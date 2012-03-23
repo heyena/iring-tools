@@ -33,11 +33,13 @@ namespace org.iringtools.web.controllers
     private RefDataRepository _refdata = null;
     private IMappingRepository _repository { get; set; }
     private string _keyFormat = "Mapping.{0}.{1}";
-    private const string unMappedToken = "[unmapped]";
-    private char[] delimiters = new char[] { '/' };
-    private bool qn = false;
-    private string qName = string.Empty;
-    private string contextName, endpoint, baseUrl;
+    private const string _unMappedToken = "[unmapped]";
+    private char[] _delimiters = new char[] { '/' };
+    private bool _qn = false;
+    private string _qName = string.Empty;
+    private string _contextName = string.Empty;
+    private string _endpoint = string.Empty;
+    private string _baseUrl = string.Empty;
 
     public MappingController() : this(new MappingRepository()) { }
 
@@ -64,11 +66,11 @@ namespace org.iringtools.web.controllers
 
     private Mapping GetMapping(string baseUrl)
     {
-      string key = string.Format(_keyFormat, contextName, endpoint);
+      string key = string.Format(_keyFormat, _contextName, _endpoint);
 
       if (Session[key] == null)
       {
-        Session[key] = _repository.GetMapping(contextName, endpoint, baseUrl);
+        Session[key] = _repository.GetMapping(_contextName, _endpoint, baseUrl);
       }
 
       return (Mapping)Session[key];
@@ -79,7 +81,7 @@ namespace org.iringtools.web.controllers
     {
       TreeNode nodes = new TreeNode();
       nodes.children = new List<JsonTreeNode>();
-      setContextEndpoint(form);
+      SetContextEndpoint(form);
 
       try
       {
@@ -100,7 +102,7 @@ namespace org.iringtools.web.controllers
           idents = string.Format("{0}.{1}.{2}", dataObject, relation, propertyName);
         }
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
 
         string parentClassId = form["parentClassId"];
@@ -115,18 +117,18 @@ namespace org.iringtools.web.controllers
           {
             if (role.name == roleName)
             {
-              qn = _nsMap.ReduceToQName(classId, out qName);
+              _qn = _nsMap.ReduceToQName(classId, out _qName);
               role.type = RoleType.Reference;
-              role.value = qn ? qName : classId;
+              role.value = _qn ? _qName : classId;
               classMap.name = classLabel;
-              classMap.id = qn ? qName : classId;
+              classMap.id = _qn ? _qName : classId;
               classMap.identifiers = new Identifiers();
 
               classMap.identifiers.Add(idents);
               graphMap.AddClassMap(role, classMap);
               role.classMap = classMap;
 
-              string context = contextName + "/" + endpoint + "/" + graphMap.name + "/" + classMap.name + "/" +
+              string context = _contextName + "/" + _endpoint + "/" + graphMap.name + "/" + classMap.name + "/" +
                 templateMap.name + "(" + index + ")" + role.name;
 
               nodes.children.Add(CreateClassNode(context, classMap));
@@ -151,7 +153,7 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string qName = string.Empty;
         string templateName = string.Empty;
         string format = String.Empty;
@@ -166,7 +168,7 @@ namespace org.iringtools.web.controllers
 
         int index = Convert.ToInt32(form["index"]);
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(graph);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
         TemplateMap tMap = ctm.templateMaps[index];
@@ -201,7 +203,7 @@ namespace org.iringtools.web.controllers
 
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string qName = string.Empty;
         string format = String.Empty;
         string nodeType = form["nodetype"];
@@ -209,10 +211,10 @@ namespace org.iringtools.web.controllers
         string parentId = form["parentId"];
         string identifier = form["id"];
         string graph = form["graphName"];        
-        string context = string.Format("{0}/{1}", contextName, endpoint);
+        string context = string.Format("{0}/{1}", _contextName, _endpoint);
 
         ClassMap selectedClassMap = null;
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(graph);
         ClassMap graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
         QMXF newtemplate = _refdata.GetTemplate(identifier);
@@ -273,19 +275,19 @@ namespace org.iringtools.web.controllers
     // added string baseUrl = form["baseUrl"];    
     public JsonResult GetNode(FormCollection form)
     {
-      setContextEndpoint(form);
+      SetContextEndpoint(form);
       GraphMap graphMap = null;
       ClassMap graphClassMap = null;
       string format = String.Empty;
       string context = form["node"];
       string baseUrl = form["baseUrl"];
 
-      setContextEndpoint(form);
+      //SetContextEndpoint(form);
       
-      string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+      string[] variables = context.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries);
       string graphName = form["graphName"];      
       
-      string key = string.Format(_keyFormat, contextName, endpoint);
+      string key = string.Format(_keyFormat, _contextName, _endpoint);
       Mapping mapping = GetMapping(baseUrl);
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -330,7 +332,7 @@ namespace org.iringtools.web.controllers
                       iconCls = "treeRole",
                       id = templateNode.id + "/" + role.name,
                       text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
-                                                string.Format("{0}{1}", role.name, unMappedToken),
+                                                string.Format("{0}{1}", role.name, _unMappedToken),
                       expanded = false,
                       leaf = false,
 
@@ -392,7 +394,7 @@ namespace org.iringtools.web.controllers
                         iconCls = "treeRole",
                         id = templateNode.id + "/" + role.name,
                         text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
-                                                 string.Format("{0}{1}", role.name, unMappedToken),
+                                                 string.Format("{0}{1}", role.name, _unMappedToken),
                         expanded = false,
                         leaf = false,
                         record = role
@@ -489,7 +491,7 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string graph = form["graphName"];
         string classId = form["classId"];
         string parentClassId = form["parentClass"];
@@ -498,7 +500,7 @@ namespace org.iringtools.web.controllers
         int index = Convert.ToInt32(form["index"]);
         string className = form["className"];        
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(graph);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
         TemplateMap tMap = ctm.templateMaps[index];
@@ -524,14 +526,14 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string roleId = form["roleId"];
         string templateId = form["templateId"];
         string classId = form["parentClassId"];
         string graphName = form["graphName"];        
 
         int index = Convert.ToInt32(form["index"]);
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
         TemplateMap tMap = ctm.templateMaps[index];
@@ -570,14 +572,14 @@ namespace org.iringtools.web.controllers
 
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string graphName = form["graphName"];
         int index = Convert.ToInt32(form["index"]);
         string classId = form["classId"];
         string roleName = form["roleName"];        
-        string context = string.Format("{0}/{1}/{2}/{3}", contextName, endpoint, graphName, roleName);
+        string context = string.Format("{0}/{1}/{2}/{3}", _contextName, _endpoint, graphName, roleName);
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
         TemplateMap tMap = ctm.templateMaps[index];
@@ -590,7 +592,7 @@ namespace org.iringtools.web.controllers
           rMap.valueListName = null;
           rMap.value = null;
           JsonTreeNode roleNode = CreateRoleNode(context, rMap);
-          roleNode.text.Replace(unMappedToken, "");
+          roleNode.text.Replace(_unMappedToken, "");
           nodes.Add(roleNode);
         }
         else
@@ -675,7 +677,7 @@ namespace org.iringtools.web.controllers
         iconCls = "treeRole",
         id = context + "/" + role.name,
         text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
-                                 string.Format("{0}{1}", role.name, unMappedToken),
+                                 string.Format("{0}{1}", role.name, _unMappedToken),
         expanded = false,
         leaf = false,
         record = role
@@ -691,7 +693,7 @@ namespace org.iringtools.web.controllers
 
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string qName = string.Empty;
         string format = String.Empty;
         string oldGraphName = "";
@@ -700,8 +702,8 @@ namespace org.iringtools.web.controllers
         string propertyCtx = form["objectName"];
         if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
 
-        Mapping mapping = GetMapping(baseUrl);
-        string context = string.Format("{0}/{1}", contextName, endpoint);
+        Mapping mapping = GetMapping(_baseUrl);
+        string context = string.Format("{0}/{1}", _contextName, _endpoint);
         string newGraphName = form["graphName"];
         string classLabel = form["classLabel"];
 
@@ -750,7 +752,7 @@ namespace org.iringtools.web.controllers
           ctm.classMap.id = qn ? qName : classId;
           ctm.classMap.identifiers.Clear();
           ctm.classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-          _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)
@@ -762,22 +764,22 @@ namespace org.iringtools.web.controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
-    private void setContextEndpoint(FormCollection form)
+    private void SetContextEndpoint(FormCollection form)
     {
-      contextName = form["contextName"];
-      endpoint = form["endpoint"];
-      baseUrl = form["baseUrl"];
+      _contextName = form["contextName"];
+      _endpoint = form["endpoint"];
+      _baseUrl = form["baseUrl"];
     }
 
     // added string baseUrl = form["baseUrl"];   
     public JsonResult UpdateMapping(FormCollection form)
     {
-      setContextEndpoint(form);      
-      Mapping mapping = GetMapping(baseUrl);
+      SetContextEndpoint(form);      
+      Mapping mapping = GetMapping(_baseUrl);
 
       try
       {
-        _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+        _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       }
       catch (Exception ex)
       {
@@ -792,15 +794,15 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
-        Mapping mapping = GetMapping(baseUrl);
+        SetContextEndpoint(form);
+        Mapping mapping = GetMapping(_baseUrl);
         string graphName = form["graphName"];
         GraphMap graphMap = mapping.FindGraphMap(graphName);
 
         if (graphMap != null)
         {
           mapping.graphMaps.Remove(graphMap);
-          _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)
@@ -817,7 +819,7 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string propertyName = form["propertyName"];
         string graphName = form["graphName"];
         string classId = form["classId"];
@@ -825,7 +827,7 @@ namespace org.iringtools.web.controllers
         string roleName = form["roleName"];
         int index = Convert.ToInt16(form["index"]);
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
         ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
 
@@ -878,7 +880,7 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string propertyName = form["propertyName"];
         string graphName = form["graphName"];
         string classId = form["classId"];
@@ -887,7 +889,7 @@ namespace org.iringtools.web.controllers
         int index = Convert.ToInt16(form["index"]);
         string relatedObject = form["relatedObject"];
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
 
@@ -919,13 +921,13 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string parentNode = form["mappingNode"].Split('/')[2];
         string templateId = form["identifier"];
         string parentClassId = form["parentIdentifier"];
         int index = Convert.ToInt16(form["index"]);
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         GraphMap graphMap = mapping.FindGraphMap(parentNode);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
         ctm.templateMaps.RemoveAt(index);
@@ -944,14 +946,14 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
-        Mapping mapping = GetMapping(baseUrl);
+        SetContextEndpoint(form);
+        Mapping mapping = GetMapping(_baseUrl);
         string deleteValueList = form["valueList"];
         var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
 
         if (valueListMap != null)
           mapping.valueListMaps.Remove(valueListMap);
-        _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+        _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       }
       catch (Exception ex)
       {
@@ -963,11 +965,11 @@ namespace org.iringtools.web.controllers
     }
 
     // added string baseUrl = form["baseUrl"];   
-    public ActionResult valueListMap(FormCollection form)
+    public ActionResult ValueListMap(FormCollection form)
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string valueList = form["valueList"];
         //?
         string oldClassUrl = form["oldClassUrl"];
@@ -984,18 +986,18 @@ namespace org.iringtools.web.controllers
             if (classUrl.ToLower().StartsWith(prefix + ":"))
             {
               classUrlUsesPrefix = true;
-              qName = classUrl;
+              _qName = classUrl;
               break;
             }
           }
 
           if (!classUrlUsesPrefix)
           {
-            qn = _nsMap.ReduceToQName(classUrl, out qName);
+            _qn = _nsMap.ReduceToQName(classUrl, out _qName);
           }
         }
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         ValueListMap valuelistMap = null;
 
         if (mapping.valueListMaps != null)
@@ -1006,13 +1008,13 @@ namespace org.iringtools.web.controllers
           ValueMap valueMap = new ValueMap
           {
             internalValue = internalName,
-            uri = qName,
+            uri = _qName,
             label = classLabel
           };
           if (valuelistMap.valueMaps == null)
             valuelistMap.valueMaps = new ValueMaps();
           valuelistMap.valueMaps.Add(valueMap);
-          _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
         else
         {
@@ -1020,9 +1022,9 @@ namespace org.iringtools.web.controllers
           if (valueMap != null)
           {
             valueMap.internalValue = internalName;
-            valueMap.uri = qName;
+            valueMap.uri = _qName;
             valueMap.label = classLabel;
-            _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+            _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
           }
         }
       }
@@ -1040,11 +1042,11 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string valueList = form["valueList"];
         //?
         string oldClassUrl = form["oldClassUrl"];
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         ValueListMap valuelistMap = null;
 
         if (mapping.valueListMaps != null)
@@ -1053,7 +1055,7 @@ namespace org.iringtools.web.controllers
         ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
         if (valueMap != null)
           valuelistMap.valueMaps.Remove(valueMap);
-        _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+        _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       }
       catch (Exception ex)
       {
@@ -1065,17 +1067,17 @@ namespace org.iringtools.web.controllers
     }
 
     // added string baseUrl = form["baseUrl"];   
-    public ActionResult valueList(FormCollection form)
+    public ActionResult ValueList(FormCollection form)
     {
       try
       {
-        setContextEndpoint(form);
+        SetContextEndpoint(form);
         string oldValueList = "";
         ValueListMap valueListMap = null;
 
         oldValueList = form["oldValueList"];
 
-        Mapping mapping = GetMapping(baseUrl);
+        Mapping mapping = GetMapping(_baseUrl);
         string newvalueList = form["valueList"];
 
         if (mapping.valueListMaps != null)
@@ -1093,12 +1095,12 @@ namespace org.iringtools.web.controllers
           };
 
           mapping.valueListMaps.Add(valuelistMap);
-          _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
         else
         {
           valueListMap.name = newvalueList;
-          _repository.UpdateMapping(mapping, contextName, endpoint, baseUrl);
+          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)
@@ -1281,10 +1283,10 @@ namespace org.iringtools.web.controllers
     // added string baseUrl = form["baseUrl"];   
     public ActionResult Export(string scope, string application, string graphMap)
     {
-      this.contextName = scope;
-      this.endpoint = application;
+      this._contextName = scope;
+      this._endpoint = application;
 
-      Mapping mapping = GetMapping(baseUrl);
+      Mapping mapping = GetMapping(_baseUrl);
       Mapping export;
       if (!string.IsNullOrEmpty(graphMap))
       {

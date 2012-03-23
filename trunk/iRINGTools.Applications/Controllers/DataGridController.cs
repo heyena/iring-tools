@@ -66,8 +66,6 @@ namespace org.iringtools.web.controllers
                                  dataIndex = row.columnName,
                                  sortable = true
                              };
-
-
                 dataItems = GetDataObjects(context, endpoint, graph, dataFilter, start, limit);
 
                 long total = dataItems.total;
