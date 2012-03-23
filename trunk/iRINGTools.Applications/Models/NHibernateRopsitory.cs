@@ -23,6 +23,7 @@ namespace org.iringtools.web.Models
     private string proxyHost = "";
     private string proxyPort = "";
     private WebProxy webProxy = null;    
+    private string adapterServiceUri = "";
     private string hibernateServiceUri = "";
 
     [Inject]
@@ -38,16 +39,19 @@ namespace org.iringtools.web.Models
       #region initialize webHttpClient for converting old mapping
       proxyHost = _settings["ProxyHost"];
       proxyPort = _settings["ProxyPort"];      
+      adapterServiceUri = _settings["AdapterServiceUri"];
       hibernateServiceUri = _settings["NHibernateServiceUri"];
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
         webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
         webProxy.Credentials = _settings.GetProxyCredential();
+        _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
       }
       else
       {
+        _adapterServiceClient = new WebHttpClient(adapterServiceUri);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
       }
       #endregion
@@ -73,6 +77,21 @@ namespace org.iringtools.web.Models
       {
         return "folder";
       }
+    }
+
+    public Response RegenAll(string user)
+    {
+      Response totalObj = new Response();
+      string _key = user + "." + "directory";
+      Directories directory = null;
+      if (HttpContext.Current.Session[_key] != null)
+        directory = (Directories)HttpContext.Current.Session[_key];
+
+      foreach (Folder folder in directory)
+      {
+        GenerateFolders(folder, totalObj);
+      }
+      return totalObj;
     }
 
     public DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl)
@@ -241,7 +260,7 @@ namespace org.iringtools.web.Models
           {
             keyPropertiesNode, dataPropertiesNode, relationshipsNode
           },
-          nhproperty = new Dictionary<string, string>
+          property = new Dictionary<string, string>
           {
             {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
             {"objectName", dataObject.objectName},
@@ -271,7 +290,7 @@ namespace org.iringtools.web.Models
             {
               text = dataProperty.columnName,
               type = "keyProperty",
-              nhproperty = properties,
+              property = properties,
               iconCls = "treeKey",
               leaf = true
             };
@@ -287,7 +306,7 @@ namespace org.iringtools.web.Models
               iconCls = "treeProperty",
               leaf = true,
               hidden = true,
-              nhproperty = properties
+              property = properties
             };
 
             dataPropertiesNode.children.Add(dataPropertyNode);
@@ -335,12 +354,12 @@ namespace org.iringtools.web.Models
       string adapterBaseUri = CleanBaseUrl(hibernateServiceUri.ToLower(), '/');
 
       if (!baseUri.Equals(adapterBaseUri))
-        return GetServiceClinet(baseUrl, serviceName);
+        return GetServiceClient(baseUrl, serviceName);
       else
         return _hibernateServiceClient;
     }
 
-    private WebHttpClient GetServiceClinet(string uri, string serviceName)
+    private WebHttpClient GetServiceClient(string uri, string serviceName)
     {
       WebHttpClient _newServiceClient = null;
       string serviceUri = uri + "/" + serviceName;
@@ -361,6 +380,37 @@ namespace org.iringtools.web.Models
       System.Uri uri = new System.Uri(url);
       return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
     }
+
+    private Response GenerateFolders(Folder folder, Response totalObj)
+    {
+      Response obj = null;
+      Endpoints endpoints = folder.Endpoints;
+
+      if (endpoints != null)
+      {
+        foreach (Endpoint endpoint in endpoints)
+        {
+          WebHttpClient _newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
+          obj = _newServiceClient.Get<Response>(String.Format("/{0}/{1}/generate", endpoint.Context, endpoint.Name));
+          totalObj.Append(obj);
+        }
+      }
+
+      Folders subFolders = folder.Folders;
+
+      if (subFolders == null)
+        return totalObj;
+      else
+      {
+        foreach (Folder subFolder in subFolders)
+        {
+          obj = GenerateFolders(subFolder, totalObj);
+        }
+      }
+
+      return totalObj;
+    }
+
     #endregion
   }
 
