@@ -16,8 +16,9 @@ namespace org.iringtools.web.controllers
         protected IAuthenticationLayer _authenticationLayer = new OAuthProvider();
         protected IDictionary _allClaims = new Dictionary<string, string>();
         protected string _oAuthToken = String.Empty;
+        protected string adapter_PREFIX = "adpmgr-";
         protected IAuthorizationLayer _authorizationLayer = new LdapAuthorizationProvider();
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseController));
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseController));        
 
         public BaseController()
         {

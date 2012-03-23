@@ -55,8 +55,17 @@ namespace org.iringtools.web.controllers
         {
           case "ScopesNode":
             {
-              string user = GetUserId((IDictionary<string, string>)_allClaims);
-              Tree directoryTree = _repository.GetDirectoryTree(user);
+              System.Collections.IEnumerator ie = Session.GetEnumerator();
+              while (ie.MoveNext())
+              {
+                if (ie.Current.ToString().StartsWith(adapter_PREFIX))
+                {
+                  Session.Remove(ie.Current.ToString());
+                  ie = Session.GetEnumerator();
+                }
+              }
+              string directoryKey = adapter_PREFIX + GetUserId((IDictionary<string, string>)_allClaims);
+              Tree directoryTree = _repository.GetDirectoryTree(directoryKey);
               return Json(directoryTree.getNodes(), JsonRequestBehavior.AllowGet);
             }
           case "ApplicationNode":
@@ -448,8 +457,8 @@ namespace org.iringtools.web.controllers
     public JsonResult Folder(FormCollection form)
     {
       string success;
-      string user = GetUserId((IDictionary<string, string>)_allClaims);
-      success = _repository.Folder(form["foldername"], form["description"], form["path"], form["state"], form["contextName"], form["oldContext"], user);
+      string key = adapter_PREFIX + GetUserId((IDictionary<string, string>)_allClaims);
+      success = _repository.Folder(form["foldername"], form["description"], form["path"], form["state"], form["contextName"], form["oldContext"], key);
 
       if (success == "ERROR")
       {
@@ -463,9 +472,9 @@ namespace org.iringtools.web.controllers
     public JsonResult Endpoint(FormCollection form)
     {
       string success;
-      string user = GetUserId((IDictionary<string, string>)_allClaims);
+      string key = adapter_PREFIX + GetUserId((IDictionary<string, string>)_allClaims);
 
-      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["oldAssembly"], form["assembly"], form["baseUrl"], form["oldBaseUrl"], user);
+      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["oldAssembly"], form["assembly"], form["baseUrl"], form["oldBaseUrl"], key);
 
       if (success == "ERROR")
       {
@@ -478,15 +487,15 @@ namespace org.iringtools.web.controllers
 
     public JsonResult DeleteEntry(FormCollection form)
     {
-      string user = GetUserId((IDictionary<string, string>)_allClaims);
-      _repository.DeleteEntry(form["path"], form["type"], form["contextName"], form["baseUrl"], user);
+      string key = adapter_PREFIX + GetUserId((IDictionary<string, string>)_allClaims);
+      _repository.DeleteEntry(form["path"], form["type"], form["contextName"], form["baseUrl"], key);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult RegenAll()
     {
-      string user = GetUserId((IDictionary<string, string>)_allClaims);
-      Response response = _repository.RegenAll(user);
+      string resourceKey = adapter_PREFIX + GetUserId((IDictionary<string, string>)_allClaims);
+      Response response = _repository.RegenAll(resourceKey);
       return Json(response, JsonRequestBehavior.AllowGet);
     }
 
@@ -504,8 +513,8 @@ namespace org.iringtools.web.controllers
 
     public JsonResult EndpointBaseUrl()
     {
-      string user = GetUserId((IDictionary<string, string>)_allClaims);
-      BaseUrls baseUrls = _repository.GetEndpointBaseUrl(user);
+      string resourceKey = adapter_PREFIX + GetUserId((IDictionary<string, string>)_allClaims);
+      BaseUrls baseUrls = _repository.GetEndpointBaseUrl(resourceKey);
       JsonContainer<BaseUrls> container = new JsonContainer<BaseUrls>();
       container.items = baseUrls;
       container.success = true;
