@@ -115,7 +115,9 @@ Ext.define('AM.view.mapping.MapProperty', {
         });
     }
   });
-
+      ///what is this STUFF????????????
+      ///forms are not posted this way??????????
+      ///why is this required??????????
 var submitMapProperty = function (propertyName, graphName, relatedObject, roleName, classId, index, contextName, endpoint, baseUrl, tree, win) {
   Ext.Ajax.request({
     url: 'mapping/mapproperty',
