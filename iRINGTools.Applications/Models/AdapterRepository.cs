@@ -72,7 +72,7 @@ namespace iRINGTools.Web.Models
       #endregion
     }
 
-    public WebHttpClient getServiceClinet(string uri, string serviceName)
+    public WebHttpClient getServiceClient(string uri, string serviceName)
     {
       WebHttpClient _newServiceClient = null;
       string serviceUri = uri + "/" + serviceName;
@@ -596,7 +596,7 @@ namespace iRINGTools.Web.Models
       string adapterBaseUri = CleanBaseUrl(adapterServiceUri.ToLower(), '/');
 
       if (!baseUri.Equals(adapterBaseUri))
-        return getServiceClinet(baseUrl, serviceName);
+        return getServiceClient(baseUrl, serviceName);
       else
         return _adapterServiceClient;
     }
@@ -1141,7 +1141,7 @@ namespace iRINGTools.Web.Models
               {
                 keyPropertiesNode, dataPropertiesNode, relationshipsNode
               },
-          nhproperty = new Dictionary<string, string>
+          property = new Dictionary<string, string>
               {
                 {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
                 {"objectName", dataObject.objectName},
@@ -1171,7 +1171,7 @@ namespace iRINGTools.Web.Models
             {
               text = dataProperty.columnName,
               type = "keyProperty",
-              nhproperty = properties,
+              property = properties,
               iconCls = "treeKey",
               leaf = true
             };
@@ -1187,7 +1187,7 @@ namespace iRINGTools.Web.Models
               iconCls = "treeProperty",
               leaf = true,
               hidden = true,
-              nhproperty = properties
+              property = properties
             };
 
             dataPropertiesNode.children.Add(dataPropertyNode);
