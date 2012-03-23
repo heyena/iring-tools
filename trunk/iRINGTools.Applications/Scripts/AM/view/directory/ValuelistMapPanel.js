@@ -49,7 +49,11 @@
       contextName = this.node.data.property.context;
       endpoint = this.node.data.property.endpoint;
       baseUrl = this.node.data.property.baseUrl;
-      valuelist = getLastXString(nodeId, 1);
+      var arr = new Array();
+      arr = nodeId.split('ValueList');
+      var arr1 = arr[arr.length - 1];
+      valuelist = arr1.split('/')[1];
+
     }
     if (this.record != null && this.node.data.type == 'ListMapNode') {
       interName = this.record.record.internalValue;

@@ -9246,7 +9246,7 @@ Ext.apply(Ext, {
      * @return (String) The resulting URL
      */
     urlAppend : function(url, s) {
-      if (!Ext.isEmpty(s) && url != null) {
+        if (!Ext.isEmpty(s)) {
             return url + (url.indexOf('?') === -1 ? '?' : '&') + s;
         }
         return url;

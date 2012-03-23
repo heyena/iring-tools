@@ -5297,7 +5297,7 @@ Ext.apply(Ext, {
 
     
     urlAppend : function(url, s) {
-        if (!Ext.isEmpty(s) && url != null) {
+        if (!Ext.isEmpty(s)) {
             return url + (url.indexOf('?') === -1 ? '?' : '&') + s;
         }
         return url;
@@ -93089,10 +93089,5 @@ Ext.define('Ext.view.TableChunker', {
 });
 
 
-// added for debug purpose
 
-Ext.Loader.setConfig({
-  enabled: true,
-  disableCaching: false
-});
 

@@ -102,6 +102,20 @@ function showDialog(width, height, title, message, buttons, callback) {
   });
 };
 
+function getLastXString(str, num) {
+    var index = str.length;
+
+    if (str[index - 1] == '.')
+      str = str.substring(0, index - 1);
+
+    for (var i = 0; i < num; i++) {
+      str = str.substring(0, index);
+      index = str.lastIndexOf('/');
+    }
+    return str.substring(index + 1);
+  };
+  
+
 //Function to activate context menus with touch events
 (function () {
     var EM = Ext.EventManager,

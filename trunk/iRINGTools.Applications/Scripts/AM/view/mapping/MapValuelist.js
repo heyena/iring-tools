@@ -6,51 +6,48 @@
   baseUrl: null,
   mappingNode: null,
   graphName: null,
+  roleName: null,
   classId: null,
   index: 0,
   endpoint: null,
-  tree: null,
-  height: 190,
+  height: 170,
   width: 430,
   floating: true,
   layout: 'fit',
   initComponent: function () {
+    var me = this;
     var formid = 'valuelisttarget-' + this.contextName + '-' + this.endpoint;
-    var that = this;
     this.items = [{
-      xtype: 'form',      
+      xtype: 'form',
+      method: 'POST',
+      url: 'mapping/mapvaluelist',
+      classId: this.classId,
+      mappingNode: this.mappingNode,
+      index: this.index,
       bodyStyle: 'padding:10px 5px 0',
       bbar: [
-              { xtype: 'tbfill' },
-              { text: 'Ok',
-                scope: this,
-                handler: function (btn, e) {
-                  var form = btn.findParentByType('form');
-                  var win = btn.findParentByType('window');
-                  var mapValuelistForm = form.getForm();
-
-                  if (mapValuelistForm.isValid()) {
-                    var valueListName = mapValuelistForm.findField('valueListName').getValue();
-                    var relation = mapValuelistForm.findField('related').getValue();
-                    var propertyName = mapValuelistForm.findField('propertyName').getValue();
-                    
-                    var roleName = getLastXString(this.mappingNode.data.id, 1);
-                    submitValuelistMap(valueListName, propertyName, relation, this.classId, roleName, this.graphName, this.contextName, this.endpoint, this.baseUrl, this.index, this.tree, win);
-                  }
-                }
-              },
-              { text: 'Cancel', scope: this, handler: this.onReset }
+                { xtype: 'tbfill' },
+                { text: 'Ok', scope: this, handler: this.onSave },
+                { text: 'Cancel', scope: this, handler: this.onReset }
             ],
       items: [
-                { xtype: 'hidden', name: 'valueListName' },
-                { xtype: 'hidden', name: 'propertyName' },
-                { xtype: 'hidden', name: 'related' },
+                { xtype: 'hidden', name: 'valueListName', id: 'valueListName' },
+                { xtype: 'hidden', name: 'relatedObject', id: 'relatedObject' },
+                { xtype: 'hidden', name: 'propertyName', id: 'propertyName' },
+                { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode', value: this.mappingNode },
+                { xtype: 'hidden', name: 'index', id: 'index', value: this.index },
+                { xtype: 'hidden', name: 'classId', id: 'classID', value: this.classId },
+                { xtype: 'hidden', name: 'graphName', id: 'graphName', value: this.graphName },
+                { xtype: 'hidden', name: 'roleName', id: 'roleNAme', value: this.roleName },
+                { xtype: 'hidden', name: 'contextName', id: 'contextName', value: this.contextName },
+                { xtype: 'hidden', name: 'endpoint', id: 'endpoint', value: this.endpoint },
+                { xtype: 'hidden', name: 'baseUrl', id: 'baseUrl', value: this.baseUrl }
             ],
       html: '<div class="property-target' + formid + '" '
-                + 'style="border:1px silver solid;margin:5px;padding:8px;height:40px">'
+                + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
                 + 'Drop a Property Node here.</div>'
                 + '<div class="class-target' + formid + '" '
-                + 'style="border:1px silver solid;margin:5px;padding:8px;height:40px">'
+                + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
                 + 'Drop a ValueList Node here. </div>',
       afterRender: function (cmp) {
         Ext.FormPanel.prototype.afterRender.apply(this, arguments);
@@ -75,11 +72,9 @@
               return false;
             }
             else {
-              var propertyName = data.records[0].data.property.Name;
-              me.getForm().findField('propertyName').setValue(propertyName);
-              me.getForm().findField('related').setValue(data.records[0].data.property.Related);
-
-              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + propertyName + '</b></td></tr>'
+              me.getForm().findField('propertyName').setValue(data.records[0].data.property.Name);
+              me.getForm().findField('relatedObject').setValue(data.records[0].data.record.Ralated);
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.records[0].data.record.Name + '</b></td></tr>'
               msg += '</table>'
               me.body.child('div.property-target' + formid).update(msg)
               return true;
@@ -106,14 +101,12 @@
           notifyDrop: function (classdd, e, data) {
             if (data.records[0].data.type != 'ValueListNode') {
 
-              var message = 'Please slect a RDL Class...';
+              var message = 'Please slect a ValueList Node...';
               showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
               return false;
             }
-
-            var valueListName = data.records[0].data.property.Name;
-            me.getForm().findField('valueListName').setValue(valueListName);
-            var msg = '<table style="font-size:13px"><tr><td>Value List:</td><td><b>' + valueListName + '</b></td></tr>'
+            me.getForm().findField('valueListName').setValue(data.records[0].data.record.record.name);
+            var msg = '<table style="font-size:13px"><tr><td>Value List:</td><td><b>' + data.records[0].data.record.record.name + '</b></td></tr>'
             msg += '</table>'
             me.body.child('div.class-target' + formid).update(msg)
             return true;
@@ -127,44 +120,21 @@
   onReset: function () {
     this.items.items[0].getForm().reset();
     this.fireEvent('Cancel', this);
+  },
+
+  onSave: function () {
+    var me = this;
+    var thisForm = this.items.items[0].getForm();
+
+    thisForm.submit({
+      waitMsg: 'Saving Data...',
+      success: function (result, request) {
+        me.fireEvent('Save', me);
+      },
+      failure: function (result, request) {
+        var message = 'Failed to Map ValueList to RoleMap';
+        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      }
+    });
   }
 });
-
-var submitValuelistMap = function (valueListName, propertyName, relation, classId, roleName, graphName, contextName, endpoint, baseUrl, index, tree, win) {
-  Ext.Ajax.request({
-    url: 'mapping/mapvaluelist',    
-    method: 'POST',
-    params: {
-      classId: classId,
-      roleName: roleName,
-      graphName: graphName,
-      propertyName: propertyName,
-      relatedObject: relation,
-      contextName: contextName,
-      endpoint: endpoint,
-      baseUrl: baseUrl,
-      valueListName: valueListName,
-      index: index
-    },
-    success: function (result, request) {
-      var rtext = result.responseText;
-      if (rtext.toUpperCase().indexOf('FALSE') == -1) {
-        tree.onReload();
-        win.close();
-      }
-      else {
-        var ind = rtext.indexOf('}');
-        var ine = rtext.indexOf('at');
-        var len = rtext.length - ind - 1;
-        var msg = rtext.substring(ind + 1, ine - 7);
-        showDialog(400, 100, 'Valuelist mapping result - Error', msg, Ext.Msg.OK, null);
-      }
-      //Ext.Msg.show({ title: 'Success', msg: 'Mapped ValueList to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
-    },
-    failure: function (result, request) {
-      //Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map ValueList to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
-      var message = 'Failed to Map ValueList to RoleMap';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-    }
-  })
-};
