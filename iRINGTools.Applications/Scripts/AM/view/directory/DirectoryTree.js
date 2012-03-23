@@ -17,14 +17,13 @@
   lines: true,
   tbar: null,
   scroll: 'both',
-  // store: 'DirectoryStore',
   initComponent: function () {
-
     this.tbar = [{
       text: 'Reload Tree',
-      handler: this.onReload,
+      // handler: this.onReload,
       icon: 'Content/img/16x16/view-refresh.png',
-      scope: this
+      scope: this,
+      action: 'reloaddirtree'
     }];
 
     Ext.apply(this, {
@@ -100,14 +99,11 @@
 
   getState: function () {
     var nodes = [], state = this.callParent();
-    var root = this.getRootNode();
-    var rootId = root.get('id');
-    root.eachChild(function (child) {
+    this.getRootNode().eachChild(function (child) {
       // function to store state of tree recursively 
       var storeTreeState = function (node, expandedNodes) {
         if (node.isExpanded() && node.childNodes.length > 0) {
-          expandedNodes.push(node.get('id')); //'text'));
-          //expandedNodes.push('/'+rootId+'/'+node.get('id')); //'text'));
+          expandedNodes.push(node.getPath('id'));
           node.eachChild(function (child) {
             storeTreeState(child, expandedNodes);
           });
@@ -121,41 +117,23 @@
     return state;
   },
 
-  applyState: function (state) {
-    var that = this;
-    var rootNode = that.getRootNode();
-
-    var findChildById = function (root, id) {
-      var i = 0;
-      while (root.childNodes[i]) {
-        var node = root.childNodes[i]
-        if (node.data.id == id)
-          return node;
-        i++;
-      }
-      return null;
-    };
-
-    var treeNode = rootNode;
+applyState: function (state) {
+    var me = this;
     var nodes = state.expandedNodes || [],
             len = nodes.length;
     //  this.collapseAll();
-    for (var i = 0; i < len; i++) {
-      if (typeof nodes[i] != 'undefined') {
-        if (treeNode) {
-          var treeNode = findChildById(treeNode, nodes[i]);
-          if (treeNode && treeNode.data.expanded == false) {
-            treeNode.expand();
-          }
-        }
-        //that.expandPath(nodes[i]); //, 'text');
-      }
-    }
-    // this.callParent(arguments);
-
-
+    Ext.each(nodes, function (path) {
+      me.expandPath(path, 'id');
+    });
   },
 
+  onReload: function (node) {
+    var state = this.getState();
+    this.body.mask('Loading', 'x-mask-loading');
+    this.store().load();
+    this.body.unmask();
+    this.applyState(state, true);
+  },
   buildScopesMenu: function () {
     return [
       {
@@ -181,7 +159,6 @@
       icon: 'Content/img/16x16/document-new.png',
       scope: this,
       action: 'regenerateAll'
-      // HibernateDataLayer artifacts
     }]
   },
 
@@ -257,14 +234,7 @@
         icon: 'Content/img/16x16/preferences-system.png',
         scope: this,
         action: 'configureendpoint'
-      }//,
-    //      {
-    //          xtype: 'button',
-    //          text: 'Open NHConfiguration',
-    //          icon: 'Content/img/16x16/preferences-system.png',
-    //          scope: this,
-    //          action: 'configurenh'
-    //      }
+      }
     ]
   },
   buildAppDataMenu: function () {
@@ -494,16 +464,6 @@
     return this.getSelectionModel().selected.items[0];
   },
 
-  onReload: function (node) {
-    //get state from tree
-    // var me = this;
-    var state = this.getState();
-    //this.body.mask('Loading', 'x-mask-loading');
-
-    this.getStore().load();
-    //this.body.unmask();
-    this.applyState(state, true);
-  },
 
   onClick: function (view, model, n, idx, e) {
     try {

@@ -401,7 +401,7 @@
       AM.view.nhibernate.dbInfo = {};
     AM.view.nhibernate.dbInfo.dbName = dbDict.SchemaName;
 
-    if (!dbInfo.dbUserName)
+    if (!dbInfo == null && !dbInfo.dbUserName == null)
       for (var i = 0; i < connStrParts.length; i++) {
         var pair = connStrParts[i].split('=');
         switch (pair[0].toUpperCase()) {
@@ -723,6 +723,6 @@
     },
         form = Ext.widget('spreadsheetsource', sourceconf);
     form.show();
-  },
+  }
 
 });

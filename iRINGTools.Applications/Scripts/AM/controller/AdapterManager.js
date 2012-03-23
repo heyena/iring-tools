@@ -34,7 +34,6 @@
           selector: 'viewport > centerpanel > contentpanel'
         }
     ],
-  parentClass: null,
   init: function () {
     this.control({
       'menu button[action=newscope]': {
@@ -65,9 +64,20 @@
         click: this.onRegenerateAll
       },
       'directorypanel directorytree': {
-        beforeload: this.beforeLoad
+        beforeload: this.onBeforeLoad
+      },
+      'button[action=reloaddirtree]': {
+        click: this.onReloadTree
       }
     });
+  },
+
+  onReloadTree: function (node) {
+    var tree = this.getDirTree();
+    var state = tree.getState();
+    tree.store.load();
+
+    tree.applyState(state);
   },
 
   onRegenerateAll: function (btn, ev) {
@@ -223,7 +233,7 @@
 
     win.on('save', function () {
       win.close();
-      tree.onReload();
+      tree.store.load();
       if (node.get('expanded') == false)
         node.expand();
     }, this);
@@ -346,7 +356,8 @@
     tree.applicationMenu.hide();
   },
 
-  beforeLoad: function (store, operation, options) {
+
+  onBeforeLoad: function (store, operation, eOpts) {
     if (operation.node != undefined) {
       var operationNode = operation.node.data;
       //var param = store.proxy.extraParams;
@@ -391,20 +402,5 @@
           store.proxy.extraParams.text = operationNode.text;
       }
     }
-  },
-
-  getParentClass: function (n) {
-    if (n.parentNode != undefined) {
-      if ((n.parentNode.data.type == 'ClassMapNode'
-         || n.parentNode.data.type == 'GraphMapNode')
-         && n.parentNode.data.identifier != undefined) {
-        this.parentClass = n.parentNode.data.identifier;
-        return this.parentClass;
-      }
-      else {
-        this.getParentClass(n.parentNode);
-      }
-    }
-    return this.parentClass;
   }
 });

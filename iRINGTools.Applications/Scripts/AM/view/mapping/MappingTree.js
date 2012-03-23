@@ -227,7 +227,7 @@
   onReload: function (node) {
     var state = this.getState();
     this.body.mask('Loading', 'x-mask-loading');
-    this.getStore().load();
+    this.store().load();
     this.body.unmask();
     this.applyState(state, true);
   },
@@ -381,16 +381,3 @@
 
   }
 });
-
-var getLastXString = function (str, num) {
-  var index = str.length;
-
-  if (str[index - 1] == '.')
-    str = str.substring(0, index - 1);
-
-  for (var i = 0; i < num; i++) {
-    str = str.substring(0, index);
-    index = str.lastIndexOf('/');
-  }
-  return str.substring(index + 1);
-};

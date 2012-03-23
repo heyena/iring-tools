@@ -28,6 +28,7 @@
           selector: 'mappingtree'
         }
   ],
+  parentClass: null,
   init: function () {
     this.control({
       'menu button[action=newgraph]': {
@@ -83,19 +84,24 @@
       }
     });
   },
-   mapValueList: function () {
+
+
+  mapValueList: function () {
     var tree = this.getMappingPanel(),
           node = tree.getSelectedNode(),
           graphName = tree.graphName,
           contextName = tree.contextName,
-          endpoint = tree.endpoint;
+          endpoint = tree.endpoint,
+          baseUrl = tree.baseUrl;
+    var roleName = node.data.record.name;
     this.getParentClass(node);
     var conf = {
-      tree: tree,
+      graphName: graphName,
       contextName: contextName,
       endpoint: endpoint,
-      graphName: graphName,
+      baseUrl: baseUrl,
       mappingNode: node,
+      roleName: roleName,
       index: node.parentNode.parentNode.indexOf(node.parentNode),
       classId: this.parentClass
     },
@@ -606,5 +612,21 @@
       failure: function () { }
     });
     tree.graphMenu.hide();
+  },
+
+  getParentClass: function (n) {
+    if (n.parentNode != undefined) {
+      if ((n.parentNode.data.type == 'ClassMapNode'
+         || n.parentNode.data.type == 'GraphMapNode')
+         && n.parentNode.data.identifier != undefined) {
+        this.parentClass = n.parentNode.data.identifier;
+        return this.parentClass;
+      }
+      else {
+        this.getParentClass(n.parentNode);
+      }
+    }
+    return this.parentClass;
   }
+
 });
