@@ -20,7 +20,7 @@ namespace org.iringtools.web.controllers
     IAdapterRepository _repository;
     private string _keyFormat = "Mapping.{0}.{1}";
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
-    private System.Web.Script.Serialization.JavaScriptSerializer oSerializer;
+    private System.Web.Script.Serialization.JavaScriptSerializer _serializer;
     private const string USERID_KEY = "emailaddress";
 
     public DirectoryController()
@@ -34,7 +34,7 @@ namespace org.iringtools.web.controllers
     public DirectoryController(IAdapterRepository repository)
     {
       _repository = repository;
-      oSerializer =
+      _serializer =
          new System.Web.Script.Serialization.JavaScriptSerializer();
     }
 
