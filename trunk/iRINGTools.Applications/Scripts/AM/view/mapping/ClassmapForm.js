@@ -170,7 +170,9 @@
     });
   }
 });
-
+///what is this STUFF????????????
+///forms are not posted this way??????????
+///why is this required??????????
 var submitAddClassMap = function (contextName, endpoint, baseUrl, propertyName, graphName, dataObject, roleName, classurl, classlabel, relation, parentClassId, index, tree, win) {
   Ext.Ajax.request({
     url: 'mapping/addclassmap',
