@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC        
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"        
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.iringtools.adapter.datalayer.proj_12345_000.ABC" default-lazy="true">
+    <class table="&quot;LINES&quot;" name="LINES">
+        <id name="Id" column="TAG">
+            <generator class="assigned" />
+        </id>
+    <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
+    <property name="ID" column="&quot;ID&quot;" />
+    <property name="AREA" column="&quot;AREA&quot;" />
+    <property name="TRAINNUMBER" column="&quot;TRAINNUMBER&quot;" />
+    <property name="SPEC" column="&quot;SPEC&quot;" />
+    <property name="SYSTEM" column="&quot;SYSTEM&quot;" />
+    <property name="LINENO" column="&quot;LINENO&quot;" />
+    <property name="NOMDIAMETER" column="&quot;NOMDIAMETER&quot;" />
+    <property name="INSULATIONTYPE" column="&quot;INSULATIONTYPE&quot;" />
+    <property name="HTRACED" column="&quot;HTRACED&quot;" />
+    <property name="CONSTTYPE" column="&quot;CONSTTYPE&quot;" />
+    <property name="DESPRESSURE" column="&quot;DESPRESSURE&quot;" />
+    <property name="TESTPRESSURE" column="&quot;TESTPRESSURE&quot;" />
+    <property name="PWHT" column="&quot;PWHT&quot;" />
+    <property name="TESTMEDIA" column="&quot;TESTMEDIA&quot;" />
+    <property name="MATLTYPE" column="&quot;MATLTYPE&quot;" />
+    <property name="NDT" column="&quot;NDT&quot;" />
+    <property name="NDE" column="&quot;NDE&quot;" />
+    <property name="PIPECLASS" column="&quot;PIPECLASS&quot;" />
+    <property name="PIDNUMBER" column="&quot;PIDNUMBER&quot;" />
+    <property name="DESTEMPERATURE" column="&quot;DESTEMPERATURE&quot;" />
+    <property name="PAINTSYSTEM" column="&quot;PAINTSYSTEM&quot;" />
+    <property name="DESIGNCODE" column="&quot;DESIGNCODE&quot;" />
+    <property name="COLOURCODE" column="&quot;COLOURCODE&quot;" />
+    <property name="EWP" column="&quot;EWP&quot;" />
+    <property name="USER1" column="&quot;USER1&quot;" />
+    <property name="TAGSTATUS" column="&quot;TAGSTATUS&quot;" />
+    <property name="FULLLINE" column="&quot;FULLLINE&quot;" />
+    <property name="UOM_NOMDIAMETER" column="&quot;UOM_NOMDIAMETER&quot;" />
+    <property name="UOM_DESPRESSURE" column="&quot;UOM_DESPRESSURE&quot;" />
+    <property name="UOM_DESTEMPERATURE" column="&quot;UOM_DESTEMPERATURE&quot;" />
+
+    </class>
+</hibernate-mapping>
