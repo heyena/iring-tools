@@ -41,7 +41,9 @@
                 plugins: {
                     ptype: 'treeviewdragdrop',
                     dragGroup: 'refdataGroup',
-                    enableDrop: false
+                    enableDrop: false,
+                    dragText: '{0}',
+                    dragField: 'text'
                 }
             }
         });

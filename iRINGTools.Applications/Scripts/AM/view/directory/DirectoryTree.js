@@ -1,18 +1,12 @@
 ﻿Ext.define('AM.view.directory.DirectoryTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.directorytree',
-  viewConfig: {
-    plugins: {
-      ptype: 'treeviewdragdrop',
-      dragGroup: 'propertyGroup',
-      enableDrop: false
-    }
-  },
   region: 'center',
   border: false,
   expandAll: true,
   animate: true,
   containerScroll: true,
+
   //  pathSeparator: '>',
   lines: true,
   tbar: null,
@@ -54,6 +48,15 @@
           reader: { type: 'json' }
         }
       }),
+      viewConfig: {
+        plugins: {
+          ptype: 'treeviewdragdrop',
+          dragGroup: 'propertyGroup',
+          enableDrop: false,
+          dragText: '{0}',
+          dragField: 'text'
+        }
+      },
       stateful: true,
       stateId: this.id + '-state'//,
       // stateEvents: ['itemcollapse', 'itemexpand']
@@ -118,7 +121,6 @@
     });
     return state;
   },
-
   applyState: function (state) {
     var me = this;   
     var nodes = state.expandedNodes || [],

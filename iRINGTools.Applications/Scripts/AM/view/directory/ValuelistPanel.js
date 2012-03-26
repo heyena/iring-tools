@@ -68,12 +68,12 @@
       },
       defaultType: 'textfield',
       items: [
-              { name: 'oldValueList', xtype: 'hidden', width: 120, value: oldValueListName, allowBlank: false },
-				      { name: 'contextName', xtype: 'hidden', width: 120, value: contextName, allowBlank: false },
-				      { name: 'endpoint', xtype: 'hidden', width: 120, value: endpoint, allowBlank: false },
-              { name: 'baseUrl', xtype: 'hidden', width: 120, value: baseUrl, allowBlank: false },
-				      { fieldLabel: 'Value List Name', name: 'valueList', xtype: 'textfield', width: 230, value: name, allowBlank: false }
-            ],
+         { name: 'oldValueList', xtype: 'hidden', width: 120, value: oldValueListName, allowBlank: false },
+         { name: 'contextName', xtype: 'hidden', width: 120, value: contextName, allowBlank: false },
+         { name: 'endpoint', xtype: 'hidden', width: 120, value: endpoint, allowBlank: false },
+         { name: 'baseUrl', xtype: 'hidden', width: 120, value: baseUrl, allowBlank: false },
+         { fieldLabel: 'Value List Name', name: 'valueList', xtype: 'textfield', width: 230, value: name, allowBlank: false }
+      ],
       autoDestroy: false
     }];
     // super

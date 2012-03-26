@@ -133,7 +133,7 @@
               return false;
             }
             else {
-              me.getForm().findField('objectName').setValue(data.records[0].data.id);
+              me.getForm().findField('objectName').setValue(getLastXString(data.records[0].data.id, 2));
               var msg = '<table style="font-size:13px"><tr><td>Identifier:</td><td><b>' + getLastXString(data.records[0].data.id, 1) + '</b></td></tr>'
               msg += '</table>'
               me.body.child('div.property-target' + formid).update(msg);
