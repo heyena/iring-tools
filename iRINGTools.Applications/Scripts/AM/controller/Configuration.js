@@ -149,14 +149,19 @@
     }
   },
 
-  setTablesSelectorPane: function (editor, context, endpoint) {
+  setTablesSelectorPane: function (editor, context, endpoint, baseUrl) {
     if (editor) {
       var dbDict = AM.view.nhibernate.dbDict.value;
       if (dbDict)
         var content = this.getMainContent();
+      var dataTree = this.getDataTree();
+      var dbInfo = AM.view.nhibernate.dbInfo.value;
       var conf = {
         contextName: context,
         endpoint: endpoint,
+        baseUrl: baseUrl,
+        dbInfo: dbInfo,
+        dataTree: dataTree,
         height: 300,
         width: 400,
         region: 'center',
@@ -180,7 +185,7 @@
     var content = this.getMainContent();
     if (node.isRoot()) {
       var editor = this.getEditPanel();
-      this.setTablesSelectorPane(editor, tree.contextName, tree.endpoint);
+      this.setTablesSelectorPane(editor, tree.contextName, tree.endpoint, tree.baseUrl);
       return;
     }
     var nodeType = node.data.type.toUpperCase();
@@ -230,6 +235,7 @@
       var cstr = dbDict.ConnectionString;
       if (cstr)
         var dbInfo = this.getConnStringParts(cstr);
+        AM.view.nhibernate.dbInfo.value = dbInfo;
     };
     var conf = {
       contextName: editor.contextName,
@@ -297,7 +303,8 @@
         }
         else {
           var datatree = me.getDataTree();
-          datatree.disable();
+          if (datatree)
+            datatree.disable();
 
           if (AM.view.nhibernate.dbInfo.value == null)
             AM.view.nhibernate.dbInfo.value = {};
@@ -378,7 +385,7 @@
           dbInfo = {};
         dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
 
-        me.setTablesSelectorPane(me.getEditPanel(), form.contextName, form.endpoint, dbInfo.dbTableNames.items, selected);
+        me.setTablesSelectorPane(me.getEditPanel(), form.contextName, form.endpoint, form.baseUrl, dbInfo.dbTableNames.items, selected);
         return dbInfo.dbTableNames;
       },
       failure: function (f, a) {

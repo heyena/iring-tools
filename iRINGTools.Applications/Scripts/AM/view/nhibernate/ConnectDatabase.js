@@ -161,7 +161,7 @@
           name: 'portNumber',
           fieldLabel: 'Port Number',
           hidden: true,
-          value: '1521',
+          value: '1433',
           allowBlank: false
         },
         {
