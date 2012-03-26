@@ -79,7 +79,8 @@ Ext.define('AM.view.nhibernate.RadioField', {
 
     this.items = [{
       width: 25,
-      layout: 'fit',
+      layout: 'anchor',
+      defaults: { anchor: '100%' },
       labelWidth: 0.1,      
       border: false,
       frame: false,  
@@ -109,8 +110,6 @@ Ext.define('AM.view.nhibernate.RadioField', {
         radioGroup.items[1].checked = true;
       }
     }
-
-
 
     this.callParent(arguments);
   }

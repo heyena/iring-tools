@@ -18,12 +18,12 @@
   tbar: null,
   scroll: 'both',
   initComponent: function () {
+
     this.tbar = [{
       text: 'Reload Tree',
-      // handler: this.onReload,
-      icon: 'Content/img/16x16/view-refresh.png',
+      icon: 'Content/img/16x16/view-refresh.png',      
       scope: this,
-      action: 'reloaddirtree'
+      action: 'reloaddiretree'
     }];
 
     Ext.apply(this, {
@@ -94,8 +94,8 @@
     this.graphMenu.add(this.buildGraphMenu());
 
     this.on('itemcontextmenu', this.showContextMenu, this);
-    this.on('itemclick', this.onClick, this);
-  },
+    this.on('itemclick', this.onClick, this);    
+  },  
 
   getState: function () {
     var nodes = [], state = this.callParent();
@@ -104,6 +104,7 @@
       var storeTreeState = function (node, expandedNodes) {
         if (node.isExpanded() && node.childNodes.length > 0) {
           expandedNodes.push(node.getPath('id'));
+
           node.eachChild(function (child) {
             storeTreeState(child, expandedNodes);
           });
@@ -117,8 +118,8 @@
     return state;
   },
 
-applyState: function (state) {
-    var me = this;
+  applyState: function (state) {
+    var me = this;   
     var nodes = state.expandedNodes || [],
             len = nodes.length;
     //  this.collapseAll();
@@ -134,6 +135,7 @@ applyState: function (state) {
     this.body.unmask();
     this.applyState(state, true);
   },
+
   buildScopesMenu: function () {
     return [
       {
@@ -158,7 +160,7 @@ applyState: function (state) {
       text: 'Generate NH Files',
       icon: 'Content/img/16x16/document-new.png',
       scope: this,
-      action: 'regenerateAll'
+      action: 'regenerateAll'     
     }]
   },
 
@@ -169,8 +171,7 @@ applyState: function (state) {
       text: 'Generate NH Files',
       icon: 'Content/img/16x16/document-new.png',
       scope: this,
-      action: 'regenerateAll'
-      // HibernateDataLayer artifacts
+      action: 'regenerateAll'      
     }]
   },
 
@@ -232,7 +233,7 @@ applyState: function (state) {
         xtype: 'button',
         text: 'Open Configuration',
         icon: 'Content/img/16x16/preferences-system.png',
-        scope: this,
+        scope: this,        
         action: 'configureendpoint'
       }
     ]
@@ -308,7 +309,6 @@ applyState: function (state) {
     ]
   },
 
-
   buildGraphsMenu: function () {
     return [
     {
@@ -363,6 +363,10 @@ applyState: function (state) {
 
     e.stopEvent();
     var node = model.store.getAt(index);
+
+    this.getSelectionModel().select(node);
+    this.onClick(view, model, 0, index, e);
+
     var obj = node.data;
     var ifsuperadmin = false;
     var baseUrl = 'false';
@@ -388,53 +392,52 @@ applyState: function (state) {
         method: 'GET',
         success: function (response, request) {
           baseUrl = response.responseText;
+          //when root node has children
+          if (node.childNodes[0]) {
+            if (baseUrl.toLowerCase().indexOf('true') > -1) {
+              if (node.childNodes[0].data.record.securityRole) {
+                securityRole = node.childNodes[0].data.record.securityRole;
+
+                if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1) {
+                  ifsuperadmin = true;                  
+                  me.scopesMenu.showAt(e.getXY());
+                }
+                else if (securityRole.indexOf('admin') > -1) {                  
+                  me.generateMenu.showAt(e.getXY());
+                }
+              }
+            }
+            else {
+              ifsuperadmin = true;
+              me.scopesGenerateMenu.showAt(e.getXY());
+            }
+          }
+          //when starting from scratch (root node has no children)
+          else {
+            if (baseUrl == 'false') {
+              me.scopesGenerateMenu.showAt(e.getXY());
+            }
+            else {
+              Ext.Ajax.request({
+                url: 'directory/RootSecurityRole',
+                method: 'GET',
+                success: function (response, request) {
+                  var rootSecurityRole = response.responseText;
+                  if (rootSecurityRole.indexOf('rootadmin') > -1) {
+                    ifsuperadmin = true;                  
+                    me.scopesMenu.showAt(e.getXY());
+                  }
+                  else if (securityRole.indexOf('admin') > -1) {                   
+                    me.generateMenu.showAt(e.getXY());
+                  }
+                },
+                failure: function () { }
+              });
+            }
+          }
         },
         failure: function () { }
       });
-
-      //when root node has children
-      if (node.childNodes[0]) {
-        if (baseUrl.toLowerCase() == 'true') {
-          if (node.childNodes[0].data.record.securityRole) {
-            securityRole = node.childNodes[0].data.record.securityRole;
-
-            if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1) {
-              ifsuperadmin = true;
-              me.scopesMenu.showAt(e.getXY());
-            }
-            else if (securityRole.indexOf('admin') > -1) {
-              me.generateMenu.showAt(e.getXY());
-            }
-          }
-        }
-        else {
-          ifsuperadmin = true;
-          me.scopesGenerateMenu.showAt(e.getXY());
-        }
-      }
-      //when starting from scratch (root node has no children)
-      else {
-        if (baseUrl == 'false') {
-          me.scopesGenerateMenu.showAt(e.getXY());
-        }
-        else {
-          Ext.Ajax.request({
-            url: 'directory/RootSecurityRole',
-            method: 'GET',
-            success: function (response, request) {
-              var rootSecurityRole = response.responseText;
-              if (rootSecurityRole.indexOf('rootadmin') > -1) {
-                ifsuperadmin = true;
-                me.scopesMenu.showAt(e.getXY());
-              }
-              else if (securityRole.indexOf('admin') > -1) {
-                me.generateMenu.showAt(e.getXY());
-              }
-            },
-            failure: function () { }
-          });
-        }
-      }
     }
     //right clicks tree nodes which are not the root node
     else if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
@@ -462,8 +465,7 @@ applyState: function (state) {
 
   getSelectedNode: function () {
     return this.getSelectionModel().selected.items[0];
-  },
-
+  }, 
 
   onClick: function (view, model, n, idx, e) {
     try {
