@@ -93,8 +93,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\DatabaseDictionary.23456.ABC.xml" />
-    <Content Include="App_Data\DataDictionary.12345.ABC.xml" />
     <Content Include="App_Data\default.css" />
     <Content Include="css\sparql-query.css" />
     <Content Include="css\iring-tools.css" />
