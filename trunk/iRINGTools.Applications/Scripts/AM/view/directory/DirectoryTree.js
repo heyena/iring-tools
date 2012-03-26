@@ -23,7 +23,8 @@
       text: 'Reload Tree',
       icon: 'Content/img/16x16/view-refresh.png',      
       scope: this,
-      action: 'reloaddiretree'
+      //action: 'reloaddiretree',
+      handler: this.onReload
     }];
 
     Ext.apply(this, {
@@ -131,7 +132,7 @@
   onReload: function (node) {
     var state = this.getState();
     this.body.mask('Loading', 'x-mask-loading');
-    this.store().load();
+    this.store.load();
     this.body.unmask();
     this.applyState(state, true);
   },
