@@ -366,11 +366,11 @@ namespace iRINGTools.Web.Models
       return _javaServiceClient.GetMessage("/directory/userldap");
     }
 
-    public BaseUrls GetEndpointBaseUrl(string user)
+    public BaseUrls GetEndpointBaseUrl(string resourceKey)
     {
       bool ifExit = false;
       string baseUri = _adapterServiceClient.GetBaseUri();
-      Resources resources = GetResource(user);
+      Resources resources = GetResource(resourceKey);
       BaseUrls baseUrls = new BaseUrls();
       BaseUrl baseUrl;
 
@@ -384,7 +384,7 @@ namespace iRINGTools.Web.Models
 
       if (!ifExit)
       {
-        baseUrl = new BaseUrl { Url = baseUri };
+        baseUrl = new BaseUrl { Url = baseUri + "/adapter" };
         baseUrls.Add(baseUrl);
       }
 
