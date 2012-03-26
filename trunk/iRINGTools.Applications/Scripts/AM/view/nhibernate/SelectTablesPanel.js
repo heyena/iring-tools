@@ -47,14 +47,12 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
       hideLabel: true,
       bodyStyle: 'background:#eee',
       frame: true,
-      imagePath: 'Scripts/extjs407/examples/ux/css/images',
-      width: 240,
-      height: 370,
+      imagePath: 'Scripts/extjs407/examples/ux/css/images',      
       displayField: 'tableName',
-      store: '',
+      store: availItems,
       valueField: 'tableValue',
       border: 0,
-      value: '',
+      value: selectItems,
       listeners: {
         change: function (itemSelector, selectedValuesStr) {
           var selectTables = itemSelector.toMultiselect.store.data.items;

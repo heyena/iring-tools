@@ -8,6 +8,7 @@
     
     <link href="../../Scripts/extjs407/resources/css/ext-all.css" rel="stylesheet" type="text/css" />
     <link href="../../Scripts/extjs407/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
+    <link href="../../Scripts/extjs407/examples/ux/css/ItemSelector.css" rel="stylesheet" type="text/css" />
 
     <script src="<%: Url.Content("~/Scripts/extjs407/bootstrap.js") %>" type="text/javascript"></script>   
     <script src="<%: Url.Content("~/Scripts/AM/AM.js") %>" type="text/javascript"></script>

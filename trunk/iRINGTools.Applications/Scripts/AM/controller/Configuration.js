@@ -81,6 +81,12 @@
       },
       'button[action=connecttodatabase]': {
         click: this.connectToDatabase
+      },
+      'button[action=applydatatables]': {
+        click: this.applydatatables
+      },
+      'button[action=resettables]': {
+        click: this.resettables
       }
     })
   },
