@@ -82,10 +82,10 @@
       defaultType: 'textfield',
       items: [
         { name: 'contextName', xtype: 'hidden', width: 120, value: contextName, allowBlank: false },
-				{ name: 'endpoint', xtype: 'hidden', width: 120, value: endpoint, allowBlank: false },
+        { name: 'endpoint', xtype: 'hidden', width: 120, value: endpoint, allowBlank: false },
         { name: 'valueList', xtype: 'hidden', width: 120, value: valuelist, allowBlank: false },
         { name: 'baseUrl', xtype: 'hidden', width: 120, value: baseUrl, allowBlank: false },
-		    { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 120, value: nodeId, allowBlank: true },
+        { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 120, value: nodeId, allowBlank: true },
         { fieldLabel: 'Internal Name', name: 'internalName', xtype: 'textfield', width: 230, value: interName, allowBlank: false },
         { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
         { fieldLabel: 'Old Class Url', name: 'oldClassUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
@@ -111,8 +111,6 @@
             me.getForm().findField('classUrl').setValue(data.records[0].data.record.Uri);
             me.getForm().findField('classlabel').setValue(data.records[0].data.record.Label);
             var msg = '<table style="font-size:13px"><tr><td>Class Label:  </td><td><b>' + data.records[0].data.record.Label + '</b></td></tr>'
-            msg += '</table>'
-            //Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg);
             me.body.child('div.class-target' + formid).update(msg);
             return true;
           } //eo notifyDrop

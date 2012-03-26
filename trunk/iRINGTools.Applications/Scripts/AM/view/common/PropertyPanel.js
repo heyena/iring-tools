@@ -11,8 +11,5 @@
     collapsed: false,
     border: 0,
     frame: false,
-    source: {}//,
-//    initComponent: function () {
-//        this.callParent(arguments);
-//    }
+    source: {}
 });

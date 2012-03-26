@@ -74,6 +74,130 @@ Ext.application({
   }
 });
 
+
+Ext.ns('Ext.ux');
+Ext.define('Ext.ux.plugin.GridPageSizer', {
+  extend: 'Object',
+  alias: 'plugin.PagingToolbarResizer',
+
+  options: [5, 10, 15, 20, 25, 30, 50, 75, 100, 200, 300, 500, 1000],
+
+  mode: 'remote',
+  displayText: 'Records per Page',
+  prependCombo: false,
+
+  constructor: function (config) {
+    Ext.apply(this, config);
+    this.callParent();
+  },
+
+  init: function (pagingToolbar) {
+    var comboStore = this.options;
+    var combo = new Ext.form.field.ComboBox({
+      typeAhead: false,
+      triggerAction: 'all',
+      forceSelection: true,
+      selectOnFocus: true,
+      editable: true,
+      mode: this.mode,
+      value: pagingToolbar.pageSize,
+      width: 50,
+      store: comboStore
+    });
+
+    combo.on('select', this.onPageSizeChanged, pagingToolbar);
+    var index = 0;
+    if (this.prependCombo) {
+      index = pagingToolbar.items.indexOf(pagingToolbar.first);
+      index--;
+    } else {
+      index = pagingToolbar.items.indexOf(pagingToolbar.refresh);
+      pagingToolbar.insert(++index, '-');
+    }
+    pagingToolbar.insert(++index, this.displayText);
+    pagingToolbar.insert(++index, combo);
+
+    if (this.prependCombo) {
+      pagingToolbar.insert(++index, '-');
+    }
+    pagingToolbar.on({
+      beforedestroy: function () {
+        combo.destroy();
+      }
+    });
+  },
+  onPageSizeChanged: function (combo) {
+    this.store.pageSize = parseInt(combo.getRawValue(), 10);
+    this.doRefresh();
+  }
+});
+
+///overrides required to display correct text on dragstart
+
+Ext.override(Ext.view.DragZone, {
+    getDragText: function () {
+        if (this.dragField) {
+            var fieldValue = this.dragData.records[0].get(this.dragField);
+            return Ext.String.format(this.dragText, fieldValue);
+        } else {
+            var count = this.dragData.records.length;
+            return Ext.String.format(this.dragText, count, count == 1 ? '' : 's');
+        }
+    }
+});
+ 
+
+Ext.override(Ext.tree.plugin.TreeViewDragDrop, {
+    onViewRender: function (view) {
+        var me = this;
+
+        if (me.enableDrag) {
+            me.dragZone = Ext.create('Ext.tree.ViewDragZone', {
+                view: view,
+                ddGroup: me.dragGroup || me.ddGroup,
+                dragText: me.dragText,
+                dragField: me.dragField,
+                repairHighlightColor: me.nodeHighlightColor,
+                repairHighlight: me.nodeHighlightOnRepair
+            });
+        }
+
+        if (me.enableDrop) {
+            me.dropZone = Ext.create('Ext.tree.ViewDropZone', {
+                view: view,
+                ddGroup: me.dropGroup || me.ddGroup,
+                allowContainerDrops: me.allowContainerDrops,
+                appendOnly: me.appendOnly,
+                allowParentInserts: me.allowParentInserts,
+                expandDelay: me.expandDelay,
+                dropHighlightColor: me.nodeHighlightColor,
+                dropHighlight: me.nodeHighlightOnDrop
+            });
+        }
+    }
+});
+
+var ifExistSibling = function (str, node, state) {
+  var ifExist = false;
+  var childNodes = node.childNodes;
+  var repeatTime = 0;
+
+  for (var i = 0; i < childNodes.length; i++) {
+    if (childNodes[i].data.text == str) {
+      if (state == 'new')
+        ifExist = true;
+      else {
+        repeatTime++;
+        if (repeatTime > 1)
+          ifExist = true;
+      }
+    }
+  }
+
+  return ifExist;
+};
+
+
 String.format = String.prototype.format = function () {
   var i = 0;
   var string = (typeof (this) == "function" && !(i++)) ? arguments[0] : this;

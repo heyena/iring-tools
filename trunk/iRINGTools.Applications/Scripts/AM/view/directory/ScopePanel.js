@@ -125,44 +125,13 @@
                     var msg = rtext.substring(ind + 1, rtext.length - 1);
                     showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
                     return;
-                }
-                
+                }                
                 var message = 'Error saving changes!';
                 showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
             }
         });
-
-    },
-
-    checkidNodeExists: function () {
-        var returnVal = true
-        var tree = Ext.ComponentQuery.query('directorytree');
-        for (var i = 0; i < tree[0].getStore().getRootNode().childNodes.length; i++) {
-            if (tree[0].getStore().getRootNode().childNodes[i].text == this.items.first().getForm().getFieldValues().Name) {
-                returnVal = false
-            }
-        }
-        return returnVal
-    }
+    } 
 });
 
-var ifExistSibling = function (str, node, state) {
-    var ifExist = false;
-    var childNodes = node.childNodes;
-    var repeatTime = 0;
 
-    for (var i = 0; i < childNodes.length; i++) {
-        if (childNodes[i].data.text == str) {
-            if (state == 'new')
-                ifExist = true;
-            else {
-                repeatTime++;
-                if (repeatTime > 1)
-                    ifExist = true;
-            }
-        }
-    }
-
-    return ifExist;
-};
 
