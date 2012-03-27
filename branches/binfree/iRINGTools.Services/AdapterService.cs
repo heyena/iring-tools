@@ -343,17 +343,73 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region GetDataLayers
+    #region DataLayers Management
     [Description("Get a list of Data Layers available from the service.")]
     [WebGet(UriTemplate = "/datalayers")]
-    public DataLayers GetDatalayers()
+    public void GetDatalayers()
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        DataLayers dataLayers = _adapterProvider.GetDataLayers();
+        string xml = Utility.Serialize<DataLayers>(dataLayers, true);
 
-      return _adapterProvider.GetDataLayers();
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xml);
+      }
+      catch (Exception e)
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.StatusCode = HttpStatusCode.InternalServerError;
+
+        HttpContext.Current.Response.ContentType = "text/html";
+        HttpContext.Current.Response.Write(e);
+      }
     }
-    #endregion
+
+    [Description("Adds or updates a dataLayer to the service.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/dataLayers")]
+    public void PostDatalayer(DataLayer dataLayer)
+    {
+      try
+      {
+        Response response = _adapterProvider.SaveDataLayer(dataLayer);
+        string xml = Utility.Serialize<Response>(response, true);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xml);
+      }
+      catch (Exception e)
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.StatusCode = HttpStatusCode.InternalServerError;
+
+        HttpContext.Current.Response.ContentType = "text/html";
+        HttpContext.Current.Response.Write(e);
+      }
+    }
+
+    [Description("Deletes a data layer from the service.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/datalayers/{name}")]
+    public void DeleteDatalayer(string name)
+    {
+      try
+      {
+        Response response = _adapterProvider.DeleteDataLayer(name);
+        string xml = Utility.Serialize<Response>(response, true);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xml);
+      }
+      catch (Exception e)
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.StatusCode = HttpStatusCode.InternalServerError;
+
+        HttpContext.Current.Response.ContentType = "text/html";
+        HttpContext.Current.Response.Write(e);
+      }
+    }
+    #endregion DataLayers Management
 
     #region RefreshDataObjects
     [Description("Resets all data objects state in data layer.")]
@@ -393,6 +449,7 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region Helper Methods
     private Response PrepareErrorResponse(Exception ex)
     {
       Response response = new Response
@@ -406,5 +463,6 @@ namespace org.iringtools.services
 
       return response;
     }
+    #endregion
   }
 }
