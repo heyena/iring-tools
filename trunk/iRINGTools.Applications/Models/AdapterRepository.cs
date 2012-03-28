@@ -433,7 +433,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string oldAssembly, string newAssembly, string baseUrl, string oldBaseUrl, string user)
+    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string oldAssembly, string newAssembly, string baseUrl, string oldBaseUrl, string key)
     {
       string obj = "";
       Locator scope = null;
@@ -460,10 +460,10 @@ namespace iRINGTools.Web.Models
       try
       {
         WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        CheckeCombination(baseUrl, oldBaseUrl, context, context, newEndpointName, endpointName, path, user);
-        Resources resourcesOld = (Resources)HttpContext.Current.Session[user + ".resources"];
+        CheckeCombination(baseUrl, oldBaseUrl, context, context, newEndpointName, endpointName, path, key);
+        Resources resourcesOld = (Resources)HttpContext.Current.Session[key + ".resources"];
         obj = _javaServiceClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}/{4}", path, newEndpointName, "endpoint", baseUri.Replace('/', '.'), newAssembly), description, true);
-        Resources resourcesNew = GetResource(user); 
+        Resources resourcesNew = GetResource(key); 
 
         //&& (!newAssembly.Equals(oldAssembly) || !newEndpointName.Equals(endpointName))
         if (!state.Equals("new"))
@@ -510,7 +510,7 @@ namespace iRINGTools.Web.Models
         }
 
         _logger.Debug("Successfully called Adapter and Java Directory Service.");
-        ClearDirSession(user);
+        ClearDirSession(key);
       }
       catch (Exception ex)
       {

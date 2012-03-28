@@ -96,7 +96,6 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
       }]
     });
 
-
     this.callParent(arguments);
   }
 });

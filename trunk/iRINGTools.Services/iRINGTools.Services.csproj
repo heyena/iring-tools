@@ -59,9 +59,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.DynamicProxy2.dll</HintPath>
     </Reference>
-    <Reference Include="dotNetRDF, Version=0.4.2.11625, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.5.0.13616, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+      <HintPath>..\ExternalBinaries\dotnetRDF\core\net40\dotNetRDF.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
