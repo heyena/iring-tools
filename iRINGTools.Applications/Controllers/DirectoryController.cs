@@ -20,8 +20,7 @@ namespace org.iringtools.web.controllers
     IAdapterRepository _repository;
     private string _keyFormat = "Mapping.{0}.{1}";
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
-    private System.Web.Script.Serialization.JavaScriptSerializer _serializer;
-    private const string USERID_KEY = "emailaddress";
+    private System.Web.Script.Serialization.JavaScriptSerializer _serializer;    
 
     public DirectoryController()
       : this(new AdapterRepository())
@@ -522,20 +521,7 @@ namespace org.iringtools.web.controllers
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
-    #region Private Methods
-
-    private string GetUserId(IDictionary<string, string> claims)
-    {
-      foreach (var pair in claims)
-      {
-        if (pair.Key.ToLower() == USERID_KEY)
-        {
-          return pair.Value;
-        }
-      }
-
-      return "guest";
-    }
+    #region Private Methods    
 
     private Mapping GetMapping(string contextName, string endpoint, string baseUrl)
     {

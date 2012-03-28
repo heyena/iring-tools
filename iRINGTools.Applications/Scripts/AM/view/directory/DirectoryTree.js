@@ -28,7 +28,7 @@
           expanded: true,
           type: 'ScopesNode',
           iconCls: 'scopes',
-          text: 'Scopes',
+          text: 'World',
           security: ''
         },
         proxy: {

@@ -24,7 +24,7 @@
      'nhibernate.RadioField'
     ],
   stores: [
-       //'ProviderStore'
+  //'ProviderStore'
     ],
   models: [
       'SpreadsheetModel',
@@ -51,6 +51,14 @@
       {
         ref: 'dataObjectPanel',
         selector: 'dataobjectpanel'
+      },
+      {
+        ref: 'dsConfigPane',
+        selector: 'connectdatabase'
+      },
+      {
+        ref: 'radioField',
+        selector: 'radiotextfield'
       }
     ],
   init: function () {
@@ -184,6 +192,9 @@
     }
   },
 
+  resettables: function () {
+  },
+
   onItemClick: function (view, model, n, index) {
     var node = model.store.getAt(index);
     var editor = this.getEditPanel();
@@ -233,7 +244,6 @@
   },
 
   onEditDbConnection: function (btn, evt) {
-
     var editor = this.getEditPanel();
     var dbDict = AM.view.nhibernate.dbDict.value;
     var dbInfo = AM.view.nhibernate.dbInfo.value;
@@ -241,14 +251,14 @@
       var cstr = dbDict.ConnectionString;
       if (cstr)
         var dbInfo = this.getConnStringParts(cstr);
-        AM.view.nhibernate.dbInfo.value = dbInfo;
+      AM.view.nhibernate.dbInfo.value = dbInfo;
     };
     var conf = {
       contextName: editor.contextName,
       dbDict: dbDict,
       dbInfo: dbInfo,
-      endpoint: editor.endpoint,      
-      baseUrl: editor.baseUrl,      
+      endpoint: editor.endpoint,
+      baseUrl: editor.baseUrl,
       id: editor.contextName + '.' + editor.endpoint + '.conform'
     };
 
@@ -263,8 +273,6 @@
     var panelIndex = editor.items.indexOf(confrm);
     editor.getLayout().setActiveItem(panelIndex);
   },
-
-  
 
   getDataTypes: function () {
     Ext.Ajax.request({
@@ -320,10 +328,120 @@
       },
       failure: function (response, request) {
         var dataObjPanel = this.getDataObjectPanel();
-
-        //                setDsConfigPane(scopeName, appName);
       }
     });
+  },
+
+  applydatatables: function (btn, evt) {
+    var dataObjectPanel = this.getDataObjectPanel();
+    var dbDict = AM.view.nhibernate.dbDict.value;
+    var dbInfo = AM.view.nhibernate.dbInfo.value;
+    var dbObjectsTree = this.getDataTree();
+    var tablesSelForm = btn.up('form');
+    var dsConfigPane = this.getDsConfigPane();
+    var radioField = this.getRadioField();
+    var dbProvider = '';
+    var dbServer = '';
+    var dbInstance = '';
+    var dbName = '';
+    var dbSchema = '';
+    var dbUserName = '';
+    var dbPassword = '';
+    var portNumber = '';
+    var serName = '';
+
+    if (dbObjectsTree.disabled) {
+      dbObjectsTree.enable();
+    }
+
+    if (radioField) {
+      var serviceNamePane = dsConfigPane.items.items[10];
+      if (serviceNamePane.items.items[0])
+        serName = serviceNamePane.items.items[0].serName;
+    }
+    else {
+      if (dbInfo.serName)
+        serName = dbInfo.serName;
+    }
+
+    if (tablesSelForm.getForm().findField('tableSelector').getValue().indexOf('') == -1)
+      var selectTableNames = tablesSelForm.getForm().findField('tableSelector').getValue();
+    else {
+      var tableNames = tablesSelForm.getForm().findField('tableSelector').toMultiselect.store.data.items;
+      var selectTableNames = new Array();
+      for (var i = 0; i < tableNames.length; i++) {
+        selectTableNames.push(tableNames[i].data.text);
+      }
+    }
+
+    if (selectTableNames.length < 1) {
+      var rootNode = dbObjectsTree.getRootNode();
+      while (rootNode.firstChild) {
+        rootNode.removeChild(rootNode.firstChild);
+      }
+      return;
+    }
+
+    userTableNames = new Array();
+
+    if (selectTableNames[1]) {
+      if (selectTableNames[1].length > 1 && selectTableNames[0].length > 1) {
+        for (var i = 0; i < selectTableNames.length; i++) {
+          userTableNames.push(selectTableNames[i]);
+        }
+      }
+      else {
+        userTableNames.push(selectTableNames)
+      }
+    }
+    else {
+      userTableNames.push(selectTableNames[0]);
+    }
+
+    if (dsConfigPane) {
+      var dsConfigForm = dsConfigPane.getForm();
+      dbProvider = dsConfigForm.findField('dbProvider').getValue();
+      dbServer = dsConfigForm.findField('dbServer').getValue();
+      dbInstance = dsConfigForm.findField('dbInstance').getValue();
+      dbName = dsConfigForm.findField('dbName').getValue();
+      dbSchema = dsConfigForm.findField('dbSchema').getValue();
+      dbUserName = dsConfigForm.findField('dbUserName').getValue();
+      dbPassword = dsConfigForm.findField('dbPassword').getValue();
+      portNumber = dsConfigForm.findField('portNumber').getValue();
+    }
+    else {
+      dbProvider = dbDict.Provider;
+      dbServer = dbInfo.dbServer;
+      dbInstance = dbInfo.dbInstance;
+      dbName = dbInfo.dbName;
+      dbSchema = dbDict.SchemaName;
+      dbUserName = dbInfo.dbUserName;
+      dbPassword = dbInfo.dbPassword;
+      portNumber = dbInfo.portNumber;
+    }
+
+    var store = dbObjectsTree.getStore();
+    dbObjectsTree.on('beforeload', function (store, operation) {
+      store.proxy.url = 'NHibernate/DBObjects';
+      store.proxy.extraParams.dbProvider = dbProvider;
+      store.proxy.extraParams.dbServer = dbServer;
+      store.proxy.extraParams.dbInstance = dbInstance;
+      store.proxy.extraParams.dbName = dbName;
+      store.proxy.extraParams.dbSchema = dbSchema;
+      store.proxy.extraParams.dbPassword = dbPassword;
+      store.proxy.extraParams.dbUserName = dbUserName;
+      store.proxy.extraParams.portNumber = portNumber;
+      store.proxy.extraParams.tableNames = selectTableNames;
+      store.proxy.extraParams.serName = serName;
+      store.proxy.extraParams.contextName = tablesSelForm.contextName;
+      store.proxy.extraParams.endpoint = tablesSelForm.endpoint;
+      store.proxy.extraParams.baseUrl = tablesSelForm.baseUrl;
+    }, this);
+
+    dataObjectPanel.body.mask('Loading...', 'x-mask-loading');
+    store.load();
+    dataObjectPanel.body.unmask();
+    dbObjectsTree.getRootNode().expand();
   },
 
   connectToDatabase: function (btn, evt) {
@@ -369,7 +487,6 @@
     }
     var me = this;
     form.getForm().submit({
-
       url: 'nhibernate/TableNames',
       timeout: 600000,
       params: {
@@ -389,8 +506,8 @@
 
         if (!dbInfo)
           dbInfo = {};
-        dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
 
+        dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
         me.setTablesSelectorPane(me.getEditPanel(), form.contextName, form.endpoint, form.baseUrl, dbInfo.dbTableNames.items, selected);
         return dbInfo.dbTableNames;
       },
@@ -514,7 +631,7 @@
     var baseUrl = node.data.record.BaseUrl;
 
     switch (datalayer) {
-      case 'NHibernateLibrary':       
+      case 'NHibernateLibrary':
 
         conf = {
           id: contextName + '.' + endpoint + '.-nh-config',
@@ -540,10 +657,9 @@
           contextName: contextName,
           endpoint: endpoint,
           baseUrl: baseUrl,
-          region: 'center',
-          width: 400,
-          height: 200
+          region: 'center'
         };
+
         var nhpan = Ext.widget('dataobjectpanel', conf);
 
         var nhtree = Ext.widget('nhibernatetreepanel', treeconf);
@@ -596,9 +712,7 @@
         this.getDataTypes();
         this.getDbdictionary(contextName, endpoint, baseUrl);
 
-        
         break;
-
 
       case 'SpreadsheetDatalayer':
         var conf =
@@ -664,6 +778,7 @@
         break;
     }
   },
+
   setItemSelectorAvailValues: function (node) {
     var availItems = new Array();
     var propertiesNode = node.parentNode.childNodes[1];
@@ -695,7 +810,7 @@
     }
     return selectedItems;
   },
-  
+
   onSaveSpreadsheet: function () {
     var tree = this.getDirTree(),
         node = tree.getSelectedNode();

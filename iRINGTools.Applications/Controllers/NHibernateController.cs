@@ -83,8 +83,11 @@ namespace org.iringtools.web.Controllers
               node.property.Add("keyDelimiter", dataObject.keyDelimeter.Trim());
 
               //    AddContextEndpointtoNode(node, form);
-                nodes.Add(node);
+              nodes.Add(node);
             }
+
+
+
             return Json(nodes, JsonRequestBehavior.AllowGet);
 
           }
@@ -246,6 +249,7 @@ namespace org.iringtools.web.Controllers
       }
     }
 
+
     private DatabaseDictionary GetDbDictionary(string contextName, string endpoint, string baseUrl)
     {
       string key = string.Format(adapter_PREFIX + _keyFormat, contextName, endpoint);
@@ -349,7 +353,7 @@ namespace org.iringtools.web.Controllers
       try
       {
         List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
-          form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+          form["contextName"], form["endpoint"], form["dbProvider"], form["dbServer"], form["dbInstance"],
           form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"],
           form["serName"], form["baseUrl"]);
 
