@@ -52,7 +52,7 @@
     }, this);
     tree.on('itemclick', this.onSearchClick, this);
     tree.on('beforeload', function (store, action) {
-      content.getEl().mask('Loading...');
+     // content.getEl().mask('Loadindg...');
       store.proxy.extraParams.type = (action.node.data.type == "" ? 'SearchNode' : action.node.data.type);
       if (searchText != undefined && searchText != '') {
         store.proxy.extraParams.query = searchText;
@@ -67,7 +67,7 @@
 
     }, this);
     tree.on('beforeitemexpand', function () {
-      content.getEl().mask('Loading...');
+      //content.getEl().mask('Ldddddoading...'); 
     }, this);
     tree.on('load', function (store, model) {
       content.getEl().unmask();
@@ -89,7 +89,10 @@
     } else {
       exist.show();
     }
-    tree.getStore().load();
+//  tree.store.getProxy().url  = 'refdata/getnode';
+//  tree.store.load();
+
+  tree.getStore().load();
 
   },
 
