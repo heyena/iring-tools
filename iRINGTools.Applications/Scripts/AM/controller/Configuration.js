@@ -736,6 +736,10 @@
     },
         form = Ext.widget('spreadsheetsource', sourceconf);
     form.show();
-  }
+  },
+
+   onReloadSpreadsheet: function () {
+   this.getMainContent().items.items[0].items.items[0].getStore().load();
+     },
 
 });

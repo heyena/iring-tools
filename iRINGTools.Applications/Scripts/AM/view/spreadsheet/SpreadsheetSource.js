@@ -64,6 +64,8 @@
             method: 'POST',
             success: function (f, a) {
                 me.hide();
+                var tabId = 'tab-c.' + me.context + '.' + me.endpoint;
+                Ext.getCmp(tabId).items.items[0].getStore().load();
             },
             failure: function (f, a) {
                 Ext.Msg.alert('Warning', 'Error uploading file "' + f.items[3] + '"!');

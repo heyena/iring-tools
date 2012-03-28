@@ -2514,6 +2514,10 @@
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
       <Name>UtilityLibrary</Name>
     </ProjectReference>
+	<ProjectReference Include="..\Libraries\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
+      <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
+      <Name>SpreadsheetDatalayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\extjs407\examples\app\feed-viewer\app.jsb3" />
