@@ -59,6 +59,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="WidgetLibrary">
+      <HintPath>..\..\ObjectDataLayer\WidgetLibrary\bin\Debug\WidgetLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
@@ -69,15 +72,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Widget.xml">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sample.cs" />
-    <Compile Include="WidgetProvider.cs" />
     <Compile Include="WidgetService.cs" />
-    <Compile Include="Widget.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

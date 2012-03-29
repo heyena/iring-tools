@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Text;
+using org.iringtools.sdk.objects.widgets;
 
 namespace WidgetService
 {
@@ -26,14 +27,14 @@ namespace WidgetService
 
         // TODO: Implement the collection resource that will contain the SampleItem instances
 
-        [WebGet(UriTemplate = "/Generate")]
-        public List<Sample> Generate()
-        {
-            OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-            context.ContentType = "application/xml";
-            return _widgetProvider.Generate();
+        //[WebGet(UriTemplate = "/Generate")]
+        //public List<Sample> Generate()
+        //{
+        //    OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        //    context.ContentType = "application/xml";
+        //    return _widgetProvider.Generate();
            
-        }
+        //}
 
         [WebInvoke(UriTemplate = "", Method = "POST")]
         public Widget Create(Widget instance)
@@ -42,11 +43,21 @@ namespace WidgetService
             throw new NotImplementedException();
         }
 
-        [WebGet(UriTemplate = "{id}")]
-        public Widget Get(string id)
+        [WebGet(UriTemplate = "")]
+        public Widgets GetAll()
         {
-            // TODO: Return the instance of SampleItem with the given id
-            throw new NotImplementedException();
+            Widgets widgets = _widgetProvider.ReadWidgets(null);
+
+            return widgets;
+        }
+
+        [WebGet(UriTemplate = "{identifier}")]
+        public Widget Get(string identifier)
+        {
+            int id = Int32.Parse(identifier);
+            Widget widget = _widgetProvider.ReadWidget(id);
+
+            return widget;
         }
 
         [WebInvoke(UriTemplate = "{id}", Method = "PUT")]

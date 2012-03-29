@@ -15,7 +15,7 @@ namespace WidgetService
         private void RegisterRoutes()
         {
             // Edit the base address of Service1 by replacing the "Service1" string below
-            RouteTable.Routes.Add(new ServiceRoute("Service1", new WebServiceHostFactory(), typeof(WidgetService)));
+            RouteTable.Routes.Add(new ServiceRoute("widgets", new WebServiceHostFactory(), typeof(WidgetService)));
         }
     }
 }
