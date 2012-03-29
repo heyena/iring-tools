@@ -15,7 +15,7 @@ using org.iringtools.sdk.objects.widgets;
 
 namespace org.iringtools.sdk.objects
 {
-  public class ObjectDataLayer : BaseDataLayer, IDataLayer2
+  public class ObjectDataLayer : BaseDataLayer
   {
     WidgetProvider _widgetProvider = null;
 

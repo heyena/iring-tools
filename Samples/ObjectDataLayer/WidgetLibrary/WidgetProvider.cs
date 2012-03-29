@@ -17,6 +17,8 @@ namespace org.iringtools.sdk.objects.widgets
 
     public WidgetProvider()
     {
+        Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
       _repository = Initialize();
     }
 
