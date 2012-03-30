@@ -30,7 +30,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -3050,8 +3049,15 @@ namespace org.iringtools.adapter
             {
               if (dataLayer.External)
               {
-                Assembly asm = Assembly.LoadFrom(dataLayer.Path + dataLayer.MainDLL);
-                Type type = asm.GetType(assembly.Split(',')[0]);
+                AppDomain appDomain = AppDomain.CreateDomain("temp");
+                Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
+
+                if (dataLayerAssembly == null)
+                {
+                  throw new Exception("Unable to load data layer assembly.");
+                }
+
+                Type type = dataLayerAssembly.GetType(assembly.Split(',')[0]);
                 ConstructorInfo[] ctors = type.GetConstructors();
 
                 foreach (ConstructorInfo ctor in ctors)
@@ -3341,6 +3347,7 @@ namespace org.iringtools.adapter
     public Response SaveDataLayer(DataLayer dataLayer)
     {
       Response response = new Response();
+      response.Level = StatusLevel.Success;
       
       try
       {
@@ -3348,13 +3355,27 @@ namespace org.iringtools.adapter
         DataLayer dl = dataLayers.Find(x => x.Name.ToLower() == dataLayer.Name.ToLower());
         dataLayer.Path = _settings["DataLayersPath"] + "\\" + dataLayer.Name + "\\";
 
-        //
-        // TODO: extract package file
-        //
-        GZipStream zipStream = dataLayer.Package;
+        // extract package file
+        if (dataLayer.Package != null)
+        {
+          try
+          {
+            Utility.Unzip(dataLayer.Package, dataLayer.Path);
+          }
+          catch (UnauthorizedAccessException e)
+          {
+            _logger.Warn("Error extracting data layer package: " + e);
+            response.Level = StatusLevel.Warning;
+          }
+        }
 
-        Assembly assembly = Assembly.LoadFrom(dataLayer.Path + dataLayer.MainDLL);
-        dataLayer.Assembly = GetDataLayerAssembly(assembly);
+        Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
+        if (dataLayerAssembly == null)
+        {
+          throw new Exception("Unable to load data layer assembly.");
+        }
+
+        dataLayer.Assembly = GetDataLayerAssemblyName(dataLayerAssembly);
         dataLayer.External = true;
 
         if (!string.IsNullOrEmpty(dataLayer.Assembly))
@@ -3369,8 +3390,6 @@ namespace org.iringtools.adapter
           }
 
           Utility.Write<DataLayers>(dataLayers, _dataLayersBindingPath);
-
-          response.Level = StatusLevel.Success;
           response.Messages.Add("Data layer [" + dataLayer.Name + "] added successfully.");
         }
         else
@@ -3453,7 +3472,12 @@ namespace org.iringtools.adapter
       return dataLayers;
     }
 
-    private string GetDataLayerAssembly(Assembly assembly)
+    private Assembly GetDataLayerAssembly(DataLayer dataLayer)
+    {
+      return Assembly.LoadFrom(dataLayer.Path + dataLayer.MainDLL);
+    }
+
+    private string GetDataLayerAssemblyName(Assembly assembly)
     {
       Type dlType = typeof(IDataLayer);
       Type[] asmTypes = assembly.GetTypes();
