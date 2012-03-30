@@ -22,7 +22,7 @@ namespace org.iringtools.sdk.objects.widgets
       _repository = Initialize();
     }
 
-    private void CreateWidget(Widget widget)
+    public Widget CreateWidget(Widget widget)
     {
       var ids = from w in _repository
                 select w.Id;
@@ -32,6 +32,7 @@ namespace org.iringtools.sdk.objects.widgets
       widget.Id = newId;
 
       _repository.Add(widget);
+      return widget;
     }
 
     public Widget ReadWidget(int identifier)

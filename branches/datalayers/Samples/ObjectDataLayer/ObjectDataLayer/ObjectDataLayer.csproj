@@ -59,6 +59,7 @@
     <Reference Include="iRINGLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\lib\log4net\log4net.dll</HintPath>

@@ -21,58 +21,40 @@ namespace WidgetService
         private WidgetProvider _widgetProvider = null;
         public WidgetService()
         {
-            _widgetProvider = new WidgetProvider();
-
-        }
-
-        // TODO: Implement the collection resource that will contain the SampleItem instances
-
-        //[WebGet(UriTemplate = "/Generate")]
-        //public List<Sample> Generate()
-        //{
-        //    OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        //    context.ContentType = "application/xml";
-        //    return _widgetProvider.Generate();
-           
-        //}
+          _widgetProvider = new WidgetProvider();
+        }       
 
         [WebInvoke(UriTemplate = "", Method = "POST")]
         public Widget Create(Widget instance)
         {
-            // TODO: Add the new instance of SampleItem to the collection
-            throw new NotImplementedException();
+          return _widgetProvider.CreateWidget(instance);
         }
 
         [WebGet(UriTemplate = "")]
         public Widgets GetAll()
         {
-            Widgets widgets = _widgetProvider.ReadWidgets(null);
-
-            return widgets;
+          return _widgetProvider.ReadWidgets(null);            
         }
 
         [WebGet(UriTemplate = "{identifier}")]
         public Widget Get(string identifier)
         {
-            int id = Int32.Parse(identifier);
-            Widget widget = _widgetProvider.ReadWidget(id);
-
-            return widget;
+          Widget widget = _widgetProvider.ReadWidget(Int32.Parse(identifier));
+          return widget;         
         }
 
-        [WebInvoke(UriTemplate = "{id}", Method = "PUT")]
-        public Widget Update(string id, Widget instance)
+        [WebInvoke(UriTemplate = "/update", Method = "POST")]
+        public int Update(Widgets widgets)
         {
-            // TODO: Update the given instance of SampleItem in the collection
-            throw new NotImplementedException();
+          int response = _widgetProvider.UpdateWidgets(widgets);
+          return response;
         }
 
-        [WebInvoke(UriTemplate = "{id}", Method = "DELETE")]
-        public void Delete(string id)
+        [WebInvoke(UriTemplate = "/delete/{identifier}", Method = "GET")]
+        public int Delete(string identifier)
         {
-            // TODO: Remove the instance of SampleItem with the given id from the collection
-            throw new NotImplementedException();
+          int response = _widgetProvider.DeleteWidgets(Int32.Parse(identifier));
+          return response;
         }
-
     }
 }
