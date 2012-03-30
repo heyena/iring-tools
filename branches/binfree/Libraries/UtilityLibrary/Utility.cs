@@ -44,6 +44,7 @@ using System.Data.SqlClient;
 using System.Runtime.Serialization.Json;
 using System.Web;
 using System.Web.Script.Serialization;
+using Ionic.Zip;
 
 namespace org.iringtools.utility
 {
@@ -550,7 +551,9 @@ namespace org.iringtools.utility
       try
       {
         stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        reader = XmlDictionaryReader.CreateTextReader(stream, new XmlDictionaryReaderQuotas());
+        XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
+        quotas.MaxArrayLength = Int32.MaxValue;
+        reader = XmlDictionaryReader.CreateTextReader(stream, quotas);
 
         if (useDataContractSerializer)
         {
@@ -1508,6 +1511,58 @@ namespace org.iringtools.utility
       }
 
       return endpointBaseUri;
+    }
+
+    public static MemoryStream Zip(string directory)
+    {
+      MemoryStream stream = new MemoryStream();
+
+      using (ZipFile zip = new ZipFile())
+      {
+        zip.AddDirectory(directory, string.Empty);
+        zip.Save(stream);
+      }
+
+      stream.Position = 0;
+
+      return stream;
+    }
+
+    public static void Unzip(Stream zipStream, string targetDirectory)
+    {
+      zipStream.Position = 0;
+
+      using (ZipFile zip = ZipFile.Read(zipStream))
+      {
+        zip.ExtractAll(targetDirectory, ExtractExistingFileAction.OverwriteSilently);
+        zip.Dispose();
+      }
+    }
+
+    public static void Unzip(string zipFile, string targetDirectory)
+    {
+      using (ZipFile zip = ZipFile.Read(zipFile))
+      {
+        zip.ExtractAll(targetDirectory);
+        zip.Dispose();
+      }
+    }
+
+    public static byte[] GetBytes(string file)
+    {
+      FileStream fs = File.OpenRead(file);
+
+      try
+      {
+        byte[] bytes = new byte[fs.Length];
+        fs.Read(bytes, 0, (int) fs.Length);
+        fs.Close();
+        return bytes;
+      }
+      finally
+      {
+        fs.Close();
+      }
     }
   }
 }

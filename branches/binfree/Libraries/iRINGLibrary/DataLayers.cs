@@ -39,7 +39,7 @@ namespace org.iringtools.library
 
     [XmlElement]
     [DataMember(Name = "package", Order = 7, EmitDefaultValue = false)]
-    public GZipStream Package { get; set; }
+    public MemoryStream Package { get; set; }
   }
 
   [CollectionDataContract(Name = "dataLayers", Namespace = "http://www.iringtools.org/library", ItemName = "dataLayer")]

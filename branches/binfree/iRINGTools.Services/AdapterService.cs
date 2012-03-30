@@ -44,6 +44,7 @@ using org.iringtools.utility;
 using org.iringtools.mapping;
 using System.Web;
 using System.Net;
+using System.Runtime.Serialization;
 
 namespace org.iringtools.services
 {
@@ -368,10 +369,13 @@ namespace org.iringtools.services
 
     [Description("Adds or updates a dataLayer to the service.")]
     [WebInvoke(Method = "POST", UriTemplate = "/dataLayers")]
-    public void PostDatalayer(DataLayer dataLayer)
+    public void PostDatalayer(Stream dataLayerStream)
     {
       try
       {
+        DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
+        DataLayer dataLayer = (DataLayer)serializer.ReadObject(dataLayerStream);
+        
         Response response = _adapterProvider.SaveDataLayer(dataLayer);
         string xml = Utility.Serialize<Response>(response, true);
 
