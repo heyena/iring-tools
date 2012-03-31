@@ -59,8 +59,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="WidgetLibrary">
-      <HintPath>..\..\ObjectDataLayer\WidgetLibrary\bin\Debug\WidgetLibrary.dll</HintPath>
+    <Reference Include="WidgetLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\widget\WidgetLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
