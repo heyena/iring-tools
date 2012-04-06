@@ -78,6 +78,42 @@ a:active {color: black}
 .x-tree-panel .x-grid-row .x-grid-cell-inner .valuelistmap {
   background-image: url("../img/valuelist.png") !important;
 }
+
+.x-tree-node .treeObject {
+  background-image: url(../img/object.png);
+}
+.x-tree-node .folder {
+  background-image: url(../img/folder.png);
+}
+
+.x-tree-node .treeProperty {
+  background-image: url(../img/property.png);
+}
+
+.x-tree-node .treeValue {
+  background-image: url(../img/valuelist.png);
+}
+
+.x-tree-node .treeValuelist {
+  background-image: url(../img/value.png);
+}
+
+.x-tree-node .treeKey {
+  background-image: url(../img/key.png);
+}
+
+.x-tree-node .treeRelation {
+  background-image: url(../img/relation.png);
+}
+
+.x-tree-node-collapsed .folder {
+  background-image: url(../img/folder-close.png);
+}
+
+.x-tree-node-expanded .folder {
+  background-image: url(../img/folder-open.png);
+}
+
 .blue-fade {
   background-image: url(../img/blue-fade.png);
   background-repeat: repeat-x;

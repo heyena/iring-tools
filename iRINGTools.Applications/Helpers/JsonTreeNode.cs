@@ -5,22 +5,6 @@ using System.Web;
 
 namespace iRINGTools.Web.Helpers
 {
-  /*
-   [{
-        id: 1,
-        text: 'A leaf Node',
-        leaf: true
-    },{
-        id: 2,
-        text: 'A folder Node',
-        children: [{
-            id: 3,
-            text: 'A child Node',
-            leaf: true
-        }]
-   }]    
-  */
-
   public class JsonTreeNode
   {
     public JsonTreeNode()
@@ -43,7 +27,11 @@ namespace iRINGTools.Web.Helpers
     public Dictionary<string, string> property { get; set; }
     public Dictionary<string, string> nhproperty { get; set; }
     public string iconCls { get; set; }
-
-
+    public object relatedObjMap { get; set; }
+    public string objectName { get; set; }
+		public string relatedObjectName { get; set; }
+		public string relationshipType { get; set; }
+		public string relationshipTypeIndex { get; set; }
+    public object propertyMap { get; set; }
   }
 }
