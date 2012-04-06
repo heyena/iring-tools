@@ -25096,331 +25096,334 @@ Ext.define('Ext.data.Errors', {
 
 
 Ext.define('Ext.data.reader.Reader', {
-    requires: ['Ext.data.ResultSet'],
-    alternateClassName: ['Ext.data.Reader', 'Ext.data.DataReader'],
-    
-    
+  requires: ['Ext.data.ResultSet'],
+  alternateClassName: ['Ext.data.Reader', 'Ext.data.DataReader'],
 
-    
-    totalProperty: 'total',
 
-    
-    successProperty: 'success',
 
-    
-    root: '',
-    
-    
-    
-    
-    implicitIncludes: true,
-    
-    isReader: true,
-    
-    
-    constructor: function(config) {
-        var me = this;
-        
-        Ext.apply(me, config || {});
-        me.fieldCount = 0;
-        me.model = Ext.ModelManager.getModel(config.model);
-        if (me.model) {
-            me.buildExtractors();
-        }
-    },
 
-    
-    setModel: function(model, setOnProxy) {
-        var me = this;
-        
-        me.model = Ext.ModelManager.getModel(model);
-        me.buildExtractors(true);
-        
-        if (setOnProxy && me.proxy) {
-            me.proxy.setModel(me.model, true);
-        }
-    },
+  totalProperty: 'total',
 
-    
-    read: function(response) {
-        var data = response;
-        
-        if (response && response.responseText) {
-            data = this.getResponseData(response);
-        }
-        
-        if (data) {
-            return this.readRecords(data);
-        } else {
-            return this.nullResultSet;
-        }
-    },
 
-    
-    readRecords: function(data) {
-        var me  = this;
-        
-        
-        if (me.fieldCount !== me.getFields().length) {
-            me.buildExtractors(true);
-        }
-        
-        
-        me.rawData = data;
+  successProperty: 'success',
 
-        data = me.getData(data);
 
-        
-        
-        var root    = Ext.isArray(data) ? data : me.getRoot(data),
+  root: '',
+
+
+
+
+  implicitIncludes: true,
+
+  isReader: true,
+
+
+  constructor: function (config) {
+    var me = this;
+
+    Ext.apply(me, config || {});
+    me.fieldCount = 0;
+    me.model = Ext.ModelManager.getModel(config.model);
+    if (me.model) {
+      me.buildExtractors();
+    }
+  },
+
+
+  setModel: function (model, setOnProxy) {
+    var me = this;
+
+    me.model = Ext.ModelManager.getModel(model);
+    me.buildExtractors(true);
+
+    if (setOnProxy && me.proxy) {
+      me.proxy.setModel(me.model, true);
+    }
+  },
+
+
+  read: function (response) {
+    var data = response;
+
+    if (response && response.responseText) {
+      data = this.getResponseData(response);
+    }
+
+    if (data) {
+      return this.readRecords(data);
+    } else {
+      return this.nullResultSet;
+    }
+  },
+
+
+  readRecords: function (data) {
+    var me = this;
+
+
+    if (me.fieldCount !== me.getFields().length) {
+      me.buildExtractors(true);
+    }
+
+
+    me.rawData = data;
+
+    data = me.getData(data);
+
+
+
+    var root = Ext.isArray(data) ? data : me.getRoot(data),
             success = true,
             recordCount = 0,
             total, value, records, message;
-            
-        if (root) {
-            total = root.length;
-        }
 
-        if (me.totalProperty) {
-            value = parseInt(me.getTotal(data), 10);
-            if (!isNaN(value)) {
-                total = value;
-            }
-        }
+    if (root) {
+      total = root.length;
+    }
 
-        if (me.successProperty) {
-            value = me.getSuccess(data);
-            if (value === false || value === 'false') {
-                success = false;
-            }
-        }
-        
-        if (me.messageProperty) {
-            message = me.getMessage(data);
-        }
-        
-        if (root) {
-            records = me.extractData(root);
-            recordCount = records.length;
-        } else {
-            recordCount = 0;
-            records = [];
-        }
+    if (me.totalProperty) {
+      value = parseInt(me.getTotal(data), 10);
+      if (!isNaN(value)) {
+        total = value;
+      }
+    }
 
-        return Ext.create('Ext.data.ResultSet', {
-            total  : total || recordCount,
-            count  : recordCount,
-            records: records,
-            success: success,
-            message: message
-        });
-    },
+    if (me.successProperty) {
+      value = me.getSuccess(data);
+      if (value === false || value === 'false') {
+        success = false;
+      }
+    }
 
-    
-    extractData : function(root) {
-        var me = this,
-            values  = [],
+    if (me.messageProperty) {
+      message = me.getMessage(data);
+    }
+
+    if (root) {
+      records = me.extractData(root);
+      recordCount = records.length;
+    } else {
+      recordCount = 0;
+      records = [];
+    }
+
+    return Ext.create('Ext.data.ResultSet', {
+      total: total || recordCount,
+      count: recordCount,
+      records: records,
+      success: success,
+      message: message
+    });
+  },
+
+
+  extractData: function (root) {
+    var me = this,
+            values = [],
             records = [],
-            Model   = me.model,
-            i       = 0,
-            length  = root.length,
-            idProp  = me.getIdProperty(),
+            Model = me.model,
+            i = 0,
+            length = root.length,
+            idProp = me.getIdProperty(),
             node, id, record;
-            
-        if (!root.length && Ext.isObject(root)) {
-            root = [root];
-            length = 1;
-        }
 
-        for (; i < length; i++) {
-            node   = root[i];
-            values = me.extractValues(node);
-            id     = me.getId(node);
+    if (!root.length && Ext.isObject(root)) {
+      root = [root];
+      length = 1;
+    }
 
-            
-            record = new Model(values, id, node);
-            records.push(record);
-                
-            if (me.implicitIncludes) {
-                me.readAssociated(record, node);
-            }
-        }
+    for (; i < length; i++) {
+      node = root[i];
+      values = me.extractValues(node);
+      id = me.getId(node);
 
-        return records;
-    },
-    
-    
-    readAssociated: function(record, data) {
-        var associations = record.associations.items,
-            i            = 0,
-            length       = associations.length,
+
+      record = new Model(values, id, node);
+      records.push(record);
+
+      if (me.implicitIncludes) {
+        me.readAssociated(record, node);
+      }
+    }
+
+    return records;
+  },
+
+
+  readAssociated: function (record, data) {
+    var associations = record.associations.items,
+            i = 0,
+            length = associations.length,
             association, associationData, proxy, reader;
-        
-        for (; i < length; i++) {
-            association     = associations[i];
-            associationData = this.getAssociatedDataRoot(data, association.associationKey || association.name);
-            
-            if (associationData) {
-                reader = association.getReader();
-                if (!reader) {
-                    proxy = association.associatedModel.proxy;
-                    
-                    if (proxy) {
-                        reader = proxy.getReader();
-                    } else {
-                        reader = new this.constructor({
-                            model: association.associatedName
-                        });
-                    }
-                }
-                association.read(record, reader, associationData);
-            }  
-        }
-    },
-    
-    
-    getAssociatedDataRoot: function(data, associationName) {
-        return data[associationName];
-    },
-    
-    getFields: function() {
-        return this.model.prototype.fields.items;
-    },
 
-    
-    extractValues: function(data) {
-        var fields = this.getFields(),
-            i      = 0,
+    for (; i < length; i++) {
+      association = associations[i];
+      associationData = this.getAssociatedDataRoot(data, association.associationKey || association.name);
+
+      if (associationData) {
+        reader = association.getReader();
+        if (!reader) {
+          proxy = association.associatedModel.proxy;
+
+          if (proxy) {
+            reader = proxy.getReader();
+          } else {
+            reader = new this.constructor({
+              model: association.associatedName
+            });
+          }
+        }
+        association.read(record, reader, associationData);
+      }
+    }
+  },
+
+
+  getAssociatedDataRoot: function (data, associationName) {
+    return data[associationName];
+  },
+
+  getFields: function () {
+    return this.model.prototype.fields.items;
+  },
+
+
+  extractValues: function (data) {
+    var me = this;
+    var fields = me.getFields(),
+            i = 0,
             length = fields.length,
             output = {},
             field, value;
 
-        for (; i < length; i++) {
-            field = fields[i];
-            value = this.extractorFunctions[i](data);
+    for (; i < length; i++) {
+      field = fields[i];      
+      value = me.extractorFunctions[i](data);
+      output[field.name] = value;
+     
+    }
 
-            output[field.name] = value;
-        }
+    return output;
+  },
 
-        return output;
-    },
 
-    
-    getData: function(data) {
-        return data;
-    },
+  getData: function (data) {
+    return data;
+  },
 
-    
-    getRoot: function(data) {
-        return data;
-    },
 
-    
-    getResponseData: function(response) {
-    },
+  getRoot: function (data) {
+    return data;
+  },
 
-    
-    onMetaChange : function(meta) {
-        var fields = meta.fields,
+
+  getResponseData: function (response) {
+  },
+
+
+  onMetaChange: function (meta) {
+    var fields = meta.fields,
             newModel;
-        
-        Ext.apply(this, meta);
-        
-        if (fields) {
-            newModel = Ext.define("Ext.data.reader.Json-Model" + Ext.id(), {
-                extend: 'Ext.data.Model',
-                fields: fields
-            });
-            this.setModel(newModel, true);
-        } else {
-            this.buildExtractors(true);
-        }
-    },
-    
-    
-    getIdProperty: function(){
-        var prop = this.idProperty;
-        if (Ext.isEmpty(prop)) {
-            prop = this.model.prototype.idProperty;
-        }
-        return prop;
-    },
 
-    
-    buildExtractors: function(force) {
-        var me          = this,
-            idProp      = me.getIdProperty(),
-            totalProp   = me.totalProperty,
+    Ext.apply(this, meta);
+
+    if (fields) {
+      newModel = Ext.define("Ext.data.reader.Json-Model" + Ext.id(), {
+        extend: 'Ext.data.Model',
+        fields: fields
+      });
+      this.setModel(newModel, true);
+    } else {
+      this.buildExtractors(true);
+    }
+  },
+
+
+  getIdProperty: function () {
+    var prop = this.idProperty;
+    if (Ext.isEmpty(prop)) {
+      prop = this.model.prototype.idProperty;
+    }
+    return prop;
+  },
+
+
+  buildExtractors: function (force) {
+    var me = this,
+            idProp = me.getIdProperty(),
+            totalProp = me.totalProperty,
             successProp = me.successProperty,
             messageProp = me.messageProperty,
             accessor;
-            
-        if (force === true) {
-            delete me.extractorFunctions;
-        }
-        
-        if (me.extractorFunctions) {
-            return;
-        }   
 
-        
-        if (totalProp) {
-            me.getTotal = me.createAccessor(totalProp);
-        }
-
-        if (successProp) {
-            me.getSuccess = me.createAccessor(successProp);
-        }
-
-        if (messageProp) {
-            me.getMessage = me.createAccessor(messageProp);
-        }
-
-        if (idProp) {
-            accessor = me.createAccessor(idProp);
-
-            me.getId = function(record) {
-                var id = accessor.call(me, record);
-                return (id === undefined || id === '') ? null : id;
-            };
-        } else {
-            me.getId = function() {
-                return null;
-            };
-        }
-        me.buildFieldExtractors();
-    },
-
-    
-    buildFieldExtractors: function() {
-        
-        var me = this,
-            fields = me.getFields(),
-            ln = fields.length,
-            i  = 0,
-            extractorFunctions = [],
-            field, map;
-
-        for (; i < ln; i++) {
-            field = fields[i];
-            map   = (field.mapping !== undefined && field.mapping !== null) ? field.mapping : field.name;
-
-            extractorFunctions.push(me.createAccessor(map));
-        }
-        me.fieldCount = ln;
-
-        me.extractorFunctions = extractorFunctions;
+    if (force === true) {
+      delete me.extractorFunctions;
     }
-}, function() {
-    Ext.apply(this, {
-        
-        nullResultSet: Ext.create('Ext.data.ResultSet', {
-            total  : 0,
-            count  : 0,
-            records: [],
-            success: true
-        })
-    });
+
+    if (me.extractorFunctions) {
+      return;
+    }
+
+
+    if (totalProp) {
+      me.getTotal = me.createAccessor(totalProp);
+    }
+
+    if (successProp) {
+      me.getSuccess = me.createAccessor(successProp);
+    }
+
+    if (messageProp) {
+      me.getMessage = me.createAccessor(messageProp);
+    }
+
+    if (idProp) {
+      accessor = me.createAccessor(idProp);
+
+      me.getId = function (record) {
+        var id = accessor.call(me, record);
+        return (id === undefined || id === '') ? null : id;
+      };
+    } else {
+      me.getId = function () {
+        return null;
+      };
+    }
+    me.buildFieldExtractors();
+  },
+
+
+  buildFieldExtractors: function () {
+
+    var me = this;
+    var fields = me.getFields();
+    var ln = fields.length;    
+    var i = 0;
+    var extractorFunctions = [];
+    var field;
+    var map;
+
+    for (; i < ln; i++) {
+      field = fields[i];
+      map = (field.mapping !== undefined && field.mapping !== null) ? field.mapping : field.name;
+
+      extractorFunctions.push(me.createAccessor(map));
+    }
+    me.fieldCount = ln;
+
+    me.extractorFunctions = extractorFunctions;
+    
+  }
+}, function () {
+  Ext.apply(this, {
+
+    nullResultSet: Ext.create('Ext.data.ResultSet', {
+      total: 0,
+      count: 0,
+      records: [],
+      success: true
+    })
+  });
 });
 
 Ext.define('Ext.data.reader.Json', {
@@ -60137,9 +60140,9 @@ Ext.define('Ext.LoadMask', {
 });
 
 Ext.define('Ext.view.AbstractView', {
-    extend: 'Ext.Component',
-    alternateClassName: 'Ext.view.AbstractView',
-    requires: [
+  extend: 'Ext.Component',
+  alternateClassName: 'Ext.view.AbstractView',
+  requires: [
         'Ext.LoadMask',
         'Ext.data.StoreManager',
         'Ext.CompositeElementLite',
@@ -60147,660 +60150,667 @@ Ext.define('Ext.view.AbstractView', {
         'Ext.selection.DataViewModel'
     ],
 
-    inheritableStatics: {
-        getRecord: function(node) {
-            return this.getBoundView(node).getRecord(node);
-        },
-
-        getBoundView: function(node) {
-            return Ext.getCmp(node.boundView);
-        }
+  inheritableStatics: {
+    getRecord: function (node) {
+      return this.getBoundView(node).getRecord(node);
     },
 
-    
-    
-
-    
-    deferInitialRefresh: true,
-
-    
-
-    
-    itemCls: Ext.baseCSSPrefix + 'dataview-item',
-
-    
-
-    
-
-    
-    loadingText: 'Loading...',
-
-    
-    loadMask: true,
-
-    
-
-    
-    loadingUseMsg: true,
+    getBoundView: function (node) {
+      return Ext.getCmp(node.boundView);
+    }
+  },
 
 
-    
-
-    
-    selectedItemCls: Ext.baseCSSPrefix + 'item-selected',
-
-    
-    emptyText: "",
-
-    
-    deferEmptyText: true,
-
-    
-    trackOver: false,
-
-    
-    blockRefresh: false,
-
-    
 
 
-    
-    last: false,
 
-    triggerEvent: 'itemclick',
-    triggerCtEvent: 'containerclick',
+  deferInitialRefresh: true,
 
-    addCmpEvents: function() {
 
-    },
 
-    
-    initComponent : function(){
-        var me = this,
+
+  itemCls: Ext.baseCSSPrefix + 'dataview-item',
+
+
+
+
+
+
+  loadingText: 'Loading...',
+
+
+  loadMask: true,
+
+
+
+
+  loadingUseMsg: true,
+
+
+
+
+
+  selectedItemCls: Ext.baseCSSPrefix + 'item-selected',
+
+
+  emptyText: "",
+
+
+  deferEmptyText: true,
+
+
+  trackOver: false,
+
+
+  blockRefresh: false,
+
+
+
+
+
+  last: false,
+
+  triggerEvent: 'itemclick',
+  triggerCtEvent: 'containerclick',
+
+  addCmpEvents: function () {
+
+  },
+
+
+  initComponent: function () {
+    var me = this,
             isDef = Ext.isDefined,
             itemTpl = me.itemTpl,
             memberFn = {};
 
-        if (itemTpl) {
-            if (Ext.isArray(itemTpl)) {
-                
-                itemTpl = itemTpl.join('');
-            } else if (Ext.isObject(itemTpl)) {
-                
-                memberFn = Ext.apply(memberFn, itemTpl.initialConfig);
-                itemTpl = itemTpl.html;
-            }
+    if (itemTpl) {
+      if (Ext.isArray(itemTpl)) {
 
-            if (!me.itemSelector) {
-                me.itemSelector = '.' + me.itemCls;
-            }
+        itemTpl = itemTpl.join('');
+      } else if (Ext.isObject(itemTpl)) {
 
-            itemTpl = Ext.String.format('<tpl for="."><div class="{0}">{1}</div></tpl>', me.itemCls, itemTpl);
-            me.tpl = Ext.create('Ext.XTemplate', itemTpl, memberFn);
-        }
+        memberFn = Ext.apply(memberFn, itemTpl.initialConfig);
+        itemTpl = itemTpl.html;
+      }
 
+      if (!me.itemSelector) {
+        me.itemSelector = '.' + me.itemCls;
+      }
 
-        me.callParent();
-        if(Ext.isString(me.tpl) || Ext.isArray(me.tpl)){
-            me.tpl = Ext.create('Ext.XTemplate', me.tpl);
-        }
+      itemTpl = Ext.String.format('<tpl for="."><div class="{0}">{1}</div></tpl>', me.itemCls, itemTpl);
+      me.tpl = Ext.create('Ext.XTemplate', itemTpl, memberFn);
+    }
 
 
-        me.addEvents(
-            
+    me.callParent();
+    if (Ext.isString(me.tpl) || Ext.isArray(me.tpl)) {
+      me.tpl = Ext.create('Ext.XTemplate', me.tpl);
+    }
+
+
+    me.addEvents(
+
             'beforerefresh',
-            
+
             'refresh',
-            
+
             'viewready',
-            
+
             'itemupdate',
-            
+
             'itemadd',
-            
+
             'itemremove'
         );
 
-        me.addCmpEvents();
+    me.addCmpEvents();
 
-        
-        me.store = Ext.data.StoreManager.lookup(me.store || 'ext-empty-store');
-        me.all = new Ext.CompositeElementLite();
-    },
 
-    onRender: function() {
-        var me = this,
+    me.store = Ext.data.StoreManager.lookup(me.store || 'ext-empty-store');
+    me.all = new Ext.CompositeElementLite();
+  },
+
+  onRender: function () {
+    var me = this,
             mask = me.loadMask,
             cfg = {
-                msg: me.loadingText,
-                msgCls: me.loadingCls,
-                useMsg: me.loadingUseMsg
+              msg: me.loadingText,
+              msgCls: me.loadingCls,
+              useMsg: me.loadingUseMsg
             };
 
-        me.callParent(arguments);
+    me.callParent(arguments);
 
-        if (mask) {
-            
-            if (Ext.isObject(mask)) {
-                cfg = Ext.apply(cfg, mask);
-            }
-            
-            
-            
-            
-            me.loadMask = Ext.create('Ext.LoadMask', me, cfg);
-            me.loadMask.on({
-                scope: me,
-                beforeshow: me.onMaskBeforeShow,
-                hide: me.onMaskHide
-            });
-        }
-    },
+    if (mask) {
 
-    onMaskBeforeShow: function(){
-        var loadingHeight = this.loadingHeight;
-        
-        this.getSelectionModel().deselectAll();
-        if (loadingHeight) {
-            this.setCalculatedSize(undefined, loadingHeight);
-        }
-    },
+      if (Ext.isObject(mask)) {
+        cfg = Ext.apply(cfg, mask);
+      }
 
-    onMaskHide: function(){
-        var me = this;
-        
-        if (!me.destroying && me.loadingHeight) {
-            me.setHeight(me.height);
-        }
-    },
 
-    afterRender: function() {
-        this.callParent(arguments);
 
-        
-        
-        
-        this.getSelectionModel().bindComponent(this);
-    },
 
-    
-    getSelectionModel: function(){
-        var me = this,
+      me.loadMask = Ext.create('Ext.LoadMask', me, cfg);
+      me.loadMask.on({
+        scope: me,
+        beforeshow: me.onMaskBeforeShow,
+        hide: me.onMaskHide
+      });
+    }
+  },
+
+  onMaskBeforeShow: function () {
+    var loadingHeight = this.loadingHeight;
+
+    this.getSelectionModel().deselectAll();
+    if (loadingHeight) {
+      this.setCalculatedSize(undefined, loadingHeight);
+    }
+  },
+
+  onMaskHide: function () {
+    var me = this;
+
+    if (!me.destroying && me.loadingHeight) {
+      me.setHeight(me.height);
+    }
+  },
+
+  afterRender: function () {
+    this.callParent(arguments);
+
+
+
+
+    this.getSelectionModel().bindComponent(this);
+  },
+
+
+  getSelectionModel: function () {
+    var me = this,
             mode = 'SINGLE';
 
-        if (!me.selModel) {
-            me.selModel = {};
-        }
+    if (!me.selModel) {
+      me.selModel = {};
+    }
 
-        if (me.simpleSelect) {
-            mode = 'SIMPLE';
-        } else if (me.multiSelect) {
-            mode = 'MULTI';
-        }
+    if (me.simpleSelect) {
+      mode = 'SIMPLE';
+    } else if (me.multiSelect) {
+      mode = 'MULTI';
+    }
 
-        Ext.applyIf(me.selModel, {
-            allowDeselect: me.allowDeselect,
-            mode: mode
-        });
+    Ext.applyIf(me.selModel, {
+      allowDeselect: me.allowDeselect,
+      mode: mode
+    });
 
-        if (!me.selModel.events) {
-            me.selModel = Ext.create('Ext.selection.DataViewModel', me.selModel);
-        }
+    if (!me.selModel.events) {
+      me.selModel = Ext.create('Ext.selection.DataViewModel', me.selModel);
+    }
 
-        if (!me.selModel.hasRelaySetup) {
-            me.relayEvents(me.selModel, [
+    if (!me.selModel.hasRelaySetup) {
+      me.relayEvents(me.selModel, [
                 'selectionchange', 'beforeselect', 'beforedeselect', 'select', 'deselect'
             ]);
-            me.selModel.hasRelaySetup = true;
-        }
+      me.selModel.hasRelaySetup = true;
+    }
 
-        
-        
-        if (me.disableSelection) {
-            me.selModel.locked = true;
-        }
 
-        return me.selModel;
-    },
 
-    
-    refresh: function() {
-        var me = this,
+    if (me.disableSelection) {
+      me.selModel.locked = true;
+    }
+
+    return me.selModel;
+  },
+
+
+  refresh: function () {
+    var me = this,
             el,
             records;
 
-        if (!me.rendered || me.isDestroyed) {
-            return;
-        }
+    if (!me.rendered || me.isDestroyed) {
+      return;
+    }
 
-        me.fireEvent('beforerefresh', me);
-        el = me.getTargetEl();
-        records = me.store.getRange();
+    me.fireEvent('beforerefresh', me);
+    el = me.getTargetEl();
+    records = me.store.getRange();
 
-        el.update('');
-        if (records.length < 1) {
-            if (!me.deferEmptyText || me.hasSkippedEmptyText) {
-                el.update(me.emptyText);
-            }
-            me.all.clear();
-        } else {
-            me.tpl.overwrite(el, me.collectData(records, 0));
-            me.all.fill(Ext.query(me.getItemSelector(), el.dom));
-            me.updateIndexes(0);
-        }
+    el.update('');
+    if (records.length < 1) {
+      if (!me.deferEmptyText || me.hasSkippedEmptyText) {
+        el.update(me.emptyText);
+      }
+      me.all.clear();
+    } else {
+      me.tpl.overwrite(el, me.collectData(records, 0));
+      me.all.fill(Ext.query(me.getItemSelector(), el.dom));
+      me.updateIndexes(0);
+    }
 
-        me.selModel.refresh();
-        me.hasSkippedEmptyText = true;
-        me.fireEvent('refresh', me);
+    me.selModel.refresh();
+    me.hasSkippedEmptyText = true;
+    me.fireEvent('refresh', me);
 
-        
-        
-        if (!me.viewReady) {
-            
-            
-            me.viewReady = true;
-            me.fireEvent('viewready', me);
-        }
-    },
 
-    
-    prepareData: function(data, index, record) {
-        if (record) {
-            Ext.apply(data, record.getAssociatedData());
-        }
-        return data;
-    },
 
-    
-    collectData : function(records, startIndex){
-        var r = [],
+    if (!me.viewReady) {
+
+
+      me.viewReady = true;
+      me.fireEvent('viewready', me);
+    }
+  },
+
+
+  prepareData: function (data, index, record) {
+    if (record) {
+      Ext.apply(data, record.getAssociatedData());
+    }
+    return data;
+  },
+
+
+  collectData: function (records, startIndex) {
+    var r = [],
             i = 0,
             len = records.length,
             record;
 
-        for(; i < len; i++){
-            record = records[i];
-            r[r.length] = this.prepareData(record[record.persistenceProperty], startIndex + i, record);
-        }
-        return r;
-    },
+    for (; i < len; i++) {
+      record = records[i];
+      r[r.length] = this.prepareData(record[record.persistenceProperty], startIndex + i, record);
+    }
+    return r;
+  },
 
-    
-    bufferRender : function(records, index){
-        var div = document.createElement('div');
-        this.tpl.overwrite(div, this.collectData(records, index));
-        return Ext.query(this.getItemSelector(), div);
-    },
 
-    
-    onUpdate : function(ds, record){
-        var me = this,
+  bufferRender: function (records, index) {
+    var div = document.createElement('div');
+    this.tpl.overwrite(div, this.collectData(records, index));
+    return Ext.query(this.getItemSelector(), div);
+  },
+
+
+  onUpdate: function (ds, record) {
+    var me = this,
             index = me.store.indexOf(record),
             node;
 
-        if (index > -1){
-            node = me.bufferRender([record], index)[0];
-            
-            if (me.getNode(record)) {
-                me.all.replaceElement(index, node, true);
-                me.updateIndexes(index, index);
-                
-                
-                me.selModel.refresh();
-                me.fireEvent('itemupdate', record, index, node);
-            }
-        }
+    if (index > -1) {
+      node = me.bufferRender([record], index)[0];
 
-    },
+      if (me.getNode(record)) {
+        me.all.replaceElement(index, node, true);
+        me.updateIndexes(index, index);
 
-    
-    onAdd : function(ds, records, index) {
-        var me = this,
-            nodes;
-
-        if (me.all.getCount() === 0) {
-            me.refresh();
-            return;
-        }
-
-        nodes = me.bufferRender(records, index);
-        me.doAdd(nodes, records, index);
 
         me.selModel.refresh();
-        me.updateIndexes(index);
-        me.fireEvent('itemadd', records, index, nodes);
-    },
+        me.fireEvent('itemupdate', record, index, node);
+      }
+    }
 
-    doAdd: function(nodes, records, index) {
-        var all = this.all;
+  },
 
-        if (index < all.getCount()) {
-            all.item(index).insertSibling(nodes, 'before', true);
-        } else {
-            all.last().insertSibling(nodes, 'after', true);
-        }
 
-        Ext.Array.insert(all.elements, index, nodes);
-    },
+  onAdd: function (ds, records, index) {
+    var me = this,
+            nodes;
 
-    
-    onRemove : function(ds, record, index) {
-        var me = this;
+    if (me.all.getCount() === 0) {
+      me.refresh();
+      return;
+    }
 
-        me.doRemove(record, index);
-        me.updateIndexes(index);
-        if (me.store.getCount() === 0){
-            me.refresh();
-        }
-        me.fireEvent('itemremove', record, index);
-    },
+    nodes = me.bufferRender(records, index);
+    me.doAdd(nodes, records, index);
 
-    doRemove: function(record, index) {
-        this.all.removeElement(index, true);
-    },
+    me.selModel.refresh();
+    me.updateIndexes(index);
+    me.fireEvent('itemadd', records, index, nodes);
+  },
 
-    
-    refreshNode : function(index){
-        this.onUpdate(this.store, this.store.getAt(index));
-    },
+  doAdd: function (nodes, records, index) {
+    var all = this.all;
 
-    
-    updateIndexes : function(startIndex, endIndex) {
-        var ns = this.all.elements,
+    if (index < all.getCount()) {
+      all.item(index).insertSibling(nodes, 'before', true);
+    } else {
+      all.last().insertSibling(nodes, 'after', true);
+    }
+
+    Ext.Array.insert(all.elements, index, nodes);
+  },
+
+
+  onRemove: function (ds, record, index) {
+    var me = this;
+
+    me.doRemove(record, index);
+    me.updateIndexes(index);
+    if (me.store.getCount() === 0) {
+      me.refresh();
+    }
+    me.fireEvent('itemremove', record, index);
+  },
+
+  doRemove: function (record, index) {
+    this.all.removeElement(index, true);
+  },
+
+
+  refreshNode: function (index) {
+    this.onUpdate(this.store, this.store.getAt(index));
+  },
+
+
+  updateIndexes: function (startIndex, endIndex) {
+    var ns = this.all.elements,
             records = this.store.getRange(),
             i;
-            
-        startIndex = startIndex || 0;
-        endIndex = endIndex || ((endIndex === 0) ? 0 : (ns.length - 1));
-        for(i = startIndex; i <= endIndex; i++){
-            ns[i].viewIndex = i;
-            ns[i].viewRecordId = records[i].internalId;
-            if (!ns[i].boundView) {
-                ns[i].boundView = this.id;
-            }
-        }
-    },
 
-    
-    getStore : function(){
-        return this.store;
-    },
+    startIndex = startIndex || 0;
+    endIndex = endIndex || ((endIndex === 0) ? 0 : (ns.length - 1));
+    for (i = startIndex; i <= endIndex; i++) {
+      ns[i].viewIndex = i;
 
-    
-    bindStore : function(store, initial) {
-        var me = this,
+      if (records[i])
+        ns[i].viewRecordId = records[i].internalId;
+
+      if (!ns[i].boundView) {
+        ns[i].boundView = this.id;
+      }
+    }
+  },
+
+
+  getStore: function () {
+    return this.store;
+  },
+
+
+  bindStore: function (store, initial) {
+    var me = this,
             maskStore;
 
-        if (!initial && me.store) {
-            if (store !== me.store && me.store.autoDestroy) {
-                me.store.destroyStore();
-            }
-            else {
-                me.mun(me.store, {
-                    scope: me,
-                    datachanged: me.onDataChanged,
-                    add: me.onAdd,
-                    remove: me.onRemove,
-                    update: me.onUpdate,
-                    clear: me.refresh
-                });
-            }
-            if (!store) {
-                
-                if (me.loadMask && me.loadMask.bindStore) {
-                    me.loadMask.bindStore(null);
-                }
-                me.store = null;
-            }
+    if (!initial && me.store) {
+      if (store !== me.store && me.store.autoDestroy) {
+        me.store.destroyStore();
+      }
+      else {
+        me.mun(me.store, {
+          scope: me,
+          datachanged: me.onDataChanged,
+          add: me.onAdd,
+          remove: me.onRemove,
+          update: me.onUpdate,
+          clear: me.refresh
+        });
+      }
+      if (!store) {
+
+        if (me.loadMask && me.loadMask.bindStore) {
+          me.loadMask.bindStore(null);
         }
-        if (store) {
-            store = Ext.data.StoreManager.lookup(store);
-            me.mon(store, {
-                scope: me,
-                datachanged: me.onDataChanged,
-                add: me.onAdd,
-                remove: me.onRemove,
-                update: me.onUpdate,
-                clear: me.refresh
-            });
-            
-            if (me.loadMask && me.loadMask.bindStore) {
-                
-                if (Ext.Array.contains(store.alias, 'store.node')) {
-                    maskStore = this.ownerCt.store;
-                } else {
-                    maskStore = store;
-                }
-                me.loadMask.bindStore(maskStore);
-            }
+        me.store = null;
+      }
+    }
+    if (store) {
+      store = Ext.data.StoreManager.lookup(store);
+      me.mon(store, {
+        scope: me,
+        datachanged: me.onDataChanged,
+        add: me.onAdd,
+        remove: me.onRemove,
+        update: me.onUpdate,
+        clear: me.refresh
+      });
+
+      if (me.loadMask && me.loadMask.bindStore) {
+
+        if (Ext.Array.contains(store.alias, 'store.node')) {
+          maskStore = this.ownerCt.store;
+        } else {
+          maskStore = store;
         }
-
-        
-        
-        me.viewReady = false;
-
-        me.store = store;
-        
-        me.getSelectionModel().bind(store);
-
-        
-        if (store) {
-            if (initial && me.deferInitialRefresh) {
-                Ext.Function.defer(function () {
-                    if (!me.isDestroyed) {
-                        me.refresh(true);
-                    }
-                }, 1);
-            } else {
-                me.refresh(true);
-            }
-        }
-    },
-
-    
-    onDataChanged: function() {
-        if (this.blockRefresh !== true) {
-            this.refresh.apply(this, arguments);
-        }
-    },
-
-    
-    findItemByChild: function(node){
-        return Ext.fly(node).findParent(this.getItemSelector(), this.getTargetEl());
-    },
-
-    
-    findTargetByEvent: function(e) {
-        return e.getTarget(this.getItemSelector(), this.getTargetEl());
-    },
+        me.loadMask.bindStore(maskStore);
+      }
+    }
 
 
-    
-    getSelectedNodes: function(){
-        var nodes   = [],
+
+    me.viewReady = false;
+
+    me.store = store;
+
+    me.getSelectionModel().bind(store);
+
+
+    if (store) {
+      if (initial && me.deferInitialRefresh) {
+        Ext.Function.defer(function () {
+          if (!me.isDestroyed) {
+            me.refresh(true);
+          }
+        }, 1);
+      } else {
+        me.refresh(true);
+      }
+    }
+  },
+
+
+  onDataChanged: function () {
+    if (this.blockRefresh !== true) {
+      this.refresh.apply(this, arguments);
+    }
+  },
+
+
+  findItemByChild: function (node) {
+    return Ext.fly(node).findParent(this.getItemSelector(), this.getTargetEl());
+  },
+
+
+  findTargetByEvent: function (e) {
+    return e.getTarget(this.getItemSelector(), this.getTargetEl());
+  },
+
+
+
+  getSelectedNodes: function () {
+    var nodes = [],
             records = this.selModel.getSelection(),
             ln = records.length,
-            i  = 0;
+            i = 0;
 
-        for (; i < ln; i++) {
-            nodes.push(this.getNode(records[i]));
-        }
+    for (; i < ln; i++) {
+      nodes.push(this.getNode(records[i]));
+    }
 
-        return nodes;
-    },
+    return nodes;
+  },
 
-    
-    getRecords: function(nodes) {
-        var records = [],
+
+  getRecords: function (nodes) {
+    var records = [],
             i = 0,
             len = nodes.length,
             data = this.store.data;
 
-        for (; i < len; i++) {
-            records[records.length] = data.getByKey(nodes[i].viewRecordId);
-        }
+    for (; i < len; i++) {
+      records[records.length] = data.getByKey(nodes[i].viewRecordId);
+    }
 
-        return records;
-    },
-
-    
-    getRecord: function(node){
-        return this.store.data.getByKey(Ext.getDom(node).viewRecordId);
-    },
+    return records;
+  },
 
 
-    
-    isSelected : function(node) {
-        
-        var r = this.getRecord(node);
-        return this.selModel.isSelected(r);
-    },
+  getRecord: function (node) {
+    return this.store.data.getByKey(Ext.getDom(node).viewRecordId);
+  },
 
-    
-    select: function(records, keepExisting, suppressEvent) {
-        this.selModel.select(records, keepExisting, suppressEvent);
-    },
 
-    
-    deselect: function(records, suppressEvent) {
-        this.selModel.deselect(records, suppressEvent);
-    },
 
-    
-    getNode : function(nodeInfo) {
-        if (!this.rendered) {
-            return null;
-        }
-        if (Ext.isString(nodeInfo)) {
-            return document.getElementById(nodeInfo);
-        }
-        if (Ext.isNumber(nodeInfo)) {
-            return this.all.elements[nodeInfo];
-        }
-        if (nodeInfo instanceof Ext.data.Model) {
-            return this.getNodeByRecord(nodeInfo);
-        }
-        return nodeInfo; 
-    },
+  isSelected: function (node) {
 
-    
-    getNodeByRecord: function(record) {
-        var ns = this.all.elements,
+    var r = this.getRecord(node);
+    return this.selModel.isSelected(r);
+  },
+
+
+  select: function (records, keepExisting, suppressEvent) {
+    this.selModel.select(records, keepExisting, suppressEvent);
+  },
+
+
+  deselect: function (records, suppressEvent) {
+    this.selModel.deselect(records, suppressEvent);
+  },
+
+
+  getNode: function (nodeInfo) {
+    if (!this.rendered) {
+      return null;
+    }
+    if (Ext.isString(nodeInfo)) {
+      return document.getElementById(nodeInfo);
+    }
+    if (Ext.isNumber(nodeInfo)) {
+      return this.all.elements[nodeInfo];
+    }
+    if (nodeInfo instanceof Ext.data.Model) {
+      return this.getNodeByRecord(nodeInfo);
+    }
+    return nodeInfo;
+  },
+
+
+  getNodeByRecord: function (record) {
+    var ns = this.all.elements,
             ln = ns.length,
             i = 0;
 
-        for (; i < ln; i++) {
-            if (ns[i].viewRecordId === record.internalId) {
-                return ns[i];
-            }
-        }
+    for (; i < ln; i++) {
+      if (ns[i].viewRecordId === record.internalId) {
+        return ns[i];
+      }
+    }
 
-        return null;
-    },
+    return null;
+  },
 
-    
-    getNodes: function(start, end) {
-        var ns = this.all.elements,
+
+  getNodes: function (start, end) {
+    var ns = this.all.elements,
             nodes = [],
             i;
 
-        start = start || 0;
-        end = !Ext.isDefined(end) ? Math.max(ns.length - 1, 0) : end;
-        if (start <= end) {
-            for (i = start; i <= end && ns[i]; i++) {
-                nodes.push(ns[i]);
-            }
-        } else {
-            for (i = start; i >= end && ns[i]; i--) {
-                nodes.push(ns[i]);
-            }
-        }
-        return nodes;
-    },
-
-    
-    indexOf: function(node) {
-        node = this.getNode(node);
-        if (Ext.isNumber(node.viewIndex)) {
-            return node.viewIndex;
-        }
-        return this.all.indexOf(node);
-    },
-
-    onDestroy : function() {
-        var me = this;
-
-        me.all.clear();
-        me.callParent();
-        me.bindStore(null);
-        me.selModel.destroy();
-    },
-
-    
-    onItemSelect: function(record) {
-        var node = this.getNode(record);
-        
-        if (node) {
-            Ext.fly(node).addCls(this.selectedItemCls);
-        }
-    },
-
-    
-    onItemDeselect: function(record) {
-        var node = this.getNode(record);
-        
-        if (node) {
-            Ext.fly(node).removeCls(this.selectedItemCls);
-        }
-    },
-
-    getItemSelector: function() {
-        return this.itemSelector;
+    start = start || 0;
+    end = !Ext.isDefined(end) ? Math.max(ns.length - 1, 0) : end;
+    if (start <= end) {
+      for (i = start; i <= end && ns[i]; i++) {
+        nodes.push(ns[i]);
+      }
+    } else {
+      for (i = start; i >= end && ns[i]; i--) {
+        nodes.push(ns[i]);
+      }
     }
-}, function() {
-    
-    
-    
-    
-    Ext.deprecate('extjs', '4.0', function() {
-        Ext.view.AbstractView.override({
-            
-            
-            
+    return nodes;
+  },
 
-            
-            getSelectionCount : function(){
-                if (Ext.global.console) {
-                    Ext.global.console.warn("DataView: getSelectionCount will be removed, please interact with the Ext.selection.DataViewModel");
-                }
-                return this.selModel.getSelection().length;
-            },
 
-            
-            getSelectedRecords : function(){
-                if (Ext.global.console) {
-                    Ext.global.console.warn("DataView: getSelectedRecords will be removed, please interact with the Ext.selection.DataViewModel");
-                }
-                return this.selModel.getSelection();
-            },
+  indexOf: function (node) {
+    node = this.getNode(node);
 
-            select: function(records, keepExisting, supressEvents) {
-                if (Ext.global.console) {
-                    Ext.global.console.warn("DataView: select will be removed, please access select through a DataView's SelectionModel, ie: view.getSelectionModel().select()");
-                }
-                var sm = this.getSelectionModel();
-                return sm.select.apply(sm, arguments);
-            },
+    if (node) {
+      if (Ext.isNumber(node.viewIndex)) {
+        return node.viewIndex;
+      }
+      return this.all.indexOf(node);
+    }
+    return -1;
+  },
 
-            clearSelections: function() {
-                if (Ext.global.console) {
-                    Ext.global.console.warn("DataView: clearSelections will be removed, please access deselectAll through DataView's SelectionModel, ie: view.getSelectionModel().deselectAll()");
-                }
-                var sm = this.getSelectionModel();
-                return sm.deselectAll();
-            }
-        });
+  onDestroy: function () {
+    var me = this;
+
+    me.all.clear();
+    me.callParent();
+    me.bindStore(null);
+    me.selModel.destroy();
+  },
+
+
+  onItemSelect: function (record) {
+    var node = this.getNode(record);
+
+    if (node) {
+      Ext.fly(node).addCls(this.selectedItemCls);
+    }
+  },
+
+
+  onItemDeselect: function (record) {
+    var node = this.getNode(record);
+
+    if (node) {
+      Ext.fly(node).removeCls(this.selectedItemCls);
+    }
+  },
+
+  getItemSelector: function () {
+    return this.itemSelector;
+  }
+}, function () {
+
+
+
+
+  Ext.deprecate('extjs', '4.0', function () {
+    Ext.view.AbstractView.override({
+
+
+
+
+
+      getSelectionCount: function () {
+        if (Ext.global.console) {
+          Ext.global.console.warn("DataView: getSelectionCount will be removed, please interact with the Ext.selection.DataViewModel");
+        }
+        return this.selModel.getSelection().length;
+      },
+
+
+      getSelectedRecords: function () {
+        if (Ext.global.console) {
+          Ext.global.console.warn("DataView: getSelectedRecords will be removed, please interact with the Ext.selection.DataViewModel");
+        }
+        return this.selModel.getSelection();
+      },
+
+      select: function (records, keepExisting, supressEvents) {
+        if (Ext.global.console) {
+          Ext.global.console.warn("DataView: select will be removed, please access select through a DataView's SelectionModel, ie: view.getSelectionModel().select()");
+        }
+        var sm = this.getSelectionModel();
+        return sm.select.apply(sm, arguments);
+      },
+
+      clearSelections: function () {
+        if (Ext.global.console) {
+          Ext.global.console.warn("DataView: clearSelections will be removed, please access deselectAll through DataView's SelectionModel, ie: view.getSelectionModel().deselectAll()");
+        }
+        var sm = this.getSelectionModel();
+        return sm.deselectAll();
+      }
     });
+  });
 });
 
 
@@ -91457,7 +91467,8 @@ Ext.define('Ext.tree.View', {
         
         else {
             
-            Ext.fly(children[relativeIndex + 1]).insertSibling(nodes, 'before', true);
+            if (Ext.fly(children[relativeIndex + 1]))
+              Ext.fly(children[relativeIndex + 1]).insertSibling(nodes, 'before', true);
         }
 
         
@@ -91693,10 +91704,11 @@ Ext.define('Ext.tree.View', {
     collapse: function(record, deep, callback, scope) {
         return record.collapse(deep, callback, scope);
     },
-    
-    
-    toggle: function(record) {
-        this[record.isExpanded() ? 'collapse' : 'expand'](record);
+
+
+      toggle: function (record) {
+        if (record)
+          this[record.isExpanded() ? 'collapse' : 'expand'](record);
     },
     
     onItemDblClick: function(record, item, index) {
@@ -93091,3 +93103,9 @@ Ext.define('Ext.view.TableChunker', {
 
 
 
+//    // added for debug purpose
+
+//    Ext.Loader.setConfig({
+//      enabled: true,
+//      disableCaching: false
+//    });

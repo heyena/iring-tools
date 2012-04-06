@@ -20,7 +20,7 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
  // store: null,
   width: 300,
   root: {
-    expanded: false,
+    expanded: true,
     type: 'DATAOBJECTS',
     text: 'Data Objects',
     iconCls: 'folder'
@@ -40,14 +40,14 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
         proxy: {
           type: 'ajax',
           timeout: 600000,
-          url: 'NHibernate/getnode',
+          url: 'NHibernate/DBObjects',          
           actionMethods: { read: 'POST' },
-          extraParams: {
-            contextName: me.contextName,
-            endpoint: me.endpoint,
-            baseUrl: me.baseUrl,
-            type: 'DATAOBJECTS'
-          },
+//          extraParams: {
+//            contextName: me.contextName,
+//            endpoint: me.endpoint,
+//            baseUrl: me.baseUrl,
+//            type: 'DATAOBJECTS'
+//          },
           reader: { type: 'json' }
         }
       })
@@ -97,3 +97,14 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
   }
 });
 
+function setTableNames(dbDict) {
+  // populate selected tables			
+  var selectTableNames = new Array();
+
+  for (var i = 0; i < dbDict.dataObjects.length; i++) {
+    var tableName = (dbDict.dataObjects[i].tableName ? dbDict.dataObjects[i].tableName : dbDict.dataObjects[i]);
+    selectTableNames.push(tableName);
+  }
+
+  return selectTableNames;
+};

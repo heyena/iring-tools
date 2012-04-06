@@ -254,14 +254,18 @@ namespace org.iringtools.web.Controllers
     {
       string key = string.Format(adapter_PREFIX + _keyFormat, contextName, endpoint);
       DatabaseDictionary databaseDictionary = null;
+      bool getDbDict = false;
 
       if (Session[key] != null)
       {
         databaseDictionary = (DatabaseDictionary)Session[key];
-        if (databaseDictionary.ConnectionString == null)
-          databaseDictionary = _repository.GetDBDictionary(contextName, endpoint, baseUrl);
+        if (databaseDictionary.ConnectionString == null || databaseDictionary.dataObjects.Count == 0)
+          getDbDict = true;          
       }
       else
+        getDbDict = true;       
+     
+      if (getDbDict)
       {
         databaseDictionary = _repository.GetDBDictionary(contextName, endpoint, baseUrl);
       }
@@ -352,12 +356,24 @@ namespace org.iringtools.web.Controllers
     {
       try
       {
-        List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
-          form["contextName"], form["endpoint"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"],
-          form["serName"], form["baseUrl"]);
+        DatabaseDictionary databaseDictionary = null;
+        Tree dbObjects = null;
 
-        return Json(dbObjects, JsonRequestBehavior.AllowGet);
+        if (form["contextName"] != null)
+        {
+          databaseDictionary = GetDbDictionary(form["contextName"], form["endpoint"], form["baseUrl"]);
+
+          if (form["tableNames"] != null)
+          {
+            dbObjects = _repository.GetDBObjects(
+              form["contextName"], form["endpoint"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+              form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"],
+              form["serName"], form["baseUrl"], databaseDictionary);
+            return Json(dbObjects.getNodes(), JsonRequestBehavior.AllowGet);
+          }
+        }
+
+        return null;
       }
       catch (Exception e)
       {

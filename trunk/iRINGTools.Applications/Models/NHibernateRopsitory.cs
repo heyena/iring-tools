@@ -195,13 +195,34 @@ namespace org.iringtools.web.Models
     }
 
     // use appropriate icons especially node with children
-    public List<JsonTreeNode> GetDBObjects(string scope, string application, string dbProvider, string dbServer,
-      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName, string baseUrl)
+    public Tree GetDBObjects(string contextName, string endpoint, string dbProvider, string dbServer,
+      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName, string baseUrl, DatabaseDictionary databaseDictionary)
     {
-      List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
+      //Tree tree = new Tree();
+      //List<JsonTreeNode> dbObjectNodes = tree.getNodes();
+      //TreeNode dataObjectNode = new TreeNode();
+      //dataObjectNode.text = "EQUIPMENT";
+      //dataObjectNode.type = "DATAOBJECT";
+      //dataObjectNode.id = dataObjectNode.text;
+      //dataObjectNode.identifier = dataObjectNode.id;
+      //dataObjectNode.iconCls = "treeObject";
+      //dataObjectNode.leaf = true;
+      //dbObjectNodes.Add(dataObjectNode);
 
+      //dataObjectNode.record = new {
+      //  Name = "EQUIPMENT"        
+      //};
+
+      //dataObjectNode.property = new Dictionary<string,string>();
+      //dataObjectNode.property.Add("tableName", "EQUIPMENT");
+      //dataObjectNode.property.Add("objectNamespace", "org.iringtools.adapter.datalayer.proj_12345_000.ABC");
+      //dataObjectNode.property.Add("objectName", "EQUIPMENT");           
+
+
+      var hasDBDictionary = false;
       WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
-      var uri = String.Format("/{0}/{1}/objects", scope, application);
+      var uri = String.Format("/{0}/{1}/objects", contextName, endpoint);
+      Tree tree = null;
 
       Request request = new Request();
       request.Add("dbProvider", dbProvider);
@@ -217,61 +238,77 @@ namespace org.iringtools.web.Models
 
       List<DataObject> dataObjects = _newServiceClient.Post<Request, List<DataObject>>(uri, request, true);
 
-      foreach (DataObject dataObject in dataObjects)
+      if (databaseDictionary != null)
+        if (databaseDictionary.dataObjects.Count > 0)
+          hasDBDictionary = true;
+
+      if (dataObjects != null)
       {
-        TreeNode keyPropertiesNode = new TreeNode()
-        {
-          text = "Keys",
-          type = "keys",
-          expanded = true,
-          iconCls = "folder",
-          leaf = false,
-          children = new List<JsonTreeNode>()
-        };
+        tree = new Tree();
+        List<JsonTreeNode> dbObjectNodes = tree.getNodes();
 
-        TreeNode dataPropertiesNode = new TreeNode()
+        foreach (DataObject dataObject in dataObjects)
         {
-          text = "Properties",
-          type = "properties",
-          expanded = true,
-          iconCls = "folder",
-          leaf = false,
-          children = new List<JsonTreeNode>()
-        };
-
-        TreeNode relationshipsNode = new TreeNode()
-        {
-          text = "Relationships",
-          type = "relationships",
-          expanded = true,
-          iconCls = "folder",
-          leaf = false,
-          children = new List<JsonTreeNode>()
-        };
-
-        // create data object node
-        TreeNode dataObjectNode = new TreeNode()
-        {
-          text = dataObject.tableName,
-          type = "dataObject",
-          iconCls = "treeObject",
-          leaf = false,
-          children = new List<JsonTreeNode>()
+          // create data object node
+          TreeNode dataObjectNode = new TreeNode();
+          dataObjectNode.text = dataObject.tableName;
+          dataObjectNode.type = "DATAOBJECT";
+          dataObjectNode.id = dataObjectNode.text;
+          dataObjectNode.identifier = dataObjectNode.id;
+          dataObjectNode.iconCls = "treeObject";
+          dataObjectNode.leaf = false;
+          dataObjectNode.children = new List<JsonTreeNode>();
+          dataObjectNode.property = new Dictionary<string, string>()
           {
-            keyPropertiesNode, dataPropertiesNode, relationshipsNode
-          },
-          property = new Dictionary<string, string>
-          {
-            {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
+            {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + contextName + "." + endpoint},
             {"objectName", dataObject.objectName},
+            {"tableName", dataObject.objectName},
             {"keyDelimiter", dataObject.keyDelimeter}
-          }
-        };
+          };
 
-        // add key/data property nodes
-        foreach (DataProperty dataProperty in dataObject.dataProperties)
-        {
-          Dictionary<string, string> properties = new Dictionary<string, string>()
+          dataObjectNode.record = new
+          {
+            Name = dataObjectNode.objectName
+          };
+
+          TreeNode keyPropertiesNode = new TreeNode();
+          keyPropertiesNode.text = "Keys";
+          keyPropertiesNode.type = "KEYS";
+          keyPropertiesNode.id = dataObjectNode.id + "/" + keyPropertiesNode.text;
+          keyPropertiesNode.identifier = keyPropertiesNode.id;
+          keyPropertiesNode.expanded = true;
+          keyPropertiesNode.iconCls = "folder";
+          keyPropertiesNode.leaf = false;
+          keyPropertiesNode.children = new List<JsonTreeNode>();
+
+          TreeNode dataPropertiesNode = new TreeNode();
+          dataPropertiesNode.text = "Properties";
+          dataPropertiesNode.type = "PROPERTIES";
+          dataPropertiesNode.id = dataObjectNode.id + "/" + dataPropertiesNode.text;
+          dataPropertiesNode.identifier = dataPropertiesNode.id;
+          dataPropertiesNode.expanded = true;
+          dataPropertiesNode.iconCls = "folder";
+          dataPropertiesNode.leaf = false;
+          dataPropertiesNode.children = new List<JsonTreeNode>();
+
+          TreeNode relationshipsNode = new TreeNode();
+          relationshipsNode.text = "Relationships";
+          relationshipsNode.type = "relationships";
+          relationshipsNode.id = dataObjectNode.id + "/" + relationshipsNode.text;
+          relationshipsNode.identifier = relationshipsNode.id;
+          relationshipsNode.expanded = true;
+          relationshipsNode.iconCls = "folder";
+          relationshipsNode.leaf = false;
+          relationshipsNode.children = new List<JsonTreeNode>();    
+          
+          dataObjectNode.children.Add(keyPropertiesNode);
+          dataObjectNode.children.Add(dataPropertiesNode);
+          dataObjectNode.children.Add(relationshipsNode);         
+
+          // add key/data property nodes
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
+          {
+            Dictionary<string, string> properties = new Dictionary<string, string>()
           {
             {"columnName", dataProperty.columnName},
             {"propertyName", dataProperty.propertyName},
@@ -280,70 +317,225 @@ namespace org.iringtools.web.Models
             {"nullable", dataProperty.isNullable.ToString()},
             {"showOnIndex", dataProperty.showOnIndex.ToString()},
             {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
+            {"isHidden", dataProperty.isHidden.ToString()}
           };
 
-          if (dataObject.isKeyProperty(dataProperty.propertyName))
-          {
-            properties.Add("keyType", dataProperty.keyType.ToString());
-
-            JsonTreeNode keyPropertyNode = new JsonTreeNode()
+            if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDBDictionary)
             {
-              text = dataProperty.columnName,
-              type = "keyProperty",
-              property = properties,
-              iconCls = "treeKey",
-              leaf = true
-            };
+              properties.Add("keyType", dataProperty.keyType.ToString());
 
-            keyPropertiesNode.children.Add(keyPropertyNode);
-          }
-          else
-          {
-            JsonTreeNode dataPropertyNode = new JsonTreeNode()
+              JsonTreeNode keyPropertyNode = new JsonTreeNode();
+              keyPropertyNode.text = dataProperty.columnName;
+              keyPropertyNode.type = "KEYPROPERTY";
+              keyPropertyNode.id = keyPropertiesNode.id + "/" + keyPropertyNode.text;
+              keyPropertyNode.identifier = keyPropertyNode.id;
+              keyPropertyNode.property = properties;
+              keyPropertyNode.iconCls = "treeKey";
+              keyPropertyNode.hidden = false;
+              keyPropertyNode.leaf = true;
+              keyPropertiesNode.children.Add(keyPropertyNode);
+              keyPropertiesNode.record = new
+              {
+                Name = keyPropertyNode.text
+              };
+            }
+            else
             {
-              text = dataProperty.columnName,
-              type = "dataProperty",
-              iconCls = "treeProperty",
-              leaf = true,
-              hidden = true,
-              property = properties
-            };
-
-            dataPropertiesNode.children.Add(dataPropertyNode);
+              JsonTreeNode dataPropertyNode = new JsonTreeNode();
+              dataPropertyNode.text = dataProperty.columnName;
+              dataPropertyNode.type = "DATAPROPERTY";
+              dataPropertyNode.id = dataPropertiesNode.id + "/" + dataPropertyNode.text;
+              dataPropertyNode.identifier = dataPropertyNode.id;
+              dataPropertyNode.iconCls = "treeProperty";
+              dataPropertyNode.leaf = true;
+              dataPropertyNode.hidden = true;
+              dataPropertyNode.property = properties;
+              dataPropertiesNode.children.Add(dataPropertyNode);
+              dataPropertyNode.record = new
+              {
+                Name = dataPropertyNode.text
+              };
+            }
           }
+
+          dbObjectNodes.Add(dataObjectNode);
         }
-
-        // add relationship nodes
-        if (dataObject.dataRelationships.Count == 0)
-        {
-          JsonTreeNode relationshipNode = new JsonTreeNode()
-          {
-            text = "",
-            type = "relationship",
-            leaf = true,
-            hidden = true
-          };
-          relationshipsNode.children.Add(relationshipNode);
-        }
-
-        foreach (DataRelationship relationship in dataObject.dataRelationships)
-        {
-          JsonTreeNode relationshipNode = new JsonTreeNode()
-          {
-            text = relationship.relationshipName,
-            type = "relationship",
-            iconCls = "relation",
-            leaf = true
-          };
-
-          relationshipsNode.children.Add(relationshipNode);
-        }
-
-        dbObjectNodes.Add(dataObjectNode);
       }
 
-      return dbObjectNodes;
-    }    
+      if (hasDBDictionary)
+        return dBOjbectsAndDBDictionary(tree, contextName, endpoint, baseUrl, databaseDictionary);
+
+      return tree;
+    }
+
+    //rootNode(dataObjectNode) is from database tables
+    //dbDict(dataObject) is from database dictionary
+    private Tree dBOjbectsAndDBDictionary(Tree tree, string contextName, string endpoint, string baseUrl, DatabaseDictionary dbDict)
+    {
+      string[] relationTypeStr = { "OneToOne", "OneToMany" };
+
+      if (tree == null)
+        tree = new Tree();
+
+      List<JsonTreeNode> dbObjectNodes = tree.getNodes();
+
+      // sync data object tree with data dictionary
+      for (var i = 0; i < dbObjectNodes.Count; i++)
+      {
+        TreeNode dataObjectNode = (TreeNode)dbObjectNodes[i];
+        dataObjectNode.property["tableName"] = dataObjectNode.text;
+        for (var ijk = 0; ijk < dbDict.dataObjects.Count; ijk++)
+        {
+          DataObject dataObject = dbDict.dataObjects[ijk];
+
+          if (dataObjectNode.text.ToUpper() != dataObject.tableName.ToUpper())
+            continue;
+
+          // sync data object
+          dataObjectNode.property["objectNamespace"] = dataObject.objectNamespace;
+          dataObjectNode.property["objectName"] = dataObject.objectName;
+          dataObjectNode.property["keyDelimiter"] = dataObject.keyDelimeter;
+          dataObjectNode.property["description"] = dataObject.description;
+          dataObjectNode.text = dataObject.objectName;
+          //dataObjectNode.attributes.text = dataObject.objectName;
+          //dataObjectNode.setText(dataObject.objectName);
+
+          if (dataObject.objectName.ToLower() == dataObjectNode.text.ToLower())
+          {
+            List<string> shownProperty = new List<string>();
+            TreeNode keysNode = (TreeNode)dataObjectNode.children[0];
+            TreeNode propertiesNode = (TreeNode)dataObjectNode.children[1];
+            TreeNode relationshipsNode = (TreeNode)dataObjectNode.children[2];  
+
+            // sync data properties
+            for (int j = 0; j < propertiesNode.children.Count; j++)
+            {
+              for (int jj = 0; jj < dataObject.dataProperties.Count; jj++)
+              {
+                if (propertiesNode.children[j].text.ToLower() == dataObject.dataProperties[jj].columnName.ToLower())
+                {
+
+                  if (!hasShown(shownProperty, propertiesNode.children[j].text.ToLower()))
+                  {
+                    shownProperty.Add(propertiesNode.children[j].text.ToLower());
+                    propertiesNode.children[j].hidden = false;
+                  }
+
+                  propertiesNode.children[j].text = dataObject.dataProperties[jj].propertyName;
+                  propertiesNode.children[j].property["propertyName"] = dataObject.dataProperties[jj].propertyName;
+                  propertiesNode.children[j].property["isHidden"] = dataObject.dataProperties[jj].isHidden.ToString();
+                }
+              }
+            }
+
+            // sync key properties
+            for (int ij = 0; ij < dataObject.keyProperties.Count; ij++)
+            {
+              for (int k = 0; k < keysNode.children.Count; k++)
+              {
+                for (int ikk = 0; ikk < dataObject.dataProperties.Count; ikk++)
+                {
+                  if (dataObject.keyProperties[ij].keyPropertyName.ToLower() == dataObject.dataProperties[ikk].propertyName.ToLower())
+                  {
+                    if (keysNode.children[k].text.ToLower() == dataObject.dataProperties[ikk].columnName.ToLower())
+                    {
+                      keysNode.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
+                      keysNode.children[k].property["propertyName"] = dataObject.keyProperties[ij].keyPropertyName;
+                      keysNode.children[k].property["isHidden"] = "false";
+                      ij++;
+                      break;
+                    }
+                  }
+                }
+                break;
+              }
+              if (ij < dataObject.keyProperties.Count)
+              {
+                for (int ijj = 0; ijj < propertiesNode.children.Count; ijj++)
+                {
+                  var nodeText = dataObject.keyProperties[ij].keyPropertyName;
+                  if (propertiesNode.children[ijj].text.ToLower() == nodeText.ToLower())
+                  {
+                    propertiesNode.children[ijj].property["propertyName"] = nodeText;
+                    //properties.keyType = 'assigned';
+                    //properties.nullable = false;
+
+                    JsonTreeNode newKeyNode = new JsonTreeNode();
+                    newKeyNode.text = nodeText;
+                    newKeyNode.type = "keyProperty";
+                    newKeyNode.id = keysNode.id + "/" + newKeyNode.text;
+                    newKeyNode.identifier = newKeyNode.id;
+                    newKeyNode.leaf = true;
+                    newKeyNode.iconCls = "treeKey";
+                    newKeyNode.hidden = false;
+                    newKeyNode.property = propertiesNode.children[ijj].property;
+                    newKeyNode.record = new
+                    {
+                      Name = newKeyNode.text
+                    };
+                    propertiesNode.children.RemoveAt(ijj);
+                    ijj--;
+
+                    if (newKeyNode != null)
+                      keysNode.children.Add(newKeyNode);
+
+                    break;
+                  }
+                }
+              }
+            }
+
+            // sync relationships 
+            for (int kj = 0; kj < dataObject.dataRelationships.Count; kj++)
+            {
+              Dictionary<string, string> relatedObjMap = new Dictionary<string, string>();
+
+              JsonTreeNode relationNode = new JsonTreeNode();              
+              relationNode.text = dataObject.dataRelationships[kj].relationshipName;
+              relationNode.type = "relationship";
+              relationNode.id = relationshipsNode.id + "/" + relationNode.text;
+              relationNode.identifier = relationNode.id;
+              relationNode.leaf = true;
+              relationNode.iconCls = "treeRelation";
+              relationNode.relatedObjMap = relatedObjMap;
+              relationNode.objectName = dataObjectNode.text;
+              relationNode.relatedObjectName = dataObject.dataRelationships[kj].relatedObjectName;
+              relationNode.relationshipType = relationTypeStr[(int)dataObject.dataRelationships[kj].relationshipType];
+              relationNode.relationshipTypeIndex = dataObject.dataRelationships[kj].relationshipType.ToString();
+              relationNode.record = new
+              {
+                Name = relationNode.text
+              };
+              List<Dictionary<string, string>> mapArray = new List<Dictionary<string, string>>();
+              for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.Count; kjj++)
+              {
+                Dictionary<string, string> mapItem = new Dictionary<string, string>()
+                {
+						      {"dataPropertyName", dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName},
+						      {"relatedPropertyName", dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName}
+                };
+                mapArray.Add(mapItem);
+              }
+              
+              relationNode.propertyMap = mapArray;
+              relationshipsNode.expanded = true;
+              relationshipsNode.children.Add(relationNode);
+            }
+          }
+        }
+      }
+
+      return tree;
+    }
+
+
+    private Boolean hasShown(List<string> shownArray, string text)
+    {
+      for (var shownIndex = 0; shownIndex < shownArray.Count; shownIndex++)
+          if (shownArray[shownIndex] == text)
+              return true;
+      return false;
+    }
 
     private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
     {
