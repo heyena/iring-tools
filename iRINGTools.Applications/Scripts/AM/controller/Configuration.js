@@ -244,10 +244,57 @@
   },
 
   onEditDbConnection: function (btn, evt) {
-    var editor = this.getEditPanel();
+    var dirtree = this.getDirTree(),
+        node = dirtree.getSelectedNode();   
+    var content = this.getMainContent(); 
+    var contextName = node.data.record.context;    
+    var endpoint = node.data.record.endpoint;
+    var baseUrl = node.data.record.BaseUrl;    
     var dbDict = AM.view.nhibernate.dbDict.value;
     var dbInfo = AM.view.nhibernate.dbInfo.value;
     
+    var objConf = {
+      id: contextName + '.' + endpoint + '.-nh-config',
+      title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
+      contextName: contextName,
+      endpoint: endpoint,
+      baseUrl: baseUrl,
+      layout: {
+        type: 'border',
+        padding: 2
+      },
+      split: true,
+      closable: true
+    };
+
+    var treeconf = {
+      contextName: contextName,
+      endpoint: endpoint,
+      baseUrl: baseUrl,
+      region: 'west',
+      layout: 'fit'
+    };
+
+    var editconf = {
+      contextName: contextName,
+      endpoint: endpoint,
+      baseUrl: baseUrl,
+      region: 'center'
+    };
+
+    var nhpan = Ext.widget('dataobjectpanel', objConf);
+    var editpan = Ext.widget('editorpanel', editconf);
+    var nhtree = Ext.widget('nhibernatetreepanel', treeconf);
+    nhpan.items.add(nhtree);
+    nhpan.items.add(editpan);
+    var exist = content.items.map[nhpan.id];
+
+    if (exist == undefined) {
+      content.add(nhpan).show();
+    } else {
+      exist.show();
+    }
+
     if (dbDict) {
       var cstr = dbDict.ConnectionString;
       if (cstr)
@@ -256,24 +303,26 @@
     }
 
     var conf = {
-      contextName: editor.contextName,
+      contextName: contextName,
       dbDict: dbDict,
       dbInfo: dbInfo,
-      endpoint: editor.endpoint,
-      baseUrl: editor.baseUrl,
-      id: editor.contextName + '.' + editor.endpoint + '.conform'
+      endpoint: endpoint,
+      baseUrl: baseUrl,
+      id: contextName + '.' + endpoint + '.conform'
     };
 
-    var confrm = editor.items.map[conf.id];
+    var confrm = editpan.items.map[conf.id];
     if (!confrm) {
       confrm = Ext.widget('connectdatabase', conf);
-      editor.items.add(confrm);
-      editor.doLayout();
+      editpan.items.add(confrm);
+      editpan.doLayout();
     }
+
+    nhtree.disable();
     if (dbInfo)
       confrm.setActiveRecord(dbInfo);
-    var panelIndex = editor.items.indexOf(confrm);
-    editor.getLayout().setActiveItem(panelIndex);
+    var panelIndex = editpan.items.indexOf(confrm);
+    editpan.getLayout().setActiveItem(panelIndex);
   },
 
   getDataTypes: function () {
@@ -710,10 +759,8 @@
 
     switch (datalayer) {
       case 'NHibernateLibrary':
-        this.getDbdictionary(contextName, endpoint, baseUrl, dirtree, content);         
-       
+        this.getDbdictionary(contextName, endpoint, baseUrl, dirtree, content);       
         break;
-
       case 'SpreadsheetDatalayer':
         var conf =
             {
@@ -745,7 +792,7 @@
           iconCls: 'tabsMapping',
           items: []
         },
-                scpanel = Ext.widget('panel', panconf);
+        scpanel = Ext.widget('panel', panconf);
         scpanel.items.add(sctree);
         scpanel.items.add(scprop);
         sctree.on('beforeitemexpand', function () {
