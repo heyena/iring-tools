@@ -299,14 +299,14 @@
     });
   },
 
-  getDbdictionary: function (context, endpoint, baseUrl) {
+  getDbdictionary: function (contextName, endpoint, baseUrl, dirtree, content) {
     var me = this;
     Ext.Ajax.request({
       url: 'NHibernate/DBDictionary',
       method: 'POST',
       timeout: 6000000,
       params: {
-        scope: context,
+        scope: contextName,
         app: endpoint,
         baseUrl: baseUrl
       },
@@ -316,7 +316,82 @@
         if (dbDict.ConnectionString != null) {
           var base64 = AM.view.nhibernate.Utility;
           AM.view.nhibernate.dbDict.value.ConnectionString = base64.decode(dbDict.ConnectionString);
-          return dbDict;
+          //return dbDict;
+
+          conf = {
+            id: contextName + '.' + endpoint + '.-nh-config',
+            title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
+            contextName: contextName,
+            endpoint: endpoint,
+            baseUrl: baseUrl,
+            layout: {
+              type: 'border',
+              padding: 2
+            },
+            split: true,
+            closable: true
+          };
+          var treeconf = {
+            contextName: contextName,
+            endpoint: endpoint,
+            baseUrl: baseUrl,
+            region: 'west',
+            layout: 'fit'
+          };
+          var editconf = {
+            contextName: contextName,
+            endpoint: endpoint,
+            baseUrl: baseUrl,
+            region: 'center'
+          };
+
+          var nhpan = Ext.widget('dataobjectpanel', conf);
+        
+          me.getDataTypes();        
+          var dbDict = AM.view.nhibernate.dbDict.value;
+
+          if (dbDict) {          
+            var cstr = dbDict.ConnectionString;
+            if (cstr) {
+              var dbInfo = me.getConnStringParts(cstr);
+              AM.view.nhibernate.dbInfo.value = dbInfo;
+              var selectTableNames = setTableNames(dbDict); 
+
+              var nhtree = Ext.widget('nhibernatetreepanel', treeconf);            
+              nhtree.on('beforeload', function (store, operation) {
+                store.proxy.extraParams.dbProvider = dbDict.Provider;
+                store.proxy.extraParams.dbServer = dbInfo.dbServer;
+                store.proxy.extraParams.dbInstance = dbInfo.dbInstance;
+                store.proxy.extraParams.dbName = dbInfo.dbName;
+                store.proxy.extraParams.dbSchema = dbDict.SchemaName;
+                store.proxy.extraParams.dbPassword = dbInfo.dbPassword;
+                store.proxy.extraParams.dbUserName = dbInfo.dbUserName;
+                store.proxy.extraParams.portNumber = dbInfo.portNumber;
+                store.proxy.extraParams.tableNames = selectTableNames;
+                store.proxy.extraParams.serName = dbInfo.serName;
+                store.proxy.extraParams.contextName = contextName;
+                store.proxy.extraParams.endpoint = endpoint;
+                store.proxy.extraParams.baseUrl = baseUrl;        
+              }, me);                
+
+              var editpan = Ext.widget('editorpanel', editconf);
+              nhpan.items.add(nhtree);
+              nhpan.items.add(editpan);
+              var exist = content.items.map[nhpan.id];
+
+              if (exist == undefined) {
+                content.add(nhpan).show();
+              } else {
+                exist.show();
+              }
+
+              nhpan.body.mask('Loading...', 'x-mask-loading');
+              nhtree.getStore().load();
+              nhpan.body.unmask();
+
+              dirtree.applicationMenu.hide();            
+            }
+          }
         }
         else {
           var datatree = me.getDataTree();
@@ -330,7 +405,7 @@
         }
       },
       failure: function (response, request) {
-        var dataObjPanel = this.getDataObjectPanel();
+        var dataObjPanel = me.getDataObjectPanel();
       }
     });
   },
@@ -426,7 +501,6 @@
 
     var store = dbObjectsTree.getStore();
     dbObjectsTree.on('beforeload', function (store, operation) {
-      store.proxy.url = 'NHibernate/DBObjects';
       store.proxy.extraParams.dbProvider = dbProvider;
       store.proxy.extraParams.dbServer = dbServer;
       store.proxy.extraParams.dbInstance = dbInstance;
@@ -444,9 +518,7 @@
 
     dataObjectPanel.body.mask('Loading...', 'x-mask-loading');
     store.load();
-    dataObjectPanel.body.unmask();
-    rootNode.expand();
-    HideExtjs4TreeNodes(rootNode, dbObjectsTree);
+    dataObjectPanel.body.unmask();    
   },
 
   connectToDatabase: function (btn, evt) {
@@ -638,78 +710,8 @@
 
     switch (datalayer) {
       case 'NHibernateLibrary':
-        this.getDbdictionary(contextName, endpoint, baseUrl);         
-        conf = {
-          id: contextName + '.' + endpoint + '.-nh-config',
-          title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
-          contextName: contextName,
-          endpoint: endpoint,
-          baseUrl: baseUrl,
-          layout: {
-            type: 'border',
-            padding: 2
-          },
-          split: true,
-          closable: true
-        };
-        var treeconf = {
-          contextName: contextName,
-          endpoint: endpoint,
-          baseUrl: baseUrl,
-          region: 'west',
-          layout: 'fit'
-        };
-        var editconf = {
-          contextName: contextName,
-          endpoint: endpoint,
-          baseUrl: baseUrl,
-          region: 'center'
-        };
-
-        var nhpan = Ext.widget('dataobjectpanel', conf);
-        
-        this.getDataTypes();        
-        var dbDict = AM.view.nhibernate.dbDict.value;
-
-        if (dbDict) {          
-          var cstr = dbDict.ConnectionString;
-          if (cstr) {
-            var dbInfo = this.getConnStringParts(cstr);
-            AM.view.nhibernate.dbInfo.value = dbInfo;
-            var selectTableNames = setTableNames(dbDict); 
-
-            var nhtree = Ext.widget('nhibernatetreepanel', treeconf);            
-            nhtree.on('beforeload', function (store, operation) {
-              store.proxy.extraParams.dbProvider = dbDict.Provider;
-              store.proxy.extraParams.dbServer = dbInfo.dbServer;
-              store.proxy.extraParams.dbInstance = dbInfo.dbInstance;
-              store.proxy.extraParams.dbName = dbInfo.dbName;
-              store.proxy.extraParams.dbSchema = dbDict.SchemaName;
-              store.proxy.extraParams.dbPassword = dbInfo.dbPassword;
-              store.proxy.extraParams.dbUserName = dbInfo.dbUserName;
-              store.proxy.extraParams.portNumber = dbInfo.portNumber;
-              store.proxy.extraParams.tableNames = selectTableNames;
-              store.proxy.extraParams.serName = dbInfo.serName;
-              store.proxy.extraParams.contextName = contextName;
-              store.proxy.extraParams.endpoint = endpoint;
-              store.proxy.extraParams.baseUrl = baseUrl;        
-            }, this);           
-
-            nhtree.getStore().load();
-            var editpan = Ext.widget('editorpanel', editconf);
-            nhpan.items.add(nhtree);
-            nhpan.items.add(editpan);
-            var exist = content.items.map[nhpan.id];
-
-            if (exist == undefined) {
-              content.add(nhpan).show();
-            } else {
-              exist.show();
-            }
-
-            dirtree.applicationMenu.hide();            
-          }
-        }
+        this.getDbdictionary(contextName, endpoint, baseUrl, dirtree, content);         
+       
         break;
 
       case 'SpreadsheetDatalayer':
