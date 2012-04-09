@@ -3301,7 +3301,7 @@ namespace org.iringtools.adapter
           int dataLayersCount = dataLayers.Count;
 
           //
-          // validate external dataLayers, remove from list if no longer exists
+          // validate external data layers, remove from list if no longer exists
           //
           for (int i = 0; i < dataLayers.Count; i++)
           {
@@ -3361,6 +3361,7 @@ namespace org.iringtools.adapter
           try
           {
             Utility.Unzip(dataLayer.Package, dataLayer.Path);
+            dataLayer.Package = null;
           }
           catch (UnauthorizedAccessException e)
           {
@@ -3369,6 +3370,7 @@ namespace org.iringtools.adapter
           }
         }
 
+        // validate data layer
         Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
         if (dataLayerAssembly == null)
         {
@@ -3380,11 +3382,11 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(dataLayer.Assembly))
         {
-          if (dl == null)  // does not exist, add it
+          if (dl == null)  // data layer does not exist, add it
           {
             dataLayers.Add(dataLayer);
           }
-          else  // else update
+          else  // data layer already exists, update it
           {
             dl = dataLayer;
           }
@@ -3455,14 +3457,14 @@ namespace org.iringtools.adapter
     {
       DataLayers dataLayers = new DataLayers();
 
-      // Load NHibernate data layer
+      // load NHibernate data layer
       Type type = typeof(NHibernateDataLayer);
       string library = type.Assembly.GetName().Name;
       string assembly = string.Format("{0}, {1}", type.FullName, library);
       DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = library, Configurable = true };
       dataLayers.Add(dataLayer);
 
-      // Load Spreadsheet data layer
+      // load Spreadsheet data layer
       type = typeof(SpreadsheetDatalayer);
       library = type.Assembly.GetName().Name;
       assembly = string.Format("{0}, {1}", type.FullName, library);
