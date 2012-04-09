@@ -3026,16 +3026,25 @@ namespace org.iringtools.adapter
           if (_settings["DumpSettings"] == "True")
           {
             Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
+
             foreach (string key in _settings.AllKeys)
             {
               settingsDictionary.Add(key, _settings[key]);
             }
+
             Utility.Write<Dictionary<string, string>>(settingsDictionary, @"AdapterSettings.xml");
             Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
           }
 
           string bindingConfigPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml",
             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+          string qualPath = Path.Combine(
+                  _settings["BaseDirectoryPath"],
+                  bindingConfigPath
+                );
+
+          _settings["BindingConfigurationPath"] = qualPath;
 
           XElement bindingConfig = Utility.ReadXml(bindingConfigPath);
           string assembly = bindingConfig.Element("bind").Attribute("to").Value;
@@ -3107,12 +3116,12 @@ namespace org.iringtools.adapter
               else
               {
                 // NInject requires full qualified path
-                string qualPath = Path.Combine(
-                  _settings["BaseDirectoryPath"],
-                  bindingConfigPath
-                );
+                //string qualPath = Path.Combine(
+                //  _settings["BaseDirectoryPath"],
+                //  bindingConfigPath
+                //);
 
-                _settings["BindingConfigurationPath"] = qualPath;
+                //_settings["BindingConfigurationPath"] = qualPath;
 
                 if (File.Exists(qualPath))
                 {
@@ -3288,7 +3297,7 @@ namespace org.iringtools.adapter
 
     #endregion
 
-    #region dataLayer management
+    #region data layer management methods
     public DataLayers GetDataLayers()
     {
       DataLayers dataLayers = new DataLayers();
@@ -3325,11 +3334,11 @@ namespace org.iringtools.adapter
         }
         else
         {
-          DataLayers builtinDataLayers = GetInternalDataLayers();
+          DataLayers internalDataLayers = GetInternalDataLayers();
 
-          if (builtinDataLayers != null && builtinDataLayers.Count > 0)
+          if (internalDataLayers != null && internalDataLayers.Count > 0)
           {
-            dataLayers.AddRange(builtinDataLayers);
+            dataLayers.AddRange(internalDataLayers);
           }
 
           Utility.Write<DataLayers>(dataLayers, _dataLayersBindingPath);
@@ -3465,7 +3474,7 @@ namespace org.iringtools.adapter
       dataLayers.Add(dataLayer);
 
       // load Spreadsheet data layer
-      type = typeof(SpreadsheetDatalayer);
+      type = typeof(SpreadsheetDataLayer);
       library = type.Assembly.GetName().Name;
       assembly = string.Format("{0}, {1}", type.FullName, library);
       dataLayer = new DataLayer { Assembly = assembly, Name = library, Configurable = true };
@@ -3500,7 +3509,7 @@ namespace org.iringtools.adapter
 
       return string.Empty;
     }
-    #endregion dataLayer management
+    #endregion data layer management methods
 
     public void setScopes(Resource importScopes)
     {
