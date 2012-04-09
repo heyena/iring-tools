@@ -251,49 +251,9 @@
     var endpoint = node.data.record.endpoint;
     var baseUrl = node.data.record.BaseUrl;    
     var dbDict = AM.view.nhibernate.dbDict.value;
-    var dbInfo = AM.view.nhibernate.dbInfo.value;
-    
-    var objConf = {
-      id: contextName + '.' + endpoint + '.-nh-config',
-      title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
-      contextName: contextName,
-      endpoint: endpoint,
-      baseUrl: baseUrl,
-      layout: {
-        type: 'border',
-        padding: 2
-      },
-      split: true,
-      closable: true
-    };
+    var dbInfo = AM.view.nhibernate.dbInfo.value;    
 
-    var treeconf = {
-      contextName: contextName,
-      endpoint: endpoint,
-      baseUrl: baseUrl,
-      region: 'west',
-      layout: 'fit'
-    };
-
-    var editconf = {
-      contextName: contextName,
-      endpoint: endpoint,
-      baseUrl: baseUrl,
-      region: 'center'
-    };
-
-    var nhpan = Ext.widget('dataobjectpanel', objConf);
-    var editpan = Ext.widget('editorpanel', editconf);
-    var nhtree = Ext.widget('nhibernatetreepanel', treeconf);
-    nhpan.items.add(nhtree);
-    nhpan.items.add(editpan);
-    var exist = content.items.map[nhpan.id];
-
-    if (exist == undefined) {
-      content.add(nhpan).show();
-    } else {
-      exist.show();
-    }
+    var editpan = createMainContentPanel(content, contextName, endpoint, baseUrl);
 
     if (dbDict) {
       var cstr = dbDict.ConnectionString;
@@ -365,39 +325,9 @@
         if (dbDict.ConnectionString != null) {
           var base64 = AM.view.nhibernate.Utility;
           AM.view.nhibernate.dbDict.value.ConnectionString = base64.decode(dbDict.ConnectionString);
-          //return dbDict;
-
-          conf = {
-            id: contextName + '.' + endpoint + '.-nh-config',
-            title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
-            contextName: contextName,
-            endpoint: endpoint,
-            baseUrl: baseUrl,
-            layout: {
-              type: 'border',
-              padding: 2
-            },
-            split: true,
-            closable: true
-          };
-          var treeconf = {
-            contextName: contextName,
-            endpoint: endpoint,
-            baseUrl: baseUrl,
-            region: 'west',
-            layout: 'fit'
-          };
-          var editconf = {
-            contextName: contextName,
-            endpoint: endpoint,
-            baseUrl: baseUrl,
-            region: 'center'
-          };
-
-          var nhpan = Ext.widget('dataobjectpanel', conf);
-        
-          me.getDataTypes();        
-          var dbDict = AM.view.nhibernate.dbDict.value;
+          me.getDataTypes();  
+          var content = me.getMainContent(); 
+          createMainContentPanel(content, contextName, endpoint, baseUrl);        
 
           if (dbDict) {          
             var cstr = dbDict.ConnectionString;
@@ -405,9 +335,10 @@
               var dbInfo = me.getConnStringParts(cstr);
               AM.view.nhibernate.dbInfo.value = dbInfo;
               var selectTableNames = setTableNames(dbDict); 
-
-              var nhtree = Ext.widget('nhibernatetreepanel', treeconf);            
-              nhtree.on('beforeload', function (store, operation) {
+              nhpan = me.getDataObjectPanel();
+              var datatree = me.getDataTree();
+    
+              datatree.on('beforeload', function (store, operation) {
                 store.proxy.extraParams.dbProvider = dbDict.Provider;
                 store.proxy.extraParams.dbServer = dbInfo.dbServer;
                 store.proxy.extraParams.dbInstance = dbInfo.dbInstance;
@@ -421,29 +352,17 @@
                 store.proxy.extraParams.contextName = contextName;
                 store.proxy.extraParams.endpoint = endpoint;
                 store.proxy.extraParams.baseUrl = baseUrl;        
-              }, me);                
-
-              var editpan = Ext.widget('editorpanel', editconf);
-              nhpan.items.add(nhtree);
-              nhpan.items.add(editpan);
-              var exist = content.items.map[nhpan.id];
-
-              if (exist == undefined) {
-                content.add(nhpan).show();
-              } else {
-                exist.show();
-              }
+              }, me);              
 
               nhpan.body.mask('Loading...', 'x-mask-loading');
-              nhtree.getStore().load();
+              datatree.getStore().load();
               nhpan.body.unmask();
-
               dirtree.applicationMenu.hide();            
             }
           }
         }
-        else {
-          var datatree = me.getDataTree();
+        else {   
+          var datatree = me.getDataTree();           
           if (datatree)
             datatree.disable();
 

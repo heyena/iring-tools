@@ -42,12 +42,6 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
           timeout: 600000,
           url: 'NHibernate/DBObjects',          
           actionMethods: { read: 'POST' },
-//          extraParams: {
-//            contextName: me.contextName,
-//            endpoint: me.endpoint,
-//            baseUrl: me.baseUrl,
-//            type: 'DATAOBJECTS'
-//          },
           reader: { type: 'json' }
         }
       })
@@ -108,3 +102,48 @@ function setTableNames(dbDict) {
 
   return selectTableNames;
 };
+
+function createMainContentPanel(content, contextName, endpoint, baseUrl) {
+  var objConf = {
+    id: contextName + '.' + endpoint + '.-nh-config',
+    title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
+    contextName: contextName,
+    endpoint: endpoint,
+    baseUrl: baseUrl,
+    layout: {
+      type: 'border',
+      padding: 2
+    },
+    split: true,
+    closable: true
+  };
+
+  var treeconf = {
+    contextName: contextName,
+    endpoint: endpoint,
+    baseUrl: baseUrl,
+    region: 'west',
+    layout: 'fit'
+  };
+
+  var editconf = {
+    contextName: contextName,
+    endpoint: endpoint,
+    baseUrl: baseUrl,
+    region: 'center'
+  };
+
+  var nhpan = Ext.widget('dataobjectpanel', objConf);
+  var editpan = Ext.widget('editorpanel', editconf);
+  var nhtree = Ext.widget('nhibernatetreepanel', treeconf);
+  nhpan.items.add(nhtree);
+  nhpan.items.add(editpan);
+  var exist = content.items.map[nhpan.id];
+
+  if (exist == undefined) {
+    content.add(nhpan).show();
+  } else {
+    exist.show();
+  }
+  return editpan;
+}
