@@ -3039,13 +3039,6 @@ namespace org.iringtools.adapter
           string bindingConfigPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml",
             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
 
-          string qualPath = Path.Combine(
-                  _settings["BaseDirectoryPath"],
-                  bindingConfigPath
-                );
-
-          _settings["BindingConfigurationPath"] = qualPath;
-
           XElement bindingConfig = Utility.ReadXml(bindingConfigPath);
           string assembly = bindingConfig.Element("bind").Attribute("to").Value;
 
@@ -3058,13 +3051,14 @@ namespace org.iringtools.adapter
             {
               if (dataLayer.External)
               {
-                AppDomain appDomain = AppDomain.CreateDomain("temp");
                 Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
 
                 if (dataLayerAssembly == null)
                 {
                   throw new Exception("Unable to load data layer assembly.");
                 }
+
+                _settings["DataLayerPath"] = dataLayer.Path;
 
                 Type type = dataLayerAssembly.GetType(assembly.Split(',')[0]);
                 ConstructorInfo[] ctors = type.GetConstructors();
@@ -3116,12 +3110,12 @@ namespace org.iringtools.adapter
               else
               {
                 // NInject requires full qualified path
-                //string qualPath = Path.Combine(
-                //  _settings["BaseDirectoryPath"],
-                //  bindingConfigPath
-                //);
+                string qualPath = Path.Combine(
+                  _settings["BaseDirectoryPath"],
+                  bindingConfigPath
+                );
 
-                //_settings["BindingConfigurationPath"] = qualPath;
+                _settings["BindingConfigurationPath"] = qualPath;
 
                 if (File.Exists(qualPath))
                 {
