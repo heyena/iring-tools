@@ -274,7 +274,7 @@
       dbInfo: dbInfo,
       endpoint: endpoint,
       baseUrl: baseUrl,
-      id: contextName + '.' + endpoint + '.conform'
+      id: contextName + '.' + endpoint + '.connectdatabase'
     };
 
     var content = this.getMainContent(); 
@@ -406,10 +406,11 @@
     var dbDict = AM.view.nhibernate.dbDict.value;
     var dbInfo = AM.view.nhibernate.dbInfo.value;    
     var dbObjectsTree = dataObjectPanel.items.map[contextName + '.' + endpoint + '.-nh-tree'];
+    var editorPane = dataObjectPanel.items.map[contextName + '.' + endpoint + '.-nh-editor'];
     var rootNode = dbObjectsTree.getRootNode();
     var tablesSelForm = btn.up('form');
-    var dsConfigPane = this.getDsConfigPane();
-    var radioField = this.getRadioField();
+    var dsConfigPane = editorPane.items.map[contextName + '.' + endpoint + '.connectdatabase'];
+    
     var dbProvider = '';
     var dbServer = '';
     var dbInstance = '';
@@ -424,8 +425,8 @@
       dbObjectsTree.enable();
     }
 
-    if (radioField) {
-      var serviceNamePane = dsConfigPane.items.items[10];
+    if (dsConfigPane.items.map[contextName + '.' + endpoint + 'radioField']) {
+      var serviceNamePane = dsConfigPane.items.map[contextName + '.' + endpoint + 'radioField'];
       if (serviceNamePane.items.items[0])
         serName = serviceNamePane.items.items[0].serName;
     }

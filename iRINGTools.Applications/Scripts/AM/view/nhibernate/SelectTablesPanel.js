@@ -37,9 +37,9 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
 
     this.items = [{
       xtype: 'label',
-      fieldLabel: 'Select Tables',
-      labelSeparator: '',
-      itemCls: 'form-title'
+      text: 'Select Tables',
+      cls: 'x-form-item',
+      style: 'font-weight:bold;'
     }, {
       xtype: 'itemselector',
       name: 'tableSelector',
@@ -55,21 +55,25 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
       value: selectItems,
       listeners: {
         change: function (itemSelector, selectedValuesStr) {
-          var selectTables = itemSelector.toMultiselect.store.data.items;
+          var selectTables = itemSelector.toField.store.data.items;
           for (var i = 0; i < selectTables.length; i++) {
             var selectTableName = selectTables[i].data.text;
             if (selectTableName == '')
-              itemSelector.toMultiselect.store.removeAt(i);
+              itemSelector.toField.store.removeAt(i);
           }
 
-          var availTables = itemSelector.fromMultiselect.store.data.items;
+          var availTables = itemSelector.fromField.store.data.items;
           for (var i = 0; i < availTables.length; i++) {
             var availTableName = availTables[i].data.text
             if (availTables[i].data.text == '')
-              itemSelector.fromMultiselect.store.removeAt(i);
+              itemSelector.fromField.store.removeAt(i);
           }
         }
       }
+    }, {
+      xtype: 'checkbox',
+      name: 'enableSummary',
+      fieldLabel: 'Enable Summary'
     }];
 
     this.tbar = new Ext.Toolbar({
@@ -92,7 +96,80 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
         text: 'Reset',
         tooltip: 'Reset to the latest applied changes',
         handler: function () {
-          Ext.getCmp(contextName + '.' + endpoint + '.tablesform').up('form').getForm().reset();
+          var rootNode = dataTree.getRootNode();
+          var selectTableNames = new Array();
+          var selectTableNamesSingle = new Array();
+          var firstSelectTableNames = new Array();
+          var availTableName = new Array();
+          var found = false;
+          var repeatItem;
+          for (var i = 0; i < dbInfo.dbTableNames.items.length; i++) {
+            repeatItem = dbInfo.dbTableNames.items[i];
+            availTableName.push([repeatItem, repeatItem]);
+          }
+
+          for (var j = 0; j < availTableName.length; j++)
+            for (var i = 0; i < rootNode.childNodes.length; i++) {
+              if (rootNode.childNodes[i].data.property.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
+                found = true;
+                availTableName.splice(j, 1);
+                j--;
+                break;
+              }
+            }
+
+          for (var i = 0; i < rootNode.childNodes.length; i++) {
+            var nodeText = rootNode.childNodes[i].data.property.tableName;
+            selectTableNames.push([nodeText, nodeText]);
+            selectTableNamesSingle.push(nodeText);
+          }
+
+          var tablesSelector = me.items.items[1];
+
+          if (selectTableNames[0]) {
+            firstSelectTableNames.push(selectTableNames[0]);            
+
+            if (tablesSelector.toField.store.data) {
+              tablesSelector.toField.reset();
+              tablesSelector.toField.store.removeAll();
+            }
+
+            tablesSelector.toField.store.loadData(firstSelectTableNames);
+            var firstSelectTables = tablesSelector.toField.store.data.items;
+            var loadSingle = false;
+            var selectTableName = firstSelectTables[0].data.text;
+
+            if (selectTableName[1])
+              if (selectTableName[1].length > 1)
+                var loadSingle = true;
+
+            tablesSelector.toField.reset();
+            tablesSelector.toField.store.removeAll();
+
+            if (!loadSingle)
+              tablesSelector.toField.store.loadData(selectTableNames);
+            else
+              tablesSelector.toField.store.loadData(selectTableNamesSingle);
+
+            tablesSelector.toField.store.commitChanges();
+          }
+          else {            
+            if (tablesSelector.toField) {
+              tablesSelector.toField.reset();
+              tablesSelector.toField.store.removeAll();              
+            }
+          }
+
+          if (tablesSelector.fromField.store.data) {
+            tablesSelector.fromField.reset();
+            tablesSelector.fromField.store.removeAll();
+          }
+
+          tablesSelector.fromField.store.loadData(availTableName);
+          tablesSelector.fromField.reset();
+                   
+          if (dbDict)
+            me.getForm().findField('enableSummary').setValue(dbDict.enableSummary);
         }
 
       }]

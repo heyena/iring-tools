@@ -115,7 +115,7 @@ Ext.define('AM.view.nhibernate.RadioField', {
   }
 });
 
-function creatRadioField(panel, idLabel, value, serName) {
+function creatRadioField(panel, idLabel, value, serName, contextName, endpoint) {
 	if (panel.items) {
 		var radioPane = panel.items.map[idLabel + 'radioField'];
 		if (radioPane) {
@@ -126,7 +126,7 @@ function creatRadioField(panel, idLabel, value, serName) {
   var conf = {
     value: value,
     serName: serName,
-    id: idLabel + 'radioField'
+    id: contextName + '.' + endpoint + 'radioField'
   };
 
   var radioField = Ext.widget('radiotextfield', conf);
