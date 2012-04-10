@@ -74,17 +74,17 @@
                   if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
                     host.setValue(dbInfo.dbServer);
                     serviceName.show();
-                    creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
+                    creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName, contextName, endpoint);
                     host.show();
                     userName.setValue(dbInfo.dbUserName);
                     password.setValue(dbInfo.dbPassword);
                     dbSchema.setValue(dbDict.SchemaName);
                   }
                   else
-                    changeConfigOracle(host, dbSchema, userName, password, serviceName);
+                    changeConfigOracle(host, dbSchema, userName, password, serviceName, contextName, endpoint);
                 }
                 else
-                  changeConfigOracle(host, dbSchema, userName, password, serviceName);
+                  changeConfigOracle(host, dbSchema, userName, password, serviceName, contextName, endpoint);
 
                 portNumber.setValue('1521');
                 portNumber.show();
@@ -275,7 +275,7 @@
   }
 });
 
-function changeConfigOracle(host, dbSchema, userName, password, serviceName) {
+function changeConfigOracle(host, dbSchema, userName, password, serviceName, contextName, endpoint) {
   host.setValue('');
   host.clearInvalid();
 
@@ -290,7 +290,7 @@ function changeConfigOracle(host, dbSchema, userName, password, serviceName) {
   password.setValue('');
   password.clearInvalid();
   serviceName.show();
-  creatRadioField(serviceName, serviceName.id, '', '', 1);
+  creatRadioField(serviceName, serviceName.id, '', '', 1, contextName, endpoint);
 };
 
 function changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password) {
