@@ -91,7 +91,9 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
         icon: 'Content/img/16x16/edit-clear.png',
         text: 'Reset',
         tooltip: 'Reset to the latest applied changes',
-        action: 'resettables'
+        handler: function () {
+          Ext.getCmp(contextName + '.' + endpoint + '.tablesform').up('form').getForm().reset();
+        }
 
       }]
     });

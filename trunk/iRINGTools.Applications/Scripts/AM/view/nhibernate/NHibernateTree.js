@@ -123,27 +123,48 @@ function createMainContentPanel(content, contextName, endpoint, baseUrl) {
     endpoint: endpoint,
     baseUrl: baseUrl,
     region: 'west',
-    layout: 'fit'
+    layout: 'fit',
+    id: contextName + '.' + endpoint + '.-nh-tree'
   };
 
   var editconf = {
     contextName: contextName,
     endpoint: endpoint,
     baseUrl: baseUrl,
-    region: 'center'
+    region: 'center',
+    id: contextName + '.' + endpoint + '.-nh-editor'
   };
 
-  var nhpan = Ext.widget('dataobjectpanel', objConf);
+  var existNhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
+
+  if (existNhpan != undefined) {
+    var existNhtree = existNhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
+    var exitsEditpan = existNhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
+  }
+  else {
+    var nhpan = Ext.widget('dataobjectpanel', objConf);    
+  }
+
   var editpan = Ext.widget('editorpanel', editconf);
   var nhtree = Ext.widget('nhibernatetreepanel', treeconf);
-  nhpan.items.add(nhtree);
-  nhpan.items.add(editpan);
-  var exist = content.items.map[nhpan.id];
 
-  if (exist == undefined) {
+  if (existNhtree == undefined) {
+    if (existNhpan == undefined)
+      nhpan.items.add(nhtree);
+    else
+      existNhpan.items.add(nhtree);
+  }
+
+  if (exitsEditpan == undefined) {
+    if (existNhpan == undefined)
+      nhpan.items.add(editpan);
+    else
+      existNhpan.items.add(editpan);
+  } 
+
+  if (existNhpan == undefined) {
     content.add(nhpan).show();
   } else {
-    exist.show();
-  }
-  return editpan;
+    existNhpan.show();
+  }  
 }

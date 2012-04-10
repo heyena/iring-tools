@@ -100,7 +100,9 @@
   },
 
   applyDbObjectChanges: function (btn, evt) {
-    var datatree = this.getDataTree();
+    var content = this.getMainContent(); 
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
+    var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
     var form = btn.up('form').getForm();
     form.url = 'nhibernate/updatedbobject';
     form.method = 'POST';
@@ -163,52 +165,56 @@
     }
   },
 
-  setTablesSelectorPane: function (editor, context, endpoint, baseUrl) {
-    if (editor) {
-      var dbDict = AM.view.nhibernate.dbDict.value;
-      if (dbDict)
-        var content = this.getMainContent();
-      var dataTree = this.getDataTree();
-      var dbInfo = AM.view.nhibernate.dbInfo.value;
-      var conf = {
-        contextName: context,
-        endpoint: endpoint,
-        baseUrl: baseUrl,
-        dbInfo: dbInfo,
-        dataTree: dataTree,
-        height: 300,
-        width: 400,
-        region: 'center',
-        id: context + '.' + endpoint + '.tablesform'
-      };
-      var select = editor.items.map[conf.id];
-      if (!select) {
-        select = Ext.widget('selecttables', conf);
-        editor.items.add(select);
-        editor.doLayout();
-      }
-      var panelIndex = editor.items.indexOf(select);
-      editor.getLayout().setActiveItem(panelIndex);
+  setTablesSelectorPane: function (contextName, endpoint, baseUrl) {    
+    var dbDict = AM.view.nhibernate.dbDict.value;
+    var content = this.getMainContent();
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
+    var editor = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
+    var dataTree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
+    var dbInfo = AM.view.nhibernate.dbInfo.value;
+    var conf = {
+      contextName: contextName,
+      endpoint: endpoint,
+      baseUrl: baseUrl,
+      dbInfo: dbInfo,
+      dataTree: dataTree,
+      height: 300,
+      width: 400,
+      region: 'center',
+      id: contextName + '.' + endpoint + '.tablesselector'
+    };
+    var select = editor.items.map[conf.id];
+    if (!select) {
+      select = Ext.widget('selecttables', conf);
+      editor.items.add(select);
+      editor.doLayout();
     }
+    var panelIndex = editor.items.indexOf(select);
+    editor.getLayout().setActiveItem(panelIndex);    
   },
 
   resettables: function () {
   },
 
   onItemClick: function (view, model, n, index) {
-    var node = model.store.getAt(index);
-    var editor = this.getEditPanel();
-    var tree = this.getDataTree();
+    var dirtree = this.getDirTree(),
+        node = dirtree.getSelectedNode();
     var content = this.getMainContent();
+    var contextName = node.data.record.context;    
+    var endpoint = node.data.record.endpoint;
+    var baseUrl = node.data.record.BaseUrl;    
+    var node = model.store.getAt(index);    
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
+    var editor = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];    
+    var tree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];   
+     
     if (node.isRoot()) {
-      var editor = this.getEditPanel();
-      this.setTablesSelectorPane(editor, tree.contextName, tree.endpoint, tree.baseUrl);
+      this.setTablesSelectorPane(contextName, endpoint, baseUrl);
       return;
     }
     var nodeType = node.data.type.toUpperCase();
 
     if (nodeType) {
-      var editor = this.getEditPanel();
       switch (nodeType) {
         case 'DATAOBJECT':
           this.setDataObject(editor, node, tree.contextName, tree.endpoint);
@@ -239,7 +245,9 @@
   },
 
   onReloadDataObjects: function () {
-    var datatree = this.getDataTree();
+    var content = this.getMainContent(); 
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
+    var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
     datatree.onReload();
   },
 
@@ -251,10 +259,8 @@
     var endpoint = node.data.record.endpoint;
     var baseUrl = node.data.record.BaseUrl;    
     var dbDict = AM.view.nhibernate.dbDict.value;
-    var dbInfo = AM.view.nhibernate.dbInfo.value;    
-
-    var editpan = createMainContentPanel(content, contextName, endpoint, baseUrl);
-
+    var dbInfo = AM.view.nhibernate.dbInfo.value;       
+   
     if (dbDict) {
       var cstr = dbDict.ConnectionString;
       if (cstr)
@@ -271,16 +277,21 @@
       id: contextName + '.' + endpoint + '.conform'
     };
 
+    var content = this.getMainContent(); 
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
+    var editpan = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
     var confrm = editpan.items.map[conf.id];
     if (!confrm) {
       confrm = Ext.widget('connectdatabase', conf);
       editpan.items.add(confrm);
       editpan.doLayout();
-    }
+    } else {
+      confrm.show();
+    }   
 
-    nhtree.disable();
     if (dbInfo)
       confrm.setActiveRecord(dbInfo);
+
     var panelIndex = editpan.items.indexOf(confrm);
     editpan.getLayout().setActiveItem(panelIndex);
   },
@@ -309,7 +320,9 @@
   },
 
   getDbdictionary: function (contextName, endpoint, baseUrl, dirtree, content) {
-    var me = this;
+    var me = this;    
+    var content = me.getMainContent();       
+    createMainContentPanel(content, contextName, endpoint, baseUrl);   
     Ext.Ajax.request({
       url: 'NHibernate/DBDictionary',
       method: 'POST',
@@ -325,9 +338,7 @@
         if (dbDict.ConnectionString != null) {
           var base64 = AM.view.nhibernate.Utility;
           AM.view.nhibernate.dbDict.value.ConnectionString = base64.decode(dbDict.ConnectionString);
-          me.getDataTypes();  
-          var content = me.getMainContent(); 
-          createMainContentPanel(content, contextName, endpoint, baseUrl);        
+          me.getDataTypes();
 
           if (dbDict) {          
             var cstr = dbDict.ConnectionString;
@@ -335,8 +346,9 @@
               var dbInfo = me.getConnStringParts(cstr);
               AM.view.nhibernate.dbInfo.value = dbInfo;
               var selectTableNames = setTableNames(dbDict); 
-              nhpan = me.getDataObjectPanel();
-              var datatree = me.getDataTree();
+              var content = me.getMainContent();    
+              var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
+              var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
     
               datatree.on('beforeload', function (store, operation) {
                 store.proxy.extraParams.dbProvider = dbDict.Provider;
@@ -362,9 +374,13 @@
           }
         }
         else {   
-          var datatree = me.getDataTree();           
-          if (datatree)
-            datatree.disable();
+          var content = me.getMainContent(); 
+          var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
+          if (nhpan) {
+            var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];         
+            if (datatree)
+              datatree.disable();
+          }
 
           if (AM.view.nhibernate.dbInfo.value == null)
             AM.view.nhibernate.dbInfo.value = {};
@@ -373,16 +389,23 @@
         }
       },
       failure: function (response, request) {
-        var dataObjPanel = me.getDataObjectPanel();
+        //var dataObjPanel = content.items.map[contextName + '.' + endpoint + '.-nh-config'];;
       }
     });
   },
 
   applydatatables: function (btn, evt) {
-    var dataObjectPanel = this.getDataObjectPanel();
+    var dirtree = this.getDirTree(),
+        node = dirtree.getSelectedNode();   
+    var content = this.getMainContent(); 
+    var contextName = node.data.record.context;    
+    var endpoint = node.data.record.endpoint;
+    var baseUrl = node.data.record.BaseUrl;    
+    var content = this.getMainContent(); 
+    var dataObjectPanel = content.items.map[contextName + '.' + endpoint + '.-nh-config'];;
     var dbDict = AM.view.nhibernate.dbDict.value;
-    var dbInfo = AM.view.nhibernate.dbInfo.value;
-    var dbObjectsTree = this.getDataTree();
+    var dbInfo = AM.view.nhibernate.dbInfo.value;    
+    var dbObjectsTree = dataObjectPanel.items.map[contextName + '.' + endpoint + '.-nh-tree'];
     var rootNode = dbObjectsTree.getRootNode();
     var tablesSelForm = btn.up('form');
     var dsConfigPane = this.getDsConfigPane();
@@ -490,8 +513,15 @@
   },
 
   connectToDatabase: function (btn, evt) {
+    var dirtree = this.getDirTree(),
+        node = dirtree.getSelectedNode();   
+    var contextName = node.data.record.context;   
+    var endpoint = node.data.record.endpoint;
+    var baseUrl = node.data.record.BaseUrl;    
     var dbDict = AM.view.nhibernate.dbDict.value;
-    var datatree = this.getDataTree();
+    var content = this.getMainContent(); 
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
+    var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
     var form = btn.up('form');
 
     form.getForm().submit({
@@ -512,8 +542,7 @@
     var serviceNamePane = form.items.items[10];
     var dbSchema = form.getForm().findField('dbSchema');
     var servieName = '';
-    var serName = '';
-    var baseUrl = datatree.baseUrl;
+    var serName = '';   
 
     if (dbProvider.indexOf('ORACLE') > -1) {
       dbServer.setValue(host.getValue());
@@ -553,7 +582,7 @@
           dbInfo = {};
 
         dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
-        me.setTablesSelectorPane(me.getEditPanel(), form.contextName, form.endpoint, form.baseUrl, dbInfo.dbTableNames.items, selected);
+        me.setTablesSelectorPane(form.contextName, form.endpoint, form.baseUrl, dbInfo.dbTableNames.items, selected);
         return dbInfo.dbTableNames;
       },
       failure: function (f, a) {
