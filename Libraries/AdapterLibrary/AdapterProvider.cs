@@ -80,7 +80,7 @@ namespace org.iringtools.adapter
 
     private bool _isScopeInitialized = false;
     private bool _isDataLayerInitialized = false;
-    private string _dataLayersBindingPath = string.Empty;
+    private string _dataLayersBindingConfiguration = string.Empty;
 
     [Inject]
     public AdapterProvider(NameValueCollection settings)
@@ -126,7 +126,12 @@ namespace org.iringtools.adapter
         Utility.Write<Resource>(_scopes, scopesPath);
       }
 
-      _dataLayersBindingPath = string.Format("{0}DataLayersBindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
+      _dataLayersBindingConfiguration = string.Format("{0}DataLayersBindingConfiguration.xml", _settings["DataLayersPath"]);
+      if (!Directory.Exists(_settings["DataLayersPath"]))
+      {
+        Directory.CreateDirectory(_settings["DataLayersPath"]);
+      }
+
       string identityBindingRelativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
       // NInject requires full qualified path
@@ -3041,8 +3046,6 @@ namespace org.iringtools.adapter
 
           XElement bindingConfig = Utility.ReadXml(bindingConfigPath);
           string assembly = bindingConfig.Element("bind").Attribute("to").Value;
-
-          string dataLayersPath = string.Format("{0}Adapter.DataLayers.xml", _settings["AppDataPath"]);
           DataLayers dataLayers = GetDataLayers();
 
           foreach (DataLayer dataLayer in dataLayers)
@@ -3100,7 +3103,7 @@ namespace org.iringtools.adapter
                     }
                     else
                     {
-                      throw new Exception("DataLayer does not contain supported constructor.");
+                      throw new Exception("Data layer does not contain supported constructor.");
                     }
 
                     break;
@@ -3298,9 +3301,9 @@ namespace org.iringtools.adapter
       
       try
       {
-        if (File.Exists(_dataLayersBindingPath))
+        if (File.Exists(_dataLayersBindingConfiguration))
         {
-          dataLayers = Utility.Read<DataLayers>(_dataLayersBindingPath);
+          dataLayers = Utility.Read<DataLayers>(_dataLayersBindingConfiguration);
           int dataLayersCount = dataLayers.Count;
 
           //
@@ -3323,7 +3326,7 @@ namespace org.iringtools.adapter
 
           if (dataLayersCount > dataLayers.Count)
           {
-            Utility.Write<DataLayers>(dataLayers, _dataLayersBindingPath);
+            Utility.Write<DataLayers>(dataLayers, _dataLayersBindingConfiguration);
           }
         }
         else
@@ -3335,7 +3338,7 @@ namespace org.iringtools.adapter
             dataLayers.AddRange(internalDataLayers);
           }
 
-          Utility.Write<DataLayers>(dataLayers, _dataLayersBindingPath);
+          Utility.Write<DataLayers>(dataLayers, _dataLayersBindingConfiguration);
         }
       }
       catch (Exception e)
@@ -3394,7 +3397,7 @@ namespace org.iringtools.adapter
             dl = dataLayer;
           }
 
-          Utility.Write<DataLayers>(dataLayers, _dataLayersBindingPath);
+          Utility.Write<DataLayers>(dataLayers, _dataLayersBindingConfiguration);
           response.Messages.Add("Data layer [" + dataLayer.Name + "] added successfully.");
         }
         else
@@ -3433,7 +3436,7 @@ namespace org.iringtools.adapter
           if (dl.External)
           {
             dataLayers.Remove(dl);
-            Utility.Write<DataLayers>(dataLayers, _dataLayersBindingPath);
+            Utility.Write<DataLayers>(dataLayers, _dataLayersBindingConfiguration);
 
             response.Level = StatusLevel.Success;
             response.Messages.Add("Data layer [" + dataLayerName + "] deleted successfully.");
