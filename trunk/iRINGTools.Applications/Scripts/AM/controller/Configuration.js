@@ -174,9 +174,7 @@
       endpoint: endpoint,
       baseUrl: baseUrl,
       dbInfo: dbInfo,
-      dataTree: dataTree,
-      height: 300,
-      width: 400,
+      dataTree: dataTree,      
       region: 'center',
       id: contextName + '.' + endpoint + '.tablesselector'
     };

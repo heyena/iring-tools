@@ -27,9 +27,7 @@ Ext.application({
     Ext.get('about-link').on('click', function () {
       var win = Ext.create('Ext.window.Window', {
         title: 'About Adapter Manager',
-        bodyStyle: 'background-color:white;padding:5px',
-        width: 700,
-        height: 500,
+        bodyStyle: 'background-color:white;padding:5px',        
         closable: true,
         resizable: false,
         autoScroll: true,
