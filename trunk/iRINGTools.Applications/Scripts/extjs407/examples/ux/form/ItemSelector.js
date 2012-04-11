@@ -65,7 +65,8 @@ Ext.define('Ext.ux.form.ItemSelector', {
     componentLayout: 'itemselectorfield',
 
     fieldBodyCls: Ext.baseCSSPrefix + 'form-itemselector-body',
-
+    listAvailable: null,
+    listSelected: null,
 
     bindStore: function(store, initial) {
         var me = this,
@@ -77,7 +78,7 @@ Ext.define('Ext.ux.form.ItemSelector', {
 
         if (toField) {
             // Clear both field stores
-            toField.store.removeAll();
+            //toField.store.removeAll();
             fromField.store.removeAll();
 
             // Clone the contents of the main store into the fromField
@@ -87,7 +88,7 @@ Ext.define('Ext.ux.form.ItemSelector', {
             });
             fromField.store.add(models);
         }
-    },
+    },   
 
     onRender: function(ct, position) {
         var me = this,
@@ -97,13 +98,15 @@ Ext.define('Ext.ux.form.ItemSelector', {
                 displayField: me.displayField,
                 valueField: me.valueField,
                 dragGroup: ddGroup,
+
                 dropGroup: ddGroup,
                 flex: 1,
                 hideLabel: true,
-                disabled: me.disabled
+                disabled: me.disabled,
+                height: (this.height || 200)
             },
             fromConfig = Ext.apply({
-                listTitle: 'Available',
+                listTitle: (this.listAvailable || 'Available'),
                 store: Ext.create('Ext.data.Store', {model: me.store.model}), //blank store to begin
                 listeners: {
                     boundList: {
@@ -113,7 +116,7 @@ Ext.define('Ext.ux.form.ItemSelector', {
                 }
             }, me.multiselects[0], commonConfig),
             toConfig = Ext.apply({
-                listTitle: 'Selected',
+                listTitle: (this.listSelected || 'Selected'),
                 store: Ext.create('Ext.data.Store', {model: me.store.model}), //blank store to begin
                 listeners: {
                     boundList: {
