@@ -6,7 +6,7 @@ using System.Data;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.iringtools.datalayer;
+using org.iringtools.adapter.datalayer;
 
 namespace ebTest
 {
