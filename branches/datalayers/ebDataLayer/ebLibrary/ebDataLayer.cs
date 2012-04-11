@@ -12,7 +12,7 @@ using org.iringtools.utility;
 using System.Data;
 using System.Text.RegularExpressions;
 
-namespace org.iringtools.datalayer
+namespace org.iringtools.adapter.datalayer
 {
   public class ebDataLayer : BaseDataLayer
   {
