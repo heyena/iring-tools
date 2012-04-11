@@ -22,6 +22,7 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
   bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
   labelWidth: 140,
   monitorValid: true,
+  selectItems: null,
 
   initComponent: function () {
     var me = this;
@@ -33,7 +34,8 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
     var dbDict = this.dbDict;
 
     var availItems = setAvailTables(dataTree, dbInfo.dbTableNames);
-    var selectItems = setSelectTables(dataTree);
+    this.selectItems = setSelectTables(dataTree);
+    var selectItems = this.selectItems;
 
     this.items = [{
       xtype: 'label',
@@ -45,9 +47,12 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
       name: 'tableSelector',
       anchor: '100%',
       hideLabel: true,
+      listAvailable: 'Available Tables',
+      listSelected: 'Selected Tables',
+      height: 370,
       bodyStyle: 'background:#eee',
       frame: true,
-      imagePath: 'Scripts/extjs407/examples/ux/css/images',      
+      imagePath: 'Scripts/extjs407/examples/ux/css/images',
       displayField: 'tableName',
       store: availItems,
       valueField: 'tableValue',
@@ -97,9 +102,7 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
         tooltip: 'Reset to the latest applied changes',
         handler: function () {
           var rootNode = dataTree.getRootNode();
-          var selectTableNames = new Array();
           var selectTableNamesSingle = new Array();
-          var firstSelectTableNames = new Array();
           var availTableName = new Array();
           var found = false;
           var repeatItem;
@@ -110,7 +113,7 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
 
           for (var j = 0; j < availTableName.length; j++)
             for (var i = 0; i < rootNode.childNodes.length; i++) {
-              if (rootNode.childNodes[i].data.property.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
+              if (rootNode.childNodes[i].data.property.tableName.toLowerCase() == availTableName[j][0].toLowerCase()) {
                 found = true;
                 availTableName.splice(j, 1);
                 j--;
@@ -120,54 +123,30 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
 
           for (var i = 0; i < rootNode.childNodes.length; i++) {
             var nodeText = rootNode.childNodes[i].data.property.tableName;
-            selectTableNames.push([nodeText, nodeText]);
             selectTableNamesSingle.push(nodeText);
           }
 
           var tablesSelector = me.items.items[1];
+          var list = tablesSelector.toField.boundList;
+          var store = list.getStore();
 
-          if (selectTableNames[0]) {
-            firstSelectTableNames.push(selectTableNames[0]);            
-
-            if (tablesSelector.toField.store.data) {
-              tablesSelector.toField.reset();
-              tablesSelector.toField.store.removeAll();
-            }
-
-            tablesSelector.toField.store.loadData(firstSelectTableNames);
-            var firstSelectTables = tablesSelector.toField.store.data.items;
-            var loadSingle = false;
-            var selectTableName = firstSelectTables[0].data.text;
-
-            if (selectTableName[1])
-              if (selectTableName[1].length > 1)
-                var loadSingle = true;
-
-            tablesSelector.toField.reset();
-            tablesSelector.toField.store.removeAll();
-
-            if (!loadSingle)
-              tablesSelector.toField.store.loadData(selectTableNames);
-            else
-              tablesSelector.toField.store.loadData(selectTableNamesSingle);
-
-            tablesSelector.toField.store.commitChanges();
+          if (store.data) {
+            store.removeAll();
           }
-          else {            
-            if (tablesSelector.toField) {
-              tablesSelector.toField.reset();
-              tablesSelector.toField.store.removeAll();              
-            }
+
+          for (var i = 0; i < selectTableNamesSingle.length; i++) {
+            store.insert(i + 1, 'field1');
+            store.data.items[i].data.field1 = selectTableNamesSingle[i];
           }
+
+          list.refresh();
 
           if (tablesSelector.fromField.store.data) {
-            tablesSelector.fromField.reset();
             tablesSelector.fromField.store.removeAll();
           }
 
           tablesSelector.fromField.store.loadData(availTableName);
-          tablesSelector.fromField.reset();
-                   
+
           if (dbDict)
             me.getForm().findField('enableSummary').setValue(dbDict.enableSummary);
         }
@@ -199,7 +178,7 @@ function setAvailTables(dbObjectsTree, dbTableNames) {
     if (!dbObjectsTree.disabled) {
       for (var j = 0; j < availTableName.length; j++)
         for (var i = 0; i < rootNode.childNodes.length; i++) {
-          if (rootNode.childNodes[i].attributes.properties.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
+          if (rootNode.childNodes[i].data.property.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
             found = true;
             availTableName.splice(j, 1);
             j--;
@@ -217,8 +196,8 @@ function setSelectTables(dbObjectsTree) {
   if (!dbObjectsTree.disabled) {
     var rootNode = dbObjectsTree.getRootNode();
     for (var i = 0; i < rootNode.childNodes.length; i++) {
-      var nodeText = rootNode.childNodes[i].attributes.properties.tableName;
-      selectTableNames.push([nodeText, nodeText]);
+      var nodeText = rootNode.childNodes[i].data.property.tableName;
+      selectTableNames.push(nodeText);
     }
   }
 

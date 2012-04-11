@@ -468,35 +468,6 @@ namespace org.iringtools.web.Controllers
       }
     }
 
-    public ActionResult ParseConnectionString(FormCollection form)
-    {
-      string connStr = string.Empty;
-      string dbProvider = form["dbProvider"];
-      string dbServer = form["dbServer"];
-      string dbInstance = form["dbInstance"];
-      string dbName = form["dbName"];
-      string dbUserName = form["dbUserNAme"];
-      string dbPassword = form["dbPassword"];
-      string portNumber = form["portNumber"];
-      string serName = form["serName"];
-      try
-      {
-        if (dbProvider.ToUpper().Contains("MSSQL"))
-          connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
-            dbServer, dbInstance, dbName, dbUserName, dbPassword);
-        else
-          connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}",
-            dbServer, portNumber, serName, dbInstance, dbUserName, dbPassword);
-
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
-      return Json(connStr, JsonRequestBehavior.AllowGet);
-    }
-
     public ActionResult TableNames(FormCollection form)
     {
       JsonContainer<List<string>> container = new JsonContainer<List<string>>();
@@ -507,7 +478,6 @@ namespace org.iringtools.web.Controllers
           form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
           form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"], form["serName"],
           form["baseUrl"]);
-
 
         container.items = dataObjects;
         container.success = true;
