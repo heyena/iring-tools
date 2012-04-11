@@ -8,8 +8,8 @@
     <ProjectGuid>{2EEBBD3F-C066-4990-8154-26E287464E09}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpreadsheetDatalayer</RootNamespace>
-    <AssemblyName>SpreadsheetDatalayer</AssemblyName>
+    <RootNamespace>org.iringtools.adapter.datalayer</RootNamespace>
+    <AssemblyName>SpreadsheetLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
