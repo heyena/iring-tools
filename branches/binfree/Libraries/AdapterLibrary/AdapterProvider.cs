@@ -85,6 +85,9 @@ namespace org.iringtools.adapter
     [Inject]
     public AdapterProvider(NameValueCollection settings)
     {
+      AppDomain currentDomain = AppDomain.CurrentDomain;
+      currentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolveEventHandler);
+
       var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
       _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
 
@@ -3481,8 +3484,9 @@ namespace org.iringtools.adapter
     }
 
     private Assembly GetDataLayerAssembly(DataLayer dataLayer)
-    {
-      return Assembly.LoadFrom(dataLayer.Path + dataLayer.MainDLL);
+    {      
+      byte[] bytes = Utility.GetBytes(dataLayer.Path + dataLayer.MainDLL);
+      return Assembly.Load(bytes);
     }
 
     private string GetDataLayerAssemblyName(Assembly assembly)
@@ -3505,6 +3509,27 @@ namespace org.iringtools.adapter
       }
 
       return string.Empty;
+    }
+
+    private Assembly AssemblyResolveEventHandler(object sender, ResolveEventArgs args)
+    {
+      string[] files = Directory.GetFiles(_settings["DataLayerPath"]);
+
+      foreach (string file in files)
+      {
+        if (file.ToLower().EndsWith(".dll") || file.ToLower().EndsWith(".exe"))
+        {
+          AssemblyName asmName = AssemblyName.GetAssemblyName(file);
+
+          if (args.Name.StartsWith(asmName.Name))
+          {
+            byte[] bytes = Utility.GetBytes(file);
+            return Assembly.Load(bytes);
+          }
+        }
+      }
+
+      throw new Exception("Unable to resolve assembly [" + args.Name + "].");
     }
     #endregion data layer management methods
 
