@@ -19,8 +19,6 @@ namespace iRINGTools.Web.Models
 
     Tree GetDirectoryTree(string user);
 
-    DataLayer GetDataLayer(string contextName, string endpoint, string baseUrl);
-
     Mapping GetMapping(string contextName, string endpoint, string baseUrl);
 
     DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl);

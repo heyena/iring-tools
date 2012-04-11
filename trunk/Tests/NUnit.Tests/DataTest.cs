@@ -41,7 +41,7 @@ namespace NUnit.Tests
       string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
 
       Resource importScopes = Utility.Read<Resource>(scopesPath);
-      _adapterProvider.setScopes(importScopes);
+      _adapterProvider.SetScopes(importScopes);
 
       ResetDatabase();
     }

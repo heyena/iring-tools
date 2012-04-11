@@ -70,9 +70,6 @@
     this.generateMenu = new Ext.menu.Menu();
     this.generateMenu.add(this.buildGenerateMenu());
 
-    this.scopesGenerateMenu = new Ext.menu.Menu();
-    this.scopesGenerateMenu.add(this.buildScopesGenerateMenu());
-
     this.scopeMenu = new Ext.menu.Menu();
     this.scopeMenu.add(this.buildScopeMenu());
 
@@ -141,29 +138,36 @@
 
   buildScopesMenu: function () {
     return [
-      {
+    {
         xtype: 'button',
         text: 'New Folder',
         icon: 'Content/img/16x16/document-new.png',
         scope: this,
         action: 'newscope'
-      }]
-  },
-
-  buildScopesGenerateMenu: function () {
-    return [
+    },
     {
-      xtype: 'button',
-      text: 'New Folder',
-      icon: 'Content/img/16x16/document-new.png',
-      scope: this,
-      action: 'newscope'
-    }, {
-      xtype: 'button',
-      text: 'Generate NH Files',
-      icon: 'Content/img/16x16/document-new.png',
-      scope: this,
-      action: 'regenerateAll'     
+        xtype: 'menuseparator'
+    },
+    {
+        xtype: 'button',
+        text: 'Add Data Layer',
+        icon: 'Content/img/16x16/document-new.png',
+        scope: this,
+        action: 'newDataLayer'
+    },
+    {
+        xtype: 'button',
+        text: 'Edit Data Layer',
+        icon: 'Content/img/16x16/edit-delete.png',
+        scope: this,
+        action: 'editDataLayer'
+    },
+    {
+        xtype: 'button',
+        text: 'Delete Data Layer',
+        icon: 'Content/img/16x16/edit-delete.png',
+        scope: this,
+        action: 'deleteDataLayer'
     }]
   },
 
@@ -171,7 +175,7 @@
     return [
     {
       xtype: 'button',
-      text: 'Generate NH Files',
+      text: 'Regenerate Hibernate artifacts',
       icon: 'Content/img/16x16/document-new.png',
       scope: this,
       action: 'regenerateAll'      
