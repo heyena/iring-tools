@@ -219,21 +219,6 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public DataLayer GetDataLayer(string context, string endpoint, string baseUrl)
-    {
-      XElement binding = GetBinding(context, endpoint, baseUrl);
-      DataLayer dataLayer = null;
-
-      if (binding != null)
-      {
-        dataLayer = new DataLayer();
-        dataLayer.Assembly = binding.Element("bind").Attribute("to").Value;
-        dataLayer.Name = binding.Element("bind").Attribute("to").Value.Split(',')[1].Trim();
-      }
-
-      return dataLayer;
-    }
-
     public string PostScopes(Directories scopes)
     {
       string obj = null;
@@ -942,14 +927,6 @@ namespace iRINGTools.Web.Models
           if (endpoint.BaseUrl != null)
             baseUrl = endpoint.BaseUrl + "/adapter";
           
-          DataLayer dataLayer = GetDataLayer(context, endpointName, baseUrl);
-
-          if (dataLayer != null)
-          {
-            assembly = dataLayer.Assembly;
-            dataLayerName = dataLayer.Name;
-          }
-
           Object record = new
           {
             Name = endpointName,
