@@ -435,5 +435,10 @@ namespace org.iringtools.library
     {
       return null;
     }
+
+    public virtual Picklists GetPicklist(string name, int start, int limit)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

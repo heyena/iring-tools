@@ -37,18 +37,22 @@ namespace org.iringtools.library
     public DataDictionary()
     {
       dataObjects = new List<DataObject>();
+      picklists = new List<PicklistDefinition>();
     }
 
     [DataMember(Order = 0)]
     public List<DataObject> dataObjects { get; set; }
 
     [DataMember(Order = 1)]
-    public bool enableSearch { get; set; }
+    public List<PicklistDefinition> picklists { get; set; }
 
     [DataMember(Order = 2)]
-    public bool enableSummary { get; set; }
+    public bool enableSearch { get; set; }
 
     [DataMember(Order = 3)]
+    public bool enableSummary { get; set; }
+
+    [DataMember(Order = 4)]
     public string dataVersion { get; set; }
 
     public static bool IsNumeric(DataType dataType)
@@ -306,5 +310,30 @@ namespace org.iringtools.library
     @Single,
     [EnumMember]
     @String
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.org/library")]
+  public class PicklistDefinition
+  {
+    [DataMember(IsRequired = true, Order = 0)]
+    public string name { get; set; }
+
+    [DataMember(IsRequired = false, Order = 1)]
+    public string title { get; set; }
+
+    [DataMember(IsRequired = false, Order = 2)]
+    public int valueColumnIndex { get; set; }
+
+    [DataMember(IsRequired = false, Order = 3)]
+    public string fieldList { get; set; }
+
+    [DataMember(IsRequired = false, Order = 4)]
+    public string tableName { get; set; }
+
+    [DataMember(IsRequired = false, Order = 5)]
+    public string filterBy { get; set; }
+
+    [DataMember(IsRequired = false, Order = 6)]
+    public string orderBy { get; set; }
   }
 }
