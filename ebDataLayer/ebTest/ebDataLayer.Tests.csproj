@@ -72,7 +72,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests.cs" />
   </ItemGroup>
@@ -80,13 +79,13 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EBLibrary\ebLibrary.csproj">
-      <Project>{7B0A6054-3108-4ADA-B006-6510C9EE2141}</Project>
-      <Name>ebLibrary</Name>
-    </ProjectReference>
+    <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <ProjectReference Include="..\EBLibrary\ebDataLayer.csproj">
+      <Project>{7B0A6054-3108-4ADA-B006-6510C9EE2141}</Project>
+      <Name>ebDataLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

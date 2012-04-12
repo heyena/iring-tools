@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eBDataLayer.Tests", "ebTest\eBDataLayer.Tests.csproj", "{D71635C0-974C-415F-8154-855DC2924EF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ebDataLayer.Tests", "ebTest\ebDataLayer.Tests.csproj", "{D71635C0-974C-415F-8154-855DC2924EF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eBDataLayer", "EBLibrary\eBDataLayer.csproj", "{7B0A6054-3108-4ADA-B006-6510C9EE2141}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ebDataLayer", "EBLibrary\ebDataLayer.csproj", "{7B0A6054-3108-4ADA-B006-6510C9EE2141}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnit.Runner", "NUnit.Runner\NUnit.Runner.csproj", "{47E9D680-C10C-46B6-BDC8-68CEFC037AFE}"
 EndProject
