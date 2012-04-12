@@ -2462,6 +2462,28 @@ namespace org.iringtools.adapter
       }
     }
 
+    public Picklists GetPicklist(string projectName, string applicationName, string picklistName,
+          string format, int start, int limit)
+    {
+      string dataObjectName = String.Empty;
+      Picklists obj = new Picklists();
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+        //InitializeProjection(resourceName, ref format, true);
+
+        obj = _dataLayer.GetPicklist(picklistName, start, limit);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetPicklist: {0}", ex));
+        throw ex;
+      }
+
+      return obj;
+    }
+
     //Related
     public XDocument GetDataProjection(
         string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
