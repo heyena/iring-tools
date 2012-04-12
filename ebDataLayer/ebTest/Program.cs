@@ -7,6 +7,7 @@ using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.adapter.datalayer;
+using System.Reflection;
 
 namespace ebTest
 {
@@ -16,21 +17,59 @@ namespace ebTest
     {
       try
       {
-        string dataPath = @"C:\development\csharp\ebTest\EBLibrary\App_Data\";
+        string baseDir = typeof(ebDataLayer).Assembly.Location.Replace(@"ebTest\bin\Debug\ebLibrary.dll", "");
 
         AdapterSettings settings = new AdapterSettings();
-        settings["AppDataPath"] = dataPath;
+        settings["AppDataPath"] = baseDir + @"ebLibrary\App_Data\";
         settings["ProjectName"] = "MPower";
         settings["ApplicationName"] = "Pilot";
-        settings["eb_server"] = "chist95004.amers.ibechtel.com";
-        settings["eb_datasource"] = "ebInsight";
-        settings["eb_username"] = "admin";
-        settings["eb_password"] = "wZf4K0P6bBju40XrrV66vg==";
+
+        // MPower.Pilot settings
+        settings["ebServer"] = "chist95004.amers.ibechtel.com";
+        settings["ebDataSource"] = "ebInsight";
+        settings["ebUserName"] = "admin";
+        settings["ebPassword"] = "wZf4K0P6bBju40XrrV66vg==";
+        settings["ebClassCodes"] = "ELECT, AE, MECH, LINE, VALVE";
+        settings["ebMetadataQuery.1"] = @"
+            select d.char_name, d.char_data_type, d.char_length, 0 as readonly from class_objects a 
+            inner join class_attributes c on c.class_id = a.class_id
+            inner join characteristics d on c.char_id = d.char_id
+            where a.code = '{0}'
+            union select 'Class.Code', 'String', 255, 1
+            union select 'Id', 'Int32', 4, 1
+            union select 'Code', 'String', 100, 1
+            union select 'Middle', 'String', 100, 1
+            union select 'Revision', 'String', 100, 1
+            union select 'DateEffective', 'DateTime', 0, 1
+            union select 'Name', 'String', 255, 1
+            union select 'ChangeControlled', 'String', 1, 1
+            union select 'ApprovalStatus', 'String', 1, 1
+            union select 'Remark', 'String', 255, 1
+            union select 'Synopsis', 'String', 255, 1
+            union select 'DateObsolete', 'DateTime', 0, 1
+            union select 'Class.Id', 'Int32', 8, 1";
+        settings["ebMetadataQuery.17"] = @"
+            select d.char_name, d.char_data_type, d.char_length, 0 as readonly from class_objects a 
+            inner join class_attributes c on c.class_id = a.class_id
+            inner join characteristics d on c.char_id = d.char_id
+            where a.code = '{0}'
+            union select 'Class.Code', 'String', 255, 1
+            union select 'Id', 'Int32', 4, 1
+            union select 'Class.Id', 'Int32', 4, 1
+            union select 'PrimaryPhysicalItem.Id', 'Int32', 4, 1
+            union select 'Code', 'String', 100, 1
+            union select 'Revision', 'String', 100, 1
+            union select 'Name', 'String', 255, 1
+            union select 'Description', 'String', 4000, 1
+            union select 'ApprovalStatus', 'String', 1, 1
+            union select 'ChangeControlled', 'String', 1, 1
+            union select 'OperationalStatus', 'String', 1, 1
+            union select 'Quantity', 'Int32', 8, 1";
 
         ebDataLayer dataLayer = new ebDataLayer(settings);
         DataDictionary ebDictionary = dataLayer.GetDictionary();
 
-        IList<IDataObject> objects = dataLayer.Get("T0046", null, 0, 0);
+        //IList<IDataObject> objects = dataLayer.Get("T0046", null, 0, 0);
       }
       catch (Exception e)
       {
