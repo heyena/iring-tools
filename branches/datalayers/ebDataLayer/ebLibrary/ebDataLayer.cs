@@ -11,21 +11,145 @@ using Ninject;
 using org.iringtools.utility;
 using System.Data;
 using System.Text.RegularExpressions;
+using eB.Common.Enum;
 
 namespace org.iringtools.adapter.datalayer
 {
   public class ebDataLayer : BaseDataLayer
   {
-    private string _dictionaryPath = String.Empty;
+    private string _appDataPath = string.Empty;
+    private string _scope = string.Empty;
+    private string _dictionaryXML = string.Empty;  
+
+    private string _server = string.Empty;
+    private string _dataSource = string.Empty;
+    private string _userName = string.Empty;
+    private string _password = string.Empty;
+    private string _groups = string.Empty;
+    private string _classCodes = string.Empty; 
 
     [Inject]
     public ebDataLayer(AdapterSettings settings)
       : base(settings)
     {
-      _dictionaryPath = string.Format("{0}DataDictionary.{1}.{2}.xml",
-          settings["AppDataPath"],
-          settings["ProjectName"],
-          settings["ApplicationName"]);
+      _appDataPath = settings["AppDataPath"];
+      _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
+      _dictionaryXML = string.Format("{0}DataDictionary.{1}.xml", _appDataPath, _scope);
+
+      _server = _settings["ebServer"];
+      _dataSource = _settings["ebDataSource"];
+      _userName = _settings["ebUserName"];
+      _password = _settings["ebPassword"];
+      _classCodes = _settings["ebClassCodes"];
+    }
+
+    public override DataDictionary GetDictionary()
+    {
+      DataDictionary dictionary = new DataDictionary();
+
+      if (System.IO.File.Exists(_dictionaryXML))
+        return Utility.Read<DataDictionary>(_dictionaryXML);
+
+      try
+      {
+        Connect();
+
+        string cosQuery = "select * from class_objects";
+        if (!string.IsNullOrEmpty(_classCodes))
+        {
+          string[] codes = _classCodes.Split(',');
+
+          for (int i = 0; i < codes.Length; i++)
+          {
+            codes[i] = "'" + codes[i].Trim() + "'";
+          }
+
+          cosQuery += " where code in (" + string.Join(",", codes) + ")";
+        }
+
+        XmlDocument cosDoc = new XmlDocument();
+        int status = 0;
+        string cosResults = proxy.query(cosQuery, ref status);
+        cosDoc.LoadXml(cosResults);
+
+        foreach (XmlNode coNode in cosDoc.DocumentElement.ChildNodes)
+        {
+          string classCode = coNode.SelectSingleNode("code").InnerText;
+          string className = coNode.SelectSingleNode("name").InnerText;
+          string groupId = coNode.SelectSingleNode("group_id").InnerText;
+
+          DataObject dataObjectDef = new DataObject();
+          dataObjectDef.objectName = className;
+          dataObjectDef.tableName = groupId;
+
+          string ebMetadataQuery = _settings["ebMetadataQuery." + groupId];
+
+          if (string.IsNullOrEmpty(ebMetadataQuery))
+            throw new Exception("No meta query configured for group_id [" + groupId + "]");
+
+          string attrsMeatadataQuery = string.Format(ebMetadataQuery, classCode);
+
+          XmlDocument attrsDoc = new XmlDocument();
+          string attrsResults = proxy.query(attrsMeatadataQuery, ref status);
+          attrsDoc.LoadXml(attrsResults);
+
+          foreach (XmlNode attrNode in attrsDoc.DocumentElement.ChildNodes)
+          {
+            DataProperty dataProp = new DataProperty();
+            dataProp.columnName = attrNode.SelectSingleNode("char_name").InnerText;
+            dataProp.propertyName = Regex.Replace(dataProp.columnName, @" |\.", "");
+            dataProp.dataType = ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
+            dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
+            dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;
+            dataObjectDef.dataProperties.Add(dataProp);
+          }
+
+          dataObjectDef.keyDelimeter = ";";
+          switch (groupId)
+          {
+            case "1":
+              dataObjectDef.keyProperties = new List<KeyProperty>()
+              {
+                new KeyProperty() {
+                  keyPropertyName = "Code",
+                },
+                new KeyProperty() {
+                  keyPropertyName = "Middle",
+                },
+                new KeyProperty() {
+                  keyPropertyName = "Revision",
+                }
+              };
+              break;
+
+            case "17":
+              dataObjectDef.keyProperties = new List<KeyProperty>()
+              {
+                new KeyProperty() {
+                  keyPropertyName = "PrimaryPhysicalItem.Id",
+                },
+                new KeyProperty() {
+                  keyPropertyName = "Code",
+                }
+              };
+              break;
+          }
+
+          dictionary.dataObjects.Add(dataObjectDef);
+        }
+
+        Utility.Write<DataDictionary>(dictionary, _dictionaryXML);
+      }
+      catch (Exception e)
+      {
+        throw e;
+      }
+      finally
+      {
+        Disconnect();
+      }
+
+      return dictionary;
     }
 
     public Proxy proxy { get; set; }
@@ -35,15 +159,15 @@ namespace org.iringtools.adapter.datalayer
     public void Connect()
     {
       proxy = new Proxy();
-      int ret = proxy.connect(0, _settings["eb_server"]);
+
+      int ret = proxy.connect(0, _server);
 
       if (ret < 0)
       {
         throw new Exception(proxy.get_error(ret));
       }
 
-      ret = proxy.logon(0, _settings["eb_datasource"], _settings["eb_username"], 
-        EncryptionUtility.Decrypt(_settings["eb_password"]));
+      ret = proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
       if (ret < 0)
       {
         throw new Exception(proxy.get_error(ret));
@@ -160,149 +284,24 @@ namespace org.iringtools.adapter.datalayer
       return (tagId);
     }
 
-    public override DataDictionary GetDictionary()
+    protected DataType ToCSharpType(string type)
     {
-      DataDictionary dictionary = new DataDictionary();
-            
-      if (System.IO.File.Exists(_dictionaryPath))
-        return Utility.Read<DataDictionary>(_dictionaryPath);
-
-      try
+      // convert ebType to known type
+      switch (type)
       {
-        Connect();
-
-        string cosQuery = "select * from class_objects where group_id in (1, 17)";
-
-        XmlDocument cosDoc = new XmlDocument();
-        int status = 0;
-        string cosResults = proxy.query(cosQuery, ref status);
-        cosDoc.LoadXml(cosResults);
-
-        foreach (XmlNode coNode in cosDoc.DocumentElement.ChildNodes)
-        {
-          string classCode = coNode.SelectSingleNode("code").InnerText.Trim();
-          int groupId = int.Parse(coNode.SelectSingleNode("group_id").InnerText);
-
-          DataObject dataObjectDef = new DataObject();
-          dataObjectDef.objectName = classCode;
-
-          string attrsQuery = @"
-              select d.char_name, d.char_data_type, d.char_length, 0 as readonly from class_objects a 
-              inner join class_attributes c on c.class_id = a.class_id
-              inner join characteristics d on c.char_id = d.char_id
-              where a.code = '{0}'";
-
-          attrsQuery = string.Format(attrsQuery, classCode);
-
-          //TODO: use sysobjects, ebType & .net map
-          //      use namespace.id and class.id to query for existing
-          switch (groupId)
-          {
-            case 1:
-              dataObjectDef.tableName = "Documents." + classCode;
-              attrsQuery += @"
-                 union select 'Class.Code', 'String', 255, 1
-                 union select 'Id', 'Int32', 255 , 1
-                 union select 'Code', 'String', 100, 1
-                 union select 'Middle', 'String', 100, 1
-                 union select 'Revision', 'String', 100, 1
-                 union select 'DateEffective', 'DateTime', 100, 1
-                 union select 'Name', 'String', 255, 1
-                 union select 'ChangeControlled', 'String', 1, 1
-                 union select 'ApprovalStatus', 'String', 1, 1
-                 union select 'Remark', 'String', 255, 1
-                 union select 'Synopsis', 'String', 255, 1
-                 union select 'DateObsolete', 'DateTime', 100, 1
-                 union select 'Class.Id', 'Int32', 8, 1";
-              break;
-            case 17:
-              dataObjectDef.tableName = "Tags." + classCode;
-              attrsQuery += @"
-                 union select 'Class.Code', 'String', 255, 1
-                 union select 'Id', 'Int32', 255, 1
-                 union select 'Class.Id', 'Int32', 255, 1
-                 union select 'PrimaryPhysicalItem.Id', 'Int32', 100, 1
-                 union select 'Code', 'String', 100, 1
-                 union select 'Revision', 'String', 100, 1
-                 union select 'Name', 'String', 255, 1
-                 union select 'Description', 'String', 1000, 1
-                 union select 'ApprovalStatus', 'String', 1, 1
-                 union select 'ChangeControlled', 'String', 1, 1
-                 union select 'OperationalStatus', 'String', 1, 1
-                 union select 'Quantity', 'Int32', 8, 1";
-              break;
-            //case 22:
-            //  attrsQuery = string.Format(attrsQuery, "Relationships");
-            //  break;
-            default:
-              attrsQuery = string.Format(attrsQuery, classCode);
-              break;
-          }
-
-          XmlDocument attrsDoc = new XmlDocument();
-          string attrsResults = proxy.query(attrsQuery, ref status);
-          attrsDoc.LoadXml(attrsResults);
-
-          foreach (XmlNode attrNode in attrsDoc.DocumentElement.ChildNodes)
-          {
-            DataProperty dataProp = new DataProperty();
-            dataProp.columnName = attrNode.SelectSingleNode("char_name").InnerText.Trim();
-            dataProp.propertyName = Regex.Replace(dataProp.columnName, @" |\.", "");
-            dataProp.dataType = ToSystemType(attrNode.SelectSingleNode("char_data_type").InnerText);
-            dataProp.isReadOnly = (attrNode.SelectSingleNode("readonly").InnerText == "0") ? true : false;
-            dataObjectDef.dataProperties.Add(dataProp);
-          }
-                    
-          dataObjectDef.keyDelimeter = ";";
-          switch (groupId)
-          {
-            case 1:
-              dataObjectDef.keyProperties = new List<KeyProperty>()
-              {
-                new KeyProperty() {
-                  keyPropertyName = "Code",
-                },
-                new KeyProperty() {
-                  keyPropertyName = "Middle",
-                },
-                new KeyProperty() {
-                  keyPropertyName = "Revision",
-                }
-              };
-              break;
-            case 17: 
-              dataObjectDef.keyProperties = new List<KeyProperty>()
-              {
-                new KeyProperty() {
-                  keyPropertyName = "PrimaryPhysicalItem.Id",
-                },
-                new KeyProperty() {
-                  keyPropertyName = "Code",
-                }
-              };
-              break;
-          }
-
-          dictionary.dataObjects.Add(dataObjectDef);
-        }
-
-        Utility.Write<DataDictionary>(dictionary, _dictionaryPath);
-      }
-      catch (Exception e)
-      {
-        throw e;
-      }
-      finally
-      {
-        Disconnect();
+        case "CH":
+        case "PD":
+          type = "String";
+          break;
+        case "NU":
+          type = "Decimal";
+          break;        
+        case "DA":
+          type = "DateTime";
+          break;
       }
 
-      return dictionary;
-    }
-
-    protected DataType ToSystemType(string ebType)
-    {
-      return DataType.String;
+      return (DataType)Enum.Parse(typeof(DataType), type, true);
     }
     
     protected DataTable ExecuteSearch(Session session, string eql, object[] parameters, int pageSize = -1)
@@ -490,7 +489,7 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
-        System.IO.File.Delete(_dictionaryPath);
+        System.IO.File.Delete(_dictionaryXML);
         GetDictionary();
         response.Level = StatusLevel.Success;
       }
