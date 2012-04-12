@@ -8,7 +8,7 @@
     <ProjectGuid>{7B0A6054-3108-4ADA-B006-6510C9EE2141}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.datalayer</RootNamespace>
+    <RootNamespace>org.iringtools.adaper.datalayer</RootNamespace>
     <AssemblyName>ebLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ebDataLayer.cs" />
+    <Compile Include="GroupType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

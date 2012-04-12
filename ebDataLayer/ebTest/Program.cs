@@ -29,8 +29,8 @@ namespace ebTest
         settings["ebDataSource"] = "ebInsight";
         settings["ebUserName"] = "admin";
         settings["ebPassword"] = "wZf4K0P6bBju40XrrV66vg==";
-        settings["ebClassCodes"] = "ELECT, AE, MECH, LINE, VALVE";
-        settings["ebMetadataQuery.1"] = @"
+        settings["ebClassCodes"] = "Tag.ELECT, Tag.AE, Tag.MECH, Document.LINE, Document.VLVS, Document.MECH";
+        settings["ebMetadataQuery.Tag"] = @"
             select d.char_name, d.char_data_type, d.char_length, 0 as readonly from class_objects a 
             inner join class_attributes c on c.class_id = a.class_id
             inner join characteristics d on c.char_id = d.char_id
@@ -48,7 +48,7 @@ namespace ebTest
             union select 'Synopsis', 'String', 255, 1
             union select 'DateObsolete', 'DateTime', 0, 1
             union select 'Class.Id', 'Int32', 8, 1";
-        settings["ebMetadataQuery.17"] = @"
+        settings["ebMetadataQuery.Document"] = @"
             select d.char_name, d.char_data_type, d.char_length, 0 as readonly from class_objects a 
             inner join class_attributes c on c.class_id = a.class_id
             inner join characteristics d on c.char_id = d.char_id
