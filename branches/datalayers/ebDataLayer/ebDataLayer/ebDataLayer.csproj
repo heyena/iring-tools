@@ -33,23 +33,19 @@
   <ItemGroup>
     <Reference Include="eB.Common, Version=15.3.2.261, Culture=neutral, PublicKeyToken=a3739844efdab314, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\eB.Common.dll</HintPath>
+      <HintPath>..\lib\eb\eB.Common.dll</HintPath>
     </Reference>
     <Reference Include="eB.Service.Proxy, Version=15.3.2.261, Culture=neutral, PublicKeyToken=bb56b8c969e865be, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\eB.Service.Proxy.dll</HintPath>
+      <HintPath>..\lib\eb\eB.Service.Proxy.dll</HintPath>
     </Reference>
-    <Reference Include="iRINGLibrary">
-      <HintPath>lib\iRINGLibrary.dll</HintPath>
+    <Reference Include="iRINGLibrary, Version=2.3.0.4643, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>lib\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject">
-      <HintPath>lib\Ninject.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject.Extensions.Xml">
-      <HintPath>lib\Ninject.Extensions.Xml.dll</HintPath>
+    <Reference Include="Ninject, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,8 +54,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UtilityLibrary">
-      <HintPath>lib\UtilityLibrary.dll</HintPath>
+    <Reference Include="UtilityLibrary, Version=2.3.0.4643, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
