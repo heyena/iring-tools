@@ -28,17 +28,13 @@ namespace bechtel.eb.datalayer.test
       Directory.SetCurrentDirectory(baseDir.Substring(0, baseDir.LastIndexOf("\\bin")));
 
       AdapterSettings adapterSettings = new AdapterSettings();
-      adapterSettings.AppendSettings(new AppSettingsReader("App.config"));
+      adapterSettings.AppendSettings(new AppSettingsReader("app.config"));
 
       FileInfo log4netConfig = new FileInfo("log4net.config");
       log4net.Config.XmlConfigurator.Configure(log4netConfig);
 
       _dataLayer = new ebDataLayer(adapterSettings);
       _dataLayer.GetDictionary();
-
-      _objectType = adapterSettings["ObjectType"];
-      _objectDefinition = GetObjectDefinition(_objectType);
-
     }
 
     [Test]
