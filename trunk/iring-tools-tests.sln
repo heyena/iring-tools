@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WADLLibrary", "Libraries\WA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernateExtension", "Libraries\NHibernateExtension\NHibernateExtension.csproj", "{16254768-97F8-457E-ACC8-0FA6315436EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetDatalayer", "Libraries\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj", "{2EEBBD3F-C066-4990-8154-26E287464E09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetLibrary", "Libraries\SpreadsheetLibrary\SpreadsheetLibrary.csproj", "{2EEBBD3F-C066-4990-8154-26E287464E09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
