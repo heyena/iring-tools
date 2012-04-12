@@ -43,6 +43,37 @@ namespace org.iringtools.adapter.datalayer
       _classCodes = _settings["ebClassCodes"];
     }
 
+    public Proxy Proxy { get; set; }
+
+    public Session Session { get; set; }
+
+    public void Connect()
+    {
+      Proxy = new Proxy();
+
+      int ret = Proxy.connect(0, _server);
+
+      if (ret < 0)
+      {
+        throw new Exception(Proxy.get_error(ret));
+      }
+
+      ret = Proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
+      if (ret < 0)
+      {
+        throw new Exception(Proxy.get_error(ret));
+      }
+
+      Proxy.silent_mode = true;
+      Session = new eB.Data.Session();
+      Session.AttachProtoProxy(Proxy.proto_proxy, Proxy.connect_info);
+    }
+
+    public void Disconnect()
+    {
+      if (Proxy != null) Proxy.Dispose();
+    }
+
     public override DataDictionary GetDictionary()
     {
       DataDictionary dictionary = new DataDictionary();
@@ -54,43 +85,58 @@ namespace org.iringtools.adapter.datalayer
       {
         Connect();
 
-        string cosQuery = "select * from class_objects";
+        StringBuilder cosQuery = new StringBuilder("select * from class_objects");
+
         if (!string.IsNullOrEmpty(_classCodes))
         {
-          string[] codes = _classCodes.Split(',');
+          string[] classCodes = _classCodes.Split(',');
+          cosQuery.Append(" where ");
 
-          for (int i = 0; i < codes.Length; i++)
+          for (int i = 0; i < classCodes.Length; i++)
           {
-            codes[i] = "'" + codes[i].Trim() + "'";
-          }
+            string[] parts = classCodes[i].Trim().Split('.');
+            int groupId = (int)(Enum.Parse(typeof(GroupType), parts[0]));
+            string code = parts[1];
 
-          cosQuery += " where code in (" + string.Join(",", codes) + ")";
+            if (i > 0)
+            {
+              cosQuery.Append(" or ");
+            }
+
+            cosQuery.Append(string.Format("(group_id = {0} and code = '{1}')", groupId, code));
+          }
         }
 
         XmlDocument cosDoc = new XmlDocument();
         int status = 0;
-        string cosResults = proxy.query(cosQuery, ref status);
+        string cosResults = Proxy.query(cosQuery.ToString(), ref status);
         cosDoc.LoadXml(cosResults);
 
         foreach (XmlNode coNode in cosDoc.DocumentElement.ChildNodes)
         {
           string classCode = coNode.SelectSingleNode("code").InnerText;
           string className = coNode.SelectSingleNode("name").InnerText;
-          string groupId = coNode.SelectSingleNode("group_id").InnerText;
+          int groupId = int.Parse(coNode.SelectSingleNode("group_id").InnerText);
+
+          string groupName = Enum.GetName(typeof(GroupType), groupId);
+          string tableName = groupName + "." + classCode;
+
+          if (dictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower()) != null)
+            continue;
 
           DataObject dataObjectDef = new DataObject();
           dataObjectDef.objectName = className;
-          dataObjectDef.tableName = groupId;
+          dataObjectDef.tableName = tableName;
 
-          string ebMetadataQuery = _settings["ebMetadataQuery." + groupId];
+          string ebMetadataQuery = _settings["ebMetadataQuery." + groupName];
 
           if (string.IsNullOrEmpty(ebMetadataQuery))
-            throw new Exception("No meta query configured for group_id [" + groupId + "]");
+            throw new Exception("No metadata query configured for group [" + groupName + "]");
 
-          string attrsMeatadataQuery = string.Format(ebMetadataQuery, classCode);
+          string attrsQuery = string.Format(ebMetadataQuery, classCode);
 
           XmlDocument attrsDoc = new XmlDocument();
-          string attrsResults = proxy.query(attrsMeatadataQuery, ref status);
+          string attrsResults = Proxy.query(attrsQuery, ref status);
           attrsDoc.LoadXml(attrsResults);
 
           foreach (XmlNode attrNode in attrsDoc.DocumentElement.ChildNodes)
@@ -105,34 +151,33 @@ namespace org.iringtools.adapter.datalayer
           }
 
           dataObjectDef.keyDelimeter = ";";
-          switch (groupId)
-          {
-            case "1":
-              dataObjectDef.keyProperties = new List<KeyProperty>()
-              {
-                new KeyProperty() {
-                  keyPropertyName = "Code",
-                },
-                new KeyProperty() {
-                  keyPropertyName = "Middle",
-                },
-                new KeyProperty() {
-                  keyPropertyName = "Revision",
-                }
-              };
-              break;
 
-            case "17":
-              dataObjectDef.keyProperties = new List<KeyProperty>()
-              {
-                new KeyProperty() {
-                  keyPropertyName = "PrimaryPhysicalItem.Id",
-                },
-                new KeyProperty() {
-                  keyPropertyName = "Code",
-                }
-              };
-              break;
+          if (groupName == GroupType.Tag.ToString())
+          {
+            dataObjectDef.keyProperties = new List<KeyProperty>()
+            {
+              new KeyProperty() {
+                keyPropertyName = "Code",
+              },
+              new KeyProperty() {
+                keyPropertyName = "Middle",
+              },
+              new KeyProperty() {
+                keyPropertyName = "Revision",
+              }
+            };
+          }
+          else if (groupName == GroupType.Document.ToString())
+          {
+            dataObjectDef.keyProperties = new List<KeyProperty>()
+            {
+              new KeyProperty() {
+                keyPropertyName = "PrimaryPhysicalItem.Id",
+              },
+              new KeyProperty() {
+                keyPropertyName = "Code",
+              }
+            };
           }
 
           dictionary.dataObjects.Add(dataObjectDef);
@@ -152,48 +197,17 @@ namespace org.iringtools.adapter.datalayer
       return dictionary;
     }
 
-    public Proxy proxy { get; set; }
-
-    public Session session { get; set; }
-
-    public void Connect()
-    {
-      proxy = new Proxy();
-
-      int ret = proxy.connect(0, _server);
-
-      if (ret < 0)
-      {
-        throw new Exception(proxy.get_error(ret));
-      }
-
-      ret = proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
-      if (ret < 0)
-      {
-        throw new Exception(proxy.get_error(ret));
-      }
-
-      proxy.silent_mode = true;
-      session = new eB.Data.Session();
-      session.AttachProtoProxy(proxy.proto_proxy, proxy.connect_info);
-    }
-
-    public void Disconnect()
-    {
-      if (proxy != null) proxy.Dispose();
-    }
-
     public int GetTemplateId(string templateName)
     {
       string selectCommandText;
       int templateId = 0;
 
-      if (proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
+      if (Proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
         selectCommandText = string.Format("SELECT template_id FROM templates (NOLOCK) WHERE name = '{0}'", templateName);
       else
         selectCommandText = string.Format("SELECT template_id FROM templates WHERE name = '{0}'", templateName);
       int rc = 0;
-      string result = proxy.query(selectCommandText, ref rc);
+      string result = Proxy.query(selectCommandText, ref rc);
       XmlDocument doc = new XmlDocument();
       doc.LoadXml(result);
 
@@ -215,7 +229,7 @@ namespace org.iringtools.adapter.datalayer
           criteria = string.Format("Code = '{0}'", itemNumber);
 
         string column = "Id";
-        eB.Data.Search s = new Search(session, eB.Common.Enum.ObjectType.Item, column, criteria);
+        eB.Data.Search s = new Search(Session, eB.Common.Enum.ObjectType.Item, column, criteria);
         return (s.RetrieveScalar<int>(column));
       }
       catch (Exception)
@@ -235,7 +249,7 @@ namespace org.iringtools.adapter.datalayer
           criteria = string.Format("Code = '{0}' AND IsLatestRevision = 'Y'", docNumber);
 
         string column = "Id";
-        eB.Data.Search s = new Search(session, eB.Common.Enum.ObjectType.Document, column, criteria);
+        eB.Data.Search s = new Search(Session, eB.Common.Enum.ObjectType.Document, column, criteria);
         return (s.RetrieveScalar<int>(column));
       }
       catch (Exception)
@@ -250,7 +264,7 @@ namespace org.iringtools.adapter.datalayer
       {
         string criteria = string.Format("Name = '{0}'", charName);
         string column = "Id";
-        eB.Data.Search s = new Search(session, eB.Common.Enum.ObjectType.AttributeDef, column, criteria);
+        eB.Data.Search s = new Search(Session, eB.Common.Enum.ObjectType.AttributeDef, column, criteria);
         return (s.RetrieveScalar<int>(column));
       }
       catch (Exception)
@@ -266,13 +280,13 @@ namespace org.iringtools.adapter.datalayer
 
       int itemId = GetItemId(itemCode, itemVersion);
 
-      if (proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
+      if (Proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
         selectCommandText = string.Format("SELECT TOP 1 tag_id FROM tags WHERE item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
       else
         selectCommandText = string.Format("SELECT tag_id FROM tags WHERE rownum <= 1 AND item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
 
       int rc = 0;
-      string result = proxy.query(selectCommandText, ref rc);
+      string result = Proxy.query(selectCommandText, ref rc);
       XmlDocument doc = new XmlDocument();
       doc.LoadXml(result);
 
@@ -360,7 +374,7 @@ namespace org.iringtools.adapter.datalayer
           }
 
           query = string.Format(query, classGroup, queryBuilder.ToString(), dataObjectDef.objectName);
-          DataTable result = ExecuteSearch(session, query, new object[0], -1);
+          DataTable result = ExecuteSearch(Session, query, new object[0], -1);
 
           dataObjects = ToDataObjects(result, dataObjectDef);
         }
