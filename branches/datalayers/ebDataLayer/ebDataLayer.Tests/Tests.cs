@@ -16,11 +16,11 @@ namespace bechtel.eb.datalayer.test
   [TestFixture]
   public class Tests
   {
-    private IDataLayer2 _dataLayer;
-    private string _objectType;
-    private DataObject _objectDefinition;
-    private string _modifiedProperty;
-    private DataFilter _filter;
+    private IDataLayer2 _dataLayer = null;
+    private string _objectType = string.Empty;
+    private DataObject _objectDefinition = null;
+    private string _modifiedProperty = string.Empty;
+    private DataFilter _filter = null;
 
     public Tests()
     {
@@ -37,28 +37,28 @@ namespace bechtel.eb.datalayer.test
       _dataLayer.GetDictionary();
     }
 
-    [Test]
+    //[Test]
     public void TestCreate()
     {
       IList<IDataObject> dataObjects = _dataLayer.Create(_objectType, null);
       Assert.AreNotEqual(dataObjects, null);
     }
 
-    [Test]
+    //[Test]
     public void TestGetCount()
     {
       long count = _dataLayer.GetCount(_objectType, new DataFilter());
       Assert.Greater(count, 0);
     }
 
-    [Test]
+    //[Test]
     public void TestGetPage()
     {
       IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, new DataFilter(), 5, 0);
       Assert.Greater(dataObjects.Count, 0);
     }
 
-    [Test]
+    //[Test]
     public void TestGetWithIdentifiers()
     {
       IList<string> identifiers = _dataLayer.GetIdentifiers(_objectType, new DataFilter());
@@ -67,28 +67,28 @@ namespace bechtel.eb.datalayer.test
       Assert.Greater(dataObjects.Count, 0);
     }
 
-    [Test]
+    //[Test]
     public void TestGetCountWithFilter()
     {
       long count = _dataLayer.GetCount(_objectType, _filter);
       Assert.Greater(count, 0);
     }
 
-    [Test]
+    //[Test]
     public void TestGetPageWithFilter()
     {
       IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, _filter, 5, 0);
       Assert.Greater(dataObjects.Count, 0);
     }
 
-    [Test]
+    //[Test]
     public void TestGetIdentifiersWithFilter()
     {
       IList<string> identifiers = _dataLayer.GetIdentifiers(_objectType, _filter);
       Assert.Greater(identifiers.Count, 0);
     }
 
-    [Test]
+    //[Test]
     public void TestPostWithUpdate()
     {
       IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, new DataFilter(), 1, 1);
@@ -111,7 +111,7 @@ namespace bechtel.eb.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    [Test]
+    //[Test]
     public void TestPostWithAddAndDeleteByIdentifier()
     {
       //
@@ -134,7 +134,7 @@ namespace bechtel.eb.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    [Test]
+    //[Test]
     public void TestPostWithAddAndDeleteByFilter()
     {
       //
@@ -168,7 +168,7 @@ namespace bechtel.eb.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    [Test]
+    //[Test]
     public void TestRefresh()
     {
       Response response = _dataLayer.RefreshAll();
