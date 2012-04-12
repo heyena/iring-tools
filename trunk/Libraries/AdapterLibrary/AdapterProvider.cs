@@ -86,7 +86,7 @@ namespace org.iringtools.adapter
     public AdapterProvider(NameValueCollection settings)
     {
       AppDomain currentDomain = AppDomain.CurrentDomain;
-      currentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolveEventHandler);
+      currentDomain.AssemblyResolve += new ResolveEventHandler(DataLayerAssemblyResolveEventHandler);
 
       var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
       _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
@@ -2894,6 +2894,17 @@ namespace org.iringtools.adapter
 
           _settings["Scope"] = scope;
 
+          string relativeBindingConfigPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+            _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+          // NInject requires full qualified path
+          string bindingConfigPath = Path.Combine(
+            _settings["BaseDirectoryPath"],
+            relativeBindingConfigPath
+          );
+
+          _settings["BindingConfigurationPath"] = bindingConfigPath;
+
           string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);
 
           _settings["DBDictionaryPath"] = dbDictionaryPath;
@@ -3044,10 +3055,7 @@ namespace org.iringtools.adapter
             Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
           }
 
-          string bindingConfigPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml",
-            _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
-
-          XElement bindingConfig = Utility.ReadXml(bindingConfigPath);
+          XElement bindingConfig = Utility.ReadXml(_settings["BindingConfigurationPath"]);
           string assembly = bindingConfig.Element("bind").Attribute("to").Value;
           DataLayers dataLayers = GetDataLayers();
 
@@ -3115,17 +3123,9 @@ namespace org.iringtools.adapter
               }
               else
               {
-                // NInject requires full qualified path
-                string qualPath = Path.Combine(
-                  _settings["BaseDirectoryPath"],
-                  bindingConfigPath
-                );
-
-                _settings["BindingConfigurationPath"] = qualPath;
-
-                if (File.Exists(qualPath))
+                if (File.Exists(_settings["BindingConfigurationPath"]))
                 {
-                  _kernel.Load(qualPath);
+                  _kernel.Load(_settings["BindingConfigurationPath"]);
                 }
                 else
                 {
@@ -3362,7 +3362,7 @@ namespace org.iringtools.adapter
       {
         DataLayers dataLayers = GetDataLayers();
         DataLayer dl = dataLayers.Find(x => x.Name.ToLower() == dataLayer.Name.ToLower());
-        dataLayer.Path = _settings["DataLayersPath"] + "\\" + dataLayer.Name + "\\";
+        dataLayer.Path = _settings["DataLayersPath"] + dataLayer.Name + "\\";
 
         // extract package file
         if (dataLayer.Package != null)
@@ -3511,25 +3511,30 @@ namespace org.iringtools.adapter
       return string.Empty;
     }
 
-    private Assembly AssemblyResolveEventHandler(object sender, ResolveEventArgs args)
+    private Assembly DataLayerAssemblyResolveEventHandler(object sender, ResolveEventArgs args)
     {
-      string[] files = Directory.GetFiles(_settings["DataLayerPath"]);
-
-      foreach (string file in files)
+      if (Directory.Exists(_settings["DataLayerPath"]))
       {
-        if (file.ToLower().EndsWith(".dll") || file.ToLower().EndsWith(".exe"))
-        {
-          AssemblyName asmName = AssemblyName.GetAssemblyName(file);
+        string[] files = Directory.GetFiles(_settings["DataLayerPath"]);
 
-          if (args.Name.StartsWith(asmName.Name))
+        foreach (string file in files)
+        {
+          if (file.ToLower().EndsWith(".dll") || file.ToLower().EndsWith(".exe"))
           {
-            byte[] bytes = Utility.GetBytes(file);
-            return Assembly.Load(bytes);
+            AssemblyName asmName = AssemblyName.GetAssemblyName(file);
+
+            if (args.Name.StartsWith(asmName.Name))
+            {
+              byte[] bytes = Utility.GetBytes(file);
+              return Assembly.Load(bytes);
+            }
           }
         }
+
+        throw new Exception("Unable to resolve assembly [" + args.Name + "].");
       }
 
-      throw new Exception("Unable to resolve assembly [" + args.Name + "].");
+      return null;
     }
     #endregion data layer management methods
 
