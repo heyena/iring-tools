@@ -9,7 +9,7 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using System.Data;
 using System.Text;
-using org.iringtools.datalayer;
+using org.iringtools.adapter.datalayer;
 
 namespace bechtel.eb.datalayer.test
 {
@@ -29,19 +29,6 @@ namespace bechtel.eb.datalayer.test
 
       AdapterSettings adapterSettings = new AdapterSettings();
       adapterSettings.AppendSettings(new AppSettingsReader("App.config"));
-
-      //string ConfigFile = String.Format("{0}{1}.{2}.config",
-      //  adapterSettings["AppDataPath"],
-      //  adapterSettings["ProjectName"],
-      //  adapterSettings["ApplicationName"]
-      //);
-
-      //AppSettingsReader Settings = new AppSettingsReader(ConfigFile);
-      //adapterSettings.AppendSettings(Settings);
-
-      //IDictionary keyRing = new Dictionary<string, string>();
-      //keyRing["DomainName"] = adapterSettings["DomainName"];
-      //keyRing["UserName"] = adapterSettings["UserName"];
 
       FileInfo log4netConfig = new FileInfo("log4net.config");
       log4net.Config.XmlConfigurator.Configure(log4netConfig);
