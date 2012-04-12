@@ -82,7 +82,7 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EBLibrary\ebDataLayer.csproj">
+    <ProjectReference Include="..\ebDataLayer\ebDataLayer.csproj">
       <Project>{7B0A6054-3108-4ADA-B006-6510C9EE2141}</Project>
       <Name>ebDataLayer</Name>
     </ProjectReference>

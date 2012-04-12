@@ -10,7 +10,7 @@ namespace org.iringtools.nunit
   {
     static void Main()
     {
-        string commandLine = @"/run ../../../ebTest/eBDataLayer.Tests.csproj";
+        string commandLine = @"/run ../../../ebDataLayer.Tests/eBDataLayer.Tests.csproj";
 
       string[] args = commandLine.Split(' ');
       AppEntry.Main(args);
