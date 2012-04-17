@@ -171,7 +171,57 @@ namespace bechtel.eb.datalayer.test
     [Test]
     public void TestPost()
     {
-      _dataLayer.Post(null);
+      IDataObject dataObject = new GenericDataObject() { ObjectType = "Tag" };
+      dataObject.SetPropertyValue("ApprDiameter", "");
+      dataObject.SetPropertyValue("ApprDPress", "");
+      dataObject.SetPropertyValue("ApprDTemp", "");
+      dataObject.SetPropertyValue("ApprInsulMaterial", "");
+      dataObject.SetPropertyValue("ApprInsulationThickness", "");
+      dataObject.SetPropertyValue("ApprLineClass", "");
+      dataObject.SetPropertyValue("ApprovalStatus", "");
+      dataObject.SetPropertyValue("ApprovedAQClass", "");
+      dataObject.SetPropertyValue("ApprovedDesignPressure", "");
+      dataObject.SetPropertyValue("ApprovedDesignTemperature", "");
+      dataObject.SetPropertyValue("ApprovedEstLoad", "");
+      dataObject.SetPropertyValue("ApprovedLoad", "");
+      dataObject.SetPropertyValue("ApprovedNon-PressureBoundryQualityGroup", "");
+      dataObject.SetPropertyValue("ApprovedPressureBoundryQualityGroup", "NA");
+      dataObject.SetPropertyValue("ApprovedQualityClass", "");
+      dataObject.SetPropertyValue("ApprovedSeismicClass", "SC-II");
+      dataObject.SetPropertyValue("ChangeControlled", "");
+      dataObject.SetPropertyValue("ClassCode", "");
+      dataObject.SetPropertyValue("ClassId", "");
+      dataObject.SetPropertyValue("Code", "MES0");
+      dataObject.SetPropertyValue("ClassId", "");
+      dataObject.SetPropertyValue("CommGrpCode", "");
+      dataObject.SetPropertyValue("CommodityCode", "");
+      dataObject.SetPropertyValue("ComponentFunctionName (CFN)", "1-N-CCW-HX-1A");
+      dataObject.SetPropertyValue("DateEffective", "");
+      dataObject.SetPropertyValue("DateObsolete", "");
+      dataObject.SetPropertyValue("DateEffective", "");
+      dataObject.SetPropertyValue("Discipline", "");
+      dataObject.SetPropertyValue("DocumentStatus", "");
+      dataObject.SetPropertyValue("EquipmentRating", "18200000");
+      dataObject.SetPropertyValue("HP(Est/Act/Calc)", "");
+      dataObject.SetPropertyValue("Id", "");
+      dataObject.SetPropertyValue("Manufacturer", "");
+      dataObject.SetPropertyValue("Middle", "");
+      dataObject.SetPropertyValue("ModelNo", "");
+      dataObject.SetPropertyValue("Name", "");
+      dataObject.SetPropertyValue("PowerReqd", "");
+      dataObject.SetPropertyValue("Q-List(Y/N)", "N");
+      dataObject.SetPropertyValue("PowerReqd", "N");
+      dataObject.SetPropertyValue("ReasonforIssue", "");
+      dataObject.SetPropertyValue("RegulatoryRequirement", "");
+      dataObject.SetPropertyValue("Remark", "");
+      dataObject.SetPropertyValue("Revision", "");
+      dataObject.SetPropertyValue("SafetyDesignator", "");
+      dataObject.SetPropertyValue("Synopsis", "");
+      dataObject.SetPropertyValue("VendorSupplied(Y/N)", "");
+
+      IList<IDataObject> dataObjects = new List<IDataObject>() { dataObject };
+
+      _dataLayer.Post(dataObjects);
     }
 
     //[Test]

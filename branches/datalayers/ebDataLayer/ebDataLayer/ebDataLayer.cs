@@ -27,7 +27,6 @@ namespace org.iringtools.adapter.datalayer.eb
     private string _scope = string.Empty;
     private string _dictionaryXML = string.Empty;
 
-    private EqlClient _eqlClient = null;
     private Configuration _config = null;
     private Rules _rules = null;    
     private GroupTypes _groupTypes = null;
@@ -58,12 +57,12 @@ namespace org.iringtools.adapter.datalayer.eb
       try
       {
         Connect();
-
-        _eqlClient = new EqlClient(Session);
-
+        
         int docId = int.Parse(_settings["ebDocId"]);
         string communityName = _settings["ebCommunityName"];
-        string templateName = _eqlClient.GetDocumentTemplate(docId);
+
+        EqlClient eqlClient = new EqlClient(Session);
+        string templateName = eqlClient.GetDocumentTemplate(docId);
 
         _config = Utility.Read<Configuration>(_dataLayerPath + templateName + "_" + communityName + ".xml", false);
         _rules = Utility.Read<Rules>(_dataLayerPath + "Rules_" + communityName + ".xml", false);
@@ -287,7 +286,89 @@ namespace org.iringtools.adapter.datalayer.eb
 
       try
       {
+        if (dataObjects.Count <= 0)
+        {
+          response.Level = StatusLevel.Warning;
+          response.Messages.Add("Data objects are empty.");
+          return response;
+        }
         
+        DataDictionary dictionary = GetDictionary();
+        string objType = ((GenericDataObject)dataObjects[0]).ObjectType;
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objType.ToLower());
+
+        Connect();
+
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
+          string keyValue = (string) dataObject.GetPropertyValue(keyProp.keyPropertyName);
+
+          //string keyValue = string.Empty;
+          //try
+          //{
+          //  Map codeMap = _config.Maps.Find(x => x.Type == adaper.datalayer.eb.config.Type.Code);
+          //  keyValue = (string)dataObject.GetPropertyValue(codeMap.Name);
+          //}
+          //catch { }
+
+          string revision = string.Empty;
+          try
+          {
+            Map revisionMap = _config.Mappings.Find(x => x.Type == adaper.datalayer.eb.config.Type.Revision);
+            revision = (string)dataObject.GetPropertyValue(revisionMap.Name);
+          }
+          catch {}
+
+          EqlClient eql = new EqlClient(Session);
+          
+          int objectId = eql.GetObjectId(keyValue, revision, _config.Template.ObjectType);
+          org.iringtools.adaper.datalayer.eb.config.Template template = _config.Template;
+
+          if (objectId == 0)  // does not exist, create
+          { 
+            string templateName = GetTemplateName(template, dataObject);
+            int templateId = eql.GetTemplateId(templateName);
+
+            if (templateId == 0)
+            {
+              Status status = new Status()
+              {
+                Identifier = keyValue,
+                Level = StatusLevel.Error,
+                Messages = new Messages() { string.Format("Template [{0}] for the object does not exist.", templateName) }
+              };
+
+              response.StatusList.Add(status);              
+              break;
+            }
+
+            objectId = Session.Writer.CreateFromTemplate(templateId, "", "");
+          }
+
+          string objectType = Enum.GetName(typeof(ObjectType), template.ObjectType);
+          ebProcessor processor = new ebProcessor(Session, _config.Mappings);
+          
+          if (objectType == ObjectType.Tag.ToString())
+          {
+            response.Append(processor.ProcessTag(objectId, keyValue));
+          }
+          else if (objectType == ObjectType.Document.ToString())
+          {
+            response.Append(processor.ProcessDocument(objectId, keyValue));
+          }
+          else 
+          {
+            Status status = new Status()
+            {
+              Identifier = keyValue,
+              Level = StatusLevel.Error,
+              Messages = new Messages() { string.Format("Object type [{0}] is not supoorted in this version.", template.ObjectType) }
+            };
+
+            response.StatusList.Add(status);
+          }
+        }
       }
       catch (Exception e)
       {
@@ -350,52 +431,46 @@ namespace org.iringtools.adapter.datalayer.eb
       if (Proxy != null) Proxy.Dispose();
     }
 
-    //protected string GetDocumentTemplate(int docId)
-    //{
-    //  string templateName = string.Empty;
-
-    //  try
-    //  {
-    //    string eql = String.Format("START WITH Template SELECT Name WHERE Instances.Object.Id = {0} AND Instances.Object.Type = 3", docId);
-    //    Search search = new Search(Session, eql);
-    //    templateName = search.RetrieveScalar<string>("Name");
-    //  }
-    //  catch (Exception e)
-    //  {
-    //    throw e;
-    //  }
-
-    //  return templateName;
-    //}
-    
-    //TODO: retrieve document template and id dictionary
-    //protected Dictionary<string, string> DocumentTemplateDictionary()
-    //{
-    //  string eql = String.Format("START WITH Template SELECT Instances.Object.Id, Name WHERE Instances.Object.Type = 3");
-    //  Search search = new Search(Session, eql);
-    //  return null;
-    //}
-
-    protected int GetTemplateId(string templateName)
+    protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.config.Template template, IDataObject dataObject)
     {
-      string selectCommandText;
-      int templateId = 0;
+      if ((template.Placeholders == null) || (template.Placeholders.Count() == 0))
+      {
+        return template.Name;
+      }
 
-      if (Proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
-        selectCommandText = string.Format("SELECT template_id FROM templates (NOLOCK) WHERE name = '{0}'", templateName);
-      else
-        selectCommandText = string.Format("SELECT template_id FROM templates WHERE name = '{0}'", templateName);
-      int rc = 0;
-      string result = Proxy.query(selectCommandText, ref rc);
-      XmlDocument doc = new XmlDocument();
-      doc.LoadXml(result);
+      template.Placeholders.Sort(new PlaceHolderComparer());
 
-      if (doc.DocumentElement.ChildNodes.Count <= 0)
-        throw new Exception("ConnectionGetTemplateIdNoEntryFoundForTemplateName" + templateName + ";");
-      templateId = Convert.ToInt32(doc.SelectSingleNode("records/record/template_id").InnerText);
+      string[] parameters = new string[template.Placeholders.Count];
+      int i = 0;
 
-      return (templateId);
+      foreach (Placeholder placeholder in template.Placeholders)
+      {
+        parameters[i++] = (string)dataObject.GetPropertyValue(placeholder.Value);
+      }
+
+      return string.Format(template.Name, parameters);
     }
+
+    //protected int GetTemplateId(string templateName)
+    //{
+    //  string selectCommandText;
+
+    //  if (Proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
+    //    selectCommandText = string.Format("SELECT template_id FROM templates (NOLOCK) WHERE name = '{0}'", templateName);
+    //  else
+    //    selectCommandText = string.Format("SELECT template_id FROM templates WHERE name = '{0}'", templateName);
+
+    //  int rc = 0;
+    //  string result = Proxy.query(selectCommandText, ref rc);
+    //  XmlDocument doc = new XmlDocument();
+    //  doc.LoadXml(result);
+
+    //  if (doc.DocumentElement.ChildNodes.Count <= 0)
+    //    throw new Exception("ConnectionGetTemplateIdNoEntryFoundForTemplateName" + templateName + ";");
+
+    //  int templateId = Convert.ToInt32(doc.SelectSingleNode("records/record/template_id").InnerText);
+    //  return (templateId);
+    //}
 
     protected int GetItemId(string itemNumber, string version)
     {

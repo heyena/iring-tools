@@ -12,20 +12,11 @@ namespace org.iringtools.adaper.datalayer.eb
   public class EqlClient
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(EqlClient));
-    private Session session;
-
-    //public String CommunityName { get; set; }
+    private Session _session;
 
     public EqlClient(Session session)
     {
-      this.session = session;
-
-      //if (string.IsNullOrEmpty(session.SystemData.CommunityName))
-      //{
-      //  session.SystemData.Retrieve("Header");
-      //}
-
-      //CommunityName = session.SystemData.CommunityName;
+      _session = session;
     }
 
     public string GetDocumentTemplate(int docId)
@@ -35,7 +26,7 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         string eql = String.Format("START WITH Template SELECT Name  WHERE Instances.Object.Id = {0} AND Instances.Object.Type = 3", docId);
-        eB.Data.Search s = new Search(session, eql);
+        eB.Data.Search s = new Search(_session, eql);
         templateName = s.RetrieveScalar<String>("Name");
       }
       catch (Exception e) { 
@@ -53,7 +44,7 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         string eql = String.Format("START WITH Template SELECT Id WHERE Name = '{0}'", templateName);
-        eB.Data.Search s = new Search(this.session, eql);
+        eB.Data.Search s = new Search(this._session, eql);
         templateId = s.RetrieveScalar<int>("Id");
       }
       catch (Exception e) 
@@ -82,7 +73,7 @@ namespace org.iringtools.adaper.datalayer.eb
           eql = String.Format("START WITH Object SELECT Id WHERE Code = '{0}' AND Type = {1} AND Revision = '{2}'", code, type, revision);
         }
 
-        eB.Data.Search s = new Search(this.session, eql);
+        eB.Data.Search s = new Search(this._session, eql);
         objectId = s.RetrieveScalar<int>("Id");
       }
       catch (Exception e) { 
@@ -99,7 +90,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        eB.Data.Search s = new Search(this.session, eql);
+        eB.Data.Search s = new Search(this._session, eql);
         objectId = s.RetrieveScalar<int>("Id");
       }
       catch (Exception e) { 
@@ -117,7 +108,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        eB.Data.Search s = new Search(this.session, eql);
+        eB.Data.Search s = new Search(this._session, eql);
         dt = s.Retrieve<DataTable>();
       }
       catch (Exception e)
@@ -138,7 +129,7 @@ namespace org.iringtools.adaper.datalayer.eb
                             inner join relationships s on r.rel_type_id  = s.rel_type_id 
                             where t.template_id = {0} and s.left_object_id = {1}", relationshipTemplateId, leftObjectId);
 
-        XDocument dataset = XDocument.Parse(this.session.ProtoProxy.Query(this.session.ReaderSessionString, sql));
+        XDocument dataset = XDocument.Parse(this._session.ProtoProxy.Query(this._session.ReaderSessionString, sql));
         int rows = dataset.Element("records").Elements("record").Count();
 
         if (rows == 1)

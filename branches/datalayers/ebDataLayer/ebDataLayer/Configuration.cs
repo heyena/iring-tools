@@ -13,14 +13,14 @@ namespace org.iringtools.adaper.datalayer.eb.config
     public Template Template { get; set; }
 
     [XmlArray("mappings")]
-    public List<Mapping> Mappings { get; set; }
+    public List<Map> Mappings { get; set; }
   }
 
   [XmlType("template")]
   public class Template
   {
     [XmlElement("objecttype")]
-    public string ObjectType { get; set; }
+    public int ObjectType { get; set; }
 
     [XmlElement("name")]
     public string Name { get; set; }
@@ -40,7 +40,7 @@ namespace org.iringtools.adaper.datalayer.eb.config
   }
 
   [XmlType("map")]
-  public class Mapping
+  public class Map
   {
     [XmlAttribute("name")]
     public string Name { get; set; }
@@ -73,4 +73,39 @@ namespace org.iringtools.adaper.datalayer.eb.config
     Title = 5,
     Revision = 6
   };
+
+  public class PlaceHolderComparer : IComparer<Placeholder>
+  {
+    public int Compare(Placeholder x, Placeholder y)
+    {
+      if (x == null)
+      {
+        if (y == null)
+        {
+          return 0;
+        }
+        else
+        {
+          return -1;
+        }
+      }
+      else
+      {
+        if (y == null)
+        {
+          return 1;
+        }
+        else
+        {
+          if (x.Id > y.Id)
+            return 1;
+
+          if (x.Id < y.Id)
+            return -1;
+
+          return 0;
+        }
+      }
+    }
+  }
 }

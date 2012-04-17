@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ebProcessor.cs" />
     <Compile Include="EqlClient.cs" />
     <Compile Include="GroupTypes.cs" />
     <Compile Include="ebDataLayer.cs" />
