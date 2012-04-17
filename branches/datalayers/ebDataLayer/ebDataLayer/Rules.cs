@@ -27,16 +27,16 @@ namespace org.iringtools.adaper.datalayer.eb
     [XmlElement("eql")]
     public string Eql { get; set; }
 
-    [XmlElement("parameters")]
+    [XmlArray("parameters")]
     public List<Parameter> Parameters { get; set; }
 
-    [XmlElement("selfchecks")]
+    [XmlArray("selfchecks", IsNullable = true)]
     public List<SelfCheck> SelfChecks { get; set; }
 
     [XmlElement("create")]
     public bool Create { get; set; }
 
-    [XmlElement("createtemplate")]
+    [XmlElement("createtemplate", IsNullable = true)]
     public string CreateTemplate { get; set; }
   }
 
@@ -51,9 +51,12 @@ namespace org.iringtools.adaper.datalayer.eb
 
     [XmlAttribute(AttributeName = "seperator")]
     public string Seperator { get; set; }
+
+    [XmlText]
+    public string Value { get; set; }
   }
 
-  [XmlType("selfchecks")]
+  [XmlType("check")]
   public class SelfCheck
   {
     [XmlAttribute(AttributeName = "column")]

@@ -26,15 +26,17 @@ namespace org.iringtools.adapter.datalayer.eb
     private string _dataLayerPath = string.Empty;
     private string _scope = string.Empty;
     private string _dictionaryXML = string.Empty;
-    
+
+    private EqlClient _eqlClient = null;
+    private Configuration _config = null;
+    private Rules _rules = null;    
     private GroupTypes _groupTypes = null;
+
     private string _server = string.Empty;
     private string _dataSource = string.Empty;
     private string _userName = string.Empty;
     private string _password = string.Empty;
     private string _classCodes = string.Empty;
-
-    private int _docId;
 
     [Inject]
     public ebDataLayer(AdapterSettings settings)
@@ -43,8 +45,8 @@ namespace org.iringtools.adapter.datalayer.eb
       _appDataPath = settings["AppDataPath"];
       _dataLayerPath = settings["DataLayerPath"];
       _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
-
       _dictionaryXML = string.Format("{0}DataDictionary.{1}.xml", _appDataPath, _scope);
+
       _groupTypes = Utility.Read<GroupTypes>(_dataLayerPath + "GroupTypes.xml", false);
 
       _server = _settings["ebServer"];
@@ -52,7 +54,24 @@ namespace org.iringtools.adapter.datalayer.eb
       _userName = _settings["ebUserName"];
       _password = _settings["ebPassword"];
       _classCodes = _settings["ebClassCodes"];
-      _docId = int.Parse(_settings["ebDocId"]);
+
+      try
+      {
+        Connect();
+
+        _eqlClient = new EqlClient(Session);
+
+        int docId = int.Parse(_settings["ebDocId"]);
+        string communityName = _settings["ebCommunityName"];
+        string templateName = _eqlClient.GetDocumentTemplate(docId);
+
+        _config = Utility.Read<Configuration>(_dataLayerPath + templateName + "_" + communityName + ".xml", false);
+        _rules = Utility.Read<Rules>(_dataLayerPath + "Rules_" + communityName + ".xml", false);
+      }
+      finally
+      {
+        Disconnect();
+      }
     }
 
     public Proxy Proxy { get; set; }
@@ -142,33 +161,33 @@ namespace org.iringtools.adapter.datalayer.eb
 
           dataObjectDef.keyDelimeter = ";";
 
-          //if (group.Name.ToLower() == "tag")
-          //{
-          //  dataObjectDef.keyProperties = new List<KeyProperty>()
-          //  {
-          //    new KeyProperty() {
-          //      keyPropertyName = "Code",
-          //    },
-          //    new KeyProperty() {
-          //      keyPropertyName = "Middle",
-          //    },
-          //    new KeyProperty() {
-          //      keyPropertyName = "Revision",
-          //    }
-          //  };
-          //}
-          //else if (group.Name.ToLower() == "document")
-          //{
-          //  dataObjectDef.keyProperties = new List<KeyProperty>()
-          //  {
-          //    new KeyProperty() {
-          //      keyPropertyName = "PrimaryPhysicalItem.Id",
-          //    },
-          //    new KeyProperty() {
-          //      keyPropertyName = "Code",
-          //    }
-          //  };
-          //}
+          if (group.Name.ToLower() == "tag")
+          {
+            dataObjectDef.keyProperties = new List<KeyProperty>()
+            {
+              new KeyProperty() {
+                keyPropertyName = "Code",
+              },
+              new KeyProperty() {
+                keyPropertyName = "Middle",
+              },
+              new KeyProperty() {
+                keyPropertyName = "Revision",
+              }
+            };
+          }
+          else if (group.Name.ToLower() == "document")
+          {
+            dataObjectDef.keyProperties = new List<KeyProperty>()
+            {
+              new KeyProperty() {
+                keyPropertyName = "PrimaryPhysicalItem.Id",
+              },
+              new KeyProperty() {
+                keyPropertyName = "Code",
+              }
+            };
+          }
 
           dictionary.dataObjects.Add(dataObjectDef);
         }
@@ -268,14 +287,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
       try
       {
-        //string docTpl = GetDocumentTemplate(_docId);
-                
-        //load mapping
-        /* process row data
-         * RowProcessor r = new RowProcessor(this.Session, dataSet, importMappingFile);
-                    try {
-                        string message = r.ProcessObject();
-         */
+        
       }
       catch (Exception e)
       {
@@ -283,6 +295,10 @@ namespace org.iringtools.adapter.datalayer.eb
         
         response.Level = StatusLevel.Error;
         response.Messages.Add("Error posting data objects: " + e);
+      }
+      finally
+      {
+        Disconnect();
       }
 
       return response;
@@ -334,29 +350,23 @@ namespace org.iringtools.adapter.datalayer.eb
       if (Proxy != null) Proxy.Dispose();
     }
 
-    protected string GetDocumentTemplate(int id)
-    {
-      string templateName = string.Empty;
+    //protected string GetDocumentTemplate(int docId)
+    //{
+    //  string templateName = string.Empty;
 
-      try
-      {
-        Connect();
+    //  try
+    //  {
+    //    string eql = String.Format("START WITH Template SELECT Name WHERE Instances.Object.Id = {0} AND Instances.Object.Type = 3", docId);
+    //    Search search = new Search(Session, eql);
+    //    templateName = search.RetrieveScalar<string>("Name");
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    throw e;
+    //  }
 
-        string eql = String.Format("START WITH Template SELECT Name  WHERE Instances.Object.Id = {0} AND Instances.Object.Type = 3", id);
-        Search search = new Search(Session, eql);
-        templateName = search.RetrieveScalar<string>("Name");
-      }
-      catch (Exception e)
-      {
-        throw e;
-      }
-      finally
-      {
-        Disconnect();
-      }
-
-      return templateName;
-    }
+    //  return templateName;
+    //}
     
     //TODO: retrieve document template and id dictionary
     //protected Dictionary<string, string> DocumentTemplateDictionary()
