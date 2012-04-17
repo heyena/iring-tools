@@ -33,7 +33,7 @@ namespace org.iringtools.adaper.datalayer.eb.config
   public class Placeholder
   {
     [XmlAttribute("id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlText]
     public string Value { get; set; }
@@ -42,11 +42,11 @@ namespace org.iringtools.adaper.datalayer.eb.config
   [XmlType("map")]
   public class Mapping
   {
-    [XmlAttribute("columnname")]
-    public string ColumnName { get; set; }
+    [XmlAttribute("name")]
+    public string Name { get; set; }
 
-    [XmlAttribute("destination")]
-    public string Destination { get; set; }
+    [XmlAttribute("type")]
+    public Type Type { get; set; }
 
     [XmlArray("rules")]
     public List<Rule> Rules { get; set; }
@@ -56,9 +56,21 @@ namespace org.iringtools.adaper.datalayer.eb.config
   public class Rule
   {
     [XmlAttribute("order")]
-    public string Order { get; set; }
+    public int Order { get; set; }
 
     [XmlText]
     public string Value { get; set; }
   }
+
+  [XmlType("type")]
+  public enum Type
+  {
+    None = 0,
+    Attribute = 1,
+    Relationship = 2,
+    Code = 3,
+    Name = 4,
+    Title = 5,
+    Revision = 6
+  };
 }
