@@ -9,7 +9,7 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using System.Data;
 using System.Text;
-using org.iringtools.adapter.datalayer;
+using org.iringtools.adapter.datalayer.eb;
 
 namespace bechtel.eb.datalayer.test
 {
@@ -166,6 +166,12 @@ namespace bechtel.eb.datalayer.test
 
       response = _dataLayer.Delete(_objectType, filter);
       Assert.AreEqual(response.Level, StatusLevel.Success);
+    }
+
+    [Test]
+    public void TestPost()
+    {
+      _dataLayer.Post(null);
     }
 
     //[Test]
