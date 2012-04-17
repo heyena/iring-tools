@@ -8,7 +8,7 @@
     <ProjectGuid>{7B0A6054-3108-4ADA-B006-6510C9EE2141}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adaper.datalayer</RootNamespace>
+    <RootNamespace>org.iringtools.adaper.datalayer.eb</RootNamespace>
     <AssemblyName>ebLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -43,6 +43,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\lib\log4net\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
@@ -60,9 +63,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GroupTypes.cs" />
     <Compile Include="ebDataLayer.cs" />
-    <Compile Include="GroupType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rules.cs" />
+    <Compile Include="Configuration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
