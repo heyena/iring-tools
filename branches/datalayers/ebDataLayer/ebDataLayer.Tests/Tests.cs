@@ -193,9 +193,9 @@ namespace bechtel.eb.datalayer.test
       dataObject.SetPropertyValue("ClassId", "");
       dataObject.SetPropertyValue("Code", "MES0");
       dataObject.SetPropertyValue("ClassId", "");
-      dataObject.SetPropertyValue("CommGrpCode", "");
-      dataObject.SetPropertyValue("CommodityCode", "");
-      dataObject.SetPropertyValue("ComponentFunctionName (CFN)", "1-N-CCW-HX-1A");
+      dataObject.SetPropertyValue("CommGrpCode", "ME");
+      dataObject.SetPropertyValue("CommodityCode", "01");  // Unit
+      dataObject.SetPropertyValue("ComponentFunctionName (CFN)", "1-N-CCW-HX-1Z");
       dataObject.SetPropertyValue("DateEffective", "");
       dataObject.SetPropertyValue("DateObsolete", "");
       dataObject.SetPropertyValue("DateEffective", "");
@@ -203,7 +203,7 @@ namespace bechtel.eb.datalayer.test
       dataObject.SetPropertyValue("DocumentStatus", "");
       dataObject.SetPropertyValue("EquipmentRating", "18200000");
       dataObject.SetPropertyValue("HP(Est/Act/Calc)", "");
-      dataObject.SetPropertyValue("Id", "");
+      dataObject.SetPropertyValue("Id", "01-N-CCW-ME-001Z");  // Tag Number
       dataObject.SetPropertyValue("Manufacturer", "");
       dataObject.SetPropertyValue("Middle", "");
       dataObject.SetPropertyValue("ModelNo", "");
