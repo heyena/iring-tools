@@ -46,9 +46,9 @@ namespace org.iringtools.adaper.datalayer.eb.config
     public string Name { get; set; }
 
     [XmlAttribute("type")]
-    public Type Type { get; set; }
+    public PropertyType Type { get; set; }
 
-    [XmlArray("rules")]
+    [XmlElement("rule")]
     public List<Rule> Rules { get; set; }
   }
 
@@ -63,7 +63,7 @@ namespace org.iringtools.adaper.datalayer.eb.config
   }
 
   [XmlType("type")]
-  public enum Type
+  public enum PropertyType
   {
     None = 0,
     Attribute = 1,
@@ -76,11 +76,11 @@ namespace org.iringtools.adaper.datalayer.eb.config
 
   public class PlaceHolderComparer : IComparer<Placeholder>
   {
-    public int Compare(Placeholder x, Placeholder y)
+    public int Compare(Placeholder left, Placeholder right)
     {
-      if (x == null)
+      if (left == null)
       {
-        if (y == null)
+        if (right == null)
         {
           return 0;
         }
@@ -91,16 +91,16 @@ namespace org.iringtools.adaper.datalayer.eb.config
       }
       else
       {
-        if (y == null)
+        if (right == null)
         {
           return 1;
         }
         else
         {
-          if (x.Id > y.Id)
+          if (left.Id > right.Id)
             return 1;
 
-          if (x.Id < y.Id)
+          if (left.Id < right.Id)
             return -1;
 
           return 0;

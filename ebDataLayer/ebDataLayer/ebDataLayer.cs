@@ -27,26 +27,26 @@ namespace org.iringtools.adapter.datalayer.eb
     private string _scope = string.Empty;
     private string _dictionaryXML = string.Empty;
 
-    private Configuration _config = null;
-    private Rules _rules = null;    
-    private GroupTypes _groupTypes = null;
-
     private string _server = string.Empty;
     private string _dataSource = string.Empty;
     private string _userName = string.Empty;
     private string _password = string.Empty;
     private string _classCodes = string.Empty;
 
+    private Proxy _proxy = null;
+    private Session _session = null;
+    private Configuration _config = null;
+    private Rules _rules = null;
+    private GroupTypes _groupTypes = null;
+
     [Inject]
     public ebDataLayer(AdapterSettings settings)
       : base(settings)
     {
       _appDataPath = settings["AppDataPath"];
-      _dataLayerPath = settings["DataLayerPath"];
+      _dataLayerPath = settings["DataLayerPath"] + "App_Data\\";
       _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
       _dictionaryXML = string.Format("{0}DataDictionary.{1}.xml", _appDataPath, _scope);
-
-      _groupTypes = Utility.Read<GroupTypes>(_dataLayerPath + "GroupTypes.xml", false);
 
       _server = _settings["ebServer"];
       _dataSource = _settings["ebDataSource"];
@@ -61,9 +61,10 @@ namespace org.iringtools.adapter.datalayer.eb
         int docId = int.Parse(_settings["ebDocId"]);
         string communityName = _settings["ebCommunityName"];
 
-        EqlClient eqlClient = new EqlClient(Session);
+        EqlClient eqlClient = new EqlClient(_session);
         string templateName = eqlClient.GetDocumentTemplate(docId);
 
+        _groupTypes = Utility.Read<GroupTypes>(_dataLayerPath + "GroupTypes.xml", false);
         _config = Utility.Read<Configuration>(_dataLayerPath + templateName + "_" + communityName + ".xml", false);
         _rules = Utility.Read<Rules>(_dataLayerPath + "Rules_" + communityName + ".xml", false);
       }
@@ -72,10 +73,6 @@ namespace org.iringtools.adapter.datalayer.eb
         Disconnect();
       }
     }
-
-    public Proxy Proxy { get; set; }
-
-    public Session Session { get; set; }
 
     public override DataDictionary GetDictionary()
     {
@@ -118,7 +115,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
         XmlDocument cosDoc = new XmlDocument();
         int status = 0;
-        string cosResults = Proxy.query(cosQuery.ToString(), ref status);
+        string cosResults = _proxy.query(cosQuery.ToString(), ref status);
         cosDoc.LoadXml(cosResults);
 
         foreach (XmlNode coNode in cosDoc.DocumentElement.ChildNodes)
@@ -144,7 +141,7 @@ namespace org.iringtools.adapter.datalayer.eb
           string attrsQuery = string.Format(ebMetadataQuery, classCode);
 
           XmlDocument attrsDoc = new XmlDocument();
-          string attrsResults = Proxy.query(attrsQuery, ref status);
+          string attrsResults = _proxy.query(attrsQuery, ref status);
           attrsDoc.LoadXml(attrsResults);
 
           foreach (XmlNode attrNode in attrsDoc.DocumentElement.ChildNodes)
@@ -238,7 +235,7 @@ namespace org.iringtools.adapter.datalayer.eb
           }
 
           query = string.Format(query, classGroup, queryBuilder.ToString(), dataObjectDef.objectName);
-          DataTable result = ExecuteSearch(Session, query, new object[0], -1);
+          DataTable result = ExecuteSearch(_session, query, new object[0], -1);
 
           dataObjects = ToDataObjects(result, dataObjectDef);
         }
@@ -315,12 +312,12 @@ namespace org.iringtools.adapter.datalayer.eb
           string revision = string.Empty;
           try
           {
-            Map revisionMap = _config.Mappings.Find(x => x.Type == adaper.datalayer.eb.config.Type.Revision);
+            Map revisionMap = _config.Mappings.Find(x => x.Type == adaper.datalayer.eb.config.PropertyType.Revision);
             revision = (string)dataObject.GetPropertyValue(revisionMap.Name);
           }
           catch {}
 
-          EqlClient eql = new EqlClient(Session);
+          EqlClient eql = new EqlClient(_session);
           
           int objectId = eql.GetObjectId(keyValue, revision, _config.Template.ObjectType);
           org.iringtools.adaper.datalayer.eb.config.Template template = _config.Template;
@@ -343,11 +340,11 @@ namespace org.iringtools.adapter.datalayer.eb
               break;
             }
 
-            objectId = Session.Writer.CreateFromTemplate(templateId, "", "");
+            objectId = _session.Writer.CreateFromTemplate(templateId, "", "");
           }
 
           string objectType = Enum.GetName(typeof(ObjectType), template.ObjectType);
-          ebProcessor processor = new ebProcessor(Session, _config.Mappings);
+          ebProcessor processor = new ebProcessor(_session, _config.Mappings);
           
           if (objectType == ObjectType.Tag.ToString())
           {
@@ -406,29 +403,29 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public void Connect()
     {
-      Proxy = new Proxy();
+      _proxy = new Proxy();
 
-      int ret = Proxy.connect(0, _server);
+      int ret = _proxy.connect(0, _server);
 
       if (ret < 0)
       {
-        throw new Exception(Proxy.get_error(ret));
+        throw new Exception(_proxy.get_error(ret));
       }
 
-      ret = Proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
+      ret = _proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
       if (ret < 0)
       {
-        throw new Exception(Proxy.get_error(ret));
+        throw new Exception(_proxy.get_error(ret));
       }
 
-      Proxy.silent_mode = true;
-      Session = new eB.Data.Session();
-      Session.AttachProtoProxy(Proxy.proto_proxy, Proxy.connect_info);
+      _proxy.silent_mode = true;
+      _session = new eB.Data.Session();
+      _session.AttachProtoProxy(_proxy.proto_proxy, _proxy.connect_info);
     }
 
     public void Disconnect()
     {
-      if (Proxy != null) Proxy.Dispose();
+      if (_proxy != null) _proxy.Dispose();
     }
 
     protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.config.Template template, IDataObject dataObject)
@@ -483,7 +480,7 @@ namespace org.iringtools.adapter.datalayer.eb
           criteria = string.Format("Code = '{0}'", itemNumber);
 
         string column = "Id";
-        eB.Data.Search s = new Search(Session, eB.Common.Enum.ObjectType.Item, column, criteria);
+        eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.Item, column, criteria);
         return (s.RetrieveScalar<int>(column));
       }
       catch (Exception)
@@ -503,7 +500,7 @@ namespace org.iringtools.adapter.datalayer.eb
           criteria = string.Format("Code = '{0}' AND IsLatestRevision = 'Y'", docNumber);
 
         string column = "Id";
-        eB.Data.Search s = new Search(Session, eB.Common.Enum.ObjectType.Document, column, criteria);
+        eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.Document, column, criteria);
         return (s.RetrieveScalar<int>(column));
       }
       catch (Exception)
@@ -518,7 +515,7 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         string criteria = string.Format("Name = '{0}'", charName);
         string column = "Id";
-        eB.Data.Search s = new Search(Session, eB.Common.Enum.ObjectType.AttributeDef, column, criteria);
+        eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.AttributeDef, column, criteria);
         return (s.RetrieveScalar<int>(column));
       }
       catch (Exception)
@@ -534,13 +531,13 @@ namespace org.iringtools.adapter.datalayer.eb
 
       int itemId = GetItemId(itemCode, itemVersion);
 
-      if (Proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
+      if (_proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
         selectCommandText = string.Format("SELECT TOP 1 tag_id FROM tags WHERE item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
       else
         selectCommandText = string.Format("SELECT tag_id FROM tags WHERE rownum <= 1 AND item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
 
       int rc = 0;
-      string result = Proxy.query(selectCommandText, ref rc);
+      string result = _proxy.query(selectCommandText, ref rc);
       XmlDocument doc = new XmlDocument();
       doc.LoadXml(result);
 
