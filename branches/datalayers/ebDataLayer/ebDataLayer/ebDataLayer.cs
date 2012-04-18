@@ -22,8 +22,7 @@ namespace org.iringtools.adapter.datalayer.eb
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ebDataLayer));
 
-    private string _adapterDataPath = string.Empty;
-    private string _configPath = string.Empty;
+    private string _dataPath = string.Empty;
     private string _scope = string.Empty;
     private string _dictionaryXML = string.Empty;
 
@@ -43,10 +42,9 @@ namespace org.iringtools.adapter.datalayer.eb
     public ebDataLayer(AdapterSettings settings)
       : base(settings)
     {
-      _adapterDataPath = settings["AppDataPath"];
-      _configPath = settings["DataLayerPath"] + "App_Data\\";
+      _dataPath = (settings["DataLayerPath"] == null) ? settings["AppDataPath"] : settings["DataLayerPath"] + "App_Data\\";
       _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
-      _dictionaryXML = string.Format("{0}DataDictionary.{1}.xml", _adapterDataPath, _scope);
+      _dictionaryXML = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
 
       _server = _settings["ebServer"];
       _dataSource = _settings["ebDataSource"];
@@ -64,9 +62,9 @@ namespace org.iringtools.adapter.datalayer.eb
         EqlClient eqlClient = new EqlClient(_session);
         string templateName = eqlClient.GetDocumentTemplate(docId);
 
-        _groupTypes = Utility.Read<GroupTypes>(_configPath + "GroupTypes.xml", false);
-        _config = Utility.Read<Configuration>(_configPath + templateName + "_" + communityName + ".xml", false);
-        _rules = Utility.Read<Rules>(_configPath + "Rules_" + communityName + ".xml", false);
+        _groupTypes = Utility.Read<GroupTypes>(_dataPath + "GroupTypes.xml", false);
+        _config = Utility.Read<Configuration>(_dataPath + templateName + "_" + communityName + ".xml", false);
+        _rules = Utility.Read<Rules>(_dataPath + "Rules_" + communityName + ".xml", false);
       }
       catch (Exception e)
       {
@@ -571,7 +569,7 @@ namespace org.iringtools.adapter.datalayer.eb
           }
       }).ToArray();
 
-      eql = String.Format(eql, parameters);
+      eql = string.Format(eql, parameters);
       return new Search(session, new eB.ContentData.Eql.Search(eql)).Retrieve<DataTable>(1, pageSize);
     }
 
@@ -618,7 +616,7 @@ namespace org.iringtools.adapter.datalayer.eb
             {
               if (dataRow.Table.Columns.Contains(objectProperty.propertyName))
               {
-                String value = Convert.ToString(dataRow[objectProperty.propertyName]);
+                string value = Convert.ToString(dataRow[objectProperty.propertyName]);
 
                 if (value != null)
                 {
@@ -627,8 +625,8 @@ namespace org.iringtools.adapter.datalayer.eb
               }
               else
               {
-                //_logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]",
-                //  objectProperty.columnName, objectDefinition.tableName));
+                _logger.Warn(string.Format("Value for column [{0}] not found in data row of table [{1}]",
+                  objectProperty.columnName, objectDefinition.tableName));
               }
             }
             catch (Exception ex)
