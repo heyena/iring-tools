@@ -603,9 +603,9 @@ namespace org.iringtools.adapter.datalayer.eb
         {
           dataObject = new GenericDataObject() { ObjectType = objectDefinition.objectName };
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-          throw ex;
+          throw e;
         }
 
         if (dataObject != null && objectDefinition.dataProperties != null)
@@ -629,9 +629,9 @@ namespace org.iringtools.adapter.datalayer.eb
                   objectProperty.columnName, objectDefinition.tableName));
               }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-              throw ex;
+              throw e;
             }
           }
         }
@@ -654,9 +654,9 @@ namespace org.iringtools.adapter.datalayer.eb
           {
             dataObject = ToDataObject(dataRow, objectDefinition);
           }
-          catch (Exception ex)
+          catch (Exception e)
           {
-            throw ex;
+            throw e;
           }
 
           if (dataObjects != null)

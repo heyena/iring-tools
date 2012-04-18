@@ -29,7 +29,8 @@ namespace org.iringtools.adaper.datalayer.eb
         eB.Data.Search s = new Search(_session, eql);
         templateName = s.RetrieveScalar<String>("Name");
       }
-      catch (Exception e) { 
+      catch (Exception e) 
+      { 
         _logger.Error(e); 
         throw e; 
       }
@@ -76,7 +77,8 @@ namespace org.iringtools.adaper.datalayer.eb
         eB.Data.Search s = new Search(this._session, eql);
         objectId = s.RetrieveScalar<int>("Id");
       }
-      catch (Exception e) { 
+      catch (Exception e) 
+      { 
         _logger.Error(e); 
         throw e; 
       }
@@ -93,7 +95,8 @@ namespace org.iringtools.adaper.datalayer.eb
         eB.Data.Search s = new Search(this._session, eql);
         objectId = s.RetrieveScalar<int>("Id");
       }
-      catch (Exception e) { 
+      catch (Exception e) 
+      { 
         _logger.Error(e); 
         throw e; 
       }
@@ -101,7 +104,6 @@ namespace org.iringtools.adaper.datalayer.eb
       return objectId;
     }
 
-    //TODO: return list
     public DataTable GetObjectIds(string eql)
     {
       DataTable dt = new DataTable();

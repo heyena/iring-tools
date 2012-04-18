@@ -198,16 +198,16 @@ namespace org.iringtools.adaper.datalayer.eb
               }
             }
           }
-          catch (Exception ex)
+          catch (Exception e)
           {
-            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", m.Property, ex.Message));
+            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", m.Property, e.Message));
             status.Level = StatusLevel.Warning;
           }
         }
       }
-      catch (Exception ex) 
+      catch (Exception e) 
       {
-        status.Messages.Add(ex.Message);
+        status.Messages.Add(e.Message);
         status.Level = StatusLevel.Error;
       }
 
@@ -240,16 +240,16 @@ namespace org.iringtools.adaper.datalayer.eb
               }
             }
           }
-          catch (Exception ex)
+          catch (Exception e)
           {
-            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Property, ex.Message));
+            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Property, e.Message));
             status.Level = StatusLevel.Warning;
           }
         }
       }
-      catch (Exception ex) 
+      catch (Exception e) 
       { 
-        status.Messages.Add(ex.Message);
+        status.Messages.Add(e.Message);
         status.Level = StatusLevel.Error;
       }
 
@@ -300,9 +300,9 @@ namespace org.iringtools.adaper.datalayer.eb
                           _session.Writer.CreateRelFromTemplate(reltemplateId, tag.Id, (int)ObjectType.Tag, relatedObjectId, rule.RelatedObjectType);
                         }
                       }
-                      catch (Exception ex)
+                      catch (Exception e)
                       {
-                        status.Messages.Add(string.Format("Relationship update failed due to error {0}.", ex.Message));
+                        status.Messages.Add(string.Format("Relationship update failed due to error {0}.", e.Message));
                         status.Level = StatusLevel.Warning;
                       }
                     }
@@ -318,9 +318,9 @@ namespace org.iringtools.adaper.datalayer.eb
           }
         }
       }
-      catch (Exception ex) 
+      catch (Exception e) 
       {         
-        status.Messages.Add(ex.Message);
+        status.Messages.Add(e.Message);
         status.Level = StatusLevel.Error;
       }
 
@@ -366,9 +366,9 @@ namespace org.iringtools.adaper.datalayer.eb
                           _session.Writer.CreateRelFromTemplate(reltemplateId, doc.Id, (int)ObjectType.Document, relatedObjectId, (int)rule.RelatedObjectType);
                         }
                       }
-                      catch (Exception ex)
+                      catch (Exception e)
                       {
-                        status.Messages.Add(string.Format("Relationship update failed due to error {0}.", ex.Message));
+                        status.Messages.Add(string.Format("Relationship update failed due to error {0}.", e.Message));
                         status.Level = StatusLevel.Warning;
                       }
                     }
@@ -384,9 +384,9 @@ namespace org.iringtools.adaper.datalayer.eb
           }
         }
       }
-      catch (Exception ex) 
+      catch (Exception e) 
       { 
-        status.Messages.Add(ex.Message);
+        status.Messages.Add(e.Message);
         status.Level = StatusLevel.Error;
       }
 
