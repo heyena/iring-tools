@@ -313,27 +313,18 @@ namespace org.iringtools.library
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]
-  public class PicklistDefinition
+  public class PicklistObject
   {
     [DataMember(IsRequired = true, Order = 0)]
     public string name { get; set; }
 
     [DataMember(IsRequired = false, Order = 1)]
-    public string title { get; set; }
+    public string description { get; set; }
 
     [DataMember(IsRequired = false, Order = 2)]
-    public int valueColumnIndex { get; set; }
+    public int valuePropertyIndex { get; set; }
 
     [DataMember(IsRequired = false, Order = 3)]
-    public string fieldList { get; set; }
-
-    [DataMember(IsRequired = false, Order = 4)]
-    public string tableName { get; set; }
-
-    [DataMember(IsRequired = false, Order = 5)]
-    public string filterBy { get; set; }
-
-    [DataMember(IsRequired = false, Order = 6)]
-    public string orderBy { get; set; }
+    public List<DataProperty> pickListProperties { get; set; }
   }
 }
