@@ -60,8 +60,9 @@ namespace org.iringtools.adaper.datalayer.eb
       return status;
     }
 
-    public Status ProcessDocument(int id, string key)
+    public Status ProcessDocument(IDataObject dataObject, int id, string key)
     {
+      _dataObject = dataObject;
       Status status = new Status();
 
       try
@@ -69,8 +70,7 @@ namespace org.iringtools.adaper.datalayer.eb
         Document doc = new Document(_session, id);
         doc.Retrieve("Header;Attributes");
         
-        //TODO: SetAttributes???
-
+        status.Messages.Add(SetAttributes(ref doc));
         status.Messages.Add(SetRelationships(doc));
         status.Level = StatusLevel.Success;
       }
@@ -83,35 +83,35 @@ namespace org.iringtools.adaper.datalayer.eb
       return status;
     }
 
-    protected string SetAttributes(ref Tag o)
+    protected string SetAttributes(ref Tag tag)
     {
       StringBuilder messages = new StringBuilder();
 
       try
       {
-        var attrs = from k in _mappings
-                    where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Attribute
-                    select k;
+        var attrs = from m in _mappings
+                    where m.Type == PropertyType.Attribute
+                    select m;
 
         foreach (Map m in attrs)
         {
           try
           {
-            object value = _dataObject.GetPropertyValue(m.Name);
+            object value = _dataObject.GetPropertyValue(m.Property);
 
             if (value != null)
             {
-              eB.Data.Attribute ebAtr = o.Attributes.Where(atr => ((atr.Name == m.Name))).Select(atr => atr).FirstOrDefault();
+              eB.Data.Attribute ebAtr = tag.Attributes.Where(atr => ((atr.Name == m.Property))).Select(atr => atr).FirstOrDefault();
 
               if ((ebAtr.Value == null) || (ebAtr.Value.ToString() != value.ToString()))
               {
-                _session.Writer.ChgCharData(o.Id, ebAtr.AttributeDef.Id, value);
+                _session.Writer.ChgCharData(tag.Id, ebAtr.AttributeDef.Id, value);
               }
             }
           }
           catch (Exception ex)
           {
-            messages.Append(String.Format("Attribute {0} update failed due to error {1}", m.Name, ex.Message));
+            messages.Append(String.Format("Attribute {0} update failed due to error {1}", m.Property, ex.Message));
           }
         }
       }
@@ -120,35 +120,35 @@ namespace org.iringtools.adaper.datalayer.eb
       return messages.ToString();
     }
 
-    protected string SetAttributes(ref Document o)
+    protected string SetAttributes(ref Document doc)
     {
       StringBuilder messages = new StringBuilder();
 
       try
       {
         var attrs = from k in _mappings
-                    where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Attribute
+                    where k.Type == PropertyType.Attribute
                     select k;
 
         foreach (Map m in attrs)
         {
           try
           {
-            object value = _dataObject.GetPropertyValue(m.Name);
+            object value = _dataObject.GetPropertyValue(m.Property);
 
             if (value != null)
             {
-              eB.Data.Attribute ebAtr = o.Attributes.Where(atr => ((atr.Name == m.Name))).Select(atr => atr).FirstOrDefault();
+              eB.Data.Attribute ebAtr = doc.Attributes.Where(atr => ((atr.Name == m.Property))).Select(atr => atr).FirstOrDefault();
 
               if (ebAtr.Value.ToString() != (string)value)
               {
-                _session.Writer.ChgCharData(o.Id, ebAtr.AttributeDef.Id, value);
+                _session.Writer.ChgCharData(doc.Id, ebAtr.AttributeDef.Id, value);
               }
             }
           }
           catch (Exception ex)
           {
-            messages.Append(String.Format("Attribute {0} update failed due to error {1}", m.Name, ex.Message));
+            messages.Append(String.Format("Attribute {0} update failed due to error {1}", m.Property, ex.Message));
           }
         }
       }
@@ -156,7 +156,7 @@ namespace org.iringtools.adaper.datalayer.eb
       return messages.ToString();
     }
 
-    public bool RequiredParametersPresent(org.iringtools.adaper.datalayer.eb.Rule rule)
+    public bool RequiredParametersPresent(Rule rule)
     {
       foreach (var p in rule.Parameters)
       {
@@ -188,7 +188,7 @@ namespace org.iringtools.adaper.datalayer.eb
     {
       try
       {
-        return p.Split(param.Seperator)[param.Position];
+        return p.Split(new String[] {param.Seperator}, StringSplitOptions.RemoveEmptyEntries)[param.Position];
       }
 
       catch { return p; }
@@ -254,7 +254,7 @@ namespace org.iringtools.adaper.datalayer.eb
         {
           List<Rule> rules = GetRules(m.RuleRefs);
 
-          foreach (org.iringtools.adaper.datalayer.eb.Rule r in rules)
+          foreach (Rule r in rules)
           {
             if (RequiredParametersPresent(r))
             {
@@ -369,11 +369,12 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map n = (from k in _mappings
-                     where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Name
+                     where k.Type == PropertyType.Name
                      select k).FirstOrDefault();
+
         if (n != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(n.Name);
+          string name = (string)_dataObject.GetPropertyValue(n.Property);
 
           if (tag.Name != name)
           {
@@ -394,11 +395,11 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map n = (from k in _mappings
-                     where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Name
+                     where k.Type == PropertyType.Name
                      select k).FirstOrDefault();
         if (n != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(n.Name);
+          string name = (string)_dataObject.GetPropertyValue(n.Property);
 
           if (doc.Name != name)
           {
@@ -419,11 +420,11 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map n = (from k in _mappings
-                     where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Title
+                     where k.Type == PropertyType.Title
                      select k).FirstOrDefault();
         if (n != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(n.Name);
+          string name = (string)_dataObject.GetPropertyValue(n.Property);
           if (tag.Name != name)
           {
             tag.Description = name;

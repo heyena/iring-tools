@@ -309,7 +309,7 @@ namespace org.iringtools.adapter.datalayer.eb
           try
           {
             Map codeMap = _config.Mappings.Find(x => x.Type == PropertyType.Code);
-            keyValue = (string)dataObject.GetPropertyValue(codeMap.Name);
+            keyValue = (string)dataObject.GetPropertyValue(codeMap.Property);
           }
           catch {}
 
@@ -317,12 +317,11 @@ namespace org.iringtools.adapter.datalayer.eb
           try
           {
             Map revisionMap = _config.Mappings.Find(x => x.Type == PropertyType.Revision);
-            revision = (string)dataObject.GetPropertyValue(revisionMap.Name);
+            revision = (string)dataObject.GetPropertyValue(revisionMap.Property);
           }
           catch {}
 
-          EqlClient eql = new EqlClient(_session);
-          
+          EqlClient eql = new EqlClient(_session);          
           int objectId = eql.GetObjectId(keyValue, revision, _config.Template.ObjectType);
           org.iringtools.adaper.datalayer.eb.config.Template template = _config.Template;
 
@@ -356,7 +355,7 @@ namespace org.iringtools.adapter.datalayer.eb
           }
           else if (objectType == ObjectType.Document.ToString())
           {
-            response.Append(processor.ProcessDocument(objectId, keyValue));
+            response.Append(processor.ProcessDocument(dataObject, objectId, keyValue));
           }
           else 
           {

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+	<template>
+		<objecttype>212</objecttype>
+		<name>TMP-MECH-{0}-{1}</name>
+		<placeholders>
+			<placeholder id="0">CommGrpCode</placeholder>
+			<placeholder id="1">CommodityCode</placeholder>
+		</placeholders>
+	</template>
+	<mappings>
+		<map property="Id" type="Code"/>
+		<map property="Unit" type="Relationship">
+			<rule order="0">5</rule>
+			<rule order="1">20</rule>
+		</map >
+		<map property="Safety Designator" type="Attribute"/>
+		<map property="System" type="Relationship">
+			<rule order="0">1</rule>
+		</map>
+		<map property="Comm Grp Code" type="None"/>
+		<map property="Description" type="Title"/>
+		<map property="Component Function Name (CFN)" type="Attribute"/>
+		<map property="P&amp;ID" type="Relationship">
+			<rule order="0">2</rule>
+		</map>
+		<map property="P&amp;ID Rev" type="None"/>
+		<map property="Equipment Rating" type="Attribute"/>
+		<map property="Reference Calc" type="Relationship"/>
+		<map property="Commodity Code" type="Attribute"/>
+		<map property="Material Req No" type="Relationship"/>
+		<map property="Data Sheet No." type="Relationship"/>
+		<map property="Power Reqd" type="Attribute"/>
+		<map property="HP (Est/Act/Calc)" type="Attribute"/>
+		<map property="Approved Load" type="Attribute"/>
+		<map property="LOAD UOM" type="None"/>
+		<map property="Manufacturer" type="Attribute"/>
+		<map property="Model No" type="Attribute"/>
+		<map property="Vendor Drawing" type="Relationship"/>
+		<map property="Area /VNS" type="Relationship">
+			<rule order="0">3</rule>
+			<rule order="1">25</rule>
+		</map >
+		<map property="PO Number" type="Relationship"/>
+		<map property="Vendor Supplied (Y/N)" type="Attribute"/>
+		<map property="Q-List (Y/N)" type="Attribute"/>
+		<map property="Approved Seismic Class" type="Attribute"/>
+		<map property="Approved Pressure Boundry Quality Group" type="Attribute"/>
+		<map property="Approved Non-Pressure Boundry Quality Group" type="Attribute"/>
+		<map property="Approved Quality Class" type="Attribute"/>
+		<map property="Approved AQ Class" type="Attribute"/>
+		<map property="Facility/BLDG" type="None"/>
+		<map property="Location Elev/Area" type="None"/>
+	</mappings>
+</configuration>
