@@ -81,7 +81,7 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         var attrs = from k in _mappings
-                    where k.Type == org.iringtools.adaper.datalayer.eb.config.Type.Attribute
+                    where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Attribute
                     select k;
         foreach (Map m in attrs)
         {
@@ -113,7 +113,7 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         var attrs = from k in _mappings
-                    where k.Type == org.iringtools.adaper.datalayer.eb.config.Type.Attribute
+                    where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Attribute
                     select k;
         foreach (Map m in attrs)
         {
@@ -257,7 +257,7 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map n = (from k in _mappings
-                     where k.Type == org.iringtools.adaper.datalayer.eb.config.Type.Name
+                     where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Name
                      select k).FirstOrDefault();
         //if (n != null)
         //{
@@ -281,7 +281,7 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map n = (from k in _mappings
-                     where k.Type == org.iringtools.adaper.datalayer.eb.config.Type.Name
+                     where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Name
                      select k).FirstOrDefault();
         //if (n != null)
         //{
@@ -305,7 +305,7 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map n = (from k in _mappings
-                     where k.Type == org.iringtools.adaper.datalayer.eb.config.Type.Title
+                     where k.Type == org.iringtools.adaper.datalayer.eb.config.PropertyType.Title
                      select k).FirstOrDefault();
         //if (n != null)
         //{

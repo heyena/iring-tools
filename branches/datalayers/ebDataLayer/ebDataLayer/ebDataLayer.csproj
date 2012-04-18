@@ -71,6 +71,11 @@
     <Compile Include="Rules.cs" />
     <Compile Include="Configuration.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Data\GroupTypes.xml" />
+    <Content Include="App_Data\IMP_MECH_BechtelPreProd.xml" />
+    <Content Include="App_Data\Rules_BechtelPreProd.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
