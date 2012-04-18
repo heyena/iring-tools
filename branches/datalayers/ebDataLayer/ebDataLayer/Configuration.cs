@@ -42,8 +42,8 @@ namespace org.iringtools.adaper.datalayer.eb.config
   [XmlType("map")]
   public class Map
   {
-    [XmlAttribute("name")]
-    public string Name { get; set; }
+    [XmlAttribute("property")]
+    public string Property { get; set; }
 
     [XmlAttribute("type")]
     public PropertyType Type { get; set; }

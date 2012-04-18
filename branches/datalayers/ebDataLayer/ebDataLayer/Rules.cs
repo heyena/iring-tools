@@ -43,14 +43,14 @@ namespace org.iringtools.adaper.datalayer.eb
   [XmlType("parameter")]
   public class Parameter
   {
-    [XmlAttribute(AttributeName = "position")]
+    [XmlAttribute("position")]
     public int Position { get; set; }
 
-    [XmlAttribute(AttributeName = "placeholder")]
-    public string Placeholder { get; set; }
+    [XmlAttribute("placeholder")]
+    public int Placeholder { get; set; }
 
-    [XmlAttribute(AttributeName = "seperator")]
-    public char Seperator { get; set; }
+    [XmlAttribute("seperator")]
+    public string Seperator { get; set; }
 
     [XmlText]
     public string Value { get; set; }
@@ -59,13 +59,13 @@ namespace org.iringtools.adaper.datalayer.eb
   [XmlType("check")]
   public class SelfCheck
   {
-    [XmlAttribute(AttributeName = "column")]
+    [XmlAttribute("column")]
     public string Column { get; set; }
 
-    [XmlAttribute(AttributeName = "value")]
+    [XmlAttribute("value")]
     public string Value { get; set; }
 
-    [XmlAttribute(AttributeName = "operator")]
+    [XmlAttribute("operator")]
     public string Operator { get; set; }
   }
 }
