@@ -13,7 +13,7 @@ namespace org.iringtools.adaper.datalayer.eb
   public class Rule
   {
     [XmlAttribute("id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlElement("name")]
     public string Name { get; set; }
@@ -22,7 +22,7 @@ namespace org.iringtools.adaper.datalayer.eb
     public string RelationshipTemplate { get; set; }
 
     [XmlElement("relatedobjecttype")]
-    public string RelatedObjectType { get; set; }
+    public int RelatedObjectType { get; set; }
 
     [XmlElement("eql")]
     public string Eql { get; set; }
@@ -44,13 +44,13 @@ namespace org.iringtools.adaper.datalayer.eb
   public class Parameter
   {
     [XmlAttribute(AttributeName = "position")]
-    public string Position { get; set; }
+    public int Position { get; set; }
 
     [XmlAttribute(AttributeName = "placeholder")]
     public string Placeholder { get; set; }
 
     [XmlAttribute(AttributeName = "seperator")]
-    public string Seperator { get; set; }
+    public char Seperator { get; set; }
 
     [XmlText]
     public string Value { get; set; }

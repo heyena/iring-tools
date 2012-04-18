@@ -49,17 +49,17 @@ namespace org.iringtools.adaper.datalayer.eb.config
     public PropertyType Type { get; set; }
 
     [XmlElement("rule")]
-    public List<Rule> Rules { get; set; }
+    public List<RuleRef> RuleRefs { get; set; }
   }
 
   [XmlType("rule")]
-  public class Rule
+  public class RuleRef
   {
     [XmlAttribute("order")]
     public int Order { get; set; }
 
     [XmlText]
-    public string Value { get; set; }
+    public int Value { get; set; }
   }
 
   [XmlType("type")]
@@ -101,6 +101,41 @@ namespace org.iringtools.adaper.datalayer.eb.config
             return 1;
 
           if (left.Id < right.Id)
+            return -1;
+
+          return 0;
+        }
+      }
+    }
+  }
+
+  public class RuleRefComparer : IComparer<RuleRef>
+  {
+    public int Compare(RuleRef left, RuleRef right)
+    {
+      if (left == null)
+      {
+        if (right == null)
+        {
+          return 0;
+        }
+        else
+        {
+          return -1;
+        }
+      }
+      else
+      {
+        if (right == null)
+        {
+          return 1;
+        }
+        else
+        {
+          if (left.Order > right.Order)
+            return 1;
+
+          if (left.Order < right.Order)
             return -1;
 
           return 0;

@@ -22,8 +22,8 @@ namespace org.iringtools.adapter.datalayer.eb
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ebDataLayer));
 
-    private string _appDataPath = string.Empty;
-    private string _dataLayerPath = string.Empty;
+    private string _adapterDataPath = string.Empty;
+    private string _configPath = string.Empty;
     private string _scope = string.Empty;
     private string _dictionaryXML = string.Empty;
 
@@ -43,10 +43,10 @@ namespace org.iringtools.adapter.datalayer.eb
     public ebDataLayer(AdapterSettings settings)
       : base(settings)
     {
-      _appDataPath = settings["AppDataPath"];
-      _dataLayerPath = settings["DataLayerPath"] + "App_Data\\";
+      _adapterDataPath = settings["AppDataPath"];
+      _configPath = settings["DataLayerPath"] + "App_Data\\";
       _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
-      _dictionaryXML = string.Format("{0}DataDictionary.{1}.xml", _appDataPath, _scope);
+      _dictionaryXML = string.Format("{0}DataDictionary.{1}.xml", _adapterDataPath, _scope);
 
       _server = _settings["ebServer"];
       _dataSource = _settings["ebDataSource"];
@@ -57,16 +57,20 @@ namespace org.iringtools.adapter.datalayer.eb
       try
       {
         Connect();
-        
+
         int docId = int.Parse(_settings["ebDocId"]);
         string communityName = _settings["ebCommunityName"];
 
         EqlClient eqlClient = new EqlClient(_session);
         string templateName = eqlClient.GetDocumentTemplate(docId);
 
-        _groupTypes = Utility.Read<GroupTypes>(_dataLayerPath + "GroupTypes.xml", false);
-        _config = Utility.Read<Configuration>(_dataLayerPath + templateName + "_" + communityName + ".xml", false);
-        _rules = Utility.Read<Rules>(_dataLayerPath + "Rules_" + communityName + ".xml", false);
+        _groupTypes = Utility.Read<GroupTypes>(_configPath + "GroupTypes.xml", false);
+        _config = Utility.Read<Configuration>(_configPath + templateName + "_" + communityName + ".xml", false);
+        _rules = Utility.Read<Rules>(_configPath + "Rules_" + communityName + ".xml", false);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error initializing eb data layer: " + e.ToString());
       }
       finally
       {
@@ -298,21 +302,21 @@ namespace org.iringtools.adapter.datalayer.eb
 
         foreach (IDataObject dataObject in dataObjects)
         {
-          KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
-          string keyValue = (string) dataObject.GetPropertyValue(keyProp.keyPropertyName);
+          //KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
+          //string keyValue = (string) dataObject.GetPropertyValue(keyProp.keyPropertyName);
 
-          //string keyValue = string.Empty;
-          //try
-          //{
-          //  Map codeMap = _config.Maps.Find(x => x.Type == adaper.datalayer.eb.config.Type.Code);
-          //  keyValue = (string)dataObject.GetPropertyValue(codeMap.Name);
-          //}
-          //catch { }
+          string keyValue = string.Empty;
+          try
+          {
+            Map codeMap = _config.Mappings.Find(x => x.Type == PropertyType.Code);
+            keyValue = (string)dataObject.GetPropertyValue(codeMap.Name);
+          }
+          catch {}
 
           string revision = string.Empty;
           try
           {
-            Map revisionMap = _config.Mappings.Find(x => x.Type == adaper.datalayer.eb.config.PropertyType.Revision);
+            Map revisionMap = _config.Mappings.Find(x => x.Type == PropertyType.Revision);
             revision = (string)dataObject.GetPropertyValue(revisionMap.Name);
           }
           catch {}
@@ -344,11 +348,11 @@ namespace org.iringtools.adapter.datalayer.eb
           }
 
           string objectType = Enum.GetName(typeof(ObjectType), template.ObjectType);
-          ebProcessor processor = new ebProcessor(_session, _config.Mappings);
+          ebProcessor processor = new ebProcessor(_session, _config.Mappings, _rules);
           
           if (objectType == ObjectType.Tag.ToString())
           {
-            response.Append(processor.ProcessTag(objectId, keyValue));
+            response.Append(processor.ProcessTag(dataObject, objectId, keyValue));
           }
           else if (objectType == ObjectType.Document.ToString())
           {
