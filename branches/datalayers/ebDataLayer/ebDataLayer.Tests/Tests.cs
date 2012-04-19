@@ -51,10 +51,10 @@ namespace bechtel.eb.datalayer.test
       Assert.Greater(count, 0);
     }
 
-    //[Test]
+    [Test]
     public void TestGetPage()
     {
-      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical", new DataFilter(), 5, 0);
+      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical",new DataFilter(), 5, 0);
       Assert.Greater(dataObjects.Count, 0);
     }
 
@@ -168,7 +168,7 @@ namespace bechtel.eb.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    [Test]
+    //[Test]
     public void TestPost()
     {
       IDataObject dataObject = new GenericDataObject() { ObjectType = "Tag" };

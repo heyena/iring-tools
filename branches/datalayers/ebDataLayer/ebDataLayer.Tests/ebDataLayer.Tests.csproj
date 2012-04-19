@@ -38,6 +38,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DataLibrary">
+      <HintPath>Y:\bin\DataLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="eB.Common, Version=15.3.2.261, Culture=neutral, PublicKeyToken=a3739844efdab314, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\EBLibrary\lib\eB.Common.dll</HintPath>
@@ -47,7 +50,7 @@
       <HintPath>..\EBLibrary\lib\eB.Service.Proxy.dll</HintPath>
     </Reference>
     <Reference Include="iRINGLibrary">
-      <HintPath>..\EBLibrary\lib\iRINGLibrary.dll</HintPath>
+      <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -68,7 +71,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UtilityLibrary">
-      <HintPath>..\EBLibrary\lib\UtilityLibrary.dll</HintPath>
+      <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

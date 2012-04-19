@@ -15,6 +15,7 @@ using eB.Common.Enum;
 using log4net;
 using org.iringtools.adaper.datalayer.eb;
 using org.iringtools.adaper.datalayer.eb.config;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter.datalayer.eb
 {
@@ -146,6 +147,17 @@ namespace org.iringtools.adapter.datalayer.eb
           string attrsResults = _proxy.query(attrsQuery, ref status);
           attrsDoc.LoadXml(attrsResults);
 
+          // --------populate user attributes--------
+
+          string ebUserAttributesQuery = _settings["ebUserAttributesQuery." + group.Name];
+          int objectType =212;
+          string userAttrsQuery = string.Format(ebUserAttributesQuery, objectType);
+          string userAttrsResults = _proxy.query(userAttrsQuery, ref status);
+          XDocument userAttributesDoc = new XDocument();
+          userAttributesDoc = XDocument.Parse(userAttrsResults);
+
+          //-------------------------------------------
+
           foreach (XmlNode attrNode in attrsDoc.DocumentElement.ChildNodes)
           {
             DataProperty dataProp = new DataProperty();
@@ -153,7 +165,23 @@ namespace org.iringtools.adapter.datalayer.eb
             dataProp.propertyName = Regex.Replace(dataProp.columnName, @" |\.", "");
             dataProp.dataType = ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
             dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
-            dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;
+
+            //dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;
+            var userAttributes = (from item in userAttributesDoc.Descendants("record")
+                                  where item.Element("char_name").Value == dataProp.columnName
+                                  select item.Element("char_name").Value).ToList();
+
+            // system properties are readonly
+            if (userAttributes.Count == 0)
+            {
+                dataProp.isReadOnly = true;
+            }
+            else
+            {
+                // user defined  properties are writable
+                dataProp.isReadOnly = false;
+            }
+
             dataObjectDef.dataProperties.Add(dataProp);
           }
 
@@ -228,15 +256,16 @@ namespace org.iringtools.adapter.datalayer.eb
 
             if (dataProp.isReadOnly)
             {
-              queryBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
+                queryBuilder.Append(dataProp.columnName);
+              
             }
             else
             {
-              queryBuilder.Append(dataProp.columnName);
+                queryBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
             }
           }
 
-          query = string.Format(query, classGroup, queryBuilder.ToString(), dataObjectDef.objectName);
+          query = string.Format(query, classGroup, queryBuilder.ToString(), "Mech-ME");
           DataTable result = ExecuteSearch(_session, query, new object[0], -1);
 
           dataObjects = ToDataObjects(result, dataObjectDef);
