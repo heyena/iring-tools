@@ -88,12 +88,12 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         Connect();
 
-        StringBuilder cosQuery = new StringBuilder("select * from class_objects");
+        StringBuilder cosQuery = new StringBuilder("SELECT * FROM class_objects");
 
         if (!string.IsNullOrEmpty(_classCodes))
         {
           string[] classCodes = _classCodes.Split(',');
-          cosQuery.Append(" where ");
+          cosQuery.Append(" WHERE ");
 
           for (int i = 0; i < classCodes.Length; i++)
           {
@@ -112,7 +112,7 @@ namespace org.iringtools.adapter.datalayer.eb
               cosQuery.Append(" or ");
             }
 
-            cosQuery.Append(string.Format("(group_id = {0} and code = '{1}')", groupType.Value, code));
+            cosQuery.Append(string.Format("(group_id = {0} AND name = '{1}')", groupType.Value, code));
           }
         }
 
@@ -127,14 +127,14 @@ namespace org.iringtools.adapter.datalayer.eb
           string className = coNode.SelectSingleNode("name").InnerText;
           int groupId = int.Parse(coNode.SelectSingleNode("group_id").InnerText);
           GroupType group = _groupTypes.Single<org.iringtools.adaper.datalayer.eb.GroupType>(x => x.Value == groupId);
-          string tableName = group.Name + "." + classCode;
 
-          if (dictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower()) != null)
-            continue;
+          EqlClient eqlClient = new EqlClient(_session);
+          List<string> subClassCodes = eqlClient.GetSubClassCodes(className);
 
           DataObject dataObjectDef = new DataObject();
           dataObjectDef.objectName = className;
-          dataObjectDef.tableName = tableName;
+          dataObjectDef.tableName = (subClassCodes.Count == 0) ? className :
+            group.Name + ".('" + string.Join("','", subClassCodes) + "')";
 
           string ebMetadataQuery = _settings["ebMetadataQuery." + group.Name];
 
@@ -206,6 +206,7 @@ namespace org.iringtools.adapter.datalayer.eb
       return dictionary;
     }
 
+    //TODO: use startIndex
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
@@ -219,30 +220,40 @@ namespace org.iringtools.adapter.datalayer.eb
 
         if (dataObjectDef != null)
         {
-          string classGroup = (dataObjectDef.tableName.ToLower().StartsWith("documents")) ? "Document" : "Tag";
-          string query = "START WITH {0} SELECT {1} WHERE Class.Code = '{2}'";
-          StringBuilder queryBuilder = new StringBuilder();
+          string[] parts = dataObjectDef.tableName.Split('.');
+          string classObject = parts[0];
+          string classCodes = parts[1];
 
-          foreach (DataProperty dataProp in dataObjectDef.dataProperties)
+          if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
-            if (queryBuilder.Length > 0)
-              queryBuilder.Append(",");
+            string query = "START WITH {0} SELECT {1} WHERE Class.Code IN {2}";
+            StringBuilder attrsBuilder = new StringBuilder();
 
-            if (dataProp.isReadOnly)
+            foreach (DataProperty dataProp in dataObjectDef.dataProperties)
             {
-                queryBuilder.Append(dataProp.columnName);
-              
+              if (attrsBuilder.Length > 0)
+                attrsBuilder.Append(",");
+
+              if (dataProp.isReadOnly)
+              {
+                attrsBuilder.Append(dataProp.columnName);
+
+              }
+              else
+              {
+                attrsBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
+              }
             }
-            else
-            {
-                queryBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
-            }
+
+            query = string.Format(query, classObject, attrsBuilder.ToString(), classCodes);
+            DataTable result = ExecuteSearch(_session, query, new object[0], pageSize);
+
+            dataObjects = ToDataObjects(result, dataObjectDef);
           }
-
-          query = string.Format(query, classGroup, queryBuilder.ToString(), "MECH-ME");
-          DataTable result = ExecuteSearch(_session, query, new object[0], -1);
-
-          dataObjects = ToDataObjects(result, dataObjectDef);
+          else
+          {
+            throw new Exception("Class object [" + classObject + "] not currently supported.");
+          }
         }
         else
         {
