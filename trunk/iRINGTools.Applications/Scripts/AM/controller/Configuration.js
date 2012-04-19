@@ -94,6 +94,9 @@
   },
 
   applyDbObjectChanges: function (btn, evt) {
+    var thisForm = view.up('form');
+    var contextName = thisForm.contextName;    
+    var endpoint = thisForm.endpoint;
     var content = this.getMainContent(); 
     var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
     var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
@@ -624,8 +627,8 @@ connectToDatabase: function (btn, evt) {
     var content = this.getMainContent();
     var contextName = node.data.record.context;
     var datalayer = node.data.record.DataLayer;
-    if (datalayer == '')
-      datalayer = 'NHibernateLibrary';
+//    if (datalayer == '')
+//      datalayer = 'NHibernateLibrary';
 
     var endpoint = node.data.record.endpoint;
     var baseUrl = node.data.record.BaseUrl;    
