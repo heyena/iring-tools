@@ -26,12 +26,6 @@ namespace iRINGTools.Web.Helpers
     public object record { get; set; }
     public Dictionary<string, string> property { get; set; }
     public Dictionary<string, string> nhproperty { get; set; }
-    public string iconCls { get; set; }
-    public object relatedObjMap { get; set; }
-    public string objectName { get; set; }
-		public string relatedObjectName { get; set; }
-		public string relationshipType { get; set; }
-		public string relationshipTypeIndex { get; set; }
-    public object propertyMap { get; set; }
+    public string iconCls { get; set; }    
   }
 }

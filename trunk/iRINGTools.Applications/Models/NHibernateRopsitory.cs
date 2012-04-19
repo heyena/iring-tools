@@ -198,27 +198,6 @@ namespace org.iringtools.web.Models
     public Tree GetDBObjects(string contextName, string endpoint, string dbProvider, string dbServer,
       string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName, string baseUrl, DatabaseDictionary databaseDictionary)
     {
-      //Tree tree = new Tree();
-      //List<JsonTreeNode> dbObjectNodes = tree.getNodes();
-      //TreeNode dataObjectNode = new TreeNode();
-      //dataObjectNode.text = "EQUIPMENT";
-      //dataObjectNode.type = "DATAOBJECT";
-      //dataObjectNode.id = dataObjectNode.text;
-      //dataObjectNode.identifier = dataObjectNode.id;
-      //dataObjectNode.iconCls = "treeObject";
-      //dataObjectNode.leaf = true;
-      //dbObjectNodes.Add(dataObjectNode);
-
-      //dataObjectNode.record = new {
-      //  Name = "EQUIPMENT"        
-      //};
-
-      //dataObjectNode.property = new Dictionary<string,string>();
-      //dataObjectNode.property.Add("tableName", "EQUIPMENT");
-      //dataObjectNode.property.Add("objectNamespace", "org.iringtools.adapter.datalayer.proj_12345_000.ABC");
-      //dataObjectNode.property.Add("objectName", "EQUIPMENT");           
-
-
       var hasDBDictionary = false;
       WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
       var uri = String.Format("/{0}/{1}/objects", contextName, endpoint);
@@ -268,7 +247,7 @@ namespace org.iringtools.web.Models
 
           dataObjectNode.record = new
           {
-            Name = dataObjectNode.objectName
+            Name = dataObject.objectName
           };
 
           TreeNode keyPropertiesNode = new TreeNode();
@@ -281,7 +260,15 @@ namespace org.iringtools.web.Models
           keyPropertiesNode.leaf = false;
           keyPropertiesNode.children = new List<JsonTreeNode>();
 
-          TreeNode dataPropertiesNode = new TreeNode();
+          TreeNode hiddenNodeRoot = new TreeNode();
+          hiddenNodeRoot.text = "hiddenroot";
+          hiddenNodeRoot.children = new List<JsonTreeNode>();
+          Dictionary<string, TreeNode> hiddenNodes = new Dictionary<string, TreeNode>()
+          {
+           {"hiddenNode", hiddenNodeRoot}
+          };
+
+          JsonPropertyNode dataPropertiesNode = new JsonPropertyNode();
           dataPropertiesNode.text = "Properties";
           dataPropertiesNode.type = "PROPERTIES";
           dataPropertiesNode.id = dataObjectNode.id + "/" + dataPropertiesNode.text;
@@ -290,6 +277,7 @@ namespace org.iringtools.web.Models
           dataPropertiesNode.iconCls = "folder";
           dataPropertiesNode.leaf = false;
           dataPropertiesNode.children = new List<JsonTreeNode>();
+          dataPropertiesNode.hiddenNodes = hiddenNodes;
 
           TreeNode relationshipsNode = new TreeNode();
           relationshipsNode.text = "Relationships";
@@ -309,16 +297,16 @@ namespace org.iringtools.web.Models
           foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
             Dictionary<string, string> properties = new Dictionary<string, string>()
-          {
-            {"columnName", dataProperty.columnName},
-            {"propertyName", dataProperty.propertyName},
-            {"dataType", dataProperty.dataType.ToString()},
-            {"dataLength", dataProperty.dataLength.ToString()},
-            {"nullable", dataProperty.isNullable.ToString()},
-            {"showOnIndex", dataProperty.showOnIndex.ToString()},
-            {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
-            {"isHidden", dataProperty.isHidden.ToString()}
-          };
+            {
+              {"columnName", dataProperty.columnName},
+              {"propertyName", dataProperty.propertyName},
+              {"dataType", dataProperty.dataType.ToString()},
+              {"dataLength", dataProperty.dataLength.ToString()},
+              {"nullable", dataProperty.isNullable.ToString()},
+              {"showOnIndex", dataProperty.showOnIndex.ToString()},
+              {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
+              {"isHidden", dataProperty.isHidden.ToString()}
+            };
 
             if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDBDictionary)
             {
@@ -349,12 +337,12 @@ namespace org.iringtools.web.Models
               dataPropertyNode.iconCls = "treeProperty";
               dataPropertyNode.leaf = true;
               dataPropertyNode.hidden = true;
-              dataPropertyNode.property = properties;
-              dataPropertiesNode.children.Add(dataPropertyNode);
+              dataPropertyNode.property = properties;              
               dataPropertyNode.record = new
               {
                 Name = dataPropertyNode.text
-              };
+              };              
+              hiddenNodeRoot.children.Add(dataPropertyNode);
             }
           }
 
@@ -384,6 +372,7 @@ namespace org.iringtools.web.Models
       {
         TreeNode dataObjectNode = (TreeNode)dbObjectNodes[i];
         dataObjectNode.property["tableName"] = dataObjectNode.text;
+
         for (var ijk = 0; ijk < dbDict.dataObjects.Count; ijk++)
         {
           DataObject dataObject = dbDict.dataObjects[ijk];
@@ -397,14 +386,13 @@ namespace org.iringtools.web.Models
           dataObjectNode.property["keyDelimiter"] = dataObject.keyDelimeter;
           dataObjectNode.property["description"] = dataObject.description;
           dataObjectNode.text = dataObject.objectName;
-          //dataObjectNode.attributes.text = dataObject.objectName;
-          //dataObjectNode.setText(dataObject.objectName);
-
+          
           if (dataObject.objectName.ToLower() == dataObjectNode.text.ToLower())
           {
             List<string> shownProperty = new List<string>();
             TreeNode keysNode = (TreeNode)dataObjectNode.children[0];
-            TreeNode propertiesNode = (TreeNode)dataObjectNode.children[1];
+            JsonPropertyNode propertiesNode = (JsonPropertyNode)dataObjectNode.children[1];
+            TreeNode hiddenRootNode = propertiesNode.hiddenNodes["hiddenNode"];
             TreeNode relationshipsNode = (TreeNode)dataObjectNode.children[2];  
 
             // sync data properties
@@ -424,6 +412,26 @@ namespace org.iringtools.web.Models
                   propertiesNode.children[j].text = dataObject.dataProperties[jj].propertyName;
                   propertiesNode.children[j].property["propertyName"] = dataObject.dataProperties[jj].propertyName;
                   propertiesNode.children[j].property["isHidden"] = dataObject.dataProperties[jj].isHidden.ToString();
+                }
+              }
+            }
+
+            for (int j = 0; j < hiddenRootNode.children.Count; j++)
+            {
+              for (int jj = 0; jj < dataObject.dataProperties.Count; jj++)
+              {
+                if (hiddenRootNode.children[j].text.ToLower() == dataObject.dataProperties[jj].columnName.ToLower())
+                {
+
+                  if (!hasShown(shownProperty, hiddenRootNode.children[j].text.ToLower()))
+                  {
+                    shownProperty.Add(hiddenRootNode.children[j].text.ToLower());
+                    hiddenRootNode.children[j].hidden = false;
+                  }
+
+                  hiddenRootNode.children[j].text = dataObject.dataProperties[jj].propertyName;
+                  hiddenRootNode.children[j].property["propertyName"] = dataObject.dataProperties[jj].propertyName;
+                  hiddenRootNode.children[j].property["isHidden"] = dataObject.dataProperties[jj].isHidden.ToString();
                 }
               }
             }
@@ -451,15 +459,13 @@ namespace org.iringtools.web.Models
               }
               if (ij < dataObject.keyProperties.Count)
               {
+                string nodeText;
                 for (int ijj = 0; ijj < propertiesNode.children.Count; ijj++)
                 {
-                  var nodeText = dataObject.keyProperties[ij].keyPropertyName;
+                  nodeText = dataObject.keyProperties[ij].keyPropertyName;
                   if (propertiesNode.children[ijj].text.ToLower() == nodeText.ToLower())
                   {
-                    propertiesNode.children[ijj].property["propertyName"] = nodeText;
-                    //properties.keyType = 'assigned';
-                    //properties.nullable = false;
-
+                    propertiesNode.children[ijj].property["propertyName"] = nodeText;                    
                     JsonTreeNode newKeyNode = new JsonTreeNode();
                     newKeyNode.text = nodeText;
                     newKeyNode.type = "keyProperty";
@@ -482,6 +488,35 @@ namespace org.iringtools.web.Models
                     break;
                   }
                 }
+
+                for (int ijj = 0; ijj < hiddenRootNode.children.Count; ijj++)
+                {
+                  nodeText = dataObject.keyProperties[ij].keyPropertyName;
+                  if (hiddenRootNode.children[ijj].text.ToLower() == nodeText.ToLower())
+                  {
+                    hiddenRootNode.children[ijj].property["propertyName"] = nodeText;
+                    JsonTreeNode newKeyNode = new JsonTreeNode();
+                    newKeyNode.text = nodeText;
+                    newKeyNode.type = "keyProperty";
+                    newKeyNode.id = keysNode.id + "/" + newKeyNode.text;
+                    newKeyNode.identifier = newKeyNode.id;
+                    newKeyNode.leaf = true;
+                    newKeyNode.iconCls = "treeKey";
+                    newKeyNode.hidden = false;
+                    newKeyNode.property = hiddenRootNode.children[ijj].property;
+                    newKeyNode.record = new
+                    {
+                      Name = newKeyNode.text
+                    };
+                    hiddenRootNode.children.RemoveAt(ijj);
+                    ijj--;
+
+                    if (newKeyNode != null)
+                      keysNode.children.Add(newKeyNode);
+
+                    break;
+                  }
+                }
               }
             }
 
@@ -490,7 +525,7 @@ namespace org.iringtools.web.Models
             {
               Dictionary<string, string> relatedObjMap = new Dictionary<string, string>();
 
-              JsonTreeNode relationNode = new JsonTreeNode();              
+              JsonRelationNode relationNode = new JsonRelationNode();              
               relationNode.text = dataObject.dataRelationships[kj].relationshipName;
               relationNode.type = "relationship";
               relationNode.id = relationshipsNode.id + "/" + relationNode.text;

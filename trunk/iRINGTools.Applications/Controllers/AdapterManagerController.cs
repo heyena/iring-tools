@@ -34,113 +34,113 @@ namespace org.iringtools.web.controllers
       return View();
     }
 
-    public ActionResult DBProviders(FormCollection form)
-    {
-      JsonContainer<List<DBProvider>> container = new JsonContainer<List<DBProvider>>();
+    //public ActionResult DBProviders(FormCollection form)
+    //{
+    //  JsonContainer<List<DBProvider>> container = new JsonContainer<List<DBProvider>>();
 
-      try
-      {
-        string baseUrl = form["baseUrl"];
-        DataProviders dataProviders = _repository.GetDBProviders(baseUrl);
+    //  try
+    //  {
+    //    string baseUrl = form["baseUrl"];
+    //    DataProviders dataProviders = _repository.GetDBProviders(baseUrl);
 
-        List<DBProvider> providers = new List<DBProvider>();
-        foreach (Provider dataProvider in dataProviders)
-        {
-          providers.Add(new DBProvider() { Provider = dataProvider.ToString() });
-        }
+    //    List<DBProvider> providers = new List<DBProvider>();
+    //    foreach (Provider dataProvider in dataProviders)
+    //    {
+    //      providers.Add(new DBProvider() { Provider = dataProvider.ToString() });
+    //    }
 
-        container.items = providers;
-        container.success = true;
-        container.total = dataProviders.Count;
+    //    container.items = providers;
+    //    container.success = true;
+    //    container.total = dataProviders.Count;
 
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error(e.ToString());
+    //    throw e;
+    //  }
 
-      return Json(container, JsonRequestBehavior.AllowGet);
-    }
+    //  return Json(container, JsonRequestBehavior.AllowGet);
+    //}
 
-    public ActionResult DBDictionary(FormCollection form)
-    {
-      try
-      {
-        DatabaseDictionary dbDict = _repository.GetDBDictionary(form["scope"], form["app"], form["baseUrl"]);
-        return Json(dbDict, JsonRequestBehavior.AllowGet);
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
-    }
+    //public ActionResult DBDictionary(FormCollection form)
+    //{
+    //  try
+    //  {
+    //    DatabaseDictionary dbDict = _repository.GetDBDictionary(form["scope"], form["app"], form["baseUrl"]);
+    //    return Json(dbDict, JsonRequestBehavior.AllowGet);
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error(e.ToString());
+    //    throw e;
+    //  }
+    //}
 
-    public ActionResult TableNames(FormCollection form)
-    {
-      JsonContainer<List<string>> container = new JsonContainer<List<string>>();
+    //public ActionResult TableNames(FormCollection form)
+    //{
+    //  JsonContainer<List<string>> container = new JsonContainer<List<string>>();
 
-      try
-      {
-        List<string> dataObjects = _repository.GetTableNames(
-          form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"], form["serName"], form["baseUrl"]);
+    //  try
+    //  {
+    //    List<string> dataObjects = _repository.GetTableNames(
+    //      form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+    //      form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"], form["serName"], form["baseUrl"]);
 
 
-        container.items = dataObjects;
-        container.success = true;
-        container.total = dataObjects.Count;
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
+    //    container.items = dataObjects;
+    //    container.success = true;
+    //    container.total = dataObjects.Count;
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error(e.ToString());
+    //    throw e;
+    //  }
 
-      return Json(container, JsonRequestBehavior.AllowGet);
-    }
+    //  return Json(container, JsonRequestBehavior.AllowGet);
+    //}
 
-    public ActionResult DBObjects(FormCollection form)
-    {
-      try
-      {
-        List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
-          form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"], form["serName"], form["baseUrl"]);
+    //public ActionResult DBObjects(FormCollection form)
+    //{
+    //  try
+    //  {
+    //    List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
+    //      form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+    //      form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"], form["serName"], form["baseUrl"]);
 
-        return Json(dbObjects, JsonRequestBehavior.AllowGet);
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
-    }
+    //    return Json(dbObjects, JsonRequestBehavior.AllowGet);
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error(e.ToString());
+    //    throw e;
+    //  }
+    //}
 
-    public ActionResult Trees(FormCollection form)
-    {
-      try
-      {
-        string response = string.Empty;
+    //public ActionResult Trees(FormCollection form)
+    //{
+    //  try
+    //  {
+    //    string response = string.Empty;
 
-        response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"], form["baseUrl"]);
+    //    response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"], form["baseUrl"]);
 
-        if (response != null && response.ToUpper().Contains("ERROR"))
-        {
-          int inds = response.ToUpper().IndexOf("<MESSAGE>");
-          int inde = response.ToUpper().IndexOf(";");
-          string msg = response.Substring(inds + 9, inde - inds - 13);
-          return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
-        }
-        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
-    }
+    //    if (response != null && response.ToUpper().Contains("ERROR"))
+    //    {
+    //      int inds = response.ToUpper().IndexOf("<MESSAGE>");
+    //      int inde = response.ToUpper().IndexOf(";");
+    //      string msg = response.Substring(inds + 9, inde - inds - 13);
+    //      return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+    //    }
+    //    return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error(e.ToString());
+    //    throw e;
+    //  }
+    //}
 
     public ActionResult DataType()
     {

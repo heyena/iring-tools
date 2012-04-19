@@ -91,8 +91,10 @@
         model: 'AM.model.BaseUrlModel',
         listeners: {
           load: function () {
-            if (baseurl == '')
-              baseurl = availableBaseUris.store.data.items[0].data.baseurl;
+            if (baseurl == '') {
+              if (availableBaseUris.store)
+                baseurl = availableBaseUris.store.data.items[0].data.baseurl;
+            }
 
             availableBaseUris.setValue(baseurl);
 
