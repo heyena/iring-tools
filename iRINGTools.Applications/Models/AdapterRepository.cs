@@ -962,6 +962,12 @@ namespace iRINGTools.Web.Models
           folderNodeList.Add(endPointNode);
           treePath = folderPath + "." + endpoint.Name;
 
+          if (endpoint.Context != null)
+            context = endpoint.Context;
+
+          if (endpoint.BaseUrl != null)
+            baseUrl = endpoint.BaseUrl + "/adapter";
+
           #region Get Assambly information
           XElement bindings = GetBinding(context, endpointName, baseUrl);
           DataLayer dataLayer = null;
@@ -977,14 +983,7 @@ namespace iRINGTools.Web.Models
               assembly = dataLayer.Assembly;
               dataLayerName = dataLayer.Name;
           } 
-          #endregion
-
-
-          if (endpoint.Context != null)
-            context = endpoint.Context;
-
-          if (endpoint.BaseUrl != null)
-            baseUrl = endpoint.BaseUrl + "/adapter";
+          #endregion        
           
           Object record = new
           {
