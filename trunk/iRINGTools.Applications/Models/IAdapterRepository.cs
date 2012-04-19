@@ -7,6 +7,7 @@ using org.iringtools.library;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using System.Collections;
+using System.IO;
 
 
 namespace iRINGTools.Web.Models
@@ -42,5 +43,8 @@ namespace iRINGTools.Web.Models
     string GetCombinationMsg();
 
     Response RegenAll(string user);
+
+    Response SaveDataLayers(string dataLayerName, string path, string fileName);
+      
   }
 }

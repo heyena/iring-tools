@@ -15,6 +15,7 @@ using iRINGTools.Web.Helpers;
 using System.Text;
 using System.Collections;
 using System.Net;
+using System.IO;
 
 
 namespace iRINGTools.Web.Models
@@ -236,6 +237,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
+    
     public DataLayers GetDataLayers(string baseUrl)
     {
       DataLayers obj = null;
@@ -570,7 +572,46 @@ namespace iRINGTools.Web.Models
       return combinationMsg;
     }
 
+    public Response SaveDataLayers(string dataLayerName, string path, string filename)
+    {
+        Response response = null;
+
+        try
+        {
+            MemoryStream dataLayerStream = CreateDataLayerStream(dataLayerName, filename, @"C:\Project\Branches\datalayers\SPPIDDataLayer\dist\bin\");
+
+            response = Utility.Deserialize<Response>(_adapterServiceClient.PostStream("/datalayers", dataLayerStream), true);
+          
+           
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex.ToString());
+           // response = "ERROR";
+        }
+
+        return response;
+    }
+
     #region Private methods for Directory 
+
+    static MemoryStream CreateDataLayerStream(string name, string mainDLL, string path)
+    {
+      DataLayer dataLayer = new DataLayer()
+      {
+        Name = name,
+        MainDLL = mainDLL,
+        Package = Utility.Zip(path),
+      };
+
+      MemoryStream dataLayerStream = new MemoryStream();
+      DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
+      
+      serializer.WriteObject(dataLayerStream, dataLayer);
+      dataLayerStream.Position = 0;
+
+      return dataLayerStream;
+    }
 
     private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
     {
@@ -920,6 +961,24 @@ namespace iRINGTools.Web.Models
           endPointNode.nodeType = "async";
           folderNodeList.Add(endPointNode);
           treePath = folderPath + "." + endpoint.Name;
+
+          #region Get Assambly information
+          XElement bindings = GetBinding(context, endpointName, baseUrl);
+          DataLayer dataLayer = null;
+          if (bindings != null)
+          {
+              dataLayer = new DataLayer();
+              dataLayer.Assembly = bindings.Element("bind").Attribute("to").Value;
+              dataLayer.Name = bindings.Element("bind").Attribute("to").Value.Split(',')[1].Trim();
+          }
+
+          if (dataLayer != null)
+          {
+              assembly = dataLayer.Assembly;
+              dataLayerName = dataLayer.Name;
+          } 
+          #endregion
+
 
           if (endpoint.Context != null)
             context = endpoint.Context;
