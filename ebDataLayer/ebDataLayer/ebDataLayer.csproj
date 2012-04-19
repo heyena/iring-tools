@@ -76,7 +76,9 @@
     <Content Include="App_Data\IMP_MECH_BechtelPreProd.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Data\Rules_BechtelPreProd.xml" />
+    <Content Include="App_Data\Rules_BechtelPreProd.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

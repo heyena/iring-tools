@@ -21,13 +21,13 @@ namespace org.iringtools.adaper.datalayer.eb
 
     public string GetDocumentTemplate(int docId)
     {
-      String templateName = string.Empty;
+      string templateName = string.Empty;
 
       try
       {
-        string eql = String.Format("START WITH Template SELECT Name WHERE Instances.Object.Id = {0} AND Instances.Object.Type = 3", docId);
+        string eql = string.Format("START WITH Template SELECT Name WHERE Instances.Object.Id = {0} AND Instances.Object.Type = 3", docId);
         eB.Data.Search s = new Search(_session, eql);
-        templateName = s.RetrieveScalar<String>("Name");
+        templateName = s.RetrieveScalar<string>("Name");
       }
       catch (Exception e) 
       { 
@@ -44,7 +44,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        string eql = String.Format("START WITH Template SELECT Id WHERE Name = '{0}'", templateName);
+        string eql = string.Format("START WITH Template SELECT Id WHERE Name = '{0}'", templateName);
         eB.Data.Search s = new Search(this._session, eql);
         templateId = s.RetrieveScalar<int>("Id");
       }
@@ -65,13 +65,13 @@ namespace org.iringtools.adaper.datalayer.eb
       {
         string eql = string.Empty;
 
-        if (String.IsNullOrEmpty(revision))
+        if (string.IsNullOrEmpty(revision))
         {
-          eql = String.Format("START WITH Object SELECT Id WHERE Code = '{0}' AND Type = {1}", code, type);
+          eql = string.Format("START WITH Object SELECT Id WHERE Code = '{0}' AND Type = {1}", code, type);
         }
         else
         {
-          eql = String.Format("START WITH Object SELECT Id WHERE Code = '{0}' AND Type = {1} AND Revision = '{2}'", code, type, revision);
+          eql = string.Format("START WITH Object SELECT Id WHERE Code = '{0}' AND Type = {1} AND Revision = '{2}'", code, type, revision);
         }
 
         eB.Data.Search s = new Search(this._session, eql);
@@ -126,7 +126,7 @@ namespace org.iringtools.adaper.datalayer.eb
     {
       try
       {
-        string sql = String.Format(@"select s.rel_id,r.num_right,s.right_object_id from templates t 
+        string sql = string.Format(@"select s.rel_id,r.num_right,s.right_object_id from templates t 
                             inner join relationship_types r on t.class_id = r.class_id 
                             inner join relationships s on r.rel_type_id  = s.rel_type_id 
                             where t.template_id = {0} and s.left_object_id = {1}", relationshipTemplateId, leftObjectId);
@@ -183,6 +183,30 @@ namespace org.iringtools.adaper.datalayer.eb
       { 
         _logger.Error(e); 
         throw e; 
+      }
+    }
+
+    public List<string> GetSubClassCodes(string className)
+    {
+      try
+      {
+        string eql = string.Format("START WITH Class SELECT Code WHERE Path LIKE '{0}\\%'", className);
+        eB.Data.Search s = new Search(_session, eql);
+        DataTable dt = s.Retrieve<DataTable>();
+
+        List<string> classCodes = new List<string>();
+
+        foreach (DataRow row in dt.Rows)
+        {
+          classCodes.Add(row["Code"].ToString());
+        }
+
+        return classCodes;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e);
+        throw e;
       }
     }
   }
