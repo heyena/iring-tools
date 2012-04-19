@@ -141,6 +141,9 @@ namespace org.iringtools.adapter.datalayer.eb
           if (string.IsNullOrEmpty(ebMetadataQuery))
             throw new Exception("No metadata query configured for group [" + group.Name + "]");
 
+          //ebMetadataQuery = "select d.char_name, d.char_data_type, d.char_length, 0 as readonly from class_objects a inner join class_attributes c on c.class_id = a.class_id inner join characteristics d on c.char_id = d.char_id where d.object_type<20";
+          //ebMetadataQuery = "select * from class_objects  order by object_type";
+
           string attrsQuery = string.Format(ebMetadataQuery, classCode);
 
           XmlDocument attrsDoc = new XmlDocument();
@@ -150,7 +153,8 @@ namespace org.iringtools.adapter.datalayer.eb
           // --------populate user attributes--------
 
           string ebUserAttributesQuery = _settings["ebUserAttributesQuery." + group.Name];
-          int objectType =212;
+          //int objectType = 212;
+          int objectType = (int)(Enum.Parse(typeof(ObjectType), group.Name));
           string userAttrsQuery = string.Format(ebUserAttributesQuery, objectType);
           string userAttrsResults = _proxy.query(userAttrsQuery, ref status);
           XDocument userAttributesDoc = new XDocument();
@@ -245,7 +249,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
         if (dataObjectDef != null)
         {
-          string classGroup = (dataObjectDef.tableName.ToLower().StartsWith("documents")) ? "Document" : "Tag";
+          string classGroup = (dataObjectDef.tableName.ToLower().StartsWith("document")) ? "Document" : "Tag";
           string query = "START WITH {0} SELECT {1} WHERE Class.Code = '{2}'";
           StringBuilder queryBuilder = new StringBuilder();
 
@@ -265,7 +269,7 @@ namespace org.iringtools.adapter.datalayer.eb
             }
           }
 
-          query = string.Format(query, classGroup, queryBuilder.ToString(), "Mech-ME");
+          query = string.Format(query, classGroup, queryBuilder.ToString(), "SECN");
           DataTable result = ExecuteSearch(_session, query, new object[0], -1);
 
           dataObjects = ToDataObjects(result, dataObjectDef);
