@@ -1,146 +1,258 @@
-﻿Ext.define('AM.view.nhibernate.SelectKeysPanel', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.selectdatakeysform',
-    border: false,
-    autoScroll: true,
-    bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-    labelWidth: 160,
-    defaults: { anchor: '100%' },
+﻿Ext.Loader.setConfig({ enabled: true });
+Ext.Loader.setPath('Ext.ux', 'Scripts/extjs407/examples/ux');
+Ext.require([
+    'Ext.form.Panel',
+    'Ext.ux.form.MultiSelect',
+    'Ext.ux.form.ItemSelector'
+]);
 
-    initComponent: function () {
-        this.items = [{
-            xtype: 'label',
-            fieldLabel: 'Select Keys',
-            itemCls: 'form-title',
-            labelSeparator: ''
-        }, keysItemSelector];
+Ext.define('AM.view.nhibernate.SelectKeysPanel', {
+  extend: 'Ext.form.Panel',
+  alias: 'widget.selectdatakeysform',
+  frame: false,
+  border: false,
+  autoScroll: true,
+  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  labelWidth: 140,
+  treeNode: null,
+  shownProperty: null,
+  monitorValid: true,
+  selectItems: null,
 
-        this.tbar = new Ext.Toolbar({
-            items: [{
-                xtype: 'tbspacer',
-                width: 4
-            }, {
-                xtype: 'button',
-                icon: 'Content/img/16x16/apply.png',
-                text: 'Apply',
-                tooltip: 'Apply the current changes to the data objects tree',
-                handler: function (f) {
-                    var selectedValues = keysItemSelector.toMultiselect.store.data.items;
-                    var keysNode = keysItemSelector.treeNode;
-                    var propertiesNode = keysNode.parentNode.childNodes[1];
+  initComponent: function () {
+    var me = this;
+    var node = this.treeNode;
+    var availItems = getAvailItems(node);
+    this.selectItems = getSelectItems(node);
+    var selectItems = this.selectItems;
 
-                    for (var i = 0; i < keysNode.childNodes.length; i++) {
-                        var found = false;
+    this.items = [{
+      xtype: 'label',
+      text: 'Select Keys',
+      cls: 'x-form-item',
+      style: 'font-weight:bold;'
+    }, {
+      xtype: 'itemselector',
+      name: 'keySelector',
+      anchor: '100%',
+      hideLabel: true,
+      listAvailable: 'Available Keys',
+      listSelected: 'Selected Keys',
+      height: 370,
+      bodyStyle: 'background:#eee',
+      frame: true,
+      imagePath: 'Scripts/extjs407/examples/ux/css/images',
+      displayField: 'keyName',
+      store: availItems,
+      valueField: 'keyValue',
+      border: 0,
+      value: selectItems,
+      listeners: {
+        change: function (itemSelector) {
+          var selectKeys = itemSelector.toField.store.data.items;
+          for (var i = 0; i < selectKeys.length; i++) {
+            var selectKeyName = selectKeys[i].data.text;
+            if (selectKeyName == '')
+              itemSelector.toField.store.removeAt(i);
+          }
 
-                        for (var j = 0; j < selectedValues.length; j++) {
-                            if (selectedValues[j].data.text.toLowerCase() == keysNode.childNodes[i].text.toLowerCase()) {
-                                found = true;
-                                break;
-                            }
-                        }
+          var availKeys = itemSelector.fromField.store.data.items;
+          for (var i = 0; i < availKeys.length; i++) {
+            var availKeyName = availKeys[i].data.text
+            if (availKeys[i].data.text == '')
+              itemSelector.fromField.store.removeAt(i);
+          }
+        }
+      }
+    }];
 
-                        if (!found) {
-                            if (keysNode.childNodes[i].attributes.properties)
-                                var properties = keysNode.childNodes[i].attributes.properties;
-                            else if (keysNode.childNodes[i].attributes.attributes.properties)
-                                var properties = keysNode.childNodes[i].attributes.attributes.properties;
+    this.tbar = new Ext.Toolbar({
+      items: [{
+        xtype: 'tbspacer',
+        width: 4
+      }, {
+        xtype: 'button',
+        icon: 'Content/img/16x16/apply.png',
+        text: 'Apply',
+        tooltip: 'Apply the current changes to the data objects tree',
+        handler: function (f) {
+          var keySelector = me.items.items[1];
+          if (me.getForm().findField('keySelector').getValue().indexOf('') == -1)
+            var selectValues = me.getForm().findField('keySelector').getValue();
+          var keysNode = me.treeNode;
+          var propertiesNode = keysNode.parentNode.childNodes[1]; 
+          var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;
 
-                            if (properties) {
-                                properties['isNullable'] = true;
-                                delete properties.keyType;
+          for (var i = 0; i < keysNode.childNodes.length; i++) {
+            var found = false;
 
-                                propertyNode.appendChild({
-                                    text: keysNode.childNodes[i].text,
-                                    type: "dataProperty",
-                                    leaf: true,
-                                    iconCls: 'treeProperty',
-                                    properties: properties
-                                });
+            for (var j = 0; j < selectValues.length; j++) {
+              if (selectValues[j].toLowerCase() == keysNode.childNodes[i].data.text.toLowerCase()) {
+                found = true;
+                break;
+              }
+            }
 
-                                //propertyNode.iconCls = 'treeProperty';
-                                //propertiesNode.appendChild(propertyNode);
-                                keysNode.removeChild(keysNode.childNodes[i], true);
-                                i--;
-                            }
-                        }
-                    }
+            if (!found) {
+              if (keysNode.childNodes[i].data.property)
+                var properties = keysNode.childNodes[i].data.property;
 
-                    var nodeChildren = new Array();
-                    for (var j = 0; j < keysNode.childNodes.length; j++)
-                        nodeChildren.push(keysNode.childNodes[j].text);
+              if (properties) {
+                properties['isNullable'] = true;
+                delete properties.keyType;
 
-                    for (var j = 0; j < selectedValues.length; j++) {
-                        var found = false;
-                        for (var i = 0; i < nodeChildren.length; i++) {
-                            if (selectedValues[j].data.text.toLowerCase() == nodeChildren[i].toLowerCase()) {
-                                found = true;
-                                break;
-                            }
-                        }
+                propertiesNode.appendChild({
+                  text: keysNode.childNodes[i].data.text,
+                  type: "dataProperty",
+                  leaf: true,
+                  iconCls: 'treeProperty',
+                  property: properties
+                });
 
-                        if (!found) {
-                            var newKeyNode;
+                keysNode.removeChild(keysNode.childNodes[i], true);
+                i--;
+              }
+            }
+          }
 
-                            for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
-                                if (propertiesNode.childNodes[jj].text.toLowerCase() == selectedValues[j].data.text.toLowerCase()) {
-                                    var properties = propertiesNode.childNodes[jj].attributes.properties;
-                                    properties.keyType = 'assigned';
-                                    properties.nullable = false;
+          var nodeChildren = new Array();
+          for (var j = 0; j < keysNode.childNodes.length; j++)
+            nodeChildren.push(keysNode.childNodes[j].data.text);
 
-                                    propertiesNode.appendChild({
-                                        text: selectedValues[j].data.text,
-                                        type: "keyProperty",
-                                        leaf: true,
-                                        iconCls: 'treeKey',
-                                        hidden: false,
-                                        properties: properties
-                                    });
-                                    //newKeyNode.iconCls = 'treeKey';
-                                    propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
-                                    break;
-                                }
-                            }
+          for (var j = 0; j < selectValues.length; j++) {
+            var found = false;
+            for (var i = 0; i < nodeChildren.length; i++) {
+              if (selectValues[j].toLowerCase() == nodeChildren[i].toLowerCase()) {
+                found = true;
+                break;
+              }
+            }
 
-                            if (newKeyNode) {
-                                keysNode.appendChild(newKeyNode);
-                                if (keysNode.expanded == false)
-                                    keysNode.expand();
-                            }
-                        }
-                    }
+            if (!found) {
+              var newKeyNode;
+
+              for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
+                if (propertiesNode.childNodes[jj].data.text.toLowerCase() == selectValues[j].toLowerCase()) {
+                  var properties = propertiesNode.childNodes[jj].data.property;
+                  properties.keyType = 'assigned';
+                  properties.nullable = false;
+
+                  keysNode.appendChild({
+                    text: selectValues[j],
+                    type: "keyProperty",
+                    leaf: true,
+                    iconCls: 'treeKey',
+                    hidden: false,
+                    property: properties
+                  });
+
+                  propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
+                  break;
                 }
-            }, {
-                xtype: 'tbspacer',
-                width: 4
-            }, {
-                xtype: 'button',
-                icon: 'Content/img/16x16/edit-clear.png',
-                text: 'Reset',
-                tooltip: 'Reset to the latest applied changes',
-                handler: function (f) {
-                    var availItems = setItemSelectorAvailValues(node);
-                    var selectedItems = setItemSelectorselectedValues(node);
-                    if (keysItemSelector.fromMultiselect.store.data) {
-                        keysItemSelector.fromMultiselect.reset();
-                        keysItemSelector.fromMultiselect.store.removeAll();
-                    }
+              }
+              
+              for (var jj = 0; jj < hiddenRootNode.children.length; jj++) {
+                if (hiddenRootNode.children[jj].text.toLowerCase() == selectValues[j].toLowerCase()) {
+                  var properties = hiddenRootNode.children[jj].property;
+                  properties.keyType = 'assigned';
+                  properties.nullable = false;
 
-                    keysItemSelector.fromMultiselect.store.loadData(availItems);
-                    keysItemSelector.fromMultiselect.store.commitChanges();
+                  keysNode.appendChild({
+                    text: selectValues[j],
+                    type: "keyProperty",
+                    leaf: true,
+                    iconCls: 'treeKey',
+                    hidden: false,
+                    property: properties
+                  });
 
-                    if (keysItemSelector.toMultiselect.store.data) {
-                        keysItemSelector.toMultiselect.reset();
-                        keysItemSelector.toMultiselect.store.removeAll();
-                    }
-
-                    keysItemSelector.toMultiselect.store.loadData(selectedItems);
-                    keysItemSelector.toMultiselect.store.commitChanges();
+                  hiddenRootNode.children.splice(jj, 1);
+                  jj--;
+                  break;
                 }
-            }]
-        });
-        editPane.add(keysSelectorPanel);
-        var panelIndex = editPane.items.indexOf(keysSelectorPanel);
-        editPane.getLayout().setActiveItem(panelIndex);
-    }
+              }
+            }
+          }
+            
+	        if (keysNode.expanded == false)
+	          keysNode.expand();
+        }
+      }, {
+        xtype: 'tbspacer',
+        width: 4
+      }, {
+        xtype: 'button',
+        icon: 'Content/img/16x16/edit-clear.png',
+        text: 'Reset',
+        tooltip: 'Reset to the latest applied changes',
+        handler: function (f) {
+          var availItems = new Array();
+          var propertiesNode = node.parentNode.childNodes[1];
+          var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;
+
+          for (var i = 0; i < hiddenRootNode.children.length; i++) {
+            var itemName = hiddenRootNode.children[i].text;
+            availItems.push([itemName, itemName]);
+          }         
+
+          var selectItems = getSelectItems(me.treeNode);
+          var keysItemSelector = me.items.items[1];
+
+          if (keysItemSelector.fromField.store.data) {
+            keysItemSelector.fromField.reset();
+            keysItemSelector.fromField.store.removeAll();
+          }
+
+          keysItemSelector.fromField.store.loadData(availItems);
+
+          var list = keysItemSelector.toField.boundList;
+          var store = list.getStore();
+
+          if (store.data) {
+            store.removeAll();
+          }
+
+          for (var i = 0; i < selectItems.length; i++) {
+            store.insert(i + 1, 'field1');
+            store.data.items[i].data.field1 = selectItems[i];
+          }
+
+          list.refresh();
+        }
+      }]
+    });
+
+    this.callParent(arguments);
+  }
 });
+
+function getAvailItems(node) {
+  var availItems = new Array();
+  var propertiesNode = node.parentNode.childNodes[1];
+  var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;
+  var itemName;
+
+  for (var i = 0; i < propertiesNode.childNodes.length; i++) {
+    itemName = propertiesNode.childNodes[i].data.text;
+    availItems.push(itemName);
+  }
+
+  for (var i = 0; i < hiddenRootNode.children.length; i++) {
+    itemName = hiddenRootNode.children[i].text;
+    availItems.push(itemName);
+  }
+
+  return availItems;
+};
+
+function getSelectItems(node) {
+  var selectItems = new Array();
+
+  for (var i = 0; i < node.childNodes.length; i++) {
+    var keyName = node.childNodes[i].data.text;
+    selectItems.push(keyName);
+  }
+
+  return selectItems;
+}
 

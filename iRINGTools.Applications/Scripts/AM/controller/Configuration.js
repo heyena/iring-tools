@@ -5,8 +5,7 @@
      'spreadsheet.SpreadsheetConfigPanel',
      'common.PropertyPanel',
      'common.ContentPanel',
-     'common.CenterPanel',
-     'nhibernate.TreePanel',
+     'common.CenterPanel',     
      'nhibernate.SetDataObjectPanel',
      'nhibernate.DataObjectPanel',
      'nhibernate.EditorPanel',
@@ -23,9 +22,7 @@
      'nhibernate.Utility',
      'nhibernate.RadioField'
     ],
-  stores: [
-  //'ProviderStore'
-    ],
+  stores: [],
   models: [
       'SpreadsheetModel',
       'NHibernateTreeModel',
@@ -114,112 +111,24 @@
         }
       });
     }
-  },
-
-  setPropertiesFolder: function (editor, node, context, endpoint) {
-
-  },
-
-  setDataProperty: function (editor, node, context, endpoint) {
-
-  },
-
-  setKeysFolder: function (editor, node, context, endpoint) {
-
-  },
-
-  setKeyProperty: function (editor, node, context, endpoint) {
-
-  },
-
-  setRelations: function (editor, node, context, endpoint) {
-
-  },
-
-  setRelationFields: function (editor, node, context, endpoint) {
-
-  },
-
-  setDataObject: function (editor, node, context, endpoint) {
-    if (editor) {
-      var content = this.getMainContent();
-      var conf = {
-        contextName: context,
-        endpoint: endpoint,
-        region: 'center',
-        id: context + '.' + endpoint + '.tablesform'
-      };
-      var setdop = editor.items.map[conf.id];
-      if (!setdop) {
-        setdop = Ext.widget('setdataobjectpanel', conf);
-        editor.items.add(setdop);
-        editor.doLayout();
-      }
-      setdop.setActiveRecord(node.data.property);
-      var panelIndex = editor.items.indexOf(setdop);
-      editor.getLayout().setActiveItem(panelIndex);
-      editor.doLayout();
-    }
-  },
-
-  setTablesSelectorPane: function (contextName, endpoint, baseUrl) {    
-    var dbDict = AM.view.nhibernate.dbDict.value;
-    var dbInfo = AM.view.nhibernate.dbInfo.value;
-    var content = this.getMainContent();
-    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
-    var editor = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
-    var dataTree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];    
-    var conf = {
-      contextName: contextName,
-      endpoint: endpoint,
-      baseUrl: baseUrl,
-      dbInfo: dbInfo,
-      dataTree: dataTree,      
-      region: 'center',
-      id: contextName + '.' + endpoint + '.tablesselector'
-    };
-    var select = editor.items.map[conf.id];
-    if (!select) {
-      select = Ext.widget('selecttables', conf);
-      editor.items.add(select);   
-      editor.doLayout();  
-    } 
-      var panelIndex = editor.items.indexOf(select);
-      editor.getLayout().setActiveItem(panelIndex);
-    var select = editor.items.map[conf.id];
-    var tablesSelector = select.items.items[1];
-
-    if (tablesSelector.toField) {
-      var list = tablesSelector.toField.boundList;
-      var store = list.getStore();
-
-      if (store.data) {
-        store.removeAll();
-      }
-
-      for (var i = 0; i < select.selectItems.length; i++) {
-        store.insert(i + 1, 'field1');
-        store.data.items[i].data.field1 = select.selectItems[i];
-      }
-         
-      list.refresh();    
-    }     
   }, 
 
-  onItemClick: function (view, model, n, index) {
-    var dirtree = this.getDirTree(),
-        node = dirtree.getSelectedNode();
-    var content = this.getMainContent();
-    var contextName = node.data.record.context;    
-    var endpoint = node.data.record.endpoint;
-    var baseUrl = node.data.record.BaseUrl;    
+  onItemClick: function (view, model, n, index) { 
+    var me = this;   
+    var thisPanel = view.up('panel');
+    var contextName = thisPanel.contextName;    
+    var endpoint = thisPanel.endpoint;
+    var baseUrl = thisPanel.baseUrl; 
+    var content = this.getMainContent();   
     var node = model.store.getAt(index);    
     var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config']; 
     var editor = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];    
     var tree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];   
-     
+    var dbDict = AM.view.nhibernate.dbDict.value;
+    var dbInfo = AM.view.nhibernate.dbInfo.value;
+
     if (node.isRoot()) {
-      this.setTablesSelectorPane(contextName, endpoint, baseUrl);
+      setTablesSelectorPane(me, editor, tree, nhpan, dbDict, dbInfo, contextName, endpoint, baseUrl);
       return;
     }
     var nodeType = node.data.type.toUpperCase();
@@ -227,25 +136,25 @@
     if (nodeType) {
       switch (nodeType) {
         case 'DATAOBJECT':
-          this.setDataObject(editor, node, tree.contextName, tree.endpoint);
+          setDataObject(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
           break;
         case 'KEYS':
-          this.setKeysFolder(editor, node, tree.contextName, tree.endpoint);
+          setKeysFolder(me, editor, node, contextName, endpoint);
           break;
         case 'KEYPROPERTY':
-          this.setKeyProperty(editor, node, tree.contextName, tree.endpoint);
+          setKeyProperty(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
           break;
         case 'PROPERTIES':
-          this.setPropertiesFolder(editor, node, tree.contextName, tree.endpoint);
+          setPropertiesFolder(me, editor, node, contextName, endpoint);
           break;
         case 'DATAPROPERTY':
-          this.setDataProperty(editor, node, tree.contextName, tree.endpoint);
+          setDataProperty(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
           break;
         case 'RELATIONSHIPS':
-          this.setRelations(editor, node, tree.contextName, tree.endpoint);
+          setRelations(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
           break;
         case 'RELATIONSHIP':
-          this.setRelationFields(editor, node, tree.contextName, tree.endpoint);
+          setRelationFields(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
           break;
       }
     }
@@ -262,12 +171,20 @@
   },
 
   onEditDbConnection: function (btn, evt) {
-    var dirtree = this.getDirTree(),
-        node = dirtree.getSelectedNode();   
+    if (btn)
+    {
+      var thisPanel = btn.up('panel');
+      var contextName = thisPanel.contextName;    
+      var endpoint = thisPanel.endpoint;
+      var baseUrl = thisPanel.baseUrl;   
+    } else {
+      var dirtree = this.getDirTree(),
+          node = dirtree.getSelectedNode();       
+      var contextName = node.data.record.context;    
+      var endpoint = node.data.record.endpoint;
+      var baseUrl = node.data.record.BaseUrl;    
+    }
     var content = this.getMainContent(); 
-    var contextName = node.data.record.context;    
-    var endpoint = node.data.record.endpoint;
-    var baseUrl = node.data.record.BaseUrl;    
     var dbDict = AM.view.nhibernate.dbDict.value;
     var dbInfo = AM.view.nhibernate.dbInfo.value;       
    
@@ -451,14 +368,7 @@
     }
 
     if (tablesSelForm.getForm().findField('tableSelector').getValue().indexOf('') == -1)
-      var selectTableNames = tablesSelForm.getForm().findField('tableSelector').getValue();
-    else {
-      var tableNames = tablesSelForm.getForm().findField('tableSelector').toMultiselect.store.data.items;
-      var selectTableNames = new Array();
-      for (var i = 0; i < tableNames.length; i++) {
-        selectTableNames.push(tableNames[i].data.text);
-      }
-    }
+      var selectTableNames = tablesSelForm.getForm().findField('tableSelector').getValue();    
 
     if (selectTableNames.length < 1) {
       var rootNode = dbObjectsTree.getRootNode();
@@ -541,7 +451,7 @@ connectToDatabase: function (btn, evt) {
   var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
   var editorPane = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
   var form = editorPane.items.map[contextName + '.' + endpoint + '.connectdatabase'];    
-  var dbProvider = form.getForm().findField('dbProvider').getValue().toUpperCase();
+  var dbProvider = form.getForm().findField('dbProvider').getValue().toUpperCase();  
   var dbName = form.getForm().findField('dbName');
   var portNumber = form.getForm().findField('portNumber');
   var host = form.getForm().findField('host');
@@ -550,7 +460,8 @@ connectToDatabase: function (btn, evt) {
   var serviceNamePane = form.items.items[10];
   var dbSchema = form.getForm().findField('dbSchema');
   var servieName = '';
-  var serName = '';   
+  var serName = '';
+  AM.view.nhibernate.dbDict.value.Provider = dbProvider;
 
   if (dbProvider.indexOf('ORACLE') > -1) {
     dbServer.setValue(host.getValue());
@@ -566,23 +477,6 @@ connectToDatabase: function (btn, evt) {
   else if (dbProvider.indexOf('MYSQL') > -1) {
     dbName.setValue(dbSchema.getValue());
     dbInstance.setValue(dbSchema.getValue());
-  }
-
-  var dbServerValue = dbServer.getValue();
-  var dbInstanceValue = dbInstance.getValue();
-  var dbUserName = form.getForm().findField('dbUserName').getValue();
-  var dbPassword = form.getForm().findField('dbPassword').getValue();   
-  var portNumberValue = portNumber.getValue();
-  if (dbProvider.indexOf('MSSQL') > -1) {     
-    var dbNameValue = dbName.getValue();
-    AM.view.nhibernate.dbDict.value.ConnectionString = 'Data Source=' + dbServerValue + '\\' + 
-      dbInstance + ';Initial Catalog=' + dbNameValue + ';User ID=' + 
-      dbInstanceValue + ';Password=' + dbPassword;
-  } else {
-    AM.view.nhibernate.dbDict.value.ConnectionString = 'Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + 
-      dbServerValue + ')(PORT=' + portNumberValue + ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + 
-      serName + '=' + dbInstanceValue + ')));User ID=' + dbUserName + ';Password=' + 
-      dbPassword;
   }
 
   var me = this;
@@ -608,7 +502,8 @@ connectToDatabase: function (btn, evt) {
         dbInfo = {};
 
       dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
-      me.setTablesSelectorPane(contextName, endpoint, baseUrl);
+      var nulVar = null;
+      setTablesSelectorPane(me, nulVar, nulVar, nulVar, dbDict, dbInfo, contextName, endpoint, baseUrl);
       return dbInfo.dbTableNames;
     },
     failure: function (f, a) {

@@ -118,6 +118,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\JsonRelationNode.cs" />
+    <Compile Include="Helpers\JsonPropertyNode.cs" />
     <Compile Include="Helpers\JsonArray.cs" />
     <Compile Include="Helpers\JsonContainer.cs" />
     <Compile Include="Helpers\JsonTreeNode.cs" />
@@ -195,10 +197,7 @@
     <Content Include="Scripts\AM\view\nhibernate\CreateRelations.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataObjectPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\EditorPanel.js" />
-    <Content Include="Scripts\AM\view\nhibernate\KeysSelector.js" />
-    <Content Include="Scripts\AM\view\nhibernate\NHibernateTool.js" />
     <Content Include="Scripts\AM\view\nhibernate\NHibernateTree.js" />
-    <Content Include="Scripts\AM\view\nhibernate\NHibernateTreePanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\RadioField.js" />
     <Content Include="Scripts\AM\view\nhibernate\SelectKeysPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\SelectPropertiesPanel.js" />
@@ -207,7 +206,6 @@
     <Content Include="Scripts\AM\view\nhibernate\SetKeyPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\SetPropertyPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\SetRelationPanel.js" />
-    <Content Include="Scripts\AM\view\nhibernate\TreePanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\Utility.js" />
     <Content Include="Scripts\extjs407\bootstrap.js" />
     <Content Include="Scripts\extjs407\examples\app\feed-viewer\app.js" />
@@ -2514,6 +2512,7 @@
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
       <Name>UtilityLibrary</Name>
     </ProjectReference>
+
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\extjs407\examples\app\feed-viewer\app.jsb3" />

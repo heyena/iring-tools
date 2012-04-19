@@ -1,5 +1,4 @@
-﻿
-Ext.define('AM.view.nhibernate.NHibernateTree', {
+﻿Ext.define('AM.view.nhibernate.NHibernateTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.nhibernatetreepanel',
   bodyStyle: 'padding:0.5px 1px 1px 1px',
@@ -166,5 +165,174 @@ function createMainContentPanel(content, contextName, endpoint, baseUrl) {
     content.add(nhpan).show();
   } else {
     existNhpan.show();
-  }  
-}
+  }
+};
+
+//setTablesSelectorPane(me, editor, tree, nhpan, dbDict, dbInfo, contextName, endpoint, baseUrl);
+function setTablesSelectorPane (me, editor, dataTree, nhpan, dbDict, dbInfo, contextName, endpoint, baseUrl) {    
+  var content = me.getMainContent();
+    
+  if (!nhpan)
+    nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
+
+  if (!editor)
+    editor = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
+
+  if (!dataTree)
+    dataTree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
+
+  var conf = {
+    contextName: contextName,
+    endpoint: endpoint,
+    baseUrl: baseUrl,
+    dbInfo: dbInfo,
+    dataTree: dataTree,
+    region: 'center',
+    id: contextName + '.' + endpoint + '.tablesselector'
+  };
+
+  var select = editor.items.map[conf.id];
+
+  if (!select) {
+    select = Ext.widget('selecttables', conf);
+    editor.items.add(select);   
+    editor.doLayout();
+  } 
+
+  var panelIndex = editor.items.indexOf(select);
+  editor.getLayout().setActiveItem(panelIndex); 
+  var tablesSelector = select.items.items[1];
+
+  if (tablesSelector.toField && select.selectItems.length > 0) {
+    var list = tablesSelector.toField.boundList;
+    var store = list.getStore();
+
+    if (store.data) {
+      store.removeAll();
+    }
+
+    for (var i = 0; i < select.selectItems.length; i++) {
+      store.insert(i + 1, 'field1');
+      store.data.items[i].data.field1 = select.selectItems[i];
+    }
+         
+    list.refresh();    
+  }
+};
+
+function setPropertiesFolder(me, editor, node, contextName, endpoint) {
+  var conf = {
+    contextName: contextName,
+    endpoint: endpoint,    
+    region: 'center',
+    treeNode: node,
+    id: contextName + '.' + endpoint + '.selectProperties'
+  };
+
+  var selectPane = editor.items.map[conf.id];
+
+  if (selectPane)
+    selectPane.destroy();
+  
+  var select = Ext.widget('selectProperties', conf);
+  editor.items.add(select);
+  editor.doLayout();
+  var panelIndex = editor.items.indexOf(select);
+  editor.getLayout().setActiveItem(panelIndex);  
+
+  var propertiesSelector = select.items.items[1];
+
+  if (propertiesSelector.toField && select.selectItems.length > 0) {
+    var list = propertiesSelector.toField.boundList;
+    var store = list.getStore();
+
+    if (store.data) {
+      store.removeAll();
+    }
+
+    for (var i = 0; i < select.selectItems.length; i++) {
+      store.insert(i + 1, 'field1');
+      store.data.items[i].data.field1 = select.selectItems[i];
+    }
+
+    list.refresh();
+  }
+};
+
+function setDataProperty (me, editor, node, context, endpoint) {
+
+};
+
+function setKeysFolder (me, editor, node, contextName, endpoint) {
+  var conf = {
+    contextName: contextName,
+    endpoint: endpoint,    
+    region: 'center',
+    treeNode: node,
+    id: contextName + '.' + endpoint + '.selectKeys'
+  };
+
+  var select = editor.items.map[conf.id];
+
+  if (!select) {
+    select = Ext.widget('selectdatakeysform', conf);
+    editor.items.add(select);
+    editor.doLayout();
+  }
+
+  var panelIndex = editor.items.indexOf(select);
+  editor.getLayout().setActiveItem(panelIndex);  
+  var keysSelector = select.items.items[1];
+
+  if (select.selectItems)
+    if (keysSelector.toField && select.selectItems.length > 0) {
+      var list = keysSelector.toField.boundList;
+      var store = list.getStore();
+
+      if (store.data) {
+        store.removeAll();
+      }
+
+      for (var i = 0; i < select.selectItems.length; i++) {
+        store.insert(i + 1, 'field1');
+        store.data.items[i].data.field1 = select.selectItems[i];
+      }
+
+      list.refresh();
+    }
+};
+
+function setKeyProperty (me, editor, node, context, endpoint) {
+
+};
+
+function setRelations (me, editor, node, context, endpoint) {
+
+};
+
+function setRelationFields (me, editor, node, context, endpoint) {
+
+};
+
+//setDataObject(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
+function setDataObject (me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint) {
+  if (editor) {
+    var content = me.getMainContent();
+    var conf = {
+      contextName: contextName,
+      endpoint: endpoint,
+      region: 'center',
+      id: contextName + '.' + endpoint + '.setdataobject'
+    };
+    var setdop = editor.items.map[conf.id];
+    if (!setdop) {
+      setdop = Ext.widget('setdataobjectpanel', conf);
+      editor.items.add(setdop);
+      editor.doLayout();
+    }
+    setdop.setActiveRecord(node.data.property);
+    var panelIndex = editor.items.indexOf(setdop);
+    editor.getLayout().setActiveItem(panelIndex);
+    editor.doLayout();
+  }
+};

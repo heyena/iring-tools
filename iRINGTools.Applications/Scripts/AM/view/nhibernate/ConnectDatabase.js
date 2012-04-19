@@ -10,7 +10,7 @@
   endpoint: null,
   baseUrl: null,
   bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
-  //monitorValid: true,
+  monitorValid: true,
 
   initComponent: function () {
     var me = this;
