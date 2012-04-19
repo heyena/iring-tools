@@ -25,7 +25,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        string eql = String.Format("START WITH Template SELECT Name  WHERE Instances.Object.Id = {0} AND Instances.Object.Type = 3", docId);
+        string eql = String.Format("START WITH Template SELECT Name WHERE Instances.Object.Id = {0} AND Instances.Object.Type = 3", docId);
         eB.Data.Search s = new Search(_session, eql);
         templateName = s.RetrieveScalar<String>("Name");
       }

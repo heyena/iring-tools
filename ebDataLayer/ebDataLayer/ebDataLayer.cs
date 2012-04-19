@@ -141,26 +141,12 @@ namespace org.iringtools.adapter.datalayer.eb
           if (string.IsNullOrEmpty(ebMetadataQuery))
             throw new Exception("No metadata query configured for group [" + group.Name + "]");
 
-          //ebMetadataQuery = "select d.char_name, d.char_data_type, d.char_length, 0 as readonly from class_objects a inner join class_attributes c on c.class_id = a.class_id inner join characteristics d on c.char_id = d.char_id where d.object_type<20";
-          //ebMetadataQuery = "select * from class_objects  order by object_type";
-
-          string attrsQuery = string.Format(ebMetadataQuery, classCode);
+          int objectType = (int) Enum.Parse(typeof(ObjectType), group.Name);
+          string attrsQuery = string.Format(ebMetadataQuery, objectType);
 
           XmlDocument attrsDoc = new XmlDocument();
           string attrsResults = _proxy.query(attrsQuery, ref status);
           attrsDoc.LoadXml(attrsResults);
-
-          // --------populate user attributes--------
-
-          string ebUserAttributesQuery = _settings["ebUserAttributesQuery." + group.Name];
-          //int objectType = 212;
-          int objectType = (int)(Enum.Parse(typeof(ObjectType), group.Name));
-          string userAttrsQuery = string.Format(ebUserAttributesQuery, objectType);
-          string userAttrsResults = _proxy.query(userAttrsQuery, ref status);
-          XDocument userAttributesDoc = new XDocument();
-          userAttributesDoc = XDocument.Parse(userAttrsResults);
-
-          //-------------------------------------------
 
           foreach (XmlNode attrNode in attrsDoc.DocumentElement.ChildNodes)
           {
@@ -169,23 +155,7 @@ namespace org.iringtools.adapter.datalayer.eb
             dataProp.propertyName = Regex.Replace(dataProp.columnName, @" |\.", "");
             dataProp.dataType = ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
             dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
-
-            //dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;
-            var userAttributes = (from item in userAttributesDoc.Descendants("record")
-                                  where item.Element("char_name").Value == dataProp.columnName
-                                  select item.Element("char_name").Value).ToList();
-
-            // system properties are readonly
-            if (userAttributes.Count == 0)
-            {
-                dataProp.isReadOnly = true;
-            }
-            else
-            {
-                // user defined  properties are writable
-                dataProp.isReadOnly = false;
-            }
-
+            dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;            
             dataObjectDef.dataProperties.Add(dataProp);
           }
 
@@ -198,21 +168,21 @@ namespace org.iringtools.adapter.datalayer.eb
               new KeyProperty() {
                 keyPropertyName = "Code",
               },
-              new KeyProperty() {
-                keyPropertyName = "Middle",
-              },
-              new KeyProperty() {
-                keyPropertyName = "Revision",
-              }
+              //new KeyProperty() {
+              //  keyPropertyName = "Middle",
+              //},
+              //new KeyProperty() {
+              //  keyPropertyName = "Revision",
+              //}
             };
           }
           else if (group.Name.ToLower() == "document")
           {
             dataObjectDef.keyProperties = new List<KeyProperty>()
             {
-              new KeyProperty() {
-                keyPropertyName = "PrimaryPhysicalItem.Id",
-              },
+              //new KeyProperty() {
+              //  keyPropertyName = "PrimaryPhysicalItem.Id",
+              //},
               new KeyProperty() {
                 keyPropertyName = "Code",
               }
@@ -249,7 +219,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
         if (dataObjectDef != null)
         {
-          string classGroup = (dataObjectDef.tableName.ToLower().StartsWith("document")) ? "Document" : "Tag";
+          string classGroup = (dataObjectDef.tableName.ToLower().StartsWith("documents")) ? "Document" : "Tag";
           string query = "START WITH {0} SELECT {1} WHERE Class.Code = '{2}'";
           StringBuilder queryBuilder = new StringBuilder();
 
@@ -269,7 +239,7 @@ namespace org.iringtools.adapter.datalayer.eb
             }
           }
 
-          query = string.Format(query, classGroup, queryBuilder.ToString(), "SECN");
+          query = string.Format(query, classGroup, queryBuilder.ToString(), "MECH-ME");
           DataTable result = ExecuteSearch(_session, query, new object[0], -1);
 
           dataObjects = ToDataObjects(result, dataObjectDef);
@@ -339,16 +309,16 @@ namespace org.iringtools.adapter.datalayer.eb
           string keyValue = string.Empty;
           try
           {
-            Map codeMap = _config.Mappings.Find(x => x.Type == PropertyType.Code);
-            keyValue = (string)dataObject.GetPropertyValue(codeMap.Property);
+            Map codeMap = _config.Mappings.Find(x => x.Type == (int)Destination.Code);
+            keyValue = (string)dataObject.GetPropertyValue(codeMap.Column);
           }
           catch {}
 
           string revision = string.Empty;
           try
           {
-            Map revisionMap = _config.Mappings.Find(x => x.Type == PropertyType.Revision);
-            revision = (string)dataObject.GetPropertyValue(revisionMap.Property);
+            Map revisionMap = _config.Mappings.Find(x => x.Type == (int)Destination.Revision);
+            revision = (string)dataObject.GetPropertyValue(revisionMap.Column);
           }
           catch {}
 
