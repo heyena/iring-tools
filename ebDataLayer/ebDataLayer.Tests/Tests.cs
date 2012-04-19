@@ -54,7 +54,7 @@ namespace bechtel.eb.datalayer.test
     [Test]
     public void TestGetPage()
     {
-      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical",new DataFilter(), 5, 0);
+        IList<IDataObject> dataObjects = _dataLayer.Get("MechanicalDocument", new DataFilter(), 5, 0);
       Assert.Greater(dataObjects.Count, 0);
     }
 
