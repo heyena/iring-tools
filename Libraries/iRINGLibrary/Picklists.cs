@@ -42,16 +42,13 @@ namespace org.iringtools.library
     public PicklistItem()
     {
       picklistColumns = new Dictionary<string, string>();
-      links = new List<Link>();
     }
 
     [DataMember(IsRequired = true, Order = 0)]
-    public Dictionary<string, string> picklistColumns { get; set; }
-    
-    [DataMember(Name = "links", Order = 1, EmitDefaultValue = false)]
-    public List<Link> links { get; set; }
+    public Dictionary<string, string> picklistColumns { get; set; }    
   }
 
+  //Not used since the picklistColumns in PicklistItem is using Dictionary
   public class PicklistColumn
   {
     [DataMember(IsRequired = true, Order = 0)]
