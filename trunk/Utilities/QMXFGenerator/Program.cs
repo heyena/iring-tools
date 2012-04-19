@@ -256,7 +256,7 @@ namespace QMXFGenerator
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
       }
     }
@@ -637,7 +637,7 @@ namespace QMXFGenerator
               };
               roleDefinition.description = englishUSDescription;
             }
-            object clist;
+            
             if (type != null && type.ToString() != String.Empty)
             {
               var query = from clss in _classes
