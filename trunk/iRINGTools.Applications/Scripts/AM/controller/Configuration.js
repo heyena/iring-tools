@@ -624,6 +624,9 @@ connectToDatabase: function (btn, evt) {
     var content = this.getMainContent();
     var contextName = node.data.record.context;
     var datalayer = node.data.record.DataLayer;
+    if (datalayer == '')
+      datalayer = 'NHibernateLibrary';
+
     var endpoint = node.data.record.endpoint;
     var baseUrl = node.data.record.BaseUrl;    
 
