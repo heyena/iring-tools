@@ -42,11 +42,11 @@ namespace org.iringtools.adaper.datalayer.eb.config
   [XmlType("map")]
   public class Map
   {
-    [XmlAttribute("property")]
-    public string Property { get; set; }
+    [XmlAttribute("columnname")]
+    public string Column { get; set; }
 
-    [XmlAttribute("type")]
-    public PropertyType Type { get; set; }
+    [XmlAttribute("destination")]
+    public int Type { get; set; }
 
     [XmlElement("rule")]
     public List<RuleRef> RuleRefs { get; set; }
@@ -62,8 +62,8 @@ namespace org.iringtools.adaper.datalayer.eb.config
     public int Value { get; set; }
   }
 
-  [XmlType("type")]
-  public enum PropertyType
+  [XmlType("destination")]
+  public enum Destination
   {
     None = 0,
     Attribute = 1,

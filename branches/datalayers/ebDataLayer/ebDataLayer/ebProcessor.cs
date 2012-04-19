@@ -87,12 +87,12 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map map = (from m in _mappings
-                   where m.Type == PropertyType.Name
+                   where m.Type == (int)Destination.Name
                    select m).FirstOrDefault();
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Property);
+          string name = (string)_dataObject.GetPropertyValue(map.Column);
 
           if (tag.Name != name)
           {
@@ -117,12 +117,12 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map map = (from m in _mappings
-                   where m.Type == PropertyType.Name
+                   where m.Type == (int)Destination.Name
                    select m).FirstOrDefault();
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Property);
+          string name = (string)_dataObject.GetPropertyValue(map.Column);
 
           if (doc.Name != name)
           {
@@ -147,12 +147,12 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map map = (from m in _mappings
-                   where m.Type == PropertyType.Title
+                   where m.Type == (int)Destination.Title
                    select m).FirstOrDefault();
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Property);
+          string name = (string)_dataObject.GetPropertyValue(map.Column);
 
           if (tag.Name != name)
           {
@@ -179,18 +179,18 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         var attrs = from m in _mappings
-                    where m.Type == PropertyType.Attribute
+                    where m.Type == (int)Destination.Attribute
                     select m;
 
         foreach (Map m in attrs)
         {
           try
           {
-            object value = _dataObject.GetPropertyValue(m.Property);
+            object value = _dataObject.GetPropertyValue(m.Column);
 
             if (value != null)
             {
-              eB.Data.Attribute ebAtr = tag.Attributes.Where(atr => ((atr.Name == m.Property))).Select(atr => atr).FirstOrDefault();
+              eB.Data.Attribute ebAtr = tag.Attributes.Where(atr => ((atr.Name == m.Column))).Select(atr => atr).FirstOrDefault();
 
               if ((ebAtr.Value == null) || (ebAtr.Value.ToString() != value.ToString()))
               {
@@ -200,7 +200,7 @@ namespace org.iringtools.adaper.datalayer.eb
           }
           catch (Exception e)
           {
-            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", m.Property, e.Message));
+            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", m.Column, e.Message));
             status.Level = StatusLevel.Warning;
           }
         }
@@ -221,18 +221,18 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         var maps = from m in _mappings
-                    where m.Type == PropertyType.Attribute
+                    where m.Type == (int)Destination.Attribute
                     select m;
 
         foreach (Map map in maps)
         {
           try
           {
-            object value = _dataObject.GetPropertyValue(map.Property);
+            object value = _dataObject.GetPropertyValue(map.Column);
 
             if (value != null)
             {
-              eB.Data.Attribute ebAtr = doc.Attributes.Where(atr => ((atr.Name == map.Property))).Select(atr => atr).FirstOrDefault();
+              eB.Data.Attribute ebAtr = doc.Attributes.Where(atr => ((atr.Name == map.Column))).Select(atr => atr).FirstOrDefault();
 
               if (ebAtr.Value.ToString() != (string)value)
               {
@@ -242,7 +242,7 @@ namespace org.iringtools.adaper.datalayer.eb
           }
           catch (Exception e)
           {
-            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Property, e.Message));
+            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Column, e.Message));
             status.Level = StatusLevel.Warning;
           }
         }

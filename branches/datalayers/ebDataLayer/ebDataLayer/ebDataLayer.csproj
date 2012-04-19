@@ -73,7 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\GroupTypes.xml" />
-    <Content Include="App_Data\IMP_MECH_BechtelPreProd.xml" />
+    <Content Include="App_Data\IMP_MECH_BechtelPreProd.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_Data\Rules_BechtelPreProd.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
