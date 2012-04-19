@@ -37,14 +37,14 @@ namespace org.iringtools.library
     public DataDictionary()
     {
       dataObjects = new List<DataObject>();
-      picklists = new List<PicklistDefinition>();
+      picklists = new List<PicklistObject>();
     }
 
     [DataMember(Order = 0)]
     public List<DataObject> dataObjects { get; set; }
 
     [DataMember(Order = 1)]
-    public List<PicklistDefinition> picklists { get; set; }
+    public List<PicklistObject> picklists { get; set; }
 
     [DataMember(Order = 2)]
     public bool enableSearch { get; set; }
