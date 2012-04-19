@@ -775,6 +775,6 @@ connectToDatabase: function (btn, evt) {
 
    onReloadSpreadsheet: function () {
    this.getMainContent().items.items[0].items.items[0].getStore().load();
-     },
+     }
 
 });

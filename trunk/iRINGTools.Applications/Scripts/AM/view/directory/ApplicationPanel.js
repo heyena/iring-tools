@@ -161,13 +161,13 @@
       text: 'Ok',
       disabled: false,
       handler: this.onSave,
-      scope: this,
+      scope: this
     }, {
       xtype: "button",
       text: 'Canel',
       disabled: false,
       handler: this.onReset,
-      scope: this,
+      scope: this
     }]
   },
   onReset: function () {
