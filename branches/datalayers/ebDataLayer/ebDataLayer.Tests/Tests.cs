@@ -54,14 +54,25 @@ namespace bechtel.eb.datalayer.test
     [Test]
     public void TestGetPage()
     {
-      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Tag)",new DataFilter(), 5, 0);
+      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Document)",new DataFilter(), 5, 0);
       Assert.Greater(dataObjects.Count, 0);
+    }
+
+    [Test]
+    public void TestGetIdentifiers()
+    {
+        IList<string> identifiers =new List<string>();
+        identifiers.Add("MECH-ME-01-001");
+        identifiers.Add("MECH-ME-01-002");
+
+        IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Tag)", identifiers);
+        Assert.Greater(dataObjects.Count, 0);
     }
 
     //[Test]
     public void TestGetWithIdentifiers()
     {
-      IList<string> identifiers = _dataLayer.GetIdentifiers(_objectType, new DataFilter());
+        IList<string> identifiers = _dataLayer.GetIdentifiers(_objectType, new DataFilter());
       IList<string> identifier = ((List<string>)identifiers).GetRange(1, 1);
       IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, identifier);
       Assert.Greater(dataObjects.Count, 0);
