@@ -280,7 +280,64 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
-      throw new NotImplementedException();
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+
+        try
+        {
+            Connect();
+
+            DataDictionary dictionary = GetDictionary();
+            DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+            if (dataObjectDef != null)
+            {
+                string classObject = dataObjectDef.objectNamespace;
+                string classCodes = "'" + string.Join("','", dataObjectDef.tableName.Split(',')) + "'";
+                string codes = "('" + string.Join("','", identifiers) + "')";
+
+                if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
+                {
+                    string query = "START WITH {0} SELECT {1} WHERE Code IN {2}";
+                    StringBuilder attrsBuilder = new StringBuilder();
+
+                    foreach (DataProperty dataProp in dataObjectDef.dataProperties)
+                    {
+                        if (attrsBuilder.Length > 0)
+                            attrsBuilder.Append(",");
+
+                        if (dataProp.isReadOnly)
+                        {
+                            attrsBuilder.Append(dataProp.columnName);
+                        }
+                        else
+                        {
+                            attrsBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
+                        }
+                    }
+
+                    query = string.Format(query, classObject, attrsBuilder.ToString(), codes);
+
+                    EqlClient eqlClient = new EqlClient(_session);
+                    DataTable result = eqlClient.SearchPage(_session, query, new object[0], 0, -1);
+
+                    dataObjects = ToDataObjects(result, dataObjectDef);
+                }
+                else
+                {
+                    throw new Exception("Class object [" + classObject + "] not currently supported.");
+                }
+            }
+            else
+            {
+                throw new Exception("Object type " + objectType + " not found.");
+            }
+
+        }
+        finally
+        {
+            Disconnect();
+        }
+        return dataObjects;
     }
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
