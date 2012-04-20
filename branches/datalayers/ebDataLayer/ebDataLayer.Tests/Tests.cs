@@ -54,7 +54,7 @@ namespace bechtel.eb.datalayer.test
     [Test]
     public void TestGetPage()
     {
-      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Document)",new DataFilter(), 5, 0);
+      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Tag)",new DataFilter(), 5, 0);
       Assert.Greater(dataObjects.Count, 0);
     }
 
@@ -202,11 +202,12 @@ namespace bechtel.eb.datalayer.test
       dataObject.SetPropertyValue("ChangeControlled", "");
       dataObject.SetPropertyValue("ClassCode", "");
       dataObject.SetPropertyValue("ClassId", "");
-      dataObject.SetPropertyValue("Code", "MES0");
-      dataObject.SetPropertyValue("ClassId", "");
+      dataObject.SetPropertyValue("Code", "01-N-CCW-ME-001Z");    // Tag Number
+      dataObject.SetPropertyValue("Description", "CCW HEAT EXCHANGER");
       dataObject.SetPropertyValue("CommGrpCode", "ME");
-      dataObject.SetPropertyValue("CommodityCode", "01");  // Unit
-      dataObject.SetPropertyValue("ComponentFunctionName (CFN)", "1-N-CCW-HX-ZZ");
+      dataObject.SetPropertyValue("CommodityCode", "MES0");
+      dataObject.SetPropertyValue("Unit", "01");
+      dataObject.SetPropertyValue("ComponentFunctionName(CFN)", "1-N-CCW-HX-ZZ");
       dataObject.SetPropertyValue("DateEffective", "");
       dataObject.SetPropertyValue("DateObsolete", "");
       dataObject.SetPropertyValue("DateEffective", "");
@@ -214,11 +215,10 @@ namespace bechtel.eb.datalayer.test
       dataObject.SetPropertyValue("DocumentStatus", "");
       dataObject.SetPropertyValue("EquipmentRating", "18200000");
       dataObject.SetPropertyValue("HP(Est/Act/Calc)", "");
-      dataObject.SetPropertyValue("Id", "01-N-CCW-ME-001Z");  // Tag Number
+      dataObject.SetPropertyValue("Name", "TEST-01-N-CCW-ME-001Z");
       dataObject.SetPropertyValue("Manufacturer", "");
       dataObject.SetPropertyValue("Middle", "");
       dataObject.SetPropertyValue("ModelNo", "");
-      dataObject.SetPropertyValue("Name", "");
       dataObject.SetPropertyValue("PowerReqd", "");
       dataObject.SetPropertyValue("Q-List(Y/N)", "N");
       dataObject.SetPropertyValue("PowerReqd", "N");
@@ -231,7 +231,9 @@ namespace bechtel.eb.datalayer.test
       dataObject.SetPropertyValue("VendorSupplied(Y/N)", "");
 
       IList<IDataObject> dataObjects = new List<IDataObject>() { dataObject };
-      _dataLayer.Post(dataObjects);
+      Response response = _dataLayer.Post(dataObjects);
+
+      Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
     //[Test]

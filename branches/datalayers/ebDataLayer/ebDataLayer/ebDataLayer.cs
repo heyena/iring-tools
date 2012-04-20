@@ -158,7 +158,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
           dataObjectDef.keyProperties = new List<KeyProperty>()
           {
-            new KeyProperty() { keyPropertyName = codeMap.Column }
+            new KeyProperty() { keyPropertyName = codeMap.Property }
           };
 
           string ebMetadataQuery = _settings["ebMetadataQuery." + group.Name];
@@ -166,7 +166,7 @@ namespace org.iringtools.adapter.datalayer.eb
           if (string.IsNullOrEmpty(ebMetadataQuery))
             throw new Exception("No metadata query configured for group [" + group.Name + "]");
 
-          int objectType = (int) Enum.Parse(typeof(ObjectType), group.Name);
+          int objectType = (int)Enum.Parse(typeof(ObjectType), group.Name);
           string attrsQuery = string.Format(ebMetadataQuery, objectType);
 
           XmlDocument attrsDoc = new XmlDocument();
@@ -180,7 +180,21 @@ namespace org.iringtools.adapter.datalayer.eb
             dataProp.propertyName = Regex.Replace(dataProp.columnName, @" |\.", "");
             dataProp.dataType = ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
             dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
-            dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;            
+            dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;
+
+            dataObjectDef.dataProperties.Add(dataProp);
+          }
+
+          // add related properties
+          foreach (Map m in _config.Mappings.Where(x => x.Type == (int)Destination.Relationship).Select(m => m))
+          {
+            DataProperty dataProp = new DataProperty();
+            dataProp.columnName = m.Property + "(Related)";
+            dataProp.propertyName = Regex.Replace(m.Property, @" |\.", "");
+            dataProp.dataType = DataType.String;
+            dataProp.isReadOnly = false;
+            dataProp.isHidden = true;
+
             dataObjectDef.dataProperties.Add(dataProp);
           }
 
@@ -204,11 +218,11 @@ namespace org.iringtools.adapter.datalayer.eb
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
-      
+
       try
       {
         Connect();
-        
+
         DataDictionary dictionary = GetDictionary();
         DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
@@ -224,16 +238,18 @@ namespace org.iringtools.adapter.datalayer.eb
 
             foreach (DataProperty dataProp in dataObjectDef.dataProperties)
             {
-              if (attrsBuilder.Length > 0)
-                attrsBuilder.Append(",");
-
               if (dataProp.isReadOnly)
               {
-                attrsBuilder.Append(dataProp.columnName);
+                if (attrsBuilder.Length > 0)
+                  attrsBuilder.Append(",");
 
+                attrsBuilder.Append(dataProp.columnName);
               }
-              else
+              else if (!dataProp.columnName.EndsWith("(Related)"))
               {
+                if (attrsBuilder.Length > 0)
+                  attrsBuilder.Append(",");
+
                 attrsBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
               }
             }
@@ -262,7 +278,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
       return dataObjects;
     }
-    
+
     public override long GetCount(string objectType, DataFilter filter)
     {
       return 10000;
@@ -280,64 +296,68 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
+      IList<IDataObject> dataObjects = new List<IDataObject>();
 
-        try
+      try
+      {
+        Connect();
+
+        DataDictionary dictionary = GetDictionary();
+        DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+        if (dataObjectDef != null)
         {
-            Connect();
+          string classObject = dataObjectDef.objectNamespace;
+          string key = dataObjectDef.keyProperties.FirstOrDefault().keyPropertyName;
+          string keyValues = "('" + string.Join("','", identifiers) + "')";
 
-            DataDictionary dictionary = GetDictionary();
-            DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+          if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
+          {
+            string query = "START WITH {0} SELECT {1} WHERE {2} IN {3}";
+            StringBuilder attrsBuilder = new StringBuilder();
 
-            if (dataObjectDef != null)
+            foreach (DataProperty dataProp in dataObjectDef.dataProperties)
             {
-                string classObject = dataObjectDef.objectNamespace;
-                string classCodes = "'" + string.Join("','", dataObjectDef.tableName.Split(',')) + "'";
-                string codes = "('" + string.Join("','", identifiers) + "')";
+              if (dataProp.isReadOnly)
+              {
+                if (attrsBuilder.Length > 0)
+                  attrsBuilder.Append(",");
 
-                if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
-                {
-                    string query = "START WITH {0} SELECT {1} WHERE Code IN {2}";
-                    StringBuilder attrsBuilder = new StringBuilder();
+                attrsBuilder.Append(dataProp.columnName);
+              }
+              else if (!dataProp.columnName.EndsWith("(Related)"))
+              {
+                if (attrsBuilder.Length > 0)
+                  attrsBuilder.Append(",");
 
-                    foreach (DataProperty dataProp in dataObjectDef.dataProperties)
-                    {
-                        if (attrsBuilder.Length > 0)
-                            attrsBuilder.Append(",");
-
-                        if (dataProp.isReadOnly)
-                        {
-                            attrsBuilder.Append(dataProp.columnName);
-                        }
-                        else
-                        {
-                            attrsBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
-                        }
-                    }
-
-                    query = string.Format(query, classObject, attrsBuilder.ToString(), codes);
-
-                    EqlClient eqlClient = new EqlClient(_session);
-                    DataTable result = eqlClient.SearchPage(_session, query, new object[0], 0, -1);
-
-                    dataObjects = ToDataObjects(result, dataObjectDef);
-                }
-                else
-                {
-                    throw new Exception("Class object [" + classObject + "] not currently supported.");
-                }
-            }
-            else
-            {
-                throw new Exception("Object type " + objectType + " not found.");
+                attrsBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
+              }
             }
 
+            query = string.Format(query, classObject, attrsBuilder.ToString(), key, keyValues);
+
+            EqlClient eqlClient = new EqlClient(_session);
+            DataTable result = eqlClient.SearchPage(_session, query, new object[0], 0, -1);
+
+            dataObjects = ToDataObjects(result, dataObjectDef);
+          }
+          else
+          {
+            throw new Exception("Class object [" + classObject + "] not currently supported.");
+          }
         }
-        finally
+        else
         {
-            Disconnect();
+          throw new Exception("Object type " + objectType + " not found.");
         }
-        return dataObjects;
+
+      }
+      finally
+      {
+        Disconnect();
+      }
+
+      return dataObjects;
     }
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
@@ -357,7 +377,7 @@ namespace org.iringtools.adapter.datalayer.eb
           response.Messages.Add("Not data objects to update.");
           return response;
         }
-        
+
         DataDictionary dictionary = GetDictionary();
         string objType = ((GenericDataObject)dataObjects[0]).ObjectType;
         DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objType.ToLower());
@@ -373,16 +393,16 @@ namespace org.iringtools.adapter.datalayer.eb
           try
           {
             Map revisionMap = _config.Mappings.Find(x => x.Type == (int)Destination.Revision);
-            revision = (string)dataObject.GetPropertyValue(revisionMap.Column);
+            revision = (string)dataObject.GetPropertyValue(revisionMap.Property);
           }
-          catch {}
+          catch { }
 
-          EqlClient eql = new EqlClient(_session);          
+          EqlClient eql = new EqlClient(_session);
           int objectId = eql.GetObjectId(keyValue, revision, _config.Template.ObjectType);
           org.iringtools.adaper.datalayer.eb.config.Template template = _config.Template;
 
           if (objectId == 0)  // does not exist, create
-          { 
+          {
             string templateName = GetTemplateName(template, dataObject);
             int templateId = eql.GetTemplateId(templateName);
 
@@ -395,7 +415,7 @@ namespace org.iringtools.adapter.datalayer.eb
                 Messages = new Messages() { string.Format("Template [{0}] for the object does not exist.", templateName) }
               };
 
-              response.StatusList.Add(status);              
+              response.StatusList.Add(status);
               break;
             }
 
@@ -404,16 +424,16 @@ namespace org.iringtools.adapter.datalayer.eb
 
           string objectType = Enum.GetName(typeof(ObjectType), template.ObjectType);
           ebProcessor processor = new ebProcessor(_session, _config.Mappings, _rules);
-          
+
           if (objectType == ObjectType.Tag.ToString())
           {
-            response.Append(processor.ProcessTag(dataObject, objectId, keyValue));
+            response.Append(processor.ProcessTag(objDef, dataObject, objectId, keyValue));
           }
           else if (objectType == ObjectType.Document.ToString())
           {
-            response.Append(processor.ProcessDocument(dataObject, objectId, keyValue));
+            response.Append(processor.ProcessDocument(objDef, dataObject, objectId, keyValue));
           }
-          else 
+          else
           {
             Status status = new Status()
             {
@@ -429,7 +449,7 @@ namespace org.iringtools.adapter.datalayer.eb
       catch (Exception e)
       {
         _logger.Error("Error posting data objects: " + e);
-        
+
         response.Level = StatusLevel.Error;
         response.Messages.Add("Error posting data objects: " + e);
       }

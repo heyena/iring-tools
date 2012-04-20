@@ -13,9 +13,10 @@ namespace org.iringtools.adaper.datalayer.eb
   public class ebProcessor
   {
     private Session _session;
-    private IDataObject _dataObject;
     private List<Map> _mappings;
     private Rules _rules;
+    private DataObject _objectDefinition;
+    private IDataObject _dataObject;
 
     public ebProcessor(Session session, List<Map> mappings, Rules rules)
     {
@@ -24,9 +25,11 @@ namespace org.iringtools.adaper.datalayer.eb
       _rules = rules;
     }
 
-    public Status ProcessTag(IDataObject dataObject, int id, string key)
+    public Status ProcessTag(DataObject objectDefinition, IDataObject dataObject, int id, string key)
     {
+      _objectDefinition = objectDefinition;
       _dataObject = dataObject;
+
       Status status = new Status() { Level = StatusLevel.Success };
 
       try
@@ -60,9 +63,11 @@ namespace org.iringtools.adaper.datalayer.eb
       return status;
     }
 
-    public Status ProcessDocument(IDataObject dataObject, int id, string key)
+    public Status ProcessDocument(DataObject objectDefinition, IDataObject dataObject, int id, string key)
     {
+      _objectDefinition = objectDefinition;
       _dataObject = dataObject;
+
       Status status = new Status() { Level = StatusLevel.Success };
 
       try
@@ -92,7 +97,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Column);
+          string name = (string)_dataObject.GetPropertyValue(map.Property);
 
           if (tag.Name != name)
           {
@@ -122,7 +127,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Column);
+          string name = (string)_dataObject.GetPropertyValue(map.Property);
 
           if (doc.Name != name)
           {
@@ -152,7 +157,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Column);
+          string name = (string)_dataObject.GetPropertyValue(map.Property);
 
           if (tag.Name != name)
           {
@@ -178,29 +183,30 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        var attrs = from m in _mappings
+        var attrMaps = from m in _mappings
                     where m.Type == (int)Destination.Attribute
                     select m;
 
-        foreach (Map m in attrs)
+        foreach (Map map in attrMaps)
         {
           try
           {
-            object value = _dataObject.GetPropertyValue(m.Column);
+            object value = _dataObject.GetPropertyValue(map.Property);
 
             if (value != null)
             {
-              eB.Data.Attribute ebAtr = tag.Attributes.Where(atr => ((atr.Name == m.Column))).Select(atr => atr).FirstOrDefault();
+              DataProperty prop = _objectDefinition.dataProperties.Find(x => x.propertyName.ToLower() == map.Property.ToLower());
+              eB.Data.Attribute ebAttr = tag.Attributes.Where(attr => ((attr.Name == prop.columnName))).Select(attr => attr).FirstOrDefault();
 
-              if ((ebAtr.Value == null) || (ebAtr.Value.ToString() != value.ToString()))
+              if ((ebAttr.Value == null) || (ebAttr.Value.ToString() != value.ToString()))
               {
-                _session.Writer.ChgCharData(tag.Id, ebAtr.AttributeDef.Id, value);
+                _session.Writer.ChgCharData(tag.Id, ebAttr.AttributeDef.Id, value);
               }
             }
           }
           catch (Exception e)
           {
-            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", m.Column, e.Message));
+            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Property, e.Message));
             status.Level = StatusLevel.Warning;
           }
         }
@@ -220,29 +226,30 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        var maps = from m in _mappings
+        var attrMaps = from m in _mappings
                     where m.Type == (int)Destination.Attribute
                     select m;
 
-        foreach (Map map in maps)
+        foreach (Map map in attrMaps)
         {
           try
           {
-            object value = _dataObject.GetPropertyValue(map.Column);
+            object value = _dataObject.GetPropertyValue(map.Property);
 
             if (value != null)
             {
-              eB.Data.Attribute ebAtr = doc.Attributes.Where(atr => ((atr.Name == map.Column))).Select(atr => atr).FirstOrDefault();
+              DataProperty prop = _objectDefinition.dataProperties.Find(x => x.propertyName.ToLower() == map.Property.ToLower());
+              eB.Data.Attribute ebAttr = doc.Attributes.Where(attr => ((attr.Name == prop.columnName))).Select(attr => attr).FirstOrDefault();
 
-              if (ebAtr.Value.ToString() != (string)value)
+              if (ebAttr.Value.ToString() != (string)value)
               {
-                _session.Writer.ChgCharData(doc.Id, ebAtr.AttributeDef.Id, value);
+                _session.Writer.ChgCharData(doc.Id, ebAttr.AttributeDef.Id, value);
               }
             }
           }
           catch (Exception e)
           {
-            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Column, e.Message));
+            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Property, e.Message));
             status.Level = StatusLevel.Warning;
           }
         }
