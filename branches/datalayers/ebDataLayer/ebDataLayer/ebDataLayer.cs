@@ -31,7 +31,8 @@ namespace org.iringtools.adapter.datalayer.eb
     private string _dataSource = string.Empty;
     private string _userName = string.Empty;
     private string _password = string.Empty;
-    private string _classCodes = string.Empty;
+    private string _filteredClasses = string.Empty;
+    private string _keyDelimiter = string.Empty;
 
     private Proxy _proxy = null;
     private Session _session = null;
@@ -51,7 +52,8 @@ namespace org.iringtools.adapter.datalayer.eb
       _dataSource = _settings["ebDataSource"];
       _userName = _settings["ebUserName"];
       _password = _settings["ebPassword"];
-      _classCodes = _settings["ebClassCodes"];
+      _filteredClasses = _settings["ebFilteredClasses"];
+      _keyDelimiter = _settings["ebKeyDelimiter"];
 
       try
       {
@@ -90,9 +92,9 @@ namespace org.iringtools.adapter.datalayer.eb
 
         StringBuilder cosQuery = new StringBuilder("SELECT * FROM class_objects");
 
-        if (!string.IsNullOrEmpty(_classCodes))
+        if (!string.IsNullOrEmpty(_filteredClasses))
         {
-          string[] classCodes = _classCodes.Split(',');
+          string[] classCodes = _filteredClasses.Split(',');
           cosQuery.Append(" WHERE ");
 
           for (int i = 0; i < classCodes.Length; i++)
@@ -126,16 +128,38 @@ namespace org.iringtools.adapter.datalayer.eb
           string classCode = coNode.SelectSingleNode("code").InnerText;
           string className = coNode.SelectSingleNode("name").InnerText;
           int groupId = int.Parse(coNode.SelectSingleNode("group_id").InnerText);
-          GroupType group = _groupTypes.Single<org.iringtools.adaper.datalayer.eb.GroupType>(x => x.Value == groupId);
+          GroupType group = null;
+
+          try
+          {
+            group = _groupTypes.Single<org.iringtools.adaper.datalayer.eb.GroupType>(x => x.Value == groupId);
+          }
+          catch (Exception e)
+          {
+            _logger.Error("Group type not supported: " + e.Message);
+            throw new Exception("Group type not supported: " + e.Message);
+          }
 
           EqlClient eqlClient = new EqlClient(_session);
           List<string> subClassCodes = eqlClient.GetSubClassCodes(className);
 
           DataObject dataObjectDef = new DataObject();
-          dataObjectDef.objectName = className;
-          dataObjectDef.tableName = (subClassCodes.Count == 0) 
-              ? group.Name + ":" + className
-              : group.Name + ":" + string.Join(",", subClassCodes.ToArray());
+          dataObjectDef.objectNamespace = group.Name;
+          dataObjectDef.objectName = className + "(" + group.Name + ")";
+          dataObjectDef.tableName = (subClassCodes.Count == 0)
+            ? className : string.Join(",", subClassCodes.ToArray());
+          dataObjectDef.keyDelimeter = _keyDelimiter;
+
+          Map codeMap = _config.Mappings.Find(x => x.Type == (int)Destination.Code);
+          if (codeMap == null)
+          {
+            throw new Exception("No mapping configured for Code.");
+          }
+
+          dataObjectDef.keyProperties = new List<KeyProperty>()
+          {
+            new KeyProperty() { keyPropertyName = codeMap.Column }
+          };
 
           string ebMetadataQuery = _settings["ebMetadataQuery." + group.Name];
 
@@ -158,36 +182,6 @@ namespace org.iringtools.adapter.datalayer.eb
             dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
             dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;            
             dataObjectDef.dataProperties.Add(dataProp);
-          }
-
-          dataObjectDef.keyDelimeter = ";";
-
-          if (group.Name.ToLower() == "tag")
-          {
-            dataObjectDef.keyProperties = new List<KeyProperty>()
-            {
-              new KeyProperty() {
-                keyPropertyName = "Code",
-              },
-              //new KeyProperty() {
-              //  keyPropertyName = "Middle",
-              //},
-              //new KeyProperty() {
-              //  keyPropertyName = "Revision",
-              //}
-            };
-          }
-          else if (group.Name.ToLower() == "document")
-          {
-            dataObjectDef.keyProperties = new List<KeyProperty>()
-            {
-              //new KeyProperty() {
-              //  keyPropertyName = "PrimaryPhysicalItem.Id",
-              //},
-              new KeyProperty() {
-                keyPropertyName = "Code",
-              }
-            };
           }
 
           dictionary.dataObjects.Add(dataObjectDef);
@@ -220,9 +214,8 @@ namespace org.iringtools.adapter.datalayer.eb
 
         if (dataObjectDef != null)
         {
-          string[] parts = dataObjectDef.tableName.Split(':');
-          string classObject = parts[0];
-          string classCodes = "'" + string.Join("','", parts[1].Split(',')) + "'";
+          string classObject = dataObjectDef.objectNamespace;
+          string classCodes = "'" + string.Join("','", dataObjectDef.tableName.Split(',')) + "'";
 
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
@@ -303,8 +296,8 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         if (dataObjects.Count <= 0)
         {
-          response.Level = StatusLevel.Warning;
-          response.Messages.Add("Data objects are empty.");
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Not data objects to update.");
           return response;
         }
         
@@ -316,16 +309,8 @@ namespace org.iringtools.adapter.datalayer.eb
 
         foreach (IDataObject dataObject in dataObjects)
         {
-          //KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
-          //string keyValue = (string) dataObject.GetPropertyValue(keyProp.keyPropertyName);
-
-          string keyValue = string.Empty;
-          try
-          {
-            Map codeMap = _config.Mappings.Find(x => x.Type == (int)Destination.Code);
-            keyValue = (string)dataObject.GetPropertyValue(codeMap.Column);
-          }
-          catch {}
+          KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
+          string keyValue = (string)dataObject.GetPropertyValue(keyProp.keyPropertyName);
 
           string revision = string.Empty;
           try
@@ -465,24 +450,23 @@ namespace org.iringtools.adapter.datalayer.eb
       return string.Format(template.Name, parameters);
     }
 
-    protected DataType ToCSharpType(string type)
+    protected DataType ToCSharpType(string ebType)
     {
-      // convert ebType to known type
-      switch (type)
+      switch (ebType)
       {
         case "CH":
         case "PD":
-          type = "String";
+          ebType = "String";
           break;
         case "NU":
-          type = "Decimal";
+          ebType = "Decimal";
           break;
         case "DA":
-          type = "DateTime";
+          ebType = "DateTime";
           break;
       }
 
-      return (DataType)Enum.Parse(typeof(DataType), type, true);
+      return (DataType)Enum.Parse(typeof(DataType), ebType, true);
     }
 
     protected IDataObject ToDataObject(DataRow dataRow, DataObject objectDefinition)
