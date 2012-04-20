@@ -209,5 +209,29 @@ namespace org.iringtools.adaper.datalayer.eb
         throw e;
       }
     }
+
+    public DataTable SearchPage(Session session, string eql, object[] parameters, int start, int limit = -1)
+    {
+      parameters = parameters.Select(p =>
+      {
+        if (p.GetType() == typeof(string))
+        {
+          return (p as string).Replace("'", "''");
+        }
+        else
+          if (p.GetType().IsEnum)
+          {
+            return (int)p;
+          }
+          else
+          {
+            return p;
+          }
+      }).ToArray();
+
+      eql = string.Format(eql, parameters);
+      DataTable result = new Search(session, new eB.ContentData.Eql.Search(eql)).Retrieve<DataTable>(start, limit);
+      return result;
+    }
   }
 }

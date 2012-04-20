@@ -38,9 +38,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DataLibrary">
-      <HintPath>Y:\bin\DataLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="eB.Common, Version=15.3.2.261, Culture=neutral, PublicKeyToken=a3739844efdab314, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\EBLibrary\lib\eB.Common.dll</HintPath>
