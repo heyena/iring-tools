@@ -42,10 +42,10 @@ namespace org.iringtools.adaper.datalayer.eb.config
   [XmlType("map")]
   public class Map
   {
-    [XmlAttribute("columnname")]
-    public string Column { get; set; }
+    [XmlAttribute("property")]
+    public string Property { get; set; }
 
-    [XmlAttribute("destination")]
+    [XmlAttribute("type")]
     public int Type { get; set; }
 
     [XmlElement("rule")]
