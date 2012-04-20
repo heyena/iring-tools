@@ -15,8 +15,7 @@
   dataTypes: null,
   contextName: null,
   endpoint: null,
-  baseUrl: null,
- // store: null,
+  baseUrl: null, 
   width: 300,
   root: {
     expanded: true,
@@ -259,10 +258,6 @@ function setPropertiesFolder(me, editor, node, contextName, endpoint) {
   }
 };
 
-function setDataProperty (me, editor, node, context, endpoint) {
-
-};
-
 function setKeysFolder (me, editor, node, contextName, endpoint) {
   var conf = {
     contextName: contextName,
@@ -302,26 +297,67 @@ function setKeysFolder (me, editor, node, contextName, endpoint) {
     }
 };
 
-function setKeyProperty (me, editor, node, context, endpoint) {
-
-};
-
-function setRelations (me, editor, node, context, endpoint) {
-
-};
-
-function setRelationFields (me, editor, node, context, endpoint) {
-
-};
-
-//setDataObject(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
-function setDataObject (me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint) {
+function setKeyProperty(me, editor, node, contextName, endpoint) {
   if (editor) {
     var content = me.getMainContent();
     var conf = {
       contextName: contextName,
-      endpoint: endpoint,
       region: 'center',
+      endpoint: endpoint,        
+      node: node,
+      id: contextName + '.' + endpoint + '.setkeyproperty'
+    };
+    var setdop = editor.items.map[conf.id];
+    if (!setdop) {
+      setdop = Ext.widget('setdatakeyform', conf);
+      editor.items.add(setdop);
+      editor.doLayout();
+    }
+    setdop.setActiveRecord(node.data.property);
+    var panelIndex = editor.items.indexOf(setdop);
+    editor.getLayout().setActiveItem(panelIndex);
+    editor.doLayout();
+  }
+};
+
+function setDataProperty(me, editor, node, contextName, endpoint) {
+  if (editor) {
+    var content = me.getMainContent();
+    var conf = {
+      contextName: contextName,
+      region: 'center',
+      endpoint: endpoint,
+      node: node,
+      id: contextName + '.' + endpoint + '.setdataproperty'
+    };
+    var setdop = editor.items.map[conf.id];
+    if (!setdop) {
+      setdop = Ext.widget('setproperty', conf);
+      editor.items.add(setdop);
+      editor.doLayout();
+    }
+    setdop.setActiveRecord(node.data.property);
+    var panelIndex = editor.items.indexOf(setdop);
+    editor.getLayout().setActiveItem(panelIndex);
+    editor.doLayout();
+  }
+};
+
+function setRelations(me, editor, node, contextName, endpoint) {
+
+};
+
+function setRelationFields(me, editor, node, contextName, endpoint) {
+
+};
+
+function setDataObject (me, editor, node, contextName, endpoint) {
+  if (editor) {
+    var content = me.getMainContent();
+    var conf = {
+      contextName: contextName,
+      region: 'center',
+      endpoint: endpoint,        
       id: contextName + '.' + endpoint + '.setdataobject'
     };
     var setdop = editor.items.map[conf.id];

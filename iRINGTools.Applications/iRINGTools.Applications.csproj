@@ -179,7 +179,6 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Content\img\list-add.png" />
     <Content Include="Content\img\list-remove.png" />
-    <Content Include="Scripts\AM\App.js" />
     <Content Include="Scripts\AM\controller\AdapterManager.js" />
     <Content Include="Scripts\AM\controller\Configuration.js" />
     <Content Include="Scripts\AM\controller\Mapping.js" />
@@ -193,6 +192,12 @@
     <Content Include="Scripts\AM\store\AvailItemsStore.js" />
     <Content Include="Scripts\AM\store\NHibernateTreeStore.js" />
     <Content Include="Scripts\AM\store\ProviderStore.js" />
+    <Content Include="Scripts\AM\ux\Filter.js" />
+    <Content Include="Scripts\AM\ux\GridPageSizer.js" />
+    <Content Include="Scripts\AM\ux\ListFilter.js" />
+    <Content Include="Scripts\AM\ux\PagingToolbar.js" />
+    <Content Include="Scripts\AM\ux\plugin\GridPageSizer.js" />
+    <Content Include="Scripts\AM\ux\RowExpander.js" />
     <Content Include="Scripts\AM\view\nhibernate\ConnectDatabase.js" />
     <Content Include="Scripts\AM\view\nhibernate\CreateRelations.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataObjectPanel.js" />
@@ -2455,7 +2460,6 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Web_Default.config" />
     <Resource Include="Content\img\relation.png" />
     <Content Include="Content\img\system-file-manager.png" />
     <Content Include="Content\img\table_refresh.png" />
@@ -2469,7 +2473,6 @@
     <Content Include="Scripts\AM\model\DynamicModel.js" />
     <Content Include="Scripts\AM\model\MappingModel.js" />
     <Content Include="Scripts\AM\model\SearchModel.js" />
-    <Content Include="Scripts\AM\store\DirectoryStore.js" />
     <Content Include="Scripts\AM\store\SearchStore.js" />
     <Content Include="Scripts\AM\view\common\CenterPanel.js" />
     <Content Include="Scripts\AM\view\common\ContentPanel.js" />
@@ -2499,7 +2502,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\AM\ux\plugin\" />
+    <Folder Include="Scripts\AM\ux\form\" />
+    <Folder Include="Scripts\AM\ux\grid\" />
     <Folder Include="Scripts\AM\view\spreadsheet\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
@@ -2512,7 +2516,6 @@
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
       <Name>UtilityLibrary</Name>
     </ProjectReference>
-
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\extjs407\examples\app\feed-viewer\app.jsb3" />

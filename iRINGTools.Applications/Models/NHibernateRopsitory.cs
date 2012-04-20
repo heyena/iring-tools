@@ -301,6 +301,7 @@ namespace org.iringtools.web.Models
               {"columnName", dataProperty.columnName},
               {"propertyName", dataProperty.propertyName},
               {"dataType", dataProperty.dataType.ToString()},
+              {"keyType", ""},
               {"dataLength", dataProperty.dataLength.ToString()},
               {"nullable", dataProperty.isNullable.ToString()},
               {"showOnIndex", dataProperty.showOnIndex.ToString()},
@@ -410,6 +411,7 @@ namespace org.iringtools.web.Models
                   }
 
                   propertiesNode.children[j].text = dataObject.dataProperties[jj].propertyName;
+                  propertiesNode.children[j].property["keyType"] = "unassigned";
                   propertiesNode.children[j].property["propertyName"] = dataObject.dataProperties[jj].propertyName;
                   propertiesNode.children[j].property["isHidden"] = dataObject.dataProperties[jj].isHidden.ToString();
                 }
@@ -430,6 +432,7 @@ namespace org.iringtools.web.Models
                   }
 
                   hiddenRootNode.children[j].text = dataObject.dataProperties[jj].propertyName;
+                  hiddenRootNode.children[j].property["keyType"] = "unassigned";
                   hiddenRootNode.children[j].property["propertyName"] = dataObject.dataProperties[jj].propertyName;
                   hiddenRootNode.children[j].property["isHidden"] = dataObject.dataProperties[jj].isHidden.ToString();
                 }
@@ -450,6 +453,7 @@ namespace org.iringtools.web.Models
                       keysNode.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
                       keysNode.children[k].property["propertyName"] = dataObject.keyProperties[ij].keyPropertyName;
                       keysNode.children[k].property["isHidden"] = "false";
+                      keysNode.children[k].property["keyType"] = "assigned";
                       ij++;
                       break;
                     }

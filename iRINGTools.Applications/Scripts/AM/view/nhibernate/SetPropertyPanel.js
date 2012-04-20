@@ -1,92 +1,93 @@
 ﻿Ext.define('AM.view.nhibernate.SetPropertyPanel', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.setproperty',
-    name: 'dataProperty',
-	border: false,
-	autoScroll: true,
-	monitorValid: true,
-	labelWidth: 130,
-	bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-	defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
+  extend: 'Ext.form.Panel',
+  alias: 'widget.setproperty',
+  border: false,
+  name: 'dataProperty',
+  contextName: null,
+  endpoint: null,
+  node: null,
+  autoScroll: true,
+  monitorValid: true,
+  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  defaults: {
+    anchor: '100%',
+    xtype: 'textfield',
+    labelWidth: 160,
+    allowBlank: false
+  },
 
-	initComponent: function () {
-        this.items = [{
-			    xtype: 'label',
-			    fieldLabel: 'Data Properties',
-			    labelSeparator: '',
-			    itemCls: 'form-title'
-		    }, {
-			    name: 'columnName',
-			    fieldLabel: 'Column Name',
-			    disabled: true
-		    }, {
-			    name: 'propertyName',
-			    fieldLabel: 'Property Name'
-		    }, {
-			    name: 'dataType',
-			    xtype: 'combo',
-			    fieldLabel: 'Data Type',
-			    store: dataTypes,
-			    mode: 'local',
-			    editable: false,
-			    triggerAction: 'all',
-			    displayField: 'text',
-			    valueField: 'value',
-			    selectOnFocus: true,
-			    disabled: true
-		    }, {
-			    xtype: 'numberfield',
-			    name: 'dataLength',
-			    fieldLabel: 'Data Length'
-		    }, {
-			    xtype: 'checkbox',
-			    name: 'isNullable',
-			    fieldLabel: 'Nullable',
-			    disabled: true
-		    }, {
-			    xtype: 'checkbox',
-			    name: 'showOnIndex',
-			    fieldLabel: 'Show on Index'
-		    }, {
-			    xtype: 'numberfield',
-			    name: 'numberOfDecimals',
-			    fieldLabel: 'Number of Decimals'
-		    }];
-		    this.treeNode = node,
-		    this.tbar = new Ext.Toolbar({
-			    items: [{
-				    xtype: 'tbspacer',
-				    width: 4
-			    }, {
-				    xtype: 'tbbutton',
-				    icon: 'Content/img/16x16/apply.png',
-				    text: 'Apply',
-				    tooltip: 'Apply the current changes to the data objects tree',
-				    handler: function (f) {
-					    var form = dataPropertyFormPanel.getForm();
-					    if (form.treeNode)
-						    applyProperty(form);
-				    }
-			    }, {
-				    xtype: 'tbspacer',
-				    width: 4
-			    }, {
-				    xtype: 'tbbutton',
-				    icon: 'Content/img/16x16/edit-clear.png',
-				    text: 'Reset',
-				    tooltip: 'Reset to the latest applied changes',
-				    handler: function (f) {
-					    var form = dataPropertyFormPanel.getForm();
-					    setDataPropertyFields(form, node.attributes.properties);
-				    }
-			    }]
-		    });	    
-		var form = dataPropertyFormPanel.getForm();
-		setDataPropertyFields(form, node.attributes.properties);
-		editPane.add(dataPropertyFormPanel);
-		var panelIndex = editPane.items.indexOf(dataPropertyFormPanel);
-		editPane.getLayout().setActiveItem(panelIndex);
-	}
+  initComponent: function () {
+    var me = this;
+    this.items = [{
+      xtype: 'label',
+      text: 'Data Properties',
+      cls: 'x-form-item',
+      style: 'font-weight:bold;'
+    }, {
+      name: 'columnName',
+      fieldLabel: 'Column Name',
+      readOnly: true
+    }, {
+      name: 'propertyName',
+      fieldLabel: 'Property Name (editable)'
+    }, {
+      name: 'dataType',
+      fieldLabel: 'Data Type',
+      readOnly: true
+    }, {
+      name: 'dataLength',
+      fieldLabel: 'Data Length',
+      readOnly: true
+    }, {
+      name: 'nullable',
+      fieldLabel: 'Nullable',
+      readOnly: true
+    }, {
+      name: 'showOnIndex',
+      fieldLabel: 'Show on Index',
+      readOnly: true
+    }, {
+      name: 'numberOfDecimals',
+      fieldLabel: 'Number of Decimals',
+      readOnly: true
+    }];
+    this.tbar = new Ext.Toolbar({
+      items: [{
+        xtype: 'tbspacer',
+        width: 4
+      }, {
+        xtype: 'button',
+        icon: 'Content/img/16x16/apply.png',
+        text: 'Apply',
+        tooltip: 'Apply the current changes to the data objects tree',
+        handler: function (f) {
+          var propertyName = me.getForm().findField('propertyName').getValue();
+          me.node.data.property.propertyName = propertyName;
+          me.node.set('text', propertyName);
+        }
+      }, {
+        xtype: 'tbspacer',
+        width: 4
+      }, {
+        xtype: 'button',
+        icon: 'Content/img/16x16/edit-clear.png',
+        text: 'Reset',
+        tooltip: 'Reset to the latest applied changes',
+        handler: function (f) {
+          this.setActiveRecord(this.node.data.property);
+        },
+      }]
+    });
+    this.callParent(arguments);
+  },
+ 
+  setActiveRecord: function (record) {
+    if (record) {
+      this.getForm().setValues(record);
+    } else {
+      this.getForm().reset();
+    }
+  }
 });
 
 function setDataPropertyFields(form, properties) {
