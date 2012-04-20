@@ -150,7 +150,7 @@ namespace org.iringtools.adapter.datalayer.eb
             ? className : string.Join(",", subClassCodes.ToArray());
           dataObjectDef.keyDelimeter = _keyDelimiter;
 
-          Map codeMap = _config.Mappings.Find(x => x.Type == (int)Destination.Code);
+          Map codeMap = _config.Mappings.Find(x => x.Destination == (int)Destination.Code);
           if (codeMap == null)
           {
             throw new Exception("No mapping configured for Code.");
@@ -158,7 +158,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
           dataObjectDef.keyProperties = new List<KeyProperty>()
           {
-            new KeyProperty() { keyPropertyName = codeMap.Property }
+            new KeyProperty() { keyPropertyName = codeMap.Column }
           };
 
           string ebMetadataQuery = _settings["ebMetadataQuery." + group.Name];
@@ -177,8 +177,8 @@ namespace org.iringtools.adapter.datalayer.eb
           {
             DataProperty dataProp = new DataProperty();
             dataProp.columnName = attrNode.SelectSingleNode("char_name").InnerText;
-            dataProp.propertyName = Regex.Replace(dataProp.columnName, @" |\.", "");
-            dataProp.dataType = ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
+            dataProp.propertyName = Utilities.ToPropertyName(dataProp.columnName);
+            dataProp.dataType = Utilities.ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
             dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
             dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;
 
@@ -186,11 +186,11 @@ namespace org.iringtools.adapter.datalayer.eb
           }
 
           // add related properties
-          foreach (Map m in _config.Mappings.Where(x => x.Type == (int)Destination.Relationship).Select(m => m))
+          foreach (Map m in _config.Mappings.Where(x => x.Destination == (int)Destination.Relationship).Select(m => m))
           {
             DataProperty dataProp = new DataProperty();
-            dataProp.columnName = m.Property + "(Related)";
-            dataProp.propertyName = Regex.Replace(m.Property, @" |\.", "");
+            dataProp.columnName = m.Column + Utilities.RELATED_COLUMN_SUFFIX;
+            dataProp.propertyName = Utilities.ToPropertyName(m.Column);
             dataProp.dataType = DataType.String;
             dataProp.isReadOnly = false;
             dataProp.isHidden = true;
@@ -245,7 +245,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
                 attrsBuilder.Append(dataProp.columnName);
               }
-              else if (!dataProp.columnName.EndsWith("(Related)"))
+              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_COLUMN_SUFFIX))
               {
                 if (attrsBuilder.Length > 0)
                   attrsBuilder.Append(",");
@@ -325,7 +325,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
                 attrsBuilder.Append(dataProp.columnName);
               }
-              else if (!dataProp.columnName.EndsWith("(Related)"))
+              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_COLUMN_SUFFIX))
               {
                 if (attrsBuilder.Length > 0)
                   attrsBuilder.Append(",");
@@ -390,12 +390,12 @@ namespace org.iringtools.adapter.datalayer.eb
           string keyValue = (string)dataObject.GetPropertyValue(keyProp.keyPropertyName);
 
           string revision = string.Empty;
-          try
+          Map revisionMap = _config.Mappings.Find(x => x.Destination == (int)Destination.Revision);
+          if (revisionMap != null)
           {
-            Map revisionMap = _config.Mappings.Find(x => x.Type == (int)Destination.Revision);
-            revision = (string)dataObject.GetPropertyValue(revisionMap.Property);
+            string propertyName = Utilities.ToPropertyName(revisionMap.Column);
+            revision = (string)dataObject.GetPropertyValue(propertyName);
           }
-          catch { }
 
           EqlClient eql = new EqlClient(_session);
           int objectId = eql.GetObjectId(keyValue, revision, _config.Template.ObjectType);
@@ -403,7 +403,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
           if (objectId == 0)  // does not exist, create
           {
-            string templateName = GetTemplateName(template, dataObject);
+            string templateName = GetTemplateName(template, objDef, dataObject);
             int templateId = eql.GetTemplateId(templateName);
 
             if (templateId == 0)
@@ -507,7 +507,7 @@ namespace org.iringtools.adapter.datalayer.eb
       if (_proxy != null) _proxy.Dispose();
     }
 
-    protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.config.Template template, IDataObject dataObject)
+    protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.config.Template template, DataObject objectDefinition, IDataObject dataObject)
     {
       if ((template.Placeholders == null) || (template.Placeholders.Count() == 0))
       {
@@ -521,29 +521,11 @@ namespace org.iringtools.adapter.datalayer.eb
 
       foreach (Placeholder placeholder in template.Placeholders)
       {
-        parameters[i++] = (string)dataObject.GetPropertyValue(placeholder.Value);
+        string propertyName = Utilities.ToPropertyName(placeholder.Value);
+        parameters[i++] = (string)dataObject.GetPropertyValue(propertyName);
       }
 
       return string.Format(template.Name, parameters);
-    }
-
-    protected DataType ToCSharpType(string ebType)
-    {
-      switch (ebType)
-      {
-        case "CH":
-        case "PD":
-          ebType = "String";
-          break;
-        case "NU":
-          ebType = "Decimal";
-          break;
-        case "DA":
-          ebType = "DateTime";
-          break;
-      }
-
-      return (DataType)Enum.Parse(typeof(DataType), ebType, true);
     }
 
     protected IDataObject ToDataObject(DataRow dataRow, DataObject objectDefinition)
