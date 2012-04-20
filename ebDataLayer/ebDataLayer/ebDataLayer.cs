@@ -133,8 +133,9 @@ namespace org.iringtools.adapter.datalayer.eb
 
           DataObject dataObjectDef = new DataObject();
           dataObjectDef.objectName = className;
-          dataObjectDef.tableName = (subClassCodes.Count == 0) ? className :
-            group.Name + ".('" + string.Join("','", subClassCodes) + "')";
+          dataObjectDef.tableName = (subClassCodes.Count == 0) 
+              ? group.Name + ":" + className
+              : group.Name + ":" + string.Join(",", subClassCodes.ToArray());
 
           string ebMetadataQuery = _settings["ebMetadataQuery." + group.Name];
 
@@ -206,7 +207,6 @@ namespace org.iringtools.adapter.datalayer.eb
       return dictionary;
     }
 
-    //TODO: use startIndex
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
@@ -220,13 +220,13 @@ namespace org.iringtools.adapter.datalayer.eb
 
         if (dataObjectDef != null)
         {
-          string[] parts = dataObjectDef.tableName.Split('.');
+          string[] parts = dataObjectDef.tableName.Split(':');
           string classObject = parts[0];
-          string classCodes = parts[1];
+          string classCodes = "'" + string.Join("','", parts[1].Split(',')) + "'";
 
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
-            string query = "START WITH {0} SELECT {1} WHERE Class.Code IN {2}";
+            string query = "START WITH {0} SELECT {1} WHERE Class.Code IN ({2})";
             StringBuilder attrsBuilder = new StringBuilder();
 
             foreach (DataProperty dataProp in dataObjectDef.dataProperties)
@@ -246,7 +246,9 @@ namespace org.iringtools.adapter.datalayer.eb
             }
 
             query = string.Format(query, classObject, attrsBuilder.ToString(), classCodes);
-            DataTable result = ExecuteSearch(_session, query, new object[0], pageSize);
+
+            EqlClient eqlClient = new EqlClient(_session);
+            DataTable result = eqlClient.SearchPage(_session, query, new object[0], startIndex, pageSize);
 
             dataObjects = ToDataObjects(result, dataObjectDef);
           }
@@ -463,130 +465,6 @@ namespace org.iringtools.adapter.datalayer.eb
       return string.Format(template.Name, parameters);
     }
 
-    //protected int GetTemplateId(string templateName)
-    //{
-    //  string selectCommandText;
-
-    //  if (Proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
-    //    selectCommandText = string.Format("SELECT template_id FROM templates (NOLOCK) WHERE name = '{0}'", templateName);
-    //  else
-    //    selectCommandText = string.Format("SELECT template_id FROM templates WHERE name = '{0}'", templateName);
-
-    //  int rc = 0;
-    //  string result = Proxy.query(selectCommandText, ref rc);
-    //  XmlDocument doc = new XmlDocument();
-    //  doc.LoadXml(result);
-
-    //  if (doc.DocumentElement.ChildNodes.Count <= 0)
-    //    throw new Exception("ConnectionGetTemplateIdNoEntryFoundForTemplateName" + templateName + ";");
-
-    //  int templateId = Convert.ToInt32(doc.SelectSingleNode("records/record/template_id").InnerText);
-    //  return (templateId);
-    //}
-
-    protected int GetItemId(string itemNumber, string version)
-    {
-      try
-      {
-        string criteria;
-        if (version != null)
-          criteria = string.Format("Code = '{0}' AND Version = '{1}'", itemNumber, version);
-        else
-          criteria = string.Format("Code = '{0}'", itemNumber);
-
-        string column = "Id";
-        eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.Item, column, criteria);
-        return (s.RetrieveScalar<int>(column));
-      }
-      catch (Exception)
-      {
-        return (0);
-      }
-    }
-
-    protected int GetDocId(string docNumber, string revision)
-    {
-      try
-      {
-        string criteria;
-        if (revision != null)
-          criteria = string.Format("Code = '{0}' AND Revision = '{1}'", docNumber, revision);
-        else  //Code LIKE '%' AND IsLatestRevision = 'Y'
-          criteria = string.Format("Code = '{0}' AND IsLatestRevision = 'Y'", docNumber);
-
-        string column = "Id";
-        eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.Document, column, criteria);
-        return (s.RetrieveScalar<int>(column));
-      }
-      catch (Exception)
-      {
-        return (0);
-      }
-    }
-
-    protected int GetCharId(string charName)
-    {
-      try
-      {
-        string criteria = string.Format("Name = '{0}'", charName);
-        string column = "Id";
-        eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.AttributeDef, column, criteria);
-        return (s.RetrieveScalar<int>(column));
-      }
-      catch (Exception)
-      {
-        return (0);
-      }
-    }
-
-    protected int GetTagId(string itemCode, string itemVersion, string code, string revnName)
-    {
-      string selectCommandText;
-      int tagId = 0;
-
-      int itemId = GetItemId(itemCode, itemVersion);
-
-      if (_proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
-        selectCommandText = string.Format("SELECT TOP 1 tag_id FROM tags WHERE item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
-      else
-        selectCommandText = string.Format("SELECT tag_id FROM tags WHERE rownum <= 1 AND item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
-
-      int rc = 0;
-      string result = _proxy.query(selectCommandText, ref rc);
-      XmlDocument doc = new XmlDocument();
-      doc.LoadXml(result);
-
-      if (doc.DocumentElement.ChildNodes.Count <= 0)
-        throw new Exception("There are no tags that match this code: " + code);
-
-      tagId = Convert.ToInt32(doc.SelectSingleNode("records/record/tag_id").InnerText);
-
-      return (tagId);
-    }
-
-    protected DataTable ExecuteSearch(Session session, string eql, object[] parameters, int pageSize = -1)
-    {
-      parameters = parameters.Select(p =>
-      {
-        if (p.GetType() == typeof(string))
-        {
-          return (p as string).Replace("'", "''");
-        }
-        else
-          if (p.GetType().IsEnum)
-          {
-            return (int)p;
-          }
-          else
-          {
-            return p;
-          }
-      }).ToArray();
-
-      eql = string.Format(eql, parameters);
-      return new Search(session, new eB.ContentData.Eql.Search(eql)).Retrieve<DataTable>(1, pageSize);
-    }
-
     protected DataType ToCSharpType(string type)
     {
       // convert ebType to known type
@@ -682,5 +560,106 @@ namespace org.iringtools.adapter.datalayer.eb
 
       return dataObjects;
     }
+
+    //protected int GetTemplateId(string templateName)
+    //{
+    //  string selectCommandText;
+
+    //  if (Proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
+    //    selectCommandText = string.Format("SELECT template_id FROM templates (NOLOCK) WHERE name = '{0}'", templateName);
+    //  else
+    //    selectCommandText = string.Format("SELECT template_id FROM templates WHERE name = '{0}'", templateName);
+
+    //  int rc = 0;
+    //  string result = Proxy.query(selectCommandText, ref rc);
+    //  XmlDocument doc = new XmlDocument();
+    //  doc.LoadXml(result);
+
+    //  if (doc.DocumentElement.ChildNodes.Count <= 0)
+    //    throw new Exception("ConnectionGetTemplateIdNoEntryFoundForTemplateName" + templateName + ";");
+
+    //  int templateId = Convert.ToInt32(doc.SelectSingleNode("records/record/template_id").InnerText);
+    //  return (templateId);
+    //}
+
+    //protected int GetItemId(string itemNumber, string version)
+    //{
+    //  try
+    //  {
+    //    string criteria;
+    //    if (version != null)
+    //      criteria = string.Format("Code = '{0}' AND Version = '{1}'", itemNumber, version);
+    //    else
+    //      criteria = string.Format("Code = '{0}'", itemNumber);
+
+    //    string column = "Id";
+    //    eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.Item, column, criteria);
+    //    return (s.RetrieveScalar<int>(column));
+    //  }
+    //  catch (Exception)
+    //  {
+    //    return (0);
+    //  }
+    //}
+
+    //protected int GetDocId(string docNumber, string revision)
+    //{
+    //  try
+    //  {
+    //    string criteria;
+    //    if (revision != null)
+    //      criteria = string.Format("Code = '{0}' AND Revision = '{1}'", docNumber, revision);
+    //    else  //Code LIKE '%' AND IsLatestRevision = 'Y'
+    //      criteria = string.Format("Code = '{0}' AND IsLatestRevision = 'Y'", docNumber);
+
+    //    string column = "Id";
+    //    eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.Document, column, criteria);
+    //    return (s.RetrieveScalar<int>(column));
+    //  }
+    //  catch (Exception)
+    //  {
+    //    return (0);
+    //  }
+    //}
+
+    //protected int GetCharId(string charName)
+    //{
+    //  try
+    //  {
+    //    string criteria = string.Format("Name = '{0}'", charName);
+    //    string column = "Id";
+    //    eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.AttributeDef, column, criteria);
+    //    return (s.RetrieveScalar<int>(column));
+    //  }
+    //  catch (Exception)
+    //  {
+    //    return (0);
+    //  }
+    //}
+
+    //protected int GetTagId(string itemCode, string itemVersion, string code, string revnName)
+    //{
+    //  string selectCommandText;
+    //  int tagId = 0;
+
+    //  int itemId = GetItemId(itemCode, itemVersion);
+
+    //  if (_proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
+    //    selectCommandText = string.Format("SELECT TOP 1 tag_id FROM tags WHERE item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
+    //  else
+    //    selectCommandText = string.Format("SELECT tag_id FROM tags WHERE rownum <= 1 AND item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
+
+    //  int rc = 0;
+    //  string result = _proxy.query(selectCommandText, ref rc);
+    //  XmlDocument doc = new XmlDocument();
+    //  doc.LoadXml(result);
+
+    //  if (doc.DocumentElement.ChildNodes.Count <= 0)
+    //    throw new Exception("There are no tags that match this code: " + code);
+
+    //  tagId = Convert.ToInt32(doc.SelectSingleNode("records/record/tag_id").InnerText);
+
+    //  return (tagId);
+    //}
   }
 }
