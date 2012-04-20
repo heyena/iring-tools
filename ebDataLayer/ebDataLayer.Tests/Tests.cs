@@ -54,7 +54,7 @@ namespace bechtel.eb.datalayer.test
     [Test]
     public void TestGetPage()
     {
-      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical",new DataFilter(), 5, 0);
+      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Tag)",new DataFilter(), 5, 0);
       Assert.Greater(dataObjects.Count, 0);
     }
 
@@ -168,10 +168,10 @@ namespace bechtel.eb.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    //[Test]
+    [Test]
     public void TestPost()
     {
-      IDataObject dataObject = new GenericDataObject() { ObjectType = "Tag" };
+      IDataObject dataObject = new GenericDataObject() { ObjectType = "Mechanical(Tag)" };
       dataObject.SetPropertyValue("ApprDiameter", "");
       dataObject.SetPropertyValue("ApprDPress", "");
       dataObject.SetPropertyValue("ApprDTemp", "");
@@ -195,7 +195,7 @@ namespace bechtel.eb.datalayer.test
       dataObject.SetPropertyValue("ClassId", "");
       dataObject.SetPropertyValue("CommGrpCode", "ME");
       dataObject.SetPropertyValue("CommodityCode", "01");  // Unit
-      dataObject.SetPropertyValue("ComponentFunctionName (CFN)", "1-N-CCW-HX-1Z");
+      dataObject.SetPropertyValue("ComponentFunctionName (CFN)", "1-N-CCW-HX-ZZ");
       dataObject.SetPropertyValue("DateEffective", "");
       dataObject.SetPropertyValue("DateObsolete", "");
       dataObject.SetPropertyValue("DateEffective", "");
@@ -220,7 +220,6 @@ namespace bechtel.eb.datalayer.test
       dataObject.SetPropertyValue("VendorSupplied(Y/N)", "");
 
       IList<IDataObject> dataObjects = new List<IDataObject>() { dataObject };
-
       _dataLayer.Post(dataObjects);
     }
 
