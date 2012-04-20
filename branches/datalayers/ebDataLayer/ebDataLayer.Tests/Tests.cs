@@ -182,53 +182,30 @@ namespace bechtel.eb.datalayer.test
     [Test]
     public void TestPost()
     {
-      IDataObject dataObject = new GenericDataObject() { ObjectType = "Mechanical(Tag)" };
-      dataObject.SetPropertyValue("ApprDiameter", "");
-      dataObject.SetPropertyValue("ApprDPress", "");
-      dataObject.SetPropertyValue("ApprDTemp", "");
-      dataObject.SetPropertyValue("ApprInsulMaterial", "");
-      dataObject.SetPropertyValue("ApprInsulationThickness", "");
-      dataObject.SetPropertyValue("ApprLineClass", "");
-      dataObject.SetPropertyValue("ApprovalStatus", "");
-      dataObject.SetPropertyValue("ApprovedAQClass", "");
-      dataObject.SetPropertyValue("ApprovedDesignPressure", "");
-      dataObject.SetPropertyValue("ApprovedDesignTemperature", "");
-      dataObject.SetPropertyValue("ApprovedEstLoad", "");
-      dataObject.SetPropertyValue("ApprovedLoad", "");
-      dataObject.SetPropertyValue("ApprovedNon-PressureBoundryQualityGroup", "");
+      string objectType = "Mechanical(Tag)";
+      DataObject objectDef = _dataLayer.GetDictionary().dataObjects.Find(x => x.objectName == objectType);
+      
+      // create an data object with default property values
+      IDataObject dataObject = new GenericDataObject() { ObjectType = objectType };     
+
+      foreach (DataProperty prop in objectDef.dataProperties)
+      {
+        dataObject.SetPropertyValue(prop.propertyName, "");
+      }
+
+      // update some property values
       dataObject.SetPropertyValue("ApprovedPressureBoundryQualityGroup", "NA");
-      dataObject.SetPropertyValue("ApprovedQualityClass", "");
       dataObject.SetPropertyValue("ApprovedSeismicClass", "SC-II");
-      dataObject.SetPropertyValue("ChangeControlled", "");
-      dataObject.SetPropertyValue("ClassCode", "");
-      dataObject.SetPropertyValue("ClassId", "");
       dataObject.SetPropertyValue("Code", "01-N-CCW-ME-001Z");    // Tag Number
       dataObject.SetPropertyValue("Description", "CCW HEAT EXCHANGER");
       dataObject.SetPropertyValue("CommGrpCode", "ME");
       dataObject.SetPropertyValue("CommodityCode", "MES0");
       dataObject.SetPropertyValue("Unit", "01");
       dataObject.SetPropertyValue("ComponentFunctionName(CFN)", "1-N-CCW-HX-ZZ");
-      dataObject.SetPropertyValue("DateEffective", "");
-      dataObject.SetPropertyValue("DateObsolete", "");
-      dataObject.SetPropertyValue("DateEffective", "");
-      dataObject.SetPropertyValue("Discipline", "");
-      dataObject.SetPropertyValue("DocumentStatus", "");
       dataObject.SetPropertyValue("EquipmentRating", "18200000");
-      dataObject.SetPropertyValue("HP(Est/Act/Calc)", "");
       dataObject.SetPropertyValue("Name", "TEST-01-N-CCW-ME-001Z");
-      dataObject.SetPropertyValue("Manufacturer", "");
-      dataObject.SetPropertyValue("Middle", "");
-      dataObject.SetPropertyValue("ModelNo", "");
-      dataObject.SetPropertyValue("PowerReqd", "");
       dataObject.SetPropertyValue("Q-List(Y/N)", "N");
-      dataObject.SetPropertyValue("PowerReqd", "N");
-      dataObject.SetPropertyValue("ReasonforIssue", "");
-      dataObject.SetPropertyValue("RegulatoryRequirement", "");
-      dataObject.SetPropertyValue("Remark", "");
-      dataObject.SetPropertyValue("Revision", "");
-      dataObject.SetPropertyValue("SafetyDesignator", "");
-      dataObject.SetPropertyValue("Synopsis", "");
-      dataObject.SetPropertyValue("VendorSupplied(Y/N)", "");
+      dataObject.SetPropertyValue("PowerReqd", "N");    
 
       IList<IDataObject> dataObjects = new List<IDataObject>() { dataObject };
       Response response = _dataLayer.Post(dataObjects);

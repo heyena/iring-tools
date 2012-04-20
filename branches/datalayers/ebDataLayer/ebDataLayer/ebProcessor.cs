@@ -30,7 +30,11 @@ namespace org.iringtools.adaper.datalayer.eb
       _objectDefinition = objectDefinition;
       _dataObject = dataObject;
 
-      Status status = new Status() { Level = StatusLevel.Success };
+      Status status = new Status()
+      {
+        Identifier = key,
+        Level = StatusLevel.Success
+      };
 
       try
       {
@@ -68,15 +72,26 @@ namespace org.iringtools.adaper.datalayer.eb
       _objectDefinition = objectDefinition;
       _dataObject = dataObject;
 
-      Status status = new Status() { Level = StatusLevel.Success };
+      Status status = new Status() 
+      { 
+        Identifier = key,
+        Level = StatusLevel.Success 
+      };
 
       try
       {
         Document doc = new Document(_session, id);
         doc.Retrieve("Header;Attributes");
+
+        if (!SetName(ref doc, key))
+        {
+          status.Messages.Add("Failed to set Name\n");
+        }
         
         Append(ref status, SetAttributes(ref doc));
         Append(ref status, SetRelationships(doc));
+
+        doc.Save();
       }
       catch (Exception e)
       {
@@ -92,12 +107,13 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map map = (from m in _mappings
-                   where m.Type == (int)Destination.Name
+                   where m.Destination == (int)Destination.Name
                    select m).FirstOrDefault();
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Property);
+          string propertyName = Utilities.ToPropertyName(map.Column);
+          string name = (string)_dataObject.GetPropertyValue(propertyName);
 
           if (tag.Name != name)
           {
@@ -122,12 +138,13 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map map = (from m in _mappings
-                   where m.Type == (int)Destination.Name
+                   where m.Destination == (int)Destination.Name
                    select m).FirstOrDefault();
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Property);
+          string propertyName = Utilities.ToPropertyName(map.Column);
+          string name = (string)_dataObject.GetPropertyValue(propertyName);
 
           if (doc.Name != name)
           {
@@ -152,12 +169,13 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         Map map = (from m in _mappings
-                   where m.Type == (int)Destination.Title
+                   where m.Destination == (int)Destination.Title
                    select m).FirstOrDefault();
 
         if (map != null)
         {
-          string name = (string)_dataObject.GetPropertyValue(map.Property);
+          string propertyName = Utilities.ToPropertyName(map.Column);
+          string name = (string)_dataObject.GetPropertyValue(propertyName);
 
           if (tag.Name != name)
           {
@@ -183,22 +201,19 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        var attrMaps = from m in _mappings
-                    where m.Type == (int)Destination.Attribute
-                    select m;
+        List<DataProperty> userProps = _objectDefinition.dataProperties.FindAll(x => x.isReadOnly == false && !x.columnName.EndsWith(Utilities.RELATED_COLUMN_SUFFIX));
 
-        foreach (Map map in attrMaps)
+        foreach (DataProperty prop in userProps)
         {
           try
           {
-            object value = _dataObject.GetPropertyValue(map.Property);
+            object value = _dataObject.GetPropertyValue(prop.propertyName);
 
             if (value != null)
             {
-              DataProperty prop = _objectDefinition.dataProperties.Find(x => x.propertyName.ToLower() == map.Property.ToLower());
               eB.Data.Attribute ebAttr = tag.Attributes.Where(attr => ((attr.Name == prop.columnName))).Select(attr => attr).FirstOrDefault();
 
-              if ((ebAttr.Value == null) || (ebAttr.Value.ToString() != value.ToString()))
+              if (ebAttr != null && ((ebAttr.Value == null) || (ebAttr.Value.ToString() != value.ToString())))
               {
                 _session.Writer.ChgCharData(tag.Id, ebAttr.AttributeDef.Id, value);
               }
@@ -206,7 +221,7 @@ namespace org.iringtools.adaper.datalayer.eb
           }
           catch (Exception e)
           {
-            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Property, e.Message));
+            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", prop.columnName, e.Message));
             status.Level = StatusLevel.Warning;
           }
         }
@@ -226,19 +241,16 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        var attrMaps = from m in _mappings
-                    where m.Type == (int)Destination.Attribute
-                    select m;
+        List<DataProperty> userProps = _objectDefinition.dataProperties.FindAll(x => x.isReadOnly == false && !x.columnName.EndsWith(Utilities.RELATED_COLUMN_SUFFIX));
 
-        foreach (Map map in attrMaps)
+        foreach (DataProperty prop in userProps)
         {
           try
           {
-            object value = _dataObject.GetPropertyValue(map.Property);
+            object value = _dataObject.GetPropertyValue(prop.propertyName);
 
             if (value != null)
             {
-              DataProperty prop = _objectDefinition.dataProperties.Find(x => x.propertyName.ToLower() == map.Property.ToLower());
               eB.Data.Attribute ebAttr = doc.Attributes.Where(attr => ((attr.Name == prop.columnName))).Select(attr => attr).FirstOrDefault();
 
               if (ebAttr.Value.ToString() != (string)value)
@@ -249,7 +261,7 @@ namespace org.iringtools.adaper.datalayer.eb
           }
           catch (Exception e)
           {
-            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", map.Property, e.Message));
+            status.Messages.Add(string.Format("Attribute {0} update failed due to error {1}", prop.columnName, e.Message));
             status.Level = StatusLevel.Warning;
           }
         }
@@ -402,9 +414,11 @@ namespace org.iringtools.adaper.datalayer.eb
 
     private bool RequiredParametersPresent(Rule rule)
     {
-      foreach (var p in rule.Parameters)
+      foreach (var param in rule.Parameters)
       {
-        if (_dataObject.GetPropertyValue(p.Value) == null)
+        string propertyName = Utilities.ToPropertyName(param.Value);
+
+        if (_dataObject.GetPropertyValue(propertyName) == null)
         {
           return false;
         }
@@ -430,6 +444,9 @@ namespace org.iringtools.adaper.datalayer.eb
 
     private string GetValue(Parameter param, string value)
     {
+      if (string.IsNullOrEmpty(value))
+        return string.Empty;
+
       try
       {
         return value.Split(new string[] { param.Seperator }, StringSplitOptions.RemoveEmptyEntries)[param.Position];
@@ -450,7 +467,8 @@ namespace org.iringtools.adaper.datalayer.eb
       string[] parameters = new string[rule.Parameters.Count];
       for (int i = 0; i < rule.Parameters.Count; i++)
       {
-        parameters[i] = GetValue(rule.Parameters[i], (string)_dataObject.GetPropertyValue(rule.Parameters[i].Value));
+        string propertyName = Utilities.ToPropertyName(rule.Parameters[i].Value);
+        parameters[i] = GetValue(rule.Parameters[i], (string)_dataObject.GetPropertyValue(propertyName));
       }
 
       return string.Format(rule.Eql, parameters);
@@ -470,24 +488,22 @@ namespace org.iringtools.adaper.datalayer.eb
     }
 
     private bool Passed(SelfCheck check)
-    {
-      try
-      {
-        string value = (string)_dataObject.GetPropertyValue(check.Column);
+    {      
+      string propertyName = Utilities.ToPropertyName(check.Column);
+      string value = (string)_dataObject.GetPropertyValue(propertyName);
 
-        switch (check.Operator.ToLower())
-        {
-          case "=": return value == check.Value;
-          case "<>": return value != check.Value;
-          case "contains": return value.Contains(check.Value);
-          case "startswith": return value.StartsWith(check.Value);
-          case "endswith": return value.EndsWith(check.Value);
-          default: return false;
-        }
+      if (check.Operator == null)
+      {
+        return value == check.Value; 
       }
-      catch 
-      { 
-        return false; 
+
+      switch (check.Operator.ToLower())
+      {
+        case "<>": return value != check.Value;
+        case "contains": return value.Contains(check.Value);
+        case "startswith": return value.StartsWith(check.Value);
+        case "endswith": return value.EndsWith(check.Value);
+        default: return value == check.Value;
       }
     }
 
