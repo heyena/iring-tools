@@ -213,6 +213,14 @@ namespace bechtel.eb.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
+    [Test]
+    public void TestDelete()
+    {
+      string objectType = "Mechanical(Tag)";
+      Response response = _dataLayer.Delete(objectType, new List<string> { "MECH-MP-01-002" });
+      Assert.AreEqual(response.Level, StatusLevel.Success);
+    }
+
     //[Test]
     public void TestRefresh()
     {
