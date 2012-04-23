@@ -325,6 +325,9 @@ namespace org.iringtools.library
     public int valuePropertyIndex { get; set; }
 
     [DataMember(IsRequired = false, Order = 3)]
+    public string tableName { get; set; }
+
+    [DataMember(IsRequired = false, Order = 4)]
     public List<DataProperty> pickListProperties { get; set; }
   }
 }
