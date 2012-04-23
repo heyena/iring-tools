@@ -45,7 +45,7 @@ namespace org.iringtools.adaper.datalayer.eb
       try
       {
         string eql = string.Format("START WITH Template SELECT Id WHERE Name = '{0}'", templateName);
-        eB.Data.Search s = new Search(this._session, eql);
+        eB.Data.Search s = new Search(_session, eql);
         templateId = s.RetrieveScalar<int>("Id");
       }
       catch (Exception e) 
@@ -74,7 +74,7 @@ namespace org.iringtools.adaper.datalayer.eb
           eql = string.Format("START WITH Object SELECT Id WHERE Code = '{0}' AND Type = {1} AND Revision = '{2}'", code, type, revision);
         }
 
-        eB.Data.Search s = new Search(this._session, eql);
+        eB.Data.Search s = new Search(_session, eql);
         objectId = s.RetrieveScalar<int>("Id");
       }
       catch (Exception e) 
@@ -92,7 +92,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        eB.Data.Search s = new Search(this._session, eql);
+        eB.Data.Search s = new Search(_session, eql);
         objectId = s.RetrieveScalar<int>("Id");
       }
       catch (Exception e) 
@@ -110,7 +110,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        eB.Data.Search s = new Search(this._session, eql);
+        eB.Data.Search s = new Search(_session, eql);
         dt = s.Retrieve<DataTable>();
       }
       catch (Exception e)
@@ -131,7 +131,7 @@ namespace org.iringtools.adaper.datalayer.eb
                             inner join relationships s on r.rel_type_id  = s.rel_type_id 
                             where t.template_id = {0} and s.left_object_id = {1}", relationshipTemplateId, leftObjectId);
 
-        XDocument dataset = XDocument.Parse(this._session.ProtoProxy.Query(this._session.ReaderSessionString, sql));
+        XDocument dataset = XDocument.Parse(_session.ProtoProxy.Query(_session.ReaderSessionString, sql));
         int rows = dataset.Element("records").Elements("record").Count();
 
         if (rows == 1)

@@ -38,8 +38,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        Tag tag = new Tag(_session, id);
-
+        Tag tag = new Tag(_session, id);        
         tag.Retrieve("Header;Attributes");
         tag.Code = key;
 

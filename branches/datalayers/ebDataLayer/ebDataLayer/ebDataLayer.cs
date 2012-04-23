@@ -153,7 +153,7 @@ namespace org.iringtools.adapter.datalayer.eb
           Map codeMap = _config.Mappings.Find(x => x.Destination == (int)Destination.Code);
           if (codeMap == null)
           {
-            throw new Exception("No mapping configured for Code.");
+            throw new Exception("No mapping configured for key property.");
           }
 
           dataObjectDef.keyProperties = new List<KeyProperty>()
@@ -291,7 +291,76 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override Response Delete(string objectType, IList<string> identifiers)
     {
-      throw new NotImplementedException();
+      Response response = new Response() { Level = StatusLevel.Success };
+
+      try
+      {
+        DataDictionary dictionary = GetDictionary();
+        DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+        if (dataObjectDef != null)
+        {
+          try
+          {
+            Connect();
+
+            EqlClient eqlClient = new EqlClient(_session);
+            int objType = (int)_config.Template.ObjectType;
+
+            foreach (string identifier in identifiers)
+            {
+              Status status = new Status() 
+              { 
+                Identifier = identifier,
+                Level = StatusLevel.Success
+              };
+
+              int objId = eqlClient.GetObjectId(identifier, string.Empty, objType);
+
+              if (objId != 0)
+              {
+                if (objType == (int)ObjectType.Tag)
+                {
+                  Tag tag = new Tag(_session, objId);
+                  tag.Delete();
+                  response.Messages.Add(string.Format("Tag [{0}] deleted succesfully.", identifier));
+                }
+                else if (objType == (int)ObjectType.Document)
+                {
+                  Document doc = new Document(_session, objId);
+                  doc.Delete();
+                  response.Messages.Add(string.Format("Document [{0}] deleted succesfully.", identifier));
+                }
+                else
+                {
+                  response.Level = StatusLevel.Error;
+                  response.Messages.Add(string.Format("Object type [{0}] not supported.", objType));
+                }
+              }
+              else
+              {
+                response.Level = StatusLevel.Error;
+                response.Messages.Add(string.Format("Object [{0}] not found.", identifier));
+              }
+
+              response.Append(status);
+            }
+          }
+          finally
+          {
+            Disconnect();
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error deleting data object: " + e);
+
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
     }
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
@@ -374,7 +443,7 @@ namespace org.iringtools.adapter.datalayer.eb
         if (dataObjects.Count <= 0)
         {
           response.Level = StatusLevel.Error;
-          response.Messages.Add("Not data objects to update.");
+          response.Messages.Add("No data objects to update.");
           return response;
         }
 
