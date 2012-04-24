@@ -210,7 +210,7 @@ namespace org.iringtools.adaper.datalayer.eb
       }
     }
 
-    public DataTable SearchPage(Session session, string eql, object[] parameters, int start, int limit = -1)
+    public DataTable Search(Session session, string eql, object[] parameters, int start, int limit = -1)
     {
       parameters = parameters.Select(p =>
       {

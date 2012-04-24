@@ -25,7 +25,8 @@ namespace org.iringtools.adapter.datalayer.eb
 
     private string _dataPath = string.Empty;
     private string _scope = string.Empty;
-    private string _dictionaryXML = string.Empty;
+    private string _dictionaryPath = string.Empty;
+    private DataDictionary _dictionary = null;
 
     private string _server = string.Empty;
     private string _dataSource = string.Empty;
@@ -46,7 +47,7 @@ namespace org.iringtools.adapter.datalayer.eb
     {
       _dataPath = (settings["DataLayerPath"] == null) ? settings["AppDataPath"] : settings["DataLayerPath"] + "App_Data\\";
       _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
-      _dictionaryXML = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
+      _dictionaryPath = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
 
       _server = _settings["ebServer"];
       _dataSource = _settings["ebDataSource"];
@@ -81,14 +82,20 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override DataDictionary GetDictionary()
     {
-      DataDictionary dictionary = new DataDictionary();
+      if (_dictionary != null)
+        return _dictionary;
 
-      if (System.IO.File.Exists(_dictionaryXML))
-        return Utility.Read<DataDictionary>(_dictionaryXML);
+      if (System.IO.File.Exists(_dictionaryPath))
+      {
+        _dictionary = Utility.Read<DataDictionary>(_dictionaryPath);
+        return _dictionary;
+      }
 
       try
       {
         Connect();
+
+        _dictionary = new DataDictionary();
 
         StringBuilder cosQuery = new StringBuilder("SELECT * FROM class_objects");
 
@@ -198,11 +205,12 @@ namespace org.iringtools.adapter.datalayer.eb
             dataProp.dataType = DataType.String;            
             objDef.dataProperties.Add(dataProp);
           }
-
-          dictionary.dataObjects.Add(objDef);
+          
+          _dictionary.dataObjects.Add(objDef);
         }
 
-        Utility.Write<DataDictionary>(dictionary, _dictionaryXML);
+        Utility.Write<DataDictionary>(_dictionary, _dictionaryPath);
+        return _dictionary;
       }
       catch (Exception e)
       {
@@ -212,8 +220,6 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         Disconnect();
       }
-
-      return dictionary;
     }
     public override long GetCount(string objectType, DataFilter filter)
     {
@@ -317,13 +323,13 @@ namespace org.iringtools.adapter.datalayer.eb
             }
 
             EqlClient eqlClient = new EqlClient(_session);
-            DataTable result = eqlClient.SearchPage(_session, eql, new object[0], startIndex, pageSize);
+            DataTable result = eqlClient.Search(_session, eql, new object[0], startIndex, pageSize);
 
             dataObjects = ToDataObjects(result, objDef);
           }
           else
           {
-            throw new Exception("Class object [" + classObject + "] not currently supported.");
+            throw new Exception("Class object [" + classObject + "] not supported.");
           }
         }
         else
@@ -382,7 +388,7 @@ namespace org.iringtools.adapter.datalayer.eb
             eql = string.Format(eql, classObject, attrsBuilder.ToString(), key, keyValues);
 
             EqlClient eqlClient = new EqlClient(_session);
-            DataTable result = eqlClient.SearchPage(_session, eql, new object[0], 0, -1);
+            DataTable result = eqlClient.Search(_session, eql, new object[0], 0, -1);
 
             dataObjects = ToDataObjects(result, objDef);
           }
@@ -407,7 +413,27 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
-      throw new NotImplementedException();
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, filter, 0, -1);
+
+        DataDictionary dictionary = GetDictionary();
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+        IList<string> identifiers = new List<string>();
+
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          identifiers.Add((string)dataObject.GetPropertyValue(objDef.keyProperties.First().keyPropertyName));
+        }
+
+        return identifiers;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(string.Format("Error getting identifiers of object type [{0}]", objectType));
+        throw e;
+      }
     }
 
     public override Response Post(IList<IDataObject> dataObjects)
@@ -596,7 +622,8 @@ namespace org.iringtools.adapter.datalayer.eb
 
       try
       {
-        System.IO.File.Delete(_dictionaryXML);
+        _dictionary = null;
+        System.IO.File.Delete(_dictionaryPath);
         GetDictionary();
         response.Level = StatusLevel.Success;
       }
