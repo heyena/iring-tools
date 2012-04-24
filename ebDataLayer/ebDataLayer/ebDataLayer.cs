@@ -613,7 +613,17 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override Response Delete(string objectType, DataFilter filter)
     {
-      throw new NotImplementedException();
+      try
+      {
+        IList<string> identifiers = GetIdentifiers(objectType, filter);
+        return Delete(objectType, identifiers);
+      }
+      catch (Exception e)
+      {
+        string filterXML = Utility.SerializeDataContract<DataFilter>(filter);
+        _logger.Error(string.Format("Error deleting object type [{0}] with filter [{1}].", objectType, filterXML));
+        throw e;
+      }
     }
 
     public override Response RefreshAll()
