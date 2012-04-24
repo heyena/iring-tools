@@ -143,12 +143,12 @@ namespace org.iringtools.adapter.datalayer.eb
           EqlClient eqlClient = new EqlClient(_session);
           List<string> subClassCodes = eqlClient.GetSubClassCodes(className);
 
-          DataObject dataObjectDef = new DataObject();
-          dataObjectDef.objectNamespace = group.Name;
-          dataObjectDef.objectName = className + "(" + group.Name + ")";
-          dataObjectDef.tableName = (subClassCodes.Count == 0)
+          DataObject objDef = new DataObject();
+          objDef.objectNamespace = group.Name;
+          objDef.objectName = className + "(" + group.Name + ")";
+          objDef.tableName = (subClassCodes.Count == 0)
             ? className : string.Join(",", subClassCodes.ToArray());
-          dataObjectDef.keyDelimeter = _keyDelimiter;
+          objDef.keyDelimeter = _keyDelimiter;
 
           Map codeMap = _config.Mappings.Find(x => x.Destination == (int)Destination.Code);
           if (codeMap == null)
@@ -156,7 +156,7 @@ namespace org.iringtools.adapter.datalayer.eb
             throw new Exception("No mapping configured for key property.");
           }
 
-          dataObjectDef.keyProperties = new List<KeyProperty>()
+          objDef.keyProperties = new List<KeyProperty>()
           {
             new KeyProperty() { keyPropertyName = codeMap.Column }
           };
@@ -182,23 +182,23 @@ namespace org.iringtools.adapter.datalayer.eb
             dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
             dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;
 
-            dataObjectDef.dataProperties.Add(dataProp);
+            objDef.dataProperties.Add(dataProp);
           }
 
           // add related properties
           foreach (Map m in _config.Mappings.Where(x => x.Destination == (int)Destination.Relationship).Select(m => m))
           {
             DataProperty dataProp = new DataProperty();
-            dataProp.columnName = m.Column + Utilities.RELATED_COLUMN_SUFFIX;
+            dataProp.columnName = m.Column + Utilities.RELATED_COLUMN_TOKEN;
             dataProp.propertyName = Utilities.ToPropertyName(m.Column);
             dataProp.dataType = DataType.String;
             dataProp.isReadOnly = false;
             dataProp.isHidden = true;
 
-            dataObjectDef.dataProperties.Add(dataProp);
+            objDef.dataProperties.Add(dataProp);
           }
 
-          dictionary.dataObjects.Add(dataObjectDef);
+          dictionary.dataObjects.Add(objDef);
         }
 
         Utility.Write<DataDictionary>(dictionary, _dictionaryXML);
@@ -224,19 +224,19 @@ namespace org.iringtools.adapter.datalayer.eb
         Connect();
 
         DataDictionary dictionary = GetDictionary();
-        DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
-        if (dataObjectDef != null)
+        if (objDef != null)
         {
-          string classObject = dataObjectDef.objectNamespace;
-          string classCodes = "'" + string.Join("','", dataObjectDef.tableName.Split(',')) + "'";
+          string classObject = objDef.objectNamespace;
+          string classCodes = "'" + string.Join("','", objDef.tableName.Split(',')) + "'";
 
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
-            string query = "START WITH {0} SELECT {1} WHERE Class.Code IN ({2})";
+            string eql = "START WITH {0} SELECT {1} WHERE Class.Code IN ({2})";
             StringBuilder attrsBuilder = new StringBuilder();
 
-            foreach (DataProperty dataProp in dataObjectDef.dataProperties)
+            foreach (DataProperty dataProp in objDef.dataProperties)
             {
               if (dataProp.isReadOnly)
               {
@@ -245,7 +245,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
                 attrsBuilder.Append(dataProp.columnName);
               }
-              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_COLUMN_SUFFIX))
+              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_COLUMN_TOKEN))
               {
                 if (attrsBuilder.Length > 0)
                   attrsBuilder.Append(",");
@@ -254,12 +254,18 @@ namespace org.iringtools.adapter.datalayer.eb
               }
             }
 
-            query = string.Format(query, classObject, attrsBuilder.ToString(), classCodes);
+            eql = string.Format(eql, classObject, attrsBuilder.ToString(), classCodes);
+
+            string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
+            if (!string.IsNullOrEmpty(whereClause))
+            {
+              eql += whereClause.Replace(" WHERE ", " AND ");
+            }
 
             EqlClient eqlClient = new EqlClient(_session);
-            DataTable result = eqlClient.SearchPage(_session, query, new object[0], startIndex, pageSize);
+            DataTable result = eqlClient.SearchPage(_session, eql, new object[0], startIndex, pageSize);
 
-            dataObjects = ToDataObjects(result, dataObjectDef);
+            dataObjects = ToDataObjects(result, objDef);
           }
           else
           {
@@ -284,14 +290,14 @@ namespace org.iringtools.adapter.datalayer.eb
       try
       {
         DataDictionary dictionary = GetDictionary();
-        DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
-        if (dataObjectDef != null)
+        if (objDef != null)
         {
           Connect();
 
           int objType = (int)_config.Template.ObjectType;
-          string classCodes = "'" + string.Join("','", dataObjectDef.tableName.Split(',')) + "'";
+          string classCodes = "'" + string.Join("','", objDef.tableName.Split(',')) + "'";
           string eql = string.Empty;
 
           if (objType == (int)ObjectType.Tag)
@@ -304,7 +310,13 @@ namespace org.iringtools.adapter.datalayer.eb
           }
           else
           {
-            throw new Exception(string.Format("Class object [{0}] not currently supported.", objectType));
+            throw new Exception(string.Format("Object type [{0}] not supported.", objectType));
+          }
+
+          string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
+          if (!string.IsNullOrEmpty(whereClause))
+          {
+            eql += whereClause.Replace(" WHERE ", " AND ");
           }
 
           EqlClient eqlClient = new EqlClient(_session);
@@ -338,9 +350,9 @@ namespace org.iringtools.adapter.datalayer.eb
       try
       {
         DataDictionary dictionary = GetDictionary();
-        DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
-        if (dataObjectDef != null)
+        if (objDef != null)
         {
           try
           {
@@ -419,12 +431,12 @@ namespace org.iringtools.adapter.datalayer.eb
         Connect();
 
         DataDictionary dictionary = GetDictionary();
-        DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
-        if (dataObjectDef != null)
+        if (objDef != null)
         {
-          string classObject = dataObjectDef.objectNamespace;
-          string key = dataObjectDef.keyProperties.FirstOrDefault().keyPropertyName;
+          string classObject = objDef.objectNamespace;
+          string key = objDef.keyProperties.FirstOrDefault().keyPropertyName;
           string keyValues = "('" + string.Join("','", identifiers) + "')";
 
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
@@ -432,7 +444,7 @@ namespace org.iringtools.adapter.datalayer.eb
             string query = "START WITH {0} SELECT {1} WHERE {2} IN {3}";
             StringBuilder attrsBuilder = new StringBuilder();
 
-            foreach (DataProperty dataProp in dataObjectDef.dataProperties)
+            foreach (DataProperty dataProp in objDef.dataProperties)
             {
               if (dataProp.isReadOnly)
               {
@@ -441,7 +453,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
                 attrsBuilder.Append(dataProp.columnName);
               }
-              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_COLUMN_SUFFIX))
+              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_COLUMN_TOKEN))
               {
                 if (attrsBuilder.Length > 0)
                   attrsBuilder.Append(",");
@@ -455,7 +467,7 @@ namespace org.iringtools.adapter.datalayer.eb
             EqlClient eqlClient = new EqlClient(_session);
             DataTable result = eqlClient.SearchPage(_session, query, new object[0], 0, -1);
 
-            dataObjects = ToDataObjects(result, dataObjectDef);
+            dataObjects = ToDataObjects(result, objDef);
           }
           else
           {
@@ -596,7 +608,7 @@ namespace org.iringtools.adapter.datalayer.eb
       return response;
     }
 
-    public void Connect()
+    protected void Connect()
     {
       _proxy = new Proxy();
 
@@ -618,12 +630,11 @@ namespace org.iringtools.adapter.datalayer.eb
       _session.AttachProtoProxy(_proxy.proto_proxy, _proxy.connect_info);
     }
 
-    public void Disconnect()
+    protected void Disconnect()
     { 
       if (_proxy != null)
       {
         _proxy.Dispose();
-
         _proxy = null;
         _session = null;
       }
@@ -725,106 +736,5 @@ namespace org.iringtools.adapter.datalayer.eb
 
       return dataObjects;
     }
-
-    //protected int GetTemplateId(string templateName)
-    //{
-    //  string selectCommandText;
-
-    //  if (Proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
-    //    selectCommandText = string.Format("SELECT template_id FROM templates (NOLOCK) WHERE name = '{0}'", templateName);
-    //  else
-    //    selectCommandText = string.Format("SELECT template_id FROM templates WHERE name = '{0}'", templateName);
-
-    //  int rc = 0;
-    //  string result = Proxy.query(selectCommandText, ref rc);
-    //  XmlDocument doc = new XmlDocument();
-    //  doc.LoadXml(result);
-
-    //  if (doc.DocumentElement.ChildNodes.Count <= 0)
-    //    throw new Exception("ConnectionGetTemplateIdNoEntryFoundForTemplateName" + templateName + ";");
-
-    //  int templateId = Convert.ToInt32(doc.SelectSingleNode("records/record/template_id").InnerText);
-    //  return (templateId);
-    //}
-
-    //protected int GetItemId(string itemNumber, string version)
-    //{
-    //  try
-    //  {
-    //    string criteria;
-    //    if (version != null)
-    //      criteria = string.Format("Code = '{0}' AND Version = '{1}'", itemNumber, version);
-    //    else
-    //      criteria = string.Format("Code = '{0}'", itemNumber);
-
-    //    string column = "Id";
-    //    eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.Item, column, criteria);
-    //    return (s.RetrieveScalar<int>(column));
-    //  }
-    //  catch (Exception)
-    //  {
-    //    return (0);
-    //  }
-    //}
-
-    //protected int GetDocId(string docNumber, string revision)
-    //{
-    //  try
-    //  {
-    //    string criteria;
-    //    if (revision != null)
-    //      criteria = string.Format("Code = '{0}' AND Revision = '{1}'", docNumber, revision);
-    //    else  //Code LIKE '%' AND IsLatestRevision = 'Y'
-    //      criteria = string.Format("Code = '{0}' AND IsLatestRevision = 'Y'", docNumber);
-
-    //    string column = "Id";
-    //    eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.Document, column, criteria);
-    //    return (s.RetrieveScalar<int>(column));
-    //  }
-    //  catch (Exception)
-    //  {
-    //    return (0);
-    //  }
-    //}
-
-    //protected int GetCharId(string charName)
-    //{
-    //  try
-    //  {
-    //    string criteria = string.Format("Name = '{0}'", charName);
-    //    string column = "Id";
-    //    eB.Data.Search s = new Search(_session, eB.Common.Enum.ObjectType.AttributeDef, column, criteria);
-    //    return (s.RetrieveScalar<int>(column));
-    //  }
-    //  catch (Exception)
-    //  {
-    //    return (0);
-    //  }
-    //}
-
-    //protected int GetTagId(string itemCode, string itemVersion, string code, string revnName)
-    //{
-    //  string selectCommandText;
-    //  int tagId = 0;
-
-    //  int itemId = GetItemId(itemCode, itemVersion);
-
-    //  if (_proxy.DatabaseType == eB.Common.ConnectionInfo.DatabaseTypes.MicrosoftSQL)
-    //    selectCommandText = string.Format("SELECT TOP 1 tag_id FROM tags WHERE item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
-    //  else
-    //    selectCommandText = string.Format("SELECT tag_id FROM tags WHERE rownum <= 1 AND item_id = {0} AND code = '{1}' AND revn_name = '{2}'", itemId, code, revnName);
-
-    //  int rc = 0;
-    //  string result = _proxy.query(selectCommandText, ref rc);
-    //  XmlDocument doc = new XmlDocument();
-    //  doc.LoadXml(result);
-
-    //  if (doc.DocumentElement.ChildNodes.Count <= 0)
-    //    throw new Exception("There are no tags that match this code: " + code);
-
-    //  tagId = Convert.ToInt32(doc.SelectSingleNode("records/record/tag_id").InnerText);
-
-    //  return (tagId);
-    //}
   }
 }

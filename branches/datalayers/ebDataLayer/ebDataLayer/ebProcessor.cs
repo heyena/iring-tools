@@ -228,7 +228,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        List<DataProperty> userProps = _objectDefinition.dataProperties.FindAll(x => x.isReadOnly == false && !x.columnName.EndsWith(Utilities.RELATED_COLUMN_SUFFIX));
+        List<DataProperty> userProps = _objectDefinition.dataProperties.FindAll(x => x.isReadOnly == false && !x.columnName.EndsWith(Utilities.RELATED_COLUMN_TOKEN));
 
         foreach (DataProperty prop in userProps)
         {
@@ -268,7 +268,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        List<DataProperty> userProps = _objectDefinition.dataProperties.FindAll(x => x.isReadOnly == false && !x.columnName.EndsWith(Utilities.RELATED_COLUMN_SUFFIX));
+        List<DataProperty> userProps = _objectDefinition.dataProperties.FindAll(x => x.isReadOnly == false && !x.columnName.EndsWith(Utilities.RELATED_COLUMN_TOKEN));
 
         foreach (DataProperty prop in userProps)
         {
