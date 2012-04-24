@@ -10,7 +10,8 @@ namespace org.iringtools.adaper.datalayer.eb
 {
   public static class Utilities
   {
-    public static string RELATED_COLUMN_TOKEN = "(Related)";
+    public static string RELATED_ATTRIBUTE_TOKEN = "(Related)";
+    public static string SYSTEM_ATTRIBUTE_TOKEN = "(System)";
 
     public static DataType ToCSharpType(string ebType)
     {
@@ -45,9 +46,13 @@ namespace org.iringtools.adaper.datalayer.eb
       
       foreach (DataProperty prop in newObjDef.dataProperties)
       {
-        if (prop.isReadOnly == false && prop.columnName.EndsWith(RELATED_COLUMN_TOKEN))
+        if (prop.columnName.EndsWith(SYSTEM_ATTRIBUTE_TOKEN))
         {
-          prop.columnName = prop.columnName.Replace(RELATED_COLUMN_TOKEN, string.Empty);
+          prop.columnName = prop.columnName.Replace(SYSTEM_ATTRIBUTE_TOKEN, string.Empty);
+        }
+        else if (prop.columnName.EndsWith(RELATED_ATTRIBUTE_TOKEN))
+        {
+          prop.columnName = prop.columnName.Replace(RELATED_ATTRIBUTE_TOKEN, string.Empty);
         }
         else
         {
@@ -58,6 +63,16 @@ namespace org.iringtools.adaper.datalayer.eb
       dbDictionary.dataObjects.Add(newObjDef);
 
       return filter.ToSqlWhereClause(dbDictionary, newObjDef.tableName, string.Empty);
+    }
+
+    public static void Append(ref Status status, Status newStatus)
+    {
+      if (status.Level < newStatus.Level)
+      {
+        status.Level = newStatus.Level;
+      }
+
+      status.Messages.AddRange(newStatus.Messages);
     }
   }
 }

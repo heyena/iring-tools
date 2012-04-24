@@ -71,7 +71,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
       catch (Exception e)
       {
-        _logger.Error("Error initializing eb data layer: " + e.ToString());
+        _logger.Error("Error initializing ebDataLayer: " + e.Message);
       }
       finally
       {
@@ -161,13 +161,13 @@ namespace org.iringtools.adapter.datalayer.eb
             new KeyProperty() { keyPropertyName = codeMap.Column }
           };
 
-          string ebMetadataQuery = _settings["ebMetadataQuery." + group.Name];
+          string metadataQuery = _settings["ebMetadataQuery." + group.Name];
 
-          if (string.IsNullOrEmpty(ebMetadataQuery))
+          if (string.IsNullOrEmpty(metadataQuery))
             throw new Exception("No metadata query configured for group [" + group.Name + "]");
 
           int objectType = (int)Enum.Parse(typeof(ObjectType), group.Name);
-          string attrsQuery = string.Format(ebMetadataQuery, objectType);
+          string attrsQuery = string.Format(metadataQuery, objectType);
 
           XmlDocument attrsDoc = new XmlDocument();
           string attrsResults = _proxy.query(attrsQuery, ref status);
@@ -180,7 +180,11 @@ namespace org.iringtools.adapter.datalayer.eb
             dataProp.propertyName = Utilities.ToPropertyName(dataProp.columnName);
             dataProp.dataType = Utilities.ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
             dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
-            dataProp.isReadOnly = attrNode.SelectSingleNode("readonly").InnerText == "0" ? false : true;
+
+            if (attrNode.SelectSingleNode("is_system_char").InnerText == "1")
+            {
+              dataProp.columnName += Utilities.SYSTEM_ATTRIBUTE_TOKEN;
+            }
 
             objDef.dataProperties.Add(dataProp);
           }
@@ -189,12 +193,9 @@ namespace org.iringtools.adapter.datalayer.eb
           foreach (Map m in _config.Mappings.Where(x => x.Destination == (int)Destination.Relationship).Select(m => m))
           {
             DataProperty dataProp = new DataProperty();
-            dataProp.columnName = m.Column + Utilities.RELATED_COLUMN_TOKEN;
+            dataProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
             dataProp.propertyName = Utilities.ToPropertyName(m.Column);
-            dataProp.dataType = DataType.String;
-            dataProp.isReadOnly = false;
-            dataProp.isHidden = true;
-
+            dataProp.dataType = DataType.String;            
             objDef.dataProperties.Add(dataProp);
           }
 
@@ -213,6 +214,59 @@ namespace org.iringtools.adapter.datalayer.eb
       }
 
       return dictionary;
+    }
+    public override long GetCount(string objectType, DataFilter filter)
+    {
+      try
+      {
+        DataDictionary dictionary = GetDictionary();
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+        if (objDef != null)
+        {
+          Connect();
+
+          int objType = (int)_config.Template.ObjectType;
+          string classCodes = "'" + string.Join("','", objDef.tableName.Split(',')) + "'";
+          string eql = string.Empty;
+
+          if (objType == (int)ObjectType.Tag)
+          {
+            eql = string.Format("START WITH Tag WHERE Class.Code IN ({0}) AND Code NOT IN ({0})", classCodes);
+          }
+          else if (objType == (int)ObjectType.Document)
+          {
+            eql = string.Format("START WITH Document WHERE Class.Code IN ({0}) AND Code NOT IN ({0})", classCodes);
+          }
+          else
+          {
+            throw new Exception(string.Format("Object type [{0}] not supported.", objectType));
+          }
+
+          string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
+          if (!string.IsNullOrEmpty(whereClause))
+          {
+            eql += whereClause.Replace(" WHERE ", " AND ");
+          }
+
+          EqlClient eqlClient = new EqlClient(_session);
+          DataTable dt = eqlClient.RunQuery(eql);
+          return Convert.ToInt64(dt.Rows.Count);
+        }
+        else
+        {
+          throw new Exception(string.Format("Object type [{0}] not found.", objectType));
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error(string.Format("Error getting object count for [{0}]: {1}", objectType, e.Message));
+        throw e;
+      }
+      finally
+      {
+        Disconnect();
+      }
     }
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
@@ -238,14 +292,14 @@ namespace org.iringtools.adapter.datalayer.eb
 
             foreach (DataProperty dataProp in objDef.dataProperties)
             {
-              if (dataProp.isReadOnly)
+              if (dataProp.columnName.EndsWith(Utilities.SYSTEM_ATTRIBUTE_TOKEN))
               {
                 if (attrsBuilder.Length > 0)
                   attrsBuilder.Append(",");
 
-                attrsBuilder.Append(dataProp.columnName);
+                attrsBuilder.Append(dataProp.columnName.Replace(Utilities.SYSTEM_ATTRIBUTE_TOKEN, string.Empty));
               }
-              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_COLUMN_TOKEN))
+              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN))
               {
                 if (attrsBuilder.Length > 0)
                   attrsBuilder.Append(",");
@@ -285,143 +339,6 @@ namespace org.iringtools.adapter.datalayer.eb
       return dataObjects;
     }
 
-    public override long GetCount(string objectType, DataFilter filter)
-    {
-      try
-      {
-        DataDictionary dictionary = GetDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-
-        if (objDef != null)
-        {
-          Connect();
-
-          int objType = (int)_config.Template.ObjectType;
-          string classCodes = "'" + string.Join("','", objDef.tableName.Split(',')) + "'";
-          string eql = string.Empty;
-
-          if (objType == (int)ObjectType.Tag)
-          {
-            eql = string.Format("START WITH Tag WHERE Class.Code IN ({0}) AND Code NOT IN ({0})", classCodes);
-          }
-          else if (objType == (int)ObjectType.Document)
-          {
-            eql = string.Format("START WITH Document WHERE Class.Code IN ({0}) AND Code NOT IN ({0})", classCodes);
-          }
-          else
-          {
-            throw new Exception(string.Format("Object type [{0}] not supported.", objectType));
-          }
-
-          string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
-          if (!string.IsNullOrEmpty(whereClause))
-          {
-            eql += whereClause.Replace(" WHERE ", " AND ");
-          }
-
-          EqlClient eqlClient = new EqlClient(_session);
-          DataTable dt = eqlClient.RunQuery(eql);          
-          return Convert.ToInt64(dt.Rows.Count);
-        }
-        else
-        {
-          throw new Exception(string.Format("Object type [{0}] not found.", objectType));
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error(string.Format("Error getting object count for [{0}]: {1}", objectType, e.Message));
-        throw e;
-      }
-      finally
-      {
-        Disconnect();
-      }
-    }
-    public override Response Delete(string objectType, DataFilter filter)
-    {
-      throw new NotImplementedException();
-    }
-
-    public override Response Delete(string objectType, IList<string> identifiers)
-    {
-      Response response = new Response() { Level = StatusLevel.Success };
-
-      try
-      {
-        DataDictionary dictionary = GetDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-
-        if (objDef != null)
-        {
-          try
-          {
-            Connect();
-
-            EqlClient eqlClient = new EqlClient(_session);
-            int objType = (int)_config.Template.ObjectType;
-
-            foreach (string identifier in identifiers)
-            {
-              Status status = new Status()
-              {
-                Identifier = identifier,
-                Level = StatusLevel.Success
-              };
-
-              int objId = eqlClient.GetObjectId(identifier, string.Empty, objType);
-
-              if (objId != 0)
-              {
-                if (objType == (int)ObjectType.Tag)
-                {
-                  Tag tag = new Tag(_session, objId);
-                  tag.Delete();
-                  response.Messages.Add(string.Format("Tag [{0}] deleted succesfully.", identifier));
-                }
-                else if (objType == (int)ObjectType.Document)
-                {
-                  Document doc = new Document(_session, objId);
-                  doc.Delete();
-                  response.Messages.Add(string.Format("Document [{0}] deleted succesfully.", identifier));
-                }
-                else
-                {
-                  response.Level = StatusLevel.Error;
-                  response.Messages.Add(string.Format("Object type [{0}] not supported.", objType));
-                }
-              }
-              else
-              {
-                response.Level = StatusLevel.Error;
-                response.Messages.Add(string.Format("Object [{0}] not found.", identifier));
-              }
-
-              response.Append(status);
-            }
-          }
-          finally
-          {
-            Disconnect();
-          }
-        }
-        else
-        {
-          response.Level = StatusLevel.Error;
-          response.Messages.Add(string.Format("Object type [{0}] does not exist.", objectType));
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error("Error deleting data object: " + e);
-
-        response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
-      }
-
-      return response;
-    }
-
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
@@ -441,19 +358,19 @@ namespace org.iringtools.adapter.datalayer.eb
 
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
-            string query = "START WITH {0} SELECT {1} WHERE {2} IN {3}";
+            string eql = "START WITH {0} SELECT {1} WHERE {2} IN {3}";
             StringBuilder attrsBuilder = new StringBuilder();
 
             foreach (DataProperty dataProp in objDef.dataProperties)
             {
-              if (dataProp.isReadOnly)
+              if (dataProp.columnName.EndsWith(Utilities.SYSTEM_ATTRIBUTE_TOKEN))
               {
                 if (attrsBuilder.Length > 0)
                   attrsBuilder.Append(",");
 
-                attrsBuilder.Append(dataProp.columnName);
+                attrsBuilder.Append(dataProp.columnName.Replace(Utilities.SYSTEM_ATTRIBUTE_TOKEN, string.Empty));
               }
-              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_COLUMN_TOKEN))
+              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN))
               {
                 if (attrsBuilder.Length > 0)
                   attrsBuilder.Append(",");
@@ -462,10 +379,10 @@ namespace org.iringtools.adapter.datalayer.eb
               }
             }
 
-            query = string.Format(query, classObject, attrsBuilder.ToString(), key, keyValues);
+            eql = string.Format(eql, classObject, attrsBuilder.ToString(), key, keyValues);
 
             EqlClient eqlClient = new EqlClient(_session);
-            DataTable result = eqlClient.SearchPage(_session, query, new object[0], 0, -1);
+            DataTable result = eqlClient.SearchPage(_session, eql, new object[0], 0, -1);
 
             dataObjects = ToDataObjects(result, objDef);
           }
@@ -589,6 +506,90 @@ namespace org.iringtools.adapter.datalayer.eb
       return response;
     }
 
+    public override Response Delete(string objectType, IList<string> identifiers)
+    {
+      Response response = new Response() { Level = StatusLevel.Success };
+
+      try
+      {
+        DataDictionary dictionary = GetDictionary();
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+        if (objDef != null)
+        {
+          try
+          {
+            Connect();
+
+            EqlClient eqlClient = new EqlClient(_session);
+            int objType = (int)_config.Template.ObjectType;
+
+            foreach (string identifier in identifiers)
+            {
+              Status status = new Status()
+              {
+                Identifier = identifier,
+                Level = StatusLevel.Success
+              };
+
+              int objId = eqlClient.GetObjectId(identifier, string.Empty, objType);
+
+              if (objId != 0)
+              {
+                if (objType == (int)ObjectType.Tag)
+                {
+                  Tag tag = new Tag(_session, objId);
+                  tag.Delete();
+                  response.Messages.Add(string.Format("Tag [{0}] deleted succesfully.", identifier));
+                }
+                else if (objType == (int)ObjectType.Document)
+                {
+                  Document doc = new Document(_session, objId);
+                  doc.Delete();
+                  response.Messages.Add(string.Format("Document [{0}] deleted succesfully.", identifier));
+                }
+                else
+                {
+                  response.Level = StatusLevel.Error;
+                  response.Messages.Add(string.Format("Object type [{0}] not supported.", objType));
+                }
+              }
+              else
+              {
+                response.Level = StatusLevel.Error;
+                response.Messages.Add(string.Format("Object [{0}] not found.", identifier));
+              }
+
+              response.Append(status);
+            }
+          }
+          finally
+          {
+            Disconnect();
+          }
+        }
+        else
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add(string.Format("Object type [{0}] does not exist.", objectType));
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error deleting data object: " + e);
+
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    public override Response Delete(string objectType, DataFilter filter)
+    {
+      throw new NotImplementedException();
+    }
+
     public override Response RefreshAll()
     {
       Response response = new Response();
@@ -602,7 +603,7 @@ namespace org.iringtools.adapter.datalayer.eb
       catch (Exception e)
       {
         response.Level = StatusLevel.Error;
-        response.Messages = new Messages() { e.ToString() };
+        response.Messages = new Messages() { e.Message };
       }
 
       return response;
