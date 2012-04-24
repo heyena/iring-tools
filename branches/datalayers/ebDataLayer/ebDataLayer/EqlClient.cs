@@ -233,5 +233,20 @@ namespace org.iringtools.adaper.datalayer.eb
       DataTable result = new Search(session, new eB.ContentData.Eql.Search(eql)).Retrieve<DataTable>(start, limit);
       return result;
     }
+
+    public DataTable RunQuery(string eql)
+    {
+      try
+      {
+        eB.Data.Search s = new Search(_session, eql);
+        DataTable dt = s.Retrieve<DataTable>();
+        return dt;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e);
+        throw e;
+      }
+    }
   }
 }

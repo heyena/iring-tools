@@ -281,9 +281,51 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override long GetCount(string objectType, DataFilter filter)
     {
-      return 10000;
-    }
+      try
+      {
+        DataDictionary dictionary = GetDictionary();
+        DataObject dataObjectDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
+        if (dataObjectDef != null)
+        {
+          Connect();
+
+          int objType = (int)_config.Template.ObjectType;
+          string classCodes = "'" + string.Join("','", dataObjectDef.tableName.Split(',')) + "'";
+          string eql = string.Empty;
+
+          if (objType == (int)ObjectType.Tag)
+          {
+            eql = string.Format("START WITH Tag WHERE Class.Code IN ({0}) AND Code NOT IN ({0})", classCodes);
+          }
+          else if (objType == (int)ObjectType.Document)
+          {
+            eql = string.Format("START WITH Document WHERE Class.Code IN ({0}) AND Code NOT IN ({0})", classCodes);
+          }
+          else
+          {
+            throw new Exception(string.Format("Class object [{0}] not currently supported.", objectType));
+          }
+
+          EqlClient eqlClient = new EqlClient(_session);
+          DataTable dt = eqlClient.RunQuery(eql);          
+          return Convert.ToInt64(dt.Rows.Count);
+        }
+        else
+        {
+          throw new Exception(string.Format("Object type [{0}] not found.", objectType));
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error(string.Format("Error getting object count for [{0}]: {1}", objectType, e.Message));
+        throw e;
+      }
+      finally
+      {
+        Disconnect();
+      }
+    }
     public override Response Delete(string objectType, DataFilter filter)
     {
       throw new NotImplementedException();
@@ -309,8 +351,8 @@ namespace org.iringtools.adapter.datalayer.eb
 
             foreach (string identifier in identifiers)
             {
-              Status status = new Status() 
-              { 
+              Status status = new Status()
+              {
                 Identifier = identifier,
                 Level = StatusLevel.Success
               };
@@ -350,6 +392,11 @@ namespace org.iringtools.adapter.datalayer.eb
           {
             Disconnect();
           }
+        }
+        else
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add(string.Format("Object type [{0}] does not exist.", objectType));
         }
       }
       catch (Exception e)
@@ -572,8 +619,14 @@ namespace org.iringtools.adapter.datalayer.eb
     }
 
     public void Disconnect()
-    {
-      if (_proxy != null) _proxy.Dispose();
+    { 
+      if (_proxy != null)
+      {
+        _proxy.Dispose();
+
+        _proxy = null;
+        _session = null;
+      }
     }
 
     protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.config.Template template, DataObject objectDefinition, IDataObject dataObject)
