@@ -44,14 +44,64 @@ namespace bechtel.eb.datalayer.test
       Assert.AreNotEqual(dataObjects, null);
     }
 
-    //[Test]
+    [Test]
     public void TestGetCount()
     {
-      long count = _dataLayer.GetCount(_objectType, new DataFilter());
+      long count = _dataLayer.GetCount("Mechanical(Tag)", new DataFilter());
       Assert.Greater(count, 0);
     }
 
     [Test]
+    public void TestGetCountWithFilter()
+    {
+      DataFilter filter = new DataFilter();
+      filter.Expressions = new List<org.iringtools.library.Expression>()
+      {
+        new Expression()
+        {
+          PropertyName = "CommGrpCode",
+          RelationalOperator = org.iringtools.library.RelationalOperator.EqualTo,
+          Values = new Values() { "MT" }
+        },
+        new Expression()
+        {
+          LogicalOperator = org.iringtools.library.LogicalOperator.And,
+          PropertyName = "Code",
+          RelationalOperator = org.iringtools.library.RelationalOperator.Contains,
+          Values = new Values() { "CCW" }
+        }
+      };
+
+      long count = _dataLayer.GetCount("Mechanical(Tag)", filter);
+      Assert.Greater(count, 0);
+    }
+
+    [Test]
+    public void TestGetIdentifiersWithFilter()
+    {
+      DataFilter filter = new DataFilter();
+      filter.Expressions = new List<org.iringtools.library.Expression>()
+      {
+        new Expression()
+        {
+          PropertyName = "CommGrpCode",
+          RelationalOperator = org.iringtools.library.RelationalOperator.EqualTo,
+          Values = new Values() { "MT" }
+        },
+        new Expression()
+        {
+          LogicalOperator = org.iringtools.library.LogicalOperator.And,
+          PropertyName = "Code",
+          RelationalOperator = org.iringtools.library.RelationalOperator.Contains,
+          Values = new Values() { "CCW" }
+        }
+      };
+
+      IList<string> identifiers = _dataLayer.GetIdentifiers("Mechanical(Tag)", filter);
+      Assert.Greater(identifiers.Count, 0);
+    }
+
+    //[Test]
     public void TestGetPage()
     {
       IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Tag)",new DataFilter(), 5, 0);
@@ -79,11 +129,11 @@ namespace bechtel.eb.datalayer.test
     }
 
     //[Test]
-    public void TestGetCountWithFilter()
-    {
-      long count = _dataLayer.GetCount(_objectType, _filter);
-      Assert.Greater(count, 0);
-    }
+    //public void TestGetCountWithFilter()
+    //{
+    //  long count = _dataLayer.GetCount(_objectType, _filter);
+    //  Assert.Greater(count, 0);
+    //}
 
     //[Test]
     public void TestGetPageWithFilter()
@@ -93,11 +143,11 @@ namespace bechtel.eb.datalayer.test
     }
 
     //[Test]
-    public void TestGetIdentifiersWithFilter()
-    {
-      IList<string> identifiers = _dataLayer.GetIdentifiers(_objectType, _filter);
-      Assert.Greater(identifiers.Count, 0);
-    }
+    //public void TestGetIdentifiersWithFilter()
+    //{
+    //  IList<string> identifiers = _dataLayer.GetIdentifiers(_objectType, _filter);
+    //  Assert.Greater(identifiers.Count, 0);
+    //}
 
     //[Test]
     public void TestPostWithUpdate()
@@ -179,7 +229,7 @@ namespace bechtel.eb.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    [Test]
+    //[Test]
     public void TestPost()
     {
       string objectType = "Mechanical(Tag)";
@@ -188,24 +238,41 @@ namespace bechtel.eb.datalayer.test
       // create an data object with default property values
       IDataObject dataObject = new GenericDataObject() { ObjectType = objectType };     
 
+      //foreach (DataProperty prop in objectDef.dataProperties)
+      //{
+      //  dataObject.SetPropertyValue(prop.propertyName, "");
+      //}
+
+      //// update some property values
+      //dataObject.SetPropertyValue("ApprovedPressureBoundryQualityGroup", "NA");
+      //dataObject.SetPropertyValue("ApprovedSeismicClass", "SC-II");
+      //dataObject.SetPropertyValue("Code", "01-N-CCW-ME-002Z");    // Tag Number
+      //dataObject.SetPropertyValue("Description", "CCW HEAT EXCHANGER");
+      //dataObject.SetPropertyValue("CommGrpCode", "ME");
+      //dataObject.SetPropertyValue("CommodityCode", "MES0");
+      //dataObject.SetPropertyValue("Unit", "01");
+      //dataObject.SetPropertyValue("ComponentFunctionName(CFN)", "1-N-CCW-HX-ZZ");
+      //dataObject.SetPropertyValue("EquipmentRating", "18200000");
+      //dataObject.SetPropertyValue("Name", "TEST-01-N-CCW-ME-001Z");
+      //dataObject.SetPropertyValue("Q-List(Y/N)", "N");
+      //dataObject.SetPropertyValue("PowerReqd", "N");
+
       foreach (DataProperty prop in objectDef.dataProperties)
       {
         dataObject.SetPropertyValue(prop.propertyName, "");
       }
 
       // update some property values
-      dataObject.SetPropertyValue("ApprovedPressureBoundryQualityGroup", "NA");
-      dataObject.SetPropertyValue("ApprovedSeismicClass", "SC-II");
-      dataObject.SetPropertyValue("Code", "01-N-CCW-ME-001Z");    // Tag Number
-      dataObject.SetPropertyValue("Description", "CCW HEAT EXCHANGER");
-      dataObject.SetPropertyValue("CommGrpCode", "ME");
-      dataObject.SetPropertyValue("CommodityCode", "MES0");
+      dataObject.SetPropertyValue("Code", "01-N-FW-ME-HL1");    // Tag Number
       dataObject.SetPropertyValue("Unit", "01");
-      dataObject.SetPropertyValue("ComponentFunctionName(CFN)", "1-N-CCW-HX-ZZ");
-      dataObject.SetPropertyValue("EquipmentRating", "18200000");
-      dataObject.SetPropertyValue("Name", "TEST-01-N-CCW-ME-001Z");
+      dataObject.SetPropertyValue("SafetyDesignator", "N");
+      dataObject.SetPropertyValue("System", "FW");
+      dataObject.SetPropertyValue("Unit", "01");
+      dataObject.SetPropertyValue("CommGrpCode", "ME");
+      dataObject.SetPropertyValue("Description", "FEEDWATER HEATER #01");
+      dataObject.SetPropertyValue("ComponentFunctionName(CFN)", "1-N-FW--102");
+      dataObject.SetPropertyValue("P&ID", "11111-001-M6-TRB-10004");
       dataObject.SetPropertyValue("Q-List(Y/N)", "N");
-      dataObject.SetPropertyValue("PowerReqd", "N");    
 
       IList<IDataObject> dataObjects = new List<IDataObject>() { dataObject };
       Response response = _dataLayer.Post(dataObjects);
@@ -213,11 +280,12 @@ namespace bechtel.eb.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    [Test]
+    //[Test]
     public void TestDelete()
     {
       string objectType = "Mechanical(Tag)";
-      Response response = _dataLayer.Delete(objectType, new List<string> { "MECH-MP-01-002" });
+      Response response = _dataLayer.Delete(objectType, new List<string> { "01-N-FW-ME-HL1"});
+
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
