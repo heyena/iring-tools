@@ -53,8 +53,8 @@ namespace org.iringtools.adaper.datalayer.eb
           status.Messages.Add("Failed to set Title.");
         }
 
-        Append(ref status, SetAttributes(ref tag));
-        Append(ref status, SetRelationships(tag));
+        Utilities.Append(ref status, SetAttributes(ref tag));
+        Utilities.Append(ref status, SetRelationships(tag));
 
         //tag.Save();  // for future releases
 
@@ -74,7 +74,7 @@ namespace org.iringtools.adaper.datalayer.eb
       catch (Exception e)
       {
         status.Level = StatusLevel.Error;
-        status.Messages.Add(e.ToString());
+        status.Messages.Add(e.Message);
       }
 
       return status;
@@ -100,9 +100,9 @@ namespace org.iringtools.adaper.datalayer.eb
         {
           status.Messages.Add("Failed to set Name.");
         }
-        
-        Append(ref status, SetAttributes(ref doc));
-        Append(ref status, SetRelationships(doc));
+
+        Utilities.Append(ref status, SetAttributes(ref doc));
+        Utilities.Append(ref status, SetRelationships(doc));
 
         //doc.Save();  // for future releases
 
@@ -123,7 +123,7 @@ namespace org.iringtools.adaper.datalayer.eb
       catch (Exception e)
       {
         status.Level = StatusLevel.Error;
-        status.Messages.Add(e.ToString());
+        status.Messages.Add(e.Message);
       }
 
       return status;
@@ -228,9 +228,10 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        List<DataProperty> userProps = _objectDefinition.dataProperties.FindAll(x => x.isReadOnly == false && !x.columnName.EndsWith(Utilities.RELATED_COLUMN_TOKEN));
+        List<DataProperty> userAttrs = _objectDefinition.dataProperties.FindAll(
+          x => !x.columnName.EndsWith(Utilities.SYSTEM_ATTRIBUTE_TOKEN) && !x.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN));
 
-        foreach (DataProperty prop in userProps)
+        foreach (DataProperty prop in userAttrs)
         {
           try
           {
@@ -268,9 +269,10 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        List<DataProperty> userProps = _objectDefinition.dataProperties.FindAll(x => x.isReadOnly == false && !x.columnName.EndsWith(Utilities.RELATED_COLUMN_TOKEN));
+        List<DataProperty> userAttrs = _objectDefinition.dataProperties.FindAll(
+          x => !x.columnName.EndsWith(Utilities.SYSTEM_ATTRIBUTE_TOKEN) && !x.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN));
 
-        foreach (DataProperty prop in userProps)
+        foreach (DataProperty prop in userAttrs)
         {
           try
           {
@@ -532,16 +534,6 @@ namespace org.iringtools.adaper.datalayer.eb
         case "endswith": return value.EndsWith(check.Value);
         default: return value == check.Value;
       }
-    }
-
-    private void Append(ref Status status, Status newStatus)
-    {
-      if (status.Level < newStatus.Level)
-      {
-        status.Level = newStatus.Level;
-      }
-
-      status.Messages.AddRange(newStatus.Messages);
     }
   }
 }
