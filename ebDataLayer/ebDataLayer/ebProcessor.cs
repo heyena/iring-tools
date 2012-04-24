@@ -7,6 +7,7 @@ using org.iringtools.library;
 using org.iringtools.adaper.datalayer.eb.config;
 using System.Data;
 using eB.Common.Enum;
+using eB.Common;
 
 namespace org.iringtools.adaper.datalayer.eb
 {
@@ -44,18 +45,31 @@ namespace org.iringtools.adaper.datalayer.eb
 
         if (!SetName(ref tag, key))
         {
-          status.Messages.Add("Failed to set Name\n");
+          status.Messages.Add("Failed to set Name.");
         }
 
         if (!SetTitle(ref tag, key))
         {
-          status.Messages.Add("Failed to set Title\n");
+          status.Messages.Add("Failed to set Title.");
         }
 
         Append(ref status, SetAttributes(ref tag));
         Append(ref status, SetRelationships(tag));
 
-        tag.Save();
+        //tag.Save();  // for future releases
+
+        _session.Writer.ChgTag(
+          tag.Id,
+          Constants.NoChangeInt,
+          tag.Code,
+          tag.Revision,
+          tag.Class.Id,
+          tag.Name,
+          tag.Description,
+          Constants.NoChangeString,
+          tag.OperationalStatus,
+          Constants.NoChangeInt,
+          Constants.NoChangeInt);
       }
       catch (Exception e)
       {
@@ -84,13 +98,27 @@ namespace org.iringtools.adaper.datalayer.eb
 
         if (!SetName(ref doc, key))
         {
-          status.Messages.Add("Failed to set Name\n");
+          status.Messages.Add("Failed to set Name.");
         }
         
         Append(ref status, SetAttributes(ref doc));
         Append(ref status, SetRelationships(doc));
 
-        doc.Save();
+        //doc.Save();  // for future releases
+
+        _session.Writer.ChgDocument(
+          doc.Id,
+          Constants.NoChangeString,
+          doc.Code,
+          doc.Revision,
+          doc.Class.Id,
+          doc.Name,
+          Constants.NoChangeString,
+          Constants.NoChangeString,
+          doc.Remark,
+          doc.Synopsis,
+          (DateTime)doc.DateEffective,
+          (DateTime)doc.DateObsolete);
       }
       catch (Exception e)
       {
