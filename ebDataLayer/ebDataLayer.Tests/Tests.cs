@@ -10,375 +10,132 @@ using StaticDust.Configuration;
 using System.Data;
 using System.Text;
 using org.iringtools.adapter.datalayer.eb;
+using log4net;
 
-namespace bechtel.eb.datalayer.test
+namespace org.iringtools.adaper.datalayer.test
 {
   [TestFixture]
   public class Tests
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(Tests));
+    private const string IDENTIFIER_PADDING = "_";
     private IDataLayer2 _dataLayer = null;
-    private string _objectType = string.Empty;
-    private DataObject _objectDefinition = null;
-    private string _modifiedProperty = string.Empty;
-    private DataFilter _filter = null;
+    private Scenarios _scenarios = null;
 
     public Tests()
     {
       string baseDir = Directory.GetCurrentDirectory();
       Directory.SetCurrentDirectory(baseDir.Substring(0, baseDir.LastIndexOf("\\bin")));
-
+      
       AdapterSettings adapterSettings = new AdapterSettings();
-      adapterSettings.AppendSettings(new AppSettingsReader("app.config"));
+      adapterSettings.AppendSettings(new AppSettingsReader("App.config"));
 
       FileInfo log4netConfig = new FileInfo("log4net.config");
       log4net.Config.XmlConfigurator.Configure(log4netConfig);
 
       _dataLayer = new ebDataLayer(adapterSettings);
-      _dataLayer.GetDictionary();
-    }
-
-    //[Test]
-    public void TestCreate()
-    {
-      IList<IDataObject> dataObjects = _dataLayer.Create(_objectType, null);
-      Assert.AreNotEqual(dataObjects, null);
+      _scenarios = Utility.Read<Scenarios>("Scenarios.xml");
     }
 
     [Test]
-    public void TestGetCount()
+    public void RunTest()
     {
-      long count = _dataLayer.GetCount("Mechanical(Tag)", new DataFilter());
-      Assert.Greater(count, 0);
-    }
+      #region Test dictionary
+      Console.WriteLine("Testing get dictionary ...");
+      DataDictionary dictionary = _dataLayer.GetDictionary();
+      Assert.Greater(dictionary.dataObjects.Count, 0);
+      #endregion
 
-    [Test]
-    public void TestGetCountWithFilter()
-    {
-      DataFilter filter = new DataFilter();
-      filter.Expressions = new List<org.iringtools.library.Expression>()
-      {
-        new Expression()
-        {
-          PropertyName = "CommGrpCode",
-          RelationalOperator = org.iringtools.library.RelationalOperator.EqualTo,
-          Values = new Values() { "MT" }
-        },
-        new Expression()
-        {
-          LogicalOperator = org.iringtools.library.LogicalOperator.And,
-          PropertyName = "Code",
-          RelationalOperator = org.iringtools.library.RelationalOperator.Contains,
-          Values = new Values() { "CCW" }
-        }
-      };
-
-      long count = _dataLayer.GetCount("Mechanical(Tag)", filter);
-      Assert.Greater(count, 0);
-    }
-
-    [Test]
-    public void TestGetIdentifiersWithFilter()
-    {
-      DataFilter filter = new DataFilter();
-      filter.Expressions = new List<org.iringtools.library.Expression>()
-      {
-        new Expression()
-        {
-          PropertyName = "CommGrpCode",
-          RelationalOperator = org.iringtools.library.RelationalOperator.EqualTo,
-          Values = new Values() { "MT" }
-        },
-        new Expression()
-        {
-          LogicalOperator = org.iringtools.library.LogicalOperator.And,
-          PropertyName = "Code",
-          RelationalOperator = org.iringtools.library.RelationalOperator.Contains,
-          Values = new Values() { "CCW" }
-        }
-      };
-
-      IList<string> identifiers = _dataLayer.GetIdentifiers("Mechanical(Tag)", filter);
-      Assert.Greater(identifiers.Count, 0);
-    }
-
-    //[Test]
-    public void TestGetPage()
-    {
-      IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Tag)",new DataFilter(), 5, 0);
-      Assert.Greater(dataObjects.Count, 0);
-    }
-
-    [Test]
-    public void TestGetIdentifiers()
-    {
-        IList<string> identifiers =new List<string>();
-        identifiers.Add("MECH-ME-01-001");
-        identifiers.Add("MECH-ME-01-002");
-
-        IList<IDataObject> dataObjects = _dataLayer.Get("Mechanical(Tag)", identifiers);
-        Assert.Greater(dataObjects.Count, 0);
-    }
-
-    //[Test]
-    public void TestGetWithIdentifiers()
-    {
-        IList<string> identifiers = _dataLayer.GetIdentifiers(_objectType, new DataFilter());
-      IList<string> identifier = ((List<string>)identifiers).GetRange(1, 1);
-      IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, identifier);
-      Assert.Greater(dataObjects.Count, 0);
-    }
-
-    //[Test]
-    //public void TestGetCountWithFilter()
-    //{
-    //  long count = _dataLayer.GetCount(_objectType, _filter);
-    //  Assert.Greater(count, 0);
-    //}
-
-    //[Test]
-    public void TestGetPageWithFilter()
-    {
-      IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, _filter, 5, 0);
-      Assert.Greater(dataObjects.Count, 0);
-    }
-
-    //[Test]
-    //public void TestGetIdentifiersWithFilter()
-    //{
-    //  IList<string> identifiers = _dataLayer.GetIdentifiers(_objectType, _filter);
-    //  Assert.Greater(identifiers.Count, 0);
-    //}
-
-    //[Test]
-    public void TestPostWithUpdate()
-    {
-      IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, new DataFilter(), 1, 1);
-      string orgIdentifier = GetIdentifier(dataObjects[0]);    
-      string orgPropValue = Convert.ToString(dataObjects[0].GetPropertyValue(_modifiedProperty)) ?? String.Empty;
-      string newPropValue = GenerateStringValue();
-      
-      // post data object with modified property
-      dataObjects[0].SetPropertyValue(_modifiedProperty, newPropValue);
-      Response response = _dataLayer.Post(dataObjects);
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-      
-      // verify post result
-      dataObjects = _dataLayer.Get(_objectType, new List<string> { orgIdentifier });
-      Assert.AreEqual(dataObjects[0].GetPropertyValue(_modifiedProperty), newPropValue);
-
-      // reset property to its orginal value
-      dataObjects[0].SetPropertyValue(_modifiedProperty, orgPropValue);
-      response = _dataLayer.Post(dataObjects);
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-    }
-
-    //[Test]
-    public void TestPostWithAddAndDeleteByIdentifier()
-    {
-      //
-      // create a new data object by getting an existing one and change its identifier
-      //
-      IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, new DataFilter(), 1, 1);
-      string orgIdentifier = GetIdentifier(dataObjects[0]);
-
-      string newIdentifier = GenerateStringValue();
-      SetIdentifier(dataObjects[0], newIdentifier);  
-
-      // post the new data object
-      Response response = _dataLayer.Post(dataObjects);
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-
-      //
-      // delete the new data object by its identifier
-      //
-      response = _dataLayer.Delete(_objectType, new List<string> { newIdentifier });
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-    }
-
-    //[Test]
-    public void TestPostWithAddAndDeleteByFilter()
-    {
-      //
-      // create new data object by getting an existing one and change its identifier
-      //
-      IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, new DataFilter(), 1, 1);
-      string orgIdentifier = GetIdentifier(dataObjects[0]);
-
-      string newIdentifier = GenerateStringValue();
-      SetIdentifier(dataObjects[0], newIdentifier);
-
-      // post new data object
-      Response response = _dataLayer.Post(dataObjects);
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-
-      //
-      // delete the new data object with a filter
-      //
-      DataFilter filter = new DataFilter();
-
-      filter.Expressions.Add(
-        new Expression()
-        {
-          PropertyName = "szTagNo",
-          RelationalOperator = org.iringtools.library.RelationalOperator.EqualTo,
-          Values = new Values() { newIdentifier }
-        }
-      );
-
-      response = _dataLayer.Delete(_objectType, filter);
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-    }
-
-    //[Test]
-    public void TestPost()
-    {
-      string objectType = "Mechanical(Tag)";
-      DataObject objectDef = _dataLayer.GetDictionary().dataObjects.Find(x => x.objectName == objectType);
-      
-      // create an data object with default property values
-      IDataObject dataObject = new GenericDataObject() { ObjectType = objectType };     
-
-      //foreach (DataProperty prop in objectDef.dataProperties)
-      //{
-      //  dataObject.SetPropertyValue(prop.propertyName, "");
-      //}
-
-      //// update some property values
-      //dataObject.SetPropertyValue("ApprovedPressureBoundryQualityGroup", "NA");
-      //dataObject.SetPropertyValue("ApprovedSeismicClass", "SC-II");
-      //dataObject.SetPropertyValue("Code", "01-N-CCW-ME-002Z");    // Tag Number
-      //dataObject.SetPropertyValue("Description", "CCW HEAT EXCHANGER");
-      //dataObject.SetPropertyValue("CommGrpCode", "ME");
-      //dataObject.SetPropertyValue("CommodityCode", "MES0");
-      //dataObject.SetPropertyValue("Unit", "01");
-      //dataObject.SetPropertyValue("ComponentFunctionName(CFN)", "1-N-CCW-HX-ZZ");
-      //dataObject.SetPropertyValue("EquipmentRating", "18200000");
-      //dataObject.SetPropertyValue("Name", "TEST-01-N-CCW-ME-001Z");
-      //dataObject.SetPropertyValue("Q-List(Y/N)", "N");
-      //dataObject.SetPropertyValue("PowerReqd", "N");
-
-      foreach (DataProperty prop in objectDef.dataProperties)
-      {
-        dataObject.SetPropertyValue(prop.propertyName, "");
-      }
-
-      // update some property values
-      dataObject.SetPropertyValue("Code", "01-N-FW-ME-HL1");    // Tag Number
-      dataObject.SetPropertyValue("Unit", "01");
-      dataObject.SetPropertyValue("SafetyDesignator", "N");
-      dataObject.SetPropertyValue("System", "FW");
-      dataObject.SetPropertyValue("Unit", "01");
-      dataObject.SetPropertyValue("CommGrpCode", "ME");
-      dataObject.SetPropertyValue("Description", "FEEDWATER HEATER #01");
-      dataObject.SetPropertyValue("ComponentFunctionName(CFN)", "1-N-FW--102");
-      dataObject.SetPropertyValue("P&ID", "11111-001-M6-TRB-10004");
-      dataObject.SetPropertyValue("Q-List(Y/N)", "N");
-
-      IList<IDataObject> dataObjects = new List<IDataObject>() { dataObject };
-      Response response = _dataLayer.Post(dataObjects);
-
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-    }
-
-    //[Test]
-    public void TestDelete()
-    {
-      string objectType = "Mechanical(Tag)";
-      Response response = _dataLayer.Delete(objectType, new List<string> { "01-N-FW-ME-HL1"});
-
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-    }
-
-    //[Test]
-    public void TestRefresh()
-    {
+      #region Test refresh dictionary
+      Console.WriteLine("Testing refresh dictionary ...");
       Response response = _dataLayer.RefreshAll();
       Assert.AreEqual(response.Level, StatusLevel.Success);
-    }
+      #endregion
 
-    #region helper methods
-    private string GenerateStringValue()
-    {
-      return DateTime.Now.ToUniversalTime().Ticks.ToString();
-    }
-
-    private DataObject GetObjectDefinition(string objectType)
-    {
-      DataDictionary dictionary = _dataLayer.GetDictionary();
-
-      if (dictionary.dataObjects != null)
+      foreach (Scenario scenario in _scenarios)
       {
-        foreach (DataObject dataObject in dictionary.dataObjects)
+        Console.WriteLine(string.Format("Executing scenario [{0}] ...", scenario.Name));
+
+        string objectType = scenario.ObjectType;
+        Properties properties = scenario.Properties;
+        DataFilter dataFilter = Utility.DeserializeDataContract<DataFilter>(scenario.DataFilter);
+
+        #region Test get count
+        Console.WriteLine("Testing get count ...");
+        long count = _dataLayer.GetCount(objectType, dataFilter);
+        Assert.Greater(count, 0);
+        #endregion
+
+        if (count > 25) count = 25;
+
+        #region Test get page
+        Console.WriteLine("Testing get page ...");
+        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, dataFilter, (int)count, 0);
+        Assert.Greater(dataObjects.Count, 0);
+        #endregion
+
+        #region Test get identifiers
+        Console.WriteLine("Testing get identifiers ...");
+        IList<string> identifiers = _dataLayer.GetIdentifiers(objectType, dataFilter);
+        Assert.Greater(identifiers.Count, 0);
+        #endregion
+
+        #region Test get by identifiers
+        Console.WriteLine("Testing get by identifiers ..."); 
+        dataObjects = _dataLayer.Get(objectType, identifiers);
+        Assert.Greater(dataObjects.Count, 0);
+        #endregion
+
+        #region Test post
+        Console.WriteLine("Testing post ...");
+
+        // Create data object by cloning an one and changing its property values
+        IDataObject dataObject = dataObjects[0];
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        string keyPropName = objDef.keyProperties[0].keyPropertyName;
+        string keyPropValue = Convert.ToString(dataObject.GetPropertyValue(keyPropName)) + IDENTIFIER_PADDING;
+
+        // Set key property
+        dataObject.SetPropertyValue(keyPropName, keyPropValue);
+
+        // Set configured properties
+        foreach (Property prop in properties)
         {
-          if (dataObject.objectName.ToLower() == objectType.ToLower())
-          {
-            return dataObject;
-          }
-        }
-      }
-
-      return null;
-    }
-
-    private string GetIdentifier(IDataObject dataObject)
-    {
-      string[] identifierParts = new string[_objectDefinition.keyProperties.Count];
-
-      int i = 0;
-      foreach (KeyProperty keyProperty in _objectDefinition.keyProperties)
-      {
-        identifierParts[i] = dataObject.GetPropertyValue(keyProperty.keyPropertyName).ToString();
-        i++;
-      }
-
-      return String.Join(_objectDefinition.keyDelimeter, identifierParts);
-    }
-
-    private IList<string> GetKeyProperties()
-    {
-      IList<string> keyProperties = new List<string>();
-
-      foreach (DataProperty dataProp in _objectDefinition.dataProperties)
-      {
-        foreach (KeyProperty keyProp in _objectDefinition.keyProperties)
-        {
-          if (dataProp.propertyName == keyProp.keyPropertyName)
-          {
-            keyProperties.Add(dataProp.propertyName);
-          }
-        }
-      }
-
-      return keyProperties;
-    }
-
-    private void SetIdentifier(IDataObject dataObject, string identifier)
-    {
-      IList<string> keyProperties = GetKeyProperties();
-
-      if (keyProperties.Count == 1)
-      {
-        dataObject.SetPropertyValue(keyProperties[0], identifier);
-      }
-      else if (keyProperties.Count > 1)
-      {
-        StringBuilder identifierBuilder = new StringBuilder();
-
-        foreach (string keyProperty in keyProperties)
-        {
-          dataObject.SetPropertyValue(keyProperty, identifier);
-
-          if (identifierBuilder.Length > 0)
-          {
-            identifierBuilder.Append(_objectDefinition.keyDelimeter);
-          }
-
-          identifierBuilder.Append(identifier);
+          dataObject.SetPropertyValue(prop.Name, prop.Value);
         }
 
-        identifier = identifierBuilder.ToString();
-      }
+        response = _dataLayer.Post(new List<IDataObject>() { dataObject });
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+        #endregion
+
+        #region Test delete by identifiers
+        Console.WriteLine("Testing delete by identifiers ...");
+        response = _dataLayer.Delete(objectType, new List<string>() { keyPropValue });
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+        #endregion
+
+        #region Test delete by filter
+        Console.WriteLine("Testing delete by filter ...");
+        response = _dataLayer.Post(new List<IDataObject>() { dataObject });
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+
+        dataFilter = new DataFilter()
+        {
+          Expressions = new List<Expression>()
+          {
+            new Expression()
+            {
+              PropertyName = keyPropName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              Values = new Values() { keyPropValue }
+            }
+          }
+        };
+
+        _dataLayer.Delete(objectType, dataFilter);
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+        #endregion
+      }      
     }
-    #endregion
   }
 }

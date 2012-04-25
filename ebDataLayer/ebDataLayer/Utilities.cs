@@ -10,8 +10,23 @@ namespace org.iringtools.adaper.datalayer.eb
 {
   public static class Utilities
   {
-    public static string RELATED_ATTRIBUTE_TOKEN = "(Related)";
-    public static string SYSTEM_ATTRIBUTE_TOKEN = "(System)";
+    private static readonly string PADDING = "__";
+    private static readonly string PATTERN = PADDING + ".*" + PADDING + "$";
+
+    public static readonly string SYSTEM_ATTRIBUTE_TOKEN = PADDING + "S" + PADDING;
+    public static readonly string RELATED_ATTRIBUTE_TOKEN = PADDING + "R" + PADDING;
+    public static readonly string USER_ATTRIBUTE_TOKEN = PADDING + "U" + PADDING;
+    public static readonly string OTHER_ATTRIBUTE_TOKEN = PADDING + "O" + PADDING;
+
+    public static void Append(ref Status status, Status newStatus)
+    {
+      if (status.Level < newStatus.Level)
+      {
+        status.Level = newStatus.Level;
+      }
+
+      status.Messages.AddRange(newStatus.Messages);
+    }
 
     public static DataType ToCSharpType(string ebType)
     {
@@ -32,47 +47,67 @@ namespace org.iringtools.adaper.datalayer.eb
       return (DataType)Enum.Parse(typeof(DataType), ebType, true);
     }
 
-    public static string ToPropertyName(string columnName)
-    {
-      return Regex.Replace(columnName, @" |\.", "");
-    }
-
     public static string ToSqlWhereClause(DataFilter filter, DataObject objDef)
     {
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
       dbDictionary.Provider = "SQL Server";
 
       DataObject newObjDef = Utility.CloneDataContractObject<DataObject>(objDef);
-      
+
       foreach (DataProperty prop in newObjDef.dataProperties)
       {
-        if (prop.columnName.EndsWith(SYSTEM_ATTRIBUTE_TOKEN))
-        {
-          prop.columnName = prop.columnName.Replace(SYSTEM_ATTRIBUTE_TOKEN, string.Empty);
-        }
-        else if (prop.columnName.EndsWith(RELATED_ATTRIBUTE_TOKEN))
-        {
-          prop.columnName = prop.columnName.Replace(RELATED_ATTRIBUTE_TOKEN, string.Empty);
-        }
-        else
-        {
-          prop.columnName = string.Format("Attributes[\"Global\", \"{0}\"].Value", prop.columnName);
-        }
+        prop.columnName = ToQueryItem(prop, false);
       }
-      
+
       dbDictionary.dataObjects.Add(newObjDef);
 
       return filter.ToSqlWhereClause(dbDictionary, newObjDef.tableName, string.Empty);
     }
 
-    public static void Append(ref Status status, Status newStatus)
+    public static string ToPropertyName(string columnName)
     {
-      if (status.Level < newStatus.Level)
+      string propertyName = Regex.Replace(columnName, @"\W", string.Empty);
+      return Regex.Replace(propertyName, PATTERN, string.Empty);
+    }
+
+    public static string ExtractColumnName(string columnName)
+    {
+      return Regex.Replace(columnName, PATTERN, string.Empty);
+    }
+
+    public static string ToQueryItem(DataProperty dataProperty)
+    {
+      return ToQueryItem(dataProperty, true);
+    }
+
+    public static string ToQueryItem(DataProperty dataProperty, bool includeAlias)
+    {
+      string columnName = Utilities.ExtractColumnName(dataProperty.columnName);
+
+      if (dataProperty.columnName.EndsWith(Utilities.USER_ATTRIBUTE_TOKEN))
       {
-        status.Level = newStatus.Level;
+        string item = string.Format("Attributes[\"Global\", \"{0}\"].Value", columnName);
+
+        if (includeAlias)
+        {
+          item += " " + dataProperty.propertyName;
+        }
+
+        return item;
+      }
+      else if (!dataProperty.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN))
+      {
+        string item = columnName;
+
+        if (includeAlias)
+        {
+          item += " " + dataProperty.propertyName;
+        }
+
+        return item;
       }
 
-      status.Messages.AddRange(newStatus.Messages);
+      return string.Empty;
     }
   }
 }

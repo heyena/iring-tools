@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml.Serialization;
+using System.Runtime.Serialization;
+
+namespace org.iringtools.adaper.datalayer.test
+{
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/test", Name = "senarios")]
+  public class Scenarios : List<Scenario> {}
+
+  [DataContract(Namespace = "http://www.iringtools.org/test", Name = "scenario")]
+  public class Scenario
+  {
+    [DataMember(Name = "name", Order = 0)]
+    public string Name { get; set; }
+
+    [DataMember(Name = "objectType", Order = 1)]
+    public string ObjectType { get; set; }
+
+    [DataMember(Name = "properties", Order = 2)]
+    public Properties Properties { get; set; }
+
+    [DataMember(Name = "dataFilter", Order = 3)]
+    public string DataFilter { get; set; }
+  }
+
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/test", Name = "properties", ItemName = "property")]
+  public class Properties : List<Property> {}
+  
+  [DataContract(Namespace = "http://www.iringtools.org/test", Name = "property")]
+  public class Property 
+  {
+    [DataMember(Name = "name", Order = 0)]
+    public string Name { get; set; }
+
+    [DataMember(Name = "value", Order = 1)]
+    public string Value { get; set; }
+  }
+}
