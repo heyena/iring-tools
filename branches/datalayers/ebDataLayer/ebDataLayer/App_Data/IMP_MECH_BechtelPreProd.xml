@@ -24,7 +24,7 @@
     <map columnname="P&amp;ID" destination="2">
       <rule order="0">2</rule>
     </map>
-    <map columnname="P&amp;ID Rev" destination="0"/>
+    <!--<map columnname="P&amp;ID Rev" destination="0"/>-->
     <map columnname="Equipment Rating" destination="1"/>
     <map columnname="Reference Calc" destination="2"/>
     <map columnname="Commodity Code" destination="1"/>

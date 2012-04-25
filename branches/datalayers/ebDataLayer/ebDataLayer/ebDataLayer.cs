@@ -56,6 +56,9 @@ namespace org.iringtools.adapter.datalayer.eb
       _filteredClasses = _settings["ebFilteredClasses"];
       _keyDelimiter = _settings["ebKeyDelimiter"];
 
+      if (_keyDelimiter == null) 
+        _keyDelimiter = string.Empty;
+
       try
       {
         Connect();
@@ -144,7 +147,7 @@ namespace org.iringtools.adapter.datalayer.eb
           catch (Exception e)
           {
             _logger.Error("Group type not supported: " + e.Message);
-            throw new Exception("Group type not supported: " + e.Message);
+            throw new Exception(e.Message);
           }
 
           EqlClient eqlClient = new EqlClient(_session);
@@ -192,6 +195,10 @@ namespace org.iringtools.adapter.datalayer.eb
             {
               dataProp.columnName += Utilities.SYSTEM_ATTRIBUTE_TOKEN;
             }
+            else
+            {
+              dataProp.columnName += Utilities.USER_ATTRIBUTE_TOKEN;
+            }
 
             objDef.dataProperties.Add(dataProp);
           }
@@ -203,6 +210,17 @@ namespace org.iringtools.adapter.datalayer.eb
             dataProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
             dataProp.propertyName = Utilities.ToPropertyName(m.Column);
             dataProp.dataType = DataType.String;            
+            objDef.dataProperties.Add(dataProp);
+          }
+
+          // add other properties
+          foreach (Map m in _config.Mappings.Where(x => x.Destination != (int)Destination.Relationship &&
+            x.Destination != (int)Destination.Attribute && x.Destination != (int)Destination.None).Select(m => m))
+          {
+            DataProperty dataProp = new DataProperty();
+            dataProp.columnName = m.Column + Utilities.OTHER_ATTRIBUTE_TOKEN;
+            dataProp.propertyName = Utilities.ToPropertyName(m.Column);
+            dataProp.dataType = DataType.String;
             objDef.dataProperties.Add(dataProp);
           }
           
@@ -221,6 +239,7 @@ namespace org.iringtools.adapter.datalayer.eb
         Disconnect();
       }
     }
+
     public override long GetCount(string objectType, DataFilter filter)
     {
       try
@@ -294,27 +313,22 @@ namespace org.iringtools.adapter.datalayer.eb
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
             string eql = "START WITH {0} SELECT {1} WHERE Class.Code IN ({2})";
-            StringBuilder attrsBuilder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
 
             foreach (DataProperty dataProp in objDef.dataProperties)
             {
-              if (dataProp.columnName.EndsWith(Utilities.SYSTEM_ATTRIBUTE_TOKEN))
-              {
-                if (attrsBuilder.Length > 0)
-                  attrsBuilder.Append(",");
+              string item = Utilities.ToQueryItem(dataProp);
 
-                attrsBuilder.Append(dataProp.columnName.Replace(Utilities.SYSTEM_ATTRIBUTE_TOKEN, string.Empty));
-              }
-              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN))
+              if (!string.IsNullOrEmpty(item))
               {
-                if (attrsBuilder.Length > 0)
-                  attrsBuilder.Append(",");
+                if (builder.Length > 0)
+                  builder.Append(",");
 
-                attrsBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
+                builder.Append(item);       
               }
             }
 
-            eql = string.Format(eql, classObject, attrsBuilder.ToString(), classCodes);
+            eql = string.Format(eql, classObject, builder.ToString(), classCodes);
 
             string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
             if (!string.IsNullOrEmpty(whereClause))
@@ -345,6 +359,31 @@ namespace org.iringtools.adapter.datalayer.eb
       return dataObjects;
     }
 
+    public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, filter, 0, -1);
+
+        DataDictionary dictionary = GetDictionary();
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+        IList<string> identifiers = new List<string>();
+
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          identifiers.Add(Convert.ToString(dataObject.GetPropertyValue(objDef.keyProperties.First().keyPropertyName)));
+        }
+
+        return identifiers;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(string.Format("Error getting identifiers of object type [{0}]", objectType));
+        throw e;
+      }
+    }
+
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
@@ -365,27 +404,22 @@ namespace org.iringtools.adapter.datalayer.eb
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
             string eql = "START WITH {0} SELECT {1} WHERE {2} IN {3}";
-            StringBuilder attrsBuilder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
 
             foreach (DataProperty dataProp in objDef.dataProperties)
             {
-              if (dataProp.columnName.EndsWith(Utilities.SYSTEM_ATTRIBUTE_TOKEN))
-              {
-                if (attrsBuilder.Length > 0)
-                  attrsBuilder.Append(",");
+              string item = Utilities.ToQueryItem(dataProp);
 
-                attrsBuilder.Append(dataProp.columnName.Replace(Utilities.SYSTEM_ATTRIBUTE_TOKEN, string.Empty));
-              }
-              else if (!dataProp.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN))
+              if (!string.IsNullOrEmpty(item))
               {
-                if (attrsBuilder.Length > 0)
-                  attrsBuilder.Append(",");
+                if (builder.Length > 0)
+                  builder.Append(",");
 
-                attrsBuilder.Append(string.Format("Attributes[\"Global\", \"{0}\"].Value \"{1}\"", dataProp.columnName, dataProp.propertyName));
+                builder.Append(item);
               }
             }
 
-            eql = string.Format(eql, classObject, attrsBuilder.ToString(), key, keyValues);
+            eql = string.Format(eql, classObject, builder.ToString(), key, keyValues);
 
             EqlClient eqlClient = new EqlClient(_session);
             DataTable result = eqlClient.Search(_session, eql, new object[0], 0, -1);
@@ -411,31 +445,6 @@ namespace org.iringtools.adapter.datalayer.eb
       return dataObjects;
     }
 
-    public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
-    {
-      try
-      {
-        IList<IDataObject> dataObjects = Get(objectType, filter, 0, -1);
-
-        DataDictionary dictionary = GetDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-
-        IList<string> identifiers = new List<string>();
-
-        foreach (IDataObject dataObject in dataObjects)
-        {
-          identifiers.Add((string)dataObject.GetPropertyValue(objDef.keyProperties.First().keyPropertyName));
-        }
-
-        return identifiers;
-      }
-      catch (Exception e)
-      {
-        _logger.Error(string.Format("Error getting identifiers of object type [{0}]", objectType));
-        throw e;
-      }
-    }
-
     public override Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
@@ -458,14 +467,14 @@ namespace org.iringtools.adapter.datalayer.eb
         foreach (IDataObject dataObject in dataObjects)
         {
           KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
-          string keyValue = (string)dataObject.GetPropertyValue(keyProp.keyPropertyName);
+          string keyValue = Convert.ToString(dataObject.GetPropertyValue(keyProp.keyPropertyName));
 
           string revision = string.Empty;
           Map revisionMap = _config.Mappings.Find(x => x.Destination == (int)Destination.Revision);
           if (revisionMap != null)
           {
             string propertyName = Utilities.ToPropertyName(revisionMap.Column);
-            revision = (string)dataObject.GetPropertyValue(propertyName);
+            revision = Convert.ToString(dataObject.GetPropertyValue(propertyName));
           }
 
           EqlClient eql = new EqlClient(_session);
@@ -566,24 +575,24 @@ namespace org.iringtools.adapter.datalayer.eb
                 {
                   Tag tag = new Tag(_session, objId);
                   tag.Delete();
-                  response.Messages.Add(string.Format("Tag [{0}] deleted succesfully.", identifier));
+                  status.Messages.Add(string.Format("Tag [{0}] deleted succesfully.", identifier));
                 }
                 else if (objType == (int)ObjectType.Document)
                 {
                   Document doc = new Document(_session, objId);
                   doc.Delete();
-                  response.Messages.Add(string.Format("Document [{0}] deleted succesfully.", identifier));
+                  status.Messages.Add(string.Format("Document [{0}] deleted succesfully.", identifier));
                 }
                 else
                 {
-                  response.Level = StatusLevel.Error;
-                  response.Messages.Add(string.Format("Object type [{0}] not supported.", objType));
+                  status.Level = StatusLevel.Error;
+                  status.Messages.Add(string.Format("Object type [{0}] not supported.", objType));
                 }
               }
               else
               {
-                response.Level = StatusLevel.Error;
-                response.Messages.Add(string.Format("Object [{0}] not found.", identifier));
+                status.Level = StatusLevel.Error;
+                status.Messages.Add(string.Format("Object [{0}] not found.", identifier));
               }
 
               response.Append(status);
@@ -693,7 +702,7 @@ namespace org.iringtools.adapter.datalayer.eb
       foreach (Placeholder placeholder in template.Placeholders)
       {
         string propertyName = Utilities.ToPropertyName(placeholder.Value);
-        parameters[i++] = (string)dataObject.GetPropertyValue(propertyName);
+        parameters[i++] = Convert.ToString(dataObject.GetPropertyValue(propertyName));
       }
 
       return string.Format(template.Name, parameters);
@@ -716,24 +725,19 @@ namespace org.iringtools.adapter.datalayer.eb
 
         if (dataObject != null && objectDefinition.dataProperties != null)
         {
-          foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+          foreach (DataProperty prop in objectDefinition.dataProperties)
           {
             try
             {
-              if (dataRow.Table.Columns.Contains(objectProperty.propertyName))
-              {
-                string value = Convert.ToString(dataRow[objectProperty.propertyName]);
+              string columnName = Utilities.ExtractColumnName(prop.columnName);
+              string value = string.Empty;
 
-                if (value != null)
-                {
-                  dataObject.SetPropertyValue(objectProperty.propertyName, value);
-                }
-              }
-              else
+              if (dataRow.Table.Columns.Contains(columnName))
               {
-                _logger.Warn(string.Format("Value for column [{0}] not found in data row of table [{1}]",
-                  objectProperty.columnName, objectDefinition.tableName));
+                value = Convert.ToString(dataRow[columnName]);
               }
+
+              dataObject.SetPropertyValue(prop.propertyName, value);
             }
             catch (Exception e)
             {

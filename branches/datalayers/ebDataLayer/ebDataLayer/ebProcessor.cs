@@ -56,7 +56,7 @@ namespace org.iringtools.adaper.datalayer.eb
         Utilities.Append(ref status, SetAttributes(ref tag));
         Utilities.Append(ref status, SetRelationships(tag));
 
-        //tag.Save();  // for future releases
+        //tag.Save();  // for future eB API
 
         _session.Writer.ChgTag(
           tag.Id,
@@ -70,6 +70,8 @@ namespace org.iringtools.adaper.datalayer.eb
           tag.OperationalStatus,
           Constants.NoChangeInt,
           Constants.NoChangeInt);
+
+        status.Messages.Add(string.Format("Tag [{0}] saved successfully.", key));
       }
       catch (Exception e)
       {
@@ -104,7 +106,7 @@ namespace org.iringtools.adaper.datalayer.eb
         Utilities.Append(ref status, SetAttributes(ref doc));
         Utilities.Append(ref status, SetRelationships(doc));
 
-        //doc.Save();  // for future releases
+        //doc.Save();  // for future eB API
 
         _session.Writer.ChgDocument(
           doc.Id,
@@ -119,6 +121,8 @@ namespace org.iringtools.adaper.datalayer.eb
           doc.Synopsis,
           (DateTime)doc.DateEffective,
           (DateTime)doc.DateObsolete);
+
+        status.Messages.Add(string.Format("Document [{0}] saved successfully.", key));
       }
       catch (Exception e)
       {
@@ -140,7 +144,7 @@ namespace org.iringtools.adaper.datalayer.eb
         if (map != null)
         {
           string propertyName = Utilities.ToPropertyName(map.Column);
-          string name = (string)_dataObject.GetPropertyValue(propertyName);
+          string name = Convert.ToString(_dataObject.GetPropertyValue(propertyName));
 
           if (tag.Name != name)
           {
@@ -171,7 +175,7 @@ namespace org.iringtools.adaper.datalayer.eb
         if (map != null)
         {
           string propertyName = Utilities.ToPropertyName(map.Column);
-          string name = (string)_dataObject.GetPropertyValue(propertyName);
+          string name = Convert.ToString(_dataObject.GetPropertyValue(propertyName));
 
           if (doc.Name != name)
           {
@@ -202,7 +206,7 @@ namespace org.iringtools.adaper.datalayer.eb
         if (map != null)
         {
           string propertyName = Utilities.ToPropertyName(map.Column);
-          string name = (string)_dataObject.GetPropertyValue(propertyName);
+          string name = Convert.ToString(_dataObject.GetPropertyValue(propertyName));
 
           if (tag.Name != name)
           {
@@ -228,8 +232,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        List<DataProperty> userAttrs = _objectDefinition.dataProperties.FindAll(
-          x => !x.columnName.EndsWith(Utilities.SYSTEM_ATTRIBUTE_TOKEN) && !x.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN));
+        List<DataProperty> userAttrs = _objectDefinition.dataProperties.FindAll(x => x.columnName.EndsWith(Utilities.USER_ATTRIBUTE_TOKEN));
 
         foreach (DataProperty prop in userAttrs)
         {
@@ -239,7 +242,8 @@ namespace org.iringtools.adaper.datalayer.eb
 
             if (value != null)
             {
-              eB.Data.Attribute ebAttr = tag.Attributes.Where(attr => ((attr.Name == prop.columnName))).Select(attr => attr).FirstOrDefault();
+              string columnName = prop.columnName.Replace(Utilities.USER_ATTRIBUTE_TOKEN, string.Empty);
+              eB.Data.Attribute ebAttr = tag.Attributes.Where(attr => ((attr.Name == columnName))).Select(attr => attr).FirstOrDefault();
 
               if (ebAttr != null && ((ebAttr.Value == null) || (ebAttr.Value.ToString() != value.ToString())))
               {
@@ -269,8 +273,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        List<DataProperty> userAttrs = _objectDefinition.dataProperties.FindAll(
-          x => !x.columnName.EndsWith(Utilities.SYSTEM_ATTRIBUTE_TOKEN) && !x.columnName.EndsWith(Utilities.RELATED_ATTRIBUTE_TOKEN));
+        List<DataProperty> userAttrs = _objectDefinition.dataProperties.FindAll(x => x.columnName.EndsWith(Utilities.USER_ATTRIBUTE_TOKEN));
 
         foreach (DataProperty prop in userAttrs)
         {
@@ -280,9 +283,10 @@ namespace org.iringtools.adaper.datalayer.eb
 
             if (value != null)
             {
-              eB.Data.Attribute ebAttr = doc.Attributes.Where(attr => ((attr.Name == prop.columnName))).Select(attr => attr).FirstOrDefault();
+              string columnName = prop.columnName.Replace(Utilities.USER_ATTRIBUTE_TOKEN, string.Empty);
+              eB.Data.Attribute ebAttr = doc.Attributes.Where(attr => ((attr.Name == columnName))).Select(attr => attr).FirstOrDefault();
 
-              if (ebAttr.Value.ToString() != (string)value)
+              if (ebAttr.Value.ToString() != Convert.ToString(value))
               {
                 _session.Writer.ChgCharData(doc.Id, ebAttr.AttributeDef.Id, value);
               }
@@ -497,7 +501,7 @@ namespace org.iringtools.adaper.datalayer.eb
       for (int i = 0; i < rule.Parameters.Count; i++)
       {
         string propertyName = Utilities.ToPropertyName(rule.Parameters[i].Value);
-        parameters[i] = GetValue(rule.Parameters[i], (string)_dataObject.GetPropertyValue(propertyName));
+        parameters[i] = GetValue(rule.Parameters[i], Convert.ToString(_dataObject.GetPropertyValue(propertyName)));
       }
 
       return string.Format(rule.Eql, parameters);
@@ -519,7 +523,7 @@ namespace org.iringtools.adaper.datalayer.eb
     private bool Passed(SelfCheck check)
     {      
       string propertyName = Utilities.ToPropertyName(check.Column);
-      string value = (string)_dataObject.GetPropertyValue(propertyName);
+      string value = Convert.ToString(_dataObject.GetPropertyValue(propertyName));
 
       if (check.Operator == null)
       {
