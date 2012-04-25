@@ -729,12 +729,11 @@ namespace org.iringtools.adapter.datalayer.eb
           {
             try
             {
-              string columnName = Utilities.ExtractColumnName(prop.columnName);
               string value = string.Empty;
 
-              if (dataRow.Table.Columns.Contains(columnName))
+              if (dataRow.Table.Columns.Contains(prop.propertyName))
               {
-                value = Convert.ToString(dataRow[columnName]);
+                value = Convert.ToString(dataRow[prop.propertyName]);
               }
 
               dataObject.SetPropertyValue(prop.propertyName, value);
