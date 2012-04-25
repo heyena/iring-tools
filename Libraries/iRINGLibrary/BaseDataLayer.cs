@@ -436,6 +436,11 @@ namespace org.iringtools.library
       return null;
     }
 
+    public virtual IList<PicklistObject> GetPicklists()
+    {
+      throw new NotImplementedException();
+    }
+
     public virtual Picklists GetPicklist(string name, int start, int limit)
     {
       throw new NotImplementedException();
