@@ -47,8 +47,7 @@
       name: 'description',
       xtype: 'textarea',
       height: 150,
-      fieldLabel: 'Description',
-      //value: treeNode.data.property.description,
+      fieldLabel: 'Description',      
       allowBlank: true
     }];
 

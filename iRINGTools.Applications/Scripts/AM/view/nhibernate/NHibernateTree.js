@@ -264,7 +264,7 @@ function setKeysFolder (me, editor, node, contextName, endpoint) {
     endpoint: endpoint,    
     region: 'center',
     treeNode: node,
-    id: contextName + '.' + endpoint + '.selectKeys'
+    id: contextName + '.' + endpoint + '.' + node.id + '.selectKeys'
   };
 
   var select = editor.items.map[conf.id];
@@ -305,7 +305,7 @@ function setKeyProperty(me, editor, node, contextName, endpoint) {
       region: 'center',
       endpoint: endpoint,        
       node: node,
-      id: contextName + '.' + endpoint + '.setkeyproperty'
+      id: contextName + '.' + endpoint + '.' + node.id + '.setkeyproperty'
     };
     var setdop = editor.items.map[conf.id];
     if (!setdop) {
@@ -328,7 +328,7 @@ function setDataProperty(me, editor, node, contextName, endpoint) {
       region: 'center',
       endpoint: endpoint,
       node: node,
-      id: contextName + '.' + endpoint + '.setdataproperty'
+      id: contextName + '.' + endpoint + '.' + node.id + '.setdataproperty'
     };
     var setdop = editor.items.map[conf.id];
     if (!setdop) {
@@ -343,8 +343,43 @@ function setDataProperty(me, editor, node, contextName, endpoint) {
   }
 };
 
-function setRelations(me, editor, node, contextName, endpoint) {
+function setRelations(me, editor, tree, node, contextName, endpoint) {
+  if (editor) {
+    var content = me.getMainContent();
+    var conf = {
+      contextName: contextName,
+      region: 'center',
+      endpoint: endpoint,
+      node: node,
+      id: contextName + '.' + endpoint + '.' + node.id + '.createrelation'
+    };
 
+    var setdop = editor.items.map[conf.id];
+    if (!setdop) {
+      setdop = Ext.widget('createrelations', conf);
+      editor.items.add(setdop);
+      editor.doLayout();
+    }
+    else {
+      var panelIndex = editor.items.indexOf(setdop);
+      editor.getLayout().setActiveItem(panelIndex);
+      editor.doLayout();
+    }
+
+    var deleteDataRelationPane = setdop.items.items[2];
+    var relations = new Array();
+    var gridLabel = contextName + '.' + endpoint + '.' + node.id;
+    var i = 0;    
+
+    if (node.childNodes)
+      for (i = 0; i < node.childNodes.length; i++) {
+        if (node.childNodes[i].text != '')
+          relations.push([node.childNodes[i].text]);
+      }
+
+    var rootNode = tree.getRootNode();
+    createRelationGrid(setdop, rootNode, node, gridLabel, deleteDataRelationPane, relations, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationCreateForm.' + node.id, 0, contextName, endpoint, '');
+  }
 };
 
 function setRelationFields(me, editor, node, contextName, endpoint) {
@@ -357,8 +392,8 @@ function setDataObject (me, editor, node, contextName, endpoint) {
     var conf = {
       contextName: contextName,
       region: 'center',
-      endpoint: endpoint,        
-      id: contextName + '.' + endpoint + '.setdataobject'
+      endpoint: endpoint,
+      id: contextName + '.' + endpoint + '.' + node.id + '.setdataobject'
     };
     var setdop = editor.items.map[conf.id];
     if (!setdop) {

@@ -2,9 +2,9 @@
   extend: 'Ext.grid.Panel',
   alias: 'widget.datagridpanel',
   requires: [
-        'Ext.form.field.Text',
-        'Ext.toolbar.TextItem',
-        'Ext.data.*'
+    'Ext.form.field.Text',
+    'Ext.toolbar.TextItem',
+    'Ext.data.*'
   ],
   closable: true,
   context: null,

@@ -278,9 +278,9 @@
 					}
 
 					var colModel = new Ext.grid.ColumnModel([
-                            { id: 'property', header: 'Property', dataIndex: 'property' },
-                            { header: 'Related Property', dataIndex: 'relatedProperty' }
-                        ]);
+            { id: 'property', header: 'Property', dataIndex: 'property' },
+            { header: 'Related Property', dataIndex: 'relatedProperty' }
+          ]);
 					var dataStore = new Ext.data.Store({
 						autoDestroy: true,
 						proxy: new Ext.data.MemoryProxy(properMap),
@@ -294,58 +294,58 @@
 			}
 		  }]
 	  });
-		
-	  editPane.add(relationConfigPanel);
-	  var panelIndex = editPane.items.indexOf(relationConfigPanel);
-	  editPane.getLayout().setActiveItem(panelIndex);
-	  var relationConfigForm = relationConfigPanel.getForm();
-	  var dataRelationPane = relationConfigPanel.items.items[7];
-	  relationConfigForm.findField('relatedObjectName').setValue(relatedObjectName);
-	  relationConfigForm.findField('relatedTable').setValue(relatedObjectName);
-	  if (node.attributes.attributes)
-		  var relationTypeIndex = node.attributes.attributes.relationshipTypeIndex;
-	  else
-		  var relationTypeIndex = node.attributes.relationshipTypeIndex;
-	  relationConfigForm.findField('relationType').setValue(relationTypeIndex);
+//		
+//	  editPane.add(relationConfigPanel);
+//	  var panelIndex = editPane.items.indexOf(relationConfigPanel);
+//	  editPane.getLayout().setActiveItem(panelIndex);
+//	  var relationConfigForm = relationConfigPanel.getForm();
+//	  var dataRelationPane = relationConfigPanel.items.items[7];
+//	  relationConfigForm.findField('relatedObjectName').setValue(relatedObjectName);
+//	  relationConfigForm.findField('relatedTable').setValue(relatedObjectName);
+//	  if (node.attributes.attributes)
+//		  var relationTypeIndex = node.attributes.attributes.relationshipTypeIndex;
+//	  else
+//		  var relationTypeIndex = node.attributes.relationshipTypeIndex;
+//	  relationConfigForm.findField('relationType').setValue(relationTypeIndex);
 
-	  if (node.attributes.attributes)
-		  var propertyMaps = node.attributes.attributes.propertyMap;
-	  else
-		  var propertyMaps = node.attributes.propertyMap;
+//	  if (node.attributes.attributes)
+//		  var propertyMaps = node.attributes.attributes.propertyMap;
+//	  else
+//		  var propertyMaps = node.attributes.propertyMap;
 
-	  var configLabel = scopeName + '.' + appName + '.-nh-config';
-	  var gridLabel = scopeName + '.' + appName + '.' + node.id;
-	  if (dataRelationPane.items) {
-		  var gridPane = dataRelationPane.items.map[gridLabel];
-		  if (gridPane) {
-			  gridPane.destroy();
-		  }
-	  }
-	  var myArray = new Array();
-	  var i = 0;
+//	  var configLabel = scopeName + '.' + appName + '.-nh-config';
+//	  var gridLabel = scopeName + '.' + appName + '.' + node.id;
+//	  if (dataRelationPane.items) {
+//		  var gridPane = dataRelationPane.items.map[gridLabel];
+//		  if (gridPane) {
+//			  gridPane.destroy();
+//		  }
+//	  }
+//	  var myArray = new Array();
+//	  var i = 0;
 
-	  var relatedMapItem = findNodeRelatedObjMap(node, relatedObjectName);
-	  var relPropertyName;
-	  var relMapPropertyName;
-	  for (i = 0; i < propertyMaps.length; i++) {
-		  relPropertyName = propertyMaps[i].dataPropertyName.toUpperCase();
-		  relMapPropertyName = propertyMaps[i].relatedPropertyName.toUpperCase();
-		  myArray.push([relPropertyName, relMapPropertyName]);
-		  relatedMapItem.push([relPropertyName, relMapPropertyName]);
-	  }
-	  var colModel = new Ext.grid.ColumnModel([
-      { id: 'property', header: 'Property', width: 230, dataIndex: 'property' },
-      { header: 'Related Property', width: 230, dataIndex: 'relatedProperty' }
-    ]);
-	  var dataStore = new Ext.data.Store({
-		  autoDestroy: true,
-		  proxy: new Ext.data.MemoryProxy(myArray),
-		  reader: new Ext.data.ArrayReader({}, [
-        { name: 'property' },
-        { name: 'relatedProperty' }
-      ])
-	  });
-	  createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName, relatedObjectName);
+//	  var relatedMapItem = findNodeRelatedObjMap(node, relatedObjectName);
+//	  var relPropertyName;
+//	  var relMapPropertyName;
+//	  for (i = 0; i < propertyMaps.length; i++) {
+//		  relPropertyName = propertyMaps[i].dataPropertyName.toUpperCase();
+//		  relMapPropertyName = propertyMaps[i].relatedPropertyName.toUpperCase();
+//		  myArray.push([relPropertyName, relMapPropertyName]);
+//		  relatedMapItem.push([relPropertyName, relMapPropertyName]);
+//	  }
+//	  var colModel = new Ext.grid.ColumnModel([
+//      { id: 'property', header: 'Property', width: 230, dataIndex: 'property' },
+//      { header: 'Related Property', width: 230, dataIndex: 'relatedProperty' }
+//    ]);
+//	  var dataStore = new Ext.data.Store({
+//		  autoDestroy: true,
+//		  proxy: new Ext.data.MemoryProxy(myArray),
+//		  reader: new Ext.data.ArrayReader({}, [
+//        { name: 'property' },
+//        { name: 'relatedProperty' }
+//      ])
+//	  });
+//	  createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName, relatedObjectName);
   }
 });
 
