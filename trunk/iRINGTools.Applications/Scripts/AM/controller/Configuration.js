@@ -20,7 +20,8 @@
      'nhibernate.CreateRelations',
      'nhibernate.SetRelationPanel',
      'nhibernate.Utility',
-     'nhibernate.RadioField'
+     'nhibernate.RadioField',
+     'nhibernate.RelationGridPanel'
     ],
   stores: [],
   models: [
@@ -204,7 +205,7 @@
           setDataProperty(me, editor, node, contextName, endpoint);
           break;
         case 'RELATIONSHIPS':
-          setRelations(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
+          setRelations(me, editor, tree, node, contextName, endpoint);
           break;
         case 'RELATIONSHIP':
           setRelationFields(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);

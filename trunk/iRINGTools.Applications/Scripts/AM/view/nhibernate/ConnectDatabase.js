@@ -74,7 +74,7 @@
                   if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
                     host.setValue(dbInfo.dbServer);
                     serviceName.show();
-                    creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName, contextName, endpoint);
+                    creatRadioField(serviceName, dbInfo.dbInstance, dbInfo.serName, contextName, endpoint);
                     host.show();
                     userName.setValue(dbInfo.dbUserName);
                     password.setValue(dbInfo.dbPassword);
@@ -290,7 +290,7 @@ function changeConfigOracle(host, dbSchema, userName, password, serviceName, con
   password.setValue('');
   password.clearInvalid();
   serviceName.show();
-  creatRadioField(serviceName, serviceName.id, '', '', 1, contextName, endpoint);
+  creatRadioField(serviceName, '', '', 1, contextName, endpoint);
 };
 
 function changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password) {
@@ -409,7 +409,7 @@ function setDSOracle(portNumber, host, serviceName, dbServer, dbInstance, dbName
   host.show();
 
   serviceName.show();
-  creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
+  creatRadioField(serviceName, dbInfo.dbInstance, dbInfo.serName);
 
   portNumber.setValue(dbInfo.portNumber);
   portNumber.show();
