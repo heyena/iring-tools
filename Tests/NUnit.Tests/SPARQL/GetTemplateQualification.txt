@@ -11,6 +11,6 @@ tpl:param1 rdfs:label ?name .
 OPTIONAL { tpl:param1 rdfs:comment ?description }
 OPTIONAL { ?st tpl:R64574858717 tpl:param1 }
 OPTIONAL { ?st tpl:R61794465713 ?statusClass }
-OPTIONAL {?st tpl:R56599656536 ?statusAuthority }
+OPTIONAL { ?st tpl:R56599656536 ?statusAuthority }
 }
 ORDER BY ASC(?name)

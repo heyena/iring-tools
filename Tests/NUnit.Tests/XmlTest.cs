@@ -6,7 +6,6 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using org.iringtools.adapter;
 using org.iringtools.library;
-using org.iringtools.utility;
 
 namespace NUnit.Tests
 {
@@ -28,7 +27,7 @@ namespace NUnit.Tests
       _settings["GraphName"] = "Lines";
       _settings["ClassName"] = "PIPINGNETWORKSYSTEM";
       _settings["Identifier"] = "90002-RV";
-      _settings["TestMode"] = "WriteFiles"; //UseFiles/WriteFiles
+      _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
       _settings["GraphBaseUri"] = "http://www.example.com/"; 
       _baseDirectory = Directory.GetCurrentDirectory();
       _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
@@ -36,11 +35,6 @@ namespace NUnit.Tests
       Directory.SetCurrentDirectory(_baseDirectory);
 
       _adapterProvider = new AdapterProvider(_settings);
-
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-
-      Resource importScopes = Utility.Read<Resource>(scopesPath);
-      _adapterProvider.SetScopes(importScopes);
 
       ResetDatabase();
     }

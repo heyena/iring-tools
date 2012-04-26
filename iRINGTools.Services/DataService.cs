@@ -116,12 +116,8 @@ namespace org.iringtools.services
       format = MapContentType(format);
 
       DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
-      //DataDictionary dictionary1 = Utility.Read<DataDictionary>("C:\\temp\\DATADICTIONARY.XML");
-      //Utility.Write<DataDictionary>(dictionary, "C:\\temp\\DATADICTIONARY.XML");
 
-      HttpContext.Current.Response.ContentType = "application/xml";
-      HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataDictionary>(dictionary));
-      //FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
+      FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
     }
 
     [Description("Gets an XML or JSON projection of the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
@@ -153,46 +149,6 @@ namespace org.iringtools.services
       {
         object content = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, ref format, false);
         FormatOutgoingMessage(content, format);
-      }
-      catch (Exception ex)
-      {
-        ExceptionHandler(ex);
-      }
-    }
-
-    [Description("Gets an XML or JSON of Picklists in the specified project, application in the format specified. Valid formats include json, xml")]
-    [WebGet(UriTemplate = "/{app}/{project}/picklists?format={format}")]
-    public void GetPicklists(string project, string app, string format)
-    {
-      if (string.IsNullOrWhiteSpace(format))
-        format = "xml";
-      try
-      {
-        IList<PicklistObject> objs = _adapterProvider.GetPicklists(project, app, format);
-        if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
-          FormatOutgoingMessage<IList<PicklistObject>>(objs, format, true);
-        else
-          FormatOutgoingMessage<IList<PicklistObject>>(objs, format, false);
-      }
-      catch (Exception ex)
-      {
-        ExceptionHandler(ex);
-      }
-    }
-
-    [Description("Gets an XML or JSON of Picklists in the specified project, application in the format specified. Valid formats include json, xml")]
-    [WebGet(UriTemplate = "/{app}/{project}/picklists/{name}?format={format}&start={start}&limit={limit}")]
-    public void GetPicklist(string project, string app, string name, string format, int start, int limit)
-    {
-      if (string.IsNullOrWhiteSpace(format))
-        format = "xml";
-      try
-      {
-        Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
-        if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
-          FormatOutgoingMessage<Picklists>(obj, format, true);
-        else
-          FormatOutgoingMessage<Picklists>(obj, format, false);
       }
       catch (Exception ex)
       {

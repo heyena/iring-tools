@@ -57,7 +57,7 @@ namespace org.iringtools.adapter
 
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private Resource _scopes = null;
+    private ScopeProjects _scopes = null;
     private IDataLayer2 _dataLayer = null;
     private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
@@ -115,12 +115,12 @@ namespace org.iringtools.adapter
 
       if (File.Exists(scopesPath))
       {
-        _scopes = Utility.Read<Resource>(scopesPath);
+        _scopes = Utility.Read<ScopeProjects>(scopesPath);
       }
       else
       {
-        _scopes = new Resource();
-        Utility.Write<Resource>(_scopes, scopesPath);
+        _scopes = new ScopeProjects();
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
@@ -132,11 +132,6 @@ namespace org.iringtools.adapter
 
       _kernel.Load(bindingConfigurationPath);
       InitializeIdentity();
-    }
-
-    public void setScopes(Resource importScopes)
-    {
-      _scopes = importScopes;
     }
 
     public VersionInfo GetVersion()
@@ -157,7 +152,7 @@ namespace org.iringtools.adapter
       Manifest manifest = new Manifest()
       {
         graphs = new Graphs(),
-        version = "2.1.1",
+        version = "2.3.1",
         valueListMaps = new ValueListMaps()
       };      
 
@@ -574,33 +569,23 @@ namespace org.iringtools.adapter
       return dataTransferObjects;
     }
 
-    private void getResource()
-    {
-      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
-      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port;
-      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
-    }
-
     private void InitializeScope(string projectName, string applicationName)
     {
       try
       {
-        if (_scopes.Locators == null)
-          getResource();
-
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
-
-          foreach (Locator project in _scopes.Locators)
+          foreach (ScopeProject project in _scopes)
           {
-            if (project.Context.ToUpper() == projectName.ToUpper())
+            if (project.Name.ToUpper() == projectName.ToUpper())
             {
-              foreach (EndpointApplication application in project.Applications)
+              foreach (ScopeApplication application in project.Applications)
               {
-                if (application.Endpoint.ToUpper() == applicationName.ToUpper())
+                if (application.Name.ToUpper() == applicationName.ToUpper())
+                {
                   isScopeValid = true;
+                }
               }
             }
           }

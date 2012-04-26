@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="axiom-1.2.8" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/axiom-1.2.8/axiom.jar"/>
+    </library>
+    <library name="axis2-kernel-1.5.1" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/axis2-kernel-1.5.1/axis2-kernel-1.5.1.jar"/>
+    </library>
+    <library name="commons-codec-1.4" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/commons-codec-1.4/commons-codec-1.4.jar"/>
+    </library>
+    <library name="commons-logging-1.1.1" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
+    </library>
+    <library name="cxf-2.3.0" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/antlr-2.7.7.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/aopalliance-1.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/asm-3.3.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/bcprov-jdk15-1.43.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/commons-collections-3.2.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/commons-lang-2.5.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/commons-logging-1.1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/commons-pool-1.5.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/cxf-2.3.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/cxf-manifest.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/cxf-xjc-boolean-2.3.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/cxf-xjc-bug671-2.3.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/cxf-xjc-dv-2.3.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/cxf-xjc-ts-2.3.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/FastInfoset-1.2.8.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/geronimo-activation_1.1_spec-1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/geronimo-annotation_1.0_spec-1.1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/geronimo-javamail_1.4_spec-1.7.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/geronimo-jaxws_2.2_spec-1.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/geronimo-jms_1.1_spec-1.1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/geronimo-servlet_3.0_spec-1.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/geronimo-ws-metadata_2.0_spec-1.1.3.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jaxb-api-2.2.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jaxb-impl-2.2.1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jaxb-xjc-2.2.1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jettison-1.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jetty-continuation-7.1.6.v20100715.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jetty-http-7.1.6.v20100715.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jetty-io-7.1.6.v20100715.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jetty-server-7.1.6.v20100715.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jetty-util-7.1.6.v20100715.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jra-1.0-alpha-4.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/js-1.7R1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/jsr311-api-1.1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/neethi-2.0.4.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/oro-2.0.8.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/saaj-api-1.3.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/saaj-impl-1.3.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/serializer-2.7.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/slf4j-api-1.6.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/slf4j-jdk14-1.6.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-aop-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-asm-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-beans-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-context-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-core-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-expression-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-jms-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-tx-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/spring-web-3.0.4.RELEASE.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/stax2-api-3.0.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/velocity-1.6.4.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/woodstox-core-asl-4.0.8.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/wsdl4j-1.6.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/wss4j-1.5.9.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/xalan-2.7.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/xmlbeans-2.4.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/xml-resolver-1.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/XmlSchema-1.4.7.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/xmlsec-1.4.3.jar"/>
+    </library>
+    <library name="hibernate-3.0" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/hibernate-annotations.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/hibernate3.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/jta-1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/dom4j-1.6.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/javassist-3.12.0.GA.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/antlr-2.7.6.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/commons-collections-3.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/cglib-2.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/slf4j-api-1.6.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/log4j.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/hibernate-commons-annotations.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/ejb3-persistence.jar"/>
+    </library>
+    <library name="jaxb-ri-20100511" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/activation.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/jaxb1-impl.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/jaxb-api.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/jaxb-impl.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/jsr173_1.0_api.jar"/>
+    </library>
+    <library name="jaxen-1.1.3" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxen-1.1.3/jaxen-1.1.3.jar"/>
+    </library>
+    <library name="json-utils" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/json-utils/commons-logging-1.0.4.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/json-utils/commons-logging-api-1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/json-utils/struts2-json-plugin-2.2.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/json-utils/xwork-core-2.2.1.jar"/>
+    </library>
+    <library name="jsr311-api" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jsr311-api/jsr311-api.jar"/>
+    </library>
+    <library name="log4j-1.2.16" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-log4j-1.2.16/log4j-1.2.16.jar"/>
+    </library>
+    <library name="struts2-2.2.1" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-fileupload-1.2.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-io-1.3.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-logging-api-1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-validator-1.3.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/freemarker-2.3.16.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/javassist-3.7.ga.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/ognl-3.0.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/struts2-core-2.2.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/struts2-dojo-plugin-2.2.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/struts2-jquery-plugin-2.4.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/struts2-json-plugin-2.2.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/xwork-core-2.2.1.jar"/>
+    </library>
+    <library name="synapse-core-1.4.0" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/synapse-core-1.4.0/synapse-core-1.4.0.wso2v2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/synapse-core-1.4.0/synapse-nhttp-transport-1.4.0.wso2v2.jar"/>
+    </library>
+    <library name="tomcat-6.0" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/annotations-api.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/catalina.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/catalina-ant.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/catalina-ha.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/catalina-tribes.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/el-api.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/jasper.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/jasper-el.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/jasper-jdt.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/jsp-api.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/servlet-api.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-coyote.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-dbcp.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-i18n-es.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-i18n-fr.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-i18n-ja.jar"/>
+    </library>
+	<library name="jena-2.6.4" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/arq-2.8.7.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/icu4j-3.4.4.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/iri-0.8.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/jena-2.6.4.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/jena-2.6.4-tests.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/junit-4.5.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/lucene-core-2.3.1.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/stax-api-1.0.1.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/wstx-asl-3.2.9.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.4/xercesImpl-2.7.1.jar"/>
+    </library>
+</eclipse-userlibraries>

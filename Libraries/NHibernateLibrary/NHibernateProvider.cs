@@ -519,19 +519,19 @@ namespace org.iringtools.nhibernate
       }
 
       if (dbProvider.ToUpper().Contains("MSSQL"))
-        if (dbInstance == "default" || string.IsNullOrEmpty(dbInstance))
+        if (dbInstance == "default")
         {
           connStr = String.Format("Data Source={0};Initial Catalog={2};User ID={3};Password={4}",
-            dbServer, dbInstance, dbName, dbUserName, dbPassword);
+           dbServer, dbInstance, dbName, dbUserName, dbPassword);
         }
         else
         {
           connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
-           dbServer, dbInstance, dbName, dbUserName, dbPassword);
+            dbServer, dbInstance, dbName, dbUserName, dbPassword);
         }
-        else
-          connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}",
-            dbServer, portNumber, serName, dbInstance, dbUserName, dbPassword);
+      else
+        connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}",
+          dbServer, portNumber, serName, dbInstance, dbUserName, dbPassword);
 
       Dictionary<string, string> properties = new Dictionary<string, string>();
 

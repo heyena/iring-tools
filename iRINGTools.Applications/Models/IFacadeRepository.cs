@@ -8,6 +8,6 @@ namespace org.iringtools.web.Models
 {
     public interface IFacadeRepository
     {
-        Response RefreshGraph(string scope, string app, string graph, string baseUrl);
+        Response RefreshGraph(string scope, string app, string graph);
     }
 }
