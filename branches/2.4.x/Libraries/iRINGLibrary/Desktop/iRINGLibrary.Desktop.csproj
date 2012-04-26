@@ -138,6 +138,7 @@
     <Compile Include="DataProviders.cs" />
     <Compile Include="DataRelationships.cs" />
     <Compile Include="OAuthProvider.cs" />
+    <Compile Include="Picklists.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Repositories.cs" />
     <Compile Include="DatabaseDictionary.cs" />

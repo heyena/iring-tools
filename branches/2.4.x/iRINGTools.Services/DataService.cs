@@ -156,6 +156,46 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets an XML or JSON of Picklists in the specified project, application in the format specified. Valid formats include json, xml")]
+    [WebGet(UriTemplate = "/{app}/{project}/picklists?format={format}")]
+    public void GetPicklists(string project, string app, string format)
+    {
+      if (string.IsNullOrWhiteSpace(format))
+        format = "xml";
+      try
+      {
+        IList<PicklistObject> objs = _adapterProvider.GetPicklists(project, app, format);
+        if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
+          FormatOutgoingMessage<IList<PicklistObject>>(objs, format, true);
+        else
+          FormatOutgoingMessage<IList<PicklistObject>>(objs, format, false);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
+    [Description("Gets an XML or JSON of Picklists in the specified project, application in the format specified. Valid formats include json, xml")]
+    [WebGet(UriTemplate = "/{app}/{project}/picklists/{name}?format={format}&start={start}&limit={limit}")]
+    public void GetPicklist(string project, string app, string name, string format, int start, int limit)
+    {
+      if (string.IsNullOrWhiteSpace(format))
+        format = "xml";
+      try
+      {
+        Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
+        if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
+          FormatOutgoingMessage<Picklists>(obj, format, true);
+        else
+          FormatOutgoingMessage<Picklists>(obj, format, false);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
     [Description("Gets an XML or JSON projection of a filtered set in the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
     public void GetWithFilter(string project, string app, string graph, string format, int start, int limit, string indexStyle, Stream stream)
