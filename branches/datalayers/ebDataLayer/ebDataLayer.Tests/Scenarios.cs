@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
 
-namespace org.iringtools.adaper.datalayer.test
+namespace org.iringtools.adaper.datalayer.eb.test
 {
   [CollectionDataContract(Namespace = "http://www.iringtools.org/test", Name = "senarios")]
   public class Scenarios : List<Scenario> {}
