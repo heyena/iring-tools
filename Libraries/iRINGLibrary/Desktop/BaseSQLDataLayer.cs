@@ -60,6 +60,9 @@ namespace org.iringtools.library
 
     // delete data rows by identifiers
     public abstract Response DeleteDataTable(string tableName, IList<string> identifiers);
+
+    // refresh dictionary for a specific data table
+    public abstract Response RefreshDataTable(string tableName);
     #endregion
 
     #region IDataLayer implementation methods

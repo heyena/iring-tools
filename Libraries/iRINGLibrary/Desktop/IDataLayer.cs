@@ -65,6 +65,10 @@ namespace org.iringtools.library
 
     IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex);
 
+    IList<PicklistObject> GetPicklists();
+
+    Picklists GetPicklist(string name, int start, int limit);
+
     Response Post(IList<IDataObject> dataObjects);
 
     Response Delete(string objectType, IList<string> identifiers);
