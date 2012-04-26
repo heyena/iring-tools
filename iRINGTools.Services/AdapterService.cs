@@ -368,15 +368,15 @@ namespace org.iringtools.services
     }
 
     [Description("Adds or updates a dataLayer to the service.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/dataLayers")]
-    public void PostDatalayer(Stream dataLayerStream)
+    [WebInvoke(Method = "POST", UriTemplate = "/datalayers")]
+    public void PostDataLayer(Stream dataLayerStream)
     {
       try
       {
         DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
         DataLayer dataLayer = (DataLayer)serializer.ReadObject(dataLayerStream);
         
-        Response response = _adapterProvider.SaveDataLayer(dataLayer);
+        Response response = _adapterProvider.PostDataLayer(dataLayer);
         string xml = Utility.Serialize<Response>(response, true);
 
         HttpContext.Current.Response.ContentType = "application/xml";
