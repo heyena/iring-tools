@@ -18,7 +18,6 @@ namespace org.iringtools.adaper.datalayer.test
   public class Tests
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(Tests));
-    private const string IDENTIFIER_PADDING = "_";
     private IDataLayer2 _dataLayer = null;
     private Scenarios _scenarios = null;
 
@@ -30,7 +29,7 @@ namespace org.iringtools.adaper.datalayer.test
       AdapterSettings adapterSettings = new AdapterSettings();
       adapterSettings.AppendSettings(new AppSettingsReader("App.config"));
 
-      FileInfo log4netConfig = new FileInfo("log4net.config");
+      FileInfo log4netConfig = new FileInfo("Log4net.config");
       log4net.Config.XmlConfigurator.Configure(log4netConfig);
 
       _dataLayer = new ebDataLayer(adapterSettings);
@@ -57,6 +56,7 @@ namespace org.iringtools.adaper.datalayer.test
         Console.WriteLine(string.Format("Executing scenario [{0}] ...", scenario.Name));
 
         string objectType = scenario.ObjectType;
+        string padding = scenario.IdentifierPadding;
         Properties properties = scenario.Properties;
         DataFilter dataFilter = Utility.DeserializeDataContract<DataFilter>(scenario.DataFilter);
 
@@ -86,14 +86,13 @@ namespace org.iringtools.adaper.datalayer.test
         Assert.Greater(dataObjects.Count, 0);
         #endregion
 
-        #region Test post
-        Console.WriteLine("Testing post ...");
-
-        // Create data object by cloning an one and changing its property values
+        //
+        // Create a data object to post and delete
+        //
         IDataObject dataObject = dataObjects[0];
         DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
         string keyPropName = objDef.keyProperties[0].keyPropertyName;
-        string keyPropValue = Convert.ToString(dataObject.GetPropertyValue(keyPropName)) + IDENTIFIER_PADDING;
+        string keyPropValue = Convert.ToString(dataObject.GetPropertyValue(keyPropName)) + padding;
 
         // Set key property
         dataObject.SetPropertyValue(keyPropName, keyPropValue);
@@ -104,6 +103,8 @@ namespace org.iringtools.adaper.datalayer.test
           dataObject.SetPropertyValue(prop.Name, prop.Value);
         }
 
+        #region Test post
+        Console.WriteLine("Testing post ...");
         response = _dataLayer.Post(new List<IDataObject>() { dataObject });
         Assert.AreEqual(response.Level, StatusLevel.Success);
         #endregion
@@ -114,11 +115,25 @@ namespace org.iringtools.adaper.datalayer.test
         Assert.AreEqual(response.Level, StatusLevel.Success);
         #endregion
 
+        #region Test create
+        Console.WriteLine("Testing create ...");
+        IDataObject newDataObject = _dataLayer.Create(objectType, null)[0];
+        Assert.AreNotEqual(newDataObject, null);
+        #endregion
+
         #region Test delete by filter
         Console.WriteLine("Testing delete by filter ...");
-        response = _dataLayer.Post(new List<IDataObject>() { dataObject });
+        // Prepare data object to post
+        foreach (DataProperty prop in objDef.dataProperties)
+        {
+          newDataObject.SetPropertyValue(prop.propertyName, dataObject.GetPropertyValue(prop.propertyName));
+        }
+
+        // Execute delete
+        response = _dataLayer.Post(new List<IDataObject>() { newDataObject });
         Assert.AreEqual(response.Level, StatusLevel.Success);
 
+        // Prepare filter to delete
         dataFilter = new DataFilter()
         {
           Expressions = new List<Expression>()
@@ -132,6 +147,7 @@ namespace org.iringtools.adaper.datalayer.test
           }
         };
 
+        // Execute delete
         _dataLayer.Delete(objectType, dataFilter);
         Assert.AreEqual(response.Level, StatusLevel.Success);
         #endregion

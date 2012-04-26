@@ -18,11 +18,14 @@ namespace org.iringtools.adaper.datalayer.test
 
     [DataMember(Name = "objectType", Order = 1)]
     public string ObjectType { get; set; }
+    
+    [DataMember(Name = "identifierPadding", Order = 2)]
+    public string IdentifierPadding { get; set; }
 
-    [DataMember(Name = "properties", Order = 2)]
+    [DataMember(Name = "properties", Order = 3)]
     public Properties Properties { get; set; }
 
-    [DataMember(Name = "dataFilter", Order = 3)]
+    [DataMember(Name = "dataFilter", Order = 4)]
     public string DataFilter { get; set; }
   }
 
