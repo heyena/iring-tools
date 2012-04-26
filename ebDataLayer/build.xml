@@ -1,0 +1,57 @@
+<Project DefaultTargets="All" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+  <PropertyGroup>
+    <SolutionFile>ebDataLayer.sln</SolutionFile>
+    <DeploymentDir>$(MSBuildProjectDirectory)\deployment</DeploymentDir>
+    <NUnitPath>$(MSBuildProjectDirectory)\lib\Nunit</NUnitPath>
+    <ZipCmd>$(MSBuildProjectDirectory)\lib\7-Zip\7z.exe</ZipCmd>
+    <PackageDir>$(DeploymentDir)\ebDataLayer</PackageDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <DeploymentFileSet
+      Include="ebDataLayer\bin\debug\ebDataLayer.dll;
+               ebDataLayer\bin\debug\eB.Common.dll;
+               ebDataLayer\bin\debug\eB.Service.Proxy.dll;
+               ebDataLayer\App_Data\*.*"
+      Exclude="ebDataLayer\App_Data\DataDictionary.*">
+    </DeploymentFileSet>
+    
+    <DeploymentPackage Include="*.*" Exclude="*.zip">
+      <Options>a -tzip -y -r</Options>
+      <FileSet>$(PackageDir)\*</FileSet>
+      <ZipFile>$(DeploymentDir)\ebDataLayer.zip</ZipFile>
+    </DeploymentPackage>
+  </ItemGroup>
+
+  <Target Name="CleanBuild">
+    <Message Text="Performing clean-up ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+  </Target>
+   
+  <Target Name="CoreBuild">
+    <Message Text="Performing build ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+  </Target>
+
+  <Target Name="Test">
+    <Message Text="Performing test ..." />
+    <NUnit ToolPath="$(NUnitPath)" DisableShadowCopy="true" Assemblies="ebDataLayer.Tests\bin\Debug\ebDataLayer.Tests.dll" OutputXmlFile="test-results.xml" />
+	</Target>
+
+  <Target Name="CreateDeployment">
+    <Message Text="Removing old deployment..." />
+    <Exec Command="RmDir /S /Q $(DeploymentDir)" />
+    
+    <Message Text="Creating deployment ..." />
+    <MakeDir Directories="$(DeploymentDir)"/>
+    <Copy SourceFiles="@(DeploymentFileSet)"
+          DestinationFiles="@(DeploymentFileSet->'$(PackageDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="CoreBuild"/>
+  <Target Name="Rebuild" DependsOnTargets="CleanBuild; CoreBuild"/>  
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreateDeployment"/>
+</Project>

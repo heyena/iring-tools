@@ -12,7 +12,7 @@ using System.Text;
 using org.iringtools.adapter.datalayer.eb;
 using log4net;
 
-namespace org.iringtools.adaper.datalayer.test
+namespace org.iringtools.adaper.datalayer.eb.test
 {
   [TestFixture]
   public class Tests
@@ -40,7 +40,7 @@ namespace org.iringtools.adaper.datalayer.test
     public void RunTest()
     {
       #region Test dictionary
-      Console.WriteLine("Testing get dictionary ...");
+      Console.WriteLine("\nTesting get dictionary ...");
       DataDictionary dictionary = _dataLayer.GetDictionary();
       Assert.Greater(dictionary.dataObjects.Count, 0);
       #endregion

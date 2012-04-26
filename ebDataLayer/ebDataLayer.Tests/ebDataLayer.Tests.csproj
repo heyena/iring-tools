@@ -8,15 +8,15 @@
     <ProjectGuid>{D71635C0-974C-415F-8154-855DC2924EF7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ebTest</RootNamespace>
-    <AssemblyName>ebTest</AssemblyName>
+    <RootNamespace>org.iringtools.adaper.datalayer.eb.test</RootNamespace>
+    <AssemblyName>ebDataLayer.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>

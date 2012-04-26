@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>org.iringtools.adaper.datalayer.eb</RootNamespace>
-    <AssemblyName>ebLibrary</AssemblyName>
+    <AssemblyName>ebDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,10 +34,12 @@
     <Reference Include="eB.Common, Version=15.3.2.261, Culture=neutral, PublicKeyToken=a3739844efdab314, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\eb\eB.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="eB.Service.Proxy, Version=15.3.2.261, Culture=neutral, PublicKeyToken=bb56b8c969e865be, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\eb\eB.Service.Proxy.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="iRINGLibrary, Version=2.3.0.4643, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
