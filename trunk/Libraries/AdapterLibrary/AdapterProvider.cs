@@ -3396,7 +3396,7 @@ namespace org.iringtools.adapter
       return dataLayers;
     }
 
-    public Response SaveDataLayer(DataLayer dataLayer)
+    public Response PostDataLayer(DataLayer dataLayer)
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
