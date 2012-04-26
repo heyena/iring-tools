@@ -66,7 +66,8 @@ namespace org.iringtools.adaper.datalayer.eb
 
     public static string ToPropertyName(string columnName)
     {
-      string propertyName = Regex.Replace(columnName, @"\W", string.Empty);
+      string propertyName = Regex.Replace(columnName, @"\(.*\)", string.Empty);
+      propertyName = Regex.Replace(propertyName, @"\W", string.Empty);
       return Regex.Replace(propertyName, PATTERN, string.Empty);
     }
 

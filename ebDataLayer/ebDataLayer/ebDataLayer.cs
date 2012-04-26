@@ -16,6 +16,7 @@ using log4net;
 using org.iringtools.adaper.datalayer.eb;
 using org.iringtools.adaper.datalayer.eb.config;
 using System.Xml.Linq;
+using StaticDust.Configuration;
 
 namespace org.iringtools.adapter.datalayer.eb
 {
@@ -45,22 +46,41 @@ namespace org.iringtools.adapter.datalayer.eb
     public ebDataLayer(AdapterSettings settings)
       : base(settings)
     {
-      _dataPath = (settings["DataLayerPath"] == null) ? settings["AppDataPath"] : settings["DataLayerPath"] + "App_Data\\";
-      _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
-      _dictionaryPath = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
-
-      _server = _settings["ebServer"];
-      _dataSource = _settings["ebDataSource"];
-      _userName = _settings["ebUserName"];
-      _password = _settings["ebPassword"];
-      _filteredClasses = _settings["ebFilteredClasses"];
-      _keyDelimiter = _settings["ebKeyDelimiter"];
-
-      if (_keyDelimiter == null) 
-        _keyDelimiter = string.Empty;
-
       try
       {
+        _dataPath = settings["DataLayerPath"];
+        if (_dataPath == null)
+        {
+          _dataPath = settings["AppDataPath"];
+        }
+
+        _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
+        
+        //
+        // Load AppSettings
+        //
+        string appSettingsPath = string.Format("{0}{1}.config", _dataPath, _scope);
+        if (!System.IO.File.Exists(appSettingsPath))
+        {
+          _dataPath += "App_Data\\";
+          appSettingsPath = string.Format("{0}{1}.config", _dataPath, _scope);
+        }
+        _settings.AppendSettings(new AppSettingsReader(appSettingsPath));
+
+        _dictionaryPath = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
+
+        _server = _settings["ebServer"];
+        _dataSource = _settings["ebDataSource"];
+        _userName = _settings["ebUserName"];
+        _password = _settings["ebPassword"];
+        _filteredClasses = _settings["ebFilteredClasses"];
+
+        _keyDelimiter = _settings["ebKeyDelimiter"];
+        if (_keyDelimiter == null)
+        {
+          _keyDelimiter = string.Empty;
+        }
+
         Connect();
 
         int docId = int.Parse(_settings["ebDocId"]);
