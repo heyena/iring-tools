@@ -315,7 +315,7 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        foreach (Map m in _mappings.Where(m => m.RuleRefs.Length > 0).Select(m => m))
+        foreach (Map m in _mappings.Where(m => m.RuleRefs != null && m.RuleRefs.Length > 0).Select(m => m))
         {
           List<Rule> rules = GetRules(m.RuleRefs.ToList<RuleRef>());
 
@@ -386,9 +386,9 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        foreach (Map map in _mappings.Where(m => m.RuleRefs.Length > 0).Select(m => m))
+        foreach (Map m in _mappings.Where(m => m.RuleRefs != null && m.RuleRefs.Length > 0).Select(m => m))
         {
-          List<Rule> rules = GetRules(map.RuleRefs.ToList<RuleRef>());
+          List<Rule> rules = GetRules(m.RuleRefs.ToList<RuleRef>());
 
           foreach (Rule rule in rules)
           {
