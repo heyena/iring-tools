@@ -170,17 +170,21 @@ namespace org.iringtools.adapter.datalayer.eb
             throw new Exception(e.Message);
           }
 
+          string objectName = className + "(" + group.Name + ")";
+          if (_dictionary.dataObjects.Find(x => x.objectName == objectName) != null)
+            continue;
+
           EqlClient eqlClient = new EqlClient(_session);
           List<string> subClassCodes = eqlClient.GetSubClassCodes(className);
 
           DataObject objDef = new DataObject();
           objDef.objectNamespace = group.Name;
-          objDef.objectName = className + "(" + group.Name + ")";
+          objDef.objectName = objectName;
           objDef.tableName = (subClassCodes.Count == 0)
             ? className : string.Join(",", subClassCodes.ToArray());
           objDef.keyDelimeter = _keyDelimiter;
 
-          Map codeMap = _config.Mappings.Find(x => x.Destination == (int)Destination.Code);
+          Map codeMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Code);
           if (codeMap == null)
           {
             throw new Exception("No mapping configured for key property.");
@@ -207,7 +211,12 @@ namespace org.iringtools.adapter.datalayer.eb
           {
             DataProperty dataProp = new DataProperty();
             dataProp.columnName = attrNode.SelectSingleNode("char_name").InnerText;
-            dataProp.propertyName = Utilities.ToPropertyName(dataProp.columnName);
+
+            string propertyName = Utilities.ToPropertyName(dataProp.columnName);
+            if (objDef.dataProperties.Find(x => x.propertyName == propertyName) != null)
+              continue;
+
+            dataProp.propertyName = propertyName;
             dataProp.dataType = Utilities.ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
             dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
 
@@ -226,11 +235,21 @@ namespace org.iringtools.adapter.datalayer.eb
           // add related properties
           foreach (Map m in _config.Mappings.Where(x => x.Destination == (int)Destination.Relationship).Select(m => m))
           {
-            DataProperty dataProp = new DataProperty();
-            dataProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
-            dataProp.propertyName = Utilities.ToPropertyName(m.Column);
-            dataProp.dataType = DataType.String;            
-            objDef.dataProperties.Add(dataProp);
+            DataProperty dataProp = new DataProperty();            
+            string propertyName = Utilities.ToPropertyName(m.Column);
+            DataProperty checkProp = objDef.dataProperties.Find(x => x.propertyName == propertyName);
+
+            if (checkProp != null)  // property already exists, update its column name
+            {
+              checkProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
+            }
+            else
+            {
+              dataProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
+              dataProp.propertyName = propertyName;
+              dataProp.dataType = DataType.String;
+              objDef.dataProperties.Add(dataProp);
+            }
           }
 
           // add other properties
@@ -238,10 +257,20 @@ namespace org.iringtools.adapter.datalayer.eb
             x.Destination != (int)Destination.Attribute && x.Destination != (int)Destination.None).Select(m => m))
           {
             DataProperty dataProp = new DataProperty();
-            dataProp.columnName = m.Column + Utilities.OTHER_ATTRIBUTE_TOKEN;
-            dataProp.propertyName = Utilities.ToPropertyName(m.Column);
-            dataProp.dataType = DataType.String;
-            objDef.dataProperties.Add(dataProp);
+            string propertyName = Utilities.ToPropertyName(m.Column);
+            DataProperty checkProp = objDef.dataProperties.Find(x => x.propertyName == propertyName);
+
+            if (checkProp != null)  // property already exists, update its column name
+            {
+              checkProp.columnName = m.Column + Utilities.OTHER_ATTRIBUTE_TOKEN;
+            }
+            else
+            {
+              dataProp.columnName = m.Column + Utilities.OTHER_ATTRIBUTE_TOKEN;
+              dataProp.propertyName = propertyName;
+              dataProp.dataType = DataType.String;
+              objDef.dataProperties.Add(dataProp);
+            }
           }
           
           _dictionary.dataObjects.Add(objDef);
@@ -490,7 +519,7 @@ namespace org.iringtools.adapter.datalayer.eb
           string keyValue = Convert.ToString(dataObject.GetPropertyValue(keyProp.keyPropertyName));
 
           string revision = string.Empty;
-          Map revisionMap = _config.Mappings.Find(x => x.Destination == (int)Destination.Revision);
+          Map revisionMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Revision);
           if (revisionMap != null)
           {
             string propertyName = Utilities.ToPropertyName(revisionMap.Column);
@@ -523,7 +552,7 @@ namespace org.iringtools.adapter.datalayer.eb
           }
 
           string objectType = Enum.GetName(typeof(ObjectType), template.ObjectType);
-          ebProcessor processor = new ebProcessor(_session, _config.Mappings, _rules);
+          ebProcessor processor = new ebProcessor(_session, _config.Mappings.ToList<Map>(), _rules);
 
           if (objectType == ObjectType.Tag.ToString())
           {
@@ -714,9 +743,9 @@ namespace org.iringtools.adapter.datalayer.eb
         return template.Name;
       }
 
-      template.Placeholders.Sort(new PlaceHolderComparer());
+      template.Placeholders.ToList<Placeholder>().Sort(new PlaceHolderComparer());
 
-      string[] parameters = new string[template.Placeholders.Count];
+      string[] parameters = new string[template.Placeholders.Length];
       int i = 0;
 
       foreach (Placeholder placeholder in template.Placeholders)
