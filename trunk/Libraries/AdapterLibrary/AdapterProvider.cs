@@ -3556,6 +3556,11 @@ namespace org.iringtools.adapter
 
     private Assembly DataLayerAssemblyResolveEventHandler(object sender, ResolveEventArgs args)
     {
+      if (args.Name.Contains(".resources,")) 
+      { 
+        return null; 
+      }
+
       if (Directory.Exists(_settings["DataLayerPath"]))
       {
         string[] files = Directory.GetFiles(_settings["DataLayerPath"]);
@@ -3574,7 +3579,7 @@ namespace org.iringtools.adapter
           }
         }
 
-        throw new Exception("Unable to resolve assembly [" + args.Name + "].");
+        _logger.Error("Unable to resolve assembly [" + args.Name + "].");
       }
 
       return null;
