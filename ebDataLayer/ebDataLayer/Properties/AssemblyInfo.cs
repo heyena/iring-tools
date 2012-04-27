@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EBLibrary")]
+[assembly: AssemblyTitle("ebDataLayer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Bechtel Corporation")]
-[assembly: AssemblyProduct("EBLibrary")]
+[assembly: AssemblyProduct("ebDataLayer")]
 [assembly: AssemblyCopyright("Copyright © Bechtel Corporation 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

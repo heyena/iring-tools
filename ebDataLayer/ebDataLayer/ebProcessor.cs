@@ -315,9 +315,9 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        foreach (Map m in _mappings.Where(m => m.RuleRefs.Count > 0).Select(m => m))
+        foreach (Map m in _mappings.Where(m => m.RuleRefs.Length > 0).Select(m => m))
         {
-          List<Rule> rules = GetRules(m.RuleRefs);
+          List<Rule> rules = GetRules(m.RuleRefs.ToList<RuleRef>());
 
           foreach (Rule rule in rules)
           {
@@ -386,9 +386,9 @@ namespace org.iringtools.adaper.datalayer.eb
 
       try
       {
-        foreach (Map map in _mappings.Where(m => m.RuleRefs.Count > 0).Select(m => m))
+        foreach (Map map in _mappings.Where(m => m.RuleRefs.Length > 0).Select(m => m))
         {
-          List<Rule> rules = GetRules(map.RuleRefs);
+          List<Rule> rules = GetRules(map.RuleRefs.ToList<RuleRef>());
 
           foreach (Rule rule in rules)
           {
@@ -497,8 +497,8 @@ namespace org.iringtools.adaper.datalayer.eb
         return rule.Eql;
       }
 
-      string[] parameters = new string[rule.Parameters.Count];
-      for (int i = 0; i < rule.Parameters.Count; i++)
+      string[] parameters = new string[rule.Parameters.Length];
+      for (int i = 0; i < rule.Parameters.Length; i++)
       {
         string propertyName = Utilities.ToPropertyName(rule.Parameters[i].Value);
         parameters[i] = GetValue(rule.Parameters[i], Convert.ToString(_dataObject.GetPropertyValue(propertyName)));

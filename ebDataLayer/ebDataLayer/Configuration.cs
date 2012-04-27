@@ -13,7 +13,7 @@ namespace org.iringtools.adaper.datalayer.eb.config
     public Template Template { get; set; }
 
     [XmlArray("mappings")]
-    public List<Map> Mappings { get; set; }
+    public Map[] Mappings { get; set; }
   }
 
   [XmlType("template")]
@@ -26,7 +26,7 @@ namespace org.iringtools.adaper.datalayer.eb.config
     public string Name { get; set; }
 
     [XmlArray("placeholders")]
-    public List<Placeholder> Placeholders { get; set; }
+    public Placeholder[] Placeholders { get; set; }
   }
 
   [XmlType("placeholder")]
@@ -49,7 +49,7 @@ namespace org.iringtools.adaper.datalayer.eb.config
     public int Destination { get; set; }
 
     [XmlElement("rule")]
-    public List<RuleRef> RuleRefs { get; set; }
+    public RuleRef[] RuleRefs { get; set; }
   }
 
   [XmlType("rule")]

@@ -28,10 +28,10 @@ namespace org.iringtools.adaper.datalayer.eb
     public string Eql { get; set; }
 
     [XmlArray("parameters")]
-    public List<Parameter> Parameters { get; set; }
+    public Parameter[] Parameters { get; set; }
 
     [XmlArray("selfchecks", IsNullable = true)]
-    public List<SelfCheck> SelfChecks { get; set; }
+    public SelfCheck[] SelfChecks { get; set; }
 
     [XmlElement("create")]
     public bool Create { get; set; }
