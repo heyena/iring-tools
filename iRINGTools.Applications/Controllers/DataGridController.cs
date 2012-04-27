@@ -61,9 +61,9 @@ namespace org.iringtools.web.controllers
                 var fields = from row in dataObject.dataProperties
                              select new
                              {
-                                 name = row.columnName,
-                                 header = row.columnName,
-                                 dataIndex = row.columnName,
+                                 name = row.propertyName,
+                                 header = row.propertyName,
+                                 dataIndex = row.propertyName,
                                  sortable = true
                              };
                 dataItems = GetDataObjects(context, endpoint, graph, dataFilter, start, limit);
