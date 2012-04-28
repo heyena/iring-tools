@@ -984,6 +984,7 @@ namespace org.iringtools.refdata
       }
       return queryResult;
     }
+
     public Entities GetEntityTypes()
     {
       Entities queryResult = new Entities();
@@ -1679,7 +1680,6 @@ namespace org.iringtools.refdata
       return qmxf;
     }
 
-
     private List<TemplateQualification> GetTemplateQualification(string id, Repository rep)
     {
       TemplateQualification templateQualification = null;
@@ -1781,10 +1781,11 @@ namespace org.iringtools.refdata
       }
     }
 
-    private int getIndexFromName(string name)
+    private int GetIndexFromName(string name)
     {
       try
       {
+
         int index = 0;
         foreach (Repository repository in _repositories)
         {
@@ -3328,7 +3329,7 @@ namespace org.iringtools.refdata
         obj = work.CreateUriNode("owl:Thing");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
-        obj = work.CreateUriNode("p8:BaseTemplateStatement");
+        obj = work.CreateUriNode("p8:SpecializedTemplateStatement");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
         obj = work.CreateUriNode(objectId);
