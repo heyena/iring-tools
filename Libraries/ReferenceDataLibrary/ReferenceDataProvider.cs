@@ -547,7 +547,7 @@ namespace org.iringtools.refdata
         if (namespaceUrl == String.Empty || namespaceUrl == null)
           namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
 
-        string uri = namespaceUrl + id;
+        string uri = String.Concat("<", namespaceUrl, id, ">");
         sparql = sparql.Replace("param1", uri);
         foreach (Repository repository in _repositories)
         {
@@ -564,7 +564,7 @@ namespace org.iringtools.refdata
           {
             classDefinition = new ClassDefinition();
 
-            classDefinition.identifier = uri;
+            classDefinition.identifier = uri.Replace("<", "").Replace(">", ""); //need without angle brackets
             classDefinition.repositoryName = repository.Name;
             name = new QMXFName();
             description = new Description();
@@ -1781,7 +1781,7 @@ namespace org.iringtools.refdata
       }
     }
 
-    private int getIndexFromName(string name)
+    private int GetIndexFromName(string name)
     {
       try
       {
@@ -2446,7 +2446,8 @@ namespace org.iringtools.refdata
                     {
                       if (repository.RepositoryType == RepositoryType.Part8)
                       {
-
+                        GenerateTemplateSpesialization(ref delete, templateID, os.reference, oldTQ);
+                        GenerateTemplateSpesialization(ref insert, templateID, ns.reference, newTQ);
                       }
                       else
                       {
@@ -2799,6 +2800,15 @@ namespace org.iringtools.refdata
 
       return response;
     }
+
+    private void GenerateTemplateSpesialization(ref Graph work, string templateID, string qualifies, TemplateQualification oldTQ)
+    {
+      subj = work.CreateUriNode(string.Format("tpl:{0}", templateID));
+      pred = work.CreateUriNode(rdfssubClassOf);
+      obj = work.CreateUriNode(string.Format("tpl:{0}", qualifies));
+      work.Assert(new Triple(subj, pred, obj));
+    }
+
     public Response PostClass(QMXF qmxf)
     {
       Graph delete = new Graph();
