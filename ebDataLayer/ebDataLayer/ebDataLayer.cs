@@ -175,7 +175,7 @@ namespace org.iringtools.adapter.datalayer.eb
             continue;
 
           EqlClient eqlClient = new EqlClient(_session);
-          List<string> subClassIds = eqlClient.GetSubClassIds(className, groupId);
+          List<string> subClassIds = eqlClient.GetSubClassIds(className);
 
           DataObject objDef = new DataObject();
           objDef.objectNamespace = group.Name;
