@@ -175,13 +175,13 @@ namespace org.iringtools.adapter.datalayer.eb
             continue;
 
           EqlClient eqlClient = new EqlClient(_session);
-          List<string> subClassCodes = eqlClient.GetSubClassCodes(className);
+          List<string> subClassIds = eqlClient.GetSubClassIds(className, groupId);
 
           DataObject objDef = new DataObject();
           objDef.objectNamespace = group.Name;
           objDef.objectName = objectName;
-          objDef.tableName = (subClassCodes.Count == 0)
-            ? className : string.Join(",", subClassCodes.ToArray());
+          objDef.tableName = (subClassIds.Count == 0)
+            ? className : string.Join(",", subClassIds.ToArray());
           objDef.keyDelimeter = _keyDelimiter;
 
           Map codeMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Code);
@@ -301,16 +301,15 @@ namespace org.iringtools.adapter.datalayer.eb
           Connect();
 
           int objType = (int)_config.Template.ObjectType;
-          string classCodes = "'" + string.Join("','", objDef.tableName.Split(',')) + "'";
           string eql = string.Empty;
 
           if (objType == (int)ObjectType.Tag)
           {
-            eql = string.Format("START WITH Tag WHERE Class.Code IN ({0}) AND Code NOT IN ({0})", classCodes);
+            eql = string.Format("START WITH Tag WHERE Class.Id IN ({0})", objDef.tableName);
           }
           else if (objType == (int)ObjectType.Document)
           {
-            eql = string.Format("START WITH Document WHERE Class.Code IN ({0}) AND Code NOT IN ({0})", classCodes);
+            eql = string.Format("START WITH Document WHERE Class.Id IN ({0})", objDef.tableName);
           }
           else
           {
@@ -361,7 +360,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
-            string eql = "START WITH {0} SELECT {1} WHERE Class.Code IN ({2})";
+            string eql = "START WITH {0} SELECT {1} WHERE Class.Id IN ({2})";
             StringBuilder builder = new StringBuilder();
 
             foreach (DataProperty dataProp in objDef.dataProperties)
