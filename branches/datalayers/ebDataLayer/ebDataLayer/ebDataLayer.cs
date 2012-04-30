@@ -156,6 +156,7 @@ namespace org.iringtools.adapter.datalayer.eb
         foreach (XmlNode coNode in cosDoc.DocumentElement.ChildNodes)
         {
           string classCode = coNode.SelectSingleNode("code").InnerText;
+          string classId = coNode.SelectSingleNode("class_id").InnerText;
           string className = coNode.SelectSingleNode("name").InnerText;
           int groupId = int.Parse(coNode.SelectSingleNode("group_id").InnerText);
           GroupType group = null;
@@ -181,7 +182,7 @@ namespace org.iringtools.adapter.datalayer.eb
           objDef.objectNamespace = group.Name;
           objDef.objectName = objectName;
           objDef.tableName = (subClassIds.Count == 0)
-            ? className : string.Join(",", subClassIds.ToArray());
+            ? classId : string.Join(",", subClassIds.ToArray());
           objDef.keyDelimeter = _keyDelimiter;
 
           Map codeMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Code);
