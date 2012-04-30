@@ -186,7 +186,7 @@ namespace org.iringtools.adaper.datalayer.eb
       }
     }
 
-    public List<string> GetSubClassIds(string className, int groupId)
+    public List<string> GetSubClassIds(string className)
     {
       try
       {
