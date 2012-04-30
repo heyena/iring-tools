@@ -58,7 +58,9 @@ namespace org.iringtools.adaper.datalayer.eb.test
         string objectType = scenario.ObjectType;
         string padding = scenario.IdentifierPadding;
         Properties properties = scenario.Properties;
-        DataFilter dataFilter = Utility.DeserializeDataContract<DataFilter>(scenario.DataFilter);
+        DataFilter dataFilter = (scenario.DataFilter != null)
+          ? Utility.DeserializeDataContract<DataFilter>(scenario.DataFilter)
+          : new DataFilter();
 
         #region Test get count
         Console.WriteLine("Testing get count ...");
