@@ -53,7 +53,7 @@ namespace org.iringtools.adaper.datalayer.test
 
       foreach (Scenario scenario in _scenarios)
       {
-        Console.WriteLine(string.Format("Executing scenario [{0}] ...", scenario.Name));
+        Console.WriteLine(string.Format("\nExecuting scenario [{0}] ...", scenario.Name));
 
         string objectType = scenario.ObjectType;
         string padding = scenario.IdentifierPadding;

@@ -16,6 +16,7 @@ using log4net;
 using org.iringtools.adaper.datalayer.eb;
 using System.Xml.Linq;
 using StaticDust.Configuration;
+using System.IO;
 
 namespace org.iringtools.adapter.datalayer.eb
 {
@@ -69,12 +70,13 @@ namespace org.iringtools.adapter.datalayer.eb
     private string _dataSource = string.Empty;
     private string _userName = string.Empty;
     private string _password = string.Empty;
+    private string _communityName = string.Empty;
     private string _classObjects = string.Empty;
     private string _keyDelimiter = string.Empty;
 
     private Proxy _proxy = null;
     private Session _session = null;
-    private Configuration _config = null;
+    private Dictionary<string, Configuration> _configs = null;
     private Rules _rules = null;
 
     [Inject]
@@ -116,24 +118,31 @@ namespace org.iringtools.adapter.datalayer.eb
           _keyDelimiter = ";";
         }
 
-        Connect();
+        _communityName = _settings["ebCommunityName"];
+        string[] configFiles = Directory.GetFiles(_dataPath, "*" + _communityName + ".xml");
+        string ruleFile = _dataPath + "Rules_" + _communityName + ".xml";
 
-        int docId = int.Parse(_settings["ebDocId"]);
-        string communityName = _settings["ebCommunityName"];
+        //
+        // Load configuration files
+        //
+        _configs = new Dictionary<string, Configuration>(StringComparer.OrdinalIgnoreCase);      
+  
+        foreach (string configFile in configFiles)
+        {
+          if (configFile.ToLower() != ruleFile.ToLower())
+          {
+            string fileName = Path.GetFileName(configFile);
+            Configuration config = Utility.Read<Configuration>(configFile, false);
+            _configs[fileName] = config;
+          }
+        }
 
-        EqlClient eqlClient = new EqlClient(_session);
-        string templateName = eqlClient.GetDocumentTemplate(docId);
-
-        _config = Utility.Read<Configuration>(_dataPath + templateName + "_" + communityName + ".xml", false);
-        _rules = Utility.Read<Rules>(_dataPath + "Rules_" + communityName + ".xml", false);
+        // Load rule file
+        _rules = Utility.Read<Rules>(ruleFile, false);
       }
       catch (Exception e)
       {
         _logger.Error("Error initializing ebDataLayer: " + e.Message);
-      }
-      finally
-      {
-        Disconnect();
       }
     }
 
@@ -190,7 +199,8 @@ namespace org.iringtools.adapter.datalayer.eb
         {
           Connect();
 
-          int objType = (int)_config.Template.ObjectType;
+          Configuration config = GetConfiguration(objDef);
+          int objType = (int)config.Template.ObjectType;
           string classIds = objDef.tableName.Replace("_", ",");
           string eql = string.Empty;
 
@@ -400,6 +410,7 @@ namespace org.iringtools.adapter.datalayer.eb
         DataDictionary dictionary = GetDictionary();
         string objType = ((GenericDataObject)dataObjects[0]).ObjectType;
         DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objType.ToLower());
+        Configuration config = GetConfiguration(objDef);
 
         Connect();
 
@@ -409,7 +420,7 @@ namespace org.iringtools.adapter.datalayer.eb
           string keyValue = Convert.ToString(dataObject.GetPropertyValue(keyProp.keyPropertyName));
 
           string revision = string.Empty;
-          Map revisionMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Revision);
+          Map revisionMap = config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Revision);
           if (revisionMap != null)
           {
             string propertyName = Utilities.ToPropertyName(revisionMap.Column);
@@ -417,8 +428,8 @@ namespace org.iringtools.adapter.datalayer.eb
           }
 
           EqlClient eql = new EqlClient(_session);
-          int objectId = eql.GetObjectId(keyValue, revision, _config.Template.ObjectType);
-          org.iringtools.adaper.datalayer.eb.Template template = _config.Template;
+          int objectId = eql.GetObjectId(keyValue, revision, config.Template.ObjectType);
+          org.iringtools.adaper.datalayer.eb.Template template = config.Template;
 
           if (objectId == 0)  // does not exist, create
           {
@@ -442,7 +453,7 @@ namespace org.iringtools.adapter.datalayer.eb
           }
 
           string objectType = Enum.GetName(typeof(ObjectType), template.ObjectType);
-          ebProcessor processor = new ebProcessor(_session, _config.Mappings.ToList<Map>(), _rules);
+          ebProcessor processor = new ebProcessor(_session, config.Mappings.ToList<Map>(), _rules);
 
           if (objectType == ObjectType.Tag.ToString())
           {
@@ -496,7 +507,8 @@ namespace org.iringtools.adapter.datalayer.eb
             Connect();
 
             EqlClient eqlClient = new EqlClient(_session);
-            int objType = (int)_config.Template.ObjectType;
+            Configuration config = GetConfiguration(objDef);
+            int objType = (int)config.Template.ObjectType;
 
             foreach (string identifier in identifiers)
             {
@@ -592,6 +604,23 @@ namespace org.iringtools.adapter.datalayer.eb
       }
 
       return response;
+    }
+
+    protected Configuration GetConfiguration(DataObject objDef)
+    {
+      string fileName = objDef.objectNamespace + "_" + 
+        Regex.Replace(objDef.objectName, @"\(.*\)", string.Empty) + "_" + _communityName + ".xml";
+
+      // use specific config for object type if available
+      if (_configs.ContainsKey(fileName))
+        return _configs[fileName];
+
+      // specific config does not exist, look for higher scope configuration
+      fileName = objDef.objectNamespace + "_" + _communityName + ".xml";
+      if (_configs.ContainsKey(fileName))
+        return _configs[fileName];
+
+      return null;
     }
 
     protected void Connect()
@@ -713,7 +742,11 @@ namespace org.iringtools.adapter.datalayer.eb
       objDef.tableName = string.Join("_", classObject.Ids.ToArray());
       objDef.keyDelimeter = _keyDelimiter;
 
-      Map codeMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Code);
+      Configuration config = GetConfiguration(objDef);
+      if (config == null)
+        return null;
+
+      Map codeMap = config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Code);
       if (codeMap == null)
       {
         throw new Exception("No mapping configured for key property.");
@@ -750,7 +783,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
 
       // add related properties
-      foreach (Map m in _config.Mappings.Where(x => x.Destination == (int)Destination.Relationship).Select(m => m))
+      foreach (Map m in config.Mappings.Where(x => x.Destination == (int)Destination.Relationship).Select(m => m))
       {
         DataProperty dataProp = new DataProperty();
         string propertyName = Utilities.ToPropertyName(m.Column);
@@ -770,7 +803,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
 
       // add other properties
-      foreach (Map m in _config.Mappings.Where(x => x.Destination != (int)Destination.Relationship &&
+      foreach (Map m in config.Mappings.Where(x => x.Destination != (int)Destination.Relationship &&
         x.Destination != (int)Destination.Attribute && x.Destination != (int)Destination.None).Select(m => m))
       {
         DataProperty dataProp = new DataProperty();
