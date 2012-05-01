@@ -14,7 +14,6 @@ using System.Text.RegularExpressions;
 using eB.Common.Enum;
 using log4net;
 using org.iringtools.adaper.datalayer.eb;
-using org.iringtools.adaper.datalayer.eb.config;
 using System.Xml.Linq;
 using StaticDust.Configuration;
 
@@ -23,6 +22,43 @@ namespace org.iringtools.adapter.datalayer.eb
   public class ebDataLayer : BaseDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ebDataLayer));
+
+    private readonly string TAG_METADATA_QUERY = @"
+      select d.char_name, d.char_data_type, d.char_length, 0 as is_system_char from class_objects a 
+      inner join class_attributes c on c.class_id = a.class_id 
+      inner join characteristics d on c.char_id = d.char_id 
+      where d.object_type = {0} 
+      union select 'Id', 'Int32', 255 , 1 
+      union select 'Class.Code', 'String', 255, 1 
+      union select 'Class.Id', 'Int32', 255, 1 
+      union select 'Code', 'String', 100, 1 
+      union select 'Revision', 'String', 100, 1 
+      union select 'Name', 'String', 255, 1 
+      union select 'ChangeControlled', 'String', 1, 1 
+      union select 'DateEffective', 'DateTime', 100, 1 
+      union select 'DateObsolete', 'DateTime', 100, 1 
+      union select 'ApprovalStatus', 'String', 1, 1 
+      union select 'OperationalStatus', 'String', 1, 1 
+      union select 'Quantity', 'Int32', 8, 1 
+      union select 'Description', 'String', 1000, 1";
+
+    private readonly string DOCUMENT_METADATA_QUERY = @"
+      select d.char_name, d.char_data_type, d.char_length, 0 as is_system_char from class_objects a 
+      inner join class_attributes c on c.class_id = a.class_id 
+      inner join characteristics d on c.char_id = d.char_id 
+      where d.object_type = {0} 
+      union select 'Id', 'Int32', 255, 1 
+      union select 'Class.Code', 'String', 255, 1 
+      union select 'Class.Id', 'Int32', 255, 1 
+      union select 'Code', 'String', 100, 1 
+      union select 'Revision', 'String', 100, 1 
+      union select 'Name', 'String', 255, 1 
+      union select 'ChangeControlled', 'String', 1, 1 
+      union select 'DateEffective', 'DateTime', 100, 1 
+      union select 'DateObsolete', 'DateTime', 100, 1 
+      union select 'ApprovalStatus', 'String', 1, 1 
+      union select 'Remark', 'String', 255, 1 
+      union select 'Synopsis', 'String', 255, 1";
 
     private string _dataPath = string.Empty;
     private string _scope = string.Empty;
@@ -33,14 +69,13 @@ namespace org.iringtools.adapter.datalayer.eb
     private string _dataSource = string.Empty;
     private string _userName = string.Empty;
     private string _password = string.Empty;
-    private string _filteredClasses = string.Empty;
+    private string _classObjects = string.Empty;
     private string _keyDelimiter = string.Empty;
 
     private Proxy _proxy = null;
     private Session _session = null;
     private Configuration _config = null;
     private Rules _rules = null;
-    private GroupTypes _groupTypes = null;
 
     [Inject]
     public ebDataLayer(AdapterSettings settings)
@@ -73,12 +108,12 @@ namespace org.iringtools.adapter.datalayer.eb
         _dataSource = _settings["ebDataSource"];
         _userName = _settings["ebUserName"];
         _password = _settings["ebPassword"];
-        _filteredClasses = _settings["ebFilteredClasses"];
+        _classObjects = _settings["ebClassObjects"];
 
         _keyDelimiter = _settings["ebKeyDelimiter"];
         if (_keyDelimiter == null)
         {
-          _keyDelimiter = string.Empty;
+          _keyDelimiter = ";";
         }
 
         Connect();
@@ -89,7 +124,6 @@ namespace org.iringtools.adapter.datalayer.eb
         EqlClient eqlClient = new EqlClient(_session);
         string templateName = eqlClient.GetDocumentTemplate(docId);
 
-        _groupTypes = Utility.Read<GroupTypes>(_dataPath + "GroupTypes.xml", false);
         _config = Utility.Read<Configuration>(_dataPath + templateName + "_" + communityName + ".xml", false);
         _rules = Utility.Read<Rules>(_dataPath + "Rules_" + communityName + ".xml", false);
       }
@@ -118,162 +152,13 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         Connect();
 
+        EqlClient eqlClient = new EqlClient(_session);
+        List<ClassObject> classObjects = GetClassObjects(eqlClient);
+
         _dictionary = new DataDictionary();
-
-        StringBuilder cosQuery = new StringBuilder("SELECT * FROM class_objects");
-
-        if (!string.IsNullOrEmpty(_filteredClasses))
+        foreach (ClassObject classObject in classObjects)
         {
-          string[] classCodes = _filteredClasses.Split(',');
-          cosQuery.Append(" WHERE ");
-
-          for (int i = 0; i < classCodes.Length; i++)
-          {
-            string[] parts = classCodes[i].Trim().Split('.');
-            GroupType groupType = _groupTypes.Single(x => x.Name == parts[0]);
-
-            if (groupType == null)
-            {
-              throw new Exception("Group [" + parts[0] + "] not configured.");
-            }
-
-            string code = parts[1];
-
-            if (i > 0)
-            {
-              cosQuery.Append(" or ");
-            }
-
-            cosQuery.Append(string.Format("(group_id = {0} AND name = '{1}')", groupType.Value, code));
-          }
-        }
-
-        XmlDocument cosDoc = new XmlDocument();
-        int status = 0;
-        string cosResults = _proxy.query(cosQuery.ToString(), ref status);
-        cosDoc.LoadXml(cosResults);
-
-        foreach (XmlNode coNode in cosDoc.DocumentElement.ChildNodes)
-        {
-          string classCode = coNode.SelectSingleNode("code").InnerText;
-          string classId = coNode.SelectSingleNode("class_id").InnerText;
-          string className = coNode.SelectSingleNode("name").InnerText;
-          int groupId = int.Parse(coNode.SelectSingleNode("group_id").InnerText);
-          GroupType group = null;
-
-          try
-          {
-            group = _groupTypes.Single<org.iringtools.adaper.datalayer.eb.GroupType>(x => x.Value == groupId);
-          }
-          catch (Exception e)
-          {
-            _logger.Error("Group type not supported: " + e.Message);
-            throw new Exception(e.Message);
-          }
-
-          string objectName = className + "(" + group.Name + ")";
-          if (_dictionary.dataObjects.Find(x => x.objectName == objectName) != null)
-            continue;
-
-          EqlClient eqlClient = new EqlClient(_session);
-          List<string> subClassIds = eqlClient.GetSubClassIds(className);
-
-          DataObject objDef = new DataObject();
-          objDef.objectNamespace = group.Name;
-          objDef.objectName = objectName;
-          objDef.tableName = (subClassIds.Count == 0)
-            ? classId : string.Join(",", subClassIds.ToArray());
-          objDef.keyDelimeter = _keyDelimiter;
-
-          Map codeMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Code);
-          if (codeMap == null)
-          {
-            throw new Exception("No mapping configured for key property.");
-          }
-
-          objDef.keyProperties = new List<KeyProperty>()
-          {
-            new KeyProperty() { keyPropertyName = codeMap.Column }
-          };
-
-          string metadataQuery = _settings["ebMetadataQuery." + group.Name];
-
-          if (string.IsNullOrEmpty(metadataQuery))
-            throw new Exception("No metadata query configured for group [" + group.Name + "]");
-
-          int objectType = (int)Enum.Parse(typeof(ObjectType), group.Name);
-          string attrsQuery = string.Format(metadataQuery, objectType);
-
-          XmlDocument attrsDoc = new XmlDocument();
-          string attrsResults = _proxy.query(attrsQuery, ref status);
-          attrsDoc.LoadXml(attrsResults);
-
-          foreach (XmlNode attrNode in attrsDoc.DocumentElement.ChildNodes)
-          {
-            DataProperty dataProp = new DataProperty();
-            dataProp.columnName = attrNode.SelectSingleNode("char_name").InnerText;
-
-            string propertyName = Utilities.ToPropertyName(dataProp.columnName);
-            if (objDef.dataProperties.Find(x => x.propertyName == propertyName) != null)
-              continue;
-
-            dataProp.propertyName = propertyName;
-            dataProp.dataType = Utilities.ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
-            dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
-
-            if (attrNode.SelectSingleNode("is_system_char").InnerText == "1")
-            {
-              dataProp.columnName += Utilities.SYSTEM_ATTRIBUTE_TOKEN;
-            }
-            else
-            {
-              dataProp.columnName += Utilities.USER_ATTRIBUTE_TOKEN;
-            }
-
-            objDef.dataProperties.Add(dataProp);
-          }
-
-          // add related properties
-          foreach (Map m in _config.Mappings.Where(x => x.Destination == (int)Destination.Relationship).Select(m => m))
-          {
-            DataProperty dataProp = new DataProperty();            
-            string propertyName = Utilities.ToPropertyName(m.Column);
-            DataProperty checkProp = objDef.dataProperties.Find(x => x.propertyName == propertyName);
-
-            if (checkProp != null)  // property already exists, update its column name
-            {
-              checkProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
-            }
-            else
-            {
-              dataProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
-              dataProp.propertyName = propertyName;
-              dataProp.dataType = DataType.String;
-              objDef.dataProperties.Add(dataProp);
-            }
-          }
-
-          // add other properties
-          foreach (Map m in _config.Mappings.Where(x => x.Destination != (int)Destination.Relationship &&
-            x.Destination != (int)Destination.Attribute && x.Destination != (int)Destination.None).Select(m => m))
-          {
-            DataProperty dataProp = new DataProperty();
-            string propertyName = Utilities.ToPropertyName(m.Column);
-            DataProperty checkProp = objDef.dataProperties.Find(x => x.propertyName == propertyName);
-
-            if (checkProp != null)  // property already exists, update its column name
-            {
-              checkProp.columnName = m.Column + Utilities.OTHER_ATTRIBUTE_TOKEN;
-            }
-            else
-            {
-              dataProp.columnName = m.Column + Utilities.OTHER_ATTRIBUTE_TOKEN;
-              dataProp.propertyName = propertyName;
-              dataProp.dataType = DataType.String;
-              objDef.dataProperties.Add(dataProp);
-            }
-          }
-          
+          DataObject objDef = CreateObjectDefinition(classObject);
           _dictionary.dataObjects.Add(objDef);
         }
 
@@ -528,7 +413,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
           EqlClient eql = new EqlClient(_session);
           int objectId = eql.GetObjectId(keyValue, revision, _config.Template.ObjectType);
-          org.iringtools.adaper.datalayer.eb.config.Template template = _config.Template;
+          org.iringtools.adaper.datalayer.eb.Template template = _config.Template;
 
           if (objectId == 0)  // does not exist, create
           {
@@ -736,7 +621,169 @@ namespace org.iringtools.adapter.datalayer.eb
       }
     }
 
-    protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.config.Template template, DataObject objectDefinition, IDataObject dataObject)
+    protected List<ClassObject> GetClassObjects(EqlClient eqlClient)
+    {
+      List<ClassObject> classObjects = new List<ClassObject>();
+
+      if (string.IsNullOrEmpty(_classObjects))
+      {
+        string eql = @"START WITH Class SELECT ClassGroup.Id GroupId, ClassGroup.ObjectType ObjectType, Path
+                       WHERE ClassGroup.Id IN (1,17) AND Path NOT LIKE '%\%' ORDER BY ClassGroup.Id, Path";
+
+        DataTable dt = eqlClient.RunQuery(eql);
+
+        foreach (DataRow row in dt.Rows)
+        {
+          int groupId = (int)row["GroupId"];
+          string groupName = Enum.GetName(typeof(GroupType), groupId);
+          string path = row["Path"].ToString();
+
+          ClassObject classObject = new ClassObject()
+          {
+            Name = path,
+            ObjectType = (ObjectType)(row["ObjectType"]),
+            GroupId = groupId,
+            Ids = eqlClient.GetClassIds(groupId, path)
+          };
+
+          classObjects.Add(classObject);
+        }
+      }
+      else
+      {
+        string[] cosParts = _classObjects.Split(',');
+
+        for (int i = 0; i < cosParts.Length; i++)
+        {
+          string[] coParts = cosParts[i].Trim().Split('.');
+          string groupName = coParts[0];
+          string className = coParts[1];
+
+          ClassObject classObject = new ClassObject()
+          {
+            Name = className,
+            ObjectType = (ObjectType)Enum.Parse(typeof(ObjectType), groupName),
+            GroupId = (int)Enum.Parse(typeof(GroupType), groupName),
+            Ids = eqlClient.GetClassIds((int)Enum.Parse(typeof(GroupType), groupName), className)
+          };
+
+          classObjects.Add(classObject);
+        }
+      }
+
+      return classObjects;
+    }
+
+    public DataObject CreateObjectDefinition(ClassObject classObject)
+    {
+      string metadataQuery = string.Empty;
+
+      if (classObject.ObjectType == ObjectType.Tag)
+      {
+        metadataQuery = string.Format(TAG_METADATA_QUERY, (int)ObjectType.Tag);
+      }
+      else if (classObject.ObjectType == ObjectType.Document)
+      {
+        metadataQuery = string.Format(DOCUMENT_METADATA_QUERY, (int)ObjectType.Document);
+      }
+      else
+      {
+        throw new Exception(string.Format("Object type [{0}] not supported.", classObject.ObjectType));
+      }
+
+      int status = 0;
+      string result = _proxy.query(metadataQuery, ref status);
+      XmlDocument resultXml = new XmlDocument();
+      resultXml.LoadXml(result);
+
+      string type = Enum.GetName(typeof(ObjectType), classObject.ObjectType);
+      DataObject objDef = new DataObject();
+      objDef.objectNamespace = type;
+      objDef.objectName = classObject.Name + "(" + type + ")";
+      objDef.tableName = string.Join(",", classObject.Ids.ToArray());
+      objDef.keyDelimeter = _keyDelimiter;
+
+      Map codeMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Code);
+      if (codeMap == null)
+      {
+        throw new Exception("No mapping configured for key property.");
+      }
+
+      objDef.keyProperties = new List<KeyProperty>()
+      {
+        new KeyProperty() { keyPropertyName = codeMap.Column }
+      };
+
+      foreach (XmlNode attrNode in resultXml.DocumentElement.ChildNodes)
+      {
+        DataProperty dataProp = new DataProperty();
+        dataProp.columnName = attrNode.SelectSingleNode("char_name").InnerText;
+
+        string propertyName = Utilities.ToPropertyName(dataProp.columnName);
+        if (objDef.dataProperties.Find(x => x.propertyName == propertyName) != null)
+          continue;
+
+        dataProp.propertyName = propertyName;
+        dataProp.dataType = Utilities.ToCSharpType(attrNode.SelectSingleNode("char_data_type").InnerText);
+        dataProp.dataLength = Int32.Parse(attrNode.SelectSingleNode("char_length").InnerText);
+
+        if (attrNode.SelectSingleNode("is_system_char").InnerText == "1")
+        {
+          dataProp.columnName += Utilities.SYSTEM_ATTRIBUTE_TOKEN;
+        }
+        else
+        {
+          dataProp.columnName += Utilities.USER_ATTRIBUTE_TOKEN;
+        }
+
+        objDef.dataProperties.Add(dataProp);
+      }
+
+      // add related properties
+      foreach (Map m in _config.Mappings.Where(x => x.Destination == (int)Destination.Relationship).Select(m => m))
+      {
+        DataProperty dataProp = new DataProperty();
+        string propertyName = Utilities.ToPropertyName(m.Column);
+        DataProperty checkProp = objDef.dataProperties.Find(x => x.propertyName == propertyName);
+
+        if (checkProp != null)  // property already exists, update its column name
+        {
+          checkProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
+        }
+        else
+        {
+          dataProp.columnName = m.Column + Utilities.RELATED_ATTRIBUTE_TOKEN;
+          dataProp.propertyName = propertyName;
+          dataProp.dataType = DataType.String;
+          objDef.dataProperties.Add(dataProp);
+        }
+      }
+
+      // add other properties
+      foreach (Map m in _config.Mappings.Where(x => x.Destination != (int)Destination.Relationship &&
+        x.Destination != (int)Destination.Attribute && x.Destination != (int)Destination.None).Select(m => m))
+      {
+        DataProperty dataProp = new DataProperty();
+        string propertyName = Utilities.ToPropertyName(m.Column);
+        DataProperty checkProp = objDef.dataProperties.Find(x => x.propertyName == propertyName);
+
+        if (checkProp != null)  // property already exists, update its column name
+        {
+          checkProp.columnName = m.Column + Utilities.OTHER_ATTRIBUTE_TOKEN;
+        }
+        else
+        {
+          dataProp.columnName = m.Column + Utilities.OTHER_ATTRIBUTE_TOKEN;
+          dataProp.propertyName = propertyName;
+          dataProp.dataType = DataType.String;
+          objDef.dataProperties.Add(dataProp);
+        }
+      }
+
+      return objDef;
+    }
+
+    protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.Template template, DataObject objectDefinition, IDataObject dataObject)
     {
       if ((template.Placeholders == null) || (template.Placeholders.Count() == 0))
       {
