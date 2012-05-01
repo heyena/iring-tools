@@ -159,7 +159,11 @@ namespace org.iringtools.adapter.datalayer.eb
         foreach (ClassObject classObject in classObjects)
         {
           DataObject objDef = CreateObjectDefinition(classObject);
-          _dictionary.dataObjects.Add(objDef);
+
+          if (objDef != null)
+          {
+            _dictionary.dataObjects.Add(objDef);
+          }
         }
 
         Utility.Write<DataDictionary>(_dictionary, _dictionaryPath);
@@ -187,15 +191,16 @@ namespace org.iringtools.adapter.datalayer.eb
           Connect();
 
           int objType = (int)_config.Template.ObjectType;
+          string classIds = objDef.tableName.Replace("_", ",");
           string eql = string.Empty;
 
           if (objType == (int)ObjectType.Tag)
           {
-            eql = string.Format("START WITH Tag WHERE Class.Id IN ({0})", objDef.tableName);
+            eql = string.Format("START WITH Tag WHERE Class.Id IN ({0})", classIds);
           }
           else if (objType == (int)ObjectType.Document)
           {
-            eql = string.Format("START WITH Document WHERE Class.Id IN ({0})", objDef.tableName);
+            eql = string.Format("START WITH Document WHERE Class.Id IN ({0})", classIds);
           }
           else
           {
@@ -242,7 +247,7 @@ namespace org.iringtools.adapter.datalayer.eb
         if (objDef != null)
         {
           string classObject = objDef.objectNamespace;
-          string classCodes = "'" + string.Join("','", objDef.tableName.Split(',')) + "'";
+          string classIds = objDef.tableName.Replace("_", ",");
 
           if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
           {
@@ -262,7 +267,7 @@ namespace org.iringtools.adapter.datalayer.eb
               }
             }
 
-            eql = string.Format(eql, classObject, builder.ToString(), classCodes);
+            eql = string.Format(eql, classObject, builder.ToString(), classIds);
 
             string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
             if (!string.IsNullOrEmpty(whereClause))
@@ -676,6 +681,11 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public DataObject CreateObjectDefinition(ClassObject classObject)
     {
+      if (classObject.Ids == null || classObject.Ids.Count == 0)
+      {
+        return null;
+      }
+
       string metadataQuery = string.Empty;
 
       if (classObject.ObjectType == ObjectType.Tag)
@@ -700,7 +710,7 @@ namespace org.iringtools.adapter.datalayer.eb
       DataObject objDef = new DataObject();
       objDef.objectNamespace = type;
       objDef.objectName = classObject.Name + "(" + type + ")";
-      objDef.tableName = string.Join(",", classObject.Ids.ToArray());
+      objDef.tableName = string.Join("_", classObject.Ids.ToArray());
       objDef.keyDelimeter = _keyDelimiter;
 
       Map codeMap = _config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Code);
