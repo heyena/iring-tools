@@ -186,19 +186,18 @@ namespace org.iringtools.adaper.datalayer.eb
       }
     }
 
-    public List<string> GetSubClassIds(string className)
+    public List<int> GetClassIds(int groupId, string path)
     {
       try
       {
-        string eql = string.Format("START WITH Class SELECT Id WHERE Path LIKE '{0}\\%'", className);
+        string eql = string.Format("START WITH Class SELECT Id WHERE ClassGroup.Id={0} AND Path LIKE '{1}\\%'", groupId, path);
         eB.Data.Search s = new Search(_session, eql);
         DataTable dt = s.Retrieve<DataTable>();
-
-        List<string> classIds = new List<string>();
+        List<int> classIds = new List<int>();
 
         foreach (DataRow row in dt.Rows)
         {
-          classIds.Add(row["Id"].ToString());
+          classIds.Add(int.Parse(row["Id"].ToString()));
         }
 
         return classIds;

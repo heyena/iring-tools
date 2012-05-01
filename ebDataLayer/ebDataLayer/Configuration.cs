@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace org.iringtools.adaper.datalayer.eb.config
+namespace org.iringtools.adaper.datalayer.eb
 {
   [XmlType("configuration")]
   public class Configuration

@@ -12,7 +12,7 @@ using System.Text;
 using org.iringtools.adapter.datalayer.eb;
 using log4net;
 
-namespace org.iringtools.adaper.datalayer.eb.test
+namespace org.iringtools.adaper.datalayer.test
 {
   [TestFixture]
   public class Tests
