@@ -19,7 +19,7 @@
       <rule order="0">1</rule>
     </map>
     <!--<map columnname="Comm Grp Code" destination="0"/>-->
-    <map columnname="Description" destination="5"/>
+    <!--<map columnname="Description" destination="5"/>-->
     <map columnname="Component Function Name (CFN)" destination="1"/>
     <map columnname="P&amp;ID" destination="2">
       <rule order="0">2</rule>
