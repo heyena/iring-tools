@@ -39,6 +39,8 @@ namespace org.iringtools.adaper.datalayer.test
     [Test]
     public void RunTest()
     {
+      int MAX_ITEMS = 25;
+
       #region Test dictionary
       Console.WriteLine("\nTesting get dictionary ...");
       DataDictionary dictionary = _dataLayer.GetDictionary();
@@ -68,7 +70,7 @@ namespace org.iringtools.adaper.datalayer.test
         Assert.Greater(count, 0);
         #endregion
 
-        if (count > 25) count = 25;
+        if (count > MAX_ITEMS) count = MAX_ITEMS;
 
         #region Test get page
         Console.WriteLine("Testing get page ...");
@@ -83,8 +85,12 @@ namespace org.iringtools.adaper.datalayer.test
         #endregion
 
         #region Test get by identifiers
-        Console.WriteLine("Testing get by identifiers ..."); 
-        dataObjects = _dataLayer.Get(objectType, identifiers);
+        Console.WriteLine("Testing get by identifiers ...");
+        if (identifiers.Count > MAX_ITEMS)
+          dataObjects = _dataLayer.Get(objectType, (((List<string>)identifiers).GetRange(0, MAX_ITEMS - 1)));
+        else
+          dataObjects = _dataLayer.Get(objectType, identifiers);
+        Assert.Greater(dataObjects.Count, 0);
         Assert.Greater(dataObjects.Count, 0);
         #endregion
 
