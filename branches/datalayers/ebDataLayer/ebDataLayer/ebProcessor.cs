@@ -97,6 +97,7 @@ namespace org.iringtools.adaper.datalayer.eb
       {
         Document doc = new Document(_session, id);
         doc.Retrieve("Header;Attributes");
+        doc.Code = key;
 
         if (!SetName(ref doc, key))
         {
@@ -106,21 +107,7 @@ namespace org.iringtools.adaper.datalayer.eb
         Utilities.Append(ref status, SetAttributes(ref doc));
         Utilities.Append(ref status, SetRelationships(doc));
 
-        //doc.Save();  // for future eB API
-
-        _session.Writer.ChgDocument(
-          doc.Id,
-          Constants.NoChangeString,
-          doc.Code,
-          doc.Revision,
-          doc.Class.Id,
-          doc.Name,
-          Constants.NoChangeString,
-          Constants.NoChangeString,
-          doc.Remark,
-          doc.Synopsis,
-          (DateTime)doc.DateEffective,
-          (DateTime)doc.DateObsolete);
+        doc.Save();
 
         status.Messages.Add(string.Format("Document [{0}] saved successfully.", key));
       }

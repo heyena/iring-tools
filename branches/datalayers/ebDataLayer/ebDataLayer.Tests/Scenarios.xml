@@ -19,23 +19,11 @@
     </properties>
     <dataFilter>&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter"&gt;&lt;expressions&gt;&lt;expression&gt;&lt;propertyName&gt;CommGrpCode&lt;/propertyName&gt;&lt;relationalOperator&gt;EqualTo&lt;/relationalOperator&gt;&lt;values&gt;&lt;value&gt;MT&lt;/value&gt;&lt;/values&gt;&lt;/expression&gt;&lt;expression&gt;&lt;propertyName&gt;Code&lt;/propertyName&gt;&lt;relationalOperator&gt;Contains&lt;/relationalOperator&gt;&lt;values&gt;&lt;value&gt;CCW&lt;/value&gt;&lt;/values&gt;&lt;logicalOperator&gt;And&lt;/logicalOperator&gt;&lt;/expression&gt;&lt;/expressions&gt;&lt;orderExpressions /&gt;&lt;/dataFilter&gt;</dataFilter>
   </scenario>
-  <!--<scenario>
+  <scenario>
     <name>Mechanical Document Test</name>
-    <objectType>Mechanical(Document)</objectType>
+    <objectType>Drawing(Document)</objectType>
     <identifierPadding>_</identifierPadding>
-    --><!--<properties>
-      <property>Code</property>
-      <property>CommGrpCode</property>
-          <property>
-        <name>Code</name>
-      </property>
-      <property>
-        <name>Description</name>
-        <value>Lines Test Document</value>
-      </property>
-    </properties>
-    <dataFilter>&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter"&gt;&lt;expressions&gt;&lt;expression&gt;&lt;propertyName&gt;CommGrpCode&lt;/propertyName&gt;&lt;relationalOperator&gt;EqualTo&lt;/relationalOperator&gt;&lt;values&gt;&lt;value&gt;MT&lt;/value&gt;&lt;/values&gt;&lt;/expression&gt;&lt;expression&gt;&lt;propertyName&gt;Code&lt;/propertyName&gt;&lt;relationalOperator&gt;Contains&lt;/relationalOperator&gt;&lt;values&gt;&lt;value&gt;CCW&lt;/value&gt;&lt;/values&gt;&lt;logicalOperator&gt;And&lt;/logicalOperator&gt;&lt;/expression&gt;&lt;/expressions&gt;&lt;orderExpressions /&gt;&lt;/dataFilter&gt;</dataFilter>--><!--
     <properties/>
     <dataFilter xmlns="http://www.iringtools.org/data/filter"/>  
-  </scenario>-->
+  </scenario>
 </senarios>

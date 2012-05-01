@@ -73,7 +73,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="M6" />
+      <check column="Class.Code" value="M6" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -99,7 +99,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="M6" />
+      <check column="Class.Code" value="M6" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -115,7 +115,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="-D" operator="endswith" />
+      <check column="Class.Code" value="-D" operator="endswith" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -131,7 +131,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="3SS" operator="=" />
+      <check column="Class.Code" value="3SS" operator="=" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -147,7 +147,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="3PS" operator="=" />
+      <check column="Class.Code" value="3PS" operator="=" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -161,7 +161,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="E1" />
+      <check column="Class.Code" value="E1" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -175,7 +175,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="E1" />
+      <check column="Class.Code" value="E1" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -189,7 +189,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="-C" operator="endswith" />
+      <check column="Class.Code" value="-C" operator="endswith" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -203,7 +203,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="MRA" />
+      <check column="Class.Code" value="MRA" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -219,7 +219,7 @@
       <parameter position="0" placeholder="2" seperator="">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="E1" />
+      <check column="Class.Code" value="E1" />
       <check column="Code" value="-E1-YA-" operator="contains" />
     </selfchecks>
     <create>false</create>
@@ -236,7 +236,7 @@
       <parameter position="3" placeholder="2" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="ER" />
+      <check column="Class.Code" value="ER" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -252,7 +252,7 @@
       <parameter position="3" placeholder="2" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="E4" />
+      <check column="Class.Code" value="E4" />
     </selfchecks>
     <create>false</create>
     <createtemplate />
@@ -323,7 +323,7 @@
       <parameter position="3" placeholder="0" seperator="-">Code</parameter>
     </parameters>
     <selfchecks>
-      <check column="Class" value="P1" />
+      <check column="Class.Code" value="P1" />
     </selfchecks >
     <create>false</create>
     <createtemplate />
