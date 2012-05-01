@@ -620,6 +620,7 @@ namespace org.iringtools.adapter.datalayer.eb
       if (_configs.ContainsKey(fileName))
         return _configs[fileName];
 
+      _logger.Error(string.Format("No configuration provided for object type [{0}].", objDef.objectName));        
       return null;
     }
 

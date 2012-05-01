@@ -8,8 +8,8 @@
 			<placeholder id="1">Unit</placeholder>
 		</placeholders>
 	</template>
-	<mapppings>
-		<map columnname="Tag Number" destination="3"/>
+	<mappings>
+		<map columnname="Code" destination="3"/>
 		<map columnname="Unit" destination="2">
 			<rule order="0">3</rule>
 		</map>
@@ -80,6 +80,5 @@
 		<map columnname="Area Locator Code" destination="2">
 			<rule order="0">27</rule>
 		</map>
-	</mapppings>
-	
+	</mappings>	
 </configuration>
