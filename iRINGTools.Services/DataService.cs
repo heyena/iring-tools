@@ -163,8 +163,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{app}/{project}/picklists?format={format}")]
     public void GetPicklists(string project, string app, string format)
     {
-      if (string.IsNullOrWhiteSpace(format))
-        format = "xml";
+      format = MapContentType(format);
       try
       {
         IList<PicklistObject> objs = _adapterProvider.GetPicklists(project, app, format);
@@ -183,8 +182,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{app}/{project}/picklists/{name}?format={format}&start={start}&limit={limit}")]
     public void GetPicklist(string project, string app, string name, string format, int start, int limit)
     {
-      if (string.IsNullOrWhiteSpace(format))
-        format = "xml";
+      format = MapContentType(format);
       try
       {
         Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
