@@ -34,7 +34,6 @@ namespace org.iringtools.adapter
         {
           DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
           serializer.WriteObject(stream, graph);
-          string json = Encoding.Default.GetString(stream.ToArray());
         }
         else
         {
@@ -48,10 +47,6 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
-      }
-      finally
-      {
-        stream.Close();
       }
 
       return stream;
