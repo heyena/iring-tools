@@ -67,8 +67,7 @@ namespace org.iringtools.services
       format = MapContentType(format);
 
       VersionInfo version = _adapterProvider.GetVersion();
-
-      FormatOutgoingMessage<VersionInfo>(version, format, true);
+      _adapterProvider.FormatOutgoingMessage<VersionInfo>(version, format, true);
     }
 
     [Description("Gets object definitions of an application.")]
@@ -79,7 +78,7 @@ namespace org.iringtools.services
 
       Contexts contexts = _adapterProvider.GetContexts(app);
 
-      FormatOutgoingMessage<Contexts>(contexts, format, true);
+      _adapterProvider.FormatOutgoingMessage<Contexts>(contexts, format, true);
     }
 
     [Description("Gets the wadl for an all endpoint.")]
@@ -88,7 +87,7 @@ namespace org.iringtools.services
     {
       WADLApplication wadl = _adapterProvider.GetWADL("all", app);
 
-      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
+      _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
     }
 
     [Description("Gets the wadl for an application.")]
@@ -97,7 +96,7 @@ namespace org.iringtools.services
     {
       WADLApplication wadl = _adapterProvider.GetWADL("app", app);
 
-      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
+      _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
     }
 
     [Description("Gets the wadl for an endpoint.")]
@@ -106,7 +105,7 @@ namespace org.iringtools.services
     {
       WADLApplication wadl = _adapterProvider.GetWADL(project, app);
 
-      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
+      _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
     }
 
     [Description("Gets object definitions of an application.")]
@@ -121,7 +120,7 @@ namespace org.iringtools.services
 
       HttpContext.Current.Response.ContentType = "application/xml";
       HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataDictionary>(dictionary));
-      //FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
+      //_adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
     }
 
     [Description("Gets an XML or JSON projection of the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
@@ -137,7 +136,7 @@ namespace org.iringtools.services
           fullIndex = true;
 
         XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
-        FormatOutgoingMessage(xDocument.Root, format);
+        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
       {
@@ -152,7 +151,7 @@ namespace org.iringtools.services
       try
       {
         object content = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, ref format, false);
-        FormatOutgoingMessage(content, format);
+        _adapterProvider.FormatOutgoingMessage(content, format);
       }
       catch (Exception ex)
       {
@@ -170,9 +169,9 @@ namespace org.iringtools.services
       {
         IList<PicklistObject> objs = _adapterProvider.GetPicklists(project, app, format);
         if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
-          FormatOutgoingMessage<IList<PicklistObject>>(objs, format, true);
+          _adapterProvider.FormatOutgoingMessage<IList<PicklistObject>>(objs, format, true);
         else
-          FormatOutgoingMessage<IList<PicklistObject>>(objs, format, false);
+          _adapterProvider.FormatOutgoingMessage<IList<PicklistObject>>(objs, format, false);
       }
       catch (Exception ex)
       {
@@ -190,9 +189,9 @@ namespace org.iringtools.services
       {
         Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
         if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
-          FormatOutgoingMessage<Picklists>(obj, format, true);
+          _adapterProvider.FormatOutgoingMessage<Picklists>(obj, format, true);
         else
-          FormatOutgoingMessage<Picklists>(obj, format, false);
+          _adapterProvider.FormatOutgoingMessage<Picklists>(obj, format, false);
       }
       catch (Exception ex)
       {
@@ -215,7 +214,7 @@ namespace org.iringtools.services
           fullIndex = true;
 
         XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, filter, ref format, start, limit, fullIndex);
-        FormatOutgoingMessage(xDocument.Root, format);
+        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
       {
@@ -236,7 +235,7 @@ namespace org.iringtools.services
           fullIndex = true;
 
         XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
-        FormatOutgoingMessage(xDocument.Root, format);
+        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
       {
@@ -260,13 +259,13 @@ namespace org.iringtools.services
           {
             // id is clazz, related is individual
             object content = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, false);
-            FormatOutgoingMessage(content, format);
+            _adapterProvider.FormatOutgoingMessage(content, format);
           }
         }
         else
         {
           XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, start, limit);
-          FormatOutgoingMessage(xDocument.Root, format);
+          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
         }
       }
       catch (Exception ex)
@@ -294,7 +293,7 @@ namespace org.iringtools.services
         else
         {
           XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, relatedId, ref format);
-          FormatOutgoingMessage(xDocument.Root, format);
+          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
         }
       }
       catch (Exception ex)
@@ -319,7 +318,7 @@ namespace org.iringtools.services
 
         Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
 
-        FormatOutgoingMessage<Response>(response, format, true);
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
       }
     }
 
@@ -341,7 +340,7 @@ namespace org.iringtools.services
         response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
       }
 
-      FormatOutgoingMessage<Response>(response, format, true);
+      _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
@@ -360,7 +359,7 @@ namespace org.iringtools.services
 
         Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
 
-        FormatOutgoingMessage<Response>(response, format, true);
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
       }
     }
 
@@ -372,7 +371,7 @@ namespace org.iringtools.services
 
       Response response = _adapterProvider.DeleteIndividual(project, app, graph, id);
 
-      FormatOutgoingMessage<Response>(response, format, true);
+      _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
     }
 
     [Description("Get summary of an application based on configuration.")]
@@ -467,40 +466,6 @@ namespace org.iringtools.services
     #endregion
 
     #region Private Methods
-    private void FormatOutgoingMessage(XElement xElement, string format)
-    {
-      if (format == null)
-      {
-        format = String.Empty;
-      }
-
-      if (format.ToUpper() == "HTML")
-      {
-        HttpContext.Current.Response.ContentType = "text/html";
-        HttpContext.Current.Response.Write(xElement.ToString());
-      }
-      else if (format.ToUpper() == "JSON")
-      {
-        byte[] json = new byte[0];
-        
-        if (xElement != null)
-        {
-          DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
-          MemoryStream ms = Utility.SerializeToStreamJSON<DataItems>(dataItems, false);
-          json = ms.ToArray();
-          ms.Close();
-        }
-
-        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-        HttpContext.Current.Response.Write(Encoding.UTF8.GetString(json, 0, json.Length));
-      }
-      else
-      {
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(xElement.ToString());
-      }
-    }
-
     private string MapContentType(string format)
     {
       IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
@@ -568,43 +533,6 @@ namespace org.iringtools.services
       }
 
       return graph;
-    }
-
-    private void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
-    {
-      if (format.ToUpper() == "JSON")
-      {
-        string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
-        
-        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-        HttpContext.Current.Response.Write(json);
-      }
-      else
-      {
-        string xml = Utility.Serialize<T>(graph, useDataContractSerializer);
-
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(xml);
-      }
-    }
-
-    private void FormatOutgoingMessage(object content, string format)
-    {
-      if (typeof(IContentObject).IsInstanceOfType(content))
-      {
-        IContentObject contentObject = (IContentObject)content;
-        HttpContext.Current.Response.ContentType = contentObject.contentType;
-        HttpContext.Current.Response.BinaryWrite(contentObject.content.ToMemoryStream().GetBuffer());
-      }
-      else if (content.GetType() == typeof(XDocument))
-      {
-        XDocument xDoc = (XDocument)content;
-        FormatOutgoingMessage(xDoc.Root, format);
-      }
-      else
-      {
-        throw new Exception("Invalid response type from DataLayer.");
-      }
     }
 
     private void ExceptionHandler(Exception ex)

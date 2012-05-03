@@ -33,11 +33,8 @@ namespace org.iringtools.library
 
     [DataMember(Name = "properties", Order = 1, EmitDefaultValue = false)]
     public Dictionary<string, string> properties { get; set; }
-    
-    [DataMember(Name = "content", Order = 2, EmitDefaultValue = false)]
-    public string content { get; set; }
 
-    [DataMember(Name = "links", Order = 3, EmitDefaultValue = false)]
+    [DataMember(Name = "links", Order = 2, EmitDefaultValue = false)]
     public List<Link> links { get; set; }
   }
 
@@ -49,5 +46,5 @@ namespace org.iringtools.library
 
     [DataMember(Name = "rel", Order = 1)]
     public string rel { get; set; }
-  }
+  }  
 }

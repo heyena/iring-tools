@@ -63,8 +63,6 @@
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Types\Category.cs" />
-    <Compile Include="Types\Priority.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WebClient.cs" />
     <Compile Include="WebCredentials.cs" />
