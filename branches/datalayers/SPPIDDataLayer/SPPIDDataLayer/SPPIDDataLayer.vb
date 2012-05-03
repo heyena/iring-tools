@@ -63,7 +63,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 
     <Inject()>
-    Public Sub New(settings As AdapterSettings)
+    Public Sub New(ByVal settings As AdapterSettings)
 
         MyBase.New(settings)
 
@@ -155,18 +155,39 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
 
-            _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+            '_dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
 
             _dataDictionary = Utility.Read(Of DataDictionary)(path)
             Return _dataDictionary
 
         Else
-            Return New DataDictionary()
+            ''Call Configure
+            Dim _xElement As System.Xml.Linq.XElement = Nothing
+            Dim _response As Response = Configure(_xElement)
+            If _response.Level = StatusLevel.Success Then
+                Dim tablename As List(Of String) = LoadDataTable(_stageConn.ConnectionString)
+                _dataDictionary = LoadDataObjects(tablename, _stageConn.ConnectionString)
+                Dim _databaseDictionary As New DatabaseDictionary()
+                _databaseDictionary.dataObjects = _dataDictionary.dataObjects
+                _databaseDictionary.ConnectionString = EncryptionUtility.Encrypt(_stageConn.ConnectionString)
+                _databaseDictionary.Provider = "MSSQL2008"
+                _databaseDictionary.SchemaName = "dbo"
+
+
+                Utility.Write(Of DatabaseDictionary)(_databaseDictionary, [String].Format("{0}{1}DataBaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
+                Utility.Write(Of DataDictionary)(_dataDictionary, [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
+                Return _dataDictionary
+            Else
+                _logger.Error("Error while configuring SP P&ID data layer:  '" & _response.Messages(0))
+                Return (New DataDictionary())
+            End If
+
+
 
         End If
     End Function
 
-    Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
+    Public Overrides Function GetDataTable(ByVal tableName As String, ByVal identifiers As IList(Of String)) As System.Data.DataTable
 
         Dim filter As DataFilter = FormMultipleKeysFilter(identifiers)
         _projConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
@@ -190,7 +211,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-    Public Overrides Function GetDataTable(tableName As String, whereClause As String, start As Long, limit As Long) As System.Data.DataTable
+    Public Overrides Function GetDataTable(ByVal tableName As String, ByVal whereClause As String, ByVal start As Long, ByVal limit As Long) As System.Data.DataTable
         'Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
 
         Dim query As String = "SELECT * FROM " & tableName & " " & whereClause
@@ -207,7 +228,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-    Public Overrides Function GetCount(tableName As String, whereClause As String) As Long
+    Public Overrides Function GetCount(ByVal tableName As String, ByVal whereClause As String) As Long
 
         Dim dataObjects As DataTable = GetDataTable(tableName, whereClause, 0, 0)
 
@@ -245,7 +266,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-    Public Overrides Function PostDataTables(dataTables As IList(Of System.Data.DataTable)) As Response
+    Public Overrides Function PostDataTables(ByVal dataTables As IList(Of System.Data.DataTable)) As Response
 
         Dim tableName As String = dataTables.First().TableName
         Dim query As String = "SELECT * FROM " & tableName
@@ -308,7 +329,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             If AppSettings("iRingStagingConnectionString") = Nothing Then
                 AppSettings("iRingStagingConnectionString") = String.Empty
             End If
-         
+
             _sppidconfiguration = New SPPIDConfiguration() With { _
               .PlantConnectionString = AppSettings("SPPIDPlantConnectionString"),
               .SiteConnectionString = AppSettings("SPPIDSiteConnectionString"),
@@ -326,93 +347,94 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-    Public Overrides Function Configure(configuration As System.Xml.Linq.XElement) As Response
-
-        Dim Config As SPPIDConfiguration = Utility.DeserializeFromXElement(Of SPPIDConfiguration)(configuration)
+    Public Overrides Function Configure(ByVal configuration As System.Xml.Linq.XElement) As Response
 
         Dim response As New Response
+        If configuration IsNot Nothing Then
+            Dim Config As SPPIDConfiguration = Utility.DeserializeFromXElement(Of SPPIDConfiguration)(configuration)
 
-        '' Create Config File ----------------------
-        Dim configfile As New XElement("configuration", _
-                    New XElement("appSettings", _
-                    New XElement("add", New XAttribute("key", "Provider"), _
-                    New XAttribute("value", Config.Provider)), _
-                    New XElement("add", New XAttribute("key", "SPPIDSiteConnectionString"), _
-                    New XAttribute("value", EncryptionUtility.Encrypt(Config.SiteConnectionString))), _
-                    New XElement("add", New XAttribute("key", "SPPIDPlantConnectionString"), _
-                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantConnectionString))), _
-                    New XElement("add", New XAttribute("key", "PlantDataDicConnectionString"), _
-                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantDataDicConnectionString))), _
-                    New XElement("add", New XAttribute("key", "PIDConnectionString"), _
-                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDConnectionString))), _
-                    New XElement("add", New XAttribute("key", "PIDDataDicConnectionString"), _
-                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDDataDicConnectionString))), _
-                    New XElement("add", New XAttribute("key", "iRingStagingConnectionString"), _
-                    New XAttribute("value", EncryptionUtility.Encrypt(Config.StagingConnectionString)))))
+            '' Create Config File ----------------------
+            Dim configfile As New XElement("configuration", _
+                        New XElement("appSettings", _
+                        New XElement("add", New XAttribute("key", "Provider"), _
+                        New XAttribute("value", Config.Provider)), _
+                        New XElement("add", New XAttribute("key", "SPPIDSiteConnectionString"), _
+                        New XAttribute("value", EncryptionUtility.Encrypt(Config.SiteConnectionString))), _
+                        New XElement("add", New XAttribute("key", "SPPIDPlantConnectionString"), _
+                        New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantConnectionString))), _
+                        New XElement("add", New XAttribute("key", "PlantDataDicConnectionString"), _
+                        New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantDataDicConnectionString))), _
+                        New XElement("add", New XAttribute("key", "PIDConnectionString"), _
+                        New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDConnectionString))), _
+                        New XElement("add", New XAttribute("key", "PIDDataDicConnectionString"), _
+                        New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDDataDicConnectionString))), _
+                        New XElement("add", New XAttribute("key", "iRingStagingConnectionString"), _
+                        New XAttribute("value", EncryptionUtility.Encrypt(Config.StagingConnectionString)))))
 
 
-        If (File.Exists(_settings("ProjectConfigurationPath"))) Then
-            File.Delete(_settings("ProjectConfigurationPath"))
+            If (File.Exists(_settings("ProjectConfigurationPath"))) Then
+                File.Delete(_settings("ProjectConfigurationPath"))
+            End If
+
+            configfile.Save(_settings("ProjectConfigurationPath"))
+
+            If (File.Exists(_settings("ProjectConfigurationPath"))) Then
+                AppSettings.AppendSettings(New StaticDust.Configuration.AppSettingsReader(_settings("ProjectConfigurationPath")))
+            End If
+
+
+            ''Set Connection strings----------------
+            If (AppSettings("SPPIDPlantConnectionString").ToString().Contains("PROTOCOL=TCP")) Then
+                _siteConnOracle = New OracleConnection(AppSettings("SPPIDSiteConnectionString"))
+
+                _plantConnOracle = New OracleConnection(AppSettings("SPPIDPlantConnectionString"))
+
+                _PIDConnOracle = New OracleConnection(AppSettings("PIDConnectionString"))
+                _PIDDicConnOracle = New OracleConnection(AppSettings("PIDDataDicConnectionString"))
+
+
+                _plantDicConnOracle = New OracleConnection(AppSettings("PlantDataDicConnectionString"))
+
+            Else
+                _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
+                _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
+            End If
+
+
+            _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
         End If
-
-        configfile.Save(_settings("ProjectConfigurationPath"))
-
-        If (File.Exists(_settings("ProjectConfigurationPath"))) Then
-            AppSettings.AppendSettings(New StaticDust.Configuration.AppSettingsReader(_settings("ProjectConfigurationPath")))
-        End If
-
-
-        ''Set Connection strings----------------
-        If (AppSettings("SPPIDPlantConnectionString").ToString().Contains("PROTOCOL=TCP")) Then
-            _siteConnOracle = New OracleConnection(AppSettings("SPPIDSiteConnectionString"))
-
-            _plantConnOracle = New OracleConnection(AppSettings("SPPIDPlantConnectionString"))
-
-            _PIDConnOracle = New OracleConnection(AppSettings("PIDConnectionString"))
-            _PIDDicConnOracle = New OracleConnection(AppSettings("PIDDataDicConnectionString"))
-
-
-            _plantDicConnOracle = New OracleConnection(AppSettings("PlantDataDicConnectionString"))
-
-        Else
-            _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
-            _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
-        End If
-
-
-        _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
-
-
         Dim success As String = UpdateConfigurations()
-
+        If success.Contains("Pass") = False Then
+            response.Level = StatusLevel.Error
+        End If
         response.Messages.Add(success)
 
         Return response
     End Function
 
-    Public Overrides Function CreateDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
+    Public Overrides Function CreateDataTable(ByVal tableName As String, ByVal identifiers As IList(Of String)) As System.Data.DataTable
         Throw New NotImplementedException()
     End Function
 
-    Public Overrides Function DeleteDataTable(tableName As String, identifiers As IList(Of String)) As Response
+    Public Overrides Function DeleteDataTable(ByVal tableName As String, ByVal identifiers As IList(Of String)) As Response
         Throw New NotImplementedException()
     End Function
 
-    Public Overrides Function DeleteDataTable(tableName As String, whereClause As String) As Response
+    Public Overrides Function DeleteDataTable(ByVal tableName As String, ByVal whereClause As String) As Response
         Throw New NotImplementedException()
     End Function
 
-    Public Overrides Function GetRelatedDataTable(dataRow As System.Data.DataRow, relatedTableName As String) As System.Data.DataTable
+    Public Overrides Function GetRelatedDataTable(ByVal dataRow As System.Data.DataRow, ByVal relatedTableName As String) As System.Data.DataTable
         Throw New NotImplementedException()
     End Function
-    Public Overrides Function GetRelatedDataTable(dataRow As System.Data.DataRow, relatedTableName As String, start As Long, limit As Long) As System.Data.DataTable
+    Public Overrides Function GetRelatedDataTable(ByVal dataRow As System.Data.DataRow, ByVal relatedTableName As String, ByVal start As Long, ByVal limit As Long) As System.Data.DataTable
         Throw New NotImplementedException()
     End Function
-    Public Overrides Function GetRelatedCount(dataRow As System.Data.DataRow, relatedTableName As String) As Long
+    Public Overrides Function GetRelatedCount(ByVal dataRow As System.Data.DataRow, ByVal relatedTableName As String) As Long
         Throw New NotImplementedException()
     End Function
 
-    Public Overrides Function Refresh(tableName As String) As Response
+    Public Overrides Function Refresh(ByVal tableName As String) As Response
 
         Dim success = UpdateConfigurations(tableName)
 
@@ -436,13 +458,20 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-   
+    Public Overrides Function RefreshDataTable(ByVal tablename As String) As Response
+
+        Throw New NotImplementedException()
+
+    End Function
+
+
 
 #End Region
 
-    Public Function LoadDataTable(_stageConStr As String) As List(Of String)
+    Public Function LoadDataTable(ByVal _stageConStr As String) As List(Of String)
         Dim _dataTables As New List(Of String)
-        Dim _stage As New SqlConnection(_stageConStr)
+        Dim _stage As SqlConnection = _stageConn
+        ' Dim _stage As New SqlConnection(_stageConStr)
         If _stage.State = ConnectionState.Closed Then _stage.Open()
 
         Dim _selectSql As SqlCommand = _stage.CreateCommand
@@ -453,14 +482,14 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 _dataTables.Add(_selectSqlDR.Item("TABLE_NAME"))
             Loop
         End If
-
+        _selectSqlDR.Close()
         Return _dataTables
 
     End Function
 
 #Region " Staging Methods "
 
-    Public Function MigrateSPPIDToStaging(Optional tablename As String = "") As String
+    Public Function MigrateSPPIDToStaging(Optional ByVal tablename As String = "") As String
 
         Dim replacements As IEnumerable(Of XElement) = Nothing
         Dim declarations As IEnumerable(Of XElement) = Nothing
@@ -560,7 +589,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-    Public Function MigrateSPPIDToStagingfromOracle(Optional tablename As String = "") As String
+    Public Function MigrateSPPIDToStagingfromOracle(Optional ByVal tablename As String = "") As String
 
         Dim replacements As IEnumerable(Of XElement) = Nothing
         Dim declarations As IEnumerable(Of XElement) = Nothing
@@ -688,7 +717,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #Region "Private Functions"
 
-    Public Shared Sub SaveDatabaseDictionary(dbDictionary As DatabaseDictionary, path As String)
+    Public Shared Sub SaveDatabaseDictionary(ByVal dbDictionary As DatabaseDictionary, ByVal path As String)
         Dim connStr As String = dbDictionary.ConnectionString
 
         If connStr IsNot Nothing Then
@@ -702,7 +731,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Sub
 
 
-    Private Sub InitializeScope(projectName As String, applicationName As String)
+    Private Sub InitializeScope(ByVal projectName As String, ByVal applicationName As String)
         Try
             Dim scope As String = String.Format("{0}.{1}", projectName, applicationName)
 
@@ -715,7 +744,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         End Try
     End Sub
 
-    Public Shared Function LoadDatabaseDictionary(path As String) As DatabaseDictionary
+    Public Shared Function LoadDatabaseDictionary(ByVal path As String) As DatabaseDictionary
         Dim dbDictionary As DatabaseDictionary = Utility.Read(Of DatabaseDictionary)(path)
         Dim connStr As String = dbDictionary.ConnectionString
 
@@ -734,10 +763,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Return dbDictionary
     End Function
 
-  
 
 
-    Private Function ValidateDatabaseDictionary(dbDictionary As DatabaseDictionary) As Boolean
+
+    Private Function ValidateDatabaseDictionary(ByVal dbDictionary As DatabaseDictionary) As Boolean
         ' Validate table key
         For Each dataObject As DataObject In dbDictionary.dataObjects
             If dataObject.keyProperties Is Nothing OrElse dataObject.keyProperties.Count = 0 Then
@@ -754,7 +783,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     ''' <param name="StagingConfigQueries"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function GetStagingQueries(ByRef StagingConfigQueries As IEnumerable(Of XElement), Optional stagingDestinationName As String = "") As String
+    Private Function GetStagingQueries(ByRef StagingConfigQueries As IEnumerable(Of XElement), Optional ByVal stagingDestinationName As String = "") As String
 
         Dim doc As XDocument
 
@@ -790,7 +819,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     ''' <param name="tablename"></param>
     ''' <returns>Success or Failure while Migrating Tables and Data </returns>
     ''' <remarks></remarks>
-    Private Function UpdateConfigurations(Optional tablename As String = "") As String
+    Private Function UpdateConfigurations(Optional ByVal tablename As String = "") As String
 
 
         Dim configPath As String = AppSettings("ProjectConfigurationPath")
@@ -818,7 +847,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     ''' <param name="Path"></param>
     ''' <returns></returns>
     ''' <remarks>This allows, for instance, for test settings under a non-standard naming convention to be loaded</remarks>
-    Private Function AddProjConfigSettings([Path] As String) As String
+    Private Function AddProjConfigSettings(ByVal [Path] As String) As String
 
         Dim ProjConfigPath As String = [Path]
         Dim x As Xml.XmlReader
@@ -879,69 +908,92 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Sub
 
 
-    Private Function LoadDataObjects(objectType As String) As IList(Of IDataObject)
-        '        Try
+    Private Function LoadDataObjects(ByVal objectType As List(Of String), ByVal connectionString As String) As DataDictionary
+        Try
 
-        '            Dim dataObjects As New List(Of IDataObject)()
+            '            Dim dataObjects As New List(Of DataObjects)()
+            Dim _dataObject As New DataObject()
+            Dim _keyproperties As New KeyProperty()
+            Dim _dataproperties As New DataProperty()
+            Dim _stage As SqlConnection = _stageConn
+            Dim _dataDictionary As New DataDictionary()
 
-        '            LoadConfiguration()
+            'Dim _stage As New SqlConnection(connectionString)
+            If _stage.State = ConnectionState.Closed Then _stage.Open()
 
-        '            Dim commodityElement As XElement = GetCommodityConfig(objectType)
-        '            Dim attributeElements As IEnumerable(Of XElement) = commodityElement.Element("attributes").Elements("attribute")
+            Dim _dataTables As New List(Of String)
 
-        '            Dim appSource As String = String.Empty
-        '            Dim objEquipments As LMEquipments
-        '            Dim objEquipment As LMEquipment
+            For Each item As String In objectType
 
-        '            _lmCriterion = New LMACriterion
-        '            _lmFilters = New LMAFilter
+               
 
-        '            Dim criteriaName As String = "getEquipments"
+                Dim _selectSql As SqlCommand = _stage.CreateCommand
+                _selectSql.CommandText = "SELECT COLUMN_NAME,DATA_TYPE, " & _
+                                        " DataLenght = " & _
+                                                   " CASE DATA_TYPE " & _
+                                                   " WHEN 'int' THEN NUMERIC_PRECISION " & _
+                                                   " ELSE CHARACTER_MAXIMUM_LENGTH " & _
+                                                " END, IS_NULLABLE =  CASE IS_NULLABLE " & _
+                                                    " when 'YES' then 'True' " & _
+                                                    " else 'False' " & _
+                                                "    end " & _
+                                                  " FROM information_schema.COLUMNS " & _
+                                            " where TABLE_NAME='" & item & "'"
 
-        '            _lmFilters.Criteria.AddNew(criteriaName)
-        '            _lmCriterion = New LMACriterion
-        '            _lmFilters = New LMAFilter
 
-        '            _lmFilters.ItemType = "Equipment"
+                Dim _selectSqlDR As SqlDataReader = _selectSql.ExecuteReader()
+                If _selectSqlDR.HasRows Then
+                    _dataObject = New DataObject()
+                    _dataObject.objectName = item
+                    _dataObject.tableName = item
+                    _dataObject.objectNamespace = "com.example"
+                    _dataObject.keyDelimeter = "_"
+                    Do While _selectSqlDR.Read()
+                        '' _dataTables.Add(_selectSqlDR.Item("TABLE_NAME"))
+                        If _selectSqlDR.Item("COLUMN_NAME").ToString().ToUpper().EndsWith("TAG") Then
+                            _keyproperties = New KeyProperty()
+                            _keyproperties.keyPropertyName = _selectSqlDR.Item("COLUMN_NAME")
+                            _dataObject.keyProperties.Add(_keyproperties)
+                        Else
+                            _dataproperties = New DataProperty()
+                            _dataproperties.columnName = _selectSqlDR.Item("COLUMN_NAME")
+                            _dataproperties.dataLength = _selectSqlDR.Item("DataLenght")
+                            _dataproperties.isNullable = Convert.ToBoolean(_selectSqlDR.Item("IS_NULLABLE"))
+                            _dataproperties.keyType = KeyType.unassigned
+                            _dataproperties.propertyName = _selectSqlDR.Item("COLUMN_NAME")
 
-        '            objEquipments = New LMEquipments
-        '            objEquipments.Collect(_projDatasource, Filter:=_lmFilters)
+                            Select Case _selectSqlDR.Item("DATA_TYPE")
+                                Case "bool"
+                                    _dataproperties.dataType = DataType.Char
+                                Case "int"
+                                    _dataproperties.dataType = DataType.Int32
+                                Case "datetime"
+                                    _dataproperties.dataType = DataType.DateTime
+                                Case Else
+                                    _dataproperties.dataType = DataType.Char
+                                    Exit Select
+                            End Select
 
-        '            If Not objEquipments Is Nothing Then
-        '                For Each objEquipment In objEquipments
-        '                    Dim dataObject As IDataObject = New GenericDataObject() With { _
-        '.ObjectType = objectType _
-        '}
-        '                    fetchEquipment(objEquipment, dataObject, objectType)
-        '                    If Not IsDBNull(dataObject) Then
-        '                        dataObjects.Add(dataObject)
-        '                    End If
-        '                Next
-        '            End If
+                            _dataObject.dataProperties.Add(_dataproperties)
+                        End If
 
-        '            If Not IsDBNull(dataObjects) Then
-        '                For Each obj In dataObjects
-        '                    For Each attr In attributeElements
-        '                        Dim s = obj.GetType()
-        '                        Dim n As String = attr.Attribute("name").Value
-        '                        Try
-        '                            Dim name = obj.GetPropertyValue(n).GetType()
-        '                        Catch ex As Exception
-        '                            obj.SetPropertyValue(attr.Attribute("name").Value, "Null")
-        '                        End Try
-        '                    Next
-        '                Next
-        '            End If
+                        '_dataObject.dataProperties.Clear()
+                        '_dataObject.keyProperties.Clear()
+                    Loop
+                End If
 
-        '            Return dataObjects
-        '        Catch ex As Exception
-        '            '_logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
-        '            Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
-        '        End Try
+                _dataDictionary.dataObjects.Add(_dataObject)
+                _selectSqlDR.Close()
+            Next
+            Return _dataDictionary
+        Catch ex As Exception
+            '_logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
+            'Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
+        End Try
         Return Nothing
     End Function
 
-    Private Function SaveDataObjects(objectType As String, dataObjects As IList(Of IDataObject)) As Response
+    Private Function SaveDataObjects(ByVal objectType As String, ByVal dataObjects As IList(Of IDataObject)) As Response
         Return New Response
     End Function
 
@@ -985,7 +1037,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         End If
     End Sub
 
-    Private Function GetCommodityConfig(objectType As String) As XElement
+    Private Function GetCommodityConfig(ByVal objectType As String) As XElement
         If _configuration Is Nothing Then
             LoadConfiguration()
         End If
