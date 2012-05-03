@@ -33,7 +33,7 @@ namespace iRINGTools.Web.Models
       {
         return null;
       }
-      string relativeUrl = string.Format("/{0}/dictionary", relUri);
+      string relativeUrl = string.Format("/{0}/dictionary?format=xml", relUri);
       return _client.Get<DataDictionary>(relativeUrl, true);
     }
 
