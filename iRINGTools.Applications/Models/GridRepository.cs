@@ -8,6 +8,7 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web.Script.Serialization;
+using org.iringtools.adapter;
 
 namespace iRINGTools.Web.Models
 {
@@ -39,11 +40,11 @@ namespace iRINGTools.Web.Models
     public DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit)
     {
       string fmt = "json";
-      string relurl = string.Format("/{0}/{1}/{2}/filter?format={3}&start={4}&limit={5}", endpoint, context, graph, fmt, start, limit);
-      string allDataItemsJson = _client.Post<DataFilter, string>(relurl, dataFilter, fmt, true);
-      JavaScriptSerializer serializer = new JavaScriptSerializer();
-      DataItems dataItems = (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
-
+      string relUrl = string.Format("/{0}/{1}/{2}/filter?format={3}&start={4}&limit={5}", endpoint, context, graph, fmt, start, limit);
+      string json = _client.Post<DataFilter, string>(relUrl, dataFilter, fmt, true);
+      
+      DataItemSerializer serializer = new DataItemSerializer();
+      DataItems dataItems = serializer.Deserialize<DataItems>(json, false); 
       return dataItems;
     }
   }
