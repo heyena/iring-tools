@@ -23,8 +23,8 @@ namespace org.iringtools.adapter
       this.Add("DumpSettings", "False");
       this.Add("ExecutingAssemblyName", "App_Code");
       this.Add("DefaultStyleSheet", @".\App_Data\default.css");
-      this.Add("ValidateLinks", "True");
-      this.Add("DisplayLinks", "True");
+      this.Add("ValidateLinks", "False");
+      this.Add("DisplayLinks", "False");
 
       if (OperationContext.Current != null)
       {

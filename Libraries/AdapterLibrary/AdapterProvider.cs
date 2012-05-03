@@ -50,6 +50,7 @@ using net.java.dev.wadl;
 using System.Globalization;
 using org.iringtools.nhibernate;
 using org.iringtools.adapter.datalayer;
+using System.Text;
 
 namespace org.iringtools.adapter
 {
@@ -3465,6 +3466,79 @@ namespace org.iringtools.adapter
         throw new WebFaultException(HttpStatusCode.NotFound);
 
       return _dataLayer.GetSummary();
+    }
+
+    public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
+    {
+      if (format.ToUpper() == "JSON")
+      {
+        string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
+
+        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+        HttpContext.Current.Response.Write(json);
+      }
+      else
+      {
+        string xml = Utility.Serialize<T>(graph, useDataContractSerializer);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xml);
+      }
+    }
+
+    public void FormatOutgoingMessage(XElement xElement, string format)
+    {
+      if (format == null)
+      {
+        format = String.Empty;
+      }
+
+      if (format.ToUpper() == "HTML")
+      {
+        HttpContext.Current.Response.ContentType = "text/html";
+        HttpContext.Current.Response.Write(xElement.ToString());
+      }
+      else if (format.ToUpper() == "JSON")
+      {
+        byte[] json = new byte[0];
+
+        if (xElement != null)
+        {
+          DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
+          DataItemSerializer serializer = new DataItemSerializer(
+            _settings["JsonIdField"], _settings["JsonLinksField"], bool.Parse(_settings["DisplayLinks"]));
+          MemoryStream ms = serializer.SerializeToMemoryStream<DataItems>(dataItems, false);
+          json = ms.ToArray();
+          ms.Close();
+        }
+
+        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+        HttpContext.Current.Response.Write(Encoding.UTF8.GetString(json, 0, json.Length));
+      }
+      else
+      {
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xElement.ToString());
+      }
+    }
+
+    public void FormatOutgoingMessage(object content, string format)
+    {
+      if (typeof(IContentObject).IsInstanceOfType(content))
+      {
+        IContentObject contentObject = (IContentObject)content;
+        HttpContext.Current.Response.ContentType = contentObject.contentType;
+        HttpContext.Current.Response.BinaryWrite(contentObject.content.ToMemoryStream().GetBuffer());
+      }
+      else if (content.GetType() == typeof(XDocument))
+      {
+        XDocument xDoc = (XDocument)content;
+        FormatOutgoingMessage(xDoc.Root, format);
+      }
+      else
+      {
+        throw new Exception("Invalid response type from DataLayer.");
+      }
     }
   }
 }

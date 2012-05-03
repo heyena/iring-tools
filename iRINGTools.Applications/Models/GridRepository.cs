@@ -9,6 +9,7 @@ using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
 using System.Net;
+using org.iringtools.adapter;
 
 namespace iRINGTools.Web.Models
 {
@@ -114,9 +115,9 @@ namespace iRINGTools.Web.Models
           DataFilter dataFilter = createDataFilter(filter, sort, dir);
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
           string dataItemsJson = _dataServiceClient.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
-          
-          JavaScriptSerializer serializer = new JavaScriptSerializer();
-          dataItems = (DataItems)serializer.Deserialize(dataItemsJson, typeof(DataItems));
+
+          DataItemSerializer serializer = new DataItemSerializer();
+          dataItems = serializer.Deserialize<DataItems>(dataItemsJson, false); 
         }
         catch (Exception ex)
         {

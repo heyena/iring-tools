@@ -122,6 +122,9 @@
     <Compile Include="..\Desktop\MappingExtensions.cs">
       <Link>MappingExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Desktop\Picklists.cs">
+      <Link>Picklists.cs</Link>
+    </Compile>
     <Compile Include="..\Desktop\QMXF.cs">
       <Link>QMXF.cs</Link>
     </Compile>
@@ -143,6 +146,7 @@
     <Compile Include="..\Desktop\SPARQLResults.cs">
       <Link>SPARQLResults.cs</Link>
     </Compile>
+    <Compile Include="DataItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\AssemblyInfo.cs" />
   </ItemGroup>
@@ -182,7 +186,7 @@
       <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
         <SilverlightProjectProperties />
       </FlavorProperties>
-      <UserProperties ProjectLinkReference="46fb3942-d0a5-4bff-97b0-739e56bfb111" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="46fb3942-d0a5-4bff-97b0-739e56bfb111" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
