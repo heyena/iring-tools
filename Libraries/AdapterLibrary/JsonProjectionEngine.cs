@@ -67,11 +67,7 @@ namespace org.iringtools.adapter.projection
               {                
                 string value = Convert.ToString(dataObj.GetPropertyValue(dataProperty.propertyName));
 
-                if (value == null)
-                {
-                  value = String.Empty;
-                }
-                else if (dataProperty.dataType == DataType.DateTime)
+                if (dataProperty.dataType == DataType.DateTime && value != null)
                 {
                   value = Utility.ToXsdDateTime(value);
                 }
@@ -87,18 +83,18 @@ namespace org.iringtools.adapter.projection
                 }                
               }
 
-              string itemHref = String.Format("{0}/{1}", BaseURI, dataItem.id);
-              
-              dataItem.links = new List<Link> 
-              {
-                new Link {
-                  href = itemHref,
-                  rel = "self"
-                }
-              };
-
               if (_settings["DisplayLinks"].ToLower() == "true")
               {
+                string itemHref = String.Format("{0}/{1}", BaseURI, dataItem.id);
+              
+                dataItem.links = new List<Link> 
+                {
+                  new Link {
+                    href = itemHref,
+                    rel = "self"
+                  }
+                };
+
                 foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
                 {
                   long relObjCount = 0;
@@ -164,16 +160,6 @@ namespace org.iringtools.adapter.projection
           foreach (DataItem dataItem in dataItems.items)
           {
             IDataObject dataObject = _dataLayer.Create(graphName, null)[0];
-
-            if (objectDefinition.hasContent)
-            {
-              string base64Content = dataItem.content;
-
-              if (!String.IsNullOrEmpty(dataItem.content))
-              {
-                ((IContentObject)dataObject).content = base64Content.ToMemoryStream();
-              }
-            }
 
             foreach (var pair in dataItem.properties)
             {
