@@ -5,9 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -318,16 +315,12 @@ public class HttpClient
     URL url = new URL(baseUri + relativeUri);
     logger.debug("Opening URL connection [" + url + "]");
     
+    conn = (HttpURLConnection) url.openConnection();    
+    
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
       String proxyHost = System.getProperty("http.proxyHost");
-      int proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
-      SocketAddress address = new InetSocketAddress(proxyHost, proxyPort);
-      
-      Proxy httpProxy = new Proxy(Proxy.Type.HTTP, address);
-      conn = (HttpURLConnection) url.openConnection(httpProxy);
-      
       String proxyUserName = System.getProperty("http.proxyUserName");
       String proxyPassword = System.getProperty("http.proxyPassword");      
       String proxyDomain = System.getProperty("http.proxyDomain");   
@@ -336,10 +329,6 @@ public class HttpClient
       conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
 
       logger.debug("Connecting thru proxy server [" + proxyHost + "]");
-    }
-    else
-    {
-      conn = (HttpURLConnection) url.openConnection();
     }
 
     if (networkCredentials != null)
