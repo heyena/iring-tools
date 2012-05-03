@@ -125,6 +125,7 @@
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
     <Compile Include="BaseProvider.cs" />
+    <Compile Include="DataItemSerializer.cs" />
     <Compile Include="JsonProjectionEngine.cs" />
     <Compile Include="HtmlProjectionEngine.cs" />
     <Compile Include="MockIdentityProvider.cs" />
