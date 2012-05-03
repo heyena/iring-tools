@@ -529,10 +529,15 @@ namespace org.iringtools.library
         DataColumn dataColumn = new DataColumn()
         {
           ColumnName = objectProperty.columnName,
-          DataType = Type.GetType("System." + objectProperty.dataType.ToString())
+          //DataType = Type.GetType("System." + objectProperty.dataType.ToString())
         };
 
-        if (objectProperty.dataType == DataType.String)
+        if (objectProperty.dataType == DataType.Reference)
+          dataColumn.DataType = Type.GetType("System.String");
+        else
+          dataColumn.DataType = Type.GetType("System." + objectProperty.dataType.ToString());
+
+        if (objectProperty.dataType == DataType.String || objectProperty.dataType == DataType.Reference)
         {
           dataColumn.MaxLength = objectProperty.dataLength;
         }
