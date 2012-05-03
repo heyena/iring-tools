@@ -12,51 +12,115 @@ namespace org.iringtools.adapter
 {
   public class DataItemSerializer
   {
-    AdapterSettings _settings;
+    private DataItemConverter _converter;
 
-    public DataItemSerializer(AdapterSettings settings)
+    public DataItemSerializer()
     {
-      _settings = settings;
+      _converter = new DataItemConverter(null, null, false);
     }
 
-    public MemoryStream Serialize<T>(T graph, bool useDataContractSerializer)
+    public DataItemSerializer(string idFieldName, string linksFieldName, bool displayLinks)
+    {
+      _converter = new DataItemConverter(idFieldName, linksFieldName, displayLinks);
+    }
+
+    public MemoryStream SerializeToMemoryStream<T>(T graph, bool useDataContractSerializer)
     {
       MemoryStream stream = new MemoryStream();
 
       try
       {
-        if (!useDataContractSerializer)
-        {
-          JavaScriptSerializer serializer = new JavaScriptSerializer();
-          serializer.RegisterConverters(new JavaScriptConverter[] { new DataItemConverter(_settings) });
-          string json = serializer.Serialize(graph);
-          byte[] byteArray = Encoding.Default.GetBytes(json);
-          stream = new MemoryStream(byteArray);
-        }
-        else
+        if (useDataContractSerializer)
         {
           DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
           serializer.WriteObject(stream, graph);
           string json = Encoding.Default.GetString(stream.ToArray());
-          stream.Close();
+        }
+        else
+        {
+          JavaScriptSerializer serializer = new JavaScriptSerializer();
+          serializer.RegisterConverters(new JavaScriptConverter[] { _converter });
+          string json = serializer.Serialize(graph);
+          byte[] byteArray = Encoding.Default.GetBytes(json);
+          stream = new MemoryStream(byteArray);
         }
       }
       catch (Exception exception)
       {
         throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
       }
+      finally
+      {
+        stream.Close();
+      }
 
       return stream;
+    }
+
+    public string Serialize<T>(T graph, bool useDataContractSerializer)
+    {
+      string json = string.Empty;
+
+      try
+      {
+        MemoryStream stream = SerializeToMemoryStream<T>(graph, useDataContractSerializer);
+        stream.Position = 0;
+        StreamReader reader = new StreamReader(stream);
+        json = reader.ReadToEnd();
+        reader.Close();
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
+      }
+
+      return json;
+    }
+
+    public T Deserialize<T>(string json, bool useDataContractSerializer)
+    {
+      T graph;
+
+      try
+      {
+        if (useDataContractSerializer)
+        {
+          DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+          byte[] byteArray = Encoding.Default.GetBytes(json);
+          MemoryStream stream = new MemoryStream(byteArray);
+          graph = (T)serializer.ReadObject(stream);
+        }
+        else
+        {
+          JavaScriptSerializer serializer = new JavaScriptSerializer();
+          serializer.RegisterConverters(new JavaScriptConverter[] { _converter });
+          graph = (T)serializer.Deserialize<T>(json);
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error deserializing [" + typeof(T).Name + "].", exception);
+      }
+
+      return graph;
     }
   }
 
   public class DataItemConverter : JavaScriptConverter
   {
-    AdapterSettings _settings;
+    private string _idFieldName = "_ID_";
+    private string _linksFieldName = "_LINKS_";
+    private bool _displayLinks = false;
 
-    public DataItemConverter(AdapterSettings settings)
+    public DataItemConverter(string idFieldName, string linksFieldName, bool displayLinks)
     {
-      _settings = settings;
+      if (!string.IsNullOrEmpty(idFieldName))
+        _idFieldName = idFieldName;
+
+      if (!string.IsNullOrEmpty(linksFieldName))
+        _linksFieldName = linksFieldName;
+
+      _displayLinks = displayLinks;
     }
 
     public override IEnumerable<Type> SupportedTypes
@@ -66,25 +130,21 @@ namespace org.iringtools.adapter
 
     public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
     {
-      string jsonIdField = _settings["JsonIdField"];
-      string displayLinks = _settings["DisplayLinks"];
-
       DataItem dataItem = (DataItem)obj;
       Dictionary<string, object> result = new Dictionary<string, object>();
 
       if (dataItem != null)
       {
-        string idFieldName = _settings["JsonIdField"];
-        result[idFieldName] = dataItem.id;
+        result[_idFieldName] = dataItem.id;
 
         foreach (var property in dataItem.properties)
         {
           result[property.Key] = property.Value;
         }
 
-        if (displayLinks.ToLower() == "true")
+        if (_displayLinks)
         {
-          result["links"] = dataItem.links;
+          result[_linksFieldName] = dataItem.links;
         }
       }
 
@@ -93,7 +153,27 @@ namespace org.iringtools.adapter
 
     public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
     {
-      throw new NotImplementedException();
+      if (dictionary == null)
+        return null;
+
+      DataItem dataItem = new DataItem()
+      {
+        properties = new Dictionary<string, string>()
+      };
+
+      foreach (var pair in dictionary)
+      {
+        if (pair.Key == _idFieldName)
+        {
+          dataItem.id = Convert.ToString(pair.Value);
+        }
+        else if (pair.Key != _linksFieldName)
+        {
+          dataItem.properties[pair.Key] = Convert.ToString(pair.Value);
+        }
+      }
+
+      return dataItem;
     }
   }
 }

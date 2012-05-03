@@ -105,6 +105,9 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\Libraries\AdapterLibrary\DataItemSerializer.cs">
+      <Link>DataItemSerializer.cs</Link>
+    </Compile>
     <Compile Include="ConfigFile.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\BaseController.cs" />

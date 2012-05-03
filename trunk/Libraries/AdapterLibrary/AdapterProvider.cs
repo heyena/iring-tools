@@ -3762,8 +3762,9 @@ namespace org.iringtools.adapter
         if (xElement != null)
         {
           DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
-          DataItemSerializer jsonSerializer = new DataItemSerializer(_settings);
-          MemoryStream ms = jsonSerializer.Serialize<DataItems>(dataItems, false);
+          DataItemSerializer serializer = new DataItemSerializer(
+            _settings["JsonIdField"], _settings["JsonLinksField"], bool.Parse(_settings["DisplayLinks"]));
+          MemoryStream ms = serializer.SerializeToMemoryStream<DataItems>(dataItems, false);
           json = ms.ToArray();
           ms.Close();
         }
