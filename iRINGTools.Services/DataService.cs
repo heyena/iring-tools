@@ -115,12 +115,8 @@ namespace org.iringtools.services
       format = MapContentType(format);
 
       DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
-      //DataDictionary dictionary1 = Utility.Read<DataDictionary>("C:\\temp\\DATADICTIONARY.XML");
-      //Utility.Write<DataDictionary>(dictionary, "C:\\temp\\DATADICTIONARY.XML");
 
-      HttpContext.Current.Response.ContentType = "application/xml";
-      HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataDictionary>(dictionary));
-      //_adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
+      _adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
     }
 
     [Description("Gets an XML or JSON projection of the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
