@@ -72,7 +72,6 @@ namespace org.iringtools.library
 
       DataDictionary dictionary = new DataDictionary();
       dictionary.dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects);
-      dictionary.picklists = utility.Utility.CloneDataContractObject<List<PicklistObject>>(_dbDictionary.picklists);
 
       return dictionary;
     }
@@ -326,7 +325,7 @@ namespace org.iringtools.library
     public override Response Refresh(string objectType) 
     {
       string tableName = GetTableName(objectType);
-      return RefreshDataTable(objectType);
+      return RefreshDataTable(tableName);
     }
     #endregion
 
@@ -402,7 +401,7 @@ namespace org.iringtools.library
               }
               else
               {
-                _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]", 
+                _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]",
                   objectProperty.columnName, objectDefinition.tableName));
               }
             }
@@ -414,6 +413,15 @@ namespace org.iringtools.library
           }
         }
       }
+      else
+      {
+        dataObject = new GenericDataObject() { ObjectType = objectDefinition.objectName };
+
+        foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+        {
+          dataObject.SetPropertyValue(objectProperty.propertyName, null);
+        }
+      }
 
       return dataObject;
     }
@@ -422,26 +430,33 @@ namespace org.iringtools.library
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
       DataObject objectDefinition = GetObjectDefinition(objectType);
-      
+      IDataObject dataObject = null;
+          
       if (objectDefinition != null && dataTable.Rows != null)
       {
-        foreach (DataRow dataRow in dataTable.Rows)
+        if (dataTable.Rows.Count == 0)
         {
-          IDataObject dataObject = null;
+          dataObject = ToDataObject(null, objectDefinition);
+          dataObjects.Add(dataObject);
+        }
+        else
+        {
+          foreach (DataRow dataRow in dataTable.Rows)
+          {
+            try
+            {
+              dataObject = ToDataObject(dataRow, objectDefinition);
+            }
+            catch (Exception ex)
+            {
+              _logger.Error("Error converting data row to data object: " + ex);
+              throw ex;
+            }
 
-          try
-          {
-            dataObject = ToDataObject(dataRow, objectDefinition);
-          }
-          catch (Exception ex)
-          {
-            _logger.Error("Error converting data row to data object: " + ex);
-            throw ex;
-          }
-
-          if (dataObjects != null)
-          {
-            dataObjects.Add(dataObject);
+            if (dataObjects != null)
+            {
+              dataObjects.Add(dataObject);
+            }
           }
         }
       }
