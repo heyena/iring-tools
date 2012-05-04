@@ -325,7 +325,7 @@ namespace org.iringtools.library
     public override Response Refresh(string objectType) 
     {
       string tableName = GetTableName(objectType);
-      return RefreshDataTable(objectType);
+      return RefreshDataTable(tableName);
     }
     #endregion
 
