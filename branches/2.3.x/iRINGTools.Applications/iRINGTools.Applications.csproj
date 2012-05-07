@@ -155,9 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="about.html" />
-    <Content Include="ClientBin\ApplicationEditor.xap" />
-    <Content Include="ClientBin\MappingEditor.xap" />
-    <Content Include="ClientBin\ReferenceDataEditor.xap" />
     <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
     <Content Include="Content\css\GridFilters.css" />
@@ -4740,9 +4737,10 @@
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\MappingEditor\Index.aspx" />
     <Content Include="Views\RefDataEditor\Index.aspx" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
+    <None Include="Web.config">
+      <SubType>
+      </SubType>
+    </None>
     <Content Include="Scripts\jquery-1.4.1.js" />
     <Content Include="Scripts\jquery-1.4.1.min.js" />
     <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
@@ -4759,6 +4757,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ClientBin\" />
     <Folder Include="Scripts\ext-3.3.1\examples\spinner\images\" />
     <Folder Include="Scripts\ext-3.3.1\resources\images\vista\dd\" />
     <Folder Include="Scripts\ext-3.3.1\resources\images\vista\tree\" />

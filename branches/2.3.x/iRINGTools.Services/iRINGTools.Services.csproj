@@ -78,6 +78,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
+    <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\datalayers\SPPIDDataLayer\SPPIDDataLayer\bin\Debug\Oracle.DataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="SPPIDDataLayer">
+      <HintPath>..\..\datalayers\SPPIDDataLayer\SPPIDDataLayer\bin\Debug\SPPIDDataLayer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Runtime.Serialization" />
