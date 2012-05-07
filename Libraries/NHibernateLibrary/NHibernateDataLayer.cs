@@ -408,7 +408,8 @@ namespace org.iringtools.adapter.datalayer
         else
         {
           criteria.SetFirstResult(startIndex).SetMaxResults(pageSize);
-          return criteria.List<IDataObject>();
+          IList<IDataObject> dataObjects = criteria.List<IDataObject>();
+          return dataObjects;
         }
       }
       catch (Exception ex)

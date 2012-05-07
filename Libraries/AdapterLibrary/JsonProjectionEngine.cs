@@ -64,36 +64,43 @@ namespace org.iringtools.adapter.projection
               };
 
               foreach (DataProperty dataProperty in dataObject.dataProperties)
-              {                
-                string value = Convert.ToString(dataObj.GetPropertyValue(dataProperty.propertyName));
+              {
+                object value = dataObj.GetPropertyValue(dataProperty.propertyName);
 
-                if (dataProperty.dataType == DataType.DateTime && value != null)
+                if (value != null)
                 {
-                  value = Utility.ToXsdDateTime(value);
+                  string valueStr = Convert.ToString(value);
+
+                  if (dataProperty.dataType == DataType.DateTime)
+                    value = Utility.ToXsdDateTime(valueStr);
+
+                  if (!dataProperty.isHidden)
+                  {
+                    dataItem.properties.Add(dataProperty.propertyName, valueStr);
+                  }
+
+                  if (dataObject.isKeyProperty(dataProperty.propertyName))
+                  {
+                    dataItem.id = valueStr;
+                  }
                 }
-
-                if (!dataProperty.isHidden)
-                {
-                  dataItem.properties.Add(dataProperty.propertyName, value);
-                }
-
-                if (dataObject.isKeyProperty(dataProperty.propertyName))
-                {
-                  dataItem.id = value;
-                }                
+                //else
+                //{
+                //  dataItem.properties.Add(dataProperty.propertyName, null);
+                //}
               }
 
               if (_settings["DisplayLinks"].ToLower() == "true")
               {
                 string itemHref = String.Format("{0}/{1}", BaseURI, dataItem.id);
-              
-              dataItem.links = new List<Link> 
-              {
-                new Link {
-                  href = itemHref,
-                  rel = "self"
-                }
-              };
+
+                dataItem.links = new List<Link> 
+                {
+                  new Link {
+                    href = itemHref,
+                    rel = "self"
+                  }
+                };
 
                 foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
                 {
@@ -127,7 +134,7 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
-        
+
         dataItems.limit = dataItems.items.Count;
 
         string xml = Utility.SerializeDataContract<DataItems>(dataItems);
@@ -180,7 +187,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    #region helper methods    
+    #region helper methods
     private DataObject FindGraphDataObject(string dataObjectName)
     {
       foreach (DataObject dataObject in _dictionary.dataObjects)
