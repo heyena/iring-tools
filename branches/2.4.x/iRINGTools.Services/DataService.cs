@@ -120,6 +120,22 @@ namespace org.iringtools.services
       _adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
     }
 
+    [Description("Gets specified object definition of an application.")]
+    [WebGet(UriTemplate = "/{app}/{project}/dictionary/{graph}?format={format}")]
+    public void GetDictionaryGraph(string project, string app, string graph, string format)
+    {
+        format = MapContentType(format);
+
+        DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+
+        DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == graph.ToLower());
+
+        if (dataObject == null)
+            ExceptionHandler(new FileNotFoundException());
+
+        _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
+    }
+
     [Description("Gets an XML or JSON projection of the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
     [WebGet(UriTemplate = "/{app}/{project}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void GetList(string project, string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)

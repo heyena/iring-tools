@@ -14,7 +14,8 @@
     <AssemblyName>iRINGTools.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <SilverlightApplicationList>{2AD28296-22DA-465F-90AA-6538661B3F86}|..\Applications\ApplicationEditor\ApplicationEditor.Silverlight.csproj|ClientBin|False,{965B155F-23B5-4650-8CEF-2B36A1B6F843}|..\Applications\ReferenceDataEditor\ReferenceDataEditor.Silverlight.csproj|ClientBin|False,{4549FEAF-A62B-4126-9D6D-10D1DB543466}|..\Applications\MappingEditor\MappingEditor.Silverlight.csproj|ClientBin|False</SilverlightApplicationList>
+    <SilverlightApplicationList>
+    </SilverlightApplicationList>
     <UseIISExpress>true</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -158,9 +159,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="about.html" />
-    <Content Include="ClientBin\ApplicationEditor.xap" />
-    <Content Include="ClientBin\MappingEditor.xap" />
-    <Content Include="ClientBin\ReferenceDataEditor.xap" />
     <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
     <Content Include="Content\css\GridFilters.css" />
@@ -4762,6 +4760,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ClientBin\" />
     <Folder Include="Scripts\ext-3.3.1\examples\spinner\images\" />
     <Folder Include="Scripts\ext-3.3.1\resources\images\vista\dd\" />
     <Folder Include="Scripts\ext-3.3.1\resources\images\vista\tree\" />
@@ -4781,6 +4780,10 @@
     <ProjectReference Include="..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj">
+      <Project>{1A611244-54BE-4F12-AA34-12F54A2B07E6}</Project>
+      <Name>PrismContrib.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
