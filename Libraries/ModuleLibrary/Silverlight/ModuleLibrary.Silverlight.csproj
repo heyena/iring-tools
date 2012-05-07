@@ -220,16 +220,6 @@
     <Compile Include="UserControls\TemplateTreeItem.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\PrismContrib\Silverlight\PrismContrib.Silverlight.csproj">
-      <Project>{04C08B97-3D9E-4BB4-B0EC-6AE035105BF8}</Project>
-      <Name>PrismContrib.Silverlight</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\UtilityLibrary\Silverlight\UtilityLibrary.Silverlight.csproj">
-      <Project>{EA853599-4781-4BD2-8EC7-61E893520A23}</Project>
-      <Name>UtilityLibrary.Silverlight</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
