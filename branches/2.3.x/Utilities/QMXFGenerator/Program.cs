@@ -783,10 +783,10 @@ namespace QMXFGenerator
         {
           int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
           object identifier = parentRow[(int)RoleColumns.ID + roleOffset];
-          object label = row[(int)RoleColumns.Name + roleOffset];
-          object description = row[(int)RoleColumns.Description + roleOffset];
-          object type = row[(int)RoleColumns.Type + roleOffset];
-          object value = row[(int)RoleColumns.Value + roleOffset];
+          object label = parentRow[(int)RoleColumns.Name + roleOffset];
+          object description = parentRow[(int)RoleColumns.Description + roleOffset];
+          object type = parentRow[(int)RoleColumns.Type + roleOffset];
+          object value = parentRow[(int)RoleColumns.Value + roleOffset];
           object parentRole = parentRow[(int)RoleColumns.ID + roleOffset];
 
           if (label != null && label.ToString().Trim() != String.Empty)
