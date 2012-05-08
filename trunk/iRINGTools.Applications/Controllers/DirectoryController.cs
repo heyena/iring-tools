@@ -12,6 +12,9 @@ using log4net;
 using System.Web.Script.Serialization;
 using System.Web;
 using System.IO;
+using org.iringtools.utility;
+using System.Runtime.Serialization;
+using System.Text;
 
 
 namespace org.iringtools.web.controllers
@@ -445,51 +448,26 @@ namespace org.iringtools.web.controllers
                 node.property.Add("baseUrl", form["baseUrl"]);
         }
 
-        public ActionResult DataLayers(JsonTreeNode node, FormCollection form)
+        public JsonResult DataLayer(JsonTreeNode node, FormCollection form)
         {
-            DataLayers dataLayers = _repository.GetDataLayers(form["baseUrl"]);
-            JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
-            container.items = dataLayers;
-            container.success = true;
-            container.total = dataLayers.Count;
-            return Json(container, JsonRequestBehavior.AllowGet);
-        }
+          HttpFileCollectionBase files = Request.Files;
+          HttpPostedFileBase hpf = files[0] as HttpPostedFileBase;
 
-        public JsonResult SaveDataLayers(FormCollection form)
-        {
-            Response success= null;
-            string msg = "";
-            bool level=true;
-            try
-            {
-                HttpFileCollectionBase files = Request.Files;
+          DataLayer dataLayer = new DataLayer()
+          {
+            Name = form["Name"],
+            MainDLL = form["MainDLL"],
+            Package = Utility.ToMemoryStream(hpf.InputStream)
+          };
 
-                HttpPostedFileBase hpf = files[0] as HttpPostedFileBase;
-                string filename = hpf.FileName;
+          MemoryStream dataLayerStream = new MemoryStream();
+          DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
+          serializer.WriteObject(dataLayerStream, dataLayer);
+          dataLayerStream.Position = 0;
 
-                success = _repository.SaveDataLayers(form["datalayername"], "", filename);
-                msg = success.Messages[0];
-                if (msg.Contains("Error")){
-                    level = false;
-                }
-
-            }
-            catch(Exception ex)
-            {
-                return new JsonResult()
-                {
-                    ContentType = "text/html",
-                    Data = PrepareErrorResponse(ex)
-                   
-                };
-            }
-            return new JsonResult()
-              {
-                  ContentType = "text/html",
-                  Data = new { success = level, Messages = msg } 
-              };
-
-           
+          Response response = _repository.SaveDataLayer(dataLayerStream);
+          JsonResult result = Json(response, JsonRequestBehavior.AllowGet);
+          return result;
         }
 
         public JsonResult Folder(FormCollection form)

@@ -324,7 +324,11 @@ namespace org.iringtools.library
 
     public override Response Refresh(string objectType) 
     {
-      string tableName = GetTableName(objectType);
+      string tableName = string.Empty;
+
+      if (!string.IsNullOrEmpty(objectType))
+        tableName = GetTableName(objectType);
+
       return RefreshDataTable(tableName);
     }
     #endregion
