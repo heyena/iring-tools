@@ -25,6 +25,7 @@ namespace org.iringtools.adapter
       this.Add("DefaultStyleSheet", @".\App_Data\default.css");
       this.Add("ValidateLinks", "False");
       this.Add("DisplayLinks", "False");
+      this.Add("ShowJsonNullValues", "False");
 
       if (OperationContext.Current != null)
       {
