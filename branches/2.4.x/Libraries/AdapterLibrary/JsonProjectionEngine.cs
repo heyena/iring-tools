@@ -46,6 +46,8 @@ namespace org.iringtools.adapter.projection
         {
           DataObject dataObject = FindGraphDataObject(graphName);
           if (dataObject == null) return new XDocument();
+          bool showNullValue = _settings["ShowJsonNullValues"] != null && 
+            _settings["ShowJsonNullValues"].ToString() == "True";
 
           for (int i = 0; i < dataObjects.Count; i++)
           {
@@ -84,10 +86,10 @@ namespace org.iringtools.adapter.projection
                     dataItem.id = valueStr;
                   }
                 }
-                //else
-                //{
-                //  dataItem.properties.Add(dataProperty.propertyName, null);
-                //}
+                else if (showNullValue) 
+                {
+                  dataItem.properties.Add(dataProperty.propertyName, null);
+                }
               }
 
               if (_settings["DisplayLinks"].ToLower() == "true")
