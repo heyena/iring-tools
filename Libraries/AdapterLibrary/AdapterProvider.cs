@@ -3481,9 +3481,12 @@ namespace org.iringtools.adapter
         else
         {
           if (dl.External)
-          {
+          {            
             dataLayers.Remove(dl);
             Utility.Write<DataLayers>(dataLayers, _dataLayersBindingConfiguration);
+
+            string dlPath = dl.Path;
+            Directory.Delete(dlPath, true);
 
             response.Level = StatusLevel.Success;
             response.Messages.Add("Data layer [" + dataLayerName + "] deleted successfully.");

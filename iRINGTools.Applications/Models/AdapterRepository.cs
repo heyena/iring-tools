@@ -572,27 +572,26 @@ namespace iRINGTools.Web.Models
       return combinationMsg;
     }
 
-    public Response SaveDataLayers(string dataLayerName, string path, string filename)
+    public Response SaveDataLayer(MemoryStream dataLayerStream)
     {
-        Response response = null;
+      try
+      {
+        return Utility.Deserialize<Response>(_adapterServiceClient.PostStream("/datalayers", dataLayerStream), true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
 
-        try
+        Response response = new Response()
         {
-            MemoryStream dataLayerStream = CreateDataLayerStream(dataLayerName, filename, @"C:\Project\Branches\datalayers\SPPIDDataLayer\dist\bin\");
-
-            response = Utility.Deserialize<Response>(_adapterServiceClient.PostStream("/datalayers", dataLayerStream), true);
-          
-           
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex.ToString());
-           // response = "ERROR";
-        }
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
 
         return response;
+      }
     }
-
+    
     #region Private methods for Directory 
 
     static MemoryStream CreateDataLayerStream(string name, string mainDLL, string path)

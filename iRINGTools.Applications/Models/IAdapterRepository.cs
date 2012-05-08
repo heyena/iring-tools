@@ -44,7 +44,7 @@ namespace iRINGTools.Web.Models
 
     Response RegenAll(string user);
 
-    Response SaveDataLayers(string dataLayerName, string path, string fileName);
+    Response SaveDataLayer(MemoryStream dataLayerStream);
       
   }
 }

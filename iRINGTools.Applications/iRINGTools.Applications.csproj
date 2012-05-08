@@ -201,6 +201,7 @@
     <Content Include="Scripts\AM\ux\PagingToolbar.js" />
     <Content Include="Scripts\AM\ux\plugin\GridPageSizer.js" />
     <Content Include="Scripts\AM\ux\RowExpander.js" />
+    <Content Include="Scripts\AM\view\directory\DataLayerPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\ConnectDatabase.js" />
     <Content Include="Scripts\AM\view\nhibernate\RelationGridPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\CreateRelations.js" />
