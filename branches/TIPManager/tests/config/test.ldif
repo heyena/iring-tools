@@ -1,0 +1,245 @@
+version: 1
+
+dn: o=test,dc=iringug,dc=org
+objectClass: top
+objectClass: organization
+o: test
+
+dn: ou=groups,o=test,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+dn: cn=team1Admins,ou=groups,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: team1Admins
+description: Controls admin rights on the directory
+member: uid=karthur,ou=users,o=test,dc=iringug,dc=org
+
+dn: cn=adapterAdmins,ou=groups,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: adapterAdmins
+description: Controls login to AdapterManager
+member: uid=guest,ou=users,o=test,dc=iringug,dc=org
+member: uid=karthur,ou=users,o=test,dc=iringug,dc=org
+
+dn: cn=exchangeAdmins,ou=groups,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: exchangeAdmins
+description: Controls login to ExchangeManager and has exchange right
+member: uid=guest,ou=users,o=test,dc=iringug,dc=org
+member: uid=karthur,ou=users,o=test,dc=iringug,dc=org
+
+dn: ou=rights,o=test,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: rights
+
+dn: cn=exchange,ou=rights,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: exchange
+member: cn=exchangeAdmins,ou=groups,o=test,dc=iringug,dc=org
+
+dn: cn=user,ou=rights,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: user
+member: cn=team1Viewers,ou=groups,o=test,dc=iringug,dc=org
+
+dn: ou=users,o=test,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: uid=karthur,ou=users,o=test,dc=iringug,dc=org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: top
+cn: King
+sn: Arthur
+uid: karthur
+
+dn: uid=guest,ou=users,o=test,dc=iringug,dc=org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: top
+cn: iRINGTools
+sn: Guest
+uid: guest
+
+dn: ou=directory,o=test,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: directory
+
+dn: cn=team1Viewers,ou=groups,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: team1Viewers
+description: Controls admin rights on the directory
+member: uid=guest,ou=users,o=test,dc=iringug,dc=org
+
+dn: cn=superadmin,ou=groups,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: superadmin
+description: Controls admin rights on the directory
+
+dn: cn=12345_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: folder
+objectClass: top
+cn: 12345_000
+context: 12345_000
+description: asdfasdf
+member: cn=team1Admins,ou=groups,o=test,dc=iringug,dc=org
+name: 12345_000
+type: folder
+
+dn: cn=Application Data,cn=12345_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: folder
+objectClass: top
+cn: Application Data
+context: 12345_000
+description: asdf
+member: cn=team1Viewers,ou=groups,o=test,dc=iringug,dc=org
+name: Application Data
+type: folder
+
+dn: cn=ABC,cn=Application Data,cn=12345_000,ou=directory,o=test,dc=iringug,d
+ c=org
+objectClass: top
+objectClass: endpoint
+cn: ABC
+baseurl: http:..localhost:54321.adapter
+context: 12345_000
+description: ASDFASDF
+member: 
+name: ABC
+type: endpoint
+
+dn: cn=DEF,cn=Application Data,cn=12345_000,ou=directory,o=test,dc=iringug,d
+ c=org
+objectClass: top
+objectClass: endpoint
+cn: DEF
+baseurl: http:..localhost:54321.adapter
+context: 12345_000
+description: ASDF
+member: 
+name: DEF
+type: endpoint
+
+dn: cn=TYU,cn=Application Data,cn=12345_000,ou=directory,o=test,dc=iringug,d
+ c=org
+objectClass: top
+objectClass: endpoint
+cn: TYU
+baseurl: http:..localhost:54321.adapter
+context: 12345_000
+description: ASDF
+member: 
+name: TYU
+type: endpoint
+
+dn: cn=UIO,cn=Application Data,cn=12345_000,ou=directory,o=test,dc=iringug,d
+ c=org
+objectClass: top
+objectClass: endpoint
+cn: UIO
+baseurl: http:..localhost:54321.adapter
+context: 12345_000
+description: ASDF
+member: 
+name: UIO
+type: endpoint
+
+dn: cn=Application,cn=12345_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: folder
+objectClass: top
+cn: Application
+context: 12345_000
+description: asdfdsaf
+member: 
+name: Application
+type: folder
+
+dn: cn=App,cn=12345_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: folder
+objectClass: top
+cn: App
+context: 12345_000
+description: adsf
+member: 
+name: App
+type: folder
+
+dn: cn=54321_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: folder
+objectClass: top
+cn: 54321_000
+context: asdf
+description: ASDF
+member: cn=team1Admins,ou=groups,o=test,dc=iringug,dc=org
+name: 54321_000
+type: folder
+
+dn: cn=def,cn=54321_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: folder
+objectClass: top
+cn: def
+context: asdf
+description: fdg
+member: 
+name: def
+type: folder
+
+dn: cn=ABC,cn=54321_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: folder
+objectClass: top
+cn: ABC
+context: asdf
+description: ADSF
+member: 
+name: ABC
+type: folder
+
+dn: cn=ABC,cn=ABC,cn=54321_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: top
+objectClass: endpoint
+cn: ABC
+baseurl: asdf
+context: asdf
+description: adsf
+member: cn=team1Viewers,ou=groups,o=test,dc=iringug,dc=org
+name: ABC
+type: endpoint
+
+dn: cn=ert,cn=ABC,cn=54321_000,ou=directory,o=test,dc=iringug,dc=org
+objectClass: top
+objectClass: endpoint
+cn: ert
+baseurl: http:..localhost:54321.adapter
+context: asdf
+description: adsf
+member: 
+name: ert
+type: endpoint
+
+dn: cn=rootAdmin,ou=rights,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: rootAdmin
+member: cn=directoryAdmins,ou=groups,o=test,dc=iringug,dc=org
+
+dn: cn=treeNodeAdmin,ou=rights,o=test,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: treeNodeAdmin
+member: cn=directoryAdmins,ou=groups,o=test,dc=iringug,dc=org
+

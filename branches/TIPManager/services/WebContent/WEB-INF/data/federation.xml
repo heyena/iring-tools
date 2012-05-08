@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<federation xmlns="http://www.iringtools.org/refdata/federation">
+    <idGenerators>
+        <sequenceId>2</sequenceId>
+        <idGenerator>
+            <id>1</id>
+            <uri>https://secure.ids-adi.org/registry</uri>
+            <name>ids-adi.org</name>
+            <description>IDS-ADI ID Generator</description>
+        </idGenerator>
+    </idGenerators>
+    <namespaces>
+        <sequenceId>3</sequenceId>
+        <namespace>
+            <id>1</id>
+            <uri>http://dm.rdlfacade.org/data#</uri>
+            <alias>dm</alias>
+            <isWritable>false</isWritable>
+            <description>Data Model</description>
+            <idGenerator>idGenerator0</idGenerator>
+        </namespace>
+        <namespace>
+            <id>3</id>
+            <uri>http://tpl.rdlfacade.org/data#</uri>
+            <alias>tpl</alias>
+            <isWritable>true</isWritable>
+            <description>Templates</description>
+            <idGenerator>1</idGenerator>
+        </namespace>
+        <namespace>
+            <id>2</id>
+            <uri>http://rdl.rdlfacade.org/data#</uri>
+            <alias>rdl</alias>
+            <isWritable>true</isWritable>
+            <description>Reference Data Library</description>
+            <idGenerator>1</idGenerator>
+        </namespace>
+    </namespaces>
+    <repositories>
+        <sequenceId>3</sequenceId>
+        <repository>
+            <id>1</id>
+            <description>RDS/WIP Part 4 Reference Data Library</description>
+            <isReadOnly>true</isReadOnly>
+            <name>RDS/WIP</name>
+            <repositoryType>Camelot</repositoryType>
+            <uri>http://rdl.rdlfacade.org/data#</uri>
+            <namespaces>
+                <namespaceId>2</namespaceId>
+            </namespaces>
+        </repository>
+        <repository>
+            <id>3</id>
+            <description>iRINGSandbox</description>
+            <isReadOnly>false</isReadOnly>
+            <name>iRINGSandbox</name>
+            <repositoryType>Camelot</repositoryType>
+            <uri>http://iringsandbox.org/repositories/sandbox/query</uri>
+            <updateUri>http://iringsandbox.org/repositories/sandbox/update</updateUri>
+            <namespaces>
+                <namespaceId>2</namespaceId>
+                <namespaceId>3</namespaceId>
+            </namespaces>
+        </repository>
+        <repository>
+            <id>2</id>
+            <description>Temporary Proto &amp; Initial Set Templates</description>
+            <isReadOnly>true</isReadOnly>
+            <name>TempInitSet</name>
+            <repositoryType>Camelot</repositoryType>
+            <uri>http://iringsandbox.org/repositories/tempInitSet/query</uri>
+            <namespaces>
+                <namespaceId>3</namespaceId>
+            </namespaces>
+        </repository>
+		<repository>
+            <id>4</id>
+            <description>Part 2 Entity Types</description>
+            <isReadOnly>true</isReadOnly>
+            <name>EntityTypes</name>
+            <repositoryType>Camelot</repositoryType>
+            <uri>http://dm.rdlfacade.org/data#</uri>
+            <namespaces>
+                <namespaceId>1</namespaceId>
+            </namespaces>
+        </repository>
+		<repository>
+            <id>5</id>
+            <description>Private sandbox</description>
+            <isReadOnly>false</isReadOnly>
+            <name>My Sandbox</name>
+            <repositoryType>Part8</repositoryType>
+            <uri>http://localhost:62603/services/sandbox/query</uri>
+            <namespaces>
+                <namespaceId>1</namespaceId>
+				<namespaceId>2</namespaceId>
+				<namespaceId>3</namespaceId>
+            </namespaces>
+            <updateUri>http://localhost:62603/services/sandbox/update</updateUri>
+		</repository>
+		
+    </repositories>
+</federation>

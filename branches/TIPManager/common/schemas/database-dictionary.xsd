@@ -1,0 +1,246 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/library"
+  targetNamespace="http://www.iringtools.org/library" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+
+  <xs:annotation>
+    <xs:appinfo>
+      <jaxb:globalBindings>
+        <xjc:simple />
+      </jaxb:globalBindings>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:element name="dataBaseDictionary" type="DatabaseDictionary" />
+  <xs:complexType name="DatabaseDictionary">
+    <xs:complexContent>
+      <xs:extension base="DataDictionary">
+        <xs:sequence>
+          <xs:element name="provider" type="xs:string" />
+          <xs:element name="connectionString" type="xs:string" />
+          <xs:element name="schemaName" type="xs:string" />
+          <xs:element name="identityConfiguration" type="IdentityConfiguration" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+
+  </xs:complexType>
+
+  <xs:complexType name="IdentityProperties">
+    <xs:sequence>
+      <xs:element name="useIdentityFilter" type="xs:boolean" />
+      <xs:element name="identityProperty" type="xs:string" />
+      <xs:element name="keyRingProperty" type="xs:string" />
+      <xs:element name="isCaseSensitive" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="objectConfiguration" type="ObjectConfiguration" />
+  <xs:complexType name="ObjectConfiguration">
+  </xs:complexType>
+  <!-- <xs:complexType name="IdentityConfiguration"> <xs:complexContent> <xs:extension base="IdentityProperties" /> </xs:complexContent> 
+    </xs:complexType> -->
+  <xs:complexType name="IdentityConfiguration">
+    <xs:all>
+      <xs:element name="key" type="xs:string" />
+      <xs:element name="value" type="IdentityProperties" />
+    </xs:all>
+  </xs:complexType>
+
+
+  <xs:simpleType name="DataType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="@Boolean" />
+      <xs:enumeration value="@Byte" />
+      <xs:enumeration value="@Char" />
+      <xs:enumeration value="@DateTime" />
+      <xs:enumeration value="@Decimal" />
+      <xs:enumeration value="@Double" />
+      <xs:enumeration value="@Int16" />
+      <xs:enumeration value="@Int32" />
+      <xs:enumeration value="@Int64" />
+      <xs:enumeration value="@Single" />
+      <xs:enumeration value="@String" />
+      <xs:enumeration value="TimeSpan" />
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="Provider">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="MsSql2000" />
+      <xs:enumeration value="MsSql2005" />
+      <xs:enumeration value="MsSql2008" />
+      <xs:enumeration value="MySql3" />
+      <xs:enumeration value="MySql4" />
+      <xs:enumeration value="MySql5" />
+      <xs:enumeration value="Oracle8i" />
+      <xs:enumeration value="Oracle9i" />
+      <xs:enumeration value="Oracle10g" />
+      <xs:enumeration value="OracleLite" />
+      <xs:enumeration value="PostgresSql81" />
+      <xs:enumeration value="PostgresSql82" />
+      <xs:enumeration value="SqLite" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="dataDictionary" type="DataDictionary" />
+  <xs:complexType name="DataDictionary">
+    <xs:sequence>
+      <xs:element name="dataObjects" type="DataObject" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="VersionInfo">
+    <xs:sequence>
+      <xs:element name="major" type="xs:int" />
+      <xs:element name="minor" type="xs:int" />
+      <xs:element name="build" type="xs:int" />
+      <xs:element name="revision" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+
+  <xs:element name="dataObject" type="DataObject" />
+  <xs:complexType name="DataObject">
+    <xs:sequence>
+      <xs:element name="tableName" type="xs:string" />
+      <xs:element name="objectNamespace" type="xs:string" />
+      <xs:element name="objectName" type="xs:string" />
+      <xs:element name="keyDelimeter" type="xs:string" />
+      <xs:element name="keyProperties" type="KeyProperty" maxOccurs="unbounded" />
+      <xs:element name="dataProperties" type="DataProperty" maxOccurs="unbounded" />
+      <xs:element name="dataRelationships" type="DataRelationship" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="KeyProperty">
+    <xs:sequence>
+      <xs:element name="keyPropertyName" type="xs:string">
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DataProperty">
+    <xs:sequence>
+      <xs:element name="columnName" type="xs:string" />
+      <xs:element name="propertyName" type="xs:string" />
+      <xs:element name="dataType" type="DataType" />
+      <xs:element name="dataLength" type="xs:int" />
+      <xs:element name="isNullable" type="xs:boolean" />
+      <xs:element name="keyType" type="KeyType" />
+      <xs:element name="showOnIndex" type="xs:boolean" />
+      <xs:element name="numberOfDecimals" type="xs:int" />
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="description" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="DataRelationship">
+    <xs:sequence>
+      <xs:element name="propertyMaps" type="PropertyMap" maxOccurs="unbounded" />
+      <xs:element name="relatedObjectName" type="xs:string" />
+      <xs:element name="relationshipName" type="xs:string" />
+      <xs:element name="relationshipType" type="RelationshipType" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PropertyMap">
+    <xs:sequence>
+      <xs:element name="dataPropertyName" type="xs:string" />
+      <xs:element name="relatedPropertyName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="RelationshipType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OneToOne" />
+      <xs:enumeration value="OneToMany" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Relationships">
+    <xs:sequence>
+      <xs:element name="relationship" type="RelationshipType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="Providers">
+    <xs:sequence>
+      <xs:element name="provider" type="Provider" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="AuthroziedUsers">
+    <xs:sequence>
+      <xs:element name="userId" type="xs:string" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+
+  <xs:simpleType name="KeyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unassigned" />
+      <xs:enumeration value="assigned" />
+      <xs:enumeration value="foreign" />
+      <xs:enumeration value="identity" />
+      <xs:enumeration value="sequence" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Status">
+    <xs:sequence>
+      <xs:element name="level" type="StatusLevel" />
+      <xs:element name="identifier" type="xs:string" />
+      <xs:element name="results" type="Results" />
+      <xs:element name="messages" type="Messages" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="StatusLevel">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="Warning" />
+      <xs:enumeration value="Error" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Results">
+    <xs:sequence>
+      <xs:element name="result" type="Result" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Result">
+    <xs:sequence>
+      <xs:element name="key" type="xs:string" />
+      <xs:element name="value" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Messages">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

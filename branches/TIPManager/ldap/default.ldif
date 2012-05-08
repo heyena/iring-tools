@@ -1,0 +1,92 @@
+version: 1
+
+dn: dc=iringug,dc=org
+objectClass: domain
+objectClass: top
+dc: iringug
+
+dn: o=iringtools,dc=iringug,dc=org
+objectClass: top
+objectClass: organization
+o: iringtools
+
+dn: ou=groups,o=iringtools,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+dn: ou=rights,o=iringtools,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: rights
+
+dn: ou=users,o=iringtools,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: uid=karthur,ou=users,o=iringtools,dc=iringug,dc=org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: top
+cn: King
+sn: Arthur
+uid: karthur
+
+dn: cn=directoryAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: directoryAdmins
+description: Controls admin rights on the directory
+member: uid=guest,ou=users,o=iringtools,dc=iringug,dc=org
+
+dn: cn=treeNodeAdmin,ou=rights,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: treeNodeAdmin
+member: cn=directoryAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+
+dn: ou=directory,o=iringtools,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: directory
+
+dn: uid=guest,ou=users,o=iringtools,dc=iringug,dc=org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: top
+cn: iRINGTools
+sn: Guest
+uid: guest
+
+dn: cn=adapterAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: adapterAdmins
+description: Controls login to AdapterManager
+
+dn: cn=exchangeAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: exchangeAdmins
+description: Controls login to ExchangeManager and has exchange right
+
+dn: cn=exchange,ou=rights,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: exchange
+member: cn=exchangeAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+
+dn: cn=user,ou=rights,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: user
+
+dn: cn=rootAdmin,ou=rights,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: rootAdmin
+member: cn=directoryAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/.svn/" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/axiom-1.2.8">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j-1.2.16">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-codec-1.4">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/cxf-2.3.0">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/axis2-kernel-1.5.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-logging-1.1.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/gson-2.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jaxb-ri-20100511"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jaxen-1.1.3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/json-utils"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jsr311-api"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/struts2-2.2.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/synapse-core-1.4.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/tomcat-6.0"/>
+	<classpathentry kind="lib" path="/iRINGTools.Common/bin" sourcepath="/iRINGTools.Common/src">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jena-2.6.4">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/guice-3.0">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/hibernate-4.0">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6"/>
+	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
+</classpath>

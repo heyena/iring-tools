@@ -1,0 +1,247 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/directory"
+  targetNamespace="http://www.iringtools.org/directory"
+  elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.1" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+  jaxb:extensionBindingPrefixes="xjc">
+
+  <xs:element name="directory">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="folder" maxOccurs="unbounded"  minOccurs="0">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="folderList" />
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="folder">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="endpoints" minOccurs="0">
+        <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="endpoints" />
+            </xs:appinfo>
+          </xs:annotation>  
+          </xs:element>           
+        <xs:element ref="folders" minOccurs="0">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="folders" />
+            </xs:appinfo>
+          </xs:annotation>  
+          </xs:element>         
+      <xs:element name="name" type="xs:string" />      
+      <xs:element name="type" type="xs:string" />
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="context" type="xs:string" minOccurs="0"/>
+      <xs:element name="securityRole" type="xs:string" minOccurs="0"/>
+      <xs:element name="group" type="xs:string" minOccurs="0"/>
+      <xs:element ref="exchanges" minOccurs="0">
+        <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="exchanges" />
+            </xs:appinfo>
+          </xs:annotation>  
+          </xs:element>      
+      </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="endpoints">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element ref="endpoint" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+      </xs:element>
+    </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="exchanges">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element ref="exchange" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+      </xs:element>
+    </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="folders">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element ref="folder" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+      </xs:element>
+    </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="endpoint">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" />      
+      <xs:element name="type" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="context" type="xs:string" minOccurs="0"/>
+      <xs:element name="baseUrl" type="xs:string" minOccurs="0"/>
+      <xs:element name="securityRole" type="xs:string" minOccurs="0"/>
+      <xs:element name="group" type="xs:string" minOccurs="0"/>  
+      <xs:element name="assembly" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataSource" type="SourceType" minOccurs="0"/>          
+      </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="exchange">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element name="id" type="xs:string" />
+      <xs:element name="lpath" type="xs:string" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="context" type="xs:string" minOccurs="0"/>
+      <xs:element name="securityRole" type="xs:string" minOccurs="0"/>
+      <xs:element name="group" type="xs:string" minOccurs="0"/>  
+      </xs:sequence>  
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="exchangeDefinition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" type="xs:string" />
+        <xs:element name="sourceUri" type="xs:string" />
+        <xs:element name="sourceScopeName" type="xs:string" />
+        <xs:element name="sourceAppName" type="xs:string" />
+        <xs:element name="sourceGraphName" type="xs:string" />
+        <xs:element name="targetUri" type="xs:string" />
+        <xs:element name="targetScopeName" type="xs:string" />
+        <xs:element name="targetAppName" type="xs:string" />
+        <xs:element name="targetGraphName" type="xs:string" />
+        <xs:element name="hashAlgorithm" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:simpleType name="NodeIconCls">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="folder" />
+      <xs:enumeration value="project" />
+      <xs:enumeration value="application" />
+      <xs:enumeration value="resource" />
+      <xs:enumeration value="exchange" />      
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="SourceType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="dxfr" />
+      <xs:enumeration value="data" />      
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:element name="locators">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element ref="locator" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+      </xs:element>
+    </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+    
+    <xs:element name="applications">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element ref="application" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+      </xs:element>
+    </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+  
+  
+    <xs:element name="resources">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="resource" maxOccurs="unbounded"  minOccurs="0">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="resourceList" />
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+   <xs:element name="resource">
+    <xs:complexType>
+    <xs:sequence>      
+      <xs:element name="baseUrl" type="xs:string" />  
+      <xs:element ref="locators" minOccurs="0">
+        <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="locators" />
+            </xs:appinfo>
+          </xs:annotation>  
+          </xs:element>              
+      </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:element name="locator">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element name="context" type="xs:string" />
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element ref="applications" minOccurs="0">
+        <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="applications" />
+            </xs:appinfo>
+          </xs:annotation>  
+          </xs:element>   
+      </xs:sequence>      
+    </xs:complexType>
+  </xs:element>    
+  
+  <xs:element name="application">
+    <xs:complexType>
+    <xs:sequence>
+      <xs:element name="endpoint" type="xs:string" />    
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="assembly" type="xs:string" minOccurs="0"/> 
+      <xs:element name="lpath" type="xs:string" minOccurs="0"/>       
+      </xs:sequence>      
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>

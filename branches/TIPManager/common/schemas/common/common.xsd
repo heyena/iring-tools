@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/common"
+	targetNamespace="http://www.iringtools.org/common" elementFormDefault="qualified"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	jaxb:extensionBindingPrefixes="xjc">
+
+	<xs:element name="config">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="section" maxOccurs="unbounded" >
+					<xs:annotation>
+						<xs:appinfo>
+							<jaxb:property name="items" />
+						</xs:appinfo>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="section">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="xs:string" />
+				<xs:element ref="setting" maxOccurs="unbounded" >
+					<xs:annotation>
+						<xs:appinfo>
+							<jaxb:property name="items" />
+						</xs:appinfo>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="setting">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="xs:string" />
+				<xs:element name="value" type="xs:string" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="version">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="major" type="xs:string" />
+				<xs:element name="minor" type="xs:string" />
+				<xs:element name="build" type="xs:string" />
+				<xs:element name="revision" type="xs:string" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

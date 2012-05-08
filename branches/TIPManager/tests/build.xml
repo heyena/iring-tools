@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="test" name="tests">
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="common.location" value="../common" />
+	<property name="applications.location" value="../applications" />
+	<property name="services.location" value="../services" />
+  
+  <path id="tests.classpath">
+		<pathelement location="${basedir}/bin" />
+	</path>
+  
+  <path id="libraries.classpath">
+		<pathelement location="${common.location}/bin" />
+		<pathelement location="${applications.location}/WebContentWEB-INF/classes" />
+		<pathelement location="${services.location}/WebContent/WEB-INF/classes" />
+		<fileset dir="../libraries/junit-4.8.2">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="../libraries/commons-codec-1.4">
+			<include name="**/*.jar" />
+		</fileset>
+    <fileset dir="../libraries/apache-log4j-1.2.16">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
+
+	<target name="clean">
+		<echo message="Cleaning up previous compilation artifacts..." />
+		<delete includeemptydirs="true">
+			<fileset dir="bin" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="build-subprojects">
+		<echo message="Compiling subprojects" />
+		<ant antfile="build.xml" dir="${common.location}" inheritAll="false" target="build" />
+		<ant antfile="build.xml" dir="${applications.location}" inheritAll="false" target="build" />
+		<ant antfile="build.xml" dir="${services.location}" inheritAll="false" target="build" />
+	</target>
+
+	<target name="build" depends="clean, build-subprojects">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac includeantruntime="false" debug="true" debuglevel="${debuglevel}" destdir="bin">
+			<src path="src" />
+			<exclude name="**/.svn/" />
+			<classpath refid="libraries.classpath" />
+		</javac>
+	</target>
+
+	<target name="test" depends="build">
+		<junit fork="true" dir="${basedir}" printsummary="yes" haltonfailure="yes" >
+			<classpath refid="tests.classpath" />
+			<classpath refid="libraries.classpath" />
+			<formatter type="xml" />
+			<test name="org.iringtools.tests.DirectoryTests" outfile="test-results" />
+		</junit>
+    <delete>
+			<fileset dir="bin" includes="**/*" />
+		</delete>
+	</target>
+</project>

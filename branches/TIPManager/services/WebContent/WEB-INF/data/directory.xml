@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<directory xmlns="http://www.iringtools.org/directory">
+    <folder>
+        <folders>
+            <folder>
+                <name>Application</name>
+                <type>folder</type>
+                <description>asdfdsaf</description>
+                <context>12345_000</context>                
+            </folder>
+            <folder>
+                <name>App</name>
+                <type>folder</type>
+                <description>adsf</description>
+                <context>12345_000</context>                
+            </folder>
+            <folder>
+                <endpoints>
+                    <endpoint>
+                        <name>ABC</name>
+                        <type>endpoint</type>
+                        <description>ADSF</description>
+                        <context>12345_000</context>
+                        <baseUrl>http://localhost:54321</baseUrl>   
+                        <assembly>org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary</assembly>                     
+                    </endpoint>
+                    <endpoint>
+                        <name>DEF</name>
+                        <type>endpoint</type>
+                        <description>ADSF</description>
+                        <context>12345_000</context>
+                        <baseUrl>http://localhost:54321</baseUrl>  
+                        <assembly>org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary</assembly>                      
+                    </endpoint>
+                </endpoints>
+                <name>Application Data</name>
+                <type>folder</type>
+                <description>adsf</description>
+                <context>12345_000</context>                
+            </folder>
+        </folders>
+        <name>12345_000</name>
+        <type>folder</type>
+        <description>asdfasdf</description>
+        <context>12345_000</context>        
+    </folder>
+</directory>

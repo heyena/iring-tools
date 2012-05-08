@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.iringtools.org/common">
+  <section>
+    <name>global</name>
+    <setting>
+      <name>userid-header</name>
+      <value>userid</value>
+    </setting>
+    <setting>
+      <name>ignore-ssl-errors</name>
+      <value>true</value>
+    </setting>
+  </section>
+  <section>
+    <name>directory service</name>
+    <setting>
+      <name>use-ldap</name>
+      <value>true</value>
+    </setting>
+  </section>
+  <section>
+    <name>exchange service</name>
+    <setting>
+      <name>log-history</name>
+      <value>10</value>
+    </setting>
+    <setting>
+      <name>pool-size</name>
+      <value>100</value>
+    </setting>
+    <setting>
+      <name>manifest-task-timeout</name>
+      <value>300</value>
+    </setting>
+    <setting>
+      <name>dti-task-timeout</name>
+      <value>1800</value>
+    </setting>
+    <setting>
+      <name>dto-task-timeout</name>
+      <value>600</value>
+    </setting>
+  </section>
+</config>

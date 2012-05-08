@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/library"
+  targetNamespace="http://www.iringtools.org/library" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.1" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+  <xs:element name="dataDictionary">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="dataObjects">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="dataObjects" />
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="enableSearch" type="xs:boolean" />
+        <xs:element name="enableSummary" type="xs:boolean" />
+        <xs:element name="dataVersion" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dataObjects">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="dataObject" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dataObject">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="tableName" type="xs:string" />
+        <xs:element name="objectNamespace" type="xs:string" minOccurs="0" />
+        <xs:element name="objectName" type="xs:string" />
+        <xs:element name="keyDelimeter" type="xs:string" minOccurs="0" />
+        <xs:element ref="keyProperties" />
+        <xs:element ref="dataProperties" />
+        <xs:element ref="dataRelationships" minOccurs="0" />
+        <xs:element name="isReadOnly" type="xs:boolean"  minOccurs="0" />
+        <xs:element name="hasContent" type="xs:boolean"  minOccurs="0" />
+        <xs:element name="isListOnly" type="xs:boolean"  minOccurs="0" />
+        <xs:element name="defaultProjectionFormat" type="xs:string"  minOccurs="0" />
+        <xs:element name="defaultListProjectionFormat" type="xs:string"  minOccurs="0" />
+        <xs:element name="description" type="xs:string"  minOccurs="0" />
+        <xs:element name="isRelatedOnly" type="xs:boolean"  minOccurs="0" />        
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="keyProperties">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="keyProperty" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="keyProperty">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="keyPropertyName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dataProperties">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="dataProperty" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dataProperty">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="columnName" type="xs:string" />
+        <xs:element name="propertyName" type="xs:string" />
+        <xs:element name="dataType" type="DataType" />
+        <xs:element name="dataLength" type="xs:int" />
+        <xs:element name="isNullable" type="xs:boolean" />
+        <xs:element name="keyType" type="KeyType" />
+        <xs:element name="showOnIndex" type="xs:boolean" />
+        <xs:element name="numberOfDecimals" type="xs:int" />
+        <xs:element name="isReadOnly" type="xs:boolean"  />
+        <xs:element name="showOnSearch" type="xs:boolean"  />
+        <xs:element name="isHidden" type="xs:boolean"  />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dataRelationships">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="dataRelationship" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dataRelationship">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="propertyMaps" />
+        <xs:element name="relatedObjectName" type="xs:string" />
+        <xs:element name="relationshipName" type="xs:string" />
+        <xs:element name="relationshipType" type="RelationshipType" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="propertyMaps">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="propertyMap" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="items" />
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="propertyMap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="dataPropertyName" type="xs:string" />
+        <xs:element name="relatedPropertyName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="RelationshipType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OneToOne" />
+      <xs:enumeration value="OneToMany" />
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="KeyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unassigned" />
+      <xs:enumeration value="assigned" />
+      <xs:enumeration value="foreign" />
+      <xs:enumeration value="identity" />
+      <xs:enumeration value="sequence" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Boolean" />
+      <xs:enumeration value="Byte" />
+      <xs:enumeration value="Char" />
+      <xs:enumeration value="DateTime" />
+      <xs:enumeration value="TimeSpan" />
+      <xs:enumeration value="Decimal" />
+      <xs:enumeration value="Double" />
+      <xs:enumeration value="Int16" />
+      <xs:enumeration value="Int32" />
+      <xs:enumeration value="Int64" />
+      <xs:enumeration value="Single" />
+      <xs:enumeration value="String" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
