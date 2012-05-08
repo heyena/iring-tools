@@ -423,7 +423,7 @@ namespace org.iringtools.library
 
     public virtual Response RefreshAll()
     {
-      throw new NotImplementedException();
+      return Refresh(string.Empty);
     }
 
     public virtual Response Refresh(string objectType)
