@@ -25,12 +25,15 @@ namespace org.iringtools.sdk.objects
     private System.IO.StreamWriter file;
 
     public Program()
-    {      
+    {
+      //Adapter Service does all this...
       Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
       file = new System.IO.StreamWriter(_fileName);
       NameValueCollection appSettings = System.Configuration.ConfigurationManager.AppSettings;
       ServiceSettings settings = new ServiceSettings();
       settings.AppendSettings(appSettings);
+
+      //This is how DataLayers should use settings...
       WebProxyCredentials webProxyCredentials = settings.GetWebProxyCredentials();
 
       _widgetServiceClient = new WebHttpClient(settings["WidgetServiceUri"],
@@ -39,7 +42,8 @@ namespace org.iringtools.sdk.objects
         webProxyCredentials.domain,
         webProxyCredentials.proxyHost,
         webProxyCredentials.proxyPort);
-
+      
+      //In a DataLayer this is automatic and is not required
       _widgetServiceClient.AccessToken = settings["AccessToken"];
     }
 
