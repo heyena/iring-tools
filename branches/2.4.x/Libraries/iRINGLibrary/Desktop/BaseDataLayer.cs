@@ -428,7 +428,13 @@ namespace org.iringtools.library
 
     public virtual Response Refresh(string objectType)
     {
-      throw new NotImplementedException();
+      Response response = new Response()
+      {
+        Level = StatusLevel.Warning,
+        Messages = new Messages { "Method not implemented." }
+      };
+
+      return response;
     }
 
     public virtual IList<Object> GetSummary()
