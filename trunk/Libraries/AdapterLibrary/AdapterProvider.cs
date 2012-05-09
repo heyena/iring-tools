@@ -3445,7 +3445,7 @@ namespace org.iringtools.adapter
           }
 
           Utility.Write<DataLayers>(dataLayers, _dataLayersBindingConfiguration);
-          response.Messages.Add("Data layer [" + dataLayer.Name + "] added successfully.");
+          response.Messages.Add("Data layer [" + dataLayer.Name + "] saved successfully.");
         }
         else
         {
@@ -3455,7 +3455,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception e)
       {
-        _logger.Error("Error saving data layers: " + e);
+        _logger.Error("Error saving data layer: " + e);
 
         response.Level = StatusLevel.Success;
         response.Messages.Add("Error adding data layer [" + dataLayer.Name + "]. " + e);
