@@ -89,22 +89,14 @@
             iconCls: 'tabsScope',
             url: 'directory/datalayer'
         };
-        var win = Ext.widget('datalayerform', conf);
 
-        win.on('save', function () {
-            win.close();
-            tree.onReload();
-            if (node.get('expanded') == false)
-                node.expand();
-        }, this);
+        var win = Ext.widget('datalayerform', conf);
 
         win.on('Cancel', function () {
             win.close();
         }, this);
-        win.show();
 
-        if (win.items.first().getForm().findField('Name'))
-            win.items.first().getForm().findField('Name').clearInvalid();
+        win.show();
     },
 
     onReloadTree: function (node) {

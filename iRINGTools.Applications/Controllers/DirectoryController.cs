@@ -448,7 +448,7 @@ namespace org.iringtools.web.controllers
                 node.property.Add("baseUrl", form["baseUrl"]);
         }
 
-        public JsonResult DataLayer(JsonTreeNode node, FormCollection form)
+        public string DataLayer(JsonTreeNode node, FormCollection form)
         {
           HttpFileCollectionBase files = Request.Files;
           HttpPostedFileBase hpf = files[0] as HttpPostedFileBase;
@@ -466,8 +466,8 @@ namespace org.iringtools.web.controllers
           dataLayerStream.Position = 0;
 
           Response response = _repository.SaveDataLayer(dataLayerStream);
-          JsonResult result = Json(response, JsonRequestBehavior.AllowGet);
-          return result;
+          //return Json(response, JsonRequestBehavior.AllowGet);
+          return Utility.ToJson<Response>(response);
         }
 
         public JsonResult Folder(FormCollection form)

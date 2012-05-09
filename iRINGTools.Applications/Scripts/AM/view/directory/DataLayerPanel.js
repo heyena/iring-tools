@@ -44,7 +44,6 @@
             xtype: 'form',
             labelWidth: 100,
             url: this.url,
-            method: 'POST',
             bodyStyle: 'padding:10px 5px 0',
             border: false,
             frame: false,
@@ -60,10 +59,8 @@
               { fieldLabel: 'Package File', name: 'packageFile', allowBlank: true, xtype: 'filefield', value: packageFile }
            ],
             autoDestroy: false
-
         }];
 
-        // super
         this.callParent(arguments);
     },
 
@@ -92,21 +89,15 @@
 
     onSave: function () {
         var me = this;
-        var thisForm = me.items.items[0].getForm();
-
         this.items.first().getForm().submit({
-            waitMsg: 'Processing ...',            
+            waitMsg: 'Processing ...',
             success: function (response, request) {
                 me.close();
-                //var responseObj = Ext.decode(response.responseText);
-                //showDialog(300, 100, 'Saving Data Layer ' + responseObj.Level, responseObj.Messages, Ext.Msg.OK, null);
-                showDialog(300, 100, 'Saving Data Layer Result', "Succeeded", Ext.Msg.OK, null);
+                showDialog(320, 80, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
             },
             failure: function (response, request) {
                 me.close();
-                //var msg = response.responseText;
-                //showDialog(300, 100, 'Saving Data Layer Error', msg, Ext.Msg.OK, null);
-                showDialog(300, 100, 'Saving Data Layer Result', "Error", Ext.Msg.OK, null);
+                showDialog(320, 80, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
             }
         });
     }
