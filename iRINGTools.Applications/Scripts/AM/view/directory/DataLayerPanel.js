@@ -57,8 +57,7 @@
               { fieldLabel: 'Name', name: 'name', xtype: 'textfield', value: name, allowBlank: false },
               { fieldLabel: 'Main DLL', name: 'mainDLL', xtype: 'textfield', value: mainDLL },
               { fieldLabel: 'Package File', name: 'packageFile', allowBlank: true, xtype: 'filefield', value: packageFile }
-           ],
-            autoDestroy: false
+           ]
         }];
 
         this.callParent(arguments);

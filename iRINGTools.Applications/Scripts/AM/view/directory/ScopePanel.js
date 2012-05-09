@@ -8,7 +8,7 @@
     split: true,
     record: null,
     url: null,
-    height: 230,
+    height: 240,
     width: 460,
     closable: true,
     bodyPadding: 1,
@@ -68,9 +68,7 @@
               { fieldLabel: 'Folder name', name: 'folderName', xtype: 'textfield', value: name, allowBlank: false },
               { fieldLabel: 'Context name', name: 'contextName', xtype: 'textfield', value: context },
               { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description }
-           ],
-            autoDestroy: false
-
+           ]
         }];
 
         // super
