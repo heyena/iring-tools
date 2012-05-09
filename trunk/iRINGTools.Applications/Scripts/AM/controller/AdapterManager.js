@@ -61,17 +61,27 @@
             'menu button[action=refreshfacade]': {
                 click: this.onRefreshFacade
             },
-            'menu button[action=regenerateAll]': {
-                click: this.onRegenerateAll
-            },
             'directorypanel directorytree': {
                 beforeload: this.onBeforeLoad
             },
             'button[action=reloaddirtree]': {
                 click: this.onReloadTree
             },
-            'button[action=newDataLayer]': {
+            'menuitem[action=newscope]': {
+                click: this.newScope
+            },
+            'menuitem[action=newDataLayer]': {
                 click: this.onNewDataLayer
+            },
+//            TODOs:
+//            'menuitem[action=editDataLayer]': {
+//                click: this.onEditDataLayer
+//            },
+//            'menuitem[action=deleteDataLayer]': {
+//                click: this.onDeleteDataLayer
+//            },
+            'menuitem[action=regenerateAll]': {
+                click: this.onRegenerateAll
             }
         });
     },

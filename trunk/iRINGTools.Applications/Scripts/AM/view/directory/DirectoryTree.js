@@ -136,7 +136,6 @@
     buildScopesMenu: function () {
         return [
     {
-        xtype: 'button',
         text: 'New Folder',
         icon: 'Content/img/16x16/document-new.png',
         anchor: '100%',
@@ -147,7 +146,6 @@
         xtype: 'menuseparator'
     },
     {
-        xtype: 'button',
         text: 'New Data Layer',
         icon: 'Content/img/16x16/document-new.png',
         anchor: '100%',
@@ -155,7 +153,6 @@
         action: 'newDataLayer'
     },
     {
-        xtype: 'button',
         text: 'Edit Data Layer',
         icon: 'Content/img/16x16/edit-delete.png',
         anchor: '100%',
@@ -163,7 +160,6 @@
         action: 'editDataLayer'
     },
     {
-        xtype: 'button',
         text: 'Delete Data Layer',
         icon: 'Content/img/16x16/edit-delete.png',
         anchor: '100%',
@@ -174,7 +170,6 @@
         xtype: 'menuseparator'
     },
     {
-        xtype: 'button',
         text: 'Regenerate Hibernate Artifacts',
         icon: 'Content/img/16x16/document-new.png',
         anchor: '100%',
@@ -185,6 +180,13 @@
 
     buildScopeMenu: function () {
         return [
+      {
+          xtype: 'button',
+          text: 'New Folder',
+          icon: 'Content/img/16x16/document-new.png',
+          scope: this,
+          action: 'newscope'
+      },
       {
           xtype: 'button',
           text: 'Edit Folder',
@@ -198,13 +200,6 @@
           icon: 'Content/img/16x16/edit-delete.png',
           scope: this,
           action: 'deletescope'
-      },
-      {
-          xtype: 'button',
-          text: 'New Folder',
-          icon: 'Content/img/16x16/document-new.png',
-          scope: this,
-          action: 'newscope'
       },
       {
           xtype: 'menuseparator'
@@ -370,7 +365,7 @@
     showContextMenu: function (view, model, node, index, e) {
 
         e.stopEvent();
-        var node = model.store.getAt(index);
+        node = model.store.getAt(index);
 
         this.getSelectionModel().select(node);
         this.onClick(view, model, 0, index, e);
