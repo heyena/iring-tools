@@ -138,7 +138,6 @@
     {
         text: 'New Folder',
         icon: 'Content/img/16x16/document-new.png',
-        anchor: '100%',
         scope: this,
         action: 'newscope'
     },
@@ -148,21 +147,18 @@
     {
         text: 'New Data Layer',
         icon: 'Content/img/16x16/document-new.png',
-        anchor: '100%',
         scope: this,
         action: 'newDataLayer'
     },
     {
         text: 'Edit Data Layer',
         icon: 'Content/img/16x16/edit-delete.png',
-        anchor: '100%',
         scope: this,
         action: 'editDataLayer'
     },
     {
         text: 'Delete Data Layer',
         icon: 'Content/img/16x16/edit-delete.png',
-        anchor: '100%',
         scope: this,
         action: 'deleteDataLayer'
     },
@@ -172,7 +168,6 @@
     {
         text: 'Regenerate Hibernate Artifacts',
         icon: 'Content/img/16x16/document-new.png',
-        anchor: '100%',
         scope: this,
         action: 'regenerateAll'
     }]

@@ -96,7 +96,13 @@
             },
             failure: function (response, request) {
                 me.close();
-                showDialog(320, 80, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
+
+                if (request.result.level == 0) {
+                    showDialog(320, 80, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
+                }
+                else {
+                    showDialog(600, 300, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
+                }
             }
         });
     }
