@@ -176,21 +176,18 @@
     buildScopeMenu: function () {
         return [
       {
-          xtype: 'button',
           text: 'New Folder',
           icon: 'Content/img/16x16/document-new.png',
           scope: this,
           action: 'newscope'
       },
       {
-          xtype: 'button',
           text: 'Edit Folder',
           icon: 'Content/img/16x16/document-properties.png',
           scope: this,
           action: 'editscope'
       },
       {
-          xtype: 'button',
           text: 'Delete Folder',
           icon: 'Content/img/16x16/edit-delete.png',
           scope: this,
@@ -200,7 +197,6 @@
           xtype: 'menuseparator'
       },
       {
-          xtype: 'button',
           text: 'New Endpoint',
           icon: 'Content/img/16x16/document-new.png',
           scope: this,
@@ -211,14 +207,12 @@
     buildApplicationMenu: function () {
         return [
       {
-          xtype: 'button',
           text: 'Edit Endpoint',
           icon: 'Content/img/16x16/document-properties.png',
           scope: this,
           action: 'editendpoint'
       },
       {
-          xtype: 'button',
           text: 'Delete Endpoint',
           icon: 'Content/img/16x16/edit-delete.png',
           scope: this,
@@ -228,7 +222,6 @@
           xtype: 'menuseparator'
       },
       {
-          xtype: 'button',
           text: 'Open Configuration',
           icon: 'Content/img/16x16/preferences-system.png',
           scope: this,
@@ -239,7 +232,6 @@
     buildAppDataMenu: function () {
         return [
       {
-          xtype: 'button',
           text: 'Open Grid',
           icon: 'Content/img/16x16/document-properties.png',
           scope: this,
@@ -250,8 +242,7 @@
     buildvalueListsMenu: function () {
         return [
     {
-        xtype: 'button',
-        text: 'New Value List',
+        text: 'New ValueList',
         icon: 'Content/img/16x16/document-new.png',
         scope: this,
         action: 'newvaluelist'
@@ -262,14 +253,12 @@
     buildvalueListMenu: function () {
         return [
     {
-        xtype: 'button',
-        text: 'Edit Value List Name',
+        text: 'Edit ValueList',
         icon: 'Content/img/16x16/document-properties.png',
         scope: this,
         action: 'editvaluelist'
     },
     {
-        xtype: 'button',
         text: 'Delete ValueList',
         icon: 'Content/img/16x16/edit-delete.png',
         scope: this,
@@ -279,8 +268,7 @@
         xtype: 'menuseparator'
     },
     {
-        xtype: 'button',
-        text: 'New Value Map',
+        text: 'New ValueMap',
         icon: 'Content/img/16x16/document-new.png',
         scope: this,
         action: 'newvaluemap'
@@ -291,15 +279,13 @@
     buildvalueListMapMenu: function () {
         return [
     {
-        xtype: 'button',
-        text: 'Edit Value List Map',
+        text: 'Edit ValueMap',
         icon: 'Content/img/16x16/document-properties.png',
         scope: this,
         action: 'editvaluemap'
     },
     {
-        xtype: 'button',
-        text: 'Delete Value List Map',
+        text: 'Delete ValueMap',
         icon: 'Content/img/16x16/edit-delete.png',
         scope: this,
         action: 'deletevaluemap'
@@ -310,7 +296,6 @@
     buildGraphsMenu: function () {
         return [
     {
-        xtype: 'button',
         text: 'New GraphMap',
         icon: 'Content/img/16x16/document-new.png',
         scope: this,
@@ -322,7 +307,6 @@
     buildGraphMenu: function () {
         return [
         {
-            xtype: 'button',
             text: 'Refresh Facade',
             icon: 'Content/img/table_refresh.png',
             scope: this,
@@ -332,14 +316,12 @@
             xtype: 'menuseparator'
         },
         {
-            xtype: 'button',
             text: 'Edit GraphMap',
             icon: 'Content/img/16x16/document-properties.png',
             scope: this,
             action: 'editgraph'
         },
       {
-          xtype: 'button',
           text: 'Delete GraphMap',
           icon: 'Content/img/16x16/edit-delete.png',
           scope: this,
@@ -349,7 +331,6 @@
           xtype: 'menuseparator'
       },
     {
-        xtype: 'button',
         text: 'Open GraphMap',
         icon: 'Content/img/16x16/mapping.png',
         scope: this,

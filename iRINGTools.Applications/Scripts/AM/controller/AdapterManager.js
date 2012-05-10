@@ -37,30 +37,6 @@
     ],
     init: function () {
         this.control({
-            'menu button[action=newscope]': {
-                click: this.newScope
-            },
-            'menu button[action=editscope]': {
-                click: this.editScope
-            },
-            'menu button[action=deletescope]': {
-                click: this.deleteScope
-            },
-            'menu button[action=newendpoint]': {
-                click: this.newEndpoint
-            },
-            'menu button[action=editendpoint]': {
-                click: this.editEndpoint
-            },
-            'menu button[action=deleteendpoint]': {
-                click: this.deleteEndpoint
-            },
-            'menu button[action=showdata]': {
-                click: this.showDataGrid
-            },
-            'menu button[action=refreshfacade]': {
-                click: this.onRefreshFacade
-            },
             'directorypanel directorytree': {
                 beforeload: this.onBeforeLoad
             },
@@ -70,16 +46,37 @@
             'menuitem[action=newscope]': {
                 click: this.newScope
             },
+            'menuitem[action=editscope]': {
+                click: this.editScope
+            },
+            'menuitem[action=deletescope]': {
+                click: this.deleteScope
+            },
+            'menuitem[action=newendpoint]': {
+                click: this.newEndpoint
+            },
+            'menuitem[action=editendpoint]': {
+                click: this.editEndpoint
+            },
+            'menuitem[action=deleteendpoint]': {
+                click: this.deleteEndpoint
+            },
+            'menuitem[action=showdata]': {
+                click: this.showDataGrid
+            },
+            'menuitem[action=refreshfacade]': {
+                click: this.onRefreshFacade
+            },
             'menuitem[action=newDataLayer]': {
                 click: this.onNewDataLayer
             },
-//            TODOs:
-//            'menuitem[action=editDataLayer]': {
-//                click: this.onEditDataLayer
-//            },
-//            'menuitem[action=deleteDataLayer]': {
-//                click: this.onDeleteDataLayer
-//            },
+            //TODOs:
+            //            'menuitem[action=editDataLayer]': {
+            //                click: this.onEditDataLayer
+            //            },
+            //            'menuitem[action=deleteDataLayer]': {
+            //                click: this.onDeleteDataLayer
+            //            },
             'menuitem[action=regenerateAll]': {
                 click: this.onRegenerateAll
             }
@@ -87,7 +84,7 @@
     },
 
     onNewDataLayer: function () {
-      var tree = this.getDirTree(),
+        var tree = this.getDirTree(),
         node = tree.getSelectedNode(),
         conf = {
             id: 'tab-' + node.data.id,

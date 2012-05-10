@@ -102,35 +102,35 @@
         this.getView().on('beforedrop', this.onBeforeNodedrop, this);
     },
 
-  getState: function () {
-    var nodes = [], state = this.callParent();
-    this.getRootNode().eachChild(function (child) {
-      // function to store state of tree recursively 
-      var storeTreeState = function (node, expandedNodes) {
-        if (node.isExpanded() && node.childNodes.length > 0) {
-          expandedNodes.push(node.getPath('id'));
-          node.eachChild(function (child) {
-            storeTreeState(child, expandedNodes);
-          });
-        }
-      };
-      storeTreeState(child, nodes);
-    });
-    Ext.apply(state, {
-      expandedNodes: nodes
-    });
-    return state;
-  },
+    getState: function () {
+        var nodes = [], state = this.callParent();
+        this.getRootNode().eachChild(function (child) {
+            // function to store state of tree recursively 
+            var storeTreeState = function (node, expandedNodes) {
+                if (node.isExpanded() && node.childNodes.length > 0) {
+                    expandedNodes.push(node.getPath('id'));
+                    node.eachChild(function (child) {
+                        storeTreeState(child, expandedNodes);
+                    });
+                }
+            };
+            storeTreeState(child, nodes);
+        });
+        Ext.apply(state, {
+            expandedNodes: nodes
+        });
+        return state;
+    },
 
-  applyState: function (state) {
-    var me = this;
-    var nodes = state.expandedNodes || [],
+    applyState: function (state) {
+        var me = this;
+        var nodes = state.expandedNodes || [],
             len = nodes.length;
-    //  this.collapseAll();
-    Ext.each(nodes, function (path) {
-      me.expandPath(path, 'id');
-    });
-  },
+        //  this.collapseAll();
+        Ext.each(nodes, function (path) {
+            me.expandPath(path, 'id');
+        });
+    },
 
     buildToolbar: function () {
         return [
@@ -154,7 +154,6 @@
     buildTemplateMapMenu: function () {
         return [
           {
-              xtype: 'button',
               text: 'Delete TemplateMap',
               icon: 'Content/img/16x16/edit-delete.png',
               scope: this,
@@ -166,35 +165,30 @@
     buildRoleMapMenu: function () {
         return [
           {
-              xtype: 'button',
               text: 'Add ClassMap',
               icon: 'Content/img/16x16/document-new.png',
               scope: this,
               action: 'addclassmap'
           },
           {
-              xtype: 'button',
               text: 'Make Possessor',
               // icon: 'Content/img/16x16/view-refresh.png',
               scope: this,
               action: 'makepossessor'
           },
           {
-              xtype: 'button',
               text: 'Map Property',
               // icon: '',
               scope: this,
               action: 'mapproperty'
           },
           {
-              xtype: 'button',
               text: 'Map ValueList',
               // icon: '',
               scope: this,
               action: 'mapvaluelist'
           },
           {
-              xtype: 'button',
               text: 'Reset Mapping',
               //icon: '',
               scope: this,
@@ -206,14 +200,12 @@
     buildClassMapMenu: function () {
         return [
           {
-              xtype: 'button',
               text: 'Delete ClassMap',
               icon: 'Content/img/16x16/edit-delete.png',
               scope: this,
               action: 'deleteclassmap'
           },
           {
-              xtype: 'button',
               text: 'Change ClassMap',
               // icon:'',
               scope: this,
@@ -289,16 +281,16 @@
         }
     },
 
-  onReload: function (node) {
-    //get state from tree
-    var me = this;
-    var state = this.getState();
-    this.body.mask('Loading', 'x-mask-loading');
+    onReload: function (node) {
+        //get state from tree
+        var me = this;
+        var state = this.getState();
+        this.body.mask('Loading', 'x-mask-loading');
 
-    this.getStore().load(node);
-    this.body.unmask();
-    this.applyState(state, true);
-  },
+        this.getStore().load(node);
+        this.body.unmask();
+        this.applyState(state, true);
+    },
 
     onBeforeNodedrop: function (domel, source, target, dropPosition) {
         this.getParentClass(target);
