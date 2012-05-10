@@ -3449,6 +3449,11 @@ namespace org.iringtools.adapter
         }
         else
         {
+          if (Directory.Exists(dataLayer.Path))
+          {
+            Directory.Delete(dataLayer.Path, true);
+          }
+          
           response.Level = StatusLevel.Error;
           response.Messages.Add("Data layer [" + dataLayer.Name + "] is not compatible.");
         }
@@ -3457,7 +3462,12 @@ namespace org.iringtools.adapter
       {
         _logger.Error("Error saving data layer: " + e);
 
-        response.Level = StatusLevel.Success;
+        if (Directory.Exists(dataLayer.Path))
+        {
+          Directory.Delete(dataLayer.Path, true);
+        }
+
+        response.Level = StatusLevel.Error;
         response.Messages.Add("Error adding data layer [" + dataLayer.Name + "]. " + e);
       }
 
