@@ -470,6 +470,16 @@ namespace org.iringtools.web.controllers
           return Utility.ToJson<Response>(response);
         }
 
+        public ActionResult DataLayers(JsonTreeNode node, FormCollection form)
+        {
+          DataLayers dataLayers = _repository.GetDataLayers(form["baseUrl"]);
+          JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
+          container.items = dataLayers;
+          container.success = true;
+          container.total = dataLayers.Count;
+          return Json(container, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult Folder(FormCollection form)
         {
             string success;
