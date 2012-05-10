@@ -31,60 +31,59 @@
   parentClass: null,
   init: function () {
     this.control({
-      'menu button[action=newgraph]': {
+    'menuitem[action=newgraph]': {
         click: this.onNewGraph
       },
-      'menu button[action=editgraph]': {
+    'menuitem[action=editgraph]': {
         click: this.onEditGraph
       },
-      'menu button[action=deletegraph]': {
+    'menuitem[action=deletegraph]': {
         click: this.onDeleteGraph
       },
-      'menu button[action=newvaluelist]': {
+    'menuitem[action=newvaluelist]': {
         click: this.onNewValueList
       },
-      'menu button[action=editvaluelist]': {
+    'menuitem[action=editvaluelist]': {
         click: this.onEditValueList
       },
-      'menu button[action=deletevaluelist]': {
+    'menuitem[action=deletevaluelist]': {
         click: this.onDeleteValueList
       },
-      'menu button[action=newvaluemap]': {
+    'menuitem[action=newvaluemap]': {
         click: this.onNewValueMap
       },
-      'menu button[action=editvaluemap]': {
+    'menuitem[action=editvaluemap]': {
         click: this.onEditValueMap
       },
-      'menu button[action=deletevaluemap]': {
+    'menuitem[action=deletevaluemap]': {
         click: this.onDeleteValueMap
       },
-      'menu button[action=opengraph]': {
+    'menuitem[action=opengraph]': {
         click: this.openGraphMap
       },
-      'menu button[action=addclassmap]': {
+    'menuitem[action=addclassmap]': {
         click: this.addClassMap
       },
-      'menu button[action=mapproperty]': {
+    'menuitem[action=mapproperty]': {
         click: this.mapProperty
       },
-      'menu button[action=makepossessor]': {
+    'menuitem[action=makepossessor]': {
         click: this.makePossessor
       },
-      'menu button[action=resetmapping]': {
+    'menuitem[action=resetmapping]': {
         click: this.resetMapping
       },
-      'menu button[action=templatemapdelete]': {
+    'menuitem[action=templatemapdelete]': {
         click: this.deleteTemplateMap
       },
-      'menu button[action=deleteclassmap]': {
+    'menuitemn[action=deleteclassmap]': {
         click: this.deleteClassMap
       },
-      'menu button[action=mapvaluelist]': {
+    'menuitem[action=mapvaluelist]': {
         click: this.mapValueList
       }
     });
   },
-
 
   mapValueList: function () {
     var tree = this.getMappingPanel(),

@@ -54,7 +54,7 @@
 
   init: function () {
     this.control({
-      'button[action=configureendpoint]': {
+      'menuitem[action=configureendpoint]': {
         click: this.onConfigureEndpoint
       },
       'button[action=uploadspreadsheet]': {
