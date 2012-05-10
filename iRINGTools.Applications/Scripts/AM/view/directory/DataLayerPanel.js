@@ -68,13 +68,13 @@
             xtype: 'tbfill'
         }, {
             xtype: "button",
-            text: 'OK',
+            text: 'Ok',
             disabled: false,
             handler: this.onSave,
             scope: this
         }, {
             xtype: "button",
-            text: 'CANCEL',
+            text: 'Cancel',
             disabled: false,
             handler: this.onReset,
             scope: this

@@ -32,13 +32,12 @@
         this.bbar = new Ext.toolbar.Toolbar();
         this.bbar.add(this.buildToolbar());
 
-        var name = ""
-        var description = ""
+        var name = '';
+        var path = '';
+        var description = '';
 
-        if (!this.node.parentNode)
-            var path = '';
-        else
-            var path = this.path;
+        if (this.node.parentNode)
+            path = this.path;
 
         var state = this.state;
         var context = this.record.context;
@@ -113,7 +112,7 @@
         this.items.first().getForm().submit({
             waitMsg: 'Saving Data...',
             success: function (response, request) {
-                me.fireEvent('Save', me);                
+                me.fireEvent('Save', me);
             },
             failure: function (response, request) {
                 var rtext = request.result;
@@ -123,12 +122,12 @@
                     var msg = rtext.substring(ind + 1, rtext.length - 1);
                     showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
                     return;
-                }                
+                }
                 var message = 'Error saving changes!';
                 showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
             }
         });
-    } 
+    }
 });
 
 
