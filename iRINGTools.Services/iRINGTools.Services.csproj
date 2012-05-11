@@ -59,6 +59,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.DynamicProxy2.dll</HintPath>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ExternalBinaries\OpenXML\DocumentFormat.OpenXml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="dotNetRDF, Version=0.4.2.11625, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
@@ -81,9 +86,6 @@
     <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\datalayers\SPPIDDataLayer\SPPIDDataLayer\bin\Debug\Oracle.DataAccess.dll</HintPath>
-    </Reference>
-    <Reference Include="SPPIDDataLayer">
-      <HintPath>..\..\datalayers\SPPIDDataLayer\SPPIDDataLayer\bin\Debug\SPPIDDataLayer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -178,6 +180,14 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\iRing\trunk\datalayers\MSSQLLibrary\MSSQLLibrary.csproj">
+      <Project>{B696E03C-AF7F-46B6-B66D-D1F8E3655425}</Project>
+      <Name>MSSQLLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\datalayers\ADONet\ADONetDataLayer\ADONetDataLayer.csproj">
+      <Project>{7DFD3469-50B6-4D22-A201-D5BFC887F4FA}</Project>
+      <Name>ADONetDataLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
