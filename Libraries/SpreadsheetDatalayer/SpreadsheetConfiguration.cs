@@ -78,6 +78,9 @@ namespace org.iringtools.adapter.datalayer
 
     [DataMember(Name = "columnIdx", Order = 3)]
     public string ColumnIdx { get; set; }
+
+    [DataMember(Name = "datalength", Order = 4)]
+    public int DataLength { get; set; }
   }
 
 }
