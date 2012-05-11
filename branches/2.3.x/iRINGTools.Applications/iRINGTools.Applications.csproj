@@ -4737,10 +4737,6 @@
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\MappingEditor\Index.aspx" />
     <Content Include="Views\RefDataEditor\Index.aspx" />
-    <None Include="Web.config">
-      <SubType>
-      </SubType>
-    </None>
     <Content Include="Scripts\jquery-1.4.1.js" />
     <Content Include="Scripts\jquery-1.4.1.min.js" />
     <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
