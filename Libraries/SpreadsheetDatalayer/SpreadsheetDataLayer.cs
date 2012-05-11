@@ -58,7 +58,8 @@ namespace org.iringtools.adapter.datalayer
             {
               propertyName = column.Label,
               columnName = column.Name,
-              dataType = column.DataType
+              dataType = column.DataType,
+              dataLength = column.DataLength
             };
 
             if (table.Identifier.Equals(column.Label))
@@ -449,7 +450,10 @@ namespace org.iringtools.adapter.datalayer
               {
                 Cell existingCell = existingRow.Descendants<Cell>().First(c => SpreadsheetReference.GetColumnName(c.CellReference).Equals(col.ColumnIdx));
                 existingCell.DataType = SpreadsheetProvider.GetCellValue(col.DataType);
-                existingCell.CellValue.Text = Convert.ToString(dataObject.GetPropertyValue(col.Name));
+                if (!string.IsNullOrEmpty(Convert.ToString(dataObject.GetPropertyValue(col.Name))))
+                  existingCell.CellValue.Text = Convert.ToString(dataObject.GetPropertyValue(col.Name));
+                else if (existingCell.CellValue == null)
+                  existingCell.CellValue = new CellValue(Convert.ToString(dataObject.GetPropertyValue(col.Name)));
               }
             }
             else
