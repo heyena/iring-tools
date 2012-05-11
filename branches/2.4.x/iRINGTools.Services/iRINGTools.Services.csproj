@@ -93,7 +93,12 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\BindingConfiguration.Adapter.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_Data\default.css" />
+    <Content Include="App_Data\Repositories.xml" />
+    <Content Include="App_Data\Scopes.xml" />
     <Content Include="css\sparql-query.css" />
     <Content Include="css\iring-tools.css" />
     <Content Include="css\reset.css" />
@@ -146,6 +151,15 @@
     <None Include="App_Data\config.ttl" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Default.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
     </Content>
   </ItemGroup>
   <ItemGroup>
