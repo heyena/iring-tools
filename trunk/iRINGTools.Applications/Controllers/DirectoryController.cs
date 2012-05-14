@@ -15,6 +15,10 @@ using System.IO;
 using org.iringtools.utility;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Reflection;
+using System.Collections.Specialized;
+using org.iringtools.adapter;
+using System.Configuration;
 
 
 namespace org.iringtools.web.controllers
@@ -26,6 +30,7 @@ namespace org.iringtools.web.controllers
         private string _keyFormat = "Mapping.{0}.{1}";
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
         private System.Web.Script.Serialization.JavaScriptSerializer _serializer;
+        private AdapterSettings _settings { get; set; }
 
         public DirectoryController()
             : this(new AdapterRepository())
@@ -40,6 +45,8 @@ namespace org.iringtools.web.controllers
             _repository = repository;
             _serializer =
                new System.Web.Script.Serialization.JavaScriptSerializer();
+
+            AddDataLayarDLLinAppDomain();
         }
 
         public ActionResult Index()
@@ -590,6 +597,74 @@ namespace org.iringtools.web.controllers
             response.Messages.Add(ex.StackTrace);
             return response;
         }
+
+        #region Manage DataLayer DLLs
+        
+        private void AddDataLayarDLLinAppDomain()
+        {
+            _settings = new AdapterSettings();
+            _settings.AppendSettings(ConfigurationManager.AppSettings);
+
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.AssemblyResolve += new ResolveEventHandler(DataLayerAssemblyResolveEventHandler);
+            if (Directory.Exists(_settings["DataLayerPath"]))
+            {
+                string[] datalayerdirectories = Directory.GetDirectories(_settings["DataLayerPath"]);
+                foreach (string _dldir in datalayerdirectories)
+                {
+                    if (_dldir.Contains("DataLayers"))
+                    {
+                        string[] directories = Directory.GetDirectories(_dldir);
+                        foreach (string dir in directories)
+                        {
+                            string[] files = Directory.GetFiles(dir);
+                            foreach (string file in files)
+                            {
+                                if (file.ToLower().EndsWith(".dll") || file.ToLower().EndsWith(".exe"))
+                                {
+                                    byte[] bytes = Utility.GetBytes(file);
+                                    Assembly.Load(bytes);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private Assembly DataLayerAssemblyResolveEventHandler(object sender, ResolveEventArgs args)
+        {
+            if (args.Name.Contains(".resources,"))
+            {
+                return null;
+            }
+
+            if (Directory.Exists(@"C:\Project\New folder\iRINGTools.Services\App_Data\DataLayers\SPPIDDataLayer"))
+            {
+                string[] files = Directory.GetFiles(@"C:\Project\New folder\iRINGTools.Services\App_Data\DataLayers\SPPIDDataLayer");
+
+                foreach (string file in files)
+                {
+                    if (file.ToLower().EndsWith(".dll") || file.ToLower().EndsWith(".exe"))
+                    {
+                        AssemblyName asmName = AssemblyName.GetAssemblyName(file);
+
+                        if (args.Name.StartsWith(asmName.Name))
+                        {
+                            byte[] bytes = Utility.GetBytes(file);
+                            return Assembly.Load(bytes);
+                        }
+                    }
+                }
+
+                _logger.Error("Unable to resolve assembly [" + args.Name + "].");
+            }
+
+            return null;
+        } 
+
+        #endregion
+
         #endregion
     }
 
