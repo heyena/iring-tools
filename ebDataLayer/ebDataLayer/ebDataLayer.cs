@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
-using eB.Service.Client;
-using eB.Data;
-using System.Xml;
-using org.iringtools.library;
-using org.iringtools.adapter;
-using Ninject;
-using org.iringtools.utility;
-using System.Data;
 using System.Text.RegularExpressions;
-using eB.Common.Enum;
-using log4net;
-using org.iringtools.adaper.datalayer.eb;
+using System.Xml;
 using System.Xml.Linq;
+using eB.Common.Enum;
+using eB.Data;
+using eB.Service.Client;
+using log4net;
+using Ninject;
+using org.iringtools.adaper.datalayer.eb;
+using org.iringtools.library;
+using org.iringtools.utility;
 using StaticDust.Configuration;
-using System.IO;
 
 namespace org.iringtools.adapter.datalayer.eb
 {
@@ -24,42 +23,60 @@ namespace org.iringtools.adapter.datalayer.eb
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ebDataLayer));
 
-    private readonly string TAG_METADATA_QUERY = @"
-      select d.char_name, d.char_data_type, d.char_length, 0 as is_system_char from class_objects a 
-      inner join class_attributes c on c.class_id = a.class_id 
-      inner join characteristics d on c.char_id = d.char_id 
-      where d.object_type = {0} 
-      union select 'Id', 'Int32', 255 , 1 
-      union select 'Class.Code', 'String', 255, 1 
-      union select 'Class.Id', 'Int32', 255, 1 
-      union select 'Code', 'String', 100, 1 
-      union select 'Revision', 'String', 100, 1 
-      union select 'Name', 'String', 255, 1 
-      union select 'ChangeControlled', 'String', 1, 1 
-      union select 'DateEffective', 'DateTime', 100, 1 
-      union select 'DateObsolete', 'DateTime', 100, 1 
-      union select 'ApprovalStatus', 'String', 1, 1 
-      union select 'OperationalStatus', 'String', 1, 1 
-      union select 'Quantity', 'Int32', 8, 1 
-      union select 'Description', 'String', 1000, 1";
+    private readonly string TAG_METADATA_SQL = @"
+      SELECT d.char_name, d.char_data_type, d.char_length, 0 AS is_system_char FROM class_objects a 
+      INNER JOIN class_attributes c ON c.class_id = a.class_id 
+      INNER JOIN characteristics d ON c.char_id = d.char_id 
+      WHERE d.object_type = {0} 
+      UNION SELECT 'Id', 'Int32', 255 , 1 
+      UNION SELECT 'Class.Code', 'String', 255, 1 
+      UNION SELECT 'Class.Id', 'Int32', 255, 1 
+      UNION SELECT 'Code', 'String', 100, 1 
+      UNION SELECT 'Revision', 'String', 100, 1 
+      UNION SELECT 'Name', 'String', 255, 1 
+      UNION SELECT 'ChangeControlled', 'String', 1, 1 
+      UNION SELECT 'DateEffective', 'DateTime', 100, 1 
+      UNION SELECT 'DateObsolete', 'DateTime', 100, 1 
+      UNION SELECT 'ApprovalStatus', 'String', 1, 1 
+      UNION SELECT 'OperationalStatus', 'String', 1, 1 
+      UNION SELECT 'Quantity', 'Int32', 8, 1 
+      UNION SELECT 'Description', 'String', 1000, 1";
 
-    private readonly string DOCUMENT_METADATA_QUERY = @"
-      select d.char_name, d.char_data_type, d.char_length, 0 as is_system_char from class_objects a 
-      inner join class_attributes c on c.class_id = a.class_id 
-      inner join characteristics d on c.char_id = d.char_id 
-      where d.object_type = {0} 
-      union select 'Id', 'Int32', 255, 1 
-      union select 'Class.Code', 'String', 255, 1 
-      union select 'Class.Id', 'Int32', 255, 1 
-      union select 'Code', 'String', 100, 1 
-      union select 'Revision', 'String', 100, 1 
-      union select 'Name', 'String', 255, 1 
-      union select 'ChangeControlled', 'String', 1, 1 
-      union select 'DateEffective', 'DateTime', 100, 1 
-      union select 'DateObsolete', 'DateTime', 100, 1 
-      union select 'ApprovalStatus', 'String', 1, 1 
-      union select 'Remark', 'String', 255, 1 
-      union select 'Synopsis', 'String', 255, 1";
+    private readonly string DOCUMENT_METADATA_SQL = @"
+      SELECT d.char_name, d.char_data_type, d.char_length, 0 AS is_system_char FROM class_objects a 
+      INNER JOIN class_attributes c ON c.class_id = a.class_id 
+      INNER JOIN characteristics d ON c.char_id = d.char_id 
+      WHERE d.object_type = {0} 
+      UNION SELECT 'Id', 'Int32', 255, 1 
+      UNION SELECT 'Class.Code', 'String', 255, 1 
+      UNION SELECT 'Class.Id', 'Int32', 255, 1 
+      UNION SELECT 'Code', 'String', 100, 1 
+      UNION SELECT 'Revision', 'String', 100, 1 
+      UNION SELECT 'Name', 'String', 255, 1 
+      UNION SELECT 'ChangeControlled', 'String', 1, 1 
+      UNION SELECT 'DateEffective', 'DateTime', 100, 1 
+      UNION SELECT 'DateObsolete', 'DateTime', 100, 1 
+      UNION SELECT 'ApprovalStatus', 'String', 1, 1 
+      UNION SELECT 'Remark', 'String', 255, 1 
+      UNION SELECT 'Synopsis', 'String', 255, 1";
+
+    private readonly string CLASS_OBJECTS_EQL = @"
+      START WITH Class SELECT ClassGroup.Id GroupId, ClassGroup.ObjectType ObjectType, Path
+      WHERE ClassGroup.Id IN (1,17) AND Path NOT LIKE '%\%' ORDER BY ClassGroup.Id, Path";
+
+    private readonly string M3_OBJECTS_SQL = @"
+      SELECT document_id, hash_key FROM (
+        SELECT MAX(a.pdm_file_id) OVER (PARTITION BY a.document_id) as max_file_id, 
+        a.pdm_file_id, c.document_id, b.hash_key FROM doc_source a 
+        INNER JOIN m3_objects b ON a.m3_object_id = b.object_id
+        INNER JOIN documents c ON a.document_id = c.document_id
+        WHERE a.pdm_file_id IS NOT NULL AND a.document_id IN ({0}) 
+      ) t WHERE pdm_file_id = max_file_id";
+
+    private readonly string CONTENT_EQL = @"
+      START WITH Document
+      SELECT Id, Code, Files.Id, Files.Name
+      WHERE Id IN ({0}) AND Files.Id IS NOT NULL AND Files.Name NOT LIKE '%(eB Historic%'";
 
     private string _dataPath = string.Empty;
     private string _scope = string.Empty;
@@ -146,6 +163,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
     }
 
+    #region interface implementation methods
     public override DataDictionary GetDictionary()
     {
       if (_dictionary != null)
@@ -192,8 +210,7 @@ namespace org.iringtools.adapter.datalayer.eb
     {
       try
       {
-        DataDictionary dictionary = GetDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        DataObject objDef = GetObjectDefinition(objectType);
 
         if (objDef != null)
         {
@@ -217,10 +234,13 @@ namespace org.iringtools.adapter.datalayer.eb
             throw new Exception(string.Format("Object type [{0}] not supported.", objectType));
           }
 
-          string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
-          if (!string.IsNullOrEmpty(whereClause))
+          if (filter != null)
           {
-            eql += whereClause.Replace(" WHERE ", " AND ");
+            string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
+            if (!string.IsNullOrEmpty(whereClause))
+            {
+              eql += whereClause.Replace(" WHERE ", " AND ");
+            }
           }
 
           EqlClient eqlClient = new EqlClient(_session);
@@ -251,8 +271,7 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         Connect();
 
-        DataDictionary dictionary = GetDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        DataObject objDef = GetObjectDefinition(objectType);
 
         if (objDef != null)
         {
@@ -279,10 +298,13 @@ namespace org.iringtools.adapter.datalayer.eb
 
             eql = string.Format(eql, classObject, builder.ToString(), classIds);
 
-            string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
-            if (!string.IsNullOrEmpty(whereClause))
+            if (filter != null)
             {
-              eql += whereClause.Replace(" WHERE ", " AND ");
+              string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
+              if (!string.IsNullOrEmpty(whereClause))
+              {
+                eql += whereClause.Replace(" WHERE ", " AND ");
+              }
             }
 
             EqlClient eqlClient = new EqlClient(_session);
@@ -313,10 +335,7 @@ namespace org.iringtools.adapter.datalayer.eb
       try
       {
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, -1);
-
-        DataDictionary dictionary = GetDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-
+        DataObject objDef = GetObjectDefinition(objectType);
         IList<string> identifiers = new List<string>();
 
         foreach (IDataObject dataObject in dataObjects)
@@ -341,8 +360,7 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         Connect();
 
-        DataDictionary dictionary = GetDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        DataObject objDef = GetObjectDefinition(objectType);
 
         if (objDef != null)
         {
@@ -377,7 +395,7 @@ namespace org.iringtools.adapter.datalayer.eb
           }
           else
           {
-            throw new Exception("Class object [" + classObject + "] not currently supported.");
+            throw new Exception("Class object [" + classObject + "] not supported.");
           }
         }
         else
@@ -407,9 +425,8 @@ namespace org.iringtools.adapter.datalayer.eb
           return response;
         }
 
-        DataDictionary dictionary = GetDictionary();
         string objType = ((GenericDataObject)dataObjects[0]).ObjectType;
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objType.ToLower());
+        DataObject objDef = GetObjectDefinition(objType);
         Configuration config = GetConfiguration(objDef);
 
         Connect();
@@ -442,11 +459,11 @@ namespace org.iringtools.adapter.datalayer.eb
               {
                 Identifier = keyValue,
                 Level = StatusLevel.Error,
-                Messages = new Messages() { string.Format("Template [{0}] for the object does not exist.", templateName) }
+                Messages = new Messages() { string.Format("Template [{0}] does not exist.", templateName) }
               };
 
               response.StatusList.Add(status);
-              break;
+              continue;
             }
 
             objectId = _session.Writer.CreateFromTemplate(templateId, "", "");
@@ -469,7 +486,7 @@ namespace org.iringtools.adapter.datalayer.eb
             {
               Identifier = keyValue,
               Level = StatusLevel.Error,
-              Messages = new Messages() { string.Format("Object type [{0}] is not supoorted in this version.", template.ObjectType) }
+              Messages = new Messages() { string.Format("Object type [{0}] not supported.", template.ObjectType) }
             };
 
             response.StatusList.Add(status);
@@ -497,9 +514,8 @@ namespace org.iringtools.adapter.datalayer.eb
 
       try
       {
-        DataDictionary dictionary = GetDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-
+        DataObject objDef = GetObjectDefinition(objectType);
+        
         if (objDef != null)
         {
           try
@@ -586,6 +602,11 @@ namespace org.iringtools.adapter.datalayer.eb
       }
     }
 
+    public override Response Refresh(string objectType)
+    {
+      return RefreshAll();
+    }
+
     public override Response RefreshAll()
     {
       Response response = new Response();
@@ -606,110 +627,94 @@ namespace org.iringtools.adapter.datalayer.eb
       return response;
     }
 
-    protected Configuration GetConfiguration(DataObject objDef)
+    //TODO: add to interface and override
+    public IDictionary<string, string> GetHashValues(string objectType, IList<string> identifiers)
     {
-      string fileName = objDef.objectNamespace + "_" + 
-        Regex.Replace(objDef.objectName, @"\(.*\)", string.Empty) + "_" + _communityName + ".xml";
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, identifiers);
+        IList<int> docIds = GetDocumentIds(dataObjects);
+        return GetHashValues(docIds);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting hash values: " + e.Message);
+        throw e;
+      }
+    }
 
-      // use specific config for object type if available
-      if (_configs.ContainsKey(fileName))
-        return _configs[fileName];
+    //TODO: add to interface and override
+    public IDictionary<string, string> GetHashValues(string objectType, DataFilter filter, int pageSize, int startIndex)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, filter, pageSize, startIndex);
+        IList<int> docIds = GetDocumentIds(dataObjects);
+        return GetHashValues(docIds);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting hash values: " + e.Message);
+        throw e;
+      }
+    }
 
-      // specific config does not exist, look for higher scope configuration
-      fileName = objDef.objectNamespace + "_" + _communityName + ".xml";
-      if (_configs.ContainsKey(fileName))
-        return _configs[fileName];
+    //TODO: add to interface and override
+    public IList<IContentObject> GetContents(string objectType, IList<string> identifiers)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, identifiers);
+        IList<int> docIds = GetDocumentIds(dataObjects);
+        return GetContents(docIds);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting contents: " + e.Message);
+        throw e;
+      }
+    }
 
-      _logger.Error(string.Format("No configuration provided for object type [{0}].", objDef.objectName));        
+    //TODO: add to interface and override
+    public IList<IContentObject> GetContents(string objectType, DataFilter filter, int pageSize, int startIndex)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, filter, pageSize, startIndex);
+        IList<int> docIds = GetDocumentIds(dataObjects);
+        return GetContents(docIds);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting contents: " + e.Message);
+        throw e;
+      }
+    }
+
+    //TODO: add to interface and override
+    public Response PostContents(IList<IContentObject> contentObjects)
+    {
+      try
+      {
+        Connect();
+
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error posting contents: " + e.Message);
+        throw e;
+      }
+      finally
+      {
+        Disconnect();
+      }
+
       return null;
     }
+    #endregion
 
-    protected void Connect()
-    {
-      _proxy = new Proxy();
-
-      int ret = _proxy.connect(0, _server);
-
-      if (ret < 0)
-      {
-        throw new Exception(_proxy.get_error(ret));
-      }
-
-      ret = _proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
-      if (ret < 0)
-      {
-        throw new Exception(_proxy.get_error(ret));
-      }
-
-      _proxy.silent_mode = true;
-      _session = new eB.Data.Session();
-      _session.AttachProtoProxy(_proxy.proto_proxy, _proxy.connect_info);
-    }
-
-    protected void Disconnect()
-    { 
-      if (_proxy != null)
-      {
-        _proxy.Dispose();
-        _proxy = null;
-        _session = null;
-      }
-    }
-
-    protected List<ClassObject> GetClassObjects(EqlClient eqlClient)
-    {
-      List<ClassObject> classObjects = new List<ClassObject>();
-
-      if (string.IsNullOrEmpty(_classObjects))
-      {
-        string eql = @"START WITH Class SELECT ClassGroup.Id GroupId, ClassGroup.ObjectType ObjectType, Path
-                       WHERE ClassGroup.Id IN (1,17) AND Path NOT LIKE '%\%' ORDER BY ClassGroup.Id, Path";
-
-        DataTable dt = eqlClient.RunQuery(eql);
-
-        foreach (DataRow row in dt.Rows)
-        {
-          int groupId = (int)row["GroupId"];
-          string groupName = Enum.GetName(typeof(GroupType), groupId);
-          string path = row["Path"].ToString();
-
-          ClassObject classObject = new ClassObject()
-          {
-            Name = path,
-            ObjectType = (ObjectType)(row["ObjectType"]),
-            GroupId = groupId,
-            Ids = eqlClient.GetClassIds(groupId, path)
-          };
-
-          classObjects.Add(classObject);
-        }
-      }
-      else
-      {
-        string[] cosParts = _classObjects.Split(',');
-
-        for (int i = 0; i < cosParts.Length; i++)
-        {
-          string[] coParts = cosParts[i].Trim().Split('.');
-          string groupName = coParts[0];
-          string className = coParts[1];
-
-          ClassObject classObject = new ClassObject()
-          {
-            Name = className,
-            ObjectType = (ObjectType)Enum.Parse(typeof(ObjectType), groupName),
-            GroupId = (int)Enum.Parse(typeof(GroupType), groupName),
-            Ids = eqlClient.GetClassIds((int)Enum.Parse(typeof(GroupType), groupName), className)
-          };
-
-          classObjects.Add(classObject);
-        }
-      }
-
-      return classObjects;
-    }
-
-    public DataObject CreateObjectDefinition(ClassObject classObject)
+    #region helper methods
+    protected DataObject CreateObjectDefinition(ClassObject classObject)
     {
       if (classObject.Ids == null || classObject.Ids.Count == 0)
       {
@@ -720,11 +725,11 @@ namespace org.iringtools.adapter.datalayer.eb
 
       if (classObject.ObjectType == ObjectType.Tag)
       {
-        metadataQuery = string.Format(TAG_METADATA_QUERY, (int)ObjectType.Tag);
+        metadataQuery = string.Format(TAG_METADATA_SQL, (int)ObjectType.Tag);
       }
       else if (classObject.ObjectType == ObjectType.Document)
       {
-        metadataQuery = string.Format(DOCUMENT_METADATA_QUERY, (int)ObjectType.Document);
+        metadataQuery = string.Format(DOCUMENT_METADATA_SQL, (int)ObjectType.Document);
       }
       else
       {
@@ -827,6 +832,113 @@ namespace org.iringtools.adapter.datalayer.eb
       return objDef;
     }
 
+    protected DataObject GetObjectDefinition(string objectType)
+    {
+      DataDictionary dictionary = GetDictionary();
+      DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+      return objDef;
+    }
+
+    protected Configuration GetConfiguration(DataObject objDef)
+    {
+      string fileName = objDef.objectNamespace + "_" + 
+        Regex.Replace(objDef.objectName, @"\(.*\)", string.Empty) + "_" + _communityName + ".xml";
+
+      // use specific config for object type if available
+      if (_configs.ContainsKey(fileName))
+        return _configs[fileName];
+
+      // specific config does not exist, look for higher scope configuration
+      fileName = objDef.objectNamespace + "_" + _communityName + ".xml";
+      if (_configs.ContainsKey(fileName))
+        return _configs[fileName];
+
+      _logger.Error(string.Format("No configuration available for object type [{0}].", objDef.objectName));        
+      return null;
+    }
+
+    protected void Connect()
+    {
+      _proxy = new Proxy();
+
+      int ret = _proxy.connect(0, _server);
+
+      if (ret < 0)
+      {
+        throw new Exception(_proxy.get_error(ret));
+      }
+
+      ret = _proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
+      if (ret < 0)
+      {
+        throw new Exception(_proxy.get_error(ret));
+      }
+
+      _proxy.silent_mode = true;
+      _session = new eB.Data.Session();
+      _session.AttachProtoProxy(_proxy.proto_proxy, _proxy.connect_info);
+    }
+
+    protected void Disconnect()
+    { 
+      if (_proxy != null)
+      {
+        _proxy.Dispose();
+        _proxy = null;
+        _session = null;
+      }
+    }
+
+    protected List<ClassObject> GetClassObjects(EqlClient eqlClient)
+    {
+      List<ClassObject> classObjects = new List<ClassObject>();
+
+      if (string.IsNullOrEmpty(_classObjects))
+      {
+        DataTable dt = eqlClient.RunQuery(CLASS_OBJECTS_EQL);
+
+        foreach (DataRow row in dt.Rows)
+        {
+          int groupId = (int)row["GroupId"];
+          string groupName = Enum.GetName(typeof(GroupType), groupId);
+          string path = row["Path"].ToString();
+
+          ClassObject classObject = new ClassObject()
+          {
+            Name = path,
+            ObjectType = (ObjectType)(row["ObjectType"]),
+            GroupId = groupId,
+            Ids = eqlClient.GetClassIds(groupId, path)
+          };
+
+          classObjects.Add(classObject);
+        }
+      }
+      else
+      {
+        string[] cosParts = _classObjects.Split(',');
+
+        for (int i = 0; i < cosParts.Length; i++)
+        {
+          string[] coParts = cosParts[i].Trim().Split('.');
+          string groupName = coParts[0];
+          string className = coParts[1];
+
+          ClassObject classObject = new ClassObject()
+          {
+            Name = className,
+            ObjectType = (ObjectType)Enum.Parse(typeof(ObjectType), groupName),
+            GroupId = (int)Enum.Parse(typeof(GroupType), groupName),
+            Ids = eqlClient.GetClassIds((int)Enum.Parse(typeof(GroupType), groupName), className)
+          };
+
+          classObjects.Add(classObject);
+        }
+      }
+
+      return classObjects;
+    }
+
     protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.Template template, DataObject objectDefinition, IDataObject dataObject)
     {
       if ((template.Placeholders == null) || (template.Placeholders.Count() == 0))
@@ -917,5 +1029,102 @@ namespace org.iringtools.adapter.datalayer.eb
 
       return dataObjects;
     }
+
+    protected IList<int> GetDocumentIds(IList<IDataObject> dataObjects)
+    {
+      IList<int> docIds = new List<int>();
+
+      foreach (IDataObject dataObject in dataObjects)
+      {
+        int docId = Convert.ToInt32(dataObject.GetPropertyValue("Id"));
+        docIds.Add(docId);
+      }
+
+      return docIds;
+    }
+
+    protected IDictionary<string, string> GetHashValues(IList<int> docIds)
+    {
+      IDictionary<string, string> hashValues = new Dictionary<string, string>();
+
+      try
+      {
+        Connect();
+
+        int status = 0;
+        string query = string.Format(M3_OBJECTS_SQL, string.Join(",", docIds.ToArray()));
+        string result = _proxy.query(query, ref status);
+        XDocument resultDoc = XDocument.Parse(result);
+
+        foreach (XElement elt in resultDoc.Element("records").Elements("record"))
+        {
+          string docId = elt.Element("document_id").Value;
+          string hashValue = elt.Element("hash_key").Value;
+          hashValues[docId] = hashValue;
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting hash values: " + e.Message);
+        throw e;
+      }
+      finally
+      {
+        Disconnect();
+      }
+
+      return hashValues;
+    }
+
+    public IList<IContentObject> GetContents(IList<int> docIds)
+    {
+      IList<IContentObject> contents = new List<IContentObject>();
+
+      try
+      {
+        Connect();
+
+        string query = string.Format(CONTENT_EQL, string.Join(",", docIds.ToArray()));
+        EqlClient client = new EqlClient(_session);
+        DataTable dt = client.RunQuery(query);
+
+        foreach (DataRow row in dt.Rows)
+        {
+          int fileId = (int)row["FilesId"];
+          string code = (string)row["Code"];
+
+          string name = ((string)row["FilesName"]);
+          string type = name.Substring(name.LastIndexOf(".") + 1);
+
+          eB.Data.File f = new eB.Data.File(_session);
+          f.Retrieve(fileId, "Header; Repositories");
+          MemoryStream stream = new MemoryStream();
+          f.ContentData = new eB.ContentData.File(f, stream);
+          f.ContentData.ReadAllBytes();
+          stream.Position = 0;
+
+          GenericContentObject content = new GenericContentObject()
+          {
+            identifier = code,
+            content = stream,
+            contentType = type.ToUpper()
+          };
+
+          contents.Add(content);
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting contents: " + e.Message);
+        throw e;
+      }
+      finally
+      {
+        Disconnect();
+      }
+
+      return contents;
+    }
+    #endregion    
   }
 }
