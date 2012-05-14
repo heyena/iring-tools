@@ -17,7 +17,6 @@
             text: 'Reload Tree',
             icon: 'Content/img/16x16/view-refresh.png',
             scope: this,
-            //action: 'reloaddiretree',
             handler: this.onReload
         }];
 
@@ -64,17 +63,35 @@
 
         this.callParent(arguments);
 
-        this.scopesMenu = new Ext.menu.Menu();
-        this.scopesMenu.add(this.buildScopesMenu());
+        this.rootAdminScopesMenu = new Ext.menu.Menu();
+        this.rootAdminScopesMenu.add(this.addFolderMenu());
+        this.rootAdminScopesMenu.add(this.buildMenuSeparatorMenu());
+        this.rootAdminScopesMenu.add(this.buildDataLayerMenu());
+
+        this.groupAdminScopesMenu = new Ext.menu.Menu();
+        this.groupAdminScopesMenu.add(this.buildDataLayerMenu());
+        this.groupAdminScopesMenu.add(this.buildMenuSeparatorMenu());
+        this.groupAdminScopesMenu.add(this.regenerateArtifactsMenu());
+
+        this.noLdapScopesMenu = new Ext.menu.Menu();
+        this.noLdapScopesMenu.add(this.addFolderMenu());
+        this.noLdapScopesMenu.add(this.buildMenuSeparatorMenu());
+        this.noLdapScopesMenu.add(this.buildDataLayerMenu());
+        this.noLdapScopesMenu.add(this.buildMenuSeparatorMenu());
+        this.noLdapScopesMenu.add(this.regenerateArtifactsMenu());
 
         this.scopeMenu = new Ext.menu.Menu();
-        this.scopeMenu.add(this.buildScopeMenu());
+        this.scopeMenu.add(this.buildFolderMenu());
+        this.scopeMenu.add(this.buildMenuSeparatorMenu());
+        this.scopeMenu.add(this.addEndpointMenu());
 
         this.applicationMenu = new Ext.menu.Menu();
-        this.applicationMenu.add(this.buildApplicationMenu());
+        this.applicationMenu.add(this.editEndpointMenu());
+        this.applicationMenu.add(this.buildMenuSeparatorMenu());
+        this.applicationMenu.add(this.openConfiguationMenu());
 
         this.appDataMenu = new Ext.menu.Menu();
-        this.appDataMenu.add(this.buildAppDataMenu());
+        this.appDataMenu.add(this.openDataGridMenu());
 
         this.valueListsMenu = new Ext.menu.Menu();
         this.valueListsMenu.add(this.buildvalueListsMenu());
@@ -133,103 +150,180 @@
         this.applyState(state, true);
     },
 
-    buildScopesMenu: function () {
-        return [
-    {
-        text: 'New Folder',
-        icon: 'Content/img/16x16/document-new.png',
-        scope: this,
-        action: 'newscope'
-    },
-    {
-        xtype: 'menuseparator'
-    },
-    {
-        text: 'New Data Layer',
-        icon: 'Content/img/16x16/document-new.png',
-        scope: this,
-        action: 'newDataLayer'
-    },
-    {
-        text: 'Edit Data Layer',
-        icon: 'Content/img/16x16/edit-delete.png',
-        scope: this,
-        action: 'editDataLayer'
-    },
-    {
-        text: 'Delete Data Layer',
-        icon: 'Content/img/16x16/edit-delete.png',
-        scope: this,
-        action: 'deleteDataLayer'
-    },
-    {
-        xtype: 'menuseparator'
-    },
-    {
-        text: 'Regenerate Hibernate Artifacts',
-        icon: 'Content/img/16x16/document-new.png',
-        scope: this,
-        action: 'regenerateAll'
-    }]
-    },
+//    buildScopesMenu: function () {
+//        return [
+//    {
+//        text: 'New Folder',
+//        icon: 'Content/img/16x16/document-new.png',
+//        scope: this,
+//        action: 'newscope'
+//    },
+//    {
+//        xtype: 'menuseparator'
+//    },
+//    {
+//        text: 'New Data Layer',
+//        icon: 'Content/img/16x16/document-new.png',
+//        scope: this,
+//        action: 'newDataLayer'
+//    },
+//    {
+//        text: 'Edit Data Layer',
+//        icon: 'Content/img/16x16/edit-delete.png',
+//        scope: this,
+//        action: 'editDataLayer'
+//    },
+//    {
+//        text: 'Delete Data Layer',
+//        icon: 'Content/img/16x16/edit-delete.png',
+//        scope: this,
+//        action: 'deleteDataLayer'
+//    },
+//    {
+//        xtype: 'menuseparator'
+//    },
+//    {
+//        text: 'Regenerate Hibernate Artifacts',
+//        icon: 'Content/img/16x16/document-new.png',
+//        scope: this,
+//        action: 'regenerateAll'
+//    }]
+      //    },
 
-    buildScopeMenu: function () {
-        return [
+      //    buildApplicationMenu: function () {
+
+      //      return [
+      //      {
+      //          text: 'Edit Endpoint',
+      //          icon: 'Content/img/16x16/document-properties.png',
+      //          scope: this,
+      //          action: 'editendpoint'
+      //      },
+      //      {
+      //          text: 'Delete Endpoint',
+      //          icon: 'Content/img/16x16/edit-delete.png',
+      //          scope: this,
+      //          action: 'deleteendpoint'
+      //      },
+      //      {
+      //          xtype: 'menuseparator'
+      //      },
+      //      {
+      //          text: 'Open Configuration',
+      //          icon: 'Content/img/16x16/preferences-system.png',
+      //          scope: this,
+      //          action: 'configureendpoint'
+      //      }
+      //    ]
+      //    },
+
+    addFolderMenu: function () {
+      return [
       {
           text: 'New Folder',
           icon: 'Content/img/16x16/document-new.png',
           scope: this,
           action: 'newscope'
-      },
-      {
-          text: 'Edit Folder',
-          icon: 'Content/img/16x16/document-properties.png',
-          scope: this,
-          action: 'editscope'
-      },
-      {
-          text: 'Delete Folder',
-          icon: 'Content/img/16x16/edit-delete.png',
-          scope: this,
-          action: 'deletescope'
-      },
-      {
-          xtype: 'menuseparator'
-      },
-      {
-          text: 'New Endpoint',
-          icon: 'Content/img/16x16/document-new.png',
-          scope: this,
-          action: 'newendpoint'
-      }
-    ]
+      }]
     },
-    buildApplicationMenu: function () {
-        return [
-      {
-          text: 'Edit Endpoint',
-          icon: 'Content/img/16x16/document-properties.png',
-          scope: this,
-          action: 'editendpoint'
-      },
-      {
-          text: 'Delete Endpoint',
-          icon: 'Content/img/16x16/edit-delete.png',
-          scope: this,
-          action: 'deleteendpoint'
-      },
-      {
-          xtype: 'menuseparator'
-      },
-      {
-          text: 'Open Configuration',
-          icon: 'Content/img/16x16/preferences-system.png',
-          scope: this,
-          action: 'configureendpoint'
-      }
-    ]
+
+    buildDataLayerMenu: function () {
+      return [
+       {
+         text: 'New Data Layer',
+         icon: 'Content/img/16x16/document-new.png',
+         scope: this,
+         action: 'newDataLayer'
+       }, {
+        text: 'Edit Data Layer',
+        icon: 'Content/img/16x16/document-properties.png',
+        scope: this,
+        action: 'editDataLayer'
+      }, {
+        text: 'Delete Data Layer',
+        icon: 'Content/img/16x16/edit-delete.png',
+        scope: this,
+        action: 'deleteDataLayer'
+      }]
     },
-    buildAppDataMenu: function () {
+
+    buildMenuSeparatorMenu: function () {
+      return [
+      {
+        xtype: 'menuseparator'
+      }]
+    },
+
+    buildFolderMenu: function () {
+      return [
+      {
+        text: 'New Folder',
+        icon: 'Content/img/16x16/document-new.png',
+        scope: this,
+        action: 'newscope'
+      },
+      {
+        text: 'Edit Folder',
+        icon: 'Content/img/16x16/document-properties.png',
+        scope: this,
+        action: 'editscope'
+      },
+      {
+        text: 'Delete Folder',
+        icon: 'Content/img/16x16/edit-delete.png',
+        scope: this,
+        action: 'deletescope'
+      }]
+    },
+
+    addEndpointMenu: function () {
+      return [
+      {
+        text: 'New Endpoint',
+        icon: 'Content/img/16x16/document-new.png',
+        scope: this,
+        action: 'newendpoint'
+      }]
+    },
+
+    editEndpointMenu: function () {
+      return [
+      {
+        text: 'Edit Endpoint',
+        icon: 'Content/img/16x16/document-properties.png',
+        scope: this,
+        action: 'editendpoint'
+      },
+      {
+        text: 'Delete Endpoint',
+        icon: 'Content/img/16x16/edit-delete.png',
+        scope: this,
+        action: 'deleteendpoint'
+      }]
+    },
+
+    regenerateArtifactsMenu: function () {
+      return [
+      {
+        text: 'Regenerate Hibernate Artifacts',
+        icon: 'Content/img/16x16/document-new.png',
+        scope: this,
+        action: 'regenerateAll'
+      }]
+    },
+
+    openConfiguationMenu: function () {
+      return [
+      {
+        text: 'Open Configuration',
+        icon: 'Content/img/16x16/preferences-system.png',
+        scope: this,
+        action: 'configureendpoint'
+      }]
+    },
+
+
+    openDataGridMenu: function () {
         return [
       {
           text: 'Open Grid',
@@ -348,7 +442,7 @@
 
         var obj = node.data;
         var ifsuperadmin = false;
-        var baseUrl = 'false';
+        var useLdap = 'false';
 
         var securityRole = '';
         var me = this;
@@ -370,44 +464,50 @@
                 url: 'directory/UseLdap',
                 method: 'GET',
                 success: function (response, request) {
-                    baseUrl = response.responseText;
-                    // when root node has children
-                    if (node.childNodes[0]) {
-                        if (baseUrl.toLowerCase().indexOf('true') > -1) {
-                            if (node.childNodes[0].data.record.securityRole) {
-                                securityRole = node.childNodes[0].data.record.securityRole;
+                  useLdap = response.responseText;
+                  // when root node has children use securityRold of the first childNode
+                  if (node.childNodes[0]) {
+                    if (useLdap.toLowerCase().indexOf('true') > -1) {
+                      if (node.childNodes[0].data.record.securityRole) {
+                        securityRole = node.childNodes[0].data.record.securityRole;
 
-                                if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1 || securityRole.indexOf('admin') > -1) {
-                                    ifsuperadmin = true;
-                                    me.scopesMenu.showAt(e.getXY());
-                                }
-                            }
+                        if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1) {
+                          ifsuperadmin = true;
+                          me.rootAdminScopesMenu.showAt(e.getXY());
                         }
-                        else {
-                            ifsuperadmin = true;
-                            me.scopesMenu.showAt(e.getXY());
+                        else if (securityRole.indexOf('admin') > -1) {
+                          me.groupAdminScopesMenu.showAt(e.getXY());
                         }
+                      }
                     }
-                    // when starting from scratch (root node has no children)
                     else {
-                        if (baseUrl == 'false') {
-                            me.scopesMenu.showAt(e.getXY());
-                        }
-                        else {
-                            Ext.Ajax.request({
-                                url: 'directory/RootSecurityRole',
-                                method: 'GET',
-                                success: function (response, request) {
-                                    var rootSecurityRole = response.responseText;
-                                    if (rootSecurityRole.indexOf('rootadmin') > -1 || securityRole.indexOf('admin') > -1) {
-                                        ifsuperadmin = true;
-                                        me.scopesMenu.showAt(e.getXY());
-                                    }
-                                },
-                                failure: function () { }
-                            });
-                        }
+                      ifsuperadmin = true;
+                      me.noLdapScopesMenu.showAt(e.getXY());
                     }
+                  }
+                  // when starting from scratch (root node has no children) using the rootNode's security
+                  else {
+                    if (useLdap == 'false') {
+                      me.noLdapScopesMenu.showAt(e.getXY());
+                    }
+                    else {
+                      Ext.Ajax.request({
+                        url: 'directory/RootSecurityRole',
+                        method: 'GET',
+                        success: function (response, request) {
+                          var rootSecurityRole = response.responseText;
+                          if (rootSecurityRole.indexOf('rootadmin') > -1) {
+                            ifsuperadmin = true;
+                            me.rootAdminScopesMenu.showAt(e.getXY());
+                          }
+                          else if (securityRole.indexOf('admin') > -1) {
+                            me.groupAdminScopesMenu.showAt(e.getXY());
+                          }
+                        },
+                        failure: function () { }
+                      });
+                    }
+                  }
                 },
                 failure: function () { }
             });
