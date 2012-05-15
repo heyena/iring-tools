@@ -223,6 +223,9 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
     public Dictionary<string, string> aliasDictionary { get; set; }
+
+    [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
+    public string referenceType { get; set; }
   }
 
   [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]
@@ -321,7 +324,9 @@ namespace org.iringtools.library
     [EnumMember]
     @Single,
     [EnumMember]
-    @String
+    @String,
+    [EnumMember]
+    @Reference
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]
