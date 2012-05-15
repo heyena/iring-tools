@@ -398,6 +398,12 @@ namespace org.iringtools.library
               if (dataRow.Table.Columns.Contains(objectProperty.columnName))
               {
                 object value = dataRow[objectProperty.columnName];
+
+                if (value.GetType() == typeof(System.DBNull))
+                {
+                  value = null;
+                }
+
                 dataObject.SetPropertyValue(objectProperty.propertyName, value);
               }
               else
