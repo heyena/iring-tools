@@ -67,6 +67,7 @@ namespace org.iringtools.services
       format = MapContentType(format);
 
       VersionInfo version = _adapterProvider.GetVersion();
+
       _adapterProvider.FormatOutgoingMessage<VersionInfo>(version, format, true);
     }
 
@@ -117,6 +118,22 @@ namespace org.iringtools.services
       DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
 
       _adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
+    }
+
+    [Description("Gets specified object definition of an application.")]
+    [WebGet(UriTemplate = "/{app}/{project}/dictionary/{graph}?format={format}")]
+    public void GetDictionaryGraph(string project, string app, string graph, string format)
+    {
+        format = MapContentType(format);
+
+        DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+
+        DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == graph.ToLower());
+
+        if (dataObject == null)
+            ExceptionHandler(new FileNotFoundException());
+
+        _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
     }
 
     [Description("Gets an XML or JSON projection of the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
