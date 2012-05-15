@@ -2473,7 +2473,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         //InitializeProjection(resourceName, ref format, true);
 
-        objs = _dataLayer.GetPicklists();
+        objs = _dataDictionary.picklists;
       }
       catch (Exception ex)
       {

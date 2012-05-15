@@ -136,6 +136,9 @@ namespace org.iringtools.library
     [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
     public Dictionary<string, string> aliasDictionary { get; set; }
 
+    [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
+    public string version { get; set; }
+
     public bool isKeyProperty(string propertyName)
     {
       foreach (KeyProperty keyProperty in keyProperties)
