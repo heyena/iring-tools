@@ -36,7 +36,7 @@ namespace org.iringtools.adapter.projection
         string resource = graphName.ToLower();
 
         DataItems dataItems = new DataItems()
-        {
+        {          
           total = this.Count,
           start = this.Start,
           items = new List<DataItem>()
@@ -45,7 +45,13 @@ namespace org.iringtools.adapter.projection
         if (dataObjects.Count > 0)
         {
           DataObject dataObject = FindGraphDataObject(graphName);
-          if (dataObject == null) return new XDocument();
+          dataItems.version = dataObject.version;
+
+          if (dataObject == null)
+          {
+            return new XDocument();
+          }
+
           bool showNullValue = _settings["ShowJsonNullValues"] != null && 
             _settings["ShowJsonNullValues"].ToString() == "True";
 
