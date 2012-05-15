@@ -7,6 +7,7 @@ using System.Data;
 using log4net;
 using System.Xml.Linq;
 using org.iringtools.adapter;
+using org.iringtools.utility;
 
 namespace org.iringtools.library
 {
@@ -393,15 +394,10 @@ namespace org.iringtools.library
           {
             try
             {
-
               if (dataRow.Table.Columns.Contains(objectProperty.columnName))
               {
-                String value = Convert.ToString(dataRow[objectProperty.columnName]);
-
-                if (value != null)
-                {
-                  dataObject.SetPropertyValue(objectProperty.propertyName, value);
-                }
+                object value = dataRow[objectProperty.columnName];
+                dataObject.SetPropertyValue(objectProperty.propertyName, value);
               }
               else
               {

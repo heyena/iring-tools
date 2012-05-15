@@ -169,7 +169,7 @@ namespace org.iringtools.adapter.datalayer
       {
         return CellValues.Date;
       }
-      else if (type == DataType.TimeSpan)
+      else if (type == DataType.TimeStamp)
       {
         return CellValues.Date;
       }
@@ -214,7 +214,7 @@ namespace org.iringtools.adapter.datalayer
       {
         return 50;
       }
-      else if (type == DataType.TimeSpan)
+      else if (type == DataType.TimeStamp)
       {
         return 50;
       }
