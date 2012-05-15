@@ -65,10 +65,6 @@ namespace org.iringtools.library
 
     IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex);
 
-    IList<PicklistObject> GetPicklists();
-
-    Picklists GetPicklist(string name, int start, int limit);
-
     Response Post(IList<IDataObject> dataObjects);
 
     Response Delete(string objectType, IList<string> identifiers);
@@ -103,6 +99,8 @@ namespace org.iringtools.library
     Response Refresh(string objectType);
 
     IList<Object> GetSummary();
+
+    Picklists GetPicklist(string name, int start, int limit);
   }
 
   [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
