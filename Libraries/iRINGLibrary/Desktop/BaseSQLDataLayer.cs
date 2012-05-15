@@ -73,6 +73,7 @@ namespace org.iringtools.library
 
       DataDictionary dictionary = new DataDictionary();
       dictionary.dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects);
+      dictionary.picklists = utility.Utility.CloneDataContractObject<List<PicklistObject>>(_dbDictionary.picklists);
 
       return dictionary;
     }
