@@ -7,6 +7,7 @@ using System.Data;
 using log4net;
 using System.Xml.Linq;
 using org.iringtools.adapter;
+using org.iringtools.utility;
 
 namespace org.iringtools.library
 {
@@ -394,15 +395,16 @@ namespace org.iringtools.library
           {
             try
             {
-
               if (dataRow.Table.Columns.Contains(objectProperty.columnName))
               {
-                String value = Convert.ToString(dataRow[objectProperty.columnName]);
+                object value = dataRow[objectProperty.columnName];
 
-                if (value != null)
+                if (value.GetType() == typeof(System.DBNull))
                 {
-                  dataObject.SetPropertyValue(objectProperty.propertyName, value);
+                  value = null;
                 }
+
+                dataObject.SetPropertyValue(objectProperty.propertyName, value);
               }
               else
               {
@@ -549,15 +551,10 @@ namespace org.iringtools.library
         DataColumn dataColumn = new DataColumn()
         {
           ColumnName = objectProperty.columnName,
-          //DataType = Type.GetType("System." + objectProperty.dataType.ToString())
+          DataType = Type.GetType("System." + objectProperty.dataType.ToString())
         };
 
-        if (objectProperty.dataType == DataType.Reference)
-          dataColumn.DataType = Type.GetType("System.String");
-        else
-          dataColumn.DataType = Type.GetType("System." + objectProperty.dataType.ToString());
-
-        if (objectProperty.dataType == DataType.String || objectProperty.dataType == DataType.Reference)
+        if (objectProperty.dataType == DataType.String)
         {
           dataColumn.MaxLength = objectProperty.dataLength;
         }

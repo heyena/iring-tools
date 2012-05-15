@@ -36,7 +36,7 @@ namespace org.iringtools.adapter.projection
         string resource = graphName.ToLower();
 
         DataItems dataItems = new DataItems()
-        {
+        {          
           total = this.Count,
           start = this.Start,
           items = new List<DataItem>()
@@ -45,7 +45,15 @@ namespace org.iringtools.adapter.projection
         if (dataObjects.Count > 0)
         {
           DataObject dataObject = FindGraphDataObject(graphName);
-          if (dataObject == null) return new XDocument();
+          dataItems.version = dataObject.version;
+
+          if (dataObject == null)
+          {
+            return new XDocument();
+          }
+
+          bool showNullValue = _settings["ShowJsonNullValues"] != null && 
+            _settings["ShowJsonNullValues"].ToString() == "True";
 
           for (int i = 0; i < dataObjects.Count; i++)
           {
@@ -64,29 +72,36 @@ namespace org.iringtools.adapter.projection
               };
 
               foreach (DataProperty dataProperty in dataObject.dataProperties)
-              {                
-                string value = Convert.ToString(dataObj.GetPropertyValue(dataProperty.propertyName));
+              {
+                object value = dataObj.GetPropertyValue(dataProperty.propertyName);
 
-                if (dataProperty.dataType == DataType.DateTime && value != null)
+                if (value != null)
                 {
-                  value = Utility.ToXsdDateTime(value);
+                  string valueStr = Convert.ToString(value);
+
+                  if (dataProperty.dataType == DataType.DateTime)
+                    value = Utility.ToXsdDateTime(valueStr);
+
+                  if (!dataProperty.isHidden)
+                  {
+                    dataItem.properties.Add(dataProperty.propertyName, valueStr);
+                  }
+
+                  if (dataObject.isKeyProperty(dataProperty.propertyName))
+                  {
+                    dataItem.id = valueStr;
+                  }
                 }
-
-                if (!dataProperty.isHidden)
+                else if (showNullValue) 
                 {
-                  dataItem.properties.Add(dataProperty.propertyName, value);
+                  dataItem.properties.Add(dataProperty.propertyName, null);
                 }
-
-                if (dataObject.isKeyProperty(dataProperty.propertyName))
-                {
-                  dataItem.id = value;
-                }                
               }
 
               if (_settings["DisplayLinks"].ToLower() == "true")
               {
                 string itemHref = String.Format("{0}/{1}", BaseURI, dataItem.id);
-              
+
                 dataItem.links = new List<Link> 
                 {
                   new Link {
@@ -127,7 +142,7 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
-        
+
         dataItems.limit = dataItems.items.Count;
 
         string xml = Utility.SerializeDataContract<DataItems>(dataItems);
@@ -180,7 +195,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    #region helper methods    
+    #region helper methods
     private DataObject FindGraphDataObject(string dataObjectName)
     {
       foreach (DataObject dataObject in _dictionary.dataObjects)
