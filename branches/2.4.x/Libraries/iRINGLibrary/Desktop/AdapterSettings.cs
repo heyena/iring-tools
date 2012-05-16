@@ -60,7 +60,8 @@ namespace org.iringtools.adapter
 
         if (key.Equals("DefaultProjectionFormat") ||
             key.Equals("ValidateLinks") ||
-            key.Equals("DisplayLinks"))
+            key.Equals("DisplayLinks") ||
+            key.Equals("ShowJsonNullValues"))
         {
           string format = settings[key].ToString();
           this[key] = format;
