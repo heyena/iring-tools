@@ -919,37 +919,38 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                     xtype: 'panel',
                     id: scopeName + '.' + appName + '.servicename',
                     name: 'serviceName',
-                    layout: 'fit',
+                    //layout: 'fit',
                     anchor: '100% - 1',
                     border: false,
                     frame: false
-                },
-           {
-               xtype: 'checkbox',
-               name: 'isPlantSchemaSame',
-               fieldLabel: 'Site and Plant Databases are same',
-               listeners: {
-                   check: function (checkbox, checked) {
-                       var siteDatabase = Ext.getCmp('siteDatabase').items
-                       var plantDatabase = Ext.getCmp('plantDatabase').items
-                       if (checked == true) {
-                           for (var i = 0; i < siteDatabase.length - 1; i++) {
-                               Ext.getCmp(plantDatabase.items[i].id).setValue(Ext.getCmp(siteDatabase.items[i].id).getValue());
-                               Ext.getCmp(plantDatabase.items[i].id).disable(true);
-                               //Ext.getCmp('dfd').items.items[i]Ext.getCmp(siteDatabase.items[5].id).getValue()
-                           }
-                       }
-                       else {
-                           for (var i = 0; i < siteDatabase.length - 1; i++) {
-                               Ext.getCmp(plantDatabase.items[i].id).enable(true);
-                               // Ext.getCmp(plantDatabase.items[i].id).setValue(Ext.getCmp(siteDatabase.items[i].id).originalValue);
-                           }
-                       }
-                   }
-               }
+                }//,
+//           {
+//               xtype: 'checkbox',
+//               name: 'isPlantSchemaSame',
+//               fieldLabel: 'Site and Plant Databases are same',
+//               listeners: {
+//                   check: function (checkbox, checked) {
+//                       var siteDatabase = Ext.getCmp('siteDatabase').items
+//                       var plantDatabase = Ext.getCmp('plantDatabase').items
+//                       if (checked == true) {
+//                           for (var i = 0; i < siteDatabase.length - 1; i++) {
+//                               Ext.getCmp(plantDatabase.items[i].id).setValue(Ext.getCmp(siteDatabase.items[i].id).getValue());
+//                               Ext.getCmp(plantDatabase.items[i].id).disable(true);
+//                               //Ext.getCmp('dfd').items.items[i]Ext.getCmp(siteDatabase.items[5].id).getValue()
+//                           }
+//                       }
+//                       else {
+//                           for (var i = 0; i < siteDatabase.length - 1; i++) {
+//                               Ext.getCmp(plantDatabase.items[i].id).enable(true);
+//                               // Ext.getCmp(plantDatabase.items[i].id).setValue(Ext.getCmp(siteDatabase.items[i].id).originalValue);
+//                           }
+//                       }
+//                   }
+//               }
 
 
-           }]
+          // }
+           ]
             },
 
             {
@@ -1012,9 +1013,9 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                     items: [{
                         xtype: 'textfield',
                         fieldLabel: 'User Name',
-                        name: 'dbPIDUserName',
+                        name: 'dbPIDUserName'
                         //  value: 'RUSSELCITY_PILOTPID'
-                        value: 'dfgdfh'
+                        //value: 'dfgdfh'
                     },
                    {
                        xtype: 'textfield',
@@ -1053,14 +1054,14 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                         items: [{
                             xtype: 'textfield',
                             fieldLabel: 'User Name',
-                            name: 'dbOraPlantUserName',
+                            name: 'dbOraPlantUserName'
                            // value: 'RUSSELCITY_PILOT'
                         },
                         {
                             xtype: 'textfield',
                             inputType: 'password',
                             fieldLabel: 'Password',
-                            name: 'dbOraPlantPassword',
+                            name: 'dbOraPlantPassword'
                            // value: 'RUSSELCITY_PILOT'
                         }]
                     },
@@ -1072,14 +1073,14 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                         items: [{
                             xtype: 'textfield',
                             fieldLabel: 'User Name',
-                            name: 'dbPlantDataDicUserName',
+                            name: 'dbPlantDataDicUserName'
                           //  value: 'RUSSELCITY_PILOTD'
                         },
                         {
                             xtype: 'textfield',
                             inputType: 'password',
                             fieldLabel: 'Password',
-                            name: 'dbPlantDataDicPassword',
+                            name: 'dbPlantDataDicPassword'
                           //  value: 'RUSSELCITY_PILOTD'
                         }]
                     }]
