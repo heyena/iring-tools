@@ -12,8 +12,7 @@ Ext.define('AM.view.directory.DirectoryPanel', {
     },
     border: true,
     split: true,
-    initComponent: function () {
-        
+    initComponent: function () {      
         this.callParent(arguments);
     }
 });

@@ -21,13 +21,16 @@
      'nhibernate.SetRelationPanel',
      'nhibernate.Utility',
      'nhibernate.RadioField',
-     'nhibernate.RelationGridPanel'
+     'nhibernate.RelationGridPanel',
+     'nhibernate.PropertyMapGridPanel'
     ],
   stores: [],
   models: [
       'SpreadsheetModel',
       'NHibernateTreeModel',
-      'ProviderModel'
+      'ProviderModel',
+      'RelationNameModel',
+      'PropertyMapModel'
     ],
   refs: [{
     ref: 'dirTree',
@@ -90,7 +93,7 @@
   applyDbObjectChanges: function (btn, evt) {
     var thisForm = btn.up('form');
     var contextName = thisForm.contextName;
-    var endpoint = thisForm.endpoint;    
+    var endpoint = thisForm.endpoint;
     var content = this.getMainContent();
     var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
     var editor = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
@@ -180,6 +183,7 @@
     var tree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
     var dbDict = AM.view.nhibernate.dbDict.value;
     var dbInfo = AM.view.nhibernate.dbInfo.value;
+    var rootNode = tree.getRootNode();
 
     if (node.isRoot()) {
       setTablesSelectorPane(me, editor, tree, nhpan, dbDict, dbInfo, contextName, endpoint, baseUrl);
@@ -205,10 +209,10 @@
           setDataProperty(me, editor, node, contextName, endpoint);
           break;
         case 'RELATIONSHIPS':
-          setRelations(me, editor, tree, node, contextName, endpoint);
+          setRelations(editor, tree, node, contextName, endpoint);
           break;
         case 'RELATIONSHIP':
-          setRelationFields(me, editor, tree, nhpan, dbDict, dbInfo, node, contextName, endpoint);
+          setRelationFields(editor, rootNode, node, contextName, endpoint);
           break;
       }
     }

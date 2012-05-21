@@ -199,7 +199,6 @@ Ext.define('AM.view.nhibernate.SelectKeysPanel', {
           var keysItemSelector = me.items.items[1];
 
           if (keysItemSelector.fromField.store.data) {
-            keysItemSelector.fromField.reset();
             keysItemSelector.fromField.store.removeAll();
           }
 

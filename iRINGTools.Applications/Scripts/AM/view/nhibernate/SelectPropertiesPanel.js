@@ -12,7 +12,7 @@ Ext.define('AM.view.nhibernate.SelectPropertiesPanel', {
   frame: false,
   border: false,
   autoScroll: true,
-  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
   labelWidth: 140,
   treeNode: null,
   shownProperty: null,
