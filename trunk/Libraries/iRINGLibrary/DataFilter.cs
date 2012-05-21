@@ -209,7 +209,7 @@ namespace org.iringtools.library
         qualColumnName = "UPPER(" + objectAlias + columnName + ")";
       }
 
-      bool isString = (propertyType == DataType.String || propertyType == DataType.Char);
+      bool isString = (propertyType == DataType.String || propertyType == DataType.Reference || propertyType == DataType.Char);
       StringBuilder sqlExpression = new StringBuilder();
 
       if (expression.LogicalOperator != LogicalOperator.None)
