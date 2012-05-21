@@ -168,25 +168,27 @@
 	      text: 'Apply',
 	      tooltip: 'Apply the current changes to the data objects tree',
 	      handler: function () {
-	        var relationTypeStr = ['OneToOne', 'OneToMany'];	        
+	        var relationTypeStr = ['OneToOne', 'OneToMany'];
 	        var thisForm = me.getForm();
 	        var newNodeName = thisForm.findField('relationshipName').getValue();
 	        node.set('title', newNodeName);
 	        node.data.relationshipTypeIndex = thisForm.findField('relationType').getValue();
 	        node.data.relationshipType = relationTypeStr[node.data.relationshipTypeIndex];
-	        var relatedName = thisForm.findField('relatedObjectName').rawValue;	        
+	        var relatedName = thisForm.findField('relatedObjectName').rawValue;
 	        node.data.relatedObjectName = relatedName;
 	        var dataRelationPane = me.items.items[7];
-          var gridLabel = contextName + '.' + endpoint + '.' +  node.id + '.createpropertymap';
-	        var gridPane = dataRelationPane.items.map[gridLabel];
+	        var gridPane = dataRelationPane.items.items[0];
 
 	        if (gridPane) {
 	          var mydata = gridPane.store.data.items;
 	          var propertyMap = new Array();
 
-	          if (node.data.propertyMap) {
-	            for (i = 0; i < node.data.propertyMap.length; i++)
-	              propertyMap.push([node.data.propertyMap[i].dataPropertyName, node.data.propertyMap[i].relatedPropertyName]);
+	          if (node.data) {
+	            if (node.data.propertyMap)
+	              for (i = 0; i < node.data.propertyMap.length; i++)
+	                propertyMap.push([node.data.propertyMap[i].dataPropertyName, node.data.propertyMap[i].relatedPropertyName]);
+	            else
+	              node.data.propertyMap = [];
 
 	            for (var i = 0; i < mydata.length; i++) {
 	              var exitPropertyMap = false;
@@ -201,7 +203,7 @@
 	              }
 
 	              if (exitPropertyMap == false) {
-	                var mapItem = new Array();
+	                var mapItem = {};
 	                mapItem['dataPropertyName'] = dataPropertyName;
 	                mapItem['relatedPropertyName'] = relatedPropertyName;
 	                node.data.propertyMap.push(mapItem);
@@ -261,7 +263,7 @@
 	          var relMapPropertyName;
 
 	          for (var i = 0; i < relatedMapItem.length; i++) {
-	            relatedMapItem.remove(relatedMapItem[i]);
+	            relatedMapItem.splice(i, 1);
 	            i--;
 	          }
 
@@ -273,7 +275,16 @@
 	          }
 
 	          var dataGridPanel = me.items.items[7];
-	          createPropertyMapGrid(me, rootNode, node, contextName + '.' + endpoint + '.' + node.id, dataGridPanel, properMap, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationConfigForm.' + node.id, contextName, endpoint, attribute.relatedObjectName);
+	          var gridPane = dataRelationPane.items.items[0];
+	          var store = gridPane.store;
+
+	          if (store.data) {
+	            store.reset;
+	          }
+
+	          gridPane.store.loadData(properMap);
+	          dataGridPanel.doLayout();
+	          //createPropertyMapGrid(me, rootNode, node, contextName + '.' + endpoint + '.' + node.id, dataGridPanel, properMap, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationConfigForm.' + node.id, contextName, endpoint, attribute.relatedObjectName);
 	        }
 	      }
 	    }]
