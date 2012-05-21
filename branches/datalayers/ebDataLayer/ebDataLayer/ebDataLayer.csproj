@@ -33,13 +33,11 @@
   <ItemGroup>
     <Reference Include="eB.Common, Version=15.3.2.261, Culture=neutral, PublicKeyToken=a3739844efdab314, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\eb\eB.Common.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Bentley\eB\Shared\eB.Common.dll</HintPath>
     </Reference>
     <Reference Include="eB.Service.Proxy, Version=15.3.2.261, Culture=neutral, PublicKeyToken=bb56b8c969e865be, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\eb\eB.Service.Proxy.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Bentley\eB\Shared\eB.Service.Proxy.dll</HintPath>
     </Reference>
     <Reference Include="iRINGLibrary, Version=2.3.0.4643, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
