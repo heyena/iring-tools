@@ -15,6 +15,7 @@ namespace org.iringtools.adaper.datalayer.eb
     public string hashType { get; set; }
     public string identifier { get; set; }
     public string url { get; set; }
-	public string revision { get; set; }
+    public string name { get; set; }
+    public string revision { get; set; }
   }
 }

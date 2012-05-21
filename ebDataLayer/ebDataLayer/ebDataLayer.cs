@@ -354,6 +354,11 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
+      return Get(objectType, identifiers, false);
+    }
+
+    public IList<IDataObject> Get(string objectType, IList<string> identifiers, bool retainSession)
+    {
       IList<IDataObject> dataObjects = new List<IDataObject>();
 
       try
@@ -402,11 +407,10 @@ namespace org.iringtools.adapter.datalayer.eb
         {
           throw new Exception("Object type " + objectType + " not found.");
         }
-
       }
       finally
       {
-        Disconnect();
+        if (!retainSession) Disconnect();
       }
 
       return dataObjects;
@@ -666,7 +670,7 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         IList<IDataObject> dataObjects = Get(objectType, identifiers);
         IList<int> docIds = GetDocumentIds(dataObjects);
-        return GetContents(docIds);
+        return GetContents(objectType, docIds);
       }
       catch (Exception e)
       {
@@ -682,7 +686,7 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         IList<IDataObject> dataObjects = Get(objectType, filter, pageSize, startIndex);
         IList<int> docIds = GetDocumentIds(dataObjects);
-        return GetContents(docIds);
+        return GetContents(objectType, docIds);
       }
       catch (Exception e)
       {
@@ -694,22 +698,126 @@ namespace org.iringtools.adapter.datalayer.eb
     //TODO: add to interface and override
     public Response PostContents(IList<IContentObject> contentObjects)
     {
-      try
-      {
-        Connect();
+      Response response = new Response() { Level = StatusLevel.Success };
 
-      }
-      catch (Exception e)
+      if (contentObjects == null || contentObjects.Count == 0)
       {
-        _logger.Error("Error posting contents: " + e.Message);
-        throw e;
-      }
-      finally
-      {
-        Disconnect();
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("No content object to post.");
+        return response;
       }
 
-      return null;
+      foreach (GenericContentObject contentObject in contentObjects)
+      {
+        try
+        {
+          //
+          // get doc Id
+          //
+          IList<IDataObject> dataObjects = Get(contentObject.ObjectType, new List<string> { contentObject.identifier }, true);
+          int docId = GetDocumentId(dataObjects.FirstOrDefault());
+
+          if (docId <= 0)
+          {
+            _session.ProtoProxy.AddObjectFile(_session.ReaderSessionString, docId, 
+              (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
+
+            Status status = new Status()
+            {
+              Identifier = contentObject.identifier,
+              Level = StatusLevel.Error,
+              Messages = new Messages() { string.Format("Document [{0}] not found.", contentObject.identifier) }
+            };
+
+            response.StatusList.Add(status);
+            continue;
+          }
+          
+          // 
+          // get content id
+          //
+          EqlClient client = new EqlClient(_session);
+          DataTable dt = client.RunQuery(string.Format(CONTENT_EQL, docId));
+          int fileId = (int)(dt.Rows[0]["FilesId"]);
+
+          if (fileId <= 0)  // add
+          {
+            _session.ProtoProxy.AddObjectFile(_session.ReaderSessionString, docId,
+              (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
+
+            Status status = new Status()
+            {
+              Identifier = contentObject.identifier,
+              Level = StatusLevel.Success,
+              Messages = new Messages() { string.Format("Document [{0}] added successfully.", contentObject.identifier) }
+            };
+
+            response.StatusList.Add(status);
+          }
+          else  // update
+          {
+            //
+            // check out content
+            //
+            eB.Data.File file = new eB.Data.File(_session);
+            file.Retrieve(fileId, "Header;Repositories");
+
+            FileInfo localFile = new FileInfo(Path.GetTempPath() + file.Name);
+            if (localFile.Exists)
+              localFile.Delete();
+
+            file.CheckOut(localFile.FullName);
+
+            //
+            // update content
+            //
+            Utility.WriteStream(contentObject.content, localFile.FullName);
+
+            // 
+            // check content back in
+            //
+            file = new eB.Data.File(_session);
+            file.Retrieve(fileId, "Header;Repositories");
+
+            if (file.IsCheckedOut)
+            {
+              try
+              {
+                file.CheckIn(localFile.FullName, eB.ContentData.File.CheckinOptions.DeleteLocalCopy, null);
+                _session.Writer.CheckinDoc(file.Document.Id, 0);
+
+                Status status = new Status()
+                {
+                  Identifier = contentObject.identifier,
+                  Level = StatusLevel.Success,
+                  Messages = new Messages() { string.Format("Document [{0}] updated successfully.", contentObject.identifier) }
+                };
+
+                response.StatusList.Add(status);
+              }
+              catch
+              {
+                file.UndoCheckout();
+              }
+            }
+          }
+        }
+        catch (Exception e)
+        {
+          _logger.Error("Error posting content: " + e.Message);
+
+          Status status = new Status()
+          {
+            Identifier = contentObject.identifier,
+            Level = StatusLevel.Error,
+            Messages = new Messages() { e.Message }
+          };
+
+          response.StatusList.Add(status);
+        }
+      }
+
+      return response;
     }
     #endregion
 
@@ -859,24 +967,27 @@ namespace org.iringtools.adapter.datalayer.eb
 
     protected void Connect()
     {
-      _proxy = new Proxy();
-
-      int ret = _proxy.connect(0, _server);
-
-      if (ret < 0)
+      if (_proxy == null)
       {
-        throw new Exception(_proxy.get_error(ret));
-      }
+        _proxy = new Proxy();
 
-      ret = _proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
-      if (ret < 0)
-      {
-        throw new Exception(_proxy.get_error(ret));
-      }
+        int ret = _proxy.connect(0, _server);
 
-      _proxy.silent_mode = true;
-      _session = new eB.Data.Session();
-      _session.AttachProtoProxy(_proxy.proto_proxy, _proxy.connect_info);
+        if (ret < 0)
+        {
+          throw new Exception(_proxy.get_error(ret));
+        }
+
+        ret = _proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
+        if (ret < 0)
+        {
+          throw new Exception(_proxy.get_error(ret));
+        }
+
+        _proxy.silent_mode = true;
+        _session = new eB.Data.Session();
+        _session.AttachProtoProxy(_proxy.proto_proxy, _proxy.connect_info);
+      }
     }
 
     protected void Disconnect()
@@ -1030,14 +1141,18 @@ namespace org.iringtools.adapter.datalayer.eb
       return dataObjects;
     }
 
+    protected int GetDocumentId(IDataObject dataObject)
+    {
+      return Convert.ToInt32(dataObject.GetPropertyValue("Id"));
+    }
+
     protected IList<int> GetDocumentIds(IList<IDataObject> dataObjects)
     {
       IList<int> docIds = new List<int>();
 
       foreach (IDataObject dataObject in dataObjects)
       {
-        int docId = Convert.ToInt32(dataObject.GetPropertyValue("Id"));
-        docIds.Add(docId);
+        docIds.Add(GetDocumentId(dataObject));
       }
 
       return docIds;
@@ -1076,7 +1191,7 @@ namespace org.iringtools.adapter.datalayer.eb
       return hashValues;
     }
 
-    public IList<IContentObject> GetContents(IList<int> docIds)
+    public IList<IContentObject> GetContents(String objectType, IList<int> docIds)
     {
       IList<IContentObject> contents = new List<IContentObject>();
 
@@ -1105,9 +1220,11 @@ namespace org.iringtools.adapter.datalayer.eb
 
           GenericContentObject content = new GenericContentObject()
           {
+            ObjectType = objectType,
             identifier = code,
             content = stream,
-            contentType = type.ToUpper()
+            contentType = type.ToUpper(),
+            name = name
           };
 
           contents.Add(content);
