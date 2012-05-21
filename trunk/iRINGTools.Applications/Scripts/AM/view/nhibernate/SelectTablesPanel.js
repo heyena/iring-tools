@@ -1,12 +1,4 @@
-﻿Ext.Loader.setConfig({ enabled: true });
-Ext.Loader.setPath('Ext.ux', 'Scripts/extjs407/examples/ux');
-Ext.require([
-    'Ext.form.Panel',
-    'Ext.ux.form.MultiSelect',
-    'Ext.ux.form.ItemSelector'
-]);
-
-Ext.define('AM.view.nhibernate.SelectTablesPanel', {
+﻿Ext.define('AM.view.nhibernate.SelectTablesPanel', {
   extend: 'Ext.form.Panel',
   alias: 'widget.selecttables',
   frame: false,
@@ -17,7 +9,7 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
   endpoint: null,
   baseUrl: null, 
   autoScroll: true,
-  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
   labelWidth: 140,
   monitorValid: true,
   selectItems: null,
@@ -50,7 +42,7 @@ Ext.define('AM.view.nhibernate.SelectTablesPanel', {
       height: 370,
       bodyStyle: 'background:#eee',
       frame: true,
-      imagePath: 'Scripts/extjs407/examples/ux/css/images',
+      imagePath: 'Scripts/extjs-4.1.0/examples/ux/css/images',
       displayField: 'tableName',
       store: availItems,
       valueField: 'tableValue',

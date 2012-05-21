@@ -1,7 +1,7 @@
 ﻿Ext.define('AM.view.nhibernate.NHibernateTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.nhibernatetreepanel',
-  bodyStyle: 'padding:0.5px 1px 1px 1px',
+  bodyStyle: 'padding:0.5px 0px 1px 1px',
   autoScroll: true,
   animate: true,
   expandAll: true,
@@ -15,6 +15,7 @@
   dataTypes: null,
   contextName: null,
   endpoint: null,
+
   baseUrl: null, 
   width: 300,
   root: {
@@ -23,6 +24,7 @@
     text: 'Data Objects',
     iconCls: 'folder'
   },
+
   initComponent: function () {
     var me = this;
     Ext.apply(this, {
@@ -167,7 +169,6 @@ function createMainContentPanel(content, contextName, endpoint, baseUrl) {
   }
 };
 
-//setTablesSelectorPane(me, editor, tree, nhpan, dbDict, dbInfo, contextName, endpoint, baseUrl);
 function setTablesSelectorPane (me, editor, dataTree, nhpan, dbDict, dbInfo, contextName, endpoint, baseUrl) {    
   var content = me.getMainContent();
     
@@ -299,7 +300,6 @@ function setKeysFolder (me, editor, node, contextName, endpoint) {
 
 function setKeyProperty(me, editor, node, contextName, endpoint) {
   if (editor) {
-    var content = me.getMainContent();
     var conf = {
       contextName: contextName,
       region: 'center',
@@ -321,8 +321,7 @@ function setKeyProperty(me, editor, node, contextName, endpoint) {
 };
 
 function setDataProperty(me, editor, node, contextName, endpoint) {
-  if (editor) {
-    var content = me.getMainContent();
+  if (editor) {    
     var conf = {
       contextName: contextName,
       region: 'center',
@@ -343,52 +342,229 @@ function setDataProperty(me, editor, node, contextName, endpoint) {
   }
 };
 
-function setRelations(me, editor, tree, node, contextName, endpoint) {
+function setRelations(editor, tree, node, contextName, endpoint) {
   if (editor) {
-    var content = me.getMainContent();
     var conf = {
       contextName: contextName,
       region: 'center',
       endpoint: endpoint,
+      rootNode: tree.getRootNode(),
       node: node,
+      editor: editor,
       id: contextName + '.' + endpoint + '.' + node.id + '.createrelation'
     };
 
     var setdop = editor.items.map[conf.id];
-    if (!setdop) {
-      setdop = Ext.widget('createrelations', conf);
-      editor.items.add(setdop);
-      editor.doLayout();
-    }
-    else {
-      var panelIndex = editor.items.indexOf(setdop);
-      editor.getLayout().setActiveItem(panelIndex);
-      editor.doLayout();
-    }
 
-    var deleteDataRelationPane = setdop.items.items[2];
+    if (setdop) {
+      setdop.destroy();
+    } 
+   
+    setdop = Ext.widget('createrelations', conf);
+    editor.items.add(setdop);
+    var panelIndex = editor.items.indexOf(setdop);
+    editor.getLayout().setActiveItem(panelIndex);
+    editor.doLayout();    
+
+    var gridRelationPane = setdop.items.items[2];
     var relations = new Array();
-    var gridLabel = contextName + '.' + endpoint + '.' + node.id;
+    var gridLabel = contextName + '.' + endpoint + '.relationsGrid' + node.id;
     var i = 0;    
 
     if (node.childNodes)
       for (i = 0; i < node.childNodes.length; i++) {
         if (node.childNodes[i].text != '')
-          relations.push([node.childNodes[i].text]);
+          relations.push([node.childNodes[i].data.text]);
       }
 
     var rootNode = tree.getRootNode();
-    createRelationGrid(setdop, rootNode, node, gridLabel, deleteDataRelationPane, relations, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationCreateForm.' + node.id, 0, contextName, endpoint, '');
+    createRelationGrid(editor, setdop, rootNode, node, gridLabel, gridRelationPane, relations, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationCreateForm.' + node.id, 0, contextName, endpoint, '');
   }
 };
 
-function setRelationFields(me, editor, node, contextName, endpoint) {
+function setRelationFields(editor, rootNode, node, contextName, endpoint) {
+  if (editor) {
+    var relationFolderNode = node.parentNode;
+    var dataObjectNode = relationFolderNode.parentNode;
+    var relatedObjects = new Array();
+    var thisObj = dataObjectNode.data.text;
+    var ifExist;
+    var relAttribute = null;
+    var relateObjStr;
+    var nodeRelateObj;
+    var rindex = 0
+    var setRelationFieldId = contextName + '.' + endpoint + '.' + node.id + '.createpropertymap';
 
+    for (var i = 0; i < rootNode.childNodes.length; i++) {
+      relateObjStr = rootNode.childNodes[i].data.text;
+      ifExist = false;
+      for (var j = 0; j < relationFolderNode.childNodes.length; j++) {
+        if (relationFolderNode.childNodes[j].data.text == '' || relationFolderNode.childNodes[j].data.id == node.data.id)
+          continue;
+        if (relationFolderNode.childNodes[j].data.property)
+          relAttribute = relationFolderNode.childNodes[j].data.property;
+
+        if (relAttribute) {
+          nodeRelateObj = relAttribute.relatedObjectName;
+          if (relateObjStr.toLowerCase() == nodeRelateObj.toLowerCase())
+            ifExist = true;
+        }
+      }
+
+      if (relateObjStr.toLowerCase() != thisObj.toLowerCase() && ifExist == false) {
+        relatedObjects.push([rindex.toString(), rootNode.childNodes[i].data.text]);
+        rindex++;
+      }
+    }
+
+    var selectedProperties = new Array();
+    var ii = 0;
+
+    if (dataObjectNode) {
+      if (dataObjectNode.childNodes[0]) {
+        var keysNode = dataObjectNode.childNodes[0];
+        for (var i = 0; i < keysNode.childNodes.length; i++) {
+          selectedProperties.push([ii.toString(), keysNode.childNodes[i].data.text]);
+          ii++;
+        }
+      }
+
+      if (dataObjectNode.childNodes[1]) {
+        var propertiesNode = dataObjectNode.childNodes[1];
+        for (var i = 0; i < propertiesNode.childNodes.length; i++) {
+          selectedProperties.push([ii.toString(), propertiesNode.childNodes[i].data.text]);
+          ii++;
+        }
+      }
+    }
+
+    var mappingProperties = new Array();
+    ii = 0;
+    var relatedObjectName = '';
+
+    if (editor.items.map[setRelationFieldId]) {
+      var relPane = editor.items.map[setRelationFieldId];
+      var relatedObjectField = relPane.getForm().findField('relatedObjectName');
+      if (relatedObjectField.rawValue)        
+        relatedObjectName = relatedObjectField.rawValue;    
+    }
+    else {
+      if (node.data.property.relatedObjectName)
+        relatedObjectName = nodeAttribute.relatedObjectName;
+    }
+
+    if (relatedObjectName != '') {
+      var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
+      if (relatedDataObjectNode) {
+        if (relatedDataObjectNode.childNodes[0]) {
+          keysNode = relatedDataObjectNode.childNodes[0];
+          for (var i = 0; i < keysNode.childNodes.length; i++) {
+            mappingProperties.push([ii.toString(), keysNode.childNodes[i].data.text]);
+            ii++;
+          }
+        }
+
+        if (relatedDataObjectNode.childNodes[1]) {
+          propertiesNode = relatedDataObjectNode.childNodes[1];
+          for (var i = 0; i < propertiesNode.childNodes.length; i++) {
+            mappingProperties.push([ii.toString(), propertiesNode.childNodes[i].data.text]);
+            ii++;
+          }
+        }
+      }
+    }
+    else {
+      mappingProperties.push(['0', '']);
+    }
+
+    if (editor.items.map[setRelationFieldId]) {
+      var setdop = editor.items.map[setRelationFieldId];
+      var panelIndex = editor.items.indexOf(setdop);
+      editor.getLayout().setActiveItem(panelIndex);
+      var objText = setdop.getForm().findField('objectName');
+      objText.setValue(dataObjectNode.data.property.objectName);
+      var relCombo = setdop.getForm().findField('relatedObjectName');
+
+      if (relCombo.store.data) {
+        relCombo.store.removeAll();
+      }
+
+      relCombo.store.loadData(relatedObjects);
+      relCombo.setValue(relatedObjectName);
+      setdop.getForm().findField('relatedTable').setValue(relatedObjectName);
+      var mapCombo = setdop.getForm().findField('mapPropertyName');
+
+      if (mapCombo.store.data) {
+        mapCombo.store.removeAll();
+      }
+
+      mapCombo.store.loadData(mappingProperties);
+      var propCombo = setdop.getForm().findField('propertyName');
+
+      if (propCombo.store.data) {
+        propCombo.store.removeAll();
+      }
+
+      propCombo.store.loadData(selectedProperties);
+      return;
+    }
+
+    var conf = {
+      contextName: contextName,      
+      endpoint: endpoint,
+      rootNode: rootNode,
+      relatedObjects: relatedObjects,
+      selectedProperties: selectedProperties,
+      mappingProperties: mappingProperties,
+      node: node,
+      id: setRelationFieldId
+    };
+    setdop = Ext.widget('setrelationform', conf);
+    editor.items.add(setdop);
+    var panelIndex = editor.items.indexOf(setdop);
+    editor.getLayout().setActiveItem(panelIndex);
+    editor.doLayout();
+
+    var propertyMapPane = setdop.items.items[7];
+    var relations = new Array();
+    var relationConfigForm = setdop.getForm();
+
+    if (relatedObjectName != '') {
+      relationConfigForm.findField('relatedObjectName').setValue(relatedObjectName);
+      relationConfigForm.findField('relatedTable').setValue(relatedObjectName);
+    }
+
+    if (node.data.relationshipTypeIndex)
+      var relationTypeIndex = node.data.relationshipTypeIndex;
+
+    relationConfigForm.findField('relationType').setValue(relationTypeIndex);
+    var propertyMaps;
+
+    if (node.data.propertyMap)
+      propertyMaps = node.data.propertyMap;
+    else
+      propertyMaps = [];
+
+    var gridLabel = contextName + '.' + endpoint + '.propertyMapGrid' + node.id;
+    var myArray = new Array();
+    var i = 0;
+    var relatedMapItem = findNodeRelatedObjMap(node, relatedObjectName);
+    var relPropertyName;
+    var relMapPropertyName;
+
+    for (i = 0; i < propertyMaps.length; i++) {
+      relPropertyName = propertyMaps[i].dataPropertyName.toUpperCase();
+      relMapPropertyName = propertyMaps[i].relatedPropertyName.toUpperCase();
+      myArray.push([relPropertyName, relMapPropertyName]);
+      relatedMapItem.push([relPropertyName, relMapPropertyName]);
+    }
+
+    createPropertyMapGrid(setdop, rootNode, node, contextName + '.' + endpoint + '.' + node.id, propertyMapPane, myArray, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationConfigForm.' + node.id, contextName, endpoint, relatedObjectName);
+  }
 };
 
 function setDataObject (me, editor, node, contextName, endpoint) {
   if (editor) {
-    var content = me.getMainContent();
     var conf = {
       contextName: contextName,
       region: 'center',
@@ -398,8 +574,7 @@ function setDataObject (me, editor, node, contextName, endpoint) {
     var setdop = editor.items.map[conf.id];
     if (!setdop) {
       setdop = Ext.widget('setdataobjectpanel', conf);
-      editor.items.add(setdop);
-      editor.doLayout();
+      editor.items.add(setdop);      
     }
     setdop.setActiveRecord(node.data.property);
     var panelIndex = editor.items.indexOf(setdop);

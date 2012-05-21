@@ -1,39 +1,39 @@
 ﻿Ext.require([
-    'Ext.form.field.Text'
+    'Ext.grid.*',
+    'Ext.data.*',
+    'Ext.util.*',
+    'Ext.state.*'
 ]);
 
 Ext.define('AM.view.nhibernate.RelationGridPanel', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.relationgridpanel',
   frame: false,
-  viewConfig: {
-    stripeRows: true
-  },
+  stateful: true,
+  store: null,
+  stateId: 'stateGrid',
   border: false,
   enableColLock: true,
   autoScroll: true,
   data: null,
   node: null,
-  height: 300,
-  columns: null,
+  columns: [{ text: 'Data Relationship Name', flex: 1, dataIndex: 'relationName'}],
   relations: null,
-  rootNode: null,
   dataGridPanel: null,
-  store: null,
-  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  rootNode: null,
+  viewConfig: {
+    stripeRows: true
+  },
 
   initComponent: function () {
     var me = this;
+    var node = me.node;
+
     this.store = Ext.create('Ext.data.ArrayStore', {
-      autoLoad: false,
       fields: [
         { name: 'relationName' }
       ],
-      data: this.relations
-    });
-
-    this.columns = Ext.create('Ext.grid.column.Column', {
-      text: "Data Relationship Name", flex: 1, dataIndex: 'relationName'
+      data: me.relations
     });
 
     this.tbar = new Ext.Toolbar({
@@ -45,15 +45,13 @@ Ext.define('AM.view.nhibernate.RelationGridPanel', {
         icon: 'Content/img/16x16/list-add.png',
         text: 'Add',
         tooltip: 'Add',
-        handler: function () {
+        handler: function (btn) {
           var msg = 'Relationship name cannot be added when the field is blank.';
           var node = me.node;
-          var store = me.store;
-          var mydata = store.data.items;
+          var mydata = me.store.data.items;
           var rootNode = me.rootNode;
           var numberOfRelation = rootNode.childNodes.length - 1;
           var form = me.dataGridPanel.getForm();
-          var relationList = new Array();
 
           if (mydata.length >= numberOfRelation) {
             if (numberOfRelation == 0) {
@@ -79,22 +77,16 @@ Ext.define('AM.view.nhibernate.RelationGridPanel', {
                 var message = relationName + ' already exits.';
                 showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
                 return;
-              }             
+              }
             }
           }
 
-          Ext.define('relationRecord', {
-            extend: 'Ext.data.Model',
-            fields: [
-              { name: "relationName" }
-            ]
-          });     
+          var newRelationRecord = new AM.model.RelationNameModel({
+            relationName: relationName
+          });
 
-          me.store.on('load', function () {
-            me.store.add(new relationRecord({
-              relationName: relationName
-            }, 0));
-          });         
+          me.store.add(newRelationRecord);
+          me.dataGridPanel.doLayout();
 
           var exitNode = false;
 
@@ -102,7 +94,7 @@ Ext.define('AM.view.nhibernate.RelationGridPanel', {
             exitNode = false;
             for (var i = 0; i < mydata.length; i++) {
               newNodeText = mydata[i].data.relationName;
-              if (node.childNodes[j].text.toLowerCase() == newNodeText.toLowerCase()) {
+              if (node.childNodes[j].data.text.toLowerCase() == newNodeText.toLowerCase()) {
                 exitNode = true;
                 break;
               }
@@ -113,42 +105,39 @@ Ext.define('AM.view.nhibernate.RelationGridPanel', {
               j--;
               node.removeChild(deleteNode);
             }
+          }
 
-            var nodeChildren = new Array();
-            for (var j = 0; j < node.childNodes.length; j++)
-              nodeChildren.push(node.childNodes[j].text);
+          var nodeChildren = new Array();
+          for (var j = 0; j < node.childNodes.length; j++)
+            nodeChildren.push(node.childNodes[j].data.text);
 
-            newNodeText = relationName;
-            exitNode = false;
-            for (var j = 0; j < nodeChildren.length; j++) {
-              if (nodeChildren[j].toLowerCase() == newNodeText.toLowerCase()) {
-                exitNode = true;
-                break;
-              }
+          newNodeText = relationName;
+          exitNode = false;
+          for (var j = 0; j < nodeChildren.length; j++) {
+            if (nodeChildren[j].toLowerCase() == newNodeText.toLowerCase()) {
+              exitNode = true;
+              break;
             }
+          }
 
-            if (exitNode == false) {
-              node.appendChild({
-                text: relationName,
-                type: 'relationship',
-                leaf: true,
-                iconCls: 'treeRelation',
-                relatedObjMap: [],
-                objectName: node.parentNode.text,
-                relatedObjectName: '',
-                relationshipType: 'OneToOne',
-                relationshipTypeIndex: '1',
-                propertyMap: []
-              });
+          if (exitNode == false) {
+            node.appendChild({
+              text: relationName,
+              type: 'relationship',
+              leaf: true,
+              iconCls: 'treeRelation',
+              relatedObjMap: [],
+              objectName: node.parentNode.text,
+              relatedObjectName: '',
+              relationshipType: 'OneToOne',
+              relationshipTypeIndex: '1'
+            });
 
-              if (node.expanded == false)
-                node.expand();
+            if (node.expanded == false)
+              node.expand();
 
-              if (!newNode.isSelected())
-                newNode.select();
-
-              //setRelationFields(editPane, newNode, scopeName, appName);
-            }
+            var relationNode = node.findChild('text', relationName)
+            setRelationFields(me.editor, me.rootNode, relationNode, me.contextName, me.endpoint)           
           }
         }
       }, {
@@ -160,24 +149,13 @@ Ext.define('AM.view.nhibernate.RelationGridPanel', {
         text: 'Remove',
         tooltip: 'Remove',
         handler: function () {
-          var selectModel = dataRelationGridPane.getSelectionModel();
+          var selectModel = me.getSelectionModel();
           if (selectModel.hasSelection()) {
-            var selectIndex = selectModel.getSelectedIndex();
-            dataStore.removeAt(selectIndex);
-
-            if (callId == 1) {
-              var tab = Ext.getCmp('content-panel');
-              var rp = tab.items.map[configLabel];
-              var dataObjectsPane = rp.items.map[dbObjLabel];
-              var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-              var node = dbObjectsTree.getSelectionModel().getSelectedNode();
-
-              var relatedMapItem = findNodeRelatedObjMap(node, relatedObjName);
-              relatedMapItem.remove(relatedMapItem[selectIndex]);
-            }
+            var selectRecord = selectModel.getLastFocused();
+            me.store.remove(selectRecord);
           }
           else {
-            if (dataStore.data.items.length < 1)
+            if (me.store.data.items.length < 1)
               showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);
             else
               showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);
@@ -190,7 +168,7 @@ Ext.define('AM.view.nhibernate.RelationGridPanel', {
   }
 });
          
-function createRelationGrid(relationPanel, rootNode, node, gridlabel, dataGridPanel, relations, configLabel, dbObjLabel, formLabel, callId, scopeName, appName, relatedObjName) {
+function createRelationGrid(editor, relationPanel, rootNode, node, gridlabel, dataGridPanel, relations, configLabel, dbObjLabel, formLabel, callId, contextName, endpoint, relatedObjName) {
   if (dataGridPanel.items) {
     var relationPane = dataGridPanel.items.map[gridlabel];
     if (relationPane) {
@@ -203,7 +181,10 @@ function createRelationGrid(relationPanel, rootNode, node, gridlabel, dataGridPa
     id: gridlabel,
     node: node,
     rootNode: rootNode,
-    dataGridPanel: relationPanel
+    dataGridPanel: relationPanel,
+    contextName: contextName,
+    endpoint: endpoint,
+    editor: editor
   };
 
   var relationGrid = Ext.widget('relationgridpanel', conf);

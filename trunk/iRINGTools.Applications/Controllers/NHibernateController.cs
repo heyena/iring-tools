@@ -20,12 +20,12 @@ namespace org.iringtools.web.Controllers
     //protected string _oAuthToken = String.Empty;
     //protected IAuthorizationLayer _authorizationLayer = new LdapAuthorizationProvider();
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseController));
-    private NHibernateRopsitory _repository;
+    private NHibernateRepository _repository;
     private string _keyFormat = "Datadictionary.{0}.{1}";
 
-    public NHibernateController() : this(new NHibernateRopsitory()) { }
+    public NHibernateController() : this(new NHibernateRepository()) { }
 
-    public NHibernateController(NHibernateRopsitory repository)
+    public NHibernateController(NHibernateRepository repository)
         : base()
     {
       _repository = repository;

@@ -30,7 +30,7 @@
           style: 'font-weight:bold;'
         },
         {
-          xtype: 'combo',
+          xtype: 'combobox',
           labelWidth: 150,
           fieldLabel: 'Database Provider',
           anchor: '100%',
@@ -50,7 +50,7 @@
               }
             }
           }),
-          listeners: { 'select': function (combo, record, index) {
+          listeners: { 'select': function (combo, record) {
             var dbProvider = record[0].data.Provider.toUpperCase();
             var dbName = me.getForm().findField('dbName');
             var portNumber = me.getForm().findField('portNumber');

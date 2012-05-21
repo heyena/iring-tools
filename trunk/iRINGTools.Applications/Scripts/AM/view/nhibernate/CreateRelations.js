@@ -1,115 +1,111 @@
 ﻿Ext.define('AM.view.nhibernate.CreateRelations', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.createrelations',   
-    border: false,
-    contextName: null,
-    node: null,
-    endpoint: null,
-    autoScroll: false,
-    monitorValid: true,
-    bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-    defaults: {
+  extend: 'Ext.form.Panel',
+  alias: 'widget.createrelations',
+  border: false,
+  contextName: null,
+  node: null,
+  endpoint: null,
+  autoScroll: false,
+  monitorValid: true,
+  editor: null,
+  rootNode: null,
+  bodyStyle: 'background:#eee;padding:10 0 0 10',
+  defaults: {
+    labelWidth: 130,
+    allowBlank: false
+  },
+
+  initComponent: function () {
+    var me = this;
+    var node = me.node;
+    var contextName = me.contextName;
+    var endpoint = me.endpoint;
+    var rootNode = me.rootNode;
+
+    me.items = [{
+      xtype: 'label',
+      text: 'Add/Remove relationship',
+      cls: 'x-form-item',
+      style: 'font-weight:bold;'
+    }, {
+      xtype: 'textfield',
+      name: 'relationName',
+      fieldLabel: 'Relationship Name',
       anchor: '100%',
-      labelWidth: 130,
-      allowBlank: false 
-    },
+      allowBlank: false
+    }, {
+      xtype: 'panel',
+      id: contextName + '.' + endpoint + '.dataRelationPane.' + node.id,
+      name: 'relationGridPanel',
+      bodyStyle: 'background:#eee',
+      anchor: '100% -10',
+      border: false,
+      items: [],
+      frame: false
+    }];
 
-    initComponent: function () {
-      this.items = [{
-        xtype: 'label',
-        text: 'Add/Remove relationship',
-        cls: 'x-form-item',
-        style: 'font-weight:bold;'
+    me.keys = [{
+      key: [Ext.EventObject.ENTER], handler: function () {
+        addRelationship(me, node, contextName, endpoint);
+      }
+    }];
+
+    me.tbar = new Ext.Toolbar({
+      items: [{
+        xtype: 'tbspacer',
+        width: 4
       }, {
-        xtype: 'textfield',
-        name: 'relationName',
-        fieldLabel: 'Relationship Name',
-        allowBlank: false
-      }, {
-        xtype: 'panel',
-        id: this.contextName + '.' + this.endpoint + '.dataRelationPane.' + this.node.id,
-        name: 'relationGridPanel',
-        bodyStyle: 'background:#eee',
-        anchor: '100% -50',
-        height: 300,
-        layout: 'fit',
-        border: false,
-        items: [],
-        frame: false
-      }];
+        xtype: 'button',
+        icon: 'Content/img/16x16/apply.png',
+        text: 'Apply',
+        tooltip: 'Apply the current changes to the data objects tree',
+        handler: function () {
+          var deleteDataRelationPane = me.items.items[2];
+          var gridLabel = contextName + '.' + endpoint + '.relationsGrid' + node.id;
+          var gridPane = deleteDataRelationPane.items.map[gridLabel];
+          if (gridPane) {
+            var mydata = gridPane.store.data.items;
 
-      this.keys = [{
-        key: [Ext.EventObject.ENTER], handler: function () {
-          addRelationship(relationCreateFormPanel, node, scopeName, appName);
-        }
-      }];
-
-      this.tbar = new Ext.Toolbar({
-        items: [{
-          xtype: 'tbspacer',
-          width: 4
-        }, {
-          xtype: 'button',
-          icon: 'Content/img/16x16/apply.png',
-          text: 'Apply',
-          tooltip: 'Apply the current changes to the data objects tree',
-          handler: function () {
-            var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
-            var gridLabel = scopeName + '.' + appName + '.' + node.id;
-            var gridPane = deleteDataRelationPane.items.map[gridLabel];
-            if (gridPane) {
-              var mydata = gridPane.store.data.items;
-
-                for (var j = 0; j < node.childNodes.length; j++) {
-                  exitNode = false;
-                  for (var i = 0; i < mydata.length; i++) {
-                    newNodeText = mydata[i].data.relationName;
-                    if (node.childNodes[j].text.toLowerCase() == newNodeText.toLowerCase()) {
-                      exitNode = true;
-                      break;
-                    }
-                  }
-                  if (exitNode == false) {
-                    var deleteNode = node.childNodes[j];
-                    node.childNodes.splice(j, 1);
-                    j--;
-                    node.removeChild(deleteNode);
-                  }
+            for (var j = 0; j < node.childNodes.length; j++) {
+              exitNode = false;
+              for (var i = 0; i < mydata.length; i++) {
+                newNodeText = mydata[i].data.relationName;
+                if (node.childNodes[j].data.text.toLowerCase() == newNodeText.toLowerCase()) {
+                  exitNode = true;
+                  break;
                 }
               }
+              if (exitNode == false) {
+                node.removeChild(node.childNodes[j], true);
+                j--;
+              }
             }
-        }, {
-          xtype: 'tbspacer',
-          width: 4
-        }, {
-          xtype: 'button',
-          icon: 'Content/img/16x16/edit-clear.png',
-          text: 'Reset',
-          tooltip: 'Reset to the latest applied changes',
-          handler: function () {
-            var relations = new Array();
-            relationCreateFormPanel.getForm().reset();
-            for (i = 0; i < node.childNodes.length; i++) {
-              if (node.childNodes[i].text != '')
-                relations.push([node.childNodes[i].text]);
-            }
-            var colModel = new Ext.grid.ColumnModel([
-              { id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' }
-            ]);
-            var dataStore = new Ext.data.Store({
-              autoDestroy: true,
-              proxy: new Ext.data.MemoryProxy(relations),
-              reader: new Ext.data.ArrayReader({}, [
-                { name: 'relationName' }
-              ])
-            });
-            createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName, '');
           }
-        }]
-      });
-      
-      this.callParent(arguments);
-    }
+        }
+      }, {
+        xtype: 'tbspacer',
+        width: 4
+      }, {
+        xtype: 'button',
+        icon: 'Content/img/16x16/edit-clear.png',
+        text: 'Reset',
+        tooltip: 'Reset to the latest applied changes',
+        handler: function () {
+          var relations = new Array();
+          me.getForm().reset();
+          for (i = 0; i < node.childNodes.length; i++) {
+            if (node.childNodes[i].text != '')
+              relations.push([node.childNodes[i].text]);
+          }
+          var gridLabel = contextName + '.' + endpoint + '.relationsGrid' + node.id;
+          var deleteDataRelationPane = me.items.items[2];
+          createRelationGrid(me.editor, me, rootNode, node, gridLabel, deleteDataRelationPane, relations, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationCreateForm.' + node.id, 0, contextName, endpoint, '');
+        }
+      }]
+    });
+
+    this.callParent(arguments);
+  }
 });
 
 
@@ -146,41 +142,12 @@ function addRelationship(relationCreateFormPanel, node, scopeName, appName) {
 				relationName: relationName
 			});
 
-			dataStore.add(newRelationRecord);
-			dataStore.commitChanges();
+			dataStore.add(newRelationRecord);			
 		}
 	}
-}		
+};		
 
-function findNodeRelatedObjMap(node, relatedObjName) {
-	if (node.attributes.attributes)
-		var attribute = node.attributes.attributes;
-	else
-		var attribute = node.attributes;
 
-	if (attribute)
-		var relatedObjMap = attribute.relatedObjMap;
-	var relateObjItem;
-	var ifHas = false;
-
-	if (relatedObjMap)
-		for (var i = 0; i < relatedObjMap.length; i++) {
-			if (relatedObjMap[i].relatedObjName)
-				if (relatedObjMap[i].relatedObjName == relatedObjName) {
-					ifHas = true;
-					relateObjItem = relatedObjMap[i];
-				}
-		}
-
-	if (ifHas == false) {
-		relateObjItem = {};
-		relateObjItem.relatedObjName = relatedObjName;
-		relateObjItem.propertyMap = new Array();
-		relatedObjMap.push(relateObjItem);
-	}
-
-	return relateObjItem.propertyMap;
-}
 
 
 

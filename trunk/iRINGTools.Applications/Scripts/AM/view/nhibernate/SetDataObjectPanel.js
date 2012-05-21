@@ -9,7 +9,7 @@
   endpoint: null,
   width: 400,
   //node: null,
-  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
   defaults: {
     anchor: '100%',
     xtype: 'textfield',
