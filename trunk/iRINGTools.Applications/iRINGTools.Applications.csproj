@@ -196,10 +196,10 @@
     <Content Include="Scripts\AM\model\DynamicModel.js" />
     <Content Include="Scripts\AM\model\MappingModel.js" />
     <Content Include="Scripts\AM\model\PropertyMapModel.js" />
-    <Content Include="Scripts\AM\model\RelationNameModel.js" />	
+    <Content Include="Scripts\AM\model\RelationNameModel.js" />
     <Content Include="Scripts\AM\model\NHibernateTreeModel.js" />
     <Content Include="Scripts\AM\model\ProviderModel.js" />
-	<Content Include="Scripts\AM\model\SearchModel.js" />
+    <Content Include="Scripts\AM\model\SearchModel.js" />
     <Content Include="Scripts\AM\model\SpreadsheetModel.js" />
     <Content Include="Scripts\AM\model\TableSelectModel.js" />
     <Content Include="Scripts\AM\store\AvailItemsStore.js" />
@@ -2505,31 +2505,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\AM\AM.js" />
-    <Content Include="Scripts\AM\model\DataLayerModel.js" />
-    <Content Include="Scripts\AM\model\DirectoryModel.js" />
-    <Content Include="Scripts\AM\model\DynamicModel.js" />
-    <Content Include="Scripts\AM\model\MappingModel.js" />
-    <Content Include="Scripts\AM\model\SearchModel.js" />
     <Content Include="Scripts\AM\store\SearchStore.js" />
-    <Content Include="Scripts\AM\view\common\CenterPanel.js" />
-    <Content Include="Scripts\AM\view\common\ContentPanel.js" />
-    <Content Include="Scripts\AM\view\common\PropertyPanel.js" />
-    <Content Include="Scripts\AM\view\directory\ApplicationPanel.js" />
-    <Content Include="Scripts\AM\view\directory\DataGridPanel.js" />
-    <Content Include="Scripts\AM\view\directory\DirectoryPanel.js" />
-    <Content Include="Scripts\AM\view\directory\DirectoryTree.js" />
-    <Content Include="Scripts\AM\view\directory\GraphPanel.js" />
-    <Content Include="Scripts\AM\view\directory\ScopePanel.js" />
-    <Content Include="Scripts\AM\view\directory\ValuelistMapPanel.js" />
-    <Content Include="Scripts\AM\view\directory\ValuelistPanel.js" />
-    <Content Include="Scripts\AM\view\mapping\ClassmapForm.js" />
-    <Content Include="Scripts\AM\view\mapping\MappingPanel.js" />
-    <Content Include="Scripts\AM\view\mapping\MappingTree.js" />
-    <Content Include="Scripts\AM\view\mapping\MapProperty.js" />
-    <Content Include="Scripts\AM\view\mapping\MapValuelist.js" />
-    <Content Include="Scripts\AM\view\search\SearchPanel.js" />
-    <Content Include="Scripts\AM\view\search\SearchTree.js" />
-    <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\Directory\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
@@ -2541,7 +2517,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Scripts\AM\ux\form\" />
     <Folder Include="Scripts\AM\ux\grid\" />
-    <Folder Include="Scripts\AM\view\spreadsheet\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>

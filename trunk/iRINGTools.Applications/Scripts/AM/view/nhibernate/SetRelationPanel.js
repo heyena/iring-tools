@@ -246,8 +246,9 @@
 	        var propertyNameCombo = thisForm.findField('propertyName');
 	        propertyNameCombo.setValue('');
 	        propertyNameCombo.clearInvalid();
-	        var mapPropertyNameCombo = thisForm.findField('mapPropertyName');
-	        mapPropertyNameCombo.setValue('');
+	        var mapPropertyNameCombo = thisForm.findField('mapPropertyName');	       
+	        mapPropertyNameCombo.setValue(null);
+	        mapPropertyNameCombo.setRawValue(null);
 	        mapPropertyNameCombo.clearInvalid();
 	        var properMap = new Array();
 	        var dataRelationPane = me.items.items[7];
@@ -267,12 +268,13 @@
 	            i--;
 	          }
 
-	          for (i = 0; i < attribute.propertyMap.length; i++) {
-	            relPropertyName = attribute.propertyMap[i].dataPropertyName.toUpperCase();
-	            relMapPropertyName = attribute.propertyMap[i].relatedPropertyName.toUpperCase();
-	            properMap.push([relPropertyName, relMapPropertyName]);
-	            relatedMapItem.push([relPropertyName, relMapPropertyName]);
-	          }
+	          if (attribute.propertyMap)
+	            for (i = 0; i < attribute.propertyMap.length; i++) {
+	              relPropertyName = attribute.propertyMap[i].dataPropertyName.toUpperCase();
+	              relMapPropertyName = attribute.propertyMap[i].relatedPropertyName.toUpperCase();
+	              properMap.push([relPropertyName, relMapPropertyName]);
+	              relatedMapItem.push([relPropertyName, relMapPropertyName]);
+	            }
 
 	          var dataGridPanel = me.items.items[7];
 	          var gridPane = dataRelationPane.items.items[0];
