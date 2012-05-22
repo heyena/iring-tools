@@ -161,6 +161,13 @@ function findNodeRelatedObjMap(node, relatedObjName) {
 };
          
 function createPropertyMapGrid(relationPanel, rootNode, node, gridlabel, dataGridPanel, propertyPairs, dbObjLabel, formLabel, callId, scopeName, appName, relatedObjName) {
+  if (dataGridPanel.items) {
+    var relationPane = dataGridPanel.items.items[0];
+    if (relationPane) {
+      relationPane.destroy();
+    }
+  }
+  
   var conf = {
     id: gridlabel,
     node: node,

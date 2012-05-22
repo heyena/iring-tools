@@ -60,7 +60,7 @@
         icon: 'Content/img/16x16/view-refresh.png',
         text: 'Reload',
         tooltip: 'Reload Data Objects',
-        action: 'reloaddataobjects'//,
+        action: 'reloaddataobjects'
       }, {
         xtype: 'tbspacer',
         width: 4
@@ -346,7 +346,6 @@ function setRelations(editor, tree, node, contextName, endpoint) {
   if (editor) {
     var conf = {
       contextName: contextName,
-      region: 'center',
       endpoint: endpoint,
       rootNode: tree.getRootNode(),
       node: node,

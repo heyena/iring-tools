@@ -170,7 +170,7 @@ Ext.define('AM.view.nhibernate.RelationGridPanel', {
          
 function createRelationGrid(editor, relationPanel, rootNode, node, gridlabel, dataGridPanel, relations, configLabel, dbObjLabel, formLabel, callId, contextName, endpoint, relatedObjName) {
   if (dataGridPanel.items) {
-    var relationPane = dataGridPanel.items.map[gridlabel];
+    var relationPane = dataGridPanel.items.items[0];
     if (relationPane) {
       relationPane.destroy();
     }
