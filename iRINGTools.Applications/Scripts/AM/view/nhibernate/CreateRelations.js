@@ -92,14 +92,25 @@
         tooltip: 'Reset to the latest applied changes',
         handler: function () {
           var relations = new Array();
-          me.getForm().reset();
+          var relationNameField = me.getForm().findField('relationName');
+          relationNameField.setValue(null);
+          relationNameField.clearInvalid();
+
           for (i = 0; i < node.childNodes.length; i++) {
-            if (node.childNodes[i].text != '')
-              relations.push([node.childNodes[i].text]);
+            if (node.childNodes[i].data.text != '')
+              relations.push([node.childNodes[i].data.text]);
           }
-          var gridLabel = contextName + '.' + endpoint + '.relationsGrid' + node.id;
-          var deleteDataRelationPane = me.items.items[2];
-          createRelationGrid(me.editor, me, rootNode, node, gridLabel, deleteDataRelationPane, relations, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationCreateForm.' + node.id, 0, contextName, endpoint, '');
+
+          var dataGridPanel = me.items.items[2];
+          var gridPane = dataGridPanel.items.items[0];
+          var store = gridPane.store;
+
+          if (store.data) {
+            store.reset;
+          }
+
+          gridPane.store.loadData(relations);
+          dataGridPanel.doLayout();
         }
       }]
     });

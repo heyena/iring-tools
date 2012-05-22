@@ -277,7 +277,7 @@
 	            }
 
 	          var dataGridPanel = me.items.items[7];
-	          var gridPane = dataRelationPane.items.items[0];
+	          var gridPane = dataGridPanel.items.items[0];
 	          var store = gridPane.store;
 
 	          if (store.data) {
@@ -286,7 +286,6 @@
 
 	          gridPane.store.loadData(properMap);
 	          dataGridPanel.doLayout();
-	          //createPropertyMapGrid(me, rootNode, node, contextName + '.' + endpoint + '.' + node.id, dataGridPanel, properMap, contextName + '.' + endpoint + '.-nh-config', contextName + '.' + endpoint + '.dataObjectsPane', contextName + '.' + endpoint + '.relationConfigForm.' + node.id, contextName, endpoint, attribute.relatedObjectName);
 	        }
 	      }
 	    }]
