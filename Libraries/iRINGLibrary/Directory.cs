@@ -45,6 +45,9 @@ namespace org.iringtools.library
 
     [DataMember(Name = "securityRole", Order = 6, EmitDefaultValue = false)]
     public string SecurityRole { get; set; }
+
+    [DataMember(Name = "user", Order = 7, EmitDefaultValue = false)]
+    public string User { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/directory", Name = "endpoint")]
@@ -67,6 +70,9 @@ namespace org.iringtools.library
 
     [DataMember(Name = "securityRole", Order = 5, EmitDefaultValue = false)]
     public string SecurityRole { get; set; }
+
+    [DataMember(Name = "user", Order = 6, EmitDefaultValue = false)]
+    public string User { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/directory")]

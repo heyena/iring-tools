@@ -195,6 +195,7 @@ namespace iRINGTools.Web.Models
           folderNode.property.Add("Name", folder.Name);
           folderNode.property.Add("Description", folder.Description);
           folderNode.property.Add("Context", folder.Context);
+          folderNode.property.Add("User", folder.User);
           folderNodes.Add(folderNode);
           TraverseDirectory(folderNode, folder, treePath);
         }
@@ -1002,6 +1003,7 @@ namespace iRINGTools.Web.Models
           endPointNode.property.Add("Description", endpoint.Description);
           endPointNode.property.Add("Context", context);
           endPointNode.property.Add("Data Layer", dataLayerName);
+          endPointNode.property.Add("User", endpoint.User);
         }
       }
 
@@ -1036,6 +1038,7 @@ namespace iRINGTools.Web.Models
           subFolderNode.property.Add("Name", folderName);
           subFolderNode.property.Add("Description", subFolder.Description);
           subFolderNode.property.Add("Context", subFolder.Context);
+          subFolderNode.property.Add("User", subFolder.User);
           folderNodeList.Add(subFolderNode);
           treePath = folderPath + "." + folderName;
           TraverseDirectory(subFolderNode, subFolder, treePath);
