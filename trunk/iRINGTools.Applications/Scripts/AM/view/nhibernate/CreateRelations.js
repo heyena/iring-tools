@@ -32,7 +32,13 @@
       name: 'relationName',
       fieldLabel: 'Relationship Name',
       anchor: '100%',
-      allowBlank: false
+      allowBlank: false,
+      listeners: { 'keydown': function (field, e) {
+        if (e.getKey() == e.ENTER) {
+          addRelationship(me, node, contextName, endpoint);
+        }
+      }
+      }
     }, {
       xtype: 'panel',
       id: contextName + '.' + endpoint + '.dataRelationPane.' + node.id,
@@ -42,13 +48,7 @@
       border: false,
       items: [],
       frame: false
-    }];
-
-    me.keys = [{
-      key: [Ext.EventObject.ENTER], handler: function () {
-        addRelationship(me, node, contextName, endpoint);
-      }
-    }];
+    }];   
 
     me.tbar = new Ext.Toolbar({
       items: [{
@@ -129,9 +129,8 @@ function addRelationship(relationCreateFormPanel, node, scopeName, appName) {
 		return;
 	}
 
-	var gridLabel = scopeName + '.' + appName + '.' + node.id;
 	if (deleteDataRelationPane.items) {
-		var gridPane = deleteDataRelationPane.items.map[gridLabel];
+		var gridPane = deleteDataRelationPane.items.items[0];
 		var myArray = new Array();
 		var i = 0;
 		if (gridPane) {
@@ -143,22 +142,39 @@ function addRelationship(relationCreateFormPanel, node, scopeName, appName) {
 					var message = relationName + 'already exits.';
 					showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 					return;
-				}
+				}			
 
-			var relationRecord = Ext.data.Record.create([
-        { name: "relationName" }
-      ]);
+		  var newRelationRecord = new AM.model.RelationNameModel({
+		    relationName: relationName
+		  });
 
-			var newRelationRecord = new relationRecord({
-				relationName: relationName
-			});
-
-			dataStore.add(newRelationRecord);			
+		  gridPane.store.add(newRelationRecord);
+		  deleteDataRelationPane.doLayout();
 		}
 	}
-};		
+};
 
 
 
+Ext.override(Ext.form.Field, {
+  fireKey: function (e) {
+    if (((Ext.isIE && e.type == 'keydown') || e.type == 'keypress') && e.isSpecialKey()) {
+      this.fireEvent('specialkey', this, e);
+    }
+    else {
+      this.fireEvent(e.type, this, e);
+    }
+  }
+          , initEvents: function () {
+            //                this.el.on(Ext.isIE ? "keydown" : "keypress", this.fireKey,  this);
+            this.el.on("focus", this.onFocus, this);
+            this.el.on("blur", this.onBlur, this);
+            this.el.on("keydown", this.fireKey, this);
+            this.el.on("keypress", this.fireKey, this);
+            this.el.on("keyup", this.fireKey, this);
 
+            // reference to original value for reset
+            this.originalValue = this.getValue();
+          }
+});
 
