@@ -106,7 +106,7 @@
           var store = gridPane.store;
 
           if (store.data) {
-            store.reset;
+            gridPane.store.removeAll();
           }
 
           gridPane.store.loadData(relations);

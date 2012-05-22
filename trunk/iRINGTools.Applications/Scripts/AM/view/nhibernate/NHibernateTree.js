@@ -476,13 +476,16 @@ function setRelationFields(editor, rootNode, node, contextName, endpoint) {
       mappingProperties.push(['0', '']);
     }
 
+    var setdopForm;
+
     if (editor.items.map[setRelationFieldId]) {
       var setdop = editor.items.map[setRelationFieldId];
+      setdopForm = setdop.getForm()
       var panelIndex = editor.items.indexOf(setdop);
       editor.getLayout().setActiveItem(panelIndex);
-      var objText = setdop.getForm().findField('objectName');
+      var objText = setdopForm.findField('objectName');
       objText.setValue(dataObjectNode.data.property.objectName);
-      var relCombo = setdop.getForm().findField('relatedObjectName');
+      var relCombo = setdopForm.findField('relatedObjectName');
 
       if (relCombo.store.data) {
         relCombo.store.removeAll();
@@ -490,15 +493,15 @@ function setRelationFields(editor, rootNode, node, contextName, endpoint) {
 
       relCombo.store.loadData(relatedObjects);
       relCombo.setValue(relatedObjectName);
-      setdop.getForm().findField('relatedTable').setValue(relatedObjectName);
-      var mapCombo = setdop.getForm().findField('mapPropertyName');
+      setdopForm.findField('relatedTable').setValue(relatedObjectName);
+      var mapCombo = setdopForm.findField('mapPropertyName');
 
       if (mapCombo.store.data) {
         mapCombo.store.removeAll();
       }
 
       mapCombo.store.loadData(mappingProperties);
-      var propCombo = setdop.getForm().findField('propertyName');
+      var propCombo = setdopForm.findField('propertyName');
 
       if (propCombo.store.data) {
         propCombo.store.removeAll();
@@ -523,20 +526,24 @@ function setRelationFields(editor, rootNode, node, contextName, endpoint) {
     var panelIndex = editor.items.indexOf(setdop);
     editor.getLayout().setActiveItem(panelIndex);
     editor.doLayout();
+    setdopForm = setdop.getForm();
+    var relatedObjNameField = setdopForm.findField('relatedObjectName');
+
+    if (relatedObjNameField.getValue() == '')
+      relatedObjNameField.clearInvalid();
 
     var propertyMapPane = setdop.items.items[7];
-    var relations = new Array();
-    var relationConfigForm = setdop.getForm();
+    var relations = new Array();    
 
     if (relatedObjectName != '') {
-      relationConfigForm.findField('relatedObjectName').setValue(relatedObjectName);
-      relationConfigForm.findField('relatedTable').setValue(relatedObjectName);
+      setdopForm.findField('relatedObjectName').setValue(relatedObjectName);
+      setdopForm.findField('relatedTable').setValue(relatedObjectName);
     }
 
     if (node.data.relationshipTypeIndex)
       var relationTypeIndex = node.data.relationshipTypeIndex;
 
-    relationConfigForm.findField('relationType').setValue(relationTypeIndex);
+    setdopForm.findField('relationType').setValue(relationTypeIndex);
     var propertyMaps;
 
     if (node.data.propertyMap)

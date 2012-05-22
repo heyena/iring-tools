@@ -85,10 +85,22 @@
         var mapCombo = relationConfigPanel.findField('mapPropertyName');
 
         if (mapCombo.store.data) {
-          mapCombo.store.reset;
+          mapCombo.store.removeAll();
+        }
+        mapCombo.setValue(null);
+        mapCombo.setRawValue(null);
+        mapCombo.store.loadData(mappingProperties);
+        var proxyData = findNodeRelatedObjMap(node, relatedObjectName);
+        var dataGridPanel = me.items.items[7];
+        var gridPane = dataGridPanel.items.items[0];
+        var store = gridPane.store;
+
+        if (store.data) {
+          gridPane.store.removeAll();
         }
 
-        mapCombo.store.loadData(mappingProperties)
+        gridPane.store.loadData(proxyData);
+        dataGridPanel.doLayout();
       }
       }
     }, {
@@ -246,10 +258,14 @@
 	        var propertyNameCombo = thisForm.findField('propertyName');
 	        propertyNameCombo.setValue('');
 	        propertyNameCombo.clearInvalid();
-	        var mapPropertyNameCombo = thisForm.findField('mapPropertyName');	       
+	        var mapPropertyNameCombo = thisForm.findField('mapPropertyName');
 	        mapPropertyNameCombo.setValue(null);
 	        mapPropertyNameCombo.setRawValue(null);
 	        mapPropertyNameCombo.clearInvalid();
+
+	        if (mapPropertyNameCombo.store.data)
+	          mapPropertyNameCombo.store.removeAll();
+
 	        var properMap = new Array();
 	        var dataRelationPane = me.items.items[7];
 
@@ -257,7 +273,12 @@
 	          var attribute = node.data;
 
 	        if (attribute) {
-	          thisForm.findField('relatedObjectName').setValue(attribute.relatedObjectName);
+	          var relatedObjNameField = thisForm.findField('relatedObjectName');
+	          relatedObjNameField.setValue(attribute.relatedObjectName);
+
+	          if (attribute.relatedObjectName == '')
+	            relatedObjNameField.clearInvalid();
+
 	          thisForm.findField('relationType').setValue(attribute.relationshipTypeIndex);
 	          var relatedMapItem = findNodeRelatedObjMap(node, attribute.relatedObjectName);
 	          var relPropertyName;
@@ -281,7 +302,7 @@
 	          var store = gridPane.store;
 
 	          if (store.data) {
-	            store.reset;
+	            gridPane.store.removeAll();
 	          }
 
 	          gridPane.store.loadData(properMap);
