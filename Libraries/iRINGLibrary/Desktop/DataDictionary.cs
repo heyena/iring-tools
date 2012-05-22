@@ -229,6 +229,9 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
     public string referenceType { get; set; }
+
+    [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
+    public bool isVirtual { get; set; }
   }
 
   [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]
