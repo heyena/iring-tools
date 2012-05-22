@@ -54,14 +54,10 @@ Ext.define('AM.view.nhibernate.PropertyMapGridPanel', {
         tooltip: 'Add',
         handler: function () {
           var msg = 'Relationship name cannot be added when the field is blank.';
-          var node = me.node;
           var mydata = me.store.data.items;
           var numberOfRelation = me.rootNode.childNodes.length - 1;
           var form = me.dataGridPanel.getForm();
-
-          if (relatedObjName == '')
-            relatedObjName = form.findField('relatedObjectName').rawValue;
-
+          relatedObjName = form.findField('relatedObjectName').rawValue;
           var propertyNameCombo = form.findField('propertyName');
           var mapPropertyNameCombo = form.findField('mapPropertyName');
 
