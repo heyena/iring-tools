@@ -221,11 +221,29 @@
     }
   },
 
-  onReloadDataObjects: function () {
+  onReloadDataObjects: function (btn) {
     var content = this.getMainContent();
-    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
-    var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
-    datatree.onReload();
+    var thisPanel = btn.up('panel');
+    var contextName = thisPanel.contextName;
+    var endpoint = thisPanel.endpoint;
+    var baseUrl = thisPanel.baseUrl;
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];   
+
+    if (nhpan) {
+      var editor = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
+      if (editor) {
+        var items = editor.items.items;
+
+        for (var i = 0; i < items.length; i++) {
+          items[i].destroy();
+          items.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    var dirtree = this.getDirTree();
+    this.getDbdictionary(contextName, endpoint, baseUrl, dirtree, content);
   },
 
   onEditDbConnection: function (btn, evt) {
