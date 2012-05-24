@@ -87,7 +87,10 @@ namespace org.iringtools.library
         InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
-        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, String.Empty);
+        string whereClause = string.Empty;
+        
+        if (filter != null)
+          whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
 
         return GetCount(tableName, whereClause);
       }
@@ -107,7 +110,10 @@ namespace org.iringtools.library
         InitializeDatabaseDictionary();
         
         string tableName = GetTableName(objectType);
-        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
+        string whereClause = string.Empty;
+
+        if (filter != null)
+          whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
 
         return GetIdentifiers(tableName, whereClause);
       }
@@ -159,10 +165,14 @@ namespace org.iringtools.library
         InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
-        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
+        string whereClause = string.Empty;
+
+        if (filter != null)
+          whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
 
         DataTable dataTable = GetDataTable(tableName, whereClause, start, limit);
-        return ToDataObjects(dataTable, objectType);
+        IList<IDataObject> dataObjects = ToDataObjects(dataTable, objectType);
+        return dataObjects;
       }
       catch (Exception ex)
       {
@@ -298,7 +308,10 @@ namespace org.iringtools.library
         InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
-        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
+        string whereClause = string.Empty;
+
+        if (filter != null)
+          whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
 
         return DeleteDataTable(tableName, whereClause);
       }
