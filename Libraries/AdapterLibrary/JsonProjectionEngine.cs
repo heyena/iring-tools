@@ -96,20 +96,6 @@ namespace org.iringtools.adapter.projection
                 {
                   dataItem.properties.Add(dataProperty.propertyName, null);
                 }
-
-                //Handling Reference data
-                if (dataProperty.dataType == DataType.Reference)
-                {
-                  value = dataObj.GetPropertyValue(dataProperty.propertyName + "Reference");
-                  if (value != null)
-                  {
-                    dataItem.properties.Add(dataProperty.propertyName + "Reference", value.ToString());
-                  }
-                  else if (showNullValue)
-                  {
-                    dataItem.properties.Add(dataProperty.propertyName, null);
-                  }
-                }
               }
 
               if (_settings["DisplayLinks"].ToLower() == "true")
