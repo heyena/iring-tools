@@ -282,7 +282,8 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(manifest, graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null, 0, 0);
+        List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, null);
+
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
       }
@@ -310,16 +311,7 @@ namespace org.iringtools.adapter
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
 
-        // get total count then page data objects
-        long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
-        List<IDataObject> dataObjects = new List<IDataObject>();
-        int defaultPageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) ? 25 : 
-          int.Parse(_settings["DefaultPageSize"]);
-
-        for (int i = 0; i < count; i = i + defaultPageSize)
-        {
-          dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, defaultPageSize, i));
-        }
+        List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
         
         // get sort index
         string sortIndex = String.Empty;        
@@ -868,6 +860,23 @@ namespace org.iringtools.adapter
           }
         }
       }
+    }
+
+    private List<IDataObject> PageDataObjects(string objectName, DataFilter filter)
+    {
+      List<IDataObject> dataObjects = new List<IDataObject>();
+
+      int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) ? 250 :
+         int.Parse(_settings["DefaultPageSize"]);
+
+      long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+
+      for (int i = 0; i < count; i = i + pageSize)
+      {
+        dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, i));
+      }
+
+      return dataObjects;
     }
   }
 }
