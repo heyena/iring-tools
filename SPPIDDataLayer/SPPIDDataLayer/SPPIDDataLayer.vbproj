@@ -69,7 +69,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
-    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -107,9 +106,7 @@
     <Compile Include="OraSchemaDS.vb">
       <DependentUpon>OraSchemaDS.xsd</DependentUpon>
     </Compile>
-    <Compile Include="SPPIDController.vb" />
     <Compile Include="SPPIDProvider.vb" />
-    <Compile Include="SPPIDRepository.vb" />
     <Compile Include="SPPIDWorkingSet.vb" />
     <Compile Include="SQLSchemaDS.Designer.vb">
       <AutoGen>True</AutoGen>
