@@ -405,19 +405,6 @@ namespace org.iringtools.library
                 }
 
                 dataObject.SetPropertyValue(objectProperty.propertyName, value);
-
-                //Handling Reference data
-                if (objectProperty.dataType == DataType.Reference)
-                {
-                  value = dataRow[objectProperty.columnName + "Reference"];
-
-                  if (value.GetType() == typeof(System.DBNull))
-                  {
-                    value = null;
-                  }
-
-                  dataObject.SetPropertyValue(objectProperty.propertyName + "Reference", value);
-                }
               }
               else
               {
