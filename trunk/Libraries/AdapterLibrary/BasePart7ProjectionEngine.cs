@@ -337,12 +337,22 @@ namespace org.iringtools.adapter.projection
         {
           string relatedObjectType = relatedRecordsMapPair.Key;
           List<KeyProperty> keyProperties = GetKeyProperties(relatedObjectType);
+          string keyDelimeter = GetKeyDelimeter(relatedObjectType);
 
           foreach (Dictionary<string, string> relatedRecord in relatedRecordsMapPair.Value)
           {
+            bool firstSegment = true;
             string relatedObjectIdentifier = String.Empty;
             foreach (KeyProperty keyProperty in keyProperties)
             {
+              if (firstSegment)
+              {
+                firstSegment = false;
+              }
+              else  // add the configured delimeter prior to concatenating subsequent segments of a composite key
+              {
+                relatedObjectIdentifier += keyDelimeter;
+              }
               relatedObjectIdentifier += relatedRecord[keyProperty.keyPropertyName];
             }
 
@@ -409,6 +419,12 @@ namespace org.iringtools.adapter.projection
     {
       DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
       return dataObject.keyProperties;
+    }
+
+    protected string GetKeyDelimeter(string objectType)
+    {
+        DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+        return dataObject.keyDelimeter;
     }
 
     protected bool IsFixedIdentifier(string identifier)
@@ -485,12 +501,22 @@ namespace org.iringtools.adapter.projection
       Dictionary<string, string> dataRecord = _dataRecords[objectIndex];
       DataObject objDef = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
       List<KeyProperty> keyProperties = objDef.keyProperties;
+      string keyDelimeter = objDef.keyDelimeter;
       string identifier = String.Empty;
+      bool firstSegment = true;
 
       foreach (KeyProperty keyProperty in keyProperties)
       {
         if (dataRecord.ContainsKey(keyProperty.keyPropertyName))
         {
+          if (firstSegment)
+          {
+              firstSegment = false;
+          }
+          else  // add the configured delimeter prior to concatenating subsequent segments of a composite key
+          {
+            identifier += keyDelimeter;
+          }
           identifier += dataRecord[keyProperty.keyPropertyName];
         }
       }
