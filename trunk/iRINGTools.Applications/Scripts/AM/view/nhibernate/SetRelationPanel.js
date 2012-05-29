@@ -78,12 +78,12 @@
             var ii = 0;
 
             for (var i = 0; i < keysNode.childNodes.length; i++) {
-              mappingProperties.push([ii, keysNode.childNodes[i].data.text]);
+              mappingProperties.push([ii, keysNode.childNodes[i].data.text, keysNode.childNodes[i].data.property.columnName]);
               ii++;
             }
 
             for (var i = 0; i < propertiesNode.childNodes.length; i++) {
-              mappingProperties.push([ii, propertiesNode.childNodes[i].data.text]);
+              mappingProperties.push([ii, propertiesNode.childNodes[i].data.text, propertiesNode.childNodes[i].data.property.columnName]);
               ii++;
             }
           }
@@ -192,8 +192,17 @@
 	        var thisForm = me.getForm();
 	        var newNodeName = thisForm.findField('relationshipName').getValue();
 	        node.set('title', newNodeName);
-	        node.data.relationshipTypeIndex = thisForm.findField('relationType').getValue();
-	        node.data.relationshipType = relationTypeStr[node.data.relationshipTypeIndex];
+	        var relationTypeField = thisForm.findField('relationType');
+
+	        if (relationTypeField.store.getAt(relationTypeField.getValue()) != undefined) {
+	          node.data.relationshipTypeIndex = thisForm.findField('relationType').getValue();
+	          node.data.relationshipType = relationTypeStr[node.data.relationshipTypeIndex];
+	        }
+	        else {
+	          node.data.relationshipType = thisForm.findField('relationType').getValue();
+	          node.data.relationshipTypeIndex = relationTypeStr.indexOf(node.data.relationshipType);
+	        }
+
 	        var relatedName = thisForm.findField('relatedObjectName').rawValue;
 	        node.data.relatedObjectName = relatedName;
 	        var dataRelationPane = me.items.items[7];

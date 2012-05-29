@@ -414,7 +414,7 @@ function setRelationFields(editor, rootNode, node, contextName, endpoint) {
       }
     }
 
-    if (relatedTable == '')
+    if (relatedTable == '' && node.raw)
       relatedTable = node.raw.relatedTableName;
 
     for (var i = 0; i < rootNode.childNodes.length; i++) {
@@ -584,18 +584,24 @@ function setRelationFields(editor, rootNode, node, contextName, endpoint) {
 
     var propertyMapPane = setdop.items.items[7];
     var relationTypeIndex;
-    var relationType;
+    var relationType = '';
 
     if (node.data.relationshipTypeIndex) {
-      relationTypeIndex = node.data.relationshipTypeIndex;
-      relationType = node.data.relationshipType;
+      relationTypeIndex = node.data.relationshipTypeIndex;     
     }
     else if (node.raw.relationshipTypeIndex) {
-      relationTypeIndex = node.raw.relationshipTypeIndex;
-      rlationType = node.raw.relationshipType;
+      relationTypeIndex = node.raw.relationshipTypeIndex;     
     }
 
-    setdopForm.findField('relationType').setValue(rlationType);
+    if (node.data.relationshipType) {
+      relationType = node.data.relationshipType;
+    }
+    else if (node.raw.relationshipType) {
+      relationType = node.raw.relationshipType;
+    }
+
+    if (relationType != '')
+      setdopForm.findField('relationType').setValue(relationType);
     var propertyMaps;
 
     if (node.data.propertyMap)
@@ -784,9 +790,12 @@ function setTreeProperty(dsConfigPane, dbInfo, dbDict, tablesSelectorPane) {
 };
 
 function getDataTypeIndex(datatype, dataTypes) {
+  if (dataTypes == undefined)
+    return;
+
   var i = 0;
 
-  while (!dataTypes[i])
+  while (dataTypes[i] == undefined)
     i++;
 
   for (var k = i; k < dataTypes.length; k++) {
@@ -889,48 +898,13 @@ function getFolderFromChildNode(folderNode, dataTypes) {
         }
         break;
       case 'Properties':
-        if (folderNode.childNodes[1])
+        if (folderNode.childNodes[1]) {
           var propChildenNodes = propertyFolderNode.childNodes;
-        
-        for (var k = 0; k < propChildenNodes.length; k++) {
-          var propertyNode = propChildenNodes[k];
-         
-          if (propertyNode.data.property)
-            var propertyNodeProf = propertyNode.data.property;          
-
-          var props = {};
-          props.columnName = propertyNodeProf.columnName;
-          props.propertyName = propertyNodeProf.propertyName;
-
-          if (typeof propertyNodeProf.dataType == 'string')
-            props.dataType = getDataTypeIndex(propertyNodeProf.dataType, dataTypes);
-          else
-            props.dataType = propertyNodeProf.dataType;
-
-          props.dataLength = propertyNodeProf.dataLength;
-
-          if (propertyNodeProf.nullable)
-            props.isNullable = propertyNodeProf.nullable.toString().toLowerCase();
-          else
-            props.isNullable = 'false';
-
-          if (keyName != '') {
-            if (props.columnName == keyName)
-              props.keyType = 1;
-            else
-              props.keyType = 0;
-          }
-          else
-            props.keyType = 0;
-
-          if (propertyNodeProf.showOnIndex)
-            props.showOnIndex = propertyNodeProf.showOnIndex.toString().toLowerCase();
-          else
-            props.showOnIndex = 'false';
-
-          props.isHidden = 'false';
-          props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
-          folder.dataProperties.push(props);         
+          folder = prepareProperties(folder, propChildenNodes, 'false', dataTypes, keyName);
+        }
+        if (propertyFolderNode.raw.hiddenNodes.hiddenNode.children) {
+          var hiddenNodes = propertyFolderNode.raw.hiddenNodes.hiddenNode.children;
+          folder = prepareProperties(folder, hiddenNodes, 'true', dataTypes, keyName);
         }
         break;
       case 'Relationships':
@@ -973,6 +947,59 @@ function getFolderFromChildNode(folderNode, dataTypes) {
           }
         break;
     }
+  }
+  return folder;
+};
+
+function prepareProperties(folder, propChildenNodes, ifHidden, dataTypes, keyName) {
+  var hasData = false;
+
+  for (var k = 0; k < propChildenNodes.length; k++) {
+    var propertyNode = propChildenNodes[k];
+
+    if (propertyNode.data != undefined) {
+      if (propertyNode.data.property != undefined) {
+        var propertyNodeProf = propertyNode.data.property;
+        hasData = true;
+      }
+    }
+    
+    if (!hasData)
+      var propertyNodeProf = propertyNode.property;
+
+    var props = {};
+    props.columnName = propertyNodeProf.columnName;
+    props.propertyName = propertyNodeProf.propertyName;
+
+    if (typeof propertyNodeProf.dataType.toLowerCase() == 'string')
+      props.dataType = getDataTypeIndex(propertyNodeProf.dataType, dataTypes);
+    else
+      props.dataType = propertyNodeProf.dataType;
+
+    props.dataLength = propertyNodeProf.dataLength;
+
+    if (propertyNodeProf.nullable)
+      props.isNullable = propertyNodeProf.nullable.toString().toLowerCase();
+    else
+      props.isNullable = 'false';
+
+    if (keyName != '') {
+      if (props.columnName == keyName)
+        props.keyType = 1;
+      else
+        props.keyType = 0;
+    }
+    else
+      props.keyType = 0;
+
+    if (propertyNodeProf.showOnIndex)
+      props.showOnIndex = propertyNodeProf.showOnIndex.toString().toLowerCase();
+    else
+      props.showOnIndex = 'false';
+
+    props.isHidden = ifHidden;
+    props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
+    folder.dataProperties.push(props);
   }
   return folder;
 };
