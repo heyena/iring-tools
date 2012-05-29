@@ -52,7 +52,11 @@
       xtype: 'combo',
       name: 'relatedObjectName',
       fieldLabel: 'Related Object Name',
-      store: relatedObjects,
+      store: Ext.create('Ext.data.SimpleStore', {
+        fields: ['value', 'text'],
+        autoLoad: true,
+        data: relatedObjects
+      }),
       queryMode: 'local',
       editable: false,
       triggerAction: 'all',
@@ -61,46 +65,50 @@
       selectOnFocus: true,
       anchor: '100%',
       listeners: { 'select': function (combo, record) {
-        var relatedObjectName = record[0].data.field2;
-        var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
-        var relationConfigPanel = me.getForm();
-        var mappingProperties = new Array();
+        var relatedObjectName = record[0].data.text;
 
-        if (relatedDataObjectNode.childNodes[1]) {
-          keysNode = relatedDataObjectNode.childNodes[0];
-          propertiesNode = relatedDataObjectNode.childNodes[1];
-          var ii = 0;
+        if (relatedObjectName != '') {
+          var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
+          var relationConfigPanel = me.getForm();
+          var mappingProperties = new Array();
 
-          for (var i = 0; i < keysNode.childNodes.length; i++) {
-            mappingProperties.push([ii, keysNode.childNodes[i].data.text]);
-            ii++;
+          if (relatedDataObjectNode.childNodes[1]) {
+            keysNode = relatedDataObjectNode.childNodes[0];
+            propertiesNode = relatedDataObjectNode.childNodes[1];
+            var ii = 0;
+
+            for (var i = 0; i < keysNode.childNodes.length; i++) {
+              mappingProperties.push([ii, keysNode.childNodes[i].data.text]);
+              ii++;
+            }
+
+            for (var i = 0; i < propertiesNode.childNodes.length; i++) {
+              mappingProperties.push([ii, propertiesNode.childNodes[i].data.text]);
+              ii++;
+            }
           }
 
-          for (var i = 0; i < propertiesNode.childNodes.length; i++) {
-            mappingProperties.push([ii, propertiesNode.childNodes[i].data.text]);
-            ii++;
+          var mapCombo = relationConfigPanel.findField('mapPropertyName');
+
+          if (mapCombo.store.data) {
+            mapCombo.store.removeAll();
           }
+          mapCombo.setValue(null);
+          mapCombo.setRawValue(null);
+          mapCombo.store.loadData(mappingProperties);
+          var proxyData = findNodeRelatedObjMap(node, relatedObjectName);
+          var dataGridPanel = me.items.items[7];
+          var gridPane = dataGridPanel.items.items[0];
+          var store = gridPane.store;
+
+          if (store.data) {
+            gridPane.store.removeAll();
+          }
+
+          gridPane.store.loadData(proxyData);
+          dataGridPanel.doLayout();
+          relationConfigPanel.findField('relatedTable').setValue(relatedDataObjectNode.data.property.tableName);
         }
-
-        var mapCombo = relationConfigPanel.findField('mapPropertyName');
-
-        if (mapCombo.store.data) {
-          mapCombo.store.removeAll();
-        }
-        mapCombo.setValue(null);
-        mapCombo.setRawValue(null);
-        mapCombo.store.loadData(mappingProperties);
-        var proxyData = findNodeRelatedObjMap(node, relatedObjectName);
-        var dataGridPanel = me.items.items[7];
-        var gridPane = dataGridPanel.items.items[0];
-        var store = gridPane.store;
-
-        if (store.data) {
-          gridPane.store.removeAll();
-        }
-
-        gridPane.store.loadData(proxyData);
-        dataGridPanel.doLayout();
       }
       }
     }, {
@@ -119,7 +127,7 @@
       name: 'propertyName',
       fieldLabel: 'Property Name',
       store: Ext.create('Ext.data.SimpleStore', {
-        fields: ['value', 'text'],
+        fields: ['value', 'text', 'name'],
         autoLoad: true,
         data: selectedProperties
       }),
@@ -139,7 +147,7 @@
       name: 'mapPropertyName',
       fieldLabel: 'Mapping Property',
       store: Ext.create('Ext.data.SimpleStore', {
-        fields: ['value', 'text'],
+        fields: ['value', 'text', 'name'],
         autoLoad: true,
         data: mappingProperties
       }),
@@ -283,6 +291,8 @@
 	          var relatedMapItem = findNodeRelatedObjMap(node, attribute.relatedObjectName);
 	          var relPropertyName;
 	          var relMapPropertyName;
+	          var columnName;
+	          var relatedColumnName;
 
 	          for (var i = 0; i < relatedMapItem.length; i++) {
 	            relatedMapItem.splice(i, 1);
@@ -291,8 +301,10 @@
 
 	          if (attribute.propertyMap)
 	            for (i = 0; i < attribute.propertyMap.length; i++) {
-	              relPropertyName = attribute.propertyMap[i].dataPropertyName.toUpperCase();
-	              relMapPropertyName = attribute.propertyMap[i].relatedPropertyName.toUpperCase();
+	              relPropertyName = attribute.propertyMap[i].dataPropertyName;
+	              relMapPropertyName = attribute.propertyMap[i].relatedPropertyName;
+	              columnName = attribute.propertyMap[i].columnName;
+	              relatedColumnName = attribute.propertyMap[i].relatedColumnName;
 	              properMap.push([relPropertyName, relMapPropertyName]);
 	              relatedMapItem.push([relPropertyName, relMapPropertyName]);
 	            }

@@ -21,9 +21,15 @@ Ext.define('AM.view.nhibernate.PropertyMapGridPanel', {
     flex: 1,
     dataIndex: 'property'
   }, {
+    hidden: true,
+    dataIndex: 'columnName'
+  }, {
     text: 'Related Property',
     flex: 1,
     dataIndex: 'relatedProperty'
+  }, {
+    hidden: true,
+    dataIndex: 'relatedColumnName'
   }],
   rootNode: null,
   propertyPairs: null,
@@ -36,10 +42,7 @@ Ext.define('AM.view.nhibernate.PropertyMapGridPanel', {
     var relatedObjName = me.relatedObjName;
 
     me.store = Ext.create('Ext.data.ArrayStore', {
-      fields: [
-        { name: 'property' },
-        { name: 'relatedProperty' }
-      ],
+      model: AM.model.PropertyMapModel,
       data: me.propertyPairs
     });
 
@@ -66,7 +69,9 @@ Ext.define('AM.view.nhibernate.PropertyMapGridPanel', {
 
           var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
           var mapPropertyName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
-
+          var columnName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.name.replace(/^\s*/, "").replace(/\s*$/, "");
+          var relatedColumnName = mapPropertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.name.replace(/^\s*/, "").replace(/\s*$/, "");
+          
           if (propertyName == "" || mapPropertyName == "") {
             showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
             return;
@@ -83,12 +88,14 @@ Ext.define('AM.view.nhibernate.PropertyMapGridPanel', {
 
           var newPropertyMapRecord = new AM.model.PropertyMapModel({
             property: propertyName,
-            relatedProperty: mapPropertyName
+            columnName: columnName,
+            relatedProperty: mapPropertyName,
+            relatedColumnName: relatedColumnName
           });
 
           me.store.add(newPropertyMapRecord);
           var propertyMap = findNodeRelatedObjMap(node, relatedObjName);
-          propertyMap.push([propertyName, mapPropertyName]);
+          propertyMap.push([propertyName, columnName, mapPropertyName, relatedColumnName]);
           me.dataGridPanel.doLayout();
         }
       }, {
@@ -130,9 +137,9 @@ Ext.define('AM.view.nhibernate.PropertyMapGridPanel', {
 
 function findNodeRelatedObjMap(node, relatedObjName) {
   if (node.data.relatedObjMap)
-    var relatedObjMap = node.data.relatedObjMap;
+    var relatedObjMap = node.data.relatedObjMap;  
   else
-    var relatedObjMap = [];
+    var relatedObjMap = new Array();
 
   var relateObjItem;
   var ifHas = false;

@@ -8,7 +8,7 @@
   contextName: null,
   endpoint: null,
   width: 400,
-  //node: null,
+  node: null,
   bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
   defaults: {
     anchor: '100%',
@@ -18,7 +18,12 @@
   },
   initComponent: function () {
     var me = this;
-    //var treeNode = this.node;
+    var keyDelimiter;
+    var treeNode = this.node;
+    if (treeNode.data.property.keyDelimiter == 'null' || !treeNode.data.property.keyDelimiter || treeNode.data.property.keyDelimiter == undefined)
+      keyDelimiter = '_';
+    else
+      keyDelimiter = treeNode.data.property.keyDelimiter;
 
     me.items = [{
       xtype: 'label',
@@ -29,25 +34,30 @@
       xtype: 'textfield',
       name: 'tableName',
       fieldLabel: 'Table Name',
-      readOnly: true
+      value: treeNode.data.property.tableName,
+      disabled: true
     }, {
       xtype: 'textfield',
       name: 'objectNamespace',
-      fieldLabel: 'Object Namespace'
+      fieldLabel: 'Object Namespace',
+      value: treeNode.data.property.objectNamespace
     }, {
       xtype: 'textfield',
       name: 'objectName',
-      fieldLabel: 'Object Name'
+      fieldLabel: 'Object Name',
+      value: treeNode.data.property.objectName
     }, {
       xtype: 'textfield',
       name: 'keyDelimeter',
       fieldLabel: 'Key Delimiter',
+      value: keyDelimiter,
       allowBlank: true
     }, {
       name: 'description',
       xtype: 'textarea',
       height: 150,
-      fieldLabel: 'Description',      
+      fieldLabel: 'Description',
+      value: treeNode.data.property.description,
       allowBlank: true
     }];
 
