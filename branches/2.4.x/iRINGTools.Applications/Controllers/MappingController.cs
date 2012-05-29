@@ -377,7 +377,8 @@ namespace org.iringtools.web.controllers
                                         if (role.type == RoleType.Reference)
                                         {
                                           roleNode.properties = new Dictionary<string, string>();
-                                          roleNode.properties.Add("value label", GetClassLabel(role.value));
+                                          string classId = role.value ?? role.dataType;
+                                          roleNode.properties.Add("value label", GetClassLabel(classId));
                                         }
 
                                         if (role.classMap != null && role.classMap.id != graphClassMap.id)
@@ -439,7 +440,8 @@ namespace org.iringtools.web.controllers
                                             if (role.type == RoleType.Reference)
                                             {
                                               roleNode.properties = new Dictionary<string, string>();
-                                              roleNode.properties.Add("value label", GetClassLabel(role.value));
+                                              string classId = role.value ?? role.dataType;
+                                              roleNode.properties.Add("value label", GetClassLabel(classId));
                                             }
 
                                             if (role.classMap != null && role.classMap.id != graphClassMap.id)
@@ -493,7 +495,8 @@ namespace org.iringtools.web.controllers
                                 if (role.type == RoleType.Reference)
                                 {
                                   roleNode.properties = new Dictionary<string, string>();
-                                  roleNode.properties.Add("value label", GetClassLabel(role.value));
+                                  string classId = role.value ?? role.dataType;
+                                  roleNode.properties.Add("value label", GetClassLabel(classId));
                                 }            
 
                                 if (role.classMap != null && role.classMap.id != graphClassMap.id)
