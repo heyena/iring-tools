@@ -30,9 +30,7 @@ Ext.define('AM.view.nhibernate.RelationGridPanel', {
     var node = me.node;
 
     this.store = Ext.create('Ext.data.ArrayStore', {
-      fields: [
-        { name: 'relationName' }
-      ],
+      model: AM.model.RelationNameModel,
       data: me.relations
     });
 

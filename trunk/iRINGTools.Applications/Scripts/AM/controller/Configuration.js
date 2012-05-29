@@ -86,6 +86,9 @@
       },
       'button[action=applydatatables]': {
         click: this.applydatatables
+      },
+      'button[action=savedbobjectstree]': {
+        click: this.savedbobjectstree
       }
     })
   },
@@ -144,15 +147,18 @@
             if (relationNode.data)
               var relationNodeAttr = relationNode.data
 
-            var relObjNam = relationNodeAttr.relatedObjectName;
-            if (relObjNam.toLowerCase() != objNam.toLowerCase() && relObjNam.toLowerCase() == oldObjNam.toLowerCase())
-              relationNodeAttr.relatedObjectName = objNam;
+            if (relationNodeAttr.relatedObjectName) {
+              var relObjNam = relationNodeAttr.relatedObjectName;
+              if (relObjNam.toLowerCase() != objNam.toLowerCase() && relObjNam.toLowerCase() == oldObjNam.toLowerCase())
+                relationNodeAttr.relatedObjectName = objNam;
+            }
 
-            var relatedObjPropMap = relationNodeAttr.relatedObjMap;
-
-            for (var iki = 0; iki < relatedObjPropMap.length; iki++) {
-              if (relatedObjPropMap[iki].relatedObjName.toLowerCase() == oldObjNam.toLowerCase())
-                relatedObjPropMap[iki].relatedObjName = objNam;
+            if (relationNodeAttr.relatedObjMap) {
+              var relatedObjPropMap = relationNodeAttr.relatedObjMap;
+              for (var iki = 0; iki < relatedObjPropMap.length; iki++) {
+                if (relatedObjPropMap[iki].relatedObjName.toLowerCase() == oldObjNam.toLowerCase())
+                  relatedObjPropMap[iki].relatedObjName = objNam;
+              }
             }
           }
         }
@@ -221,18 +227,65 @@
     }
   },
 
+  savedbobjectstree: function (btn) {
+    var content = this.getMainContent();
+    var thisPanel = btn.up('panel');
+    var contextName = thisPanel.contextName;
+    var endpoint = thisPanel.endpoint;
+    var baseUrl = thisPanel.baseUrl;
+    var dbDict = AM.view.nhibernate.dbDict.value;
+    var dbInfo = AM.view.nhibernate.dbInfo.value;
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
+    var editPane = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
+    var dsConfigPane = editPane.items.map[contextName + '.' + endpoint + '.dsconfigPane'];
+    var tablesSelectorPane = editPane.items.map[contextName + '.' + endpoint + '.tablesSelectorPane'];
+    var dbObjectsTree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
+    var rootNode = dbObjectsTree.getRootNode();
+    var treeProperty = getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, AM.view.nhibernate.dataTypes.value, tablesSelectorPane);
+    var me = this;
+
+    Ext.Ajax.request({
+      url: 'NHibernate/Trees',
+      timeout: 600000,
+      method: 'POST',
+      params: {
+        scope: contextName,
+        app: endpoint,
+        tree: JSON.stringify(treeProperty)
+      },
+      success: function (response, request) {
+        var rtext = response.responseText;
+        var error = 'SUCCESS = FALSE';
+        var index = rtext.toUpperCase().indexOf(error);
+        if (index == -1) {
+          showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
+          var navpanel = me.getDirTree();
+          navpanel.onReload();
+        }
+        else {
+          var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+          showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
+        }
+      },
+      failure: function (response, request) {
+        showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
+      }
+    });
+  },
+
   onReloadDataObjects: function (btn) {
     var content = this.getMainContent();
     var thisPanel = btn.up('panel');
     var contextName = thisPanel.contextName;
     var endpoint = thisPanel.endpoint;
     var baseUrl = thisPanel.baseUrl;
-    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];   
+    var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
 
     if (nhpan) {
       var editor = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
       if (editor) {
         var items = editor.items.items;
+        var map = editor.items.map
 
         for (var i = 0; i < items.length; i++) {
           items[i].destroy();
@@ -824,6 +877,7 @@
       }
     });
   },
+
   onUploadspreadsheet: function (panel) {
     var tree = this.getDirTree(),
         node = tree.getSelectedNode();

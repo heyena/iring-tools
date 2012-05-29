@@ -12,19 +12,22 @@ Ext.define('AM.view.nhibernate.SelectKeysPanel', {
   frame: false,
   border: false,
   autoScroll: true,
+  editor: null,
   bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
   labelWidth: 140,
   treeNode: null,
+  contextName: null,
+  endpoint: null,
   shownProperty: null,
   monitorValid: true,
   selectItems: null,
 
   initComponent: function () {
     var me = this;
-    var node = this.treeNode;
+    var node = me.treeNode;
     var availItems = getAvailItems(node);
     this.selectItems = getSelectItems(node);
-    var selectItems = this.selectItems;
+    var selectItems = me.selectItems;
 
     this.items = [{
       xtype: 'label',
@@ -50,6 +53,20 @@ Ext.define('AM.view.nhibernate.SelectKeysPanel', {
       listeners: {
         change: function (itemSelector) {
           var selectKeys = itemSelector.toField.store.data.items;
+          var dataObjPanel = me.editor.items.map[me.contextName + '.' + me.endpoint + '.' + node.parentNode.id + '.setdataobject'];
+          var keyDilimiter = '';
+          var dataObjNode = node.parentNode;
+
+          if (dataObjPanel)
+            keyDilimiter = dataObjPanel.getForm().findField('keyDelimeter').getValue();
+          else
+            keyDilimiter = dataObjNode.data.property.keyDelimiter;
+
+          if (selectKeys.length > 1 && (keyDilimiter == 'null' || !keyDilimiter || keyDilimiter == '')) {
+            showDialog(400, 100, 'Warning', "Please enter a valid key delimiter before selecting multimple keys", Ext.Msg.OK, null);
+            return;
+          }
+
           for (var i = 0; i < selectKeys.length; i++) {
             var selectKeyName = selectKeys[i].data.text;
             if (selectKeyName == '')
@@ -80,7 +97,7 @@ Ext.define('AM.view.nhibernate.SelectKeysPanel', {
           if (me.getForm().findField('keySelector').getValue().indexOf('') == -1)
             var selectValues = me.getForm().findField('keySelector').getValue();
           var keysNode = me.treeNode;
-          var propertiesNode = keysNode.parentNode.childNodes[1]; 
+          var propertiesNode = keysNode.parentNode.childNodes[1];
           var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;
 
           for (var i = 0; i < keysNode.childNodes.length; i++) {
@@ -150,7 +167,7 @@ Ext.define('AM.view.nhibernate.SelectKeysPanel', {
                   break;
                 }
               }
-              
+
               for (var jj = 0; jj < hiddenRootNode.children.length; jj++) {
                 if (hiddenRootNode.children[jj].text.toLowerCase() == selectValues[j].toLowerCase()) {
                   var properties = hiddenRootNode.children[jj].property;
@@ -173,9 +190,9 @@ Ext.define('AM.view.nhibernate.SelectKeysPanel', {
               }
             }
           }
-            
-	        if (keysNode.expanded == false)
-	          keysNode.expand();
+
+          if (keysNode.expanded == false)
+            keysNode.expand();
         }
       }, {
         xtype: 'tbspacer',
@@ -193,7 +210,7 @@ Ext.define('AM.view.nhibernate.SelectKeysPanel', {
           for (var i = 0; i < hiddenRootNode.children.length; i++) {
             var itemName = hiddenRootNode.children[i].text;
             availItems.push([itemName, itemName]);
-          }         
+          }
 
           var selectItems = getSelectItems(me.treeNode);
           var keysItemSelector = me.items.items[1];
