@@ -26,12 +26,11 @@ Ext.define('AM.view.nhibernate.SelectPropertiesPanel', {
     var node = this.treeNode;
     var hiddenRootNode = node.raw.hiddenNodes.hiddenNode;
 
-    for (var indexOfProperty = 0; indexOfProperty < node.childNodes.length; indexOfProperty++)
-      if (!node.childNodes[indexOfProperty].data.hidden) {
+    for (var indexOfProperty = 0; indexOfProperty < node.childNodes.length; indexOfProperty++) {
         !hasShown(shownProperty, node.childNodes[indexOfProperty].text)
         shownProperty.push(node.childNodes[indexOfProperty].text);
         indexOfProperty++;
-      }
+    }
 
     var selectedItems = new Array();
     for (var i = 0; i < node.childNodes.length; i++) {

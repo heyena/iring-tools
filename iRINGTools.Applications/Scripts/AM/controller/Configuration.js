@@ -431,6 +431,7 @@
         }
         else {
           var content = me.getMainContent();
+          me.getDataTypes();
           var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
           if (nhpan) {
             var datatree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];

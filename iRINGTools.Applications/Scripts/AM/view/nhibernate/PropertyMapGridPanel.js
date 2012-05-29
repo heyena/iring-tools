@@ -64,13 +64,13 @@ Ext.define('AM.view.nhibernate.PropertyMapGridPanel', {
           var propertyNameCombo = form.findField('propertyName');
           var mapPropertyNameCombo = form.findField('mapPropertyName');
 
-          if (!propertyNameCombo.getValue() || !mapPropertyNameCombo.getValue())
+          if (propertyNameCombo.getValue() == undefined || mapPropertyNameCombo.getValue() == undefined)
             return;
 
           var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
           var mapPropertyName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
           var columnName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.name.replace(/^\s*/, "").replace(/\s*$/, "");
-          var relatedColumnName = mapPropertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.name.replace(/^\s*/, "").replace(/\s*$/, "");
+          var relatedColumnName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.name.replace(/^\s*/, "").replace(/\s*$/, "");
           
           if (propertyName == "" || mapPropertyName == "") {
             showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
