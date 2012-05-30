@@ -161,4 +161,16 @@ namespace org.iringtools.library
   public class ContextNames : List<ContextName>
   {
   }
+
+  [DataContract(Namespace = "http://www.iringtools.org/directory", Name = "baseUrl")]
+  public class BaseUrl
+  {    
+    [DataMember(Name = "url", Order = 1, EmitDefaultValue = false)]
+    public string Url { get; set; }
+  }
+
+  [CollectionDataContract(Name = "baseUrls", Namespace = "http://www.iringtools.org/directory", ItemName = "baseUrl")]
+  public class BaseUrls : List<BaseUrl>
+  {
+  }
 }

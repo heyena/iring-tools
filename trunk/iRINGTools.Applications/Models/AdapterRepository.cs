@@ -357,29 +357,37 @@ namespace iRINGTools.Web.Models
     public BaseUrls GetEndpointBaseUrl(string user)
     {
       bool ifExit = false;
-      Resources resources;
+      BaseUrls baseUrls = null;
 
-      if (HttpContext.Current.Session[user + ".resources"] != null)
-        resources = (Resources)HttpContext.Current.Session[user + ".resources"];
+      if (HttpContext.Current.Session[user + ".baseUrlList"] != null)
+        baseUrls = (BaseUrls)HttpContext.Current.Session[user + ".baseUrlList"];
       else
-        resources = GetResource(user);
+      {
+        try
+        {
+          baseUrls = _javaServiceClient.Get<BaseUrls>("/directory/baseUrls", true);
+          HttpContext.Current.Session[user + ".baseUrlList"] = baseUrls;
+          _logger.Debug("Successfully called Adapter.");
+        }
+        catch (Exception ex)
+        {
+          _logger.Error(ex.ToString());
+        }
+      }        
 
       string baseUri = _adapterServiceClient.GetBaseUri();      
-      BaseUrls baseUrls = new BaseUrls();
-      BaseUrl baseUrl;
+      
 
-      foreach (Resource resource in resources)
+      foreach (BaseUrl baseUrl in baseUrls)
       {
-        baseUrl = new BaseUrl { Url = resource.BaseUrl + "/adapter" };
-        baseUrls.Add(baseUrl);
-        if (resource.BaseUrl.ToLower().Equals(CleanBaseUrl(baseUri, '/')))
+        if (baseUrl.Url.ToLower().Equals(baseUri.ToLower()))
           ifExit = true;
       }
 
       if (!ifExit)
       {
-        baseUrl = new BaseUrl { Url = baseUri };
-        baseUrls.Add(baseUrl);
+        BaseUrl newBaseUrl = new BaseUrl { Url = baseUri };
+        baseUrls.Add(newBaseUrl);
       }
 
       return baseUrls;
@@ -387,25 +395,24 @@ namespace iRINGTools.Web.Models
 
     public ContextNames GetFolderContexts(string user)
     {
-      Resources resources;
-      if (HttpContext.Current.Session[user + ".resources"] != null)
-        resources = (Resources)HttpContext.Current.Session[user + ".resources"];
+      ContextNames contextNames = null;
+      if (HttpContext.Current.Session[user + ".contextList"] != null)
+        contextNames = (ContextNames)HttpContext.Current.Session[user + ".contextList"];
       else
-        resources = GetResource(user);
-
-      ContextNames contexts = new ContextNames();
-      ContextName context = null;
-
-      foreach (Resource resource in resources)
       {
-        foreach (Locator locator in resource.Locators)
+        try
         {
-          context = new ContextName { Context = locator.Context };
-          contexts.Add(context);
+          contextNames = _javaServiceClient.Get<ContextNames>("/directory/contextNames", true);
+          HttpContext.Current.Session[user + ".contextList"] = contextNames;
+          _logger.Debug("Successfully called Adapter.");
+        }
+        catch (Exception ex)
+        {
+          _logger.Error(ex.ToString());
         }
       }
 
-      return contexts;
+      return contextNames;
     }
 
     public string Folder(string newFolderName, string description, string path, string state, string context, string oldContext, string user)

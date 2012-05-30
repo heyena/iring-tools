@@ -87,6 +87,9 @@
       width: 400,
       editable: true,
       triggerAction: 'all',
+      forceSelection: false,              
+      typeAhead: true,
+      selectOnFocus: true,
       store: Ext.create('Ext.data.Store', {
         model: 'AM.model.BaseUrlModel',
         listeners: {
@@ -96,7 +99,8 @@
                 baseurl = availableBaseUris.store.data.items[0].data.baseurl;
             }
 
-            availableBaseUris.setValue(baseurl);
+            if (baseurl != '')
+              availableBaseUris.setValue(baseurl);
 
             if (availableBaseUris.store.data.length == 1)
               me.record.BaseUrl = baseurl;
