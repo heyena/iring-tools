@@ -371,6 +371,9 @@ namespace org.iringtools.web.Models
       string[] relationTypeStr = { "OneToOne", "OneToMany" };
       JsonTreeNode hiddenNode = null;
       DataRelationship relation = null;
+      bool hasProperty = false;
+      DataProperty tempDataProperty = null;
+      JsonTreeNode tempPropertyNode = null;
 
       if (tree == null)
         tree = new Tree();
@@ -406,68 +409,145 @@ namespace org.iringtools.web.Models
             TreeNode relationshipsNode = (TreeNode)dataObjectNode.children[2];
 
             // sync data properties
-            for (int j = 0; j < propertiesNode.children.Count; j++)
+            for (int jj = 0; jj < dataObject.dataProperties.Count; jj++)            
             {
-              for (int jj = 0; jj < dataObject.dataProperties.Count; jj++)
+              tempDataProperty = dataObject.dataProperties[jj];
+              hasProperty = false;
+
+              for (int j = 0; j < propertiesNode.children.Count; j++)
               {
-                if (propertiesNode.children[j].text.ToLower() == dataObject.dataProperties[jj].columnName.ToLower())
+                tempPropertyNode = propertiesNode.children[j];
+
+                if (tempPropertyNode.text.ToLower() == tempDataProperty.columnName.ToLower())
                 {
-
-                  if (!hasShown(shownProperty, propertiesNode.children[j].text.ToLower()))
+                  hasProperty = true;
+                  
+                  if (!tempDataProperty.isHidden)
                   {
-                    shownProperty.Add(propertiesNode.children[j].text.ToLower());
-                    propertiesNode.children[j].hidden = false;
-                  }
+                    if (!hasShown(shownProperty, tempPropertyNode.text.ToLower()))
+                    {
+                      shownProperty.Add(tempPropertyNode.text.ToLower());
+                      tempPropertyNode.hidden = false;
+                    }
 
-                  propertiesNode.children[j].text = dataObject.dataProperties[jj].propertyName;
-                  propertiesNode.children[j].property["keyType"] = dataObject.dataProperties[jj].keyType.ToString();
-                  propertiesNode.children[j].property["propertyName"] = dataObject.dataProperties[jj].propertyName;
-                  propertiesNode.children[j].property["isHidden"] = dataObject.dataProperties[jj].isHidden.ToString();
+                    tempPropertyNode.text = tempDataProperty.propertyName;
+                    tempPropertyNode.property["keyType"] = tempDataProperty.keyType.ToString();
+                    tempPropertyNode.property["propertyName"] = tempDataProperty.propertyName;
+                    tempPropertyNode.property["isHidden"] = tempDataProperty.isHidden.ToString();
+                  }
+                  else
+                  {
+                    JsonTreeNode newHiddenNode = new JsonTreeNode();
+                    newHiddenNode.text = tempDataProperty.propertyName;
+                    newHiddenNode.type = "DATAPROPERTY";
+                    newHiddenNode.id = propertiesNode.id + "/" + newHiddenNode.text;
+                    newHiddenNode.identifier = newHiddenNode.id;
+                    newHiddenNode.iconCls = "treeProperty";
+                    newHiddenNode.leaf = true;
+                    newHiddenNode.hidden = true;
+                    newHiddenNode.property = new Dictionary<string, string>()
+                    {
+                      {"columnName", tempPropertyNode.property["columnName"]},
+                      {"propertyName", tempDataProperty.propertyName},
+                      {"dataType", tempPropertyNode.property["dataType"]},
+                      {"keyType", tempDataProperty.keyType.ToString()},
+                      {"dataLength", tempPropertyNode.property["dataLength"]},
+                      {"nullable", tempPropertyNode.property["nullable"]},
+                      {"showOnIndex", tempPropertyNode.property["showOnIndex"]},
+                      {"numberOfDecimals", tempPropertyNode.property["numberOfDecimals"]},
+                      {"isHidden", tempDataProperty.isHidden.ToString()}
+                    };
+                    newHiddenNode.record = new
+                    {
+                      Name = tempPropertyNode.text
+                    };
+                    hiddenRootNode.children.Add(newHiddenNode);
+                    propertiesNode.children.RemoveAt(j);
+                    j--;
+                  }
+                  break;
                 }
               }
-            }
 
-            for (int j = 0; j < hiddenRootNode.children.Count; j++)
-            {
-              for (int jj = 0; jj < dataObject.dataProperties.Count; jj++)
-              {
-                if (hiddenRootNode.children[j].text.ToLower() == dataObject.dataProperties[jj].columnName.ToLower())
+              if (!hasProperty)
+                for (int j = 0; j < hiddenRootNode.children.Count; j++)
                 {
-
-                  if (!hasShown(shownProperty, hiddenRootNode.children[j].text.ToLower()))
+                  if (hiddenRootNode.children[j].text.ToLower() == tempDataProperty.columnName.ToLower())
                   {
-                    shownProperty.Add(hiddenRootNode.children[j].text.ToLower());
-                    hiddenNode = hiddenRootNode.children[j];
-                    JsonTreeNode dataPropertyNode = new JsonTreeNode();
-                    dataPropertyNode.text = dataObject.dataProperties[jj].propertyName;
-                    dataPropertyNode.type = "DATAPROPERTY";
-                    dataPropertyNode.id = propertiesNode.id + "/" + dataPropertyNode.text;
-                    dataPropertyNode.identifier = dataPropertyNode.id;
-                    dataPropertyNode.iconCls = "treeProperty";
-                    dataPropertyNode.leaf = true;
-                    dataPropertyNode.hidden = false;
-                    dataPropertyNode.property = new Dictionary<string, string>()
+                    hasProperty = true;
+                    if (!hasShown(shownProperty, hiddenRootNode.children[j].text.ToLower()))
+                    {
+                      shownProperty.Add(hiddenRootNode.children[j].text.ToLower());
+                      hiddenNode = hiddenRootNode.children[j];
+                      JsonTreeNode dataPropertyNode = new JsonTreeNode();
+                      dataPropertyNode.text = tempDataProperty.propertyName;
+                      dataPropertyNode.type = "DATAPROPERTY";
+                      dataPropertyNode.id = propertiesNode.id + "/" + dataPropertyNode.text;
+                      dataPropertyNode.identifier = dataPropertyNode.id;
+                      dataPropertyNode.iconCls = "treeProperty";
+                      dataPropertyNode.leaf = true;
+                      dataPropertyNode.hidden = false;
+                      dataPropertyNode.property = new Dictionary<string, string>()
                     {
                       {"columnName", hiddenNode.property["columnName"]},
-                      {"propertyName", dataObject.dataProperties[jj].propertyName},
+                      {"propertyName", tempDataProperty.propertyName},
                       {"dataType", hiddenNode.property["dataType"]},
-                      {"keyType", dataObject.dataProperties[jj].keyType.ToString()},
+                      {"keyType", tempDataProperty.keyType.ToString()},
                       {"dataLength", hiddenNode.property["dataLength"]},
                       {"nullable", hiddenNode.property["nullable"]},
                       {"showOnIndex", hiddenNode.property["showOnIndex"]},
                       {"numberOfDecimals", hiddenNode.property["numberOfDecimals"]},
-                      {"isHidden", dataObject.dataProperties[jj].isHidden.ToString()}
+                      {"isHidden", tempDataProperty.isHidden.ToString()}
                     };
-                    dataPropertyNode.record = new
-                    {
-                      Name = dataPropertyNode.text
-                    };
+                      dataPropertyNode.record = new
+                      {
+                        Name = dataPropertyNode.text
+                      };
 
-                    propertiesNode.children.Add(dataPropertyNode);
-                    hiddenRootNode.children.RemoveAt(j);
-                    j--;
-                    break;
+                      propertiesNode.children.Add(dataPropertyNode);
+                      hiddenRootNode.children.RemoveAt(j);
+                      j--;
+                      break;
+                    }
                   }
+                }
+
+              if (!hasProperty)
+              {
+                Dictionary<string, string> properties = new Dictionary<string, string>()
+                {
+                  {"columnName", tempDataProperty.columnName},
+                  {"propertyName", tempDataProperty.propertyName},
+                  {"dataType", tempDataProperty.dataType.ToString()},
+                  {"keyType", ""},
+                  {"dataLength", tempDataProperty.dataLength.ToString()},
+                  {"nullable", tempDataProperty.isNullable.ToString()},
+                  {"showOnIndex", tempDataProperty.showOnIndex.ToString()},
+                  {"numberOfDecimals", tempDataProperty.numberOfDecimals.ToString()},
+                  {"isHidden", tempDataProperty.isHidden.ToString()}
+                };
+
+                JsonTreeNode dataPropertyNode = new JsonTreeNode();
+                dataPropertyNode.text = tempDataProperty.columnName;
+                dataPropertyNode.type = "DATAPROPERTY";
+                dataPropertyNode.id = dataPropertyNode.id + "/" + dataPropertyNode.text;
+                dataPropertyNode.identifier = dataPropertyNode.id;
+                dataPropertyNode.iconCls = "treeProperty";
+                dataPropertyNode.leaf = true;
+                dataPropertyNode.property = properties;
+                dataPropertyNode.record = new
+                {
+                  Name = dataPropertyNode.text
+                };
+
+                if (tempDataProperty.isHidden)
+                {
+                  dataPropertyNode.hidden = true;
+                  hiddenRootNode.children.Add(dataPropertyNode);
+                }
+                else
+                {
+                  propertiesNode.children.Add(dataPropertyNode);
                 }
               }
             }
