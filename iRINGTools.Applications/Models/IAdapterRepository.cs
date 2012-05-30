@@ -40,6 +40,8 @@ namespace iRINGTools.Web.Models
 
     BaseUrls GetEndpointBaseUrl(string user);
 
+    ContextNames GetFolderContexts(string user);
+
     string GetCombinationMsg();
 
     Response RegenAll(string user);

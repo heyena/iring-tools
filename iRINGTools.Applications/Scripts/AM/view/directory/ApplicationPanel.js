@@ -85,7 +85,7 @@
     var availableBaseUris = Ext.create('Ext.form.ComboBox', {
       fieldLabel: 'Base Url',
       width: 400,
-      editable: false,
+      editable: true,
       triggerAction: 'all',
       store: Ext.create('Ext.data.Store', {
         model: 'AM.model.BaseUrlModel',
