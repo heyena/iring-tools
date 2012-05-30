@@ -294,6 +294,7 @@
           state: 'new',
           path: node.internalId,
           node: node,
+          loadMask: false,
           title: 'Add New Folder',
           iconCls: 'tabsScope',
           url: 'directory/folder'
@@ -324,6 +325,7 @@
           id: 'tab-' + node.id,
           record: node.data.record,
           state: 'edit',
+          loadMask: false,
           path: node.internalId,
           node: node,
           title: 'Edit Folder \"' + node.data.text + '\"',
