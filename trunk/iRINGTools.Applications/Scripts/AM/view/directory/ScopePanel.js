@@ -47,6 +47,41 @@
             description = this.record.Description;
         }
 
+        var contextCombo = Ext.create('Ext.form.ComboBox', {
+          fieldLabel: 'Context name',
+          width: 400,
+          editable: true,
+          triggerAction: 'all',
+          store: Ext.create('Ext.data.Store', {
+            model: 'AM.model.ContextModel',
+            listeners: {
+              load: function () {
+                if (context == '') {
+                  if (contextCombo.store)
+                    context = contextCombo.store.data.items[0].data.context;
+                }
+
+                contextCombo.setValue(context);
+
+                if (contextCombo.store.data.length == 1)
+                  me.record.Context = context;
+              }
+            }
+          }),
+          displayField: 'name',
+          valueField: 'context',
+          hiddenName: 'Context',
+          value: context,
+          allowBlank: true,
+          listeners: {
+            'select': function (combo, rec, index) {
+              if (rec != null && me.record != null) {
+                me.record.Context = rec[0].data.context;
+              }
+            }
+          }
+        });
+
         this.items = [{
             xtype: 'form',
             labelWidth: 100,
@@ -65,7 +100,7 @@
               { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
               { name: 'oldContext', xtype: 'hidden', value: context, allowBlank: false },
               { fieldLabel: 'Folder name', name: 'folderName', xtype: 'textfield', value: name, allowBlank: false },
-              { fieldLabel: 'Context name', name: 'contextName', xtype: 'textfield', value: context },
+              contextCombo,
               { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description }
            ]
         }];

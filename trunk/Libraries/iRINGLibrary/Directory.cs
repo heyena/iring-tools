@@ -150,4 +150,15 @@ namespace org.iringtools.library
     public string Path { get; set; }  
   }
 
+  [DataContract(Namespace = "http://www.iringtools.org/directory", Name = "context")]
+  public class ContextName
+  {
+    [DataMember(Name = "context", Order = 1, EmitDefaultValue = false)]
+    public string Context { get; set; }
+  }
+
+  [CollectionDataContract(Name = "contexts", Namespace = "http://www.iringtools.org/directory", ItemName = "context")]
+  public class ContextNames : List<ContextName>
+  {
+  }
 }

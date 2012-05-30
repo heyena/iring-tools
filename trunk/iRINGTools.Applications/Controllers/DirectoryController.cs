@@ -25,7 +25,6 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-
         IAdapterRepository _repository;
         private string _keyFormat = "Mapping.{0}.{1}";
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
@@ -553,6 +552,17 @@ namespace org.iringtools.web.controllers
             container.success = true;
             container.total = baseUrls.Count;
             return Json(container, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult FolderContext()
+        {
+          string resourceKey = adapter_PREFIX + GetUserId((IDictionary<string, string>)_allClaims);
+          ContextNames contexts = _repository.GetFolderContexts(resourceKey);
+          JsonContainer<ContextNames> container = new JsonContainer<ContextNames>();
+          container.items = contexts;
+          container.success = true;
+          container.total = contexts.Count;
+          return Json(container, JsonRequestBehavior.AllowGet);
         }
 
         #region Private Methods

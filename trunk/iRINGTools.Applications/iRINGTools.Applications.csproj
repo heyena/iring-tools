@@ -191,6 +191,7 @@
     <Content Include="Scripts\AM\controller\Search.js" />
     <Content Include="Scripts\AM\model\AvailItemsModel.js" />
     <Content Include="Scripts\AM\model\BaseUrlModel.js" />
+    <Content Include="Scripts\AM\model\ContextModel.js" />
     <Content Include="Scripts\AM\model\DataLayerModel.js" />
     <Content Include="Scripts\AM\model\DirectoryModel.js" />
     <Content Include="Scripts\AM\model\DynamicModel.js" />

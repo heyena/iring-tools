@@ -354,17 +354,23 @@ namespace iRINGTools.Web.Models
       return _javaServiceClient.GetMessage("/directory/userldap");
     }
 
-    public BaseUrls GetEndpointBaseUrl(string resourceKey)
+    public BaseUrls GetEndpointBaseUrl(string user)
     {
       bool ifExit = false;
-      string baseUri = _adapterServiceClient.GetBaseUri();
-      Resources resources = GetResource(resourceKey);
+      Resources resources;
+
+      if (HttpContext.Current.Session[user + ".resources"] != null)
+        resources = (Resources)HttpContext.Current.Session[user + ".resources"];
+      else
+        resources = GetResource(user);
+
+      string baseUri = _adapterServiceClient.GetBaseUri();      
       BaseUrls baseUrls = new BaseUrls();
       BaseUrl baseUrl;
 
       foreach (Resource resource in resources)
       {
-        baseUrl = new BaseUrl { Url = resource.BaseUrl };
+        baseUrl = new BaseUrl { Url = resource.BaseUrl + "/adapter" };
         baseUrls.Add(baseUrl);
         if (resource.BaseUrl.ToLower().Equals(CleanBaseUrl(baseUri, '/')))
           ifExit = true;
@@ -372,16 +378,42 @@ namespace iRINGTools.Web.Models
 
       if (!ifExit)
       {
-        baseUrl = new BaseUrl { Url = baseUri + "/adapter" };
+        baseUrl = new BaseUrl { Url = baseUri };
         baseUrls.Add(baseUrl);
       }
 
       return baseUrls;
     }
 
+    public ContextNames GetFolderContexts(string user)
+    {
+      Resources resources;
+      if (HttpContext.Current.Session[user + ".resources"] != null)
+        resources = (Resources)HttpContext.Current.Session[user + ".resources"];
+      else
+        resources = GetResource(user);
+
+      ContextNames contexts = new ContextNames();
+      ContextName context = null;
+
+      foreach (Resource resource in resources)
+      {
+        foreach (Locator locator in resource.Locators)
+        {
+          context = new ContextName { Context = locator.Context };
+          contexts.Add(context);
+        }
+      }
+
+      return contexts;
+    }
+
     public string Folder(string newFolderName, string description, string path, string state, string context, string oldContext, string user)
     {
       string obj = null;
+
+      if (context == "")
+        context = "0";
 
       if (state.Equals("new"))
       {
@@ -398,7 +430,7 @@ namespace iRINGTools.Web.Models
         if (!state.Equals("new"))        
           CheckCombination(path, context, oldContext, user);
 
-        Resources resources = (Resources)HttpContext.Current.Session[user + ".resources"]; 
+        Resources resources = (Resources)HttpContext.Current.Session[user + ".resources"];
         obj = _javaServiceClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
 
         if (state != "new" && !context.Equals(oldContext))
