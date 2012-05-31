@@ -163,14 +163,14 @@ namespace org.iringtools.library
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/directory", Name = "baseUrl")]
-  public class BaseUrl
+  public class Url
   {    
     [DataMember(Name = "url", Order = 1, EmitDefaultValue = false)]
-    public string Url { get; set; }
+    public string Urlocator { get; set; }
   }
 
   [CollectionDataContract(Name = "baseUrls", Namespace = "http://www.iringtools.org/directory", ItemName = "baseUrl")]
-  public class BaseUrls : List<BaseUrl>
+  public class Urls : List<Url>
   {
   }
 }

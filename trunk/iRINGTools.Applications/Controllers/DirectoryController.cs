@@ -546,8 +546,8 @@ namespace org.iringtools.web.controllers
         public JsonResult EndpointBaseUrl()
         {
             string resourceKey = adapter_PREFIX + GetUserId((IDictionary<string, string>)_allClaims);
-            BaseUrls baseUrls = _repository.GetEndpointBaseUrl(resourceKey);
-            JsonContainer<BaseUrls> container = new JsonContainer<BaseUrls>();
+            Urls baseUrls = _repository.GetEndpointBaseUrl(resourceKey);
+            JsonContainer<Urls> container = new JsonContainer<Urls>();
             container.items = baseUrls;
             container.success = true;
             container.total = baseUrls.Count;

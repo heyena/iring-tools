@@ -38,7 +38,7 @@ namespace iRINGTools.Web.Models
 
     string GetUserLdap();
 
-    BaseUrls GetEndpointBaseUrl(string user);
+    Urls GetEndpointBaseUrl(string user);
 
     ContextNames GetFolderContexts(string user);
 
