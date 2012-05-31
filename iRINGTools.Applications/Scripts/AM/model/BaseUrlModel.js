@@ -1,7 +1,7 @@
 ﻿Ext.define('AM.model.BaseUrlModel', {
     extend: 'Ext.data.Model',
     fields: [       
-        { name: 'baseurl', mapping: 'Url' }
+        { name: 'baseurl', mapping: 'Urlocator' }
     ],
     proxy: {
         type: 'ajax',

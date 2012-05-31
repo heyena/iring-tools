@@ -112,7 +112,7 @@
       displayField: 'baseurl',
       valueField: 'baseurl',
       editable: true,
-      hiddenName: 'Url',
+      hiddenName: 'Urlocator',
       value: baseurl,
       listeners: {
         'select': function (combo, rec, index) {
