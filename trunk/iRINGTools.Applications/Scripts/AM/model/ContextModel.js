@@ -1,6 +1,5 @@
 ﻿Ext.define('AM.model.ContextModel', {
   extend: 'Ext.data.Model',
-  loadMask: false,
   fields: [       
     { name: 'context', mapping: 'Context' }
   ],
