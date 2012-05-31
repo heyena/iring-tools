@@ -101,7 +101,7 @@
                 baseurl = availableBaseUris.store.data.items[0].data.baseurl;
             }
 
-            if (baseurl != '')
+            if (baseurl != '' && baseurl != undefined && availableBaseUris.store.data.length == 1)
               availableBaseUris.setValue(baseurl);
 
             if (availableBaseUris.store.data.length == 1)

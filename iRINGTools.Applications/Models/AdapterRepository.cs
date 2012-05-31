@@ -855,6 +855,7 @@ namespace iRINGTools.Web.Models
     {
       Endpoints endpoints = folder.Endpoints;
       string endpointPath = "";
+      string folderPath = "";
 
       if (endpoints != null)
       {
@@ -873,8 +874,8 @@ namespace iRINGTools.Web.Models
       {
         foreach (Folder subFolder in subFolders)
         {
-          path = path + "." + subFolder.Name;
-          CheckCombination(subFolder, path, context, oldContext, user);
+          folderPath = path + "." + subFolder.Name;
+          CheckCombination(subFolder, folderPath, context, oldContext, user);
         }
       }
     }
