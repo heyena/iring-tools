@@ -57,7 +57,7 @@
       forceSelection: false,
       typeAhead: false,
       selectOnFocus: false,
-      minChars : 100000,      
+      minChars: 100000,
       store: Ext.create('Ext.data.Store', {
         model: 'AM.model.ContextModel',
         autoLoad: false,
@@ -70,13 +70,13 @@
                   context = contextCombo.store.data.items[0].data.context;
             }
 
-            if (context != '' && context != undefined)
+            if (context != '' && context != undefined && contextCombo.store.data.length == 1)
               contextCombo.setValue(context);
 
             if (contextCombo.store.data.length == 1)
               me.record.Context = context;
           }
-        }           
+        }
       }),
       displayField: 'context',
       valueField: 'context',
@@ -91,8 +91,8 @@
         },
         change: function (combo, newValue, oldValue) {
           if (newValue != undefined && newValue != '' && me.record != null) {
-            me.record.Context = newValue.data.context;
-          }            
+            me.record.Context = newValue;
+          }
         }
       }
     });
@@ -122,7 +122,7 @@
     }];
     /*
      
-        */
+    */
 
 
     // super
@@ -179,12 +179,9 @@
         me.fireEvent('Save', me);
       },
       failure: function (response, request) {
-        var rtext = request.result;
-        if (rtext.toUpperCase().indexOf('FALSE') > 0) {
-          var ind = rtext.indexOf('}');
-          var len = rtext.length - ind - 1;
-          var msg = rtext.substring(ind + 1, rtext.length - 1);
-          showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
+        if (response.items[3].value != undefined) {
+          var rtext = response.items[3].value;
+          showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);
           return;
         }
         var message = 'Error saving changes!';
