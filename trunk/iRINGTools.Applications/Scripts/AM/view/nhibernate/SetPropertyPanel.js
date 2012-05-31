@@ -75,7 +75,7 @@
         tooltip: 'Reset to the latest applied changes',
         handler: function (f) {
           this.setActiveRecord(this.node.data.property);
-        },
+        }
       }]
     });
     this.callParent(arguments);
