@@ -354,18 +354,18 @@ namespace iRINGTools.Web.Models
       return _javaServiceClient.GetMessage("/directory/userldap");
     }
 
-    public BaseUrls GetEndpointBaseUrl(string user)
+    public Urls GetEndpointBaseUrl(string user)
     {
       bool ifExit = false;
-      BaseUrls baseUrls = null;
+      Urls baseUrls = null;
 
       if (HttpContext.Current.Session[user + ".baseUrlList"] != null)
-        baseUrls = (BaseUrls)HttpContext.Current.Session[user + ".baseUrlList"];
+        baseUrls = (Urls)HttpContext.Current.Session[user + ".baseUrlList"];
       else
       {
         try
         {
-          baseUrls = _javaServiceClient.Get<BaseUrls>("/directory/baseUrls", true);
+          baseUrls = _javaServiceClient.Get<Urls>("/directory/baseUrls", true);
           HttpContext.Current.Session[user + ".baseUrlList"] = baseUrls;
           _logger.Debug("Successfully called Adapter.");
         }
@@ -375,18 +375,18 @@ namespace iRINGTools.Web.Models
         }
       }        
 
-      string baseUri = _adapterServiceClient.GetBaseUri();      
-      
+      string baseUri = _adapterServiceClient.GetBaseUri();
 
-      foreach (BaseUrl baseUrl in baseUrls)
+
+      foreach (Url baseUrl in baseUrls)
       {
-        if (baseUrl.Url.ToLower().Equals(baseUri.ToLower()))
+        if (baseUrl.Urlocator.ToLower().Equals(baseUri.ToLower()))
           ifExit = true;
       }
 
       if (!ifExit)
       {
-        BaseUrl newBaseUrl = new BaseUrl { Url = baseUri };
+        Url newBaseUrl = new Url { Urlocator = baseUri };
         baseUrls.Add(newBaseUrl);
       }
 
