@@ -94,9 +94,9 @@ Ext.define('AM.view.nhibernate.RadioField', {
       defaults: { anchor: '100%' },
       layout: 'anchor',      
       items: [ field1, field2 ]
-    }];   
+    }];
 
-    if (serName != '') {
+    if (serName != '' && serName != 1) {
       if (serName.toUpperCase() == 'SID') {
         field1.disabled = false;
         field2.disabled = true;
@@ -117,7 +117,7 @@ Ext.define('AM.view.nhibernate.RadioField', {
 
 function creatRadioField(panel, idLabel, value, serName, contextName, endpoint) {
 	if (panel.items) {
-		var radioPane = panel.items.map[idLabel + 'radioField'];
+		var radioPane = panel.items.items[0];
 		if (radioPane) {
 			radioPane.destroy();
 		}
