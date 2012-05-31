@@ -1,6 +1,5 @@
 ﻿Ext.define('AM.view.directory.ScopePanel', {
   extend: 'Ext.window.Window',
-  loadMask : false,
   alias: 'widget.scopeform',
   layout: 'fit',
   border: false,
@@ -58,10 +57,8 @@
       forceSelection: false,
       typeAhead: false,
       selectOnFocus: false,
-      minChars : 100000,
-      //queryMode: 'local',
+      minChars : 100000,      
       store: Ext.create('Ext.data.Store', {
-        loadMask: false,    
         model: 'AM.model.ContextModel',
         autoLoad: false,
         clearOnLoad: true,

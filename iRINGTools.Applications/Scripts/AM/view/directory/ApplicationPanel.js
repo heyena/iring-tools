@@ -83,13 +83,15 @@
     });
 
     var availableBaseUris = Ext.create('Ext.form.ComboBox', {
+      loadMask: false,
       fieldLabel: 'Base Url',
       width: 400,
       editable: true,
       triggerAction: 'all',
-      forceSelection: false,              
-      typeAhead: true,
-      selectOnFocus: true,
+      forceSelection: false,
+      typeAhead: false,
+      selectOnFocus: false,
+      minChars: 100000,    
       store: Ext.create('Ext.data.Store', {
         model: 'AM.model.BaseUrlModel',
         listeners: {
