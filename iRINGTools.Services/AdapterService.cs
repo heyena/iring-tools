@@ -79,6 +79,19 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region Test Connection
+    /// <summary>
+    /// Testing if connection exists.
+    /// </summary>
+    /// <returns>Returns a string.</returns>
+    [Description("Gets the scopes (project and application combinations) available from the service.")]
+    [WebGet(UriTemplate = "/test")]
+    public string TestBaseUrl()
+    {      
+      return "connected";
+    }
+    #endregion
+
     #region GetScopes
     /// <summary>
     /// Gets the scopes (project and application combinations) available from the service.

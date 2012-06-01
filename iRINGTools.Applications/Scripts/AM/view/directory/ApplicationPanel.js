@@ -14,6 +14,7 @@
   autoload: true,
 
   initComponent: function () {
+    var me = this;
     this.addEvents({
       close: true,
       save: true,
@@ -49,7 +50,7 @@
       showconfigure = true;
     var me = this;
     var cmbDataLayers = Ext.create('Ext.form.ComboBox', {
-      fieldLabel: 'Data Layer',      
+      fieldLabel: 'Data Layer',
       editable: false,
       triggerAction: 'all',
       store: Ext.create('Ext.data.Store', {
@@ -83,10 +84,10 @@
 
     var availableBaseUris = Ext.create('Ext.form.ComboBox', {
       loadMask: false,
-      fieldLabel: 'Base Url',      
+      fieldLabel: 'Base Url',
       editable: true,
-      triggerAction: 'all',      
-      forceSelection: false,     
+      triggerAction: 'all',
+      forceSelection: false,
       typeAhead: false,
       selectOnFocus: false,
       minChars: 100000,
@@ -189,29 +190,48 @@
         disabled: true
       }, cmbDataLayers
        , {
-        xtype: 'form',
-        layout: 'column',
-        border: false,
-        frame: false,
-        defaults: {
-          border: false,
-          frame: false
-        },
-        items: [{
-          columnWidth: .87,
-          layout: 'fit',
-          items: availableBaseUris         
-        }, {
-          columnWidth: .13,
-          items: [{
-            xtype: 'button',
-            style: 'float: right;',
-            text: 'Test Url',            
-            tooltip: 'Test the entered Url',
-            handler: function () { }
-          }]          
-        }]
-      }]
+         xtype: 'form',
+         layout: 'column',
+         border: false,
+         frame: false,
+         defaults: {
+           border: false,
+           frame: false
+         },
+         items: [{
+           columnWidth: .87,
+           layout: 'fit',
+           items: availableBaseUris
+         }, {
+           columnWidth: .13,
+           items: [{
+             xtype: 'button',
+             style: 'float: right;',
+             text: 'Test Url',
+             tooltip: 'Test the entered Url',
+             handler: function () {
+               var baseUrl = me.items.first().items.last().items.items[0].items.items[0].rawValue;
+               Ext.Ajax.request({
+                 url: 'directory/testBaseUrl',
+                 timeout: 600000,
+                 method: 'POST',
+                 params: {
+                   baseUrl: baseUrl
+                 },
+                 success: function (response, request) {
+                   if (response.responseText.indexOf('error') == -1)
+                     showDialog(400, 100, 'Testing Result', 'The url is valid and the server is connected.', Ext.Msg.OK, null);
+                   else
+                     showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid url.', Ext.Msg.OK, null);
+                 },
+                 failure: function (response, request) {
+                   showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid url.', Ext.Msg.OK, null);
+                 }
+               });
+             }
+           }]
+         }]
+       }]
     }];
 
     this.bbar = this.buildToolbar(showconfigure);

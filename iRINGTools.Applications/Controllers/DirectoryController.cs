@@ -494,11 +494,23 @@ namespace org.iringtools.web.controllers
 
             if (success == "ERROR")
             {
-                string msg = _repository.GetCombinationMsg();
+                string msg = _repository.GetCombinationMsg(); 
                 return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult TestBaseUrl(FormCollection form)
+        {
+          string success = _repository.TestBaseUrl(form["baseUrl"]);
+
+          if (success == "ERROR")
+          {
+            return Json(new { error = true }, JsonRequestBehavior.AllowGet);
+          }
+
+          return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult Endpoint(FormCollection form)
