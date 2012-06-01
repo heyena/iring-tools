@@ -290,7 +290,7 @@ function changeConfigOracle(host, dbSchema, userName, password, serviceName, con
   password.setValue('');
   password.clearInvalid();
   serviceName.show();
-  creatRadioField(serviceName, '', '', 1, contextName, endpoint);
+  creatRadioField(serviceName, '', '', 1, contextName, endpoint);  
 };
 
 function changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password) {

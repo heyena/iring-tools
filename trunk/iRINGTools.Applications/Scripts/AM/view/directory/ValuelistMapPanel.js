@@ -76,20 +76,20 @@
       border: false,
       frame: false,
       defaults: {
-        width: 310,
+        anchor: '100%',
         msgTarget: 'side'
       },
       defaultType: 'textfield',
       items: [
-        { name: 'contextName', xtype: 'hidden', width: 120, value: contextName, allowBlank: false },
-        { name: 'endpoint', xtype: 'hidden', width: 120, value: endpoint, allowBlank: false },
-        { name: 'valueList', xtype: 'hidden', width: 120, value: valuelist, allowBlank: false },
-        { name: 'baseUrl', xtype: 'hidden', width: 120, value: baseUrl, allowBlank: false },
-        { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 120, value: nodeId, allowBlank: true },
-        { fieldLabel: 'Internal Name', name: 'internalName', xtype: 'textfield', width: 230, value: interName, allowBlank: false },
-        { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
-        { fieldLabel: 'Old Class Url', name: 'oldClassUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
-        { fieldLabel: 'Class Label', name: 'classlabel', xtype: 'hidden', width: 230, value: classLabel, allowBlank: true }
+        { name: 'contextName', xtype: 'hidden', value: contextName, allowBlank: false },
+        { name: 'endpoint', xtype: 'hidden', value: endpoint, allowBlank: false },
+        { name: 'valueList', xtype: 'hidden', value: valuelist, allowBlank: false },
+        { name: 'baseUrl', xtype: 'hidden', value: baseUrl, allowBlank: false },
+        { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', value: nodeId, allowBlank: true },
+        { fieldLabel: 'Internal Name', name: 'internalName', xtype: 'textfield', value: interName, allowBlank: false },
+        { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', value: classUrl, allowBlank: false },
+        { fieldLabel: 'Old Class Url', name: 'oldClassUrl', xtype: 'hidden', value: classUrl, allowBlank: false },
+        { fieldLabel: 'Class Label', name: 'classlabel', xtype: 'hidden', value: classLabel, allowBlank: true }
       ],
 
       html: '<div class="class-target' + formid + '" '

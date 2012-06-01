@@ -50,8 +50,7 @@
     var contextCombo = Ext.create('Ext.form.ComboBox', {
       loadMask: false,
       fieldLabel: 'Context name',
-      name: 'contextCombo',
-      width: 400,
+      name: 'contextCombo',      
       editable: true,
       triggerAction: 'all',
       forceSelection: false,
@@ -106,7 +105,7 @@
       border: false,
       frame: false,
       defaults: {
-        width: 400,
+        anchor: '100%',
         msgTarget: 'side'
       },
       defaultType: 'textfield',
