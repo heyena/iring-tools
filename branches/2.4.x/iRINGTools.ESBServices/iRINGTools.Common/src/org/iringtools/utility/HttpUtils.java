@@ -19,13 +19,19 @@ public final class HttpUtils
 
     String proxyHost = context.getInitParameter("proxyHost");
     if (proxyHost != null && proxyHost.length() > 0)
+    {
       sysProps.put("http.proxyHost", proxyHost);
+      sysProps.put("https.proxyHost", proxyHost);
+    }
     else
       return;
 
     String proxyPort = context.getInitParameter("proxyPort");
     if (proxyPort != null && proxyPort.length() > 0)
+    {
       sysProps.put("http.proxyPort", proxyPort);
+      sysProps.put("https.proxyPort", proxyPort);
+    }
     else
       return;
 
