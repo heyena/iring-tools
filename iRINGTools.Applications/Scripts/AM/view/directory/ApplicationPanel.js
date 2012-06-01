@@ -49,8 +49,7 @@
       showconfigure = true;
     var me = this;
     var cmbDataLayers = Ext.create('Ext.form.ComboBox', {
-      fieldLabel: 'Data Layer',
-      width: 400,
+      fieldLabel: 'Data Layer',      
       editable: false,
       triggerAction: 'all',
       store: Ext.create('Ext.data.Store', {
@@ -84,14 +83,13 @@
 
     var availableBaseUris = Ext.create('Ext.form.ComboBox', {
       loadMask: false,
-      fieldLabel: 'Base Url',
-      width: 400,
+      fieldLabel: 'Base Url',      
       editable: true,
-      triggerAction: 'all',
-      forceSelection: false,
+      triggerAction: 'all',      
+      forceSelection: false,     
       typeAhead: false,
       selectOnFocus: false,
-      minChars: 100000,    
+      minChars: 100000,
       store: Ext.create('Ext.data.Store', {
         model: 'AM.model.BaseUrlModel',
         listeners: {
@@ -132,31 +130,95 @@
       border: false,
       frame: false,
       defaults: {
-        width: 400,
-        msgTarget: 'side'
+        msgTarget: 'side',
+        anchor: '100%'
       },
       defaultType: 'textfield',
-      items: [
-              { name: 'path', xtype: 'hidden', value: path, allowBlank: false },
-              { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
-              { name: 'contextValue', xtype: 'hidden', value: context, allowBlank: false },
-              { name: 'oldBaseUrl', xtype: 'hidden', value: baseurl, allowBlank: false },
-              { name: 'oldAssembly', xtype: 'hidden', value: assembly, allowBlank: false },
-              { name: 'assembly', xtype: 'hidden', value: me.record.Assembly, allowBlank: false },
-              { name: 'baseUrl', xtype: 'hidden', value: me.record.BaseUrl, allowBlank: false },
-              { fieldLabel: 'Endpoint name', name: 'endpoint', xtype: 'textfield', value: name, allowBlank: false },
-              { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description },
-              { fieldLabel: 'Context name', name: 'context', xtype: 'textfield', value: context, disabled: true },
-              availableBaseUris,
-              cmbDataLayers
-            ]
+      items: [{
+        name: 'path',
+        xtype: 'hidden',
+        value: path,
+        allowBlank: false
+      }, {
+        name: 'state',
+        xtype: 'hidden',
+        value: state,
+        allowBlank: false
+      }, {
+        name: 'contextValue',
+        xtype: 'hidden',
+        value: context,
+        allowBlank: false
+      }, {
+        name: 'oldBaseUrl',
+        xtype: 'hidden',
+        value: baseurl,
+        allowBlank: false
+      }, {
+        name: 'oldAssembly',
+        xtype: 'hidden',
+        value: assembly,
+        allowBlank: false
+      }, {
+        name: 'assembly',
+        xtype: 'hidden',
+        value: me.record.Assembly,
+        allowBlank: false
+      }, {
+        name: 'baseUrl',
+        xtype: 'hidden',
+        value: me.record.BaseUrl,
+        allowBlank: false
+      }, {
+        fieldLabel: 'Endpoint name',
+        name: 'endpoint',
+        xtype: 'textfield',
+        value: name,
+        allowBlank: false
+      }, {
+        fieldLabel: 'Description',
+        name: 'Description',
+        allowBlank: true,
+        xtype: 'textarea',
+        value: description
+      }, {
+        fieldLabel: 'Context name',
+        name: 'context',
+        xtype: 'textfield',
+        value: context,
+        disabled: true
+      }, cmbDataLayers
+       , {
+        xtype: 'form',
+        layout: 'column',
+        border: false,
+        frame: false,
+        defaults: {
+          border: false,
+          frame: false
+        },
+        items: [{
+          columnWidth: .87,
+          layout: 'fit',
+          items: availableBaseUris         
+        }, {
+          columnWidth: .13,
+          items: [{
+            xtype: 'button',
+            style: 'float: right;',
+            text: 'Test Url',            
+            tooltip: 'Test the entered Url',
+            handler: function () { }
+          }]          
+        }]
+      }]
     }];
 
     this.bbar = this.buildToolbar(showconfigure);
     // super
     this.callParent(arguments);
-    this.items.first().items.last().store.load();
     this.items.first().items.items[this.items.first().items.length - 2].store.load();
+    this.items.first().items.last().items.items[0].items.items[0].store.load();
   },
 
   buildToolbar: function (showconfigure) {
