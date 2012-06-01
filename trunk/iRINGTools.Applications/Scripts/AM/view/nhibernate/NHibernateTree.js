@@ -184,6 +184,7 @@ function setTablesSelectorPane (me, editor, dataTree, nhpan, dbDict, dbInfo, con
     endpoint: endpoint,
     baseUrl: baseUrl,
     dbInfo: dbInfo,
+    dbDict: dbDict,
     dataTree: dataTree,
     region: 'center',
     id: contextName + '.' + endpoint + '.tablesselector'
@@ -198,9 +199,9 @@ function setTablesSelectorPane (me, editor, dataTree, nhpan, dbDict, dbInfo, con
   } 
 
   var panelIndex = editor.items.indexOf(select);
-  editor.getLayout().setActiveItem(panelIndex); 
+  editor.getLayout().setActiveItem(panelIndex);
   var tablesSelector = select.items.items[1];
-
+  
   if (tablesSelector.toField && select.selectItems.length > 0) {
     var list = tablesSelector.toField.boundList;
     var store = list.getStore();
@@ -214,8 +215,11 @@ function setTablesSelectorPane (me, editor, dataTree, nhpan, dbDict, dbInfo, con
       store.data.items[i].data.field1 = select.selectItems[i];
     }
          
-    list.refresh();    
+    list.refresh();
   }
+
+  var checkBox = select.items.items[2];
+  checkBox.setValue(dbDict.enableSummary);
 };
 
 function setPropertiesFolder(me, editor, node, contextName, endpoint) {
@@ -706,7 +710,7 @@ function getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes, tablesSe
   dbDict.SchemaName = treeProperty.schemaName;
   dbDict.Provider = treeProperty.provider;
   dbDict.dataObjects = treeProperty.dataObjects;
-
+  dbDict.enableSummary = treeProperty.enableSummary;
   return treeProperty;
 };
 

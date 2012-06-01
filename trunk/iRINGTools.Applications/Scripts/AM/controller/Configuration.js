@@ -237,8 +237,8 @@
     var dbInfo = AM.view.nhibernate.dbInfo.value;
     var nhpan = content.items.map[contextName + '.' + endpoint + '.-nh-config'];
     var editPane = nhpan.items.map[contextName + '.' + endpoint + '.-nh-editor'];
-    var dsConfigPane = editPane.items.map[contextName + '.' + endpoint + '.dsconfigPane'];
-    var tablesSelectorPane = editPane.items.map[contextName + '.' + endpoint + '.tablesSelectorPane'];
+    var dsConfigPane = editPane.items.map[contextName + '.' + endpoint + '.connectdatabase'];
+    var tablesSelectorPane = editPane.items.map[contextName + '.' + endpoint + '.tablesselector'];
     var dbObjectsTree = nhpan.items.map[contextName + '.' + endpoint + '.-nh-tree'];
     var rootNode = dbObjectsTree.getRootNode();
     var treeProperty = getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, AM.view.nhibernate.dataTypes.value, tablesSelectorPane);
