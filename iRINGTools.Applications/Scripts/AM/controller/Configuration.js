@@ -390,6 +390,8 @@
       success: function (response, request) {
         AM.view.nhibernate.dbDict.value = Ext.JSON.decode(response.responseText);
         var dbDict = AM.view.nhibernate.dbDict.value;
+        AM.view.nhibernate.dbInfo.value = null;
+
         if (dbDict.ConnectionString != null) {
           var base64 = AM.view.nhibernate.Utility;
           AM.view.nhibernate.dbDict.value.ConnectionString = base64.decode(dbDict.ConnectionString);
