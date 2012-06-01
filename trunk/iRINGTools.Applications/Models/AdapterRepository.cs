@@ -221,6 +221,24 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
+    public string TestBaseUrl(string baseUrl)
+    {
+      string obj = null;
+
+      try
+      {
+        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+        obj = _newServiceClient.Get<string>("/test");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return "ERROR";
+      }
+
+      return obj;
+    }
+
     public string PostScopes(Directories scopes)
     {
       string obj = null;
