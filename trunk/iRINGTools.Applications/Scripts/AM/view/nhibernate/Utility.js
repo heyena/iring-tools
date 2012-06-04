@@ -84,27 +84,9 @@ Ext.define('AM.view.nhibernate.Utility', {
     }
 });
 
-Ext.define('AM.view.nhibernate.dbDict', {
-    extend: 'Ext.AbstractManager',
-    singleton: true,
-    value: null
-});
-
-Ext.define('AM.view.nhibernate.dbInfo', {
-    extend: 'Ext.AbstractManager',
-    singleton: true,
-    value: null
-});
-
-Ext.define('AM.view.nhibernate.dbTableNames', {
-    extend: 'Ext.AbstractManager',
-    singleton: true,
-    value: null
-});
-
 Ext.define('AM.view.nhibernate.dataTypes', {
-    extend: 'Ext.AbstractManager',
-    singleton: true,
-    value: null
+  extend: 'Ext.AbstractManager',
+  singleton: true,
+  value: null
 });
 
