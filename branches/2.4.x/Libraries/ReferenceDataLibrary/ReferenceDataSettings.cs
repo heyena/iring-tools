@@ -36,10 +36,10 @@ namespace org.iringtools.refdata
     {
       this.Add("SparqlPath",              @".\SPARQL\");
       this.Add("PageSize",                "100");
-      this.Add("ClassRegistryBase",       @"http://rdl.rdlfacade.org/data#");
-      this.Add("TemplateRegistryBase",    @"http://tpl.rdlfacade.org/data#");
-      this.Add("ExampleRegistryBase",     @"http://example.org/data#");
-      this.Add("UseExampleRegistryBase",  "False");
+      //this.Add("ClassRegistryBase",       @"http://rdl.rdlfacade.org/data#");
+      //this.Add("TemplateRegistryBase",    @"http://tpl.rdlfacade.org/data#");
+      //this.Add("ExampleRegistryBase",     @"http://example.org/data#");
+      //this.Add("UseExampleRegistryBase",  "False");
       this.Add("RegistryCredentialToken", String.Empty);
     }
   }
