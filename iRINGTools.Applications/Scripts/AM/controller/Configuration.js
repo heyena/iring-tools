@@ -903,7 +903,7 @@
       method: 'POST',
       url: 'spreadsheet/upload'
     },
-        form = Ext.widget('spreadsheetsource', sourceconf);
+    form = Ext.widget('spreadsheetsource', sourceconf);
     form.show();
   },
 
