@@ -3,8 +3,7 @@
   alias: 'widget.connectdatabase',
   frame: false,
   border: false,
-  dbDict: null,
-  dbInfo: null,
+  dirNode: null,
   autoScroll: true,
   contextName: null,
   endpoint: null,
@@ -16,10 +15,10 @@
     var me = this;
     var contextName = this.contextName;
     var endpoint = this.endpoint;
-    var dbDict = this.dbDict;
     var baseUrl = this.baseUrl;
-    var dbInfo = this.dbInfo;
-    var dbDict = this.dbDict;
+    var dirNode = this.dirNode;
+    var dbInfo = dirNode.data.record.dbInfo;
+    var dbDict = dirNode.data.record.dbDict;
 
     this.items = [
         {
@@ -37,7 +36,7 @@
           hiddenName: 'dbProvider',
           name: 'dbProvider',
           editable: false,
-          mode: 'local',          
+          mode: 'local',
           value: 'MsSql2008',
           triggerAction: 'all',
           displayField: 'Provider',
@@ -263,7 +262,7 @@
 
     if (dbDict.Provider) {
       setDsConfigFields(me, dbInfo, dbDict)
-    }   
+    }
   },
 
   setActiveRecord: function (record) {

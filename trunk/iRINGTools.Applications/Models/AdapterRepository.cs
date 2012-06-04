@@ -1052,7 +1052,9 @@ namespace iRINGTools.Web.Models
             BaseUrl = baseUrl,
             endpoint = endpointName,
             Assembly = assembly,
-            securityRole = endpoint.SecurityRole
+            securityRole = endpoint.SecurityRole,
+            dbInfo = new Object(),
+            dbDict = new Object()
           };
 
           endPointNode.record = record;
