@@ -22,7 +22,7 @@
     <DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
     <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
     <BinDir>$(MSBuildProjectDirectory)\SPPIDDataLayer\bin\Debug</BinDir>
-    <ConfDir>$(MSBuildProjectDirectory)\conf</ConfDir>
+    <ConfDir>$(MSBuildProjectDirectory)\SPPIDDataLayer\Configuration Files</ConfDir>
     <SolutionFile>SPPIDDataLayer.sln</SolutionFile>
 
   </PropertyGroup>
@@ -36,7 +36,7 @@
       <Options>a -tzip -y -r</Options>
       <OutputDir />
       <ZipFile>$(DistDir)\SPPIDDataLayer-</ZipFile>
-      <FileSet>$(DistDir)\bin $(DistDir)\conf</FileSet>
+      <FileSet>$(DistDir)\Configurations</FileSet>
     </DeploymentPackage>
   </ItemGroup>
 
@@ -125,8 +125,8 @@
     <Exec Command="RmDir /S /Q $(DistDir)" />
     <MakeDir Directories="$(DistDir);" />
     <Message Text="Creating distribution ..." />
-    <Copy SourceFiles="@(BinFiles)" DestinationFiles="@(BinFiles ->'$(DistDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(ConfFiles)" DestinationFiles="@(ConfFiles ->'$(DistDir)\conf\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <!--<Copy SourceFiles="@(BinFiles)" DestinationFiles="@(BinFiles ->'$(DistDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />-->
+    <Copy SourceFiles="@(ConfFiles)" DestinationFiles="@(ConfFiles ->'$(DistDir)\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
    <Target Name="CreatePackages" DependsOnTargets="CreateDist">
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile)$(Major).$(Minor).$(Build).zip %(DeploymentPackage.FileSet)" />
