@@ -268,7 +268,12 @@
     var thisForm = this.items.first().getForm();
     var endpointName = thisForm.findField('endpoint').getValue();
     thisForm.findField('assembly').setValue(this.record.Assembly);
-    thisForm.findField('baseUrl').setValue(this.record.BaseUrl);
+
+    if (me.items.first().items.last().items.items[0].items.items[0].rawValue != '' && me.items.first().items.last().items.items[0].items.items[0].rawValue != undefined)
+      thisForm.findField('baseUrl').setValue(me.items.first().items.last().items.items[0].items.items[0].rawValue);
+    else
+      thisForm.findField('baseUrl').setValue(this.record.BaseUrl);
+
     if (ifExistSibling(endpointName, me.node, me.state)) {
       showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
       return;

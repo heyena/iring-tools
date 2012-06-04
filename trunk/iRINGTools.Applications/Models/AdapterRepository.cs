@@ -510,9 +510,12 @@ namespace iRINGTools.Web.Models
         obj = _javaServiceClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}/{4}", path, newEndpointName, "endpoint", baseUri.Replace('/', '.'), newAssembly), description, true);
         Resources resourcesNew = GetResource(key); 
 
-        //&& (!newAssembly.Equals(oldAssembly) || !newEndpointName.Equals(endpointName))
+        
         if (!state.Equals("new"))
         {
+          if (newAssembly.ToLower() == oldAssembly.ToLower() && newEndpointName.ToLower() == endpointName.ToLower())
+          return "";
+          
           resourceOld = FindResource(CleanBaseUrl(baseUrl, '/'), resourcesOld); 
             
           if (resourceOld != null)
@@ -563,7 +566,6 @@ namespace iRINGTools.Web.Models
         obj = "ERROR";
       }     
 
-      //UpdateBinding(context, endpointName, assembly);
       return obj;
     }
 
