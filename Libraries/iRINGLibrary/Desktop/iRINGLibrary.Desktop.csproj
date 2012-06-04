@@ -126,6 +126,7 @@
     <Compile Include="DataItems.cs" />
     <Compile Include="DataLayerConfig.cs" />
     <Compile Include="DataLayers.cs" />
+    <Compile Include="Federation.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="GenericDataObject.cs" />
     <Compile Include="Grid.cs" />
@@ -140,7 +141,6 @@
     <Compile Include="OAuthProvider.cs" />
     <Compile Include="Picklists.cs" />
     <Compile Include="PredicateBuilder.cs" />
-    <Compile Include="Repositories.cs" />
     <Compile Include="DatabaseDictionary.cs" />
     <Compile Include="DataDictionary.cs" />
     <Compile Include="DataFilter.cs" />
