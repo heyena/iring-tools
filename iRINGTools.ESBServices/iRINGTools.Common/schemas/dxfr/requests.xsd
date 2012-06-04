@@ -14,7 +14,7 @@
         <xjc:simple />
       </jaxb:globalBindings>
     </xs:appinfo>
-  </xs:annotation>
+  </xs:annotation> 
 
   <xs:import namespace="http://www.iringtools.org/dxfr/manifest" schemaLocation="manifest.xsd" />
   <xs:import namespace="http://www.iringtools.org/data/filter" schemaLocation="dataFilter.xsd" />

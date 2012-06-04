@@ -10,12 +10,12 @@ import org.iringtools.mapping.ValueListMaps;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for Manifest complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType>
+ * &lt;complexType name="Manifest">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -31,7 +31,7 @@ import org.iringtools.mapping.ValueListMaps;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = "Manifest", propOrder = {
     "graphs",
     "version",
     "valueListMaps"
