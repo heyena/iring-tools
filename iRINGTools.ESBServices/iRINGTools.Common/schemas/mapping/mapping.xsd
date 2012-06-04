@@ -7,7 +7,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="graphMaps" />
-        <xs:element ref="valueListMaps" />
+        <xs:element name="valueListMaps" type="ValueListMaps" />
         <xs:element name="version" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
@@ -158,19 +158,17 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:element name="valueListMaps">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="valueListMap" maxOccurs="unbounded">
-          <xs:annotation>
-            <xs:appinfo>
-              <jaxb:property name="items" />
-            </xs:appinfo>
-          </xs:annotation>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+   <xs:complexType name="ValueListMaps">
+     <xs:sequence>
+       <xs:element ref="valueListMap" maxOccurs="unbounded">
+         <xs:annotation>
+           <xs:appinfo>
+             <jaxb:property name="items" />
+           </xs:appinfo>
+         </xs:annotation>
+       </xs:element>
+     </xs:sequence>
+   </xs:complexType>
 
   <xs:element name="valueListMap">
     <xs:complexType>
