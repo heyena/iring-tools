@@ -101,13 +101,10 @@ function setTableNames(dbDict) {
   return selectTableNames;
 };
 
-function createMainContentPanel(content, contextName, endpoint, baseUrl) {
+function createMainContentPanel(content, contextName, endpoint, baseUrl, dirNode) {
   var objConf = {
     id: contextName + '.' + endpoint + '.-nh-config',
-    title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
-    contextName: contextName,
-    endpoint: endpoint,
-    baseUrl: baseUrl,
+    title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,    
     layout: {
       type: 'border',
       padding: 2
@@ -120,15 +117,13 @@ function createMainContentPanel(content, contextName, endpoint, baseUrl) {
     contextName: contextName,
     endpoint: endpoint,
     baseUrl: baseUrl,
+    dirNode: dirNode,
     region: 'west',
     layout: 'fit',
     id: contextName + '.' + endpoint + '.-nh-tree'
   };
 
-  var editconf = {
-    contextName: contextName,
-    endpoint: endpoint,
-    baseUrl: baseUrl,
+  var editconf = {   
     region: 'center',
     id: contextName + '.' + endpoint + '.-nh-editor'
   };
