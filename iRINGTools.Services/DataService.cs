@@ -157,6 +157,20 @@ namespace org.iringtools.services
       }
     }
 
+    //[Description("Gets the Header of the specified project, application and graph.")]
+    //[WebInvoke(Method="HEAD", UriTemplate = "/{app}/{project}/{graph}")]
+    //public void GetHeader(string project, string app, string graph)
+    //{
+    //    try
+    //    {
+    //        //...
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        ExceptionHandler(ex);
+    //    }
+    //}
+
     [Description("Gets an XML or JSON projection of a single item in the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
     [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
     public void GetItem(string project, string app, string graph, string id, string format)

@@ -86,6 +86,7 @@ namespace org.iringtools.adapter.security
 
           //response from both pingfederate is json - deserialize that into dictionaries for easier operation
           JavaScriptSerializer desSSO = new JavaScriptSerializer();
+          desSSO.MaxJsonLength = int.MaxValue;
           IDictionary userInfo = desSSO.Deserialize<Dictionary<string, string>>(response);
 
           //ping federate interaction complete

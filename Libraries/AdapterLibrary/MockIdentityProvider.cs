@@ -91,6 +91,7 @@ namespace org.iringtools.adapter.identity
         "}";
 
       JavaScriptSerializer desSSO = new JavaScriptSerializer();
+      desSSO.MaxJsonLength = int.MaxValue;
       keyRing = desSSO.Deserialize<Dictionary<string, string>>(userAttrs);
 
       keyRing.Add("X-myPSN-AccessToken", accessToken);

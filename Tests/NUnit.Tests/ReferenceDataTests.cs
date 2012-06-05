@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using System;
 using System.Configuration;
 using NUnit.Framework;
+using org.iringtools.refdata.federation;
 
 namespace NUnit.Tests
 {
@@ -53,7 +54,7 @@ namespace NUnit.Tests
         [Test]
         public void GetRepositories()
         {
-            List<Repository> repositories = _refdataProvider.GetRepositories();
+            Repositories repositories = _refdataProvider.GetRepositories();
             Assert.AreEqual(4, repositories.Count);
         }
 
