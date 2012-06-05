@@ -232,7 +232,7 @@ namespace org.iringtools.services
       {
         format = MapContentType(format);
 
-        DataFilter filter = FormatIncomingMessage<DataFilter>(stream, format, true);
+        DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
 
         bool fullIndex = false;
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
@@ -339,7 +339,7 @@ namespace org.iringtools.services
       }
       else
       {
-        XElement xElement = FormatIncomingMessage(stream, format);
+        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
         Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
 
@@ -360,7 +360,7 @@ namespace org.iringtools.services
       }
       else
       {
-        XElement xElement = FormatIncomingMessage(stream, format);
+        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
         response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
       }
@@ -380,7 +380,7 @@ namespace org.iringtools.services
       }
       else
       {
-        XElement xElement = FormatIncomingMessage(stream, format);
+        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
         Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
 
@@ -533,40 +533,6 @@ namespace org.iringtools.services
       }
 
       return format;
-    }
-
-    private XElement FormatIncomingMessage(Stream stream, string format)
-    {
-      XElement xElement = null;
-
-      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") || 
-        format.ToLower().Contains("dto")))
-      {
-        xElement = XElement.Load(stream);
-      }
-      else
-      {
-        DataItems dataItems = Utility.DeserializeFromStreamJson<DataItems>(stream, false);
-        xElement = dataItems.ToXElement<DataItems>();
-      }
-
-      return xElement;
-    }
-
-    private T FormatIncomingMessage<T>(Stream stream, string format, bool useDataContractSerializer)
-    {
-      T graph = default(T);
-
-      if (format != null && format.ToLower().Contains("xml"))
-      {
-        graph = Utility.DeserializeFromStream<T>(stream, useDataContractSerializer);
-      }
-      else
-      {
-        graph = Utility.DeserializeFromStreamJson<T>(stream, useDataContractSerializer);
-      }
-
-      return graph;
     }
 
     private void ExceptionHandler(Exception ex)
