@@ -3547,5 +3547,47 @@ namespace org.iringtools.adapter
         throw new Exception("Invalid response type from DataLayer.");
       }
     }
+
+    public XElement FormatIncomingMessage(Stream stream, string format)
+    {
+      XElement xElement = null;
+
+      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") ||
+        format.ToLower().Contains("dto")))
+      {
+        xElement = XElement.Load(stream);
+      }
+      else
+      {
+        DataItemSerializer serializer = new DataItemSerializer(
+            _settings["JsonIdField"], _settings["JsonLinksField"], bool.Parse(_settings["DisplayLinks"]));
+        string json = Utility.ReadString(stream);
+        DataItems dataItems = serializer.Deserialize<DataItems>(json, false);
+        stream.Close();
+        xElement = dataItems.ToXElement<DataItems>();
+      }
+
+      return xElement;
+    }
+
+    public T FormatIncomingMessage<T>(Stream stream, string format, bool useDataContractSerializer)
+    {
+      T graph = default(T);
+
+      if (format != null && format.ToLower().Contains("xml"))
+      {
+        graph = Utility.DeserializeFromStream<T>(stream, useDataContractSerializer);
+      }
+      else
+      {
+        DataItemSerializer serializer = new DataItemSerializer(
+            _settings["JsonIdField"], _settings["JsonLinksField"], bool.Parse(_settings["DisplayLinks"]));
+        string json = Utility.ReadString(stream);
+        graph = serializer.Deserialize<T>(json, false);
+        stream.Close();
+      }
+
+      return graph;
+    }
   }
 }

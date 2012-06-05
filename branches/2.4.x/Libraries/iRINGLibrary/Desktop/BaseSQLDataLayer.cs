@@ -662,10 +662,10 @@ namespace org.iringtools.library
           {
             IList<string> identifiers = objectTypesIdentifiers[pair.Key];
             DataTable dataTable = GetDataTable(objectDefinition.tableName, pair.Value);
-            DataRow dataRow = null;
-
+            
             for (int i = 0; i < identifiers.Count; i++)
             {
+              DataRow dataRow = null;
               string identifier = identifiers[i];
 
               // find row with same identifier
