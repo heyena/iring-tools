@@ -728,6 +728,7 @@ namespace org.iringtools.utility
             if (!useDataContractSerializer)
             {
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
+                serializer.MaxJsonLength = int.MaxValue;
                 jsonString = serializer.Serialize(graph);
             }
             else
@@ -944,6 +945,7 @@ namespace org.iringtools.utility
         if (!useDataContractSerializer)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
+            serializer.MaxJsonLength = int.MaxValue;
             string json = ReadString(stream);
             graph = (T)serializer.Deserialize<T>(json);
         }
@@ -964,6 +966,7 @@ namespace org.iringtools.utility
             if (!useDataContractSerializer)
             {
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
+                serializer.MaxJsonLength = int.MaxValue;
                 graph = (T)serializer.Deserialize<T>(jsonString);
             }
             else

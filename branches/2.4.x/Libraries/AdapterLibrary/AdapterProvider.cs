@@ -2860,10 +2860,19 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
-        mapping.GraphMap graphMap = _mapping.FindGraphMap(graphName);
+        string format = _settings["DefaultProjectionFormat"];
+        InitializeProjection(graphName, ref format, false);
 
-        string objectType = graphMap.dataObjectName;
-        response = _dataLayer.Delete(objectType, new List<String> { identifier });
+        if (_isProjectionPart7)
+        {
+            response = _dataLayer.Delete(_graphMap.name, new List<String> { identifier });
+        }
+        else
+        {
+            response = _dataLayer.Delete(_dataObjDef.objectName, new List<String> { identifier });
+        }
+
+        
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Success;
