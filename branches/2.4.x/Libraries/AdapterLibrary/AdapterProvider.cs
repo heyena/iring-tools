@@ -2458,7 +2458,8 @@ namespace org.iringtools.adapter
           }
           else
           {
-            throw new Exception("Data object with identifier [" + classIdentifier + "] not found.");
+              _logger.Warn("Data object with identifier [" + classIdentifier + "] not found.");
+              throw new WebFaultException(HttpStatusCode.NotFound);
           }
         }
         else
@@ -2851,7 +2852,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response DeleteIndividual(string projectName, string applicationName, string graphName, string identifier)
+    public Response DeleteIndividual(string projectName, string applicationName, string graphName, string identifier, string format)
     {
       Response response = null;
 
@@ -2860,7 +2861,6 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
-        string format = _settings["DefaultProjectionFormat"];
         InitializeProjection(graphName, ref format, false);
 
         if (_isProjectionPart7)
@@ -2871,8 +2871,6 @@ namespace org.iringtools.adapter
         {
             response = _dataLayer.Delete(_dataObjDef.objectName, new List<String> { identifier });
         }
-
-        
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Success;
