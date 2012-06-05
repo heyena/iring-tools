@@ -486,6 +486,7 @@ namespace iRINGTools.Web.Models
       string endpointName = null;
       Resource resourceOld = null;
       Resource resourceNew = null;
+      bool createApp = false;
 
       string baseUri = CleanBaseUrl(baseUrl, '.');
       if (state.Equals("new"))
@@ -514,7 +515,7 @@ namespace iRINGTools.Web.Models
         if (!state.Equals("new"))
         {
           if (newAssembly.ToLower() == oldAssembly.ToLower() && newEndpointName.ToLower() == endpointName.ToLower())
-          return "";
+            return "";
           
           resourceOld = FindResource(CleanBaseUrl(baseUrl, '/'), resourcesOld); 
             
@@ -522,8 +523,13 @@ namespace iRINGTools.Web.Models
           {
             scope = resourceOld.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
             application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpointName.ToLower());
+            if (application == null)
+              createApp = true;
           }
           else
+            createApp = true;
+
+          if (createApp)
           {
             application = new EndpointApplication()
             {
