@@ -62,7 +62,18 @@
             }
           },
           beforeLoad: function (store, action) {
-            store.proxy.extraParams.baseUrl = baseurl;
+            var useNodeBaseUrl = false;
+
+            if (me.items.first().items.last().items.items[0] != undefined)
+              if (me.items.first().items.last().items.items[0].items.items[0].rawValue != undefined && me.items.first().items.last().items.items[0].items.items[0].rawValue != '')
+                store.proxy.extraParams.baseUrl = me.items.first().items.last().items.items[0].items.items[0].rawValue;
+              else
+                useNodeBaseUrl = true;
+            else
+              useNodeBaseUrl = true;
+
+            if (useNodeBaseUrl)
+              store.proxy.extraParams.baseUrl = baseUrl;
           }
         }
       }),
@@ -267,34 +278,60 @@
     var me = this;
     var thisForm = this.items.first().getForm();
     var endpointName = thisForm.findField('endpoint').getValue();
+
     thisForm.findField('assembly').setValue(this.record.Assembly);
+    var baseUrl;
 
-    if (me.items.first().items.last().items.items[0].items.items[0].rawValue != '' && me.items.first().items.last().items.items[0].items.items[0].rawValue != undefined)
+    if (me.items.first().items.last().items.items[0].items.items[0].rawValue != '' && me.items.first().items.last().items.items[0].items.items[0].rawValue != undefined) {
       thisForm.findField('baseUrl').setValue(me.items.first().items.last().items.items[0].items.items[0].rawValue);
-    else
+      baseUrl = me.items.first().items.last().items.items[0].items.items[0].rawValue;
+    }
+    else {
       thisForm.findField('baseUrl').setValue(this.record.BaseUrl);
-
-    if (ifExistSibling(endpointName, me.node, me.state)) {
-      showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
-      return;
+      baseUrl = this.record.BaseUrl;
     }
 
-    thisForm.submit({
-      waitMsg: 'Saving Data...',
-      success: function (response, request) {
-        me.fireEvent('Save', me);
+    Ext.Ajax.request({
+      url: 'directory/testBaseUrl',
+      timeout: 600000,
+      method: 'POST',
+      params: {
+        baseUrl: baseUrl
       },
-      failure: function (response, request) {
-        var rtext = request.result;
-        if (rtext.toUpperCase().indexOf('FALSE') > 0) {
-          var ind = rtext.indexOf('}');
-          var len = rtext.length - ind - 1;
-          var msg = rtext.substring(ind + 1, rtext.length - 1);
-          showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
+      success: function (response, request) {
+        if (response.responseText.indexOf('error') > -1) {
+          showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid base url.', Ext.Msg.OK, null);
           return;
         }
-        var message = 'Error saving changes!';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+        else {
+          if (ifExistSibling(endpointName, me.node, me.state)) {
+            showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
+            return;
+          }
+
+          thisForm.submit({
+            waitMsg: 'Saving Data...',
+            success: function (response, request) {
+              me.fireEvent('Save', me);
+            },
+            failure: function (response, request) {
+              var rtext = request.result;
+              if (rtext.toUpperCase().indexOf('FALSE') > 0) {
+                var ind = rtext.indexOf('}');
+                var len = rtext.length - ind - 1;
+                var msg = rtext.substring(ind + 1, rtext.length - 1);
+                showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
+                return;
+              }
+              var message = 'Error saving changes!';
+              showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+            }
+          });
+        }
+      },
+      failure: function (response, request) {
+        showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid base url.', Ext.Msg.OK, null);
+        return;
       }
     });
   }
