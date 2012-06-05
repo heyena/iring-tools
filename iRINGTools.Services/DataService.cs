@@ -392,11 +392,20 @@ namespace org.iringtools.services
     [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
     public void DeleteItem(string project, string app, string graph, string id, string format)
     {
-      format = MapContentType(format);
+      try
+      {
+      
+          format = MapContentType(format);
 
-      Response response = _adapterProvider.DeleteIndividual(project, app, graph, id);
+          Response response = _adapterProvider.DeleteIndividual(project, app, graph, id, format);
 
-      _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+          _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+
+      }
+      catch (Exception ex)
+      {
+          ExceptionHandler(ex);
+      }
     }
 
     [Description("Get summary of an application based on configuration.")]
@@ -572,9 +581,13 @@ namespace org.iringtools.services
       {
         context.StatusCode = HttpStatusCode.Unauthorized;
       }
+      else if (ex is WebFaultException)
+      {
+          context.StatusCode = ((WebFaultException)ex).StatusCode;
+      }
       else
       {
-        context.StatusCode = HttpStatusCode.InternalServerError;
+          context.StatusCode = HttpStatusCode.InternalServerError;
       }
 
       HttpContext.Current.Response.ContentType = "text/html";
