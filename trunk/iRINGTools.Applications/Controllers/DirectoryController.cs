@@ -108,7 +108,7 @@ namespace org.iringtools.web.controllers
                                 type = "GraphsNode",
                                 iconCls = "folder",
                                 id = context + "/Graphs",
-                                text = "Graphs",
+                                text = "Mapped Objects (Graphs)",
                                 //expanded = false,
                                 leaf = false,
                                 children = null,
