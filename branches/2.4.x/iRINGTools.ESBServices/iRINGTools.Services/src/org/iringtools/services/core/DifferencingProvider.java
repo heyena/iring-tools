@@ -229,7 +229,6 @@ public class DifferencingProvider
     DataTransferObjects targetDtos = null;
     Manifest manifest = dfoRequest.getManifest();
     String classId;
-    boolean changed = false;
     
     if (dtosList == null || dtosList.size() < 2)
       return null;
@@ -273,13 +272,13 @@ public class DifferencingProvider
         List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getItems();
         List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getItems();
         List<ClassTemplates> classTemplatesList = manifest.getGraphs().getItems().get(0).getClassTemplatesList().getItems();
+        
         for (int j = 0; j < classTemplatesList.size(); j++)
         {
         	ClassTemplates classTemplates = classTemplatesList.get(j);
         	classId = classTemplates.getClazz().getId();
           ClassObject targetClassObject = getClassObject(targetClassObjectList, classId);
           ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId);
-
           ClassTemplates manifestClassObject = getClassTemplates(manifest, classId);          
           
           if (sourceClassObject != null && targetClassObject != null)
@@ -294,21 +293,19 @@ public class DifferencingProvider
               throw new ServiceProviderException(message);
             }
 
-            sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
-           
             if (targetClassObject.getTemplateObjects() != null && sourceClassObject.getTemplateObjects() != null)
             {
               List<Template> manifestTemplateList = manifestClassObject.getTemplates().getItems();
               List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getItems();
               List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getItems();
+              
+              sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);  // default SYNC first
 
               for (Template template : manifestTemplateList)
               {
-              	changed = false;
-              	TemplateObject targetTemplateObject = getTemplateObject(targetTemplateObjectList, template.getId());
-        
+              	TemplateObject targetTemplateObject = getTemplateObject(targetTemplateObjectList, template.getId());        
                 TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList, template.getId());
-
+                
                 if (targetTemplateObject != null && sourceTemplateObject != null)
                 {
                   sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
@@ -330,7 +327,7 @@ public class DifferencingProvider
 
                         if (sourceRoleObject != null)
                         {
-                          changed = false;
+                          boolean roleValueChanged = false;
 
                           if (sourceRoleObject.getValues() != null)
                           {
@@ -343,12 +340,12 @@ public class DifferencingProvider
                               if (!(sourceValues.size() == targetValues.size() && sourceValues
                                   .containsAll(targetValues)))
                               {
-                                changed = true;
+                                roleValueChanged = true;
                               }
                             }
                             else
                             {
-                              changed = true;
+                              roleValueChanged = true;
                             }
 
                             sourceRoleObject.getOldValues().setItems(targetRoleObject.getValues().getItems());
@@ -358,22 +355,21 @@ public class DifferencingProvider
                             String targetRoleValue = targetRoleObject.getValue();
                             String sourceRoleValue = sourceRoleObject.getValue();
 
-                            if (targetRoleValue == null)
-                              targetRoleValue = "";
-                            if (sourceRoleValue == null)
-                              sourceRoleValue = "";
-
-                            sourceRoleObject.setOldValue(targetRoleValue);
+                            if (targetRoleValue == null) targetRoleValue = "";
+                            if (sourceRoleValue == null) sourceRoleValue = "";
 
                             if (!targetRoleValue.equals(sourceRoleValue))
                             {
-                              changed = true;
+                              sourceRoleObject.setOldValue(targetRoleValue);
+                              roleValueChanged = true;
                             }
                           }
-                          if (changed)
+                          
+                          if (roleValueChanged)
                           {	                          	
                             sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                            sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);	                            
+                            sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);	  
+                            sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
                           }
                         }
                       }
@@ -381,28 +377,88 @@ public class DifferencingProvider
                   }
                 }
                 else if (targetTemplateObject == null && sourceTemplateObject != null)
-	              {
-	              	changed = true;
+	              {             
+                  for (RoleObject roleObject : sourceTemplateObject.getRoleObjects().getItems())
+                  {
+                    RoleType roleType = roleObject.getType();
+                    
+                    if (roleType == RoleType.PROPERTY || roleType == RoleType.DATA_PROPERTY
+                        || roleType == RoleType.OBJECT_PROPERTY || roleType == RoleType.FIXED_VALUE)
+                    {
+                      roleObject.setOldValue(null);
+                    }
+                  }
+                  
+                  sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                  sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
 	              }
                 else if (targetTemplateObject != null && sourceTemplateObject == null)
 	              {
-	              	changed = true;
+                  sourceTemplateObjectList.add(targetTemplateObject);
+                  
+                  for (RoleObject roleObject : targetTemplateObject.getRoleObjects().getItems())
+                  {
+                    RoleType roleType = roleObject.getType();
+                    
+                    if (roleType == RoleType.PROPERTY || roleType == RoleType.DATA_PROPERTY
+                        || roleType == RoleType.OBJECT_PROPERTY || roleType == RoleType.FIXED_VALUE)
+                    {
+                      roleObject.setOldValue(null);
+                    }
+                  }
+                  
+                  targetTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                  sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
 	              }                
               }
             }
           }
           else if (sourceClassObject == null && targetClassObject != null)
-          {
-          	changed = true;
+          {      
+            sourceClassObjectList.add(targetClassObject);
+            
+            for (TemplateObject templateObject : targetClassObject.getTemplateObjects().getItems())
+            {
+              for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
+              {
+                RoleType roleType = roleObject.getType();
+                
+                if (roleType == RoleType.PROPERTY || roleType == RoleType.DATA_PROPERTY
+                    || roleType == RoleType.OBJECT_PROPERTY || roleType == RoleType.FIXED_VALUE)
+                {
+                  roleObject.setOldValue(roleObject.getValue());
+                  roleObject.setValue(null);
+                }
+              }
+              
+              templateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+            }
+            
+            targetClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+            sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
           }
           else if (sourceClassObject != null && targetClassObject == null)
           {
-          	changed = true;
-          }
-          
-          if (changed)
-          {
-          	sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+            for (TemplateObject templateObject : sourceClassObject.getTemplateObjects().getItems())
+            {
+              for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
+              {
+                RoleType roleType = roleObject.getType();
+                
+                if (roleType == RoleType.PROPERTY || roleType == RoleType.DATA_PROPERTY
+                    || roleType == RoleType.OBJECT_PROPERTY || roleType == RoleType.FIXED_VALUE)
+                {
+                  roleObject.setOldValue(null);
+                }
+              }
+              
+              templateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+            }
+            
+            sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+            sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
           }
         }
       }

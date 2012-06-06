@@ -689,7 +689,10 @@ public class ExchangeProvider
         try
         {
           String targetUrl = targetGraphUrl + "?format=stream";
+          
+          logger.info("Processing pool [" + i + " - " + (i + actualPoolSize) + "]...");
           poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
+          logger.info("Pool [" + i + " - " + (i + actualPoolSize) + "] completed.");          
           
           if (poolResponse.getLevel() != Level.ERROR)
           {

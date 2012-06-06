@@ -345,7 +345,7 @@ namespace org.iringtools.adapter.projection
                       }
                     }
 
-                    tempPropertyValues.Append(propertyValue);                    
+                    tempPropertyValues.Append(propertyValue.Trim());                    
                   }
                   else  // related property
                   {
@@ -370,7 +370,7 @@ namespace org.iringtools.adapter.projection
                         break;
                       }
                       
-                      tempPropertyValues.Append(propertyValue);
+                      tempPropertyValues.Append(propertyValue.Trim());
                     }
                     else  // related property is property map
                     {
@@ -385,7 +385,7 @@ namespace org.iringtools.adapter.projection
                           break;
                         }
                         
-                        tempPropertyValues.Append(propertyValue);
+                        tempPropertyValues.Append(propertyValue.Trim());
                       }
 
                       if (!isTemplateValid) break;

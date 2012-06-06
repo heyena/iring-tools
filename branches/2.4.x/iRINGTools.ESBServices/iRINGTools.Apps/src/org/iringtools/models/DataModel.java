@@ -1220,21 +1220,20 @@ public class DataModel
     {
       for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
       {
+        RoleType roleType = roleObject.getType();
         RoleValues roleValues = roleObject.getValues();
         RoleValues roleOldValues = roleObject.getOldValues();
         String roleValue = roleObject.getValue();
         String roleOldValue = roleObject.getOldValue();
-        
-        if (roleOldValue == null && dto.getTransferType() == TransferType.CHANGE)
-        	roleOldValue = "";
-        
-        if (roleValue == null && dto.getTransferType() == TransferType.CHANGE)
-        	roleValue = "";
-        
-        RoleType roleType = roleObject.getType();
         Cardinality cardinality = getCardinality(graph, className, templateObject.getName(), roleObject.getName(),
             roleObject.getRelatedClassName());
-
+        
+        if (templateObject.getTransferType() == TransferType.CHANGE)
+        {
+          if (roleOldValue == null) roleOldValue = "";
+          if (roleValue == null) roleValue = "";
+        }
+        
         if (roleType == null
             || // bug in v2.0 of c# service
             roleType == RoleType.PROPERTY || roleType == RoleType.DATA_PROPERTY || roleType == RoleType.OBJECT_PROPERTY
@@ -1265,29 +1264,52 @@ public class DataModel
           // (because class/template do not exist, e.g. due to null class identifier)
           String dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
 
-          while (rowData.size() < fields.size())
+          if (rowData.size() == fields.size())
           {
-            if (!fields.get(rowData.size()).getDataIndex().equalsIgnoreCase(dataIndex))
+            for (int i = 0; i < fields.size(); i++)
             {
-              rowData.add("");
-            }
-            else
-            {
-              break;
+              if (fields.get(i).getDataIndex().equalsIgnoreCase(dataIndex))
+              {
+                if (dataMode == DataMode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
+                {
+                  rowData.set(i, roleValue);
+                }
+                else
+                {
+                  roleValue = roleOldValue + " -> " + roleValue;
+                  rowData.set(i, "<span class=\"change\">" + roleValue + "</span>");
+                }
+                
+                break;
+              }
             }
           }
-
-          // add row value to row data
-          if (rowData.size() < fields.size())
+          else
           {
-            if (dataMode == DataMode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
+            while (rowData.size() < fields.size())
             {
-              rowData.add(roleValue);
+              if (!fields.get(rowData.size()).getDataIndex().equalsIgnoreCase(dataIndex))
+              {
+                rowData.add("");
+              }
+              else
+              {
+                break;
+              }
             }
-            else
+  
+            // add row value to row data
+            if (rowData.size() < fields.size())
             {
-              roleValue = roleOldValue + " -> " + roleValue;
-            	rowData.add("<span class=\"change\">" + roleValue + "</span>");
+              if (dataMode == DataMode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
+              {
+                rowData.add(roleValue);
+              }
+              else
+              {
+                roleValue = roleOldValue + " -> " + roleValue;
+                rowData.add("<span class=\"change\">" + roleValue + "</span>");
+              }
             }
           }
 
@@ -1317,8 +1339,7 @@ public class DataModel
             {
               relatedClassIdentifier = roleObject.getValue().substring(1);
             }
-            else
-            // v2.1
+            else  // v2.1
             {
               relatedClassIdentifier = roleObject.getValues().getItems().get(0);
             }
