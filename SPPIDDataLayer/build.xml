@@ -1,84 +1,52 @@
 <Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <Import Project="$(MSBuildExtensionsPath32)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
-
-  <PropertyGroup>
-    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs;</AssemblyInfoFile>
-    <Major>1</Major>
-    <Minor>0</Minor>
-    <Build>0</Build>
-    <Revision>0</Revision>
-  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
-    <!--<SPPIDDataLayerDir>$(MSBuildProjectDirectory)\SPPIDDataLayer</SPPIDDataLayerDir>
-    <DeploymentDir>$(MSBuildProjectDirectory)\deployment</DeploymentDir>
-    <DistDir>C:\iring-tools-web\iip.iringsandbox.org\Services\bin</DistDir>
-    <DistDirApp_Data>C:\iring-tools-web\iip.iringsandbox.org\Services\App_Data</DistDirApp_Data>
-  <DistDirApps>C:\iring-tools-web\iip.iringsandbox.org\Apps\bin</DistDirApps>
-  <DistDirScripts>C:\iring-tools-web\iip.iringsandbox.org\Apps\Scripts</DistDirScripts>-->
-    
-    <ZipCmd>$(MSBuildProjectDirectory)\library\7-Zip\7z.exe</ZipCmd>
-    <DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
-    <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
-    <BinDir>$(MSBuildProjectDirectory)\SPPIDDataLayer\bin\Debug</BinDir>
-    <ConfDir>$(MSBuildProjectDirectory)\SPPIDDataLayer\Configuration Files</ConfDir>
+    <ZipCmd>"$(MSBuildProjectDirectory)\library\7-zip\7z.exe"</ZipCmd>
+    <NUnit-ToolPath>$(MSBuildProjectDirectory)\library\Nunit</NUnit-ToolPath>
     <SolutionFile>SPPIDDataLayer.sln</SolutionFile>
-
+	<BinDir>$(MSBuildProjectDirectory)\SPPIDDataLayer\bin\Debug</BinDir>
+	<ConfDir>$(MSBuildProjectDirectory)\conf</ConfDir>
+	<DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
+	<DocsDir>$(MSBuildProjectDirectory)\docs</DocsDir>
   </PropertyGroup>
-  <ItemGroup>
-    <BinFiles Include="$(BinDir)\SPPIDDataLayer.dll" />
-    <ConfFiles Include="$(ConfDir)\**" />
-  </ItemGroup>
 
   <ItemGroup>
-     <DeploymentPackage Include="*.*">
+    <BinFiles
+      Include="SPPIDDataLayer\bin\debug\SPPIDDataLayer.dll;
+               SPPIDDataLayer\App_Data\*.*"
+      Exclude="SPPIDDataLayer\App_Data\DataDictionary.*">
+    </BinFiles>
+   
+   
+    <DocsFiles
+      Include="$(DocsDir)\*">
+    </DocsFiles>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <DeploymentPackage Include="*.*">
       <Options>a -tzip -y -r</Options>
-      <OutputDir />
+      <OutputDir></OutputDir>
       <ZipFile>$(DistDir)\SPPIDDataLayer-</ZipFile>
-      <FileSet>$(DistDir)\Configurations</FileSet>
+      <FileSet>$(DistDir)\*</FileSet>
     </DeploymentPackage>
   </ItemGroup>
-
+  
   <Target Name="Version">
     <Message Text="Updating assembly info ..." />
-       <XmlRead XPath="/version/major" XmlFileName="version.xml">
-        <Output TaskParameter="Value" PropertyName="Major" />
-      </XmlRead>
-       <XmlRead XPath="/version/minor" XmlFileName="version.xml">
-        <Output TaskParameter="Value" PropertyName="Minor" />
-      </XmlRead>
-       <XmlRead XPath="/version/build" XmlFileName="version.xml">
-        <Output TaskParameter="Value" PropertyName="Build" />
-      </XmlRead>
-       <XmlRead XPath="/version/revision" XmlFileName="version.xml">
-        <Output TaskParameter="Value" PropertyName="Revision" />
-      </XmlRead>
-       <Math.Add Numbers="$(Revision);1">
-        <Output TaskParameter="Result" PropertyName="Revision" />
-      </Math.Add>
-      <XmlUpdate XPath="/version/revision" XmlFileName="version.xml" Value="$(Revision)" />
-      <FileUpdate Files="$(AssemblyInfoFile)" Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*" ReplacementText="$(Major).$(Minor).$(Build).$(Revision)" />
 
-    <!--<FileUpdate
-      Files="$(AssemblyInfoFile)"
-      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
-      ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>-->
-  </Target>
-
-  <Target Name="SvnCleanUp">
-    <Message Text="Performing SVN clean-up ..." />
-    <Exec Command="svn cleanup"/>
-  </Target>
-
-  <Target Name="SvnUpdate">
-    <Message Text="Performing SVN update ..." />
-    <Exec Command="svn update"/>
-  </Target>
-  
-  <!--<Target Name="IISReset">
-	<Message Text="Restarting IIS ..." />
-	<Exec Command="iisreset"/>
+    <XmlRead XPath="/version/major" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Major" />
+    </XmlRead>
+	
+    <XmlRead XPath="/version/minor" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Minor" />
+    </XmlRead>
+	
+    <XmlRead XPath="/version/build" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Build" />
+    </XmlRead>
   </Target>
 
   <Target Name="CleanBuild">
@@ -86,59 +54,37 @@
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
   </Target>
 
-  <Target Name="CreateDeployment">
-    <Message Text="Cleaning up old deployment folders..." />
-    <Exec Command="RmDir /S /Q $(DeploymentDir)" />
-    <MakeDir Directories="$(DeploymentDir);$(DistDirApp_Data);$(DistDirScripts);"/>
-
-    <Message Text="Creating DataLayers deployment ..." />
-    <Copy SourceFiles="@(SPPIDDeployment)"
-         DestinationFiles="@(SPPIDDeployment->'$(DeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  <Target Name="CreateDist">
+    <Message Text="Cleaning up old dist folder..." />
+    <Exec Command="RmDir /S /Q $(DistDir)" />
+    <MakeDir Directories="$(DistDir);"/>
+    
+    <Message Text="Creating distribution ..." />
+    <Copy SourceFiles="@(BinFiles)"
+          DestinationFiles="@(BinFiles ->'$(DistDir)\\%(RecursiveDir)%(Filename)%(Extension)')" />
+	<Copy SourceFiles="@(DocsFiles)"
+	      DestinationFiles="@(DocsFiles ->'$(DistDir)\\%(RecursiveDir)%(Filename)%(Extension)')" />
+    </Target>
+  
+  <Target Name="CreatePackages" DependsOnTargets="CreateDist">
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile)$(Major).$(Minor).$(Build).zip %(DeploymentPackage.FileSet)" />
+	<RemoveDir Directories="$(DistDir)\*" />
+	<Copy SourceFiles="@(DocsFiles)"
+	      DestinationFiles="@(DocsFiles ->'$(DistDir)\\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+  
+  <Target Name="Test">
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="TWDataLayer.Tests\bin\Debug\TWDataLayer.Tests.dll" OutputXmlFile="test-results.xml" />
   </Target>
 
-  <Target Name="CreatePackages" DependsOnTargets="IISReset; CreateDeployment">
-    <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
-    <Exec Command="Copy $(SPPIDDataLayerDir)\Scripts\sppidConfigWizard.js $(DistDirScripts)\sppidConfigWizard.js" />
-<Exec Command="Copy $(SPPIDDataLayerDir)\App_Data\12345_000.StagingConfiguration.SPPID.xml $(DistDirApp_Data)\12345_000.StagingConfiguration.SPPID.xml" />
-  </Target>
-
-  <Target Name="Build">
-   DependsOnTargets="Version"
+  <Target Name="Build" DependsOnTargets="Version">
     <Message Text="Performing MSBuild ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>
 
-  <Target Name="Test">
-    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />  
-  </Target>
-
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
-  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages;"/>-->
 
-
-  <Target Name="CleanBuild">
-    <Message Text="Performing MSBuild clean-up ..." />
-    <MSBuild Projects="$(SolutionFile)" Targets="Clean" />
-  </Target>
-   <Target Name="CreateDist">
-    <Message Text="Cleaning up old dist folder..." />
-    <Exec Command="RmDir /S /Q $(DistDir)" />
-    <MakeDir Directories="$(DistDir);" />
-    <Message Text="Creating distribution ..." />
-    <!--<Copy SourceFiles="@(BinFiles)" DestinationFiles="@(BinFiles ->'$(DistDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />-->
-    <Copy SourceFiles="@(ConfFiles)" DestinationFiles="@(ConfFiles ->'$(DistDir)\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />
-  </Target>
-   <Target Name="CreatePackages" DependsOnTargets="CreateDist">
-    <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile)$(Major).$(Minor).$(Build).zip %(DeploymentPackage.FileSet)" />
-  </Target>
-   <Target Name="Build" DependsOnTargets="Version">
-     <Message Text="Performing MSBuild ..." />
-    <MSBuild Projects="$(SolutionFile)" Targets="Build" />
-  </Target>
-   <Target Name="Test">
-    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="SPPIDDataLayer.NUnit\bin\Debug\SPPIDDataLayer.NUnit.dll" OutputXmlFile="test-results.xml" />
-  </Target>
-  <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build" />
-  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages" />
-
+  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages"/>
+  <!--<Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>-->
+  <!--<Target Name="All" DependsOnTargets="Rebuild; Test"/>-->
 </Project>

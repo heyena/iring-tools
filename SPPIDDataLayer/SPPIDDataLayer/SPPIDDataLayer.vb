@@ -93,7 +93,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Try
             Dim tmp As String = String.Empty
 
-            tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"))
+            tmp = String.Format("{0}{1}.{2}.StagingConfiguration.xml", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"))
             settings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
 
             configPath = [String].Format("{0}{1}.{2}.config", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"))
@@ -120,7 +120,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 _PIDDicConnOracle = New OracleConnection(AppSettings("PIDDataDicConnectionString"))
 
                 ''Set Oracle Stagging Files-------------------------
-                tmp = String.Format("{0}{1}.StagingConfiguration.{2}.{3}.xml", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"), "Oracle")
+                tmp = String.Format("{0}{1}.{2}.StagingConfiguration.{3}.xml", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"), "Oracle")
                 settings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
                 AppSettings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
             End If
@@ -141,8 +141,11 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Public Overrides Function GetDatabaseDictionary() As DatabaseDictionary
 
         Dim path As String = [String].Format("{0}{1}DatabaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
+        Dim databaseDictionary As New DatabaseDictionary()
+        If (File.Exists(path)) Then
+            databaseDictionary = Utility.Read(Of DatabaseDictionary)(path)
+        End If
 
-        Dim databaseDictionary = Utility.Read(Of DatabaseDictionary)(path)
         Return databaseDictionary
 
     End Function
@@ -155,7 +158,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
 
-            '_dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+            _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
 
             _dataDictionary = Utility.Read(Of DataDictionary)(path)
             Return _dataDictionary
@@ -176,6 +179,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
                 Utility.Write(Of DatabaseDictionary)(_databaseDictionary, [String].Format("{0}{1}DataBaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
                 Utility.Write(Of DataDictionary)(_dataDictionary, [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
+
+                _dataObjectDefinition = _dataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
                 Return _dataDictionary
             Else
                 _logger.Error("Error while configuring SP P&ID data layer:  '" & _response.Messages(0))
@@ -954,28 +959,28 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                             _keyproperties = New KeyProperty()
                             _keyproperties.keyPropertyName = _selectSqlDR.Item("COLUMN_NAME")
                             _dataObject.keyProperties.Add(_keyproperties)
-                        Else
-                            _dataproperties = New DataProperty()
-                            _dataproperties.columnName = _selectSqlDR.Item("COLUMN_NAME")
-                            _dataproperties.dataLength = _selectSqlDR.Item("DataLenght")
-                            _dataproperties.isNullable = Convert.ToBoolean(_selectSqlDR.Item("IS_NULLABLE"))
-                            _dataproperties.keyType = KeyType.unassigned
-                            _dataproperties.propertyName = _selectSqlDR.Item("COLUMN_NAME")
-
-                            Select Case _selectSqlDR.Item("DATA_TYPE")
-                                Case "bool"
-                                    _dataproperties.dataType = DataType.Char
-                                Case "int"
-                                    _dataproperties.dataType = DataType.Int32
-                                Case "datetime"
-                                    _dataproperties.dataType = DataType.DateTime
-                                Case Else
-                                    _dataproperties.dataType = DataType.Char
-                                    Exit Select
-                            End Select
-
-                            _dataObject.dataProperties.Add(_dataproperties)
                         End If
+                        _dataproperties = New DataProperty()
+                        _dataproperties.columnName = _selectSqlDR.Item("COLUMN_NAME")
+                        _dataproperties.dataLength = _selectSqlDR.Item("DataLenght")
+                        _dataproperties.isNullable = Convert.ToBoolean(_selectSqlDR.Item("IS_NULLABLE"))
+                        _dataproperties.keyType = KeyType.unassigned
+                        _dataproperties.propertyName = _selectSqlDR.Item("COLUMN_NAME")
+
+                        Select Case _selectSqlDR.Item("DATA_TYPE")
+                            Case "bool"
+                                _dataproperties.dataType = DataType.Char
+                            Case "int"
+                                _dataproperties.dataType = DataType.Int32
+                            Case "datetime"
+                                _dataproperties.dataType = DataType.DateTime
+                            Case Else
+                                _dataproperties.dataType = DataType.Char
+                                Exit Select
+                        End Select
+
+                        _dataObject.dataProperties.Add(_dataproperties)
+
 
                         '_dataObject.dataProperties.Clear()
                         '_dataObject.keyProperties.Clear()
