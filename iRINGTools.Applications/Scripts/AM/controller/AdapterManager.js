@@ -193,6 +193,8 @@
       tree.appDataMenu.hide();
       return true;
     }
+
+    Ext.getBody().mask("Loading...", "x-mask-loading");
     var newtab = Ext.widget('datagridpanel', conf);
 
     newtab.store.on('beforeload', function (store, action) {
@@ -211,9 +213,11 @@
       callback: function (recs) {
         if (recs) {
           newtab.reconfigure(newtab.store, recs[0].store.proxy.reader.fields);
+          Ext.getBody().unmask();
           newtab.show();
         }
         else {
+          Ext.getBody().unmask();
           newtab.destroy();
           showDialog(500, 400, 'Error', 'Error Rendering DataGrid!', Ext.Msg.OK, null);
         }
