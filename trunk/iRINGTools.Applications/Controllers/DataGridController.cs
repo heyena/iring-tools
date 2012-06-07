@@ -72,19 +72,27 @@ namespace org.iringtools.web.controllers
 
                 foreach (DataItem dataItem in dataItems.items)
                 {
-                    var rowData = new Dictionary<string, object>();
-                    foreach (var field in fields)
+                  bool found = false;
+                  var rowData = new Dictionary<string, object>();
+
+                  foreach (var field in fields)
+                  {
+                    foreach (KeyValuePair<string, string> property in dataItem.properties)
                     {
-                        foreach (KeyValuePair<string, string> property in dataItem.properties)
-                        {
-                            if (field.dataIndex.ToLower() == property.Key.ToLower())
-                            {
-                                rowData.Add(property.Key, property.Value);
-                                break;
-                            }
-                        }
+                      if (field.dataIndex.ToLower() == property.Key.ToLower())
+                      {
+                        rowData.Add(property.Key, property.Value);
+                        found = true;
+                        break;
+                      }
                     }
-                    gridData.Add(rowData);
+
+                    if (!found)
+                    {
+                      rowData.Add(field.dataIndex, "");
+                    }
+                  }
+                  gridData.Add(rowData);
                 }
 
                 metaData.Add("root", "data");
