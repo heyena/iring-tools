@@ -131,7 +131,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\BindingConfiguration.12345_000.SPPID.xml">
+    <Content Include="App_Data\BindingConfiguration.12345_000.SPPID_old.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_Data\Configuration.SPPID.xml">
