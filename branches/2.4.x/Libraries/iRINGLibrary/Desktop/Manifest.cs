@@ -429,6 +429,7 @@ namespace org.iringtools.mapping
 {
   using System.Runtime.Serialization;
   using System.Collections.Generic;
+  using org.iringtools.library;
 
   [System.Runtime.Serialization.DataContractAttribute(Name = "roleType", Namespace = "http://www.iringtools.org/mapping")]
   public enum RoleType
@@ -460,6 +461,8 @@ namespace org.iringtools.mapping
     private org.iringtools.mapping.ValueListMaps valueListMapsField;
 
     private string versionField;
+
+    private org.iringtools.library.DataFilter dataFilterField;
 
     public Mapping()
     {
@@ -505,11 +508,24 @@ namespace org.iringtools.mapping
         this.versionField = value;
       }
     }
-  }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+    public org.iringtools.library.DataFilter dataFilter
+    {
+      get
+      {
+        return this.dataFilterField;
+      }
+      set
+      {
+        this.dataFilterField = value;
+      }
+    }
+  }  
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "graphMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "graphMap")]
   public class GraphMaps : System.Collections.Generic.List<org.iringtools.mapping.GraphMap>
-  {
+  {    
   }
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueListMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueListMap")]

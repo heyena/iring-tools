@@ -296,6 +296,34 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
+    public DataFilter CombineFilter(DataFilter filter1, DataFilter filter2)
+    {
+      DataFilter filter = new DataFilter();  
+      filter.Expressions = new List<Expression>();
+      filter.OrderExpressions = new List<OrderExpression>();
+
+      if (filter1.Expressions != null)      
+        foreach (Expression expression in filter1.Expressions)
+          filter.Expressions.Add(expression);
+
+      if (filter1.OrderExpressions != null)      
+        foreach (OrderExpression orderExpression in filter1.OrderExpressions)
+          filter.OrderExpressions.Add(orderExpression);
+
+      if (filter2 != null)
+      {
+        if (filter2.Expressions != null)
+          foreach (Expression expression in filter2.Expressions)
+            filter.Expressions.Add(expression);
+
+        if (filter2.OrderExpressions != null)
+          foreach (OrderExpression orderExpression in filter2.OrderExpressions)
+            filter.OrderExpressions.Add(orderExpression);
+      }
+
+      return filter;
+    }
+
     public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -307,10 +335,12 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(request.Manifest, graph);
 
-        DataFilter filter = request.DataFilter;
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+        DataFilter uiFilter = request.DataFilter;
 
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref uiFilter, graph);
+
+        DataFilter filter = CombineFilter(uiFilter, _mapping.dataFilter);
         List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
         
         // get sort index
@@ -630,7 +660,7 @@ namespace org.iringtools.adapter
           {
             try
             {
-              _mapping = Utility.Read<Mapping>(mappingPath);
+              _mapping = Utility.Read<Mapping>(mappingPath);              
             }
             catch (Exception legacyEx)
             {
