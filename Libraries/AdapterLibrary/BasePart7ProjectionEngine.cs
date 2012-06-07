@@ -725,6 +725,7 @@ namespace org.iringtools.adapter.projection
       return classIdentifiers.ToList<string>();
     }
 
+    //get real property name
     public void ProjectDataFilter(DataDictionary dictionary, ref DataFilter filter, string graph)
     {
       try
