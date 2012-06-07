@@ -115,7 +115,7 @@ namespace iRINGTools.Web.Models
           DataFilter dataFilter = createDataFilter(filter, sort, dir);
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
           string dataItemsJson = _dataServiceClient.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
-
+          
           DataItemSerializer serializer = new DataItemSerializer();
           dataItems = serializer.Deserialize<DataItems>(dataItemsJson, false); 
         }
@@ -177,17 +177,25 @@ namespace iRINGTools.Web.Models
 					List<string> rowData = new List<string>();
 					foreach (Field field in fields)
 					{
+            bool found = false;
+
 						foreach (KeyValuePair<string, string> property in dataItem.properties)
 						{
-							if (field.dataIndex.ToLower() == property.Key.ToLower())
-							{
-								rowData.Add(property.Value);
-								newWid = property.Value.Count() * 4 + 40;
-								if (newWid > 40 && newWid > field.width && newWid < 300)
-									field.width = newWid;
-								break;
-							}
+              if (field.dataIndex.ToLower() == property.Key.ToLower())
+              {
+                rowData.Add(property.Value);
+                newWid = property.Value.Count() * 4 + 40;
+                if (newWid > 40 && newWid > field.width && newWid < 300)
+                  field.width = newWid;
+                found = true;
+                break;
+              }
 						}
+
+            if (!found)
+            {
+              rowData.Add("");
+            }
 					}
 					gridData.Add(rowData);
 				}
