@@ -462,7 +462,7 @@ namespace org.iringtools.mapping
 
     private string versionField;
 
-    private org.iringtools.library.DataFilter dataFilterField;
+    private DataFilter dataFilterField;
 
     public Mapping()
     {
@@ -510,7 +510,7 @@ namespace org.iringtools.mapping
     }
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
-    public org.iringtools.library.DataFilter dataFilter
+    public DataFilter dataFilter
     {
       get
       {
