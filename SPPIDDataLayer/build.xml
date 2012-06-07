@@ -74,7 +74,7 @@
   </Target>
   
   <Target Name="Test">
-    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="TWDataLayer.Tests\bin\Debug\TWDataLayer.Tests.dll" OutputXmlFile="test-results.xml" />
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" clr-version="4.0.30319.269" Assemblies="SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="Version">
@@ -84,7 +84,7 @@
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
 
-  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages"/>
-  <!--<Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>-->
+  <!--<Target Name="All" DependsOnTargets="Rebuild; CreatePackages"/>-->
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
   <!--<Target Name="All" DependsOnTargets="Rebuild; Test"/>-->
 </Project>
