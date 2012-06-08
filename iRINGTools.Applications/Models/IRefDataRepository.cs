@@ -4,11 +4,13 @@ using System.Linq;
 using System.Web;
 using org.iringtools.library;
 using org.ids_adi.qmxf;
+using org.iringtools.refdata.federation;
 
 namespace iRINGTools.Web.Models
 {
   public interface IRefDataRepository
   {
+    Federation GetFederation();
 
     RefDataEntities Search(string query);
 

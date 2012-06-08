@@ -18,6 +18,7 @@ using iRINGTools.Web.Models;
 using org.ids_adi.qmxf;
 using org.iringtools.mapping;
 using VDS.RDF;
+using org.iringtools.refdata.federation;
 
 namespace org.iringtools.web.controllers
 {
@@ -26,6 +27,8 @@ namespace org.iringtools.web.controllers
 
         private IRefDataRepository _refdataRepository = null;
         private NamespaceMapper _nsMap = new NamespaceMapper();
+        private List<Namespace> _namespaces = null;
+        private Federation _federaton = null;
         private string _adapterServiceURI = String.Empty;
         private string _refDataServiceURI = String.Empty;
         public RefDataController()
@@ -35,15 +38,17 @@ namespace org.iringtools.web.controllers
         public RefDataController(IRefDataRepository repository)
         {
             _refdataRepository = repository;
-            _nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
-            _nsMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
-            _nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
-            _nsMap.AddNamespace("tpL", new Uri("http://tpl.rdlfacade.org/data#"));
-            _nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
-            _nsMap.AddNamespace("p8dm", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/data-model#"));
-            _nsMap.AddNamespace("owl2xml", new Uri("http://www.w3.org/2006/12/owl2-xml#"));
-            _nsMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
-            _nsMap.AddNamespace("templates", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/templates#"));
+            _federaton = _refdataRepository.GetFederation();
+            _namespaces = _federaton.Namespaces;
+            //_nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
+            //_nsMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+            //_nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+            //_nsMap.AddNamespace("tpL", new Uri("http://tpl.rdlfacade.org/data#"));
+            //_nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+            //_nsMap.AddNamespace("p8dm", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/data-model#"));
+            //_nsMap.AddNamespace("owl2xml", new Uri("http://www.w3.org/2006/12/owl2-xml#"));
+            //_nsMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+            //_nsMap.AddNamespace("templates", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/templates#"));
         }
 
         public JsonResult Index(FormCollection form)
@@ -225,7 +230,8 @@ namespace org.iringtools.web.controllers
         private List<JsonTreeNode> GetClasses(string query, int start, int limit, bool isReset)
         {
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
+            string prefix = string.Empty;
+            string ident = string.Empty;
             RefDataEntities dataEntities = new RefDataEntities();
             if (isReset)
             {
@@ -239,12 +245,22 @@ namespace org.iringtools.web.controllers
             foreach (Entity entity in dataEntities.Entities.Values.ToList<Entity>())
             {
                 string label = entity.Label + '[' + entity.Repository + ']';
-                string prefix = _nsMap.GetPrefix(new Uri(entity.Uri.Substring(0, entity.Uri.LastIndexOf("#") + 1)));
+                if (entity.Uri.Contains("#"))
+                {
+                  prefix = _namespaces.Find(n => n.Uri == entity.Uri.Substring(0, entity.Uri.IndexOf("#") + 1)).Prefix;
+                  ident = entity.Uri.Split('#')[1];
+                }
+                else
+                {
+                  prefix = _namespaces.Find(n => n.Uri == entity.Uri.Substring(0, entity.Uri.LastIndexOf("/")+1)).Prefix;
+                  ident = entity.Uri.Substring(entity.Uri.LastIndexOf("/") + 1);
+                }
+
                 JsonTreeNode node = new JsonTreeNode
                 {
-                    type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
-                    icon = (prefix.Equals("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
-                    identifier = entity.Uri.Split('#')[1],
+                    type = (prefix.Contains("rdl")) ? "ClassNode" : "TemplateNode",
+                    icon = (prefix.Contains("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
+                    identifier = ident,
                     id = Guid.NewGuid().ToString(),
                     text = label,
                     //     expanded = false,
@@ -262,25 +278,39 @@ namespace org.iringtools.web.controllers
         private List<JsonTreeNode> GetTemplateRoleClasses(string classId)
         {
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+            string prefix = string.Empty;
+            string ident = string.Empty;
+            string ns = string.Empty;
             if (classId != string.Empty)
             {
                 QMXF dataEntities = _refdataRepository.GetClasses(classId);
 
                 foreach (var entity in dataEntities.classDefinitions)
                 {
+                  if (entity.identifier.Contains("#"))
+                  {
+                    prefix = _namespaces.Find(n => n.Uri == entity.identifier.Substring(0, entity.identifier.IndexOf("#") + 1)).Prefix;
+                    ident = entity.identifier.Split('#')[1];
+                    ns = _namespaces.Find(n => n.Uri == entity.identifier.Substring(0, entity.identifier.LastIndexOf("#") + 1)).Uri;
+                  }
+                  else
+                  {
+                    prefix = _namespaces.Find(n => n.Uri == entity.identifier.Substring(0, entity.identifier.LastIndexOf("/") + 1)).Prefix;
+                    ident = entity.identifier.Substring(entity.identifier.LastIndexOf("/") + 1);
+                    ns = _namespaces.Find(n => n.Uri == entity.identifier.Substring(0, entity.identifier.LastIndexOf("/") + 1)).Uri;
+                  }
                     string label = entity.name[0].value.ToString() + '[' + entity.repositoryName + ']';
-                    string prefix = _nsMap.GetPrefix(new Uri(entity.identifier.Substring(0, entity.identifier.LastIndexOf("#") + 1)));
+                   
                     JsonTreeNode node = new JsonTreeNode
                     {
-                        type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
-                        icon = (prefix.Equals("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
-                        identifier = entity.identifier.Split('#')[1],
+                        type = (prefix.Contains("rdl")) ? "ClassNode" : "TemplateNode",
+                        icon = (prefix.Contains("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
+                        identifier = ident,
                         id = Guid.NewGuid().ToString(),
                         text = label,
-                        //     expanded = false,
                         leaf = false,
-                        //  children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
-                        record = entity
+                        record = entity,
+                        Namespace = ns
                     };
 
                     nodes.Add(node);

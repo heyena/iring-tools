@@ -356,6 +356,10 @@ namespace org.ids_adi.qmxf
 
     [DataMember(EmitDefaultValue = false)]
     [XmlAttribute]
+    public string rdsuri { get; set; }
+
+    [DataMember(EmitDefaultValue = false)]
+    [XmlAttribute]
     public string label { get; set; }
 
     [DataMember(EmitDefaultValue = false)]

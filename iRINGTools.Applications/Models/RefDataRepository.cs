@@ -12,6 +12,7 @@ using org.iringtools.mapping;
 using org.ids_adi.qmxf;
 using Ninject;
 using System.Net;
+using org.iringtools.refdata.federation;
 
 namespace iRINGTools.Web.Models
 {
@@ -56,6 +57,11 @@ namespace iRINGTools.Web.Models
       return _referenceDataServiceClient.Get<RefDataEntities>(relativeUri);
     }
 
+    public List<Namespace> GetNamespaces()
+    {
+      return null;
+    }
+
     public RefDataEntities Search(string query)
     {
       relativeUri = string.Format("/search/{0}/0/0", query);
@@ -87,7 +93,11 @@ namespace iRINGTools.Web.Models
         return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
-  
+    public Federation GetFederation()
+    {
+      relativeUri = "/federation";
+      return _referenceDataServiceClient.Get<Federation>(relativeUri);
+    }
 
     public Entities GetSuperClasses(string classId)
     {

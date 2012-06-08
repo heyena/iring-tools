@@ -37,6 +37,9 @@ namespace org.iringtools.library
     [DataMember(Name = "uri")]
     public string Uri { get; set; }
 
+    [DataMember(Name = "rdsuri")]
+    public string RDSUri { get; set; }
+
     [DataMember(Name = "label")]
     public string Label { get; set; }
 

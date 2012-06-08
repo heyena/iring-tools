@@ -77,10 +77,10 @@ namespace org.iringtools.refdata
     private bool _useExampleRegistryBase = false;
     private WebCredentials _registryCredentials = null;
     private WebProxyCredentials _proxyCredentials = null;
-    
-    private Repositories _repositories = null;
+
+    private List<Repository> _repositories = null;
     private Federation _federation = null;
-    private Namespaces _namespaces = null;
+    private List<Namespace> _namespaces = null;
 
     private Queries _queries = null;
     private static Dictionary<string, RefDataEntities> _searchHistory = new Dictionary<string, RefDataEntities>();
@@ -99,15 +99,11 @@ namespace org.iringtools.refdata
         _kernel = new StandardKernel(new ReferenceDataModule());
         _settings = _kernel.Get<ReferenceDataSettings>();
         _settings.AppendSettings(settings);
-
         Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
         _pageSize = Convert.ToInt32(_settings["PageSize"]);
         _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
-
         string registryCredentialToken = _settings["RegistryCredentialToken"];
         bool tokenIsEmpty = registryCredentialToken == String.Empty;
-        
         if (tokenIsEmpty)
         {
           _registryCredentials = new WebCredentials();
@@ -117,26 +113,23 @@ namespace org.iringtools.refdata
           _registryCredentials = new WebCredentials(registryCredentialToken);
           _registryCredentials.Decrypt();
         }
-
         _proxyCredentials = _settings.GetWebProxyCredentials();
         string queriesPath = _settings["AppDataPath"] + QUERIES_FILE_NAME;
-
         _queries = Utility.Read<Queries>(queriesPath);
         string federationPath = _settings["AppDataPath"] + FEDERATION_FILE_NAME;
-        
         if (File.Exists(federationPath))
         {
           _federation = Utility.Read<Federation>(federationPath);
           _repositories = _federation.Repositories;
-
-          foreach (Namespace ns in _federation.Namespaces)
+          _namespaces = _federation.Namespaces;
+          foreach (var ns in _namespaces)
           {
             nsMap.AddNamespace(ns.Prefix, new Uri(ns.Uri));
           }
         }
-
         _response = new Response();
         _kernel.Bind<Response>().ToConstant(_response);
+
       }
       catch (Exception ex)
       {
@@ -144,11 +137,16 @@ namespace org.iringtools.refdata
       }
     }
 
-    public Repositories GetRepositories()
+    public Federation GetFederation()
+    {
+      return _federation;
+    }
+
+    public List<Repository> GetRepositories()
     {
       try
       {
-        Repositories repositories;
+        List<Repository> repositories;
         repositories = _repositories;
         //Don't Expose Tokens
         foreach (Repository repository in repositories)
@@ -203,11 +201,21 @@ namespace org.iringtools.refdata
           Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearch").Query;
           QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-          sparql = ReadSPARQL(queryContainsSearch.FileName);
-          sparql = sparql.Replace("param1", query);
-
+          Query queryContainsSearchJORD = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearchJORD").Query;
+          QueryBindings queryBindingsJORD = queryContainsSearchJORD.Bindings;
           foreach (Repository repository in _repositories)
           {
+            if (repository.RepositoryType == RepositoryType.JORD)
+            {
+              sparql = ReadSPARQL(queryContainsSearchJORD.FileName);
+              sparql = sparql.Replace("param1", query);
+            }
+            else
+            {
+              sparql = ReadSPARQL(queryContainsSearch.FileName);
+              sparql = sparql.Replace("param1", query);
+            }
+
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
             foreach (SparqlResult result in sparqlResults)
@@ -225,6 +233,10 @@ namespace org.iringtools.refdata
                 else if ((INode)result[v] is UriNode && v.Equals("uri"))
                 {
                   resultEntity.Uri = ((UriNode)result[v]).Uri.ToString();
+                }
+                else if ((INode)result[v] is UriNode && v.Equals("rds"))
+                {
+                  resultEntity.RDSUri = ((UriNode)result[v]).Uri.ToString();
                 }
               }
               resultEntity.Repository = repository.Name;
@@ -286,12 +298,19 @@ namespace org.iringtools.refdata
         string relativeUri = String.Empty;
 
         Query query = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabel").Query;
+        Query queryEquivalent = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabelRdlEquivalent").Query;
 
-        sparql = ReadSPARQL(query.FileName);
-        sparql = sparql.Replace("param1", uri);
 
         foreach (Repository repository in _repositories)
         {
+          if (repository.RepositoryType == RepositoryType.JORD && uri.Contains("#"))
+          {
+            sparql = ReadSPARQL(queryEquivalent.FileName).Replace("param1", uri);
+          }
+          else
+          {
+            sparql = ReadSPARQL(query.FileName).Replace("param1", uri);
+          }
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
           foreach (SparqlResult result in sparqlResults)
@@ -343,16 +362,17 @@ namespace org.iringtools.refdata
             case RepositoryType.Camelot:
             case RepositoryType.RDSWIP:
               getClassification = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassification").Query;
-
-              sparql = ReadSPARQL(getClassification.FileName);
-              sparql = sparql.Replace("param1", id);
+              sparql = ReadSPARQL(getClassification.FileName).Replace("param1", id);
+              classifications = ProcessClassifications(rep, sparql);
+              break;
+            case RepositoryType.JORD:
+              getClassification = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassificationJORD").Query;
+              sparql = ReadSPARQL(getClassification.FileName).Replace("param1", id);
               classifications = ProcessClassifications(rep, sparql);
               break;
             case RepositoryType.Part8:
               getClassification = (Query)_queries.FirstOrDefault(c => c.Key == "GetPart8Classification").Query;
-
-              sparql = ReadSPARQL(getClassification.FileName);
-              sparql = sparql.Replace("param1", id);
+              sparql = ReadSPARQL(getClassification.FileName).Replace("param1", id);
               classifications = ProcessClassifications(rep, sparql);
               break;
           }
@@ -415,94 +435,132 @@ namespace org.iringtools.refdata
       try
       {
         string sparql = String.Empty;
-        string sparqlPart8 = String.Empty;
         string relativeUri = String.Empty;
+        SparqlResultSet sparqlResults = null;
 
         List<Specialization> specializations = new List<Specialization>();
 
-        Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
+        Query queryRdsWip = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclass").Query;
+        Query queryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclassJORD").Query;
+        Query queryPart8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
 
-        sparql = ReadSPARQL(queryGetSpecialization.FileName);
-        sparql = sparql.Replace("param1", id);
-
-        Query queryGetSubClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
-
-        sparqlPart8 = ReadSPARQL(queryGetSubClassOf.FileName);
-        sparqlPart8 = sparqlPart8.Replace("param1", id);
         foreach (Repository repository in _repositories)
         {
           if (rep != null)
             if (rep.Name != repository.Name) continue;
 
-          if (repository.RepositoryType == RepositoryType.Part8)
+          switch (repository.RepositoryType)
           {
+            case RepositoryType.Camelot:
+            case RepositoryType.RDSWIP:
 
-            SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlPart8);
-
-            foreach (SparqlResult result in sparqlResults)
-            {
-              Specialization specialization = new Specialization();
-              string uri = string.Empty;
-
-              foreach (var v in result.Variables)
+              sparql = ReadSPARQL(queryRdsWip.FileName).Replace("param1", id);
+              sparqlResults = QueryFromRepository(repository, sparql);
+              foreach (SparqlResult result in sparqlResults)
               {
-                if ((INode)result[v] is LiteralNode && v.Equals("label"))
+                Specialization specialization = new Specialization();
+                string uri = string.Empty;
+
+                foreach (var v in result.Variables)
                 {
-                  specialization.label = ((LiteralNode)result[v]).Value;
-                  specialization.lang = ((LiteralNode)result[v]).Language;
+                  if ((INode)result[v] is LiteralNode && v.Equals("label"))
+                  {
+                    specialization.label = ((LiteralNode)result[v]).Value;
+                    specialization.lang = ((LiteralNode)result[v]).Language;
+                  }
+                  else if ((INode)result[v] is UriNode && v.Equals("uri"))
+                  {
+                    specialization.reference = ((UriNode)result[v]).Uri.ToString();
+                    uri = specialization.reference;
+                  }
                 }
-                else if ((INode)result[v] is UriNode && v.Equals("uri"))
+                if (string.IsNullOrEmpty(specialization.label))
                 {
-                  specialization.reference = ((UriNode)result[v]).Uri.ToString();
-                  uri = specialization.reference;
+                  Entity entity = GetLabel(uri);
+                  specialization.label = entity.Label;
+                  specialization.lang = entity.Lang;
                 }
+                if (string.IsNullOrEmpty(specialization.lang))
+                  specialization.lang = defaultLanguage;
+
+                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
               }
-              if (string.IsNullOrEmpty(specialization.label))
+              break;
+
+            case RepositoryType.Part8:
+              sparql = ReadSPARQL(queryPart8.FileName).Replace("param1", id);
+              sparqlResults = QueryFromRepository(repository, sparql);
+              foreach (SparqlResult result in sparqlResults)
               {
-                Entity entity = GetLabel(uri);
+                Specialization specialization = new Specialization();
+                string uri = string.Empty;
 
-                specialization.label = entity.Label;
-                specialization.lang = entity.Lang;
+                foreach (var v in result.Variables)
+                {
+                  if ((INode)result[v] is LiteralNode && v.Equals("label"))
+                  {
+                    specialization.label = ((LiteralNode)result[v]).Value;
+                    specialization.lang = ((LiteralNode)result[v]).Language;
+                  }
+                  else if ((INode)result[v] is UriNode && v.Equals("uri"))
+                  {
+                    specialization.reference = ((UriNode)result[v]).Uri.ToString();
+                    uri = specialization.reference;
+                  }
+                }
+                if (string.IsNullOrEmpty(specialization.label))
+                {
+                  Entity entity = GetLabel(uri);
+                  specialization.label = entity.Label;
+                  specialization.lang = entity.Lang;
+                }
+                if (string.IsNullOrEmpty(specialization.lang))
+                  specialization.lang = defaultLanguage;
+
+                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
               }
-              if (string.IsNullOrEmpty(specialization.lang))
-                specialization.lang = defaultLanguage;
+              break;
+            case RepositoryType.JORD:
+              sparql = ReadSPARQL(queryJord.FileName).Replace("param1", id);
+              sparqlResults = QueryFromRepository(repository, sparql);
+              foreach (SparqlResult result in sparqlResults)
+              {
+                Specialization specialization = new Specialization();
+                string uri = string.Empty;
 
-              Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
-            }
+                foreach (var v in result.Variables)
+                {
+                  if ((INode)result[v] is LiteralNode && v.Equals("label"))
+                  {
+                    specialization.label = ((LiteralNode)result[v]).Value;
+                    specialization.lang = ((LiteralNode)result[v]).Language;
+                  }
+                  else if ((INode)result[v] is UriNode && v.Equals("uri"))
+                  {
+                    specialization.reference = ((UriNode)result[v]).Uri.ToString();
+                    uri = specialization.reference;
+                  }
+                  else if ((INode)result[v] is UriNode && v.Equals("rdsuri"))
+                  {
+                    specialization.rdsuri = ((UriNode)result[v]).Uri.ToString();
+                    uri = specialization.reference;
+                  }
+                }
+                if (string.IsNullOrEmpty(specialization.label))
+                {
+                  Entity entity = GetLabel(uri);
+                  specialization.label = entity.Label;
+                  specialization.lang = entity.Lang;
+                }
+                if (string.IsNullOrEmpty(specialization.lang))
+                  specialization.lang = defaultLanguage;
+
+                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+              }
+              break;
           }
-          else
-          {
-            SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
-            foreach (SparqlResult result in sparqlResults)
-            {
-              Specialization specialization = new Specialization();
-              string uri = string.Empty;
 
-              foreach (var v in result.Variables)
-              {
-                if ((INode)result[v] is LiteralNode && v.Equals("label"))
-                {
-                  specialization.label = ((LiteralNode)result[v]).Value;
-                  specialization.lang = ((LiteralNode)result[v]).Language;
-                }
-                else if ((INode)result[v] is UriNode && v.Equals("uri"))
-                {
-                  specialization.reference = ((UriNode)result[v]).Uri.ToString();
-                  uri = specialization.reference;
-                }
-              }
-              if (string.IsNullOrEmpty(specialization.label))
-              {
-                Entity entity = GetLabel(uri);
-                specialization.label = entity.Label;
-                specialization.lang = entity.Lang;
-              }
-              if (string.IsNullOrEmpty(specialization.lang))
-                specialization.lang = defaultLanguage;
 
-              Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
-            }
-          }
         }
 
         return specializations;
@@ -516,7 +574,12 @@ namespace org.iringtools.refdata
 
     public Entity GetClassLabel(string id)
     {
-      return GetLabel(nsMap.GetNamespaceUri("rdl").ToString() + id);
+      int number;
+      bool isNumber = int.TryParse(id.Substring(1, 1), out number);
+      if (isNumber)
+        return GetLabel(_namespaces.Find(ns => ns.Prefix == "rdl").Uri + id);
+      else
+        return GetLabel(_namespaces.Find(ns => ns.Prefix == "jordrdl").Uri + id);
     }
 
     public QMXF GetClass(string id, Repository repository)
@@ -548,18 +611,26 @@ namespace org.iringtools.refdata
         string relativeUri = String.Empty;
         string resultValue = string.Empty;
         string dataType = string.Empty;
+        string uri = string.Empty;
 
-        Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
+        Query classQuery = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
+        Query classQueryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassJORD").Query;
 
-        sparql = ReadSPARQL(queryContainsSearch.FileName);
 
-        if (namespaceUrl == String.Empty || namespaceUrl == null)
-          namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
-
-        string uri = namespaceUrl + id;
-        sparql = sparql.Replace("param1", uri);
         foreach (Repository repository in _repositories)
         {
+          if (repository.RepositoryType == RepositoryType.JORD)
+          {
+            namespaceUrl = _namespaces.Find(n => n.Prefix == "jordrdl").Uri;
+            uri = namespaceUrl + id;
+            sparql = ReadSPARQL(classQueryJord.FileName).Replace("param1", uri);
+          }
+          else
+          {
+            namespaceUrl = _namespaces.Find(n => n.Prefix == "rdl").Uri;
+            uri = namespaceUrl + id;
+            sparql = ReadSPARQL(classQuery.FileName).Replace("param1", uri);
+          }
           ClassDefinition classDefinition = null;
 
           if (rep != null)
@@ -580,57 +651,58 @@ namespace org.iringtools.refdata
             status = new QMXFStatus();
             foreach (var v in result.Variables)
             {
-              if ((INode)result[v] is LiteralNode && v.Equals("label"))
+              INode node = result[v];
+              if (node is LiteralNode && v.Equals("label"))
               {
-                name.value = ((LiteralNode)result[v]).Value;
-                name.lang = ((LiteralNode)result[v]).Language;
+                name.value = ((ILiteralNode)node).Value;
+                name.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(name.lang))
                   name.lang = defaultLanguage;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("definition"))
+              else if (node is LiteralNode && v.Equals("definition"))
               {
-                description.value = ((LiteralNode)result[v]).Value;
-                description.lang = ((LiteralNode)result[v]).Language;
+                description.value = ((ILiteralNode)node).Value;
+                description.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(description.lang))
                   description.lang = defaultLanguage;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("creator"))
+              else if (node is LiteralNode && v.Equals("creator"))
               {
-                status.authority = ((LiteralNode)result[v]).Value;
+                status.authority = ((ILiteralNode)node).Value;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("creationDate"))
+              else if (node is LiteralNode && v.Equals("creationDate"))
               {
-                status.from = ((LiteralNode)result[v]).Value;
+                status.from = ((ILiteralNode)node).Value;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("class"))
+              else if (node is LiteralNode && v.Equals("class"))
               {
-                status.Class = ((LiteralNode)result[v]).Value;
+                status.Class = ((ILiteralNode)node).Value;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
+              else if (node is LiteralNode && v.Equals("comment"))
               {
-                description.value = ((LiteralNode)result[v]).Value;
-                description.lang = ((LiteralNode)result[v]).Language;
+                description.value = ((ILiteralNode)node).Value;
+                description.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(description.lang))
                   description.lang = defaultLanguage;
               }
-              else if ((INode)result[v] is UriNode && v.Equals("type"))
+              else if (node is UriNode && v.Equals("type"))
               {
-                string typeName = ((UriNode)result[v]).Uri.ToString();
+                string typeName = ((UriNode)node).Uri.ToString();
                 string pref = nsMap.GetPrefix(new Uri(typeName.Substring(0, typeName.IndexOf("#") + 1)));
-                if (pref == "dm")
+                if (pref.Contains("dm"))
                   classDefinition.entityType = new EntityType { reference = typeName };
               }
-              else if ((INode)result[v] is UriNode && v.Equals("authority"))
+              else if (node is UriNode && v.Equals("authority"))
               {
-                status.authority = ((UriNode)result[v]).Uri.ToString();
+                status.authority = ((UriNode)node).Uri.ToString();
               }
-              else if ((INode)result[v] is UriNode && v.Equals("recorded"))
+              else if (node is UriNode && v.Equals("recorded"))
               {
-                status.Class = ((UriNode)result[v]).Uri.ToString();
+                status.Class = ((UriNode)node).Uri.ToString();
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("from"))
+              else if (node is LiteralNode && v.Equals("from"))
               {
-                status.from = ((LiteralNode)result[v]).Value;
+                status.from = ((LiteralNode)node).Value;
               }
             }
             classDefinition.name.Add(name);
@@ -2971,7 +3043,7 @@ namespace org.iringtools.refdata
               {
                 string newClsName = "Class definition " + clsLabel;
                 clsId = CreateIdsAdiId(registry, newClsName);
-                
+
               }
               // append entity type
               if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
@@ -3424,7 +3496,7 @@ namespace org.iringtools.refdata
     {
       subj = work.CreateUriNode(string.Format("<{0}>", subjId));
       pred = work.CreateUriNode("rdfs:subClassOf");
-      obj = work.CreateUriNode(string.Format("<{0}>",objId));
+      obj = work.CreateUriNode(string.Format("<{0}>", objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
@@ -3432,7 +3504,7 @@ namespace org.iringtools.refdata
     {
       subj = work.CreateUriNode(string.Format("<{0}>", subjId));
       pred = work.CreateUriNode("dm:hasClassified");
-      obj = work.CreateUriNode(string.Format("<{0}>",objId));
+      obj = work.CreateUriNode(string.Format("<{0}>", objId));
       work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("dm:hasClassifier");
       work.Assert(new Triple(subj, pred, obj));
