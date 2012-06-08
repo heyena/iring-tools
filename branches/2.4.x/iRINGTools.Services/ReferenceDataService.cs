@@ -86,7 +86,7 @@ namespace org.iringtools.services
     /// </summary>
     [Description("Gets configured repositories.")]
     [WebGet(UriTemplate = "/repositories")]
-    public Repositories GetRepositories()
+    public List<Repository> GetRepositories()
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
@@ -94,6 +94,18 @@ namespace org.iringtools.services
       return _referenceDataProvider.GetRepositories();
     }
 
+    /// <summary>
+    /// Gets configured repositories.
+    /// </summary>
+    [Description("Gets Federation.")]
+    [WebGet(UriTemplate = "/federation")]
+    public Federation GetFederation()
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetFederation();
+    }
 
     /// <summary>
     /// Does a fuzzy search by label and returns a list of Entity objects.

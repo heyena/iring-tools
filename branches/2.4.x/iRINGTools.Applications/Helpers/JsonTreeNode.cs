@@ -44,7 +44,7 @@ namespace iRINGTools.Web.Helpers
     public object record { get; set; }
     public Dictionary<string, string> properties { get; set; }
     public string iconCls { get; set; }
-
+    public string Namespace { get; set; }
       
   }  
 }

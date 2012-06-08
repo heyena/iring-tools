@@ -96,7 +96,11 @@
     <Content Include="App_Data\BindingConfiguration.Adapter.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="App_Data\DatabaseDictionary.H300061_0160.iPasCDM_ADOMockup.xml" />
     <Content Include="App_Data\default.css" />
+    <Content Include="App_Data\ipassql-configuration.H300061_0160.iPasCDM_ADOMockup.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_Data\Repositories.xml" />
     <Content Include="App_Data\Scopes.xml" />
     <Content Include="css\sparql-query.css" />
@@ -109,9 +113,11 @@
     <Content Include="index.html" />
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
+    <Content Include="SPARQL\ContainsSearchJORD.txt" />
+    <Content Include="SPARQL\GetClassificationJORD.txt" />
+    <Content Include="SPARQL\GetClassJORD.txt" />
     <Content Include="SPARQL\ExactSearch.txt" />
     <Content Include="SPARQL\GetClass.txt" />
-    <Content Include="SPARQL\GetClassification.txt" />
     <Content Include="SPARQL\GetClassTemplates.txt" />
     <Content Include="SPARQL\GetEntityTypes.txt" />
     <Content Include="SPARQL\GetInstances.txt" />
@@ -127,7 +133,7 @@
     <Content Include="SPARQL\GetSubClass.txt" />
     <Content Include="SPARQL\GetSubClassOf.txt" />
     <Content Include="SPARQL\GetSubClassSandbox.txt" />
-    <Content Include="SPARQL\GetSuperClass.txt" />
+    <Content Include="SPARQL\GetSuperClassJORD.txt" />
     <Content Include="SPARQL\GetSuperClassSandbox.txt" />
     <Content Include="SPARQL\GetBaseTemplatePart8.txt" />
     <Content Include="SPARQL\getTemplateClassification.txt" />
@@ -140,10 +146,6 @@
     <Content Include="SPARQL\part8containssearch.txt" />
     <Content Include="SPARQL\part8getclass.txt" />
     <Content Include="SPARQL\GetSubClassOfInverse.txt" />
-    <Content Include="SPARQL\SandboxContainsSearch.txt" />
-    <Content Include="SPARQL\SandboxExactSearch.txt" />
-    <Content Include="SPARQL\SandboxTemplateContainsSearch.txt" />
-    <Content Include="SPARQL\SandboxTemplateExactSearch.txt" />
     <Content Include="SPARQL\TemplateContainsSearch.txt" />
     <Content Include="SPARQL\TemplateExactSearch.txt" />
     <Content Include="SPARQL\TemplateGetProperties.txt" />
