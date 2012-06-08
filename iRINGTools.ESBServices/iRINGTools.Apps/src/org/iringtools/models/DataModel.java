@@ -1245,11 +1245,11 @@ public class DataModel
             if (!IOUtils.isNullOrEmpty(roleValue))
             {
               roleValue = getValueMap(manifest, roleValue);
-  
-              if (dataMode == DataMode.EXCHANGE)
-              {
-                roleOldValue = getValueMap(manifest, roleOldValue);
-              }
+            }
+            
+            if (dataMode == DataMode.EXCHANGE && !IOUtils.isNullOrEmpty(roleOldValue))
+            {
+              roleOldValue = getValueMap(manifest, roleOldValue);
             }
           }
           else if (roleValues != null && roleValues.getItems().size() > 0)

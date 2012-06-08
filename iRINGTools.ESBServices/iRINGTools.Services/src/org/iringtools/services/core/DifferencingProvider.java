@@ -404,7 +404,8 @@ public class DifferencingProvider
                     if (roleType == RoleType.PROPERTY || roleType == RoleType.DATA_PROPERTY
                         || roleType == RoleType.OBJECT_PROPERTY || roleType == RoleType.FIXED_VALUE)
                     {
-                      roleObject.setOldValue(null);
+                      roleObject.setOldValue(roleObject.getValue());
+                      roleObject.setValue(null);
                     }
                   }
                   

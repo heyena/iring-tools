@@ -131,7 +131,7 @@ namespace org.iringtools.library
       try
       {
         DataTable dataTable = CreateDataTable(tableName, identifiers);
-        return ToDataObjects(dataTable, objectType);
+        return ToDataObjects(dataTable, objectType, true);
       }
       catch (Exception ex)
       {
@@ -448,18 +448,18 @@ namespace org.iringtools.library
 
     protected IList<IDataObject> ToDataObjects(DataTable dataTable, string objectType)
     {
+      return ToDataObjects(dataTable, objectType, false);
+    }
+
+    protected IList<IDataObject> ToDataObjects(DataTable dataTable, string objectType, bool createsIfEmpty)
+    {
       IList<IDataObject> dataObjects = new List<IDataObject>();
       DataObject objectDefinition = GetObjectDefinition(objectType);
       IDataObject dataObject = null;
           
       if (objectDefinition != null && dataTable.Rows != null)
       {
-        if (dataTable.Rows.Count == 0)
-        {
-          dataObject = ToDataObject(null, objectDefinition);
-          dataObjects.Add(dataObject);
-        }
-        else
+        if (dataTable.Rows.Count > 0)        
         {
           foreach (DataRow dataRow in dataTable.Rows)
           {
@@ -478,6 +478,11 @@ namespace org.iringtools.library
               dataObjects.Add(dataObject);
             }
           }
+        }
+        else if (createsIfEmpty)
+        {
+          dataObject = ToDataObject(null, objectDefinition);
+          dataObjects.Add(dataObject);
         }
       }
 
