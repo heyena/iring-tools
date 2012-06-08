@@ -99,11 +99,15 @@ namespace org.iringtools.refdata
         _kernel = new StandardKernel(new ReferenceDataModule());
         _settings = _kernel.Get<ReferenceDataSettings>();
         _settings.AppendSettings(settings);
+
         Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
         _pageSize = Convert.ToInt32(_settings["PageSize"]);
         _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
+
         string registryCredentialToken = _settings["RegistryCredentialToken"];
         bool tokenIsEmpty = registryCredentialToken == String.Empty;
+        
         if (tokenIsEmpty)
         {
           _registryCredentials = new WebCredentials();
@@ -113,19 +117,26 @@ namespace org.iringtools.refdata
           _registryCredentials = new WebCredentials(registryCredentialToken);
           _registryCredentials.Decrypt();
         }
+
         _proxyCredentials = _settings.GetWebProxyCredentials();
         string queriesPath = _settings["AppDataPath"] + QUERIES_FILE_NAME;
+
         _queries = Utility.Read<Queries>(queriesPath);
         string federationPath = _settings["AppDataPath"] + FEDERATION_FILE_NAME;
+        
         if (File.Exists(federationPath))
         {
           _federation = Utility.Read<Federation>(federationPath);
           _repositories = _federation.Repositories;
+
+          foreach (Namespace ns in _federation.Namespaces)
+          {
+            nsMap.AddNamespace(ns.Prefix, new Uri(ns.Uri));
+          }
         }
+
         _response = new Response();
         _kernel.Bind<Response>().ToConstant(_response);
-
-        nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
       }
       catch (Exception ex)
       {
