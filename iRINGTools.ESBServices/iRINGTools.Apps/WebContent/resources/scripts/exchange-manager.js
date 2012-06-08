@@ -518,7 +518,7 @@ function submitExchange(userResponse) {
   var reviewed = this[3];
   
   if (userResponse == 'ok'){
-    Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl().mask('Exchange in progress ...', 'x-mask-loading');
+    Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl().mask('Exchange in progress, please wait ...', 'x-mask-loading');
     
     Ext.Ajax.request({
       url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
