@@ -851,34 +851,21 @@ namespace org.iringtools.adapter.projection
         }
         else
         {
-          // handle value list that has no uri map
           foreach (RoleMap roleMap in templateMap.roleMaps)
           {
-            if (!String.IsNullOrEmpty(roleMap.valueListName))
+            if (roleMap.type == RoleType.DataProperty || roleMap.type == RoleType.ObjectProperty ||
+              roleMap.type == RoleType.Property)
             {
-              ValueListMap valueListMap = _mapping.valueListMaps.Find(x => x.name.ToLower() == roleMap.valueListName.ToLower());
+              string[] propertyPath = roleMap.propertyName.Split('.');
+              string propertyName = propertyPath[propertyPath.Length - 1];
 
-              if (valueListMap != null && valueListMap.valueMaps != null)
+              if (propertyPath.Length > 2)  // related property
               {
-                ValueMap valueMap = valueListMap.valueMaps.Find(x => String.IsNullOrEmpty(x.uri));
-
-                if (valueMap != null)
-                {
-                  string[] propertyPath = roleMap.propertyName.Split('.');
-                  string propertyName = propertyPath[propertyPath.Length - 1];
-
-                  if (propertyPath.Length > 2)  // related property
-                  {
-                    List<string> values = new List<string>();         
-                    values.Add(valueMap.internalValue);
-
-                    SetRelatedRecords(dataObjectIndex, classObjectIndex, roleMap.propertyName, values);
-                  }
-                  else
-                  {
-                    _dataRecords[dataObjectIndex][propertyName] = valueMap.internalValue;
-                  }
-                }
+                SetRelatedRecords(dataObjectIndex, classObjectIndex, roleMap.propertyName, null);
+              }
+              else
+              {
+                _dataRecords[dataObjectIndex][propertyName] = null;
               }
             }
           }
@@ -907,7 +894,7 @@ namespace org.iringtools.adapter.projection
           {
             string value = roleObject.value;
 
-            if (!String.IsNullOrEmpty(roleMap.valueListName))
+            if (!string.IsNullOrEmpty(roleMap.valueListName))
             {
               value = _mapping.ResolveValueMap(roleMap.valueListName, value);
             }

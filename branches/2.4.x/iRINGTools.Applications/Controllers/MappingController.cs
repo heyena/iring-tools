@@ -124,7 +124,8 @@ namespace org.iringtools.web.controllers
                     {
                       qn = _nsMap.ReduceToQName(classId, out qName);
                       role.type = RoleType.Reference;
-                      role.value = qn ? qName : classId;
+                      role.dataType = qn ? qName : classId;
+                      role.value = classLabel;
                       classMap.name = classLabel;
                       classMap.id = qn ? qName : classId;
                       classMap.identifiers = new Identifiers();
@@ -182,7 +183,7 @@ namespace org.iringtools.web.controllers
                 if (rMap != null)
                 {
                     rMap.type = RoleType.Reference;
-                    rMap.value = reference;
+                    rMap.dataType = reference;
                     rMap.propertyName = null;
                     rMap.valueListName = null;
                 }
@@ -371,14 +372,27 @@ namespace org.iringtools.web.controllers
                                             expanded = false,
                                             leaf = false,
                                             children = null,
-                                            record = role
+                                            record = role,
+                                            properties = new Dictionary<string,string>()
                                         };
 
                                         if (role.type == RoleType.Reference)
                                         {
-                                          roleNode.properties = new Dictionary<string, string>();
-                                          string classId = role.value ?? role.dataType;
-                                          roleNode.properties.Add("value label", GetClassLabel(classId));
+                                          // 
+                                          // resolve class label and store it in role value
+                                          //
+                                          string classId = role.dataType;
+
+                                          if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
+                                            classId = role.value;
+
+                                          if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
+                                            role.value.StartsWith("rdl:"))
+                                          {
+                                            string classLabel = GetClassLabel(classId);
+                                            role.dataType = classId;
+                                            role.value = classLabel;
+                                          }
                                         }
 
                                         if (role.classMap != null && role.classMap.id != graphClassMap.id)
@@ -434,14 +448,27 @@ namespace org.iringtools.web.controllers
                                                 expanded = false,
                                                 leaf = false,
                                                 children = null,
-                                                record = role
+                                                record = role,                                                
+                                                properties = new Dictionary<string, string>()
                                             };
 
                                             if (role.type == RoleType.Reference)
                                             {
-                                              roleNode.properties = new Dictionary<string, string>();
-                                              string classId = role.value ?? role.dataType;
-                                              roleNode.properties.Add("value label", GetClassLabel(classId));
+                                              // 
+                                              // resolve class label and store it in role value
+                                              //
+                                              string classId = role.dataType;
+
+                                              if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
+                                                classId = role.value;
+
+                                              if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
+                                                role.value.StartsWith("rdl:"))
+                                              {
+                                                string classLabel = GetClassLabel(classId);
+                                                role.dataType = classId;
+                                                role.value = classLabel;
+                                              }
                                             }
 
                                             if (role.classMap != null && role.classMap.id != graphClassMap.id)
@@ -494,9 +521,21 @@ namespace org.iringtools.web.controllers
 
                                 if (role.type == RoleType.Reference)
                                 {
-                                  roleNode.properties = new Dictionary<string, string>();
-                                  string classId = role.value ?? role.dataType;
-                                  roleNode.properties.Add("value label", GetClassLabel(classId));
+                                  // 
+                                  // resolve class label and store it in role value
+                                  //
+                                  string classId = role.dataType;
+
+                                  if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
+                                    classId = role.value;
+
+                                  if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
+                                    role.value.StartsWith("rdl:"))
+                                  {
+                                    string classLabel = GetClassLabel(classId);
+                                    role.dataType = classId;
+                                    role.value = classLabel;
+                                  }
                                 }            
 
                                 if (role.classMap != null && role.classMap.id != graphClassMap.id)
@@ -730,7 +769,8 @@ namespace org.iringtools.web.controllers
                 expanded = false,
                 leaf = false,
                 children = null,
-                record = role
+                record = role,
+                properties = new Dictionary<string,string>()
             };
 
             return roleNode;
@@ -957,7 +997,7 @@ namespace org.iringtools.web.controllers
                   }
                   else
                   {
-                    throw new Exception("Error mapping ValueListMap...");
+                    throw new Exception("Error mapping ValueList...");
                   }
                 }
             }
@@ -1301,7 +1341,7 @@ namespace org.iringtools.web.controllers
                         {
                             roleMap.type = RoleType.Reference;
                             qn = _nsMap.ReduceToQName(roleQualification.value.reference, out qRange);
-                            roleMap.value = qn ? qRange : roleQualification.value.reference;
+                            roleMap.dataType = qn ? qRange : roleQualification.value.reference;
                         }
                         else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
                         {
@@ -1318,18 +1358,17 @@ namespace org.iringtools.web.controllers
                       roleMap.dataType = qRange;
                       currentTemplateMap.roleMaps.Add(roleMap);
                     }
-                    else if (qRange.StartsWith("xsd:")) // data property role
+                    else if (qRange.StartsWith("xsd:"))  // data property role
                     {
                         roleMap.type = RoleType.DataProperty;
                         roleMap.dataType = qRange;
                         roleMap.propertyName = String.Empty;
                         currentTemplateMap.roleMaps.Add(roleMap);
                     }
-                    else // reference role
+                    else  // reference role
                     {
                         roleMap.type = RoleType.Reference;
                         roleMap.dataType = qRange;
-                        roleMap.value = qRange;
                         roleMap.propertyName = null;
                         currentTemplateMap.roleMaps.Add(roleMap);
                     }

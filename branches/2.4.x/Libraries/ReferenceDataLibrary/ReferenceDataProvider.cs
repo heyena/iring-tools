@@ -125,6 +125,7 @@ namespace org.iringtools.refdata
         _response = new Response();
         _kernel.Bind<Response>().ToConstant(_response);
 
+        nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
       }
       catch (Exception ex)
       {
