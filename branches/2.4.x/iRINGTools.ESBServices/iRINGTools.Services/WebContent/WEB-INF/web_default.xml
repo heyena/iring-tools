@@ -19,7 +19,7 @@
   </context-param>
   <context-param>
     <param-name>poolSize</param-name>
-    <param-value>250</param-value>
+    <param-value>50</param-value>
   </context-param>
   <context-param>
     <param-name>numOfExchangeLogFiles</param-name>

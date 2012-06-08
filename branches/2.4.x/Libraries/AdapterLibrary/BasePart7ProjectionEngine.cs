@@ -464,7 +464,19 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        if (objProp.dataType == DataType.String && pair.Value != null && objProp.dataLength < pair.Value.ToString().Length)
+        if (pair.Value == null)
+        {
+          if (objProp.dataType == DataType.String || objProp.isNullable)
+          {
+            dataObject.SetPropertyValue(objProp.propertyName, null);
+          }
+          else
+          {
+            Type t = Type.GetType("System." + objProp.dataType.ToString());
+            dataObject.SetPropertyValue(objProp.propertyName, Activator.CreateInstance(t));
+          }
+        }
+        else if (objProp.dataType == DataType.String && objProp.dataLength < pair.Value.ToString().Length)
         {
           string value = pair.Value.Substring(0, objProp.dataLength);
           dataObject.SetPropertyValue(objProp.propertyName, value);
@@ -478,7 +490,6 @@ namespace org.iringtools.adapter.projection
       {
         string error = "Error setting value for property [" + objProp.propertyName + "]. " + e;
         _logger.Error(error);
-        throw new Exception(error);
       }
     }
 

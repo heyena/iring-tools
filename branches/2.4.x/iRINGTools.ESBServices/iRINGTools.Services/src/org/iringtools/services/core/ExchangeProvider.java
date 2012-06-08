@@ -505,21 +505,67 @@ public class ExchangeProvider
       throws ServiceProviderException
   {
     logger.debug("submitExchange(" + scope + ", " + id + ", exchangeRequest)");
-        
+    
+    // 
+    // create exchange response
+    //
     ExchangeResponse exchangeResponse = new ExchangeResponse();    
     exchangeResponse.setLevel(Level.SUCCESS);
     
     XMLGregorianCalendar startTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
     exchangeResponse.setStartTime(startTime);
 
+    //
+    // check exchange request
+    //
     if (exchangeRequest == null)
     {
       exchangeResponse.setLevel(Level.WARNING);
       exchangeResponse.setSummary("Exchange request is empty.");
       return exchangeResponse;
     }
+        
+    Manifest manifest = exchangeRequest.getManifest();
+    DataTransferIndices dtis = exchangeRequest.getDataTransferIndices();
 
-    // create exchange log directory
+    // 
+    // check data transfer indices
+    //
+    if (dtis == null)
+    {
+      exchangeResponse.setLevel(Level.ERROR);
+      exchangeResponse.setSummary("No data transfer objects found.");
+      return exchangeResponse;
+    }
+
+    //
+    // collect ADD/CHANGE/DELETE indices
+    //
+    List<DataTransferIndex> dxIndices = new ArrayList<DataTransferIndex>();
+    
+    for (DataTransferIndex dxi : dtis.getDataTransferIndexList().getItems())
+    {
+      TransferType transferType = dxi.getTransferType();
+      
+      if (transferType != TransferType.SYNC)
+      {
+        dxIndices.add(dxi);        
+      }
+    }    
+
+    //
+    // make sure there are items to exchange
+    //
+    if (dxIndices.size() == 0)
+    {
+      exchangeResponse.setLevel(Level.ERROR);
+      exchangeResponse.setSummary("No updated/deleted items found.");
+      return exchangeResponse;
+    }
+
+    //
+    // create directory for logging exchange
+    //
     String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
     File dirPath = new File(path);
 
@@ -528,21 +574,12 @@ public class ExchangeProvider
       dirPath.mkdirs();
     }
     
-    Manifest manifest = exchangeRequest.getManifest();
-    DataTransferIndices dtis = exchangeRequest.getDataTransferIndices();
-
-    if (dtis == null)
-      return null;
-
-    String exchangeFile = path + "/" + startTime.toString().replace(":", ".");
-    List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
-
-    if (dtiList.size() == 0)
-      return null;
-
+    String exchangeFile = path + "/" + startTime.toString().replace(":", ".");    
     initExchangeDefinition(scope, id);
 
+    //
     // add exchange definition info to exchange response
+    //
     exchangeResponse.setSenderUri(sourceUri);
     exchangeResponse.setSenderScope(sourceScopeName);
     exchangeResponse.setSenderApp(sourceAppName);
@@ -552,136 +589,90 @@ public class ExchangeProvider
     exchangeResponse.setReceiverApp(targetAppName);
     exchangeResponse.setReceiverGraph(targetGraphName);
 
-    // get target application uri
+    //
+    // prepare source and target endpoint
+    //
     String targetAppUrl = targetUri + "/" + targetScopeName + "/" + targetAppName;
     String targetGraphUrl = targetAppUrl + "/" + targetGraphName;
     String sourceGraphUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName;
-
-    // create a pool DTOs to send to target endpoint
-    int dtiSize = dtiList.size();
-    int presetPoolSize = Integer.parseInt((String) settings.get("poolSize"));
-    int poolSize = Math.min(presetPoolSize, dtiSize);
+    String sourceDtoUrl = sourceGraphUrl + "/dxo";
+    
+    //
+    // create pool DTOs
+    //
+    int dxIndicesSize = dxIndices.size();
+    int configuredPoolSize = Integer.parseInt((String) settings.get("poolSize"));
+    int poolSize = Math.min(configuredPoolSize, dxIndicesSize);
     int postedItemCount = 0;
           
     exchangeResponse.setPoolSize(poolSize);
-    exchangeResponse.setItemCount(dtiSize);
+    exchangeResponse.setItemCount(dxIndicesSize);
     
-    for (int i = 0; i < dtiSize; i += poolSize)
+    for (int i = 0; i < dxIndicesSize; i += poolSize)
     {
-      int actualPoolSize = (dtiSize > (i + poolSize)) ? poolSize : dtiSize - i;
-      List<DataTransferIndex> poolDtiListItems = dtiList.subList(i, i + actualPoolSize);
-
-      List<DataTransferIndex> sourcePoolDtiList = new ArrayList<DataTransferIndex>();
-      List<DataTransferIndex> syncDtiList = new ArrayList<DataTransferIndex>();
-      List<DataTransferIndex> deleteDtiList = new ArrayList<DataTransferIndex>();
-
-      for (DataTransferIndex poolDti : poolDtiListItems)
-      {
-        switch (poolDti.getTransferType())
-        {
-        case SYNC:
-          syncDtiList.add(poolDti);
-          break;
-        case DELETE:
-          deleteDtiList.add(poolDti);
-          break;
-        default:
-          sourcePoolDtiList.add(poolDti);
-          break;
-        }
-      }
-
-      // only include SYNC DTIs if the DTOs were not reviewed
-      if (!exchangeRequest.getReviewed())
-        sourcePoolDtiList.addAll(syncDtiList);
-
-      DataTransferObjects sourceDtos = null;
-
-      if (sourcePoolDtiList.size() > 0)
-      {
-        // request source DTOs
-        DxoRequest poolDxoRequest = new DxoRequest();
-        poolDxoRequest.setManifest(manifest);
-        DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
-        poolDxoRequest.setDataTransferIndices(poolDataTransferIndices);
-        DataTransferIndexList poolDtiList = new DataTransferIndexList();
-        poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
-        poolDtiList.setItems(sourcePoolDtiList);
-
-        String sourceDtoUrl = sourceGraphUrl + "/dxo";
-        try
-        {
-          manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
-          sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDxoRequest);
-          poolDxoRequest = null;
-        }
-        catch (HttpClientException e)
-        {
-          logger.error(e.getMessage());
-          throw new ServiceProviderException(e.getMessage());
-        }
-        
-        List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
-
-        // set transfer type for each DTO and remove SYNC ones if DTO grid is reviewed
-        for (int j = 0; j < sourceDtoListItems.size(); j++)
-        {
-          DataTransferObject sourceDto = sourceDtoListItems.get(j);
-          String identifier = sourceDto.getIdentifier();
-
-          if (sourceDto.getClassObjects() != null)
-          {
-            for (DataTransferIndex dti : poolDtiListItems)
-            {
-              if (dti.getIdentifier().equals(identifier))
-              {
-                if (exchangeRequest.getReviewed())
-                {
-                  sourcePoolDtiList.remove(dti);
-                  
-                  if (dti.getTransferType() == TransferType.SYNC)
-                  {
-                    sourceDtoListItems.remove(j--); // exclude SYNC DTOs
-                  }
-                  else
-                  {
-                    sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
-                  }
-                }
-                else
-                {
-                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
-                }
-
-                break;
-              }
-            }
-          }
-        }
-      }
-
+      int actualPoolSize = (dxIndicesSize > (i + poolSize)) ? poolSize : dxIndicesSize - i;
+      List<DataTransferIndex> poolDtiItems = dxIndices.subList(i, i + actualPoolSize);
+      List<DataTransferIndex> sourceDtiItems = new ArrayList<DataTransferIndex>();
+      
       DataTransferObjects poolDtos = new DataTransferObjects();
       DataTransferObjectList poolDtosList = new DataTransferObjectList();
       poolDtos.setDataTransferObjectList(poolDtosList);
-
       List<DataTransferObject> poolDtoListItems = new ArrayList<DataTransferObject>();
-      poolDtosList.setItems(poolDtoListItems);
+      poolDtosList.setItems(poolDtoListItems);     
+            
+      //
+      // create deleted DTOs and collect add/change DTIs from source
+      //
+      for (DataTransferIndex poolDtiItem : poolDtiItems)
+      {
+        if (poolDtiItem.getTransferType() == TransferType.DELETE)
+        {
+          DataTransferObject deletedDto = new DataTransferObject();
+          deletedDto.setIdentifier(poolDtiItem.getIdentifier());
+          deletedDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
+          poolDtoListItems.add(deletedDto);
+        }
+        else
+        {
+          sourceDtiItems.add(poolDtiItem);
+        }
+      }
+      
+      //
+      // get add/change DTOs from source endpoint
+      //
+      DataTransferObjects sourceDtos = null;  
+      DxoRequest sourceDtosRequest = new DxoRequest();
+      sourceDtosRequest.setManifest(manifest);            
+      DataTransferIndices sourceDtis = new DataTransferIndices();
+      sourceDtosRequest.setDataTransferIndices(sourceDtis);
+      DataTransferIndexList sourceDtiList = new DataTransferIndexList();
+      sourceDtis.setDataTransferIndexList(sourceDtiList);
+      sourceDtiList.setItems(sourceDtiItems);
 
+      try
+      {
+        manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
+        sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtosRequest);
+        sourceDtosRequest = null;
+      }
+      catch (HttpClientException e)
+      {
+        logger.error(e.getMessage());
+        throw new ServiceProviderException(e.getMessage());
+      }
+
+      //
+      // add add/change DTOs to pool
+      //
       if (sourceDtos != null && sourceDtos.getDataTransferObjectList() != null)
       {
         poolDtoListItems.addAll(sourceDtos.getDataTransferObjectList().getItems());
       }
 
-      // create identifiers for deleted DTOs
-      for (DataTransferIndex deleteDti : deleteDtiList)
-      {
-        DataTransferObject deleteDto = new DataTransferObject();
-        deleteDto.setIdentifier(deleteDti.getIdentifier());
-        deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
-        poolDtoListItems.add(deleteDto);
-      }
-
-      // post add/change/delete DTOs to receiver's endpoint
+      //
+      // send pool DTOs
+      //
       if (poolDtoListItems.size() > 0)
       {
         Response poolResponse = null;
@@ -702,7 +693,7 @@ public class ExchangeProvider
           // free up resources
           poolDtos = null;  
           sourceDtos = null;
-          poolDtiListItems = null;
+          poolDtiItems = null;
         }
         catch (HttpClientException e)
         {
