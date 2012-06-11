@@ -116,13 +116,15 @@ namespace org.iringtools.adapter.datalayer.eb
         //
         // load app settings
         //
-        string appSettingsPath = string.Format("{0}{1}.config", _dataPath, _scope);
-        if (!System.IO.File.Exists(appSettingsPath))
+        string configPath = string.Format("{0}{1}.config", _dataPath, _scope);
+
+        if (!System.IO.File.Exists(configPath))
         {
           _dataPath += "App_Data\\";
-          appSettingsPath = string.Format("{0}{1}.config", _dataPath, _scope);
+          configPath = string.Format("{0}{1}.config", _dataPath, _scope);
         }
-        _settings.AppendSettings(new AppSettingsReader(appSettingsPath));
+        
+        _settings.AppendSettings(new AppSettingsReader(configPath));
 
         _dictionaryPath = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
 
