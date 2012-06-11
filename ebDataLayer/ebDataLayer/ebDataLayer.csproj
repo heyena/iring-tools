@@ -66,10 +66,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseContentLayer.cs" />
     <Compile Include="ebProcessor.cs" />
     <Compile Include="EqlClient.cs" />
     <Compile Include="ebDataLayer.cs" />
     <Compile Include="GenericContentObject.cs" />
+    <Compile Include="IContentLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules.cs" />
     <Compile Include="Configuration.cs" />

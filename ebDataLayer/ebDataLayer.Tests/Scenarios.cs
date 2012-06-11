@@ -5,10 +5,10 @@ using System.Text;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
 
-namespace org.iringtools.adaper.datalayer.test
+namespace org.iringtools.test
 {
   [CollectionDataContract(Namespace = "http://www.iringtools.org/test", Name = "senarios")]
-  public class Scenarios : List<Scenario> {}
+  public class Scenarios : List<Scenario> { }
 
   [DataContract(Namespace = "http://www.iringtools.org/test", Name = "scenario")]
   public class Scenario
@@ -18,7 +18,7 @@ namespace org.iringtools.adaper.datalayer.test
 
     [DataMember(Name = "objectType", Order = 1)]
     public string ObjectType { get; set; }
-    
+
     [DataMember(Name = "identifierPadding", Order = 2)]
     public string IdentifierPadding { get; set; }
 
@@ -27,13 +27,16 @@ namespace org.iringtools.adaper.datalayer.test
 
     [DataMember(Name = "dataFilter", Order = 4)]
     public string DataFilter { get; set; }
+
+    [DataMember(Name = "postable", Order = 5)]
+    public bool Postable { get; set; }
   }
 
   [CollectionDataContract(Namespace = "http://www.iringtools.org/test", Name = "properties", ItemName = "property")]
-  public class Properties : List<Property> {}
-  
+  public class Properties : List<Property> { }
+
   [DataContract(Namespace = "http://www.iringtools.org/test", Name = "property")]
-  public class Property 
+  public class Property
   {
     [DataMember(Name = "name", Order = 0)]
     public string Name { get; set; }

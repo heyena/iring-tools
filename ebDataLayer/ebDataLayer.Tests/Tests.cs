@@ -11,6 +11,7 @@ using System.Data;
 using System.Text;
 using org.iringtools.adapter.datalayer.eb;
 using log4net;
+using org.iringtools.test;
 
 namespace org.iringtools.adaper.datalayer.test
 {
@@ -37,7 +38,7 @@ namespace org.iringtools.adaper.datalayer.test
     }
 
     [Test]
-    public void RunTest()
+    public void TestDataObjects()
     {
       int MAX_ITEMS = 25;
 
@@ -59,14 +60,14 @@ namespace org.iringtools.adaper.datalayer.test
 
         string objectType = scenario.ObjectType;
         string padding = scenario.IdentifierPadding;
-        Properties properties = scenario.Properties;
-        DataFilter dataFilter = (scenario.DataFilter != null)
+        org.iringtools.test.Properties properties = scenario.Properties;
+        DataFilter filter = (scenario.DataFilter != null)
           ? Utility.DeserializeDataContract<DataFilter>(scenario.DataFilter)
           : new DataFilter();
 
         #region Test get count
         Console.WriteLine("Testing get count ...");
-        long count = _dataLayer.GetCount(objectType, dataFilter);
+        long count = _dataLayer.GetCount(objectType, filter);
         Assert.Greater(count, 0);
         #endregion
 
@@ -74,13 +75,13 @@ namespace org.iringtools.adaper.datalayer.test
 
         #region Test get page
         Console.WriteLine("Testing get page ...");
-        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, dataFilter, (int)count, 0);
+        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, (int)count, 0);
         Assert.Greater(dataObjects.Count, 0);
         #endregion
 
         #region Test get identifiers
         Console.WriteLine("Testing get identifiers ...");
-        IList<string> identifiers = _dataLayer.GetIdentifiers(objectType, dataFilter);
+        IList<string> identifiers = _dataLayer.GetIdentifiers(objectType, filter);
         Assert.Greater(identifiers.Count, 0);
         #endregion
 
@@ -142,7 +143,7 @@ namespace org.iringtools.adaper.datalayer.test
         Assert.AreEqual(response.Level, StatusLevel.Success);
 
         // Prepare filter to delete
-        dataFilter = new DataFilter()
+        filter = new DataFilter()
         {
           Expressions = new List<Expression>()
           {
@@ -156,10 +157,33 @@ namespace org.iringtools.adaper.datalayer.test
         };
 
         // Execute delete
-        _dataLayer.Delete(objectType, dataFilter);
+        _dataLayer.Delete(objectType, filter);
         Assert.AreEqual(response.Level, StatusLevel.Success);
         #endregion
       }      
+    }
+
+    //[Test]
+    public void TestContentObjects()
+    {
+      if (typeof(IContentLayer).IsAssignableFrom(_dataLayer.GetType()))
+      {
+        IContentLayer contentLayer = ((IContentLayer)_dataLayer);
+
+        foreach (Scenario scenario in _scenarios)
+        {
+          Console.WriteLine(string.Format("\nExecuting scenario [{0}] ...", scenario.Name));
+
+          string objectType = scenario.ObjectType;
+          DataFilter filter = (scenario.DataFilter != null)
+             ? Utility.DeserializeDataContract<DataFilter>(scenario.DataFilter)
+             : new DataFilter();
+
+          IDictionary<string, string> hashValues = contentLayer.GetHashValues(objectType, filter, 25, 0);
+          IList<IContentObject> contents = contentLayer.GetContents(objectType, filter, 25, 0);
+          //Response response = contentDL.PostContents(contents);
+        }
+      }
     }
   }
 }
