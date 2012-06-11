@@ -301,7 +301,7 @@ namespace org.iringtools.adapter
     }
 
     // Combine existing filter from mapping into the filter came from UI of Exchange Manager
-    public DataFilter CombineFilter(DataFilter filter1, DataFilter filter2)
+    private DataFilter CombineFilter(DataFilter filter1, DataFilter filter2)
     {
       DataFilter filter = new DataFilter();
       filter.Expressions = new List<Expression>();
