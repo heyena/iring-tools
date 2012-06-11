@@ -10,13 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <DeploymentFileSet
-      Include="ebDataLayer\bin\debug\ebDataLayer.dll;
-               ebDataLayer\bin\debug\eB.Common.dll;
-               ebDataLayer\bin\debug\eB.Service.Proxy.dll;
-               ebDataLayer\App_Data\*.*"
+    <BinFileSet
+      Include="ebDataLayer\bin\debug\ebDataLayer.dll">
+    </BinFileSet>
+    
+    <ConfFileSet
+      Include="ebDataLayer\App_Data\*.*"
       Exclude="ebDataLayer\App_Data\DataDictionary.*">
-    </DeploymentFileSet>
+    </ConfFileSet>
     
     <DeploymentPackage Include="*.*" Exclude="*.zip">
       <Options>a -tzip -y -r</Options>
@@ -45,9 +46,15 @@
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
     
     <Message Text="Creating deployment ..." />
-    <MakeDir Directories="$(DeploymentDir)"/>
-    <Copy SourceFiles="@(DeploymentFileSet)"
-          DestinationFiles="@(DeploymentFileSet->'$(PackageDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    
+    <Copy SourceFiles="@(BinFileSet)"
+          DestinationFiles="@(BinFileSet->'$(PackageDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="C:\Program Files (x86)\Bentley\eB\Shared\eB.Common.dll" DestinationFolder="$(PackageDir)\bin" />
+    <Copy SourceFiles="C:\Program Files (x86)\Bentley\eB\Shared\eB.Service.Proxy.dll" DestinationFolder="$(PackageDir)\bin" />
+    
+    <Copy SourceFiles="@(ConfFileSet)"
+          DestinationFiles="@(ConfFileSet->'$(PackageDir)\conf\%(RecursiveDir)%(Filename)%(Extension)')" />
+          
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
   </Target>
 
