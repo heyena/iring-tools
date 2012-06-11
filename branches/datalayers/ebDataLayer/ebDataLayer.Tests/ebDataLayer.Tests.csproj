@@ -69,7 +69,9 @@
     <Compile Include="Tests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scenarios.xml" />
+    <Content Include="Scenarios.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ebDataLayer\ebDataLayer.csproj">

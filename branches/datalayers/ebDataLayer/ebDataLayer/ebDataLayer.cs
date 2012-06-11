@@ -19,8 +19,9 @@ using StaticDust.Configuration;
 
 namespace org.iringtools.adapter.datalayer.eb
 {
-  public class ebDataLayer : BaseDataLayer
+  public class ebDataLayer : BaseContentLayer
   {
+    #region data members
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ebDataLayer));
 
     private readonly string TAG_METADATA_SQL = @"
@@ -95,7 +96,9 @@ namespace org.iringtools.adapter.datalayer.eb
     private Session _session = null;
     private Dictionary<string, Configuration> _configs = null;
     private Rules _rules = null;
+    #endregion
 
+    #region constructor
     [Inject]
     public ebDataLayer(AdapterSettings settings)
       : base(settings)
@@ -111,7 +114,7 @@ namespace org.iringtools.adapter.datalayer.eb
         _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
         
         //
-        // Load AppSettings
+        // load app settings
         //
         string appSettingsPath = string.Format("{0}{1}.config", _dataPath, _scope);
         if (!System.IO.File.Exists(appSettingsPath))
@@ -140,7 +143,7 @@ namespace org.iringtools.adapter.datalayer.eb
         string ruleFile = _dataPath + "Rules_" + _communityName + ".xml";
 
         //
-        // Load configuration files
+        // load configurations
         //
         _configs = new Dictionary<string, Configuration>(StringComparer.OrdinalIgnoreCase);      
   
@@ -154,7 +157,7 @@ namespace org.iringtools.adapter.datalayer.eb
           }
         }
 
-        // Load rule file
+        // load rules
         _rules = Utility.Read<Rules>(ruleFile, false);
       }
       catch (Exception e)
@@ -162,8 +165,9 @@ namespace org.iringtools.adapter.datalayer.eb
         _logger.Error("Error initializing ebDataLayer: " + e.Message);
       }
     }
+    #endregion
 
-    #region interface implementation methods
+    #region IDataLayer implementation methods
     public override DataDictionary GetDictionary()
     {
       if (_dictionary != null)
@@ -630,9 +634,10 @@ namespace org.iringtools.adapter.datalayer.eb
 
       return response;
     }
+    #endregion
 
-    //TODO: add to interface and override
-    public IDictionary<string, string> GetHashValues(string objectType, IList<string> identifiers)
+    #region IContentLayer implementation methods
+    public override IDictionary<string, string> GetHashValues(string objectType, IList<string> identifiers)
     {
       try
       {
@@ -647,8 +652,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
     }
 
-    //TODO: add to interface and override
-    public IDictionary<string, string> GetHashValues(string objectType, DataFilter filter, int pageSize, int startIndex)
+    public override IDictionary<string, string> GetHashValues(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       try
       {
@@ -663,8 +667,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
     }
 
-    //TODO: add to interface and override
-    public IList<IContentObject> GetContents(string objectType, IList<string> identifiers)
+    public override IList<IContentObject> GetContents(string objectType, IList<string> identifiers)
     {
       try
       {
@@ -679,8 +682,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
     }
 
-    //TODO: add to interface and override
-    public IList<IContentObject> GetContents(string objectType, DataFilter filter, int pageSize, int startIndex)
+    public override IList<IContentObject> GetContents(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       try
       {
@@ -695,8 +697,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
     }
 
-    //TODO: add to interface and override
-    public Response PostContents(IList<IContentObject> contentObjects)
+    public override Response PostContents(IList<IContentObject> contentObjects)
     {
       Response response = new Response() { Level = StatusLevel.Success };
 
