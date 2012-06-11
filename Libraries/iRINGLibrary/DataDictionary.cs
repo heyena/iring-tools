@@ -55,6 +55,9 @@ namespace org.iringtools.library
     [DataMember(Order = 4)]
     public string dataVersion { get; set; }
 
+    [DataMember(Order = 5, EmitDefaultValue = false)]
+    public DataFilter dataFilter { get; set; }
+
     public static bool IsNumeric(DataType dataType)
     {
       bool isNumeric = false;
