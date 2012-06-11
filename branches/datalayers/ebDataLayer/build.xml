@@ -49,9 +49,6 @@
     
     <Copy SourceFiles="@(BinFileSet)"
           DestinationFiles="@(BinFileSet->'$(PackageDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="C:\Program Files (x86)\Bentley\eB\Shared\eB.Common.dll" DestinationFolder="$(PackageDir)\bin" />
-    <Copy SourceFiles="C:\Program Files (x86)\Bentley\eB\Shared\eB.Service.Proxy.dll" DestinationFolder="$(PackageDir)\bin" />
-    
     <Copy SourceFiles="@(ConfFileSet)"
           DestinationFiles="@(ConfFileSet->'$(PackageDir)\conf\%(RecursiveDir)%(Filename)%(Extension)')" />
           
