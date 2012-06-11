@@ -296,7 +296,7 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-    public DataFilter CombineFilter(DataFilter filter1, DataFilter filter2)
+    private DataFilter CombineFilter(DataFilter filter1, DataFilter filter2)
     {
       DataFilter filter = new DataFilter();  
       filter.Expressions = new List<Expression>();

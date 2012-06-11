@@ -138,6 +138,10 @@ namespace org.iringtools.nhibernate
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
 
+        DatabaseDictionary existDBDictionary = GetDictionary(projectName, applicationName);
+
+        databaseDictionary.dataFilter = existDBDictionary.dataFilter;
+
         NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
         response.Append(Generate(projectName, applicationName));
 
