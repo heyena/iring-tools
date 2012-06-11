@@ -232,7 +232,9 @@ namespace org.iringtools.services
       {
         format = MapContentType(format);
 
-        DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
+        DataFilter uiFilter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
+        DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+        DataFilter filter = CombineFilter(uiFilter, dictionary.dataFilter);
 
         bool fullIndex = false;
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
@@ -500,6 +502,35 @@ namespace org.iringtools.services
     #endregion
 
     #region Private Methods
+    // Combine existing filter from mapping into the filter came from UI of Exchange Manager
+    private DataFilter CombineFilter(DataFilter filter1, DataFilter filter2)
+    {
+      DataFilter filter = new DataFilter();
+      filter.Expressions = new List<Expression>();
+      filter.OrderExpressions = new List<OrderExpression>();
+
+      if (filter1.Expressions != null)
+        foreach (Expression expression in filter1.Expressions)
+          filter.Expressions.Add(expression);
+
+      if (filter1.OrderExpressions != null)
+        foreach (OrderExpression orderExpression in filter1.OrderExpressions)
+          filter.OrderExpressions.Add(orderExpression);
+
+      if (filter2 != null)
+      {
+        if (filter2.Expressions != null)
+          foreach (Expression expression in filter2.Expressions)
+            filter.Expressions.Add(expression);
+
+        if (filter2.OrderExpressions != null)
+          foreach (OrderExpression orderExpression in filter2.OrderExpressions)
+            filter.OrderExpressions.Add(orderExpression);
+      }
+
+      return filter;
+    }
+
     private string MapContentType(string format)
     {
       IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
