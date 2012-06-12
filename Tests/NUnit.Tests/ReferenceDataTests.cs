@@ -54,7 +54,7 @@ namespace NUnit.Tests
         [Test]
         public void GetRepositories()
         {
-            Repositories repositories = _refdataProvider.GetRepositories();
+            Repositories repositories = _refdataProvider.GetFederation().Repositories;
             Assert.AreEqual(4, repositories.Count);
         }
 
