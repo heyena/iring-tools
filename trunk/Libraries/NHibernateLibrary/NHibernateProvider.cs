@@ -130,7 +130,7 @@ namespace org.iringtools.nhibernate
     {
       Response response = new Response();
       Status status = new Status();
-
+      DataObject tempDataObject = null;
       response.StatusList.Add(status);
 
       try
@@ -138,7 +138,13 @@ namespace org.iringtools.nhibernate
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
         DatabaseDictionary existDBDictionary = GetDictionary(projectName, applicationName);
-        databaseDictionary.dataFilter = existDBDictionary.dataFilter;
+        
+        foreach (DataObject dataObject in databaseDictionary.dataObjects)
+        {
+          tempDataObject = existDBDictionary.getTableObject(dataObject.tableName);
+          dataObject.dataFilter = tempDataObject.dataFilter;
+        }
+
         NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
         response.Append(Generate(projectName, applicationName));
 

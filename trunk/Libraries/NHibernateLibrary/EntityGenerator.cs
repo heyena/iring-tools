@@ -141,8 +141,7 @@ namespace org.iringtools.nhibernate
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
           dataDictionary.dataVersion = dbSchema.dataVersion;
           dataDictionary.enableSearch = dbSchema.enableSearch;
-          dataDictionary.enableSummary = dbSchema.enableSummary;
-          dataDictionary.dataFilter = dbSchema.dataFilter;
+          dataDictionary.enableSummary = dbSchema.enableSummary;          
 
           Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion

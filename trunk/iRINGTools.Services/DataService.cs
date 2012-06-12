@@ -217,9 +217,8 @@ namespace org.iringtools.services
       try
       {
         format = MapContentType(format);
-        DataFilter uiFilter = FormatIncomingMessage<DataFilter>(stream, format, true);
-        DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
-        DataFilter filter = CombineFilter(uiFilter, dictionary.dataFilter);
+        DataFilter filter = FormatIncomingMessage<DataFilter>(stream, format, true);
+        
         bool fullIndex = false;
 
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
