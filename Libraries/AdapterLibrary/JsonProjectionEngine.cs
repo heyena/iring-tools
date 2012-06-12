@@ -80,7 +80,7 @@ namespace org.iringtools.adapter.projection
                   string valueStr = Convert.ToString(value);
 
                   if (dataProperty.dataType == DataType.DateTime)
-                    value = Utility.ToXsdDateTime(valueStr);
+                      valueStr = Utility.ToXsdDateTime(valueStr);
 
                   if (!dataProperty.isHidden)
                   {

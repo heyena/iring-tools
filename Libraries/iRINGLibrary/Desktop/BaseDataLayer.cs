@@ -394,8 +394,17 @@ namespace org.iringtools.library
       int i = 0;
       foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
       {
-        identifierParts[i] = dataObject.GetPropertyValue(keyProperty.keyPropertyName).ToString();
-        i++;
+          object value = dataObject.GetPropertyValue(keyProperty.keyPropertyName);
+          if (value != null)
+          {
+              identifierParts[i] = value.ToString();
+          }
+          else
+          {
+              identifierParts[i] = String.Empty;
+          }
+
+          i++;
       }
 
       return String.Join(_dataObjectDefinition.keyDelimeter, identifierParts);

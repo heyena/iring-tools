@@ -185,4 +185,17 @@ namespace org.iringtools.library
     [EnumMember]
     Error
   }
+
+  public static class ResponseExtensions
+  {
+      public static Response PrepareResponse(this Response response, string baseGraphUri)
+      {
+          foreach (Status s in response.StatusList)
+          {
+              s.Identifier = baseGraphUri + s.Identifier;
+          }
+
+          return response;
+      }
+  }
 }

@@ -2764,6 +2764,13 @@ namespace org.iringtools.adapter
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Success;
+
+        string baseUri = _settings["GraphBaseUri"] +
+                         _settings["ApplicationName"] + "/" +
+                         _settings["ProjectName"] + "/" +
+                         graphName + "/";
+
+        response.PrepareResponse(baseUri);
       }
       catch (Exception ex)
       {
