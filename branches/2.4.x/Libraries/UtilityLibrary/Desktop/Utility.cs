@@ -44,6 +44,8 @@ using System.Data.SqlClient;
 using System.Runtime.Serialization.Json;
 using System.Web;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace org.iringtools.utility
 {
@@ -727,9 +729,11 @@ namespace org.iringtools.utility
         {
             if (!useDataContractSerializer)
             {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                serializer.MaxJsonLength = int.MaxValue;
-                jsonString = serializer.Serialize(graph);
+                //JavaScriptSerializer serializer = new JavaScriptSerializer();
+                //serializer.MaxJsonLength = int.MaxValue;
+                //jsonString = serializer.Serialize(graph);
+
+                jsonString = JsonConvert.SerializeObject(graph, new IsoDateTimeConverter());
             }
             else
             {

@@ -666,6 +666,26 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetSuperClassJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>rdsUri</name>
+          <type>Uri</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSuperClassJORD.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetPart8Class</key>
     <query>
       <bindings>

@@ -440,8 +440,8 @@ namespace org.iringtools.refdata
 
         List<Specialization> specializations = new List<Specialization>();
 
-        Query queryRdsWip = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclass").Query;
-        Query queryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclassJORD").Query;
+        Query queryRdsWip = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
+        Query queryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassJORD").Query;
         Query queryPart8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
 
         foreach (Repository repository in _repositories)

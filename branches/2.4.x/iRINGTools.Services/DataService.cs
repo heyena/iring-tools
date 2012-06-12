@@ -345,7 +345,7 @@ namespace org.iringtools.services
 
         Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
 
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
       }
     }
 
@@ -353,6 +353,8 @@ namespace org.iringtools.services
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
     public void UpdateItem(string project, string app, string graph, string id, string format, Stream stream)
     {
+      _logger.Debug("I'm in!");
+
       format = MapContentType(format);
 
       Response response = new Response();
@@ -364,10 +366,12 @@ namespace org.iringtools.services
       {
         XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
+        _logger.Debug("Deserialized!");
+
         response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
       }
 
-      _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
@@ -386,7 +390,7 @@ namespace org.iringtools.services
 
         Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
 
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
       }
     }
 
@@ -401,7 +405,7 @@ namespace org.iringtools.services
 
           Response response = _adapterProvider.DeleteIndividual(project, app, graph, id, format);
 
-          _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+          _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
 
       }
       catch (Exception ex)
