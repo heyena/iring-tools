@@ -128,6 +128,72 @@ namespace org.iringtools.library
       }
     }
 
+    public void AddFilter(DataFilter filter1)
+    {
+      if (this.Expressions == null)
+        this.Expressions = new List<Expression>();
+
+      if (this.OrderExpressions == null)
+        this.OrderExpressions = new List<OrderExpression>();
+
+      if (filter1 != null)
+      {
+        if (filter1.Expressions != null)
+          foreach (Expression expression in filter1.Expressions)
+          {
+            if (!this.Has(expression))
+            this.Expressions.Add(expression);
+          }
+
+        if (filter1.OrderExpressions != null)
+          foreach (OrderExpression orderExpression in filter1.OrderExpressions)
+          {
+            if (!this.Has(orderExpression))
+              this.OrderExpressions.Add(orderExpression);
+          }
+      }
+    }
+
+    private bool Has(OrderExpression orderExpression)
+    {
+      foreach (OrderExpression item in this.OrderExpressions)
+      {
+        if (item.PropertyName.ToLower() == orderExpression.PropertyName.ToLower() &&
+            item.SortOrder == orderExpression.SortOrder)
+          return true;        
+      }
+      return false;
+    }
+
+    private bool Has(Expression expression)
+    {
+      bool ifHas = false;
+      bool findAll = false;   //make sure all values are exitsting
+
+      foreach (Expression item in this.Expressions)
+      {
+        if (item.PropertyName.ToLower() == expression.PropertyName.ToLower() && 
+            item.RelationalOperator == expression.RelationalOperator)
+        {
+          foreach (string value in item.Values)
+          {
+            findAll = false;
+            foreach (string expressionValue in expression.Values)
+            {
+              if (value.ToLower() == expressionValue.ToLower())
+              {
+                ifHas = true;
+                findAll = true;
+              }
+            }
+            if (!findAll)
+              ifHas = false;
+          }
+        }
+      }
+      return ifHas;
+    }
+
     public string ToLinqExpression<T>(string objectVariable)
     {
       if (this == null || this.Expressions.Count == 0)

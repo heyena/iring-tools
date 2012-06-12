@@ -460,9 +460,7 @@ namespace org.iringtools.mapping
 
     private org.iringtools.mapping.ValueListMaps valueListMapsField;
 
-    private string versionField;
-
-    private DataFilter dataFilterField;
+    private string versionField;    
 
     public Mapping()
     {
@@ -509,17 +507,18 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
-    public DataFilter dataFilter
+    public org.iringtools.mapping.GraphMap FindGraphMap(string name)
     {
-      get
+      org.iringtools.mapping.GraphMap graph = null;
+      foreach (org.iringtools.mapping.GraphMap item in this.graphMaps)
       {
-        return this.dataFilterField;
+        if (item.name.ToLower() == name.ToLower())
+        {
+          graph = item;
+          break;
+        }
       }
-      set
-      {
-        this.dataFilterField = value;
-      }
+      return graph;
     }
   }  
 
@@ -541,6 +540,8 @@ namespace org.iringtools.mapping
     private org.iringtools.mapping.ClassTemplateMaps classTemplateMapsField;
 
     private string dataObjectNameField;
+
+    private DataFilter dataFilterField;
 
     public GraphMap()
     {
@@ -583,6 +584,19 @@ namespace org.iringtools.mapping
       set
       {
         this.dataObjectNameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+    public DataFilter dataFilter
+    {
+      get
+      {
+        return this.dataFilterField;
+      }
+      set
+      {
+        this.dataFilterField = value;
       }
     }
   }
