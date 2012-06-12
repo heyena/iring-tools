@@ -13,7 +13,6 @@ import java.util.TreeMap;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.cxf.jaxws.javaee.XsdIntegerType;
 import org.apache.log4j.Logger;
 import org.ids_adi.ns.qxf.model.ClassDefinition;
 import org.ids_adi.ns.qxf.model.Classification;
@@ -49,26 +48,21 @@ import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.EntityComparator;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.utility.IOUtils;
 import org.iringtools.utility.JaxbUtils;
 import org.iringtools.utility.NamespaceMapper;
-import org.iringtools.utility.NetworkCredentials;
-import org.iringtools.utility.ReferenceObject;
 import org.w3._2005.sparql.results.Binding;
 import org.w3._2005.sparql.results.Result;
 import org.w3._2005.sparql.results.Results;
 import org.w3._2005.sparql.results.Sparql;
 
-import com.hp.hpl.jena.graph.TripleIterator;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.shared.PrefixMapping;
-
-
 
 public class RefDataProvider
 {
@@ -85,17 +79,16 @@ public class RefDataProvider
   private StringBuilder prefix = new StringBuilder();
   private StringBuilder sparqlBuilder = new StringBuilder();
   private static final Logger logger = Logger.getLogger(RefDataProvider.class);
-  private String qName=null;
+  private String qName = null;
   private final String rdfssubClassOf = "rdfs:subClassOf";
   private final String rdfType = "rdf:type";
-  
+
   private StringBuilder sparqlStr = new StringBuilder();
 
+  // Resource dsubj ,isubj, subj;
+  // Property dpred, ipred, pred;
+  // RDFNode dobj, iobj, obj;
 
-//  Resource dsubj ,isubj, subj; 
-//  Property dpred, ipred, pred;
-//  RDFNode dobj, iobj, obj;
-  
   public RefDataProvider(Map<String, Object> settings)
   {
     try
@@ -609,7 +602,7 @@ public class RefDataProvider
             }
             else
             {
-              names = getLabel(uri).getLabel().split("@",-1);
+              names = getLabel(uri).getLabel().split("@", -1);
               label = names[0];
               if (names.length == 1)
               {
@@ -659,7 +652,7 @@ public class RefDataProvider
             }
             else
             {
-            	label = getLabel(uri).getLabel();
+              label = getLabel(uri).getLabel();
             }
 
             specialization.setLabel(label);
@@ -771,7 +764,7 @@ public class RefDataProvider
       }
       else
       {
-    	names = getLabel(uri).getLabel().split("@");
+        names = getLabel(uri).getLabel().split("@");
         label = names[0];
         if (names.length == 1)
           lang = defaultLanguage;
@@ -815,18 +808,18 @@ public class RefDataProvider
 
   public final org.iringtools.refdata.response.Response getClassMembers(String Id)
   {
-	  org.iringtools.refdata.response.Response membersResult = new org.iringtools.refdata.response.Response();
-	    Entities entities = new Entities();
-	    membersResult.setEntities(entities);
-	    List<Entity> entityList = new ArrayList<Entity>();
-	    entities.setItems(entityList);
+    org.iringtools.refdata.response.Response membersResult = new org.iringtools.refdata.response.Response();
+    Entities entities = new Entities();
+    membersResult.setEntities(entities);
+    List<Entity> entityList = new ArrayList<Entity>();
+    entities.setItems(entityList);
     try
     {
       String sparql = "";
       String language = "";
       String[] names = null;
 
-      Query getMembers =  getQuery("GetMembers");
+      Query getMembers = getQuery("GetMembers");
       QueryBindings memberBindings = getMembers.getBindings();
       sparql = readSparql(getMembers.getFileName());
       sparql = sparql.replace("param1", Id);
@@ -840,21 +833,23 @@ public class RefDataProvider
         for (Hashtable<String, String> result : results)
         {
           names = result.get("label").split("@");
-          if (names.length == 1) {
+          if (names.length == 1)
+          {
             language = defaultLanguage;
           }
-          else {
+          else
+          {
             language = names[names.length - 1];
           }
           Entity resultEntity = new Entity();
-            resultEntity.setUri(result.get("uri"));
-            resultEntity.setLabel(names[0]);
-            resultEntity.setLang(language);
-            resultEntity.setRepository(repository.getName());
-          
+          resultEntity.setUri(result.get("uri"));
+          resultEntity.setLabel(names[0]);
+          resultEntity.setLang(language);
+          resultEntity.setRepository(repository.getName());
+
           entityList.add(resultEntity);
-         // Utility.SearchAndInsert(membersResult, resultEntity, Entity.sortAscending());
-        } //queryResult.Add(resultEntity);
+          // Utility.SearchAndInsert(membersResult, resultEntity, Entity.sortAscending());
+        } // queryResult.Add(resultEntity);
         membersResult.setTotal(entityList.size());
       }
     }
@@ -865,7 +860,6 @@ public class RefDataProvider
     return membersResult;
   }
 
-  
   public final Qmxf getTemplate(String id, String templateType, Repository rep) throws HttpClientException, Exception
   {
     Qmxf qmxf = new Qmxf();
@@ -1283,7 +1277,7 @@ public class RefDataProvider
 
               if (nameValue == null)
               {
-            	  nameValue = getLabel(uri).getLabel();
+                nameValue = getLabel(uri).getLabel();
               }
               names = nameValue.split("@", -1);
 
@@ -1303,7 +1297,7 @@ public class RefDataProvider
             }
             else
             {
-            	String nameValue = getLabel(uri).getLabel();
+              String nameValue = getLabel(uri).getLabel();
 
               if (nameValue.equals(""))
               {
@@ -1362,24 +1356,19 @@ public class RefDataProvider
           for (Hashtable<String, String> result : part8RolesBindingResults)
           {
             if (result.containsKey("comment"))
-            {
-            }
+            {}
 
             if (result.containsKey("type"))
-            {
-            }
+            {}
 
             if (result.containsKey("label"))
-            {
-            }
+            {}
 
             if (result.containsKey("index"))
-            {
-            }
+            {}
 
             if (result.containsKey("role"))
-            {
-            }
+            {}
             RoleQualification roleQualification = new RoleQualification();
           }
           break;
@@ -1431,16 +1420,14 @@ public class RefDataProvider
       throw ex;
     }
   }
-  
 
   public Response postTemplate(Qmxf qmxf)
   {
 
-	//TODO - to be initialized
-	Model delete = ModelFactory.createDefaultModel();
+    // TODO - to be initialized
+    Model delete = ModelFactory.createDefaultModel();
     Model insert = ModelFactory.createDefaultModel();
-      
-      
+
     Response response = new Response();
     response.setLevel(Level.SUCCESS);
     boolean qn = false;
@@ -1452,7 +1439,7 @@ public class RefDataProvider
       if (repository == null || repository.isIsReadOnly())
       {
         Status status = new Status();
-        //status.Level = StatusLevel.Error;
+        // status.Level = StatusLevel.Error;
 
         if (repository == null)
           status.getMessages().getItems().add("Repository not found!");
@@ -1463,18 +1450,18 @@ public class RefDataProvider
       }
       else
       {
-        String registry = (_useExampleRegistryBase) ? _settings.get("ExampleRegistryBase").toString() : _settings
-            .get("ClassRegistryBase").toString();
+        String registry = (_useExampleRegistryBase) ? _settings.get("ExampleRegistryBase").toString() : _settings.get(
+            "ClassRegistryBase").toString();
         StringBuilder sparqlDelete = new StringBuilder();
-        ///////////////////////////////////////////////////////////////////////////////
-        /// Base templates do have the following properties
-        /// 1) Base class of owl:Thing
-        /// 2) rdfs:type = p8:TemplateDescription
-        /// 3) rdfs:label name of template
-        /// 4) optional rdfs:comment
-        /// 5) p8:valNumberOfRoles
-        /// 6) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self 
-        ///////////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////////
+        // / Base templates do have the following properties
+        // / 1) Base class of owl:Thing
+        // / 2) rdfs:type = p8:TemplateDescription
+        // / 3) rdfs:label name of template
+        // / 4) optional rdfs:comment
+        // / 5) p8:valNumberOfRoles
+        // / 6) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self
+        // /////////////////////////////////////////////////////////////////////////////
 
         // region Template Definitions
         if (qmxf.getTemplateDefinitions().size() > 0)
@@ -1486,7 +1473,7 @@ public class RefDataProvider
             String identifier = null;
             String generatedId = null;
             int index = 1;
-            
+
             if (newTemplateDefinition.getId() != null && newTemplateDefinition.getId() != "")
             {
               identifier = getIdFromURI(newTemplateDefinition.getId());
@@ -1507,7 +1494,7 @@ public class RefDataProvider
                 generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), templateName);
               identifier = getIdFromURI(generatedId);
             }
-            
+
             // region Form Delete/Insert SPARQL
             if (existingQmxf.getTemplateDefinitions().size() > 0)
             {
@@ -1524,13 +1511,13 @@ public class RefDataProvider
                       existingName = tempName;
                     }
                   }
-                  if(!existingName.getValue().equalsIgnoreCase(existingName.getValue()))
+                  if (!existingName.getValue().equalsIgnoreCase(existingName.getValue()))
                   {
-                	  delete = GenerateName(delete, existingName, identifier, existingTemplate);
-                	  insert = GenerateName(insert, existingName, identifier, existingTemplate);
+                    delete = GenerateName(delete, existingName, identifier, existingTemplate);
+                    insert = GenerateName(insert, existingName, identifier, existingTemplate);
                   }
-                  }
-                
+                }
+
                 // append changing descriptions to each block
                 for (Description description : newTemplateDefinition.getDescriptions())
                 {
@@ -1542,172 +1529,177 @@ public class RefDataProvider
                       existingDescription = tempName;
                     }
                   }
-                  if(description!=null && existingDescription!=null){
-                	  if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
-                      {
-                		  delete = GenerateDescription(delete, existingDescription, identifier);
-                		  insert = GenerateDescription(insert, description, identifier);
-                      }
+                  if (description != null && existingDescription != null)
+                  {
+                    if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
+                    {
+                      delete = GenerateDescription(delete, existingDescription, identifier);
+                      insert = GenerateDescription(insert, description, identifier);
                     }
+                  }
                   else if (description != null && existingDescription == null)
                   {
-                	  insert = GenerateDescription(insert, description, identifier);
+                    insert = GenerateDescription(insert, description, identifier);
                   }
                 }
 
                 // role count
-                index=1;
-                ///  BaseTemplate roles do have the following properties
-                /// 1) baseclass of owl:Thing
-                /// 2) rdf:type = p8:TemplateRoleDescription
-                /// 3) rdfs:label = rolename
-                /// 4) p8:valRoleIndex
-                /// 5) p8:hasRoleFillerType = qualifified class
-                /// 6) p8:hasTemplate = template ID
-                /// 7) p8:hasRole = role ID --- again probably should not use this --- pointer to self
+                index = 1;
+                // / BaseTemplate roles do have the following properties
+                // / 1) baseclass of owl:Thing
+                // / 2) rdf:type = p8:TemplateRoleDescription
+                // / 3) rdfs:label = rolename
+                // / 4) p8:valRoleIndex
+                // / 5) p8:hasRoleFillerType = qualifified class
+                // / 6) p8:hasTemplate = template ID
+                // / 7) p8:hasRole = role ID --- again probably should not use this --- pointer to self
                 if (existingTemplate.getRoleDefinitions().size() < newTemplateDefinition.getRoleDefinitions().size())
                 {
-                for (RoleDefinition role : newTemplateDefinition.getRoleDefinitions())
-                {
-                	
-                  String roleName = role.getNames().get(0).getValue();
-                  String roleIdentifier = role.getId();
-                  
-                  if (roleIdentifier==null || roleIdentifier=="")
+                  for (RoleDefinition role : newTemplateDefinition.getRoleDefinitions())
                   {
-                    if (_useExampleRegistryBase)
-                      generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), roleName);
-                    else
-                      generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), roleName);
-                    roleIdentifier = generatedId;
-                  }
-                  
-                  RoleDefinition existingRole = null;
-                  String tempRoleIdentifier = getIdFromURI(roleIdentifier);
-                  for (RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions())
-                  {
-                    if (role.getId().equalsIgnoreCase(tempRoleDef.getId()))
+
+                    String roleName = role.getNames().get(0).getValue();
+                    String roleIdentifier = role.getId();
+
+                    if (roleIdentifier == null || roleIdentifier == "")
                     {
-                      existingRole = tempRoleDef;
+                      if (_useExampleRegistryBase)
+                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), roleName);
+                      else
+                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), roleName);
+                      roleIdentifier = generatedId;
                     }
-                  }
-                  if (existingRole == null) /// need to add it
-                  {
-                    for (Name name : role.getNames())
+
+                    RoleDefinition existingRole = null;
+                    String tempRoleIdentifier = getIdFromURI(roleIdentifier);
+                    for (RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions())
                     {
-                    	insert = GenerateName(insert, name, tempRoleIdentifier, role);
+                      if (role.getId().equalsIgnoreCase(tempRoleDef.getId()))
+                      {
+                        existingRole = tempRoleDef;
+                      }
                     }
-                    if (role.getDescriptions()!= null)
+                    if (existingRole == null) // / need to add it
                     {
-                    	insert = GenerateDescription(insert, role.getDescriptions().get(0), tempRoleIdentifier);
-                    }
-                    if (repository.getRepositoryType() == RepositoryType.PART_8)
-                    {
-                    	insert = GenerateTypesPart8(insert, tempRoleIdentifier, identifier, role);
-                    	insert = GenerateRoleIndexPart8(insert, tempRoleIdentifier, index, role);
-                    }
-                    else
-                    {
-                    	insert = GenerateTypes(insert, tempRoleIdentifier, identifier, role);
+                      for (Name name : role.getNames())
+                      {
+                        insert = GenerateName(insert, name, tempRoleIdentifier, role);
+                      }
+                      if (role.getDescriptions() != null)
+                      {
+                        insert = GenerateDescription(insert, role.getDescriptions().get(0), tempRoleIdentifier);
+                      }
+                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      {
+                        insert = GenerateTypesPart8(insert, tempRoleIdentifier, identifier, role);
+                        insert = GenerateRoleIndexPart8(insert, tempRoleIdentifier, index, role);
+                      }
+                      else
+                      {
+                        insert = GenerateTypes(insert, tempRoleIdentifier, identifier, role);
                         insert = GenerateRoleIndex(insert, tempRoleIdentifier, index);
+                      }
                     }
-                  }
-                  if (role.getRange() != null)
-                  {
-                    qName = _nsmap.reduceToQName(role.getRange());
-                    if (repository.getRepositoryType() == RepositoryType.PART_8)
+                    if (role.getRange() != null)
                     {
-                    	insert = GenerateRoleFillerType(insert, tempRoleIdentifier, qName.toString());
-                    }
-                    else
-                    {
-                    	insert = GenerateRoleDomain(insert, tempRoleIdentifier, identifier);
+                      qName = _nsmap.reduceToQName(role.getRange());
+                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      {
+                        insert = GenerateRoleFillerType(insert, tempRoleIdentifier, qName.toString());
+                      }
+                      else
+                      {
+                        insert = GenerateRoleDomain(insert, tempRoleIdentifier, identifier);
+                      }
                     }
                   }
                 }
-                }else if (existingTemplate.getRoleDefinitions().size() > newTemplateDefinition.getRoleDefinitions().size()) ///Role(s) removed
+                else if (existingTemplate.getRoleDefinitions().size() > newTemplateDefinition.getRoleDefinitions()
+                    .size()) // /Role(s) removed
+                {
+                  for (RoleDefinition role : existingTemplate.getRoleDefinitions())
                   {
-                    for (RoleDefinition role : existingTemplate.getRoleDefinitions())
+                    String tempRoleID = getIdFromURI(role.getId());
+                    // RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
+                    RoleDefinition existingRole = null;
+                    for (RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions())
                     {
-                      String tempRoleID = getIdFromURI(role.getId());
-                      //RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
-                      RoleDefinition existingRole = null;
-                      for (RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions())
+                      if (role.getId().equalsIgnoreCase(tempRoleDef.getId()))
                       {
-                        if (role.getId().equalsIgnoreCase(tempRoleDef.getId()))
-                        {
-                          existingRole = tempRoleDef;
-                        }
+                        existingRole = tempRoleDef;
                       }
-                      if (existingRole == null) /// need to add it
+                    }
+                    if (existingRole == null) // / need to add it
+                    {
+                      for (Name name : role.getNames())
                       {
-                        for (Name name : role.getNames())
-                        {
-                        	delete = GenerateName(delete, name, tempRoleID, role);
-                        }
-                        if (role.getDescriptions()!= null)
-                        {
-                        	delete = GenerateDescription(delete, role.getDescriptions().get(0), tempRoleID);
-                        }
-                        if (repository.getRepositoryType() == RepositoryType.PART_8)
-                        {
-                        	delete = GenerateTypesPart8(delete, tempRoleID, identifier, role);
-                        	delete = GenerateRoleIndexPart8(delete, tempRoleID, index, role);
-                        }
-                        else
-                        {
-                        	delete = GenerateTypes(delete, tempRoleID, identifier, role);
-                        	delete = GenerateRoleIndex(delete, tempRoleID, index);
-                        }
+                        delete = GenerateName(delete, name, tempRoleID, role);
                       }
-                      if (role.getRange() != null)
+                      if (role.getDescriptions() != null)
                       {
-                        qName = _nsmap.reduceToQName(role.getRange());
-                        if (repository.getRepositoryType() == RepositoryType.PART_8)
-                        {
-                        	delete = GenerateRoleFillerType(delete, tempRoleID, qName.toString());
-                        }
-                        else
-                        {
-                        	delete = GenerateRoleDomain(delete, tempRoleID, identifier);
-                        }
+                        delete = GenerateDescription(delete, role.getDescriptions().get(0), tempRoleID);
+                      }
+                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      {
+                        delete = GenerateTypesPart8(delete, tempRoleID, identifier, role);
+                        delete = GenerateRoleIndexPart8(delete, tempRoleID, index, role);
+                      }
+                      else
+                      {
+                        delete = GenerateTypes(delete, tempRoleID, identifier, role);
+                        delete = GenerateRoleIndex(delete, tempRoleID, index);
+                      }
+                    }
+                    if (role.getRange() != null)
+                    {
+                      qName = _nsmap.reduceToQName(role.getRange());
+                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      {
+                        delete = GenerateRoleFillerType(delete, tempRoleID, qName.toString());
+                      }
+                      else
+                      {
+                        delete = GenerateRoleDomain(delete, tempRoleID, identifier);
                       }
                     }
                   }
+                }
               }
               if (delete.isEmpty() && insert.isEmpty())
-                {
-                  String errMsg = "No changes made to template [" + templateName + "]";
-                  Status status = new Status();
-                  response.setLevel(Level.WARNING);
-                  status.getMessages().getItems().add(errMsg);
-                  //response.Append(status);
-                }
+              {
+                String errMsg = "No changes made to template [" + templateName + "]";
+                Status status = new Status();
+                response.setLevel(Level.WARNING);
+                status.getMessages().getItems().add(errMsg);
+                // response.Append(status);
               }
-            //endregion Form Delete/Insert
-            //region Form Insert SPARQL
+            }
+            // endregion Form Delete/Insert
+            // region Form Insert SPARQL
             if (insert.isEmpty() && delete.isEmpty())
             {
               if (repository.getRepositoryType() == RepositoryType.PART_8)
               {
-            	  insert = GenerateTypesPart8(insert, identifier, null, newTemplateDefinition);
-            	  insert = GenerateRoleCountPart8(insert, newTemplateDefinition.getRoleDefinitions().size(), identifier, newTemplateDefinition);
+                insert = GenerateTypesPart8(insert, identifier, null, newTemplateDefinition);
+                insert = GenerateRoleCountPart8(insert, newTemplateDefinition.getRoleDefinitions().size(), identifier,
+                    newTemplateDefinition);
               }
               else
               {
-            	  insert = GenerateTypes(insert, identifier, null, newTemplateDefinition);
-            	  insert = GenerateRoleCount(insert, newTemplateDefinition.getRoleDefinitions().size(), identifier, newTemplateDefinition);
+                insert = GenerateTypes(insert, identifier, null, newTemplateDefinition);
+                insert = GenerateRoleCount(insert, newTemplateDefinition.getRoleDefinitions().size(), identifier,
+                    newTemplateDefinition);
               }
               for (Name name : newTemplateDefinition.getNames())
               {
-            	  insert = GenerateName(insert, name, identifier, newTemplateDefinition);
+                insert = GenerateName(insert, name, identifier, newTemplateDefinition);
               }
 
               for (Description descr : newTemplateDefinition.getDescriptions())
               {
-            	  insert = GenerateDescription(insert, descr, identifier);
+                insert = GenerateDescription(insert, descr, identifier);
               }
-              //form labels
+              // form labels
               for (RoleDefinition role : newTemplateDefinition.getRoleDefinitions())
               {
 
@@ -1718,7 +1710,7 @@ public class RefDataProvider
                 String range = role.getRange();
 
                 genName = "Role definition " + roleLabel;
-                if(role.getId()==null || role.getId()=="")
+                if (role.getId() == null || role.getId() == "")
                 {
                   if (_useExampleRegistryBase)
                     generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), genName);
@@ -1728,84 +1720,68 @@ public class RefDataProvider
                 }
                 else
                 {
-                	roleID = getIdFromURI(role.getId());
+                  roleID = getIdFromURI(role.getId());
                 }
                 for (Name newName : role.getNames())
                 {
-                	insert = GenerateName(insert, newName, roleID, role);
+                  insert = GenerateName(insert, newName, roleID, role);
                 }
 
                 if (role.getDescriptions() != null)
                 {
-                	insert = GenerateDescription(insert, role.getDescriptions().get(0), roleID);
+                  insert = GenerateDescription(insert, role.getDescriptions().get(0), roleID);
                 }
 
                 if (repository.getRepositoryType() == RepositoryType.PART_8)
                 {
-                	insert = GenerateRoleIndexPart8(insert, roleID, ++roleCount, role);
-                	insert = GenerateHasTemplate(insert, roleID, identifier, role);
-                	insert = GenerateHasRole(insert, identifier, roleID.toString(), role);
+                  insert = GenerateRoleIndexPart8(insert, roleID, ++roleCount, role);
+                  insert = GenerateHasTemplate(insert, roleID, identifier, role);
+                  insert = GenerateHasRole(insert, identifier, roleID.toString(), role);
                 }
                 else
                 {
-                	insert = GenerateRoleIndex(insert, roleID, ++roleCount);
+                  insert = GenerateRoleIndex(insert, roleID, ++roleCount);
                 }
-                if (role.getRange()!=null && role.getRange()!="")
+                if (role.getRange() != null && role.getRange() != "")
                 {
                   qName = _nsmap.reduceToQName(role.getRange());
                   if (repository.getRepositoryType() == RepositoryType.PART_8)
                   {
-                	  insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                    insert = GenerateRoleFillerType(insert, roleID, qName.toString());
                   }
                   else
                   {
-                	  insert = GenerateRoleDomain(insert, roleID, identifier);
-                	  insert = GenerateTypes(insert, roleID, null, role);
+                    insert = GenerateRoleDomain(insert, roleID, identifier);
+                    insert = GenerateTypes(insert, roleID, null, role);
                   }
                 }
               }
-            }    
-            //endregion
-            //region Generate Query and post Template Definition
-            //TODO - formatter not working
-            /*
-            if (!delete.isEmpty())
-            {
-              sparqlBuilder.append(deleteData);
-              for (TripleImpl t : delete.Triples)
-              {
-                sparqlBuilder.append(t.ToString(formatter));
-              }
-              if (insert.isEmpty())
-                sparqlBuilder.append("}");
-              else
-                sparqlBuilder.append("};");
             }
-            if (!insert.isEmpty())
-            {
-              sparqlBuilder.append(insertData);
-              for (TripleImpl t : insert.Triples)
-              {
-                sparqlBuilder.AppendLine(t.ToString(formatter));
-              }
-              sparqlBuilder.append("}");
-            }*/
+            // endregion
+            // region Generate Query and post Template Definition
+            // TODO - formatter not working
+            /*
+             * if (!delete.isEmpty()) { sparqlBuilder.append(deleteData); for (TripleImpl t : delete.Triples) {
+             * sparqlBuilder.append(t.ToString(formatter)); } if (insert.isEmpty()) sparqlBuilder.append("}"); else
+             * sparqlBuilder.append("};"); } if (!insert.isEmpty()) { sparqlBuilder.append(insertData); for (TripleImpl
+             * t : insert.Triples) { sparqlBuilder.AppendLine(t.ToString(formatter)); } sparqlBuilder.append("}"); }
+             */
             String sparql = sparqlBuilder.toString();
             Response postResponse = postToRepository(repository, sparql);
-            //response.Append(postResponse);
+            // response.Append(postResponse);
           }
         }
-            //endregion Generate Query and post Template Definition
-       //endregion Template Definitions      
-         
-        //region Template Qualification
-        /// Specialized templates do have the following properties
-        /// 1) Base class = owl:Thing
-        /// 2) rdf:type = p8:TemplateSpecialization
-        /// 3) p8:hasSuperTemplate = Super Template ID
-        /// 4) p8:hasSubTemplate = Sub Template ID
-        /// 5) rdfs:label = template name
-        /// 
+        // endregion Generate Query and post Template Definition
+        // endregion Template Definitions
+
+        // region Template Qualification
+        // / Specialized templates do have the following properties
+        // / 1) Base class = owl:Thing
+        // / 2) rdf:type = p8:TemplateSpecialization
+        // / 3) p8:hasSuperTemplate = Super Template ID
+        // / 4) p8:hasSubTemplate = Sub Template ID
+        // / 5) rdfs:label = template name
+        // /
         if (qmxf.getTemplateQualifications().size() > 0)
         {
           for (TemplateQualification newTQ : qmxf.getTemplateQualifications())
@@ -1816,13 +1792,13 @@ public class RefDataProvider
             String generatedId = null;
             String roleQualification = null;
             int index = 1;
-            if (newTQ.getId()!=null && newTQ.getId()!="")
+            if (newTQ.getId() != null && newTQ.getId() != "")
               templateID = getIdFromURI(newTQ.getId());
 
             templateName = newTQ.getNames().get(0).getValue();
             Qmxf oldQmxf = new Qmxf();
-            //if (templateID!=null && templateID!="")
-            if (templateID!="" && templateID != null)
+            // if (templateID!=null && templateID!="")
+            if (templateID != "" && templateID != null)
             {
               oldQmxf = getTemplate(templateID.toString(), TemplateType.QUALIFICATION.toString(), repository);
             }
@@ -1835,7 +1811,7 @@ public class RefDataProvider
 
               templateID = getIdFromURI(generatedId);
             }
-            //region Form Delete/Insert SPARQL
+            // region Form Delete/Insert SPARQL
             if (oldQmxf.getTemplateQualifications().size() > 0)
             {
               for (TemplateQualification oldTQ : oldQmxf.getTemplateQualifications())
@@ -1844,7 +1820,7 @@ public class RefDataProvider
                 for (Name nn : newTQ.getNames())
                 {
                   templateName = nn.getValue();
-                  //Name on = oldTQ.name.Find(n => n.lang == nn.lang);
+                  // Name on = oldTQ.name.Find(n => n.lang == nn.lang);
                   Name on = new Name();
                   for (Name tempName : oldTQ.getNames())
                   {
@@ -1853,21 +1829,21 @@ public class RefDataProvider
                       on = tempName;
                     }
                   }
-                  
+
                   if (on != null)
                   {
                     if (!on.getValue().equalsIgnoreCase(nn.getValue()))
                     {
-                    	delete = GenerateName(delete, on, templateID, oldTQ);
-                    	delete = GenerateName(insert, nn, templateID, newTQ);
+                      delete = GenerateName(delete, on, templateID, oldTQ);
+                      delete = GenerateName(insert, nn, templateID, newTQ);
                     }
                   }
                 }
                 for (Description nd : newTQ.getDescriptions())
                 {
-                  if (nd.getLang() == null) 
-                	  nd.setLang(defaultLanguage);
-                  //od = oldTQ.description.Find(d => d.lang == nd.lang);
+                  if (nd.getLang() == null)
+                    nd.setLang(defaultLanguage);
+                  // od = oldTQ.description.Find(d => d.lang == nd.lang);
                   Description od = null;
                   for (Description tempDesc : oldTQ.getDescriptions())
                   {
@@ -1877,35 +1853,35 @@ public class RefDataProvider
                       od = tempDesc;
                     }
                   }
-                  
+
                   if (od != null && od.getValue() != null)
                   {
                     if (!od.getValue().equalsIgnoreCase(nd.getValue()))
                     {
-                    	delete = GenerateDescription(delete, od, templateID);
-                    	insert = GenerateDescription(insert, nd, templateID);
+                      delete = GenerateDescription(delete, od, templateID);
+                      insert = GenerateDescription(insert, nd, templateID);
                     }
                   }
-                  else if(od == null && nd.getValue() != null)
+                  else if (od == null && nd.getValue() != null)
                   {
-                	  insert = GenerateDescription(insert, nd, templateID);
+                    insert = GenerateDescription(insert, nd, templateID);
                   }
                 }
-                //role count
+                // role count
                 if (oldTQ.getRoleQualifications().size() != newTQ.getRoleQualifications().size())
                 {
                   if (repository.getRepositoryType() == RepositoryType.PART_8)
                   {
-                	  delete = GenerateRoleCountPart8(delete, oldTQ.getRoleQualifications().size(), templateID, oldTQ);
-                	  insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
+                    delete = GenerateRoleCountPart8(delete, oldTQ.getRoleQualifications().size(), templateID, oldTQ);
+                    insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
                   }
                   else
                   {
-                	  delete = GenerateRoleCount(delete, oldTQ.getRoleQualifications().size(), templateID, oldTQ);
-                	  insert = GenerateRoleCount(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
+                    delete = GenerateRoleCount(delete, oldTQ.getRoleQualifications().size(), templateID, oldTQ);
+                    insert = GenerateRoleCount(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
                   }
                 }
-                //// TODO need to work out howto correctly handle specializations
+                // // TODO need to work out howto correctly handle specializations
                 for (Specialization ns : newTQ.getSpecializations())
                 {
                   Specialization os = oldTQ.getSpecializations().get(0);
@@ -1922,16 +1898,16 @@ public class RefDataProvider
                     }
                   }
                 }
-        
+
                 index = 1;
-                ///  SpecializedTemplate roles do have the following properties
-                /// 1) baseclass of owl:Thing
-                /// 2) rdf:type = p8:TemplateRoleDescription
-                /// 3) rdfs:label = rolename
-                /// 4) p8:valRoleIndex
-                /// 5) p8:hasRoleFillerType = qualifified class
-                /// 6) p8:hasTemplate = template ID
-                /// 6) p8:hasRole = tpl:{roleName} probably don't need to use this -- pointer to self
+                // / SpecializedTemplate roles do have the following properties
+                // / 1) baseclass of owl:Thing
+                // / 2) rdf:type = p8:TemplateRoleDescription
+                // / 3) rdfs:label = rolename
+                // / 4) p8:valRoleIndex
+                // / 5) p8:hasRoleFillerType = qualifified class
+                // / 6) p8:hasTemplate = template ID
+                // / 6) p8:hasRole = tpl:{roleName} probably don't need to use this -- pointer to self
                 if (oldTQ.getRoleQualifications().size() < newTQ.getRoleQualifications().size())
                 {
                   int count = 0;
@@ -1940,8 +1916,8 @@ public class RefDataProvider
                     String roleName = nrq.getNames().get(0).getValue();
                     String newRoleID = nrq.getId();
                     String tempNewRoleID = getIdFromURI(newRoleID);
-                    
-                    if (newRoleID==null || newRoleID == "")
+
+                    if (newRoleID == null || newRoleID == "")
                     {
                       if (_useExampleRegistryBase)
                         generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), roleName);
@@ -1949,72 +1925,73 @@ public class RefDataProvider
                         generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), roleName);
                       newRoleID = generatedId;
                     }
-                    //RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                    // RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
                     RoleQualification orq = null;
                     for (RoleQualification temprq : oldTQ.getRoleQualifications())
                     {
                       if (newRoleID.equalsIgnoreCase(temprq.getId()))
                       {
-                    	  orq = new RoleQualification();
-                    	  orq = temprq;
+                        orq = new RoleQualification();
+                        orq = temprq;
                       }
                     }
-                    
+
                     if (orq == null)
                     {
                       if (repository.getRepositoryType() == RepositoryType.PART_8)
                       {
-                    	  insert = GenerateTypesPart8(insert, tempNewRoleID, templateID.toString(), nrq);
+                        insert = GenerateTypesPart8(insert, tempNewRoleID, templateID.toString(), nrq);
                         for (Name nn : nrq.getNames())
                         {
-                        	insert = GenerateName(insert, nn, tempNewRoleID, nrq);
+                          insert = GenerateName(insert, nn, tempNewRoleID, nrq);
                         }
                         insert = GenerateRoleIndexPart8(insert, tempNewRoleID, ++count, nrq);
                         insert = GenerateHasTemplate(insert, tempNewRoleID, templateID, nrq);
                         insert = GenerateHasRole(insert, templateID, tempNewRoleID, newTQ);
-                        if (nrq.getRange()!=null && nrq.getRange()=="")
+                        if (nrq.getRange() != null && nrq.getRange() == "")
                         {
                           qName = _nsmap.reduceToQName(nrq.getRange());
-                          if (qn) 
-                        	  insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
+                          if (qn)
+                            insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
                         }
                         else if (nrq.getValue() != null)
                         {
                           if (nrq.getValue().getReference() != null)
                           {
                             qName = _nsmap.reduceToQName(nrq.getValue().getReference());
-                            if (qName != "" && qName != "") 
-                            	insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
+                            if (qName != "" && qName != "")
+                              insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
                           }
                           else if (nrq.getValue().getText() != null)
                           {
-                            ///TODO
+                            // /TODO
                           }
                         }
                       }
-                      else //Not Part8 repository
+                      else
+                      // Not Part8 repository
                       {
-                        if (nrq.getRange()!=null && nrq.getRange()!="") //range restriction
+                        if (nrq.getRange() != null && nrq.getRange() != "") // range restriction
                         {
                           qName = _nsmap.reduceToQName(nrq.getRange());
-                          if (qName != null && qName != "") 
-                        	  insert = GenerateRange(insert, tempNewRoleID, qName, nrq);
+                          if (qName != null && qName != "")
+                            insert = GenerateRange(insert, tempNewRoleID, qName, nrq);
                           insert = GenerateTypes(insert, tempNewRoleID, templateID.toString(), nrq);
                           insert = GenerateQualifies(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
                         }
                         else if (nrq.getValue() != null)
                         {
-                          if (nrq.getValue().getReference() != null) //reference restriction
+                          if (nrq.getValue().getReference() != null) // reference restriction
                           {
-                        	  insert = GenerateReferenceType(insert, tempNewRoleID, templateID, nrq);
-                        	  insert = GenerateReferenceQual(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
+                            insert = GenerateReferenceType(insert, tempNewRoleID, templateID, nrq);
+                            insert = GenerateReferenceQual(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
                             qName = _nsmap.reduceToQName(nrq.getValue().getReference());
-                            if (qName !=  null && qName != "") 
-                            	insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), nrq);
+                            if (qName != null && qName != "")
+                              insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), nrq);
                           }
                           else if (nrq.getValue().getText() != null)// value restriction
                           {
-                        	  insert = GenerateValue(insert, tempNewRoleID.toString(), templateID.toString(), nrq);
+                            insert = GenerateValue(insert, tempNewRoleID.toString(), templateID.toString(), nrq);
                           }
                         }
                         insert = GenerateTypes(insert, tempNewRoleID, templateID.toString(), nrq);
@@ -2033,7 +2010,7 @@ public class RefDataProvider
                     String newRoleID = orq.getId();
                     String tempNewRoleID = getIdFromURI(newRoleID);
 
-                    if (newRoleID==null || newRoleID=="")
+                    if (newRoleID == null || newRoleID == "")
                     {
                       if (_useExampleRegistryBase)
                         generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), roleName);
@@ -2041,71 +2018,72 @@ public class RefDataProvider
                         generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), roleName);
                       newRoleID = generatedId;
                     }
-                    //RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                    // RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
                     RoleQualification nrq = null;
                     for (RoleQualification tempRq : newTQ.getRoleQualifications())
                     {
                       if (newRoleID.equalsIgnoreCase(tempRq.getId()))
                       {
-                    	  nrq = new RoleQualification();
-                    	  nrq = tempRq;
+                        nrq = new RoleQualification();
+                        nrq = tempRq;
                       }
                     }
                     if (nrq == null)
                     {
                       if (repository.getRepositoryType() == RepositoryType.PART_8)
                       {
-                    	  delete = GenerateTypesPart8(delete, tempNewRoleID, templateID.toString(), orq);
+                        delete = GenerateTypesPart8(delete, tempNewRoleID, templateID.toString(), orq);
                         for (Name nn : orq.getNames())
                         {
-                        	delete = GenerateName(delete, nn, tempNewRoleID, orq);
+                          delete = GenerateName(delete, nn, tempNewRoleID, orq);
                         }
                         delete = GenerateRoleIndexPart8(delete, tempNewRoleID, ++count, orq);
                         delete = GenerateHasTemplate(delete, tempNewRoleID, templateID.toString(), orq);
                         delete = GenerateHasRole(delete, templateID, tempNewRoleID.toString(), oldTQ);
-                        if (orq.getRange()!=null && orq.getRange()!="")
+                        if (orq.getRange() != null && orq.getRange() != "")
                         {
                           qName = _nsmap.reduceToQName(orq.getRange());
-                          if (qName != null && qName != "") 
-                        	  delete = GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
+                          if (qName != null && qName != "")
+                            delete = GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
                         }
-                        else if (orq.getValue()!= null)
+                        else if (orq.getValue() != null)
                         {
                           if (orq.getValue().getReference() != null)
                           {
                             qName = _nsmap.reduceToQName(orq.getValue().getReference());
-                            if (qName != null && qName != "") 
-                            	delete= GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
+                            if (qName != null && qName != "")
+                              delete = GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
                           }
-                          else if (nrq.getValue().getText()!= null)
+                          else if (nrq.getValue().getText() != null)
                           {
-                            ///TODO
+                            // /TODO
                           }
                         }
                       }
-                      else //Not Part8 repository
+                      else
+                      // Not Part8 repository
                       {
-                        if (orq.getRange()!=null && orq.getRange()!="") //range restriction
+                        if (orq.getRange() != null && orq.getRange() != "") // range restriction
                         {
                           qName = _nsmap.reduceToQName(orq.getRange());
-                          if (qName != null && qName != "")  
-                        	  delete = GenerateRange(delete, tempNewRoleID, qName.toString(), orq);
+                          if (qName != null && qName != "")
+                            delete = GenerateRange(delete, tempNewRoleID, qName.toString(), orq);
                           delete = GenerateTypes(delete, tempNewRoleID, templateID.toString(), nrq);
                           delete = GenerateQualifies(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
                         }
-                        else if (orq.getValue()!= null)
+                        else if (orq.getValue() != null)
                         {
-                          if (orq.getValue().getReference() != null) //reference restriction
+                          if (orq.getValue().getReference() != null) // reference restriction
                           {
-                        	  delete = GenerateReferenceType(delete, tempNewRoleID, templateID.toString(), orq);
-                        	  delete = GenerateReferenceQual(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
+                            delete = GenerateReferenceType(delete, tempNewRoleID, templateID.toString(), orq);
+                            delete = GenerateReferenceQual(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
                             qName = _nsmap.reduceToQName(orq.getValue().getReference());
-                            if (qName != null && qName != "")  
-                            	insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), orq);
+                            if (qName != null && qName != "")
+                              insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), orq);
                           }
                           else if (orq.getValue().getText() != null)// value restriction
                           {
-                        	  delete = GenerateValue(delete, tempNewRoleID.toString(), templateID.toString(), orq);
+                            delete = GenerateValue(delete, tempNewRoleID.toString(), templateID.toString(), orq);
                           }
                         }
                         delete = GenerateTypes(delete, tempNewRoleID, templateID.toString(), orq);
@@ -2118,16 +2096,16 @@ public class RefDataProvider
               }
               if (delete.isEmpty() && insert.isEmpty())
               {
-                String errMsg = "No changes made to template ["+ templateName +"]";
+                String errMsg = "No changes made to template [" + templateName + "]";
                 Status status = new Status();
                 response.setLevel(Level.WARNING);
                 status.getMessages().getItems().add(errMsg);
-                //response.Append(status);
-                //continue;//Nothing to be done
+                // response.Append(status);
+                // continue;//Nothing to be done
               }
             }
-            //endregion
-            //region Form Insert SPARQL
+            // endregion
+            // region Form Insert SPARQL
             if (delete.isEmpty())
             {
               String templateLabel = null;
@@ -2135,28 +2113,28 @@ public class RefDataProvider
 
               for (Name newName : newTQ.getNames())
               {
-            	  insert = GenerateName(insert, newName, templateID, newTQ);
+                insert = GenerateName(insert, newName, templateID, newTQ);
               }
               for (Description newDescr : newTQ.getDescriptions())
               {
-                if (newDescr.getValue()==null || newDescr.getValue()=="") 
-                	continue;
+                if (newDescr.getValue() == null || newDescr.getValue() == "")
+                  continue;
                 insert = GenerateDescription(insert, newDescr, templateID);
               }
 
               if (repository.getRepositoryType() == RepositoryType.PART_8)
               {
-            	  insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
+                insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
                 qName = _nsmap.reduceToQName(newTQ.getQualifies());
-                if (qName != null && qName != "") 
-                	insert = GenerateTypesPart8(insert, templateID, qName.toString(), newTQ);
+                if (qName != null && qName != "")
+                  insert = GenerateTypesPart8(insert, templateID, qName.toString(), newTQ);
               }
               else
               {
                 GenerateRoleCount(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
                 qName = _nsmap.reduceToQName(newTQ.getQualifies());
-                if (qName != null && qName != "") 
-                	insert = GenerateTypes(insert, templateID, qName.toString(), newTQ);
+                if (qName != null && qName != "")
+                  insert = GenerateTypes(insert, templateID, qName.toString(), newTQ);
 
               }
               for (Specialization spec : newTQ.getSpecializations())
@@ -2164,11 +2142,11 @@ public class RefDataProvider
                 String specialization = spec.getReference();
                 if (repository.getRepositoryType() == RepositoryType.PART_8)
                 {
-                  ///TODO
+                  // /TODO
                 }
                 else
                 {
-                  ///TODO
+                  // /TODO
                 }
               }
 
@@ -2181,7 +2159,7 @@ public class RefDataProvider
                 String range = newRole.getRange();
 
                 genName = "Role Qualification " + roleLabel;
-                if (newRole.getId()==null && newRole.getId()=="")
+                if (newRole.getId() == null && newRole.getId() == "")
                 {
                   if (_useExampleRegistryBase)
                     generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), genName);
@@ -2196,58 +2174,59 @@ public class RefDataProvider
                 }
                 if (repository.getRepositoryType() == RepositoryType.PART_8)
                 {
-                	insert = GenerateTypesPart8(insert, roleID, templateID.toString(), newRole);
+                  insert = GenerateTypesPart8(insert, roleID, templateID.toString(), newRole);
                   for (Name newName : newRole.getNames())
                   {
-                	  insert = GenerateName(insert, newName, roleID, newRole);
+                    insert = GenerateName(insert, newName, roleID, newRole);
                   }
                   insert = GenerateRoleIndexPart8(insert, roleID, ++roleCount, newRole);
                   insert = GenerateHasTemplate(insert, roleID, templateID.toString(), newRole);
                   insert = GenerateHasRole(insert, templateID, roleID.toString(), newTQ);
-                  if (newRole.getRange()!=null && newRole.getRange()!="")
+                  if (newRole.getRange() != null && newRole.getRange() != "")
                   {
                     qName = _nsmap.reduceToQName(newRole.getRange());
-                    if (qName != null && qName != "") 
-                    	insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                    if (qName != null && qName != "")
+                      insert = GenerateRoleFillerType(insert, roleID, qName.toString());
                   }
-                  else if (newRole.getValue()!= null)
+                  else if (newRole.getValue() != null)
                   {
                     if (newRole.getValue().getReference() != null)
                     {
                       qName = _nsmap.reduceToQName(newRole.getValue().getReference());
-                      if (qName != null && qName != "")  
-                    	  insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                      if (qName != null && qName != "")
+                        insert = GenerateRoleFillerType(insert, roleID, qName.toString());
                     }
                     else if (newRole.getValue().getText() != null)
                     {
-                      ///TODO
+                      // /TODO
                     }
                   }
                 }
-                else //Not Part8 repository
+                else
+                // Not Part8 repository
                 {
-                  if (newRole.getRange()!=null && newRole.getRange()!="") //range restriction
+                  if (newRole.getRange() != null && newRole.getRange() != "") // range restriction
                   {
 
                     qName = _nsmap.reduceToQName(newRole.getRange());
-                    if (qName != null && qName != "")  
-                    	insert = GenerateRange(insert, roleID, qName.toString(), newRole);
+                    if (qName != null && qName != "")
+                      insert = GenerateRange(insert, roleID, qName.toString(), newRole);
                     insert = GenerateTypes(insert, roleID, templateID.toString(), newRole);
                     insert = GenerateQualifies(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
                   }
                   else if (newRole.getValue() != null)
                   {
-                    if (newRole.getValue().getReference() != null) //reference restriction
+                    if (newRole.getValue().getReference() != null) // reference restriction
                     {
-                    	insert = GenerateReferenceType(insert, roleID, templateID.toString(), newRole);
-                    	insert = GenerateReferenceQual(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
+                      insert = GenerateReferenceType(insert, roleID, templateID.toString(), newRole);
+                      insert = GenerateReferenceQual(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
                       qName = _nsmap.reduceToQName(newRole.getValue().getReference());
-                      if (qName != null && qName != "")  
-                    	  insert = GenerateReferenceTpl(insert, roleID, qName.toString(), newRole);
+                      if (qName != null && qName != "")
+                        insert = GenerateReferenceTpl(insert, roleID, qName.toString(), newRole);
                     }
                     else if (newRole.getValue().getText() != null)// value restriction
                     {
-                    	insert = GenerateValue(insert, roleID.toString(), templateID.toString(), newRole);
+                      insert = GenerateValue(insert, roleID.toString(), templateID.toString(), newRole);
                     }
                   }
                   insert = GenerateTypes(insert, roleID, templateID.toString(), newRole);
@@ -2257,36 +2236,19 @@ public class RefDataProvider
               }
             }
 
-            //endregion
-            //region Generate Query and Post Qualification Template
-            //TODO
+            // endregion
+            // region Generate Query and Post Qualification Template
+            // TODO
             /*
-            if (!delete.isEmpty())
-            {
-              sparqlBuilder.append(deleteData);
-              for (Triple t : delete.Triples)
-              {
-                sparqlBuilder.append(t.ToString(formatter));
-              }
-              if (insert.isEmpty())
-                sparqlBuilder.append("}");
-              else
-                sparqlBuilder.append("};");
-            }
-            if (!insert.isEmpty())
-            {
-              sparqlBuilder.append(insertData);
-              for (Triple t : insert.Triples)
-              {
-                sparqlBuilder.append(t.ToString(formatter));
-              }
-              sparqlBuilder.append("}");
-            }
-            */
+             * if (!delete.isEmpty()) { sparqlBuilder.append(deleteData); for (Triple t : delete.Triples) {
+             * sparqlBuilder.append(t.ToString(formatter)); } if (insert.isEmpty()) sparqlBuilder.append("}"); else
+             * sparqlBuilder.append("};"); } if (!insert.isEmpty()) { sparqlBuilder.append(insertData); for (Triple t :
+             * insert.Triples) { sparqlBuilder.append(t.ToString(formatter)); } sparqlBuilder.append("}"); }
+             */
 
             String sparql = sparqlBuilder.toString();
             Response postResponse = postToRepository(repository, sparql);
-            //response.Append(postResponse);
+            // response.Append(postResponse);
           }
         }
 
@@ -2300,7 +2262,7 @@ public class RefDataProvider
 
       response.setLevel(Level.ERROR);
       status.getMessages().getItems().add(errMsg);
-      //response.Append(status);
+      // response.Append(status);
 
       logger.error(errMsg);
     }
@@ -2344,364 +2306,391 @@ public class RefDataProvider
     Response response = new Response();
     Status status = null;
 
-      try { 
+    try
+    {
+      String uri = repository.getUpdateUri().toString();
+      
+      if (repository.isIsReadOnly() == false)
+      {
+        HttpClient sparqlClient = new HttpClient(uri);
+        HttpUtils.addHttpHeaders(_settings, sparqlClient);
+        sparqlClient.postSparql(String.class, "", sparql, "");
+        status = new Status();
+      }
+      else
+      {
 
-    	  String uri = repository.getUpdateUri().toString();
-    	  NetworkCredentials credentials = new NetworkCredentials();
-          if (repository.isIsReadOnly() == false) {
-        	  HttpClient sparqlClient = new HttpClient(uri);
-        	  sparqlClient.setNetworkCredentials(credentials);
-        	  sparqlClient.postSparql(String.class, "", sparql, "");
-        	  status = new Status();
-        	  
-        	  
-          }else{
-        	  
-          }
       }
-      catch(Exception ex){
-    	  logger.error(ex);
-    	  return response;
-      }
-     
+    }
+    catch (Exception ex)
+    {
+      logger.error(ex);
+      return response;
+    }
+
     return response;
   }
 
   @SuppressWarnings("unchecked")
-public Response postClass(Qmxf qmxf)
+  public Response postClass(Qmxf qmxf)
   {
-	  //TODO - to be initialised
-	  Model delete = ModelFactory.createDefaultModel();
-      Model insert = ModelFactory.createDefaultModel();
-      for(String prefix :_nsmap.getPrefixes()) {
-    	delete.setNsPrefix(prefix,_nsmap.getNamespaceUri(prefix).toString());
-    	insert.setNsPrefix(prefix,_nsmap.getNamespaceUri(prefix).toString());       
-      }
+    // TODO - to be initialised
+    Model delete = ModelFactory.createDefaultModel();
+    Model insert = ModelFactory.createDefaultModel();
+    for (String prefix : _nsmap.getPrefixes())
+    {
+      delete.setNsPrefix(prefix, _nsmap.getNamespaceUri(prefix).toString());
+      insert.setNsPrefix(prefix, _nsmap.getNamespaceUri(prefix).toString());
+    }
 
-	  Response response = new Response();
-      response.setLevel(Level.SUCCESS);
-      boolean qn = false;
-      String qName = null;
-      
-      
-      try
+    Response response = new Response();
+    response.setLevel(Level.SUCCESS);
+    boolean qn = false;
+    String qName = null;
+
+    try
+    {
+      Repository repository = getRepository(qmxf.getTargetRepository());
+
+      if (repository == null || repository.isIsReadOnly())
       {
-          Repository repository = getRepository(qmxf.getTargetRepository());
+        Status status = new Status();
+        response.setLevel(Level.ERROR);
 
-          if (repository == null || repository.isIsReadOnly())
+        if (repository == null)
+          status.getMessages().getItems().add("Repository not found!");
+        else
+          status.getMessages().getItems().add("Repository [" + qmxf.getTargetRepository() + "] is read-only!");
+
+        // _response.Append(status);
+      }
+      else
+      {
+        String registry = _useExampleRegistryBase ? _settings.get("ExampleRegistryBase").toString() : _settings.get(
+            "ClassRegistryBase").toString();
+
+        for (ClassDefinition clsDef : qmxf.getClassDefinitions())
+        {
+
+          String language = null;
+          int classCount = 0;
+          String clsId = getIdFromURI(clsDef.getId());
+          Qmxf existingQmxf = new Qmxf();
+
+          if (clsId != null)
           {
-              Status status = new Status();
-              response.setLevel(Level.ERROR);
-              
-              if (repository == null)
-                  status.getMessages().getItems().add("Repository not found!");
-              else
-                  status.getMessages().getItems().add("Repository [" + qmxf.getTargetRepository() + "] is read-only!");
-
-              //_response.Append(status);
+            existingQmxf = getClass(clsId, repository);
           }
-          else
+
+          // delete class
+          if (existingQmxf.getClassDefinitions().size() > 0)
           {
-              String registry = _useExampleRegistryBase ? _settings.get("ExampleRegistryBase").toString() : 
-                _settings.get("ClassRegistryBase").toString();
-              
-              for (ClassDefinition clsDef : qmxf.getClassDefinitions())
+
+            for (ClassDefinition existingClsDef : existingQmxf.getClassDefinitions())
+            {
+              for (Name clsName : clsDef.getNames())
               {
-
-                  String language = null;
-                  int classCount = 0;
-                  String clsId = getIdFromURI(clsDef.getId());
-                  Qmxf existingQmxf = new Qmxf();
-
-                  if (clsId!=null)
+                // Name existingName = existingClsDef.name.Find(n => n.lang == clsName.lang);
+                Name existingName = new Name();
+                for (Name tempName : existingClsDef.getNames())
+                {
+                  if (clsName.getLang().equalsIgnoreCase(tempName.getLang()))
                   {
-                      existingQmxf = getClass(clsId, repository);
+                    existingName = tempName;
                   }
+                }
 
-                  // delete class
-                  if (existingQmxf.getClassDefinitions().size() > 0)
+                if (existingName != null)
+                {
+                  if (!existingName.getValue().equalsIgnoreCase(clsName.getValue()))
                   {
-                      
-                      for (ClassDefinition existingClsDef : existingQmxf.getClassDefinitions())
-                      {
-                          for (Name clsName : clsDef.getNames())
-                          {
-                              //Name existingName = existingClsDef.name.Find(n => n.lang == clsName.lang);
-                              Name existingName = new Name();
-								for (Name tempName : existingClsDef.getNames()) {
-									if (clsName.getLang().equalsIgnoreCase(tempName.getLang())) {
-										existingName = tempName;
-									}
-								}
-								
-								
-                              if (existingName != null)
-                              {
-                                  if (!existingName.getValue().equalsIgnoreCase(clsName.getValue()))
-                                  {
-                                	  delete = GenerateClassName(delete, existingName, clsId, existingClsDef);
-                                	  insert = GenerateClassName(insert, clsName, clsId, clsDef);
-                                  }
-                              }
+                    delete = GenerateClassName(delete, existingName, clsId, existingClsDef);
+                    insert = GenerateClassName(insert, clsName, clsId, clsDef);
+                  }
+                }
 
-                              for (Description description : clsDef.getDescriptions())
-                              {
-                                  //Description existingDescription = existingClsDef.description.Find(d => d.lang == description.lang);
-                              	Description existingDescription = new Description();
-  								for (Description tempDesc : existingClsDef.getDescriptions()) {
-  									if (description.getLang().equalsIgnoreCase(tempDesc.getLang())) {
-  										existingDescription = tempDesc;
-  									}
-  								}
-                                  if (existingDescription != null)
-                                  {
-                                      if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
-                                      {
-                                    	  delete = GenerateClassDescription(delete, existingDescription, clsId);
-                                    	  insert = GenerateClassDescription(insert, description, clsId);
-                                      }
-                                  }
-                              }
-                              if (clsDef.getSpecializations().size() == existingClsDef.getSpecializations().size())
-                              {
-                                continue; /// no change ... so continue
-                              }
-                              else if (clsDef.getSpecializations().size() < existingClsDef.getSpecializations().size()) //some is deleted ...focus on old to find deleted
-                              {
-                                for (Specialization os : existingClsDef.getSpecializations())
-                                {
-                                  //Specialization ns = newClsDef.specialization.Find(s => s.reference == os.reference);
-                                  Specialization ns = null;
-    								for (Specialization tempSpec : clsDef.getSpecializations()) {
-    									if (os.getReference().equalsIgnoreCase(tempSpec.getReference())) {
-    										ns = new Specialization();
-    										ns = tempSpec;
-    									}
-    								}
-                                  
-                                  if (ns == null)
-                                  {
-                                    qName = _nsmap.reduceToQName(os.getReference());
-                                    if (qName != null && qName != "")  
-                                    	delete = GenerateRdfSubClass(delete, clsId, qName.toString());
-                                  }
-                                }
-                              }
-                              else if (clsDef.getSpecializations().size() > existingClsDef.getSpecializations().size())//some is added ... find added 
-                              {
-                                for (Specialization ns : clsDef.getSpecializations())
-                                {
-                                  //Specialization os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
-                                  Specialization os = null;
-  								  for (Specialization tempSpec : existingClsDef.getSpecializations()) {
-  									if (ns.getReference().equalsIgnoreCase(tempSpec.getReference())) {
-  										os = new Specialization();
-  										os = tempSpec;
-  									}
-  								  }
-                                  if (os == null)
-                                  {
-                                    qName = _nsmap.reduceToQName(ns.getReference());
-                                    if (qName != null && qName != "") 
-                                    	insert = GenerateRdfSubClass(insert, clsId, qName.toString());
-                                  }
-                                }
-                              }
-                              if (clsDef.getClassifications().size() == existingClsDef.getClassifications().size())
-                              {
-                                continue; //no change...so continue
-                              }
-                              else if (clsDef.getClassifications().size() < existingClsDef.getClassifications().size()) //some is deleted ...focus on old to find deleted
-                              {
-                                for (Classification oc : existingClsDef.getClassifications())
-                                {
-                                  //Classification nc = newClsDef.classification.Find(c => c.reference == oc.reference);
-                                	Classification nc = null;
-    								  for (Classification tempClas : clsDef.getClassifications()) {
-    									if (oc.getReference().equalsIgnoreCase(tempClas.getReference())) {
-    										nc = new Classification();
-    										nc = tempClas;
-    									}
-    								  }
-                                  if (nc == null)
-                                  {
-                                    qName = _nsmap.reduceToQName(oc.getReference());
-                                    if (repository.getRepositoryType() == RepositoryType.PART_8)
-                                    {
-                                      if (qName != null && qName != "") 
-                                    	  delete = GenerateSuperClass(delete, qName.toString(), clsId.toString()); ///delete from old
-                                    }
-                                    else
-                                    {
-                                      if (qName != null && qName != "") 
-                                    	  delete = GenerateDmClassification(delete, clsId, qName.toString());
-                                    }
-                                  }
-                                }
-                              }
-                              else if (clsDef.getClassifications().size() > existingClsDef.getClassifications().size())//some is added ... find added classifications
-                              {
-                                for (Classification nc : clsDef.getClassifications())
-                                {
-                                  //Classification oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
-                                  Classification oc = null;
-  								  for (Classification tempClas : existingClsDef.getClassifications()) {
-  									if (nc.getReference().equalsIgnoreCase(tempClas.getReference())) {
-  										oc = new Classification();
-  										oc = tempClas;
-  									}
-  								  }
-                                  if (oc == null)
-                                  {
-                                    qName = _nsmap.reduceToQName(nc.getReference());
-                                    if (repository.getRepositoryType() == RepositoryType.PART_8)
-                                    {
-                                      if (qName != null && qName != "")  
-                                    	  insert = GenerateSuperClass(insert, qName.toString(), clsId.toString()); ///insert from new
-                                    }
-                                    else
-                                    {
-                                      if (qName != null && qName != "")  
-                                    	  insert = GenerateDmClassification(insert, clsId, qName.toString());
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                              
-
-                              
-                      if (delete.isEmpty() && insert.isEmpty())
+                for (Description description : clsDef.getDescriptions())
+                {
+                  // Description existingDescription = existingClsDef.description.Find(d => d.lang == description.lang);
+                  Description existingDescription = new Description();
+                  for (Description tempDesc : existingClsDef.getDescriptions())
+                  {
+                    if (description.getLang().equalsIgnoreCase(tempDesc.getLang()))
+                    {
+                      existingDescription = tempDesc;
+                    }
+                  }
+                  if (existingDescription != null)
+                  {
+                    if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
+                    {
+                      delete = GenerateClassDescription(delete, existingDescription, clsId);
+                      insert = GenerateClassDescription(insert, description, clsId);
+                    }
+                  }
+                }
+                if (clsDef.getSpecializations().size() == existingClsDef.getSpecializations().size())
+                {
+                  continue; // / no change ... so continue
+                }
+                else if (clsDef.getSpecializations().size() < existingClsDef.getSpecializations().size()) // some is
+                                                                                                          // deleted
+                                                                                                          // ...focus on
+                                                                                                          // old to find
+                                                                                                          // deleted
+                {
+                  for (Specialization os : existingClsDef.getSpecializations())
+                  {
+                    // Specialization ns = newClsDef.specialization.Find(s => s.reference == os.reference);
+                    Specialization ns = null;
+                    for (Specialization tempSpec : clsDef.getSpecializations())
+                    {
+                      if (os.getReference().equalsIgnoreCase(tempSpec.getReference()))
                       {
-                        String errMsg = "No changes made to class ["+ qmxf.getClassDefinitions().get(0).getNames().get(0).getValue()+"]";
-                        Status status = new Status();
-                        response.setLevel(Level.WARNING);
-                        status.getMessages().getItems().add(errMsg);
-                        //response.Append(status);
-                        continue;//Nothing to be done
+                        ns = new Specialization();
+                        ns = tempSpec;
                       }
                     }
-                    // add class
-                    if (delete.isEmpty() && insert.isEmpty())
+
+                    if (ns == null)
                     {
-                      String clsLabel = clsDef.getNames().get(0).getValue();
-                      if (clsId==null)
+                      qName = _nsmap.reduceToQName(os.getReference());
+                      if (qName != null && qName != "")
+                        delete = GenerateRdfSubClass(delete, clsId, qName.toString());
+                    }
+                  }
+                }
+                else if (clsDef.getSpecializations().size() > existingClsDef.getSpecializations().size())// some is
+                                                                                                         // added ...
+                                                                                                         // find added
+                {
+                  for (Specialization ns : clsDef.getSpecializations())
+                  {
+                    // Specialization os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
+                    Specialization os = null;
+                    for (Specialization tempSpec : existingClsDef.getSpecializations())
+                    {
+                      if (ns.getReference().equalsIgnoreCase(tempSpec.getReference()))
                       {
-                        String newClsName = "Class definition " + clsLabel;
-                        clsId =getIdFromURI(createIdsAdiId(registry, newClsName));
-                      }
-                      // append entity type
-                      if (clsDef.getEntityType()!= null && 
-                    		  (clsDef.getEntityType().getReference()!=null && clsDef.getEntityType().getReference()!=""))
-                      {
-                        qName = _nsmap.reduceToQName(clsDef.getEntityType().getReference());
-                        if (qName != null && qName != "")  
-                        	insert = GenerateTypesPart8(insert, clsId, qName.toString(), clsDef);
-                      }
-                      // append specialization
-                      for (Specialization ns : clsDef.getSpecializations())
-                      {
-                        if (ns.getReference()!=null && ns.getReference()!="")
-                        {
-                          qName = _nsmap.reduceToQName(ns.getReference());
-                          if (repository.getRepositoryType() == RepositoryType.PART_8)
-                          {
-                            if (qName != null && qName != "") 
-                            	insert = GenerateRdfSubClass(insert, clsId, qName.toString());
-                          }
-                          else
-                          {
-                            if (qName != null && qName != "") 
-                            	insert = GenerateDmSubClass(insert, clsId, qName.toString());
-                          }
-                        }
-                      }
-                      // append description
-                      for (Description nd : clsDef.getDescriptions())
-                      {
-                        if (nd.getValue()!=null && nd.getValue()!="")
-                        {
-                        	insert = GenerateClassDescription(insert, nd, clsId);
-                        }
-                      }
-                      for (Name nn : clsDef.getNames())
-                      {
-                        // append label
-                    	  insert = GenerateClassName(insert, nn, clsId, clsDef);
-                      }
-                      // append classification
-                      for (Classification nc : clsDef.getClassifications())
-                      {
-                        if (nc.getReference()!=null && nc.getReference()!="")                        {
-                          qName = _nsmap.reduceToQName(nc.getReference());
-                          if (repository.getRepositoryType() == RepositoryType.PART_8)
-                          {
-                            if (qName != null && qName != "")  
-                            	insert = GenerateSuperClass(insert, qName.toString(), clsId.toString());
-                          }
-                          else
-                          {
-                            if (qName != null && qName != "")  
-                            	insert = GenerateDmClassification(insert, clsId, qName.toString());
-                          }
-                        }
+                        os = new Specialization();
+                        os = tempSpec;
                       }
                     }
-                    if (!delete.isEmpty())
+                    if (os == null)
                     {
-                      sparqlBuilder.append(deleteData);
-                      //TODO
-                      StmtIterator deletes = delete.listStatements();
-                      while (deletes.hasNext()) {
-                    	  sparqlBuilder.append(deletes.nextStatement().toString());
-                    	  
-                      }
-                      if (insert.isEmpty())
-                          sparqlBuilder.append("}");
-                        else
-                          sparqlBuilder.append("};");
-                      }
-
-                      /*for (Triple t in delete.Triples)
-                      {
-                        sparqlBuilder.AppendLine(t.ToString(formatter));
-                      }*/
-                    if (!insert.isEmpty())
-                    {
-                      sparqlBuilder.append(insertData);
-                      StmtIterator inserts = insert.listStatements();
-                      while (inserts.hasNext()) {
-                    	  sparqlBuilder.append(inserts.nextStatement().toString());
-                    	  
-                      }
-                      /*for (Triple t in insert.Triples)
-                      {
-                        sparqlBuilder.AppendLine(t.ToString(formatter));
-                      }*/
-                      sparqlBuilder.append("}");
+                      qName = _nsmap.reduceToQName(ns.getReference());
+                      if (qName != null && qName != "")
+                        insert = GenerateRdfSubClass(insert, clsId, qName.toString());
                     }
-
-                    String sparql = sparqlBuilder.toString();
-                    Response postResponse = postToRepository(repository, sparql);
-                    //response.append(postResponse);
+                  }
+                }
+                if (clsDef.getClassifications().size() == existingClsDef.getClassifications().size())
+                {
+                  continue; // no change...so continue
+                }
+                else if (clsDef.getClassifications().size() < existingClsDef.getClassifications().size()) // some is
+                                                                                                          // deleted
+                                                                                                          // ...focus on
+                                                                                                          // old to find
+                                                                                                          // deleted
+                {
+                  for (Classification oc : existingClsDef.getClassifications())
+                  {
+                    // Classification nc = newClsDef.classification.Find(c => c.reference == oc.reference);
+                    Classification nc = null;
+                    for (Classification tempClas : clsDef.getClassifications())
+                    {
+                      if (oc.getReference().equalsIgnoreCase(tempClas.getReference()))
+                      {
+                        nc = new Classification();
+                        nc = tempClas;
+                      }
+                    }
+                    if (nc == null)
+                    {
+                      qName = _nsmap.reduceToQName(oc.getReference());
+                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      {
+                        if (qName != null && qName != "")
+                          delete = GenerateSuperClass(delete, qName.toString(), clsId.toString()); // /delete from old
+                      }
+                      else
+                      {
+                        if (qName != null && qName != "")
+                          delete = GenerateDmClassification(delete, clsId, qName.toString());
+                      }
+                    }
+                  }
+                }
+                else if (clsDef.getClassifications().size() > existingClsDef.getClassifications().size())// some is
+                                                                                                         // added ...
+                                                                                                         // find added
+                                                                                                         // classifications
+                {
+                  for (Classification nc : clsDef.getClassifications())
+                  {
+                    // Classification oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
+                    Classification oc = null;
+                    for (Classification tempClas : existingClsDef.getClassifications())
+                    {
+                      if (nc.getReference().equalsIgnoreCase(tempClas.getReference()))
+                      {
+                        oc = new Classification();
+                        oc = tempClas;
+                      }
+                    }
+                    if (oc == null)
+                    {
+                      qName = _nsmap.reduceToQName(nc.getReference());
+                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      {
+                        if (qName != null && qName != "")
+                          insert = GenerateSuperClass(insert, qName.toString(), clsId.toString()); // /insert from new
+                      }
+                      else
+                      {
+                        if (qName != null && qName != "")
+                          insert = GenerateDmClassification(insert, clsId, qName.toString());
+                      }
+                    }
                   }
                 }
               }
-              catch (Exception ex)
-              {
-                String errMsg = "Error in PostClass: " + ex;
-                Status status = new Status();
-
-                response.setLevel(Level.ERROR);
-                status.getMessages().getItems().add(errMsg);
-                //response.Append(status);
-
-                logger.error(errMsg);
-              }
-
-              return response;
             }
+
+            if (delete.isEmpty() && insert.isEmpty())
+            {
+              String errMsg = "No changes made to class ["
+                  + qmxf.getClassDefinitions().get(0).getNames().get(0).getValue() + "]";
+              Status status = new Status();
+              response.setLevel(Level.WARNING);
+              status.getMessages().getItems().add(errMsg);
+              // response.Append(status);
+              continue;// Nothing to be done
+            }
+          }
+          // add class
+          if (delete.isEmpty() && insert.isEmpty())
+          {
+            String clsLabel = clsDef.getNames().get(0).getValue();
+            if (clsId == null)
+            {
+              String newClsName = "Class definition " + clsLabel;
+              clsId = getIdFromURI(createIdsAdiId(registry, newClsName));
+            }
+            // append entity type
+            if (clsDef.getEntityType() != null
+                && (clsDef.getEntityType().getReference() != null && clsDef.getEntityType().getReference() != ""))
+            {
+              qName = _nsmap.reduceToQName(clsDef.getEntityType().getReference());
+              if (qName != null && qName != "")
+                insert = GenerateTypesPart8(insert, clsId, qName.toString(), clsDef);
+            }
+            // append specialization
+            for (Specialization ns : clsDef.getSpecializations())
+            {
+              if (ns.getReference() != null && ns.getReference() != "")
+              {
+                qName = _nsmap.reduceToQName(ns.getReference());
+                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                {
+                  if (qName != null && qName != "")
+                    insert = GenerateRdfSubClass(insert, clsId, qName.toString());
+                }
+                else
+                {
+                  if (qName != null && qName != "")
+                    insert = GenerateDmSubClass(insert, clsId, qName.toString());
+                }
+              }
+            }
+            // append description
+            for (Description nd : clsDef.getDescriptions())
+            {
+              if (nd.getValue() != null && nd.getValue() != "")
+              {
+                insert = GenerateClassDescription(insert, nd, clsId);
+              }
+            }
+            for (Name nn : clsDef.getNames())
+            {
+              // append label
+              insert = GenerateClassName(insert, nn, clsId, clsDef);
+            }
+            // append classification
+            for (Classification nc : clsDef.getClassifications())
+            {
+              if (nc.getReference() != null && nc.getReference() != "")
+              {
+                qName = _nsmap.reduceToQName(nc.getReference());
+                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                {
+                  if (qName != null && qName != "")
+                    insert = GenerateSuperClass(insert, qName.toString(), clsId.toString());
+                }
+                else
+                {
+                  if (qName != null && qName != "")
+                    insert = GenerateDmClassification(insert, clsId, qName.toString());
+                }
+              }
+            }
+          }
+          if (!delete.isEmpty())
+          {
+            sparqlBuilder.append(deleteData);
+            // TODO
+            StmtIterator deletes = delete.listStatements();
+            while (deletes.hasNext())
+            {
+              sparqlBuilder.append(deletes.nextStatement().toString());
+
+            }
+            if (insert.isEmpty())
+              sparqlBuilder.append("}");
+            else
+              sparqlBuilder.append("};");
+          }
+
+          /*
+           * for (Triple t in delete.Triples) { sparqlBuilder.AppendLine(t.ToString(formatter)); }
+           */
+          if (!insert.isEmpty())
+          {
+            sparqlBuilder.append(insertData);
+            StmtIterator inserts = insert.listStatements();
+            while (inserts.hasNext())
+            {
+              sparqlBuilder.append(inserts.nextStatement().toString());
+
+            }
+            /*
+             * for (Triple t in insert.Triples) { sparqlBuilder.AppendLine(t.ToString(formatter)); }
+             */
+            sparqlBuilder.append("}");
+          }
+
+          String sparql = sparqlBuilder.toString();
+          Response postResponse = postToRepository(repository, sparql);
+          // response.append(postResponse);
+        }
+      }
+    }
+    catch (Exception ex)
+    {
+      String errMsg = "Error in PostClass: " + ex;
+      Status status = new Status();
+
+      response.setLevel(Level.ERROR);
+      status.getMessages().getItems().add(errMsg);
+      // response.Append(status);
+
+      logger.error(errMsg);
+    }
+
+    return response;
+  }
+
   public List<Repository> getRepositories() throws Exception
   {
     List<Repository> repositoryList = new ArrayList<Repository>();
@@ -2724,7 +2713,7 @@ public Response postClass(Qmxf qmxf)
 
   private Repository getRepository(String name)
   {
-    //Repository repository = null;
+    // Repository repository = null;
     for (Repository tempRepo : _repositories)
     {
       if (tempRepo.getName().equalsIgnoreCase(name))
@@ -2878,40 +2867,51 @@ public Response postClass(Qmxf qmxf)
 
       for (Repository repository : _repositories)
       {
-        Results sparqlResults = queryFromRepository(repository, sparql);
-	        if(sparqlResults!=null){
-	        	List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
-	        	for (Hashtable<String, String> result : results)
-		        {
-		          names = result.get("label").split("@", -1);
-		          if (names.length == 1)
-		          {
-		            language = defaultLanguage;
-		          }
-		          else
-		          {
-		            language = names[names.length - 1];
-		          }
-		          if (names[0].startsWith("has") || names[0].startsWith("val"))
-		        	  continue;
-		          Entity tempVar = new Entity();
-		          tempVar.setUri(result.get("uri"));
-		          tempVar.setLabel(names[0]);
-		          tempVar.setLang(language);
-		          tempVar.setRepository(repository.getName());
-		          resultEntity = tempVar;
-		         
-		          key = resultEntity.getLabel();
-		
-		          if (resultEntities.containsKey(key))
-		          {
-		            key += ++counter;
-		          }
-		
-		          resultEntities.put(key, resultEntity);
-		        	}
-	        results.clear();
-	        }
+        Results sparqlResults = null;
+        
+        try
+        {
+          sparqlResults = queryFromRepository(repository, sparql);
+        }
+        catch (Exception e)
+        {
+          logger.error(e.getMessage());
+        }
+        
+        if (sparqlResults != null)
+        {
+          List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+          for (Hashtable<String, String> result : results)
+          {
+            names = result.get("label").split("@", -1);
+            if (names.length == 1)
+            {
+              language = defaultLanguage;
+            }
+            else
+            {
+              language = names[names.length - 1];
+            }
+            if (names[0].startsWith("has") || names[0].startsWith("val"))
+              continue;
+            Entity tempVar = new Entity();
+            tempVar.setUri(result.get("uri"));
+            tempVar.setLabel(names[0]);
+            tempVar.setLang(language);
+            tempVar.setRepository(repository.getName());
+            resultEntity = tempVar;
+
+            key = resultEntity.getLabel();
+
+            if (resultEntities.containsKey(key))
+            {
+              key += ++counter;
+            }
+
+            resultEntities.put(key, resultEntity);
+          }
+          results.clear();
+        }
       }
 
       _searchHistory.put(key, resultEntity);
@@ -2924,13 +2924,13 @@ public Response postClass(Qmxf qmxf)
       {
         response = getRequestedPage(response, i, j);
       }
-      return response;
     }
-    catch (RuntimeException e)
+    catch (Exception e)
     {
       logger.error("Error in SearchPage: " + e);
-      return response;
     }
+
+    return response;
   }
 
   private org.iringtools.refdata.response.Response getRequestedPage(org.iringtools.refdata.response.Response entities,
@@ -2950,7 +2950,7 @@ public Response postClass(Qmxf qmxf)
         }
         Entity entity = entities.getEntities().getItems().get(i);
         ent.getItems().add(entity);
-       // page.getEntities().getItems().add(i, entity);
+        // page.getEntities().getItems().add(i, entity);
       }
 
       return page;
@@ -3143,7 +3143,7 @@ public Response postClass(Qmxf qmxf)
 
         if (label == null)
         {
-          names = getLabel(uri).getLabel().split("[@]",-1);
+          names = getLabel(uri).getLabel().split("[@]", -1);
           label = names[0];
           if (names.length == 1)
           {
@@ -3210,6 +3210,7 @@ public Response postClass(Qmxf qmxf)
     {
       String uri = _settings.get("idGenServiceUri").toString();
       httpClient = new HttpClient(uri);
+      HttpUtils.addHttpHeaders(_settings, httpClient);
     }
     catch (Exception e)
     {
@@ -3244,47 +3245,47 @@ public Response postClass(Qmxf qmxf)
 
   public Entity getLabel(String uri) throws Exception
   {
-      Entity labelEntity = new Entity();
+    Entity labelEntity = new Entity();
 
-      try
+    try
+    {
+      String sparql = "";
+      String[] names;
+      Query queryContainsSearch = getQuery("GetLabel");
+      QueryBindings queryBindings = queryContainsSearch.getBindings();
+      sparql = readSparql(queryContainsSearch.getFileName());
+      sparql = sparql.replace("param1", uri);
+
+      for (Repository repository : _repositories)
       {
-          String sparql = "";
-          String[] names;
-          Query queryContainsSearch = getQuery("GetLabel");
-          QueryBindings queryBindings = queryContainsSearch.getBindings();
-          sparql = readSparql(queryContainsSearch.getFileName());
-          sparql = sparql.replace("param1", uri);
 
-          for (Repository repository : _repositories)
+        Results sparqlResults = queryFromRepository(repository, sparql);
+        List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+        for (Hashtable<String, String> result : results)
+        {
+          if (result.containsKey("label"))
           {
-              
-              Results sparqlResults = queryFromRepository(repository, sparql);
-              List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
-              for (Hashtable<String, String> result : results)
-              {
-                  if (result.containsKey("label"))
-                  {
-                      names = result.get("label").split("@");
-                      if (names.length == 1)
-                          labelEntity.setLang(defaultLanguage);
-                      else
-                          labelEntity.setLang(names[names.length - 1]);
+            names = result.get("label").split("@");
+            if (names.length == 1)
+              labelEntity.setLang(defaultLanguage);
+            else
+              labelEntity.setLang(names[names.length - 1]);
 
-                      labelEntity.setLabel(names[0]);
-                      labelEntity.setRepository(repository.getName());
-                      labelEntity.setUri(repository.getUri());
-                      break;
-                  }
-              }
+            labelEntity.setLabel(names[0]);
+            labelEntity.setRepository(repository.getName());
+            labelEntity.setUri(repository.getUri());
+            break;
           }
+        }
+      }
 
-          return labelEntity;
-      }
-      catch (Exception e)
-      {
-    	  logger.error("Error in GetClass: " + e);
-    	  return labelEntity;
-      }
+      return labelEntity;
+    }
+    catch (Exception e)
+    {
+      logger.error("Error in GetClass: " + e);
+      return labelEntity;
+    }
   }
 
   private List<RoleDefinition> getRoleDefinition(String id) throws Exception, HttpClientException
@@ -3471,9 +3472,8 @@ public Response postClass(Qmxf qmxf)
     try
     {
       // TODO need to look at credentials
-      NetworkCredentials credentials = new NetworkCredentials();
       HttpClient sparqlClient = new HttpClient(repository.getUri());
-      sparqlClient.setNetworkCredentials(credentials);
+      HttpUtils.addHttpHeaders(_settings, sparqlClient);
       Sparql sparqlResults = sparqlClient.postSparql(Sparql.class, "", sparql, "");
 
       results = sparqlResults.getResults();
@@ -3483,7 +3483,7 @@ public Response postClass(Qmxf qmxf)
       logger.error(ex);
       return results;
     }
-    
+
     return results;
   }
 
@@ -3501,22 +3501,22 @@ public Response postClass(Qmxf qmxf)
     }
     return query;
   }
-  
-  //updations
 
-  
+  // updations
+
   private Model GenerateValue(Model work, String subjId, String objId, Object gobj)
   {
-    RoleQualification role = (RoleQualification)gobj;
+    RoleQualification role = (RoleQualification) gobj;
     Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("tpl:R56456315674");
     Resource obj = work.createResource(String.format("tpl:%s", objId));
     work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R89867215482");
-    obj = work.createResource(String.format("tpl:%s", role.getQualifies().split("#",1)));
+    obj = work.createResource(String.format("tpl:%s", role.getQualifies().split("#", 1)));
     work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R29577887690");
-    Literal obj1 = work.createTypedLiteral(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
+    Literal obj1 = work.createTypedLiteral(role.getValue().getText(), (role.getValue().getLang() == null || role
+        .getValue().getLang() == "") ? defaultLanguage : role.getValue().getLang());
     work.add(subj, pred, obj1);
     return work;
   }
@@ -3532,7 +3532,7 @@ public Response postClass(Qmxf qmxf)
 
   private Model GenerateReferenceType(Model work, String subjId, String objId, Object gobj)
   {
-	Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty(rdfType);
     Resource obj = work.createResource("tpl:R40103148466");
     work.add(subj, pred, obj);
@@ -3589,17 +3589,17 @@ public Response postClass(Qmxf qmxf)
       Property pred = work.createProperty("p8:hasTemplate");
       Resource res = work.createResource(String.format("tpl:%s", objId));
       work.add(subj, pred, res);
-     }
+    }
     return work;
-    
+
   }
 
   private Model GenerateRoleIndex(Model work, String subjId, int index) throws Exception
   {
-	Resource subj = work.createResource(String.format("tpl:%s", subjId));
-	Property pred = work.createProperty("tpl:R97483568938");
-	Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
-	work.add(subj, pred, obj);
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Property pred = work.createProperty("tpl:R97483568938");
+    Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
+    work.add(subj, pred, obj);
     return work;
   }
 
@@ -3755,26 +3755,30 @@ public Response postClass(Qmxf qmxf)
 
   private Model GenerateName(Model work, Name name, String subjId, Object gobj)
   {
-	Resource subj = work.createResource(String.format("tpl:%s", subjId));
-	Property pred = work.createProperty("rdfs:label");
-	Literal obj = work.createTypedLiteral(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
-	work.add(subj, pred, obj);
-	return work;
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Property pred = work.createProperty("rdfs:label");
+    Literal obj = work.createTypedLiteral(name.getValue(),
+        (name.getLang() == null || name.getLang() == "") ? defaultLanguage : name.getLang());
+    work.add(subj, pred, obj);
+    return work;
   }
 
   private Model GenerateClassName(Model work, Name name, String subjId, Object gobj)
   {
     Resource subj = work.createResource(String.format("rdl:%s" + subjId));
     Property pred = work.createProperty("rdfs:label");
-    Literal obj = work.createTypedLiteral(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
+    Literal obj = work.createTypedLiteral(name.getValue(),
+        (name.getLang() == null || name.getLang() == "") ? defaultLanguage : name.getLang());
     work.add(subj, pred, obj);
     return work;
   }
+
   private Model GenerateDescription(Model work, Description descr, String subjectId)
   {
     Resource subj = work.createResource(String.format("tpl:%s", subjectId));
     Property pred = work.createProperty("rdfs:comment");
-    Literal obj = work.createTypedLiteral(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
+    Literal obj = work.createTypedLiteral(descr.getValue(),
+        (descr.getLang() == null || descr.getLang() == "") ? defaultLanguage : descr.getLang());
     work.add(subj, pred, obj);
     return work;
   }
@@ -3783,10 +3787,12 @@ public Response postClass(Qmxf qmxf)
   {
     Resource subj = work.createResource(String.format("rdl:%s", subjectId));
     Property pred = work.createProperty("rdfs:comment");
-    Literal obj = work.createTypedLiteral(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
+    Literal obj = work.createTypedLiteral(descr.getValue(),
+        (descr.getLang() == null || descr.getLang() == "") ? defaultLanguage : descr.getLang());
     work.add(subj, pred, obj);
     return work;
   }
+
   private Model GenerateRdfType(Model work, String subjId, String objId)
   {
     Resource subj = work.createResource(String.format("rdl:%s", subjId));
@@ -3833,6 +3839,5 @@ public Response postClass(Qmxf qmxf)
     work.add(subj, pred, obj);
     return work;
   }
-
 
 }
