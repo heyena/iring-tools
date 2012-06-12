@@ -892,64 +892,61 @@ namespace org.iringtools.adapter
       }
     }
 
-    //private List<IDataObject> PageDataObjects(string objectName, DataFilter filter)
-    //{
-    //  List<IDataObject> dataObjects = new List<IDataObject>();
-
-    //  int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) ? 250 :
-    //     int.Parse(_settings["DefaultPageSize"]);
-
-    //  long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
-
-    //  for (int i = 0; i < count; i = i + pageSize)
-    //  {
-    //    dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, i));
-    //  }
-
-    //  return dataObjects;
-    //}
-
     private List<IDataObject> PageDataObjects(string objectType, DataFilter filter)
     {
       List<IDataObject> dataObjects = new List<IDataObject>();
-      
-      //
-      // multithreading getting data objects
-      //
-      int itemsPerThread;
-      int.TryParse(_settings["DataObjectsPerThread"], out itemsPerThread);
-      if (itemsPerThread == 0) itemsPerThread = 25;
 
-      long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
-
-      if (total > 0)
+      if (_settings["OutboundMultithreaded"] != null && bool.Parse(_settings["OutboundMultithreaded"]))
       {
-        int numOfThreads = (int)(total / itemsPerThread);
-        numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
+        //
+        // multithreading getting data objects
+        //
+        int itemsPerThread = (String.IsNullOrEmpty(_settings["DataObjectsPerThread"]))
+           ? 25 : int.Parse(_settings["DataObjectsPerThread"]);
 
-        ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
-        DataObjectTask[] dataObjectTasks = new DataObjectTask[numOfThreads];
+        long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
 
-        for (int i = 0; i < numOfThreads; i++)
+        if (total > 0)
         {
-          doneEvents[i] = new ManualResetEvent(false);
+          int numOfThreads = (int)(total / itemsPerThread);
+          numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
 
-          int index = i * itemsPerThread;
-          int count = (index + itemsPerThread > total) ? (int)(total - index) : itemsPerThread;
+          ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
+          DataObjectTask[] dataObjectTasks = new DataObjectTask[numOfThreads];
 
-          DataObjectTask task = new DataObjectTask(doneEvents[i], _dataLayer, _graphMap.dataObjectName, filter, count, index);
-          dataObjectTasks[i] = task;
-          ThreadPool.QueueUserWorkItem(task.ThreadPoolCallback, i);
+          for (int i = 0; i < numOfThreads; i++)
+          {
+            doneEvents[i] = new ManualResetEvent(false);
+
+            int offset = i * itemsPerThread;
+            int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
+
+            DataObjectTask task = new DataObjectTask(doneEvents[i], _dataLayer, _graphMap.dataObjectName, filter, pageSize, offset);
+            dataObjectTasks[i] = task;
+            ThreadPool.QueueUserWorkItem(task.ThreadPoolCallback, i);
+          }
+
+          // wait for all tasks to complete
+          WaitHandle.WaitAll(doneEvents);
+
+          // collect data objects from the tasks
+          for (int i = 0; i < numOfThreads; i++)
+          {
+            dataObjects.AddRange(dataObjectTasks[i].DataObjects);
+          }
         }
+      }
+      else
+      {
+         int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) 
+           ? 250 : int.Parse(_settings["DefaultPageSize"]);
 
-        // wait for all tasks to complete
-        WaitHandle.WaitAll(doneEvents);
+         long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
 
-        // collect data objects from the tasks
-        for (int i = 0; i < numOfThreads; i++)
-        {
-          dataObjects.AddRange(dataObjectTasks[i].DataObjects);
-        }
+         for (int offset = 0; offset < count; offset = offset + pageSize)
+         {
+           dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, offset));
+         }
       }
 
       return dataObjects;
