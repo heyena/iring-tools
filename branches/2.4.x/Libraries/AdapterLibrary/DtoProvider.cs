@@ -48,6 +48,7 @@ using org.iringtools.mapping;
 using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter.identity;
 using Microsoft.ServiceModel.Web;
+using System.Threading;
 
 namespace org.iringtools.adapter
 {
@@ -283,7 +284,6 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(manifest, graph);
 
         List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, null);
-
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
       }
@@ -892,18 +892,64 @@ namespace org.iringtools.adapter
       }
     }
 
-    private List<IDataObject> PageDataObjects(string objectName, DataFilter filter)
+    //private List<IDataObject> PageDataObjects(string objectName, DataFilter filter)
+    //{
+    //  List<IDataObject> dataObjects = new List<IDataObject>();
+
+    //  int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) ? 250 :
+    //     int.Parse(_settings["DefaultPageSize"]);
+
+    //  long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+
+    //  for (int i = 0; i < count; i = i + pageSize)
+    //  {
+    //    dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, i));
+    //  }
+
+    //  return dataObjects;
+    //}
+
+    private List<IDataObject> PageDataObjects(string objectType, DataFilter filter)
     {
       List<IDataObject> dataObjects = new List<IDataObject>();
+      
+      //
+      // multithreading getting data objects
+      //
+      int itemsPerThread;
+      int.TryParse(_settings["DataObjectsPerThread"], out itemsPerThread);
+      if (itemsPerThread == 0) itemsPerThread = 25;
 
-      int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) ? 250 :
-         int.Parse(_settings["DefaultPageSize"]);
+      long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
 
-      long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
-
-      for (int i = 0; i < count; i = i + pageSize)
+      if (total > 0)
       {
-        dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, i));
+        int numOfThreads = (int)(total / itemsPerThread);
+        numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
+
+        ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
+        DataObjectTask[] dataObjectTasks = new DataObjectTask[numOfThreads];
+
+        for (int i = 0; i < numOfThreads; i++)
+        {
+          doneEvents[i] = new ManualResetEvent(false);
+
+          int index = i * itemsPerThread;
+          int count = (index + itemsPerThread > total) ? (int)(total - index) : itemsPerThread;
+
+          DataObjectTask task = new DataObjectTask(doneEvents[i], _dataLayer, _graphMap.dataObjectName, filter, count, index);
+          dataObjectTasks[i] = task;
+          ThreadPool.QueueUserWorkItem(task.ThreadPoolCallback, i);
+        }
+
+        // wait for all tasks to complete
+        WaitHandle.WaitAll(doneEvents);
+
+        // collect data objects from the tasks
+        for (int i = 0; i < numOfThreads; i++)
+        {
+          dataObjects.AddRange(dataObjectTasks[i].DataObjects);
+        }
       }
 
       return dataObjects;
