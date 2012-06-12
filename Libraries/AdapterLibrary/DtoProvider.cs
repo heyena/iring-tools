@@ -276,6 +276,7 @@ namespace org.iringtools.adapter
       return manifest;
     }
 
+    //show exchange data in Exchange Manager
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -287,7 +288,7 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(manifest, graph);
 
-        List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, null);
+        List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, getLayeredDataFilter(graph));
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
       }
@@ -300,35 +301,7 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-    // Combine existing filter from mapping into the filter came from UI of Exchange Manager
-    private DataFilter CombineFilter(DataFilter filter1, DataFilter filter2)
-    {
-      DataFilter filter = new DataFilter();
-      filter.Expressions = new List<Expression>();
-      filter.OrderExpressions = new List<OrderExpression>();
-
-      if (filter1.Expressions != null)
-        foreach (Expression expression in filter1.Expressions)
-          filter.Expressions.Add(expression);
-
-      if (filter1.OrderExpressions != null)
-        foreach (OrderExpression orderExpression in filter1.OrderExpressions)
-          filter.OrderExpressions.Add(orderExpression);
-
-      if (filter2 != null)
-      {
-        if (filter2.Expressions != null)
-          foreach (Expression expression in filter2.Expressions)
-            filter.Expressions.Add(expression);
-
-        if (filter2.OrderExpressions != null)
-          foreach (OrderExpression orderExpression in filter2.OrderExpressions)
-            filter.OrderExpressions.Add(orderExpression);
-      }
-
-      return filter;
-    }
-
+    //showing mapped app data in Exchange Manager and filter mapped app data and exchange data
     public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -340,11 +313,13 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(request.Manifest, graph);
 
-        DataFilter uiFilter = request.DataFilter;
+        DataFilter filter = request.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref uiFilter, graph);
-        
-        DataFilter filter = CombineFilter(uiFilter, _mapping.dataFilter);
+        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+
+        if (hashAlgorithm == null)
+          filter.AddFilter(getLayeredDataFilter(graph));
+
         List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
         
         // get sort index
@@ -369,6 +344,19 @@ namespace org.iringtools.adapter
       }
 
       return dataTransferIndices;
+    }
+
+    private DataFilter getLayeredDataFilter(string graph)
+    {
+      if (_dataDictionary == null)
+        _dataDictionary = _dataLayer.GetDictionary();
+
+      GraphMap graphObject = _mapping.FindGraphMap(graph);
+      DataObject dataObject = _dataDictionary.getDataObject(graphObject.dataObjectName);
+      DataFilter dataFilter = new DataFilter();
+      dataFilter.AddFilter(dataObject.dataFilter);
+      dataFilter.AddFilter(graphObject.dataFilter);
+      return dataFilter;
     }
 
     // get list (page) of data transfer objects per data transfer indicies

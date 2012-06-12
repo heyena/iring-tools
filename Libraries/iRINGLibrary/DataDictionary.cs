@@ -53,10 +53,7 @@ namespace org.iringtools.library
     public bool enableSummary { get; set; }
 
     [DataMember(Order = 4)]
-    public string dataVersion { get; set; }
-
-    [DataMember(Order = 5, EmitDefaultValue = false)]
-    public DataFilter dataFilter { get; set; }
+    public string dataVersion { get; set; }    
 
     public static bool IsNumeric(DataType dataType)
     {
@@ -78,6 +75,20 @@ namespace org.iringtools.library
       }
 
       return isNumeric;
+    }
+
+    public DataObject getDataObject(string name)
+    {
+      DataObject dataObject = null;
+      dataObject = this.dataObjects.FirstOrDefault<DataObject>(o => o.objectName.ToLower() == name.ToLower());
+      return dataObject;
+    }
+
+    public DataObject getTableObject(string name)
+    {
+      DataObject dataObject = null;
+      dataObject = this.dataObjects.FirstOrDefault<DataObject>(o => o.tableName.ToLower() == name.ToLower());
+      return dataObject;
     }
   }
 
@@ -141,6 +152,9 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
     public string version { get; set; }
+
+    [DataMember(IsRequired = false, Order = 17, EmitDefaultValue = false)]
+    public DataFilter dataFilter { get; set; }
 
     public bool isKeyProperty(string propertyName)
     {

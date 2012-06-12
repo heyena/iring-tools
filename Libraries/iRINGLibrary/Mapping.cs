@@ -32,6 +32,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization;
 using org.iringtools.utility;
+using org.iringtools.library;
 
 namespace org.iringtools.legacy
 {
@@ -131,6 +132,9 @@ namespace org.iringtools.legacy
 
     [DataMember(EmitDefaultValue = false, Order = 2)]
     public string dataObjectMap { get; set; }  // top level data object
+
+    [DataMember(EmitDefaultValue = false, Order = 3)]
+    public DataFilter dataFilter { get; set; }
 
     public KeyValuePair<ClassMap, List<TemplateMap>> GetClassTemplateListMap(string classId)
     {
