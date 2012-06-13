@@ -690,7 +690,7 @@ namespace org.iringtools.adapter
             _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
           }
 
-          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
+          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer).InThreadScope();
 
           _dataDictionary = _dataLayer.GetDictionary();
           _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
@@ -973,7 +973,8 @@ namespace org.iringtools.adapter
           dtos.DataTransferObjectList = dataTransferObjects.DataTransferObjectList.GetRange(offset, count);
 
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-          DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvents[i], projectionLayer, _dataLayer, _graphMap, dtos);
+          IDataLayer dataLayer = _kernel.Get<IDataLayer>();
+          DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvents[i], projectionLayer, dataLayer, _graphMap, dtos);
           dtoTasks[i] = dtoTask;
           ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, i);
         }
