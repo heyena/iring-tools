@@ -13,7 +13,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   refClassTabPanel: null,
   propertyPanel: null,
   searchStore: null,
- // contextButton: null,
+  // contextButton: null,
   contextClassMenu: null,
   /**
   * initComponent
@@ -69,16 +69,16 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       items: [this.refClassTabPanel]
 
     });
-//    this.contextButton = new Ext.Toolbar.Button({
-//      pressed: true,
-//      enableToggle: false,
-//      text: 'ContextMenu',
-//      menu: new Ext.menu.Menu()
-//    });
+    //    this.contextButton = new Ext.Toolbar.Button({
+    //      pressed: true,
+    //      enableToggle: false,
+    //      text: 'ContextMenu',
+    //      menu: new Ext.menu.Menu()
+    //    });
 
     this.tbar = new Ext.Toolbar();
     this.tbar.add(this.buildToolbar());
-//    this.tbar.add(this.contextButton);
+    //    this.tbar.add(this.contextButton);
 
     this.items = [this.mainPanel, this.propertyPanel];
 
@@ -173,6 +173,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
         baseParams: {
           id: null,
           type: null,
+          repositoryName: null,
           query: searchText,
           reset: isreset,
           limit: this.limit,
@@ -181,11 +182,14 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       });
 
       treeLoader.on("beforeload", function (treeLoader, node) {
+        var repo = node.attributes.text;
         treeLoader.baseParams.type = node.attributes.type;
         treeLoader.baseParams.query = searchText;
         treeLoader.baseParams.reset = isreset;
         treeLoader.baseParams.limit = this.limit;
         treeLoader.baseParams.start = 0;
+        if(repo)
+          treeLoader.baseParams.repositoryName = repo.substring(repo.indexOf("[")+1, repo.indexOf("]"));
         if (node.parentNode && node.attributes.identifier == null) {
           treeLoader.baseParams.id = node.parentNode.attributes.identifier;
         } else {
@@ -246,10 +250,10 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       } else {
         this.propertyPanel.setSource(node.attributes.record);
       }
-//      this.contextButton.menu.removeAll();
-//      if (obj.type == 'ClassNode') {
-//        this.contextButton.menu.add(this.buildClassContextMenu());
-//      }
+      //      this.contextButton.menu.removeAll();
+      //      if (obj.type == 'ClassNode') {
+      //        this.contextButton.menu.add(this.buildClassContextMenu());
+      //      }
     } catch (e) { }
     node.expand();
   }

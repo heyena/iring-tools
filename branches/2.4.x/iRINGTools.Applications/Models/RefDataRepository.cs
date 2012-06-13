@@ -123,6 +123,12 @@ namespace iRINGTools.Web.Models
       return _referenceDataServiceClient.Get<QMXF>(relativeUri);
     }
 
+    public QMXF GetClasses(string classId, Repository repository)
+    {
+      relativeUri = string.Format("/classes/{0}", classId);
+      return _referenceDataServiceClient.Post<Repository, QMXF>(relativeUri, repository);
+    }
+
     public QMXF GetTemplate(string id)
     {
       relativeUri = string.Format("/templates/{0}", id);

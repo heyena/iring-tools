@@ -195,7 +195,19 @@ namespace org.iringtools.services
       return _referenceDataProvider.GetEntityTypes();
     }
 
+       /// <summary>
+    /// return class details
+    /// </summary>
+    //[XmlSerializerFormat]
+    [Description("return class details")]
+    [WebInvoke(UriTemplate = "/classes/{id}")]
+    public QMXF GetClassFromRepository(string id, Repository repository)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
 
+      return _referenceDataProvider.GetClass(id, null, repository);
+    }
     /// <summary>
     /// return class details
     /// </summary>
@@ -204,11 +216,13 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}?namespace={namespace}")]
     public QMXF GetClass(string id, string @namespace)
     {
+     
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-
+      
       return _referenceDataProvider.GetClass(id, @namespace, null);
     }
+
 
     /// <summary>
     /// return immediate superclasses of specified class

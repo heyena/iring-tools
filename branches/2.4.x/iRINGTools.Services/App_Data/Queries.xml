@@ -92,6 +92,26 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetMembersJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>rds</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetMembersJORD.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetMembersPart8</key>
     <query>
       <bindings>
@@ -196,7 +216,7 @@
     </query>
   </queryItem>
   <queryItem>
-    <key>GetSpecialization</key>
+    <key>GetSuperclass</key>
     <query>
       <bindings>
         <queryBinding>
@@ -666,7 +686,7 @@
     </query>
   </queryItem>
   <queryItem>
-    <key>GetSuperClassJORD</key>
+    <key>GetSuperclassJORD</key>
     <query>
       <bindings>
         <queryBinding>

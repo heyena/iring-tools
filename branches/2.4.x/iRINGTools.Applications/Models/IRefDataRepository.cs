@@ -34,6 +34,8 @@ namespace iRINGTools.Web.Models
 
     QMXF GetClasses(string classId);
 
+    QMXF GetClasses(string classId, Repository repository);
+
     QMXF GetTemplate(string id);
   }
 }
