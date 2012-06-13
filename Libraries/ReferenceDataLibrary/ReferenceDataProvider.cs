@@ -440,8 +440,8 @@ namespace org.iringtools.refdata
 
         List<Specialization> specializations = new List<Specialization>();
 
-        Query queryRdsWip = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
-        Query queryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassJORD").Query;
+        Query queryRdsWip = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclass").Query;
+        Query queryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclassJORD").Query;
         Query queryPart8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
 
         foreach (Repository repository in _repositories)
@@ -616,25 +616,25 @@ namespace org.iringtools.refdata
         Query classQuery = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
         Query classQueryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassJORD").Query;
 
+        /// Always use rdl namespace
+        namespaceUrl = _namespaces.Find(n => n.Prefix == "rdl").Uri;
+        uri = namespaceUrl + id;
 
         foreach (Repository repository in _repositories)
         {
+
+          if (rep != null)
+            if (rep.Name != repository.Name) continue;
+
           if (repository.RepositoryType == RepositoryType.JORD)
           {
-            namespaceUrl = _namespaces.Find(n => n.Prefix == "jordrdl").Uri;
-            uri = namespaceUrl + id;
             sparql = ReadSPARQL(classQueryJord.FileName).Replace("param1", uri);
           }
           else
           {
-            namespaceUrl = _namespaces.Find(n => n.Prefix == "rdl").Uri;
-            uri = namespaceUrl + id;
             sparql = ReadSPARQL(classQuery.FileName).Replace("param1", uri);
           }
           ClassDefinition classDefinition = null;
-
-          if (rep != null)
-            if (rep.Name != repository.Name) continue;
 
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
           classifications = new List<Classification>();
@@ -848,27 +848,29 @@ namespace org.iringtools.refdata
       try
       {
         string sparql = string.Empty;
-        string sparqlp8 = string.Empty;
         Entity resultEntity = null;
         SparqlResultSet sparqlResults;
         Query getMembers = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembers").Query;
         sparql = ReadSPARQL(getMembers.FileName);
-        sparql = sparql.Replace("param1", Id);
         Query getMembersP8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembersPart8").Query;
-        sparqlp8 = ReadSPARQL(getMembersP8.FileName);
-        sparqlp8 = sparqlp8.Replace("param1", Id);
+        Query getMembersJORD = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembersJORD").Query;
 
 
         foreach (Repository repository in _repositories)
         {
-          if (repository.RepositoryType != RepositoryType.Part8)
+          if (repository.RepositoryType == RepositoryType.Part8)
           {
-            sparqlResults = QueryFromRepository(repository, sparql);
+            sparql = ReadSPARQL(getMembersP8.FileName).Replace("param1", Id);
+          }
+          else if (repository.RepositoryType == RepositoryType.JORD)
+          {
+            sparql = ReadSPARQL(getMembersJORD.FileName).Replace("param1", Id);
           }
           else
           {
-            sparqlResults = QueryFromRepository(repository, sparqlp8);
+            sparql = ReadSPARQL(getMembers.FileName).Replace("param1", Id);
           }
+          sparqlResults = QueryFromRepository(repository, sparql);
           foreach (SparqlResult result in sparqlResults)
           {
             resultEntity = new Entity();
@@ -1794,6 +1796,10 @@ namespace org.iringtools.refdata
                 break;
               case RepositoryType.Part8:
                 sparqlQuery = "GetTemplateQualificationPart8";
+                break;
+
+              case RepositoryType.JORD:
+                sparqlQuery = "GetTemplateQualificationJORD";
                 break;
             }
 

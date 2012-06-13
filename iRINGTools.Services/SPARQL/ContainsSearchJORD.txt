@@ -4,7 +4,7 @@ SELECT ?uri ?label ?rds
 { 
   
   ?rds rdfs:label ?label .
-  OPTIONAL{?rds rds:rdsWipEquivalent ?uri .}
+  ?uri rds:rdsWipEquivalent ?rds .
   FILTER (isLiteral(?label) && regex(str(?label),'param1','i'))
 }
 ORDER BY ?label
