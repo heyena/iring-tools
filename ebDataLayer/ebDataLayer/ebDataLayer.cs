@@ -92,12 +92,8 @@ namespace org.iringtools.adapter.datalayer.eb
     private string _classObjects = string.Empty;
     private string _keyDelimiter = string.Empty;
 
-    private Proxy _proxy = null;
-    private Session _session = null;
     private Dictionary<string, Configuration> _configs = null;
     private Rules _rules = null;
-
-    private System.Object _lockObject = new System.Object();
     #endregion
 
     #region constructor
@@ -114,7 +110,7 @@ namespace org.iringtools.adapter.datalayer.eb
         }
 
         _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
-        
+
         //
         // load app settings
         //
@@ -125,7 +121,7 @@ namespace org.iringtools.adapter.datalayer.eb
           _dataPath += "App_Data\\";
           configPath = string.Format("{0}{1}.config", _dataPath, _scope);
         }
-        
+
         _settings.AppendSettings(new AppSettingsReader(configPath));
 
         _dictionaryPath = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
@@ -149,8 +145,8 @@ namespace org.iringtools.adapter.datalayer.eb
         //
         // load configurations
         //
-        _configs = new Dictionary<string, Configuration>(StringComparer.OrdinalIgnoreCase);      
-  
+        _configs = new Dictionary<string, Configuration>(StringComparer.OrdinalIgnoreCase);
+
         foreach (string configFile in configFiles)
         {
           if (configFile.ToLower() != ruleFile.ToLower())
@@ -174,78 +170,145 @@ namespace org.iringtools.adapter.datalayer.eb
     #region IDataLayer implementation methods
     public override DataDictionary GetDictionary()
     {
-      lock (_lockObject)
+      Proxy proxy = null;
+      Session session = null;
+
+      if (_dictionary != null)
+        return _dictionary;
+
+      if (System.IO.File.Exists(_dictionaryPath))
       {
-        if (_dictionary != null)
-          return _dictionary;
+        _dictionary = Utility.Read<DataDictionary>(_dictionaryPath);
+        return _dictionary;
+      }
 
-        if (System.IO.File.Exists(_dictionaryPath))
+      try
+      {
+        Connect(ref proxy, ref session);
+
+        EqlClient eqlClient = new EqlClient(session);
+        List<ClassObject> classObjects = GetClassObjects(eqlClient);
+
+        _dictionary = new DataDictionary();
+        foreach (ClassObject classObject in classObjects)
         {
-          _dictionary = Utility.Read<DataDictionary>(_dictionaryPath);
-          return _dictionary;
-        }
+          DataObject objDef = CreateObjectDefinition(proxy, classObject);
 
-        try
-        {
-          Connect();
-
-          EqlClient eqlClient = new EqlClient(_session);
-          List<ClassObject> classObjects = GetClassObjects(eqlClient);
-
-          _dictionary = new DataDictionary();
-          foreach (ClassObject classObject in classObjects)
+          if (objDef != null)
           {
-            DataObject objDef = CreateObjectDefinition(classObject);
-
-            if (objDef != null)
-            {
-              _dictionary.dataObjects.Add(objDef);
-            }
+            _dictionary.dataObjects.Add(objDef);
           }
+        }
 
-          Utility.Write<DataDictionary>(_dictionary, _dictionaryPath);
-          return _dictionary;
-        }
-        catch (Exception e)
-        {
-          throw e;
-        }
-        finally
-        {
-          Disconnect();
-        }
+        Utility.Write<DataDictionary>(_dictionary, _dictionaryPath);
+        return _dictionary;
+      }
+      catch (Exception e)
+      {
+        throw e;
+      }
+      finally
+      {
+        Disconnect(ref proxy, ref session);
       }
     }
 
     public override long GetCount(string objectType, DataFilter filter)
     {
-      lock (_lockObject)
+      Proxy proxy = null;
+      Session session = null;
+
+      try
       {
-        try
+        DataObject objDef = GetObjectDefinition(objectType);
+
+        if (objDef != null)
         {
-          DataObject objDef = GetObjectDefinition(objectType);
+          Connect(ref proxy, ref session);
 
-          if (objDef != null)
+          Configuration config = GetConfiguration(objDef);
+          int objType = (int)config.Template.ObjectType;
+          string classIds = objDef.tableName.Replace("_", ",");
+          string eql = string.Empty;
+
+          if (objType == (int)ObjectType.Tag)
           {
-            Connect();
+            eql = string.Format("START WITH Tag WHERE Class.Id IN ({0})", classIds);
+          }
+          else if (objType == (int)ObjectType.Document)
+          {
+            eql = string.Format("START WITH Document WHERE Class.Id IN ({0})", classIds);
+          }
+          else
+          {
+            throw new Exception(string.Format("Object type [{0}] not supported.", objectType));
+          }
 
-            Configuration config = GetConfiguration(objDef);
-            int objType = (int)config.Template.ObjectType;
-            string classIds = objDef.tableName.Replace("_", ",");
-            string eql = string.Empty;
+          if (filter != null)
+          {
+            string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
+            if (!string.IsNullOrEmpty(whereClause))
+            {
+              eql += whereClause.Replace(" WHERE ", " AND ");
+            }
+          }
 
-            if (objType == (int)ObjectType.Tag)
+          EqlClient eqlClient = new EqlClient(session);
+          DataTable dt = eqlClient.RunQuery(eql);
+          return Convert.ToInt64(dt.Rows.Count);
+        }
+        else
+        {
+          throw new Exception(string.Format("Object type [{0}] not found.", objectType));
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error(string.Format("Error getting object count for [{0}]: {1}", objectType, e.Message));
+        throw e;
+      }
+      finally
+      {
+        Disconnect(ref proxy, ref session);
+      }
+    }
+
+    public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
+    {
+      IList<IDataObject> dataObjects = new List<IDataObject>();
+      Proxy proxy = null;
+      Session session = null;
+      
+      try
+      {
+        Connect(ref proxy, ref session);
+
+        DataObject objDef = GetObjectDefinition(objectType);
+
+        if (objDef != null)
+        {
+          string classObject = objDef.objectNamespace;
+          string classIds = objDef.tableName.Replace("_", ",");
+
+          if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
+          {
+            string eql = "START WITH {0} SELECT {1} WHERE Class.Id IN ({2})";
+            StringBuilder builder = new StringBuilder();
+
+            foreach (DataProperty dataProp in objDef.dataProperties)
             {
-              eql = string.Format("START WITH Tag WHERE Class.Id IN ({0})", classIds);
+              string item = Utilities.ToQueryItem(dataProp);
+
+              if (!string.IsNullOrEmpty(item))
+              {
+                if (builder.Length > 0)
+                  builder.Append(",");
+
+                builder.Append(item);
+              }
             }
-            else if (objType == (int)ObjectType.Document)
-            {
-              eql = string.Format("START WITH Document WHERE Class.Id IN ({0})", classIds);
-            }
-            else
-            {
-              throw new Exception(string.Format("Object type [{0}] not supported.", objectType));
-            }
+
+            eql = string.Format(eql, classObject, builder.ToString(), classIds);
 
             if (filter != null)
             {
@@ -256,137 +319,65 @@ namespace org.iringtools.adapter.datalayer.eb
               }
             }
 
-            EqlClient eqlClient = new EqlClient(_session);
-            DataTable dt = eqlClient.RunQuery(eql);
-            return Convert.ToInt64(dt.Rows.Count);
+            EqlClient eqlClient = new EqlClient(session);
+            DataTable result = eqlClient.Search(session, eql, new object[0], startIndex, pageSize);
+
+            dataObjects = ToDataObjects(result, objDef);
           }
           else
           {
-            throw new Exception(string.Format("Object type [{0}] not found.", objectType));
+            throw new Exception("Class object [" + classObject + "] not supported.");
           }
         }
-        catch (Exception e)
+        else
         {
-          _logger.Error(string.Format("Error getting object count for [{0}]: {1}", objectType, e.Message));
-          throw e;
-        }
-        finally
-        {
-          Disconnect();
+          throw new Exception("Object type " + objectType + " not found.");
         }
       }
-    }
-
-    public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
-    {
-      lock (_lockObject)
+      finally
       {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
-
-        try
-        {
-          Connect();
-
-          DataObject objDef = GetObjectDefinition(objectType);
-
-          if (objDef != null)
-          {
-            string classObject = objDef.objectNamespace;
-            string classIds = objDef.tableName.Replace("_", ",");
-
-            if (classObject.ToLower() == "document" || classObject.ToLower() == "tag")
-            {
-              string eql = "START WITH {0} SELECT {1} WHERE Class.Id IN ({2})";
-              StringBuilder builder = new StringBuilder();
-
-              foreach (DataProperty dataProp in objDef.dataProperties)
-              {
-                string item = Utilities.ToQueryItem(dataProp);
-
-                if (!string.IsNullOrEmpty(item))
-                {
-                  if (builder.Length > 0)
-                    builder.Append(",");
-
-                  builder.Append(item);
-                }
-              }
-
-              eql = string.Format(eql, classObject, builder.ToString(), classIds);
-
-              if (filter != null)
-              {
-                string whereClause = Utilities.ToSqlWhereClause(filter, objDef);
-                if (!string.IsNullOrEmpty(whereClause))
-                {
-                  eql += whereClause.Replace(" WHERE ", " AND ");
-                }
-              }
-
-              EqlClient eqlClient = new EqlClient(_session);
-              DataTable result = eqlClient.Search(_session, eql, new object[0], startIndex, pageSize);
-
-              dataObjects = ToDataObjects(result, objDef);
-            }
-            else
-            {
-              throw new Exception("Class object [" + classObject + "] not supported.");
-            }
-          }
-          else
-          {
-            throw new Exception("Object type " + objectType + " not found.");
-          }
-        }
-        finally
-        {
-          Disconnect();
-        }
-
-        return dataObjects;
+        Disconnect(ref proxy, ref session);
       }
+
+      return dataObjects;
     }
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
-      lock (_lockObject)
+      try
       {
-        try
-        {
-          IList<IDataObject> dataObjects = Get(objectType, filter, 0, -1);
-          DataObject objDef = GetObjectDefinition(objectType);
-          IList<string> identifiers = new List<string>();
+        IList<IDataObject> dataObjects = Get(objectType, filter, 0, -1);
+        DataObject objDef = GetObjectDefinition(objectType);
+        IList<string> identifiers = new List<string>();
 
-          foreach (IDataObject dataObject in dataObjects)
-          {
-            identifiers.Add(Convert.ToString(dataObject.GetPropertyValue(objDef.keyProperties.First().keyPropertyName)));
-          }
-
-          return identifiers;
-        }
-        catch (Exception e)
+        foreach (IDataObject dataObject in dataObjects)
         {
-          _logger.Error(string.Format("Error getting identifiers of object type [{0}]", objectType));
-          throw e;
+          identifiers.Add(Convert.ToString(dataObject.GetPropertyValue(objDef.keyProperties.First().keyPropertyName)));
         }
+
+        return identifiers;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(string.Format("Error getting identifiers of object type [{0}]", objectType));
+        throw e;
       }
     }
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
-      lock (_lockObject)
-      {
-        return Get(objectType, identifiers, false);
-      }
+      return Get(objectType, identifiers, false);
     }
 
     public IList<IDataObject> Get(string objectType, IList<string> identifiers, bool retainSession)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
-
+      Proxy proxy = null;
+      Session session = null;
+     
       try
       {
-        Connect();
+        Connect(ref proxy, ref session);
 
         DataObject objDef = GetObjectDefinition(objectType);
 
@@ -416,8 +407,8 @@ namespace org.iringtools.adapter.datalayer.eb
 
             eql = string.Format(eql, classObject, builder.ToString(), key, keyValues);
 
-            EqlClient eqlClient = new EqlClient(_session);
-            DataTable result = eqlClient.Search(_session, eql, new object[0], 0, -1);
+            EqlClient eqlClient = new EqlClient(session);
+            DataTable result = eqlClient.Search(session, eql, new object[0], 0, -1);
 
             dataObjects = ToDataObjects(result, objDef);
           }
@@ -433,7 +424,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
       finally
       {
-        if (!retainSession) Disconnect();
+        if (!retainSession) Disconnect(ref proxy, ref session);
       }
 
       return dataObjects;
@@ -441,438 +432,421 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override Response Post(IList<IDataObject> dataObjects)
     {
-      lock (_lockObject)
+      Response response = new Response();
+      Proxy proxy = null;
+      Session session = null;
+     
+      try
       {
-        Response response = new Response();
-
-        try
+        if (dataObjects.Count <= 0)
         {
-          if (dataObjects.Count <= 0)
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("No data objects to update.");
+          return response;
+        }
+
+        string objType = ((GenericDataObject)dataObjects[0]).ObjectType;
+        DataObject objDef = GetObjectDefinition(objType);
+        Configuration config = GetConfiguration(objDef);
+
+        Connect(ref proxy, ref session);
+
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
+          string keyValue = Convert.ToString(dataObject.GetPropertyValue(keyProp.keyPropertyName));
+
+          string revision = string.Empty;
+          Map revisionMap = config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Revision);
+          if (revisionMap != null)
           {
-            response.Level = StatusLevel.Error;
-            response.Messages.Add("No data objects to update.");
-            return response;
+            string propertyName = Utilities.ToPropertyName(revisionMap.Column);
+            revision = Convert.ToString(dataObject.GetPropertyValue(propertyName));
           }
 
-          string objType = ((GenericDataObject)dataObjects[0]).ObjectType;
-          DataObject objDef = GetObjectDefinition(objType);
-          Configuration config = GetConfiguration(objDef);
+          EqlClient eql = new EqlClient(session);
+          int objectId = eql.GetObjectId(keyValue, revision, config.Template.ObjectType);
+          org.iringtools.adaper.datalayer.eb.Template template = config.Template;
 
-          Connect();
-
-          foreach (IDataObject dataObject in dataObjects)
+          if (objectId == 0)  // does not exist, create
           {
-            KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
-            string keyValue = Convert.ToString(dataObject.GetPropertyValue(keyProp.keyPropertyName));
+            string templateName = GetTemplateName(template, objDef, dataObject);
+            int templateId = eql.GetTemplateId(templateName);
 
-            string revision = string.Empty;
-            Map revisionMap = config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Revision);
-            if (revisionMap != null)
-            {
-              string propertyName = Utilities.ToPropertyName(revisionMap.Column);
-              revision = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-            }
-
-            EqlClient eql = new EqlClient(_session);
-            int objectId = eql.GetObjectId(keyValue, revision, config.Template.ObjectType);
-            org.iringtools.adaper.datalayer.eb.Template template = config.Template;
-
-            if (objectId == 0)  // does not exist, create
-            {
-              string templateName = GetTemplateName(template, objDef, dataObject);
-              int templateId = eql.GetTemplateId(templateName);
-
-              if (templateId == 0)
-              {
-                Status status = new Status()
-                {
-                  Identifier = keyValue,
-                  Level = StatusLevel.Error,
-                  Messages = new Messages() { string.Format("Template [{0}] does not exist.", templateName) }
-                };
-
-                response.StatusList.Add(status);
-                continue;
-              }
-
-              objectId = _session.Writer.CreateFromTemplate(templateId, "", "");
-            }
-
-            string objectType = Enum.GetName(typeof(ObjectType), template.ObjectType);
-            ebProcessor processor = new ebProcessor(_session, config.Mappings.ToList<Map>(), _rules);
-
-            if (objectType == ObjectType.Tag.ToString())
-            {
-              response.Append(processor.ProcessTag(objDef, dataObject, objectId, keyValue));
-            }
-            else if (objectType == ObjectType.Document.ToString())
-            {
-              response.Append(processor.ProcessDocument(objDef, dataObject, objectId, keyValue));
-            }
-            else
+            if (templateId == 0)
             {
               Status status = new Status()
               {
                 Identifier = keyValue,
                 Level = StatusLevel.Error,
-                Messages = new Messages() { string.Format("Object type [{0}] not supported.", template.ObjectType) }
-              };
-
-              response.StatusList.Add(status);
-            }
-          }
-        }
-        catch (Exception e)
-        {
-          _logger.Error("Error posting data objects: " + e);
-
-          response.Level = StatusLevel.Error;
-          response.Messages.Add("Error posting data objects: " + e);
-        }
-        finally
-        {
-          Disconnect();
-        }
-
-        return response;
-      }
-    }
-
-    public override Response Delete(string objectType, IList<string> identifiers)
-    {
-      lock (_lockObject)
-      {
-        Response response = new Response() { Level = StatusLevel.Success };
-
-        try
-        {
-          DataObject objDef = GetObjectDefinition(objectType);
-
-          if (objDef != null)
-          {
-            try
-            {
-              Connect();
-
-              EqlClient eqlClient = new EqlClient(_session);
-              Configuration config = GetConfiguration(objDef);
-              int objType = (int)config.Template.ObjectType;
-
-              foreach (string identifier in identifiers)
-              {
-                Status status = new Status()
-                {
-                  Identifier = identifier,
-                  Level = StatusLevel.Success
-                };
-
-                int objId = eqlClient.GetObjectId(identifier, string.Empty, objType);
-
-                if (objId != 0)
-                {
-                  if (objType == (int)ObjectType.Tag)
-                  {
-                    Tag tag = new Tag(_session, objId);
-                    tag.Delete();
-                    status.Messages.Add(string.Format("Tag [{0}] deleted succesfully.", identifier));
-                  }
-                  else if (objType == (int)ObjectType.Document)
-                  {
-                    Document doc = new Document(_session, objId);
-                    doc.Delete();
-                    status.Messages.Add(string.Format("Document [{0}] deleted succesfully.", identifier));
-                  }
-                  else
-                  {
-                    status.Level = StatusLevel.Error;
-                    status.Messages.Add(string.Format("Object type [{0}] not supported.", objType));
-                  }
-                }
-                else
-                {
-                  status.Level = StatusLevel.Error;
-                  status.Messages.Add(string.Format("Object [{0}] not found.", identifier));
-                }
-
-                response.Append(status);
-              }
-            }
-            finally
-            {
-              Disconnect();
-            }
-          }
-          else
-          {
-            response.Level = StatusLevel.Error;
-            response.Messages.Add(string.Format("Object type [{0}] does not exist.", objectType));
-          }
-        }
-        catch (Exception e)
-        {
-          _logger.Error("Error deleting data object: " + e);
-
-          response.Level = StatusLevel.Error;
-          response.Messages.Add(e.Message);
-        }
-
-        return response;
-      }
-    }
-
-    public override Response Delete(string objectType, DataFilter filter)
-    {
-      lock (_lockObject)
-      {
-        try
-        {
-          IList<string> identifiers = GetIdentifiers(objectType, filter);
-          return Delete(objectType, identifiers);
-        }
-        catch (Exception e)
-        {
-          string filterXML = Utility.SerializeDataContract<DataFilter>(filter);
-          _logger.Error(string.Format("Error deleting object type [{0}] with filter [{1}].", objectType, filterXML));
-          throw e;
-        }
-      }
-    }
-
-    public override Response Refresh(string objectType)
-    {
-      lock (_lockObject)
-      {
-        return RefreshAll();
-      }
-    }
-
-    public override Response RefreshAll()
-    {
-      lock (_lockObject)
-      {
-        Response response = new Response();
-
-        try
-        {
-          _dictionary = null;
-          System.IO.File.Delete(_dictionaryPath);
-          GetDictionary();
-          response.Level = StatusLevel.Success;
-        }
-        catch (Exception e)
-        {
-          response.Level = StatusLevel.Error;
-          response.Messages = new Messages() { e.Message };
-        }
-
-        return response;
-      }
-    }
-    #endregion
-
-    #region IContentLayer implementation methods
-    public override IDictionary<string, string> GetHashValues(string objectType, IList<string> identifiers)
-    {
-      lock (_lockObject)
-      {
-        try
-        {
-          IList<IDataObject> dataObjects = Get(objectType, identifiers);
-          IList<int> docIds = GetDocumentIds(dataObjects);
-          return GetHashValues(docIds);
-        }
-        catch (Exception e)
-        {
-          _logger.Error("Error getting hash values: " + e.Message);
-          throw e;
-        }
-      }
-    }
-
-    public override IDictionary<string, string> GetHashValues(string objectType, DataFilter filter, int pageSize, int startIndex)
-    {
-      lock (_lockObject)
-      {
-        try
-        {
-          IList<IDataObject> dataObjects = Get(objectType, filter, pageSize, startIndex);
-          IList<int> docIds = GetDocumentIds(dataObjects);
-          return GetHashValues(docIds);
-        }
-        catch (Exception e)
-        {
-          _logger.Error("Error getting hash values: " + e.Message);
-          throw e;
-        }
-      }
-    }
-
-    public override IList<IContentObject> GetContents(string objectType, IList<string> identifiers)
-    {
-      lock (_lockObject)
-      {
-        try
-        {
-          IList<IDataObject> dataObjects = Get(objectType, identifiers);
-          IList<int> docIds = GetDocumentIds(dataObjects);
-          return GetContents(objectType, docIds);
-        }
-        catch (Exception e)
-        {
-          _logger.Error("Error getting contents: " + e.Message);
-          throw e;
-        }
-      }
-    }
-
-    public override IList<IContentObject> GetContents(string objectType, DataFilter filter, int pageSize, int startIndex)
-    {
-      lock (_lockObject)
-      {
-        try
-        {
-          IList<IDataObject> dataObjects = Get(objectType, filter, pageSize, startIndex);
-          IList<int> docIds = GetDocumentIds(dataObjects);
-          return GetContents(objectType, docIds);
-        }
-        catch (Exception e)
-        {
-          _logger.Error("Error getting contents: " + e.Message);
-          throw e;
-        }
-      }
-    }
-
-    public override Response PostContents(IList<IContentObject> contentObjects)
-    {
-      lock (_lockObject)
-      {
-        Response response = new Response() { Level = StatusLevel.Success };
-
-        if (contentObjects == null || contentObjects.Count == 0)
-        {
-          response.Level = StatusLevel.Error;
-          response.Messages.Add("No content object to post.");
-          return response;
-        }
-
-        foreach (GenericContentObject contentObject in contentObjects)
-        {
-          try
-          {
-            //
-            // get doc Id
-            //
-            IList<IDataObject> dataObjects = Get(contentObject.ObjectType, new List<string> { contentObject.identifier }, true);
-            int docId = GetDocumentId(dataObjects.FirstOrDefault());
-
-            if (docId <= 0)
-            {
-              _session.ProtoProxy.AddObjectFile(_session.ReaderSessionString, docId,
-                (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
-
-              Status status = new Status()
-              {
-                Identifier = contentObject.identifier,
-                Level = StatusLevel.Error,
-                Messages = new Messages() { string.Format("Document [{0}] not found.", contentObject.identifier) }
+                Messages = new Messages() { string.Format("Template [{0}] does not exist.", templateName) }
               };
 
               response.StatusList.Add(status);
               continue;
             }
 
-            // 
-            // get content id
-            //
-            EqlClient client = new EqlClient(_session);
-            DataTable dt = client.RunQuery(string.Format(CONTENT_EQL, docId));
-            int fileId = (int)(dt.Rows[0]["FilesId"]);
-
-            if (fileId <= 0)  // add
-            {
-              _session.ProtoProxy.AddObjectFile(_session.ReaderSessionString, docId,
-                (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
-
-              Status status = new Status()
-              {
-                Identifier = contentObject.identifier,
-                Level = StatusLevel.Success,
-                Messages = new Messages() { string.Format("Document [{0}] added successfully.", contentObject.identifier) }
-              };
-
-              response.StatusList.Add(status);
-            }
-            else  // update
-            {
-              //
-              // check out content
-              //
-              eB.Data.File file = new eB.Data.File(_session);
-              file.Retrieve(fileId, "Header;Repositories");
-
-              FileInfo localFile = new FileInfo(Path.GetTempPath() + file.Name);
-              if (localFile.Exists)
-                localFile.Delete();
-
-              file.CheckOut(localFile.FullName);
-
-              //
-              // update content
-              //
-              Utility.WriteStream(contentObject.content, localFile.FullName);
-
-              // 
-              // check content back in
-              //
-              file = new eB.Data.File(_session);
-              file.Retrieve(fileId, "Header;Repositories");
-
-              if (file.IsCheckedOut)
-              {
-                try
-                {
-                  file.CheckIn(localFile.FullName, eB.ContentData.File.CheckinOptions.DeleteLocalCopy, null);
-                  _session.Writer.CheckinDoc(file.Document.Id, 0);
-
-                  Status status = new Status()
-                  {
-                    Identifier = contentObject.identifier,
-                    Level = StatusLevel.Success,
-                    Messages = new Messages() { string.Format("Document [{0}] updated successfully.", contentObject.identifier) }
-                  };
-
-                  response.StatusList.Add(status);
-                }
-                catch
-                {
-                  file.UndoCheckout();
-                }
-              }
-            }
+            objectId = session.Writer.CreateFromTemplate(templateId, "", "");
           }
-          catch (Exception e)
-          {
-            _logger.Error("Error posting content: " + e.Message);
 
+          string objectType = Enum.GetName(typeof(ObjectType), template.ObjectType);
+          ebProcessor processor = new ebProcessor(session, config.Mappings.ToList<Map>(), _rules);
+
+          if (objectType == ObjectType.Tag.ToString())
+          {
+            response.Append(processor.ProcessTag(objDef, dataObject, objectId, keyValue));
+          }
+          else if (objectType == ObjectType.Document.ToString())
+          {
+            response.Append(processor.ProcessDocument(objDef, dataObject, objectId, keyValue));
+          }
+          else
+          {
             Status status = new Status()
             {
-              Identifier = contentObject.identifier,
+              Identifier = keyValue,
               Level = StatusLevel.Error,
-              Messages = new Messages() { e.Message }
+              Messages = new Messages() { string.Format("Object type [{0}] not supported.", template.ObjectType) }
             };
 
             response.StatusList.Add(status);
           }
         }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error posting data objects: " + e);
 
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error posting data objects: " + e);
+      }
+      finally
+      {
+        Disconnect(ref proxy, ref session);
+      }
+
+      return response;
+    }
+
+    public override Response Delete(string objectType, IList<string> identifiers)
+    {
+      Response response = new Response() { Level = StatusLevel.Success };
+      Proxy proxy = null;
+      Session session = null;
+     
+      try
+      {
+        DataObject objDef = GetObjectDefinition(objectType);
+
+        if (objDef != null)
+        {
+          try
+          {
+            Connect(ref proxy, ref session);
+
+            EqlClient eqlClient = new EqlClient(session);
+            Configuration config = GetConfiguration(objDef);
+            int objType = (int)config.Template.ObjectType;
+
+            foreach (string identifier in identifiers)
+            {
+              Status status = new Status()
+              {
+                Identifier = identifier,
+                Level = StatusLevel.Success
+              };
+
+              int objId = eqlClient.GetObjectId(identifier, string.Empty, objType);
+
+              if (objId != 0)
+              {
+                if (objType == (int)ObjectType.Tag)
+                {
+                  Tag tag = new Tag(session, objId);
+                  tag.Delete();
+                  status.Messages.Add(string.Format("Tag [{0}] deleted succesfully.", identifier));
+                }
+                else if (objType == (int)ObjectType.Document)
+                {
+                  Document doc = new Document(session, objId);
+                  doc.Delete();
+                  status.Messages.Add(string.Format("Document [{0}] deleted succesfully.", identifier));
+                }
+                else
+                {
+                  status.Level = StatusLevel.Error;
+                  status.Messages.Add(string.Format("Object type [{0}] not supported.", objType));
+                }
+              }
+              else
+              {
+                status.Level = StatusLevel.Error;
+                status.Messages.Add(string.Format("Object [{0}] not found.", identifier));
+              }
+
+              response.Append(status);
+            }
+          }
+          finally
+          {
+            Disconnect(ref proxy, ref session);
+          }
+        }
+        else
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add(string.Format("Object type [{0}] does not exist.", objectType));
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error deleting data object: " + e);
+
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    public override Response Delete(string objectType, DataFilter filter)
+    {
+      try
+      {
+        IList<string> identifiers = GetIdentifiers(objectType, filter);
+        return Delete(objectType, identifiers);
+      }
+      catch (Exception e)
+      {
+        string filterXML = Utility.SerializeDataContract<DataFilter>(filter);
+        _logger.Error(string.Format("Error deleting object type [{0}] with filter [{1}].", objectType, filterXML));
+        throw e;
+      }
+    }
+
+    public override Response Refresh(string objectType)
+    {
+      return RefreshAll();
+    }
+
+    public override Response RefreshAll()
+    {
+      Response response = new Response();
+
+      try
+      {
+        _dictionary = null;
+        System.IO.File.Delete(_dictionaryPath);
+        GetDictionary();
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception e)
+      {
+        response.Level = StatusLevel.Error;
+        response.Messages = new Messages() { e.Message };
+      }
+
+      return response;
+    }
+    #endregion
+
+    #region IContentLayer implementation methods
+    public override IDictionary<string, string> GetHashValues(string objectType, IList<string> identifiers)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, identifiers);
+        IList<int> docIds = GetDocumentIds(dataObjects);
+        return GetHashValues(docIds);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting hash values: " + e.Message);
+        throw e;
+      }
+    }
+
+    public override IDictionary<string, string> GetHashValues(string objectType, DataFilter filter, int pageSize, int startIndex)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, filter, pageSize, startIndex);
+        IList<int> docIds = GetDocumentIds(dataObjects);
+        return GetHashValues(docIds);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting hash values: " + e.Message);
+        throw e;
+      }
+    }
+
+    public override IList<IContentObject> GetContents(string objectType, IList<string> identifiers)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, identifiers);
+        IList<int> docIds = GetDocumentIds(dataObjects);
+        return GetContents(objectType, docIds);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting contents: " + e.Message);
+        throw e;
+      }
+    }
+
+    public override IList<IContentObject> GetContents(string objectType, DataFilter filter, int pageSize, int startIndex)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = Get(objectType, filter, pageSize, startIndex);
+        IList<int> docIds = GetDocumentIds(dataObjects);
+        return GetContents(objectType, docIds);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting contents: " + e.Message);
+        throw e;
+      }
+    }
+
+    public override Response PostContents(IList<IContentObject> contentObjects)
+    {
+      Response response = new Response() { Level = StatusLevel.Success };
+
+      if (contentObjects == null || contentObjects.Count == 0)
+      {
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("No content object to post.");
         return response;
       }
+
+      foreach (GenericContentObject contentObject in contentObjects)
+      {
+        Proxy proxy = null;
+        Session session = null;
+
+        try
+        {
+          Connect(ref proxy, ref session);
+
+          //
+          // get doc Id
+          //
+          IList<IDataObject> dataObjects = Get(contentObject.ObjectType, new List<string> { contentObject.identifier }, true);
+          int docId = GetDocumentId(dataObjects.FirstOrDefault());
+
+          if (docId <= 0)
+          {
+            session.ProtoProxy.AddObjectFile(session.ReaderSessionString, docId,
+              (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
+
+            Status status = new Status()
+            {
+              Identifier = contentObject.identifier,
+              Level = StatusLevel.Error,
+              Messages = new Messages() { string.Format("Document [{0}] not found.", contentObject.identifier) }
+            };
+
+            response.StatusList.Add(status);
+            continue;
+          }
+
+          // 
+          // get content id
+          //
+          EqlClient client = new EqlClient(session);
+          DataTable dt = client.RunQuery(string.Format(CONTENT_EQL, docId));
+          int fileId = (int)(dt.Rows[0]["FilesId"]);
+
+          if (fileId <= 0)  // add
+          {
+            session.ProtoProxy.AddObjectFile(session.ReaderSessionString, docId,
+              (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
+
+            Status status = new Status()
+            {
+              Identifier = contentObject.identifier,
+              Level = StatusLevel.Success,
+              Messages = new Messages() { string.Format("Document [{0}] added successfully.", contentObject.identifier) }
+            };
+
+            response.StatusList.Add(status);
+          }
+          else  // update
+          {
+            //
+            // check out content
+            //
+            eB.Data.File file = new eB.Data.File(session);
+            file.Retrieve(fileId, "Header;Repositories");
+
+            FileInfo localFile = new FileInfo(Path.GetTempPath() + file.Name);
+            if (localFile.Exists)
+              localFile.Delete();
+
+            file.CheckOut(localFile.FullName);
+
+            //
+            // update content
+            //
+            Utility.WriteStream(contentObject.content, localFile.FullName);
+
+            // 
+            // check content back in
+            //
+            file = new eB.Data.File(session);
+            file.Retrieve(fileId, "Header;Repositories");
+
+            if (file.IsCheckedOut)
+            {
+              try
+              {
+                file.CheckIn(localFile.FullName, eB.ContentData.File.CheckinOptions.DeleteLocalCopy, null);
+                session.Writer.CheckinDoc(file.Document.Id, 0);
+
+                Status status = new Status()
+                {
+                  Identifier = contentObject.identifier,
+                  Level = StatusLevel.Success,
+                  Messages = new Messages() { string.Format("Document [{0}] updated successfully.", contentObject.identifier) }
+                };
+
+                response.StatusList.Add(status);
+              }
+              catch
+              {
+                file.UndoCheckout();
+              }
+            }
+          }
+        }
+        catch (Exception e)
+        {
+          _logger.Error("Error posting content: " + e.Message);
+
+          Status status = new Status()
+          {
+            Identifier = contentObject.identifier,
+            Level = StatusLevel.Error,
+            Messages = new Messages() { e.Message }
+          };
+
+          response.StatusList.Add(status);
+        }
+        finally
+        {
+          Disconnect(ref proxy, ref session);
+        }
+      }
+
+      return response;
     }
     #endregion
 
     #region helper methods
-    protected DataObject CreateObjectDefinition(ClassObject classObject)
+    protected DataObject CreateObjectDefinition(Proxy proxy, ClassObject classObject)
     {
       if (classObject.Ids == null || classObject.Ids.Count == 0)
       {
@@ -895,7 +869,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
 
       int status = 0;
-      string result = _proxy.query(metadataQuery, ref status);
+      string result = proxy.query(metadataQuery, ref status);
       XmlDocument resultXml = new XmlDocument();
       resultXml.LoadXml(result);
 
@@ -999,7 +973,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
     protected Configuration GetConfiguration(DataObject objDef)
     {
-      string fileName = objDef.objectNamespace + "_" + 
+      string fileName = objDef.objectNamespace + "_" +
         Regex.Replace(objDef.objectName, @"\(.*\)", string.Empty) + "_" + _communityName + ".xml";
 
       // use specific config for object type if available
@@ -1011,42 +985,46 @@ namespace org.iringtools.adapter.datalayer.eb
       if (_configs.ContainsKey(fileName))
         return _configs[fileName];
 
-      _logger.Error(string.Format("No configuration available for object type [{0}].", objDef.objectName));        
+      _logger.Error(string.Format("No configuration available for object type [{0}].", objDef.objectName));
       return null;
     }
 
-    protected void Connect()
+    protected void Connect(ref Proxy proxy, ref Session session)
     {
-      if (_proxy == null)
+      if (proxy == null)
       {
-        _proxy = new Proxy();
+        proxy = new Proxy();
 
-        int ret = _proxy.connect(0, _server);
+        int ret = proxy.connect(0, _server);
 
         if (ret < 0)
         {
-          throw new Exception(_proxy.get_error(ret));
+          throw new Exception(proxy.get_error(ret));
         }
 
-        ret = _proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
+        ret = proxy.logon(0, _dataSource, _userName, EncryptionUtility.Decrypt(_password));
         if (ret < 0)
         {
-          throw new Exception(_proxy.get_error(ret));
+          throw new Exception(proxy.get_error(ret));
         }
 
-        _proxy.silent_mode = true;
-        _session = new eB.Data.Session();
-        _session.AttachProtoProxy(_proxy.proto_proxy, _proxy.connect_info);
+        proxy.silent_mode = true;
+        session = new eB.Data.Session();
+        session.AttachProtoProxy(proxy.proto_proxy, proxy.connect_info);
       }
     }
 
-    protected void Disconnect()
-    { 
-      if (_proxy != null)
+    protected void Disconnect(ref Proxy proxy, ref Session session)
+    {
+      if (proxy != null)
       {
-        _proxy.Dispose();
-        _proxy = null;
-        _session = null;
+        proxy.Dispose();
+        proxy = null;
+      }
+
+      if (session != null)
+      {
+        session = null;
       }
     }
 
@@ -1211,14 +1189,16 @@ namespace org.iringtools.adapter.datalayer.eb
     protected IDictionary<string, string> GetHashValues(IList<int> docIds)
     {
       IDictionary<string, string> hashValues = new Dictionary<string, string>();
-
+      Proxy proxy = null;
+      Session session = null;
+     
       try
       {
-        Connect();
+        Connect(ref proxy, ref session);
 
         int status = 0;
         string query = string.Format(M3_OBJECTS_SQL, string.Join(",", docIds.ToArray()));
-        string result = _proxy.query(query, ref status);
+        string result = proxy.query(query, ref status);
         XDocument resultDoc = XDocument.Parse(result);
 
         foreach (XElement elt in resultDoc.Element("records").Elements("record"))
@@ -1235,7 +1215,7 @@ namespace org.iringtools.adapter.datalayer.eb
       }
       finally
       {
-        Disconnect();
+        Disconnect(ref proxy, ref session);
       }
 
       return hashValues;
@@ -1244,13 +1224,15 @@ namespace org.iringtools.adapter.datalayer.eb
     public IList<IContentObject> GetContents(String objectType, IList<int> docIds)
     {
       IList<IContentObject> contents = new List<IContentObject>();
-
+      Proxy proxy = null;
+      Session session = null;
+     
       try
       {
-        Connect();
+        Connect(ref proxy, ref session);
 
         string query = string.Format(CONTENT_EQL, string.Join(",", docIds.ToArray()));
-        EqlClient client = new EqlClient(_session);
+        EqlClient client = new EqlClient(session);
         DataTable dt = client.RunQuery(query);
 
         foreach (DataRow row in dt.Rows)
@@ -1261,7 +1243,7 @@ namespace org.iringtools.adapter.datalayer.eb
           string name = ((string)row["FilesName"]);
           string type = name.Substring(name.LastIndexOf(".") + 1);
 
-          eB.Data.File f = new eB.Data.File(_session);
+          eB.Data.File f = new eB.Data.File(session);
           f.Retrieve(fileId, "Header; Repositories");
           MemoryStream stream = new MemoryStream();
           f.ContentData = new eB.ContentData.File(f, stream);
@@ -1287,11 +1269,11 @@ namespace org.iringtools.adapter.datalayer.eb
       }
       finally
       {
-        Disconnect();
+        Disconnect(ref proxy, ref session);
       }
 
       return contents;
     }
-    #endregion    
+    #endregion
   }
 }
