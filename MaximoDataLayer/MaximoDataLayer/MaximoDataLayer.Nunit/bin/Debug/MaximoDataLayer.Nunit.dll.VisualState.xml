@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="true">
+  <TopNode>[0-1007]C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\MaximoDataLayer.Nunit.dll</TopNode>
+  <SelectedNode>[0-1002]iRingTools.MaximoDataLayer.MaximoDataLayerTest.Read</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1007]C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\MaximoDataLayer.Nunit.dll" Expanded="true" />
+    <Node UniqueName="[0-1008]iRingTools" Expanded="true" />
+    <Node UniqueName="[0-1009]iRingTools.MaximoDataLayer" Expanded="true" />
+    <Node UniqueName="[0-1000]iRingTools.MaximoDataLayer.MaximoDataLayerTest" Expanded="true" />
+    <Node UniqueName="[0-1004]iRingTools.MaximoDataLayer.MaximoDataLayerTest.GetDictionary" Checked="true" />
+    <Node UniqueName="[0-1002]iRingTools.MaximoDataLayer.MaximoDataLayerTest.Read" Checked="true" />
+    <Node UniqueName="[0-1003]iRingTools.MaximoDataLayer.MaximoDataLayerTest.ReadWithFilter" Checked="true" />
+  </Nodes>
+</VisualState>
