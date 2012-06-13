@@ -2118,7 +2118,7 @@ namespace org.iringtools.refdata
       Response response = new Response();
       response.Level = StatusLevel.Success;
       Repository repository = null;
-      bool qn = false;
+      //bool qn = false;
       try
       {
         repository = GetRepository(qmxf.targetRepository);

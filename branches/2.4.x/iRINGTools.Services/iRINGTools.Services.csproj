@@ -95,9 +95,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TWDataLayer">
-      <HintPath>..\..\..\..\svncorp-dmz\iringtools_datalayers\tw_datalayer\trunk\TWDataLayer\bin\Debug\TWDataLayer.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BindingConfiguration.Adapter.xml">

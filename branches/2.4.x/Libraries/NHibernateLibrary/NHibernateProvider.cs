@@ -141,7 +141,7 @@ namespace org.iringtools.nhibernate
 
         foreach (DataObject dataObject in databaseDictionary.dataObjects)
         {
-          tempDataObject = existDBDictionary.getTableObject(dataObject.tableName);
+          tempDataObject = existDBDictionary.GetTableObject(dataObject.tableName);
           dataObject.dataFilter = tempDataObject.dataFilter;
         }
       

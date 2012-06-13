@@ -128,7 +128,7 @@ namespace org.iringtools.library
       }
     }
 
-    public void AddFilter(DataFilter filter1)
+    public void AppendFilter(DataFilter filter1)
     {
       if (this.Expressions == null)
         this.Expressions = new List<Expression>();
