@@ -13,7 +13,6 @@ import org.ids_adi.ns.qxf.model.Description;
 import org.ids_adi.ns.qxf.model.EntityType;
 import org.ids_adi.ns.qxf.model.Name;
 import org.ids_adi.ns.qxf.model.Qmxf;
-import org.ids_adi.ns.qxf.model.RoleDefinition;
 import org.ids_adi.ns.qxf.model.RoleQualification;
 import org.ids_adi.ns.qxf.model.Specialization;
 import org.ids_adi.ns.qxf.model.TemplateDefinition;
@@ -490,7 +489,7 @@ public class RefDataModel
   public boolean postTemplate(HttpServletRequest httpRequest)
   {    	
 	  Qmxf qmxf = new Qmxf();
-	  org.iringtools.common.response.Response response = new org.iringtools.common.response.Response();
+//	  org.iringtools.common.response.Response response = new org.iringtools.common.response.Response();
 
 	  try
 	    {
@@ -519,16 +518,16 @@ public class RefDataModel
 	    	
 	    	//Setting Role Definition
 	        
-	    	List<RoleDefinition> roleDefinitions = templateDefinition.getRoleDefinitions();
-	        StringTokenizer str = new StringTokenizer(httpRequest.getParameter("roleDefinition"), ",");
-	        while (str.hasMoreTokens())
-	        {
-	        	RoleDefinition roleDefinition = new RoleDefinition();
-	        	ClassDefinition classDtls = getIndividualClassDtls(str.nextToken());
-	        	//specialization.setLabel(classDtls.getNames().get(0).getValue());
-	        	//specialization.setReference(classDtls.getId());
-	        	//specializations.add(specialization);
-	        }
+//	    	List<RoleDefinition> roleDefinitions = templateDefinition.getRoleDefinitions();
+//	        StringTokenizer str = new StringTokenizer(httpRequest.getParameter("roleDefinition"), ",");
+//	        while (str.hasMoreTokens())
+//	        {
+//	        	RoleDefinition roleDefinition = new RoleDefinition();
+//	        	ClassDefinition classDtls = getIndividualClassDtls(str.nextToken());
+//	        	//specialization.setLabel(classDtls.getNames().get(0).getValue());
+//	        	//specialization.setReference(classDtls.getId());
+//	        	//specializations.add(specialization);
+//	        }
 
 	    	
 	    	templateDefinitions.add(templateDefinition);
