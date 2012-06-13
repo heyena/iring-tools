@@ -1,0 +1,16 @@
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\obj\Debug\ResolveAssemblyReference.cache
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\MaximoDataLayer.Nunit.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\MaximoDataLayer.Nunit.pdb
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\iRINGLibrary.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\MaximoDataLayer.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\nunit.framework.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\StaticDust.Configuration.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\UtilityLibrary.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\Ninject.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\MaximoDataLayer.pdb
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\nunit.framework.xml
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\Ninject.xml
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\obj\Debug\MaximoDataLayer.Nunit.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\obj\Debug\MaximoDataLayer.Nunit.pdb
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\log4net.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer.Nunit\bin\Debug\log4net.xml

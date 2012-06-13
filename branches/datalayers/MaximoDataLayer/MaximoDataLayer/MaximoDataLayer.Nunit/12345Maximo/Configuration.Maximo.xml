@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <commodity>
+    <name>Asset</name>
+    <attributes>
+      <attribute name="acwa_assettag" dataType="String" isKey="True" keyType="assigned"/>
+      <attribute name="SiteId" dataType="String" keyType="unassigned"/>
+      <attribute name="OrgId" dataType="String" keyType="unassigned"/>
+      <attribute name="Description" dataType="String" keyType="unassigned"/>
+      <attribute name="Status" dataType="String" keyType="unassigned"/>
+      <attribute name="Location" dataType="String" keyType="unassigned"/>
+      <attribute name="Manufacturer" dataType="String" keyType="unassigned"/>
+      <attribute name="acwa_assetsystem" dataType="String" keyType="unassigned"/>
+      <attribute name="classstructureid" dataType="String" keyType="unassigned"/>
+      <attribute name="acwa_eng_tag" dataType="String" keyType="unassigned"/>
+      <attribute name="acwa_qclass" dataType="String" keyType="unassigned"/>
+      <attribute name="islinear" dataType="String" keyType="unassigned"/>
+      <attribute name="acwa_futurelocation" dataType="String" keyType="unassigned"/>
+      <attribute name="pluscmodelnum" dataType="String" keyType="unassigned"/>
+      <attribute name="vendor" dataType="String" keyType="unassigned"/>
+      <attribute name="serialnum" dataType="String" keyType="unassigned"/>
+      <!--<attribute name="description_longdescription" dataType="String" keyType="unassigned"/>-->
+      <!--<attribute name="HierarchyPath" dataType="String"/>-->
+    </attributes>
+   <!-- <dataRelationShip></dataRelationShip>-->
+  </commodity>
+  <commodity>
+    <name>AssetSpec</name>
+    <attributes>
+      <attribute name="assetnum" dataType="String" isKey="True"  keyType="assigned"/>
+    </attributes>
+  </commodity>
+  <commodity>
+    <name>Locations</name>
+    <attributes>
+      <attribute name="Location" dataType="String" isKey="True"  keyType="assigned"/>
+    </attributes>
+  </commodity>
+  <commodity>
+    <name>Classifications</name>
+    <attributes>
+      <attribute name="classificationid" dataType="String" isKey="True"  keyType="assigned"/>
+    </attributes>
+  </commodity>
+  <commodity>
+    <name>Classstructure</name>
+    <attributes>
+      <attribute name="classstructureid" dataType="String" isKey="True"  keyType="assigned"/>
+    </attributes>
+  </commodity>
+  <commodity>
+    <name>Companies</name>
+    <attributes>
+      <attribute name="Company" dataType="String" isKey="True"  keyType="assigned"/>
+    </attributes>
+  </commodity>
+  <commodity>
+    <name>Items</name>
+    <attributes>
+      <attribute name="itemnum" dataType="String" isKey="True"  keyType="assigned"/>
+    </attributes>
+  </commodity>
+  <commodity>
+    <name>WorkOrders</name>
+    <attributes>
+      <attribute name="wonum" dataType="String" isKey="True"  keyType="assigned"/>
+    </attributes>
+  </commodity>
+</configuration>

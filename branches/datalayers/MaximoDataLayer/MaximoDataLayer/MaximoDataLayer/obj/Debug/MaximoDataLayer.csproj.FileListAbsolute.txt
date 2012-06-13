@@ -1,0 +1,11 @@
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\obj\Debug\ResolveAssemblyReference.cache
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\bin\Debug\MaximoDataLayer.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\bin\Debug\MaximoDataLayer.pdb
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\bin\Debug\log4net.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\bin\Debug\Ninject.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\bin\Debug\UtilityLibrary.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\bin\Debug\log4net.xml
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\bin\Debug\Ninject.xml
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\obj\Debug\MaximoDataLayer.dll
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\obj\Debug\MaximoDataLayer.pdb
+C:\MaximoDataLayer\MaximoDataLayer\MaximoDataLayer\bin\Debug\iRINGLibrary.dll

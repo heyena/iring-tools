@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaximoDataLayer", "MaximoDataLayer\MaximoDataLayer.csproj", "{E338F27D-6216-4243-82B8-04E048518091}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaximoDataLayer.Nunit", "MaximoDataLayer.Nunit\MaximoDataLayer.Nunit.csproj", "{FCE226FE-004F-437C-BCED-7590C6FE0C55}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E338F27D-6216-4243-82B8-04E048518091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E338F27D-6216-4243-82B8-04E048518091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E338F27D-6216-4243-82B8-04E048518091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E338F27D-6216-4243-82B8-04E048518091}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCE226FE-004F-437C-BCED-7590C6FE0C55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCE226FE-004F-437C-BCED-7590C6FE0C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCE226FE-004F-437C-BCED-7590C6FE0C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCE226FE-004F-437C-BCED-7590C6FE0C55}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
