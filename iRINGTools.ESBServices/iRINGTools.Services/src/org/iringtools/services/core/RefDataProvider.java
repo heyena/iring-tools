@@ -2266,66 +2266,66 @@ public class RefDataProvider
     return response;
   }
 
-  private int getIndexFromName(String name)
-  {
-    int index = 0;
-    try
-    {
-      for (Repository repository : _repositories)
-      {
-        if (repository.getName().equalsIgnoreCase(name))
-        {
-          return index;
-        }
-        index++;
-      }
-      index = 0;
-      for (Repository repository : _repositories)
-      {
-        if (!repository.isIsReadOnly())
-        {
-          return index;
-        }
-        index++;
-      }
-    }
-    catch (Exception ex)
-    {
-      logger.error(ex);
+//  private int getIndexFromName(String name)
+//  {
+//    int index = 0;
+//    try
+//    {
+//      for (Repository repository : _repositories)
+//      {
+//        if (repository.getName().equalsIgnoreCase(name))
+//        {
+//          return index;
+//        }
+//        index++;
+//      }
+//      index = 0;
+//      for (Repository repository : _repositories)
+//      {
+//        if (!repository.isIsReadOnly())
+//        {
+//          return index;
+//        }
+//        index++;
+//      }
+//    }
+//    catch (Exception ex)
+//    {
+//      logger.error(ex);
+//
+//    }
+//    return index;
+//  }
 
-    }
-    return index;
-  }
-
-  private Response postToRepository(Repository repository, String sparql)
-  {
-    Response response = new Response();
-    //Status status = null;
-
-    try
-    {
-      String uri = repository.getUpdateUri().toString();
-      
-      if (repository.isIsReadOnly() == false)
-      {
-        HttpClient sparqlClient = new HttpClient(uri);
-        HttpUtils.addHttpHeaders(_settings, sparqlClient);
-        sparqlClient.postSparql(String.class, "", sparql, "");
-        //status = new Status();
-      }
-      else
-      {
-
-      }
-    }
-    catch (Exception ex)
-    {
-      logger.error(ex);
-      return response;
-    }
-
-    return response;
-  }
+//  private Response postToRepository(Repository repository, String sparql)
+//  {
+//    Response response = new Response();
+//    //Status status = null;
+//
+//    try
+//    {
+//      String uri = repository.getUpdateUri().toString();
+//      
+//      if (repository.isIsReadOnly() == false)
+//      {
+//        HttpClient sparqlClient = new HttpClient(uri);
+//        HttpUtils.addHttpHeaders(_settings, sparqlClient);
+//        sparqlClient.postSparql(String.class, "", sparql, "");
+//        //status = new Status();
+//      }
+//      else
+//      {
+//
+//      }
+//    }
+//    catch (Exception ex)
+//    {
+//      logger.error(ex);
+//      return response;
+//    }
+//
+//    return response;
+//  }
 
     public Response postClass(Qmxf qmxf)
   {
@@ -3283,99 +3283,99 @@ public class RefDataProvider
     }
   }
 
-  private List<RoleDefinition> getRoleDefinition(String id) throws Exception, HttpClientException
-  {
-
-    List<RoleDefinition> roleDefinitions = new ArrayList<RoleDefinition>();
-    try
-    {
-      String sparql = "";
-      String sparqlQuery = "";
-      String[] names = null;
-
-      Description description = new Description();
-      //org.ids_adi.ns.qxf.model.Status status = new org.ids_adi.ns.qxf.model.Status();
-
-      //List<Entity> resultEntities = new ArrayList<Entity>();
-
-      for (Repository repository : _repositories)
-      {
-        switch (repository.getRepositoryType())
-        {
-        case CAMELOT:
-        case RDS_WIP:
-          sparqlQuery = "GetRoles";
-          break;
-        case PART_8:
-          sparqlQuery = "GetPart8Roles";
-          break;
-        }
-        Query queryContainsSearch = getQuery(sparqlQuery);
-        QueryBindings queryBindings = queryContainsSearch.getBindings();
-
-        sparql = readSparql(queryContainsSearch.getFileName());
-        sparql = sparql.replace("param1", id);
-        Results sparqlResults = queryFromRepository(repository, sparql);
-
-        List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
-
-        for (Hashtable<String, String> result : results)
-        {
-          RoleDefinition roleDefinition = new RoleDefinition();
-          Name name = new Name();
-
-          if (result.containsKey("label"))
-          {
-            names = result.get("label").split("@", -1);
-            name.setValue(names[0]);
-            if (names.length == 1)
-            {
-              name.setLang(defaultLanguage);
-            }
-            else
-            {
-              name.setLang(names[names.length - 1]);
-            }
-          }
-          if (result.containsKey("role"))
-          {
-            roleDefinition.setId(result.get("role"));
-          }
-          if (result.containsKey("comment"))
-          {
-            names = result.get("comment").split("@", -1);
-            description.setValue(names[0]);
-            if (names.length == 1)
-            {
-              description.setLang(defaultLanguage);
-            }
-            else
-            {
-              description.setLang(names[names.length - 1]);
-            }
-          }
-          if (result.containsKey("index"))
-          {
-            description.setValue(result.get("index").toString());
-          }
-          if (result.containsKey("type"))
-          {
-            roleDefinition.setRange(result.get("type"));
-          }
-          roleDefinition.getNames().add(name);
-          roleDefinition.getDescriptions().add(description);
-          roleDefinitions.add(roleDefinition);
-        }
-      }
-
-      return roleDefinitions;
-    }
-    catch (RuntimeException e)
-    {
-      logger.error("Error in GetRoleDefinition: " + e);
-      return roleDefinitions;
-    }
-  }
+//  private List<RoleDefinition> getRoleDefinition(String id) throws Exception, HttpClientException
+//  {
+//
+//    List<RoleDefinition> roleDefinitions = new ArrayList<RoleDefinition>();
+//    try
+//    {
+//      String sparql = "";
+//      String sparqlQuery = "";
+//      String[] names = null;
+//
+//      Description description = new Description();
+//      //org.ids_adi.ns.qxf.model.Status status = new org.ids_adi.ns.qxf.model.Status();
+//
+//      //List<Entity> resultEntities = new ArrayList<Entity>();
+//
+//      for (Repository repository : _repositories)
+//      {
+//        switch (repository.getRepositoryType())
+//        {
+//        case CAMELOT:
+//        case RDS_WIP:
+//          sparqlQuery = "GetRoles";
+//          break;
+//        case PART_8:
+//          sparqlQuery = "GetPart8Roles";
+//          break;
+//        }
+//        Query queryContainsSearch = getQuery(sparqlQuery);
+//        QueryBindings queryBindings = queryContainsSearch.getBindings();
+//
+//        sparql = readSparql(queryContainsSearch.getFileName());
+//        sparql = sparql.replace("param1", id);
+//        Results sparqlResults = queryFromRepository(repository, sparql);
+//
+//        List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+//
+//        for (Hashtable<String, String> result : results)
+//        {
+//          RoleDefinition roleDefinition = new RoleDefinition();
+//          Name name = new Name();
+//
+//          if (result.containsKey("label"))
+//          {
+//            names = result.get("label").split("@", -1);
+//            name.setValue(names[0]);
+//            if (names.length == 1)
+//            {
+//              name.setLang(defaultLanguage);
+//            }
+//            else
+//            {
+//              name.setLang(names[names.length - 1]);
+//            }
+//          }
+//          if (result.containsKey("role"))
+//          {
+//            roleDefinition.setId(result.get("role"));
+//          }
+//          if (result.containsKey("comment"))
+//          {
+//            names = result.get("comment").split("@", -1);
+//            description.setValue(names[0]);
+//            if (names.length == 1)
+//            {
+//              description.setLang(defaultLanguage);
+//            }
+//            else
+//            {
+//              description.setLang(names[names.length - 1]);
+//            }
+//          }
+//          if (result.containsKey("index"))
+//          {
+//            description.setValue(result.get("index").toString());
+//          }
+//          if (result.containsKey("type"))
+//          {
+//            roleDefinition.setRange(result.get("type"));
+//          }
+//          roleDefinition.getNames().add(name);
+//          roleDefinition.getDescriptions().add(description);
+//          roleDefinitions.add(roleDefinition);
+//        }
+//      }
+//
+//      return roleDefinitions;
+//    }
+//    catch (RuntimeException e)
+//    {
+//      logger.error("Error in GetRoleDefinition: " + e);
+//      return roleDefinitions;
+//    }
+//  }
 
   private List<Hashtable<String, String>> bindQueryResults(QueryBindings queryBindings, Results sparqlResults)
   {
@@ -3788,14 +3788,14 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateRdfType(Model work, String subjId, String objId)
-  {
-    Resource subj = work.createResource(String.format("rdl:%s", subjId));
-    Property pred = work.createProperty("rdf:type");
-    Resource obj = work.createResource(objId);
-    work.add(subj, pred, obj);
-    return work;
-  }
+//  private Model GenerateRdfType(Model work, String subjId, String objId)
+//  {
+//    Resource subj = work.createResource(String.format("rdl:%s", subjId));
+//    Property pred = work.createProperty("rdf:type");
+//    Resource obj = work.createResource(objId);
+//    work.add(subj, pred, obj);
+//    return work;
+//  }
 
   private Model GenerateRdfSubClass(Model work, String subjId, String objId)
   {
