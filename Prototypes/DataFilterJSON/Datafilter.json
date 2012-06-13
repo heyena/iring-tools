@@ -1,0 +1,29 @@
+[
+    {
+        "dataFilter": [
+            {
+                "expressions": {
+                    "expression": [
+                        {
+                            "propertyName": "CONSTTYPE",
+                            "relationalOperator": "EqualTo",
+                            "values": [
+                                {
+                                    "value": "NEW"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "orderExpressions": {
+                    "orderExpression": [
+                        {
+                            "propertyName": "EQTYPE",
+                            "sortOrder": "Desc"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+]
