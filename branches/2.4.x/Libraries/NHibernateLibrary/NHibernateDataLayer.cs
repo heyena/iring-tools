@@ -815,9 +815,13 @@ namespace org.iringtools.adapter.datalayer
       {
         if (_authorization == null)
         {
-          _kernel.Load(_authorizationBindingPath);
-          _authorization = _kernel.Get<IAuthorization>();
+          if (_kernel.GetBindings(typeof(IAuthorization)).ToList().Count == 0)
+          {
+            _kernel.Load(_authorizationBindingPath);
+            _authorization = _kernel.Get<IAuthorization>();
+          }
         }
+
         return _authorization.Authorize(objectType, ref dataFilter);
       }
       catch (Exception e)
