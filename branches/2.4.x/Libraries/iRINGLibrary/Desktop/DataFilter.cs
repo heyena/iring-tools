@@ -128,30 +128,37 @@ namespace org.iringtools.library
       }
     }
 
-    public void AppendFilter(DataFilter filter1)
+    public void AppendFilter(DataFilter filter)
     {
       if (this.Expressions == null)
         this.Expressions = new List<Expression>();
 
       if (this.OrderExpressions == null)
-        this.OrderExpressions = new List<OrderExpression>();
+        this.OrderExpressions = new List<OrderExpression>();      
 
-      if (filter1 != null)
+      if (filter != null)
       {
-        if (filter1.Expressions != null)
-          foreach (Expression expression in filter1.Expressions)
-          {
-            if (!this.Has(expression))
-            this.Expressions.Add(expression);
-          }
+        DataFilter clonedFilter = Utility.CloneDataContractObject<DataFilter>(filter);
 
-        if (filter1.OrderExpressions != null)
-          foreach (OrderExpression orderExpression in filter1.OrderExpressions)
+        if (clonedFilter.Expressions != null && clonedFilter.Expressions.Count > 0)
+        {
+          int maxIndex = clonedFilter.Expressions.Count - 1;
+          clonedFilter.Expressions[0].LogicalOperator = LogicalOperator.And;
+          clonedFilter.Expressions[0].OpenGroupCount++;
+          clonedFilter.Expressions[maxIndex].CloseGroupCount++;
+
+          Expressions.AddRange(clonedFilter.Expressions);
+        }
+
+        if (clonedFilter.OrderExpressions != null && clonedFilter.OrderExpressions.Count > 0)
+        {
+          foreach (OrderExpression orderExpression in clonedFilter.OrderExpressions)
           {
-            if (!this.Has(orderExpression))
-              this.OrderExpressions.Add(orderExpression);
+            if (!Has(orderExpression))
+              OrderExpressions.Add(orderExpression);
           }
-      }
+        }
+      }    
     }
 
     private bool Has(OrderExpression orderExpression)
@@ -160,38 +167,9 @@ namespace org.iringtools.library
       {
         if (item.PropertyName.ToLower() == orderExpression.PropertyName.ToLower() &&
             item.SortOrder == orderExpression.SortOrder)
-          return true;        
+          return true;
       }
       return false;
-    }
-
-    private bool Has(Expression expression)
-    {
-      bool ifHas = false;
-      bool findAll = false;   //make sure all values are exitsting
-
-      foreach (Expression item in this.Expressions)
-      {
-        if (item.PropertyName.ToLower() == expression.PropertyName.ToLower() && 
-            item.RelationalOperator == expression.RelationalOperator)
-        {
-          foreach (string value in item.Values)
-          {
-            findAll = false;
-            foreach (string expressionValue in expression.Values)
-            {
-              if (value.ToLower() == expressionValue.ToLower())
-              {
-                ifHas = true;
-                findAll = true;
-              }
-            }
-            if (!findAll)
-              ifHas = false;
-          }
-        }
-      }
-      return ifHas;
     }
 
     public string ToLinqExpression<T>(string objectVariable)

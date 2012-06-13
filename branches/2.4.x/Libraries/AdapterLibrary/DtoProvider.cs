@@ -280,7 +280,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         BuildCrossGraphMap(manifest, graph);
-        DataFilter filter = GetPredeterminedFilter();
+        DataFilter filter = GetPredeterminedFilter(graph);
 
         if (_settings["EnableMultithreadedDTIs"] != null && bool.Parse(_settings["EnableMultithreadedDTIs"]))
         {
@@ -316,7 +316,7 @@ namespace org.iringtools.adapter
         DataFilter filter = request.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-        filter.AppendFilter(GetPredeterminedFilter());        
+        filter.AppendFilter(GetPredeterminedFilter(graph));        
 
         // get sort index
         string sortIndex = String.Empty;        
@@ -350,7 +350,7 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-    private DataFilter GetPredeterminedFilter()
+    private DataFilter GetPredeterminedFilter(string graph)
     {
       if (_dataDictionary == null)
       {
@@ -358,9 +358,10 @@ namespace org.iringtools.adapter
       }
 
       DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.dataObjectName);
+      GraphMap graphMap = _mapping.FindGraphMap(graph);
       DataFilter dataFilter = new DataFilter();
       dataFilter.AppendFilter(dataObject.dataFilter);
-      dataFilter.AppendFilter(_graphMap.dataFilter);
+      dataFilter.AppendFilter(graphMap.dataFilter);
 
       return dataFilter;
     }
