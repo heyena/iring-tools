@@ -130,11 +130,11 @@ namespace org.iringtools.library
 
     public void AppendFilter(DataFilter filter)
     {
-      if (this.Expressions == null)
-        this.Expressions = new List<Expression>();
+      if (Expressions == null)
+        Expressions = new List<Expression>();
 
-      if (this.OrderExpressions == null)
-        this.OrderExpressions = new List<OrderExpression>();      
+      if (OrderExpressions == null)
+        OrderExpressions = new List<OrderExpression>();      
 
       if (filter != null)
       {
