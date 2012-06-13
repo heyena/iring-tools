@@ -272,7 +272,6 @@ namespace org.iringtools.adapter
       return manifest;
     }
 
-    //show exchange data in Exchange Manager
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -282,11 +281,19 @@ namespace org.iringtools.adapter
         InitializeScope(scope, app);
         InitializeDataLayer();
 
-        BuildCrossGraphMap(manifest, graph);        
+        BuildCrossGraphMap(manifest, graph);
+        DataFilter filter = GetPredeterminedFilter();
 
-        List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, getLayeredDataFilter(graph));
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
+        if (_settings["MultithreadingDTIs"] == null || bool.Parse(_settings["MultithreadingDTIs"]))
+        {
+          dataTransferIndices = MultiGetDataTransferIndices(filter);
+        }
+        else
+        {
+          DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          dataTransferIndices = projectionLayer.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
+        }
       }
       catch (Exception ex)
       {
@@ -297,7 +304,6 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }    
 
-    //showing mapped data in Exchange Manager
     public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -310,15 +316,10 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(request.Manifest, graph);
 
         DataFilter filter = request.DataFilter;
-
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+        filter.AppendFilter(GetPredeterminedFilter());        
 
-        if (hashAlgorithm == null)
-          filter.AddFilter(getLayeredDataFilter(graph));        
-
-        List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
-        
         // get sort index
         string sortIndex = String.Empty;        
         string sortOrder = String.Empty;
@@ -329,7 +330,15 @@ namespace org.iringtools.adapter
           sortOrder = filter.OrderExpressions.First().SortOrder.ToString();
         }
 
-        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
+        if (_settings["MultithreadingDTIs"] == null || bool.Parse(_settings["MultithreadingDTIs"]))
+        {
+          dataTransferIndices = MultiGetDataTransferIndices(filter);
+        }
+        else
+        {
+          List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
+        }
 
         if (sortOrder != String.Empty)
           dataTransferIndices.SortOrder = sortOrder;
@@ -343,16 +352,18 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-    private DataFilter getLayeredDataFilter(string graph)
+    private DataFilter GetPredeterminedFilter()
     {
       if (_dataDictionary == null)
+      {
         _dataDictionary = _dataLayer.GetDictionary();
+      }
 
-      GraphMap graphObject = _mapping.FindGraphMap(graph);
-      DataObject dataObject = _dataDictionary.getDataObject(graphObject.dataObjectName);
+      DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.dataObjectName);
       DataFilter dataFilter = new DataFilter();
-      dataFilter.AddFilter(dataObject.dataFilter);
-      dataFilter.AddFilter(graphObject.dataFilter);
+      dataFilter.AppendFilter(dataObject.dataFilter);
+      dataFilter.AppendFilter(_graphMap.dataFilter);
+
       return dataFilter;
     }
 
@@ -885,60 +896,66 @@ namespace org.iringtools.adapter
     {
       List<IDataObject> dataObjects = new List<IDataObject>();
 
-      if (_settings["OutboundMultithreaded"] != null && bool.Parse(_settings["OutboundMultithreaded"]))
+      int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"]))
+        ? 250 : int.Parse(_settings["DefaultPageSize"]);
+
+      long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+
+      for (int offset = 0; offset < count; offset = offset + pageSize)
       {
-        //
-        // multithreading getting data objects
-        //
-        int itemsPerThread = (String.IsNullOrEmpty(_settings["DataObjectsPerThread"]))
-           ? 25 : int.Parse(_settings["DataObjectsPerThread"]);
-
-        long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
-
-        if (total > 0)
-        {
-          int numOfThreads = (int)(total / itemsPerThread);
-          numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
-
-          ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
-          DataObjectTask[] dataObjectTasks = new DataObjectTask[numOfThreads];
-
-          for (int i = 0; i < numOfThreads; i++)
-          {
-            doneEvents[i] = new ManualResetEvent(false);
-
-            int offset = i * itemsPerThread;
-            int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
-
-            DataObjectTask task = new DataObjectTask(doneEvents[i], _dataLayer, _graphMap.dataObjectName, filter, pageSize, offset);
-            dataObjectTasks[i] = task;
-            ThreadPool.QueueUserWorkItem(task.ThreadPoolCallback, i);
-          }
-
-          // wait for all tasks to complete
-          WaitHandle.WaitAll(doneEvents);
-
-          // collect data objects from the tasks
-          for (int i = 0; i < numOfThreads; i++)
-          {
-            dataObjects.AddRange(dataObjectTasks[i].DataObjects);
-          }
-        }
-      }
-      else
-      {
-         int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) 
-           ? 250 : int.Parse(_settings["DefaultPageSize"]);
-
-         long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
-
-         for (int offset = 0; offset < count; offset = offset + pageSize)
-         {
-           dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, offset));
-         }
+        dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, offset));
       }
 
       return dataObjects;
+    }
+
+    private DataTransferIndices MultiGetDataTransferIndices(DataFilter filter)
+    {
+      DataTransferIndices dataTransferIndices = new DataTransferIndices();
+
+      int itemsPerThread = (String.IsNullOrEmpty(_settings["NumOfDTIsPerThread"]))
+          ? 25 : int.Parse(_settings["NumOfDTIsPerThread"]);
+
+      long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+
+      if (total > 0)
+      {
+        int numOfThreads = (int)(total / itemsPerThread);
+        numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
+
+        ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
+        DataTransferIndicesTask[] dtiTasks = new DataTransferIndicesTask[numOfThreads];
+
+        for (int i = 0; i < numOfThreads; i++)
+        {
+          doneEvents[i] = new ManualResetEvent(false);
+
+          int offset = i * itemsPerThread;
+          int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
+
+          DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          DataTransferIndicesTask dtiTask = new DataTransferIndicesTask(doneEvents[i], projectionLayer, _dataLayer, _graphMap,
+            filter, pageSize, offset);
+          dtiTasks[i] = dtiTask;
+          ThreadPool.QueueUserWorkItem(dtiTask.ThreadPoolCallback, i);
+        }
+
+        // wait for all tasks to complete
+        WaitHandle.WaitAll(doneEvents);
+
+        // collect DTIs from the tasks
+        for (int i = 0; i < numOfThreads; i++)
+        {
+          DataTransferIndices dtis = dtiTasks[i].DataTransferIndices;
+
+          if (dtis != null)
+          {
+            dataTransferIndices.DataTransferIndexList.AddRange(dtis.DataTransferIndexList);
+          }
+        }
+      }
+
+      return dataTransferIndices;
     }
   }
 }
