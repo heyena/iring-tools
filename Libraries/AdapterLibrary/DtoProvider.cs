@@ -282,7 +282,7 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(manifest, graph);
         DataFilter filter = GetPredeterminedFilter();
 
-        if (_settings["EnableMultithreadedDTIs"] == null || bool.Parse(_settings["EnableMultithreadedDTIs"]))
+        if (_settings["EnableMultithreadedDTIs"] != null && bool.Parse(_settings["EnableMultithreadedDTIs"]))
         {
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
@@ -328,7 +328,7 @@ namespace org.iringtools.adapter
           sortOrder = filter.OrderExpressions.First().SortOrder.ToString();
         }
 
-        if (_settings["EnableMultithreadedDTIs"] == null || bool.Parse(_settings["EnableMultithreadedDTIs"]))
+        if (_settings["EnableMultithreadedDTIs"] != null && bool.Parse(_settings["EnableMultithreadedDTIs"]))
         {
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
@@ -449,7 +449,7 @@ namespace org.iringtools.adapter
 
         if (dataTransferObjectList.Count > 0)
         {
-          if (_settings["EnableMultithreadedDTOs"] == null || bool.Parse(_settings["EnableMultithreadedDTOs"]))
+          if (_settings["EnableMultithreadedDTOs"] != null && bool.Parse(_settings["EnableMultithreadedDTOs"]))
           {
             response.Append(MultiPostDataTransferObjects(dataTransferObjects));
           }
