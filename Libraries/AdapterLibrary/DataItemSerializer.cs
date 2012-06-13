@@ -41,7 +41,7 @@ namespace org.iringtools.adapter
           serializer.MaxJsonLength = int.MaxValue;
           serializer.RegisterConverters(new JavaScriptConverter[] { _converter });
           string json = serializer.Serialize(graph);
-          byte[] byteArray = Encoding.Default.GetBytes(json);
+          byte[] byteArray = Encoding.UTF8.GetBytes(json);
           stream = new MemoryStream(byteArray);
         }
       }
