@@ -89,9 +89,7 @@ namespace org.iringtools.adapter
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
         WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-
         webProxy.Credentials = _settings.GetProxyCredential();
-
         _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
       }
       else
@@ -284,7 +282,7 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(manifest, graph);
         DataFilter filter = GetPredeterminedFilter();
 
-        if (_settings["MultithreadingDTIs"] == null || bool.Parse(_settings["MultithreadingDTIs"]))
+        if (_settings["EnableMultithreadedDTIs"] == null || bool.Parse(_settings["EnableMultithreadedDTIs"]))
         {
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
@@ -330,7 +328,7 @@ namespace org.iringtools.adapter
           sortOrder = filter.OrderExpressions.First().SortOrder.ToString();
         }
 
-        if (_settings["MultithreadingDTIs"] == null || bool.Parse(_settings["MultithreadingDTIs"]))
+        if (_settings["EnableMultithreadedDTIs"] == null || bool.Parse(_settings["EnableMultithreadedDTIs"]))
         {
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
@@ -430,47 +428,37 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graph);
 
-        // extract delete identifiers from data transfer objects
-        List<string> deleteIdentifiers = new List<string>();
+        // extract deleted identifiers from data transfer objects
+        List<string> deletedIdentifiers = new List<string>();
         List<DataTransferObject> dataTransferObjectList = dataTransferObjects.DataTransferObjectList;
 
         for (int i = 0; i < dataTransferObjectList.Count; i++)
         {
           if (dataTransferObjectList[i].transferType == TransferType.Delete)
           {
-            deleteIdentifiers.Add(dataTransferObjectList[i].identifier);
+            deletedIdentifiers.Add(dataTransferObjectList[i].identifier);
             dataTransferObjectList.RemoveAt(i--);
           }
         }
 
-        string xml = Utility.SerializeDataContract<DataTransferObjects>(dataTransferObjects);
-        XElement xElement = XElement.Parse(xml);
-        XDocument dtoDoc = new XDocument(xElement);
-
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap.name, ref dtoDoc);
-
-        if (dataObjects.Count < dataTransferObjectList.Count)
+        // call data layer to delete data objects
+        if (deletedIdentifiers.Count > 0)
         {
-          response.Level = StatusLevel.Error;
-          response.StatusList.Add(new Status()
+          response.Append(_dataLayer.Delete(_graphMap.dataObjectName, deletedIdentifiers));
+        }
+
+        if (dataTransferObjectList.Count > 0)
+        {
+          if (_settings["EnableMultithreadedDTOs"] == null || bool.Parse(_settings["EnableMultithreadedDTOs"]))
           {
-            Identifier = "N/A",            
-            Messages = new Messages() {
-                 "Error creating data objects - expected [" + dataTransferObjectList.Count +
-                "], actual [" + dataObjects.Count + "]. See log for details."
-            }
-          });
-        }
-                
-        if (dataObjects.Count > 0)
-        {
-          response.Append(_dataLayer.Post(dataObjects));  // add/change/sync data objects
-        }
-
-        if (deleteIdentifiers.Count > 0)
-        {
-          response.Append(_dataLayer.Delete(_graphMap.dataObjectName, deleteIdentifiers));
+            response.Append(MultiPostDataTransferObjects(dataTransferObjects));
+          }
+          else
+          {
+            DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+            IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap, ref dataTransferObjects);
+            response.Append(_dataLayer.Post(dataObjects));
+          }
         }
       }
       catch (Exception ex)
@@ -956,6 +944,51 @@ namespace org.iringtools.adapter
       }
 
       return dataTransferIndices;
+    }
+
+    private Response MultiPostDataTransferObjects(DataTransferObjects dataTransferObjects)
+    {
+      Response response = new Response();
+
+      int itemsPerThread = (String.IsNullOrEmpty(_settings["NumOfDTOsPerThread"]))
+          ? 25 : int.Parse(_settings["NumOfDTOsPerThread"]);
+
+      if (dataTransferObjects != null && dataTransferObjects.DataTransferObjectList.Count > 0)
+      {
+        int total = dataTransferObjects.DataTransferObjectList.Count;
+        int numOfThreads = (int)(total / itemsPerThread);
+        numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
+
+        ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
+        DataTransferObjectsTask[] dtoTasks = new DataTransferObjectsTask[numOfThreads];
+
+        for (int i = 0; i < numOfThreads; i++)
+        {
+          doneEvents[i] = new ManualResetEvent(false);
+
+          int offset = i * itemsPerThread;
+          int count = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
+
+          DataTransferObjects dtos = new DataTransferObjects();
+          dtos.DataTransferObjectList = dataTransferObjects.DataTransferObjectList.GetRange(offset, count);
+
+          DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvents[i], projectionLayer, _dataLayer, _graphMap, dtos);
+          dtoTasks[i] = dtoTask;
+          ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, i);
+        }
+
+        // wait for all tasks to complete
+        WaitHandle.WaitAll(doneEvents);
+
+        // collect responses from the tasks
+        for (int i = 0; i < numOfThreads; i++)
+        {
+          response.Append(dtoTasks[i].Response);
+        }
+      }
+
+      return response;
     }
   }
 }
