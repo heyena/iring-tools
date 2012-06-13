@@ -18,19 +18,21 @@ namespace org.iringtools.datadictionarysample
 {
   class Program
   {
+    //TODO: Re-write using default constructors...
+
     public DataObject CreateFolder()
     {
       DataObject folder = new DataObject();
-      folder.tableName = "folder";
+      folder.tableName = "FOLDER";
       folder.objectName = "folder";
       folder.objectNamespace = "iringtools.folder";
-      folder.keyDelimeter = "/";
+      folder.keyDelimeter = "_";
       folder.isReadOnly = false;
-      folder.hasContent = true;
+      folder.hasContent = false;
       folder.isListOnly = false;
       folder.defaultProjectionFormat = "json";
       folder.defaultListProjectionFormat = "json";
-      folder.description = "folder";
+      folder.description = "A Folder in a file system";
       folder.isRelatedOnly = false;
       folder.groupName = "directory";
       folder.version = "2.4";
@@ -38,7 +40,7 @@ namespace org.iringtools.datadictionarysample
       folder.dataProperties = new List<DataProperty>();
       DataProperty id = new DataProperty();
       folder.dataProperties.Add(id);
-      id.columnName = "id";
+      id.columnName = "ID";
       id.propertyName = "id";
       id.dataType = DataType.String;
       id.dataLength = 5;
@@ -50,24 +52,23 @@ namespace org.iringtools.datadictionarysample
       id.showOnSearch = true;
       id.isHidden = false;
       id.description = "data property for id";
-      id.referenceType = "RDL";
+      id.referenceType = null; //TODO: Include another property to demonstrate reference properties
       id.isVirtual = false;
 
       DataProperty name = new DataProperty();
       folder.dataProperties.Add(name);
-      name.columnName = "name";
+      name.columnName = "NAME";
       name.propertyName = "name";
       name.dataType = DataType.String;
       name.dataLength = 20;
       name.isNullable = false;
-      name.keyType = KeyType.unassigned;
       name.showOnIndex = true;
       name.numberOfDecimals = 0;
       name.isReadOnly = false;
       name.showOnSearch = true;
       name.isHidden = false;
       name.description = "data property for folder name";
-      name.referenceType = "RDL";
+      name.referenceType = null; //Same as above
       name.isVirtual = false;
 
       folder.keyProperties = new List<KeyProperty>();
@@ -81,24 +82,24 @@ namespace org.iringtools.datadictionarysample
     public DataObject CreateSubFolder()
     {
       DataObject subFolder = new DataObject();
-      subFolder.tableName = "subFolder";
+      subFolder.tableName = "SUB_FOLDER";
       subFolder.objectName = "subFolder";
       subFolder.objectNamespace = "iringtools.subFolder";
-      subFolder.keyDelimeter = "/";
+      subFolder.keyDelimeter = "_";
       subFolder.isReadOnly = false;
-      subFolder.hasContent = true;
-      subFolder.isListOnly = false;
+      subFolder.hasContent = false;
+      subFolder.isListOnly = true;
       subFolder.defaultProjectionFormat = "json";
       subFolder.defaultListProjectionFormat = "json";
       subFolder.description = "subFolder";
-      subFolder.isRelatedOnly = false;
-      subFolder.groupName = "folder";
+      subFolder.isRelatedOnly = true;
+      subFolder.groupName = "directory";
       subFolder.version = "2.4";
 
       subFolder.dataProperties = new List<DataProperty>();
       DataProperty subFolderId = new DataProperty();
       subFolder.dataProperties.Add(subFolderId);
-      subFolderId.columnName = "id";
+      subFolderId.columnName = "ID";
       subFolderId.propertyName = "id";
       subFolderId.dataType = DataType.String;
       subFolderId.dataLength = 5;
@@ -110,24 +111,23 @@ namespace org.iringtools.datadictionarysample
       subFolderId.showOnSearch = true;
       subFolderId.isHidden = false;
       subFolderId.description = "data property for id";
-      subFolderId.referenceType = "RDL";
+      subFolderId.referenceType = null; //Same as above
       subFolderId.isVirtual = false;
 
       DataProperty subFolderName = new DataProperty();
       subFolder.dataProperties.Add(subFolderName);
-      subFolderName.columnName = "name";
+      subFolderName.columnName = "NAME";
       subFolderName.propertyName = "name";
       subFolderName.dataType = DataType.String;
       subFolderName.dataLength = 20;
       subFolderName.isNullable = false;
-      subFolderName.keyType = KeyType.unassigned;
       subFolderName.showOnIndex = true;
       subFolderName.numberOfDecimals = 0;
       subFolderName.isReadOnly = false;
       subFolderName.showOnSearch = true;
       subFolderName.isHidden = false;
       subFolderName.description = "data property for subFolder name";
-      subFolderName.referenceType = "RDL";
+      subFolderName.referenceType = null; //Same as above
       subFolderName.isVirtual = false;
 
       subFolder.keyProperties = new List<KeyProperty>();
