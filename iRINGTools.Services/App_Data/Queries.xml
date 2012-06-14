@@ -76,6 +76,18 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetLabelRdlEquivalent</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetLabelRdlEquivalent.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetMembers</key>
     <query>
       <bindings>
@@ -133,6 +145,26 @@
       <bindings>
         <queryBinding>
           <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSubClass.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetSubClassesJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>rdsuri</name>
           <type>Uri</type>
         </queryBinding>
         <queryBinding>

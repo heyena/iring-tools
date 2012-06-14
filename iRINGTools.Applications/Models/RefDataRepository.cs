@@ -81,10 +81,13 @@ namespace iRINGTools.Web.Models
       return _referenceDataServiceClient.Get<Entity>(relativeUri);
     }
 
-    public Entities GetSubClasses(string classId)
+    public Entities GetSubClasses(string classId, Repository repository)
     {
       relativeUri = string.Format("/classes/{0}/subclasses", classId);
-      return _referenceDataServiceClient.Get<Entities>(relativeUri);
+      if (repository != null)
+        return _referenceDataServiceClient.Post<Repository, Entities>(relativeUri, repository);
+      else
+        return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
     public Entities GetSubClassesCount(string classId)
@@ -99,10 +102,13 @@ namespace iRINGTools.Web.Models
       return _referenceDataServiceClient.Get<Federation>(relativeUri);
     }
 
-    public Entities GetSuperClasses(string classId)
+    public Entities GetSuperClasses(string classId, Repository repository)
     {
       relativeUri = string.Format("/classes/{0}/superclasses", classId);
-      return _referenceDataServiceClient.Get<Entities>(relativeUri);
+      if(repository == null)
+        return _referenceDataServiceClient.Get<Entities>(relativeUri);
+      else
+        return _referenceDataServiceClient.Post<Repository, Entities>(relativeUri, repository);
     }
 
     public Entities GetClassTemplates(string classId)
@@ -117,28 +123,34 @@ namespace iRINGTools.Web.Models
         return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
-    public QMXF GetClasses(string classId)
-    {
-      relativeUri = string.Format("/classes/{0}", classId);
-      return _referenceDataServiceClient.Get<QMXF>(relativeUri);
-    }
+    //public QMXF GetClasses(string classId)
+    //{
+    //  relativeUri = string.Format("/classes/{0}", classId);
+    //  return _referenceDataServiceClient.Get<QMXF>(relativeUri);
+    //}
 
     public QMXF GetClasses(string classId, Repository repository)
     {
       relativeUri = string.Format("/classes/{0}", classId);
-      return _referenceDataServiceClient.Post<Repository, QMXF>(relativeUri, repository);
+      if(repository != null)
+        return _referenceDataServiceClient.Post<Repository, QMXF>(relativeUri, repository);
+      else
+        return _referenceDataServiceClient.Get<QMXF>(relativeUri);
     }
 
     public QMXF GetTemplate(string id)
     {
       relativeUri = string.Format("/templates/{0}", id);
       return _referenceDataServiceClient.Get<QMXF>(relativeUri);
-    }
+    }                                                                  
 
-    public Entities GetClassMembers(string classId)
+    public Entities GetClassMembers(string classId, Repository repository)
     {
       relativeUri = string.Format("/classes/{0}/members", classId);
-      return _referenceDataServiceClient.Get<Entities>(relativeUri);
+      if(repository != null)
+        return _referenceDataServiceClient.Post<Repository, Entities>(relativeUri, repository);
+      else
+        return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
   }
