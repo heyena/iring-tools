@@ -154,20 +154,27 @@ namespace org.iringtools.library
         {
           foreach (OrderExpression orderExpression in clonedFilter.OrderExpressions)
           {
-            if (!Has(orderExpression))
+            if (!DuplicateOrderExpression(orderExpression))
               OrderExpressions.Add(orderExpression);
           }
         }
       }    
     }
 
-    private bool Has(OrderExpression orderExpression)
+    private bool DuplicateOrderExpression(OrderExpression orderExpression)
     {
-      foreach (OrderExpression item in this.OrderExpressions)
+      foreach (OrderExpression item in OrderExpressions)
       {
-        if (item.PropertyName.ToLower() == orderExpression.PropertyName.ToLower() &&
-            item.SortOrder == orderExpression.SortOrder)
-          return true;
+        if (item.PropertyName.ToLower() == orderExpression.PropertyName.ToLower())
+        {  
+          if(item.SortOrder == orderExpression.SortOrder)
+            return true;
+          else 
+          {
+            item.SortOrder = orderExpression.SortOrder;
+            return true;
+          }
+        }
       }
       return false;
     }
