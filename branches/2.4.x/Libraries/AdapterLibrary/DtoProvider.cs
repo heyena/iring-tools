@@ -280,7 +280,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         BuildCrossGraphMap(manifest, graph);
-        DataFilter filter = GetPredeterminedFilter(graph);
+        DataFilter filter = GetPredeterminedFilter();
 
         if (_settings["EnableMultithreadedDTIs"] != null && bool.Parse(_settings["EnableMultithreadedDTIs"]))
         {
@@ -316,7 +316,7 @@ namespace org.iringtools.adapter
         DataFilter filter = request.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-        filter.AppendFilter(GetPredeterminedFilter(graph));        
+        filter.AppendFilter(GetPredeterminedFilter());        
 
         // get sort index
         string sortIndex = String.Empty;        
@@ -350,26 +350,10 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-    private DataFilter GetPredeterminedFilter(string graph)
+    // get single data transfer object (but wrap it in a list!)
+    public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
     {
-      if (_dataDictionary == null)
-      {
-        _dataDictionary = _dataLayer.GetDictionary();
-      }
-
-      DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.dataObjectName);
-      GraphMap graphMap = _mapping.FindGraphMap(graph);
-      DataFilter dataFilter = new DataFilter();
-      dataFilter.AppendFilter(dataObject.dataFilter);
-      dataFilter.AppendFilter(graphMap.dataFilter);
-
-      return dataFilter;
-    }
-
-    // get list (page) of data transfer objects per data transfer indicies
-    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
-    {
-      DataTransferObjects dataTransferObjects = null;
+      DataTransferObjects dataTransferObjects = new DataTransferObjects();
 
       try
       {
@@ -378,19 +362,16 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graph);
 
-        List<DataTransferIndex> dataTrasferIndexList = dataTransferIndices.DataTransferIndexList;
-
-        IList<string> identifiers = new List<string>();
-        foreach (DataTransferIndex dti in dataTrasferIndexList)
-        {
-          identifiers.Add(dti.InternalIdentifier);
-        }
-
+        IList<string> identifiers = new List<string> { id };
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
 
-        dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+        if (dtoDoc != null && dtoDoc.Root != null)
+        {
+          dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+        }
       }
       catch (Exception ex)
       {
@@ -401,11 +382,94 @@ namespace org.iringtools.adapter
       return dataTransferObjects;
     }
 
+    // get list (page) of data transfer objects per data transfer indicies
+    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
+    {
+      DataTransferObjects dataTransferObjects = new DataTransferObjects();
+
+      if (dataTransferIndices != null && dataTransferIndices.DataTransferIndexList.Count > 0)
+      {
+        try
+        {
+          InitializeScope(scope, app);
+          InitializeDataLayer();
+
+          _graphMap = _mapping.FindGraphMap(graph);
+
+          List<DataTransferIndex> dataTrasferIndexList = dataTransferIndices.DataTransferIndexList;
+
+          IList<string> identifiers = new List<string>();
+          foreach (DataTransferIndex dti in dataTrasferIndexList)
+          {
+            identifiers.Add(dti.InternalIdentifier);
+          }
+
+          IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+          DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
+
+          if (dtoDoc != null && dtoDoc.Root != null)
+          {
+            dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+          }
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error getting data transfer objects: " + ex);
+          throw ex;
+        }
+      }
+
+      return dataTransferObjects;
+    }
+
+    // get list (page) of data transfer objects per dto page request
+    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest)
+    {
+      DataTransferObjects dataTransferObjects = new DataTransferObjects();
+
+      if (dxoRequest != null && dxoRequest.DataTransferIndices != null &&
+          dxoRequest.DataTransferIndices.DataTransferIndexList.Count > 0)
+      {
+        try
+        {
+          InitializeScope(scope, app);
+          InitializeDataLayer();
+
+          BuildCrossGraphMap(dxoRequest.Manifest, graph);
+
+          List<DataTransferIndex> dataTrasferIndexList = dxoRequest.DataTransferIndices.DataTransferIndexList;
+
+          IList<string> identifiers = new List<string>();
+          foreach (DataTransferIndex dti in dataTrasferIndexList)
+          {
+            identifiers.Add(dti.InternalIdentifier);
+          }
+
+          IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+          DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap, ref dataObjects);
+
+          if (dtoDoc != null && dtoDoc.Root != null)
+          {
+            dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+          }
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error getting data transfer objects: " + ex);
+          throw ex;
+        }
+      }
+
+      return dataTransferObjects;
+    }
+
     public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {
       Response response = new Response();
       response.DateTimeStamp = DateTime.Now;
-      
+
       try
       {
         InitializeScope(scope, app);
@@ -422,7 +486,7 @@ namespace org.iringtools.adapter
 
           return response;
         }
-        
+
         response.Level = StatusLevel.Success;
 
         InitializeDataLayer();
@@ -481,35 +545,6 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    // get single data transfer object (but wrap it in a list!)
-    public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
-    {
-      DataTransferObjects dataTransferObjects = null;
-
-      try
-      {
-        InitializeScope(scope, app);
-        InitializeDataLayer();
-
-        _graphMap = _mapping.FindGraphMap(graph);
-
-        IList<string> identifiers = new List<string> { id };
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
-
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
-
-        dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting data transfer objects: " + ex);
-        throw ex;
-      }
-
-      return dataTransferObjects;
-    }
-
     public Response DeleteDataTransferObject(string scope, string app, string graph, string id)
     {
       Response response = new Response();
@@ -540,44 +575,6 @@ namespace org.iringtools.adapter
       }
 
       return response;
-    }
-
-    // get list (page) of data transfer objects per dto page request
-    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest)
-    {
-      DataTransferObjects dataTransferObjects = null;
-
-      try
-      {
-        InitializeScope(scope, app);
-        InitializeDataLayer();
-
-        BuildCrossGraphMap(dxoRequest.Manifest, graph);
-
-        List<DataTransferIndex> dataTrasferIndexList = dxoRequest.DataTransferIndices.DataTransferIndexList;
-
-        IList<string> identifiers = new List<string>();
-        foreach (DataTransferIndex dti in dataTrasferIndexList)
-        {
-          identifiers.Add(dti.InternalIdentifier);
-        }
-
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");        
-        XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap, ref dataObjects);
-
-        if (dtoDoc != null && dtoDoc.Root != null)
-          dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
-        else
-          dataTransferObjects = new DataTransferObjects();
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting data transfer objects: " + ex);
-        throw ex;
-      }
-
-      return dataTransferObjects;
     }
 
     private void InitializeScope(string projectName, string applicationName)
@@ -739,9 +736,12 @@ namespace org.iringtools.adapter
       ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
       Class manifestClass = manifestClassTemplatesMap.@class;
 
-      _graphMap = new GraphMap();
-      _graphMap.name = mappingGraph.name;
-      _graphMap.dataObjectName = mappingGraph.dataObjectName;
+      _graphMap = new GraphMap()
+      {
+        name = mappingGraph.name,
+        dataObjectName = mappingGraph.dataObjectName,
+        dataFilter = mappingGraph.dataFilter
+      };
 
       if (manifestClassTemplatesMap != null)
       {
@@ -758,6 +758,21 @@ namespace org.iringtools.adapter
       }
     }
 
+    private DataFilter GetPredeterminedFilter()
+    {
+      if (_dataDictionary == null)
+      {
+        _dataDictionary = _dataLayer.GetDictionary();
+      }
+
+      DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.dataObjectName);
+      DataFilter dataFilter = new DataFilter();
+      dataFilter.AppendFilter(dataObject.dataFilter);
+      dataFilter.AppendFilter(_graphMap.dataFilter);
+
+      return dataFilter;
+    }
+    
     private void RecurBuildCrossGraphMap(ref Graph manifestGraph, Class manifestClass, GraphMap mappingGraph, ClassMap mappingClass)
     {
       List<Template> manifestTemplates = null;
