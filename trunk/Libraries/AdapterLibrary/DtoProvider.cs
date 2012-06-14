@@ -287,7 +287,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         BuildCrossGraphMap(manifest, graph);
-        DataFilter filter = GetPredeterminedFilter(graph);
+        DataFilter filter = GetPredeterminedFilter();
 
         List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
@@ -318,7 +318,7 @@ namespace org.iringtools.adapter
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
 
-        filter.AppendFilter(GetPredeterminedFilter(graph));
+        filter.AppendFilter(GetPredeterminedFilter());
 
         List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
         
@@ -346,16 +346,16 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-    private DataFilter GetPredeterminedFilter(string graph)
+    private DataFilter GetPredeterminedFilter()
     {
       if (_dataDictionary == null)
         _dataDictionary = _dataLayer.GetDictionary();
 
-      GraphMap graphObject = _mapping.FindGraphMap(graph);
-      DataObject dataObject = _dataDictionary.getDataObject(graphObject.dataObjectName);
+      DataObject dataObject = _dataDictionary.getDataObject(_graphMap.dataObjectName);
       DataFilter dataFilter = new DataFilter();
       dataFilter.AppendFilter(dataObject.dataFilter);
-      dataFilter.AppendFilter(graphObject.dataFilter);
+      dataFilter.AppendFilter(_graphMap.dataFilter);
+
       return dataFilter;
     }
 
@@ -755,6 +755,7 @@ namespace org.iringtools.adapter
       _graphMap = new GraphMap();
       _graphMap.name = mappingGraph.name;
       _graphMap.dataObjectName = mappingGraph.dataObjectName;
+      _graphMap.dataFilter = mappingGraph.dataFilter;
 
       if (manifestClassTemplatesMap != null)
       {
