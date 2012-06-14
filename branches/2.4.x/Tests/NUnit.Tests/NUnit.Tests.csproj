@@ -70,15 +70,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdapterTest.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
-    <Compile Include="BaseTest.cs" />
-    <Compile Include="DataTest.cs" />
-    <Compile Include="DxfrTest.cs" />
-    <Compile Include="NHibernateTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceDataTests.cs" />
-    <Compile Include="XmlTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql">
@@ -100,19 +94,25 @@
     <Content Include="App_Data\Mapping.12345_000.ABC.xml" />
     <Content Include="App_Data\nh-configuration.12345_000.ABC.xml" />
     <Content Include="App_Data\nh-mapping.12345_000.ABC.xml" />
-    <Content Include="App_Data\Queries.xml" />
-    <Content Include="App_Data\Repositories.xml" />
+    <Content Include="App_Data\Queries.xml">
+      <SubType>
+      </SubType>
+    </Content>
     <Content Include="App_Data\Scopes.xml" />
     <Content Include="App_Data\SummaryBindingConfiguration.12345_000.ABC.xml" />
     <Content Include="App_Data\SummaryConfig.12345_000.ABC.xml" />
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
-    <Content Include="SPARQL\ExactSearch.txt" />
+    <Content Include="SPARQL\ContainsSearchJORD.txt" />
+    <Content Include="SPARQL\ExactSearchJORD.txt" />
     <Content Include="SPARQL\GetClass.txt" />
     <Content Include="SPARQL\GetClassification.txt" />
+    <Content Include="SPARQL\GetClassificationJORD.txt" />
+    <Content Include="SPARQL\GetClassJORD.txt" />
     <Content Include="SPARQL\GetClassTemplates.txt" />
     <Content Include="SPARQL\GetInstances.txt" />
     <Content Include="SPARQL\GetLabel.txt" />
+    <Content Include="SPARQL\GetLabelRdlEquivalent.txt" />
     <Content Include="SPARQL\GetProperties.txt" />
     <Content Include="SPARQL\GetRangeRestriction.txt" />
     <Content Include="SPARQL\GetReferenceRestriction.txt" />
@@ -122,14 +122,17 @@
     <Content Include="SPARQL\GetRoles.txt" />
     <Content Include="SPARQL\GetStatus.txt" />
     <Content Include="SPARQL\GetSubClass.txt" />
+    <Content Include="SPARQL\GetSubClassJORD.txt" />
     <Content Include="SPARQL\GetSubClassOf.txt" />
     <Content Include="SPARQL\GetSubClassOfInverse.txt" />
     <Content Include="SPARQL\GetSubClassSandbox.txt" />
     <Content Include="SPARQL\GetSuperClass.txt" />
+    <Content Include="SPARQL\GetSuperClassJORD.txt" />
     <Content Include="SPARQL\GetSuperClassSandbox.txt" />
     <Content Include="SPARQL\getTemplate.txt" />
     <Content Include="SPARQL\getTemplateClassification.txt" />
-    <Content Include="SPARQL\GetTemplateQualification.txt" />
+    <Content Include="SPARQL\GetTemplateQualificationJORD.txt" />
+    <Content Include="SPARQL\GetTemplateQualificationPart8.txt" />
     <Content Include="SPARQL\getTemplateRoleRestriction.txt" />
     <Content Include="SPARQL\getTemplateRoles.txt" />
     <Content Include="SPARQL\getTemplateSpecialization.txt" />
@@ -180,6 +183,9 @@
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -182,14 +182,20 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       });
 
       treeLoader.on("beforeload", function (treeLoader, node) {
-        var repo = node.attributes.text;
+        var repo = null;
+        if (node.attributes.type != "SearchNode" && node.attributes.type != "TemplateNode") {
+          repo = node.attributes.text;
+          if (repo && repo.indexOf("[") == -1) {
+            repo = node.parentNode.attributes.text;
+          }
+        }
         treeLoader.baseParams.type = node.attributes.type;
         treeLoader.baseParams.query = searchText;
         treeLoader.baseParams.reset = isreset;
         treeLoader.baseParams.limit = this.limit;
         treeLoader.baseParams.start = 0;
-        if(repo)
-          treeLoader.baseParams.repositoryName = repo.substring(repo.indexOf("[")+1, repo.indexOf("]"));
+        if (repo)
+          treeLoader.baseParams.repositoryName = repo.substring(repo.indexOf("[") + 1, repo.indexOf("]"));
         if (node.parentNode && node.attributes.identifier == null) {
           treeLoader.baseParams.id = node.parentNode.attributes.identifier;
         } else {

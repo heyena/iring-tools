@@ -1,0 +1,7 @@
+﻿PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>  
+prefix rds: <http://posccaesar.org/rdl/>
+SELECT DISTINCT ?label
+{
+  <param1> rds:rdsWipEquivalent ?rds .
+  ?rds rds:hasDesignation ?label 
+}

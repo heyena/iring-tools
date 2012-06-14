@@ -127,7 +127,7 @@
     <Content Include="SPARQL\GetClassTemplates.txt" />
     <Content Include="SPARQL\GetEntityTypes.txt" />
     <Content Include="SPARQL\GetInstances.txt" />
-    <Content Include="SPARQL\GetLabel.txt" />
+    <Content Include="SPARQL\GetLabelRdlEquivalent.txt" />
     <Content Include="SPARQL\GetProperties.txt" />
     <Content Include="SPARQL\GetRangeRestriction.txt" />
     <Content Include="SPARQL\GetReferenceRestriction.txt" />
@@ -136,7 +136,7 @@
     <Content Include="SPARQL\GetRoleInfo.txt" />
     <Content Include="SPARQL\GetRoles.txt" />
     <Content Include="SPARQL\GetStatus.txt" />
-    <Content Include="SPARQL\GetSubClass.txt" />
+    <Content Include="SPARQL\GetSubClassJORD.txt" />
     <Content Include="SPARQL\GetSubClassOf.txt" />
     <Content Include="SPARQL\GetSubClassSandbox.txt" />
     <Content Include="SPARQL\GetSuperClassJORD.txt" />
