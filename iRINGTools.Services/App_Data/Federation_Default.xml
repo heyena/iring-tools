@@ -111,5 +111,16 @@
       <updateuri i:nil="true"/>
       <uri>http://www.iringsandbox.org/repositories/tempInitSet/query</uri>
     </repository>
+    <repository>
+      <description>JORD Endpoint</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>0</id>
+      <isreadonly>false</isreadonly>
+      <name>JORD</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>JORD</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://posccaesar.org/endpoint/sparql</uri>
+    </repository>
   </repositorylist>
 </federation>
