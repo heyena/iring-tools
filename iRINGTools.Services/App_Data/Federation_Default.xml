@@ -74,7 +74,7 @@
       <isreadonly>false</isreadonly>
       <name>iRING Sandbox</name>
       <namespaces i:nil="true"/>
-      <repositorytype>Part8</repositorytype>
+      <repositorytype>Camelot</repositorytype>
       <updateuri i:nil="true"/>
       <uri>http://www.iringsandbox.org/repositories/sandbox/query</uri>
     </repository>
@@ -107,7 +107,7 @@
       <isreadonly>false</isreadonly>
       <name>Proto and Initial</name>
       <namespaces i:nil="true"/>
-      <repositorytype>Part8</repositorytype>
+      <repositorytype>Camelot</repositorytype>
       <updateuri i:nil="true"/>
       <uri>http://www.iringsandbox.org/repositories/tempInitSet/query</uri>
     </repository>
