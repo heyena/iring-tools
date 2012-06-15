@@ -214,9 +214,15 @@ namespace org.iringtools.mapping
 
     public static bool IsMapped(this RoleMap roleMap)
     {
-      return roleMap.type == RoleType.Possessor || roleMap.classMap != null ||
-        !string.IsNullOrEmpty(roleMap.propertyName) ||
-        !string.IsNullOrEmpty(roleMap.value) || !string.IsNullOrEmpty(roleMap.dataType);
+      if ((roleMap.type == RoleType.Property ||
+          roleMap.type == RoleType.DataProperty ||
+          roleMap.type == RoleType.ObjectProperty) && 
+          string.IsNullOrEmpty(roleMap.propertyName))
+      {
+        return false;
+      }
+
+      return true;
     }
 
     public static string ResolveValueMap(this Mapping mapping, string valueListName, string qualifiedUri)
