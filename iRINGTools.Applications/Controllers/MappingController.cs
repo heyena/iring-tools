@@ -1369,6 +1369,7 @@ namespace org.iringtools.web.controllers
                     {
                         roleMap.type = RoleType.Reference;
                         roleMap.dataType = qRange;
+                        roleMap.value = GetClassLabel(qRange);
                         roleMap.propertyName = null;
                         currentTemplateMap.roleMaps.Add(roleMap);
                     }
