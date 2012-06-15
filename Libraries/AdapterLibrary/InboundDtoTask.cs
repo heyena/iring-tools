@@ -36,7 +36,11 @@ namespace org.iringtools.adapter
       if (_dataTransferObjects != null)
       {
         IList<IDataObject> dataObjects = _projectionLayer.ToDataObjects(_graphMap, ref _dataTransferObjects);
-        _response = _dataLayer.Post(dataObjects); 
+
+        if (dataObjects != null)
+        {
+          _response = _dataLayer.Post(dataObjects);
+        }
       }
 
       _doneEvent.Set();
