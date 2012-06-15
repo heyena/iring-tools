@@ -283,7 +283,7 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(manifest, graph);
         DataFilter filter = GetPredeterminedFilter();
 
-        if (_settings["EnableMultithreadedDTIs"] != null && bool.Parse(_settings["EnableMultithreadedDTIs"]))
+        if (_settings["MultiGetDTIs"] != null && bool.Parse(_settings["MultiGetDTIs"]))
         {
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
@@ -329,7 +329,7 @@ namespace org.iringtools.adapter
           sortOrder = filter.OrderExpressions.First().SortOrder.ToString();
         }
 
-        if (_settings["EnableMultithreadedDTIs"] != null && bool.Parse(_settings["EnableMultithreadedDTIs"]))
+        if (_settings["MultiGetDTIs"] != null && bool.Parse(_settings["MultiGetDTIs"]))
         {
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
@@ -398,20 +398,30 @@ namespace org.iringtools.adapter
           _graphMap = _mapping.FindGraphMap(graph);
 
           List<DataTransferIndex> dataTrasferIndexList = dataTransferIndices.DataTransferIndexList;
+          List<string> identifiers = new List<string>();
 
-          IList<string> identifiers = new List<string>();
           foreach (DataTransferIndex dti in dataTrasferIndexList)
           {
             identifiers.Add(dti.InternalIdentifier);
           }
 
-          IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
-          DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-          XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
-
-          if (dtoDoc != null && dtoDoc.Root != null)
+          if (identifiers.Count > 0)
           {
-            dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+            if (_settings["MultiGetDTOs"] != null && bool.Parse(_settings["MultiGetDTOs"]))
+            {
+              dataTransferObjects = MultiGetDataTransferObjects(identifiers);
+            }
+            else
+            {
+              IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+              DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+              XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
+
+              if (dtoDoc != null && dtoDoc.Root != null)
+              {
+                dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+              }
+            }
           }
         }
         catch (Exception ex)
@@ -440,20 +450,30 @@ namespace org.iringtools.adapter
           BuildCrossGraphMap(dxoRequest.Manifest, graph);
 
           List<DataTransferIndex> dataTrasferIndexList = dxoRequest.DataTransferIndices.DataTransferIndexList;
+          List<string> identifiers = new List<string>();
 
-          IList<string> identifiers = new List<string>();
           foreach (DataTransferIndex dti in dataTrasferIndexList)
           {
             identifiers.Add(dti.InternalIdentifier);
           }
 
-          IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
-          DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-          XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap, ref dataObjects);
-
-          if (dtoDoc != null && dtoDoc.Root != null)
+          if (identifiers.Count > 0)
           {
-            dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+            if (_settings["MultiGetDTOs"] != null && bool.Parse(_settings["MultiGetDTOs"]))
+            {
+              dataTransferObjects = MultiGetDataTransferObjects(identifiers);
+            }
+            else
+            {
+              IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+              DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+              XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap, ref dataObjects);
+
+              if (dtoDoc != null && dtoDoc.Root != null)
+              {
+                dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+              }
+            }
           }
         }
         catch (Exception ex)
@@ -515,7 +535,7 @@ namespace org.iringtools.adapter
 
         if (dataTransferObjectList.Count > 0)
         {
-          if (_settings["EnableMultithreadedDTOs"] != null && bool.Parse(_settings["EnableMultithreadedDTOs"]))
+          if (_settings["MultiPostDTOs"] != null && bool.Parse(_settings["MultiPostDTOs"]))
           {
             response.Append(MultiPostDataTransferObjects(dataTransferObjects));
           }
@@ -961,6 +981,50 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
+    private DataTransferObjects MultiGetDataTransferObjects(List<string> identifiers)
+    {
+      DataTransferObjects dataTransferObjects = new DataTransferObjects();
+      int total = identifiers.Count;
+      
+      int itemsPerThread = Math.Max((int)(total / MAX_THREADS), MAX_THREADS);
+
+      int numOfThreads = (int)(total / itemsPerThread);
+      numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
+
+      ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
+      OutboundDtoTask[] dtoTasks = new OutboundDtoTask[numOfThreads];
+
+      for (int i = 0; i < numOfThreads; i++)
+      {
+        doneEvents[i] = new ManualResetEvent(false);
+
+        int offset = i * itemsPerThread;
+        int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
+
+        List<string> pageIdentifiers = identifiers.GetRange(offset, pageSize);
+        DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        OutboundDtoTask dtoTask = new OutboundDtoTask(doneEvents[i], projectionLayer, _dataLayer, _graphMap, pageIdentifiers);
+        dtoTasks[i] = dtoTask;
+        ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, i);
+      }
+
+      // wait for all tasks to complete
+      WaitHandle.WaitAll(doneEvents);
+
+      // collect DTIs from the tasks
+      for (int i = 0; i < numOfThreads; i++)
+      {
+        DataTransferObjects dtos = dtoTasks[i].DataTransferObjects;
+
+        if (dtos != null)
+        {
+          dataTransferObjects.DataTransferObjectList.AddRange(dtos.DataTransferObjectList);
+        }
+      }
+
+      return dataTransferObjects;
+    }
+
     private Response MultiPostDataTransferObjects(DataTransferObjects dataTransferObjects)
     {
       Response response = new Response();
@@ -981,10 +1045,10 @@ namespace org.iringtools.adapter
           doneEvents[i] = new ManualResetEvent(false);
 
           int offset = i * itemsPerThread;
-          int count = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
+          int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
 
           DataTransferObjects dtos = new DataTransferObjects();
-          dtos.DataTransferObjectList = dataTransferObjects.DataTransferObjectList.GetRange(offset, count);
+          dtos.DataTransferObjectList = dataTransferObjects.DataTransferObjectList.GetRange(offset, pageSize);
 
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           IDataLayer dataLayer = _kernel.Get<IDataLayer>();
