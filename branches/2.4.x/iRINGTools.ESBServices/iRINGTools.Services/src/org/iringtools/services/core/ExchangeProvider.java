@@ -174,18 +174,20 @@ public class ExchangeProvider
     }
     
     DataTransferIndices sourceDtis = sourceDtiTask.getDataTransferIndices();
-    if (sourceDtis != null)
+    if (sourceDtis == null)
     {
-      sourceDtis.setScopeName(sourceScopeName);
-      sourceDtis.setAppName(sourceAppName);
+      sourceDtis = new DataTransferIndices();
     }
+    sourceDtis.setScopeName(sourceScopeName);
+    sourceDtis.setAppName(sourceAppName);
     
     DataTransferIndices targetDtis = targetDtiTask.getDataTransferIndices();
-    if (targetDtis != null)
+    if (targetDtis == null)
     {
-      targetDtis.setScopeName(targetScopeName);
-      targetDtis.setAppName(targetAppName);
+      targetDtis = new DataTransferIndices();
     }
+    targetDtis.setScopeName(targetScopeName);
+    targetDtis.setAppName(targetAppName);
 
     // create dxi request to diff source and target dti
     DfiRequest dfiRequest = new DfiRequest();

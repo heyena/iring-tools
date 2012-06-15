@@ -55,6 +55,7 @@ namespace org.iringtools.adapter
   public class DataTranferProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataTranferProvider));
+    private const int MAX_THREADS = 50;
 
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
@@ -916,14 +917,12 @@ namespace org.iringtools.adapter
     private DataTransferIndices MultiGetDataTransferIndices(DataFilter filter)
     {
       DataTransferIndices dataTransferIndices = new DataTransferIndices();
-
-      int itemsPerThread = (String.IsNullOrEmpty(_settings["NumOfDTIsPerThread"]))
-          ? 25 : int.Parse(_settings["NumOfDTIsPerThread"]);
-
       long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
-
+      
       if (total > 0)
       {
+        int itemsPerThread = Math.Max((int)(total / MAX_THREADS), MAX_THREADS);  
+      
         int numOfThreads = (int)(total / itemsPerThread);
         numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
 
@@ -966,12 +965,11 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
 
-      int itemsPerThread = (String.IsNullOrEmpty(_settings["NumOfDTOsPerThread"]))
-          ? 25 : int.Parse(_settings["NumOfDTOsPerThread"]);
-
       if (dataTransferObjects != null && dataTransferObjects.DataTransferObjectList.Count > 0)
       {
         int total = dataTransferObjects.DataTransferObjectList.Count;
+        int itemsPerThread = Math.Max((int)(total / MAX_THREADS), MAX_THREADS);  
+      
         int numOfThreads = (int)(total / itemsPerThread);
         numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
 
