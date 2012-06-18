@@ -844,8 +844,13 @@ namespace iRINGTools.Web.Models
 
     private string CleanBaseUrl(string url, char con)
     {
-      System.Uri uri = new System.Uri(url);
-      return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
+      try
+      {
+        System.Uri uri = new System.Uri(url);
+        return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
+      }
+      catch(Exception){}
+      return null;
     }
 
     private void CheckeCombination(string baseUrl, string oldBaseUrl, string context, string oldContext, string endpointName, string oldEndpointName, string path, string user)

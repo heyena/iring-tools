@@ -72,8 +72,11 @@
             else
               useNodeBaseUrl = true;
 
+            if (baseurl == '' || baseurl == "")
+              return;
+
             if (useNodeBaseUrl)
-              store.proxy.extraParams.baseUrl = baseUrl;
+              store.proxy.extraParams.baseUrl = baseurl;
           }
         }
       }),

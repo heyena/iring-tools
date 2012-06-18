@@ -105,8 +105,8 @@ namespace org.iringtools.web.controllers
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                _logger.Error(ex + " " + response);
+                return Json(new { success = false } + response, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -245,7 +245,11 @@ namespace org.iringtools.web.controllers
                 if (ex.InnerException != null)
                     _logger.Error("Error deserializing filtered data objects: " + ex);
                 if (response == "success")
-                    response = ex.Message.ToString() + " " + ex.InnerException.Message.ToString();
+                {
+                  response = ex.Message.ToString();
+                  if (ex.InnerException.Message != null)
+                    response = response + " " + ex.InnerException.Message.ToString();
+                }
             }
 
             return dataItems;

@@ -210,8 +210,12 @@
     }, this);
 
     newtab.store.load({
-      callback: function (recs) {
-        if (recs) {
+      callback: function (recs, response) {
+        var rtext = response.response.responseText;
+        var error = 'SUCCESS = FALSE';
+        var index = rtext.toUpperCase().indexOf(error);
+
+        if (index == -1) {
           newtab.reconfigure(newtab.store, recs[0].store.proxy.reader.fields);
           Ext.getBody().unmask();
           newtab.show();
@@ -219,7 +223,11 @@
         else {
           Ext.getBody().unmask();
           newtab.destroy();
-          showDialog(500, 400, 'Error', 'Error Rendering DataGrid!', Ext.Msg.OK, null);
+          var rtext = response.response.responseText;
+          var error = 'SUCCESS = FALSE';
+          var index = rtext.toUpperCase().indexOf(error);
+          var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+          showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);          
         }
       }
     });
