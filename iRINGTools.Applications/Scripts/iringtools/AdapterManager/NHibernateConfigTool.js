@@ -482,21 +482,14 @@ function creatRadioField(panel, idLabel, value, serName) {
 	panel.doLayout();
 }
 
-function showDialog(width, height, title, message, buttons, callback) {
-  if (message.indexOf('\\r\\n') != -1)
-    var msg = message.replace('\\r\\n', '\r\n');
-  else
-    var msg = message;
-
-  if (msg.indexOf("\\") != -1)
-    var msgg = msg.replace(/\\\\/g, "\\");
-  else
-    var msgg = msg;
+function showDialog(width, height, title, msg, buttons, callback) {
+  while (msg.indexOf('\\r\\n') != -1)
+    msg = msg.replace('\\r\\n', ' \r\n');  
   
 	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
 		title: title,
-		msg: '<textarea ' + style + ' readonly="yes">' + msgg + '</textarea>',
+		msg: '<textarea ' + style + ' readonly="yes">' + msg + '</textarea>',
 		buttons: buttons,
 		fn: callback
 	});
