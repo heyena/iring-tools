@@ -789,7 +789,7 @@ namespace org.iringtools.utility
         {
           if (requestMessage.type == MultipartMessageType.File)
           {
-            header = string.Format("--{0}\r\n\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\n\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
+            header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
             stream.Write(encoding.GetBytes(header), 0, header.Length);
 
             //byte[] fileData = (byte[])requestMessage.message;
@@ -802,7 +802,7 @@ namespace org.iringtools.utility
           }
           else
           {
-            header = string.Format("--{0}\r\n\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n\r\n", _boundary, requestMessage.name, requestMessage.message);
+            header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
             stream.Write(encoding.GetBytes(header), 0, header.Length);
           }
 
@@ -850,7 +850,7 @@ namespace org.iringtools.utility
             {
                 if (requestMessage.type == MultipartMessageType.File)
                 {
-                  header = string.Format("--{0}\r\n\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\n\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
+                    header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
                     stream.Write(encoding.GetBytes(header), 0, header.Length);
 
                     //byte[] fileData = (byte[])requestMessage.message;
@@ -859,11 +859,11 @@ namespace org.iringtools.utility
                     Stream fileData = (Stream)requestMessage.message;
                     fileData.CopyTo(stream);
                     //add linefeed to enable multiple posts
-                    stream.Write(encoding.GetBytes("\r\n\r\n"), 0, 2);
+                    stream.Write(encoding.GetBytes("\r\n"), 0, 2);
                 }
                 else
                 {
-                  header = string.Format("--{0}\r\n\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n\r\n", _boundary, requestMessage.name, requestMessage.message);
+                    header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
                     stream.Write(encoding.GetBytes(header), 0, header.Length);
                 }
 
