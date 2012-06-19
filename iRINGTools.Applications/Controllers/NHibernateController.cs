@@ -146,9 +146,9 @@ namespace org.iringtools.web.Controllers
 
         if (response != null && response.ToUpper().Contains("ERROR"))
         {
-          int inds = response.ToUpper().IndexOf("<MESSAGE>");
-          int inde = response.ToUpper().IndexOf(";");
-          string msg = response.Substring(inds + 9, inde - inds - 13);
+          int inds = response.ToLower().IndexOf("<message>");
+          int inde = response.ToLower().IndexOf("</message>");
+          string msg = response.Substring(inds + 9, inde - inds - 9);
           return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
         }
         return Json(new { success = true }, JsonRequestBehavior.AllowGet);
