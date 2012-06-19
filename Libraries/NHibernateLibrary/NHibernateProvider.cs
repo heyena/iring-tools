@@ -142,7 +142,9 @@ namespace org.iringtools.nhibernate
         foreach (DataObject dataObject in databaseDictionary.dataObjects)
         {
           tempDataObject = existDBDictionary.getTableObject(dataObject.tableName);
-          dataObject.dataFilter = tempDataObject.dataFilter;
+          if (tempDataObject != null)
+            if (tempDataObject.dataFilter != null)
+              dataObject.dataFilter = tempDataObject.dataFilter;
         }
 
         NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
@@ -470,6 +472,7 @@ namespace org.iringtools.nhibernate
               dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
               dataLength = dataLength,
               isNullable = isNullable,
+              isHidden = true,
               propertyName = Utility.ToSafeName(columnName)
             };
 

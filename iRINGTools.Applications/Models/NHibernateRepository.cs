@@ -198,6 +198,7 @@ namespace org.iringtools.web.Models
     public Tree GetDBObjects(string contextName, string endpoint, string dbProvider, string dbServer,
       string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName, string baseUrl, DatabaseDictionary databaseDictionary)
     {
+      bool hasDataObjectinDBDictionary = false;
       bool hasDBDictionary = false;
       WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
       string uri = String.Format("/{0}/{1}/objects", contextName, endpoint);
@@ -228,6 +229,12 @@ namespace org.iringtools.web.Models
 
         foreach (DataObject dataObject in dataObjects)
         {
+          hasDataObjectinDBDictionary = false;
+
+          if (hasDBDictionary)
+            if (databaseDictionary.dataObjects.FirstOrDefault<DataObject>(o => o.tableName.ToLower() == dataObject.tableName.ToLower()) != null)
+              hasDataObjectinDBDictionary = true;
+
           // create data object node
           TreeNode dataObjectNode = new TreeNode();
           dataObjectNode.text = dataObject.tableName;
@@ -309,7 +316,7 @@ namespace org.iringtools.web.Models
               {"isHidden", dataProperty.isHidden.ToString()}
             };
 
-            if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDBDictionary)
+            if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDataObjectinDBDictionary)
             {
               properties["keyType"] = dataProperty.keyType.ToString();
               JsonTreeNode keyPropertyNode = new JsonTreeNode();
@@ -342,7 +349,7 @@ namespace org.iringtools.web.Models
                 Name = dataPropertyNode.text
               };
 
-              if (!hasDBDictionary || dataProperty.isHidden)
+              if (!hasDataObjectinDBDictionary || dataProperty.isHidden)
               {
                 dataPropertyNode.hidden = true;
                 hiddenNodeRoot.children.Add(dataPropertyNode);

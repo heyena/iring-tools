@@ -189,12 +189,18 @@ function setTablesSelectorPane (me, editor, dataTree, nhpan, dbDict, dbInfo, con
 
   if (!select) {
     select = Ext.widget('selecttables', conf);
-    editor.items.add(select);   
-    editor.doLayout();
-  } 
+    editor.items.add(select);    
+  }
 
   var panelIndex = editor.items.indexOf(select);
+  if (panelIndex < 0) {
+    select.destroy();
+    select = Ext.widget('selecttables', conf);
+    editor.items.add(select);
+    panelIndex = editor.items.indexOf(select);
+  }
   editor.getLayout().setActiveItem(panelIndex);
+  editor.doLayout();
   var tablesSelector = select.items.items[1];
   
   if (tablesSelector.toField && select.selectItems.length > 0) {
@@ -313,6 +319,14 @@ function setKeyProperty(me, editor, node, contextName, endpoint) {
     }
     setdop.setActiveRecord(node.data.property);
     var panelIndex = editor.items.indexOf(setdop);
+
+    if (panelIndex < 0) {
+      setdop.destroy();
+      setdop = Ext.widget('setdatakeyform', conf);
+      editor.items.add(setdop);
+      panelIndex = editor.items.indexOf(setdop);
+    }
+
     editor.getLayout().setActiveItem(panelIndex);
     editor.doLayout();
   }
@@ -335,6 +349,14 @@ function setDataProperty(me, editor, node, contextName, endpoint) {
     }
     setdop.setActiveRecord(node.data.property);
     var panelIndex = editor.items.indexOf(setdop);
+
+    if (panelIndex < 0) {
+      setdop.destroy();
+      setdop = Ext.widget('setproperty', conf);
+      editor.items.add(setdop);
+      panelIndex = editor.items.indexOf(setdop);
+    }
+
     editor.getLayout().setActiveItem(panelIndex);
     editor.doLayout();
   }
@@ -531,6 +553,14 @@ function setRelationFields(editor, rootNode, node, contextName, endpoint) {
     }
 
     var panelIndex = editor.items.indexOf(setdop);
+
+    if (panelIndex < 0) {
+      setdop.destroy();
+      setdop = Ext.widget('setrelationform', conf);
+      editor.items.add(setdop);
+      panelIndex = editor.items.indexOf(setdop);
+    }
+
     editor.getLayout().setActiveItem(panelIndex);
     editor.doLayout();
     setdopForm = setdop.getForm();          
@@ -673,8 +703,16 @@ function setDataObject (me, editor, node, contextName, endpoint) {
       setdop = Ext.widget('setdataobjectpanel', conf);
       editor.items.add(setdop);      
     }
-    
+
     var panelIndex = editor.items.indexOf(setdop);
+
+    if (panelIndex < 0) {
+      setdop.destroy();
+      setdop = Ext.widget('setdataobjectpanel', conf);
+      editor.items.add(setdop);
+      panelIndex = editor.items.indexOf(setdop);
+    }
+
     editor.getLayout().setActiveItem(panelIndex);
     editor.doLayout();
   }
