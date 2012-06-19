@@ -192,11 +192,11 @@
     var dbInfo = dirNode.data.record.dbInfo;
     var dbDict = dirNode.data.record.dbDict;
 
-    if (node.isRoot()) {
+    if (dataNode.isRoot()) {
       setTablesSelectorPane(me, editor, tree, nhpan, dbDict, dbInfo, contextName, endpoint, baseUrl);
       return;
     }
-    var nodeType = node.data.type.toUpperCase();
+    var nodeType = dataNode.data.type.toUpperCase();
 
     if (nodeType) {
       switch (nodeType) {
