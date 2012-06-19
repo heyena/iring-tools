@@ -142,7 +142,9 @@ namespace org.iringtools.nhibernate
         foreach (DataObject dataObject in databaseDictionary.dataObjects)
         {
           tempDataObject = existDBDictionary.GetTableObject(dataObject.tableName);
-          dataObject.dataFilter = tempDataObject.dataFilter;
+          if (tempDataObject != null)
+            if (tempDataObject.dataFilter != null)
+              dataObject.dataFilter = tempDataObject.dataFilter;
         }
       
         NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
