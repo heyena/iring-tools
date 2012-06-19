@@ -356,6 +356,7 @@ namespace org.iringtools.web.Models
               }
               else
               {
+                dataPropertyNode.hidden = false;
                 dataPropertiesNode.children.Add(dataPropertyNode);
               }
             }            
