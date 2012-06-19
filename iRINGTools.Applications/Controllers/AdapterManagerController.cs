@@ -187,12 +187,16 @@ namespace org.iringtools.web.controllers
 
         response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
 
-        if (response != null && response.ToUpper().Contains("ERROR"))
+        if (response != null)
         {
-          int inds = response.ToUpper().IndexOf("<MESSAGE>");
-          int inde = response.ToUpper().IndexOf(";");
-          string msg = response.Substring(inds + 9, inde - inds - 13);
-          return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+          response = response.ToLower();
+          if (response.Contains("error"))
+          {
+            int inds = response.IndexOf("<message>");
+            int inde = response.IndexOf("</message>");
+            string msg = response.Substring(inds + 9, inde - inds - 9);
+            return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+          }
         }
         return Json(new { success = true }, JsonRequestBehavior.AllowGet);
       }
