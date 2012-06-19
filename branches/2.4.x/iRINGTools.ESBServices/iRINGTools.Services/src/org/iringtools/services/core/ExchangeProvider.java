@@ -605,7 +605,6 @@ public class ExchangeProvider
     int dxIndicesSize = dxIndices.size();
     int configuredPoolSize = Integer.parseInt((String) settings.get("poolSize"));
     int poolSize = Math.min(configuredPoolSize, dxIndicesSize);
-    int postedItemCount = 0;
           
     exchangeResponse.setPoolSize(poolSize);
     exchangeResponse.setItemCount(dxIndicesSize);
@@ -687,11 +686,6 @@ public class ExchangeProvider
           poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
           logger.info("Pool [" + i + " - " + (i + actualPoolSize) + "] completed.");          
           
-          if (poolResponse.getLevel() != Level.ERROR)
-          {
-            postedItemCount += poolDtoListItems.size();
-          }
-          
           // free up resources
           poolDtos = null;  
           sourceDtos = null;
@@ -727,79 +721,70 @@ public class ExchangeProvider
       }
     }
 
-    if (postedItemCount == 0)
-    {
-      exchangeResponse.setLevel(Level.WARNING);
-      String message = "No Add/Change/Delete items in the exchange.";
+    if (exchangeResponse.getLevel() == Level.ERROR)
+    {          
+      String message = "Exchange completed with error.";
       exchangeResponse.setSummary(message);
     }
-    else 
+    else if (exchangeResponse.getLevel() == Level.WARNING)
     {
-      if (exchangeResponse.getLevel() == Level.ERROR)
-      {          
-        String message = "Exchange completed with error.";
-        exchangeResponse.setSummary(message);
-      }
-      else if (exchangeResponse.getLevel() == Level.WARNING)
+      String message = "Exchange completed with warning.";
+      exchangeResponse.setSummary(message);
+    }
+    else if (exchangeResponse.getLevel() == Level.SUCCESS)
+    {
+      String message = "Exchange completed succesfully.";
+      exchangeResponse.setSummary(message);
+    }
+
+    XMLGregorianCalendar endTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
+    exchangeResponse.setEndTime(endTime);
+
+    // write exchange response to file system    
+    try
+    {
+      JaxbUtils.write(exchangeResponse, exchangeFile + ".xml", false);
+      List<String> exchangeLogs = IOUtils.getFiles(path);
+      
+      /* if number of log files exceed the limit, 
+       * remove the oldest one and its pools
+       */
+      
+      for (int i=0; i < exchangeLogs.size(); i++)
       {
-        String message = "Exchange completed with warning.";
-        exchangeResponse.setSummary(message);
-      }
-      else if (exchangeResponse.getLevel() == Level.SUCCESS)
-      {
-        String message = "Exchange completed succesfully.";
-        exchangeResponse.setSummary(message);
-      }
-  
-      XMLGregorianCalendar endTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
-      exchangeResponse.setEndTime(endTime);
-  
-      // write exchange response to file system    
-      try
-      {
-        JaxbUtils.write(exchangeResponse, exchangeFile + ".xml", false);
-        List<String> exchangeLogs = IOUtils.getFiles(path);
-        
-        /* if number of log files exceed the limit, 
-         * remove the oldest one and its pools
-         */
-        
-        for (int i=0; i < exchangeLogs.size(); i++)
+        if (exchangeLogs.get(i).contains(POOL_PREFIX))
         {
-          if (exchangeLogs.get(i).contains(POOL_PREFIX))
-          {
-            exchangeLogs.remove(i--);
-          }
-        }
-        
-        Collections.sort(exchangeLogs);
-  
-        while (exchangeLogs.size() > Integer.valueOf((String) settings.get("numOfExchangeLogFiles")))
-        {
-          final String filePrefix = (exchangeLogs.get(0).replace(".xml", ""));
-          
-          FileFilter fileFilter = new FileFilter() 
-          {
-            public boolean accept(File file) 
-            {
-              return file.getName().startsWith(filePrefix);
-            }
-          };
-            
-          for (File file : new File(path).listFiles(fileFilter))
-          {
-            file.delete();
-          }
-          
-          exchangeLogs.remove(0);
+          exchangeLogs.remove(i--);
         }
       }
-      catch (Exception e)
+      
+      Collections.sort(exchangeLogs);
+
+      while (exchangeLogs.size() > Integer.valueOf((String) settings.get("numOfExchangeLogFiles")))
       {
-        String message = "Error writing exchange response to disk: " + e;
-        logger.error(message);
-        throw new ServiceProviderException(message);
+        final String filePrefix = (exchangeLogs.get(0).replace(".xml", ""));
+        
+        FileFilter fileFilter = new FileFilter() 
+        {
+          public boolean accept(File file) 
+          {
+            return file.getName().startsWith(filePrefix);
+          }
+        };
+          
+        for (File file : new File(path).listFiles(fileFilter))
+        {
+          file.delete();
+        }
+        
+        exchangeLogs.remove(0);
       }
+    }
+    catch (Exception e)
+    {
+      String message = "Error writing exchange response to disk: " + e;
+      logger.error(message);
+      throw new ServiceProviderException(message);
     }
 
     return exchangeResponse;
