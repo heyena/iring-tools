@@ -291,9 +291,11 @@
         var map = editor.items.map
 
         for (var i = 0; i < items.length; i++) {
-          items[i].destroy();
-          items.splice(i, 1);
-          i--;
+          if (items[i] != undefined && items[i] != null) {
+            items[i].destroy();
+            items.splice(i, 1);
+            i--;
+          }
         }
       }
     }
