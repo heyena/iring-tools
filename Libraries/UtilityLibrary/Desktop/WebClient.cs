@@ -310,7 +310,9 @@ namespace org.iringtools.utility
       try
       {
         if (relativeUri.Contains(" ")) HttpUtility.HtmlEncode(relativeUri);
-        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Getting data from URL [uri]...", uri));
 
         WebRequest request = HttpWebRequest.Create(uri);
 
@@ -354,8 +356,10 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Getting stream from URL [uri]...", uri));
+
         WebRequest request = HttpWebRequest.Create(uri);
-        
+
         PrepareCredentials(request);
         _logger.Debug("Got Credentials!");
         PrepareHeaders(request);
@@ -402,7 +406,6 @@ namespace org.iringtools.utility
     {
       try
       {
-        _logger.Debug("I'm in!");
         Stream stream = GetStream(relativeUri);
         string message = Utility.SerializeFromStream(stream);
         return message;
@@ -422,7 +425,8 @@ namespace org.iringtools.utility
     {
       try
       {
-        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting data to URL [{0}]...", uri));
 
         MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
@@ -483,6 +487,8 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting data to URL [{0}]...", uri));
+
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
         request.Timeout = TIMEOUT;
@@ -502,11 +508,11 @@ namespace org.iringtools.utility
           request.ContentType = "application/json";
           request.ContentLength = stream.Length;
         }
-        else 
+        else
         {
           throw new Exception("Format " + format + " not allowed.");
         }
-        
+
         PrepareCredentials(request);
         PrepareHeaders(request);
 
@@ -557,7 +563,9 @@ namespace org.iringtools.utility
     {
       try
       {
-        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting message to URL [{0}]...", uri));
+
         MemoryStream stream = new MemoryStream();
         StreamWriter writer = new StreamWriter(stream);
         writer.Write(requestMessage);
@@ -602,7 +610,9 @@ namespace org.iringtools.utility
     {
       try
       {
-        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Putting stream to URL [{0}]...", uri));
+
         byte[] bytes = ((MemoryStream)stream).ToArray();
 
         if (String.IsNullOrEmpty(_contentType))
@@ -649,9 +659,10 @@ namespace org.iringtools.utility
     {
       try
       {
-        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
-        byte[] bytes = ((MemoryStream)stream).ToArray();
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting stream to URL [{0}]...", uri));
 
+        byte[] bytes = ((MemoryStream)stream).ToArray();
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
         PrepareCredentials(request);
@@ -691,7 +702,9 @@ namespace org.iringtools.utility
     {
       try
       {
-        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting message to URL [{0}]...", uri));
+
         MemoryStream stream = new MemoryStream();
         StreamWriter writer = new StreamWriter(stream);
         writer.Write(requestMessage);
@@ -737,7 +750,9 @@ namespace org.iringtools.utility
     {
       try
       {
-        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Putting message to URL [{0}]...", uri));
+
         MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
@@ -775,6 +790,8 @@ namespace org.iringtools.utility
       {
         // Encoding encoding = Encoding.UTF8;
         string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting multipart message to URL [{0}]...", uri));
+
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
         request.ContentType = "multipart/form-data; boundary=" + _boundary;
         request.Method = "POST";
@@ -832,61 +849,63 @@ namespace org.iringtools.utility
     }
     public string PostMultipartMessage(string relativeUri, List<MultiPartMessage> requestMessages, bool isreturn)
     {
-        try
+      try
+      {
+        // Encoding encoding = Encoding.UTF8;
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting multipart message to URL [{0}]...", uri));
+
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+        request.ContentType = "multipart/form-data; boundary=" + _boundary;
+        request.Method = "POST";
+        request.Timeout = TIMEOUT;
+        MemoryStream stream = new MemoryStream();
+        string header = string.Empty;
+
+        foreach (MultiPartMessage requestMessage in requestMessages)
         {
-            // Encoding encoding = Encoding.UTF8;
-            string uri = _baseUri + relativeUri;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.ContentType = "multipart/form-data; boundary=" + _boundary;
-            request.Method = "POST";
-            request.Timeout = TIMEOUT;
-            MemoryStream stream = new MemoryStream();
-            string header = string.Empty;
-
-            foreach (MultiPartMessage requestMessage in requestMessages)
-            {
-                if (requestMessage.type == MultipartMessageType.File)
-                {
-                    header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
-                    stream.Write(encoding.GetBytes(header), 0, header.Length);
-
-                    //byte[] fileData = (byte[])requestMessage.message;
-                    //stream.Write(fileData, 0, fileData.Length);
-
-                    Stream fileData = (Stream)requestMessage.message;
-                    fileData.CopyTo(stream);
-                    //add linefeed to enable multiple posts
-                    stream.Write(encoding.GetBytes("\r\n"), 0, 2);
-                }
-                else
-                {
-                    header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
-                    stream.Write(encoding.GetBytes(header), 0, header.Length);
-                }
-
-            }
-
-            header = string.Format("--{0}--\r\n", _boundary);
+          if (requestMessage.type == MultipartMessageType.File)
+          {
+            header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
             stream.Write(encoding.GetBytes(header), 0, header.Length);
 
-            PrepareCredentials(request);
-            PrepareHeaders(request);
+            //byte[] fileData = (byte[])requestMessage.message;
+            //stream.Write(fileData, 0, fileData.Length);
 
-            request.ContentLength = stream.Length;
-            request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            stream.Close();
+            Stream fileData = (Stream)requestMessage.message;
+            fileData.CopyTo(stream);
+            //add linefeed to enable multiple posts
+            stream.Write(encoding.GetBytes("\r\n"), 0, 2);
+          }
+          else
+          {
+            header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
+            stream.Write(encoding.GetBytes(header), 0, header.Length);
+          }
 
-            string message = Utility.SerializeFromStream(response.GetResponseStream());
-
-            return message;
         }
-        catch (Exception exception)
-        {
-            string uri = _baseUri + relativeUri;
 
-            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-        }
+        header = string.Format("--{0}--\r\n", _boundary);
+        stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+        PrepareCredentials(request);
+        PrepareHeaders(request);
+
+        request.ContentLength = stream.Length;
+        request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        stream.Close();
+
+        string message = Utility.SerializeFromStream(response.GetResponseStream());
+
+        return message;
+      }
+      catch (Exception exception)
+      {
+        string uri = _baseUri + relativeUri;
+
+        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+      }
     }
 
     public string ForwardPost(string relativeUri, HttpRequestBase requestBase)
@@ -940,7 +959,9 @@ namespace org.iringtools.utility
     {
       try
       {
-        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting data to URL [{0}]...", uri));
+
         MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
