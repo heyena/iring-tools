@@ -192,14 +192,16 @@ namespace org.iringtools.utility
           WebOperationContext.Current.IncomingRequest != null &&
           WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
         {
-          if (WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != null)
+          if (WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != null &&
+              WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != String.Empty)
           {
             _appKey = WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"];
           }
         }
         else if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
         {
-          if (HttpContext.Current.Request.Cookies["X-myPSN-AppKey"] != null)
+            if (HttpContext.Current.Request.Cookies["X-myPSN-AppKey"] != null &&
+                HttpContext.Current.Request.Cookies["X-myPSN-AppKey"].ToString() != String.Empty)
           {
             HttpCookie appKeyCookie = HttpContext.Current.Request.Cookies["X-myPSN-AppKey"];
             _appKey = appKeyCookie.Value;
