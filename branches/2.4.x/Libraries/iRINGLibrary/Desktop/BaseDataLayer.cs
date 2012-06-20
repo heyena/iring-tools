@@ -351,7 +351,7 @@ namespace org.iringtools.library
 
     protected void SetKeys(IDataObject dataObject, string identifier)
     {
-      string[] delimiter = new string[] { _dataObjectDefinition.keyDelimeter };
+      string[] delimiter = new string[] { _dataObjectDefinition.keyDelimeter ?? string.Empty };
 
       if (identifier == null)
       {
@@ -368,6 +368,37 @@ namespace org.iringtools.library
         {
           int i = 0;
           foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
+          {
+            string identifierPart = identifierParts[i];
+            if (!String.IsNullOrEmpty(identifierPart))
+            {
+              dataObject.SetPropertyValue(keyProperty.keyPropertyName, identifierPart);
+            }
+            i++;
+          }
+        }
+      }
+    }
+
+    protected void SetKeyProperties(DataObject dataObjectDefinition, IDataObject dataObject, string identifier)
+    {
+      string[] delimiter = new string[] { dataObjectDefinition.keyDelimeter ?? string.Empty };
+
+      if (identifier == null)
+      {
+        foreach (KeyProperty keyProperty in dataObjectDefinition.keyProperties)
+        {
+          dataObject.SetPropertyValue(keyProperty.keyPropertyName, null);
+        }
+      }
+      else
+      {
+        string[] identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
+
+        if (identifierParts.Count() == dataObjectDefinition.keyProperties.Count)
+        {
+          int i = 0;
+          foreach (KeyProperty keyProperty in dataObjectDefinition.keyProperties)
           {
             string identifierPart = identifierParts[i];
             if (!String.IsNullOrEmpty(identifierPart))

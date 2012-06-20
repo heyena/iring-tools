@@ -515,6 +515,7 @@ namespace org.iringtools.adapter.projection
           {
             identifier += keyDelimeter;
           }
+
           identifier += dataRecord[keyProperty.keyPropertyName];
         }
       }
