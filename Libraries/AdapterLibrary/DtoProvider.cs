@@ -52,9 +52,9 @@ using System.Threading;
 
 namespace org.iringtools.adapter
 {
-  public class DataTranferProvider : BaseProvider
+  public class DtoProvider : BaseProvider
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataTranferProvider));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProvider));
     private const int MAX_THREADS = 50;
 
     private IKernel _kernel = null;
@@ -71,7 +71,7 @@ namespace org.iringtools.adapter
     protected string _fixedIdentifierBoundary = "#";
 
     [Inject]
-    public DataTranferProvider(NameValueCollection settings)
+    public DtoProvider(NameValueCollection settings)
     {
       var ninjectSettings = new NinjectSettings { LoadExtensions = false };
       _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
