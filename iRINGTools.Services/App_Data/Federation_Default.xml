@@ -6,6 +6,14 @@
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
+      <prefix>rds</prefix>
+      <uri>http://rds.posccaesar.org/2008/02/OWL/ISO-15926-2_2003#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
       <prefix>rdl</prefix>
       <uri>http://rdl.rdlfacade.org/data#</uri>
     </namespace>
