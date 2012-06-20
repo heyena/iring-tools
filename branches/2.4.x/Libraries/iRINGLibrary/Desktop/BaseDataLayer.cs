@@ -269,27 +269,41 @@ namespace org.iringtools.library
 
       if (identifierParts.Count() == _dataObjectDefinition.keyProperties.Count)
       {
-        for (int i = 0; i < _dataObjectDefinition.keyProperties.Count; i++)
-        {
-          string identifierPart = identifierParts[i];
+          for (int i = 0; i < _dataObjectDefinition.keyProperties.Count; i++)
+          {
+              string identifierPart = identifierParts[i];
 
+              Expression expression = new Expression
+              {
+                  PropertyName = _dataObjectDefinition.keyProperties[i].keyPropertyName,
+                  RelationalOperator = RelationalOperator.EqualTo,
+                  Values = new Values
+                  {
+                    identifierPart,
+                  }
+              };
+
+              if (expressions.Count > 0)
+              {
+                  expression.LogicalOperator = LogicalOperator.And;
+              }
+
+              expressions.Add(expression);
+          }
+      }
+      else
+      {
           Expression expression = new Expression
           {
-            PropertyName = _dataObjectDefinition.keyProperties[i].keyPropertyName,
-            RelationalOperator = RelationalOperator.EqualTo,
-            Values = new Values
-            {
-              identifierPart,
-            }
+              PropertyName = _dataObjectDefinition.keyProperties[0].keyPropertyName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              Values = new Values
+                {
+                    identifier,
+                }
           };
 
-          if (expressions.Count > 0)
-          {
-            expression.LogicalOperator = LogicalOperator.And;
-          }
-
           expressions.Add(expression);
-        }
       }
 
       return expressions;

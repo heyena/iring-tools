@@ -546,6 +546,12 @@ namespace org.iringtools.adapter
             response.Append(_dataLayer.Post(dataObjects));
           }
         }
+
+        if (response.Level == StatusLevel.Error)
+        {
+            string dtoFilename = String.Format(_settings["BaseDirectoryPath"] + "/Logs/DTO_{0}.{1}.{2}.xml", scope, app, graph);
+            Utility.Write<DataTransferObjects>(dataTransferObjects, dtoFilename, true);
+        }
       }
       catch (Exception ex)
       {
