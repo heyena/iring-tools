@@ -430,6 +430,55 @@ namespace org.iringtools.adapter.datalayer.eb
       return dataObjects;
     }
 
+    public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        DataObject objDef = GetObjectDefinition(objectType);
+          
+        if (identifiers != null)
+        {
+          IList<IDataObject> existingDataObjects = Get(objectType, identifiers);
+
+          if (existingDataObjects.Count == identifiers.Count)
+          {
+            return existingDataObjects;
+          }
+
+          //
+          // find data objects that do not currently exist then create them
+          //
+          List<string> newIdentifiers = new List<string>(identifiers);
+
+          foreach (IDataObject dataObject in existingDataObjects)
+          {
+            string identifier = GetIdentifier(objDef, dataObject);
+            newIdentifiers.Remove(identifier);
+          }
+
+          foreach (string identifier in newIdentifiers)
+          {
+            IDataObject dataObject = CreateEmptyDataObject(objectType, objDef);
+            SetKeyProperties(objDef, dataObject, identifier);
+            dataObjects.Add(dataObject);
+          }
+        }
+        else
+        {
+          IDataObject dataObject = CreateEmptyDataObject(objectType, objDef);
+          dataObjects.Add(dataObject);
+        }
+
+        return dataObjects;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e);
+        throw e;
+      }
+    }
+
     public override Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
@@ -1093,10 +1142,30 @@ namespace org.iringtools.adapter.datalayer.eb
       foreach (Placeholder placeholder in template.Placeholders)
       {
         string propertyName = Utilities.ToPropertyName(placeholder.Value);
-        parameters[i++] = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+        string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+
+        if (string.IsNullOrEmpty(propertyValue))
+        {
+          _logger.Warn(string.Format("Template holder [{0}] is empty.", placeholder.Value));
+        }
+
+        parameters[i++] = propertyValue;
       }
 
       return string.Format(template.Name, parameters);
+    }
+
+    protected IDataObject CreateEmptyDataObject(string objectType, DataObject objDef)
+    {
+      IDataObject dataObject = new GenericContentObject();
+      ((GenericDataObject)dataObject).ObjectType = objectType;
+
+      foreach (DataProperty prop in objDef.dataProperties)
+      {
+        dataObject.SetPropertyValue(prop.propertyName, null);
+      }
+
+      return dataObject;
     }
 
     protected IDataObject ToDataObject(DataRow dataRow, DataObject objectDefinition)
@@ -1143,6 +1212,7 @@ namespace org.iringtools.adapter.datalayer.eb
     protected IList<IDataObject> ToDataObjects(DataTable dataTable, DataObject objectDefinition)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
+      List<string> identifiers = new List<string>();
 
       if (objectDefinition != null && dataTable.Rows != null)
       {
@@ -1161,7 +1231,20 @@ namespace org.iringtools.adapter.datalayer.eb
 
           if (dataObjects != null)
           {
-            dataObjects.Add(dataObject);
+            if (_settings["ebShowAllRevisions"] == null || !bool.Parse(_settings["ebShowAllRevisions"]))
+            {
+              string identifier = GetIdentifier(objectDefinition, dataObject);
+
+              if (!identifiers.Contains(identifier))
+              {
+                identifiers.Add(identifier);
+                dataObjects.Add(dataObject);
+              }
+            }
+            else
+            {
+              dataObjects.Add(dataObject);
+            }
           }
         }
       }
