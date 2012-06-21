@@ -169,11 +169,11 @@ namespace org.iringtools.library
         {  
           if(item.SortOrder == orderExpression.SortOrder)
             return true;
-          else 
-          {
-            item.SortOrder = orderExpression.SortOrder;
-            return true;
-          }
+          //else 
+          //{
+          //  item.SortOrder = orderExpression.SortOrder;
+          //  return true;
+          //}
         }
       }
       return false;
