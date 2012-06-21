@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using eB.Data;
 using org.iringtools.library;
-using org.iringtools.adaper.datalayer.eb;
+using org.iringtools.adapter.datalayer.eb;
 using System.Data;
 using eB.Common.Enum;
 using eB.Common;
 
-namespace org.iringtools.adaper.datalayer.eb
+namespace org.iringtools.adapter.datalayer.eb
 {
   public class ebProcessor
   {

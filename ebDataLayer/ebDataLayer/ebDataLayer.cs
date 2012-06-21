@@ -12,7 +12,7 @@ using eB.Data;
 using eB.Service.Client;
 using log4net;
 using Ninject;
-using org.iringtools.adaper.datalayer.eb;
+using org.iringtools.adapter.datalayer.eb;
 using org.iringtools.library;
 using org.iringtools.utility;
 using StaticDust.Configuration;
@@ -94,6 +94,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
     private Dictionary<string, Configuration> _configs = null;
     private Rules _rules = null;
+    private ContentTypes _contentTypes = null;
     #endregion
 
     #region constructor
@@ -159,6 +160,10 @@ namespace org.iringtools.adapter.datalayer.eb
 
         // load rules
         _rules = Utility.Read<Rules>(ruleFile, false);
+
+        // load content types
+        string contentTypesFile = _dataPath + "ContentTypes.xml";
+        _contentTypes = Utility.Read<ContentTypes>(contentTypesFile, true);
       }
       catch (Exception e)
       {
@@ -411,6 +416,27 @@ namespace org.iringtools.adapter.datalayer.eb
             DataTable result = eqlClient.Search(session, eql, new object[0], 0, -1);
 
             dataObjects = ToDataObjects(result, objDef);
+
+            //
+            // return content when requesting single item for backward compatability
+            //
+            if (identifiers.Count == 1)
+            {
+              IList<int> docIds = GetDocumentIds(dataObjects);
+              IList<IContentObject> contentObjects = GetContents(objectType, docIds, proxy, session);
+
+              //
+              // make data object a content object
+              //
+              if (contentObjects.Count > 0)
+              {
+                IContentObject contentObject = new GenericContentObject { ObjectType = objectType };
+                contentObject.content = contentObjects[0].content;
+                contentObject.contentType = contentObjects[0].contentType;
+                contentObject.identifier = contentObjects[0].identifier;
+                return new List<IDataObject> { contentObject };
+              }
+            }
           }
           else
           {
@@ -515,7 +541,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
           EqlClient eql = new EqlClient(session);
           int objectId = eql.GetObjectId(keyValue, revision, config.Template.ObjectType);
-          org.iringtools.adaper.datalayer.eb.Template template = config.Template;
+          org.iringtools.adapter.datalayer.eb.Template template = config.Template;
 
           if (objectId == 0)  // does not exist, create
           {
@@ -1127,7 +1153,7 @@ namespace org.iringtools.adapter.datalayer.eb
       return classObjects;
     }
 
-    protected string GetTemplateName(org.iringtools.adaper.datalayer.eb.Template template, DataObject objectDefinition, IDataObject dataObject)
+    protected string GetTemplateName(org.iringtools.adapter.datalayer.eb.Template template, DataObject objectDefinition, IDataObject dataObject)
     {
       if ((template.Placeholders == null) || (template.Placeholders.Count() == 0))
       {
@@ -1306,14 +1332,31 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public IList<IContentObject> GetContents(String objectType, IList<int> docIds)
     {
-      IList<IContentObject> contents = new List<IContentObject>();
       Proxy proxy = null;
       Session session = null;
-     
+
       try
       {
         Connect(ref proxy, ref session);
+        return GetContents(objectType, docIds, proxy, session);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting contents: " + e.Message);
+        throw e;
+      }
+      finally
+      {
+        Disconnect(ref proxy, ref session);
+      }
+    }
 
+    protected IList<IContentObject> GetContents(String objectType, IList<int> docIds, Proxy proxy, Session session)
+    {
+      IList<IContentObject> contents = new List<IContentObject>();
+     
+      try
+      {
         string query = string.Format(CONTENT_EQL, string.Join(",", docIds.ToArray()));
         EqlClient client = new EqlClient(session);
         DataTable dt = client.RunQuery(query);
@@ -1338,8 +1381,8 @@ namespace org.iringtools.adapter.datalayer.eb
             ObjectType = objectType,
             identifier = code,
             content = stream,
-            contentType = type.ToUpper(),
-            name = name
+            contentType = _contentTypes.Find(x => x.Extension == type.ToLower()).MimeType,
+            //name = name
           };
 
           contents.Add(content);
@@ -1349,10 +1392,6 @@ namespace org.iringtools.adapter.datalayer.eb
       {
         _logger.Error("Error getting contents: " + e.Message);
         throw e;
-      }
-      finally
-      {
-        Disconnect(ref proxy, ref session);
       }
 
       return contents;

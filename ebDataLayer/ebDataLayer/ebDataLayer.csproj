@@ -8,7 +8,7 @@
     <ProjectGuid>{7B0A6054-3108-4ADA-B006-6510C9EE2141}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adaper.datalayer.eb</RootNamespace>
+    <RootNamespace>org.iringtools.adapter.datalayer.eb</RootNamespace>
     <AssemblyName>ebDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -55,6 +55,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -67,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseContentLayer.cs" />
+    <Compile Include="ContentTypes.cs" />
     <Compile Include="ebProcessor.cs" />
     <Compile Include="EqlClient.cs" />
     <Compile Include="ebDataLayer.cs" />
