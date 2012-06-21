@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace org.iringtools.adaper.datalayer.eb
+namespace org.iringtools.adapter.datalayer.eb
 {
   [XmlType("rules")]
   public class Rules : List<Rule> {}

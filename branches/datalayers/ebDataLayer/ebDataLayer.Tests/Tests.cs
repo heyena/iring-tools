@@ -13,7 +13,7 @@ using org.iringtools.adapter.datalayer.eb;
 using log4net;
 using org.iringtools.test;
 
-namespace org.iringtools.adaper.datalayer.test
+namespace org.iringtools.adapter.datalayer.test
 {
   [TestFixture]
   public class Tests

@@ -7,7 +7,7 @@ using System.Data;
 using System.Xml.Linq;
 using log4net;
 
-namespace org.iringtools.adaper.datalayer.eb
+namespace org.iringtools.adapter.datalayer.eb
 {
   public class EqlClient
   {

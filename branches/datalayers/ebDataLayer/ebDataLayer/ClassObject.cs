@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using eB.Common.Enum;
 
-namespace org.iringtools.adaper.datalayer.eb
+namespace org.iringtools.adapter.datalayer.eb
 {
   public class ClassObject
   {

@@ -6,7 +6,7 @@ using org.iringtools.library;
 using System.Text.RegularExpressions;
 using org.iringtools.utility;
 
-namespace org.iringtools.adaper.datalayer.eb
+namespace org.iringtools.adapter.datalayer.eb
 {
   public static class Utilities
   {
