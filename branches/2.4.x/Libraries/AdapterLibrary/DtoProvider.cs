@@ -547,7 +547,7 @@ namespace org.iringtools.adapter
           }
         }
 
-        if (response.Level == StatusLevel.Error)
+        if (response.Level != StatusLevel.Success)
         {
             string dtoFilename = String.Format(_settings["BaseDirectoryPath"] + "/Logs/DTO_{0}.{1}.{2}.xml", scope, app, graph);
             Utility.Write<DataTransferObjects>(dataTransferObjects, dtoFilename, true);
