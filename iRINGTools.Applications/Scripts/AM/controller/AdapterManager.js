@@ -189,9 +189,7 @@
     };
     var exist = content.items.map[conf.id];
     if (exist) {
-      exist.show();
       tree.appDataMenu.hide();
-      return true;
     }
 
     Ext.getBody().mask("Loading...", "x-mask-loading");
@@ -209,6 +207,11 @@
       newtab.store.sync()
     }, this);
 
+    newtab.store.on('load', function (store, action) {
+      newtab.reconfigure(newtab.store, newtab.store.proxy.reader.fields);
+      newtab.doLayout();        
+    }, this);
+
     newtab.store.load({
       callback: function (recs, response) {
         var rtext = response.response.responseText;
@@ -218,7 +221,6 @@
         if (index == -1) {
           newtab.reconfigure(newtab.store, recs[0].store.proxy.reader.fields);
           Ext.getBody().unmask();
-          newtab.show();
         }
         else {
           Ext.getBody().unmask();
@@ -227,7 +229,7 @@
           var error = 'SUCCESS = FALSE';
           var index = rtext.toUpperCase().indexOf(error);
           var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
-          showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);          
+          showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
         }
       }
     });

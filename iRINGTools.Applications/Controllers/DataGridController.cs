@@ -43,7 +43,7 @@ namespace org.iringtools.web.controllers
                 string context = form["context"];
                 string endpoint = form["endpoint"];
                 string graph = form["graph"];
-                _key = string.Format("Datadictionary-{0}.{1}", context, endpoint);
+                _key = adapter_PREFIX + string.Format("Datadictionary-{0}.{1}", context, endpoint);
                 string filter = form["filter"];
                 string sort = form["sort"];
                 string dir = form["dir"];
@@ -58,14 +58,20 @@ namespace org.iringtools.web.controllers
                     GetDatadictionary(context, endpoint);
 
                 DataObject dataObject = ((DataDictionary)Session[_key]).dataObjects.FirstOrDefault(d => d.objectName == graph);
-                var fields = from row in dataObject.dataProperties
-                             select new
+                List<Field> fields = new List<Field>();
+                
+                foreach(DataProperty dataPropergty in dataObject.dataProperties)
+                {
+                  Field field = new Field
                              {
-                                 name = row.propertyName,
-                                 header = row.propertyName,
-                                 dataIndex = row.propertyName,
+                                 name = dataPropergty.propertyName,
+                                 header = dataPropergty.propertyName,
+                                 dataIndex = dataPropergty.propertyName,
                                  sortable = true
                              };
+                  fields.Add(field);
+                }             
+              
                 dataItems = GetDataObjects(context, endpoint, graph, dataFilter, start, limit);
 
                 long total = dataItems.total;
@@ -75,7 +81,7 @@ namespace org.iringtools.web.controllers
                   bool found = false;
                   var rowData = new Dictionary<string, object>();
 
-                  foreach (var field in fields)
+                  foreach (Field field in fields)
                   {
                     foreach (KeyValuePair<string, string> property in dataItem.properties)
                     {
