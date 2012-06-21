@@ -406,9 +406,10 @@ namespace iRINGTools.Web.Models
       string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName)
     {
       List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
-      var hasDBDictionary = false;
-
-      var uri = String.Format("/{0}/{1}/objects", scope, application);
+      bool hasDBDictionary = false;
+      bool hasDataObjectinDBDictionary = false;
+      DatabaseDictionary dbDictionary = null;
+      string uri = String.Format("/{0}/{1}/objects", scope, application);
 
       Request request = new Request();
       request.Add("dbProvider", dbProvider);
@@ -426,7 +427,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        DatabaseDictionary dbDictionary = GetDBDictionary(scope, application);
+        dbDictionary = GetDBDictionary(scope, application);
 
         if (dbDictionary != null)
           if (dbDictionary.dataObjects.Count > 0)
@@ -439,6 +440,12 @@ namespace iRINGTools.Web.Models
 
       foreach (DataObject dataObject in dataObjects)
       {
+        hasDataObjectinDBDictionary = false;
+
+        if (hasDBDictionary)
+          if (dbDictionary.dataObjects.FirstOrDefault<DataObject>(o => o.tableName.ToLower() == dataObject.tableName.ToLower()) != null)
+            hasDataObjectinDBDictionary = true;
+
         JsonTreeNode keyPropertiesNode = new JsonTreeNode()
         {
           text = "Keys",
@@ -503,7 +510,7 @@ namespace iRINGTools.Web.Models
                 {"isHidden", dataProperty.isHidden.ToString()},
               };
 
-          if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDBDictionary)
+          if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDataObjectinDBDictionary)
           {
             properties.Add("keyType", dataProperty.keyType.ToString());
 
