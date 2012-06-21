@@ -430,10 +430,19 @@ namespace org.iringtools.adapter.datalayer.eb
               //
               if (contentObjects.Count > 0)
               {
-                IContentObject contentObject = new GenericContentObject { ObjectType = objectType };
+                IDataObject dataObject = dataObjects.FirstOrDefault();
+                IContentObject contentObject = new GenericContentObject { ObjectType = objectType };    
+            
                 contentObject.content = contentObjects[0].content;
                 contentObject.contentType = contentObjects[0].contentType;
                 contentObject.identifier = contentObjects[0].identifier;
+
+                foreach (DataProperty prop in objDef.dataProperties)
+                {
+                  object value = dataObject.GetPropertyValue(prop.propertyName);
+                  contentObject.SetPropertyValue(prop.propertyName, value);
+                }
+
                 return new List<IDataObject> { contentObject };
               }
             }
