@@ -673,7 +673,7 @@ namespace org.iringtools.library
               DataRow dataRow = null;
               string identifier = identifiers[i];
 
-              // find row with same identifier
+              // check if data row exists
               foreach (DataRow row in dataTable.Rows)
               {
                 string rowIdentifier = GetIdentifier(objectDefinition, row);
@@ -698,9 +698,10 @@ namespace org.iringtools.library
 
               foreach (DataProperty objectProperty in objectDefinition.dataProperties)
               {
-                if (!objectProperty.isReadOnly)
+                if (dataRow.RowState == DataRowState.Added || !objectProperty.isReadOnly)
                 {
                   object value = dataObject.GetPropertyValue(objectProperty.propertyName);
+                  dataRow.Table.Columns[objectProperty.columnName].ReadOnly = false;
 
                   if (value != null && value.ToString().Trim().Length > 0)
                   {
