@@ -230,6 +230,7 @@
 
   savedbobjectstree: function (btn) {
     var content = this.getMainContent();
+    content.body.mask('Loading...', 'x-mask-loading');
     var thisPanel = btn.up('panel');
     var contextName = thisPanel.contextName;
     var endpoint = thisPanel.endpoint;
@@ -255,7 +256,7 @@
         app: endpoint,
         tree: JSON.stringify(treeProperty)
       },
-      success: function (response, request) {
+      success: function (response, request) {        
         var rtext = response.responseText;
         var error = 'SUCCESS = FALSE';
         var index = rtext.toUpperCase().indexOf(error);
@@ -263,14 +264,17 @@
           showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
           var navpanel = me.getDirTree();
           navpanel.onReload();
+          content.body.unmask();
         }
         else {
           var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
           showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
-        }
+          content.body.unmask();
+        }        
       },
       failure: function (response, request) {
         showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
+        content.body.unmask();
       }
     });
   },
