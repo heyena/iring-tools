@@ -150,16 +150,17 @@ namespace org.iringtools.adapter.datalayer.eb
 
         foreach (string configFile in configFiles)
         {
-          if (configFile.ToLower() != ruleFile.ToLower())
+          if (configFile.ToLower() == ruleFile.ToLower())
+          {
+            _rules = Utility.Read<Rules>(ruleFile, false);
+          }
+          else
           {
             string fileName = Path.GetFileName(configFile);
             Configuration config = Utility.Read<Configuration>(configFile, false);
             _configs[fileName] = config;
           }
         }
-
-        // load rules
-        _rules = Utility.Read<Rules>(ruleFile, false);
 
         // load content types
         string contentTypesFile = _dataPath + "ContentTypes.xml";
