@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <SolutionFile>ebDataLayer.sln</SolutionFile>
-    <DeploymentDir>$(MSBuildProjectDirectory)\deployment</DeploymentDir>
+    <DeploymentDir>$(MSBuildProjectDirectory)\dist</DeploymentDir>
     <NUnitPath>$(MSBuildProjectDirectory)\lib\Nunit</NUnitPath>
     <ZipCmd>$(MSBuildProjectDirectory)\lib\7-Zip\7z.exe</ZipCmd>
     <PackageDir>$(DeploymentDir)\ebDataLayer</PackageDir>
@@ -15,8 +15,7 @@
     </BinFileSet>
     
     <ConfFileSet
-      Include="ebDataLayer\App_Data\*.*"
-      Exclude="ebDataLayer\App_Data\DataDictionary.*">
+      Include="conf\*.*">
     </ConfFileSet>
     
     <DeploymentPackage Include="*.*" Exclude="*.zip">
