@@ -939,10 +939,10 @@ function getFolderFromChildNode(folderNode, dataTypes) {
           var propChildenNodes = propertyFolderNode.childNodes;
           folder = prepareProperties(folder, propChildenNodes, 'false', dataTypes, keyName);
         }
-        if (propertyFolderNode.raw.hiddenNodes.hiddenNode.children) {
-          var hiddenNodes = propertyFolderNode.raw.hiddenNodes.hiddenNode.children;
-          folder = prepareProperties(folder, hiddenNodes, 'true', dataTypes, keyName);
-        }
+//        if (propertyFolderNode.raw.hiddenNodes.hiddenNode.children) {
+//          var hiddenNodes = propertyFolderNode.raw.hiddenNodes.hiddenNode.children;
+//          folder = prepareProperties(folder, hiddenNodes, 'true', dataTypes, keyName);
+//        }
         break;
       case 'Relationships':
         if (!relationFolderNode)
