@@ -202,21 +202,22 @@ function setTablesSelectorPane (me, editor, dataTree, nhpan, dbDict, dbInfo, con
   editor.getLayout().setActiveItem(panelIndex);
   editor.doLayout();
   var tablesSelector = select.items.items[1];
-  
-  if (tablesSelector.toField && select.selectItems.length > 0) {
+  var selectItems = setSelectTables(dataTree);
+
+  if (tablesSelector.toField && select.selectItems.length > 0 && selectItems.length == select.selectItems.length) {
     var list = tablesSelector.toField.boundList;
     var store = list.getStore();
 
-    if (store.data) {
+    if (!store.data.items[0] ) {
       store.removeAll();
-    }
 
-    for (var i = 0; i < select.selectItems.length; i++) {
-      store.insert(i + 1, 'field1');
-      store.data.items[i].data.field1 = select.selectItems[i];
-    }
-         
-    list.refresh();
+      for (var i = 0; i < select.selectItems.length; i++) {
+        store.insert(i + 1, 'field1');
+        store.data.items[i].data.field1 = select.selectItems[i];
+      }
+
+      list.refresh();
+    }    
   }
 
   var checkBox = select.items.items[2];
