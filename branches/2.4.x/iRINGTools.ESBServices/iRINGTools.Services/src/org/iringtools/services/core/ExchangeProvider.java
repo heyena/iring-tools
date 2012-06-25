@@ -72,7 +72,7 @@ public class ExchangeProvider
   private String targetAppName = null;
   private String targetGraphName = null;
   private String hashAlgorithm = null;
-  private int exchangePoolSize;
+  private Integer exchangePoolSize;
 
   public ExchangeProvider(Map<String, Object> settings) throws ServiceProviderException
   {
@@ -606,7 +606,7 @@ public class ExchangeProvider
     int dxIndicesSize = dxIndices.size();
     
     // if pool size is not set for specific data exchange, then use the default one
-    if (exchangePoolSize == 0)
+    if (exchangePoolSize == null || exchangePoolSize == 0)
     {
       exchangePoolSize = Integer.parseInt((String) settings.get("poolSize"));
     }

@@ -69,7 +69,9 @@ public class DirectoryModel
           appNode.setIconCls("application");
           appDataNodeList.add(appNode);
 
-          List<Node> appNodeList = appNode.getChildren();
+          List<Node> appNodeList = appNode.getChildren();          
+          String context = (app.getContext() != null && app.getContext().length() > 0)
+              ? app.getContext() : scope.getName();
 
           for (Graph graph : app.getGraphs().getItems())
           {
@@ -80,12 +82,7 @@ public class DirectoryModel
             appNodeList.add(graphNode);
             
             HashMap<String, String> properties = graphNode.getProperties();
-            
-            if (app.getContext() != null && app.getContext().length() > 0)
-            {
-              properties.put("Context", app.getContext());
-            }
-            
+            properties.put("Context", context);
             properties.put("Name", graph.getName());
             properties.put("Description", graph.getDescription());
             properties.put("Base URI", app.getBaseUri());

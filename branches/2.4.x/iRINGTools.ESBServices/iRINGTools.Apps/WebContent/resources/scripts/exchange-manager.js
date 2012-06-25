@@ -705,7 +705,7 @@ Ext.onReady(function(){
           if (dataTypeNode != null){          
             if (dataTypeNode.attributes['text'] == 'Application Data'){
               var graphNode = node.parentNode;
-              var scope = dataTypeNode.parentNode.attributes['text'];
+              var scope = properties['Context'];
               var app = graphNode.attributes['text'];
               var graph = node.attributes['text'];
               var baseUri = properties['Base URI'];
