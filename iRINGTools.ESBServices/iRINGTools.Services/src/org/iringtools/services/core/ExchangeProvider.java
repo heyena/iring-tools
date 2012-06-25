@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -58,9 +59,11 @@ public class ExchangeProvider
 {
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
   public static final String POOL_PREFIX = "_pool_";
+
+  private static Hashtable<String, String> exchangeProgresses = new Hashtable<String, String>();
+  private static DatatypeFactory datatypeFactory = null;
   
   private Map<String, Object> settings;
-  private static DatatypeFactory datatypeFactory = null;
   private HttpClient httpClient = null;
 
   private String sourceUri = null;
@@ -540,6 +543,10 @@ public class ExchangeProvider
       exchangeResponse.setSummary("No data transfer objects found.");
       return exchangeResponse;
     }
+    
+    // start tracking exchange progress
+    String exchangeKey = scope + "/" + id;
+    exchangeProgresses.put(exchangeKey, "Unknown");
 
     //
     // collect ADD/CHANGE/DELETE indices
@@ -689,9 +696,11 @@ public class ExchangeProvider
         {
           String targetUrl = targetGraphUrl + "?format=stream";
           
-          logger.info("Processing pool [" + i + " - " + (i + actualPoolSize) + "]...");
+          String poolRange = i + " - " + (i + actualPoolSize);
+          logger.info("Processing pool [" + poolRange + "] of [" + dxIndices.size() + "]...");
+          exchangeProgresses.put(exchangeKey, i + "," + (i+actualPoolSize) + ";" + dxIndices.size());
           poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
-          logger.info("Pool [" + i + " - " + (i + actualPoolSize) + "] completed.");          
+          logger.info("Pool [" + poolRange + "] completed.");          
           
           // free up resources
           poolDtos = null;  
@@ -795,6 +804,18 @@ public class ExchangeProvider
     }
 
     return exchangeResponse;
+  }
+  
+  public String getProgress(String scope, String id)
+  {
+    String exchangeKey = scope + "/" + id;
+    
+    if (exchangeProgresses.containsKey(exchangeKey))
+    {
+      return exchangeProgresses.get(exchangeKey);
+    }
+    
+    return "Exchange [" + exchangeKey + "] not found or started.";
   }
 
   private void initExchangeDefinition(String scope, String id) throws ServiceProviderException
