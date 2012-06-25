@@ -69,10 +69,12 @@ public class DirectoryModel
           appNode.setIconCls("application");
           appDataNodeList.add(appNode);
 
-          List<Node> appNodeList = appNode.getChildren();          
           String context = (app.getContext() != null && app.getContext().length() > 0)
               ? app.getContext() : scope.getName();
+          app.setContext(context);
 
+          List<Node> appNodeList = appNode.getChildren();          
+          
           for (Graph graph : app.getGraphs().getItems())
           {
             LeafNode graphNode = new LeafNode();
