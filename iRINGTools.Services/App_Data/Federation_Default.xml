@@ -2,7 +2,7 @@
   <idgeneratorlist/>  
   <namespacelist>
     <namespace>
-      <description i:nil="true"/>
+      <description>RDL Classes</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -18,7 +18,7 @@
       <uri>http://rdl.rdlfacade.org/data#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>RDL Templates</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -26,7 +26,7 @@
       <uri>http://tpl.rdlfacade.org/data#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>Data Model</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -34,7 +34,7 @@
       <uri>http://dm.rdlfacade.org/data#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>W3 OWL</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -42,7 +42,7 @@
       <uri>http://www.w3.org/2002/07/owl#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>W3 OWL2-XML</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -50,7 +50,7 @@
       <uri>http://www.w3.org/2006/12/owl2-xml#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>ISO 15926 Part 8</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -58,7 +58,7 @@
       <uri>http://standards.tc184-sc4.org/iso/15926/-8/template-model#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>Part8 Data Model</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -66,7 +66,7 @@
       <uri>http://standards.tc184-sc4.org/iso/15926/-8/data-model#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>Part8 Templates</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
