@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Application }
+     * 
+     */
+    public Application createApplication() {
+        return new Application();
+    }
+
+    /**
      * Create an instance of {@link DataExchanges }
      * 
      */
@@ -38,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Scope }
+     * Create an instance of {@link Directory }
      * 
      */
-    public Scope createScope() {
-        return new Scope();
+    public Directory createDirectory() {
+        return new Directory();
     }
 
     /**
@@ -51,6 +59,14 @@ public class ObjectFactory {
      */
     public Graphs createGraphs() {
         return new Graphs();
+    }
+
+    /**
+     * Create an instance of {@link ApplicationData }
+     * 
+     */
+    public ApplicationData createApplicationData() {
+        return new ApplicationData();
     }
 
     /**
@@ -70,11 +86,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Directory }
+     * Create an instance of {@link Commodity }
      * 
      */
-    public Directory createDirectory() {
-        return new Directory();
+    public Commodity createCommodity() {
+        return new Commodity();
     }
 
     /**
@@ -86,19 +102,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ApplicationData }
+     * Create an instance of {@link Scope }
      * 
      */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
+    public Scope createScope() {
+        return new Scope();
     }
 
     /**
@@ -107,14 +115,6 @@ public class ObjectFactory {
      */
     public Graph createGraph() {
         return new Graph();
-    }
-
-    /**
-     * Create an instance of {@link Application }
-     * 
-     */
-    public Application createApplication() {
-        return new Application();
     }
 
 }
