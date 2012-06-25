@@ -194,4 +194,33 @@ public class ExchangeService extends AbstractService
     
     return Response.ok().entity(exchangeResponse).build();
   }
+  
+  @GET
+  @Path("/{scope}/exchanges/{id}/progress")
+  @Produces(MediaType.TEXT_PLAIN)
+  public Response getProgress( @PathParam("scope") String scope, @PathParam("id") String id) 
+  {
+    String progress = "";
+    
+    try
+    {
+      initService(SERVICE_NAME);
+    }
+    catch (AuthorizationException e)
+    {
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+    
+    try
+    {
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      progress = exchangeProvider.getProgress(scope, id);
+    }
+    catch (Exception e)
+    {
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+    }
+    
+    return Response.ok().entity(progress).build();
+  }
 }
