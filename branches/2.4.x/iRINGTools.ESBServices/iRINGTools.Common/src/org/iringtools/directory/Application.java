@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="context" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="baseUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -33,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Application", propOrder = {
     "id",
+    "context",
     "name",
     "description",
     "baseUri",
@@ -42,6 +44,7 @@ public class Application {
 
     @XmlElement(required = true)
     protected String id;
+    protected String context;
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
@@ -73,6 +76,30 @@ public class Application {
      */
     public void setId(String value) {
         this.id = value;
+    }
+
+    /**
+     * Gets the value of the context property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getContext() {
+        return context;
+    }
+
+    /**
+     * Sets the value of the context property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setContext(String value) {
+        this.context = value;
     }
 
     /**

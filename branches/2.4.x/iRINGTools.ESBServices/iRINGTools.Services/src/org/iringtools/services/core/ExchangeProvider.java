@@ -72,6 +72,7 @@ public class ExchangeProvider
   private String targetAppName = null;
   private String targetGraphName = null;
   private String hashAlgorithm = null;
+  private int exchangePoolSize;
 
   public ExchangeProvider(Map<String, Object> settings) throws ServiceProviderException
   {
@@ -603,8 +604,14 @@ public class ExchangeProvider
     // create pool DTOs
     //
     int dxIndicesSize = dxIndices.size();
-    int configuredPoolSize = Integer.parseInt((String) settings.get("poolSize"));
-    int poolSize = Math.min(configuredPoolSize, dxIndicesSize);
+    
+    // if pool size is not set for specific data exchange, then use the default one
+    if (exchangePoolSize == 0)
+    {
+      exchangePoolSize = Integer.parseInt((String) settings.get("poolSize"));
+    }
+    
+    int poolSize = Math.min(exchangePoolSize, dxIndicesSize);
           
     exchangeResponse.setPoolSize(poolSize);
     exchangeResponse.setItemCount(dxIndicesSize);
@@ -814,7 +821,9 @@ public class ExchangeProvider
     targetScopeName = xdef.getTargetScopeName();
     targetAppName = xdef.getTargetAppName();
     targetGraphName = xdef.getTargetGraphName();
+    
     hashAlgorithm = xdef.getHashAlgorithm();
+    exchangePoolSize = xdef.getPoolSize();
   }
 
   public String md5Hash(DataTransferObject dataTransferObject)

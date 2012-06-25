@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="sourceUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sourceScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="sourceAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="sourceGraphName" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -27,7 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="targetScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="targetAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="targetGraphName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="hashAlgorithm" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="hashAlgorithm" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="poolSize" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,6 +42,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ExchangeDefinition", propOrder = {
     "id",
     "sourceUri",
+    "description",
     "sourceScopeName",
     "sourceAppName",
     "sourceGraphName",
@@ -47,7 +50,8 @@ import javax.xml.bind.annotation.XmlType;
     "targetScopeName",
     "targetAppName",
     "targetGraphName",
-    "hashAlgorithm"
+    "hashAlgorithm",
+    "poolSize"
 })
 @XmlRootElement(name = "exchangeDefinition")
 public class ExchangeDefinition {
@@ -56,6 +60,7 @@ public class ExchangeDefinition {
     protected String id;
     @XmlElement(required = true)
     protected String sourceUri;
+    protected String description;
     @XmlElement(required = true)
     protected String sourceScopeName;
     @XmlElement(required = true)
@@ -70,8 +75,8 @@ public class ExchangeDefinition {
     protected String targetAppName;
     @XmlElement(required = true)
     protected String targetGraphName;
-    @XmlElement(required = true)
     protected String hashAlgorithm;
+    protected Integer poolSize;
 
     /**
      * Gets the value of the id property.
@@ -119,6 +124,30 @@ public class ExchangeDefinition {
      */
     public void setSourceUri(String value) {
         this.sourceUri = value;
+    }
+
+    /**
+     * Gets the value of the description property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDescription(String value) {
+        this.description = value;
     }
 
     /**
@@ -311,6 +340,30 @@ public class ExchangeDefinition {
      */
     public void setHashAlgorithm(String value) {
         this.hashAlgorithm = value;
+    }
+
+    /**
+     * Gets the value of the poolSize property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getPoolSize() {
+        return poolSize;
+    }
+
+    /**
+     * Sets the value of the poolSize property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setPoolSize(Integer value) {
+        this.poolSize = value;
     }
 
 }
