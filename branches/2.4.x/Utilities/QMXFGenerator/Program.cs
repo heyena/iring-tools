@@ -414,30 +414,39 @@ namespace QMXFGenerator
       {
         string identifier = String.Empty;
 
-        WebCredentials webCredentials = null;
-        if (_idsADICredentials != String.Empty)
+
+        if (!string.IsNullOrEmpty(registryBase))
+          return string.Format("{0}#R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", ""));
+        else
         {
-          webCredentials = new WebCredentials(_idsADICredentials);
-          webCredentials.Decrypt();
+           Utility.WriteString("Failed to create id for "+ name , "error.log");
+          throw new Exception("CreateIdsAdiId: Failed to create id ");
+
         }
+        //WebCredentials webCredentials = null;
+        //if (_idsADICredentials != String.Empty)
+        //{
+        //  webCredentials = new WebCredentials(_idsADICredentials);
+        //  webCredentials.Decrypt();
+        //}
 
-        WebProxy webProxy = null;
-        if (!string.IsNullOrEmpty(_proxyHost))
-        {
-          WebCredentials proxyCredentials = new WebCredentials(_proxyCredentials);
-          if (proxyCredentials.isEncrypted)
-            proxyCredentials.Decrypt();
-          webProxy = new WebProxy(_proxyHost, Convert.ToInt32(_proxyPort));
-          webProxy.Credentials = proxyCredentials.GetNetworkCredential();
-        }
-        string baseServiceUrl = "https://secure.ids-adi.org/registry?registry-op=acquire&registry-base=" +
-                              HttpUtility.UrlEncode(registryBase) + "&registry-comment=";
-        string serviceUrl = baseServiceUrl + HttpUtility.UrlEncode(name);
-        WebHttpClient webClient = new WebHttpClient(serviceUrl, webCredentials.GetNetworkCredential(), webProxy);
+        //WebProxy webProxy = null;
+        //if (!string.IsNullOrEmpty(_proxyHost))
+        //{
+        //  WebCredentials proxyCredentials = new WebCredentials(_proxyCredentials);
+        //  if (proxyCredentials.isEncrypted)
+        //    proxyCredentials.Decrypt();
+        //  webProxy = new WebProxy(_proxyHost, Convert.ToInt32(_proxyPort));
+        //  webProxy.Credentials = proxyCredentials.GetNetworkCredential();
+        //}
+        //string baseServiceUrl = "https://secure.ids-adi.org/registry?registry-op=acquire&registry-base=" +
+        //                      HttpUtility.UrlEncode(registryBase) + "&registry-comment=";
+        //string serviceUrl = baseServiceUrl + HttpUtility.UrlEncode(name);
+        //WebHttpClient webClient = new WebHttpClient(serviceUrl, webCredentials.GetNetworkCredential(), webProxy);
 
-        RegistryResult registryResult = webClient.Get<RegistryResult>(serviceUrl, false);
+        //RegistryResult registryResult = webClient.Get<RegistryResult>(serviceUrl, false);
 
-        return registryResult.registryid;
+       // return registryResult.registryid;
       }
       catch (Exception ex)
       {
