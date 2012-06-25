@@ -30,27 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Application }
+     * Create an instance of {@link DataExchanges }
      * 
      */
-    public Application createApplication() {
-        return new Application();
-    }
-
-    /**
-     * Create an instance of {@link ApplicationData }
-     * 
-     */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
+    public DataExchanges createDataExchanges() {
+        return new DataExchanges();
     }
 
     /**
@@ -62,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Exchange }
+     * Create an instance of {@link Graphs }
      * 
      */
-    public Exchange createExchange() {
-        return new Exchange();
+    public Graphs createGraphs() {
+        return new Graphs();
     }
 
     /**
@@ -86,11 +70,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graphs }
+     * Create an instance of {@link Directory }
      * 
      */
-    public Graphs createGraphs() {
-        return new Graphs();
+    public Directory createDirectory() {
+        return new Directory();
+    }
+
+    /**
+     * Create an instance of {@link Exchange }
+     * 
+     */
+    public Exchange createExchange() {
+        return new Exchange();
+    }
+
+    /**
+     * Create an instance of {@link ApplicationData }
+     * 
+     */
+    public ApplicationData createApplicationData() {
+        return new ApplicationData();
+    }
+
+    /**
+     * Create an instance of {@link Commodity }
+     * 
+     */
+    public Commodity createCommodity() {
+        return new Commodity();
     }
 
     /**
@@ -102,19 +110,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataExchanges }
+     * Create an instance of {@link Application }
      * 
      */
-    public DataExchanges createDataExchanges() {
-        return new DataExchanges();
-    }
-
-    /**
-     * Create an instance of {@link Directory }
-     * 
-     */
-    public Directory createDirectory() {
-        return new Directory();
+    public Application createApplication() {
+        return new Application();
     }
 
 }
