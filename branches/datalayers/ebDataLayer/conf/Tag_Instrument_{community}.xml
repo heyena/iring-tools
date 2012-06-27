@@ -4,7 +4,7 @@
 		<objecttype>212</objecttype>
 		<name>TMP-INST-{0}-{1}</name>
 		<placeholders>
-			<placeholder id="0">Function ID</placeholder>
+			<placeholder id="1" format="00">Unit</placeholder>
 			<placeholder id="1">Unit</placeholder>
 		</placeholders>
 	</template>
