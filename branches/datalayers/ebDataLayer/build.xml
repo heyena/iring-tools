@@ -40,7 +40,7 @@
     <NUnit ToolPath="$(NUnitPath)" DisableShadowCopy="true" Assemblies="ebDataLayer.Tests\bin\Debug\ebDataLayer.Tests.dll" OutputXmlFile="test-results.xml" />
 	</Target>
 
-  <Target Name="CreateDeployment">
+  <Target Name="CreatePackages">
     <Message Text="Removing old deployment..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
     
@@ -56,5 +56,5 @@
 
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; CoreBuild"/>  
-  <Target Name="All" DependsOnTargets="Rebuild; Test; CreateDeployment"/>
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>

@@ -421,7 +421,7 @@ namespace org.iringtools.adapter.datalayer.eb
             //
             // return content when requesting single item for backward compatability
             //
-            if (identifiers.Count == 1)
+            if (dataObjects.Count == 1 && identifiers.Count == 1)
             {
               IList<int> docIds = GetDocumentIds(dataObjects);
               IList<IContentObject> contentObjects = GetContents(objectType, docIds, proxy, session);
@@ -1183,6 +1183,16 @@ namespace org.iringtools.adapter.datalayer.eb
         if (string.IsNullOrEmpty(propertyValue))
         {
           _logger.Warn(string.Format("Template holder [{0}] is empty.", placeholder.Value));
+        }
+
+        if (!string.IsNullOrEmpty(placeholder.Format))
+        {
+          if (propertyValue.Length < placeholder.Format.Length)
+          {
+            propertyValue = placeholder.Format.Substring(0, placeholder.Format.Length - propertyValue.Length) + propertyValue;
+          }
+
+          propertyValue = int.Parse(propertyValue).ToString(placeholder.Format);
         }
 
         parameters[i++] = propertyValue;
