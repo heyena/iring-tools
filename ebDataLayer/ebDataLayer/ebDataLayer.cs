@@ -419,7 +419,7 @@ namespace org.iringtools.adapter.datalayer.eb
             dataObjects = ToDataObjects(result, objDef);
 
             //
-            // return content when requesting single item for backward compatability
+            // return content when requesting single item like IW data layer
             //
             if (dataObjects.Count == 1 && identifiers.Count == 1)
             {
@@ -568,6 +568,8 @@ namespace org.iringtools.adapter.datalayer.eb
               };
 
               response.StatusList.Add(status);
+              response.Level = StatusLevel.Error;
+
               continue;
             }
 
@@ -584,6 +586,14 @@ namespace org.iringtools.adapter.datalayer.eb
           else if (objectType == ObjectType.Document.ToString())
           {
             response.Append(processor.ProcessDocument(objDef, dataObject, objectId, keyValue));
+            
+            //
+            // post content like IW data layer
+            //
+            if (dataObject.GetType() == typeof(GenericContentObject))
+            {
+              response.Append(PostContents(new List<IContentObject>{(GenericContentObject) dataObject}, proxy, session));
+            }
           }
           else
           {
@@ -595,6 +605,7 @@ namespace org.iringtools.adapter.datalayer.eb
             };
 
             response.StatusList.Add(status);
+            response.Level = StatusLevel.Error;
           }
         }
       }
@@ -661,12 +672,14 @@ namespace org.iringtools.adapter.datalayer.eb
                 {
                   status.Level = StatusLevel.Error;
                   status.Messages.Add(string.Format("Object type [{0}] not supported.", objType));
+                  response.Level = StatusLevel.Error;
                 }
               }
               else
               {
                 status.Level = StatusLevel.Error;
                 status.Messages.Add(string.Format("Object [{0}] not found.", identifier));
+                response.Level = StatusLevel.Error;
               }
 
               response.Append(status);
@@ -798,135 +811,29 @@ namespace org.iringtools.adapter.datalayer.eb
 
     public override Response PostContents(IList<IContentObject> contentObjects)
     {
-      Response response = new Response() { Level = StatusLevel.Success };
-
       if (contentObjects == null || contentObjects.Count == 0)
       {
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("No content object to post.");
+        Response response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages() { "No content object to post." }
+        };
+
         return response;
       }
 
-      foreach (GenericContentObject contentObject in contentObjects)
+      Proxy proxy = null;
+      Session session = null;
+
+      try
       {
-        Proxy proxy = null;
-        Session session = null;
-
-        try
-        {
-          Connect(ref proxy, ref session);
-
-          //
-          // get doc Id
-          //
-          IList<IDataObject> dataObjects = Get(contentObject.ObjectType, new List<string> { contentObject.identifier }, true);
-          int docId = GetDocumentId(dataObjects.FirstOrDefault());
-
-          if (docId <= 0)
-          {
-            session.ProtoProxy.AddObjectFile(session.ReaderSessionString, docId,
-              (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
-
-            Status status = new Status()
-            {
-              Identifier = contentObject.identifier,
-              Level = StatusLevel.Error,
-              Messages = new Messages() { string.Format("Document [{0}] not found.", contentObject.identifier) }
-            };
-
-            response.StatusList.Add(status);
-            continue;
-          }
-
-          // 
-          // get content id
-          //
-          EqlClient client = new EqlClient(session);
-          DataTable dt = client.RunQuery(string.Format(CONTENT_EQL, docId));
-          int fileId = (int)(dt.Rows[0]["FilesId"]);
-
-          if (fileId <= 0)  // add
-          {
-            session.ProtoProxy.AddObjectFile(session.ReaderSessionString, docId,
-              (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
-
-            Status status = new Status()
-            {
-              Identifier = contentObject.identifier,
-              Level = StatusLevel.Success,
-              Messages = new Messages() { string.Format("Document [{0}] added successfully.", contentObject.identifier) }
-            };
-
-            response.StatusList.Add(status);
-          }
-          else  // update
-          {
-            //
-            // check out content
-            //
-            eB.Data.File file = new eB.Data.File(session);
-            file.Retrieve(fileId, "Header;Repositories");
-
-            FileInfo localFile = new FileInfo(Path.GetTempPath() + file.Name);
-            if (localFile.Exists)
-              localFile.Delete();
-
-            file.CheckOut(localFile.FullName);
-
-            //
-            // update content
-            //
-            Utility.WriteStream(contentObject.content, localFile.FullName);
-
-            // 
-            // check content back in
-            //
-            file = new eB.Data.File(session);
-            file.Retrieve(fileId, "Header;Repositories");
-
-            if (file.IsCheckedOut)
-            {
-              try
-              {
-                file.CheckIn(localFile.FullName, eB.ContentData.File.CheckinOptions.DeleteLocalCopy, null);
-                session.Writer.CheckinDoc(file.Document.Id, 0);
-
-                Status status = new Status()
-                {
-                  Identifier = contentObject.identifier,
-                  Level = StatusLevel.Success,
-                  Messages = new Messages() { string.Format("Document [{0}] updated successfully.", contentObject.identifier) }
-                };
-
-                response.StatusList.Add(status);
-              }
-              catch
-              {
-                file.UndoCheckout();
-              }
-            }
-          }
-        }
-        catch (Exception e)
-        {
-          _logger.Error("Error posting content: " + e.Message);
-
-          Status status = new Status()
-          {
-            Identifier = contentObject.identifier,
-            Level = StatusLevel.Error,
-            Messages = new Messages() { e.Message }
-          };
-
-          response.StatusList.Add(status);
-        }
-        finally
-        {
-          Disconnect(ref proxy, ref session);
-        }
+        Connect(ref proxy, ref session);
+        return PostContents(contentObjects, proxy, session);
       }
-
-      return response;
+      finally
+      {
+        Disconnect(ref proxy, ref session);
+      }
     }
     #endregion
 
@@ -1350,7 +1257,7 @@ namespace org.iringtools.adapter.datalayer.eb
       return hashValues;
     }
 
-    public IList<IContentObject> GetContents(String objectType, IList<int> docIds)
+    protected IList<IContentObject> GetContents(String objectType, IList<int> docIds)
     {
       Proxy proxy = null;
       Session session = null;
@@ -1415,6 +1322,126 @@ namespace org.iringtools.adapter.datalayer.eb
       }
 
       return contents;
+    }
+
+    protected Response PostContents(IList<IContentObject> contentObjects, Proxy proxy, Session session)
+    {
+      Response response = new Response() { Level = StatusLevel.Success };
+
+      foreach (GenericContentObject contentObject in contentObjects)
+      {
+        try
+        {
+          //
+          // get doc Id
+          //
+          IList<IDataObject> dataObjects = Get(contentObject.ObjectType, new List<string> { contentObject.identifier }, true);
+          int docId = GetDocumentId(dataObjects.FirstOrDefault());
+
+          if (docId <= 0)
+          {
+            session.ProtoProxy.AddObjectFile(session.ReaderSessionString, docId,
+              (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
+
+            Status status = new Status()
+            {
+              Identifier = contentObject.identifier,
+              Level = StatusLevel.Error,
+              Messages = new Messages() { string.Format("Document [{0}] not found.", contentObject.identifier) }
+            };
+
+            response.StatusList.Add(status);
+            response.Level = StatusLevel.Error;
+
+            continue;
+          }
+
+          // 
+          // get content id
+          //
+          EqlClient client = new EqlClient(session);
+          DataTable dt = client.RunQuery(string.Format(CONTENT_EQL, docId));
+          int fileId = (int)(dt.Rows[0]["FilesId"]);
+
+          if (fileId <= 0)  // add
+          {
+            session.ProtoProxy.AddObjectFile(session.ReaderSessionString, docId,
+              (int)ObjectType.Document, contentObject.content, contentObject.identifier, 0);
+
+            Status status = new Status()
+            {
+              Identifier = contentObject.identifier,
+              Level = StatusLevel.Success,
+              Messages = new Messages() { string.Format("Document [{0}] added successfully.", contentObject.identifier) }
+            };
+
+            response.StatusList.Add(status);
+          }
+          else  // update
+          {
+            //
+            // check out content
+            //
+            eB.Data.File file = new eB.Data.File(session);
+            file.Retrieve(fileId, "Header;Repositories");
+
+            FileInfo localFile = new FileInfo(Path.GetTempPath() + file.Name);
+            if (localFile.Exists)
+              localFile.Delete();
+
+            file.CheckOut(localFile.FullName);
+
+            //
+            // update content
+            //
+            Utility.WriteStream(contentObject.content, localFile.FullName);
+
+            // 
+            // check content back in
+            //
+            file = new eB.Data.File(session);
+            file.Retrieve(fileId, "Header;Repositories");
+
+            if (file.IsCheckedOut)
+            {
+              try
+              {
+                file.CheckIn(localFile.FullName, eB.ContentData.File.CheckinOptions.DeleteLocalCopy, null);
+                session.Writer.CheckinDoc(file.Document.Id, 0);
+
+                Status status = new Status()
+                {
+                  Identifier = contentObject.identifier,
+                  Level = StatusLevel.Success,
+                  Messages = new Messages() { string.Format("Document [{0}] updated successfully.", contentObject.identifier) }
+                };
+
+                response.StatusList.Add(status);
+              }
+              catch
+              {
+                file.UndoCheckout();
+              }
+            }
+          }
+        }
+        catch (Exception e)
+        {
+          _logger.Error("Error posting content: " + e.Message);
+
+          Status status = new Status()
+          {
+            Identifier = contentObject.identifier,
+            Level = StatusLevel.Error,
+            Messages = new Messages() { e.Message }
+          };
+
+          response.StatusList.Add(status);
+          response.Level = StatusLevel.Error;
+        }
+      }
+
+      return response;
     }
     #endregion
   }
