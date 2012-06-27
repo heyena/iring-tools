@@ -476,10 +476,17 @@ namespace org.iringtools.adapter.projection
             dataObject.SetPropertyValue(objProp.propertyName, Activator.CreateInstance(t));
           }
         }
-        else if (objProp.dataType == DataType.String && objProp.dataLength < pair.Value.ToString().Length)
+        else if (objProp.dataType == DataType.String)
         {
-          string value = pair.Value.Substring(0, objProp.dataLength);
-          dataObject.SetPropertyValue(objProp.propertyName, value);
+          if (objProp.dataLength > 0 && objProp.dataLength < pair.Value.ToString().Length)
+          {
+            string value = pair.Value.Substring(0, objProp.dataLength);
+            dataObject.SetPropertyValue(objProp.propertyName, value);
+          }
+          else
+          {
+            dataObject.SetPropertyValue(objProp.propertyName, pair.Value);
+          }
         }
         else
         {

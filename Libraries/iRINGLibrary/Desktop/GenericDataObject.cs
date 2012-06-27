@@ -28,7 +28,10 @@ namespace org.iringtools.library
 
     public object GetPropertyValue(string propertyName)
     {
-      return _dictionary[propertyName];
+      if (_dictionary.ContainsKey(propertyName))
+        return _dictionary[propertyName];
+
+      return null;
     }
 
     public void SetPropertyValue(string propertyName, object value)
