@@ -41,17 +41,22 @@ namespace org.iringtools.adapter.datalayer.test
     public void TestDataObjects()
     {
       int MAX_ITEMS = 25;
+      string result = string.Empty;
 
       #region Test dictionary
       Console.WriteLine("\nTesting get dictionary ...");
       DataDictionary dictionary = _dataLayer.GetDictionary();
       Assert.Greater(dictionary.dataObjects.Count, 0);
+      result = (dictionary.dataObjects.Count > 0) ? "passed." : "failed.";
+      _logger.Info("Test get dictionary " + result);
       #endregion
 
       #region Test refresh dictionary
       Console.WriteLine("Testing refresh dictionary ...");
       Response response = _dataLayer.RefreshAll();
       Assert.AreEqual(response.Level, StatusLevel.Success);
+      result = (dictionary.dataObjects.Count > 0) ? "passed." : "failed.";
+      _logger.Info("Test refresh dictionary " + result);
       #endregion
 
       foreach (Scenario scenario in _scenarios)
@@ -69,6 +74,8 @@ namespace org.iringtools.adapter.datalayer.test
         Console.WriteLine("Testing get count ...");
         long count = _dataLayer.GetCount(objectType, filter);
         Assert.Greater(count, 0);
+        result = (count > 0) ? "passed." : "failed.";
+        _logger.Info("Test get count " + result);
         #endregion
 
         if (count > MAX_ITEMS) count = MAX_ITEMS;
@@ -77,12 +84,16 @@ namespace org.iringtools.adapter.datalayer.test
         Console.WriteLine("Testing get page ...");
         IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, (int)count, 0);
         Assert.Greater(dataObjects.Count, 0);
+        result = (dataObjects.Count > 0) ? "passed." : "failed.";
+        _logger.Info("Test get page " + result);
         #endregion
 
         #region Test get identifiers
         Console.WriteLine("Testing get identifiers ...");
         IList<string> identifiers = _dataLayer.GetIdentifiers(objectType, filter);
         Assert.Greater(identifiers.Count, 0);
+        result = (identifiers.Count > 0) ? "passed." : "failed.";
+        _logger.Info("Test get identifires " + result);
         #endregion
 
         #region Test get by identifiers
@@ -92,7 +103,8 @@ namespace org.iringtools.adapter.datalayer.test
         else
           dataObjects = _dataLayer.Get(objectType, identifiers);
         Assert.Greater(dataObjects.Count, 0);
-        Assert.Greater(dataObjects.Count, 0);
+        result = (dataObjects.Count > 0) ? "passed." : "failed.";
+        _logger.Info("Test get by identifires " + result);
         #endregion
 
         //
@@ -116,18 +128,24 @@ namespace org.iringtools.adapter.datalayer.test
         Console.WriteLine("Testing post ...");
         response = _dataLayer.Post(new List<IDataObject>() { dataObject });
         Assert.AreEqual(response.Level, StatusLevel.Success);
+        result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
+        _logger.Info("Test post " + result);
         #endregion
 
         #region Test delete by identifiers
         Console.WriteLine("Testing delete by identifiers ...");
         response = _dataLayer.Delete(objectType, new List<string>() { keyPropValue });
         Assert.AreEqual(response.Level, StatusLevel.Success);
+        result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
+        _logger.Info("Test delete by identifiers " + result);
         #endregion
 
         #region Test create
         Console.WriteLine("Testing create ...");
         IDataObject newDataObject = _dataLayer.Create(objectType, null)[0];
         Assert.AreNotEqual(newDataObject, null);
+        result = (newDataObject != null) ? "passed." : "failed.";
+        _logger.Info("Test create " + result);
         #endregion
 
         #region Test delete by filter
@@ -138,7 +156,7 @@ namespace org.iringtools.adapter.datalayer.test
           newDataObject.SetPropertyValue(prop.propertyName, dataObject.GetPropertyValue(prop.propertyName));
         }
 
-        // Execute delete
+        // Post it
         response = _dataLayer.Post(new List<IDataObject>() { newDataObject });
         Assert.AreEqual(response.Level, StatusLevel.Success);
 
@@ -159,6 +177,8 @@ namespace org.iringtools.adapter.datalayer.test
         // Execute delete
         _dataLayer.Delete(objectType, filter);
         Assert.AreEqual(response.Level, StatusLevel.Success);
+        result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
+        _logger.Info("Test delete by filter " + result);
         #endregion
       }      
     }

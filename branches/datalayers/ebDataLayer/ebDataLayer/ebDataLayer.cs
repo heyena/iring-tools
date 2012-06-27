@@ -1110,8 +1110,7 @@ namespace org.iringtools.adapter.datalayer.eb
 
     protected IDataObject CreateEmptyDataObject(string objectType, DataObject objDef)
     {
-      IDataObject dataObject = new GenericContentObject();
-      ((GenericDataObject)dataObject).ObjectType = objectType;
+      IDataObject dataObject = new GenericDataObject() { ObjectType = objectType };
 
       foreach (DataProperty prop in objDef.dataProperties)
       {
