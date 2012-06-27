@@ -37,7 +37,7 @@
 
   <Target Name="Test">
     <Message Text="Performing test ..." />
-    <NUnit ToolPath="$(NUnitPath)" DisableShadowCopy="true" Assemblies="ebDataLayer.Tests\bin\Debug\ebDataLayer.Tests.dll" OutputXmlFile="test-results.xml" />
+    <NUnit ToolPath="$(NUnitPath)" DisableShadowCopy="true" Assemblies="ebDataLayer.Tests\bin\Debug\ebDataLayer.Tests.dll" OutputXmlFile="TestResult.xml" />
 	</Target>
 
   <Target Name="CreatePackages">
