@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using org.iringtools.library;
 
 namespace org.iringtools.adapter.datalayer.eb
 {
@@ -34,6 +35,9 @@ namespace org.iringtools.adapter.datalayer.eb
   {
     [XmlAttribute("id")]
     public int Id { get; set; }
+    
+    [XmlAttribute("format")]
+    public string Format { get; set; }
 
     [XmlText]
     public string Value { get; set; }
