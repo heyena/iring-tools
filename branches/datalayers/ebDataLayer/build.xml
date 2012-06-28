@@ -17,7 +17,7 @@
     <ConfigFiles Include="conf\*.*" />
     <DocFiles    Include="$(DocsDir)\*" />
     <ScriptFiles Include="$(ScriptsDir)\*" />
-    <TestResults Include="$(TestDir)\TestResult.txt" />
+    <TestResults Include="$(TestDir)\TestResult.*" />
     
     <DeploymentPackage Include="*.*" Exclude="*.zip">
       <Options>a -tzip -y -r</Options>
