@@ -423,30 +423,7 @@ namespace QMXFGenerator
           throw new Exception("CreateIdsAdiId: Failed to create id ");
 
         }
-        //WebCredentials webCredentials = null;
-        //if (_idsADICredentials != String.Empty)
-        //{
-        //  webCredentials = new WebCredentials(_idsADICredentials);
-        //  webCredentials.Decrypt();
-        //}
-
-        //WebProxy webProxy = null;
-        //if (!string.IsNullOrEmpty(_proxyHost))
-        //{
-        //  WebCredentials proxyCredentials = new WebCredentials(_proxyCredentials);
-        //  if (proxyCredentials.isEncrypted)
-        //    proxyCredentials.Decrypt();
-        //  webProxy = new WebProxy(_proxyHost, Convert.ToInt32(_proxyPort));
-        //  webProxy.Credentials = proxyCredentials.GetNetworkCredential();
-        //}
-        //string baseServiceUrl = "https://secure.ids-adi.org/registry?registry-op=acquire&registry-base=" +
-        //                      HttpUtility.UrlEncode(registryBase) + "&registry-comment=";
-        //string serviceUrl = baseServiceUrl + HttpUtility.UrlEncode(name);
-        //WebHttpClient webClient = new WebHttpClient(serviceUrl, webCredentials.GetNetworkCredential(), webProxy);
-
-        //RegistryResult registryResult = webClient.Get<RegistryResult>(serviceUrl, false);
-
-       // return registryResult.registryid;
+      
       }
       catch (Exception ex)
       {
