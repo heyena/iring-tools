@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010, iringtools.org //////////////////////////////////////////
+﻿//// Copyright (c) 2010, iringtools.org //////////////////////////////////////////
 // All rights reserved.
 //------------------------------------------------------------------------------
 // Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,6 @@ namespace org.iringtools.refdata
     private int _pageSize = 0;
 
     private bool _useExampleRegistryBase = false;
-    private WebCredentials _registryCredentials = null;
     private WebProxyCredentials _proxyCredentials = null;
 
     private List<Repository> _repositories = null;
@@ -96,39 +95,27 @@ namespace org.iringtools.refdata
     {
       try
       {
-        _kernel = new StandardKernel(new ReferenceDataModule());
-        _settings = _kernel.Get<ReferenceDataSettings>();
-        _settings.AppendSettings(settings);
+        this._kernel = new StandardKernel(new ReferenceDataModule());
+        this._settings = this._kernel.Get<ReferenceDataSettings>();
+        this._settings.AppendSettings(settings);
         Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-        _pageSize = Convert.ToInt32(_settings["PageSize"]);
+        this._pageSize = Convert.ToInt32(_settings["PageSize"]);
         _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
-        string registryCredentialToken = _settings["RegistryCredentialToken"];
-        bool tokenIsEmpty = registryCredentialToken == String.Empty;
-        if (tokenIsEmpty)
-        {
-          _registryCredentials = new WebCredentials();
-        }
-        else
-        {
-          _registryCredentials = new WebCredentials(registryCredentialToken);
-          _registryCredentials.Decrypt();
-        }
-        _proxyCredentials = _settings.GetWebProxyCredentials();
         string queriesPath = _settings["AppDataPath"] + QUERIES_FILE_NAME;
         _queries = Utility.Read<Queries>(queriesPath);
         string federationPath = _settings["AppDataPath"] + FEDERATION_FILE_NAME;
         if (File.Exists(federationPath))
         {
-          _federation = Utility.Read<Federation>(federationPath);
-          _repositories = _federation.Repositories;
-          _namespaces = _federation.Namespaces;
-          foreach (var ns in _namespaces)
+          this._federation = Utility.Read<Federation>(federationPath);
+          this._repositories = this._federation.Repositories;
+          this._namespaces = this._federation.Namespaces;
+          foreach (var ns in this._namespaces)
           {
             nsMap.AddNamespace(ns.Prefix, new Uri(ns.Uri));
           }
         }
         _response = new Response();
-        _kernel.Bind<Response>().ToConstant(_response);
+        this._kernel.Bind<Response>().ToConstant(_response);
 
       }
       catch (Exception ex)
@@ -139,7 +126,7 @@ namespace org.iringtools.refdata
 
     public Federation GetFederation()
     {
-      return _federation;
+      return this._federation;
     }
 
     public List<Repository> GetRepositories()
@@ -147,7 +134,7 @@ namespace org.iringtools.refdata
       try
       {
         List<Repository> repositories;
-        repositories = _repositories;
+        repositories = this._repositories;
         //Don't Expose Tokens
         foreach (Repository repository in repositories)
         {
@@ -583,9 +570,9 @@ namespace org.iringtools.refdata
       int number;
       bool isNumber = int.TryParse(id.Substring(1, 1), out number);
       if (isNumber)
-        return GetLabel(_namespaces.Find(ns => ns.Prefix == "rdl").Uri + id);
+        return GetLabel(this._namespaces.Find(ns => ns.Prefix == "rdl").Uri + id);
       else
-        return GetLabel(_namespaces.Find(ns => ns.Prefix == "jordrdl").Uri + id);
+        return GetLabel(this._namespaces.Find(ns => ns.Prefix == "jordrdl").Uri + id);
     }
 
     public QMXF GetClass(string id, Repository repository)
@@ -623,10 +610,10 @@ namespace org.iringtools.refdata
         Query classQueryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassJORD").Query;
 
         /// Always use rdl namespace
-        namespaceUrl = _namespaces.Find(n => n.Prefix == "rdl").Uri;
+        namespaceUrl = this._namespaces.Find(n => n.Prefix == "rdl").Uri;
         uri = namespaceUrl + id;
 
-        foreach (Repository repository in _repositories)
+        foreach (Repository repository in this._repositories)
         {
 
           if (rep != null)
@@ -2038,23 +2025,6 @@ namespace org.iringtools.refdata
       }
     }
 
-    private string QueryIdGenerator(string serviceUrl)
-    {
-      try
-      {
-        string result;
-
-        WebHttpClient webClient = new WebHttpClient(serviceUrl, _registryCredentials.GetNetworkCredential(), _proxyCredentials.GetWebProxy());
-        result = webClient.GetMessage(serviceUrl);
-
-        return result;
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
     private Response PostToRepository(Repository repository, string sparql)
     {
       try
@@ -2222,9 +2192,9 @@ namespace org.iringtools.refdata
               else
               {
                 if (_useExampleRegistryBase)
-                  generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"], templateName);
+                  generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, templateName);
                 else
-                  generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"], templateName);
+                  generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, templateName);
                 templateId = Utility.GetIdFromURI(generatedId);
               }
 
@@ -2280,9 +2250,9 @@ namespace org.iringtools.refdata
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
-                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, roleName);
                         else
-                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
                         newRoleID = generatedId;
                       }
                       RoleDefinition ord = oldTDef.roleDefinition.Find(r => r.identifier == newRoleID);
@@ -2410,9 +2380,9 @@ namespace org.iringtools.refdata
                   if (string.IsNullOrEmpty(newRole.identifier))
                   {
                     if (_useExampleRegistryBase)
-                      generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"], genName);
+                      generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, genName);
                     else
-                      generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"], genName);
+                      generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, genName);
                     newRoleID = Utility.GetIdFromURI(generatedId);
                   }
                   else
@@ -2512,9 +2482,9 @@ namespace org.iringtools.refdata
               else
               {
                 if (_useExampleRegistryBase)
-                  generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"], templateName);
+                  generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, templateName);
                 else
-                  generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"], templateName);
+                  generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, templateName);
 
                 templateID = Utility.GetIdFromURI(generatedId);
               }
@@ -2608,9 +2578,9 @@ namespace org.iringtools.refdata
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
-                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, roleName);
                         else
-                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
                         newRoleID = generatedId;
                       }
                       RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
@@ -2685,9 +2655,9 @@ namespace org.iringtools.refdata
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
-                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, roleName);
                         else
-                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
                         newRoleID = generatedId;
                       }
                       RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
@@ -2817,9 +2787,9 @@ namespace org.iringtools.refdata
                   if (string.IsNullOrEmpty(newRole.identifier))
                   {
                     if (_useExampleRegistryBase)
-                      generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"], genName);
+                      generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, genName);
                     else
-                      generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"], genName);
+                      generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, genName);
 
                     roleID = generatedId;
                   }
@@ -3063,7 +3033,6 @@ namespace org.iringtools.refdata
                       Classification oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
                       if (oc == null)
                       {
-                        //qn = nsMap.ReduceToQName(nc.reference, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
                           GenerateSuperClass(ref insert, nc.reference, clsId); ///insert from new
@@ -3084,26 +3053,26 @@ namespace org.iringtools.refdata
                 response.Level = StatusLevel.Warning;
                 status.Messages.Add(errMsg);
                 response.Append(status);
-                continue;//Nothing to be done
+                continue;
               }
             }
-            // add class
+            /// add class
             if (delete.IsEmpty && insert.IsEmpty)
             {
               string clsLabel = newClsDef.name[0].value;
               if (string.IsNullOrEmpty(clsId))
               {
                 string newClsName = "Class definition " + clsLabel;
-                clsId = CreateNewGuidId(registry, newClsName);
+                clsId = CreateNewGuidId(registry);
 
               }
-              // append entity type
+              /// append entity type
               if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
               {
-                //qn = nsMap.ReduceToQName(newClsDef.entityType.reference, out qName);
+              ///qn = nsMap.ReduceToQName(newClsDef.entityType.reference, out qName);
                 GenerateTypesPart8(ref insert, clsId, newClsDef.entityType.reference, newClsDef);
               }
-              // append specialization
+              /// append specialization
               foreach (Specialization ns in newClsDef.specialization)
               {
                 if (!String.IsNullOrEmpty(ns.reference))
