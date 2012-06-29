@@ -87,30 +87,33 @@ namespace org.iringtools.web.controllers
               {
                 DataLayer dataLayer = _repository.GetDataLayer(scope.Name, application.Name);
 
-                JsonTreeNode node = new JsonTreeNode
+                if (dataLayer != null)
                 {
-                  nodeType = "async",
-                  type = "ApplicationNode",
-                  iconCls = "applications",
-                  id = scope.Name + "/" + application.Name,
-                  text = application.Name,
-                  expanded = false,
-                  leaf = false,
-                  children = null,
-                  record = new
+                  JsonTreeNode node = new JsonTreeNode
                   {
-                    Name = application.Name,
-                    Description = application.Description,
-                    DataLayer = dataLayer.Name,
-                    Assembly = dataLayer.Assembly
-                  }
-                };
-                node.property = new Dictionary<string, string>();
-                node.property.Add("Name", application.Name);
-                node.property.Add("Description", application.Description);
-                node.property.Add("Data Layer", dataLayer.Name);
-                nodes.Add(node);
+                    nodeType = "async",
+                    type = "ApplicationNode",
+                    iconCls = "applications",
+                    id = scope.Name + "/" + application.Name,
+                    text = application.Name,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = new
+                    {
+                      Name = application.Name,
+                      Description = application.Description,
+                      DataLayer = dataLayer.Name,
+                      Assembly = dataLayer.Assembly
+                    }
+                  };
 
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", application.Name);
+                  node.property.Add("Description", application.Description);
+                  node.property.Add("Data Layer", dataLayer.Name);
+                  nodes.Add(node);
+                }
               }
 
               return Json(nodes, JsonRequestBehavior.AllowGet);
