@@ -105,4 +105,12 @@
     <extension>ppsm</extension>
     <mimeType>application/vnd.ms-powerpoint.slideshow.macroEnabled.12</mimeType>
   </contentType>
+  <contentType>
+    <extension>ini</extension>
+    <mimeType>text/plain</mimeType>
+  </contentType>
+  <contentType>
+    <extension>txt</extension>
+    <mimeType>text/plain</mimeType>
+  </contentType>
 </contentTypes>
