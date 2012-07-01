@@ -127,9 +127,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
 
-        Catch ex As Exception
-            'MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
-            ' this will likely only be loaded in this way while testing, so ignore the error
+    Catch ex As Exception
+      _logger.Debug("SPPIDDataLayer could not be instantiated due to error: " + ex.Message)
+      'MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
+      ' this will likely only be loaded in this way while testing, so ignore the error
         End Try
 
     End Sub
@@ -152,45 +153,50 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     Public Overrides Function GetDictionary() As DataDictionary
 
-        Dim path As String = [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
+    Try
+      Dim path As String = [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
 
-        If (File.Exists(path)) Then
+      If (File.Exists(path)) Then
 
-            Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
+        Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
 
-            _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+        _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
 
-            _dataDictionary = Utility.Read(Of DataDictionary)(path)
-            Return _dataDictionary
+        _dataDictionary = Utility.Read(Of DataDictionary)(path)
+        Return _dataDictionary
 
+      Else
+        ''Call Configure
+        Dim _xElement As System.Xml.Linq.XElement = Nothing
+        Dim _response As Response = Configure(_xElement)
+        If _response.Level = StatusLevel.Success Then
+          Dim tablename As List(Of String) = LoadDataTable(_stageConn.ConnectionString)
+          _dataDictionary = LoadDataObjects(tablename, _stageConn.ConnectionString)
+          Dim _databaseDictionary As New DatabaseDictionary()
+          _databaseDictionary.dataObjects = _dataDictionary.dataObjects
+          _databaseDictionary.ConnectionString = EncryptionUtility.Encrypt(_stageConn.ConnectionString)
+          _databaseDictionary.Provider = "MSSQL2008"
+          _databaseDictionary.SchemaName = "dbo"
+
+
+          Utility.Write(Of DatabaseDictionary)(_databaseDictionary, [String].Format("{0}{1}DataBaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
+          Utility.Write(Of DataDictionary)(_dataDictionary, [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
+
+          _dataObjectDefinition = _dataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+          Return _dataDictionary
         Else
-            ''Call Configure
-            Dim _xElement As System.Xml.Linq.XElement = Nothing
-            Dim _response As Response = Configure(_xElement)
-            If _response.Level = StatusLevel.Success Then
-                Dim tablename As List(Of String) = LoadDataTable(_stageConn.ConnectionString)
-                _dataDictionary = LoadDataObjects(tablename, _stageConn.ConnectionString)
-                Dim _databaseDictionary As New DatabaseDictionary()
-                _databaseDictionary.dataObjects = _dataDictionary.dataObjects
-                _databaseDictionary.ConnectionString = EncryptionUtility.Encrypt(_stageConn.ConnectionString)
-                _databaseDictionary.Provider = "MSSQL2008"
-                _databaseDictionary.SchemaName = "dbo"
-
-
-                Utility.Write(Of DatabaseDictionary)(_databaseDictionary, [String].Format("{0}{1}DataBaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
-                Utility.Write(Of DataDictionary)(_dataDictionary, [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
-
-                _dataObjectDefinition = _dataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
-                Return _dataDictionary
-            Else
-                _logger.Error("Error while configuring SP P&ID data layer:  '" & _response.Messages(0))
-                Return (New DataDictionary())
-            End If
-
-
-
+          _logger.Error("Error while configuring SP P&ID data layer:  '" & _response.Messages(0))
+          Return (New DataDictionary())
         End If
-    End Function
+      End If
+    Catch ex As Exception
+      _logger.Debug("GetDictionary has error: " + ex.Message)
+      Throw New Exception(ex.Message)
+      'MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
+      ' this will likely only be loaded in this way while testing, so ignore the error
+    End Try
+
+  End Function
 
     Public Overrides Function GetDataTable(ByVal tableName As String, ByVal identifiers As IList(Of String)) As System.Data.DataTable
 
@@ -265,41 +271,61 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             Next
 
             Return identifiers
-        Catch ex As Exception
-            Throw New Exception("Error while getting a list of identifiers of type [" & tableName & "].", ex)
-        End Try
+    Catch ex As Exception
+      _logger.Debug("Error while getting a list of identifiers of type [" + tableName + "].")
+      Throw New Exception("Error while getting a list of identifiers of type [" & tableName & "].", ex)
+    End Try
 
     End Function
 
-    Public Overrides Function PostDataTables(ByVal dataTables As IList(Of System.Data.DataTable)) As Response
+  Public Overrides Function PostDataTables(ByVal dataTables As IList(Of System.Data.DataTable)) As Response
+    Dim response As New Response()
+    Try
+      Dim tableName As String = dataTables.First().TableName
+      Dim query As String = "SELECT * FROM " & tableName
 
-        Dim tableName As String = dataTables.First().TableName
-        Dim query As String = "SELECT * FROM " & tableName
+      Dim adapter As New SqlDataAdapter()
+      adapter.SelectCommand = New SqlCommand(query, _projConn)
 
-        Dim adapter As New SqlDataAdapter()
-        adapter.SelectCommand = New SqlCommand(query, _projConn)
+      Dim command As New SqlCommandBuilder(adapter)
+      adapter.UpdateCommand = command.GetUpdateCommand()
 
-        Dim command As New SqlCommandBuilder(adapter)
-        adapter.UpdateCommand = command.GetUpdateCommand()
+      Dim dataSet As New DataSet()
+      For Each dataTable As DataTable In dataTables
+        dataSet.Tables.Add(dataTable)
+      Next
 
-        Dim dataSet As New DataSet()
-        For Each dataTable As DataTable In dataTables
-            dataSet.Tables.Add(dataTable)
-        Next
+      adapter.Update(dataSet, tableName)
 
-        adapter.Update(dataSet, tableName)
+      Dim status As New Status
+      status.Level = StatusLevel.Success
+      status.Messages = New Messages()
+      status.Messages.Add("success")
+      response.Level = StatusLevel.Success
+      response.StatusList.Add(status)
 
-        Dim response As New Response()
-        response.StatusList.Add(New Status() With { _
-          .Level = StatusLevel.Success, _
-          .Messages = New Messages() From { _
-          "success" _
-         } _
-        })
 
-        Return response
+      'response.StatusList.Add(New Status() With { _
+      ' .Level = StatusLevel.Success, _
+      '.Messages = New Messages() From { _
+      '"success" _
+      '} _
+      '})
 
-    End Function
+    Catch ex As Exception
+      Dim errorMessage As String
+      errorMessage = "Error Posting Tables: " & ex.Message
+      _logger.Error(errorMessage)
+      Dim status As New Status
+      status.Level = StatusLevel.Error
+      status.Messages = New Messages()
+      status.Messages.Add(errorMessage)
+      response.Level = StatusLevel.Error
+      response.StatusList.Add(status)
+    End Try
+    Return response
+
+  End Function
 
     Dim _sppidconfiguration As SPPIDConfiguration
     Public Overrides Function GetConfiguration() As System.Xml.Linq.XElement
@@ -354,80 +380,113 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     Public Overrides Function Configure(ByVal configuration As System.Xml.Linq.XElement) As Response
 
-        Dim response As New Response
-        If configuration IsNot Nothing Then
-            Dim Config As SPPIDConfiguration = Utility.DeserializeFromXElement(Of SPPIDConfiguration)(configuration)
+    Dim response As New Response
+    Try
+      If configuration IsNot Nothing Then
+        Dim Config As SPPIDConfiguration = Utility.DeserializeFromXElement(Of SPPIDConfiguration)(configuration)
 
-            '' Create Config File ----------------------
-            Dim configfile As New XElement("configuration", _
-                        New XElement("appSettings", _
-                        New XElement("add", New XAttribute("key", "Provider"), _
-                        New XAttribute("value", Config.Provider)), _
-                        New XElement("add", New XAttribute("key", "SPPIDSiteConnectionString"), _
-                        New XAttribute("value", EncryptionUtility.Encrypt(Config.SiteConnectionString))), _
-                        New XElement("add", New XAttribute("key", "SPPIDPlantConnectionString"), _
-                        New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantConnectionString))), _
-                        New XElement("add", New XAttribute("key", "PlantDataDicConnectionString"), _
-                        New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantDataDicConnectionString))), _
-                        New XElement("add", New XAttribute("key", "PIDConnectionString"), _
-                        New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDConnectionString))), _
-                        New XElement("add", New XAttribute("key", "PIDDataDicConnectionString"), _
-                        New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDDataDicConnectionString))), _
-                        New XElement("add", New XAttribute("key", "iRingStagingConnectionString"), _
-                        New XAttribute("value", EncryptionUtility.Encrypt(Config.StagingConnectionString)))))
-
-
-            If (File.Exists(_settings("ProjectConfigurationPath"))) Then
-                File.Delete(_settings("ProjectConfigurationPath"))
-            End If
-
-            configfile.Save(_settings("ProjectConfigurationPath"))
-
-            If (File.Exists(_settings("ProjectConfigurationPath"))) Then
-                AppSettings.AppendSettings(New StaticDust.Configuration.AppSettingsReader(_settings("ProjectConfigurationPath")))
-            End If
+        '' Create Config File ----------------------
+        Dim configfile As New XElement("configuration", _
+                    New XElement("appSettings", _
+                    New XElement("add", New XAttribute("key", "Provider"), _
+                    New XAttribute("value", Config.Provider)), _
+                    New XElement("add", New XAttribute("key", "SPPIDSiteConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.SiteConnectionString))), _
+                    New XElement("add", New XAttribute("key", "SPPIDPlantConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantConnectionString))), _
+                    New XElement("add", New XAttribute("key", "PlantDataDicConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantDataDicConnectionString))), _
+                    New XElement("add", New XAttribute("key", "PIDConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDConnectionString))), _
+                    New XElement("add", New XAttribute("key", "PIDDataDicConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDDataDicConnectionString))), _
+                    New XElement("add", New XAttribute("key", "iRingStagingConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.StagingConnectionString)))))
 
 
-            ''Set Connection strings----------------
-            If (AppSettings("SPPIDPlantConnectionString").ToString().Contains("PROTOCOL=TCP")) Then
-                _siteConnOracle = New OracleConnection(AppSettings("SPPIDSiteConnectionString"))
-
-                _plantConnOracle = New OracleConnection(AppSettings("SPPIDPlantConnectionString"))
-
-                _PIDConnOracle = New OracleConnection(AppSettings("PIDConnectionString"))
-                _PIDDicConnOracle = New OracleConnection(AppSettings("PIDDataDicConnectionString"))
-
-
-                _plantDicConnOracle = New OracleConnection(AppSettings("PlantDataDicConnectionString"))
-
-            Else
-                _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
-                _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
-            End If
-
-
-            _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
+        If (File.Exists(_settings("ProjectConfigurationPath"))) Then
+          File.Delete(_settings("ProjectConfigurationPath"))
         End If
-        Dim success As String = UpdateConfigurations()
-        If success.Contains("Pass") = False Then
-            response.Level = StatusLevel.Error
-        End If
-        response.Messages.Add(success)
 
-        Return response
-    End Function
+        configfile.Save(_settings("ProjectConfigurationPath"))
+
+        If (File.Exists(_settings("ProjectConfigurationPath"))) Then
+          AppSettings.AppendSettings(New StaticDust.Configuration.AppSettingsReader(_settings("ProjectConfigurationPath")))
+        End If
+
+
+        ''Set Connection strings----------------
+        If (AppSettings("SPPIDPlantConnectionString").ToString().Contains("PROTOCOL=TCP")) Then
+          _siteConnOracle = New OracleConnection(AppSettings("SPPIDSiteConnectionString"))
+
+          _plantConnOracle = New OracleConnection(AppSettings("SPPIDPlantConnectionString"))
+
+          _PIDConnOracle = New OracleConnection(AppSettings("PIDConnectionString"))
+          _PIDDicConnOracle = New OracleConnection(AppSettings("PIDDataDicConnectionString"))
+
+
+          _plantDicConnOracle = New OracleConnection(AppSettings("PlantDataDicConnectionString"))
+
+        Else
+          _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
+          _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
+        End If
+
+
+        _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
+      End If
+      Dim success As String = UpdateConfigurations()
+      If success.Contains("Pass") = False Then
+        response.Level = StatusLevel.Error
+      End If
+      response.Messages.Add(success)
+    Catch ex As Exception
+      Dim errorMessage As String
+      errorMessage = "Error Happened in Configuring SPPID Datalayer: " & ex.Message
+      _logger.Error(errorMessage)
+      Dim status As New Status
+      status.Level = StatusLevel.Error
+      status.Messages = New Messages()
+      status.Messages.Add(errorMessage)
+      response.Level = StatusLevel.Error
+      response.StatusList.Add(status)
+    End Try
+    Return response
+  End Function
 
     Public Overrides Function CreateDataTable(ByVal tableName As String, ByVal identifiers As IList(Of String)) As System.Data.DataTable
         Throw New NotImplementedException()
     End Function
 
-    Public Overrides Function DeleteDataTable(ByVal tableName As String, ByVal identifiers As IList(Of String)) As Response
-        Throw New NotImplementedException()
-    End Function
+  Public Overrides Function DeleteDataTable(ByVal tableName As String, ByVal identifiers As IList(Of String)) As Response
+    Dim response As New Response
+    Dim errorMessage As String
+    errorMessage = "The function of DeleteDataTable is not implemented "
+    _logger.Error(errorMessage)
+    Dim status As New Status
+    status.Level = StatusLevel.Error
+    status.Messages = New Messages()
+    status.Messages.Add(errorMessage)
+    response.Level = StatusLevel.Error
+    response.StatusList.Add(status)
+    Return response
+    'Throw New NotImplementedException()
+  End Function
 
-    Public Overrides Function DeleteDataTable(ByVal tableName As String, ByVal whereClause As String) As Response
-        Throw New NotImplementedException()
-    End Function
+  Public Overrides Function DeleteDataTable(ByVal tableName As String, ByVal whereClause As String) As Response
+    Dim response As New Response
+    Dim errorMessage As String
+    errorMessage = "The function of DeleteDataTable is not implemented "
+    _logger.Error(errorMessage)
+    Dim status As New Status
+    status.Level = StatusLevel.Error
+    status.Messages = New Messages()
+    status.Messages.Add(errorMessage)
+    response.Level = StatusLevel.Error
+    response.StatusList.Add(status)
+    Return response
+    'Throw New NotImplementedException()
+  End Function
 
     Public Overrides Function GetRelatedDataTable(ByVal dataRow As System.Data.DataRow, ByVal relatedTableName As String) As System.Data.DataTable
         Throw New NotImplementedException()
@@ -439,35 +498,72 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Throw New NotImplementedException()
     End Function
 
-    Public Overrides Function Refresh(ByVal tableName As String) As Response
+  Public Overrides Function Refresh(ByVal tableName As String) As Response
+    Dim response As New Response
+    Try
+      Dim success = UpdateConfigurations(tableName)
+      Dim status As New Status
+      status.Level = StatusLevel.Success
+      status.Messages = New Messages()
+      status.Messages.Add(success)
+      response.Level = StatusLevel.Success
+      response.StatusList.Add(status)
+    Catch ex As Exception
+      Dim errorMessage As String
+      errorMessage = "Error refreshing the table of " & tableName & ": " & ex.Message
+      _logger.Error(errorMessage)
+      Dim status As New Status
+      status.Level = StatusLevel.Error
+      status.Messages = New Messages()
+      status.Messages.Add(errorMessage)
+      response.Level = StatusLevel.Error
+      response.StatusList.Add(status)
+    End Try
+    Return response
+  End Function
 
-        Dim success = UpdateConfigurations(tableName)
+  Public Overrides Function RefreshAll() As Response
 
-        Dim response As New Response
+    Dim response As New Response
+    Try
+      Dim success = UpdateConfigurations()
+      Dim status As New Status
+      status.Level = StatusLevel.Success
+      status.Messages = New Messages()
+      status.Messages.Add(success)
+      response.Level = StatusLevel.Success
+      response.StatusList.Add(status)
+    Catch ex As Exception
+      Dim errorMessage As String
+      errorMessage = "Error refreshing dictionary: " & ex.Message
+      _logger.Error(errorMessage)
+      Dim status As New Status
+      status.Level = StatusLevel.Error
+      status.Messages = New Messages()
+      status.Messages.Add(errorMessage)
+      response.Level = StatusLevel.Error
+      response.StatusList.Add(status)
+      'MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
+      ' this will likely only be loaded in this way while testing, so ignore the error
+    End Try
+    Return response
 
-        response.Messages.Add(success)
+  End Function
 
-
-        Return response
-
-    End Function
-
-    Public Overrides Function RefreshAll() As Response
-
-        Dim success = UpdateConfigurations()
-
-        Dim response As New Response
-        response.Messages.Add(success)
-
-        Return response
-
-    End Function
-
-    Public Overrides Function RefreshDataTable(ByVal tablename As String) As Response
-
-        Throw New NotImplementedException()
-
-    End Function
+  Public Overrides Function RefreshDataTable(ByVal tablename As String) As Response
+    Dim response As New Response
+    Dim errorMessage As String
+    errorMessage = "The function of RefreshDataTable is not implemented "
+    _logger.Error(errorMessage)
+    Dim status As New Status
+    status.Level = StatusLevel.Error
+    status.Messages = New Messages()
+    status.Messages.Add(errorMessage)
+    response.Level = StatusLevel.Error
+    response.StatusList.Add(status)
+    Return response
+    'Throw New NotImplementedException()
+  End Function
 
 
 
@@ -585,9 +681,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             Next
 
-        Catch ex As Exception
-            Debug.Print("got here")
-            Return "Fail: " + ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Debug.Print("got here")
+      Return "Fail: " + ex.Message
         End Try
 
         Return "Pass"
@@ -706,9 +803,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             Next
 
-        Catch ex As Exception
-            Debug.Print("got here")
-            Return "Fail: " + ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Debug.Print("got here")
+      Return "Fail: " + ex.Message
         End Try
 
         Return "Pass"
@@ -744,8 +842,9 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             _settings("ApplicationName") = applicationName
             _settings("Scope") = scope
             _settings("DBDictionaryPath") = [String].Format("{0}DatabaseDictionary.{1}.xml", "D:\Project\iRing-Branch\2.3.x\iRINGTools.Services\App_Data\", scope)
-        Catch ex As Exception
-            Throw New Exception(String.Format("Error initializing application: {0})", ex))
+    Catch ex As Exception
+      _logger.Debug("Error initializing application: " & ex.Message)
+      Throw New Exception(String.Format("Error initializing application: {0})", ex))
         End Try
     End Sub
 
@@ -810,8 +909,9 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     Where el.Attribute("name").Value <> "!Template" AndAlso el.Attribute("name").Value <> "!SiteData"
             End If
 
-        Catch ex As Exception
-            Return "Fail: " & ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Return "Fail: " & ex.Message
         End Try
 
         Return "Pass"
@@ -875,8 +975,9 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             Return "Pass"
 
-        Catch ex As Exception
-            Return "Fail: " & ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Return "Fail: " & ex.Message
         End Try
 
     End Function
@@ -991,16 +1092,27 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 _selectSqlDR.Close()
             Next
             Return _dataDictionary
-        Catch ex As Exception
-            '_logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
-            'Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
+    Catch ex As Exception
+      _logger.Debug("Error in LoadDataObjects: " & ex.Message)
+      '_logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
+      'Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
         End Try
         Return Nothing
     End Function
 
-    Private Function SaveDataObjects(ByVal objectType As String, ByVal dataObjects As IList(Of IDataObject)) As Response
-        Return New Response
-    End Function
+  Private Function SaveDataObjects(ByVal objectType As String, ByVal dataObjects As IList(Of IDataObject)) As Response
+    Dim response As New Response
+    Dim errorMessage As String
+    errorMessage = "The function of SaveDataObjects is not implemented "
+    _logger.Error(errorMessage)
+    Dim status As New Status
+    status.Level = StatusLevel.Error
+    status.Messages = New Messages()
+    status.Messages.Add(errorMessage)
+    response.Level = StatusLevel.Error
+    response.StatusList.Add(status)
+    Return response
+  End Function
 
     'Private Function skipDwg( _
     '      ByRef rep As LMRepresentation, _
@@ -1037,7 +1149,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 Dim configDocument As XDocument = XDocument.Load(uri)
                 _configuration = configDocument.Element("configuration")
             Catch ex As Exception
-
+        _logger.Debug(ex.Message)
             End Try
         End If
     End Sub

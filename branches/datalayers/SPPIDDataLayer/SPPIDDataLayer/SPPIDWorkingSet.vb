@@ -359,8 +359,9 @@ Public Class SPPIDWorkingSet
 
             QueryNode = q.First
 
-        Catch ex As Exception
-            Return "Fail: " & ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Return "Fail: " & ex.Message
         End Try
 
         Return "Pass"
@@ -443,19 +444,22 @@ Public Class SPPIDWorkingSet
             ' set properly
             ' _siteDataDV = _siteDataDT.DefaultView
 
-        Catch ex As InvalidOperationException
-            Throw ex
-        Catch ex As Exception
-            Throw ex
-            ' to do: Exit ungracefully if the connection string does
+    Catch ex As InvalidOperationException
+      _logger.Debug(ex.Message)
+      Throw ex
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Throw ex
+      ' to do: Exit ungracefully if the connection string does
         End Try
 
         ' exit if the table is not found
         Try
             TablesDR = _tablesDT.Select("Name='T_DB_Data'").First
-        Catch ex As Exception
-            Throw New KeyNotFoundException("The table 'T_DB_Data' cannot be found in the SPPID site database using " & _
-                                       "connection string '" & SiteConnection.ConnectionString & "'")
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Throw New KeyNotFoundException("The table 'T_DB_Data' cannot be found in the SPPID site database using " & _
+                                 "connection string '" & SiteConnection.ConnectionString & "'")
         End Try
 
         ' otherwise use the schema to form the correct query to get the SPPID schema types
@@ -477,8 +481,9 @@ Public Class SPPIDWorkingSet
             ' overridden when Fill (or the default GetData) is called.
             _siteDataTA.Adapter.SelectCommand.CommandText = queryText
 
-        Catch ex As Exception
-            Throw New InvalidExpressionException("The site data query '" & queryText & "' is malformed")
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Throw New InvalidExpressionException("The site data query '" & queryText & "' is malformed")
         End Try
 
         _siteDataTA.ClearBeforeFill = True
@@ -538,19 +543,22 @@ Public Class SPPIDWorkingSet
             ' set properly
             ' _siteDataDV = _siteDataDT.DefaultView
 
-        Catch ex As InvalidOperationException
-            Throw ex
-        Catch ex As Exception
-            Throw ex
-            ' to do: Exit ungracefully if the connection string does
+    Catch ex As InvalidOperationException
+      _logger.Debug(ex.Message)
+      Throw ex
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Throw ex
+      ' to do: Exit ungracefully if the connection string does
         End Try
 
         ' exit if the table is not found
         Try
             oraTablesDR = _OratablesDT.Select("Name='T_DB_Data'").First
-        Catch ex As Exception
-            Throw New KeyNotFoundException("The table 'T_DB_Data' cannot be found in the SPPID site database using " & _
-                                       "connection string '" & SiteConnection.ConnectionString & "'")
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Throw New KeyNotFoundException("The table 'T_DB_Data' cannot be found in the SPPID site database using " & _
+                                 "connection string '" & SiteConnection.ConnectionString & "'")
         End Try
 
         ' otherwise use the schema to form the correct query to get the SPPID schema types
@@ -581,8 +589,9 @@ Public Class SPPIDWorkingSet
             ' overridden when Fill (or the default GetData) is called.
             _OrasiteDataTA.Adapter.SelectCommand.CommandText = queryText
 
-        Catch ex As Exception
-            Throw New InvalidExpressionException("The site data query '" & queryText & "' is malformed")
+    Catch ex As Exception
+      _logger.Debug("The site data query '" & queryText & "' is malformed; " + ex.Message)
+      Throw New InvalidExpressionException("The site data query '" & queryText & "' is malformed")
         End Try
 
         _OrasiteDataTA.ClearBeforeFill = True
@@ -664,8 +673,9 @@ Public Class SPPIDWorkingSet
 
             Next
 
-        Catch ex As Exception
-            Return "Fail: " & ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Return "Fail: " & ex.Message
         End Try
 
         Return "Pass"
@@ -732,8 +742,9 @@ Public Class SPPIDWorkingSet
 
             Next
 
-        Catch ex As Exception
-            Return "Fail: " & ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Return "Fail: " & ex.Message
         End Try
 
         Return "Pass"
