@@ -109,7 +109,8 @@ Module Module1
             spdl = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
 
         Catch ex As Exception
-            ' Intentionally Empty - catching an error here allows the querylog to be processed later
+      ' Intentionally Empty - catching an error here allows the querylog to be processed later
+      Throw ex
         End Try
 
         Testing()
