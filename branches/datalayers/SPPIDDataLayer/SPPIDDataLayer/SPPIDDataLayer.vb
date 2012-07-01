@@ -129,6 +129,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     Catch ex As Exception
       _logger.Debug("SPPIDDataLayer could not be instantiated due to error: " + ex.Message)
+      Throw New Exception(ex.Message)
       'MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
       ' this will likely only be loaded in this way while testing, so ignore the error
         End Try
@@ -680,15 +681,12 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 End If
 
             Next
-
+      Return "Pass"
     Catch ex As Exception
       _logger.Debug(ex.Message)
       Debug.Print("got here")
       Return "Fail: " + ex.Message
-        End Try
-
-        Return "Pass"
-
+    End Try
     End Function
 
     Public Function MigrateSPPIDToStagingfromOracle(Optional ByVal tablename As String = "") As String
@@ -802,16 +800,13 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 End If
 
             Next
-
+      Return "Pass"
     Catch ex As Exception
       _logger.Debug(ex.Message)
       Debug.Print("got here")
       Return "Fail: " + ex.Message
-        End Try
-
-        Return "Pass"
-
-    End Function
+    End Try
+  End Function
 
 
 
@@ -908,15 +903,12 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     Select el
                     Where el.Attribute("name").Value <> "!Template" AndAlso el.Attribute("name").Value <> "!SiteData"
             End If
-
+      Return "Pass"
     Catch ex As Exception
       _logger.Debug(ex.Message)
       Return "Fail: " & ex.Message
-        End Try
-
-        Return "Pass"
-
-    End Function
+    End Try
+  End Function
 
     ''' <summary>
     '''Reset or update Data Objects
@@ -978,9 +970,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Catch ex As Exception
       _logger.Debug(ex.Message)
       Return "Fail: " & ex.Message
-        End Try
-
-    End Function
+    End Try
+  End Function
 
 
     Private Sub DecryptConntionInfo(ByRef siteConn As String, ByRef stageConn As String, ByRef plantconn As String, ByRef pidconn As String, ByRef pidDicconn As String, ByRef plantDicconn As String)
@@ -1095,7 +1086,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Catch ex As Exception
       _logger.Debug("Error in LoadDataObjects: " & ex.Message)
       '_logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
-      'Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
+      Throw New Exception("Error while loading data objects " & ex.Message)
         End Try
         Return Nothing
     End Function
@@ -1150,6 +1141,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 _configuration = configDocument.Element("configuration")
             Catch ex As Exception
         _logger.Debug(ex.Message)
+
             End Try
         End If
     End Sub

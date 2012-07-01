@@ -270,16 +270,14 @@ Public Module Common
 
                 ' QueryText = sb.ToString
 
-            End If
+      End If
+      Return "Pass"
 
     Catch ex As Exception
       _logger.Debug("Fail: (BuildQuery) " & ex.Message)
       Return "Fail: (BuildQuery) " & ex.Message
         End Try
-
-        Return "Pass"
-
-    End Function
+  End Function
 
     <Extension()> _
     Public Function GetDataTypeString(Row As SQLSchemaDS.SchemaColumnsRow) As String
@@ -414,13 +412,13 @@ Public Module Common
             Else
                 Parts.Add(SQLClause.Set, s.ToString)
             End If
-
+      Return "Pass"
     Catch ex As Exception
       _logger.Debug("Fail: (" & MethodBase.GetCurrentMethod.Name & "): " & ex.Message)
       Return "Fail: (" & MethodBase.GetCurrentMethod.Name & "): " & ex.Message
         End Try
 
-        Return "Pass"
+
 
     End Function
 
@@ -1044,13 +1042,13 @@ Public Module Common
 
             If o.Length > 0 Then o.Insert(0, "ORDER BY " & nltb)
             QueryParts.Add(SQLClause.OrderBy, o.ToString)
-
+      Return "Pass"
     Catch ex As Exception
       _logger.Debug(ex.Message)
       Return "Fail: " & ex.Message
-        End Try
+    End Try
 
-        Return "Pass"
+
 
     End Function
 
@@ -1486,13 +1484,13 @@ Public Module Common
 
             If o.Length > 0 Then o.Insert(0, "ORDER BY " & nltb)
             QueryParts.Add(SQLClause.OrderBy, o.ToString)
-
+      Return "Pass"
     Catch ex As Exception
       _logger.Debug(ex.Message)
       Return "Fail: " & ex.Message
         End Try
 
-        Return "Pass"
+
 
     End Function
 
