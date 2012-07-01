@@ -8,6 +8,7 @@ Imports System.Text.RegularExpressions
 'Imports System.Data.OracleClient
 Imports Oracle.DataAccess.Client
 
+Imports log4net
 Public Module Common
 
 #Region " Constants "
@@ -211,14 +212,16 @@ Public Module Common
                                Optional SelectInto As Boolean = False
                                ) As String
 
-        Dim exists As Boolean
+    Dim exists As Boolean
         Dim clause As String = ""
         Dim sb As New StringBuilder
         Dim qParts As Array = [Enum].GetValues(GetType(SQLClause))
         Dim varName As String
         Dim varValue As String = ""
         Dim varKey As String = ""
-        Dim pat As String
+    Dim pat As String
+    Dim _logger As ILog = LogManager.GetLogger(GetType(SPPIDDataLayer))
+
 
         For Each part As SQLClause In qParts
 
@@ -269,8 +272,9 @@ Public Module Common
 
             End If
 
-        Catch ex As Exception
-            Return "Fail: (BuildQuery) " & ex.Message
+    Catch ex As Exception
+      _logger.Debug("Fail: (BuildQuery) " & ex.Message)
+      Return "Fail: (BuildQuery) " & ex.Message
         End Try
 
         Return "Pass"
@@ -411,8 +415,9 @@ Public Module Common
                 Parts.Add(SQLClause.Set, s.ToString)
             End If
 
-        Catch ex As Exception
-            Return "Fail: (" & MethodBase.GetCurrentMethod.Name & "): " & ex.Message
+    Catch ex As Exception
+      _logger.Debug("Fail: (" & MethodBase.GetCurrentMethod.Name & "): " & ex.Message)
+      Return "Fail: (" & MethodBase.GetCurrentMethod.Name & "): " & ex.Message
         End Try
 
         Return "Pass"
@@ -671,7 +676,8 @@ Public Module Common
         Dim isExpression As Boolean
         Dim vals As Dictionary(Of String, String) = DeclarationValues
         Dim lastChecked As String = ""
-        Dim includeFilter As Boolean = False
+    Dim includeFilter As Boolean = False
+    Dim _logger As ILog = LogManager.GetLogger(GetType(SPPIDDataLayer))
 
         ' init
         If CommonServerName <> "" Then svNm = "[" & CommonServerName & "]."
@@ -1039,8 +1045,9 @@ Public Module Common
             If o.Length > 0 Then o.Insert(0, "ORDER BY " & nltb)
             QueryParts.Add(SQLClause.OrderBy, o.ToString)
 
-        Catch ex As Exception
-            Return "Fail: " & ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Return "Fail: " & ex.Message
         End Try
 
         Return "Pass"
@@ -1102,7 +1109,8 @@ Public Module Common
         Dim isExpression As Boolean
         Dim vals As Dictionary(Of String, String) = DeclarationValues
         Dim lastChecked As String = ""
-        Dim includeFilter As Boolean = False
+    Dim includeFilter As Boolean = False
+    Dim _logger As ILog = LogManager.GetLogger(GetType(SPPIDDataLayer))
 
         ' init
         If CommonServerName <> "" Then svNm = "[" & CommonServerName & "]."
@@ -1479,8 +1487,9 @@ Public Module Common
             If o.Length > 0 Then o.Insert(0, "ORDER BY " & nltb)
             QueryParts.Add(SQLClause.OrderBy, o.ToString)
 
-        Catch ex As Exception
-            Return "Fail: " & ex.Message
+    Catch ex As Exception
+      _logger.Debug(ex.Message)
+      Return "Fail: " & ex.Message
         End Try
 
         Return "Pass"
