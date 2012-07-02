@@ -749,7 +749,10 @@ namespace org.iringtools.library
                 }
               }
 
-              dataTable.Rows.Add(dataRow);
+              if (dataRow.RowState == DataRowState.Added || dataRow.RowState == DataRowState.Detached)
+              {
+                dataTable.Rows.Add(dataRow);
+              }
             }
 
             dataTables.Add(dataTable);
