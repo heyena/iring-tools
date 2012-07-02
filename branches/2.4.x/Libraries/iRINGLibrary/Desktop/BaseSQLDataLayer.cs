@@ -690,7 +690,6 @@ namespace org.iringtools.library
               if (dataRow == null)
               {
                 dataRow = dataTable.NewRow();
-                dataTable.Rows.Add(dataRow);
               }
 
               // update or fill row values from data object properties
@@ -698,7 +697,7 @@ namespace org.iringtools.library
 
               foreach (DataProperty objectProperty in objectDefinition.dataProperties)
               {
-                if (dataRow.RowState == DataRowState.Added || !objectProperty.isReadOnly)
+                if (dataRow.RowState == DataRowState.Added || dataRow.RowState == DataRowState.Detached || !objectProperty.isReadOnly)
                 {
                   object value = dataObject.GetPropertyValue(objectProperty.propertyName);
                   dataRow.Table.Columns[objectProperty.columnName].ReadOnly = false;
@@ -749,6 +748,8 @@ namespace org.iringtools.library
                   }
                 }
               }
+
+              dataTable.Rows.Add(dataRow);
             }
 
             dataTables.Add(dataTable);
