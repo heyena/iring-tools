@@ -40,12 +40,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
-    <Reference Include="Ext.Net">
-      <HintPath>..\ExternalBinaries\ext.net.community.1.0rc1\Ext.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Ext.Net.Utilities">
-      <HintPath>..\ExternalBinaries\ext.net.community.1.0rc1\Ext.Net.Utilities.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>

@@ -63,8 +63,8 @@ public class DifferencingProvider
 
     /*
      * Case 1:
-     * 
-     * Source DTIs: Target DTIs: x x x x
+     *    Source DTIs: 
+     *    Target DTIs: x x x x
      */
     if (sourceDtis == null || sourceDtis.getDataTransferIndexList().getItems().size() == 0)
     {
@@ -82,8 +82,8 @@ public class DifferencingProvider
 
     /*
      * Case 2:
-     * 
-     * Source DTIs: x x x x Target DTIs:
+     *    Source DTIs: x x x x 
+     *    Target DTIs:
      */
     if (targetDtis == null || targetDtis.getDataTransferIndexList().getItems().size() == 0)
     {
@@ -106,14 +106,16 @@ public class DifferencingProvider
     Collections.sort(targetDtiList, identifierComparator);
 
     /*
-     * Case 3, 4:
+     * Case 3:
+     *    Source DTIs:         x x x x 
+     *    Target DTIs: x x x x
      * 
-     * Source DTIs: x x x x Target DTIs: x x x x
-     * 
-     * Source DTIs: x x x x Target DTIs: x x x x
+     * Case 4:
+     *    Source DTIs: x x x x 
+     *    Target DTIs:         x x x x
      */
-    if (sourceDtiList.get(0).getIdentifier().compareTo(targetDtiList.get(targetDtiList.size() - 1).getIdentifier()) > 0
-        || targetDtiList.get(0).getIdentifier().compareTo(sourceDtiList.get(sourceDtiList.size() - 1).getIdentifier()) > 0)
+    if (sourceDtiList.get(0).getIdentifier().toLowerCase().compareTo(targetDtiList.get(targetDtiList.size() - 1).getIdentifier().toLowerCase()) > 0
+        || targetDtiList.get(0).getIdentifier().toLowerCase().compareTo(sourceDtiList.get(sourceDtiList.size() - 1).getIdentifier().toLowerCase()) > 0)
     {
       for (DataTransferIndex dti : sourceDtiList)
       {
@@ -137,13 +139,17 @@ public class DifferencingProvider
     }
 
     /*
-     * Case 5, 6, 7:
-     * 
-     * Source DTIs: x x x x Target DTIs: x x x x
-     * 
-     * Source DTIs: x x x x Target DTIs: x x x x
-     * 
-     * Source DTIs: x x x x Target DTIs: x x x x
+     * Case 5:
+     *    Source DTIs:     x x x x 
+     *    Target DTIs: x x x x
+     *    
+     * Case 6:
+     *    Source DTIs: x x x x 
+     *    Target DTIs:     x x x x
+     *    
+     * Case 7:
+     *    Source DTIs: x x x x 
+     *    Target DTIs: x x x x
      */
     int sourceIndex = 0;
     int targetIndex = 0;
@@ -153,7 +159,7 @@ public class DifferencingProvider
       DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(sourceIndex);
       DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(targetIndex);
 
-      int value = sourceDti.getIdentifier().compareTo(targetDti.getIdentifier());
+      int value = sourceDti.getIdentifier().toLowerCase().compareTo(targetDti.getIdentifier().toLowerCase());
 
       if (value < 0)
       {
@@ -163,23 +169,30 @@ public class DifferencingProvider
         if (sourceIndex < sourceDtiList.size())
           sourceIndex++;
       }
-      else if (value == 0)
+      else if (value == 0)  // identifiers match, can be SYNC or CHANGE
       {
-        if (sourceDti.getHashValue().compareTo(targetDti.getHashValue()) == 0)
+        DataTransferIndex resultDti = new DataTransferIndex();
+        resultDti.setIdentifier(sourceDti.getIdentifier());
+        resultDti.setInternalIdentifier(sourceDti.getInternalIdentifier() + "->" + targetDti.getInternalIdentifier());
+        
+        if (sourceDti.getHashValue().equalsIgnoreCase(targetDti.getHashValue()))
         {
-          targetDti.setTransferType(TransferType.SYNC);
+          resultDti.setTransferType(TransferType.SYNC);
+          resultDti.setHashValue(targetDti.getHashValue());
+          resultDti.setSortIndex(targetDti.getSortIndex());
         }
         else
         {
-          targetDti.setTransferType(TransferType.CHANGE);
-          targetDti.setHashValue(sourceDti.getHashValue()); // use source hash value
-          targetDti.setSortIndex(sourceDti.getSortIndex()); // use source sort index
+          resultDti.setTransferType(TransferType.CHANGE);
+          resultDti.setHashValue(sourceDti.getHashValue());
+          resultDti.setSortIndex(sourceDti.getSortIndex());
         }
 
-        resultDtiListItems.add(targetDti);
+        resultDtiListItems.add(resultDti);
 
         if (sourceIndex < sourceDtiList.size())
           sourceIndex++;
+        
         if (targetIndex < targetDtiList.size())
           targetIndex++;
       }
@@ -290,7 +303,6 @@ public class DifferencingProvider
                   "Identifiers are out of sync - source identifier [%s], target identifier [%s]",
                   sourceClassObject.getIdentifier(), targetClassObject.getIdentifier());
               logger.error(message);
-              throw new ServiceProviderException(message);
             }
 
             if (targetClassObject.getTemplateObjects() != null && sourceClassObject.getTemplateObjects() != null)
@@ -358,7 +370,7 @@ public class DifferencingProvider
                             if (targetRoleValue == null) targetRoleValue = "";
                             if (sourceRoleValue == null) sourceRoleValue = "";
 
-                            if (!targetRoleValue.equals(sourceRoleValue))
+                            if (!targetRoleValue.equalsIgnoreCase(sourceRoleValue))
                             {
                               sourceRoleObject.setOldValue(targetRoleValue);
                               roleValueChanged = true;

@@ -293,38 +293,62 @@ public class ExchangeProvider
     DataTransferObjectList resultDtoList = new DataTransferObjectList();
     resultDtos.setDataTransferObjectList(resultDtoList);
     List<DataTransferObject> resultDtoListItems = resultDtoList.getItems();
-
+    
+    List<DataTransferIndex> sourceDtiItems = new ArrayList<DataTransferIndex>();
+    List<DataTransferIndex> targetDtiItems = new ArrayList<DataTransferIndex>();    
+    
     try
     {
       initExchangeDefinition(scope, id);
+
+      for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
+      {
+        DataTransferIndex sourceDti, targetDti;
+        String splitToken = "->";
+        int splitIndex;
+        
+        switch (dti.getTransferType())
+        {
+        case ADD:
+          sourceDtiItems.add(dti);
+          break;
+        case CHANGE:
+          splitIndex = dti.getInternalIdentifier().indexOf(splitToken);
+          
+          sourceDti = new DataTransferIndex();
+          sourceDti.setIdentifier(dti.getIdentifier());
+          sourceDti.setHashValue(dti.getHashValue());
+          sourceDti.setSortIndex(dti.getSortIndex());
+          sourceDti.setInternalIdentifier(dti.getInternalIdentifier().substring(0, splitIndex));        
+          sourceDtiItems.add(sourceDti);   
+          
+          targetDti = new DataTransferIndex();
+          targetDti.setIdentifier(dti.getIdentifier());
+          targetDti.setHashValue(dti.getHashValue());
+          targetDti.setSortIndex(dti.getSortIndex());
+          targetDti.setInternalIdentifier(dti.getInternalIdentifier().substring(splitIndex+2));        
+          targetDtiItems.add(targetDti);
+          break;
+        case SYNC:
+          splitIndex = dti.getInternalIdentifier().indexOf(splitToken);
+          
+          sourceDti = new DataTransferIndex();
+          sourceDti.setIdentifier(dti.getIdentifier());
+          sourceDti.setHashValue(dti.getHashValue());
+          sourceDti.setSortIndex(dti.getSortIndex());
+          sourceDti.setInternalIdentifier(dti.getInternalIdentifier().substring(0, splitIndex));        
+          sourceDtiItems.add(sourceDti);
+          break;
+        case DELETE:
+          targetDtiItems.add(dti);
+          break;
+        }
+      }
     }
-    catch (ServiceProviderException e)
+    catch (Exception e)
     {
       logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
-    }
-
-    List<DataTransferIndex> sourceDtiItems = new ArrayList<DataTransferIndex>();
-    List<DataTransferIndex> targetDtiItems = new ArrayList<DataTransferIndex>();
-
-    for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
-    {
-      switch (dti.getTransferType())
-      {
-      case ADD:
-        sourceDtiItems.add(dti);
-        break;
-      case CHANGE:
-        sourceDtiItems.add(dti);
-        targetDtiItems.add(dti);
-        break;
-      case SYNC:
-        sourceDtiItems.add(dti);
-        break;
-      case DELETE:
-        targetDtiItems.add(dti);
-        break;
-      }
     }
     
     String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxo";
@@ -494,7 +518,7 @@ public class ExchangeProvider
     {
       for (DataTransferObject dto : resultDtoListItems)
       {
-        if (dti.getIdentifier().equals(dto.getIdentifier()))
+        if (dti.getIdentifier().equalsIgnoreCase(dto.getIdentifier()))
         {
           orderedDtoListItems.add(dto);
           break;
