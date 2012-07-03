@@ -309,7 +309,7 @@ public class DataModel
       List<DataTransferIndex> cloneFullDtiList = new ArrayList<DataTransferIndex>();
       cloneFullDtiList.addAll(fullDtiList);
 
-      // apply transfer type filtering
+      // apply transfer type filter
       if (transferTypeExpression != null && cloneFullDtiList != null)
       {
         String value = transferTypeExpression.getValues().getItems().get(0);
@@ -326,9 +326,7 @@ public class DataModel
       if ((dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
           || dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
       {
-        boolean matched = false;
-        List<DataTransferIndex> partialDtiList = null;
-
+        // apply property filter 
         HttpClient httpClient = new HttpClient(serviceUri);
         HttpUtils.addHttpHeaders(session, httpClient);
 
@@ -339,39 +337,9 @@ public class DataModel
         dxiRequest.setDataFilter(dataFilter);
 
         resultDtis = httpClient.post(DataTransferIndices.class, destinationUri, dxiRequest);
-
-        if (resultDtis != null && resultDtis.getDataTransferIndexList() != null)
-        {
-          partialDtiList = resultDtis.getDataTransferIndexList().getItems();
-          matched = parsePartialDtis(partialDtiList, cloneFullDtiList);
-        }
-
-        if (!matched)
-        {
-          destinationUri = dtiRelativePath + "?destination=target";
-          dxiRequest.setDataFilter(dataFilter);
-          DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, destinationUri, dxiRequest);
-
-          if (targetDtis != null && targetDtis.getDataTransferIndexList() != null)
-          {
-            List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();
-
-            for (DataTransferIndex targetDti : targetDtiList)
-            {
-              for (DataTransferIndex fullDti : cloneFullDtiList)
-              {
-                if (fullDti.getTransferType() == org.iringtools.dxfr.dti.TransferType.DELETE
-                    && fullDti.getIdentifier().equalsIgnoreCase(targetDti.getIdentifier()))
-                {
-                  partialDtiList.add(targetDti);
-                  break;
-                }
-              }
-            }
-
-            parsePartialDtis(partialDtiList, cloneFullDtiList);
-          }
-        }
+        
+        List<DataTransferIndex> partialDtiList = resultDtis.getDataTransferIndexList().getItems();
+        parsePartialDtis(partialDtiList, cloneFullDtiList);
       }
       else
       {
@@ -979,6 +947,9 @@ public class DataModel
     }
   }
 
+  //
+  // remove DTIs from the partial list who are not in the full list; also apply internal identifier and hash value
+  //
   private boolean parsePartialDtis(List<DataTransferIndex> partialDtiList, List<DataTransferIndex> fullDtiList)
   {
     int count = 0;
@@ -991,13 +962,12 @@ public class DataModel
       {
         if (partialDtiList.get(i).getIdentifier().equalsIgnoreCase(fullDtiList.get(j).getIdentifier()))
         {
+          partialDtiList.get(i).setInternalIdentifier(fullDtiList.get(j).getInternalIdentifier());
           partialDtiList.get(i).setTransferType(fullDtiList.get(j).getTransferType());
-
-          if (!partialDtiList.get(i).getHashValue().equalsIgnoreCase(fullDtiList.get(j).getHashValue()))
-            fullDtiList.get(j).setHashValue(partialDtiList.get(i).getHashValue());
 
           exists = true;
           count++;
+          
           break;
         }
       }

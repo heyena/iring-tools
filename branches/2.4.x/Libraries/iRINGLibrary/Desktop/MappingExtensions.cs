@@ -30,48 +30,49 @@ using System.Linq;
 using org.iringtools.dxfr.manifest;
 using org.iringtools.utility;
 using org.iringtools.library;
+using log4net;
 
 namespace org.iringtools.mapping
 {
   public static class MappingExtensions
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingExtensions));
+    
     public static readonly string RDL_NS = "http://rdl.rdlfacade.org/data#";
     public static readonly string RDF_NIL = "rdf:nil";
 
     public static Graph FindGraph(this Manifest manifest, string graphName)
     {
-      Graph graph = null;
-
       foreach (Graph manifestGraph in manifest.graphs)
       {
         if (manifestGraph.name.ToLower() == graphName.ToLower())
         {
           if (manifestGraph.classTemplatesList.Count == 0)
-            throw new Exception("Graph [" + graphName + "] is empty.");
+          {
+            _logger.Warn("Graph [" + graphName + "] is empty.");
+          }
 
-          graph = manifestGraph;
+          return manifestGraph;
         }
       }
 
-      return graph;
+      return null;
     }
 
     public static GraphMap FindGraphMap(this Mapping mapping, string graphName)
     {
-      GraphMap graphMap = null;
-
       foreach (GraphMap graph in mapping.graphMaps)
       {
         if (graph.name.ToLower() == graphName.ToLower())
         {
           if (graph.classTemplateMaps.Count == 0)
-            throw new Exception("Graph [" + graphName + "] is empty.");
+            _logger.Warn("Graph [" + graphName + "] is empty.");
 
-          graphMap = graph;
+          return graph;
         }
       }
 
-      return graphMap;
+      return null;
     }
 
     public static void DeleteRoleMap(this GraphMap graphMap, TemplateMap templateMap, string roleId)
@@ -94,6 +95,7 @@ namespace org.iringtools.mapping
       if (classTemplateMap.classMap != null)
       {
         List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+
         foreach (TemplateMap templateMap in templateMaps)
         {
           RoleMap classRole = templateMap.roleMaps.Where(c => c.classMap != null).FirstOrDefault();
@@ -103,6 +105,7 @@ namespace org.iringtools.mapping
             classRole.classMap = null;
           }
         }
+
         templateMaps.Clear();
         graphMap.classTemplateMaps.Remove(classTemplateMap);
       }
@@ -138,6 +141,7 @@ namespace org.iringtools.mapping
     public static void AddClassMap(this GraphMap graphMap, RoleMap roleMap, ClassMap classMap)
     {
       ClassTemplateMap classTemplateListMap = graphMap.GetClassTemplateMap(classMap.id);
+
       if (classTemplateListMap == null)
         classTemplateListMap = new ClassTemplateMap();
 
@@ -160,6 +164,7 @@ namespace org.iringtools.mapping
     {
       graphMap.AddClassMap(null, classMap);
       ClassTemplateMap classTemplateMap = graphMap.classTemplateMaps.Where(c => c.classMap.id == classMap.id).FirstOrDefault();
+
       if (classTemplateMap.classMap != null)
         classTemplateMap.templateMaps.Add(templateMap);
     }

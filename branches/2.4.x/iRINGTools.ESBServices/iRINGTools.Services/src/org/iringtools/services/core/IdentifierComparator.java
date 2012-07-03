@@ -8,6 +8,6 @@ public class IdentifierComparator implements Comparator<DataTransferIndex>
   @Override
   public int compare(DataTransferIndex dti1, DataTransferIndex dti2)
   {
-    return dti1.getIdentifier().compareTo(dti2.getIdentifier());
+    return dti1.getIdentifier().toLowerCase().compareTo(dti2.getIdentifier().toLowerCase());
   }
 }
