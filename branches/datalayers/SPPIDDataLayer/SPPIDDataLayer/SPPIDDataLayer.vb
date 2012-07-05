@@ -131,7 +131,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Try
             Dim path As String = [String].Format("{0}{1}DatabaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
             If (File.Exists(path)) Then
-                databaseDictionary = Utility.Read(Of DatabaseDictionary)(path)
+                databaseDictionary = utility.Utility.Read(Of DatabaseDictionary)(path)
             End If
             Return databaseDictionary
         Catch ex As Exception
@@ -149,11 +149,11 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             If (File.Exists(path)) Then
 
-                Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
+                Dim DataDictionary = utility.Utility.Read(Of DataDictionary)(path)
 
                 _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
 
-                _dataDictionary = Utility.Read(Of DataDictionary)(path)
+                _dataDictionary = utility.Utility.Read(Of DataDictionary)(path)
                 Return _dataDictionary
 
             Else
@@ -170,8 +170,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     _databaseDictionary.SchemaName = "dbo"
 
 
-                    Utility.Write(Of DatabaseDictionary)(_databaseDictionary, [String].Format("{0}{1}DataBaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
-                    Utility.Write(Of DataDictionary)(_dataDictionary, [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
+                    utility.Utility.Write(Of DatabaseDictionary)(_databaseDictionary, [String].Format("{0}{1}DataBaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
+                    utility.Utility.Write(Of DataDictionary)(_dataDictionary, [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName")))
 
                     ' _dataObjectDefinition = _dataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
                     Return _dataDictionary
@@ -364,7 +364,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             }
         End If
 
-        xelement = Utility.SerializeToXElement(_sppidconfiguration)
+        xelement = utility.Utility.SerializeToXElement(_sppidconfiguration)
 
         Return xelement
 
@@ -375,7 +375,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim response As New Response
         Try
             If configuration IsNot Nothing Then
-                Dim Config As SPPIDConfiguration = Utility.DeserializeFromXElement(Of SPPIDConfiguration)(configuration)
+                Dim Config As SPPIDConfiguration = utility.Utility.DeserializeFromXElement(Of SPPIDConfiguration)(configuration)
 
                 '' Create Config File ----------------------
                 Dim configfile As New XElement("configuration", _
@@ -816,7 +816,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             End If
         End If
 
-        Utility.Write(Of DatabaseDictionary)(dbDictionary, path)
+        utility.Utility.Write(Of DatabaseDictionary)(dbDictionary, path)
     End Sub
 
 
@@ -835,14 +835,14 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Sub
 
     Public Shared Function LoadDatabaseDictionary(ByVal path As String) As DatabaseDictionary
-        Dim dbDictionary As DatabaseDictionary = Utility.Read(Of DatabaseDictionary)(path)
+        Dim dbDictionary As DatabaseDictionary = utility.Utility.Read(Of DatabaseDictionary)(path)
         Dim connStr As String = dbDictionary.ConnectionString
 
         If connStr IsNot Nothing Then
             If connStr.ToUpper().Contains("DATA SOURCE") Then
                 ' connection string is not encrypted, encrypt and write it back
                 dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr)
-                Utility.Write(Of DatabaseDictionary)(dbDictionary, path)
+                utility.Utility.Write(Of DatabaseDictionary)(dbDictionary, path)
 
                 dbDictionary.ConnectionString = connStr
             Else

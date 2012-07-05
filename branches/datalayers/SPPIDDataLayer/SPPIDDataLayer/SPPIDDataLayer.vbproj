@@ -9,7 +9,7 @@
     </SchemaVersion>
     <ProjectGuid>{5541C20E-0ADA-44E3-B626-7CD54E05C412}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>iRINGTools.SDK.SPPIDDataLayer</RootNamespace>
+    <RootNamespace>org.iringtools.datalayers.IIP.SPPID</RootNamespace>
     <AssemblyName>SPPIDDataLayer</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -71,8 +71,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="UtilityLibrary, Version=2.3.0.4521, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="UtilityLibrary">
       <HintPath>..\library\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>

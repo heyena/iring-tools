@@ -2,10 +2,10 @@
 <module name="12345_000.SPPID">
    <bind name="DataLayer" 
         service="org.iringtools.library.IDataLayer2, iRINGLibrary" 
-        to="iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer, SPPIDDataLayer" />
+        to="org.iringtools.datalayers.IIP.SPPID.SPPIDDataLayer, SPPIDDataLayer" />
 <!--
   <bind name="LMADataSource"
-        service="iRINGTools.SDK.SPPIDDataLayer.ILMADataSource, SPPIDDataLayer"
-        to="iRINGTools.SDK.SPPIDDataLayer.MockLMADataSource, SPPIDDataLayer" />
+        service="org.iringtools.datalayers.IIP.SPPID.ILMADataSource, SPPIDDataLayer"
+        to="org.iringtools.datalayers.IIP.SPPID.MockLMADataSource, SPPIDDataLayer" />
 -->
 </module>

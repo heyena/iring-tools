@@ -28,7 +28,7 @@ Public Class SPPIDProvider
             '  _configuration.Generate = false;
             '  Utility.Write<SPPIDConfiguration>(_configuration, _configurationPath, true);
             ' }
-            InitializeProvider(Utility.Read(Of SPPIDConfiguration)(_configurationPath))
+            InitializeProvider(utility.Utility.Read(Of SPPIDConfiguration)(_configurationPath))
         End If
     End Sub
 
