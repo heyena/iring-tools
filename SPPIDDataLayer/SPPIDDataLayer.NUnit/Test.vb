@@ -11,7 +11,7 @@ Imports Ninject
 Imports Ninject.Extensions.Xml
 Imports System.Reflection
 Imports Oracle.DataAccess.Client
-Imports iRINGTools.SDK.SPPIDDataLayer
+Imports org.iringtools.datalayers.IIP.SPPID
 Imports System.Data.SqlClient
 
 <TestFixture()>
