@@ -64,7 +64,7 @@ public abstract class AbstractService
     /*
      * PREPARE REFERENCE DATA SETTINGS
      */    	
-    String exampleRegistryBase = servletContext.getInitParameter("ExampleRegistryBase");
+    /*String exampleRegistryBase = servletContext.getInitParameter("ExampleRegistryBase");
     if (exampleRegistryBase == null || exampleRegistryBase.equals(""))
     	exampleRegistryBase = "http://example.org/data#";
     settings.put("ExampleRegistryBase", exampleRegistryBase);
@@ -82,7 +82,7 @@ public abstract class AbstractService
     String useExampleRegistryBase = servletContext.getInitParameter("UseExampleRegistryBase");
     if (useExampleRegistryBase == null || useExampleRegistryBase.equals(""))
     	useExampleRegistryBase = "false";
-    settings.put("UseExampleRegistryBase", useExampleRegistryBase);
+    settings.put("UseExampleRegistryBase", useExampleRegistryBase);*/
         
     /*
      * PREPARE EXCHANGE SETTINGS
