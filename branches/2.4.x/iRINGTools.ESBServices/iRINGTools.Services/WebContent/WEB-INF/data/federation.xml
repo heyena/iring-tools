@@ -1,77 +1,135 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<federation xmlns="http://www.iringtools.org/refdata/federation">
-    <idGenerators>
-        <sequenceId>2</sequenceId>
-        <idGenerator>
-            <id>1</id>
-            <uri>https://secure.ids-adi.org/registry</uri>
-            <name>ids-adi.org</name>
-            <description>IDS-ADI ID Generator</description>
-        </idGenerator>
-    </idGenerators>
-    <namespaces>
-        <sequenceId>3</sequenceId>
-        <namespace>
-            <id>1</id>
-            <uri>http://dm.rdlfacade.org/data#</uri>
-            <alias>dm</alias>
-            <isWritable>false</isWritable>
-            <description>Data Model</description>
-            <idGenerator>idGenerator0</idGenerator>
-        </namespace>
-        <namespace>
-            <id>3</id>
-            <uri>http://tpl.rdlfacade.org/data#</uri>
-            <alias>tpl</alias>
-            <isWritable>true</isWritable>
-            <description>Templates</description>
-            <idGenerator>1</idGenerator>
-        </namespace>
-        <namespace>
-            <id>2</id>
-            <uri>http://rdl.rdlfacade.org/data#</uri>
-            <alias>rdl</alias>
-            <isWritable>true</isWritable>
-            <description>Reference Data Library</description>
-            <idGenerator>1</idGenerator>
-        </namespace>
-    </namespaces>
-    <repositories>
-        <sequenceId>3</sequenceId>
-        <repository>
-            <id>1</id>
-            <description>RDS/WIP Part 4 Reference Data Library</description>
-            <isReadOnly>true</isReadOnly>
-            <name>RDS/WIP</name>
-            <repositoryType>Camelot</repositoryType>
-            <uri>http://rdl.rdlfacade.org/data#</uri>
-            <namespaces>
-                <namespaceId>2</namespaceId>
-            </namespaces>
-        </repository>
-        <repository>
-            <id>3</id>
-            <description>iRINGSandbox</description>
-            <isReadOnly>false</isReadOnly>
-            <name>iRINGSandbox</name>
-            <repositoryType>Camelot</repositoryType>
-            <uri>http://iringsandbox.org/repositories/sandbox/query</uri>
-            <updateUri>http://iringsandbox.org/repositories/sandbox/update</updateUri>
-            <namespaces>
-                <namespaceId>2</namespaceId>
-                <namespaceId>3</namespaceId>
-            </namespaces>
-        </repository>
-        <repository>
-            <id>2</id>
-            <description>Temporary Proto &amp; Initial Set Templates</description>
-            <isReadOnly>true</isReadOnly>
-            <name>TempInitSet</name>
-            <repositoryType>Camelot</repositoryType>
-            <uri>http://iringsandbox.org/repositories/tempInitSet/query</uri>
-            <namespaces>
-                <namespaceId>3</namespaceId>
-            </namespaces>
-        </repository>
-    </repositories>
+<federation xmlns="http://www.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <idgeneratorlist/>  
+  <namespacelist>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>rds</prefix>
+      <uri>http://rds.posccaesar.org/2008/02/OWL/ISO-15926-2_2003#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>rdl</prefix>
+      <uri>http://rdl.rdlfacade.org/data#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>tpl</prefix>
+      <uri>http://tpl.rdlfacade.org/data#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>dm</prefix>
+      <uri>http://dm.rdlfacade.org/data#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>owl</prefix>
+      <uri>http://www.w3.org/2002/07/owl#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>owl2xml</prefix>
+      <uri>http://www.w3.org/2006/12/owl2-xml#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>p8</prefix>
+      <uri>http://standards.tc184-sc4.org/iso/15926/-8/template-model#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>p8dm</prefix>
+      <uri>http://standards.tc184-sc4.org/iso/15926/-8/data-model#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>templates</prefix>
+      <uri>http://standards.tc184-sc4.org/iso/15926/-8/templates#</uri>
+    </namespace>
+  </namespacelist>
+  <repositorylist>
+    <repository>
+      <description>iRING Sandbox</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>0</id>
+      <isreadonly>false</isreadonly>
+      <name>iRING Sandbox</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>Camelot</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://www.iringsandbox.org/repositories/sandbox/query</uri>
+    </repository>
+    <repository>
+      <description>RDS/WIP Part 4 Reference Data Library</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>0</id>
+      <isreadonly>false</isreadonly>
+      <name>ReferenceData</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>Part8</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://rdl.rdlfacade.org/data</uri>
+    </repository>
+    <repository>
+      <description>EntityTypes Data Library</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>0</id>
+      <isreadonly>false</isreadonly>
+      <name>EntityTypes</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>Part8</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://dm.rdlfacade.org/data</uri>
+    </repository>
+    <repository>
+      <description>RDS/Proto and P7 Initial Set Templates</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>0</id>
+      <isreadonly>false</isreadonly>
+      <name>Proto and Initial</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>Camelot</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://www.iringsandbox.org/repositories/tempInitSet/query</uri>
+    </repository>
+    <repository>
+      <description>JORD Endpoint</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>0</id>
+      <isreadonly>false</isreadonly>
+      <name>JORD</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>JORD</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://posccaesar.org/endpoint/sparql</uri>
+    </repository>
+  </repositorylist>
 </federation>

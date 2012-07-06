@@ -36,8 +36,24 @@ public class Specialization {
     protected String label;
     @XmlAttribute(name = "lang")
     protected String lang;
+    @XmlAttribute(name = "lang")
+    protected String rdsuri;
 
     /**
+	 * @return the rdsuri
+	 */
+	public String getRdsuri() {
+		return rdsuri;
+	}
+
+	/**
+	 * @param rdfsuri the rdsuri to set
+	 */
+	public void setRdsuri(String rdsuri) {
+		this.rdsuri = rdsuri;
+	}
+
+	/**
      * Gets the value of the reference property.
      * 
      * @return
