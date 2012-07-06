@@ -103,7 +103,6 @@
     <Compile Include="OraSchemaDS.vb">
       <DependentUpon>OraSchemaDS.xsd</DependentUpon>
     </Compile>
-    <Compile Include="SPPIDProvider.vb" />
     <Compile Include="SPPIDWorkingSet.vb" />
     <Compile Include="SQLSchemaDS.Designer.vb">
       <AutoGen>True</AutoGen>
