@@ -79,7 +79,6 @@ public class RefDataProvider
   //private StringBuilder prefix = new StringBuilder();
   private StringBuilder sparqlBuilder = new StringBuilder();
   private static final Logger logger = Logger.getLogger(RefDataProvider.class);
-  private String qName = null;
   //private final String rdfssubClassOf = "rdfs:subClassOf";
   private final String rdfType = "rdf:type";
 
@@ -359,7 +358,16 @@ public class RefDataProvider
 
   public Entity getClassLabel(String id) throws Exception
   {
-    return getLabel(_nsmap.getNamespaceUri("rdl").toString() + id);
+	  int number;
+	  try 
+	  {
+		  Integer.parseInt(id.substring(1, 1));
+		  return getLabel(_nsmap.getNamespaceUri("rdl").toString() + id);
+	  }
+	  catch (NumberFormatException e)
+	  {
+		  return getLabel(_nsmap.getNamespaceUri("jordrdl").toString() + id);
+	  }
   }
 
   public Qmxf getClass(String id, Repository repository) throws Exception
@@ -382,6 +390,7 @@ public class RefDataProvider
       Description description;
       org.ids_adi.ns.qxf.model.Status status;
       String[] names = null;
+      QueryBindings queryBindings = null;
 
       List<Classification> classifications = new ArrayList<Classification>();
       List<Specialization> specializations = new ArrayList<Specialization>();
@@ -389,26 +398,36 @@ public class RefDataProvider
       // String relativeUri = "";
 
       Query queryContainsSearch = getQuery("GetClass");
-
-      QueryBindings queryBindings = queryContainsSearch.getBindings();
-
-      sparql = readSparql(queryContainsSearch.getFileName());
-
-      if (namespaceUrl == null || namespaceUrl.isEmpty())
-        namespaceUrl = _nsmap.getNamespaceUri("rdl").toString();
-
+      
+      Query queryContainsSearchJord = getQuery("GetClassJORD");
+      
+      namespaceUrl = _nsmap.getNamespaceUri("rdl").toString();
       String uri = namespaceUrl + id;
 
       sparql = sparql.replace("param1", uri);
       for (Repository repository : _repositories)
       {
+    	if (rep != null)
+            if (rep.getName() != repository.getName())
+            {
+              continue;
+            }
+    	  
+    	if (repository.getRepositoryType() == RepositoryType.JORD)
+    	{
+    		queryBindings = queryContainsSearchJord.getBindings();
+    	    sparql = readSparql(queryContainsSearchJord.getFileName());
+    	}
+    	else
+    	{
+    		
+    		queryBindings = queryContainsSearch.getBindings();
+    	    sparql = readSparql(queryContainsSearch.getFileName());
+    	}
+    	  
         ClassDefinition classDefinition = null;
 
-        if (rep != null)
-          if (rep.getName() != repository.getName())
-          {
-            continue;
-          }
+        
         Results sparqlResult = queryFromRepository(repository, sparql);
 
         List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResult);
@@ -549,18 +568,25 @@ public class RefDataProvider
     {
       String sparql = "";
       String sparqlPart8 = "";
+      String sparqlJORD = "";
       //String relativeUri = "";
+      Results sparqlResults = null;
+      List<Hashtable<String, String>> results = null;
       String[] names = null;
       //Results res = null;
 
       Query queryGetSpecialization = getQuery("GetSpecialization");
       QueryBindings queryBindings = queryGetSpecialization.getBindings();
-      sparql = readSparql(queryGetSpecialization.getFileName());
-      sparql = sparql.replace("param1", id);
+      sparql = readSparql(queryGetSpecialization.getFileName()).replace("param1", id);
+      
       Query queryGetSubClassOf = getQuery("GetSubClassOf");
       QueryBindings queryBindingsPart8 = queryGetSubClassOf.getBindings();
-      sparqlPart8 = readSparql(queryGetSubClassOf.getFileName());
-      sparqlPart8 = sparqlPart8.replace("param1", id);
+      sparqlPart8 = readSparql(queryGetSubClassOf.getFileName()).replace("param1", id);
+      
+      Query queryJord = getQuery("GetSuperclassJORD");
+      QueryBindings queryBindingsJORD = queryJord.getBindings();
+      sparqlJORD = readSparql(queryJord.getFileName()).replace("param1", id);
+      
       for (Repository repository : _repositories)
       {
         if (rep != null)
@@ -570,95 +596,149 @@ public class RefDataProvider
             continue;
           }
         }
-        if (repository.getRepositoryType() == RepositoryType.PART_8)
+        switch (repository.getRepositoryType())
         {
-          Results sparqlResults = queryFromRepository(repository, sparqlPart8);
+        	case PART_8:
+        		sparqlResults = queryFromRepository(repository, sparqlPart8);
 
-          List<Hashtable<String, String>> results = bindQueryResults(queryBindingsPart8, sparqlResults);
+                results = bindQueryResults(queryBindingsPart8, sparqlResults);
 
-          for (Hashtable<String, String> result : results)
-          {
-            Specialization specialization = new Specialization();
-            String uri = "";
-            String label = "";
-            String lang = "";
-            if (result.containsKey("uri"))
-            {
-              uri = result.get("uri");
-              specialization.setReference(uri);
-            }
-            if (result.containsKey("label"))
-            {
-              names = result.get("label").split("@", -1);
-              label = names[0];
-              if (names.length == 1)
-              {
-                lang = defaultLanguage;
-              }
-              else
-              {
-                lang = names[names.length - 1];
-              }
-            }
-            else
-            {
-              names = getLabel(uri).getLabel().split("@", -1);
-              label = names[0];
-              if (names.length == 1)
-              {
-                lang = defaultLanguage;
-              }
-              else
-              {
-                lang = names[names.length - 1];
-              }
-            }
-            specialization.setLabel(label);
-            specialization.setLang(lang);
-            specializations.add(specialization);
-          }
+                for (Hashtable<String, String> result : results)
+                {
+                  Specialization specialization = new Specialization();
+                  String uri = "";
+                  String label = "";
+                  String lang = "";
+                  if (result.containsKey("uri"))
+                  {
+                    uri = result.get("uri");
+                    specialization.setReference(uri);
+                  }
+                  if (result.containsKey("label"))
+                  {
+                    names = result.get("label").split("@", -1);
+                    label = names[0];
+                    if (names.length == 1)
+                    {
+                      lang = defaultLanguage;
+                    }
+                    else
+                    {
+                      lang = names[names.length - 1];
+                    }
+                  }
+                  else
+                  {
+                    names = getLabel(uri).getLabel().split("@", -1);
+                    label = names[0];
+                    if (names.length == 1)
+                    {
+                      lang = defaultLanguage;
+                    }
+                    else
+                    {
+                      lang = names[names.length - 1];
+                    }
+                  }
+                  specialization.setLabel(label);
+                  specialization.setLang(lang);
+                  specializations.add(specialization);
+                }
+        		break;
+        	case CAMELOT:
+        	case RDS_WIP:
+        		sparqlResults = queryFromRepository(repository, sparql);
 
-        }
-        else
-        {
-          Results sparqlResults = queryFromRepository(repository, sparql);
+                results = bindQueryResults(queryBindings, sparqlResults);
 
-          List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+                for (Hashtable<String, String> result : results)
+                {
+                  Specialization specialization = new Specialization();
+                  String uri = "";
+                  String label = "";
+                  String lang = "";
 
-          for (Hashtable<String, String> result : results)
-          {
-            Specialization specialization = new Specialization();
-            String uri = "";
-            String label = "";
-            String lang = "";
+                  if (result.containsKey("uri"))
+                  {
+                    uri = result.get("uri");
+                    specialization.setReference(uri);
+                  }
+                  if (result.containsKey("label"))
+                  {
+                    names = result.get("label").split("@", -1);
+                    label = names[0];
+                    if (names.length == 1)
+                    {
+                      lang = defaultLanguage;
+                    }
+                    else
+                    {
+                      lang = names[names.length - 1];
+                    }
+                  }
+                  else
+                  {
+                    label = getLabel(uri).getLabel();
+                  }
 
-            if (result.containsKey("uri"))
-            {
-              uri = result.get("uri");
-              specialization.setReference(uri);
-            }
-            if (result.containsKey("label"))
-            {
-              names = result.get("label").split("@", -1);
-              label = names[0];
-              if (names.length == 1)
-              {
-                lang = defaultLanguage;
-              }
-              else
-              {
-                lang = names[names.length - 1];
-              }
-            }
-            else
-            {
-              label = getLabel(uri).getLabel();
-            }
+                  specialization.setLabel(label);
+                  specialization.setLang(lang);
+                  specializations.add(specialization);
+                }
+        		break;
+        	case JORD:
+        		sparqlResults = queryFromRepository(repository, sparqlPart8);
 
-            specialization.setLabel(label);
-            specialization.setLang(lang);
-            specializations.add(specialization);
-          }
+                results = bindQueryResults(queryBindingsPart8, sparqlResults);
+
+                for (Hashtable<String, String> result : results)
+                {
+                  Specialization specialization = new Specialization();
+                  String uri = "";
+                  String label = "";
+                  String lang = "";
+                  String rdsuri = "";
+                  if (result.containsKey("uri"))
+                  {
+                    uri = result.get("uri");
+                    specialization.setReference(uri);
+                  }
+                  else if (result.containsKey("rdsuri"))
+                  {
+                	  rdsuri = result.get("rdsuri");
+                      specialization.setRdsuri(rdsuri);
+                  }
+                  if (result.containsKey("label"))
+                  {
+                    names = result.get("label").split("@", -1);
+                    label = names[0];
+                    if (names.length == 1)
+                    {
+                      lang = defaultLanguage;
+                    }
+                    else
+                    {
+                      lang = names[names.length - 1];
+                    }
+                  }
+                  else
+                  {
+                    names = getLabel(uri).getLabel().split("@", -1);
+                    label = names[0];
+                    if (names.length == 1)
+                    {
+                      lang = defaultLanguage;
+                    }
+                    else
+                    {
+                      lang = names[names.length - 1];
+                    }
+                  }
+                  specialization.setLabel(label);
+                  specialization.setLang(lang);
+                  specializations.add(specialization);
+                }
+        		break;
         }
 
       }
@@ -698,10 +778,16 @@ public class RefDataProvider
           getClassification = getQuery("GetClassification");
           queryBindings = getClassification.getBindings();
 
-          sparql = readSparql(getClassification.getFileName());
-          sparql = sparql.replace("param1", id);
+          sparql = readSparql(getClassification.getFileName()).replace("param1", id);
           classifications = processClassifications(rep, sparql, queryBindings);
           break;
+        case JORD:
+            getClassification = getQuery("GetClassificationJORD");
+            queryBindings = getClassification.getBindings();
+
+            sparql = readSparql(getClassification.getFileName()).replace("param1", id);
+            classifications = processClassifications(rep, sparql, queryBindings);
+            break;
         case PART_8:
           getClassification = getQuery("GetPart8Classification");
           queryBindings = getClassification.getBindings();
@@ -806,7 +892,7 @@ public class RefDataProvider
     return qmxf;
   }
 
-  public final org.iringtools.refdata.response.Response getClassMembers(String Id)
+  public final org.iringtools.refdata.response.Response getClassMembers(String Id, Repository repo)
   {
     org.iringtools.refdata.response.Response membersResult = new org.iringtools.refdata.response.Response();
     Entities entities = new Entities();
@@ -818,14 +904,33 @@ public class RefDataProvider
       String sparql = "";
       String language = "";
       String[] names = null;
-
+      QueryBindings memberBindings = null;
+      
       Query getMembers = getQuery("GetMembers");
-      QueryBindings memberBindings = getMembers.getBindings();
-      sparql = readSparql(getMembers.getFileName());
-      sparql = sparql.replace("param1", Id);
+      Query getMembersJord = getQuery("GetMembersJORD");
+      
 
       for (Repository repository : _repositories)
       {
+    	  if (repo != null)
+          {
+            if (repo.getName() != repository.getName())
+            {
+              continue;
+            }
+          }
+    	  
+    	  if (repository.getRepositoryType() == RepositoryType.JORD)
+      	{
+      		memberBindings = getMembersJord.getBindings();
+      		sparql = readSparql(getMembersJord.getFileName()).replace("param1", Id);
+      	}
+      	else
+      	{
+      		memberBindings = getMembers.getBindings();
+      		sparql = readSparql(getMembers.getFileName()).replace("param1", Id);
+      	}
+    	  
         Results sparqlResults = queryFromRepository(repository, sparql);
 
         List<Hashtable<String, String>> results = bindQueryResults(memberBindings, sparqlResults);
@@ -842,7 +947,14 @@ public class RefDataProvider
             language = names[names.length - 1];
           }
           Entity resultEntity = new Entity();
-          resultEntity.setUri(result.get("uri"));
+          if(result.get("uri")!=null)
+          {
+        	  resultEntity.setUri(result.get("uri"));
+          }
+          else if (result.get("rds")!=null)
+          {
+        	  resultEntity.setRdsuri(result.get("rds"));
+          }
           resultEntity.setLabel(names[0]);
           resultEntity.setLang(language);
           resultEntity.setRepository(repository.getName());
@@ -1118,8 +1230,11 @@ public class RefDataProvider
             sparqlQuery = "GetTemplateQualification";
             break;
           case PART_8:
-            sparqlQuery = "GetTemplateQualification";
+            sparqlQuery = "GetTemplateQualificationPart8";
             break;
+          case JORD:
+        	  sparqlQuery = "GetTemplateQualification";
+        	  break;
           }
           getTemplateQualification = getQuery(sparqlQuery);
           queryBindings = getTemplateQualification.getBindings();
@@ -1602,10 +1717,10 @@ public class RefDataProvider
                     }
                     if (role.getRange() != null)
                     {
-                      qName = _nsmap.reduceToQName(role.getRange());
+                      //qName = _nsmap.reduceToQName(role.getRange());
                       if (repository.getRepositoryType() == RepositoryType.PART_8)
                       {
-                        insert = GenerateRoleFillerType(insert, tempRoleIdentifier, qName.toString());
+                        insert = GenerateRoleFillerType(insert, tempRoleIdentifier, role.getRange());
                       }
                       else
                       {
@@ -1652,10 +1767,10 @@ public class RefDataProvider
                     }
                     if (role.getRange() != null)
                     {
-                      qName = _nsmap.reduceToQName(role.getRange());
+                      //qName = _nsmap.reduceToQName(role.getRange());
                       if (repository.getRepositoryType() == RepositoryType.PART_8)
                       {
-                        delete = GenerateRoleFillerType(delete, tempRoleID, qName.toString());
+                        delete = GenerateRoleFillerType(delete, tempRoleID, role.getRange());
                       }
                       else
                       {
@@ -1744,10 +1859,10 @@ public class RefDataProvider
                 }
                 if (role.getRange() != null && role.getRange() != "")
                 {
-                  qName = _nsmap.reduceToQName(role.getRange());
+                  //qName = _nsmap.reduceToQName(role.getRange());
                   if (repository.getRepositoryType() == RepositoryType.PART_8)
                   {
-                    insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                    insert = GenerateRoleFillerType(insert, roleID, role.getRange());
                   }
                   else
                   {
@@ -1793,7 +1908,7 @@ public class RefDataProvider
             //String roleQualification = null;
             //int index = 1;
             if (newTQ.getId() != null && newTQ.getId() != "")
-              templateID = getIdFromURI(newTQ.getId());
+              templateID = newTQ.getId();
 
             templateName = newTQ.getNames().get(0).getValue();
             Qmxf oldQmxf = new Qmxf();
@@ -1816,7 +1931,7 @@ public class RefDataProvider
             {
               for (TemplateQualification oldTQ : oldQmxf.getTemplateQualifications())
               {
-                qName = _nsmap.reduceToQName(oldTQ.getQualifies());
+                //qName = _nsmap.reduceToQName(oldTQ.getQualifies());
                 for (Name nn : newTQ.getNames())
                 {
                   templateName = nn.getValue();
@@ -1950,17 +2065,17 @@ public class RefDataProvider
                         insert = GenerateHasRole(insert, templateID, tempNewRoleID, newTQ);
                         if (nrq.getRange() != null && nrq.getRange() == "")
                         {
-                          qName = _nsmap.reduceToQName(nrq.getRange());
+                          //qName = _nsmap.reduceToQName(nrq.getRange());
                           if (qn)
-                            insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
+                            insert = GenerateRoleFillerType(insert, tempNewRoleID, nrq.getRange());
                         }
                         else if (nrq.getValue() != null)
                         {
                           if (nrq.getValue().getReference() != null)
                           {
-                            qName = _nsmap.reduceToQName(nrq.getValue().getReference());
-                            if (qName != "" && qName != "")
-                              insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
+                            //qName = _nsmap.reduceToQName(nrq.getValue().getReference());
+                            
+                              insert = GenerateRoleFillerType(insert, tempNewRoleID, nrq.getValue().getReference());
                           }
                           else if (nrq.getValue().getText() != null)
                           {
@@ -1973,9 +2088,9 @@ public class RefDataProvider
                       {
                         if (nrq.getRange() != null && nrq.getRange() != "") // range restriction
                         {
-                          qName = _nsmap.reduceToQName(nrq.getRange());
-                          if (qName != null && qName != "")
-                            insert = GenerateRange(insert, tempNewRoleID, qName, nrq);
+                          //qName = _nsmap.reduceToQName(nrq.getRange());
+                          
+                            insert = GenerateRange(insert, tempNewRoleID, nrq.getRange(), nrq);
                           insert = GenerateTypes(insert, tempNewRoleID, templateID.toString(), nrq);
                           insert = GenerateQualifies(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
                         }
@@ -1985,9 +2100,9 @@ public class RefDataProvider
                           {
                             insert = GenerateReferenceType(insert, tempNewRoleID, templateID, nrq);
                             insert = GenerateReferenceQual(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
-                            qName = _nsmap.reduceToQName(nrq.getValue().getReference());
-                            if (qName != null && qName != "")
-                              insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), nrq);
+                            //qName = _nsmap.reduceToQName(nrq.getValue().getReference());
+                            
+                              insert = GenerateReferenceTpl(insert, tempNewRoleID, nrq.getValue().getReference(), nrq);
                           }
                           else if (nrq.getValue().getText() != null)// value restriction
                           {
@@ -2042,17 +2157,17 @@ public class RefDataProvider
                         delete = GenerateHasRole(delete, templateID, tempNewRoleID.toString(), oldTQ);
                         if (orq.getRange() != null && orq.getRange() != "")
                         {
-                          qName = _nsmap.reduceToQName(orq.getRange());
-                          if (qName != null && qName != "")
-                            delete = GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
+                          //qName = _nsmap.reduceToQName(orq.getRange());
+                          
+                            delete = GenerateRoleFillerType(delete, tempNewRoleID, orq.getRange());
                         }
                         else if (orq.getValue() != null)
                         {
                           if (orq.getValue().getReference() != null)
                           {
-                            qName = _nsmap.reduceToQName(orq.getValue().getReference());
-                            if (qName != null && qName != "")
-                              delete = GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
+                            //qName = _nsmap.reduceToQName(orq.getValue().getReference());
+                           
+                              delete = GenerateRoleFillerType(delete, tempNewRoleID, orq.getValue().getReference());
                           }
                         }
                       }
@@ -2061,9 +2176,9 @@ public class RefDataProvider
                       {
                         if (orq.getRange() != null && orq.getRange() != "") // range restriction
                         {
-                          qName = _nsmap.reduceToQName(orq.getRange());
-                          if (qName != null && qName != "")
-                            delete = GenerateRange(delete, tempNewRoleID, qName.toString(), orq);
+                          //qName = _nsmap.reduceToQName(orq.getRange());
+                         
+                            delete = GenerateRange(delete, tempNewRoleID, orq.getRange(), orq);
                           delete = GenerateTypes(delete, tempNewRoleID, templateID.toString(), nrq);
                           delete = GenerateQualifies(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
                         }
@@ -2073,9 +2188,9 @@ public class RefDataProvider
                           {
                             delete = GenerateReferenceType(delete, tempNewRoleID, templateID.toString(), orq);
                             delete = GenerateReferenceQual(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
-                            qName = _nsmap.reduceToQName(orq.getValue().getReference());
-                            if (qName != null && qName != "")
-                              insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), orq);
+                            //qName = _nsmap.reduceToQName(orq.getValue().getReference());
+                           
+                              insert = GenerateReferenceTpl(insert, tempNewRoleID, orq.getValue().getReference(), orq);
                           }
                           else if (orq.getValue().getText() != null)// value restriction
                           {
@@ -2121,16 +2236,16 @@ public class RefDataProvider
               if (repository.getRepositoryType() == RepositoryType.PART_8)
               {
                 insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
-                qName = _nsmap.reduceToQName(newTQ.getQualifies());
-                if (qName != null && qName != "")
-                  insert = GenerateTypesPart8(insert, templateID, qName.toString(), newTQ);
+                //qName = _nsmap.reduceToQName(newTQ.getQualifies());
+                
+                  insert = GenerateTypesPart8(insert, templateID, newTQ.getQualifies(), newTQ);
               }
               else
               {
                 GenerateRoleCount(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
-                qName = _nsmap.reduceToQName(newTQ.getQualifies());
-                if (qName != null && qName != "")
-                  insert = GenerateTypes(insert, templateID, qName.toString(), newTQ);
+                //qName = _nsmap.reduceToQName(newTQ.getQualifies());
+                
+                  insert = GenerateTypes(insert, templateID, newTQ.getQualifies(), newTQ);
 
               }
               /*for (Specialization spec : newTQ.getSpecializations())
@@ -2162,11 +2277,11 @@ public class RefDataProvider
                   else
                     generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), genName);
 
-                  roleID = getIdFromURI(generatedId);
+                  roleID = generatedId;
                 }
                 else
                 {
-                  roleID = getIdFromURI(newRole.getId());
+                  roleID = newRole.getId();
                 }
                 if (repository.getRepositoryType() == RepositoryType.PART_8)
                 {
@@ -2180,17 +2295,17 @@ public class RefDataProvider
                   insert = GenerateHasRole(insert, templateID, roleID.toString(), newTQ);
                   if (newRole.getRange() != null && newRole.getRange() != "")
                   {
-                    qName = _nsmap.reduceToQName(newRole.getRange());
-                    if (qName != null && qName != "")
-                      insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                    //qName = _nsmap.reduceToQName(newRole.getRange());
+                    
+                      insert = GenerateRoleFillerType(insert, roleID, newRole.getRange());
                   }
                   else if (newRole.getValue() != null)
                   {
                     if (newRole.getValue().getReference() != null)
                     {
-                      qName = _nsmap.reduceToQName(newRole.getValue().getReference());
-                      if (qName != null && qName != "")
-                        insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                      //qName = _nsmap.reduceToQName(newRole.getValue().getReference());
+                      
+                        insert = GenerateRoleFillerType(insert, roleID, newRole.getValue().getReference());
                     }
                     else if (newRole.getValue().getText() != null)
                     {
@@ -2204,9 +2319,9 @@ public class RefDataProvider
                   if (newRole.getRange() != null && newRole.getRange() != "") // range restriction
                   {
 
-                    qName = _nsmap.reduceToQName(newRole.getRange());
-                    if (qName != null && qName != "")
-                      insert = GenerateRange(insert, roleID, qName.toString(), newRole);
+                    //qName = _nsmap.reduceToQName(newRole.getRange());
+                    
+                      insert = GenerateRange(insert, roleID, newRole.getRange(), newRole);
                     insert = GenerateTypes(insert, roleID, templateID.toString(), newRole);
                     insert = GenerateQualifies(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
                   }
@@ -2216,9 +2331,9 @@ public class RefDataProvider
                     {
                       insert = GenerateReferenceType(insert, roleID, templateID.toString(), newRole);
                       insert = GenerateReferenceQual(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
-                      qName = _nsmap.reduceToQName(newRole.getValue().getReference());
-                      if (qName != null && qName != "")
-                        insert = GenerateReferenceTpl(insert, roleID, qName.toString(), newRole);
+                      //qName = _nsmap.reduceToQName(newRole.getValue().getReference());
+                      
+                        insert = GenerateReferenceTpl(insert, roleID, newRole.getValue().getReference(), newRole);
                     }
                     else if (newRole.getValue().getText() != null)// value restriction
                     {
@@ -2369,7 +2484,7 @@ public class RefDataProvider
 
           //String language = null;
           //int classCount = 0;
-          String clsId = getIdFromURI(clsDef.getId());
+          String clsId = clsDef.getId();
           Qmxf existingQmxf = new Qmxf();
 
           if (clsId != null)
@@ -2449,9 +2564,9 @@ public class RefDataProvider
 
                     if (ns == null)
                     {
-                      qName = _nsmap.reduceToQName(os.getReference());
-                      if (qName != null && qName != "")
-                        delete = GenerateRdfSubClass(delete, clsId, qName.toString());
+                      //qName = _nsmap.reduceToQName(os.getReference());
+                      
+                        delete = GenerateRdfSubClass(delete, clsId, os.getReference());
                     }
                   }
                 }
@@ -2473,9 +2588,9 @@ public class RefDataProvider
                     }
                     if (os == null)
                     {
-                      qName = _nsmap.reduceToQName(ns.getReference());
-                      if (qName != null && qName != "")
-                        insert = GenerateRdfSubClass(insert, clsId, qName.toString());
+                      //qName = _nsmap.reduceToQName(ns.getReference());
+                      
+                        insert = GenerateRdfSubClass(insert, clsId, ns.getReference());
                     }
                   }
                 }
@@ -2503,16 +2618,16 @@ public class RefDataProvider
                     }
                     if (nc == null)
                     {
-                      qName = _nsmap.reduceToQName(oc.getReference());
+                      //qName = _nsmap.reduceToQName(oc.getReference());
                       if (repository.getRepositoryType() == RepositoryType.PART_8)
                       {
-                        if (qName != null && qName != "")
-                          delete = GenerateSuperClass(delete, qName.toString(), clsId.toString()); // /delete from old
+                       
+                          delete = GenerateSuperClass(delete, oc.getReference(), clsId.toString()); // /delete from old
                       }
                       else
                       {
-                        if (qName != null && qName != "")
-                          delete = GenerateDmClassification(delete, clsId, qName.toString());
+                      
+                          delete = GenerateDmClassification(delete, clsId, oc.getReference());
                       }
                     }
                   }
@@ -2536,16 +2651,16 @@ public class RefDataProvider
                     }
                     if (oc == null)
                     {
-                      qName = _nsmap.reduceToQName(nc.getReference());
+                      //qName = _nsmap.reduceToQName(nc.getReference());
                       if (repository.getRepositoryType() == RepositoryType.PART_8)
                       {
-                        if (qName != null && qName != "")
-                          insert = GenerateSuperClass(insert, qName.toString(), clsId.toString()); // /insert from new
+                        
+                          insert = GenerateSuperClass(insert, nc.getReference(), clsId.toString()); // /insert from new
                       }
                       else
                       {
-                        if (qName != null && qName != "")
-                          insert = GenerateDmClassification(insert, clsId, qName.toString());
+                        
+                          insert = GenerateDmClassification(insert, clsId, nc.getReference());
                       }
                     }
                   }
@@ -2571,31 +2686,31 @@ public class RefDataProvider
             if (clsId == null)
             {
               String newClsName = "Class definition " + clsLabel;
-              clsId = getIdFromURI(createIdsAdiId(registry, newClsName));
+              clsId = createIdsAdiId(registry, newClsName);
             }
             // append entity type
             if (clsDef.getEntityType() != null
                 && (clsDef.getEntityType().getReference() != null && clsDef.getEntityType().getReference() != ""))
             {
-              qName = _nsmap.reduceToQName(clsDef.getEntityType().getReference());
-              if (qName != null && qName != "")
-                insert = GenerateTypesPart8(insert, clsId, qName.toString(), clsDef);
+              //qName = _nsmap.reduceToQName(clsDef.getEntityType().getReference());
+              
+                insert = GenerateTypesPart8(insert, clsId, clsDef.getEntityType().getReference(), clsDef);
             }
             // append specialization
             for (Specialization ns : clsDef.getSpecializations())
             {
               if (ns.getReference() != null && ns.getReference() != "")
               {
-                qName = _nsmap.reduceToQName(ns.getReference());
+                //qName = _nsmap.reduceToQName(ns.getReference());
                 if (repository.getRepositoryType() == RepositoryType.PART_8)
                 {
-                  if (qName != null && qName != "")
-                    insert = GenerateRdfSubClass(insert, clsId, qName.toString());
+                  
+                    insert = GenerateRdfSubClass(insert, clsId, ns.getReference());
                 }
                 else
                 {
-                  if (qName != null && qName != "")
-                    insert = GenerateDmSubClass(insert, clsId, qName.toString());
+                  
+                    insert = GenerateDmSubClass(insert, clsId, ns.getReference());
                 }
               }
             }
@@ -2617,16 +2732,16 @@ public class RefDataProvider
             {
               if (nc.getReference() != null && nc.getReference() != "")
               {
-                qName = _nsmap.reduceToQName(nc.getReference());
+                //qName = _nsmap.reduceToQName(nc.getReference());
                 if (repository.getRepositoryType() == RepositoryType.PART_8)
                 {
-                  if (qName != null && qName != "")
-                    insert = GenerateSuperClass(insert, qName.toString(), clsId.toString());
+                 
+                    insert = GenerateSuperClass(insert, nc.getReference(), clsId.toString());
                 }
                 else
                 {
-                  if (qName != null && qName != "")
-                    insert = GenerateDmClassification(insert, clsId, qName.toString());
+                 
+                    insert = GenerateDmClassification(insert, clsId, nc.getReference());
                 }
               }
             }
@@ -2847,7 +2962,7 @@ public class RefDataProvider
       String language = "";
       Entity resultEntity = null;
       String key = null;
-
+      QueryBindings queryBindings = null;
       // TODO Check the search History for Optimization
       // if (_searchHistory.containsKey(query)) {
       // entityList.addAll(_searchHistory.keySet().ceilingEntry(query).getValue());
@@ -2855,13 +2970,25 @@ public class RefDataProvider
       Map<String, Entity> resultEntities = new TreeMap<String, Entity>();
 
       Query queryContainsSearch = getQuery("ContainsSearch");
-      QueryBindings queryBindings = queryContainsSearch.getBindings();
-
-      sparql = readSparql(queryContainsSearch.getFileName());
-      sparql = sparql.replace("param1", query);
+      
+      Query queryContainsSearchJORD = getQuery("ContainsSearchJORD");
 
       for (Repository repository : _repositories)
       {
+        
+        if (repository.getRepositoryType() == RepositoryType.JORD)
+        {
+        	sparql = readSparql(queryContainsSearch.getFileName());
+            sparql = sparql.replace("param1", query);
+            queryBindings = queryContainsSearch.getBindings();
+        }
+        else 
+        {
+            sparql = readSparql(queryContainsSearchJORD.getFileName());
+            sparql = sparql.replace("param1", query);
+            queryBindings = queryContainsSearchJORD.getBindings();
+        }
+        
         Results sparqlResults = null;
         
         try
@@ -2890,7 +3017,10 @@ public class RefDataProvider
             if (names[0].startsWith("has") || names[0].startsWith("val"))
               continue;
             Entity tempVar = new Entity();
-            tempVar.setUri(result.get("uri"));
+            if(result.get("uri") != null)
+            	tempVar.setUri(result.get("uri"));
+            else if (result.get("rds") != null)
+            	tempVar.setRdsuri(result.get("rds"));
             tempVar.setLabel(names[0]);
             tempVar.setLang(language);
             tempVar.setRepository(repository.getName());
@@ -2962,7 +3092,7 @@ public class RefDataProvider
     return null;
   }
 
-  public org.iringtools.refdata.response.Response getSuperClasses(String id) throws Exception
+  public org.iringtools.refdata.response.Response getSuperClasses(String id, Repository repo) throws Exception
   {
     org.iringtools.refdata.response.Response response = new org.iringtools.refdata.response.Response();
     Entities entities = new Entities();
@@ -2973,7 +3103,7 @@ public class RefDataProvider
     String[] names = null;
     try
     {
-      List<Specialization> specializations = getSpecializations(id, null);
+      List<Specialization> specializations = getSpecializations(id, repo);
 
       for (Specialization specialization : specializations)
       {
@@ -3012,7 +3142,7 @@ public class RefDataProvider
     return response;
   }
 
-  public org.iringtools.refdata.response.Response getSubClasses(String id) throws Exception
+  public org.iringtools.refdata.response.Response getSubClasses(String id, Repository repo) throws Exception
   {
     org.iringtools.refdata.response.Response response = new org.iringtools.refdata.response.Response();
     Entities entities = new Entities();
@@ -3024,6 +3154,7 @@ public class RefDataProvider
     {
       String sparql = "";
       String sparqlPart8 = "";
+      String sparqlJord = "";
       //String relativeUri = "";
       String language = "";
       String[] names = null;
@@ -3031,17 +3162,28 @@ public class RefDataProvider
       Query queryGetSubClasses = getQuery("GetSubClasses");
       QueryBindings queryBindings = queryGetSubClasses.getBindings();
 
-      sparql = readSparql(queryGetSubClasses.getFileName());
-      sparql = sparql.replace("param1", id);
+      sparql = readSparql(queryGetSubClasses.getFileName()).replace("param1", id);
 
       Query queryGetSubClassOfInverse = getQuery("GetSubClassOfInverse");
       QueryBindings queryBindingsPart8 = queryGetSubClassOfInverse.getBindings();
 
-      sparqlPart8 = readSparql(queryGetSubClassOfInverse.getFileName());
-      sparqlPart8 = sparqlPart8.replace("param1", id);
+      sparqlPart8 = readSparql(queryGetSubClassOfInverse.getFileName()).replace("param1", id);
+      
+      Query queryGetSubClassJord = getQuery("GetSubClassesJORD");
+      QueryBindings queryBindingsJord = queryGetSubClassJord.getBindings();
+
+      sparqlJord = readSparql(queryGetSubClassJord.getFileName()).replace("param1", id);
 
       for (Repository repository : _repositories)
       {
+    	  if (repo != null)
+          {
+            if (repo.getName() != repository.getName())
+            {
+              continue;
+            }
+          }
+    	  
         if (repository.getRepositoryType().equals(RepositoryType.PART_8))
         {
           Results sparqlResults = queryFromRepository(repository, sparqlPart8);
@@ -3067,6 +3209,39 @@ public class RefDataProvider
             // Entity resultEntity = tempVar;
             entityList.add(tempVar);
           }
+        }
+        else if (repository.getRepositoryType().equals(RepositoryType.JORD))
+        {
+        	Results sparqlResults = queryFromRepository(repository, sparqlJord);
+
+            List<Hashtable<String, String>> results = bindQueryResults(queryBindingsJord, sparqlResults);
+
+            for (Hashtable<String, String> result : results)
+            {
+              names = result.get("label").split("@", -1);
+
+              if (names.length == 1)
+              {
+                language = defaultLanguage;
+              }
+              else
+              {
+                language = names[names.length - 1];
+              }
+              Entity tempVar = new Entity();
+              if (result.get("uri")!=null)
+              {
+            	  tempVar.setUri(result.get("uri"));
+              }
+              else if (result.get("rds")!=null)
+              {
+            	  tempVar.setRdsuri(result.get("rds"));
+              }
+              tempVar.setLabel(names[0]);
+              tempVar.setLang(language);
+              // Entity resultEntity = tempVar;
+              entityList.add(tempVar);
+            }
         }
         else
         {
@@ -3246,14 +3421,22 @@ public class RefDataProvider
     {
       String sparql = "";
       String[] names;
-      Query queryContainsSearch = getQuery("GetLabel");
-      QueryBindings queryBindings = queryContainsSearch.getBindings();
-      sparql = readSparql(queryContainsSearch.getFileName());
-      sparql = sparql.replace("param1", uri);
+      Query queryEquivalent = getQuery("GetLabelRdlEquivalent");
+      Query query = getQuery("GetLabel");
+      QueryBindings queryBindings = null;
 
       for (Repository repository : _repositories)
       {
-
+    	  if (repository.getRepositoryType() == RepositoryType.JORD && uri.contains("#"))
+          {
+    		  sparql = readSparql(queryEquivalent.getFileName()).replace("param1", uri);
+    		  queryBindings = queryEquivalent.getBindings();
+    	  }
+    	  else
+    	  {
+    		  sparql = readSparql(query.getFileName()).replace("param1", uri);
+    		  queryBindings = query.getBindings();
+    	  }
         Results sparqlResults = queryFromRepository(repository, sparql);
         List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
         for (Hashtable<String, String> result : results)
@@ -3502,12 +3685,12 @@ public class RefDataProvider
   private Model GenerateValue(Model work, String subjId, String objId, Object gobj)
   {
     RoleQualification role = (RoleQualification) gobj;
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("tpl:R56456315674");
-    Resource obj = work.createResource(String.format("tpl:%s", objId));
+    Resource obj = work.createResource(String.format("<%s>", objId));
     work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R89867215482");
-    obj = work.createResource(String.format("tpl:%s", role.getQualifies().split("#", 1).toString()));
+    obj = work.createResource(String.format("<%s>", role.getQualifies().split("#", 1).toString()));
     work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R29577887690");
     Literal obj1 = work.createTypedLiteral(role.getValue().getText(), (role.getValue().getLang() == null || role
@@ -3518,28 +3701,28 @@ public class RefDataProvider
 
   private Model GenerateReferenceQual(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("tpl:R30741601855");
-    Resource obj = work.createResource(String.format("tpl:%s", objId));
+    Resource obj = work.createResource(String.format("<%s>", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateReferenceType(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty(rdfType);
     Resource obj = work.createResource("tpl:R40103148466");
     work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R49267603385");
-    obj = work.createProperty(String.format("tpl:%s", objId));
+    obj = work.createProperty(String.format("<%s>", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateReferenceTpl(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("tpl:R21129944603");
     Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
@@ -3548,30 +3731,30 @@ public class RefDataProvider
 
   private Model GenerateQualifies(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("tpl:R91125890543");
-    Resource obj = work.createResource(String.format("tpl:%s", objId));
+    Resource obj = work.createResource(String.format("<%s>", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateRange(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("rdfs:range");
     Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R98983340497");
-    obj = work.createProperty(qName);
+    obj = work.createProperty(String.format("<%s>", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateHasRole(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("p8:hasRole");
-    Resource res = work.createResource(String.format("tpl:%s", objId));
+    Resource res = work.createResource(String.format("<%s>", objId));
     work.add(subj, pred, res);
     return work;
   }
@@ -3580,9 +3763,9 @@ public class RefDataProvider
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:%s", subjId));
+      Resource subj = work.createResource(String.format("<%s>", subjId));
       Property pred = work.createProperty("p8:hasTemplate");
-      Resource res = work.createResource(String.format("tpl:%s", objId));
+      Resource res = work.createResource(String.format("<%s>", objId));
       work.add(subj, pred, res);
     }
     return work;
@@ -3602,7 +3785,7 @@ public class RefDataProvider
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:%s", subjId));
+      Resource subj = work.createResource(String.format("<%s>", subjId));
       Property pred = work.createProperty("p8:valRoleIndex");
       Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
       work.add(subj, pred, obj);
@@ -3612,18 +3795,18 @@ public class RefDataProvider
 
   private Model GenerateRoleDomain(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("rdfs:domain");
-    Resource obj = work.createProperty(String.format("tpl:%s", objId));
+    Resource obj = work.createProperty(String.format("<%s>", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
-  private Model GenerateRoleFillerType(Model work, String subjId, String qName)
+  private Model GenerateRoleFillerType(Model work, String subjId, String range)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("p8:hasRoleFillerType");
-    Resource obj = work.createProperty(qName);
+    Resource obj = work.createProperty(String.format("<%s>", range));
     work.add(subj, pred, obj);
     return work;
   }
@@ -3632,7 +3815,7 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:%s", subjId));
+      Resource subj = work.createResource(String.format("<%s>", subjId));
       Property pred = work.createProperty("tpl:R35529169909");
       Literal obj = work.createTypedLiteral(String.valueOf(rolecount), "xsd:integer");
       work.add(subj, pred, obj);
@@ -3656,28 +3839,46 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition)
     {
-      Resource subj = work.createResource(String.format("tpl:%s", subjId));
+      Resource subj = work.createResource(String.format("<%s>", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("p8:TemplateDescription");
       work.add(subj, pred, obj);
       obj = work.createProperty("owl:Thing");
       work.add(subj, pred, obj);
     }
-    else if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
+    else if (gobj instanceof RoleQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:%s", subjId));
+      Resource subj = work.createResource(String.format("<%s>", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("owl:Thing");
       work.add(subj, pred, obj);
       obj = work.createResource("p8:TemplateRoleDescription");
       work.add(subj, pred, obj);
       pred = work.createProperty("p8:hasTemplate");
-      obj = work.createResource(String.format("tpl:%s", objectId));
+      obj = work.createResource(String.format("<%s>", objectId));
       work.add(subj, pred, obj);
+      pred = work.createProperty("p8:hasRoleFillerType");
+      obj = work.createResource(String.format("<%s>", ((RoleQualification)gobj).getRange()));
+      work.add(subj, pred, obj);
+    }
+    else if (gobj instanceof RoleDefinition)
+    {
+    	Resource subj = work.createResource(String.format("<%s>", subjId));
+        Property pred = work.createProperty(rdfType);
+        Resource obj = work.createResource("owl:Thing");
+        work.add(subj, pred, obj);
+        obj = work.createResource("p8:TemplateRoleDescription");
+        work.add(subj, pred, obj);
+        pred = work.createProperty("p8:hasTemplate");
+        obj = work.createResource(String.format("<%s>", objectId));
+        work.add(subj, pred, obj);
+        pred = work.createProperty("p8:hasRoleFillerType");
+        obj = work.createResource(String.format("<%s>", ((RoleDefinition)gobj).getRange()));
+        work.add(subj, pred, obj);
     }
     else if (gobj instanceof TemplateQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:%s", subjId));
+      Resource subj = work.createResource(String.format("<%s>", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("p8:TemplateDescription");
       work.add(subj, pred, obj);
@@ -3690,7 +3891,7 @@ public class RefDataProvider
       work.add(subj, pred, obj);
       subj = work.createResource(objectId);
       pred = work.createProperty("p8:hasSubTemplate");
-      obj = work.createResource(String.format("tpl:%s", subjId));
+      obj = work.createResource(String.format("<%s>", subjId));
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof ClassDefinition)
@@ -3709,37 +3910,37 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition)
     {
-      Resource subj = work.createResource(String.format("tpl:%s", subjId));
+      Resource subj = work.createResource(String.format("<%s>", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("tpl:R16376066707");
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleDefinition)
     {
-      Resource subj = work.createResource(String.format("tpl:%s", subjId));
+      Resource subj = work.createResource(String.format("<%s>", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("tpl:R74478971040");
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof TemplateQualification)
     {
-      Resource subj = work.createResource(objId);
+      Resource subj = work.createResource(String.format("<%s>",objId));
       Property pred = work.createProperty("dm:hasSubclass");
-      Resource obj = work.createResource(String.format("tpl:%s", subjId));
+      Resource obj = work.createResource(String.format("<%s>", subjId));
       work.add(subj, pred, obj);
-      subj = work.createResource(String.format("tpl:%s", subjId));
+      subj = work.createResource(String.format("<%s>", subjId));
       pred = work.createProperty("dm:hasSuperclass");
-      obj = work.createResource(objId);
+      obj = work.createResource(String.format("<%s>",objId));
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleQualification)
     {
-      Resource subj = work.createResource(subjId.toString());
+      Resource subj = work.createResource(String.format("<%s>",subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("tpl:R76288246068");
       work.add(subj, pred, obj);
       pred = work.createProperty("tpl:R99672026745");
-      obj = work.createResource(String.format("tpl:%s", objId));
+      obj = work.createResource(String.format("<%s>", objId));
       work.add(subj, pred, obj);
       pred = work.createProperty(rdfType);
       obj = work.createResource("tpl:R67036823327");
@@ -3750,7 +3951,7 @@ public class RefDataProvider
 
   private Model GenerateName(Model work, Name name, String subjId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("rdfs:label");
     Literal obj = work.createTypedLiteral(name.getValue(),
         (name.getLang() == null || name.getLang() == "") ? defaultLanguage : name.getLang());
@@ -3799,9 +4000,9 @@ public class RefDataProvider
 
   private Model GenerateRdfSubClass(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(objId);
+    Resource subj = work.createResource(String.format("<%s>", objId));
     Property pred = work.createProperty("rdfs:subClassOf");
-    Resource obj = work.createResource(String.format("rdl:%s", subjId));
+    Resource obj = work.createResource(String.format("<%s>", subjId));
     work.add(subj, pred, obj);
     return work;
   }
@@ -3817,9 +4018,9 @@ public class RefDataProvider
 
   private Model GenerateDmClassification(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(String.format("rdl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("dm:hasClassified");
-    Resource obj = work.createResource(objId);
+    Resource obj = work.createResource(String.format("<%s>", objId));
     work.add(subj, pred, obj);
     pred = work.createProperty("dm:hasClassifier");
     work.add(subj, pred, obj);
@@ -3828,9 +4029,9 @@ public class RefDataProvider
 
   private Model GenerateDmSubClass(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(String.format("rdl:%s", subjId));
+    Resource subj = work.createResource(String.format("<%s>", subjId));
     Property pred = work.createProperty("dm:hasSubclass");
-    Resource obj = work.createResource(objId);
+    Resource obj = work.createResource(String.format("<%s>", objId));
     work.add(subj, pred, obj);
     return work;
   }
