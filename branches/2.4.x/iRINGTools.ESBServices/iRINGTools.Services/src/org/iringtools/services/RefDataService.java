@@ -28,33 +28,7 @@ public class RefDataService extends AbstractService
 {
   private final String SERVICE_NAME = "RefDataService";
   
-  @GET
-  @Path("/federation")
-  public Federation getFederation()
-  {
-    Federation federation = null;
-
-    try
-    {
-      initService(SERVICE_NAME);
-    }
-    catch (AuthorizationException e)
-    {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
-    }
-
-    try
-    {
-      RefDataProvider refDataProvider = new RefDataProvider(settings);
-      federation = refDataProvider.getFederation();
-    }
-    catch (Exception e)
-    {
-      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
-    }
-
-    return federation;
-  }
+  
 
   @POST
   @Path("/federation")
@@ -289,9 +263,8 @@ public class RefDataService extends AbstractService
   }
 
   @GET
-  @Path("/classes/{id}")
-  // TODO need to add namespace parameter
-  public Qmxf getClass(@PathParam("id") String id)
+  @Path("/classes/{id}/{namespace}")
+  public Qmxf getClassFromRepository(@PathParam("id") String id, @PathParam("namespace") String namespace, Repository repository)
   {
     Qmxf qmxf = null;
     
@@ -307,7 +280,35 @@ public class RefDataService extends AbstractService
     try
     {
       RefDataProvider refDataProvider = new RefDataProvider(settings);
-      qmxf = refDataProvider.getClass(id, null, null);
+      qmxf = refDataProvider.getClass(id, namespace, repository);
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+    }
+    
+    return qmxf;
+  }
+  
+  @GET
+  @Path("/classes/{id}/{namespace}")
+  public Qmxf getClass(@PathParam("id") String id, @PathParam("namespace") String namespace)
+  {
+    Qmxf qmxf = null;
+    
+    try
+    {
+      initService(SERVICE_NAME);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+
+    try
+    {
+      RefDataProvider refDataProvider = new RefDataProvider(settings);
+      qmxf = refDataProvider.getClass(id, namespace, null);
     }
     catch (Exception e)
     {
@@ -392,7 +393,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
       RefDataProvider refdataProvider = new RefDataProvider(settings);
-      entityList = refdataProvider.getSuperClasses(id);
+      entityList = refdataProvider.getSuperClasses(id, null);
     }
     catch (Exception e)
     {
@@ -420,7 +421,35 @@ public class RefDataService extends AbstractService
     try
     {
       RefDataProvider refdataProvider = new RefDataProvider(settings);
-      entityList = refdataProvider.getSubClasses(id);
+      entityList = refdataProvider.getSubClasses(id, null);
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+    }
+    
+    return entityList;
+  }
+  
+  @GET
+  @Path("/classes/{id}/subclasses")
+  public org.iringtools.refdata.response.Response getSubClassesFromRepository(@PathParam("id") String id, Repository repository)
+  {
+    org.iringtools.refdata.response.Response entityList = null;
+    
+    try
+    {
+      initService(SERVICE_NAME);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+
+    try
+    {
+      RefDataProvider refdataProvider = new RefDataProvider(settings);
+      entityList = refdataProvider.getSubClasses(id, repository);
     }
     catch (Exception e)
     {
@@ -504,7 +533,7 @@ public class RefDataService extends AbstractService
     try
     {
       RefDataProvider refdataProvider = new RefDataProvider(settings);
-      entityList = refdataProvider.getClassMembers(id);
+      entityList = refdataProvider.getClassMembers(id, null);
     }
     catch (Exception e)
     {
@@ -514,6 +543,34 @@ public class RefDataService extends AbstractService
     return entityList;
   }
 
+  @GET
+  @Path("/classes/{id}/members")
+  public org.iringtools.refdata.response.Response getClassMembersFromRepository(@PathParam("id") String id, Repository repository)
+  {
+    org.iringtools.refdata.response.Response entityList = null;
+    
+    try
+    {
+      initService(SERVICE_NAME);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+
+    try
+    {
+      RefDataProvider refdataProvider = new RefDataProvider(settings);
+      entityList = refdataProvider.getClassMembers(id, repository);
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+    }
+    
+    return entityList;
+  }
+  
   @GET
   @Path("/search/{query}/{start}/{limit}")
   public org.iringtools.refdata.response.Response searchPage(@PathParam("query") String query,
