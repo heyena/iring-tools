@@ -55,8 +55,24 @@ public class Namespace {
     protected String description;
     @XmlElement(required = true)
     protected String idGenerator;
+    @XmlElement(required = true)
+    protected String prefix;
 
     /**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
+
+	/**
+	 * @param prefix the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	/**
      * Gets the value of the id property.
      * 
      * @return

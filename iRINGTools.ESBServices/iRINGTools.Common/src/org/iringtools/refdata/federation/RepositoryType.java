@@ -31,7 +31,9 @@ public enum RepositoryType {
     @XmlEnumValue("RDS/WIP")
     RDS_WIP("RDS/WIP"),
     @XmlEnumValue("Camelot")
-    CAMELOT("Camelot");
+    CAMELOT("Camelot"),
+    @XmlEnumValue("JORD")
+    JORD("JORD");
     private final String value;
 
     RepositoryType(String v) {

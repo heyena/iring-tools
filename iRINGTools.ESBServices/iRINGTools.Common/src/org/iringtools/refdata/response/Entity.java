@@ -46,9 +46,24 @@ public class Entity {
     protected String repository;
     @XmlElement(required = true)
     protected String uri;
-    @XmlElement(required = true)
+    @XmlElement(required = false)
+    protected String rdsuri;
+	@XmlElement(required = true)
     protected String lang;
 
+	/**
+	 * @return the rdsuri
+	 */
+	public String getRdsuri() {
+		return rdsuri;
+	}
+
+	/**
+	 * @param rdsuri the rdsuri to set
+	 */
+	public void setRdsuri(String rdsuri) {
+		this.rdsuri = rdsuri;
+	}
     /**
      * Gets the value of the label property.
      * 
