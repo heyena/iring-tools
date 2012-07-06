@@ -11,7 +11,7 @@ namespace NUnit
         [STAThread]
         static void Main()
         {
-            string commandLine = @"/run ../../../../../../SPPIDDataLayer/SPPIDDataLayer.NUnit/SPPIDDataLayer.NUnit.vbproj";
+            string commandLine = @"/run ../../../../../../SPPIDDataLayer/SPPIDDataLayer.NUnit/SPPIDDataLayer.NUnit.csproj";
 
             string[] args = commandLine.Split(' ');
             AppEntry.Main(args);
