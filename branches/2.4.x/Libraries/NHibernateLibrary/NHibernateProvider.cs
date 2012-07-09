@@ -517,7 +517,7 @@ namespace org.iringtools.nhibernate
     private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
       string dbUserName, string dbPassword, string portNumber, string serName)
     {
-      string connStr;
+      string connStr, defaultConnStr = "";
 
       if (portNumber == "")
       {
@@ -528,10 +528,12 @@ namespace org.iringtools.nhibernate
       }
 
       if (dbProvider.ToUpper().Contains("MSSQL"))
-        if (dbInstance == "default")
+        if (dbInstance == "default" || dbInstance == "")
         {
           connStr = String.Format("Data Source={0};Initial Catalog={2};User ID={3};Password={4}",
            dbServer, dbInstance, dbName, dbUserName, dbPassword);
+          defaultConnStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
+           dbServer, "SQLEXPRESS", dbName, dbUserName, dbPassword);
         }
         else
         {
@@ -553,7 +555,17 @@ namespace org.iringtools.nhibernate
       NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
       config.AddProperties(properties);
 
-      ISessionFactory sessionFactory = config.BuildSessionFactory();
+      ISessionFactory sessionFactory;
+
+      try
+      {        
+        sessionFactory = config.BuildSessionFactory();
+      }
+      catch(Exception)
+      {
+        config.Properties["connection.connection_string"] = defaultConnStr;
+        sessionFactory = config.BuildSessionFactory();
+      }
       return sessionFactory.OpenSession();
     }
 
