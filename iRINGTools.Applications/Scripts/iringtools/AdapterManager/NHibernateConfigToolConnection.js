@@ -292,7 +292,7 @@ function setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjec
                 name: 'dbInstance',
                 fieldLabel: 'Database Instance',
                 value: 'default',
-                allowBlank: false
+                allowBlank: true
             }, {
                 xtype: 'textfield',
                 name: 'dbName',
