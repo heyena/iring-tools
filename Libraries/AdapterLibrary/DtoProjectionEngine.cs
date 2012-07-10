@@ -319,7 +319,8 @@ namespace org.iringtools.adapter.projection
                   if (propertyParts.Length == 2)  // direct property
                   {
                     string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-                    propertyValue = ParsePropertyValue(roleMap, propertyValue);
+                    string keyValue = string.Empty;
+                    propertyValue = ParsePropertyValue(roleMap, propertyValue, ref keyValue);
 
                     if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
                     {
@@ -341,11 +342,11 @@ namespace org.iringtools.adapter.projection
                     {
                       if (!keyValues.ContainsKey(roleMap.propertyName))
                       {
-                        keyValues.Add(roleMap.propertyName, propertyValue);
+                        keyValues.Add(roleMap.propertyName, keyValue);
                       }
                     }
 
-                    tempPropertyValues.Append(propertyValue.Trim());                    
+                    tempPropertyValues.Append(propertyValue);              
                   }
                   else  // related property
                   {
@@ -362,7 +363,8 @@ namespace org.iringtools.adapter.projection
                     {
                       IDataObject relatedObject = relatedObjects[classIdentifierIndex];
                       string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-                      propertyValue = ParsePropertyValue(roleMap, propertyValue);
+                      string keyValue = string.Empty;
+                      propertyValue = ParsePropertyValue(roleMap, propertyValue, ref keyValue);
 
                       if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
                       {
@@ -370,14 +372,15 @@ namespace org.iringtools.adapter.projection
                         break;
                       }
                       
-                      tempPropertyValues.Append(propertyValue.Trim());
+                      tempPropertyValues.Append(propertyValue);
                     }
                     else  // related property is property map
                     {
                       foreach (IDataObject relatedObject in relatedObjects)
                       {
                         string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-                        propertyValue = ParsePropertyValue(roleMap, propertyValue);
+                        string keyValue = string.Empty;
+                        propertyValue = ParsePropertyValue(roleMap, propertyValue, ref keyValue);
 
                         if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
                         {
@@ -385,7 +388,7 @@ namespace org.iringtools.adapter.projection
                           break;
                         }
                         
-                        tempPropertyValues.Append(propertyValue.Trim());
+                        tempPropertyValues.Append(propertyValue);
                       }
 
                       if (!isTemplateValid) break;
@@ -595,7 +598,8 @@ namespace org.iringtools.adapter.projection
           if (propertyParts.Length == 2)  // direct property
           {
             string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-            propertyValue = ParsePropertyValue(propertyRole, propertyValue);
+            string keyValue = string.Empty;
+            propertyValue = ParsePropertyValue(propertyRole, propertyValue, ref keyValue);
 
             RoleObject roleObject = new RoleObject()
             {
@@ -645,7 +649,8 @@ namespace org.iringtools.adapter.projection
             {
               IDataObject relatedObject = relatedObjects[classIdentifierIndex];
               string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-              propertyValue = ParsePropertyValue(propertyRole, propertyValue);
+              string keyValue = string.Empty;
+              propertyValue = ParsePropertyValue(propertyRole, propertyValue, ref keyValue);
               roleObject.value = propertyValue;
             }
             else  // related property is property map
@@ -655,7 +660,8 @@ namespace org.iringtools.adapter.projection
               foreach (IDataObject relatedObject in relatedObjects)
               {
                 string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-                propertyValue = ParsePropertyValue(propertyRole, propertyValue);
+                string keyValue = string.Empty;
+                propertyValue = ParsePropertyValue(propertyRole, propertyValue, ref keyValue);
 
                 if (!String.IsNullOrEmpty(propertyRole.valueListName))
                 {
@@ -749,14 +755,21 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private string ParsePropertyValue(RoleMap propertyRole, string propertyValue)
+    private string ParsePropertyValue(RoleMap propertyRole, string propertyValue, ref string keyValue)
     {
       string value = propertyValue;
 
       if (String.IsNullOrEmpty(propertyRole.valueListName))
       {
         if (propertyRole.dataType.ToLower().Contains("datetime"))
+        {
           value = Utility.ToXsdDateTime(propertyValue);
+        }
+        else if (propertyRole.dataType == "xsd:string" && propertyValue.Length > propertyRole.dataLength)
+        {
+          keyValue = value;
+          value = value.Substring(0, propertyRole.dataLength);
+        }
       }
       else  // resolve value list to uri
       {

@@ -1246,7 +1246,7 @@ public class DataModel
                 }
                 else
                 {
-                  roleValue = roleOldValue + " -> " + roleValue;
+                  roleValue = "[" + roleOldValue + "] -> [" + roleValue + "]";
                   rowData.set(i, "<span class=\"change\">" + roleValue + "</span>");
                 }
                 
@@ -1277,7 +1277,7 @@ public class DataModel
               }
               else
               {
-                roleValue = roleOldValue + " -> " + roleValue;
+                roleValue = "[" + roleOldValue + "] -> [" + roleValue + "]";
                 rowData.add("<span class=\"change\">" + roleValue + "</span>");
               }
             }

@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassTemplates }
+     * Create an instance of {@link Templates }
      * 
      */
-    public ClassTemplates createClassTemplates() {
-        return new ClassTemplates();
+    public Templates createTemplates() {
+        return new Templates();
     }
 
     /**
@@ -46,19 +46,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Roles }
+     * Create an instance of {@link Template }
      * 
      */
-    public Roles createRoles() {
-        return new Roles();
+    public Template createTemplate() {
+        return new Template();
     }
 
     /**
-     * Create an instance of {@link Graph }
+     * Create an instance of {@link Manifest }
      * 
      */
-    public Graph createGraph() {
-        return new Graph();
+    public Manifest createManifest() {
+        return new Manifest();
+    }
+
+    /**
+     * Create an instance of {@link Role }
+     * 
+     */
+    public Role createRole() {
+        return new Role();
     }
 
     /**
@@ -78,35 +86,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Manifest }
+     * Create an instance of {@link ClassTemplates }
      * 
      */
-    public Manifest createManifest() {
-        return new Manifest();
+    public ClassTemplates createClassTemplates() {
+        return new ClassTemplates();
     }
 
     /**
-     * Create an instance of {@link Template }
+     * Create an instance of {@link Graph }
      * 
      */
-    public Template createTemplate() {
-        return new Template();
+    public Graph createGraph() {
+        return new Graph();
     }
 
     /**
-     * Create an instance of {@link Templates }
+     * Create an instance of {@link Roles }
      * 
      */
-    public Templates createTemplates() {
-        return new Templates();
-    }
-
-    /**
-     * Create an instance of {@link Role }
-     * 
-     */
-    public Role createRole() {
-        return new Role();
+    public Roles createRoles() {
+        return new Roles();
     }
 
 }
