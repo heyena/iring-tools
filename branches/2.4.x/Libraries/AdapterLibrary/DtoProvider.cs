@@ -236,6 +236,9 @@ namespace org.iringtools.adapter
                       string objectName = property[0].Trim();
                       string propertyName = property[1].Trim();
 
+                      DataProperty dataProp = dataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                      manifestRole.dataLength = dataProp.dataLength;
+
                       if (dataObject.isKeyProperty(propertyName))
                       {
                         manifestTemplate.transferOption = TransferOption.Required;
@@ -840,8 +843,9 @@ namespace org.iringtools.adapter
                   List<string> unmatchedRoleIds = new List<string>();
                   int rolesMatchedCount = 0;
                   
-                  foreach (RoleMap roleMap in mappingTemplate.roleMaps)
+                  for (int i = 0; i < mappingTemplate.roleMaps.Count; i++)
                   {
+                    RoleMap roleMap = mappingTemplate.roleMaps[i];
                     bool found = false;
 
                     foreach (Role manifestRole in manifestTemplate.roles)
@@ -853,6 +857,13 @@ namespace org.iringtools.adapter
                         if (roleMap.type != RoleType.Reference || roleMap.value == manifestRole.value)
                         {
                           rolesMatchedCount++;
+                        }
+
+                        if (manifestRole.type == RoleType.Property ||
+                            manifestRole.type == RoleType.DataProperty ||
+                            manifestRole.type == RoleType.ObjectProperty)
+                        {
+                          roleMap.dataLength = manifestRole.dataLength;
                         }
 
                         break;
@@ -868,9 +879,9 @@ namespace org.iringtools.adapter
                   if (rolesMatchedCount == manifestTemplate.roles.Count)
                   {
                     crossedTemplate = Utility.CloneDataContractObject<TemplateMap>(mappingTemplate);
-                    
+
                     if (unmatchedRoleIds.Count > 0)
-                    {                      
+                    {
                       // remove unmatched roles                      
                       for (int i = 0; i < crossedTemplate.roleMaps.Count; i++)
                       {
@@ -878,7 +889,7 @@ namespace org.iringtools.adapter
                         {
                           crossedTemplate.roleMaps.RemoveAt(i--);
                         }
-                      }                      
+                      }
                     }
                   }
                 }

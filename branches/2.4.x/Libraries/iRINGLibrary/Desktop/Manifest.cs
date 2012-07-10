@@ -295,6 +295,8 @@ namespace org.iringtools.dxfr.manifest
 
     private string dataTypeField;
 
+    private int dataLengthField;
+
     private string valueField;
 
     private org.iringtools.dxfr.manifest.Class classField;
@@ -389,6 +391,19 @@ namespace org.iringtools.dxfr.manifest
       set
       {
         this.cardinalityField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 7)]
+    public int dataLength
+    {
+      get
+      {
+        return this.dataLengthField;
+      }
+      set
+      {
+        this.dataLengthField = value;
       }
     }
   }
@@ -835,6 +850,8 @@ namespace org.iringtools.mapping
 
     private string dataTypeField;
 
+    private int dataLengthField;
+
     private string valueField;
 
     private string propertyNameField;
@@ -944,6 +961,19 @@ namespace org.iringtools.mapping
       set
       {
         this.classMapField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 7)]
+    public int dataLength
+    {
+      get
+      {
+        return this.dataLengthField;
+      }
+      set
+      {
+        this.dataLengthField = value;
       }
     }
   }

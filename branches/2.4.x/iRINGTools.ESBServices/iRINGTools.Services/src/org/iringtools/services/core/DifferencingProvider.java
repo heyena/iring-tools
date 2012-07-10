@@ -277,7 +277,7 @@ public class DifferencingProvider
       DataTransferObject targetDto = targetDtoList.get(i);
       DataTransferObject sourceDto = sourceDtoList.get(i);
 
-      // sanity check see if the data transfer object has become SYNC'ed since DTI differencing occurs
+      // sanity check see if the data transfer object has become SYNC'ed since last DTI differencing occurred
       sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
 
       if (targetDto.getClassObjects() != null && sourceDto.getClassObjects() != null)

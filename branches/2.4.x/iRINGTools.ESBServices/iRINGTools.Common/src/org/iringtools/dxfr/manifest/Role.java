@@ -25,6 +25,7 @@ import org.iringtools.mapping.RoleType;
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="class" type="{http://www.iringtools.org/dxfr/manifest}Class"/>
  *         &lt;element name="cardinality" type="{http://www.iringtools.org/dxfr/manifest}Cardinality" minOccurs="0"/>
+ *         &lt;element name="dataLength" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,7 +42,8 @@ import org.iringtools.mapping.RoleType;
     "dataType",
     "value",
     "clazz",
-    "cardinality"
+    "cardinality",
+    "dataLength"
 })
 public class Role {
 
@@ -58,6 +60,7 @@ public class Role {
     @XmlElement(name = "class", required = true)
     protected Class clazz;
     protected Cardinality cardinality;
+    protected Integer dataLength;
 
     /**
      * Gets the value of the type property.
@@ -225,6 +228,30 @@ public class Role {
      */
     public void setCardinality(Cardinality value) {
         this.cardinality = value;
+    }
+
+    /**
+     * Gets the value of the dataLength property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getDataLength() {
+        return dataLength;
+    }
+
+    /**
+     * Sets the value of the dataLength property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setDataLength(Integer value) {
+        this.dataLength = value;
     }
 
 }
