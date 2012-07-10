@@ -81,7 +81,6 @@ namespace org.iringtools.adapter.datalayer
       );
 
       _kernel.Load(_authorizationBindingPath);
-      _authorization = _kernel.Get<IAuthorization>();
     }
 
     #region public methods
@@ -816,6 +815,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
+        _authorization = _kernel.Get<IAuthorization>();
         return _authorization.Authorize(objectType, ref dataFilter);
       }
       catch (Exception e)

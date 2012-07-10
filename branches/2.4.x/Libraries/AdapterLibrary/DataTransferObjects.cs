@@ -71,7 +71,7 @@ namespace org.iringtools.adapter
     [DataMember(Order = 1)]
     public List<ClassObject> classObjects { get; set; }
 
-    [DataMember(Order = 2, EmitDefaultValue = false)]
+    [DataMember(Order = 2)]
     public TransferType transferType { get; set; }
 
     public ClassObject GetClassObject(string classId)
@@ -108,7 +108,7 @@ namespace org.iringtools.adapter
     [DataMember(Order = 3)]
     public List<TemplateObject> templateObjects { get; set; }
 
-    [DataMember(Order = 4, EmitDefaultValue = false)]
+    [DataMember(Order = 4)]
     public TransferType transferType { get; set; }
 
     public TemplateObject GetTemplateObject(TemplateMap templateMap)
@@ -167,7 +167,7 @@ namespace org.iringtools.adapter
     [DataMember(Order = 2)]
     public List<RoleObject> roleObjects { get; set; }
 
-    [DataMember(Order = 3, EmitDefaultValue = false)]
+    [DataMember(Order = 3)]
     public TransferType transferType { get; set; }
   }
 

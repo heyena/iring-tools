@@ -67,7 +67,7 @@ namespace org.iringtools.adapter
     [DataMember(Name = "hashValue", Order = 1, EmitDefaultValue = false)]
     public string HashValue { get; set; }
 
-    [DataMember(Name = "transferType", Order = 2, EmitDefaultValue = false)]
+    [DataMember(Name = "transferType", Order = 2)]
     public TransferType TransferType { get; set; }
 
     [DataMember(Name = "sortIndex", Order = 3, EmitDefaultValue = false)]

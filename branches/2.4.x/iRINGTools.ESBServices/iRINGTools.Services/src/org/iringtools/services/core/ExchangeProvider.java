@@ -319,14 +319,16 @@ public class ExchangeProvider
           sourceDti.setIdentifier(dti.getIdentifier());
           sourceDti.setHashValue(dti.getHashValue());
           sourceDti.setSortIndex(dti.getSortIndex());
-          sourceDti.setInternalIdentifier(dti.getInternalIdentifier().substring(0, splitIndex));        
+          sourceDti.setInternalIdentifier(dti.getInternalIdentifier().substring(0, splitIndex));    
+          sourceDti.setTransferType(dti.getTransferType());
           sourceDtiItems.add(sourceDti);   
           
           targetDti = new DataTransferIndex();
           targetDti.setIdentifier(dti.getIdentifier());
           targetDti.setHashValue(dti.getHashValue());
           targetDti.setSortIndex(dti.getSortIndex());
-          targetDti.setInternalIdentifier(dti.getInternalIdentifier().substring(splitIndex+2));        
+          targetDti.setInternalIdentifier(dti.getInternalIdentifier().substring(splitIndex+2));   
+          targetDti.setTransferType(dti.getTransferType());
           targetDtiItems.add(targetDti);
           break;
         case SYNC:
@@ -336,7 +338,8 @@ public class ExchangeProvider
           sourceDti.setIdentifier(dti.getIdentifier());
           sourceDti.setHashValue(dti.getHashValue());
           sourceDti.setSortIndex(dti.getSortIndex());
-          sourceDti.setInternalIdentifier(dti.getInternalIdentifier().substring(0, splitIndex));        
+          sourceDti.setInternalIdentifier(dti.getInternalIdentifier().substring(0, splitIndex));   
+          sourceDti.setTransferType(dti.getTransferType());
           sourceDtiItems.add(sourceDti);
           break;
         case DELETE:
@@ -422,18 +425,18 @@ public class ExchangeProvider
               {
                 TransferType transferOption = sourceDti.getTransferType();
   
-                if (transferOption == TransferType.ADD)
-                {
-                  DataTransferObject addDto = sourceDtoListItems.remove(i--);
-                  addDto.setTransferType(org.iringtools.dxfr.dto.TransferType.ADD);
-                  resultDtoListItems.add(addDto);
-                  break;
-                }
-                else if (transferOption == TransferType.SYNC)
+                if (transferOption == null || transferOption == TransferType.SYNC)
                 {
                   DataTransferObject syncDto = sourceDtoListItems.remove(i--);
                   syncDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
                   resultDtoListItems.add(syncDto);
+                  break;
+                }
+                else if (transferOption == TransferType.ADD)
+                {
+                  DataTransferObject addDto = sourceDtoListItems.remove(i--);
+                  addDto.setTransferType(org.iringtools.dxfr.dto.TransferType.ADD);
+                  resultDtoListItems.add(addDto);
                   break;
                 }
               }
