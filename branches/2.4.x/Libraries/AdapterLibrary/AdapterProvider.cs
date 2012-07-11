@@ -470,7 +470,8 @@ namespace org.iringtools.adapter
           if (File.Exists(currDictionaryPath))
           {
             string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Name);
-            File.Copy(currDictionaryPath, updatedDictionaryPath);
+            if (currDictionaryPath.ToLower() != updatedDictionaryPath.ToLower())
+              File.Copy(currDictionaryPath, updatedDictionaryPath);
           }
 
           DeleteApplication(scopeName, appName);
