@@ -4750,7 +4750,6 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="ClientBin\" />
     <Folder Include="Scripts\ext-3.3.1\examples\spinner\images\" />
     <Folder Include="Scripts\ext-3.3.1\resources\images\vista\dd\" />
@@ -4765,6 +4764,7 @@
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\examples\tabs\images\" />
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\test\yui_2.6.0\yui\build\logger\assets\skins\sam\" />
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\test\yui_2.6.0\yui\build\yuitest\assets\skins\sam\" />
+    <Folder Include="Service References\App_Data\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
