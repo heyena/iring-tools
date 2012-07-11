@@ -24,7 +24,7 @@ namespace NUnit.Tests
 	    private static readonly ILog _logger = LogManager.GetLogger(typeof(DxfrTest));      
       private AdapterSettings _settings = null;
       private string _baseDirectory = string.Empty;
-      private DataTranferProvider _dxfrProvider = null;			
+      private DtoProvider _dxfrProvider = null;			
 
       public DxfrTest()
       {
@@ -42,7 +42,7 @@ namespace NUnit.Tests
 				_baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
 				_settings["BaseDirectoryPath"] = _baseDirectory;       
 				Directory.SetCurrentDirectory(_baseDirectory);
-        _dxfrProvider = new DataTranferProvider(_settings);
+        _dxfrProvider = new DtoProvider(_settings);
 
         ResetDatabase();
       }			
