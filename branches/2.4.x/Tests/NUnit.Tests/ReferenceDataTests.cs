@@ -11,9 +11,9 @@ using System.Xml;
 using System.Linq;
 using System.Xml.Linq;
 using System;
-using System.Configuration;
 using NUnit.Framework;
 using org.iringtools.refdata.federation;
+using StaticDust.Configuration;
 
 namespace NUnit.Tests
 {
@@ -21,9 +21,21 @@ namespace NUnit.Tests
   public class ReferenceDataTests
   {
     private ReferenceDataProvider _refdataProvider = null;
-    private ReferenceDataSettings _settings = null;
+    private AdapterSettings _settings = null;
     private string _baseDirectory = string.Empty;
 
+    public ReferenceDataTests()
+    {
+      _baseDirectory = Directory.GetCurrentDirectory();
+      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));      
+      Directory.SetCurrentDirectory(_baseDirectory);
+      _settings = new AdapterSettings();
+      _settings.AppendSettings(new AppSettingsReader("App.config"));
+      _settings["BaseDirectoryPath"] = _baseDirectory;      
+      _refdataProvider = new ReferenceDataProvider(_settings);
+    }
+
+    /*
     public ReferenceDataTests()
     {
       _settings = new ReferenceDataSettings();
@@ -34,6 +46,7 @@ namespace NUnit.Tests
       Directory.SetCurrentDirectory(_baseDirectory);
       _refdataProvider = new ReferenceDataProvider(_settings);
     }
+     */
 
     //[Test]
     public void GetFederation()

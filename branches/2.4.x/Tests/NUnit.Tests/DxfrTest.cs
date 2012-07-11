@@ -493,7 +493,10 @@ namespace NUnit.Tests
 						foreach (Status xmlStatus in xmlResponse.StatusList)
 						{
 							Assert.AreEqual(status.Messages.ToString(), xmlStatus.Messages.ToString());
-							Assert.AreEqual(status.Identifier, xmlStatus.Identifier);
+							//the following line of code is only applicable to menu testing
+              //set _settings["TestMode"]  to "WriteFiles" and run
+              //then set set _settings["TestMode"] to "UseFiles" and run
+              //Assert.AreEqual(status.Identifier, xmlStatus.Identifier);
 							xmlResponse.StatusList.Remove(xmlStatus);
 							break;
 						}

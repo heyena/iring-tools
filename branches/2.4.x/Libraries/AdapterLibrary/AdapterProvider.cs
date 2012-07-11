@@ -2952,6 +2952,7 @@ namespace org.iringtools.adapter
                 {
                   _application = application;
                   isScopeValid = true;
+                  break;
                 }
               }
             }
