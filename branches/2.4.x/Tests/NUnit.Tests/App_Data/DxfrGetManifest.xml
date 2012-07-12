@@ -30,6 +30,7 @@
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
+                  <dataLength>100</dataLength>
                 </role>
               </roles>
               <transferOption>Required</transferOption>
@@ -106,6 +107,7 @@
                   <id>tpl:R93884193692</id>
                   <name>hasScale</name>
                   <dataType>xsd:string</dataType>
+                  <dataLength>20</dataLength>
                 </role>
                 <role>
                   <type>Reference</type>
@@ -118,6 +120,7 @@
                   <id>tpl:R90688063648</id>
                   <name>valValue</name>
                   <dataType>xsd:single</dataType>
+                  <dataLength>8</dataLength>
                 </role>
               </roles>
               <transferOption>Desired</transferOption>
@@ -150,6 +153,7 @@
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
+                  <dataLength>10</dataLength>
                 </role>
               </roles>
               <transferOption>Desired</transferOption>
@@ -182,6 +186,7 @@
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
+                  <dataLength>50</dataLength>
                 </role>
               </roles>
               <transferOption>Desired</transferOption>
