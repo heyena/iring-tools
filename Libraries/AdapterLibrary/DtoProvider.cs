@@ -878,7 +878,7 @@ namespace org.iringtools.adapter
 
                   if (rolesMatchedCount == manifestTemplate.roles.Count)
                   {
-                    crossedTemplate = Utility.CloneDataContractObject<TemplateMap>(mappingTemplate);
+                   crossedTemplate = CloneTemplateMap(mappingTemplate);
 
                     if (unmatchedRoleIds.Count > 0)
                     {
@@ -932,6 +932,23 @@ namespace org.iringtools.adapter
           }
         }
       }
+    }
+
+    private TemplateMap CloneTemplateMap(TemplateMap templateMap)
+    {
+      TemplateMap clonedTemplateMap = new TemplateMap()
+      {
+        id = templateMap.id,
+        name = templateMap.name,
+        type = templateMap.type        
+      };
+
+      foreach (RoleMap roleMap in templateMap.roleMaps)
+      {
+        clonedTemplateMap.roleMaps.Add(roleMap);
+      }
+
+      return clonedTemplateMap;
     }
 
     private List<IDataObject> PageDataObjects(string objectType, DataFilter filter)

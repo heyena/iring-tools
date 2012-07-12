@@ -219,6 +219,11 @@ namespace org.iringtools.mapping
 
     public static bool IsMapped(this RoleMap roleMap)
     {
+      if (roleMap.type == RoleType.Unknown)
+      {
+        return false;
+      }
+
       if ((roleMap.type == RoleType.Property ||
           roleMap.type == RoleType.DataProperty ||
           roleMap.type == RoleType.ObjectProperty) && 

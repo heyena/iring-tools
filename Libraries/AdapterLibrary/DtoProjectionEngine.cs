@@ -765,7 +765,8 @@ namespace org.iringtools.adapter.projection
         {
           value = Utility.ToXsdDateTime(propertyValue);
         }
-        else if (propertyRole.dataType == "xsd:string" && propertyValue.Length > propertyRole.dataLength)
+        else if (propertyRole.dataType == "xsd:string" &&
+          propertyRole.dataLength > 0 && propertyValue.Length > propertyRole.dataLength)
         {
           keyValue = value;
           value = value.Substring(0, propertyRole.dataLength);

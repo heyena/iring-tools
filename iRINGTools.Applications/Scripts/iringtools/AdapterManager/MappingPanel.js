@@ -225,7 +225,13 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           {
               text: 'Make Possessor',
               handler: this.onMakePossessor,
-              // icon: 'Content/img/16x16/view-refresh.png',
+              // icon: '',
+              scope: this
+          },
+          {
+              text: 'Make Reference',
+              handler: this.onMakeReference,
+              // icon: '',
               scope: this
           },
           {
@@ -596,8 +602,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
                             if (data.node.parentNode != undefined
                               && data.node.parentNode.attributes.record != undefined
-                              && data.node.parentNode.attributes.type != 'DataObjectNode') 
-                            {   
+                              && data.node.parentNode.attributes.type != 'DataObjectNode') {
                                 Ext.get('relatedObject').dom.value = data.node.parentNode.attributes.record.Related;
                             }
 
@@ -846,6 +851,32 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         })
     },
 
+    onMakeReference: function () {
+        var that = this;
+        var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+        var index = node.parentNode.parentNode.indexOf(node.parentNode);
+        var contextParts = node.id.split('/');
+
+        Ext.Ajax.request({
+            url: 'mapping/makereference',
+            method: 'POST',
+            params: {
+                scope: contextParts[0],
+                app: contextParts[1],
+                graph: contextParts[2],
+                index: index,
+                classId: node.parentNode.parentNode.attributes.identifier,
+                roleId: node.attributes.record.id,
+                roleName: node.attributes.record.name
+            },
+            success: function (result, request) {
+                that.onReload();
+                //Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.attributes.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+            },
+            failure: function (result, request) { }
+        })
+    },
+
     onAddClassMap: function () {
         var mapnode = this.mappingPanel.getSelectionModel().getSelectedNode();
         var formid = 'classtarget-' + this.scope.Name + '-' + this.application.Name;
@@ -983,31 +1014,24 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     onClick: function (node) {
         var templateTypes = ['Qualification', 'Definition']
-        var roleTypes = ['Property', 'Possessor', 'Reference', 'FixedValue', 'DataProperty', 'ObjectProperty'];
+        var roleTypes = ['Unknown', 'Property', 'Possessor', 'Reference', 'FixedValue', 'DataProperty', 'ObjectProperty'];
         var classLabelKey = 'value label';
         var source = {};
 
         for (var propName in node.attributes.record) {
-            var propValue = node.attributes.record[propName];
+            if (propName != 'dataLength') {
+                var propValue = node.attributes.record[propName];
 
-            if (propName == 'type') {
-                if (node.attributes.type == 'TemplateMapNode') {
-                    propValue = templateTypes[propValue];
-                }
-                else if (node.attributes.type == 'RoleMapNode') {
-                    if (node.text.indexOf('[unmapped]') != -1) {
-                        propValue = '';
+                if (propName == 'type') {
+                    if (node.attributes.type == 'TemplateMapNode') {
+                        propValue = templateTypes[propValue];
                     }
-                    else {
+                    else if (node.attributes.type == 'RoleMapNode') {
                         propValue = roleTypes[propValue];
                     }
                 }
-            }
 
-            source[propName] = propValue;
-
-            if (propValue == 'Reference') {
-                source[classLabelKey] = node.attributes.properties[classLabelKey];
+                source[propName] = propValue;
             }
         }
 

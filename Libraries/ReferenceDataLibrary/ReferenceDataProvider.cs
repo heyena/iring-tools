@@ -75,7 +75,7 @@ namespace org.iringtools.refdata
     private int _pageSize = 0;
 
     private bool _useExampleRegistryBase = false;
-    private WebProxyCredentials _proxyCredentials = null;
+    //private WebProxyCredentials _proxyCredentials = null;
 
     private List<Repository> _repositories = null;
     private Federation _federation = null;
