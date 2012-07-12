@@ -627,17 +627,20 @@ namespace org.iringtools.web.controllers
           graphMap.DeleteRoleMap(tMap, rMap.id);
         }
 
-        if (!string.IsNullOrEmpty(rMap.propertyName) || rMap.dataType.StartsWith("xsd"))
+        if (rMap.dataType.StartsWith("xsd:"))
+        {
           rMap.type = RoleType.DataProperty;
+          rMap.propertyName = string.Empty;
+        }
         else
-          rMap.type = RoleType.Reference;
+        {
+          rMap.type = RoleType.Unknown;
+          rMap.propertyName = null;
+        }
 
-        rMap.propertyName = null;
         rMap.value = null;
         rMap.valueListName = null;
         rMap.classMap = null;
-
-        rMap.type = RoleType.Reference;
       }
       catch (Exception ex)
       {
