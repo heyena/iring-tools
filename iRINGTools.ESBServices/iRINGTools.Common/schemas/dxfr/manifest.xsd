@@ -7,15 +7,13 @@
 
   <xs:import namespace="http://www.iringtools.org/mapping" schemaLocation="../mapping/mapping.xsd" />
 
-  <xs:element name="manifest">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="graphs" type="Graphs" />
-        <xs:element name="version" type="xs:string" />      
-        <xs:element name="valueListMaps" type="mapping:ValueListMaps" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+  <xs:complexType name="Manifest">
+     <xs:sequence>
+       <xs:element name="graphs" type="Graphs" />
+       <xs:element name="version" type="xs:string" />      
+       <xs:element name="valueListMaps" type="mapping:ValueListMaps" />
+     </xs:sequence>
+   </xs:complexType>
 
   <xs:complexType name="Graphs">
     <xs:sequence>
