@@ -450,6 +450,9 @@ namespace org.iringtools.mapping
   public enum RoleType
   {
     [System.Runtime.Serialization.EnumMemberAttribute()]
+    Unknown,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
     Property,
 
     [System.Runtime.Serialization.EnumMemberAttribute()]
@@ -964,7 +967,6 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 7)]
     public int dataLength
     {
       get

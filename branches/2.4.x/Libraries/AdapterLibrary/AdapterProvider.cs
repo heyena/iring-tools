@@ -3311,7 +3311,6 @@ namespace org.iringtools.adapter
 
         foreach (Assembly asm in domainAssemblies)
         {
-
           try
           {
             Type[] asmTypes = asm.GetTypes();
@@ -3338,11 +3337,11 @@ namespace org.iringtools.adapter
             }
             catch (Exception e)
             {
-                _logger.Error("Error loading data layer (While getting types): " + e);
+                _logger.Error("Error loading data layer (while getting types): " + e);
             }
           }
           catch (Exception e) {
-              _logger.Error("Error loading data layer: " + e);
+              _logger.Error("Error loading data layer (while getting assemblies): " + e);
           }
         }
       }
