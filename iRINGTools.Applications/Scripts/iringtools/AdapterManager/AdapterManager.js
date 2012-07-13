@@ -206,9 +206,10 @@ Ext.onReady(function () {
 
   directoryPanel.on('configure', function (npanel, node) {
     var dataLayerValue = node.attributes.record.DataLayer;
+    var parentNode = node.parentNode;
     var assembly = node.attributes.record.Assembly;
     var application = node.text;
-    var scope = node.parentNode.text;
+    var scope = parentNode.text;
     var datalayer = node.attributes.record.DataLayer;
 
     if (dataLayerValue == 'SpreadsheetDatalayer') {
@@ -222,6 +223,10 @@ Ext.onReady(function () {
         url: 'spreadsheet/configure',
         closable: true
       });
+
+      newConfig.on('save', function () {
+        directoryPanel.onReload(node);        
+      }, this);
 
       contentPanel.add(newConfig);
       contentPanel.activate(newConfig);
@@ -276,6 +281,8 @@ Ext.onReady(function () {
       id: 'tab-' + node.id,
       scope: node.attributes.record,
       record: null,
+      state: 'new',
+      node: node,
       url: 'directory/application'
     });
 
@@ -322,6 +329,8 @@ Ext.onReady(function () {
       id: 'tab-' + node.id,
       scope: node.parentNode.attributes.record,
       record: node.attributes.record,
+      state: 'edit',
+      node: node,
       url: 'directory/application'
     });
 
