@@ -615,6 +615,18 @@ namespace org.iringtools.adapter
       {
         File.Delete(appCodePath);
       }
+
+      string SpreadSheetConfigPath = String.Format("{0}spreadsheet-configuration.{1}.xml", path, context);
+      if (File.Exists(SpreadSheetConfigPath))
+      {
+        File.Delete(SpreadSheetConfigPath);
+      }
+
+      string SpreadSheetDataPath = String.Format("{0}SpreadsheetData.{1}.xlsx", path, context);
+      if (File.Exists(SpreadSheetDataPath))
+      {
+        File.Delete(SpreadSheetDataPath);
+      }
     }
 
     #region Generate methods

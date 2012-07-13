@@ -49,9 +49,9 @@ namespace org.iringtools.adapter.datalayer
   public class SpreadsheetController : Controller
   {
 
-    private NameValueCollection _settings = null;
+    private ServiceSettings _settings = null;
     private ISpreadsheetRepository _repository { get; set; }
-    private string _keyFormat = "Configuration.{0}.{1}";
+    private string _keyFormat = "adpmgr-Configuration.{0}.{1}";
     private string _appData = string.Empty;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetController));
 
@@ -62,7 +62,9 @@ namespace org.iringtools.adapter.datalayer
 
     public SpreadsheetController(ISpreadsheetRepository repository)
     {
-      _settings = ConfigurationManager.AppSettings;
+      NameValueCollection settings = ConfigurationManager.AppSettings;
+      _settings = new ServiceSettings();
+      _settings.AppendSettings(settings);      
       _repository = repository;
     }
 

@@ -45,6 +45,7 @@ namespace org.iringtools.adapter.datalayer
       if (configuration != null)
       {
         _configuration = configuration;
+
         if (File.Exists(_configuration.Location))
         {
          // if (_stream == null) _stream = OpenStream(_configuration.Location);
@@ -71,7 +72,8 @@ namespace org.iringtools.adapter.datalayer
      
       try
       {
-        doc = SpreadsheetDocument.Open(path, true);
+        if (File.Exists(path))
+          doc = SpreadsheetDocument.Open(path, true);
       }
       catch (IOException e)
       {
@@ -91,6 +93,10 @@ namespace org.iringtools.adapter.datalayer
         else
         {
           _document = SpreadsheetDocument.Open(inputFile, false);
+
+          //C:\iring-tools\branches\2.4.x
+          //_document = SpreadsheetDocument.Open("C:\\iring-tools\\branches\\2.4.x\\Test890.xlsx", false);
+
         }
         DefinedNames definedNames = _document.WorkbookPart.Workbook.DefinedNames;
         if (definedNames != null)
@@ -294,15 +300,14 @@ namespace org.iringtools.adapter.datalayer
 
     public WorksheetPart GetWorksheetPart(string sheetName)
     {
-         if(_document == null)
-         _document = GetDocument(_configuration.Location);
-        string relId = _document.WorkbookPart.Workbook.Descendants<Sheet>()
-                             .Where(s => sheetName.Equals(s.Name))
-                             .First()
-                             .Id;
+      if(_document == null)
+        _document = GetDocument(_configuration.Location);
+      string relId = _document.WorkbookPart.Workbook.Descendants<Sheet>()
+                            .Where(s => sheetName.Equals(s.Name))
+                            .First()
+                            .Id;
 
-        return (WorksheetPart)_document.WorkbookPart.GetPartById(relId);
-    
+      return (WorksheetPart)_document.WorkbookPart.GetPartById(relId);    
     }
 
     private string GetCellValue(WorksheetPart worksheetPart, string startCol, int startRow)
@@ -311,8 +316,8 @@ namespace org.iringtools.adapter.datalayer
 
       //get exact cell based on reference 
       Cell cell = worksheetPart.Worksheet.Descendants<Cell>()
-                      .Where(c => reference.Equals(c.CellReference))
-                      .First();
+        .Where(c => reference.Equals(c.CellReference))
+        .First();
 
       return GetValue(cell);
     }

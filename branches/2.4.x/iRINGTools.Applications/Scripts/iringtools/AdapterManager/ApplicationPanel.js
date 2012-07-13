@@ -9,7 +9,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     border: false,
     frame: false,
     split: false,
-
+    node: null,
+    state: null,
     scope: null,
     record: null,
     id: null,
@@ -178,25 +179,57 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     },
 
     onSave: function () {
-        var that = this;    // consists the main/prappNameclass object       
-        if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
-            this.form.getForm().submit({
-                waitMsg: 'Saving Data...',
-                success: function (f, a) {
-                    that.fireEvent('Save', that);
-                },
-                failure: function (f, a) {
-                    //Ext.Msg.alert('Warning', 'Error saving changes!')
-                    var message = 'Error saving changes!';
-                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-                }
-            });
+      var that = this;    // consists the main/prappNameclass object  
+      var endpointName = that.items.first().getForm().findField('Name').getValue();
+
+      if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
+        if (ifExistSibling(endpointName, that.node, that.state)) {
+          showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
+          return;
         }
-        else {
-            var message = 'Scope & Application name cannot be same!';
-            showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        }
+
+        this.form.getForm().submit({
+            waitMsg: 'Saving Data...',
+            success: function (f, a) {
+                that.fireEvent('Save', that);
+            },
+            failure: function (f, a) {
+                //Ext.Msg.alert('Warning', 'Error saving changes!')
+                var message = 'Error saving changes!';
+                showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+            }
+        });
+      }
+      else {
+          var message = 'Scope & Application name cannot be same!';
+          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      }
     }
 
 });
+
+var ifExistSibling = function (str, node, state) {
+  var ifExist = false;
+  if (node.childNodes) {
+    var childNodes = node.childNodes;
+    var repeatTime = 0;
+
+    for (var i = 0; i < childNodes.length; i++) {
+      if (childNodes[i].attributes.text.toLowerCase() == str.toLowerCase()) {
+        if (state == 'new')
+          ifExist = true;
+        else {
+          repeatTime++;
+          if (repeatTime > 1) {
+            ifExist = true;
+            return ifExist;
+          }
+        }
+      }
+    }
+  }
+
+  return ifExist;
+};
+
 

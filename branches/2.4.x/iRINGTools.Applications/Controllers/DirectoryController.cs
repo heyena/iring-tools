@@ -45,6 +45,16 @@ namespace org.iringtools.web.controllers
         {
           case "ScopesNode":
             {
+              System.Collections.IEnumerator ie = Session.GetEnumerator();
+              while (ie.MoveNext())
+              {
+                if (ie.Current.ToString().StartsWith(adapter_PREFIX))
+                {
+                  Session.Remove(ie.Current.ToString());
+                  ie = Session.GetEnumerator();
+                }
+              }
+
               _logger.Debug("In ScopesNode case block");
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();

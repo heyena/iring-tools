@@ -8,7 +8,7 @@
 AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
 
     fileUpload: true,
-    labelWidth: 120, // label settings here cascade unless    
+    labelWidth: 150, // label settings here cascade unless    
     method: 'POST',
     bodyStyle: 'padding:5 5 5 5',
 
@@ -56,8 +56,8 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
               scope: this, 
               handler: this.onUpload,
               icon: 'Content/img/16x16/document-up.png'
-          }
-        //  { xtype: 'button', text: 'Cancel', scope: this, handler: this.onReset }
+          }//,
+          //{ xtype: 'button', text: 'Cancel', scope: this, handler: this.onReset }
         ]
 
         this.items = [
@@ -65,17 +65,17 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
             { xtype: 'hidden', name: 'Application', value: this.Application },
             { xtype: 'hidden', name: 'DataLayer', value: this.datalayer },
             {
-                xtype: 'fileuploadfield',
-                name: 'SourceFile',
-                emptyText: 'Select an Spreadsheet',
-                fieldLabel: 'Spreadsheet Source',
-                buttonText: '...',
-                buttonCfg: {
-                    iconCls: 'upload-icon'
-
-                }
+              xtype: 'fileuploadfield',
+              name: 'SourceFile',
+              emptyText: 'Select an Spreadsheet',
+              fieldLabel: 'Spreadsheet Source',
+              width:232,
+              buttonText: null,
+              buttonCfg: {
+                  iconCls: 'upload-icon'
+              }
             },
-            { xtype: 'checkbox', name: 'Generate', boxLabel: 'Generate Configuration', checked: true }
+           { xtype: 'checkbox', name: 'Generate', fieldLabel: 'Generate Configuration', checked: true }
         ];
 
         // super
@@ -396,9 +396,10 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
               else {
                 var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
                 showDialog(400, 100, 'An error has occurred while saving the configuration.', msg, Ext.Msg.OK, null);
-              }*/              
-               
-              that.configurationPanel.root.reload();
+              }*/
+
+             // that.configurationPanel.root.reload();
+              that.fireEvent('Save', that);
               showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
             },   // function called on success
             failure: function (response, request) {
