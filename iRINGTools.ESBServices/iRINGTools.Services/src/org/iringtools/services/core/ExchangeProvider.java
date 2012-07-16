@@ -59,9 +59,11 @@ public class ExchangeProvider
 {
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
   public static final String POOL_PREFIX = "_pool_";
-
-  private static Hashtable<String, String> exchangeProgresses = new Hashtable<String, String>();  
+  
   private static final String progressFormat = "%d-%d/%d";
+  private static final String splitToken = "->";
+  
+  private static Hashtable<String, String> exchangeProgresses = new Hashtable<String, String>();  
   private static DatatypeFactory datatypeFactory = null;
   
   private Map<String, Object> settings;
@@ -304,7 +306,6 @@ public class ExchangeProvider
       for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
       {
         DataTransferIndex sourceDti, targetDti;
-        String splitToken = "->";
         int splitIndex;
         
         switch (dti.getTransferType())
@@ -676,6 +677,12 @@ public class ExchangeProvider
         }
         else
         {
+          if (poolDtiItem.getTransferType() == TransferType.CHANGE)
+          {
+            int splitIndex = poolDtiItem.getInternalIdentifier().indexOf(splitToken);
+            poolDtiItem.setInternalIdentifier(poolDtiItem.getInternalIdentifier().substring(0, splitIndex));
+          }
+          
           sourceDtiItems.add(poolDtiItem);
         }
       }
