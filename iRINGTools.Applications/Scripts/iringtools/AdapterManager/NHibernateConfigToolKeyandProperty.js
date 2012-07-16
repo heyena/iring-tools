@@ -37,7 +37,10 @@ function setKeyProperty(editPane, node, scopeName, appName, dataTypes) {
 				disabled: true
 			}, {
 				name: 'propertyName',
-				fieldLabel: 'Property Name'
+				fieldLabel: 'Property Name',
+				validationEvent: "blur",
+				regex: new RegExp("^[a-zA-Z_][a-zA-Z0-9_]*$"),
+				regexText: '<b>Error</b></br>Invalid Value. A valid value should start with alphabet or "_", and follow by any number of "_", alphabet, or number characters'
 			}, {
 				name: 'dataType',
 				xtype: 'combo',
@@ -125,12 +128,22 @@ function setKeyProperty(editPane, node, scopeName, appName, dataTypes) {
 }
 
 function applyProperty(form) {
-	if (form.treeNode.attributes.attributes)
+  if (form.treeNode.attributes.attributes)
 		var treeNodeProps = form.treeNode.attributes.attributes.properties;
 	else
 		var treeNodeProps = form.treeNode.attributes.properties;
+
+  var propertyNameField = form.findField('propertyName');
+  var propertyName = propertyNameField.getValue();
+
+  if (propertyNameField.validate())
+    treeNodeProps['propertyName'] = propertyName;
+  else {
+    showDialog(400, 100, 'Warning', "Property Name is not valid. A valid property name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
+    return;
+  }
+    
 	treeNodeProps['columnName'] = form.findField('columnName').getValue();
-	var propertyName = form.findField('propertyName').getValue();
 	treeNodeProps['propertyName'] = propertyName;
 	form.treeNode.setText(propertyName);
 	treeNodeProps['dataType'] = form.findField('dataType').getValue();
@@ -172,7 +185,10 @@ function setDataProperty(editPane, node, scopeName, appName, dataTypes) {
 				disabled: true
 			}, {
 				name: 'propertyName',
-				fieldLabel: 'Property Name'
+				fieldLabel: 'Property Name',
+				validationEvent: "blur",
+				regex: new RegExp("^[a-zA-Z_][a-zA-Z0-9_]*$"),
+				regexText: '<b>Error</b></br>Invalid Value. A valid value should start with alphabet or "_", and follow by any number of "_", alphabet, or number characters'
 			}, {
 				name: 'dataType',
 				xtype: 'combo',
@@ -323,6 +339,9 @@ function setDataObject(editPane, node, dbDict, dataObjectsPane, scopeName, appNa
 	    }, {
 	        name: 'objectName',
 	        fieldLabel: 'Object Name',
+          validationEvent: "blur",
+				  regex: new RegExp("^[a-zA-Z_][a-zA-Z0-9_]*$"),
+				  regexText: '<b>Error</b></br>Invalid Value. A valid value should start with alphabet or "_", and follow by any number of "_", alphabet, or number characters',
 	        value: node.attributes.properties.objectName
 	    }, {
 	        name: 'keyDelimeter',
@@ -350,80 +369,89 @@ function setDataObject(editPane, node, dbDict, dataObjectsPane, scopeName, appNa
 	            handler: function (f) {
 	                var form = dataObjectFormPanel.getForm();
 	                if (form.treeNode) {
-	                    var treeNodeProps = form.treeNode.attributes.properties;
-	                    var objNam = form.findField('objectName').getValue();
-	                    var oldObjNam = treeNodeProps['objectName'];
-	                    treeNodeProps['tableName'] = form.findField('tableName').getValue();
+	                  var treeNodeProps = form.treeNode.attributes.properties;
+	                  var objectNameField = form.findField('objectName');
+	                  var objNam = objectNameField.getValue();
+
+	                  if (objectNameField.validate())
 	                    treeNodeProps['objectName'] = objNam;
-	                    treeNodeProps['keyDelimiter'] = form.findField('keyDelimeter').getValue();
-	                    treeNodeProps['description'] = form.findField('description').getValue();
+	                  else {
+	                    showDialog(400, 100, 'Warning', "Object Name is not valid. A valid object name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
+	                    return;
+	                  }
 
-	                    for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
-	                        var dataObject = dbDict.dataObjects[ijk];
-	                        if (form.treeNode.text.toUpperCase() != dataObject.objectName.toUpperCase())
-	                            continue;
-	                        dataObject.objectName = objNam;
-	                    }
+	                  var oldObjNam = treeNodeProps['objectName'];
+	                  treeNodeProps['tableName'] = form.findField('tableName').getValue();
+	                  treeNodeProps['objectName'] = objNam;
+	                  treeNodeProps['keyDelimiter'] = form.findField('keyDelimeter').getValue();
+	                  treeNodeProps['description'] = form.findField('description').getValue();
 
-	                    form.treeNode.setText(objNam);
-	                    form.treeNode.text = objNam;
-	                    form.treeNode.attributes.text = objNam;
-	                    form.treeNode.attributes.properties.objectName = objNam;
+	                  for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
+	                      var dataObject = dbDict.dataObjects[ijk];
+	                      if (form.treeNode.text.toUpperCase() != dataObject.objectName.toUpperCase())
+	                          continue;
+	                      dataObject.objectName = objNam;
+	                  }
 
-	                    var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
-	                    var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-	                    var rootNode = dbObjectsTree.getRootNode();
+	                  form.treeNode.setText(objNam);
+	                  form.treeNode.text = objNam;
+	                  form.treeNode.attributes.text = objNam;
+	                  form.treeNode.attributes.properties.objectName = objNam;
 
-	                    for (var i = 0; i < rootNode.childNodes.length; i++) {
-	                        var folderNode = rootNode.childNodes[i];
-	                        var folderNodeProp = folderNode.attributes.properties;
-	                        if (folderNode.childNodes[2])
-	                            var relationFolderNode = folderNode.childNodes[2];
-	                        else
-	                            var relationFolderNode = folderNode.attributes.children[2];
+	                  var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+	                  var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+	                  var rootNode = dbObjectsTree.getRootNode();
 
-	                        if (!relationFolderNode)
-	                            continue;
+	                  for (var i = 0; i < rootNode.childNodes.length; i++) {
+	                      var folderNode = rootNode.childNodes[i];
+	                      var folderNodeProp = folderNode.attributes.properties;
+	                      if (folderNode.childNodes[2])
+	                          var relationFolderNode = folderNode.childNodes[2];
+	                      else
+	                          var relationFolderNode = folderNode.attributes.children[2];
 
-	                        if (relationFolderNode.childNodes)
-	                            var relChildenNodes = relationFolderNode.childNodes;
-	                        else
-	                            var relChildenNodes = relationFolderNode.children;
+	                      if (!relationFolderNode)
+	                          continue;
 
-	                        if (relChildenNodes) {
-	                            for (var k = 0; k < relChildenNodes.length; k++) {
-	                                var relationNode = relChildenNodes[k];
+	                      if (relationFolderNode.childNodes)
+	                          var relChildenNodes = relationFolderNode.childNodes;
+	                      else
+	                          var relChildenNodes = relationFolderNode.children;
 
-	                                if (relationNode.text == '')
-	                                    continue;
+	                      if (relChildenNodes) {
+	                          for (var k = 0; k < relChildenNodes.length; k++) {
+	                              var relationNode = relChildenNodes[k];
 
-	                                if (relationNode.attributes.attributes)
-	                                    var relationNodeAttr = relationNode.attributes.attributes;
-	                                else
-	                                    var relationNodeAttr = relationNode.attributes;
+	                              if (relationNode.text == '')
+	                                  continue;
 
-	                                var relObjNam = relationNodeAttr.relatedObjectName;
-	                                if (relObjNam.toLowerCase() != objNam.toLowerCase() && relObjNam.toLowerCase() == oldObjNam.toLowerCase())
-	                                    relationNodeAttr.relatedObjectName = objNam;
+	                              if (relationNode.attributes.attributes)
+	                                  var relationNodeAttr = relationNode.attributes.attributes;
+	                              else
+	                                  var relationNodeAttr = relationNode.attributes;
 
-	                                var relatedObjPropMap = relationNodeAttr.relatedObjMap;
+	                              var relObjNam = relationNodeAttr.relatedObjectName;
+	                              if (relObjNam.toLowerCase() != objNam.toLowerCase() && relObjNam.toLowerCase() == oldObjNam.toLowerCase())
+	                                  relationNodeAttr.relatedObjectName = objNam;
 
-	                                for (var iki = 0; iki < relatedObjPropMap.length; iki++) {
-	                                    if (relatedObjPropMap[iki].relatedObjName.toLowerCase() == oldObjNam.toLowerCase())
-	                                        relatedObjPropMap[iki].relatedObjName = objNam;
-	                                }
-	                            }
-	                        }
-	                    }
+	                              var relatedObjPropMap = relationNodeAttr.relatedObjMap;
 
-	                    var items = editPane.items.items;
+	                              for (var iki = 0; iki < relatedObjPropMap.length; iki++) {
+	                                  if (relatedObjPropMap[iki].relatedObjName.toLowerCase() == oldObjNam.toLowerCase())
+	                                      relatedObjPropMap[iki].relatedObjName = objNam;
+	                              }
+	                          }
+	                      }
+	                  }
 
-	                    for (var i = 0; i < items.length; i++) {
-	                        var relateObjField = items[i].getForm().findField('relatedObjectName');
-	                        if (relateObjField)
-	                            if (relateObjField.getValue().toLowerCase() == oldObjNam.toLowerCase())
-	                                relateObjField.setValue(objNam);
-	                    }
+	                  var items = editPane.items.items;
+
+	                  for (var i = 0; i < items.length; i++) {
+	                      var relateObjField = items[i].getForm().findField('relatedObjectName');
+	                      if (relateObjField)
+	                          if (relateObjField.getValue().toLowerCase() == oldObjNam.toLowerCase())
+	                              relateObjField.setValue(objNam);
+	                  }
 	                }
 	            }
 	        }, {
@@ -869,19 +897,20 @@ function hasShown(shownArray, text)
 function removeSelectorStore(selector) {
 	selector.reset();
 	selector.store.removeAll();
-}
+};
 
 function loadSelectorStore(selector, storeData) {
 	selector.store.loadData(storeData);
 	selector.store.commitChanges();
-}
+};
 
 function setSelectorStore(selector, storeData) {
 	removeSelectorStore(selector);
 	loadSelectorStore(selector, storeData);
-}
+};
 
 function cleanSelectorStore(selector) {
 	removeSelectorStore(selector);
 	selector.store.commitChanges();
-}
+};
+
