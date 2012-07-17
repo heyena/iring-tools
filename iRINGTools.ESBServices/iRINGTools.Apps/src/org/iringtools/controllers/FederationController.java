@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.iringtools.models.FederationModel;
 import org.iringtools.models.Result;
-import org.iringtools.refdata.federation.Repositorytype;
+import org.iringtools.refdata.federation.RepositoryType;
 import org.iringtools.widgets.tree.Tree;
 import com.opensymphony.xwork2.Action;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -112,10 +112,10 @@ public class FederationController extends AbstractController implements ServletR
 
   public String getRepoTypes()
   {
-    Repositorytype[] repoTypes = Repositorytype.values();
+    RepositoryType[] repoTypes = RepositoryType.values();
     String returnArray[] = new String[(repoTypes.length)];
     int i = 0;
-    for (Repositorytype repoType : repoTypes)
+    for (RepositoryType repoType : repoTypes)
     {
       returnArray[i] = repoType.value();
       i++;

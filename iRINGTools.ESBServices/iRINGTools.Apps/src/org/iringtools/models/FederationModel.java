@@ -9,12 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.iringtools.common.response.Response;
 import org.iringtools.refdata.federation.Federation;
-import org.iringtools.refdata.federation.Idgenerator;
-import org.iringtools.refdata.federation.Idgeneratorlist;
+import org.iringtools.refdata.federation.IdGenerator;
+import org.iringtools.refdata.federation.IdGeneratorList;
 import org.iringtools.refdata.federation.Namespace;
-import org.iringtools.refdata.federation.Namespacelist;
-import org.iringtools.refdata.federation.Repositorylist;
-import org.iringtools.refdata.federation.Repositorytype;
+import org.iringtools.refdata.federation.NamespaceList;
+import org.iringtools.refdata.federation.RepositoryList;
+import org.iringtools.refdata.federation.RepositoryType;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
@@ -77,17 +77,17 @@ public class FederationModel
     }
   }
 
-  public Idgeneratorlist getIdgeneratorlist()
+  public IdGeneratorList getIdgeneratorlist()
   {
     return federation.getIdgeneratorlist();
   }
 
-  public Namespacelist getNamespacelist()
+  public NamespaceList getNamespacelist()
   {
     return federation.getNamespacelist();
   }
 
-  public Repositorylist getRepositorylist()
+  public RepositoryList getRepositorylist()
   {
     return federation.getRepositorylist();
   }
@@ -126,7 +126,7 @@ public class FederationModel
     generatorNodeDef.setHidden(true);
     generatorNodes.add(generatorNodeDef);
 
-    for (Idgenerator idgenerator : federation.getIdgeneratorlist().getItems())
+    for (IdGenerator idgenerator : federation.getIdgeneratorlist().getItems())
     {
       LeafNode generatorNode = new LeafNode();
       generatorNode.setIdentifier(Integer.toString(idgenerator.getId()));
@@ -265,7 +265,7 @@ public class FederationModel
           + httpRequest.getParameter("nodeID"));
       if ("idGenerator".equalsIgnoreCase(httpRequest.getParameter("parentNodeID")))
       {
-        Idgenerator idgenerator = new Idgenerator();
+        IdGenerator idgenerator = new IdGenerator();
         if (httpRequest.getParameter("nodeID") != null)
         {
         	String nodeIdParameter = httpRequest.getParameter("nodeID");
@@ -322,14 +322,14 @@ public class FederationModel
         System.out.println("Description :" + httpRequest.getParameter("Description"));
         repository.setName(httpRequest.getParameter("Name"));
         repository.setDescription(httpRequest.getParameter("Description"));
-        repository.setRepositorytype(Repositorytype.fromValue(httpRequest.getParameter("Repository Type")));
+        repository.setRepositorytype(RepositoryType.fromValue(httpRequest.getParameter("Repository Type")));
         repository.setIsreadonly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
         repository.setUri(httpRequest.getParameter("URI"));        
         repository.setUpdateUri(httpRequest.getParameter("Update URI"));
         if (httpRequest.getParameter("Namespace List") != null)
         {
           StringTokenizer st = new StringTokenizer(httpRequest.getParameter("Namespace List"), ",");
-          Namespacelist namespaces = new Namespacelist();
+          NamespaceList namespaces = new NamespaceList();
           List<Namespace> namespaceList = new ArrayList<Namespace>();
           namespaces.setItems(namespaceList);
           
@@ -376,7 +376,7 @@ public class FederationModel
       Response response = null;
       if ("idGenerator".equalsIgnoreCase(parentNodeID))
       {
-        Idgenerator idgenerator = new Idgenerator();
+        IdGenerator idgenerator = new IdGenerator();
         idgenerator.setId(Integer.parseInt(nodeId.replaceFirst("idgenerator", "")));
 
         response = httpClient.post(Response.class, "/idgenerator/delete", idgenerator);

@@ -10,17 +10,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for namespacelist complex type.
+ * <p>Java class for NamespaceList complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="namespacelist">
+ * &lt;complexType name="NamespaceList">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="sequenceid" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
- *         &lt;element name="namespace" type="{http://www.iringtools.org/refdata/federation}namespace" maxOccurs="unbounded"/>
+ *         &lt;element name="namespace" type="{http://www.iringtools.org/refdata/federation}Namespace" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "namespacelist", propOrder = {
+@XmlType(name = "NamespaceList", propOrder = {
     "sequenceid",
     "items"
 })
-public class Namespacelist {
+public class NamespaceList {
 
     protected Integer sequenceid;
     @XmlElement(name = "namespace", required = true)

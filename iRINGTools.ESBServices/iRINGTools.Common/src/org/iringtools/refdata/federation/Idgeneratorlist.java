@@ -10,17 +10,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for idgeneratorlist complex type.
+ * <p>Java class for IdGeneratorList complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="idgeneratorlist">
+ * &lt;complexType name="IdGeneratorList">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="sequenceid" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
- *         &lt;element name="idgenerator" type="{http://www.iringtools.org/refdata/federation}idgenerator" maxOccurs="unbounded"/>
+ *         &lt;element name="idgenerator" type="{http://www.iringtools.org/refdata/federation}IdGenerator" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,15 +30,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "idgeneratorlist", propOrder = {
+@XmlType(name = "IdGeneratorList", propOrder = {
     "sequenceid",
     "items"
 })
-public class Idgeneratorlist {
+public class IdGeneratorList {
 
     protected Integer sequenceid;
     @XmlElement(name = "idgenerator", required = true)
-    protected List<Idgenerator> items;
+    protected List<IdGenerator> items;
 
     /**
      * Gets the value of the sequenceid property.
@@ -82,13 +82,13 @@ public class Idgeneratorlist {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Idgenerator }
+     * {@link IdGenerator }
      * 
      * 
      */
-    public List<Idgenerator> getItems() {
+    public List<IdGenerator> getItems() {
         if (items == null) {
-            items = new ArrayList<Idgenerator>();
+            items = new ArrayList<IdGenerator>();
         }
         return this.items;
     }
@@ -98,10 +98,10 @@ public class Idgeneratorlist {
      * 
      * @param items
      *     allowed object is
-     *     {@link Idgenerator }
+     *     {@link IdGenerator }
      *     
      */
-    public void setItems(List<Idgenerator> items) {
+    public void setItems(List<IdGenerator> items) {
         this.items = items;
     }
 

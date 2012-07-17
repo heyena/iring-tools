@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for repositorytype.
+ * <p>Java class for RepositoryType.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="repositorytype">
+ * &lt;simpleType name="RepositoryType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="Part8"/>
  *     &lt;enumeration value="RDS/WIP"/>
@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  */
-@XmlType(name = "repositorytype")
+@XmlType(name = "RepositoryType")
 @XmlEnum
-public enum Repositorytype {
+public enum RepositoryType {
 
     @XmlEnumValue("Part8")
     PART_8("Part8"),
@@ -36,7 +36,7 @@ public enum Repositorytype {
     JORD("JORD");
     private final String value;
 
-    Repositorytype(String v) {
+    RepositoryType(String v) {
         value = v;
     }
 
@@ -44,8 +44,8 @@ public enum Repositorytype {
         return value;
     }
 
-    public static Repositorytype fromValue(String v) {
-        for (Repositorytype c: Repositorytype.values()) {
+    public static RepositoryType fromValue(String v) {
+        for (RepositoryType c: RepositoryType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }
