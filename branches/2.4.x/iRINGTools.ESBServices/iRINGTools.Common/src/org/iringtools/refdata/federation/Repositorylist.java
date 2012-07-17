@@ -10,17 +10,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for repositorylist complex type.
+ * <p>Java class for RepositoryList complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="repositorylist">
+ * &lt;complexType name="RepositoryList">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="sequenceid" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
- *         &lt;element name="repository" type="{http://www.iringtools.org/refdata/federation}repository" maxOccurs="unbounded"/>
+ *         &lt;element name="repository" type="{http://www.iringtools.org/refdata/federation}Repository" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "repositorylist", propOrder = {
+@XmlType(name = "RepositoryList", propOrder = {
     "sequenceid",
     "items"
 })
-public class Repositorylist {
+public class RepositoryList {
 
     protected Integer sequenceid;
     @XmlElement(name = "repository", required = true)

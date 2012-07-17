@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="idgeneratorlist" type="{http://www.iringtools.org/refdata/federation}idgeneratorlist"/>
- *         &lt;element name="namespacelist" type="{http://www.iringtools.org/refdata/federation}namespacelist"/>
- *         &lt;element name="repositorylist" type="{http://www.iringtools.org/refdata/federation}repositorylist"/>
+ *         &lt;element name="idgeneratorlist" type="{http://www.iringtools.org/refdata/federation}IdGeneratorList"/>
+ *         &lt;element name="namespacelist" type="{http://www.iringtools.org/refdata/federation}NamespaceList"/>
+ *         &lt;element name="repositorylist" type="{http://www.iringtools.org/refdata/federation}RepositoryList"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,21 +39,21 @@ import javax.xml.bind.annotation.XmlType;
 public class Federation {
 
     @XmlElement(required = true)
-    protected Idgeneratorlist idgeneratorlist;
+    protected IdGeneratorList idgeneratorlist;
     @XmlElement(required = true)
-    protected Namespacelist namespacelist;
+    protected NamespaceList namespacelist;
     @XmlElement(required = true)
-    protected Repositorylist repositorylist;
+    protected RepositoryList repositorylist;
 
     /**
      * Gets the value of the idgeneratorlist property.
      * 
      * @return
      *     possible object is
-     *     {@link Idgeneratorlist }
+     *     {@link IdGeneratorList }
      *     
      */
-    public Idgeneratorlist getIdgeneratorlist() {
+    public IdGeneratorList getIdgeneratorlist() {
         return idgeneratorlist;
     }
 
@@ -62,10 +62,10 @@ public class Federation {
      * 
      * @param value
      *     allowed object is
-     *     {@link Idgeneratorlist }
+     *     {@link IdGeneratorList }
      *     
      */
-    public void setIdgeneratorlist(Idgeneratorlist value) {
+    public void setIdgeneratorlist(IdGeneratorList value) {
         this.idgeneratorlist = value;
     }
 
@@ -74,10 +74,10 @@ public class Federation {
      * 
      * @return
      *     possible object is
-     *     {@link Namespacelist }
+     *     {@link NamespaceList }
      *     
      */
-    public Namespacelist getNamespacelist() {
+    public NamespaceList getNamespacelist() {
         return namespacelist;
     }
 
@@ -86,10 +86,10 @@ public class Federation {
      * 
      * @param value
      *     allowed object is
-     *     {@link Namespacelist }
+     *     {@link NamespaceList }
      *     
      */
-    public void setNamespacelist(Namespacelist value) {
+    public void setNamespacelist(NamespaceList value) {
         this.namespacelist = value;
     }
 
@@ -98,10 +98,10 @@ public class Federation {
      * 
      * @return
      *     possible object is
-     *     {@link Repositorylist }
+     *     {@link RepositoryList }
      *     
      */
-    public Repositorylist getRepositorylist() {
+    public RepositoryList getRepositorylist() {
         return repositorylist;
     }
 
@@ -110,10 +110,10 @@ public class Federation {
      * 
      * @param value
      *     allowed object is
-     *     {@link Repositorylist }
+     *     {@link RepositoryList }
      *     
      */
-    public void setRepositorylist(Repositorylist value) {
+    public void setRepositorylist(RepositoryList value) {
         this.repositorylist = value;
     }
 

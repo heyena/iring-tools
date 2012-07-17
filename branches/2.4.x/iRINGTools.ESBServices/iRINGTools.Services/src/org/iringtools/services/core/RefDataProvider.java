@@ -33,10 +33,10 @@ import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
 import org.iringtools.mapping.TemplateType;
 import org.iringtools.refdata.federation.Federation;
-import org.iringtools.refdata.federation.Idgenerator;
+import org.iringtools.refdata.federation.IdGenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
-import org.iringtools.refdata.federation.Repositorytype;
+import org.iringtools.refdata.federation.RepositoryType;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.queries.Query;
 import org.iringtools.refdata.queries.QueryBinding;
@@ -207,7 +207,7 @@ public class RefDataProvider
     return response;
   }
 
-  public Response saveIdGenerator(Idgenerator idgenerator, boolean deleteFlag) throws Exception
+  public Response saveIdGenerator(IdGenerator idgenerator, boolean deleteFlag) throws Exception
   {
     Response response = new Response();
     StatusList sl = new StatusList();
@@ -220,7 +220,7 @@ public class RefDataProvider
     try
     {
       Federation federation = getFederation();
-      for (Idgenerator idg : federation.getIdgeneratorlist().getItems())
+      for (IdGenerator idg : federation.getIdgeneratorlist().getItems())
       {
         if (idg.getId() == idgenerator.getId())
         {
@@ -420,7 +420,7 @@ public class RefDataProvider
               continue;
             }
     	  
-    	if (repository.getRepositorytype() == Repositorytype.JORD)
+    	if (repository.getRepositorytype() == RepositoryType.JORD)
     	{
     		queryBindings = queryContainsSearchJord.getBindings();
     	    sparql = readSparql(queryContainsSearchJord.getFileName());
@@ -460,7 +460,7 @@ public class RefDataProvider
               et.setReference(result.get("type"));
               classDefinition.setEntityType(et);
             }
-            else if (repository.getRepositorytype().equals(Repositorytype.PART_8))
+            else if (repository.getRepositorytype().equals(RepositoryType.PART_8))
             {
               continue;
             }
@@ -927,7 +927,7 @@ public class RefDataProvider
             }
           }
     	  
-    	  if (repository.getRepositorytype() == Repositorytype.JORD)
+    	  if (repository.getRepositorytype() == RepositoryType.JORD)
       	{
       		memberBindings = getMembersJord.getBindings();
       		sparql = readSparql(getMembersJord.getFileName()).replace("param1", Id);
@@ -1711,7 +1711,7 @@ public class RefDataProvider
                       {
                         insert = GenerateDescription(insert, role.getDescriptions().get(0), tempRoleIdentifier);
                       }
-                      if (repository.getRepositorytype() == Repositorytype.PART_8)
+                      if (repository.getRepositorytype() == RepositoryType.PART_8)
                       {
                         insert = GenerateTypesPart8(insert, tempRoleIdentifier, identifier, role);
                         insert = GenerateRoleIndexPart8(insert, tempRoleIdentifier, index, role);
@@ -1725,7 +1725,7 @@ public class RefDataProvider
                     if (role.getRange() != null)
                     {
                       //qName = _nsmap.reduceToQName(role.getRange());
-                      if (repository.getRepositorytype() == Repositorytype.PART_8)
+                      if (repository.getRepositorytype() == RepositoryType.PART_8)
                       {
                         insert = GenerateRoleFillerType(insert, tempRoleIdentifier, role.getRange());
                       }
@@ -1761,7 +1761,7 @@ public class RefDataProvider
                       {
                         delete = GenerateDescription(delete, role.getDescriptions().get(0), tempRoleID);
                       }
-                      if (repository.getRepositorytype() == Repositorytype.PART_8)
+                      if (repository.getRepositorytype() == RepositoryType.PART_8)
                       {
                         delete = GenerateTypesPart8(delete, tempRoleID, identifier, role);
                         delete = GenerateRoleIndexPart8(delete, tempRoleID, index, role);
@@ -1775,7 +1775,7 @@ public class RefDataProvider
                     if (role.getRange() != null)
                     {
                       //qName = _nsmap.reduceToQName(role.getRange());
-                      if (repository.getRepositorytype() == Repositorytype.PART_8)
+                      if (repository.getRepositorytype() == RepositoryType.PART_8)
                       {
                         delete = GenerateRoleFillerType(delete, tempRoleID, role.getRange());
                       }
@@ -1800,7 +1800,7 @@ public class RefDataProvider
             // region Form Insert SPARQL
             if (insert.isEmpty() && delete.isEmpty())
             {
-              if (repository.getRepositorytype() == Repositorytype.PART_8)
+              if (repository.getRepositorytype() == RepositoryType.PART_8)
               {
                 insert = GenerateTypesPart8(insert, identifier, null, newTemplateDefinition);
                 insert = GenerateRoleCountPart8(insert, newTemplateDefinition.getRoleDefinitions().size(), identifier,
@@ -1854,7 +1854,7 @@ public class RefDataProvider
                   insert = GenerateDescription(insert, role.getDescriptions().get(0), roleID);
                 }
 
-                if (repository.getRepositorytype() == Repositorytype.PART_8)
+                if (repository.getRepositorytype() == RepositoryType.PART_8)
                 {
                   insert = GenerateRoleIndexPart8(insert, roleID, ++roleCount, role);
                   insert = GenerateHasTemplate(insert, roleID, identifier, role);
@@ -1867,7 +1867,7 @@ public class RefDataProvider
                 if (role.getRange() != null && role.getRange() != "")
                 {
                   //qName = _nsmap.reduceToQName(role.getRange());
-                  if (repository.getRepositorytype() == Repositorytype.PART_8)
+                  if (repository.getRepositorytype() == RepositoryType.PART_8)
                   {
                     insert = GenerateRoleFillerType(insert, roleID, role.getRange());
                   }
@@ -1992,7 +1992,7 @@ public class RefDataProvider
                 // role count
                 if (oldTQ.getRoleQualifications().size() != newTQ.getRoleQualifications().size())
                 {
-                  if (repository.getRepositorytype() == Repositorytype.PART_8)
+                  if (repository.getRepositorytype() == RepositoryType.PART_8)
                   {
                     delete = GenerateRoleCountPart8(delete, oldTQ.getRoleQualifications().size(), templateID, oldTQ);
                     insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
@@ -2010,7 +2010,7 @@ public class RefDataProvider
 
                   if (os != null && !(os.getReference().equalsIgnoreCase(ns.getReference())))
                   {
-                    if (repository.getRepositorytype() == Repositorytype.PART_8)
+                    if (repository.getRepositorytype() == RepositoryType.PART_8)
                     {
 
                     }
@@ -2060,7 +2060,7 @@ public class RefDataProvider
 
                     if (orq == null)
                     {
-                      if (repository.getRepositorytype() == Repositorytype.PART_8)
+                      if (repository.getRepositorytype() == RepositoryType.PART_8)
                       {
                         insert = GenerateTypesPart8(insert, tempNewRoleID, templateID.toString(), nrq);
                         for (Name nn : nrq.getNames())
@@ -2152,7 +2152,7 @@ public class RefDataProvider
                     }
                     if (nrq == null)
                     {
-                      if (repository.getRepositorytype() == Repositorytype.PART_8)
+                      if (repository.getRepositorytype() == RepositoryType.PART_8)
                       {
                         delete = GenerateTypesPart8(delete, tempNewRoleID, templateID.toString(), orq);
                         for (Name nn : orq.getNames())
@@ -2240,7 +2240,7 @@ public class RefDataProvider
                 insert = GenerateDescription(insert, newDescr, templateID);
               }
 
-              if (repository.getRepositorytype() == Repositorytype.PART_8)
+              if (repository.getRepositorytype() == RepositoryType.PART_8)
               {
                 insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
                 //qName = _nsmap.reduceToQName(newTQ.getQualifies());
@@ -2258,7 +2258,7 @@ public class RefDataProvider
               /*for (Specialization spec : newTQ.getSpecializations())
               {
                 //String specialization = spec.getReference();
-                if (repository.getRepositorytype() == Repositorytype.PART_8)
+                if (repository.getRepositorytype() == RepositoryType.PART_8)
                 {
                   // /TODO
                 }
@@ -2290,7 +2290,7 @@ public class RefDataProvider
                 {
                   roleID = newRole.getId();
                 }
-                if (repository.getRepositorytype() == Repositorytype.PART_8)
+                if (repository.getRepositorytype() == RepositoryType.PART_8)
                 {
                   insert = GenerateTypesPart8(insert, roleID, templateID.toString(), newRole);
                   for (Name newName : newRole.getNames())
@@ -2626,7 +2626,7 @@ public class RefDataProvider
                     if (nc == null)
                     {
                       //qName = _nsmap.reduceToQName(oc.getReference());
-                      if (repository.getRepositorytype() == Repositorytype.PART_8)
+                      if (repository.getRepositorytype() == RepositoryType.PART_8)
                       {
                        
                           delete = GenerateSuperClass(delete, oc.getReference(), clsId.toString()); // /delete from old
@@ -2659,7 +2659,7 @@ public class RefDataProvider
                     if (oc == null)
                     {
                       //qName = _nsmap.reduceToQName(nc.getReference());
-                      if (repository.getRepositorytype() == Repositorytype.PART_8)
+                      if (repository.getRepositorytype() == RepositoryType.PART_8)
                       {
                         
                           insert = GenerateSuperClass(insert, nc.getReference(), clsId.toString()); // /insert from new
@@ -2709,7 +2709,7 @@ public class RefDataProvider
               if (ns.getReference() != null && ns.getReference() != "")
               {
                 //qName = _nsmap.reduceToQName(ns.getReference());
-                if (repository.getRepositorytype() == Repositorytype.PART_8)
+                if (repository.getRepositorytype() == RepositoryType.PART_8)
                 {
                   
                     insert = GenerateRdfSubClass(insert, clsId, ns.getReference());
@@ -2740,7 +2740,7 @@ public class RefDataProvider
               if (nc.getReference() != null && nc.getReference() != "")
               {
                 //qName = _nsmap.reduceToQName(nc.getReference());
-                if (repository.getRepositorytype() == Repositorytype.PART_8)
+                if (repository.getRepositorytype() == RepositoryType.PART_8)
                 {
                  
                     insert = GenerateSuperClass(insert, nc.getReference(), clsId.toString());
@@ -2870,7 +2870,7 @@ public class RefDataProvider
 
       for (Repository repository : _repositories)
       {
-        if (repository.getRepositorytype().equals(Repositorytype.PART_8))
+        if (repository.getRepositorytype().equals(RepositoryType.PART_8))
         {
           Results sparqlResults = queryFromRepository(repository, sparqlGetRelatedTemplates);
 
@@ -2983,7 +2983,7 @@ public class RefDataProvider
       for (Repository repository : _repositories)
       {
         
-        if (repository.getRepositorytype() == Repositorytype.JORD)
+        if (repository.getRepositorytype() == RepositoryType.JORD)
         {
         	sparql = readSparql(queryContainsSearch.getFileName());
             sparql = sparql.replace("param1", query);
@@ -3191,7 +3191,7 @@ public class RefDataProvider
             }
           }
     	  
-        if (repository.getRepositorytype().equals(Repositorytype.PART_8))
+        if (repository.getRepositorytype().equals(RepositoryType.PART_8))
         {
           Results sparqlResults = queryFromRepository(repository, sparqlPart8);
 
@@ -3217,7 +3217,7 @@ public class RefDataProvider
             entityList.add(tempVar);
           }
         }
-        else if (repository.getRepositorytype().equals(Repositorytype.JORD))
+        else if (repository.getRepositorytype().equals(RepositoryType.JORD))
         {
         	Results sparqlResults = queryFromRepository(repository, sparqlJord);
 
@@ -3434,7 +3434,7 @@ public class RefDataProvider
 
       for (Repository repository : _repositories)
       {
-    	  if (repository.getRepositorytype() == Repositorytype.JORD && uri.contains("#"))
+    	  if (repository.getRepositorytype() == RepositoryType.JORD && uri.contains("#"))
           {
     		  sparql = readSparql(queryEquivalent.getFileName()).replace("param1", uri);
     		  queryBindings = queryEquivalent.getBindings();

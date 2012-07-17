@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for repository complex type.
+ * <p>Java class for Repository complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="repository">
+ * &lt;complexType name="Repository">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -21,10 +21,10 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="isreadonly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="repositorytype" type="{http://www.iringtools.org/refdata/federation}repositorytype"/>
+ *         &lt;element name="repositorytype" type="{http://www.iringtools.org/refdata/federation}RepositoryType"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="updateUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="namespaces" type="{http://www.iringtools.org/refdata/federation}namespacelist" minOccurs="0"/>
+ *         &lt;element name="namespaces" type="{http://www.iringtools.org/refdata/federation}NamespaceList" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "repository", propOrder = {
+@XmlType(name = "Repository", propOrder = {
     "id",
     "description",
     "isreadonly",
@@ -54,12 +54,12 @@ public class Repository {
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
-    protected Repositorytype repositorytype;
+    protected RepositoryType repositorytype;
     @XmlElement(required = true)
     protected String uri;
     @XmlElement(required = true)
     protected String updateUri;
-    protected Namespacelist namespaces;
+    protected NamespaceList namespaces;
 
     /**
      * Gets the value of the id property.
@@ -155,10 +155,10 @@ public class Repository {
      * 
      * @return
      *     possible object is
-     *     {@link Repositorytype }
+     *     {@link RepositoryType }
      *     
      */
-    public Repositorytype getRepositorytype() {
+    public RepositoryType getRepositorytype() {
         return repositorytype;
     }
 
@@ -167,10 +167,10 @@ public class Repository {
      * 
      * @param value
      *     allowed object is
-     *     {@link Repositorytype }
+     *     {@link RepositoryType }
      *     
      */
-    public void setRepositorytype(Repositorytype value) {
+    public void setRepositorytype(RepositoryType value) {
         this.repositorytype = value;
     }
 
@@ -227,10 +227,10 @@ public class Repository {
      * 
      * @return
      *     possible object is
-     *     {@link Namespacelist }
+     *     {@link NamespaceList }
      *     
      */
-    public Namespacelist getNamespaces() {
+    public NamespaceList getNamespaces() {
         return namespaces;
     }
 
@@ -239,10 +239,10 @@ public class Repository {
      * 
      * @param value
      *     allowed object is
-     *     {@link Namespacelist }
+     *     {@link NamespaceList }
      *     
      */
-    public void setNamespaces(Namespacelist value) {
+    public void setNamespaces(NamespaceList value) {
         this.namespaces = value;
     }
 
