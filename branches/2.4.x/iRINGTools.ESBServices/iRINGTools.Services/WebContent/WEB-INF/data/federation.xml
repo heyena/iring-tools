@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<federation xmlns="http://www.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+<federation xmlns="http://www.iringtools.org/refdata/federation" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <idgeneratorlist/>  
   <namespacelist>
     <namespace>
@@ -17,6 +17,14 @@
       <iswriteable>false</iswriteable>
       <prefix>rdl</prefix>
       <uri>http://rdl.rdlfacade.org/data#</uri>
+    </namespace>
+    <namespace>
+      <description i:nil="true"/>
+      <id>0</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>jordrdl</prefix>      
+      <uri>http://posccaesar.org/endpoint/sparql#</uri>
     </namespace>
     <namespace>
       <description i:nil="true"/>

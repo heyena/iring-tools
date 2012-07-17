@@ -30,43 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IDGenerators }
-     * 
-     */
-    public IDGenerators createIDGenerators() {
-        return new IDGenerators();
-    }
-
-    /**
-     * Create an instance of {@link IDGenerator }
-     * 
-     */
-    public IDGenerator createIDGenerator() {
-        return new IDGenerator();
-    }
-
-    /**
      * Create an instance of {@link Federation }
      * 
      */
     public Federation createFederation() {
         return new Federation();
-    }
-
-    /**
-     * Create an instance of {@link NamespaceList }
-     * 
-     */
-    public NamespaceList createNamespaceList() {
-        return new NamespaceList();
-    }
-
-    /**
-     * Create an instance of {@link Repository }
-     * 
-     */
-    public Repository createRepository() {
-        return new Repository();
     }
 
     /**
@@ -78,19 +46,43 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Repositories }
+     * Create an instance of {@link Idgeneratorlist }
      * 
      */
-    public Repositories createRepositories() {
-        return new Repositories();
+    public Idgeneratorlist createIdgeneratorlist() {
+        return new Idgeneratorlist();
     }
 
     /**
-     * Create an instance of {@link Namespaces }
+     * Create an instance of {@link Idgenerator }
      * 
      */
-    public Namespaces createNamespaces() {
-        return new Namespaces();
+    public Idgenerator createIdgenerator() {
+        return new Idgenerator();
+    }
+
+    /**
+     * Create an instance of {@link Repository }
+     * 
+     */
+    public Repository createRepository() {
+        return new Repository();
+    }
+
+    /**
+     * Create an instance of {@link Repositorylist }
+     * 
+     */
+    public Repositorylist createRepositorylist() {
+        return new Repositorylist();
+    }
+
+    /**
+     * Create an instance of {@link Namespacelist }
+     * 
+     */
+    public Namespacelist createNamespacelist() {
+        return new Namespacelist();
     }
 
 }

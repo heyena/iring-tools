@@ -18,10 +18,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="repository" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="rdsuri" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="lang" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="repository" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,85 +33,25 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Entity", propOrder = {
-    "label",
-    "repository",
     "uri",
-    "lang"
+    "rdsuri",
+    "label",
+    "lang",
+    "repository"
 })
 @XmlRootElement(name = "entity")
 public class Entity {
 
     @XmlElement(required = true)
+    protected String uri;
+    @XmlElement(required = true)
+    protected String rdsuri;
+    @XmlElement(required = true)
     protected String label;
     @XmlElement(required = true)
-    protected String repository;
-    @XmlElement(required = true)
-    protected String uri;
-    @XmlElement(required = false)
-    protected String rdsuri;
-	@XmlElement(required = true)
     protected String lang;
-
-	/**
-	 * @return the rdsuri
-	 */
-	public String getRdsuri() {
-		return rdsuri;
-	}
-
-	/**
-	 * @param rdsuri the rdsuri to set
-	 */
-	public void setRdsuri(String rdsuri) {
-		this.rdsuri = rdsuri;
-	}
-    /**
-     * Gets the value of the label property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * Sets the value of the label property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setLabel(String value) {
-        this.label = value;
-    }
-
-    /**
-     * Gets the value of the repository property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getRepository() {
-        return repository;
-    }
-
-    /**
-     * Sets the value of the repository property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setRepository(String value) {
-        this.repository = value;
-    }
+    @XmlElement(required = true)
+    protected String repository;
 
     /**
      * Gets the value of the uri property.
@@ -137,6 +78,54 @@ public class Entity {
     }
 
     /**
+     * Gets the value of the rdsuri property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRdsuri() {
+        return rdsuri;
+    }
+
+    /**
+     * Sets the value of the rdsuri property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRdsuri(String value) {
+        this.rdsuri = value;
+    }
+
+    /**
+     * Gets the value of the label property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * Sets the value of the label property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setLabel(String value) {
+        this.label = value;
+    }
+
+    /**
      * Gets the value of the lang property.
      * 
      * @return
@@ -158,6 +147,30 @@ public class Entity {
      */
     public void setLang(String value) {
         this.lang = value;
+    }
+
+    /**
+     * Gets the value of the repository property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRepository() {
+        return repository;
+    }
+
+    /**
+     * Sets the value of the repository property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRepository(String value) {
+        this.repository = value;
     }
 
 }

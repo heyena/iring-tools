@@ -1,6 +1,5 @@
 PREFIX tpl: <http://tpl.rdlfacade.org/data#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
-PREFIX rds: <http://rds.posccaesar.org/2008/06/OWL/RDL#> 
 SELECT ?instance
-WHERE { ?instance tpl:R64574858717 tpl:param1 } 
+{
+ ?instance tpl:R64574858717 tpl:param1 
+} 

@@ -13,7 +13,7 @@ import javax.ws.rs.Produces;
 import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.common.response.Response;
 import org.iringtools.refdata.federation.Federation;
-import org.iringtools.refdata.federation.IDGenerator;
+import org.iringtools.refdata.federation.Idgenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
@@ -88,7 +88,7 @@ public class RefDataService extends AbstractService
 
   @POST
   @Path("/idgenerator")
-  public Response saveIDGenerator(IDGenerator idgenerator)
+  public Response saveIDGenerator(Idgenerator idgenerator)
   {
     Response response = null;
 
@@ -172,7 +172,7 @@ public class RefDataService extends AbstractService
 
   @POST
   @Path("/idgenerator/delete")
-  public Response deleteIDGenerator(IDGenerator idgenerator)
+  public Response deleteIDGenerator(Idgenerator idgenerator)
   {
     Response response = null;
 

@@ -4,28 +4,27 @@ package org.iringtools.refdata.federation;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Repository complex type.
+ * <p>Java class for repository complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Repository">
+ * &lt;complexType name="repository">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="isReadOnly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="isreadonly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="repositoryType" type="{http://www.iringtools.org/refdata/federation}RepositoryType"/>
+ *         &lt;element name="repositorytype" type="{http://www.iringtools.org/refdata/federation}repositorytype"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="updateUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="namespaces" type="{http://www.iringtools.org/refdata/federation}NamespaceList"/>
+ *         &lt;element name="namespaces" type="{http://www.iringtools.org/refdata/federation}namespacelist" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,34 +34,32 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Repository", propOrder = {
+@XmlType(name = "repository", propOrder = {
     "id",
     "description",
-    "isReadOnly",
+    "isreadonly",
     "name",
-    "repositoryType",
+    "repositorytype",
     "uri",
     "updateUri",
     "namespaces"
 })
-@XmlRootElement(name = "repository")
 public class Repository {
 
     @XmlElement(required = true)
     protected String id;
     @XmlElement(required = true)
     protected String description;
-    protected boolean isReadOnly;
+    protected boolean isreadonly;
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
-    protected RepositoryType repositoryType;
+    protected Repositorytype repositorytype;
     @XmlElement(required = true)
     protected String uri;
     @XmlElement(required = true)
     protected String updateUri;
-    @XmlElement(required = true)
-    protected NamespaceList namespaces;
+    protected Namespacelist namespaces;
 
     /**
      * Gets the value of the id property.
@@ -113,19 +110,20 @@ public class Repository {
     }
 
     /**
-     * Gets the value of the isReadOnly property.
+     * Gets the value of the isreadonly property.
+     * This getter has been renamed from isIsreadonly() to getIsreadonly() by cxf-xjc-boolean plugin.
      * 
      */
-    public boolean isIsReadOnly() {
-        return isReadOnly;
+    public boolean getIsreadonly() {
+        return isreadonly;
     }
 
     /**
-     * Sets the value of the isReadOnly property.
+     * Sets the value of the isreadonly property.
      * 
      */
-    public void setIsReadOnly(boolean value) {
-        this.isReadOnly = value;
+    public void setIsreadonly(boolean value) {
+        this.isreadonly = value;
     }
 
     /**
@@ -153,27 +151,27 @@ public class Repository {
     }
 
     /**
-     * Gets the value of the repositoryType property.
+     * Gets the value of the repositorytype property.
      * 
      * @return
      *     possible object is
-     *     {@link RepositoryType }
+     *     {@link Repositorytype }
      *     
      */
-    public RepositoryType getRepositoryType() {
-        return repositoryType;
+    public Repositorytype getRepositorytype() {
+        return repositorytype;
     }
 
     /**
-     * Sets the value of the repositoryType property.
+     * Sets the value of the repositorytype property.
      * 
      * @param value
      *     allowed object is
-     *     {@link RepositoryType }
+     *     {@link Repositorytype }
      *     
      */
-    public void setRepositoryType(RepositoryType value) {
-        this.repositoryType = value;
+    public void setRepositorytype(Repositorytype value) {
+        this.repositorytype = value;
     }
 
     /**
@@ -229,10 +227,10 @@ public class Repository {
      * 
      * @return
      *     possible object is
-     *     {@link NamespaceList }
+     *     {@link Namespacelist }
      *     
      */
-    public NamespaceList getNamespaces() {
+    public Namespacelist getNamespaces() {
         return namespaces;
     }
 
@@ -241,10 +239,10 @@ public class Repository {
      * 
      * @param value
      *     allowed object is
-     *     {@link NamespaceList }
+     *     {@link Namespacelist }
      *     
      */
-    public void setNamespaces(NamespaceList value) {
+    public void setNamespaces(Namespacelist value) {
         this.namespaces = value;
     }
 
