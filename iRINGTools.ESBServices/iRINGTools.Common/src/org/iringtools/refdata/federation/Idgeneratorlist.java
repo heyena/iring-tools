@@ -10,17 +10,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for IDGenerators complex type.
+ * <p>Java class for idgeneratorlist complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IDGenerators">
+ * &lt;complexType name="idgeneratorlist">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="sequenceId" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="idGenerator" type="{http://www.iringtools.org/refdata/federation}IDGenerator" maxOccurs="unbounded"/>
+ *         &lt;element name="sequenceid" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="idgenerator" type="{http://www.iringtools.org/refdata/federation}idgenerator" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,30 +30,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "IDGenerators", propOrder = {
-    "sequenceId",
+@XmlType(name = "idgeneratorlist", propOrder = {
+    "sequenceid",
     "items"
 })
-public class IDGenerators {
+public class Idgeneratorlist {
 
-    protected int sequenceId;
-    @XmlElement(name = "idGenerator", required = true)
-    protected List<IDGenerator> items;
+    protected Integer sequenceid;
+    @XmlElement(name = "idgenerator", required = true)
+    protected List<Idgenerator> items;
 
     /**
-     * Gets the value of the sequenceId property.
+     * Gets the value of the sequenceid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getSequenceId() {
-        return sequenceId;
+    public Integer getSequenceid() {
+        return sequenceid;
     }
 
     /**
-     * Sets the value of the sequenceId property.
+     * Sets the value of the sequenceid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setSequenceId(int value) {
-        this.sequenceId = value;
+    public void setSequenceid(Integer value) {
+        this.sequenceid = value;
     }
 
     /**
@@ -74,13 +82,13 @@ public class IDGenerators {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link IDGenerator }
+     * {@link Idgenerator }
      * 
      * 
      */
-    public List<IDGenerator> getItems() {
+    public List<Idgenerator> getItems() {
         if (items == null) {
-            items = new ArrayList<IDGenerator>();
+            items = new ArrayList<Idgenerator>();
         }
         return this.items;
     }
@@ -90,10 +98,10 @@ public class IDGenerators {
      * 
      * @param items
      *     allowed object is
-     *     {@link IDGenerator }
+     *     {@link Idgenerator }
      *     
      */
-    public void setItems(List<IDGenerator> items) {
+    public void setItems(List<Idgenerator> items) {
         this.items = items;
     }
 
