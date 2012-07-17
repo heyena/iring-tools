@@ -19,7 +19,8 @@ public class NamespaceMapper implements NsMapper {
 	public static final String OWL2XML = "http://www.w3.org/2006/12/owl2-xml#";
 	public static final String P8 = "http://standards.tc184-sc4.org/iso/15926/-8/template-model#";
 	public static final String TEMPLATES = "http://standards.tc184-sc4.org/iso/15926/-8/templates#";
-	protected Map<String, URI> _uris;
+	public static final String JORD = "http://posccaesar.org/endpoint/sparql#";
+		public Map<String, URI> _uris;
 
 	protected Map<Integer, String> _prefixes;
 
@@ -36,6 +37,7 @@ public class NamespaceMapper implements NsMapper {
 			this.addNamespace("rdf", new URI(RDF));
 			this.addNamespace("rdfs", new URI(RDFS));
 			this.addNamespace("xsd", new URI(XSD));
+			this.addNamespace("jordrdl", new URI(JORD));
 			this.addNamespace("owl", new URI(OWL));
 			this.addNamespace("owl2xml", new URI(OWL2XML));
 			this.addNamespace("rdl", new URI(RDL));

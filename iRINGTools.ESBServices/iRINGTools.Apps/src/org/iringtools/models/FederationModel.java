@@ -9,13 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.iringtools.common.response.Response;
 import org.iringtools.refdata.federation.Federation;
-import org.iringtools.refdata.federation.IDGenerator;
-import org.iringtools.refdata.federation.IDGenerators;
+import org.iringtools.refdata.federation.Idgenerator;
+import org.iringtools.refdata.federation.Idgeneratorlist;
 import org.iringtools.refdata.federation.Namespace;
-import org.iringtools.refdata.federation.NamespaceList;
-import org.iringtools.refdata.federation.Namespaces;
-import org.iringtools.refdata.federation.Repositories;
-import org.iringtools.refdata.federation.RepositoryType;
+import org.iringtools.refdata.federation.Namespacelist;
+import org.iringtools.refdata.federation.Repositorylist;
+import org.iringtools.refdata.federation.Repositorytype;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
@@ -25,6 +24,7 @@ import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpUtils;
 import org.apache.struts2.json.JSONException;
 import org.apache.struts2.json.JSONUtil;
+import java.util.ArrayList;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -77,19 +77,19 @@ public class FederationModel
     }
   }
 
-  public IDGenerators getIdGenerators()
+  public Idgeneratorlist getIdgeneratorlist()
   {
-    return federation.getIdGenerators();
+    return federation.getIdgeneratorlist();
   }
 
-  public Namespaces getNamespaces()
+  public Namespacelist getNamespacelist()
   {
-    return federation.getNamespaces();
+    return federation.getNamespacelist();
   }
 
-  public Repositories getRepositories()
+  public Repositorylist getRepositorylist()
   {
-    return federation.getRepositories();
+    return federation.getRepositorylist();
   }
 
   public Federation getFederation()
@@ -126,16 +126,16 @@ public class FederationModel
     generatorNodeDef.setHidden(true);
     generatorNodes.add(generatorNodeDef);
 
-    for (IDGenerator idgenerator : federation.getIdGenerators().getItems())
+    for (Idgenerator idgenerator : federation.getIdgeneratorlist().getItems())
     {
       LeafNode generatorNode = new LeafNode();
-      generatorNode.setIdentifier(idgenerator.getId());
+      generatorNode.setIdentifier(Integer.toString(idgenerator.getId()));
       generatorNode.setText(idgenerator.getName());
       generatorNode.setIconCls("generator");
       generatorNode.setLeaf(true);
 
       Map<String, String> properties = generatorNode.getProperties();
-      properties.put("Id", idgenerator.getId());
+      properties.put("Id", Integer.toString(idgenerator.getId()));
       properties.put("Name", idgenerator.getName());
       properties.put("URI", idgenerator.getUri());
       properties.put("Description", idgenerator.getDescription());
@@ -143,10 +143,10 @@ public class FederationModel
       generatorNodes.add(generatorNode);
     }
 
-    // Namespaces
+    // Namespacelist
     TreeNode namespacesNode = new TreeNode();
     namespacesNode.setIdentifier("namespace");
-    namespacesNode.setText("Namespaces");
+    namespacesNode.setText("Namespacelist");
     namespacesNode.setIconCls("folder");
     namespacesNode.getProperties().put("Id", "namespace");
     namespacesNode.setIdentifier("namespace");
@@ -161,33 +161,33 @@ public class FederationModel
     treeNodes.add(namespacesNode);
     List<Node> namespaceNodes = namespacesNode.getChildren();
 
-    for (Namespace namespace : federation.getNamespaces().getItems())
+    for (Namespace namespace : federation.getNamespacelist().getItems())
     {
       LeafNode namespaceNode = new LeafNode();
-      namespaceNode.setIdentifier(namespace.getId());
-      namespaceNode.setText(namespace.getAlias());
+      namespaceNode.setIdentifier(Integer.toString(namespace.getId()));
+      namespaceNode.setText(namespace.getPrefix());
       namespaceNode.setIconCls("namespace");
       namespaceNode.setLeaf(true);
 
       Map<String, String> properties = namespaceNode.getProperties();
-      properties.put("Id", namespace.getId());
-      properties.put("Alias", namespace.getAlias());
+      properties.put("Id", Integer.toString(namespace.getId()));
+      properties.put("Alias", namespace.getPrefix());
       properties.put("URI", namespace.getUri());
       properties.put("Description", namespace.getDescription());
-      properties.put("Writable", String.valueOf(namespace.isIsWritable()));
+      properties.put("Writable", String.valueOf(namespace.getIswriteable()));
       
-      if (namespace.getIdGenerator() != null)
+      if (namespace.getIdgenerator() > -1)
       {
-        properties.put("ID Generator", namespace.getIdGenerator());
+        properties.put("ID Generator", Integer.toString(namespace.getIdgenerator()));
       }
 
       namespaceNodes.add(namespaceNode);
     }
 
-    // Repositories
+    // Repositorylist
     TreeNode repositoriesNode = new TreeNode();
     repositoriesNode.setIdentifier("repository");
-    repositoriesNode.setText("Repositories");
+    repositoriesNode.setText("Repositorylist");
     repositoriesNode.setIconCls("folder");
     repositoriesNode.getProperties().put("Id", "repository");
     repositoriesNode.setIdentifier("repository");
@@ -204,7 +204,7 @@ public class FederationModel
     treeNodes.add(repositoriesNode);
     List<Node> repositoryNodes = repositoriesNode.getChildren();
 
-    for (Repository repository : federation.getRepositories().getItems())
+    for (Repository repository : federation.getRepositorylist().getItems())
     {
       LeafNode repositoryNode = new LeafNode();
       repositoryNode.setIdentifier(repository.getId());
@@ -217,9 +217,9 @@ public class FederationModel
       
       properties.put("Name", repository.getName());
       properties.put("Description", repository.getDescription());
-      properties.put("Repository Type", repository.getRepositoryType().value());
+      properties.put("Repository Type", repository.getRepositorytype().value());
       properties.put("Id", repository.getId());
-      properties.put("Read Only", String.valueOf(repository.isIsReadOnly()));
+      properties.put("Read Only", String.valueOf(repository.getIsreadonly()));
       properties.put("URI", repository.getUri());
       properties.put("Update URI", repository.getUpdateUri());
       
@@ -228,10 +228,9 @@ public class FederationModel
       {
         Map<String, String> namespaces = new HashMap<String, String>();
         
-        for (String namespaceId : repository.getNamespaces().getItems())
+        for (Namespace namespace : repository.getNamespaces().getItems())
         {
-          Namespace namespace = getNamespace(namespaceId);
-          namespaces.put(namespaceId, namespace.getAlias());
+          namespaces.put(Integer.toString(namespace.getId()), namespace.getPrefix());
         }       
         
         try
@@ -253,38 +252,26 @@ public class FederationModel
     }
 
     return tree;
-  }
-  
-  private Namespace getNamespace(String namespaceId)
-  {
-    for (Namespace namespace : federation.getNamespaces().getItems())
-    {
-      if (namespace.getId().equalsIgnoreCase(namespaceId))
-      {
-        return namespace;
-      }
-    }
-    
-    return null;
-  }
+  } 
 
   public boolean readTree(HttpServletRequest httpRequest)
   {
     try
     {
       Response response = null;
-
+      
+      String nameSpaceId = "";
       System.out.println("###" + httpRequest.getParameter("parentNodeID") + "### ---"
           + httpRequest.getParameter("nodeID"));
       if ("idGenerator".equalsIgnoreCase(httpRequest.getParameter("parentNodeID")))
       {
-        IDGenerator idgenerator = new IDGenerator();
+        Idgenerator idgenerator = new Idgenerator();
         if (httpRequest.getParameter("nodeID") != null)
         {
         	String nodeIdParameter = httpRequest.getParameter("nodeID");
         	if (nodeIdParameter.contains("idgenerator"))
         		nodeIdParameter = nodeIdParameter.replaceFirst("idgenerator", "");
-          idgenerator.setId(nodeIdParameter);
+          idgenerator.setId(Integer.parseInt(nodeIdParameter));
         }
         idgenerator.setName(httpRequest.getParameter("Name"));
         idgenerator.setUri(httpRequest.getParameter("URI"));
@@ -301,11 +288,11 @@ public class FederationModel
         	String nodeIdParameter = httpRequest.getParameter("nodeID");
         	if (nodeIdParameter.contains("namespace"))
         		nodeIdParameter = nodeIdParameter.replaceFirst("namespace", "");
-          namespace.setId(nodeIdParameter);
+          namespace.setId(Integer.parseInt(nodeIdParameter));
         }
         namespace.setUri(httpRequest.getParameter("URI"));
-        namespace.setAlias(httpRequest.getParameter("Alias"));
-        namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
+        namespace.setPrefix(httpRequest.getParameter("Prefix"));
+        namespace.setIswriteable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
         namespace.setDescription(httpRequest.getParameter("Description"));
         
         String idGeneratorParameter="";
@@ -318,7 +305,7 @@ public class FederationModel
         	idGeneratorParameter="0";
           e.printStackTrace();
         }
-        namespace.setIdGenerator(idGeneratorParameter);
+        namespace.setIdgenerator(Integer.parseInt(idGeneratorParameter));
         response = httpClient.post(Response.class, "/namespace", namespace);
       }
       else if ("repository".equalsIgnoreCase(httpRequest.getParameter("parentNodeID")))
@@ -335,21 +322,26 @@ public class FederationModel
         System.out.println("Description :" + httpRequest.getParameter("Description"));
         repository.setName(httpRequest.getParameter("Name"));
         repository.setDescription(httpRequest.getParameter("Description"));
-        repository.setRepositoryType(RepositoryType.fromValue(httpRequest.getParameter("Repository Type")));
-        repository.setIsReadOnly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
+        repository.setRepositorytype(Repositorytype.fromValue(httpRequest.getParameter("Repository Type")));
+        repository.setIsreadonly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
         repository.setUri(httpRequest.getParameter("URI"));        
         repository.setUpdateUri(httpRequest.getParameter("Update URI"));
         if (httpRequest.getParameter("Namespace List") != null)
         {
           StringTokenizer st = new StringTokenizer(httpRequest.getParameter("Namespace List"), ",");
-          NamespaceList namespaceList = new NamespaceList();
-          List<String> namespaceItem = namespaceList.getItems();
+          Namespacelist namespaces = new Namespacelist();
+          List<Namespace> namespaceList = new ArrayList<Namespace>();
+          namespaces.setItems(namespaceList);
+          
           while (st.hasMoreTokens())
           {
-            namespaceItem.add(st.nextToken().replaceFirst("namespace", ""));
+        	nameSpaceId = st.nextToken().replaceFirst("namespace", "");
+            Namespace namespace = new Namespace();
+        	namespace.setId(Integer.parseInt(nameSpaceId));
+        	namespaceList.add(namespace);
           }
-          repository.setNamespaces(namespaceList);
-          System.out.println("Namespace List :" + namespaceList.getItems());
+          repository.setNamespaces(namespaces);
+          //System.out.println("Namespace List :" + namespaceList.getItems());
         }
         response = httpClient.post(Response.class, "/repository", repository);
       }
@@ -384,8 +376,8 @@ public class FederationModel
       Response response = null;
       if ("idGenerator".equalsIgnoreCase(parentNodeID))
       {
-        IDGenerator idgenerator = new IDGenerator();
-        idgenerator.setId(nodeId.replaceFirst("idgenerator", ""));
+        Idgenerator idgenerator = new Idgenerator();
+        idgenerator.setId(Integer.parseInt(nodeId.replaceFirst("idgenerator", "")));
 
         response = httpClient.post(Response.class, "/idgenerator/delete", idgenerator);
 
@@ -393,7 +385,7 @@ public class FederationModel
       else if ("namespace".equalsIgnoreCase(parentNodeID))
       {
         Namespace namespace = new Namespace();
-        namespace.setId(nodeId.replaceFirst("namespace", ""));
+        namespace.setId(Integer.parseInt(nodeId.replaceFirst("namespace", "")));
 
         response = httpClient.post(Response.class, "/namespace/delete", namespace);
 

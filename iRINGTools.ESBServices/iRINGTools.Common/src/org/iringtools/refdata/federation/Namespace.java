@@ -4,26 +4,25 @@ package org.iringtools.refdata.federation;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Namespace complex type.
+ * <p>Java class for namespace complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Namespace">
+ * &lt;complexType name="namespace">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="alias" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="isWritable" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="prefix" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="iswriteable" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="idGenerator" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="idgenerator" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,66 +32,39 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Namespace", propOrder = {
+@XmlType(name = "namespace", propOrder = {
     "id",
     "uri",
-    "alias",
-    "isWritable",
+    "prefix",
+    "iswriteable",
     "description",
-    "idGenerator"
+    "idgenerator"
 })
-@XmlRootElement(name = "namespace")
 public class Namespace {
 
-    @XmlElement(required = true)
-    protected String id;
+    protected int id;
     @XmlElement(required = true)
     protected String uri;
     @XmlElement(required = true)
-    protected String alias;
-    protected boolean isWritable;
+    protected String prefix;
+    protected boolean iswriteable;
     @XmlElement(required = true)
     protected String description;
-    @XmlElement(required = true)
-    protected String idGenerator;
-    @XmlElement(required = true)
-    protected String prefix;
+    protected int idgenerator;
 
     /**
-	 * @return the prefix
-	 */
-	public String getPrefix() {
-		return prefix;
-	}
-
-	/**
-	 * @param prefix the prefix to set
-	 */
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-
-	/**
      * Gets the value of the id property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * Sets the value of the id property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setId(String value) {
+    public void setId(int value) {
         this.id = value;
     }
 
@@ -121,43 +93,44 @@ public class Namespace {
     }
 
     /**
-     * Gets the value of the alias property.
+     * Gets the value of the prefix property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getAlias() {
-        return alias;
+    public String getPrefix() {
+        return prefix;
     }
 
     /**
-     * Sets the value of the alias property.
+     * Sets the value of the prefix property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setAlias(String value) {
-        this.alias = value;
+    public void setPrefix(String value) {
+        this.prefix = value;
     }
 
     /**
-     * Gets the value of the isWritable property.
+     * Gets the value of the iswriteable property.
+     * This getter has been renamed from isIswriteable() to getIswriteable() by cxf-xjc-boolean plugin.
      * 
      */
-    public boolean isIsWritable() {
-        return isWritable;
+    public boolean getIswriteable() {
+        return iswriteable;
     }
 
     /**
-     * Sets the value of the isWritable property.
+     * Sets the value of the iswriteable property.
      * 
      */
-    public void setIsWritable(boolean value) {
-        this.isWritable = value;
+    public void setIswriteable(boolean value) {
+        this.iswriteable = value;
     }
 
     /**
@@ -185,27 +158,19 @@ public class Namespace {
     }
 
     /**
-     * Gets the value of the idGenerator property.
+     * Gets the value of the idgenerator property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getIdGenerator() {
-        return idGenerator;
+    public int getIdgenerator() {
+        return idgenerator;
     }
 
     /**
-     * Sets the value of the idGenerator property.
+     * Sets the value of the idgenerator property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setIdGenerator(String value) {
-        this.idGenerator = value;
+    public void setIdgenerator(int value) {
+        this.idgenerator = value;
     }
 
 }

@@ -38,10 +38,11 @@
 
   <xs:complexType name="Entity">
     <xs:sequence>
-     <xs:element name="label" type="xs:string" />
-      <xs:element name="repository" type="xs:string" />
       <xs:element name="uri" type="xs:string" />
+      <xs:element name="rdsuri" type="xs:string" />
+      <xs:element name="label" type="xs:string" />
       <xs:element name="lang" type="xs:string" />
+      <xs:element name="repository" type="xs:string" />      
     </xs:sequence>
   </xs:complexType>
 

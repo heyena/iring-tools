@@ -33,10 +33,10 @@ import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
 import org.iringtools.mapping.TemplateType;
 import org.iringtools.refdata.federation.Federation;
-import org.iringtools.refdata.federation.IDGenerator;
+import org.iringtools.refdata.federation.Idgenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
-import org.iringtools.refdata.federation.RepositoryType;
+import org.iringtools.refdata.federation.Repositorytype;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.queries.Query;
 import org.iringtools.refdata.queries.QueryBinding;
@@ -113,7 +113,10 @@ public class RefDataProvider
   public Federation getFederation() throws JAXBException, IOException
   {
     String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
-    return JaxbUtils.read(Federation.class, path);
+    //return JaxbUtils.read(Federation.class, path);
+    Federation f = JaxbUtils.read(Federation.class, path);
+    System.out.println(JaxbUtils.toXml(f, true));
+    return f;    
   }
 
   public Response saveFederation(Federation federation) throws Exception
@@ -146,11 +149,11 @@ public class RefDataProvider
     try
     {
       Federation federation = getFederation();
-      for (Namespace ns : federation.getNamespaces().getItems())
+      for (Namespace ns : federation.getNamespacelist().getItems())
       {
-        if (ns.getId().equalsIgnoreCase(namespace.getId()))
+        if (ns.getId() == namespace.getId())
         {
-          index = federation.getNamespaces().getItems().indexOf(ns);
+          index = federation.getNamespacelist().getItems().indexOf(ns);
           namespaceExist = true;
           break;
         }
@@ -161,8 +164,8 @@ public class RefDataProvider
         {
           // find out the repositories that use this namespace and
           // remove the namespace
-          Integer nsID = Integer.parseInt(namespace.getId());
-          for (Repository repo : federation.getRepositories().getItems())
+          Integer nsID = namespace.getId();
+          for (Repository repo : federation.getRepositorylist().getItems())
           {
             if (repo.getNamespaces() != null && repo.getNamespaces().getItems().contains(nsID))
               repo.getNamespaces().getItems().remove(nsID);
@@ -170,17 +173,17 @@ public class RefDataProvider
         }
 
         // now remove the namespace
-        federation.getNamespaces().getItems().remove(index);
+        federation.getNamespacelist().getItems().remove(index);
       }
       else
       {
-        int sequenceId = federation.getNamespaces().getSequenceId();
-        namespace.setId(Integer.toString(++sequenceId));
-        federation.getNamespaces().setSequenceId(sequenceId);
+        int sequenceId = federation.getNamespacelist().getSequenceid();
+        namespace.setId(++sequenceId);
+        federation.getNamespacelist().setSequenceid(sequenceId);
       }
       if (!deleteFlag)
       {
-        federation.getNamespaces().getItems().add(namespace);
+        federation.getNamespacelist().getItems().add(namespace);
       }
 
       String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
@@ -204,7 +207,7 @@ public class RefDataProvider
     return response;
   }
 
-  public Response saveIdGenerator(IDGenerator idgenerator, boolean deleteFlag) throws Exception
+  public Response saveIdGenerator(Idgenerator idgenerator, boolean deleteFlag) throws Exception
   {
     Response response = new Response();
     StatusList sl = new StatusList();
@@ -217,11 +220,11 @@ public class RefDataProvider
     try
     {
       Federation federation = getFederation();
-      for (IDGenerator idg : federation.getIdGenerators().getItems())
+      for (Idgenerator idg : federation.getIdgeneratorlist().getItems())
       {
-        if (idg.getId().equalsIgnoreCase(idgenerator.getId()))
+        if (idg.getId() == idgenerator.getId())
         {
-          index = federation.getIdGenerators().getItems().indexOf(idg);
+          index = federation.getIdgeneratorlist().getItems().indexOf(idg);
           idgenExist = true;
           break;
         }
@@ -232,28 +235,28 @@ public class RefDataProvider
         {
           // find out the namespaces that use this idGenerator and
           // remove the idGenerator
-          String nsID = idgenerator.getId();
-          for (Namespace ns : federation.getNamespaces().getItems())
+          int nsID = idgenerator.getId();
+          for (Namespace ns : federation.getNamespacelist().getItems())
           {
-            if (ns.getIdGenerator().equalsIgnoreCase(nsID))
+            if (ns.getIdgenerator() == nsID)
             {
-              ns.setIdGenerator("0");
+              ns.setIdgenerator(0);
             }
           }
         }
 
         // now remove the namespace
-        federation.getIdGenerators().getItems().remove(index);
+        federation.getIdgeneratorlist().getItems().remove(index);
       }
       else
       {
-        int sequenceId = federation.getIdGenerators().getSequenceId();
-        idgenerator.setId(Integer.toString(++sequenceId));
-        federation.getIdGenerators().setSequenceId(sequenceId);
+        int sequenceId = federation.getIdgeneratorlist().getSequenceid();
+        idgenerator.setId(++sequenceId);
+        federation.getIdgeneratorlist().setSequenceid(sequenceId);
       }
       if (!deleteFlag)
       {
-        federation.getIdGenerators().getItems().add(idgenerator);
+        federation.getIdgeneratorlist().getItems().add(idgenerator);
       }
 
       String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
@@ -290,28 +293,28 @@ public class RefDataProvider
     try
     {
       Federation federation = getFederation();
-      for (Repository repo : federation.getRepositories().getItems())
+      for (Repository repo : federation.getRepositorylist().getItems())
       {
         if (repo.getId().equalsIgnoreCase(repository.getId()))
         {
-          index = federation.getRepositories().getItems().indexOf(repo);
+          index = federation.getRepositorylist().getItems().indexOf(repo);
           repositoryExist = true;
           break;
         }
       }
       if (repositoryExist)
       {
-        federation.getRepositories().getItems().remove(index);
+        federation.getRepositorylist().getItems().remove(index);
       }
       else
       {
-        int sequenceId = federation.getRepositories().getSequenceId();
+        int sequenceId = federation.getRepositorylist().getSequenceid();
         repository.setId(Integer.toString(++sequenceId));
-        federation.getRepositories().setSequenceId(sequenceId);
+        federation.getRepositorylist().setSequenceid(sequenceId);
       }
       if (!deleteFlag)
       {
-        federation.getRepositories().getItems().add(repository);
+        federation.getRepositorylist().getItems().add(repository);
       }
       String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
       JaxbUtils.write(federation, path, true);
@@ -357,17 +360,21 @@ public class RefDataProvider
   }
 
   public Entity getClassLabel(String id) throws Exception
-  {
-	  int number;
-	  try 
-	  {
-		  Integer.parseInt(id.substring(1, 1));
-		  return getLabel(_nsmap.getNamespaceUri("rdl").toString() + id);
-	  }
-	  catch (NumberFormatException e)
-	  {
-		  return getLabel(_nsmap.getNamespaceUri("jordrdl").toString() + id);
-	  }
+  {	  
+	char firstChar = id.charAt(1);
+	boolean isInt = Character.isDigit( firstChar );
+	Entity entity = null;
+	  
+	if (isInt)
+	{
+	  entity = getLabel(_nsmap.getNamespaceUri("rdl").toString() + id);
+	}
+	else
+	{
+	  String url = _nsmap.getNamespaceUri("jordrdl").toString();
+	  entity = getLabel(url + id);			  
+	}
+	return entity;	  
   }
 
   public Qmxf getClass(String id, Repository repository) throws Exception
@@ -413,7 +420,7 @@ public class RefDataProvider
               continue;
             }
     	  
-    	if (repository.getRepositoryType() == RepositoryType.JORD)
+    	if (repository.getRepositorytype() == Repositorytype.JORD)
     	{
     		queryBindings = queryContainsSearchJord.getBindings();
     	    sparql = readSparql(queryContainsSearchJord.getFileName());
@@ -453,7 +460,7 @@ public class RefDataProvider
               et.setReference(result.get("type"));
               classDefinition.setEntityType(et);
             }
-            else if (repository.getRepositoryType().equals(RepositoryType.PART_8))
+            else if (repository.getRepositorytype().equals(Repositorytype.PART_8))
             {
               continue;
             }
@@ -568,7 +575,7 @@ public class RefDataProvider
     {
       String sparql = "";
       String sparqlPart8 = "";
-      String sparqlJORD = "";
+      //String sparqlJORD = "";
       //String relativeUri = "";
       Results sparqlResults = null;
       List<Hashtable<String, String>> results = null;
@@ -583,9 +590,9 @@ public class RefDataProvider
       QueryBindings queryBindingsPart8 = queryGetSubClassOf.getBindings();
       sparqlPart8 = readSparql(queryGetSubClassOf.getFileName()).replace("param1", id);
       
-      Query queryJord = getQuery("GetSuperclassJORD");
-      QueryBindings queryBindingsJORD = queryJord.getBindings();
-      sparqlJORD = readSparql(queryJord.getFileName()).replace("param1", id);
+      //Query queryJord = getQuery("GetSuperclassJORD");
+      //QueryBindings queryBindingsJORD = queryJord.getBindings();
+     // sparqlJORD = readSparql(queryJord.getFileName()).replace("param1", id);
       
       for (Repository repository : _repositories)
       {
@@ -596,7 +603,7 @@ public class RefDataProvider
             continue;
           }
         }
-        switch (repository.getRepositoryType())
+        switch (repository.getRepositorytype())
         {
         	case PART_8:
         		sparqlResults = queryFromRepository(repository, sparqlPart8);
@@ -770,7 +777,7 @@ public class RefDataProvider
             continue;
           }
         }
-        switch (rep.getRepositoryType())
+        switch (rep.getRepositorytype())
         {
         case CAMELOT:
         case RDS_WIP:
@@ -920,7 +927,7 @@ public class RefDataProvider
             }
           }
     	  
-    	  if (repository.getRepositoryType() == RepositoryType.JORD)
+    	  if (repository.getRepositorytype() == Repositorytype.JORD)
       	{
       		memberBindings = getMembersJord.getBindings();
       		sparql = readSparql(getMembersJord.getFileName()).replace("param1", Id);
@@ -1115,7 +1122,7 @@ public class RefDataProvider
 
       //List<Entity> resultEntities = new ArrayList<Entity>();
 
-      switch (repository.getRepositoryType())
+      switch (repository.getRepositorytype())
       {
       case PART_8:
         sparqlQuery = "GetPart8Roles";
@@ -1223,7 +1230,7 @@ public class RefDataProvider
             }
           }
 
-          switch (repository.getRepositoryType())
+          switch (repository.getRepositorytype())
           {
           case CAMELOT:
           case RDS_WIP:
@@ -1335,7 +1342,7 @@ public class RefDataProvider
             continue;
           }
         }
-        switch (rep.getRepositoryType())
+        switch (rep.getRepositorytype())
         {
         case CAMELOT:
         case RDS_WIP:
@@ -1546,12 +1553,12 @@ public class RefDataProvider
     Response response = new Response();
     response.setLevel(Level.SUCCESS);
     boolean qn = false;
-    String qName = null;
+    //String qName = null;
     try
     {
       Repository repository = getRepository(qmxf.getTargetRepository());
 
-      if (repository == null || repository.isIsReadOnly())
+      if (repository == null || repository.getIsreadonly())
       {
         Status status = new Status();
         // status.Level = StatusLevel.Error;
@@ -1704,7 +1711,7 @@ public class RefDataProvider
                       {
                         insert = GenerateDescription(insert, role.getDescriptions().get(0), tempRoleIdentifier);
                       }
-                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      if (repository.getRepositorytype() == Repositorytype.PART_8)
                       {
                         insert = GenerateTypesPart8(insert, tempRoleIdentifier, identifier, role);
                         insert = GenerateRoleIndexPart8(insert, tempRoleIdentifier, index, role);
@@ -1718,7 +1725,7 @@ public class RefDataProvider
                     if (role.getRange() != null)
                     {
                       //qName = _nsmap.reduceToQName(role.getRange());
-                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      if (repository.getRepositorytype() == Repositorytype.PART_8)
                       {
                         insert = GenerateRoleFillerType(insert, tempRoleIdentifier, role.getRange());
                       }
@@ -1754,7 +1761,7 @@ public class RefDataProvider
                       {
                         delete = GenerateDescription(delete, role.getDescriptions().get(0), tempRoleID);
                       }
-                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      if (repository.getRepositorytype() == Repositorytype.PART_8)
                       {
                         delete = GenerateTypesPart8(delete, tempRoleID, identifier, role);
                         delete = GenerateRoleIndexPart8(delete, tempRoleID, index, role);
@@ -1768,7 +1775,7 @@ public class RefDataProvider
                     if (role.getRange() != null)
                     {
                       //qName = _nsmap.reduceToQName(role.getRange());
-                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      if (repository.getRepositorytype() == Repositorytype.PART_8)
                       {
                         delete = GenerateRoleFillerType(delete, tempRoleID, role.getRange());
                       }
@@ -1793,7 +1800,7 @@ public class RefDataProvider
             // region Form Insert SPARQL
             if (insert.isEmpty() && delete.isEmpty())
             {
-              if (repository.getRepositoryType() == RepositoryType.PART_8)
+              if (repository.getRepositorytype() == Repositorytype.PART_8)
               {
                 insert = GenerateTypesPart8(insert, identifier, null, newTemplateDefinition);
                 insert = GenerateRoleCountPart8(insert, newTemplateDefinition.getRoleDefinitions().size(), identifier,
@@ -1847,7 +1854,7 @@ public class RefDataProvider
                   insert = GenerateDescription(insert, role.getDescriptions().get(0), roleID);
                 }
 
-                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                if (repository.getRepositorytype() == Repositorytype.PART_8)
                 {
                   insert = GenerateRoleIndexPart8(insert, roleID, ++roleCount, role);
                   insert = GenerateHasTemplate(insert, roleID, identifier, role);
@@ -1860,7 +1867,7 @@ public class RefDataProvider
                 if (role.getRange() != null && role.getRange() != "")
                 {
                   //qName = _nsmap.reduceToQName(role.getRange());
-                  if (repository.getRepositoryType() == RepositoryType.PART_8)
+                  if (repository.getRepositorytype() == Repositorytype.PART_8)
                   {
                     insert = GenerateRoleFillerType(insert, roleID, role.getRange());
                   }
@@ -1985,7 +1992,7 @@ public class RefDataProvider
                 // role count
                 if (oldTQ.getRoleQualifications().size() != newTQ.getRoleQualifications().size())
                 {
-                  if (repository.getRepositoryType() == RepositoryType.PART_8)
+                  if (repository.getRepositorytype() == Repositorytype.PART_8)
                   {
                     delete = GenerateRoleCountPart8(delete, oldTQ.getRoleQualifications().size(), templateID, oldTQ);
                     insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
@@ -2003,7 +2010,7 @@ public class RefDataProvider
 
                   if (os != null && !(os.getReference().equalsIgnoreCase(ns.getReference())))
                   {
-                    if (repository.getRepositoryType() == RepositoryType.PART_8)
+                    if (repository.getRepositorytype() == Repositorytype.PART_8)
                     {
 
                     }
@@ -2053,7 +2060,7 @@ public class RefDataProvider
 
                     if (orq == null)
                     {
-                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      if (repository.getRepositorytype() == Repositorytype.PART_8)
                       {
                         insert = GenerateTypesPart8(insert, tempNewRoleID, templateID.toString(), nrq);
                         for (Name nn : nrq.getNames())
@@ -2145,7 +2152,7 @@ public class RefDataProvider
                     }
                     if (nrq == null)
                     {
-                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      if (repository.getRepositorytype() == Repositorytype.PART_8)
                       {
                         delete = GenerateTypesPart8(delete, tempNewRoleID, templateID.toString(), orq);
                         for (Name nn : orq.getNames())
@@ -2233,7 +2240,7 @@ public class RefDataProvider
                 insert = GenerateDescription(insert, newDescr, templateID);
               }
 
-              if (repository.getRepositoryType() == RepositoryType.PART_8)
+              if (repository.getRepositorytype() == Repositorytype.PART_8)
               {
                 insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
                 //qName = _nsmap.reduceToQName(newTQ.getQualifies());
@@ -2251,7 +2258,7 @@ public class RefDataProvider
               /*for (Specialization spec : newTQ.getSpecializations())
               {
                 //String specialization = spec.getReference();
-                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                if (repository.getRepositorytype() == Repositorytype.PART_8)
                 {
                   // /TODO
                 }
@@ -2283,7 +2290,7 @@ public class RefDataProvider
                 {
                   roleID = newRole.getId();
                 }
-                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                if (repository.getRepositorytype() == Repositorytype.PART_8)
                 {
                   insert = GenerateTypesPart8(insert, roleID, templateID.toString(), newRole);
                   for (Name newName : newRole.getNames())
@@ -2456,13 +2463,13 @@ public class RefDataProvider
     Response response = new Response();
     response.setLevel(Level.SUCCESS);
     //boolean qn = false;
-    String qName = null;
+    //String qName = null;
 
     try
     {
       Repository repository = getRepository(qmxf.getTargetRepository());
 
-      if (repository == null || repository.isIsReadOnly())
+      if (repository == null || repository.getIsreadonly())
       {
         Status status = new Status();
         response.setLevel(Level.ERROR);
@@ -2619,7 +2626,7 @@ public class RefDataProvider
                     if (nc == null)
                     {
                       //qName = _nsmap.reduceToQName(oc.getReference());
-                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      if (repository.getRepositorytype() == Repositorytype.PART_8)
                       {
                        
                           delete = GenerateSuperClass(delete, oc.getReference(), clsId.toString()); // /delete from old
@@ -2652,7 +2659,7 @@ public class RefDataProvider
                     if (oc == null)
                     {
                       //qName = _nsmap.reduceToQName(nc.getReference());
-                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      if (repository.getRepositorytype() == Repositorytype.PART_8)
                       {
                         
                           insert = GenerateSuperClass(insert, nc.getReference(), clsId.toString()); // /insert from new
@@ -2702,7 +2709,7 @@ public class RefDataProvider
               if (ns.getReference() != null && ns.getReference() != "")
               {
                 //qName = _nsmap.reduceToQName(ns.getReference());
-                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                if (repository.getRepositorytype() == Repositorytype.PART_8)
                 {
                   
                     insert = GenerateRdfSubClass(insert, clsId, ns.getReference());
@@ -2733,7 +2740,7 @@ public class RefDataProvider
               if (nc.getReference() != null && nc.getReference() != "")
               {
                 //qName = _nsmap.reduceToQName(nc.getReference());
-                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                if (repository.getRepositorytype() == Repositorytype.PART_8)
                 {
                  
                     insert = GenerateSuperClass(insert, nc.getReference(), clsId.toString());
@@ -2807,7 +2814,7 @@ public class RefDataProvider
     try
     {
       Federation federation = getFederation();
-      for (Repository repo : federation.getRepositories().getItems())
+      for (Repository repo : federation.getRepositorylist().getItems())
       {
         repositoryList.add(repo);
       }
@@ -2863,7 +2870,7 @@ public class RefDataProvider
 
       for (Repository repository : _repositories)
       {
-        if (repository.getRepositoryType().equals(RepositoryType.PART_8))
+        if (repository.getRepositorytype().equals(Repositorytype.PART_8))
         {
           Results sparqlResults = queryFromRepository(repository, sparqlGetRelatedTemplates);
 
@@ -2976,7 +2983,7 @@ public class RefDataProvider
       for (Repository repository : _repositories)
       {
         
-        if (repository.getRepositoryType() == RepositoryType.JORD)
+        if (repository.getRepositorytype() == Repositorytype.JORD)
         {
         	sparql = readSparql(queryContainsSearch.getFileName());
             sparql = sparql.replace("param1", query);
@@ -3184,7 +3191,7 @@ public class RefDataProvider
             }
           }
     	  
-        if (repository.getRepositoryType().equals(RepositoryType.PART_8))
+        if (repository.getRepositorytype().equals(Repositorytype.PART_8))
         {
           Results sparqlResults = queryFromRepository(repository, sparqlPart8);
 
@@ -3210,7 +3217,7 @@ public class RefDataProvider
             entityList.add(tempVar);
           }
         }
-        else if (repository.getRepositoryType().equals(RepositoryType.JORD))
+        else if (repository.getRepositorytype().equals(Repositorytype.JORD))
         {
         	Results sparqlResults = queryFromRepository(repository, sparqlJord);
 
@@ -3427,7 +3434,7 @@ public class RefDataProvider
 
       for (Repository repository : _repositories)
       {
-    	  if (repository.getRepositoryType() == RepositoryType.JORD && uri.contains("#"))
+    	  if (repository.getRepositorytype() == Repositorytype.JORD && uri.contains("#"))
           {
     		  sparql = readSparql(queryEquivalent.getFileName()).replace("param1", uri);
     		  queryBindings = queryEquivalent.getBindings();
@@ -3483,7 +3490,7 @@ public class RefDataProvider
 //
 //      for (Repository repository : _repositories)
 //      {
-//        switch (repository.getRepositoryType())
+//        switch (repository.getRepositorytype())
 //        {
 //        case CAMELOT:
 //        case RDS_WIP:

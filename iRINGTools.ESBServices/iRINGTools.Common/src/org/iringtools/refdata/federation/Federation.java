@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="idGenerators" type="{http://www.iringtools.org/refdata/federation}IDGenerators"/>
- *         &lt;element name="namespaces" type="{http://www.iringtools.org/refdata/federation}Namespaces"/>
- *         &lt;element name="repositories" type="{http://www.iringtools.org/refdata/federation}Repositories"/>
+ *         &lt;element name="idgeneratorlist" type="{http://www.iringtools.org/refdata/federation}idgeneratorlist"/>
+ *         &lt;element name="namespacelist" type="{http://www.iringtools.org/refdata/federation}namespacelist"/>
+ *         &lt;element name="repositorylist" type="{http://www.iringtools.org/refdata/federation}repositorylist"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,90 +31,90 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Federation", propOrder = {
-    "idGenerators",
-    "namespaces",
-    "repositories"
+    "idgeneratorlist",
+    "namespacelist",
+    "repositorylist"
 })
 @XmlRootElement(name = "federation")
 public class Federation {
 
     @XmlElement(required = true)
-    protected IDGenerators idGenerators;
+    protected Idgeneratorlist idgeneratorlist;
     @XmlElement(required = true)
-    protected Namespaces namespaces;
+    protected Namespacelist namespacelist;
     @XmlElement(required = true)
-    protected Repositories repositories;
+    protected Repositorylist repositorylist;
 
     /**
-     * Gets the value of the idGenerators property.
+     * Gets the value of the idgeneratorlist property.
      * 
      * @return
      *     possible object is
-     *     {@link IDGenerators }
+     *     {@link Idgeneratorlist }
      *     
      */
-    public IDGenerators getIdGenerators() {
-        return idGenerators;
+    public Idgeneratorlist getIdgeneratorlist() {
+        return idgeneratorlist;
     }
 
     /**
-     * Sets the value of the idGenerators property.
+     * Sets the value of the idgeneratorlist property.
      * 
      * @param value
      *     allowed object is
-     *     {@link IDGenerators }
+     *     {@link Idgeneratorlist }
      *     
      */
-    public void setIdGenerators(IDGenerators value) {
-        this.idGenerators = value;
+    public void setIdgeneratorlist(Idgeneratorlist value) {
+        this.idgeneratorlist = value;
     }
 
     /**
-     * Gets the value of the namespaces property.
+     * Gets the value of the namespacelist property.
      * 
      * @return
      *     possible object is
-     *     {@link Namespaces }
+     *     {@link Namespacelist }
      *     
      */
-    public Namespaces getNamespaces() {
-        return namespaces;
+    public Namespacelist getNamespacelist() {
+        return namespacelist;
     }
 
     /**
-     * Sets the value of the namespaces property.
+     * Sets the value of the namespacelist property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Namespaces }
+     *     {@link Namespacelist }
      *     
      */
-    public void setNamespaces(Namespaces value) {
-        this.namespaces = value;
+    public void setNamespacelist(Namespacelist value) {
+        this.namespacelist = value;
     }
 
     /**
-     * Gets the value of the repositories property.
+     * Gets the value of the repositorylist property.
      * 
      * @return
      *     possible object is
-     *     {@link Repositories }
+     *     {@link Repositorylist }
      *     
      */
-    public Repositories getRepositories() {
-        return repositories;
+    public Repositorylist getRepositorylist() {
+        return repositorylist;
     }
 
     /**
-     * Sets the value of the repositories property.
+     * Sets the value of the repositorylist property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Repositories }
+     *     {@link Repositorylist }
      *     
      */
-    public void setRepositories(Repositories value) {
-        this.repositories = value;
+    public void setRepositorylist(Repositorylist value) {
+        this.repositorylist = value;
     }
 
 }

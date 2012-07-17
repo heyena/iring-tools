@@ -108,7 +108,9 @@
     </Content>
     <Content Include="App_Data\DatabaseDictionary.H300061_0160.iPasCDM_ADOMockup.xml" />
     <Content Include="App_Data\default.css" />
-    <Content Include="App_Data\Federation.xml" />
+    <Content Include="App_Data\Federation.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_Data\ipassql-configuration.H300061_0160.iPasCDM_ADOMockup.xml">
       <SubType>Designer</SubType>
     </Content>
