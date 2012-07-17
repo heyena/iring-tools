@@ -39,10 +39,10 @@
                 <a href="Apps/AdapterManager">
                 AdapterManager</a>
               </li>
-              <li>
+              <!--<li>
                 <a href="Apps/RefDataEditor">
                 Reference Data Editor</a>
-              </li>
+              </li>-->
               <li>
                 <a href="services/facade/sparql/query">
                 Facade Query</a>
