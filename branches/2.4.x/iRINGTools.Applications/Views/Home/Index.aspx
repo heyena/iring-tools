@@ -31,7 +31,7 @@
       <h2>iRINGTools Applications</h2>
       <ul>
       <li><a href="services/sandbox/sparql/query">Sandbox SPARQL Query</a></li>
-      <li><a href="<%=ResolveUrl("~/RefDataEditor") %>">Reference Data Editor</a></li>
+      <!--<li><a href="<%=ResolveUrl("~/RefDataEditor") %>">Reference Data Editor</a></li>-->
       <li><a href="<%=ResolveUrl("~/AdapterManager") %>">Adapter Manager</a></li>
       <li><a href="services/facade/sparql/query">Facade SPARQL Query</a></li>
 	    </ul>
