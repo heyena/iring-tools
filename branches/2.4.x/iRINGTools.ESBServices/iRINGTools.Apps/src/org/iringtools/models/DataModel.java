@@ -330,19 +330,20 @@ public class DataModel
         HttpClient httpClient = new HttpClient(serviceUri);
         HttpUtils.addHttpHeaders(session, httpClient);
 
-        String destinationUri = dtiRelativePath + "?destination=source";
+        String requestUrl = dtiRelativePath + "?dtiOnly=true";
 
         DxiRequest dxiRequest = new DxiRequest();
         dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
         dxiRequest.setDataFilter(dataFilter);
 
-        resultDtis = httpClient.post(DataTransferIndices.class, destinationUri, dxiRequest);
+        resultDtis = httpClient.post(DataTransferIndices.class, requestUrl, dxiRequest);
         
         List<DataTransferIndex> partialDtiList = resultDtis.getDataTransferIndexList().getItems();
         parsePartialDtis(partialDtiList, cloneFullDtiList);
       }
       else
       {
+        // no property filter, return full DTI list
         DataTransferIndexList resultDtiList = new DataTransferIndexList();
         resultDtis.setDataTransferIndexList(resultDtiList);
         resultDtiList.setItems(cloneFullDtiList);

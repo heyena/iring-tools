@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.manifest.Manifest;
+import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpUtils;
 
@@ -13,14 +13,14 @@ public class DtiTask implements Runnable
   private static final Logger logger = Logger.getLogger(DtiTask.class);
   private Map<String, Object> settings;
   private String url;
-  private Manifest manifest;
+  private DxiRequest dxiRequest;
   private DataTransferIndices indices;
   
-  public DtiTask(final Map<String, Object> settings, final String url, final Manifest manifest)
+  public DtiTask(final Map<String, Object> settings, final String url, final DxiRequest dxiRequest)
   {
     this.settings = settings;
     this.url = url;    
-    this.manifest = manifest;
+    this.dxiRequest = dxiRequest;
   }
   
   @Override
@@ -30,7 +30,7 @@ public class DtiTask implements Runnable
     {
       HttpClient httpClient = new HttpClient(url);
       HttpUtils.addHttpHeaders(settings, httpClient); 
-      indices = httpClient.post(DataTransferIndices.class, manifest);
+      indices = httpClient.post(DataTransferIndices.class, dxiRequest);
     }
     catch (Exception e) 
     {
