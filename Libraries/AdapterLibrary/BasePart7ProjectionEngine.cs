@@ -167,7 +167,15 @@ namespace org.iringtools.adapter.projection
       {
         foreach (IDataObject parentObj in parentObjects)
         {
-          if (parentObj.GetType().Name != objectPath[i])
+
+          string objectType = parentObj.GetType().Name;
+
+          if (objectType == typeof(GenericDataObject).Name)
+          {
+            objectType = ((GenericDataObject)parentObj).ObjectType;
+          }
+
+          if (objectType.ToLower() != objectPath[i].ToLower())
           {
             List<IDataObject> relatedObjects = new List<IDataObject>();
 
