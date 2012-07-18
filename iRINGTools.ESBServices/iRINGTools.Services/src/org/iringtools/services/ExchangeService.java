@@ -96,7 +96,7 @@ public class ExchangeService extends AbstractService
   public Response getDataTransferIndices(
       @PathParam("scope") String scope, 
       @PathParam("id") String id,
-      @QueryParam("destination") String destination,
+      @QueryParam("dtiOnly") boolean dtiOnly,
       DxiRequest dxiRequest) 
   {
     DataTransferIndices dataTransferIndices = null;
@@ -112,16 +112,8 @@ public class ExchangeService extends AbstractService
     
     try
     {
-      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-      
-      if (destination == null || destination.length() == 0)
-      {
-        dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id, dxiRequest.getManifest());
-      }
-      else
-      {
-        dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id, destination, dxiRequest);
-      }
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);      
+      dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id, dxiRequest, dtiOnly);
     }
     catch (Exception e)
     {

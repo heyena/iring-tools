@@ -21,7 +21,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
-import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndex;
@@ -128,32 +127,33 @@ public class ExchangeProvider
     return createCrossedManifest();
   }
 
-  // get dxi without filter
-  public DataTransferIndices getDataTransferIndices(String scope, String id, Manifest manifest)
+  public DataTransferIndices getDataTransferIndices(String scope, String id, DxiRequest dxiRequest, boolean dtiOnly)
       throws ServiceProviderException
   {
-    logger.debug("getDataTransferIndices(" + scope + "," + id + ",manifest)");
+    logger.debug("getDataTransferIndices(" + scope + "," + id + ",dxiRequest)");
     
-    if (manifest == null) return null;
-
     initExchangeDefinition(scope, id);
 
     String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName
-        + "/dxi?hashAlgorithm=" + hashAlgorithm;
+        + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
 
     String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName
-        + "/dxi?hashAlgorithm=" + hashAlgorithm;
+        + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
     
-    Manifest sourceManifest = null;
-    Manifest targetManifest = null;
+    DxiRequest sourceDxiRequest = new DxiRequest();
+    DxiRequest targetDxiRequest = new DxiRequest();
     
     try
     {
-      sourceManifest = JaxbUtils.clone(Manifest.class, manifest);
+      Manifest sourceManifest = JaxbUtils.clone(Manifest.class, dxiRequest.getManifest());
       sourceManifest.getGraphs().getItems().get(0).setName(sourceGraphName);
+      sourceDxiRequest.setManifest(sourceManifest);
+      sourceDxiRequest.setDataFilter(dxiRequest.getDataFilter());
       
-      targetManifest = JaxbUtils.clone(Manifest.class, manifest);
+      Manifest targetManifest = JaxbUtils.clone(Manifest.class, dxiRequest.getManifest());
       targetManifest.getGraphs().getItems().get(0).setName(targetGraphName);
+      targetDxiRequest.setManifest(targetManifest);
+      targetDxiRequest.setDataFilter(dxiRequest.getDataFilter());      
     }
     catch (Exception e)
     {
@@ -164,10 +164,10 @@ public class ExchangeProvider
     
     ExecutorService execSvc = Executors.newFixedThreadPool(2); 
     
-    DtiTask sourceDtiTask = new DtiTask(settings, sourceDtiUrl, sourceManifest);    
+    DtiTask sourceDtiTask = new DtiTask(settings, sourceDtiUrl, sourceDxiRequest);    
     execSvc.execute(sourceDtiTask);    
     
-    DtiTask targetDtiTask = new DtiTask(settings, targetDtiUrl, targetManifest);    
+    DtiTask targetDtiTask = new DtiTask(settings, targetDtiUrl, targetDxiRequest);    
     execSvc.execute(targetDtiTask);    
     
     execSvc.shutdown();
@@ -184,91 +184,79 @@ public class ExchangeProvider
     {
       sourceDtis = new DataTransferIndices();
     }
-    sourceDtis.setScopeName(sourceScopeName);
-    sourceDtis.setAppName(sourceAppName);
-    
+     
     DataTransferIndices targetDtis = targetDtiTask.getDataTransferIndices();
     if (targetDtis == null)
     {
       targetDtis = new DataTransferIndices();
     }
-    targetDtis.setScopeName(targetScopeName);
-    targetDtis.setAppName(targetAppName);
-
-    // create dxi request to diff source and target dti
-    DfiRequest dfiRequest = new DfiRequest();
-    dfiRequest.setSourceScopeName(sourceScopeName);
-    dfiRequest.setSourceAppName(sourceAppName);
-    dfiRequest.setTargetScopeName(targetScopeName);
-    dfiRequest.setTargetAppName(targetAppName);
-    dfiRequest.getDataTransferIndices().add(sourceDtis);
-    dfiRequest.getDataTransferIndices().add(targetDtis);
-
-    // request exchange service to diff the dtis
-    String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
-    DataTransferIndices dxis = null;
     
-    try
+    DataTransferIndices resultDtis = null;
+    
+    if (dtiOnly)
     {
-      dxis = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
-    }
-    catch (HttpClientException e)
-    {
-      logger.error(e.getMessage());
-      throw new ServiceProviderException(e.getMessage());
-    }
-
-    return dxis;
-  }
-
-  // get dxi with filter
-  public DataTransferIndices getDataTransferIndices(String scope, String id, String destination, DxiRequest dxiRequest)
-      throws ServiceProviderException
-  {
-    DataTransferIndices dxis = null;
-
-    logger.debug("getDataTransferIndices(" + scope + "," + id + ")");
-    Manifest manifest = dxiRequest.getManifest();
-    DataFilter dataFilter = dxiRequest.getDataFilter();
-
-    try
-    {
-      initExchangeDefinition(scope, id);
-    }
-    catch (ServiceProviderException e)
-    {
-      logger.error(e.getMessage());
-      throw new ServiceProviderException(e.getMessage());
-    }
-
-    DxiRequest adapterDxiRequest = new DxiRequest();
-    adapterDxiRequest.setDataFilter(dataFilter);
-    adapterDxiRequest.setManifest(manifest);
-
-    if (destination.equalsIgnoreCase("source"))
-    {
-      // get source dti
-      String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName
-          + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-      try
+      resultDtis = sourceDtis;
+      
+      if (sourceDtis.getDataTransferIndexList() == null)
       {
-        manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
-        dxis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, adapterDxiRequest);
+        resultDtis.setDataTransferIndexList(new DataTransferIndexList());  
       }
-      catch (HttpClientException e)
+      
+      if (targetDtis.getDataTransferIndexList() != null)
       {
-        logger.error(e.getMessage());
-        throw new ServiceProviderException(e.getMessage());
+        List<DataTransferIndex> resultDtiList = resultDtis.getDataTransferIndexList().getItems();
+        
+        if (resultDtiList.isEmpty())
+        {
+          resultDtis = targetDtis;
+        }
+        else
+        {
+          for (DataTransferIndex targetDti : targetDtis.getDataTransferIndexList().getItems())
+          {
+            boolean found = false;
+            
+            // check for duplicates
+            for (DataTransferIndex resultDti : resultDtiList)
+            {
+              if (resultDti.getIdentifier().equalsIgnoreCase(targetDti.getIdentifier()))
+              {
+                found = true;
+                break;
+              }
+            }
+            
+            if (!found)
+            {
+              resultDtiList.add(targetDti);
+            }
+          }  
+        }
       }
     }
     else
     {
-      String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName
-          + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
+      sourceDtis.setScopeName(sourceScopeName);
+      sourceDtis.setAppName(sourceAppName);
+     
+      targetDtis.setScopeName(targetScopeName);
+      targetDtis.setAppName(targetAppName);
+      
+      // create dxi request to diff source and target dti
+      DfiRequest dfiRequest = new DfiRequest();
+      dfiRequest.setSourceScopeName(sourceScopeName);
+      dfiRequest.setSourceAppName(sourceAppName);
+      dfiRequest.setTargetScopeName(targetScopeName);
+      dfiRequest.setTargetAppName(targetAppName);
+      dfiRequest.getDataTransferIndices().add(sourceDtis);
+      dfiRequest.getDataTransferIndices().add(targetDtis);
+  
+      // request exchange service to diff the dtis
+      String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
+      
       try
       {
-        manifest.getGraphs().getItems().get(0).setName(targetGraphName);
-        dxis = httpClient.post(DataTransferIndices.class, targetDtiUrl, adapterDxiRequest);
+        resultDtis = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
       }
       catch (HttpClientException e)
       {
@@ -277,7 +265,7 @@ public class ExchangeProvider
       }
     }
 
-    return dxis;
+    return resultDtis;
   }
 
   public DataTransferObjects getDataTransferObjects(String scope, String id, DxoRequest dxoRequest)
