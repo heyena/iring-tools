@@ -388,29 +388,33 @@ public class DataModel
             {
               int compareValue = 0;
 
-              if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
+              if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
               {
-                if (sortDir.equals("asc"))
-                {
-                  compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
-                }
-                else
-                {
-                  compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
-                }
-              }
-              else  // sort type is numeric
-              {
-                if (sortDir.equals("asc"))
-                {
-                  compareValue = (int) (Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2
-                      .getSortIndex()));
-                }
-                else
-                {
-                  compareValue = (int) (Double.parseDouble(dti2.getSortIndex()) - Double.parseDouble(dti1
-                      .getSortIndex()));
-                }
+	              if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
+	              {
+	                if (sortDir.equals("asc"))
+	                {
+	                  
+	                	compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
+	                }
+	                else
+	                {
+	                  compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
+	                }
+	              }
+	              else  // sort type is numeric
+	              {
+	                if (sortDir.equals("asc"))
+	                {
+	                  compareValue = (int) (Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2
+	                      .getSortIndex()));
+	                }
+	                else
+	                {
+	                  compareValue = (int) (Double.parseDouble(dti2.getSortIndex()) - Double.parseDouble(dti1
+	                      .getSortIndex()));
+	                }
+	              }
               }
 
               return compareValue;

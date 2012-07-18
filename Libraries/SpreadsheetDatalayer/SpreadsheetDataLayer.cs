@@ -414,11 +414,11 @@ namespace org.iringtools.adapter.datalayer
                       break;
                     }
                   }
-                }               
-              }
+                }
 
-              if (filter.Expressions.Count == 0)
-                addDataObject = true;
+                if (filter.Expressions.Count == 0)
+                  addDataObject = true;
+              }
 
               if (addDataObject)
                 dataObject.SetPropertyValue(column.Name, _provider.GetValue(col));              
