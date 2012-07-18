@@ -92,7 +92,7 @@ namespace org.iringtools.adapter.datalayer
       {
         LoadDataDictionary(objectType);
 
-        IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
+        IList<IDataObject> allDataObjects = LoadDataObjects(objectType, null);
 
         var expressions = FormMultipleKeysPredicate(identifiers);
 
@@ -120,7 +120,7 @@ namespace org.iringtools.adapter.datalayer
       {
         LoadDataDictionary(objectType);
 
-        IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
+        IList<IDataObject> allDataObjects = LoadDataObjects(objectType, filter);
 
         // Apply filter
         if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
@@ -129,14 +129,16 @@ namespace org.iringtools.adapter.datalayer
 
           if (predicate != null)
           {
-            _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList();
+            IQueryable<IDataObject> iq = allDataObjects.AsQueryable().Where(predicate);
+
+            _dataObjects = iq.ToList();
           }
         }
 
-        if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
-        {
-          throw new NotImplementedException("OrderExpressions are not supported by the CSV DataLayer.");
-        }
+        //if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
+        //{
+        //  throw new NotImplementedException("OrderExpressions are not supported by the CSV DataLayer.");
+        //}
         else
         {
           _dataObjects = allDataObjects.ToList();
@@ -368,10 +370,11 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    private IList<IDataObject> LoadDataObjects(string objectType)
+    private IList<IDataObject> LoadDataObjects(string objectType, DataFilter filter)
     {
       try
       {
+        bool addDataObject = true, containFilterProperty = false;
         IList<IDataObject> dataObjects = new List<IDataObject>();
 
         SpreadsheetTable cfTable = _provider.GetConfigurationTable(objectType);
@@ -383,6 +386,8 @@ namespace org.iringtools.adapter.datalayer
 
         foreach (Row row in rows)
         {
+          addDataObject = true;
+          containFilterProperty = false;
           IDataObject dataObject = new GenericDataObject
           {
             ObjectType = objectType,
@@ -396,15 +401,44 @@ namespace org.iringtools.adapter.datalayer
 
             if (column != null)
             {
-              dataObject.SetPropertyValue(column.Name, _provider.GetValue(col));
+              if (filter != null)
+              {
+                foreach (Expression expression in filter.Expressions)
+                {
+                  if (expression.PropertyName.ToLower().Equals(column.Name.ToLower()))
+                  {
+                    containFilterProperty = true;
+                    if (_provider.GetValue(col) == null)
+                    {
+                      addDataObject = false;
+                      break;
+                    }
+                  }
+                }               
+              }
+
+              if (filter.Expressions.Count == 0)
+                addDataObject = true;
+
+              if (addDataObject)
+                dataObject.SetPropertyValue(column.Name, _provider.GetValue(col));              
             }
           }
-          foreach (var col in cfTable.Columns)
-          {
-              if (!((GenericDataObject)dataObject).Dictionary.ContainsKey(col.Name))
-                  dataObject.SetPropertyValue(col.Name, null);
-          }
-          dataObjects.Add(dataObject);
+
+          if (!containFilterProperty && filter != null)
+            if (filter.Expressions.Count > 0)
+              addDataObject = false;
+
+          if (addDataObject)
+            dataObjects.Add(dataObject);
+
+          //foreach (var col in cfTable.Columns)
+          //{
+          //    if (!((GenericDataObject)dataObject).Dictionary.ContainsKey(col.Name))
+          //        dataObject.SetPropertyValue(col.Name, null);
+          //}
+          
+          
         }
 
         return dataObjects;
