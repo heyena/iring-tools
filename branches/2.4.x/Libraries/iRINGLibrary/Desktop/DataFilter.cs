@@ -981,7 +981,9 @@ namespace org.iringtools.library
     // Implement the IComparable interface. 
     public bool Equals(string str1, string str2)
     {
-      return Compare(str1, str2) == 0;
+      if (str1 != null && str2 != null)
+        return Compare(str1, str2) == 0;
+      return false;
     }
 
     public int Compare(string str1, string str2)
