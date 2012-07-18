@@ -338,18 +338,25 @@ namespace org.iringtools.library
 
     protected DataFilter CreateDataFilter(IDataObject parentDataObject, string relatedObjectType)
     {
+        string objectType = parentDataObject.GetType().Name;
+
+        if (objectType == typeof(GenericDataObject).Name)
+        {
+            objectType = ((GenericDataObject)parentDataObject).ObjectType;
+        }
+
       DataDictionary dataDictionary = GetDictionary();
 
-      DataObject dataObject = dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == parentDataObject.GetType().Name.ToLower());
+      DataObject dataObject = dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == objectType.ToLower());
       if (dataObject == null)
       {
-        throw new Exception("Parent data object [" + parentDataObject.GetType().Name + "] not found.");
+          throw new Exception("Parent data object [" + objectType + "] not found.");
       }
 
       DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
       if (dataRelationship == null)
       {
-        throw new Exception("Relationship between data object [" + parentDataObject.GetType().Name +
+          throw new Exception("Relationship between data object [" + objectType +
           "] and related data object [" + relatedObjectType + "] not found.");
       }
 
