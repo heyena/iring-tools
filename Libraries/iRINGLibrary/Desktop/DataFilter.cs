@@ -638,7 +638,7 @@ namespace org.iringtools.library
       {
         if (Expressions != null && Expressions.Count > 0)
         {
-          if (_filterBuffer == null)
+          if (_filterBuffer == null || _filterBuffer.Count == 0)
             _filterBuffer = Expressions.ToList();
 
           List<Expression> localBuffer = _filterBuffer.ToList();

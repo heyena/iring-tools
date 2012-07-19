@@ -98,7 +98,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (expressions != null)
         {
-          _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList();
+          _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList();          
         }
 
         return _dataObjects;
@@ -117,7 +117,7 @@ namespace org.iringtools.adapter.datalayer
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       try
-      {
+      {       
         LoadDataDictionary(objectType);
 
         IList<IDataObject> allDataObjects = LoadDataObjects(objectType, filter);
@@ -129,9 +129,7 @@ namespace org.iringtools.adapter.datalayer
 
           if (predicate != null)
           {
-            IQueryable<IDataObject> iq = allDataObjects.AsQueryable().Where(predicate);
-
-            _dataObjects = iq.ToList();
+            _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList();
           }
         }
 
@@ -143,6 +141,8 @@ namespace org.iringtools.adapter.datalayer
         {
           _dataObjects = allDataObjects.ToList();
         }
+    
+
         //Page and Sort The Data
         if (pageSize > _dataObjects.Count() || pageSize == 0)
           pageSize = _dataObjects.Count();
@@ -376,6 +376,7 @@ namespace org.iringtools.adapter.datalayer
       {
         bool addDataObject = true, containFilterProperty = false;
         IList<IDataObject> dataObjects = new List<IDataObject>();
+        int index = 0;
 
         SpreadsheetTable cfTable = _provider.GetConfigurationTable(objectType);
         SpreadsheetReference tableReference = cfTable.GetReference();
@@ -386,6 +387,7 @@ namespace org.iringtools.adapter.datalayer
 
         foreach (Row row in rows)
         {
+          index = 0;
           addDataObject = true;
           containFilterProperty = false;
           IDataObject dataObject = new GenericDataObject
@@ -395,12 +397,21 @@ namespace org.iringtools.adapter.datalayer
 
           foreach (Cell col in row.ChildElements)
           {
-
+            index++;
             string columnIdx = SpreadsheetReference.GetColumnName(col.CellReference);
             SpreadsheetColumn column = cfTable.Columns.First<SpreadsheetColumn>(c => columnIdx.Equals(c.ColumnIdx));
-
+            
             if (column != null)
             {
+              if (index == 1)
+              {
+                if (_provider.GetValue(col) == null)
+                {
+                  addDataObject = false;
+                  break;
+                }
+              }
+
               if (filter != null)
               {
                 foreach (Expression expression in filter.Expressions)
