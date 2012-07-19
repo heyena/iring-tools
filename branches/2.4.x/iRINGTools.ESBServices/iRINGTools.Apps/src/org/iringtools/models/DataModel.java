@@ -381,41 +381,94 @@ public class DataModel
         {
           final String sortType = resultDtis.getSortType().toLowerCase();
           final String sortDir = resultDtis.getSortOrder().toLowerCase();
+          
 
           Comparator<DataTransferIndex> comparator = new Comparator<DataTransferIndex>()
           {
             public int compare(DataTransferIndex dti1, DataTransferIndex dti2)
             {
-              int compareValue = 0;
-
-              if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
+              int compareValue = 0;   
+              
+              if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
               {
-	              if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
-	              {
-	                if (sortDir.equals("asc"))
-	                {
-	                  
-	                	compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
-	                }
-	                else
-	                {
-	                  compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
-	                }
-	              }
-	              else  // sort type is numeric
-	              {
-	                if (sortDir.equals("asc"))
-	                {
-	                  compareValue = (int) (Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2
-	                      .getSortIndex()));
-	                }
-	                else
-	                {
+                if (sortDir.equals("asc"))
+                {
+                	if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
+                	{
+                		compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
+                	}
+                	else if (dti2.getSortIndex() == null && dti1.getSortIndex() != null)
+                	{
+                		compareValue = dti1.getSortIndex().compareTo("0");	                		
+                	}
+                	else if (dti2.getSortIndex() != null && dti1.getSortIndex() == null)
+                	{
+                		compareValue = "0".compareTo("0");
+                	}	                		
+                	else
+                		compareValue = 0;	                		
+                }
+                else
+                {
+                	if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
+                	{
+                		compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
+                	}
+                	else if (dti2.getSortIndex() == null && dti1.getSortIndex() != null)
+                	{
+                		compareValue = "0".compareTo(dti1.getSortIndex());
+                	}
+                	else if (dti2.getSortIndex() != null && dti1.getSortIndex() == null)
+                	{
+                		compareValue = dti2.getSortIndex().compareTo("0");	                		
+                	}
+                	else
+                		compareValue = 0;	                		
+                	
+                }
+              }
+              else  // sort type is numeric
+              {
+                if (sortDir.equals("asc"))
+                {
+                	if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
+                	{
+                		compareValue = (int) (Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2
+                      .getSortIndex()));
+                	}
+                	else if (dti2.getSortIndex() == null && dti1.getSortIndex() != null)
+                	{
+                		compareValue = (int) (Double.parseDouble(dti1.getSortIndex()) - 0);
+                	}
+                	else if (dti2.getSortIndex() != null && dti1.getSortIndex() == null)
+                	{
+                		compareValue = (int) (0 - Double.parseDouble(dti2
+      	                      .getSortIndex()));
+                	}
+                	else
+                		compareValue = 0;	 
+                }
+                else
+                {
+                	if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
+                	{                		
 	                  compareValue = (int) (Double.parseDouble(dti2.getSortIndex()) - Double.parseDouble(dti1
 	                      .getSortIndex()));
-	                }
-	              }
+                	}
+                	else if (dti2.getSortIndex() == null && dti1.getSortIndex() != null)
+                	{
+                		compareValue = (int) (0 - Double.parseDouble(dti1
+  		                      .getSortIndex()));
+                	}
+                	else if (dti2.getSortIndex() != null && dti1.getSortIndex() == null)
+                	{
+                		compareValue = (int) (Double.parseDouble(dti2.getSortIndex()) - 0);
+                	}
+                	else
+                		compareValue = 0;	 
+                }
               }
+              
 
               return compareValue;
             }
