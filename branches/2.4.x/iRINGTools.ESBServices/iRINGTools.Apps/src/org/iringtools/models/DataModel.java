@@ -380,95 +380,58 @@ public class DataModel
         else if (dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
         {
           final String sortType = resultDtis.getSortType().toLowerCase();
-          final String sortDir = resultDtis.getSortOrder().toLowerCase();
-          
+          final String sortDir = resultDtis.getSortOrder().toLowerCase();          
 
           Comparator<DataTransferIndex> comparator = new Comparator<DataTransferIndex>()
           {
             public int compare(DataTransferIndex dti1, DataTransferIndex dti2)
             {
               int compareValue = 0;   
-              
+              String dti1SortIndex = dti1.getSortIndex();
+              String dti2SortIndex = dti2.getSortIndex();
+                            
               if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
               {
+                if (dti1SortIndex == null)
+                {
+                  dti1SortIndex = "";
+                }
+                
+                if (dti2SortIndex == null)
+                {
+                  dti2SortIndex = "";
+                }
+                
                 if (sortDir.equals("asc"))
                 {
-                	if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
-                	{
-                		compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
-                	}
-                	else if (dti2.getSortIndex() == null && dti1.getSortIndex() != null)
-                	{
-                		compareValue = dti1.getSortIndex().compareTo("0");	                		
-                	}
-                	else if (dti2.getSortIndex() != null && dti1.getSortIndex() == null)
-                	{
-                		compareValue = "0".compareTo("0");
-                	}	                		
-                	else
-                		compareValue = 0;	                		
+                	compareValue = dti1SortIndex.compareTo(dti2SortIndex);
                 }
                 else
                 {
-                	if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
-                	{
-                		compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
-                	}
-                	else if (dti2.getSortIndex() == null && dti1.getSortIndex() != null)
-                	{
-                		compareValue = "0".compareTo(dti1.getSortIndex());
-                	}
-                	else if (dti2.getSortIndex() != null && dti1.getSortIndex() == null)
-                	{
-                		compareValue = dti2.getSortIndex().compareTo("0");	                		
-                	}
-                	else
-                		compareValue = 0;	                		
-                	
+                	compareValue = dti2SortIndex.compareTo(dti1SortIndex);
                 }
               }
               else  // sort type is numeric
               {
+                if (dti1SortIndex == null)
+                {
+                  dti1SortIndex = String.valueOf(Double.MAX_VALUE);
+                }
+                
+                if (dti2SortIndex == null)
+                {
+                  dti2SortIndex = String.valueOf(Double.MAX_VALUE);
+                }
+                
                 if (sortDir.equals("asc"))
                 {
-                	if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
-                	{
-                		compareValue = (int) (Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2
-                      .getSortIndex()));
-                	}
-                	else if (dti2.getSortIndex() == null && dti1.getSortIndex() != null)
-                	{
-                		compareValue = (int) (Double.parseDouble(dti1.getSortIndex()) - 0);
-                	}
-                	else if (dti2.getSortIndex() != null && dti1.getSortIndex() == null)
-                	{
-                		compareValue = (int) (0 - Double.parseDouble(dti2
-      	                      .getSortIndex()));
-                	}
-                	else
-                		compareValue = 0;	 
+                	compareValue = (int) (Double.parseDouble(dti1SortIndex) - Double.parseDouble(dti2SortIndex));
                 }
                 else
                 {
-                	if (dti2.getSortIndex() != null && dti1.getSortIndex() != null)
-                	{                		
-	                  compareValue = (int) (Double.parseDouble(dti2.getSortIndex()) - Double.parseDouble(dti1
-	                      .getSortIndex()));
-                	}
-                	else if (dti2.getSortIndex() == null && dti1.getSortIndex() != null)
-                	{
-                		compareValue = (int) (0 - Double.parseDouble(dti1
-  		                      .getSortIndex()));
-                	}
-                	else if (dti2.getSortIndex() != null && dti1.getSortIndex() == null)
-                	{
-                		compareValue = (int) (Double.parseDouble(dti2.getSortIndex()) - 0);
-                	}
-                	else
-                		compareValue = 0;	 
+                	compareValue = (int) (Double.parseDouble(dti2SortIndex) - Double.parseDouble(dti1SortIndex));
                 }
-              }
-              
+              }              
 
               return compareValue;
             }
