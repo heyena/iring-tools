@@ -19,8 +19,7 @@
     <!-- ExtJS library: all widgets -->
     <!--<script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>-->
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all-debug-w-comments.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ux-all.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ComboListAutoSizer.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ux-all.js") %>" type="text/javascript"></script>    
     <!-- extensions -->      
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/App.js") %>" type="text/javascript"></script>    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ActionPanel.js") %>" type="text/javascript"></script>
@@ -41,6 +40,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigToolRelation.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigToolSave.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/HrefItem.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/LinkButton.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/Utility.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/paging-toolbar-resizer.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/BooleanFilter.js") %>" type="text/javascript"></script>
@@ -53,7 +53,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/RangeMenu.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ItemSelector.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/MultiSelect.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/sppidConfigWizard.js") %>" type="text/javascript"></script>
+    
     
     <!-- page specific -->    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AdapterManager.js") %>" type="text/javascript"></script>    
