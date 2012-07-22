@@ -39,8 +39,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigToolKeyandProperty.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigToolRelation.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigToolSave.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/HrefItem.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/LinkButton.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/HrefItem.js") %>" type="text/javascript"></script>    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/Utility.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/paging-toolbar-resizer.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/BooleanFilter.js") %>" type="text/javascript"></script>
