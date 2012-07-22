@@ -21,7 +21,7 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
     scope: null,
     application: null,
     dataLayer: null,
-    assembly: null,
+    assembly: null,   
 
     /**
     * initComponent
@@ -30,7 +30,8 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
     initComponent: function () {
 
         this.addEvents({
-            uploaded: true
+            uploaded: true,
+            downloaded: true
         });
 
         var scope = "";
@@ -56,7 +57,8 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
               scope: this, 
               handler: this.onUpload,
               icon: 'Content/img/16x16/document-up.png'
-          }//,
+            }
+
           //{ xtype: 'button', text: 'Cancel', scope: this, handler: this.onReset }
         ]
 
@@ -67,7 +69,7 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
             {
               xtype: 'fileuploadfield',
               name: 'SourceFile',
-              emptyText: 'Select an Spreadsheet',
+              emptyText: 'Select a Spreadsheet',
               fieldLabel: 'Spreadsheet Source',
               width:232,
               buttonText: null,
@@ -207,269 +209,287 @@ AdapterManager.SpreadsheetWorksheetSelection = Ext.extend(Ext.FormPanel, {
 * @author by Gert Jansen van Rensburg
 */
 AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
-    title: 'SpreadsheetDataLayer',
-    width: 120,
+  title: 'SpreadsheetDataLayer',
+  width: 120,
 
-    collapseMode: 'mini',
-    //collapsible: true,
-    //collapsed: false,
-    closable: true,
+  collapseMode: 'mini',
+  //collapsible: true,
+  //collapsed: false,
+  closable: true,
 
-    layout: 'border',
-    border: true,
-    split: true,
+  layout: 'border',
+  border: true,
+  split: true,
 
-    scope: null,
-    application: null,
-    configurationPanel: null,
-    // propertyPanel: null,
-    // tablesConfigPanel: null,
-    url: null,
+  scope: null,
+  application: null,
+  configurationPanel: null,
+  // propertyPanel: null,
+  // tablesConfigPanel: null,
+  url: null,
 
-    btnNext: null,
-    btnPrev: null,
-
-
-    /**
-    * initComponent
-    * @protected
-    */
-    initComponent: function () {
-
-        this.addEvents({
-            save: true,
-            reset: true,
-            validate: true,
-            refresh: true,
-            selectionchange: true
-        });
-
-        var scope = "";
+  btnNext: null,
+  btnPrev: null,
 
 
+  /**
+  * initComponent
+  * @protected
+  */
+  initComponent: function () {   
 
-        if (this.scope != null) {
-            scope = this.scope.Name;
-        }
+    this.addEvents({
+      save: true,
+      reset: true,
+      validate: true,
+      refresh: true,
+      selectionchange: true
+    });
 
-        var application = "";
-        var dataLayer = "";
+    var scope = "";
 
-        if (this.application != null) {
-            application = this.application.Name;
-            dataLayer = this.application.DataLayer;
-        }
+    if (this.scope != null) {
+      scope = this.scope.Name;
+    }
 
-        this.tbar = this.buildToolbar();
+    var application = "";
+    var dataLayer = "";
 
-        this.treeLoader = new Ext.tree.TreeLoader({
-            baseParams: {
-                scope: this.scope,
-                application: this.application,
-                type: null
-            },
-            url: 'spreadsheet/getnode'
+    if (this.application != null) {
+      application = this.application.Name;
+      dataLayer = this.application.DataLayer;
+    }
 
-        });
+    this.tbar = this.buildToolbar();
 
-        this.treeLoader.on("beforeload", function (treeLoader, node) {
-            treeLoader.baseParams.type = node.attributes.type;
-        }, this);
+    this.treeLoader = new Ext.tree.TreeLoader({
+      baseParams: {
+        scope: this.scope,
+        application: this.application,
+        type: null
+      },
+      url: 'spreadsheet/getnode'
 
-        this.rootNode = new Ext.tree.AsyncTreeNode({
-            id: 'root',
-            text: 'Workbook',
-            expanded: true,
-            draggable: false,
-            icon: 'Content/img/excel.png',
-            type: 'ExcelWorkbookNode'
-        });
+    });
 
-        this.configurationPanel = new Ext.tree.TreePanel({
-            layout: 'fit',
-            region: 'west',
-            border: false,
-            split: false,
-            lines: true,
-            expandAll: true,
-            rootVisible: true,
-            autoScroll: true,
-            width: 500,
-            loader: this.treeLoader,
-            root: this.rootNode
-        });
+    this.treeLoader.on("beforeload", function (treeLoader, node) {
+      treeLoader.baseParams.type = node.attributes.type;
+    }, this);
 
-        //--------------
-        this.tablesConfigPanel = new Ext.Panel({
-            layout: 'fit',
-            region: 'center',
-            minWidth: 10,
-            frame: false,
-            border: false,
-            autoScroll: true
-        });
-        //--------------------
+    this.rootNode = new Ext.tree.AsyncTreeNode({
+      id: 'root',
+      text: 'Workbook',
+      expanded: true,
+      draggable: false,
+      icon: 'Content/img/excel.png',
+      type: 'ExcelWorkbookNode'
+    });
 
-        this.items = [
+    this.configurationPanel = new Ext.tree.TreePanel({
+      layout: 'fit',
+      region: 'west',
+      border: false,
+      split: false,
+      lines: true,
+      expandAll: true,
+      rootVisible: true,
+      autoScroll: true,
+      width: 500,
+      loader: this.treeLoader,
+      root: this.rootNode
+    });
+
+    //--------------
+    this.tablesConfigPanel = new Ext.Panel({
+      layout: 'fit',
+      region: 'center',
+      minWidth: 10,
+      frame: false,
+      border: false,
+      autoScroll: true
+    });
+    //--------------------
+
+    this.items = [
             this.configurationPanel,
             this.tablesConfigPanel
         ];
 
-        // super
-        AdapterManager.SpreadsheetLibraryPanel.superclass.initComponent.call(this);
-    },
+    // super
+    AdapterManager.SpreadsheetLibraryPanel.superclass.initComponent.call(this);
+  },
 
-    buildToolbar: function () {
-        return [
+  buildToolbar: function () {    
+    return [
       {
-          text: 'Reload',
-          handler: this.onReload,
-          icon: 'Content/img/16x16/view-refresh.png',
-          scope: this
-      },
-      {
-          text: 'Save',
-          handler: this.onSave,
-          icon: 'Content/img/16x16/document-save.png',
-          scope: this
-      },
-      {
-          text: 'Upload',
-          handler: this.onUpload,
-          icon: 'Content/img/16x16/document-up.png',
-          scope: this
+        xtype: 'button',
+        text: 'Reload',
+        handler: this.onReload,
+        icon: 'Content/img/16x16/view-refresh.png',
+        scope: this
+      }, {
+        xtype: 'button',
+        text: 'Save',
+        handler: this.onSave,
+        icon: 'Content/img/16x16/document-save.png',
+        scope: this
+      }, {
+        xtype: 'button',
+        text: 'Upload',
+        handler: this.onUpload,
+        icon: 'Content/img/16x16/document-up.png',
+        scope: this
+      }, {
+        xtype: 'button',
+        text: 'Download',
+        handler: function (button) {
+          var downloadUrl = '/spreadsheet/export';
+          var scopeName = this.scope;
+          var appName = this.application;
+          var htmlString = '<form action= ' + downloadUrl + ' target=\"_blank\" method=\"post\" style=\"display:none\">' +
+                '<input type=\"text\" name=\"scope\" value=' + scopeName +
+                '></input><input type=\"text\" name=\"application\" value=' + appName + 
+                '></input><input type=\"submit\"></input></form>'
+          button.el.insertHtml(            
+              'beforeBegin',
+              htmlString              
+          ).submit();
+        },
+        icon: 'Content/img/16x16/document-down.png',
+        scope: this
       }
     ]
-    },
+  },
 
-    onReload: function () {
-        this.configurationPanel.root.reload();
-    },
+  onReload: function () {
+    this.configurationPanel.root.reload();
+  },
 
-    onReloadNode: function (node) {
-        node.reload();
-    },
+  onReloadNode: function (node) {
+    node.reload();
+  },
 
-    onUpload: function (panel) {
-        var that = this;
-        var form = new AdapterManager.SpreadsheetSourcePanel({
-            Scope: that.scope,
-            Application: that.application,
-            DataLayer: that.datalayer,
-            method: 'POST',
-            url: 'spreadsheet/upload'
-        });
+  onUpload: function (panel) {
+    var that = this;
+    var form = new AdapterManager.SpreadsheetSourcePanel({
+      Scope: that.scope,
+      Application: that.application,
+      DataLayer: that.datalayer,
+      method: 'POST',
+      url: 'spreadsheet/upload'
+    });
 
-        var newWin = new Ext.Window({
-            width: 420,
-            // layout: 'fit',
-            //height: 300,
-            autoScroll: true,
-            modal: true,
-            items: form
-        });
+    var newWin = new Ext.Window({
+      width: 420,
+      // layout: 'fit',
+      //height: 300,
+      autoScroll: true,
+      title: "Upload Spreadsheet",
+      modal: true,
+      items: form
+    });
 
-        form.on('uploaded', function () {
-            newWin.close();
-            this.configurationPanel.root.reload();
-        }, this);
+    form.on('uploaded', function () {
+      newWin.close();
+      this.configurationPanel.root.reload();
+    }, this);
 
-        newWin.show();
-    },
+    newWin.show();
+  },
 
 
-    onSave: function (panel) {
-        var that = this;
-        Ext.Ajax.request({
-            url: 'spreadsheet/configure',    // where you wanna post
-            method: 'POST',
-            success: function (response, request) {
-              
-              /*need the service send error message { success = false } + msg
-              var rtext = response.responseText;
-              var error = 'SUCCESS = FALSE';
-              var index = rtext.toUpperCase().indexOf(error);
-              if (index == -1) {
-                showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
-                that.configurationPanel.root.reload();
-              }
-              else {
-                var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
-                showDialog(400, 100, 'An error has occurred while saving the configuration.', msg, Ext.Msg.OK, null);
-              }*/
+  onSave: function (panel) {
+    var that = this;
+    Ext.Ajax.request({
+      url: 'spreadsheet/configure',    // where you wanna post
+      method: 'POST',
+      success: function (response, request) {
 
-             // that.configurationPanel.root.reload();
-              that.fireEvent('Save', that);
-              showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
-            },   // function called on success
-            failure: function (response, request) {
-                showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
-            },
-            params: {
-                Scope: this.scope,
-                Application: this.application,
-                DataLayer: this.datalayer
-            }
-        });
-
-    },
-
-    showContextMenu: function (node, event) {
-
-        //  if (node.isSelected()) { 
-        var x = event.browserEvent.clientX;
-        var y = event.browserEvent.clientY;
-
-        var obj = node.attributes;
-
-        if (obj.type == "ExcelWorkbookNode") {
-            this.workbookMenu.showAt([x, y]);
-        } else if (obj.type == "ExcelWorksheetNode") {
-            this.worksheetMenu.showAt([x, y]);
-        } else if (obj.type == "ExcelColumnNode") {
-            this.columnMenu.showAt([x, y]);
+        /*need the service send error message { success = false } + msg
+        var rtext = response.responseText;
+        var error = 'SUCCESS = FALSE';
+        var index = rtext.toUpperCase().indexOf(error);
+        if (index == -1) {
+        showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
+        that.configurationPanel.root.reload();
         }
-        //}
-    },
+        else {
+        var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+        showDialog(400, 100, 'An error has occurred while saving the configuration.', msg, Ext.Msg.OK, null);
+        }*/
 
-    onUpdate: function (panel) {
-        var that = this;
-        Ext.Ajax.request({
-            url: 'spreadsheet/updateconfiguration',    // where you wanna post
-            method: 'POST',
-            success: function (response, request) {
+        // that.configurationPanel.root.reload();
+        that.fireEvent('Save', that);
+        showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
+      },   // function called on success
+      failure: function (response, request) {
+        showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
+      },
+      params: {
+        Scope: this.scope,
+        Application: this.application,
+        DataLayer: this.datalayer
+      }
+    });
 
-              /* need the service send error message { success = false } + msg
-              var rtext = response.responseText;
-              var error = 'SUCCESS = FALSE';
-              var index = rtext.toUpperCase().indexOf(error);
-              if (index == -1) {
-                showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
-                that.configurationPanel.root.reload();
-              }
-              else {
-                var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
-                showDialog(400, 100, 'An error has occurred while updating the configuration.', msg, Ext.Msg.OK, null);
-              }*/            
+  },
 
-              that.configurationPanel.root.reload();
-              showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
-            },   // function called on success
-            failure: function (response, request) {
-              showDialog(660, 300, 'Saving Result', 'An error has occurred updating update the configuration.', Ext.Msg.OK, null);
-            },
-            params: {
-                Scope: this.scope.Name,
-                Application: this.application.Name,
-                DataLayer: this.application.Assembly,
-                Label: this.tablesConfigPanel.items.items[0].getForm().getFieldValues().Label,
-                Name: this.tablesConfigPanel.items.items[0].getForm().getFieldValues().Name
-            }
-        });
-    },
+  showContextMenu: function (node, event) {
 
-    onReset: function (panel) {
-        this.tablesConfigPanel.items.items[0].getForm().reset();
+    //  if (node.isSelected()) { 
+    var x = event.browserEvent.clientX;
+    var y = event.browserEvent.clientY;
+
+    var obj = node.attributes;
+
+    if (obj.type == "ExcelWorkbookNode") {
+      this.workbookMenu.showAt([x, y]);
+    } else if (obj.type == "ExcelWorksheetNode") {
+      this.worksheetMenu.showAt([x, y]);
+    } else if (obj.type == "ExcelColumnNode") {
+      this.columnMenu.showAt([x, y]);
     }
+    //}
+  },
+
+  onUpdate: function (panel) {
+    var that = this;
+    Ext.Ajax.request({
+      url: 'spreadsheet/updateconfiguration',    // where you wanna post
+      method: 'POST',
+      success: function (response, request) {
+
+        /* need the service send error message { success = false } + msg
+        var rtext = response.responseText;
+        var error = 'SUCCESS = FALSE';
+        var index = rtext.toUpperCase().indexOf(error);
+        if (index == -1) {
+        showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
+        that.configurationPanel.root.reload();
+        }
+        else {
+        var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+        showDialog(400, 100, 'An error has occurred while updating the configuration.', msg, Ext.Msg.OK, null);
+        }*/
+
+        that.configurationPanel.root.reload();
+        showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
+      },   // function called on success
+      failure: function (response, request) {
+        showDialog(660, 300, 'Saving Result', 'An error has occurred updating update the configuration.', Ext.Msg.OK, null);
+      },
+      params: {
+        Scope: this.scope.Name,
+        Application: this.application.Name,
+        DataLayer: this.application.Assembly,
+        Label: this.tablesConfigPanel.items.items[0].getForm().getFieldValues().Label,
+        Name: this.tablesConfigPanel.items.items[0].getForm().getFieldValues().Name
+      }
+    });
+  },
+
+  onReset: function (panel) {
+    this.tablesConfigPanel.items.items[0].getForm().reset();
+  }
 
 });

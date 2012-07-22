@@ -100,7 +100,6 @@ namespace org.iringtools.adapter.datalayer
 
           if (form["Generate"] != null)
           {
-
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
             hpf.InputStream.Flush();
             hpf.InputStream.Position = 0;
@@ -132,6 +131,64 @@ namespace org.iringtools.adapter.datalayer
           Data = new { success = true }
         };
     }
+
+    public ActionResult Export(string scope, string application)
+    {
+      string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"], string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
+      string blankFullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"], "SpreadsheetData.blank.xlsx");
+      FileStream fsSrc;
+
+      if (fullPath.Contains("Applications"))
+      {
+        fullPath = fullPath.Replace("Applications", "Services");
+        blankFullPath = blankFullPath.Replace("Applications", "Services");
+      }
+
+      if (fullPath.Contains("\\.\\"))
+      {
+        fullPath = fullPath.Replace("\\.\\", "\\");
+        blankFullPath = blankFullPath.Replace("\\.\\", "\\");
+      }
+
+      try
+      {
+        if (!System.IO.File.Exists(fullPath))
+        {
+          fsSrc = new FileStream(blankFullPath, FileMode.Open, FileAccess.Read);
+        }
+        else
+          fsSrc = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+
+        using (FileStream fsSource = fsSrc)
+          {
+
+            // Read the source file into a byte array.
+            byte[] bytes = new byte[fsSource.Length];
+            int numBytesToRead = (int)fsSource.Length;
+            int numBytesRead = 0;
+            while (numBytesToRead > 0)
+            {
+                // Read may return anything from 0 to numBytesToRead.
+                int n = fsSource.Read(bytes, numBytesRead, numBytesToRead);
+
+                // Break when the end of the file is reached.
+                if (n == 0)
+                    break;
+
+                numBytesRead += n;
+                numBytesToRead -= n;
+            }
+             numBytesToRead = bytes.Length;
+            return File(bytes, "application/vnd.ms-excel", string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
+    
+        }
+    }
+    catch (FileNotFoundException ioEx)
+    {
+      _logger.Error(ioEx.Message);
+      throw ioEx;
+    }
+   }
 
     private SpreadsheetConfiguration GetConfiguration(string context, string endpoint)
     {
