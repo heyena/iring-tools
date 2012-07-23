@@ -342,21 +342,35 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
       }, {
         xtype: 'button',
         text: 'Download',
+        icon: 'Content/img/16x16/document-down.png',
+        scope: this,
         handler: function (button) {
+          var that = this;
           var downloadUrl = '/spreadsheet/export';
           var scopeName = this.scope;
           var appName = this.application;
-          var htmlString = '<form action= ' + downloadUrl + ' target=\"_blank\" method=\"post\" style=\"display:none\">' +
+          Ext.Ajax.request({
+            url: 'spreadsheet/export',    // where you wanna post
+            method: 'POST',
+            success: function (response, request) {
+              var htmlString = '<form action= ' + downloadUrl + ' target=\"_blank\" method=\"post\" style=\"display:none\">' +
                 '<input type=\"text\" name=\"scope\" value=' + scopeName +
                 '></input><input type=\"text\" name=\"application\" value=' + appName + 
                 '></input><input type=\"submit\"></input></form>'
-          button.el.insertHtml(            
-              'beforeBegin',
-              htmlString              
-          ).submit();
-        },
-        icon: 'Content/img/16x16/document-down.png',
-        scope: this
+              button.el.insertHtml(            
+                  'beforeBegin',
+                  htmlString              
+              ).submit();              
+            },   // function called on success
+            failure: function (response, request) {
+              showDialog(500, 100, 'Error', 'The file does not exist. Need to upload a spreadsheet first.', Ext.Msg.OK, null);
+            },
+            params: {
+              scope: scopeName,
+              application: appName              
+            }
+            })         
+        }        
       }
     ]
   },
