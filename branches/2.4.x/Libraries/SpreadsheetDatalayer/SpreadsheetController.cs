@@ -134,30 +134,13 @@ namespace org.iringtools.adapter.datalayer
 
     public ActionResult Export(string scope, string application)
     {
-      string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"], string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
-      string blankFullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"], "SpreadsheetData.blank.xlsx");
       FileStream fsSrc;
 
-      if (fullPath.Contains("Applications"))
-      {
-        fullPath = fullPath.Replace("Applications", "Services");
-        blankFullPath = blankFullPath.Replace("Applications", "Services");
-      }
-
-      if (fullPath.Contains("\\.\\"))
-      {
-        fullPath = fullPath.Replace("\\.\\", "\\");
-        blankFullPath = blankFullPath.Replace("\\.\\", "\\");
-      }
+      string fullPath = Path.GetFullPath(String.Format("{0}SpreadsheetData.{1}.{2}.xlsx", _settings["AppDataPath"], scope, application));
 
       try
       {
-        if (!System.IO.File.Exists(fullPath))
-        {
-          fsSrc = new FileStream(blankFullPath, FileMode.Open, FileAccess.Read);
-        }
-        else
-          fsSrc = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+        fsSrc = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
 
         using (FileStream fsSource = fsSrc)
           {
