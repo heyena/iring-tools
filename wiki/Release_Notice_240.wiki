@@ -1,4 +1,5 @@
-#summary Date: 2012/02/16
+#summary Date: 2012/07/23
+#labels Featured
 =iRINGTools-2.04.00.5257=
 
 Release of iRINGTools 2.4 that includes new features.  
