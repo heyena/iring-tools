@@ -94,18 +94,16 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region GetPath
+    #region GetResourceData
     /// <summary>
-    /// Gets the serviceSettings available from the service.
+    /// Gets the resource data for a datalayer.
     /// </summary>
     /// <returns>Returns a list of service settings.</returns>
-    [Description("Gets parth for the service.")]
-    [WebGet(UriTemplate = "/path")]
-    public ServicePath GetPath()
+    [Description("Gets datalayer resource data.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/resourcedata")]
+    public DocumentBytes GetResourceData(string scope, string app)
     {
-      ServicePath servicePath = new ServicePath();
-      servicePath.value = AppDomain.CurrentDomain.BaseDirectory;
-      return servicePath;
+      return _adapterProvider.GetResourceData(scope, app);
     }
     #endregion
 

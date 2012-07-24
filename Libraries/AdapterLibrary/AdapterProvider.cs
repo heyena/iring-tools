@@ -3437,6 +3437,22 @@ namespace org.iringtools.adapter
       return response;
     }
 
+    public DocumentBytes GetResourceData(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        return _dataLayer.GetResourceData();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
+        throw new Exception(string.Format("Error getting configuration: {0}", ex));
+      }
+    }
+
     public XElement GetConfiguration(string projectName, string applicationName)
     {
       try

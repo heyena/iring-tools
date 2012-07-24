@@ -75,33 +75,9 @@ namespace org.iringtools.adapter.datalayer
       
       try
       {
-        ServicePath pathObject = _client.Get<ServicePath>("/path");
-        string spreadsheetPath = Path.Combine(pathObject.value, _settings["AppDataPath"], string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
-
-        FileStream fsSrc = new FileStream(spreadsheetPath, FileMode.Open, FileAccess.Read);
-
-        using (FileStream fsSource = fsSrc)
-        {
-
-          // Read the source file into a byte array.
-          byte[] bytes = new byte[fsSource.Length];
-          int numBytesToRead = (int)fsSource.Length;
-          int numBytesRead = 0;
-          while (numBytesToRead > 0)
-          {
-            // Read may return anything from 0 to numBytesToRead.
-            int n = fsSource.Read(bytes, numBytesRead, numBytesToRead);
-
-            // Break when the end of the file is reached.
-            if (n == 0)
-              break;
-
-            numBytesRead += n;
-            numBytesToRead -= n;
-          }
-          numBytesToRead = bytes.Length;
-          return bytes;
-        }
+        DocumentBytes pathObject = _client.Get<DocumentBytes>(String.Format("/{0}/{1}/resourcedata", scope, application), true);
+        
+        return pathObject.Content;       
       }      
       catch (Exception ioEx)
       {

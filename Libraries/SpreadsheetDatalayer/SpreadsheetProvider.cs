@@ -7,6 +7,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using org.iringtools.library;
 using org.iringtools.utility;
+using log4net;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -16,6 +17,7 @@ namespace org.iringtools.adapter.datalayer
     private string _configurationPath = string.Empty;
     private SpreadsheetConfiguration _configuration = null;
     private SpreadsheetDocument _document = null;
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetController));
     //private Stream _stream = null;
 
     public SpreadsheetProvider(SpreadsheetConfiguration configuration)
@@ -143,6 +145,46 @@ namespace org.iringtools.adapter.datalayer
         }
         configuration.Tables = tables;
         return configuration;
+    }
+
+    public DocumentBytes GetResourceData()
+    {
+      try
+      {
+        string spreadsheetPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"], string.Format("SpreadsheetData.{0}.xlsx", _settings["Scope"]));
+        FileStream fsSrc = new FileStream(spreadsheetPath, FileMode.Open, FileAccess.Read);
+        DocumentBytes document = new DocumentBytes();
+        document.DocumentPath = spreadsheetPath;
+
+        using (FileStream fsSource = fsSrc)
+        {
+
+          // Read the source file into a byte array.
+          byte[] bytes = new byte[fsSource.Length];
+          int numBytesToRead = (int)fsSource.Length;
+          int numBytesRead = 0;
+          while (numBytesToRead > 0)
+          {
+            // Read may return anything from 0 to numBytesToRead.
+            int n = fsSource.Read(bytes, numBytesRead, numBytesToRead);
+
+            // Break when the end of the file is reached.
+            if (n == 0)
+              break;
+
+            numBytesRead += n;
+            numBytesToRead -= n;
+          }
+          numBytesToRead = bytes.Length;
+          document.Content = bytes;
+          return document;
+        }
+      }
+      catch (Exception ioEx)
+      {
+        _logger.Error(ioEx.Message);
+        throw ioEx;
+      }
     }
 
     public static DataType GetDataType(EnumValue<CellValues> type)
