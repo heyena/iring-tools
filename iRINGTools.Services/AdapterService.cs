@@ -94,6 +94,21 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region GetPath
+    /// <summary>
+    /// Gets the serviceSettings available from the service.
+    /// </summary>
+    /// <returns>Returns a list of service settings.</returns>
+    [Description("Gets parth for the service.")]
+    [WebGet(UriTemplate = "/path")]
+    public ServicePath GetPath()
+    {
+      ServicePath servicePath = new ServicePath();
+      servicePath.value = AppDomain.CurrentDomain.BaseDirectory;
+      return servicePath;
+    }
+    #endregion
+
     #region Config methods
     [Description("Configure the selected data layer in the service.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/configure")]

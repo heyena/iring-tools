@@ -64,7 +64,7 @@ namespace org.iringtools.adapter.datalayer
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
       _settings = new ServiceSettings();
-      _settings.AppendSettings(settings);      
+      _settings.AppendSettings(settings);
       _repository = repository;
     }
 
@@ -80,7 +80,6 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-
         string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer";
         string savedFileName = string.Empty;
 
@@ -134,43 +133,16 @@ namespace org.iringtools.adapter.datalayer
 
     public ActionResult Export(string scope, string application)
     {
-      FileStream fsSrc;
-
-      string fullPath = Path.GetFullPath(String.Format("{0}SpreadsheetData.{1}.{2}.xlsx", _settings["AppDataPath"], scope, application));
-
       try
+      {        
+        byte[] bytes = _repository.getExcelFile(scope, application);
+        return File(bytes, "application/vnd.ms-excel", string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
+      }
+      catch (Exception ioEx)
       {
-        fsSrc = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
-
-        using (FileStream fsSource = fsSrc)
-          {
-
-            // Read the source file into a byte array.
-            byte[] bytes = new byte[fsSource.Length];
-            int numBytesToRead = (int)fsSource.Length;
-            int numBytesRead = 0;
-            while (numBytesToRead > 0)
-            {
-                // Read may return anything from 0 to numBytesToRead.
-                int n = fsSource.Read(bytes, numBytesRead, numBytesToRead);
-
-                // Break when the end of the file is reached.
-                if (n == 0)
-                    break;
-
-                numBytesRead += n;
-                numBytesToRead -= n;
-            }
-             numBytesToRead = bytes.Length;
-            return File(bytes, "application/vnd.ms-excel", string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
-    
-        }
-    }
-    catch (FileNotFoundException ioEx)
-    {
-      _logger.Error(ioEx.Message);
-      throw ioEx;
-    }
+        _logger.Error(ioEx.Message);
+        throw ioEx;
+      }
    }
 
     private SpreadsheetConfiguration GetConfiguration(string context, string endpoint)
