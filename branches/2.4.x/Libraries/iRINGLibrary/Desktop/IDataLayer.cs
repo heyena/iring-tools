@@ -94,6 +94,8 @@ namespace org.iringtools.library
 
     XElement GetConfiguration();
 
+    DocumentBytes GetResourceData();
+
     Response RefreshAll();
 
     Response Refresh(string objectType);

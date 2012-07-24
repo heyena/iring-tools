@@ -363,7 +363,7 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
               ).submit();              
             },   // function called on success
             failure: function (response, request) {
-              showDialog(500, 100, 'Error', 'The file does not exist. Need to upload a spreadsheet first.', Ext.Msg.OK, null);
+              showDialog(500, 150, 'Error', 'The file does not exist. Need to upload a spreadsheet first.', Ext.Msg.OK, null);
             },
             params: {
               scope: scopeName,

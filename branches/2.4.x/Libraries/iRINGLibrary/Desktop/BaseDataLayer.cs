@@ -150,6 +150,12 @@ namespace org.iringtools.library
       throw new NotImplementedException();
     }
 
+    public virtual DocumentBytes GetResourceData()
+    {
+      _logger.Error("NotImplementedException");
+      throw new NotImplementedException();
+    }
+
     protected void LoadDataDictionary(string objectType)
     {
       DataDictionary dataDictionary = GetDictionary();

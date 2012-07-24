@@ -588,5 +588,11 @@ namespace org.iringtools.adapter.datalayer
       SpreadsheetConfiguration sc = _provider.GetConfiguration();
       return Utility.SerializeToXElement<SpreadsheetConfiguration>(sc);
     }
+
+    public override DocumentBytes GetResourceData()
+    {
+      DocumentBytes sc = _provider.GetResourceData();
+      return sc;
+    }
   }
 }
