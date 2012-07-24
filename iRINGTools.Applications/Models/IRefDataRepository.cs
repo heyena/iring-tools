@@ -10,11 +10,11 @@ namespace iRINGTools.Web.Models
   public interface IRefDataRepository
   {
 
-    RefDataEntities Search(string query);
+      RefDataEntities Search(string query);
 
-    RefDataEntities Search(string query, int start, int limit);
+      RefDataEntities Search(string query, int start, int limit);
 
-    RefDataEntities SearchReset(string query);
+      RefDataEntities SearchReset(string query);
 
     Entity GetClassLabel(string classId);
 
