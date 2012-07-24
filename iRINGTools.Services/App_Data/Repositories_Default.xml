@@ -1,18 +1,11 @@
 <repositories xmlns="http://www.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <repository>
-    <!-- note that the order of the elements are important-->
-    <encryptedCredentials></encryptedCredentials>
-    <!-- please use the encrypt credentials utility if you need credentials otherwise omit this element-->
     <description>Development Sandbox</description>
     <isReadOnly>false</isReadOnly>
-    <!-- this must only be set to false for your own updatable repository-->
     <name>My Private Sandbox</name>
-    <!-- this name need to be a unique name in the list of repositories-->
     <repositoryType>Camelot</repositoryType>
-    <!-- Possible values are RDSWIP, Camelot and Part8 ... All new Repositories must be Part8 -->
+	<updateUri>http://localhost/Services/SandboxService/update</updateUri>
     <uri>http://localhost/Services/SandboxService/query</uri>
-    <updateUri>http://localhost/Services/SandboxService/update</updateUri>
-    <!-- only add this element if your repository is updateable-->
   </repository>
   <repository>
     <description>iRING Sandbox</description>

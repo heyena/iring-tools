@@ -47,11 +47,11 @@ namespace org.iringtools.services
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   public class DataTransferService
   {
-    private DataTranferProvider _dxfrProvider = null;
+    private DtoProvider _dxfrProvider = null;
 
     public DataTransferService()
     {
-      _dxfrProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
+      _dxfrProvider = new DtoProvider(ConfigurationManager.AppSettings);
     }
 
     [Description("Gets service version.")]

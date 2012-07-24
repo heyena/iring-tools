@@ -79,6 +79,8 @@ namespace org.iringtools.adapter.datalayer
         _settings["BaseDirectoryPath"],
         relativePath
       );
+
+      _kernel.Load(_authorizationBindingPath);
     }
 
     #region public methods
@@ -512,7 +514,7 @@ namespace org.iringtools.adapter.datalayer
               {
                 session.SaveOrUpdate(dataObject);
                 session.Flush();
-                status.Messages.Add(string.Format("Record [{0}] have been saved successfully.", identifier));
+                status.Messages.Add(string.Format("Record [{0}] saved successfully.", identifier));
               }
               catch (Exception ex)
               {
@@ -571,7 +573,7 @@ namespace org.iringtools.adapter.datalayer
           Status status = new Status();
           status.Messages = new Messages();
           status.Identifier = identifier;
-          status.Messages.Add(string.Format("Record [{0}] have been deleted successfully.", identifier));
+          status.Messages.Add(string.Format("Record [{0}] deleted successfully.", identifier));
 
           response.Append(status);
         }
@@ -631,7 +633,7 @@ namespace org.iringtools.adapter.datalayer
 
         session.Delete(queryString.ToString());
         session.Flush();
-        status.Messages.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
+        status.Messages.Add(string.Format("Records of type [{0}] deleted succesfully.", objectType));
       }
       catch (Exception ex)
       {
@@ -813,11 +815,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        if (_authorization == null)
-        {
-          _kernel.Load(_authorizationBindingPath);
-          _authorization = _kernel.Get<IAuthorization>();
-        }
+        _authorization = _kernel.Get<IAuthorization>();
         return _authorization.Authorize(objectType, ref dataFilter);
       }
       catch (Exception e)

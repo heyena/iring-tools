@@ -11,96 +11,146 @@ using org.iringtools.utility;
 using org.iringtools.mapping;
 using org.ids_adi.qmxf;
 using Ninject;
+using System.Net;
+using org.iringtools.refdata.federation;
 
 namespace iRINGTools.Web.Models
 {
   public class RefDataRepository : IRefDataRepository
   {
-    private NameValueCollection _settings = null;
-    private WebHttpClient _client = null;
+    //private NameValueCollection _settings = null;
+    private WebHttpClient _referenceDataServiceClient = null;
     private string _refDataServiceURI = string.Empty;
     private string relativeUri = string.Empty;
 
     [Inject]
     public RefDataRepository()
     {
-      _settings = ConfigurationManager.AppSettings;
-      _client = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
+      NameValueCollection settings = ConfigurationManager.AppSettings;
+      ServiceSettings _settings = new ServiceSettings();
+      _settings.AppendSettings(settings);
+
+      #region initialize webHttpClient for converting old mapping
+      string proxyHost = _settings["ProxyHost"];
+      string proxyPort = _settings["ProxyPort"];
+      string referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      {
+        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+        webProxy.Credentials = _settings.GetProxyCredential();
+
+        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri, null, webProxy);
+      }
+      else
+      {
+        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri);
+
+      }
+      #endregion
     }
 
     public RefDataEntities Search(string query, int start, int limit)
     {
       relativeUri = string.Format("/search/{0}/{1}/{2}", query, start, limit);
-      return _client.Get<RefDataEntities>(relativeUri);
+      return _referenceDataServiceClient.Get<RefDataEntities>(relativeUri);
+    }
+
+    public List<Namespace> GetNamespaces()
+    {
+      return null;
     }
 
     public RefDataEntities Search(string query)
     {
       relativeUri = string.Format("/search/{0}/0/0", query);
-      return _client.Get<RefDataEntities>(relativeUri);
+      return _referenceDataServiceClient.Get<RefDataEntities>(relativeUri);
     }
 
     public RefDataEntities SearchReset(string query)
     {
       relativeUri = string.Format("/search/{0}/reset", query);
-      return  _client.Get<RefDataEntities>(relativeUri);
+      return  _referenceDataServiceClient.Get<RefDataEntities>(relativeUri);
        
     }
 
     public Entity GetClassLabel(string classId)
     {
       relativeUri = string.Format("/classes/{0}/label", classId);
-      return _client.Get<Entity>(relativeUri);
+      return _referenceDataServiceClient.Get<Entity>(relativeUri);
     }
 
-    public Entities GetSubClasses(string classId)
+    public Entities GetSubClasses(string classId, Repository repository)
     {
       relativeUri = string.Format("/classes/{0}/subclasses", classId);
-      return _client.Get<Entities>(relativeUri);
+      if (repository != null)
+        return _referenceDataServiceClient.Post<Repository, Entities>(relativeUri, repository);
+      else
+        return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
     public Entities GetSubClassesCount(string classId)
     {
         relativeUri = string.Format("/classes/{0}/subclasses/count", classId);
-        return _client.Get<Entities>(relativeUri);
+        return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
-  
+    public Federation GetFederation()
+    {
+      relativeUri = "/federation";
+      return _referenceDataServiceClient.Get<Federation>(relativeUri);
+    }
 
-    public Entities GetSuperClasses(string classId)
+    public Entities GetSuperClasses(string classId, Repository repository)
     {
       relativeUri = string.Format("/classes/{0}/superclasses", classId);
-      return _client.Get<Entities>(relativeUri);
+      if(repository == null)
+        return _referenceDataServiceClient.Get<Entities>(relativeUri);
+      else
+        return _referenceDataServiceClient.Post<Repository, Entities>(relativeUri, repository);
     }
 
     public Entities GetClassTemplates(string classId)
     {
       relativeUri = string.Format("/classes/{0}/templates", classId);
-      return _client.Get<Entities>(relativeUri);
+      return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
     public Entities GetClassTemplatesCount(string classId)
     {
         relativeUri = string.Format("/classes/{0}/templates/count", classId);
-        return _client.Get<Entities>(relativeUri);
+        return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
-    public QMXF GetClasses(string classId)
+    //public QMXF GetClasses(string classId)
+    //{
+    //  relativeUri = string.Format("/classes/{0}", classId);
+    //  return _referenceDataServiceClient.Get<QMXF>(relativeUri);
+    //}
+
+    public QMXF GetClasses(string classId, Repository repository)
     {
       relativeUri = string.Format("/classes/{0}", classId);
-      return _client.Get<QMXF>(relativeUri);
+      if(repository != null)
+        return _referenceDataServiceClient.Post<Repository, QMXF>(relativeUri, repository);
+      else
+        return _referenceDataServiceClient.Get<QMXF>(relativeUri);
     }
 
     public QMXF GetTemplate(string id)
     {
       relativeUri = string.Format("/templates/{0}", id);
-      return _client.Get<QMXF>(relativeUri);
-    }
+      return _referenceDataServiceClient.Get<QMXF>(relativeUri);
+    }                                                                  
 
-    public Entities GetClassMembers(string classId)
+    public Entities GetClassMembers(string classId, Repository repository)
     {
       relativeUri = string.Format("/classes/{0}/members", classId);
-      return _client.Get<Entities>(relativeUri);
+      if(repository != null)
+        return _referenceDataServiceClient.Post<Repository, Entities>(relativeUri, repository);
+      else
+        return _referenceDataServiceClient.Get<Entities>(relativeUri);
     }
 
   }

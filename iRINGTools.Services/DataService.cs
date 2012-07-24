@@ -157,6 +157,20 @@ namespace org.iringtools.services
       }
     }
 
+    //[Description("Gets the Header of the specified project, application and graph.")]
+    //[WebInvoke(Method="HEAD", UriTemplate = "/{app}/{project}/{graph}")]
+    //public void GetHeader(string project, string app, string graph)
+    //{
+    //    try
+    //    {
+    //        //...
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        ExceptionHandler(ex);
+    //    }
+    //}
+
     [Description("Gets an XML or JSON projection of a single item in the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
     [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
     public void GetItem(string project, string app, string graph, string id, string format)
@@ -217,7 +231,7 @@ namespace org.iringtools.services
       try
       {
         format = MapContentType(format);
-        DataFilter filter = FormatIncomingMessage<DataFilter>(stream, format, true);
+        DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
         
         bool fullIndex = false;
 
@@ -325,11 +339,11 @@ namespace org.iringtools.services
       }
       else
       {
-        XElement xElement = FormatIncomingMessage(stream, format);
+        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
         Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
 
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
       }
     }
 
@@ -337,6 +351,8 @@ namespace org.iringtools.services
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
     public void UpdateItem(string project, string app, string graph, string id, string format, Stream stream)
     {
+      _logger.Debug("I'm in!");
+
       format = MapContentType(format);
 
       Response response = new Response();
@@ -346,12 +362,14 @@ namespace org.iringtools.services
       }
       else
       {
-        XElement xElement = FormatIncomingMessage(stream, format);
+        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+        _logger.Debug("Deserialized!");
 
         response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
       }
 
-      _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
@@ -366,11 +384,11 @@ namespace org.iringtools.services
       }
       else
       {
-        XElement xElement = FormatIncomingMessage(stream, format);
+        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
         Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
 
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
       }
     }
 
@@ -378,11 +396,20 @@ namespace org.iringtools.services
     [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
     public void DeleteItem(string project, string app, string graph, string id, string format)
     {
-      format = MapContentType(format);
+      try
+      {
+      
+          format = MapContentType(format);
 
-      Response response = _adapterProvider.DeleteIndividual(project, app, graph, id);
+          Response response = _adapterProvider.DeleteIndividual(project, app, graph, id, format);
 
-      _adapterProvider.FormatOutgoingMessage<Response>(response, format, true);
+          _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+
+      }
+      catch (Exception ex)
+      {
+          ExceptionHandler(ex);
+      }
     }
 
     [Description("Get summary of an application based on configuration.")]
@@ -477,35 +504,6 @@ namespace org.iringtools.services
     #endregion
 
     #region Private Methods
-    // Combine existing filter from mapping into the filter came from UI of Exchange Manager
-    private DataFilter CombineFilter(DataFilter filter1, DataFilter filter2)
-    {
-      DataFilter filter = new DataFilter();
-      filter.Expressions = new List<Expression>();
-      filter.OrderExpressions = new List<OrderExpression>();
-
-      if (filter1.Expressions != null)
-        foreach (Expression expression in filter1.Expressions)
-          filter.Expressions.Add(expression);
-
-      if (filter1.OrderExpressions != null)
-        foreach (OrderExpression orderExpression in filter1.OrderExpressions)
-          filter.OrderExpressions.Add(orderExpression);
-
-      if (filter2 != null)
-      {
-        if (filter2.Expressions != null)
-          foreach (Expression expression in filter2.Expressions)
-            filter.Expressions.Add(expression);
-
-        if (filter2.OrderExpressions != null)
-          foreach (OrderExpression orderExpression in filter2.OrderExpressions)
-            filter.OrderExpressions.Add(orderExpression);
-      }
-
-      return filter;
-    }
-
     private string MapContentType(string format)
     {
       IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
@@ -541,40 +539,6 @@ namespace org.iringtools.services
       return format;
     }
 
-    private XElement FormatIncomingMessage(Stream stream, string format)
-    {
-      XElement xElement = null;
-
-      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") || 
-        format.ToLower().Contains("dto")))
-      {
-        xElement = XElement.Load(stream);
-      }
-      else
-      {
-        DataItems dataItems = Utility.DeserializeFromStreamJson<DataItems>(stream, false);
-        xElement = dataItems.ToXElement<DataItems>();
-      }
-
-      return xElement;
-    }
-
-    private T FormatIncomingMessage<T>(Stream stream, string format, bool useDataContractSerializer)
-    {
-      T graph = default(T);
-
-      if (format != null && format.ToLower().Contains("xml"))
-      {
-        graph = Utility.DeserializeFromStream<T>(stream, useDataContractSerializer);
-      }
-      else
-      {
-        graph = Utility.DeserializeFromStreamJson<T>(stream, useDataContractSerializer);
-      }
-
-      return graph;
-    }
-
     private void ExceptionHandler(Exception ex)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
@@ -587,9 +551,13 @@ namespace org.iringtools.services
       {
         context.StatusCode = HttpStatusCode.Unauthorized;
       }
+      else if (ex is WebFaultException)
+      {
+          context.StatusCode = ((WebFaultException)ex).StatusCode;
+      }
       else
       {
-        context.StatusCode = HttpStatusCode.InternalServerError;
+          context.StatusCode = HttpStatusCode.InternalServerError;
       }
 
       HttpContext.Current.Response.ContentType = "text/html";

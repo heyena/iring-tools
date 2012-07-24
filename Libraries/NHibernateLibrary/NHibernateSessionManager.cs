@@ -7,6 +7,7 @@ using log4net;
 using NHibernate;
 using NHibernate.Cfg;
 using org.iringtools.utility;
+using Microsoft.SqlServer.Management.Smo.Wmi;
 
 namespace org.iringtools.nhibernate
 {
@@ -43,14 +44,17 @@ namespace org.iringtools.nhibernate
     {
       try
       {
-        string factoryKey = context.ToLower();
-
-        if (!_sessionFactories.ContainsKey(factoryKey))
+        lock (_lockObj)
         {
-          InitSessionFactory(path, context);
-        }
+          string factoryKey = context.ToLower();
 
-        return _sessionFactories[factoryKey].OpenSession();
+          if (!_sessionFactories.ContainsKey(factoryKey))
+          {
+            InitSessionFactory(path, context);
+          }
+
+          return _sessionFactories[factoryKey].OpenSession();
+        }
       }
       catch (Exception e)
       {
@@ -59,39 +63,77 @@ namespace org.iringtools.nhibernate
       }
     }
 
+    private string getProcessedConnectionString(string connStr)
+    {
+      string mssqlInstanceName = "";
+      ManagedComputer mc = new ManagedComputer();
+      if (mc.ServerInstances.Count == 1)
+        mssqlInstanceName = mc.ServerInstances[0].Name;
+
+      if (mssqlInstanceName == "")
+        mssqlInstanceName = "SQLEXPRESS";
+
+      string[] parts = connStr.Split(';');
+      parts[0] = parts[0] + mssqlInstanceName;
+
+      return parts[0] + ";" + parts[1] + ";" + parts[2] + ";" + parts[3];
+    }
+
     private void InitSessionFactory(string path, string context)
     {
       try
       {
-        string cfgPath = string.Format("{0}nh-configuration.{1}.xml", path, context);
-        string mappingPath = string.Format("{0}nh-mapping.{1}.xml", path, context);
-
-        if (File.Exists(cfgPath) && File.Exists(mappingPath))
+        lock (_lockObj)
         {
-          Configuration cfg = new Configuration();
-          cfg.Configure(cfgPath);
+          string cfgPath = string.Format("{0}nh-configuration.{1}.xml", path, context);
+          string mappingPath = string.Format("{0}nh-mapping.{1}.xml", path, context);
+          string connStr = "";
 
-          string connStrProp = "connection.connection_string";
-          string connStr = cfg.Properties[connStrProp];
-
-          if (connStr.ToUpper().Contains("DATA SOURCE"))
+          if (File.Exists(cfgPath) && File.Exists(mappingPath))
           {
-            // connection string is not encrypted, encrypt and write it back
-            string encryptedConnStr = EncryptionUtility.Encrypt(connStr);
-            cfg.Properties[connStrProp] = encryptedConnStr;
-            SaveConfiguration(cfg, cfgPath);
+            Configuration cfg = new Configuration();
+            cfg.Configure(cfgPath);
 
-            // restore plain text connection string for creating session factory
-            cfg.Properties[connStrProp] = connStr;
-          }
-          else
-          {
-            cfg.Properties[connStrProp] = EncryptionUtility.Decrypt(connStr);
-          }
+            string connStrProp = "connection.connection_string";
+            string dialectPro = "dialect";
+            ISessionFactory sessionFactory = null;
+            connStr = cfg.Properties[connStrProp];
 
-          ISessionFactory sessionFactory = cfg.AddFile(mappingPath).BuildSessionFactory();
-          string factoryKey = context.ToLower();
-          _sessionFactories[factoryKey] = sessionFactory;
+            if (connStr.ToUpper().Contains("DATA SOURCE"))
+            {
+              // connection string is not encrypted, encrypt and write it back
+              string encryptedConnStr = EncryptionUtility.Encrypt(connStr);
+              cfg.Properties[connStrProp] = encryptedConnStr;
+              SaveConfiguration(cfg, cfgPath);
+
+              // restore plain text connection string for creating session factory
+              cfg.Properties[connStrProp] = connStr;
+            }
+            else
+            {
+              cfg.Properties[connStrProp] = EncryptionUtility.Decrypt(connStr);
+            }
+
+            Configuration ctfConfiguration = cfg.AddFile(mappingPath);
+
+            try
+            {
+              sessionFactory = ctfConfiguration.BuildSessionFactory();
+            }
+            catch (Exception e)
+            {
+              if (cfg.Properties[dialectPro].ToLower().Contains("mssql"))
+              {
+                cfg.Properties[connStrProp] = getProcessedConnectionString(connStr);
+                sessionFactory = ctfConfiguration.BuildSessionFactory();
+              }
+              else
+                throw e;
+            }
+
+            string factoryKey = context.ToLower();
+            _sessionFactories[factoryKey] = sessionFactory;
+          }
         }
       }
       catch (Exception e)
@@ -105,32 +147,35 @@ namespace org.iringtools.nhibernate
     {
       try
       {
-        XmlTextWriter writer = new XmlTextWriter(path, Encoding.UTF8);
-        writer.Formatting = Formatting.Indented;
-
-        writer.WriteStartElement("configuration");
-        writer.WriteStartElement("hibernate-configuration", "urn:nhibernate-configuration-2.2");
-        writer.WriteStartElement("session-factory");
-
-        if (cfg.Properties != null)
+        lock (_lockObj)
         {
-          foreach (var property in cfg.Properties)
+          XmlTextWriter writer = new XmlTextWriter(path, Encoding.UTF8);
+          writer.Formatting = Formatting.Indented;
+
+          writer.WriteStartElement("configuration");
+          writer.WriteStartElement("hibernate-configuration", "urn:nhibernate-configuration-2.2");
+          writer.WriteStartElement("session-factory");
+
+          if (cfg.Properties != null)
           {
-            if (property.Key != "use_reflection_optimizer")
+            foreach (var property in cfg.Properties)
             {
-              writer.WriteStartElement("property");
-              writer.WriteAttributeString("name", property.Key);
-              writer.WriteString(property.Value);
-              writer.WriteEndElement();
+              if (property.Key != "use_reflection_optimizer")
+              {
+                writer.WriteStartElement("property");
+                writer.WriteAttributeString("name", property.Key);
+                writer.WriteString(property.Value);
+                writer.WriteEndElement();
+              }
             }
           }
+
+          writer.WriteEndElement(); // end session-factory
+          writer.WriteEndElement(); // end hibernate-configuration
+          writer.WriteEndElement(); // end configuration
+
+          writer.Close();
         }
-
-        writer.WriteEndElement(); // end session-factory
-        writer.WriteEndElement(); // end hibernate-configuration
-        writer.WriteEndElement(); // end configuration
-
-        writer.Close();
       }
       catch (Exception e)
       {

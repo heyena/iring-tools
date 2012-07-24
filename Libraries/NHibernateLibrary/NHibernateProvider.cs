@@ -36,6 +36,8 @@ using Ninject;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
+using Microsoft.SqlServer.Management.Smo.Wmi;
+
 
 namespace org.iringtools.nhibernate
 {
@@ -138,15 +140,15 @@ namespace org.iringtools.nhibernate
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
         DatabaseDictionary existDBDictionary = GetDictionary(projectName, applicationName);
-        
+
         foreach (DataObject dataObject in databaseDictionary.dataObjects)
         {
-          tempDataObject = existDBDictionary.getTableObject(dataObject.tableName);
+          tempDataObject = existDBDictionary.GetTableObject(dataObject.tableName);
           if (tempDataObject != null)
             if (tempDataObject.dataFilter != null)
               dataObject.dataFilter = tempDataObject.dataFilter;
         }
-
+      
         NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
         response.Append(Generate(projectName, applicationName));
 
@@ -197,6 +199,7 @@ namespace org.iringtools.nhibernate
     {
       DataObjects tableNames = new DataObjects();
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
+      ISessionFactory sessionFactory = null;
 
       try
       {
@@ -213,6 +216,7 @@ namespace org.iringtools.nhibernate
         string dbProvider = dbDictionary.Provider.ToString().ToUpper();
         string schemaName = dbDictionary.SchemaName;
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
+        string connStrProp = "connection.connection_string";
 
         _logger.DebugFormat("ConnectString: {0} \r\n Provider: {1} \r\n SchemaName: {2} \r\n Parsed: {3}",
             connString,
@@ -227,7 +231,7 @@ namespace org.iringtools.nhibernate
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
-        properties.Add("connection.connection_string", parsedConnStr);
+        properties.Add(connStrProp, parsedConnStr);
 
         string connDriver = GetConnectionDriver(dbProvider);
 
@@ -249,7 +253,20 @@ namespace org.iringtools.nhibernate
 
         _logger.Debug("Building Session Factory");
 
-        ISessionFactory sessionFactory = config.BuildSessionFactory();
+        try
+        {
+          sessionFactory = config.BuildSessionFactory();
+        }
+        catch (Exception e)
+        {
+          if (dbProvider.ToLower().Contains("mssql"))
+          {
+            config.Properties[connStrProp] = getProcessedConnectionString(parsedConnStr);
+            sessionFactory = config.BuildSessionFactory();
+          }
+          else
+            throw e;
+        }
 
         _logger.Debug("About to Open Session");
 
@@ -287,6 +304,8 @@ namespace org.iringtools.nhibernate
     {
       List<string> tableNames = new List<string>();
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
+      string connStrProp = "connection.connection_string";
+
       DataObject dataObject = new DataObject
       {
         tableName = schemaObjectName,
@@ -316,14 +335,29 @@ namespace org.iringtools.nhibernate
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
-        properties.Add("connection.connection_string", parsedConnStr);
+        properties.Add(connStrProp, parsedConnStr);
         properties.Add("connection.driver_class", GetConnectionDriver(dbProvider));
         properties.Add("dialect", GetDatabaseDialect(dbProvider));
 
         NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
         config.AddProperties(properties);
+        ISessionFactory sessionFactory = null;
 
-        ISessionFactory sessionFactory = config.BuildSessionFactory();
+        try
+        {
+          sessionFactory = config.BuildSessionFactory();
+        }
+        catch (Exception e)
+        {
+          if (dbProvider.ToLower().Contains("mssql"))
+          {
+            config.Properties[connStrProp] = getProcessedConnectionString(parsedConnStr);
+            sessionFactory = config.BuildSessionFactory();
+          }
+          else
+            throw e;
+        }
+
         ISession session = sessionFactory.OpenSession();
         ISQLQuery query = session.CreateSQLQuery(GetTableMetaQuery(dbProvider, schemaName, schemaObjectName));
         IList<object[]> metadataList = query.List<object[]>();
@@ -472,7 +506,6 @@ namespace org.iringtools.nhibernate
               dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
               dataLength = dataLength,
               isNullable = isNullable,
-              isHidden = true,
               propertyName = Utility.ToSafeName(columnName)
             };
 
@@ -515,10 +548,31 @@ namespace org.iringtools.nhibernate
     #endregion
 
     #region private methods
+    private string getMssqlInstanceName ()
+    {
+      string mssqlInstanceName = "";
+      ManagedComputer mc = new ManagedComputer();
+      if (mc.ServerInstances.Count == 1)
+        mssqlInstanceName = mc.ServerInstances[0].Name;
+
+      if (mssqlInstanceName == "")
+        mssqlInstanceName = "SQLEXPRESS";
+
+      return mssqlInstanceName;
+    }
+
+    private string getProcessedConnectionString(string connStr)
+    {
+      string mssqlInstanceName = getMssqlInstanceName();
+      string[] parts = connStr.Split(';');
+      parts[0] = parts[0] + mssqlInstanceName;
+      return parts[0] + ";" + parts[1] + ";" + parts[2] + ";" + parts[3];
+    }
+
     private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
       string dbUserName, string dbPassword, string portNumber, string serName)
     {
-      string connStr;
+      string connStr, defaultConnStr = "";
 
       if (portNumber == "")
       {
@@ -526,35 +580,50 @@ namespace org.iringtools.nhibernate
           portNumber = "1521";
         else if (dbProvider.ToUpper().Contains("MYSQL"))
           portNumber = "3306";
-      }
+      }      
 
       if (dbProvider.ToUpper().Contains("MSSQL"))
-        if (dbInstance == "default" || string.IsNullOrEmpty(dbInstance))
+        if (dbInstance == "default" || dbInstance == "")
         {
+          string mssqlInstanceName = getMssqlInstanceName();
           connStr = String.Format("Data Source={0};Initial Catalog={2};User ID={3};Password={4}",
-            dbServer, dbInstance, dbName, dbUserName, dbPassword);
+           dbServer, dbInstance, dbName, dbUserName, dbPassword);
+          defaultConnStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
+           dbServer, mssqlInstanceName, dbName, dbUserName, dbPassword);
         }
         else
         {
           connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
-           dbServer, dbInstance, dbName, dbUserName, dbPassword);
+            dbServer, dbInstance, dbName, dbUserName, dbPassword);
         }
-        else
-          connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}",
-            dbServer, portNumber, serName, dbInstance, dbUserName, dbPassword);
+      else
+        connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}",
+          dbServer, portNumber, serName, dbInstance, dbUserName, dbPassword);
 
       Dictionary<string, string> properties = new Dictionary<string, string>();
-
       properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
       properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
       properties.Add("connection.connection_string", connStr);
       properties.Add("connection.driver_class", GetConnectionDriver(dbProvider));
       properties.Add("dialect", GetDatabaseDialect(dbProvider));
-
       NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
       config.AddProperties(properties);
+      ISessionFactory sessionFactory;
 
-      ISessionFactory sessionFactory = config.BuildSessionFactory();
+      try
+      {        
+        sessionFactory = config.BuildSessionFactory();
+      }
+      catch(Exception e)
+      {
+        if (defaultConnStr != "")
+        {
+          config.Properties["connection.connection_string"] = defaultConnStr;
+          sessionFactory = config.BuildSessionFactory();
+        }
+        else
+          throw e;
+      }
       return sessionFactory.OpenSession();
     }
 

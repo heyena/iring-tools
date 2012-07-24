@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.iringtools.org/refdata/response" targetNamespace="http://www.iringtools.org/refdata/response"
+	elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	jaxb:extensionBindingPrefixes="xjc">
+
+	<xs:annotation>
+		<xs:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:element name="response" type="Response" />
+  <xs:element name="entities" type="Entities" />
+  <xs:element name="entity" type="Entity" />
+
+	<xs:complexType name="Response">
+		<xs:sequence>
+			<xs:element name="entities" type="Entities" />
+			<xs:element name="total" type="xs:int" />
+		</xs:sequence>
+	</xs:complexType>
+
+  <xs:complexType name="Entities">
+    <xs:sequence>
+      <xs:element name="entity" type="Entity" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Entity">
+    <xs:sequence>
+      <xs:element name="uri" type="xs:string" />
+      <xs:element name="rdsuri" type="xs:string" />
+      <xs:element name="label" type="xs:string" />
+      <xs:element name="lang" type="xs:string" />
+      <xs:element name="repository" type="xs:string" />      
+    </xs:sequence>
+  </xs:complexType>
+
+
+</xs:schema>

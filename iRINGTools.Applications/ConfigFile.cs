@@ -56,7 +56,11 @@ public static class ConfigFile
 
             System.Xml.XmlNode nodeList = xmlDoc.ChildNodes[0];
             foreach (System.Xml.XmlNode node in nodeList)
-                retList.Add(node.Attributes[0].Value, node.Attributes[1].Value);
+            {
+              if (node.Attributes != null)
+                if (node.Attributes[0] != null && node.Attributes[1].Value != null)
+                  retList.Add(node.Attributes[0].Value, node.Attributes[1].Value);
+            }
         }
         catch (Exception ex) {
 					_logger.Error("Error in GetSection: " + ex);

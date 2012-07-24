@@ -63,7 +63,7 @@ namespace QMXFGenerator
               _classSpecializationWorksheet = GetWorksheet(document, "Class Specialization");
               Console.WriteLine("Processing Classes...");
               qmxf.classDefinitions = ProcessClass(_classWorksheet, _classSpecializationWorksheet);
-              
+
               _classificationWorksheet = GetWorksheet(document, "Classification");
 
               Console.WriteLine("Processing Classifications...");
@@ -73,7 +73,7 @@ namespace QMXFGenerator
 
               Console.WriteLine("Processing Base Templates...");
               qmxf.templateDefinitions = ProcessBaseTemplate(_baseTemplateWorksheet);
-             
+
               WorksheetPartWrapper specializedIndividualTemplateWorksheet = GetWorksheet(document, "Specialized Individual Template");
 
               Console.WriteLine("Processing Specialized Individual Templates...");
@@ -216,7 +216,7 @@ namespace QMXFGenerator
 
     private static bool CheckUri(string uri)
     {
-      if(uri.Contains("example"))
+      if (uri.Contains("example"))
         return false;
       else
         return true;
@@ -256,7 +256,7 @@ namespace QMXFGenerator
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
       }
     }
@@ -327,7 +327,7 @@ namespace QMXFGenerator
           object load = row[(int)ClassColumns.Load];
           rowIndex = Convert.ToInt32(row[row.Count - 1]);
           if (load != null && load.ToString().Trim() != String.Empty && load.ToString() != "Load")
-          {            
+          {
             object identifier = row[(int)ClassColumns.ID];
             object label = row[(int)ClassColumns.Label];
             object description = row[(int)ClassColumns.Description];
@@ -414,30 +414,16 @@ namespace QMXFGenerator
       {
         string identifier = String.Empty;
 
-        WebCredentials webCredentials = null;
-        if (_idsADICredentials != String.Empty)
+
+        if (!string.IsNullOrEmpty(registryBase))
+          return string.Format("{0}#R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", ""));
+        else
         {
-          webCredentials = new WebCredentials(_idsADICredentials);
-          webCredentials.Decrypt();
+           Utility.WriteString("Failed to create id for "+ name , "error.log");
+          throw new Exception("CreateIdsAdiId: Failed to create id ");
+
         }
-
-        WebProxy webProxy = null;
-        if (!string.IsNullOrEmpty(_proxyHost))
-        {
-          WebCredentials proxyCredentials = new WebCredentials(_proxyCredentials);
-          if (proxyCredentials.isEncrypted)
-            proxyCredentials.Decrypt();
-          webProxy = new WebProxy(_proxyHost, Convert.ToInt32(_proxyPort));
-          webProxy.Credentials = proxyCredentials.GetNetworkCredential();
-        }
-        string baseServiceUrl = "https://secure.ids-adi.org/registry?registry-op=acquire&registry-base=" +
-                              HttpUtility.UrlEncode(registryBase) + "&registry-comment=";
-        string serviceUrl = baseServiceUrl + HttpUtility.UrlEncode(name);
-        WebHttpClient webClient = new WebHttpClient(serviceUrl, webCredentials.GetNetworkCredential(), webProxy);
-
-        RegistryResult registryResult = webClient.Get<RegistryResult>(serviceUrl, false);
-
-        return registryResult.registryid;
+      
       }
       catch (Exception ex)
       {
@@ -573,7 +559,7 @@ namespace QMXFGenerator
             templateDefinitions.Add(templateDefinition);
             idx++;
           }
-          
+
         }
         Console.WriteLine("  processed " + idx + " base templates.");
         return templateDefinitions;
@@ -637,7 +623,7 @@ namespace QMXFGenerator
               };
               roleDefinition.description = englishUSDescription;
             }
-            
+            object clist;
             if (type != null && type.ToString() != String.Empty)
             {
               var query = from clss in _classes
@@ -757,7 +743,7 @@ namespace QMXFGenerator
             else
               Utility.WriteString("Template Qualification \"" + templateQualification.identifier + "\" RoleQualifications failed.\n", "error.log", true);
           }
-          
+
         }
         Console.WriteLine("  processed " + idx + " Specialized templates.");
         return templateQualifications;
@@ -771,7 +757,7 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow, int rowIndex, WorksheetPartWrapper part) 
+    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow, int rowIndex, WorksheetPartWrapper part)
     {
       int roleIndex = 0;
       int idx = 0;
@@ -783,10 +769,10 @@ namespace QMXFGenerator
         {
           int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
           object identifier = parentRow[(int)RoleColumns.ID + roleOffset];
-          object label = row[(int)RoleColumns.Name + roleOffset];
-          object description = row[(int)RoleColumns.Description + roleOffset];
-          object type = row[(int)RoleColumns.Type + roleOffset];
-          object value = row[(int)RoleColumns.Value + roleOffset];
+          object label = parentRow[(int)RoleColumns.Name + roleOffset];
+          object description = parentRow[(int)RoleColumns.Description + roleOffset];
+          object type = parentRow[(int)RoleColumns.Type + roleOffset];
+          object value = parentRow[(int)RoleColumns.Value + roleOffset];
           object parentRole = parentRow[(int)RoleColumns.ID + roleOffset];
 
           if (label != null && label.ToString().Trim() != String.Empty)

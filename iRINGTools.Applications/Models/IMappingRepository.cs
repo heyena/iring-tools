@@ -8,7 +8,7 @@ namespace iRINGTools.Web.Models
 {
   public interface IMappingRepository
   {
-    Mapping GetMapping(string context, string endpoint, string baseUrl);
-    void UpdateMapping(Mapping mapping, string context, string endpoint, string baseUrl);
+    Mapping GetMapping(string scopeName, string applicationName);
+    void UpdateMapping(string scopeName, string applicationName, Mapping mapping);
   }
 }
