@@ -23,6 +23,7 @@ namespace org.iringtools.adapter.datalayer
     List<WorksheetPart> GetWorksheets(SpreadsheetConfiguration configuration);
     List<SpreadsheetColumn> GetColumns(SpreadsheetConfiguration configuration, string worksheetName);
     void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile);
+    byte[] getExcelFile(string scope, string application);
   }
 
   public class SpreadsheetRepository : ISpreadsheetRepository
@@ -66,6 +67,46 @@ namespace org.iringtools.adapter.datalayer
           wp.Add(_provider.GetWorksheetPart(st));
         }
         return wp;
+      }
+    }
+
+    public byte[] getExcelFile(string scope, string application)
+    {
+      
+      try
+      {
+        ServicePath pathObject = _client.Get<ServicePath>("/path");
+        string spreadsheetPath = Path.Combine(pathObject.value, _settings["AppDataPath"], string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
+
+        FileStream fsSrc = new FileStream(spreadsheetPath, FileMode.Open, FileAccess.Read);
+
+        using (FileStream fsSource = fsSrc)
+        {
+
+          // Read the source file into a byte array.
+          byte[] bytes = new byte[fsSource.Length];
+          int numBytesToRead = (int)fsSource.Length;
+          int numBytesRead = 0;
+          while (numBytesToRead > 0)
+          {
+            // Read may return anything from 0 to numBytesToRead.
+            int n = fsSource.Read(bytes, numBytesRead, numBytesToRead);
+
+            // Break when the end of the file is reached.
+            if (n == 0)
+              break;
+
+            numBytesRead += n;
+            numBytesToRead -= n;
+          }
+          numBytesToRead = bytes.Length;
+          return bytes;
+        }
+      }      
+      catch (Exception ioEx)
+      {
+        _logger.Error(ioEx.Message);
+        throw ioEx;
       }
     }
 
