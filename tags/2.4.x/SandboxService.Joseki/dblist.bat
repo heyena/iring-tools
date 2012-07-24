@@ -1,0 +1,2 @@
+@echo off
+java -cp lib/arq-2.8.0.jar;lib/icu4j-3.4.4.jar;lib/iri-0.7.jar;lib/jena-2.6.0.jar;lib/jetty-6.1.10.jar;lib/jetty-util-6.1.10.jar;lib/joseki-3.4.0.jar;lib/junit-4.5.jar;lib/log4j-1.2.12.jar;lib/lucene-core-2.3.1.jar;lib/mysql-connector-java-5.1.7-bin.jar;lib/slf4j-api-1.5.6.jar;lib/slf4j-log4j12-1.5.6.jar;lib/stax-api-1.0.1.jar;lib/wstx-asl-3.2.9.jar;lib/xercesImpl-2.7.1.jar jena.dblist --db jdbc:mysql://localhost:3306/sandbox --dbUser sandbox --dbPassword sandbox --dbType mysql

@@ -1,0 +1,125 @@
+html, body {
+  font: normal 12px verdana;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  overflow: hidden;
+  height: 100%;
+}
+
+a:link {color: black}
+a:visited {color: black}
+a:hover {color: black}
+a:active {color: black}
+
+.x-tree { 
+	background-color: #fff; 
+}
+
+.x-tree-node .scope {
+  background-image: url(../images/cabinet.png);
+}
+
+.x-tree-node-collapsed .folder {
+  background-image: url(../images/folder-close.png);
+}
+
+.x-tree-node-expanded .folder {
+  background-image: url(../images/folder-open.png);
+}
+
+.x-tree-node .exchange {
+  background-image: url(../images/exchange-grid.png);
+}
+
+.x-tree-node .application {
+  background-image: url(../images/application.png);
+}
+
+.x-tree-node .graph {
+  background-image: url(../images/app-grid.png);
+}
+
+.x-tree-node .commodity {
+  background-image: url(../images/class-badge-small.png);
+}
+
+.blue-fade {
+  background-image: url(../images/blue-fade.png);
+  background-repeat: repeat-x;
+  -webkit-user-select: none;
+	-moz-user-select: none;
+	cursor: default;
+}
+
+/* change default tree node */
+.x-tree-node {
+  font-family: tahoma;
+}
+
+/* change default grid font */
+.x-grid3-hd-row td, .x-grid3-row td, .x-grid3-summary-row td {
+  font-family: tahoma;
+}
+
+.sync {
+	color: #000000;
+}
+
+.add {
+	color: #df0000;
+}
+
+.change {
+	color: #0000df;
+}
+
+.delete {
+	color: #00df00;
+}
+
+.nav-toolbar {
+  border-left: 1px solid #eee;
+  border-right: 1px solid #aaa;
+  width: 52px;
+}
+
+.bc-container {
+	background-color: #f8f8f8;
+	width: 100%;
+	height: 26px;
+  overflow: hidden;
+  padding-top: 5px;
+}
+
+a.breadcrumb {
+	margin: 5px 5px 0 5px;
+	text-decoration: none;
+}
+
+/*a.breadcrumb:hover {
+	text-decoration: underline;
+}*/
+
+.breadcrumb-img {
+	vertical-align: middle;
+	padding-bottom: 2px;
+}
+
+.class-badge {
+	background-color: #ededed;
+}
+
+.headerLnkBlack {
+  font-family: Calibri, Arial;
+  font-size: 18px;
+  text-decoration: none;
+  color: #000000;
+}
+
+.exchangeBanner{
+  background-image:url('../images/blue-fade.png');
+  background-repeat:repeat-x;
+  background-position:left bottom;
+  height: 65px;
+}
