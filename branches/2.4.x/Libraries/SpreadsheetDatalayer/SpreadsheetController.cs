@@ -136,7 +136,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {        
         byte[] bytes = _repository.getExcelFile(scope, application);
-        return File(bytes, "application/vnd.ms-excel", string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml", string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
       }
       catch (Exception ioEx)
       {
