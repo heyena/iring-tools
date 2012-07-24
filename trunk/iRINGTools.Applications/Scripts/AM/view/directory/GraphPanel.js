@@ -75,12 +75,12 @@
 
     this.items = [{
       xtype: 'form',
-      labelWidth: 100, // label settings here cascade unless
+      labelWidth: 100,
       url: 'mapping/graphMap',
       method: 'POST',
       bodyStyle: 'padding:10px 5px 0',
 
-      border: false, // removing the border of the form
+      border: false,
 
       frame: false,
       defaults: {
