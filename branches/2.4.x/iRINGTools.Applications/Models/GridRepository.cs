@@ -165,6 +165,10 @@ namespace iRINGTools.Web.Models
                 }
 
                 field.type = ToExtJsType(dataProp.dataType);
+
+                if (dataProp.keyType == KeyType.assigned || dataProp.keyType == KeyType.foreign)
+                  field.keytype = "key";
+
                 fields.Add(field);
               }
 						}
@@ -185,7 +189,7 @@ namespace iRINGTools.Web.Models
               {
                 rowData.Add(property.Value);
                 newWid = property.Value.Count() * 4 + 40;
-                if (newWid > 40 && newWid > field.width && newWid < 300)
+                if (newWid > 40 && newWid > field.width && newWid < 400)
                   field.width = newWid;
                 found = true;
                 break;

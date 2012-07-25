@@ -218,10 +218,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
           handler: this.onReload,
           icon: 'Content/img/16x16/view-refresh.png',
           scope: this
-      },
-      {
-          xtype: 'menuseparator'
-      }
+        }
+//      ,
+//      {
+//          xtype: 'menuseparator'
+//      }
     ]
     },
 

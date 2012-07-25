@@ -234,6 +234,7 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
 			var field = recordType.getField(dataIndex);
 			var dataType = field.type.type;
 			var renderer = 'auto';
+			var keyType = field.keytype
 			var align = 'left';
 
 			if (dataType != null)
@@ -242,7 +243,7 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
 			if (dataType == 'date') {
 				renderer = Ext.util.Format.dateRenderer('mm/dd/YYYY');
 			}
-			else if (dataType != 'string') {
+			else if (dataType != 'string' && keyType != 'key') {
 				if (dataType == 'double' || dataType == 'float' || dataType == 'decimal') {
 					renderer = Ext.util.Format.numberRenderer('0,000.00');
 				}
