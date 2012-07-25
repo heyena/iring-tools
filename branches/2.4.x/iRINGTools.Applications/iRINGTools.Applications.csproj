@@ -35,6 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="dotNetRDF, Version=0.4.2.11625, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -198,6 +199,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="about.aspx" />
     <Content Include="Scripts\ext-3.3.1\adapter\ext\ext-base-debug.js" />
     <Content Include="Scripts\ext-3.3.1\adapter\ext\ext-base.js" />
     <Content Include="Scripts\ext-3.3.1\adapter\jquery\ext-jquery-adapter-debug.js" />
