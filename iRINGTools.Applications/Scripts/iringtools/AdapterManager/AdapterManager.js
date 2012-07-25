@@ -26,7 +26,7 @@ Ext.onReady(function () {
           win.close();
         }
       }],
-      autoLoad: 'about.html',
+      autoLoad: 'about.aspx',
       listeners: {
         close: {
           fn: function () {
