@@ -153,7 +153,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="about.html" />
     <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
     <Content Include="Content\css\GridFilters.css" />
