@@ -2,6 +2,10 @@
 #labels Featured
 =iRINGTools-2.04.00.5257=
 
+----
+*Note:* the [http://iring-tools.googlecode.com/files/iRINGTools-2.4.0.zip iRINGTools Adapter 2.4.0 (5257)] download was updated on August 2, 2012 to modify the included federation.xml file. No other changes were made. If you downloaded the iRINGTools Adapter zip file prior to August 2, you can download the updated [http://iring-tools.googlecode.com/files/iRINGTools-2.4.0-Federation.xml.zip federation.xml] file and copy it to the iRINGTools Services\App_Data folder.
+----
+
 Release of iRINGTools 2.4 that includes new features.  
 
 There are 2 packages:
