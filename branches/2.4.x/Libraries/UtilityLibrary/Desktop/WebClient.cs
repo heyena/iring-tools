@@ -259,10 +259,18 @@ namespace org.iringtools.utility
 
     private void PrepareHeaders(WebRequest request)
     {
-      _logger.Debug("Authorization: " + AccessToken);
-      request.Headers.Add("Authorization", AccessToken);
-      _logger.Debug("X-myPSN-AppKey: " + AppKey);
-      request.Headers.Add("X-myPSN-AppKey", AppKey);
+      var ac = AccessToken;
+      var ak = AppKey;
+      if (!string.IsNullOrEmpty(ac))
+      {
+        _logger.Debug("Authorization: " + AccessToken);
+        request.Headers.Add("Authorization", AccessToken);
+      }
+      if (!string.IsNullOrEmpty(ak))
+      {
+        _logger.Debug("X-myPSN-AppKey: " + AppKey);
+        request.Headers.Add("X-myPSN-AppKey", AppKey);
+      }
     }
 
     private void PrepareCredentials(WebRequest request)
