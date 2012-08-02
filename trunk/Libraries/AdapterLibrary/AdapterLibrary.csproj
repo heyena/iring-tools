@@ -132,9 +132,12 @@
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
     <Compile Include="BaseProvider.cs" />
+    <Compile Include="DtiTask.cs" />
     <Compile Include="ExchangeProvider.cs" />
+    <Compile Include="InboundDtoTask.cs" />
     <Compile Include="JsonProjectionEngine.cs" />
     <Compile Include="HtmlProjectionEngine.cs" />
+    <Compile Include="OutboundDtoTask.cs" />
     <Compile Include="SSOIdentityProvider.cs" />
     <Compile Include="DxiRequest.cs" />
     <Compile Include="DxoRequest.cs" />

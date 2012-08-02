@@ -150,6 +150,12 @@ namespace org.iringtools.library
       throw new NotImplementedException();
     }
 
+    public virtual DocumentBytes GetResourceData()
+    {
+      _logger.Error("NotImplementedException");
+      throw new NotImplementedException();
+    }
+
     protected void LoadDataDictionary(string objectType)
     {
       DataDictionary dataDictionary = GetDictionary();
@@ -269,27 +275,41 @@ namespace org.iringtools.library
 
       if (identifierParts.Count() == _dataObjectDefinition.keyProperties.Count)
       {
-        for (int i = 0; i < _dataObjectDefinition.keyProperties.Count; i++)
-        {
-          string identifierPart = identifierParts[i];
+          for (int i = 0; i < _dataObjectDefinition.keyProperties.Count; i++)
+          {
+              string identifierPart = identifierParts[i];
 
+              Expression expression = new Expression
+              {
+                  PropertyName = _dataObjectDefinition.keyProperties[i].keyPropertyName,
+                  RelationalOperator = RelationalOperator.EqualTo,
+                  Values = new Values
+                  {
+                    identifierPart,
+                  }
+              };
+
+              if (expressions.Count > 0)
+              {
+                  expression.LogicalOperator = LogicalOperator.And;
+              }
+
+              expressions.Add(expression);
+          }
+      }
+      else
+      {
           Expression expression = new Expression
           {
-            PropertyName = _dataObjectDefinition.keyProperties[i].keyPropertyName,
-            RelationalOperator = RelationalOperator.EqualTo,
-            Values = new Values
-            {
-              identifierPart,
-            }
+              PropertyName = _dataObjectDefinition.keyProperties[0].keyPropertyName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              Values = new Values
+                {
+                    identifier,
+                }
           };
 
-          if (expressions.Count > 0)
-          {
-            expression.LogicalOperator = LogicalOperator.And;
-          }
-
           expressions.Add(expression);
-        }
       }
 
       return expressions;
@@ -324,25 +344,25 @@ namespace org.iringtools.library
 
     protected DataFilter CreateDataFilter(IDataObject parentDataObject, string relatedObjectType)
     {
-      string objectType = parentDataObject.GetType().Name;
+        string objectType = parentDataObject.GetType().Name;
 
-      if (objectType == typeof(GenericDataObject).Name)
-      {
-        objectType = ((GenericDataObject)parentDataObject).ObjectType;
-      }
-        
+        if (objectType == typeof(GenericDataObject).Name)
+        {
+            objectType = ((GenericDataObject)parentDataObject).ObjectType;
+        }
+
       DataDictionary dataDictionary = GetDictionary();
 
       DataObject dataObject = dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == objectType.ToLower());
       if (dataObject == null)
       {
-        throw new Exception("Parent data object [" + objectType + "] not found.");
+          throw new Exception("Parent data object [" + objectType + "] not found.");
       }
 
       DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
       if (dataRelationship == null)
       {
-        throw new Exception("Relationship between data object [" + objectType +
+          throw new Exception("Relationship between data object [" + objectType +
           "] and related data object [" + relatedObjectType + "] not found.");
       }
 
@@ -358,7 +378,7 @@ namespace org.iringtools.library
 
     protected void SetKeys(IDataObject dataObject, string identifier)
     {
-      string[] delimiter = new string[] { _dataObjectDefinition.keyDelimeter };
+      string[] delimiter = new string[] { _dataObjectDefinition.keyDelimeter ?? string.Empty };
 
       if (identifier == null)
       {
@@ -387,6 +407,37 @@ namespace org.iringtools.library
       }
     }
 
+    protected void SetKeyProperties(DataObject dataObjectDefinition, IDataObject dataObject, string identifier)
+    {
+      string[] delimiter = new string[] { dataObjectDefinition.keyDelimeter ?? string.Empty };
+
+      if (identifier == null)
+      {
+        foreach (KeyProperty keyProperty in dataObjectDefinition.keyProperties)
+        {
+          dataObject.SetPropertyValue(keyProperty.keyPropertyName, null);
+        }
+      }
+      else
+      {
+        string[] identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
+
+        if (identifierParts.Count() == dataObjectDefinition.keyProperties.Count)
+        {
+          int i = 0;
+          foreach (KeyProperty keyProperty in dataObjectDefinition.keyProperties)
+          {
+            string identifierPart = identifierParts[i];
+            if (!String.IsNullOrEmpty(identifierPart))
+            {
+              dataObject.SetPropertyValue(keyProperty.keyPropertyName, identifierPart);
+            }
+            i++;
+          }
+        }
+      }
+    }
+
     protected string GetIdentifier(IDataObject dataObject)
     {
       return GetIdentifier(_dataObjectDefinition, dataObject);
@@ -401,8 +452,17 @@ namespace org.iringtools.library
       int i = 0;
       foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
       {
-        identifierParts[i] = dataObject.GetPropertyValue(keyProperty.keyPropertyName).ToString();
-        i++;
+          object value = dataObject.GetPropertyValue(keyProperty.keyPropertyName);
+          if (value != null)
+          {
+              identifierParts[i] = value.ToString();
+          }
+          else
+          {
+              identifierParts[i] = String.Empty;
+          }
+
+          i++;
       }
 
       return String.Join(_dataObjectDefinition.keyDelimeter, identifierParts);
@@ -435,10 +495,11 @@ namespace org.iringtools.library
 
     public virtual Response Refresh(string objectType)
     {
-      Response response = new Response() {
-	  	  Level = StatusLevel.Warning,
-		    Messages = new Messages {"Method not implemented."}
-	    };
+      Response response = new Response()
+      {
+        Level = StatusLevel.Warning,
+        Messages = new Messages { "Method not implemented." }
+      };
 
       return response;
     }

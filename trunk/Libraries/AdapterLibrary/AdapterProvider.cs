@@ -2126,7 +2126,7 @@ namespace org.iringtools.adapter
       try
       {
         DataDictionary dictionary = GetDictionary(projectName, applicationName);
-        DataObject dataObject = dictionary.getDataObject(resourceName);
+        DataObject dataObject = dictionary.GetDataObject(resourceName);
         filter.AppendFilter(dataObject.dataFilter);
         _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);

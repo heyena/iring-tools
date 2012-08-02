@@ -147,7 +147,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="about.html" />
+    <Content Include="about.aspx" />
     <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
     <Content Include="Content\css\GridFilters.css" />

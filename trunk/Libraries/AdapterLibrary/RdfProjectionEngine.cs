@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Xml;
-using System.Xml.Linq;
-using log4net;
-using Ninject;
 using org.iringtools.library;
-using org.iringtools.mapping;
-using org.iringtools.utility;
+using System.Xml.Linq;
+using Ninject;
+using log4net;
+using System.Text.RegularExpressions;
 using VDS.RDF;
+using VDS.RDF.Storage;
+using org.iringtools.utility;
+using System.Xml;
+using System.IO;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
-using VDS.RDF.Storage;
+using System.Web;
+using org.iringtools.mapping;
 
 namespace org.iringtools.adapter.projection
 {

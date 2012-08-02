@@ -342,7 +342,7 @@ namespace org.iringtools.web.controllers
                     if (role.type == RoleType.Reference)
                     {
                       roleNode.property = new Dictionary<string, string>();
-                      roleNode.property.Add("value label", GetClassLabel(role.value, baseUrl));
+                      roleNode.property.Add("value label", GetClassLabel(role.value));
                     }
 
                     if (role.classMap != null && role.classMap.id != graphClassMap.id)
@@ -403,7 +403,7 @@ namespace org.iringtools.web.controllers
                       if (role.type == RoleType.Reference)
                       {
                         roleNode.property = new Dictionary<string, string>();
-                        roleNode.property.Add("value label", GetClassLabel(role.value, baseUrl));
+                        roleNode.property.Add("value label", GetClassLabel(role.value));
                       }
 
                       if (role.classMap != null && role.classMap.id != graphClassMap.id)
@@ -457,7 +457,7 @@ namespace org.iringtools.web.controllers
                 if (role.type == RoleType.Reference)
                 {
                   roleNode.property = new Dictionary<string, string>();
-                  roleNode.property.Add("value label", GetClassLabel(role.value, baseUrl));
+                  roleNode.property.Add("value label", GetClassLabel(role.value));
                 }
 
                 if (role.classMap != null && role.classMap.id != graphClassMap.id)
@@ -544,17 +544,20 @@ namespace org.iringtools.web.controllers
           graphMap.DeleteRoleMap(tMap, rMap.id);
         }
 
-        if (!string.IsNullOrEmpty(rMap.propertyName) || rMap.dataType.StartsWith("xsd"))
+        if (rMap.dataType.StartsWith("xsd:"))
+        {
           rMap.type = RoleType.DataProperty;
+          rMap.propertyName = string.Empty;
+        }
         else
-          rMap.type = RoleType.Reference;
+        {
+          rMap.type = RoleType.Unknown;
+          rMap.propertyName = null;
+        }
 
-        rMap.propertyName = null;
         rMap.value = null;
         rMap.valueListName = null;
         rMap.classMap = null;
-
-        rMap.type = RoleType.Reference;
       }
       catch (Exception ex)
       {
@@ -1112,7 +1115,7 @@ namespace org.iringtools.web.controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
-    public string GetClassLabel(string classId, string baseUrl)
+    public string GetClassLabel(string classId)
     {
       string classLabel = String.Empty;
 
@@ -1131,6 +1134,7 @@ namespace org.iringtools.web.controllers
         try
         {
           Entity entity = _refdata.GetClassLabel(classId);
+
           classLabel = entity.Label;
           Session[key] = classLabel;
         }
@@ -1170,8 +1174,9 @@ namespace org.iringtools.web.controllers
 
     private void GetRoleMaps(string classId, object template, TemplateMap currentTemplateMap)
     {
+      string qRange = string.Empty;
+      string qId = string.Empty;
       bool qn = false;
-      string qName = string.Empty;
 
       if (currentTemplateMap.roleMaps == null)
         currentTemplateMap.roleMaps = new RoleMaps();
@@ -1184,41 +1189,41 @@ namespace org.iringtools.web.controllers
         foreach (RoleDefinition roleDefinition in roleDefinitions)
         {
           string range = roleDefinition.range;
-          RoleMap roleMap = new RoleMap();
+          qn = _nsMap.ReduceToQName(range, out qRange);
 
-          if (range != classId && range.StartsWith("xsd:"))
+          string id = roleDefinition.identifier;
+          qn = _nsMap.ReduceToQName(id, out qId);
+
+          RoleMap roleMap = new RoleMap()
           {
-            qn = _nsMap.ReduceToQName(range, out qName);
-            roleMap.type = RoleType.DataProperty;
-            roleMap.name = roleDefinition.name.FirstOrDefault().value;
-            roleMap.dataType = qn ? qName : range;
-            roleMap.propertyName = string.Empty;
-            qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
-            roleMap.id = qn ? qName : roleDefinition.identifier;
-            currentTemplateMap.roleMaps.Add(roleMap);
-          }
-          else if (range != classId && !range.StartsWith("xsd:"))
-          {
-            roleMap.type = RoleType.ObjectProperty;
-            roleMap.name = roleDefinition.name.FirstOrDefault().value;
-            qn = _nsMap.ReduceToQName(range, out qName);
-            roleMap.dataType = qn ? qName : range;
-            roleMap.propertyName = string.Empty;
-            qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
-            roleMap.id = qn ? qName : roleDefinition.identifier;
-            currentTemplateMap.roleMaps.Add(roleMap);
-          }
-          else if (range == classId)
+            name = roleDefinition.name.FirstOrDefault().value,
+            id = qId
+          };
+
+          if (qRange == classId)    // possessor role
           {
             roleMap.type = RoleType.Possessor;
-            roleMap.name = roleDefinition.name.FirstOrDefault().value;
-            qn = _nsMap.ReduceToQName(range, out qName);
-            roleMap.dataType = qn ? qName : range;
-            roleMap.propertyName = string.Empty;
-            qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
-            roleMap.id = qn ? qName : roleDefinition.identifier;
-            currentTemplateMap.roleMaps.Add(roleMap);
+            roleMap.dataType = qRange;
           }
+          else if (qRange.StartsWith("xsd:"))  // data property role
+          {
+            roleMap.type = RoleType.DataProperty;
+            roleMap.dataType = qRange;
+            roleMap.propertyName = string.Empty;
+          }
+          else if (!qRange.StartsWith("dm:"))  // reference role
+          {
+            roleMap.type = RoleType.Reference;
+            roleMap.dataType = qRange;
+            roleMap.value = GetClassLabel(qRange);
+          }
+          else  // unknown
+          {
+            roleMap.type = RoleType.Unknown;
+            roleMap.dataType = qRange;
+          }
+
+          currentTemplateMap.roleMaps.Add(roleMap);
         }
       }
 
@@ -1229,51 +1234,58 @@ namespace org.iringtools.web.controllers
 
         foreach (RoleQualification roleQualification in roleQualifications)
         {
-          qn = _nsMap.ReduceToQName(roleQualification.qualifies, out qName);
           string range = roleQualification.range;
-          RoleMap roleMap = new RoleMap();
+          qn = _nsMap.ReduceToQName(range, out qRange);
 
-          roleMap.name = roleQualification.name.FirstOrDefault().value;
-          roleMap.id = qn ? qName : roleQualification.qualifies;
+          string id = roleQualification.qualifies;
+          qn = _nsMap.ReduceToQName(id, out qId);
 
-          if (roleQualification.value != null)  // fixed role
+          if (currentTemplateMap.roleMaps.Find(x => x.id == qId) == null)
           {
-            if (!String.IsNullOrEmpty(roleQualification.value.reference))
+            RoleMap roleMap = new RoleMap()
+            {
+              name = roleQualification.name.FirstOrDefault().value,
+              id = qId
+            };
+
+            if (roleQualification.value != null)  // fixed role
+            {
+              if (!String.IsNullOrEmpty(roleQualification.value.reference))
+              {
+                roleMap.type = RoleType.Reference;
+                qn = _nsMap.ReduceToQName(roleQualification.value.reference, out qRange);
+                roleMap.dataType = qn ? qRange : roleQualification.value.reference;
+              }
+              else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
+              {
+                roleMap.type = RoleType.FixedValue;
+                roleMap.value = roleQualification.value.text;
+                roleMap.dataType = roleQualification.value.As;
+              }
+            }
+            else if (qRange == classId)    // possessor role
+            {
+              roleMap.type = RoleType.Possessor;
+              roleMap.dataType = qRange;
+            }
+            else if (qRange.StartsWith("xsd:"))  // data property role
+            {
+              roleMap.type = RoleType.DataProperty;
+              roleMap.dataType = qRange;
+              roleMap.propertyName = string.Empty;
+            }
+            else if (!qRange.StartsWith("dm:"))  // reference role
             {
               roleMap.type = RoleType.Reference;
-              qn = _nsMap.ReduceToQName(roleQualification.value.reference, out qName);
-              roleMap.value = qn ? qName : roleQualification.value.reference;
+              roleMap.dataType = qRange;
+              roleMap.value = GetClassLabel(qRange);
             }
-            else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
+            else  // unknown
             {
-              roleMap.type = RoleType.FixedValue;
-              roleMap.value = roleQualification.value.text;
-              roleMap.dataType = roleQualification.value.As;
+              roleMap.type = RoleType.Unknown;
+              roleMap.dataType = qRange;
             }
 
-            currentTemplateMap.roleMaps.Add(roleMap);
-          }
-          else if (range != classId && range.StartsWith("xsd:")) // property role
-          {
-            roleMap.type = RoleType.DataProperty;
-            qn = _nsMap.ReduceToQName(range, out qName);
-            roleMap.dataType = qn ? qName : range;
-            roleMap.propertyName = String.Empty;
-            currentTemplateMap.roleMaps.Add(roleMap);
-          }
-          else if (range != classId && !range.StartsWith("xsd:"))
-          {
-            roleMap.type = RoleType.ObjectProperty;
-            qn = _nsMap.ReduceToQName(range, out qName);
-            roleMap.dataType = qn ? qName : range;
-            roleMap.propertyName = String.Empty;
-            currentTemplateMap.roleMaps.Add(roleMap);
-          }
-          else if (range == classId)    // class role
-          {
-            roleMap.type = RoleType.Possessor;
-            qn = _nsMap.ReduceToQName(range, out qName);
-            roleMap.dataType = qn ? qName : range;
             currentTemplateMap.roleMaps.Add(roleMap);
           }
         }

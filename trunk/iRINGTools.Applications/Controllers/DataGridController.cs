@@ -65,7 +65,7 @@ namespace org.iringtools.web.controllers
                   Field field = new Field
                              {
                                  name = dataPropergty.propertyName,
-                                 header = dataPropergty.propertyName,
+                                 //header = dataPropergty.propertyName,
                                  dataIndex = dataPropergty.propertyName,
                                  sortable = true
                              };

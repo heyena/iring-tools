@@ -76,9 +76,9 @@ namespace org.iringtools.adapter.projection
 
           if (objectType == typeof(GenericDataObject).Name)
           {
-              objectType = ((GenericDataObject)parentObj).ObjectType;
-          } 
-            
+            objectType = ((GenericDataObject)parentObj).ObjectType;
+          }
+
           if (objectType.ToLower() != objectPath[i].ToLower())
           {
             List<IDataObject> relatedObjects = new List<IDataObject>();
