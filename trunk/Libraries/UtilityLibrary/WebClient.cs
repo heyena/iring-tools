@@ -254,15 +254,18 @@ namespace org.iringtools.utility
 
     private void PrepareHeaders(WebRequest request)
     {
-      if (!string.IsNullOrEmpty(AccessToken))
+      var at = AccessToken;
+      vat ak = AppKey;
+      if (!string.IsNullOrEmpty(at))
       {
-        _logger.Debug("Authorization: " + AccessToken);
-        request.Headers.Add("Authorization", AccessToken);
+        _logger.Debug("Authorization: " + at);
+        request.Headers.Add("Authorization", at);
       }
-      if (!string.IsNullOrEmpty(AppKey))
+      if (!string.IsNullOrEmpty(ak))
       {
-         _logger.Debug("X-AppKey-Cookie: " + AppKey);
-         request.Headers.Add("X-AppKey-Cookie", AppKey);
+        _logger.Debug("X-myPSN-AppKey: " + ak);
+        request.Headers.Add("X-myPSN-AppKey", ak);
+
       }
     }
 
