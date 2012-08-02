@@ -11,7 +11,7 @@ using StaticDust.Configuration;
 using Ninject;
 using Ninject.Extensions.Xml;
 
-namespace iRINGTools.SDK.SP3DDataLayer
+namespace iringtools.sdk.sp3ddatalayer
 {
     [TestFixture]
     public class SP3DDataLayerTest
@@ -69,7 +69,7 @@ namespace iRINGTools.SDK.SP3DDataLayer
 
            // _sp3dDataLayer = _kernel.Get<SP3DDataLayer>(); This will reset the new updated adaptersettings with default values.
             
-            _sp3dDataLayer = new SP3DDataLayer(_adapterSettings, _kernel);
+            _sp3dDataLayer = new SP3DDataLayer(_adapterSettings);
         }
 
         [Test]

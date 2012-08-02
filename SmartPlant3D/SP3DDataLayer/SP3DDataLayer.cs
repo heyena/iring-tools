@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Data;
 using System.Collections;
+using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Linq.Expressions;
 using System.Xml.Linq;
 using Ciloci.Flee;
@@ -11,27 +15,339 @@ using Ninject;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
+using StaticDust.Configuration;
+using Ingr.SP3D.Common.Middle.Services;
+using Ingr.SP3D.Common.Middle;
+using Ingr.SP3D.Structure.Middle;
+using Ingr.SP3D.ReferenceData.Middle;
+using Ingr.SP3D.Systems.Middle;
+using Ingr.SP3D.ReferenceData.Middle.Services;
 
-namespace iRINGTools.SDK.SP3DDataLayer
+namespace iringtools.sdk.sp3ddatalayer
 {
-    public class SP3DDataLayer : BaseDataLayer, IDataLayer2
-    {
-        private List<IDataObject> _dataObjects = null;
+  public class SP3DDataLayer : BaseDataLayer
+  {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SP3DDataLayer));
+    private string _dataPath = string.Empty;
+    private string _scope = string.Empty;
+    private string _dictionaryPath = string.Empty;
+    private BusinessObjectConfiguration _configuration = null;
+    private Dictionary<string, Configuration> _configs = null;
+    private string _communityName = string.Empty;
+    private DataDictionary _dictionary = null;
 
-        [Inject]
-        public SP3DDataLayer(AdapterSettings settings, IKernel kernel)
+    [Inject]
+    public SP3DDataLayer(AdapterSettings settings)
+      : base(settings)
+    {
+       _dataPath = settings["DataLayerPath"];
+        if (_dataPath == null)
         {
-            _settings = settings;
+          _dataPath = settings["AppDataPath"];
         }
 
-        public override long GetCount(string objectType, DataFilter filter)
+        _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
+
+        string appSettingsPath = string.Format("{0}{1}.config", _dataPath, _scope);
+        if (!System.IO.File.Exists(appSettingsPath))
         {
+          _dataPath += "App_Data\\";
+          appSettingsPath = string.Format("{0}{1}.config", _dataPath, _scope);
+        }
+        _settings.AppendSettings(new AppSettingsReader(appSettingsPath));
+
+        _dictionaryPath = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
+    }
+
+    public override DataDictionary GetDictionary()
+    {
+      if (_dictionary != null)
+        return _dictionary;
+
+      try
+      {
+        getConfigure();
+        _dictionary = new DataDictionary();
+        _dictionary.dataObjects = new List<DataObject>();
+        foreach (BusinessObject businessObject in _configuration.businessObjects)
+        {
+          DataObject dataObject = CreateDataObject(businessObject);
+          _dictionary.dataObjects.Add(dataObject);
+        }        
+
+        return _dictionary;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("connect SP3D: " + ex.ToString());
+        throw ex;
+      }
+    }
+
+    private DataObject GetDataObject(string objectName)
+    {
+      DataDictionary dictionary = GetDictionary();
+      DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectName.ToLower());
+      return dataObject;
+    }
+
+    private DataObject CreateDataObject(BusinessObject businessObject)
+    {
+      string propertyName = string.Empty;
+      string relatedPropertyName = string.Empty;
+      DataObject dataObject = new DataObject();
+      string objectName = businessObject.objectName;
+      dataObject.objectName = objectName;
+      dataObject.tableName = objectName;
+      dataObject.keyProperties = new List<KeyProperty>();
+      dataObject.dataProperties = new List<DataProperty>();
+      dataObject.dataRelationships = new List<DataRelationship>();
+
+      if (businessObject.dataFilter != null)
+        dataObject.dataFilter = businessObject.dataFilter;
+
+      foreach (BusinessProperty businessProperty in businessObject.businessProperties)
+      {
+        DataProperty dataProperty = new DataProperty();
+        propertyName = businessProperty.propertyName;
+        dataProperty.columnName = propertyName;
+        dataProperty.propertyName = propertyName;
+
+        if (businessProperty.isNullable != null)
+          dataProperty.isNullable = businessProperty.isNullable;
+
+        if (businessProperty.isReadOnly != null)
+          dataProperty.isReadOnly = businessObject.isReadOnly;
+
+        if (businessProperty.description != null)
+          dataProperty.description = businessObject.description;
+
+        dataObject.dataProperties.Add(dataProperty);
+      }
+
+      foreach (BusinessRelationship businessRelationship in businessObject.businessRelationships)
+      {
+        DataRelationship dataRelationship = new DataRelationship();
+        dataRelationship.relatedObjectName = businessRelationship.relatedObjectName;
+        dataRelationship.relationshipName = businessRelationship.relationshipName;
+        dataRelationship.propertyMaps = new List<PropertyMap>();
+        
+        if (businessRelationship.BusinessRelatedProperties != null)
+          foreach (BusinessRelatedProperty businessRelationProperty in businessRelationship.BusinessRelatedProperties)
+          {
+            DataProperty dataProperty = new DataProperty();
+            PropertyMap propertyMap = new PropertyMap();
+            relatedPropertyName = businessRelationProperty.relatedPropertyName;
+            propertyMap.relatedPropertyName = relatedPropertyName;
+            dataProperty.propertyName = relatedPropertyName;
+            dataRelationship.propertyMaps.Add(propertyMap);
+            dataObject.dataProperties.Add(dataProperty);
+          }    
+      }
+      return dataObject;
+    }
+
+    private void getConfigure()
+    {
+      string configurationPath = string.Format("{0}{1}.configuration", _dataPath, _scope);
+      _configuration = Utility.Read<BusinessObjectConfiguration>(configurationPath);
+    }
+
+    public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
+    {
+      IList<IDataObject> dataObjects = new List<IDataObject>();
+
+      try
+      {
+        Connect();
+
+        DataObject dataObject = GetDataObject(objectType);
+
+        ReadOnlyDictionary<ClassInformation> classInfoDictionary = new ReadOnlyDictionary<ClassInformation>(); 
+
+
+
+        // Apply filter
+        if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
+        {
+          var predicate = filter.ToPredicate(_dataObjectDefinition);
+
+          if (predicate != null)
+          {
+            _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList();
+          }
+        }
+
+        if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
+        {
+          throw new NotImplementedException("OrderExpressions are not supported by the SPPID DataLayer.");
+        }
+
+        //Page and Sort The Data
+        if (pageSize > _dataObjects.Count())
+          pageSize = _dataObjects.Count();
+        _dataObjects = _dataObjects.GetRange(startIndex, pageSize);
+
+        return _dataObjects;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetList: " + ex);
+
+        throw new Exception(
+          "Error while getting a list of data objects of type [" + objectType + "].",
+          ex
+        );
+      }
+    }
+
+    private void Connect()
+    {
+      Site SP3DSite = null;
+      SP3DSite = MiddleServiceProvider.SiteMgr.ConnectSite();
+      
+      if (SP3DSite != null)
+      {
+        if( SP3DSite.Plants.Count > 0 )
+          MiddleServiceProvider.SiteMgr.ActiveSite.OpenPlant((Plant)SP3DSite.Plants[0]);
+      }
+
+      Model SP3DModel = null;
+      SP3DModel = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantModel;
+      MetadataManager metadataManager = SP3DModel.MetadataMgr;
+
+      string displayName, name, showupMsg = "", category, iid, interfaceInfoNamespace, propertyName, propertyDescriber;
+      string propertyInterfaceInformationStr, unitTypeString;
+      Type type;
+      ReadOnlyDictionary<InterfaceInformation> interfactInfo, commonInterfaceInfo;
+      ReadOnlyDictionary<PropertyInformation> properties;
+      ReadOnlyDictionary<BOCInformation> oSystemsByName = metadataManager.BOCs;
+      bool complex, comAccess, displayedOnPage, isvalueRequired, metaDataAccess, metadataReadOnly, SqlAccess;
+      string propertyDisplayName, proPropertyName, uomType;
+      CodelistInformation codeListInfo;
+      InterfaceInformation propertyInterfaceInformation;
+      SP3DPropType sp3dProType;
+      UnitType unitType;
+      string showupPropertyMessage = "";
+      string showupProMsg = "";
+      foreach (string key in oSystemsByName.Keys)
+      {
+        BOCInformation bocInfo = null;
+        oSystemsByName.TryGetValue(key, out bocInfo);
+        displayName = bocInfo.DisplayName;
+        name = bocInfo.Name;
+        type = bocInfo.GetType();
+        interfactInfo = bocInfo.DefiningInterfaces;
+        foreach (string infoKey in interfactInfo.Keys)
+        {
+          InterfaceInformation itemInterfaceInfo;
+          interfactInfo.TryGetValue(infoKey, out itemInterfaceInfo);
+          interfaceInfoNamespace = itemInterfaceInfo.Namespace;
+          category = itemInterfaceInfo.Category;
+          iid = itemInterfaceInfo.IID;
+          properties = itemInterfaceInfo.Properties;
+
+          foreach (string propertyKey in properties.Keys)
+          {
+            PropertyInformation propertyInfo;
+            properties.TryGetValue(propertyKey, out propertyInfo);
+            complex = propertyInfo.Complex;
+
+            codeListInfo = propertyInfo.CodeListInfo;
+            comAccess = propertyInfo.COMAccess;
+            displayedOnPage = propertyInfo.DisplayedOnPropertyPage;
+            propertyDisplayName = propertyInfo.DisplayName;
+            propertyInterfaceInformation = propertyInfo.InterfaceInfo;
+            propertyInterfaceInformationStr = propertyInterfaceInformation.ToString();
+            isvalueRequired = propertyInfo.IsValueRequired;
+            metaDataAccess = propertyInfo.MetadataAccess;
+            metadataReadOnly = propertyInfo.MetadataReadOnly;
+            proPropertyName = propertyInfo.Name;
+            sp3dProType = propertyInfo.PropertyType;
+            SqlAccess = propertyInfo.SQLAccess;
+            unitType = propertyInfo.UOMType;
+            unitTypeString = unitType.ToString();
+
+            showupPropertyMessage = showupPropertyMessage + "\n propertyInfo.key: " + propertyKey + "\n"
+                                  + "CodeListInfo.DisplayName: " + codeListInfo.DisplayName + "\n"
+                                  + "comAccess: " + comAccess + "\n"
+                                  + "propertyDisplayName: " + propertyDisplayName + "\n"
+                                  + "propertyInterfaceInformation: " + propertyInterfaceInformation.Name + "\n"
+                                  + "proPropertyName: " + proPropertyName;
+
+
+          }
+        }
+
+        commonInterfaceInfo = bocInfo.CommonInterfaces;
+        foreach (string comInfoKey in commonInterfaceInfo.Keys)
+        {
+          InterfaceInformation comItemInterfaceInfo;
+          commonInterfaceInfo.TryGetValue(comInfoKey, out comItemInterfaceInfo);
+          interfaceInfoNamespace = comItemInterfaceInfo.Namespace;
+          category = comItemInterfaceInfo.Category;
+          iid = comItemInterfaceInfo.IID;
+          properties = comItemInterfaceInfo.Properties;
+          
+          foreach (string propertyKey in properties.Keys)
+          {
+            PropertyInformation propertyInfo;
+            properties.TryGetValue(propertyKey, out propertyInfo);
+            complex = propertyInfo.Complex;
+           
+            codeListInfo = propertyInfo.CodeListInfo;
+            comAccess = propertyInfo.COMAccess;
+            displayedOnPage = propertyInfo.DisplayedOnPropertyPage;
+            propertyDisplayName = propertyInfo.DisplayName;
+            propertyInterfaceInformation = propertyInfo.InterfaceInfo;
+            propertyInterfaceInformationStr = propertyInterfaceInformation.ToString();
+            isvalueRequired = propertyInfo.IsValueRequired;
+            metaDataAccess = propertyInfo.MetadataAccess;
+            metadataReadOnly = propertyInfo.MetadataReadOnly;
+            proPropertyName = propertyInfo.Name;
+            sp3dProType = propertyInfo.PropertyType;
+            SqlAccess = propertyInfo.SQLAccess;
+            unitType = propertyInfo.UOMType;
+            unitTypeString = unitType.ToString();
+
+            showupProMsg = showupProMsg + "\n propertyInfo.key: " + propertyKey + "\n"
+                                  + "CodeListInfo.DisplayName: " + codeListInfo.DisplayName + "\n"
+                                  + "comAccess: " + comAccess + "\n"
+                                  + "propertyDisplayName: " + propertyDisplayName + "\n"
+                                  + "propertyInterfaceInformation: " + propertyInterfaceInformation.Name + "\n"
+                                  + "proPropertyName: " + proPropertyName;          
+
+
+          }
+
+
+        }
+        
+        showupMsg = showupMsg + "\n bocInfo.key: " + key + "\n"
+                  + "bocInfo.DisplayName: " + displayName + "\n"
+                  + "bocInfo.Name: " + name + "\n"
+                  + "bocInfo.type: " + type.FullName + "\n"
+                 // + "bocInfo.DefiningInterfaces: " + showupPropertyMessage + "\n"
+                  + "bocInfo.commonInterfaceInfo: " + showupProMsg + "\n";                 
+
+      }
+      File.WriteAllText(@"C:\temp\sp3d.txt", showupMsg);
+
+      //System.Windows.Forms.MessageBox.Show(showupMsg);
+      //oSystemsByName
+    }
+
+    public override long GetCount(string objectType, DataFilter filter)
+    {
             try
             {
-                //NOTE: pageSize of 0 indicates that all rows should be returned.
-                IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+              Connect();
 
-                return dataObjects.Count();
+              //NOTE: pageSize of 0 indicates that all rows should be returned.
+              //IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+
+                //return dataObjects.Count();
+              return 5;
             }
             catch (Exception ex)
             {
@@ -46,193 +362,224 @@ namespace iRINGTools.SDK.SP3DDataLayer
 
         public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
         {
-            try
+          throw new Exception("Error while getting a count of type ");
+            //try
+            //{
+            //    List<string> identifiers = new List<string>();
+
+            //    //NOTE: pageSize of 0 indicates that all rows should be returned.
+            //    IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+
+            //    foreach (IDataObject dataObject in dataObjects)
+            //    {
+            //        identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
+            //    }
+
+            //    return identifiers;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.Error("Error in GetIdentifiers: " + ex);
+
+            //    throw new Exception(
+            //      "Error while getting a list of identifiers of type [" + objectType + "].",
+            //      ex
+            //    );
+            //}
+        }
+
+       
+
+       
+
+        protected DataObject GetObjectDefinition(string objectType)
+        {
+          DataDictionary dictionary = GetDictionary();
+          DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+          return objDef;
+        }
+
+        protected Configuration GetConfiguration(DataObject objDef)
+        {
+          string fileName = objDef.objectNamespace + "_" +
+            Regex.Replace(objDef.objectName, @"\(.*\)", string.Empty) + "_" + _communityName + ".xml";
+
+          // use specific config for object type if available
+          if (_configs.ContainsKey(fileName))
+            return _configs[fileName];
+
+          // specific config does not exist, look for higher scope configuration
+          fileName = objDef.objectNamespace + "_" + _communityName + ".xml";
+          if (_configs.ContainsKey(fileName))
+            return _configs[fileName];
+
+          _logger.Error(string.Format("No configuration available for object type [{0}].", objDef.objectName));
+          return null;
+        }
+       
+
+        public override Response Post(IList<IDataObject> dataObjects)
+        {
+          Response response = new Response();
+
+          try
+          {
+            if (dataObjects.Count <= 0)
             {
-                List<string> identifiers = new List<string>();
+              response.Level = StatusLevel.Error;
+              response.Messages.Add("No data objects to update.");
+              return response;
+            }
 
-                //NOTE: pageSize of 0 indicates that all rows should be returned.
-                IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+            string objType = ((GenericDataObject)dataObjects[0]).ObjectType;
+            DataObject objDef = GetObjectDefinition(objType);
+            Configuration config = GetConfiguration(objDef);
 
-                foreach (IDataObject dataObject in dataObjects)
+            Connect();
+
+            foreach (IDataObject dataObject in dataObjects)
+            {
+              KeyProperty keyProp = objDef.keyProperties.FirstOrDefault();
+              string keyValue = Convert.ToString(dataObject.GetPropertyValue(keyProp.keyPropertyName));
+
+              string revision = string.Empty;
+              Map revisionMap = config.Mappings.ToList<Map>().Find(x => x.Destination == (int)Destination.Revision);
+              if (revisionMap != null)
+              {
+                string propertyName = Utilities.ToPropertyName(revisionMap.Column);
+                revision = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+              }
+
+              EqlClient eql = new EqlClient();
+              int objectId = eql.GetObjectId(keyValue, revision, config.Template.ObjectType);
+              iringtools.sdk.sp3ddatalayer.Template template = config.Template;
+
+              if (objectId == 0)  // does not exist, create
+              {
+                string templateName = GetTemplateName(template, objDef, dataObject);
+                int templateId = eql.GetTemplateId(templateName);
+
+                if (templateId == 0)
                 {
-                    identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
+                  Status status = new Status()
+                  {
+                    Identifier = keyValue,
+                    Level = StatusLevel.Error,
+                    Messages = new Messages() { string.Format("Template [{0}] does not exist.", templateName) }
+                  };
+
+                  response.StatusList.Add(status);
+                  continue;
                 }
 
-                return identifiers;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error in GetIdentifiers: " + ex);
+                objectId = 0;
+              }
 
-                throw new Exception(
-                  "Error while getting a list of identifiers of type [" + objectType + "].",
-                  ex
-                );
+              
+
+              
+                Status st = new Status()
+                {
+                  Identifier = keyValue,
+                  Level = StatusLevel.Error,
+                  Messages = new Messages() { string.Format("Object type [{0}] not supported.", template.ObjectType) }
+                };
+
+                response.StatusList.Add(st);
+             
             }
+          }
+          catch (Exception e)
+          {
+            _logger.Error("Error posting data objects: " + e);
+
+            response.Level = StatusLevel.Error;
+            response.Messages.Add("Error posting data objects: " + e);
+          }
+          //finally
+          //{
+          //  Disconnect();
+          //}
+
+          return response;
+        }
+
+        private string GetTemplateName(iringtools.sdk.sp3ddatalayer.Template template, DataObject objectDefinition, IDataObject dataObject)
+        {
+          if ((template.Placeholders == null) || (template.Placeholders.Count() == 0))
+          {
+            return template.Name;
+          }
+
+          template.Placeholders.ToList<Placeholder>().Sort(new PlaceHolderComparer());
+
+          string[] parameters = new string[template.Placeholders.Length];
+          int i = 0;
+
+          foreach (Placeholder placeholder in template.Placeholders)
+          {
+            string propertyName = Utilities.ToPropertyName(placeholder.Value);
+            parameters[i++] = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+          }
+
+          return string.Format(template.Name, parameters);
+        }
+
+        
+
+        public override Response Refresh(string objectType)
+        {
+          return RefreshAll();
+        }
+
+        public override Response RefreshAll()
+        {
+          Response response = new Response();
+
+          try
+          {
+            _dictionary = null;
+            System.IO.File.Delete(_dictionaryPath);
+            GetDictionary();
+            response.Level = StatusLevel.Success;
+          }
+          catch (Exception e)
+          {
+            response.Level = StatusLevel.Error;
+            response.Messages = new Messages() { e.Message };
+          }
+
+          return response;
         }
 
         public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
         {
             throw new NotImplementedException();
-        }
-
-        public override Response Post(IList<IDataObject> dataObjects)
-        {
-            Response response = new Response();
-            string objectType = String.Empty;
-
-            if (dataObjects == null || dataObjects.Count == 0)
-            {
-                Status status = new Status();
-                status.Level = StatusLevel.Warning;
-                status.Messages.Add("Nothing to update.");
-                response.Append(status);
-                return response;
-            }
-
-            try
-            {
-                objectType = ((GenericDataObject)dataObjects.FirstOrDefault()).ObjectType;
-
-                LoadDataDictionary(objectType);
-
-                IList<IDataObject> existingDataObjects = LoadDataObjects(objectType);
-
-                foreach (IDataObject dataObject in dataObjects)
-                {
-                    IDataObject existingDataObject = null;
-
-                    string identifier = GetIdentifier(dataObject);
-                    var predicate = FormKeyPredicate(identifier);
-
-                    if (predicate != null)
-                    {
-                        existingDataObject = existingDataObjects.AsQueryable().Where(predicate).FirstOrDefault();
-                    }
-
-                    if (existingDataObject != null)
-                    {
-                        existingDataObjects.Remove(existingDataObject);
-                    }
-
-                    existingDataObjects.Add(dataObject);
-                }
-
-                response = SaveDataObjects(objectType, existingDataObjects);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error in Post: " + ex);
-
-                throw new Exception(
-                  "Error while posting dataObjects of type [" + objectType + "].",
-                  ex
-                );
-            }
-        }
+        }        
 
         public override Response Delete(string objectType, IList<string> identifiers)
         {
-            // Not gonna do it. Wouldn't be prudent.
-            Response response = new Response();
-            Status status = new Status();
-            status.Level = StatusLevel.Error;
-            status.Messages.Add("Delete not supported by the SP3D DataLayer.");
-            response.Append(status);
-            return response;
+          throw new Exception("Error while getting a count of type ");
+          //// Not gonna do it. Wouldn't be prudent.
+          //Response response = new Response();
+          //Status status = new Status();
+          //status.Level = StatusLevel.Error;
+          //status.Messages.Add("Delete not supported by the SP3D DataLayer.");
+          //response.Append(status);
+          //return response;
         }
 
         public override Response Delete(string objectType, DataFilter filter)
         {
-            // Not gonna do it. Wouldn't be prudent with a filter either.
-            Response response = new Response();
-            Status status = new Status();
-            status.Level = StatusLevel.Error;
-            status.Messages.Add("Delete not supported by the SP3D DataLayer.");
-            response.Append(status);
-            return response;
-        }
-
-        public override DataDictionary GetDictionary()
-        {
-            DataDictionary dataDictionary = new DataDictionary();
-
-            LoadConfiguration();
-
-            List<DataObject> dataObjects = new List<DataObject>();
-            foreach (XElement commodity in _configuration.Elements("commodity"))
-            {
-                string name = commodity.Element("name").Value;
-
-                DataObject dataObject = new DataObject
-                {
-                    objectName = name,
-                    keyDelimeter = "_",
-                };
-
-                List<KeyProperty> keyProperties = new List<KeyProperty>();
-                List<DataProperty> dataProperties = new List<DataProperty>();
-
-                foreach (XElement attribute in commodity.Element("attributes").Elements("attribute"))
-                {
-                    bool isKey = false;
-                    if (attribute.Attribute("isKey") != null)
-                    {
-                        Boolean.TryParse(attribute.Attribute("isKey").Value, out isKey);
-                    }
-
-                    string attributeName = attribute.Attribute("name").Value;
-
-                    DataType dataType = DataType.String;
-                    Enum.TryParse<DataType>(attribute.Attribute("dataType").Value, out dataType);
-
-                    int dataLength = 0;
-                    if (DataDictionary.IsNumeric(dataType))
-                    {
-                        dataLength = 16;
-                    }
-                    else
-                    {
-                        dataLength = 255;
-                    }
-
-                    DataProperty dataProperty = new DataProperty
-                    {
-                        propertyName = attributeName,
-                        dataType = dataType,
-                        dataLength = dataLength,
-                        isNullable = true,
-                        showOnIndex = false,
-                    };
-
-                    if (isKey)
-                    {
-                        dataProperty.isNullable = false;
-                        dataProperty.showOnIndex = true;
-
-                        KeyProperty keyProperty = new KeyProperty
-                        {
-                            keyPropertyName = attributeName,
-                        };
-
-                        keyProperties.Add(keyProperty);
-                    }
-
-                    dataProperties.Add(dataProperty);
-                }
-
-                dataObject.keyProperties = keyProperties;
-                dataObject.dataProperties = dataProperties;
-
-                dataObjects.Add(dataObject);
-            }
-
-            dataDictionary.dataObjects = dataObjects;
-
-            return dataDictionary;
-        }
+          throw new Exception("Error while getting a count of type ");
+          //// Not gonna do it. Wouldn't be prudent with a filter either.
+          //Response response = new Response();
+          //Status status = new Status();
+          //status.Level = StatusLevel.Error;
+          //status.Messages.Add("Delete not supported by the SP3D DataLayer.");
+          //response.Append(status);
+          //return response;
+        }     
 
         private void LoadConfiguration()
         {
@@ -455,68 +802,47 @@ namespace iRINGTools.SDK.SP3DDataLayer
 
         public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
         {
-            try
-            {
-                LoadDataDictionary(objectType);
+          throw new Exception("Error while getting a count of type ");
+            //try
+            //{
+            //    LoadDataDictionary(objectType);
 
-                IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
+            //    IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
 
-                var expressions = FormMultipleKeysPredicate(identifiers);
+            //    var expressions = FormMultipleKeysPredicate(identifiers);
 
-                if (expressions != null)
-                {
-                    _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList();
-                }
+            //    if (expressions != null)
+            //    {
+            //        _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList();
+            //    }
 
-                return _dataObjects;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error in GetList: " + ex);
-                throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
-            }
+            //    return _dataObjects;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.Error("Error in GetList: " + ex);
+            //    throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+            //}
         }
 
-        public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
-        {
-            try
-            {
-                LoadDataDictionary(objectType);
+       
 
-                IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
 
-                // Apply filter
-                if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
-                {
-                    var predicate = filter.ToPredicate(_dataObjectDefinition);
 
-                    if (predicate != null)
-                    {
-                        _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList();
-                    }
-                }
+    
 
-                if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
-                {
-                    throw new NotImplementedException("OrderExpressions are not supported by the SPPID DataLayer.");
-                }
 
-                //Page and Sort The Data
-                if (pageSize > _dataObjects.Count())
-                    pageSize = _dataObjects.Count();
-                _dataObjects = _dataObjects.GetRange(startIndex, pageSize);
 
-                return _dataObjects;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error in GetList: " + ex);
 
-                throw new Exception(
-                  "Error while getting a list of data objects of type [" + objectType + "].",
-                  ex
-                );
-            }
-        }
+
+
+
     }
 }
+
+
+
+
+
+
+

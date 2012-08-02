@@ -8,10 +8,11 @@
     <ProjectGuid>{FF781DFB-FA75-4A26-A936-AF2BF38189C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>iRINGTools.SDK.SP3DDataLayer</RootNamespace>
+    <RootNamespace>iringtools.sdk.sp3ddatalayer</RootNamespace>
     <AssemblyName>SP3DDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,31 +36,58 @@
     <Reference Include="Ciloci.Flee">
       <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
+    <Reference Include="CommonMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\CommonMiddle.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="iRINGLibrary">
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\lib\log4net\log4net.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Ninject">
+    <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject.Extensions.Xml">
+    <Reference Include="Ninject.Extensions.Xml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\lib\nunit\framework\nunit.framework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ReferenceDataMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\ReferenceDataMiddle.dll</HintPath>
+      <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SmartPlantStructureMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\SmartPlantStructureMiddle.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\lib\configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="SystemMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\SystemMiddle.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UtilityLibrary">
       <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
@@ -67,8 +96,35 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration.cs" />
+    <Compile Include="BusinessObjectConfiguration.cs" />
+    <Content Include="12345_000.SP3D.configuration.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Compile Include="Utilities.cs" />
+    <Compile Include="EqlClient.cs" />
     <Compile Include="SP3DDataLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="IMSICDPInterfacesLib">
+      <Guid>{C07A8108-BF64-11D1-BD6B-080036F41703}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
