@@ -351,7 +351,7 @@ namespace org.iringtools.adapter
       if (_dataDictionary == null)
         _dataDictionary = _dataLayer.GetDictionary();
 
-      DataObject dataObject = _dataDictionary.getDataObject(_graphMap.dataObjectName);
+      DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.dataObjectName);
       DataFilter dataFilter = new DataFilter();
       dataFilter.AppendFilter(dataObject.dataFilter);
       dataFilter.AppendFilter(_graphMap.dataFilter);

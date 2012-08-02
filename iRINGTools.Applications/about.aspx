@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<%@ Page Language="C#" %>
+
+<% 
+    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly(typeof(org.iringtools.library.VersionInfo));
+    string major = assembly.GetName().Version.Major.ToString();
+    string minor = assembly.GetName().Version.Minor.ToString();
+    string build = assembly.GetName().Version.Build.ToString();
+    string revision = assembly.GetName().Version.Revision.ToString();
+%>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -11,7 +20,7 @@
 	<div>
             <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank">
             <img src="Content/img/iringtools-logo.png"/>
-            </a><div style="font-family:Arial;font-size:10pt;padding-left:165px;position:relative; top:-17px;">Version 3.00.00</div>
+            </a><div style="font-family:Arial;font-size:10pt;padding-left:165px;position:relative; top:-17px;">Version <%=major%>.<%=minor%>.<%=build%>.<%=revision%></div>
             </div>
 	</div>
 
@@ -64,8 +73,6 @@
             THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             </p>
 	</div>
-        <!-- <div style=""><input type="button" name="close" value="Close"/></div>-->
-
 </body>
 
 </html>

@@ -167,7 +167,6 @@ namespace org.iringtools.adapter.projection
       {
         foreach (IDataObject parentObj in parentObjects)
         {
-
           string objectType = parentObj.GetType().Name;
 
           if (objectType == typeof(GenericDataObject).Name)
@@ -431,8 +430,8 @@ namespace org.iringtools.adapter.projection
 
     protected string GetKeyDelimeter(string objectType)
     {
-        DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
-        return dataObject.keyDelimeter;
+      DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+      return dataObject.keyDelimeter;
     }
 
     protected bool IsFixedIdentifier(string identifier)
@@ -463,43 +462,48 @@ namespace org.iringtools.adapter.projection
 
     private void SetPropertyValue(DataObject objDef, KeyValuePair<String, String> pair, IDataObject dataObject)
     {
-      if (pair.Value != null && pair.Value != String.Empty)
+      DataProperty objProp = objDef.dataProperties.Find(p => p.propertyName.ToLower() == pair.Key.ToLower());
+
+      if (objProp == null)
       {
-        DataProperty objProp = objDef.dataProperties.Find(p => p.propertyName.ToLower() == pair.Key.ToLower());
+        throw new Exception("Object property [" + pair.Key + "] not found.");
+      }
 
-        if (objProp == null)
+      try
+      {
+        if (pair.Value == null)
         {
-          throw new Exception("Object property [" + pair.Key + "] not found.");
-        }
-
-        if (objProp.dataType == DataType.String && objProp.dataLength < pair.Value.ToString().Length)
-        {
-          string value = pair.Value.Substring(0, objProp.dataLength);
-
-          try
+          if (objProp.dataType == DataType.String || objProp.isNullable)
           {
+            dataObject.SetPropertyValue(objProp.propertyName, null);
+          }
+          else
+          {
+            Type t = Type.GetType("System." + objProp.dataType.ToString());
+            dataObject.SetPropertyValue(objProp.propertyName, Activator.CreateInstance(t));
+          }
+        }
+        else if (objProp.dataType == DataType.String)
+        {
+          if (objProp.dataLength > 0 && objProp.dataLength < pair.Value.ToString().Length)
+          {
+            string value = pair.Value.Substring(0, objProp.dataLength);
             dataObject.SetPropertyValue(objProp.propertyName, value);
           }
-          catch (Exception e)
+          else
           {
-            string error = "Error setting value for property [" + objProp.propertyName + "]. " + e;
-            _logger.Error(error);
-            throw new Exception(error);
+            dataObject.SetPropertyValue(objProp.propertyName, pair.Value);
           }
         }
         else
         {
-          try
-          {
-            dataObject.SetPropertyValue(objProp.propertyName, pair.Value);
-          }
-          catch (Exception e)
-          {
-             string error = "Error setting value for property [" + objProp.propertyName + "]. " + e;
-            _logger.Error(error);
-            throw new Exception(error);
-          }
+          dataObject.SetPropertyValue(objProp.propertyName, pair.Value);
         }
+      }
+      catch (Exception e)
+      {
+        string error = "Error setting value for property [" + objProp.propertyName + "]. " + e;
+        _logger.Error(error);
       }
     }
 
@@ -519,12 +523,13 @@ namespace org.iringtools.adapter.projection
         {
           if (firstSegment)
           {
-              firstSegment = false;
+            firstSegment = false;
           }
           else  // add the configured delimeter prior to concatenating subsequent segments of a composite key
           {
             identifier += keyDelimeter;
           }
+
           identifier += dataRecord[keyProperty.keyPropertyName];
         }
       }

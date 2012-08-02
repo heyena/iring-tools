@@ -108,7 +108,7 @@ namespace QMXFGenerator
                   else
                     Console.WriteLine("Success: posted class: " + cls.name[0].value);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                   Utility.WriteString("Error posting class: " + cls.name[0].value + "\n", "error.log", true);
                 }
@@ -155,7 +155,7 @@ namespace QMXFGenerator
                   else
                     Console.WriteLine("Success: posted baseTemplate: " + t.name[0].value);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                   Utility.WriteString("Error posting baseTemplate: " + t.name[0].value + "\n", "error.log", true);
                 }
@@ -196,7 +196,7 @@ namespace QMXFGenerator
                   else
                     Console.WriteLine("Success: posted specializedTemplate: " + t.name[0].value);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                   Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\n", "error.log", true);
                 }
@@ -774,7 +774,7 @@ namespace QMXFGenerator
     private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow, int rowIndex, WorksheetPartWrapper part) 
     {
       int roleIndex = 0;
-      int idx = 0;
+      
       try
       {
         List<RoleQualification> roleQualifications = new List<RoleQualification>();

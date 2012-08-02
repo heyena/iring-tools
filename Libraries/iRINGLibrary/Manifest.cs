@@ -295,6 +295,8 @@ namespace org.iringtools.dxfr.manifest
 
     private string dataTypeField;
 
+    private int dataLengthField;
+
     private string valueField;
 
     private org.iringtools.dxfr.manifest.Class classField;
@@ -391,6 +393,19 @@ namespace org.iringtools.dxfr.manifest
         this.cardinalityField = value;
       }
     }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 7)]
+    public int dataLength
+    {
+      get
+      {
+        return this.dataLengthField;
+      }
+      set
+      {
+        this.dataLengthField = value;
+      }
+    }
   }
 
   [System.Runtime.Serialization.DataContractAttribute(Name = "transferOption", Namespace = "http://www.iringtools.org/dxfr/manifest")]
@@ -434,6 +449,9 @@ namespace org.iringtools.mapping
   [System.Runtime.Serialization.DataContractAttribute(Name = "roleType", Namespace = "http://www.iringtools.org/mapping")]
   public enum RoleType
   {
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    Unknown,
+
     [System.Runtime.Serialization.EnumMemberAttribute()]
     Property,
 
@@ -520,11 +538,11 @@ namespace org.iringtools.mapping
       }
       return graph;
     }
-  }
+  }  
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "graphMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "graphMap")]
   public class GraphMaps : System.Collections.Generic.List<org.iringtools.mapping.GraphMap>
-  {
+  {    
   }
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueListMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueListMap")]
@@ -835,6 +853,8 @@ namespace org.iringtools.mapping
 
     private string dataTypeField;
 
+    private int dataLengthField;
+
     private string valueField;
 
     private string propertyNameField;
@@ -944,6 +964,18 @@ namespace org.iringtools.mapping
       set
       {
         this.classMapField = value;
+      }
+    }
+
+    public int dataLength
+    {
+      get
+      {
+        return this.dataLengthField;
+      }
+      set
+      {
+        this.dataLengthField = value;
       }
     }
   }

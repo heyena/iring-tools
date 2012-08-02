@@ -54,7 +54,7 @@ namespace org.iringtools.legacy
     public List<ValueList> valueLists { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 2)]
-    public string version { get; set; }
+    public string version { get; set; }    
 
     public GraphMap FindGraphMap(string graphName)
     {
@@ -113,7 +113,7 @@ namespace org.iringtools.legacy
       }
 
       return null;
-    }
+    }    
   }
 
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
@@ -131,7 +131,7 @@ namespace org.iringtools.legacy
     public Dictionary<ClassMap, List<TemplateMap>> classTemplateListMaps { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 2)]
-    public string dataObjectMap { get; set; }  // top level data object
+    public string dataObjectMap { get; set; }  // top level data object    
 
     [DataMember(EmitDefaultValue = false, Order = 3)]
     public DataFilter dataFilter { get; set; }

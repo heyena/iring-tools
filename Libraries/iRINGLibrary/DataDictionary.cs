@@ -77,14 +77,14 @@ namespace org.iringtools.library
       return isNumeric;
     }
 
-    public DataObject getDataObject(string name)
+    public DataObject GetDataObject(string name)
     {
       DataObject dataObject = null;
       dataObject = this.dataObjects.FirstOrDefault<DataObject>(o => o.objectName.ToLower() == name.ToLower());
       return dataObject;
     }
 
-    public DataObject getTableObject(string name)
+    public DataObject GetTableObject(string name)
     {
       DataObject dataObject = null;
       dataObject = this.dataObjects.FirstOrDefault<DataObject>(o => o.tableName.ToLower() == name.ToLower());

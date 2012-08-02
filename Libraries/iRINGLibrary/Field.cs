@@ -25,8 +25,21 @@ namespace org.iringtools.library
 		public bool filterable = true;
 
 		[DataMember(Name = "sortable", IsRequired = true, Order = 6)]
-		public bool sortable = true;  
-	
+		public bool sortable = true;
+
+    [DataMember(Name = "keytype", IsRequired = true, Order = 7)]
+    public string keytype = null;
+
+    public void setKeytype(string keytype)
+    {
+      this.keytype = keytype;
+    }
+
+    public string getKeytype()
+    {
+      return keytype;
+    }
+
 		public void setFixed(bool fix)
 		{
 			this.fix = fix;

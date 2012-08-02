@@ -144,8 +144,8 @@
     <Message Text="Preparing build ..." />
     <Exec Condition="!Exists('$(ServicesDir)\Web.config')" 
           Command="Copy $(ServicesDir)\Web_Default.config $(ServicesDir)\Web.config" />
-    <Exec Condition="!Exists('$(ServicesDir)\App_Data\Repositories.xml')" 
-          Command="Copy $(ServicesDir)\App_Data\Repositories_Default.xml $(ServicesDir)\App_Data\Repositories.xml" />
+    <Exec Condition="!Exists('$(ServicesDir)\App_Data\Federation.xml')" 
+          Command="Copy $(ServicesDir)\App_Data\Federation_Default.xml $(ServicesDir)\App_Data\Federation.xml" />
     <Exec Condition="!Exists('$(ServicesDir)\App_Data\config.ttl')" 
           Command="Copy $(ServicesDir)\App_Data\config_Default.ttl $(ServicesDir)\App_Data\config.ttl" />
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
