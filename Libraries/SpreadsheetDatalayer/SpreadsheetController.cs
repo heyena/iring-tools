@@ -92,6 +92,7 @@ namespace org.iringtools.adapter.datalayer
             continue;
           string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], form["Scope"], form["Application"]);
 
+
           SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {
             Location = fileLocation
@@ -136,7 +137,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {        
         byte[] bytes = _repository.getExcelFile(scope, application);
-        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml", string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
       }
       catch (Exception ioEx)
       {
@@ -148,6 +149,7 @@ namespace org.iringtools.adapter.datalayer
     private SpreadsheetConfiguration GetConfiguration(string context, string endpoint)
     {
       string key = string.Format(_keyFormat, context, endpoint);
+
 
       if (Session[key] == null)
       {

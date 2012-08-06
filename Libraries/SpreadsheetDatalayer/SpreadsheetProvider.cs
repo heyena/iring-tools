@@ -17,7 +17,7 @@ namespace org.iringtools.adapter.datalayer
     private string _configurationPath = string.Empty;
     private SpreadsheetConfiguration _configuration = null;
     private SpreadsheetDocument _document = null;
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetController));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetProvider));
     //private Stream _stream = null;
 
     public SpreadsheetProvider(SpreadsheetConfiguration configuration)
@@ -98,7 +98,6 @@ namespace org.iringtools.adapter.datalayer
 
           //C:\iring-tools\branches\2.4.x
           //_document = SpreadsheetDocument.Open("C:\\iring-tools\\branches\\2.4.x\\Test890.xlsx", false);
-
         }
         DefinedNames definedNames = _document.WorkbookPart.Workbook.DefinedNames;
         if (definedNames != null)
