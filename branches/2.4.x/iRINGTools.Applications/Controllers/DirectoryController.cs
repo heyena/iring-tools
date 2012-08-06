@@ -58,10 +58,12 @@ namespace org.iringtools.web.controllers
               _logger.Debug("In ScopesNode case block");
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+              
+              var contexts = _repository.GetScopes();
 
-              if (_repository.GetScopes() != null)
+              if (contexts != null)
               {
-                foreach (ScopeProject scope in _repository.GetScopes())
+                foreach (ScopeProject scope in contexts)
                 {
                   _logger.Debug("Scope: " + scope.Name);
 
