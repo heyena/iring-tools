@@ -2158,7 +2158,10 @@ namespace org.iringtools.adapter
       {
         DataDictionary dictionary = GetDictionary(projectName, applicationName);
         DataObject dataObject = dictionary.GetDataObject(resourceName);
-        filter.AppendFilter(dataObject.dataFilter);
+
+        if (dataObject != null)
+          filter.AppendFilter(dataObject.dataFilter);
+
         _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
         _logger.Debug("Initializing DataLayer.");
