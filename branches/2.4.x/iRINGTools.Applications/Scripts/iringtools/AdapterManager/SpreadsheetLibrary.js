@@ -7,62 +7,62 @@
 */
 AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
 
-    fileUpload: true,
-    labelWidth: 150, // label settings here cascade unless    
-    method: 'POST',
-    bodyStyle: 'padding:5 5 5 5',
+  fileUpload: true,
+  labelWidth: 150, // label settings here cascade unless    
+  method: 'POST',
+  bodyStyle: 'padding:5 5 5 5',
 
-    border: false, // removing the border of the form
+  border: false, // removing the border of the form
 
-    defaultType: 'textfield',
-    buttonAlign: 'left', // buttons aligned to the left            
-    autoDestroy: false,
+  defaultType: 'textfield',
+  buttonAlign: 'left', // buttons aligned to the left            
+  autoDestroy: false,
 
-    scope: null,
-    application: null,
-    dataLayer: null,
-    assembly: null,   
+  scope: null,
+  application: null,
+  dataLayer: null,
+  assembly: null,
 
-    /**
-    * initComponent
-    * @protected
-    */
-    initComponent: function () {
+  /**
+  * initComponent
+  * @protected
+  */
+  initComponent: function () {
 
-        this.addEvents({
-            uploaded: true,
-            downloaded: true
-        });
+    this.addEvents({
+      uploaded: true,
+      downloaded: true
+    });
 
-        var scope = "";
+    var scope = "";
 
-        if (this.scope != null) {
-            scope = this.scope;
-        }
+    if (this.scope != null) {
+      scope = this.scope;
+    }
 
-        var application = "";
-        var dataLayer = "";
-        var assembly = "";
+    var application = "";
+    var dataLayer = "";
+    var assembly = "";
 
-        if (this.application != null) {
-            application = this.application
-            dataLayer = this.dataLayer;
-        }
+    if (this.application != null) {
+      application = this.application
+      dataLayer = this.dataLayer;
+    }
 
-        this.bbar = [
+    this.bbar = [
           '->',
           {
-              xtype: 'button',
-              text: 'Upload',
-              scope: this, 
-              handler: this.onUpload,
-              icon: 'Content/img/16x16/document-up.png'
-            }
+            xtype: 'button',
+            text: 'Upload',
+            scope: this,
+            handler: this.onUpload,
+            icon: 'Content/img/16x16/document-up.png'
+          }
 
-          //{ xtype: 'button', text: 'Cancel', scope: this, handler: this.onReset }
+    //{ xtype: 'button', text: 'Cancel', scope: this, handler: this.onReset }
         ]
 
-        this.items = [
+    this.items = [
             { xtype: 'hidden', name: 'Scope', value: this.Scope },
             { xtype: 'hidden', name: 'Application', value: this.Application },
             { xtype: 'hidden', name: 'DataLayer', value: this.datalayer },
@@ -71,39 +71,39 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
               name: 'SourceFile',
               emptyText: 'Select a Spreadsheet',
               fieldLabel: 'Spreadsheet Source',
-              width:232,
+              width: 232,
               buttonText: null,
               buttonCfg: {
-                  iconCls: 'upload-icon'
+                iconCls: 'upload-icon'
               }
             },
            { xtype: 'checkbox', name: 'Generate', fieldLabel: 'Generate Configuration', checked: true }
         ];
 
-        // super
-        AdapterManager.SpreadsheetSourcePanel.superclass.initComponent.call(this);
-    },
+    // super
+    AdapterManager.SpreadsheetSourcePanel.superclass.initComponent.call(this);
+  },
 
-    onUpload: function () {
-        that = this;
-        this.getForm().submit({
-            waitMsg: 'Uploading file...',
-            url: this.url,
-            method: 'POST',
-            success: function (f, a) {
-                that.fireEvent('Uploaded', that, f.items.items[3].value);
-            },
-            failure: function (f, a) {
-                Ext.Msg.alert('Warning', 'Error uploading file "' + f.items.items[3].value + '"!');
-            }
+  onUpload: function () {
+    that = this;
+    this.getForm().submit({
+      waitMsg: 'Uploading file...',
+      url: this.url,
+      method: 'POST',
+      success: function (f, a) {
+        that.fireEvent('Uploaded', that, f.items.items[3].value);
+      },
+      failure: function (f, a) {
+        Ext.Msg.alert('Warning', 'Error uploading file "' + f.items.items[3].value + '"!');
+      }
 
-        });
-    },
+    });
+  },
 
-    onReset: function () {
-        this.getForm().reset();
-        this.fireEvent('Cancel', this);
-    }
+  onReset: function () {
+    this.getForm().reset();
+    this.fireEvent('Cancel', this);
+  }
 
 });
 
@@ -167,11 +167,11 @@ AdapterManager.SpreadsheetWorksheetSelection = Ext.extend(Ext.FormPanel, {
     this.bbar = [
       '->',
       {
-          xtype: 'button',
-          text: 'Upload',
-          scope: this, handler: 
+        xtype: 'button',
+        text: 'Upload',
+        scope: this, handler:
           this.onUpload,
-          icon: 'Content/img/16x16/document-up.png'
+        icon: 'Content/img/16x16/document-up.png'
       },
       { xtype: 'button', text: 'Cancel', scope: this }
     ]
@@ -236,7 +236,7 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
   * initComponent
   * @protected
   */
-  initComponent: function () {   
+  initComponent: function () {
 
     this.addEvents({
       save: true,
@@ -319,7 +319,7 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
     AdapterManager.SpreadsheetLibraryPanel.superclass.initComponent.call(this);
   },
 
-  buildToolbar: function () {    
+  buildToolbar: function () {
     return [
       {
         xtype: 'button',
@@ -346,7 +346,7 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
         scope: this,
         handler: function (button) {
           var that = this;
-          var downloadUrl = '/spreadsheet/export';
+          var downloadUrl = 'spreadsheet/export';
           var scopeName = this.scope;
           var appName = this.application;
           Ext.Ajax.request({
@@ -355,21 +355,21 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
             success: function (response, request) {
               var htmlString = '<form action= ' + downloadUrl + ' target=\"_blank\" method=\"post\" style=\"display:none\">' +
                 '<input type=\"text\" name=\"scope\" value=' + scopeName +
-                '></input><input type=\"text\" name=\"application\" value=' + appName + 
+                '></input><input type=\"text\" name=\"application\" value=' + appName +
                 '></input><input type=\"submit\"></input></form>'
-              button.el.insertHtml(            
+              button.el.insertHtml(
                   'beforeBegin',
-                  htmlString              
-              ).submit();              
+                  htmlString
+              ).submit();
             },   // function called on success
             failure: function (response, request) {
               showDialog(500, 150, 'Error', 'The file does not exist. Need to upload a spreadsheet first.', Ext.Msg.OK, null);
             },
             params: {
               scope: scopeName,
-              application: appName              
+              application: appName
             }
-            })         
+          })
         }        
       }
     ]
