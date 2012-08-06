@@ -75,7 +75,8 @@ namespace org.iringtools.adapter.datalayer
       
       try
       {
-        DocumentBytes pathObject = _client.Get<DocumentBytes>(String.Format("/{0}/{1}/resourcedata", scope, application), true);
+        var reluri = String.Format("/{0}/{1}/resourcedata", scope, application);
+        DocumentBytes pathObject = _client.Get<DocumentBytes>(reluri, true);
         
         return pathObject.Content;       
       }      
@@ -100,7 +101,7 @@ namespace org.iringtools.adapter.datalayer
 
     public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile)
     {
-      using (InitializeProvider(configuration))
+      using(InitializeProvider(configuration))      
       {
         return _provider.ProcessConfiguration(configuration, inputFile);
       }

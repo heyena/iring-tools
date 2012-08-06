@@ -322,7 +322,7 @@ namespace org.iringtools.utility
         if (relativeUri.Contains(" ")) HttpUtility.HtmlEncode(relativeUri);
 
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Getting data from URL [uri]...", uri));
+        _logger.Debug(string.Format("Getting data from URL {0}...", uri));
 
         WebRequest request = HttpWebRequest.Create(uri);
 
