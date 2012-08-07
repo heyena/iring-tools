@@ -72,6 +72,7 @@
     <Compile Include="DataRelationships.cs" />
     <Compile Include="Directory.cs" />
     <Compile Include="DocumentBytes.cs" />
+    <Compile Include="Federation.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="GenericDataObject.cs" />
     <Compile Include="Grid.cs" />
@@ -92,7 +93,6 @@
     <Compile Include="Queries.cs" />
     <Compile Include="QXF.cs" />
     <Compile Include="RefDataEntities.cs" />
-    <Compile Include="Repositories.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="ServiceClient.cs" />

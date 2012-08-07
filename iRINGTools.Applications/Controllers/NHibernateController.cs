@@ -34,7 +34,7 @@ namespace org.iringtools.web.Controllers
 
     private DatabaseDictionary GetDbDictionary(string contextName, string endpoint, string baseUrl)
     {
-      string key = string.Format(adapter_PREFIX + _keyFormat, contextName, endpoint);
+      string key = adapter_PREFIX + string.Format(_keyFormat, contextName, endpoint);
       DatabaseDictionary databaseDictionary = null;
       bool getDbDict = false;
 
