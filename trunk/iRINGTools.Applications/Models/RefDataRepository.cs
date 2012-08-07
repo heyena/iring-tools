@@ -97,6 +97,12 @@ namespace iRINGTools.Web.Models
       return _client.Get<QMXF>(relativeUri);
     }
 
+    public Federation GetFederation()
+    {
+      relativeUri = "/federation";
+      return _referenceDataServiceClient.Get<Federation>(relativeUri);
+    }
+
     public Entities GetClassMembers(string classId)
     {
       relativeUri = string.Format("/classes/{0}/members", classId);
