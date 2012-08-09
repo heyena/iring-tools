@@ -29,7 +29,10 @@
       readOnly: true
     }, {
       name: 'propertyName',
-      fieldLabel: 'Property Name (editable)'
+      fieldLabel: 'Property Name (editable)',
+      validationEvent: "blur",
+      regex: new RegExp("^[a-zA-Z_][a-zA-Z0-9_]*$"),
+      regexText: '<b>Error</b></br>Invalid Value. A valid value should start with alphabet or "_", and follow by any number of "_", alphabet, or number characters'
     }, {
       name: 'dataType',
       fieldLabel: 'Data Type',
@@ -66,9 +69,16 @@
         text: 'Apply',
         tooltip: 'Apply the current changes to the data objects tree',
         handler: function (f) {
-          var propertyName = me.getForm().findField('propertyName').getValue();
-          me.node.data.property.propertyName = propertyName;
-          me.node.set('text', propertyName);
+          var propertyNameField = me.getForm().findField('propertyName');
+          var propertyName = propertyNameField.getValue();
+
+          if (propertyNameField.validate()) {
+            me.node.data.property.propertyName = propertyName;
+            me.node.set('text', propertyName);
+          }
+          else {
+            showDialog(400, 100, 'Warning', "Property Name is not valid. A valid property name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);           
+          }
         }
       }, {
         xtype: 'tbspacer',

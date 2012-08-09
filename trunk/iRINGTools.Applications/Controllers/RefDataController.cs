@@ -139,10 +139,12 @@ namespace org.iringtools.web.controllers
 
     private List<JsonTreeNode> GetClassMembers(string id)
     {
+      Repository repository = null;
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       if (!string.IsNullOrEmpty(id))
       {
-        Entities dataEntities = _refdataRepository.GetClassMembers(id);
+        Entities dataEntities = _refdataRepository.GetClassMembers(id, repository);
+        
         foreach (Entity entity in dataEntities)
         {
           TreeNode node = new TreeNode

@@ -170,7 +170,7 @@
           labelWidth: 150,
           fieldLabel: 'Database Instance',
           value: 'default',
-          allowBlank: false
+          allowBlank: true
         },
         {
           xtype: 'textfield',

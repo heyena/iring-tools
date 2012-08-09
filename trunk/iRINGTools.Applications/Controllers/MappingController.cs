@@ -652,6 +652,46 @@ namespace org.iringtools.web.controllers
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult MakeReference(FormCollection form)
+    {
+      try
+      {
+        SetContextEndpoint(form);
+        //string mappingNode = form["mappingNode"];
+        //string scope = form["scope"];
+        //string app = form["app"];
+        string graph = form["graph"];
+        string classId = form["classId"];
+        string roleName = form["roleName"];
+        int index = Convert.ToInt16(form["index"]);
+
+        Mapping mapping = GetMapping(_baseUrl);
+        GraphMap graphMap = mapping.FindGraphMap(graph);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+        TemplateMap tMap = ctm.templateMaps[index];
+        RoleMap rMap = tMap.roleMaps.Find(c => c.name == roleName);
+
+        if (rMap != null)
+        {
+          rMap.type = RoleType.Reference;
+          rMap.propertyName = null;
+          rMap.valueListName = null;
+        }
+        else
+        {
+          throw new Exception("Error creating Reference RoleMap...");
+        }
+      }
+      catch (Exception ex)
+      {
+        string msg = ex.ToString();
+        _logger.Error(msg);
+        return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
     private JsonTreeNode CreateGraphNode(string context, GraphMap graph, ClassMap classMap)
     {
       JsonTreeNode graphNode = new JsonTreeNode
@@ -915,7 +955,7 @@ namespace org.iringtools.web.controllers
         rMapPropertyName = string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
       }
       return rMapPropertyName;
-    }
+    }    
 
     // added string baseUrl = form["baseUrl"];   
     public JsonResult MapValueList(FormCollection form)

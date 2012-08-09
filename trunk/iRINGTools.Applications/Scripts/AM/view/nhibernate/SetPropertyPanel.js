@@ -29,7 +29,10 @@
       readOnly: true
     }, {
       name: 'propertyName',
-      fieldLabel: 'Property Name (editable)'
+      fieldLabel: 'Property Name (editable)',
+      validationEvent: "blur",
+      regex: new RegExp("^[a-zA-Z_][a-zA-Z0-9_]*$"),
+      regexText: '<b>Error</b></br>Invalid Value. A valid value should start with alphabet or "_", and follow by any number of "_", alphabet, or number characters'
     }, {
       name: 'dataType',
       fieldLabel: 'Data Type',

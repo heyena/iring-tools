@@ -7,6 +7,7 @@
   from: null,
   record: null,
   node: null,
+  state: null,
   height: 291,
   width: 460,
   bodyPadding: 1,
