@@ -55,6 +55,7 @@ namespace org.iringtools.web.controllers
         int.TryParse(form["limit"], out limit);
         string currFilter = filter + "/" + sort + "/" + dir;
         DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
+        bool found = false;
 
         if (((DataDictionary)Session[_key]) == null)
           GetDatadictionary(context, endpoint);
@@ -73,6 +74,10 @@ namespace org.iringtools.web.controllers
                          dataIndex = dataProperty.propertyName,
                          sortable = true
                        };
+
+            if (dataProperty.keyType == KeyType.assigned || dataProperty.keyType == KeyType.foreign)
+              field.keytype = "key";
+
             fields.Add(field);
           }
         }
@@ -83,11 +88,11 @@ namespace org.iringtools.web.controllers
 
         foreach (DataItem dataItem in dataItems.items)
         {
-          bool found = false;
           var rowData = new Dictionary<string, object>();
 
           foreach (Field field in fields)
           {
+            found = false;          
             foreach (KeyValuePair<string, string> property in dataItem.properties)
             {
               if (field.dataIndex.ToLower() == property.Key.ToLower())

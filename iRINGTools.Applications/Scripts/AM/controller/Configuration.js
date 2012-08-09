@@ -107,7 +107,16 @@
 
     if (dataNode) {
       var treeNodeProps = node.data.property;
-      var objNam = form.findField('objectName').getValue();
+      var objectNameField = form.findField('objectName');
+      var objNam;
+
+      if (objectNameField.validate())
+        objNam = objectNameField.getValue();
+      else {
+        showDialog(400, 100, 'Warning', "Object Name is not valid. A valid object name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
+        return;
+      }
+     
       var oldObjNam = treeNodeProps['objectName'];
       treeNodeProps.tableName = form.findField('tableName').getValue();
       treeNodeProps.objectName = objNam;

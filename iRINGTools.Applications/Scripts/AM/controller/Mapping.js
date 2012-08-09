@@ -70,6 +70,9 @@
     'menuitem[action=makepossessor]': {
         click: this.makePossessor
       },
+    'menuitem[action=makereference]': {
+      click: this.makereference
+    },
     'menuitem[action=resetmapping]': {
         click: this.resetMapping
       },
@@ -221,6 +224,34 @@
         endpoint = tree.endpoint;
     Ext.Ajax.request({
       url: 'mapping/makePossessor',
+      method: 'POST',
+      params: {
+        contextName: contextName,
+        endpoint: endpoint,
+        baseUrl: baseUrl,
+        graphName: graphName,
+        roleName: getLastXString(node.data.id, 1),
+        classId: node.parentNode.parentNode.data.identifier,
+        index: index
+      },
+      success: function () {
+        tree.onReload();
+      },
+      failure: function () { }
+    });
+    tree.rolemapMenu.hide();
+  },
+
+  makereference: function () {
+    var tree = this.getMappingPanel(),
+        node = tree.getSelectedNode(),
+        index = node.parentNode.parentNode.indexOf(node.parentNode),
+        graphName = tree.graphName,
+        contextName = tree.contextName,
+        baseUrl = tree.baseUrl,
+        endpoint = tree.endpoint;
+    Ext.Ajax.request({
+      url: 'mapping/makereference',
       method: 'POST',
       params: {
         contextName: contextName,

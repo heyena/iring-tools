@@ -169,26 +169,27 @@
               icon: 'Content/img/16x16/document-new.png',
               scope: this,
               action: 'addclassmap'
-          },
-          {
+          }, {
               text: 'Make Possessor',
               // icon: 'Content/img/16x16/view-refresh.png',
               scope: this,
               action: 'makepossessor'
-          },
-          {
+          }, {
+            text: 'Make Reference',            
+            // icon: '',
+            scope: this,
+            action: 'makereference'
+          }, {
               text: 'Map Property',
               // icon: '',
               scope: this,
               action: 'mapproperty'
-          },
-          {
+          }, {
               text: 'Map ValueList',
               // icon: '',
               scope: this,
               action: 'mapvaluelist'
-          },
-          {
+          }, {
               text: 'Reset Mapping',
               //icon: '',
               scope: this,

@@ -55,56 +55,7 @@ namespace org.iringtools.web.Controllers
       Session[key] = databaseDictionary;
 
       return (DatabaseDictionary)Session[key];
-    }
-
-    public ActionResult UpdateKeyProperties(FormCollection form)
-    {
-      try
-      {
-      }
-      catch
-      {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-
-    }
-
-    public ActionResult AvailableProperties(FormCollection form)
-    {
-      try
-      {
-      }
-      catch
-      {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-  }
-
-    public ActionResult SelectedProperties(FormCollection form)
-    {
-      try
-      {
-      }
-      catch
-      {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-    }
-
-    public ActionResult UpdateDataProperties(FormCollection form)
-    {
-      try
-      {
-      }
-      catch
-      {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-    }   
+    }       
 
     public ActionResult DBObjects(FormCollection form)
     {

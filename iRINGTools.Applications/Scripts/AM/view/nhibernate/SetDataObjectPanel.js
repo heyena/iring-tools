@@ -45,6 +45,9 @@
       xtype: 'textfield',
       name: 'objectName',
       fieldLabel: 'Object Name',
+      validationEvent: "blur",
+      regex: new RegExp("^[a-zA-Z_][a-zA-Z0-9_]*$"),
+      regexText: '<b>Error</b></br>Invalid Value. A valid value should start with alphabet or "_", and follow by any number of "_", alphabet, or number characters',
       value: treeNode.data.property.objectName
     }, {
       xtype: 'textfield',
