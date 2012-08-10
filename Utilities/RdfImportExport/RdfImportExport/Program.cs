@@ -102,7 +102,7 @@ namespace RdfImportExport
     private static void DoExport()
     {
       MicrosoftAdoManager msStore = new MicrosoftAdoManager(dbServer, dbName, dbUser, dbPassword);
-      IGraph sqlGraph = null;
+      IGraph graph = null;
       IEnumerable<Uri> graphUris = msStore.ListGraphs();
       PrettyRdfXmlWriter rdfXmlWriter = new PrettyRdfXmlWriter();
       if (String.IsNullOrEmpty(graphUri))
@@ -114,14 +114,14 @@ namespace RdfImportExport
           bool exist = !msStore.GetGraphID(new Uri(graphUri)).Equals(null);
           if (exist)
           {
-              msStore.LoadGraph(sqlGraph, new Uri(graphUri));
-              sqlGraph.BaseUri = new Uri(graphUri);
+            msStore.LoadGraph(graph, graphUri);
+              graph.BaseUri = new Uri(graphUri);
           }
           else
               throw new Exception(graphUri + " does not exist in Sql store ...");
       }
 
-      rdfXmlWriter.Save(sqlGraph, rdfFullFilename);
+      rdfXmlWriter.Save(graph, rdfFullFilename);
      // msStore.SaveGraph(sqlGraph);
 
      // if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";

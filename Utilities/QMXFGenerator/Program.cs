@@ -408,36 +408,22 @@ namespace QMXFGenerator
       }
     }
 
-    private static string GenerateID(string registryBase, string name)
+       private static string GenerateID(string registryBase, string name)
     {
       try
       {
         string identifier = String.Empty;
 
-        WebCredentials webCredentials = null;
-        if (_idsADICredentials != String.Empty)
+
+        if (!string.IsNullOrEmpty(registryBase))
+          return string.Format("{0}R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", "").Replace("-", "").ToUpper());
+        else
         {
-          webCredentials = new WebCredentials(_idsADICredentials);
-          webCredentials.Decrypt();
+           Utility.WriteString("Failed to create id for "+ name , "error.log");
+          throw new Exception("CreateIdsAdiId: Failed to create id ");
+
         }
-
-        WebProxy webProxy = null;
-        if (!string.IsNullOrEmpty(_proxyHost))
-        {
-          WebCredentials proxyCredentials = new WebCredentials(_proxyCredentials);
-          if (proxyCredentials.isEncrypted)
-            proxyCredentials.Decrypt();
-          webProxy = new WebProxy(_proxyHost, Convert.ToInt32(_proxyPort));
-          webProxy.Credentials = proxyCredentials.GetNetworkCredential();
-        }
-        string baseServiceUrl = "https://secure.ids-adi.org/registry?registry-op=acquire&registry-base=" +
-                              HttpUtility.UrlEncode(registryBase) + "&registry-comment=";
-        string serviceUrl = baseServiceUrl + HttpUtility.UrlEncode(name);
-        WebHttpClient webClient = new WebHttpClient(serviceUrl, webCredentials.GetNetworkCredential(), webProxy);
-
-        RegistryResult registryResult = webClient.Get<RegistryResult>(serviceUrl, false);
-
-        return registryResult.registryid;
+      
       }
       catch (Exception ex)
       {

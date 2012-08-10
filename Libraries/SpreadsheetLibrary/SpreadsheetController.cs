@@ -79,7 +79,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
 
-        string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer";
+        string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDataLayer, SpreadsheetLibrary";
         string savedFileName = string.Empty;
 
         HttpFileCollectionBase files = Request.Files;

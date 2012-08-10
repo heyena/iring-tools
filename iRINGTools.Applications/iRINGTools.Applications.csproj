@@ -2496,6 +2496,7 @@
     <Content Include="Scripts\extjs407\resources\themes\images\gray\window\icon-warning.gif" />
     <Content Include="Scripts\extjs407\resources\themes\images\gray\window\window-default-corners.gif" />
     <Content Include="Scripts\extjs407\resources\themes\images\gray\window\window-default-sides.gif" />
+    <Content Include="Views\Directory\Index.ascx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -2509,7 +2510,6 @@
     <Content Include="Scripts\AM\AM.js" />
     <Content Include="Scripts\AM\store\SearchStore.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
-    <Content Include="Views\Directory\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>

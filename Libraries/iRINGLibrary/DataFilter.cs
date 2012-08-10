@@ -63,9 +63,7 @@ namespace org.iringtools.library
     {
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
       dbDictionary.Provider = String.Empty;
-#if !SILVERLIGHT
       dbDictionary.dataObjects = Utility.CloneDataContractObject<List<DataObject>>(dataDictionary.dataObjects);
-#endif
       return ToSqlWhereClause(dbDictionary, tableName, objectAlias);
     }
 
@@ -73,9 +71,7 @@ namespace org.iringtools.library
     {
       _provider = dbDictionary.Provider;
       DataObject dataObject = null;
-#if !SILVERLIGHT
       dataObject = dbDictionary.dataObjects.Find(x => x.tableName.ToUpper() == tableName.ToUpper());
-#endif
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;
 
@@ -112,9 +108,7 @@ namespace org.iringtools.library
           {
             string propertyName = orderExpression.PropertyName;
             DataProperty dataProperty = null;
-#if !SILVERLIGHT
             dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
-#endif
             string orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
             whereClause.Append(orderStatement);
           }
