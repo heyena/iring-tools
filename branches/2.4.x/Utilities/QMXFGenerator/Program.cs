@@ -416,7 +416,7 @@ namespace QMXFGenerator
 
 
         if (!string.IsNullOrEmpty(registryBase))
-          return string.Format("{0}#R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", ""));
+          return string.Format("{0}R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", "").Replace("-", ""));
         else
         {
            Utility.WriteString("Failed to create id for "+ name , "error.log");
