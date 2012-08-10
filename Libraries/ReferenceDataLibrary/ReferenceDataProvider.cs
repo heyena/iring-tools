@@ -1948,7 +1948,7 @@ namespace org.iringtools.refdata
     private string CreateNewGuidId(string RegistryBase)//, string name)
     {
       if(!string.IsNullOrEmpty(RegistryBase))
-      return string.Format("{0}#R{1}",RegistryBase, Guid.NewGuid().ToString().Replace("_",""));
+      return string.Format("{0}R{1}",RegistryBase, Guid.NewGuid().ToString().Replace("_","").Replace("-","").ToUpper());
       else
       {
         _logger.Error("Failed to create id:");
