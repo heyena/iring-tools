@@ -2516,7 +2516,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Scripts\AM\ux\form\" />
     <Folder Include="Scripts\AM\ux\grid\" />
     <Folder Include="Views\Shared\" />

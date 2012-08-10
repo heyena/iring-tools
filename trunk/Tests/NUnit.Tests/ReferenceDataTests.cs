@@ -11,7 +11,7 @@ using System.Xml;
 using System.Linq;
 using System.Xml.Linq;
 using System;
-using System.Configuration;
+using StaticDust.Configuration;
 using NUnit.Framework;
 
 namespace NUnit.Tests
@@ -25,15 +25,28 @@ namespace NUnit.Tests
 
         public ReferenceDataTests()
         {
-            _settings = new ReferenceDataSettings();
-            _settings.AppendSettings(ConfigurationManager.AppSettings);
-          //  _settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
-            _baseDirectory = Directory.GetCurrentDirectory();
-            _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
-            _settings["BaseDirectoryPath"] = _baseDirectory;
-            Directory.SetCurrentDirectory(_baseDirectory);
-            _refdataProvider = new ReferenceDataProvider(_settings);
+          _baseDirectory = Directory.GetCurrentDirectory();
+          _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
+          Directory.SetCurrentDirectory(_baseDirectory);
+          AdapterSettings adapterSettings = new AdapterSettings();
+          adapterSettings.AppendSettings(new AppSettingsReader("App.config"));
+          _settings = new ReferenceDataSettings();
+          _settings.AppendSettings((ServiceSettings)adapterSettings);
+          _settings["BaseDirectoryPath"] = _baseDirectory;
+          _refdataProvider = new ReferenceDataProvider(_settings);
         }
+
+        //public ReferenceDataTests()
+        //{
+        //    _settings = new ReferenceDataSettings();
+        //    _settings.AppendSettings(ConfigurationManager.AppSettings);
+        //  //  _settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
+        //    _baseDirectory = Directory.GetCurrentDirectory();
+        //    _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
+        //    _settings["BaseDirectoryPath"] = _baseDirectory;
+        //    Directory.SetCurrentDirectory(_baseDirectory);
+        //    _refdataProvider = new ReferenceDataProvider(_settings);
+        //}
 
         [Test]
         public void Search()

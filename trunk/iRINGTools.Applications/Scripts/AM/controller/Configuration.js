@@ -63,6 +63,9 @@
       'button[action=uploadspreadsheet]': {
         click: this.onUploadspreadsheet
       },
+      'button[action=downloadspreadsheet]': {
+        click: this.onDownloadspreadsheet
+      },
       'button[action=savespreadsheet]': {
         click: this.onSaveSpreadsheet
       },
@@ -116,7 +119,7 @@
         showDialog(400, 100, 'Warning', "Object Name is not valid. A valid object name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
         return;
       }
-     
+
       var oldObjNam = treeNodeProps['objectName'];
       treeNodeProps.tableName = form.findField('tableName').getValue();
       treeNodeProps.objectName = objNam;
@@ -265,7 +268,7 @@
         app: endpoint,
         tree: JSON.stringify(treeProperty)
       },
-      success: function (response, request) {        
+      success: function (response, request) {
         var rtext = response.responseText;
         var error = 'SUCCESS = FALSE';
         var index = rtext.toUpperCase().indexOf(error);
@@ -279,7 +282,7 @@
           var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
           showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
           content.body.unmask();
-        }        
+        }
       },
       failure: function (response, request) {
         showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
@@ -787,6 +790,7 @@
         var conf = {
           context: contextName,
           endpoint: endpoint,
+          baseurl: baseUrl,
           datalayer: datalayer,
           url: 'spreadsheet/configure'
         };
@@ -835,6 +839,10 @@
           }
         }, this);
 
+        scpanel.on('save', function () {
+          dirtree.onReload(node);
+        }, this);
+
         var exist = content.items.map[panconf.id];
         if (exist == null) {
           content.add(scpanel).show();
@@ -879,17 +887,18 @@
     return selectedItems;
   },
 
-  onSaveSpreadsheet: function () {
-    var tree = this.getDirTree(),
-        node = tree.getSelectedNode();
-    var contextName = node.data.record.context;
-    var datalayer = node.data.record.Assembly;
-    var endpointName = node.data.record.endpoint;
+  onSaveSpreadsheet: function (btn, evt) {
+    var thisForm = btn.up('form');
+    var contextName = thisForm.contextName;
+    var endpoint = thisForm.endpoint;
+    var datalayer = thisForm.DataLayer;
+    var baseUrl = thisForm.baseurl;
+    var me = this;
     Ext.Ajax.request({
       url: 'spreadsheet/configure',    // where you wanna post
       method: 'POST',
       success: function (f, a) {
-
+        navpanel.onReload();
       },   // function called on success
       failure: function (f, a) {
 
@@ -897,29 +906,68 @@
       params: {
         context: contextName,
         endpoint: endpointName,
+        baseurl: baseUrl,
         DataLayer: datalayer
       }
     });
   },
 
-  onUploadspreadsheet: function (panel) {
-    var tree = this.getDirTree(),
-        node = tree.getSelectedNode();
-    var contextName = node.data.record.context;
-    var datalayer = node.data.record.DataLayer;
-    var endpoint = node.data.record.endpoint;
+  onUploadspreadsheet: function (btn, evt) {
+    var thisForm = btn.up('form');
+    var contextName = thisForm.contextName;
+    var endpoint = thisForm.endpoint;
+    var datalayer = thisForm.DataLayer;
+    var baseUrl = thisForm.baseurl;
     var that = this;
     var sourceconf = {
-      width: 450,
-      title: 'Upload ' + contextName + '-' + endpoint,
+      width: 420,
+      title: 'Upload Spreadsheet for ' + contextName + '.' + endpoint,
       context: contextName,
       endpoint: endpoint,
       DataLayer: datalayer,
+      baseurl: baseUrl,
       method: 'POST',
       url: 'spreadsheet/upload'
     },
+
     form = Ext.widget('spreadsheetsource', sourceconf);
     form.show();
+  },
+
+  onReloadSpreadsheet: function () {
+    this.getMainContent().items.items[0].items.items[0].getStore().load();
+  },
+
+  onDownloadspreadsheet: function (btn, evt) {
+    var thisForm = btn.up('form');
+    var contextName = thisForm.contextName;
+    var endpoint = thisForm.endpoint;
+    var baseurl = thisForm.baseurl;
+    var downloadUrl = '/spreadsheet/export';
+    frm.getForm().submit({
+      waitMsg: 'Uploading file...',
+      url: this.url,
+      method: 'POST',
+      success: function (f, a) {
+        var htmlString = '<form action= ' + downloadUrl + ' target=\"_blank\" method=\"post\" style=\"display:none\">' +
+                '<input type=\"text\" name=\"context\" value=' + contextName +
+                '></input><input type=\"text\" name=\"endpoint\" value=' + endpoint +
+                '></input><input type=\"text\" name=\"baseurl\" value=' + baseurl +
+                '></input><input type=\"submit\"></input></form>'
+        button.el.insertHtml(
+                  'beforeBegin',
+                  htmlString
+              ).submit();
+      },
+      failure: function (response, request) {
+        showDialog(500, 150, 'Error', 'The file does not exist. Need to upload a spreadsheet first.', Ext.Msg.OK, null);
+      },
+      params: {
+        context: contextName,
+        endpoint: endpoint,
+        baseurl: baseurl
+      }
+    });
   },
 
   onReloadSpreadsheet: function () {

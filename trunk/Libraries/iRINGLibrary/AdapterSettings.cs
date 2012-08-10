@@ -73,6 +73,8 @@ namespace org.iringtools.adapter
         {
           this.Add(key, settings[key].ToString());
         }
+        else if (this[key] == String.Empty)
+          this[key] = settings[key].ToString();
       }
     }
 

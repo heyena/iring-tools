@@ -49,11 +49,14 @@ namespace org.iringtools.adapter.datalayer
   public class SpreadsheetController : Controller
   {
 
-    private NameValueCollection _settings = null;
+    private ServiceSettings _settings = null;
     private ISpreadsheetRepository _repository { get; set; }
-    private string _keyFormat = "Configuration.{0}.{1}";
-    private string _appData = string.Empty;
+    private string _keyFormat = "adpmgr-Configuration.{0}.{1}";
+    private string _appData = string.Empty;    
     private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetController));
+    private string _context = string.Empty;
+    private string _endpoint = string.Empty;
+    private string _baseUrl = string.Empty;    
 
     public SpreadsheetController()
       : this(new SpreadsheetRepository())
@@ -62,7 +65,9 @@ namespace org.iringtools.adapter.datalayer
 
     public SpreadsheetController(ISpreadsheetRepository repository)
     {
-      _settings = ConfigurationManager.AppSettings;
+      NameValueCollection settings = ConfigurationManager.AppSettings;
+      _settings = new ServiceSettings();
+      _settings.AppendSettings(settings);
       _repository = repository;
     }
 
@@ -78,7 +83,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-
+        SetContextEndpoint(form);
         string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDataLayer, SpreadsheetLibrary";
         string savedFileName = string.Empty;
 
@@ -89,7 +94,7 @@ namespace org.iringtools.adapter.datalayer
           HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
           if (hpf.ContentLength == 0)
             continue;
-          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], form["contextName"], form["endpoint"]);
+          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], _context, _endpoint);
 
           SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {
@@ -98,11 +103,10 @@ namespace org.iringtools.adapter.datalayer
 
           if (form["Generate"] != null)
           {
-
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
             hpf.InputStream.Flush();
             hpf.InputStream.Position = 0;
-            _repository.Configure(form["contextName"], form["endpoint"], datalayer, configuration, hpf.InputStream);
+            _repository.Configure(_context, _endpoint, datalayer, configuration, hpf.InputStream, _baseUrl);
           }
           else
           {
@@ -110,7 +114,7 @@ namespace org.iringtools.adapter.datalayer
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
           }
 
-          SetConfiguration(form["contextName"], form["endpoint"], configuration);
+          SetConfiguration(_context, _endpoint, configuration, _baseUrl);
 
           //break;
         }
@@ -131,21 +135,25 @@ namespace org.iringtools.adapter.datalayer
         };
     }
 
-    private SpreadsheetConfiguration GetConfiguration(string context, string endpoint)
+    public ActionResult Export(string context, string endpoint, string baseurl)
     {
-      string key = string.Format(_keyFormat, context, endpoint);
-
-      if (Session[key] == null)
+      try
       {
-        Session[key] = _repository.GetConfiguration(context, endpoint);
+        byte[] bytes = _repository.getExcelFile(context, endpoint, baseurl);
+       // return File(bytes, "application/vnd.ms-excel---.xls", string.Format("SpreadsheetData.{0}.{1}.xlsx", context, endpoint));
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", string.Format("SpreadsheetData.{0}.{1}.xlsx", context, endpoint));
       }
-
-      return (SpreadsheetConfiguration)Session[key];
-    }
+      catch (Exception ioEx)
+      {
+        _logger.Error(ioEx.Message);
+        throw ioEx;
+      }
+    }    
 
     public ActionResult UpdateConfiguration(FormCollection form)
     {
-      SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
+      SetContextEndpoint(form);
+      SpreadsheetConfiguration configuration = GetConfiguration(_context, _endpoint, _baseUrl);
       if (configuration != null)
       {
         foreach (SpreadsheetTable workSheet in configuration.Tables)
@@ -161,7 +169,7 @@ namespace org.iringtools.adapter.datalayer
             }
           }
         }
-        _repository.Configure(form["context"], form["endpoint"], form["datalayer"], configuration,null);
+        _repository.Configure(_context, _endpoint, form["datalayer"], configuration, null, _baseUrl);
         return Json(new { success = true }, JsonRequestBehavior.AllowGet);
       }
       else
@@ -169,13 +177,7 @@ namespace org.iringtools.adapter.datalayer
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
 
-    }
-    private void SetConfiguration(string context, string endpoint, SpreadsheetConfiguration configuration)
-    {
-      string key = string.Format(_keyFormat, context, endpoint);
-
-      Session[key] = configuration;
-    }
+    }    
 
     public JsonResult GetNode(FormCollection form)
     {
@@ -183,7 +185,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (_repository != null)
       {
-        SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
+        SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"], form["baseurl"]);
 
         if (configuration != null)
         {
@@ -303,11 +305,13 @@ namespace org.iringtools.adapter.datalayer
 
     public JsonResult Configure(FormCollection form)
     {
-      SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
+      SetContextEndpoint(form);
+
+      SpreadsheetConfiguration configuration = GetConfiguration(_context, _endpoint, _baseUrl);
 
       if (configuration != null && configuration.Tables.Count > 0)
       {
-        _repository.Configure(form["context"], form["endpoint"], form["DataLayer"], configuration, null);
+        _repository.Configure(_context, _endpoint, form["DataLayer"], configuration, null, _baseUrl);
         return new JsonResult() //(6)
             {
                 ContentType = "text/html",
@@ -325,19 +329,19 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public JsonResult GetWorksheets(FormCollection form)
+    public JsonResult GetConfigurationWorksheets(FormCollection form)
     {
       JsonContainer<List<WorksheetPart>> container = new JsonContainer<List<WorksheetPart>>();
-      container.items = _repository.GetWorksheets(GetConfiguration(form["context"], form["endpoint"]));
+      container.items = _repository.GetWorksheets(GetConfiguration(form["context"], form["endpoint"], form["baseurl"]));
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult GetColumns(FormCollection form)
+    public JsonResult GetConfigurationColumns(FormCollection form)
     {
       JsonContainer<List<SpreadsheetColumn>> container = new JsonContainer<List<SpreadsheetColumn>>();
-      container.items = _repository.GetColumns(GetConfiguration(form["context"], form["endpoint"]), form["worksheet"]);
+      container.items = _repository.GetColumns(GetConfiguration(form["context"], form["endpoint"], form["baseurl"]), form["worksheet"]);
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
@@ -353,7 +357,31 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
-  }
+    private SpreadsheetConfiguration GetConfiguration(string context, string endpoint, string baseurl)
+    {
+      string key = string.Format(_keyFormat, context, endpoint, baseurl);
 
+      if (Session[key] == null)
+      {
+        Session[key] = _repository.GetConfiguration(context, endpoint, baseurl);
+      }
+
+      return (SpreadsheetConfiguration)Session[key];
+    }
+
+    private void SetConfiguration(string context, string endpoint, SpreadsheetConfiguration configuration, string baseurl)
+    {
+      string key = string.Format(_keyFormat, context, endpoint, baseurl);
+
+      Session[key] = configuration;
+    }
+
+    private void SetContextEndpoint(FormCollection form)
+    {
+      _context = form["contextName"];
+      _endpoint = form["endpoint"];
+      _baseUrl = form["baseUrl"];
+    }
+  }
 }
 

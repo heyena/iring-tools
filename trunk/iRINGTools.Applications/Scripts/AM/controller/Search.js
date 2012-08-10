@@ -52,13 +52,24 @@
     }, this);
     tree.on('itemclick', this.onSearchClick, this);
     tree.on('beforeload', function (store, action) {
-     // content.getEl().mask('Loadindg...');
+      // content.getEl().mask('Loadindg...');
+      var repo = null;
+      if (action.node.data.type != "SearchNode" && action.node.data.type != "TemplateNode") {
+        repo = action.node.data.text;
+        if (repo && repo.indexOf("[") == -1) {
+          repo = action.node.parentNode.data.text;
+        }
+      }
+
       store.proxy.extraParams.type = (action.node.data.type == "" ? 'SearchNode' : action.node.data.type);
       if (searchText != undefined && searchText != '') {
         store.proxy.extraParams.query = searchText;
         store.proxy.extraParams.reset = isreset;
-        store.proxy.extraParams.limit = value;
+        store.proxy.extraParams.limit = value;        
       }
+      if (repo)
+        store.proxy.extraParams.repositoryName = repo.substring(repo.indexOf("[") + 1, repo.indexOf("]"));
+        
       if (action.node.parentNode && (action.node.data.identifier == null || action.node.data.identifier == '')) {
         store.proxy.extraParams.id = action.node.parentNode.data.identifier;
       } else {

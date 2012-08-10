@@ -21,6 +21,9 @@ namespace org.iringtools.web.controllers
     private JavaScriptSerializer serializer;
     private string response = "";
     private string _key = null;
+    private string _context = string.Empty;
+    private string _endpoint = string.Empty;
+    private string _baseUrl = string.Empty;    
 
     public DatagridController() : this(new GridRepository()) { }
 
@@ -34,6 +37,7 @@ namespace org.iringtools.web.controllers
     {
       try
       {
+        SetContextEndpoint(form);
         response = _repository.DataServiceUri();
         if (response != "")
           return Json(new { success = false } + response, JsonRequestBehavior.AllowGet);
@@ -41,11 +45,9 @@ namespace org.iringtools.web.controllers
         var metaData = new Dictionary<string, object>();
         var gridData = new List<Dictionary<string, object>>();
         var encode = new Dictionary<string, object>();
-        DataItems dataItems = new DataItems();
-        string context = form["context"];
-        string endpoint = form["endpoint"];
+        DataItems dataItems = new DataItems();        
         string graph = form["graph"];
-        _key = adapter_PREFIX + string.Format("Datadictionary-{0}.{1}", context, endpoint);
+        _key = adapter_PREFIX + string.Format("Datadictionary-{0}.{1}", _context, _endpoint, _baseUrl);
         string filter = form["filter"];
         string sort = form["sort"];
         string dir = form["dir"];
@@ -58,7 +60,7 @@ namespace org.iringtools.web.controllers
         bool found = false;
 
         if (((DataDictionary)Session[_key]) == null)
-          GetDatadictionary(context, endpoint);
+          GetDatadictionary(_context, _endpoint, _baseUrl);
 
         DataObject dataObject = ((DataDictionary)Session[_key]).dataObjects.FirstOrDefault(d => d.objectName == graph);
         List<Field> fields = new List<Field>();
@@ -82,7 +84,7 @@ namespace org.iringtools.web.controllers
           }
         }
 
-        dataItems = GetDataObjects(context, endpoint, graph, dataFilter, start, limit);
+        dataItems = GetDataObjects(_context, _endpoint, graph, dataFilter, start, limit, _baseUrl);
 
         long total = dataItems.total;
 
@@ -226,15 +228,14 @@ namespace org.iringtools.web.controllers
       return dataFilter;
     }
 
-    private void GetDatadictionary(String context, String endpoint)
+    private void GetDatadictionary(string context, string endpoint, string baseurl)
     {
       try
       {
-        string reluri = string.Format("{0}/{1}", endpoint, context);
+        string reluri = string.Format("{0}/{1}/{2}", endpoint, context, baseurl);
         if (Session[_key] == null)
         {
           Session[_key] = _repository.GetDictionary(reluri);
-
         }
         dataDict = (DataDictionary)Session[_key];
         if (dataDict.dataObjects.Count == 0)
@@ -248,12 +249,12 @@ namespace org.iringtools.web.controllers
     }
 
 
-    private DataItems GetDataObjects(string context, string endpoint, string graph, DataFilter dataFilter, int start, int limit)
+    private DataItems GetDataObjects(string context, string endpoint, string graph, DataFilter dataFilter, int start, int limit, string baseurl)
     {
       DataItems dataItems = null;
       try
       {
-        dataItems = _repository.GetDataItems(endpoint, context, graph, dataFilter, start, limit);
+        dataItems = _repository.GetDataItems(endpoint, context, graph, dataFilter, start, limit, baseurl);
       }
       catch (Exception ex)
       {
@@ -268,6 +269,13 @@ namespace org.iringtools.web.controllers
       }
 
       return dataItems;
+    }
+
+    private void SetContextEndpoint(FormCollection form)
+    {
+      _context = form["context"];
+      _endpoint = form["endpoint"];
+      _baseUrl = form["baseUrl"];
     }
 
   }
