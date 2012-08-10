@@ -588,6 +588,18 @@ namespace org.iringtools.adapter
       {
         File.Delete(appCodePath);
       }
+
+      string SpreadSheetConfigPath = String.Format("{0}spreadsheet-configuration.{1}.xml", path, context);
+      if (File.Exists(SpreadSheetConfigPath))
+      {
+        File.Delete(SpreadSheetConfigPath);
+      }
+
+      string SpreadSheetDataPath = String.Format("{0}SpreadsheetData.{1}.xlsx", path, context);
+      if (File.Exists(SpreadSheetDataPath))
+      {
+        File.Delete(SpreadSheetDataPath);
+      }
     }
 
     #region Generate methods
@@ -2932,6 +2944,7 @@ namespace org.iringtools.adapter
                 {
                   _application = application;
                   isScopeValid = true;
+                  break;
                 }
               }
             }
@@ -3679,6 +3692,22 @@ namespace org.iringtools.adapter
         response.Level = StatusLevel.Error;
       }
       return response;
+    }
+    
+    public DocumentBytes GetResourceData(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        return _dataLayer.GetResourceData();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
+        throw new Exception(string.Format("Error getting configuration: {0}", ex));
+      }
     }
 
     public XElement GetConfiguration(string projectName, string applicationName)

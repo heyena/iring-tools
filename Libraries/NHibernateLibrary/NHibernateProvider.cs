@@ -36,6 +36,7 @@ using Ninject;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
+using Microsoft.SqlServer.Management.Smo.Wmi;
 
 namespace org.iringtools.nhibernate
 {
@@ -515,10 +516,23 @@ namespace org.iringtools.nhibernate
     #endregion
 
     #region private methods
+    private string getMssqlInstanceName()
+    {
+      string mssqlInstanceName = "";
+      ManagedComputer mc = new ManagedComputer();
+      if (mc.ServerInstances.Count == 1)
+        mssqlInstanceName = mc.ServerInstances[0].Name;
+
+      if (mssqlInstanceName == "")
+        mssqlInstanceName = "SQLEXPRESS";
+
+      return mssqlInstanceName;
+    }
+
     private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
       string dbUserName, string dbPassword, string portNumber, string serName)
     {
-      string connStr;
+      string connStr, defaultConnStr = "";
 
       if (portNumber == "")
       {
@@ -531,8 +545,11 @@ namespace org.iringtools.nhibernate
       if (dbProvider.ToUpper().Contains("MSSQL"))
         if (dbInstance == "default" || string.IsNullOrEmpty(dbInstance))
         {
+          string mssqlInstanceName = getMssqlInstanceName();
           connStr = String.Format("Data Source={0};Initial Catalog={2};User ID={3};Password={4}",
             dbServer, dbInstance, dbName, dbUserName, dbPassword);
+          defaultConnStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
+           dbServer, mssqlInstanceName, dbName, dbUserName, dbPassword);
         }
         else
         {
@@ -544,7 +561,6 @@ namespace org.iringtools.nhibernate
             dbServer, portNumber, serName, dbInstance, dbUserName, dbPassword);
 
       Dictionary<string, string> properties = new Dictionary<string, string>();
-
       properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
       properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
       properties.Add("connection.connection_string", connStr);
@@ -554,7 +570,26 @@ namespace org.iringtools.nhibernate
       NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
       config.AddProperties(properties);
 
-      ISessionFactory sessionFactory = config.BuildSessionFactory();
+      ISessionFactory sessionFactory = null;
+
+      try
+      {
+        sessionFactory = config.BuildSessionFactory();
+      }
+      catch (Exception e)
+      {
+        if (defaultConnStr != "")
+        {
+          config.Properties["connection.connection_string"] = defaultConnStr;
+          sessionFactory = config.BuildSessionFactory();
+        }
+        else
+        {
+          _logger.Error(string.Format("Error get NH session: {0}", e));
+          throw e;
+        }
+      }
+
       return sessionFactory.OpenSession();
     }
 

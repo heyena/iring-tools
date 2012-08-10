@@ -22,7 +22,7 @@ namespace iRINGTools.Web.Models
 {
   public class AdapterRepository : IAdapterRepository
   {
-    private NameValueCollection _settings = null;
+    private ServiceSettings _settings = null;
     private WebHttpClient _adapterServiceClient = null;
     private WebHttpClient _hibernateServiceClient = null;
     private WebHttpClient _referenceDataServiceClient = null;
@@ -41,10 +41,8 @@ namespace iRINGTools.Web.Models
     public AdapterRepository()
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
-
-      ServiceSettings _settings = new ServiceSettings();
+      _settings = new ServiceSettings();
       _settings.AppendSettings(settings);
-
       #region initialize webHttpClient for converting old mapping
       proxyHost = _settings["ProxyHost"];
       proxyPort = _settings["ProxyPort"];
@@ -75,6 +73,7 @@ namespace iRINGTools.Web.Models
 
     public WebHttpClient getServiceClient(string uri, string serviceName)
     {
+      getSetting();
       WebHttpClient _newServiceClient = null;
       string serviceUri = uri + "/" + serviceName;
 
@@ -155,7 +154,7 @@ namespace iRINGTools.Web.Models
       string _key = user + "." + "directory";
       string _resource = user + "." + "resource";
       directory = GetScopes();
-      HttpContext.Current.Session[user + "." + "directory"] = directory; 
+      HttpContext.Current.Session[_key] = directory; 
       resources = GetResource(user);
 
       Tree tree = null;
@@ -731,6 +730,15 @@ namespace iRINGTools.Web.Models
         return FindFolder(directory, path);        
       }
       return null;
+    }
+
+    private void getSetting()
+    {
+      if (_settings == null)
+        _settings = new ServiceSettings();
+      
+      proxyHost = _settings["ProxyHost"];
+      proxyPort = _settings["ProxyPort"];
     }
 
     private string UpdateFolders(Folder folder, string context, Resources resources, String oldContext)

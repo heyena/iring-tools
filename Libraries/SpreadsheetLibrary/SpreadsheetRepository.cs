@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Net;
 using Ninject;
 
 using org.iringtools.adapter;
@@ -18,43 +19,64 @@ namespace org.iringtools.adapter.datalayer
 {
   public interface ISpreadsheetRepository  
   {
-    SpreadsheetConfiguration GetConfiguration(string scope, string application);
+    SpreadsheetConfiguration GetConfiguration(string context, string endpoint, string baseurl);
     SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile);
     List<WorksheetPart> GetWorksheets(SpreadsheetConfiguration configuration);
     List<SpreadsheetColumn> GetColumns(SpreadsheetConfiguration configuration, string worksheetName);
-    void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile);
+    void Configure(string context, string endpoint, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile, string baseurl);
+    byte[] getExcelFile(string context, string endpoint, string baseurl);
   }
 
   public class SpreadsheetRepository : ISpreadsheetRepository
   {
-    private AdapterSettings _settings { get; set; }
     private SpreadsheetProvider _provider { get; set; }
-    private WebHttpClient _client { get; set; }
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetRepository));
+    private WebHttpClient _adapterServiceClient { get; set; }
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetRepository));   
+    private string proxyHost = "";
+    private string proxyPort = "";
+    private WebProxy webProxy = null;
+    private string adapterServiceUri = "";
 
     [Inject]
     public SpreadsheetRepository()
-    {
-      _settings = new AdapterSettings();
-      _settings.AppendSettings(ConfigurationManager.AppSettings);
-      _client = new WebHttpClient(_settings["AdapterServiceUri"]);
+    {      
+      NameValueCollection settings = ConfigurationManager.AppSettings;      
+      AdapterSettings _settings = new AdapterSettings();
+      _settings.AppendSettings(settings);
+
+      #region initialize webHttpClient for converting old mapping
+      proxyHost = _settings["ProxyHost"];
+      proxyPort = _settings["ProxyPort"];
+      adapterServiceUri = _settings["AdapterServiceUri"];
+
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      {
+        webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+        webProxy.Credentials = _settings.GetProxyCredential();
+        _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);        
+      }
+      else
+      {        
+        _adapterServiceClient = new WebHttpClient(adapterServiceUri);       
+      }
+      #endregion
     }
 
-    private SpreadsheetProvider InitializeProvider(SpreadsheetConfiguration configuration)
+    public WebHttpClient getServiceClient(string uri, string serviceName)
     {
-      try
+      WebHttpClient _newServiceClient = null;
+      string serviceUri = uri + "/" + serviceName;
+
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
-        if (_provider == null)
-        {
-          _provider = new SpreadsheetProvider(configuration);
-        }
+        _newServiceClient = new WebHttpClient(serviceUri, null, webProxy);
       }
-      catch (Exception ex)
+      else
       {
-        PrepareErrorResponse(ex);
+        _newServiceClient = new WebHttpClient(serviceUri);
       }
-      return _provider;
-    }
+      return _newServiceClient;
+    }    
 
     public List<WorksheetPart> GetWorksheets(SpreadsheetConfiguration configuration)
     {
@@ -66,6 +88,23 @@ namespace org.iringtools.adapter.datalayer
           wp.Add(_provider.GetWorksheetPart(st));
         }
         return wp;
+      }
+    }
+
+    public byte[] getExcelFile(string context, string endpoint, string baseurl)
+    {
+      try
+      {
+        WebHttpClient _newServiceClient = PrepareServiceClient(baseurl, "adapter");
+        var resourceDataUri = String.Format("/{0}/{1}/resourcedata", context, endpoint);
+        DocumentBytes pathObject = _newServiceClient.Get<DocumentBytes>(resourceDataUri, true);
+
+        return pathObject.Content;
+      }
+      catch (Exception ioEx)
+      {
+        _logger.Error(ioEx.Message);
+        throw ioEx;
       }
     }
 
@@ -81,7 +120,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile)
+    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile, string baseUrl)
     {
       using (InitializeProvider(configuration))
       {
@@ -89,10 +128,12 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public void Configure(string context, string endpoint, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile)
+    public void Configure(string context, string endpoint, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile, string baseurl)
     {
       try
       {
+        WebHttpClient _newServiceClient = PrepareServiceClient(baseurl, "adapter");
+
         using (InitializeProvider(configuration))
         {
           List<MultiPartMessage> requestMessages = new List<MultiPartMessage>();
@@ -126,7 +167,7 @@ namespace org.iringtools.adapter.datalayer
               });
               inputFile.Flush();
             }
-            _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", context, endpoint), requestMessages);
+            _newServiceClient.PostMultipartMessage(string.Format("/{0}/{1}/configure", context, endpoint), requestMessages);
           }
         }
       }
@@ -136,13 +177,14 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public SpreadsheetConfiguration GetConfiguration(string scope, string application)
+    public SpreadsheetConfiguration GetConfiguration(string context, string endpoint, string baseurl)
     {
       SpreadsheetConfiguration obj = null;
+      WebHttpClient _newServiceClient = PrepareServiceClient(baseurl, "adapter");
 
       try
       {
-        XElement element = _client.Get<XElement>(string.Format("/{0}/{1}/configuration", scope, application));
+        XElement element = _newServiceClient.Get<XElement>(string.Format("/{0}/{1}/configuration", context, endpoint));
         if (!element.IsEmpty)
         {
           obj = Utility.DeserializeFromXElement<SpreadsheetConfiguration>(element);
@@ -154,8 +196,51 @@ namespace org.iringtools.adapter.datalayer
       }
 
       return obj;
-
     }
+
+    #region Private methods for Spreadsheet
+
+    private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
+    {
+      if (baseUrl == "" || baseUrl == null)
+        return _adapterServiceClient;
+
+      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
+      string adapterBaseUri = CleanBaseUrl(adapterServiceUri.ToLower(), '/');
+
+      if (!baseUri.Equals(adapterBaseUri))
+        return getServiceClient(baseUrl, serviceName);
+      else
+        return _adapterServiceClient;
+    }
+
+    private string CleanBaseUrl(string url, char con)
+    {
+      try
+      {
+        System.Uri uri = new System.Uri(url);
+        return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
+      }
+      catch (Exception) { }
+      return null;
+    }
+
+    private SpreadsheetProvider InitializeProvider(SpreadsheetConfiguration configuration)
+    {
+      try
+      {
+        if (_provider == null)
+        {
+          _provider = new SpreadsheetProvider(configuration);
+        }
+      }
+      catch (Exception ex)
+      {
+        PrepareErrorResponse(ex);
+      }
+      return _provider;
+    }
+
     private Response PrepareErrorResponse(Exception ex)
     {
       Response response = new Response
@@ -170,5 +255,5 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
   }
-
+  #endregion   
 }

@@ -6,6 +6,7 @@
     frame: false,
     context: null,
     endpoint: null,
+    baseurl: null,
     dataLayer: null,
     assembly: null,
     initComponent: function () {
@@ -28,24 +29,36 @@
                 bodyStyle: 'padding:10px 5px 0',
                 bbar: [
                   '->',
-                  { xtype: 'button', text: 'Upload', scope: this, handler: this.onUpload },
-                  { xtype: 'button', text: 'Cancel', scope: this, handler: this.onReset }
+                  {
+                    xtype: 'button',
+                    text: 'Upload',
+                    scope: this,
+                    handler: this.onUpload,
+                    icon: 'Content/img/16x16/document-up.png'
+                  }, {
+                    xtype: 'button',
+                    text: 'Cancel',
+                    scope: this,
+                    handler: this.onReset 
+                  }
                ],
                 items: [
-                    { xtype: 'hidden', name: 'contextName', value: this.context },
+                    { xtype: 'hidden', name: 'context', value: this.context },
                     { xtype: 'hidden', name: 'endpoint', value: this.endpoint },
+                    { xtype: 'hidden', name: 'baseurl', value: this.baseurl },
                     { xtype: 'hidden', name: 'DataLayer', value: this.datalayer },
                     {
                         xtype: 'fileuploadfield',
                         name: 'SourceFile',
-                        emptyText: 'Select an Spreadsheet Source File',
-                        fieldLabel: 'Spreadsheet Source File',
-                        buttonText: '',
+                        emptyText: 'Select a Spreadsheet',
+                        fieldLabel: 'Spreadsheet Source',
+                        width: 232,
+                        buttonText: null,
                         buttonCfg: {
                             iconCls: 'upload-icon'
                         }
                     },
-                    { xtype: 'checkbox', name: 'Generate', boxLabel: 'Generate Configuration', checked: true }
+                    { xtype: 'checkbox', name: 'Generate', fieldLabel: 'Generate Configuration', checked: true }
                 ],
                 listeners: {
                     uploaded: true

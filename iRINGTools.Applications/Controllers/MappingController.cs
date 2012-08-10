@@ -66,7 +66,7 @@ namespace org.iringtools.web.controllers
 
     private Mapping GetMapping(string baseUrl)
     {
-      string key = adapter_PREFIX + string.Format(_keyFormat, _contextName, _endpoint);
+      string key = adapter_PREFIX + string.Format(_keyFormat, _contextName, _endpoint, baseUrl);
 
       if (Session[key] == null)
       {
@@ -279,16 +279,15 @@ namespace org.iringtools.web.controllers
       GraphMap graphMap = null;
       ClassMap graphClassMap = null;
       string format = String.Empty;
-      string context = form["node"];
-      string baseUrl = form["baseUrl"];
+      string context = form["node"];      
 
       //SetContextEndpoint(form);
       
       string[] variables = context.Split(_delimiters, StringSplitOptions.RemoveEmptyEntries);
-      string graphName = form["graphName"];      
-      
-      string key = string.Format(_keyFormat, _contextName, _endpoint);
-      Mapping mapping = GetMapping(baseUrl);
+      string graphName = form["graphName"];
+
+      string key = adapter_PREFIX + string.Format(_keyFormat, _contextName, _endpoint, _baseUrl);
+      Mapping mapping = GetMapping(_baseUrl);
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
       if (!string.IsNullOrEmpty(graphName))

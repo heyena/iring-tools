@@ -11,6 +11,7 @@
     context: null,
     endpoint: null,
     datalayer: null,
+    baseurl: null,
     assembly: null,
     configurationPanel: null,
     propertyPanel: null,
@@ -27,7 +28,8 @@
             reset: true,
             validate: true,
             refresh: true,
-            selectionchange: true
+            selectionchange: true,
+            downloaded: true
         });
         var context = "";
         if (this.context != null) {
@@ -65,7 +67,8 @@
                     extraParams: {
                         type: 'ExcelWorkbookNode',
                         context: me.context,
-                        endpoint: me.endpoint
+                        endpoint: me.endpoint,
+                        baseurl: me.baseurl
                     },
                     reader: { type: 'json' }
                 }
@@ -94,7 +97,15 @@
           text: 'Upload',
           //icon: 'Content/img/list-remove.png',
           scope: this,
+          icon: 'Content/img/16x16/document-up.png',
           action: 'uploadspreadsheet'
+      },
+      {
+          text: 'Download',
+          //icon: 'Content/img/list-remove.png',
+          scope: this,
+          icon: 'Content/img/16x16/document-down.png',
+          action: 'downloadspreadsheet'
       }
     ]}
 });
