@@ -255,7 +255,7 @@ namespace org.iringtools.utility
     private void PrepareHeaders(WebRequest request)
     {
       var at = AccessToken;
-      vat ak = AppKey;
+      var ak = AppKey;
       if (!string.IsNullOrEmpty(at))
       {
         _logger.Debug("Authorization: " + at);

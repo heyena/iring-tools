@@ -12,15 +12,10 @@ namespace org.iringtools.library
   {
     public DataProviders()
     {
-#if !SILVERLIGHT
       foreach (Provider provider in System.Enum.GetValues(typeof(Provider)))
       {
         this.Add(provider);
       }
-#else
-      
-      this.AddRange(Utility.GetEnumValues<Provider>());
-#endif
     }
   }
 }

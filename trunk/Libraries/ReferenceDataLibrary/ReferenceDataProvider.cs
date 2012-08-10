@@ -1812,32 +1812,26 @@ namespace org.iringtools.refdata
       }
     }
 
-    private string CreateIdsAdiId(string RegistryBase, string name)
+    /// <summary>
+    ///  this will generate an id formatted as R + new Guid replacing '_' with blank '' space
+    ///  example = RC2E15CCD8F104DD69188E6A5A23354B1
+    /// </summary>
+    /// <param name="RegistryBase"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    private string CreateNewGuidId(string registryBase)//, string name)
     {
-      string baseServiceUrl = "https://secure.ids-adi.org/registry?registry-op=acquire&registry-base=" +
-                              HttpUtility.UrlEncode(RegistryBase) + "&registry-comment=";
-      string serviceUrl = baseServiceUrl + HttpUtility.UrlEncode(name);
-      string idsAdiId = "";
-
-      try
+      if (!string.IsNullOrEmpty(registryBase))
+        return string.Format("{0}R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", "").Replace("-", "").ToUpper());
+      else
       {
-        string responseText = QueryIdGenerator(serviceUrl);
+        _logger.Error("Failed to create id:");
+        throw new Exception("CreateNewGuidId: Failed to create id ");
 
-        if (responseText != null && responseText.Contains("<registry-id>"))
-        {
-          int startIndex = responseText.IndexOf("<registry-id>");
-          int endIndex = responseText.IndexOf("</registry-id>");
-          idsAdiId = responseText.Substring(startIndex + 13, endIndex - startIndex - 13);
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error("Error in CreateIdsAdiId: " + e);
-        throw new Exception("CreateIdsAdiId: " + e.ToString() + " registrybase: " + RegistryBase);
       }
 
-      return idsAdiId;
     }
+
 
     private List<Dictionary<string, string>> MergeLists(List<Dictionary<string, string>> a, List<Dictionary<string, string>> b)
     {
@@ -2090,9 +2084,9 @@ namespace org.iringtools.refdata
               else
               {
                 if (_useExampleRegistryBase)
-                  generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
+                  generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
                 else
-                  generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+                  generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
                 templateId = Utility.GetIdFromURI(generatedId);
               }
 
@@ -2148,9 +2142,9 @@ namespace org.iringtools.refdata
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
-                          generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
                         else
-                          generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
                         newRoleID = generatedId;
                       }
                       RoleDefinition ord = oldTDef.roleDefinition.Find(r => r.identifier == newRoleID);
@@ -2278,9 +2272,9 @@ namespace org.iringtools.refdata
                   if (string.IsNullOrEmpty(newRole.identifier))
                   {
                     if (_useExampleRegistryBase)
-                      generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                      generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
                     else
-                      generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+                      generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
                     newRoleID = Utility.GetIdFromURI(generatedId);
                   }
                   else
@@ -2380,9 +2374,9 @@ namespace org.iringtools.refdata
               else
               {
                 if (_useExampleRegistryBase)
-                  generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
+                  generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
                 else
-                  generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+                  generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
 
                 templateID = Utility.GetIdFromURI(generatedId);
               }
@@ -2477,9 +2471,9 @@ namespace org.iringtools.refdata
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
-                          generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
                         else
-                          generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
                         newRoleID = generatedId;
                       }
                       RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
@@ -2554,9 +2548,9 @@ namespace org.iringtools.refdata
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
-                          generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
                         else
-                          generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
                         newRoleID = generatedId;
                       }
                       RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
@@ -2686,9 +2680,9 @@ namespace org.iringtools.refdata
                   if (string.IsNullOrEmpty(newRole.identifier))
                   {
                     if (_useExampleRegistryBase)
-                      generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                      generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
                     else
-                      generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+                      generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
 
                     roleID = Utility.GetIdFromURI(generatedId);
                   }
@@ -2972,7 +2966,7 @@ namespace org.iringtools.refdata
               if (string.IsNullOrEmpty(clsId))
               {
                 string newClsName = "Class definition " + clsLabel;
-                clsId = CreateIdsAdiId(registry, newClsName);
+                clsId = CreateNewGuidId(registry);
                 clsId = Utility.GetIdFromURI(clsId);
               }
               // append entity type
