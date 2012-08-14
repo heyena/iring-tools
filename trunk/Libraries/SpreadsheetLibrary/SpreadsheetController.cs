@@ -103,7 +103,7 @@ namespace org.iringtools.adapter.datalayer
 
           if (form["Generate"] != null)
           {
-            configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
+            configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream, _baseUrl);
             hpf.InputStream.Flush();
             hpf.InputStream.Position = 0;
             _repository.Configure(_context, _endpoint, datalayer, configuration, hpf.InputStream, _baseUrl);
@@ -111,7 +111,7 @@ namespace org.iringtools.adapter.datalayer
           else
           {
             configuration.Generate = false;
-            configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
+            configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream, _baseUrl);
           }
 
           SetConfiguration(_context, _endpoint, configuration, _baseUrl);
@@ -177,9 +177,9 @@ namespace org.iringtools.adapter.datalayer
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
 
-    }    
+    }
 
-    public JsonResult GetNode(FormCollection form)
+    public ActionResult GetNode(FormCollection form)
     {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 

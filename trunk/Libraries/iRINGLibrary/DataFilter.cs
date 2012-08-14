@@ -124,14 +124,15 @@ namespace org.iringtools.library
 
     public void AppendFilter(DataFilter filter)
     {
-      if (Expressions == null)
-        Expressions = new List<Expression>();
-
-      if (OrderExpressions == null)
-        OrderExpressions = new List<OrderExpression>();
-
-      if (filter != null)
+      if (filter != null && (filter.Expressions.Count > 0 || filter.OrderExpressions.Count > 0))
       {
+        if (Expressions == null)
+          Expressions = new List<Expression>();
+
+        if (OrderExpressions == null)
+          OrderExpressions = new List<OrderExpression>();
+
+      
         DataFilter clonedFilter = Utility.CloneDataContractObject<DataFilter>(filter);
         if (filter.Expressions != null)
         {
