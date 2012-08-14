@@ -786,7 +786,7 @@
       case 'NHibernateLibrary':
         this.getDbdictionary(contextName, endpoint, baseUrl, dirtree, content, dirNode);
         break;
-      case 'SpreadsheetDatalayer':
+      case 'SpreadsheetLibrary':
         var conf = {
           context: contextName,
           endpoint: endpoint,

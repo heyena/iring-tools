@@ -73,18 +73,19 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public DataDictionary GetDictionary(string relUri)
+    public DataDictionary GetDictionary(string relUri, string baseUrl)
     {
       WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
       string relativeUrl = string.Format("/{0}/dictionary?format=xml", relUri);
-      return _dataServiceClient.Get<DataDictionary>(relativeUrl, true);
+      return _newServiceClient.Get<DataDictionary>(relativeUrl, true);
     }
 
-    public DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit)
+    public DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit, string baseUrl)
     {
+      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");      
       string fmt = "json";
       string relUrl = string.Format("/{0}/{1}/{2}/filter?format={3}&start={4}&limit={5}", endpoint, context, graph, fmt, start, limit);
-      string json = _dataServiceClient.Post<DataFilter, string>(relUrl, dataFilter, fmt, true);
+      string json = _newServiceClient.Post<DataFilter, string>(relUrl, dataFilter, fmt, true);
       
       DataItemSerializer serializer = new DataItemSerializer();
       DataItems dataItems = serializer.Deserialize<DataItems>(json, false); 

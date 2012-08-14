@@ -60,7 +60,7 @@
                     type: 'ExcelWorkbookNode'
                 },
                 proxy: {
-                    url: 'spreadsheet/getnode',
+                  url: 'Spreadsheet/GetNode',
                     type: 'ajax',
                     timeout: 600000,
                     actionMethods: { read: 'POST' },
