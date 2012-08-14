@@ -44,6 +44,7 @@ using VDS.RDF.Update;
 using VDS.RDF.Update.Commands;
 using VDS.RDF.Writing.Formatting;
 using System.Net;
+using org.iringtools.refdata.federation;
 
 
 namespace org.iringtools.refdata
@@ -55,6 +56,7 @@ namespace org.iringtools.refdata
     private Response _response = null;
 
     private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
+    private const string FEDERATION_FILE_NAME = "Federation.xml";
     private const string QUERIES_FILE_NAME = "Queries.xml";
 
     private NamespaceMapper nsMap = new NamespaceMapper();
@@ -77,6 +79,11 @@ namespace org.iringtools.refdata
     private WebCredentials _registryCredentials = null;
     private WebProxyCredentials _proxyCredentials = null;
     private Repositories _repositories = null;
+
+    //private List<Repository> _repositories = null;
+    private Federation _federation = null;
+    private List<Namespace> _namespaceList = null;
+
     private Queries _queries = null;
     private static Dictionary<string, RefDataEntities> _searchHistory = new Dictionary<string, RefDataEntities>();
     private IKernel _kernel = null;
@@ -99,6 +106,19 @@ namespace org.iringtools.refdata
         _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
         string registryCredentialToken = _settings["RegistryCredentialToken"];
         bool tokenIsEmpty = registryCredentialToken == String.Empty;
+
+        string federationPath = _settings["AppDataPath"] + FEDERATION_FILE_NAME;
+        if (File.Exists(federationPath))
+        {
+          this._federation = Utility.Read<Federation>(federationPath);
+          this._repositories = this._federation.Repositories;
+          this._namespaceList = this._federation.Namespaces;
+          foreach (var ns in this._namespaceList)
+          {
+            nsMap.AddNamespace(ns.Prefix, new Uri(ns.Uri));
+          }
+        }
+
         if (tokenIsEmpty)
         {
           _registryCredentials = new WebCredentials();
@@ -112,7 +132,7 @@ namespace org.iringtools.refdata
         string queriesPath = _settings["AppDataPath"] + QUERIES_FILE_NAME;
         _queries = Utility.Read<Queries>(queriesPath);
         string repositoriesPath = _settings["AppDataPath"] + REPOSITORIES_FILE_NAME;
-        _repositories = Utility.Read<Repositories>(repositoriesPath);
+        //_repositories = Utility.Read<Repositories>(repositoriesPath);
         _response = new Response();
         _kernel.Bind<Response>().ToConstant(_response);
         nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
@@ -135,12 +155,17 @@ namespace org.iringtools.refdata
       }
     }
 
+    public Federation GetFederation()
+    {
+      return this._federation;
+    }
+
     public Repositories GetRepositories()
     {
       try
       {
         Repositories repositories;
-        repositories = _repositories;
+        repositories = (Repositories)_repositories;
         //Don't Expose Tokens
         foreach (Repository repository in repositories)
         {
@@ -507,7 +532,12 @@ namespace org.iringtools.refdata
 
     public Entity GetClassLabel(string id)
     {
-      return GetLabel(nsMap.GetNamespaceUri("rdl").ToString() + id);
+      int number;
+      bool isNumber = int.TryParse(id.Substring(1, 1), out number);
+      if (isNumber)
+        return GetLabel(this._namespaceList.Find(ns => ns.Prefix == "rdl").Uri + id);
+      else
+        return GetLabel(this._namespaceList.Find(ns => ns.Prefix == "jordrdl").Uri + id);
     }
 
     public QMXF GetClass(string id, Repository repository)
@@ -539,22 +569,39 @@ namespace org.iringtools.refdata
         string relativeUri = String.Empty;
         string resultValue = string.Empty;
         string dataType = string.Empty;
+        string uri = string.Empty;
+        Query classQueryJord = null;
 
-        Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
+        Query classQuery = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
 
-        sparql = ReadSPARQL(queryContainsSearch.FileName);
-
-        if (namespaceUrl == String.Empty || namespaceUrl == null)
-          namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
-
-        string uri = String.Concat("<", namespaceUrl, id, ">");                                        
-        sparql = sparql.Replace("param1", uri);
-        foreach (Repository repository in _repositories)
+        foreach (QueryItem query in _queries)
         {
-          ClassDefinition classDefinition = null;
+          if (query.Key.ToLower() == "getclassjord")
+          {
+            classQueryJord = query.Query;
+            break;
+          }
+        }
+        
+        /// Always use rdl namespace
+        namespaceUrl = this._namespaceList.Find(n => n.Prefix == "rdl").Uri;
+        uri = namespaceUrl + id;
+
+        foreach (Repository repository in this._repositories)
+        {
 
           if (rep != null)
             if (rep.Name != repository.Name) continue;
+
+          if (repository.RepositoryType == RepositoryType.JORD && classQueryJord != null)
+          {
+            sparql = ReadSPARQL(classQueryJord.FileName).Replace("param1", uri);
+          }
+          else
+          {
+            sparql = ReadSPARQL(classQuery.FileName).Replace("param1", uri);
+          }
+          ClassDefinition classDefinition = null;
 
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
           classifications = new List<Classification>();
@@ -564,64 +611,65 @@ namespace org.iringtools.refdata
           {
             classDefinition = new ClassDefinition();
 
-            classDefinition.identifier = uri.Replace("<","").Replace(">",""); //need without angle brackets
+            classDefinition.identifier = uri;
             classDefinition.repositoryName = repository.Name;
             name = new QMXFName();
             description = new Description();
             status = new QMXFStatus();
             foreach (var v in result.Variables)
             {
-              if ((INode)result[v] is LiteralNode && v.Equals("label"))
+              INode node = result[v];
+              if (node is LiteralNode && v.Equals("label"))
               {
-                name.value = ((LiteralNode)result[v]).Value;
-                name.lang = ((LiteralNode)result[v]).Language;
+                name.value = ((ILiteralNode)node).Value;
+                name.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(name.lang))
                   name.lang = defaultLanguage;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("definition"))
+              else if (node is LiteralNode && v.Equals("definition"))
               {
-                description.value = ((LiteralNode)result[v]).Value;
-                description.lang = ((LiteralNode)result[v]).Language;
+                description.value = ((ILiteralNode)node).Value;
+                description.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(description.lang))
                   description.lang = defaultLanguage;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("creator"))
+              else if (node is LiteralNode && v.Equals("creator"))
               {
-                status.authority = ((LiteralNode)result[v]).Value;
+                status.authority = ((ILiteralNode)node).Value;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("creationDate"))
+              else if (node is LiteralNode && v.Equals("creationDate"))
               {
-                status.from = ((LiteralNode)result[v]).Value;
+                status.from = ((ILiteralNode)node).Value;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("class"))
+              else if (node is LiteralNode && v.Equals("class"))
               {
-                status.Class = ((LiteralNode)result[v]).Value;
+                status.Class = ((ILiteralNode)node).Value;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
+              else if (node is LiteralNode && v.Equals("comment"))
               {
-                description.value = ((LiteralNode)result[v]).Value;
-                description.lang = ((LiteralNode)result[v]).Language;
+                description.value = ((ILiteralNode)node).Value;
+                description.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(description.lang))
                   description.lang = defaultLanguage;
               }
-              else if ((INode)result[v] is UriNode && v.Equals("type"))
+              else if (node is UriNode && v.Equals("type"))
               {
-                string typeName = ((UriNode)result[v]).Uri.ToString();
+                string typeName = ((UriNode)node).Uri.ToString();
                 string pref = nsMap.GetPrefix(new Uri(typeName.Substring(0, typeName.IndexOf("#") + 1)));
-                if (pref == "dm")
+                if (pref.Contains("dm"))
                   classDefinition.entityType = new EntityType { reference = typeName };
               }
-              else if ((INode)result[v] is UriNode && v.Equals("authority"))
+              else if (node is UriNode && v.Equals("authority"))
               {
-                status.authority = ((UriNode)result[v]).Uri.ToString();
+                status.authority = ((UriNode)node).Uri.ToString();
               }
-              else if ((INode)result[v] is UriNode && v.Equals("recorded"))
+              else if (node is UriNode && v.Equals("recorded"))
               {
-                status.Class = ((UriNode)result[v]).Uri.ToString();
+                status.Class = ((UriNode)node).Uri.ToString();
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("from"))
+              else if (node is LiteralNode && v.Equals("from"))
               {
-                status.from = ((LiteralNode)result[v]).Value;
+                status.from = ((LiteralNode)node).Value;
               }
             }
             classDefinition.name.Add(name);

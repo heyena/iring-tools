@@ -35,6 +35,7 @@ using log4net;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.refdata;
+using org.iringtools.refdata.federation;
 
 namespace org.iringtools.services
 {
@@ -93,6 +94,18 @@ namespace org.iringtools.services
       return _referenceDataProvider.GetRepositories();
     }
 
+    /// <summary>
+    /// Gets configured repositories.
+    /// </summary>
+    [Description("Gets Federation.")]
+    [WebGet(UriTemplate = "/federation")]
+    public Federation GetFederation()
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetFederation();
+    }
 
     /// <summary>
     /// Does a fuzzy search by label and returns a list of Entity objects.
