@@ -20,7 +20,7 @@ namespace org.iringtools.adapter.datalayer
   public interface ISpreadsheetRepository  
   {
     SpreadsheetConfiguration GetConfiguration(string context, string endpoint, string baseurl);
-    SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile);
+    SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile, string baseUrl);
     List<WorksheetPart> GetWorksheets(SpreadsheetConfiguration configuration);
     List<SpreadsheetColumn> GetColumns(SpreadsheetConfiguration configuration, string worksheetName);
     void Configure(string context, string endpoint, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile, string baseurl);

@@ -6,16 +6,16 @@
     <meta name="viewport" content="width = device-width, height = device-height, initial-scale = 2.3, user=scalable = no" />
     <link href="../../Content/css/adaptermanager-gray.css" rel="stylesheet" type="text/css" />  
     
-    <link href="../../Scripts/extjs-4.1.1/resources/css/ext-all.css" rel="stylesheet" type="text/css" />
-    <link href="../../Scripts/extjs-4.1.1/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
-    <link href="../../Scripts/extjs-4.1.1/examples/ux/css/ItemSelector.css" rel="stylesheet" type="text/css" />
+    <link href="../../Scripts/extjs407/resources/css/ext-all.css" rel="stylesheet" type="text/css" />
+    <link href="../../Scripts/extjs407/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
+    <link href="../../Scripts/extjs407/examples/ux/css/ItemSelector.css" rel="stylesheet" type="text/css" />
 
-    <script src="<%: Url.Content("~/Scripts/extjs-4.1.1/bootstrap.js") %>" type="text/javascript"></script>   
+    <script src="<%: Url.Content("~/Scripts/extjs407/bootstrap.js") %>" type="text/javascript"></script>   
     <script src="<%: Url.Content("~/Scripts/AM/AM.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/extjs-4.1.1/examples/ux/form/MultiSelect.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/extjs-4.1.1/examples/ux/layout/component/form/ItemSelector.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/extjs-4.1.1/examples/ux/layout/component/form/MultiSelect.js") %>" type="text/javascript"></script>
-    <script src="<%: Url.Content("~/Scripts/extjs-4.1.1/examples/ux/form/ItemSelector.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/extjs407/examples/ux/form/MultiSelect.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/extjs407/examples/ux/layout/component/form/ItemSelector.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/extjs407/examples/ux/layout/component/form/MultiSelect.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/extjs407/examples/ux/form/ItemSelector.js") %>" type="text/javascript"></script>
 </head>
 <body>
 </body>

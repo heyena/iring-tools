@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using System;
 using StaticDust.Configuration;
 using NUnit.Framework;
+using org.iringtools.refdata.federation;
 
 namespace NUnit.Tests
 {
@@ -67,14 +68,14 @@ namespace NUnit.Tests
         public void GetRepositories()
         {
             List<Repository> repositories = _refdataProvider.GetRepositories();
-            Assert.AreEqual(4, repositories.Count);
+            Assert.AreNotEqual(0, repositories.Count);
         }
 
         [Test]
         public void GetClass()
         {
-            QMXF qmxf = _refdataProvider.GetClass("R99781532089");
-            Assert.IsNotNull(qmxf);
+          QMXF qmxf = _refdataProvider.GetClass("R99781532089");
+          Assert.IsNotNull(qmxf);
         }
 
         //[Test]

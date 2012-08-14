@@ -27,7 +27,6 @@ namespace NUnit.Tests
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
       _settings["Identifier"] = "90002-RV";
-      _settings["TestMode"] = "WriteFiles"; //UseFiles/WriteFiles
       _settings["ClassName"] = "PIPINGNETWORKSYSTEM";
 
       _baseDirectory = Directory.GetCurrentDirectory();
@@ -68,16 +67,10 @@ namespace NUnit.Tests
          _settings["AppDataPath"]
        );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+     
     }
 
     [Test]
@@ -102,16 +95,10 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);      
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+      
     }
 
     [Test]
@@ -136,16 +123,9 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());      
     }
 
     [Test]
@@ -170,16 +150,10 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+      
 
       int total = 0;
 
@@ -204,16 +178,9 @@ namespace NUnit.Tests
             (i / 5) + 1
           );
 
-        if (_settings["TestMode"].ToLower() != "usefiles")
-        {
-          xDocument.Save(path);
-          Assert.AreNotEqual(null, xDocument);
-        }
-        else
-        {
-          benchmark = XDocument.Load(path);
-          Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-        }
+        xDocument.Save(path);
+        benchmark = XDocument.Load(path);
+        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());       
       }
     }
 
@@ -239,16 +206,10 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+      
 
       int total = 0;
 
@@ -273,16 +234,9 @@ namespace NUnit.Tests
             (i / 5) + 1
           );
 
-        if (_settings["TestMode"].ToLower() != "usefiles")
-        {
-          xDocument.Save(path);
-          Assert.AreNotEqual(null, xDocument);
-        }
-        else
-        {
-          benchmark = XDocument.Load(path);
-          Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-        }
+        xDocument.Save(path);
+        benchmark = XDocument.Load(path);
+        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());        
       }
     }
 
@@ -312,16 +266,10 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+     
     }
 
     [Test]
@@ -350,16 +298,10 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+      
     }
 
     [Test]
@@ -386,16 +328,9 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());      
     }
 
     [Test]
@@ -422,16 +357,10 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+      
     }
 
     [Test]
@@ -460,16 +389,10 @@ namespace NUnit.Tests
           _settings["AppDataPath"]
         );
 
-      if (_settings["TestMode"].ToLower() != "usefiles")
-      {
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-      }
-      else
-      {
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      }
+      xDocument.Save(path);
+      benchmark = XDocument.Load(path);
+      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+      
 
       int total = 0;
 
@@ -494,16 +417,9 @@ namespace NUnit.Tests
             (i / 5) + 1
           );
 
-        if (_settings["TestMode"].ToLower() != "usefiles")
-        {
-          xDocument.Save(path);
-          Assert.AreNotEqual(null, xDocument);
-        }
-        else
-        {
-          benchmark = XDocument.Load(path);
-          Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-        }
+        xDocument.Save(path);
+        benchmark = XDocument.Load(path);
+        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());          
       }
     }
 
