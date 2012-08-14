@@ -104,7 +104,7 @@ namespace org.iringtools.web.controllers
             nodes = GetClasses(query, start, limit, Convert.ToBoolean(isreset));
             break;
           case "ClassificationsNode":
-            nodes = GetClasses(id);
+            nodes = GetClasses(id, repositoryName);
             break;
           case "MembersNode":
             // nodes = GetClassMembers(id);
@@ -126,7 +126,7 @@ namespace org.iringtools.web.controllers
             nodes = GetRoleClass(roleClassId);
             break;
           case "ClassNode":
-            nodes = GetClasses(id);
+            nodes = GetClasses(id, repositoryName);
             break;
           default:
             nodes = new List<JsonTreeNode>();
@@ -285,7 +285,7 @@ namespace org.iringtools.web.controllers
 
       if (classId != string.Empty)
       {
-        QMXF dataEntities = _refdataRepository.GetClasses(classId);
+        QMXF dataEntities = _refdataRepository.GetClasses(classId, null);
 
         foreach (var entity in dataEntities.classDefinitions)
         {
@@ -324,13 +324,19 @@ namespace org.iringtools.web.controllers
       return nodes;
     }
 
-    private List<JsonTreeNode> GetClasses(string classId)
+    private List<JsonTreeNode> GetClasses(string classId, string repositoryName)
     {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+      QMXF dataEntities = null;
+      Repository repository = null;
 
       if (!string.IsNullOrEmpty(classId))
       {
-        QMXF dataEntities = _refdataRepository.GetClasses(classId);
+        if (!string.IsNullOrEmpty(repositoryName))
+          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+
+        dataEntities = _refdataRepository.GetClasses(classId, repository);
+
         foreach (var entity in dataEntities.classDefinitions)
         {
           #region Default Nodes------------------
@@ -442,7 +448,7 @@ namespace org.iringtools.web.controllers
           }
           #endregion
 
-          JsonTreeNode membersNodes = GetClassMembers(classId, memberNode);
+          JsonTreeNode membersNodes = GetClassMembers(classId, memberNode, repositoryName);
           memberNode.record = properties;
           nodes.Add(membersNodes);
           nodes.Add(clasifNode); // Add Classification node.
@@ -505,40 +511,6 @@ namespace org.iringtools.web.controllers
       return nodes;
     }
 
-    private List<JsonTreeNode> GetSubClasses(string classId, string repositoryName)
-    {
-      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-      Repository repository = null;
-
-      if (!string.IsNullOrEmpty(classId))
-      {
-        if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
-
-        Entities dataEntities = _refdataRepository.GetSubClasses(classId, repository);
-        
-        foreach (var entity in dataEntities)
-        {
-          JsonTreeNode node = new JsonTreeNode
-          {
-            type = "ClassNode",
-            iconCls = "treeClass",
-            identifier = entity.Uri.Split('#')[1],
-            id = Guid.NewGuid().ToString(),
-            text = string.Format("{0}[{1}]", entity.Label, repositoryName),
-            //   expanded = false,
-            leaf = false,
-            record = entity
-          };
-
-          nodes.Add(node);
-        }
-        
-      }
-
-      return nodes;
-    }
-
     private string GetSubClassesCount(string classId)
     {
       string count = string.Empty;
@@ -553,13 +525,17 @@ namespace org.iringtools.web.controllers
       return count;
     }
 
-    private List<JsonTreeNode> GetSubClasses(string classId)
+    private List<JsonTreeNode> GetSubClasses(string classId, string repositoryName)
     {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+      Repository repository = null;
 
       if (!string.IsNullOrEmpty(classId))
       {
-        Entities dataEntities = _refdataRepository.GetSubClasses(classId);
+        if (!string.IsNullOrEmpty(repositoryName))
+          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+
+        Entities dataEntities = _refdataRepository.GetSubClasses(classId, repository);
         foreach (var entity in dataEntities)
         {
           JsonTreeNode node = new JsonTreeNode
@@ -614,11 +590,16 @@ namespace org.iringtools.web.controllers
       return nodes;
     }
 
-    private JsonTreeNode GetClassMembers(string classId, TreeNode tempsNode)
+    private JsonTreeNode GetClassMembers(string classId, TreeNode tempsNode, string repositoryName)
     {
+      Repository repository = null;
+
       if (!string.IsNullOrEmpty(classId))
       {
-        Entities dataEntities = _refdataRepository.GetClassMembers(classId);
+        if (!string.IsNullOrEmpty(repositoryName))
+          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+
+        Entities dataEntities = _refdataRepository.GetClassMembers(classId, repository);
         foreach (Entity entity in dataEntities)
         {
           JsonTreeNode node = new JsonTreeNode
@@ -721,7 +702,7 @@ namespace org.iringtools.web.controllers
 
       if (!string.IsNullOrEmpty(id))
       {
-        QMXF entity = _refdataRepository.GetClasses(id);
+        QMXF entity = _refdataRepository.GetClasses(id, null);
         if (entity != null && entity.classDefinitions.Count > 0)
         {
           JsonTreeNode classNode = new JsonTreeNode

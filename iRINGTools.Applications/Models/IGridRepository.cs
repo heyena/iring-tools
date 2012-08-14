@@ -5,9 +5,9 @@ namespace iRINGTools.Web.Models
 {
   public interface IGridRepository
   {
-    DataDictionary GetDictionary(string relativeUrl);
+    DataDictionary GetDictionary(string relativeUrl, string baseUrl);
 
-    DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit);
+    DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit, string baseUrl);
 
     string DataServiceUri();
   }

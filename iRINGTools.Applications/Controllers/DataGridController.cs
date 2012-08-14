@@ -235,7 +235,7 @@ namespace org.iringtools.web.controllers
         string reluri = string.Format("{0}/{1}/{2}", endpoint, context, baseurl);
         if (Session[_key] == null)
         {
-          Session[_key] = _repository.GetDictionary(reluri);
+          Session[_key] = _repository.GetDictionary(reluri, baseurl);
         }
         dataDict = (DataDictionary)Session[_key];
         if (dataDict.dataObjects.Count == 0)
