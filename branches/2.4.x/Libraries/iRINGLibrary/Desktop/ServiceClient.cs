@@ -18,9 +18,7 @@ namespace org.iringtools.library
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
-        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        webProxy.Credentials = settings.GetProxyCredential();
-        
+        WebProxy webProxy = settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
         _webHttpClient = new WebHttpClient(baseUri, null, webProxy);
       }
       else
