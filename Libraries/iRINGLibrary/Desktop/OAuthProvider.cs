@@ -71,10 +71,10 @@ namespace org.iringtools.adapter.security
           {
             string host = ConfigurationManager.AppSettings["ProxyHost"];
             int port = int.Parse(ConfigurationManager.AppSettings["ProxyPort"]);
-            WebProxyCredentials webCreds = new WebProxyCredentials(proxyCreds, host, port);
-
-            req.Proxy = webCreds.GetWebProxy();
-            req.Proxy.Credentials = webCreds.GetNetworkCredential();
+            string bypassOnLocal = ConfigurationManager.AppSettings["ProxyBypassOnLocal"];
+            string bypassList = ConfigurationManager.AppSettings["ProxyBypassList"];
+            WebProxyCredentials webCreds = new WebProxyCredentials(proxyCreds, host, port, bypassOnLocal, bypassList);
+            req.Proxy = webCreds.GetWebProxy();  // Note that the Proxy returned by GetWebProxy has already had it's .Credentials set
           }
 
           //get the response from the service 

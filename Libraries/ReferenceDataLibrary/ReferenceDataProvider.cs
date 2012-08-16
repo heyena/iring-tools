@@ -75,7 +75,6 @@ namespace org.iringtools.refdata
     private int _pageSize = 0;
 
     private bool _useExampleRegistryBase = false;
-    //private WebProxyCredentials _proxyCredentials = null;
 
     private List<Repository> _repositories = null;
     private Federation _federation = null;
@@ -2001,15 +2000,13 @@ namespace org.iringtools.refdata
         string encryptedCredentials = repository.EncryptedCredentials;
         WebCredentials cred = new WebCredentials(encryptedCredentials);
         if (cred.isEncrypted) cred.Decrypt();
+
         if (!string.IsNullOrEmpty(_settings["ProxyHost"])
           && !string.IsNullOrEmpty(_settings["ProxyPort"])
           && !string.IsNullOrEmpty(_settings["ProxyCredentialToken"])) /// need to use proxy
         {
-          endpoint.Proxy = new WebProxy(_settings["ProxyHost"], Convert.ToInt32(_settings["ProxyPort"]));
-          WebProxyCredentials pcred = new WebProxyCredentials(_settings["ProxyCredentialToken"],
-                                        _settings["ProxyHost"],
-                                        Convert.ToInt32(_settings["ProxyPort"]));
-          if (pcred.isEncrypted) pcred.Decrypt();
+          WebProxyCredentials pcred = _settings.GetWebProxyCredentials();
+          endpoint.Proxy = pcred.GetWebProxy() as WebProxy;
           endpoint.ProxyCredentials = pcred.GetNetworkCredential();
         }
         endpoint.Credentials = cred.GetNetworkCredential();
@@ -2033,21 +2030,15 @@ namespace org.iringtools.refdata
 
         SparqlRemoteUpdateEndpoint endpoint = new SparqlRemoteUpdateEndpoint(repository.UpdateUri);
         string encryptedCredentials = repository.EncryptedCredentials;
-
         WebCredentials cred = new WebCredentials(encryptedCredentials);
-
         if (cred.isEncrypted) cred.Decrypt();
 
         if (!string.IsNullOrEmpty(_settings["ProxyHost"])
           && !string.IsNullOrEmpty(_settings["ProxyPort"])
           && !string.IsNullOrEmpty(_settings["ProxyCredentialToken"])) /// need to use proxy
         {
-          endpoint.Proxy = new WebProxy(_settings["ProxyHost"], Convert.ToInt32(_settings["ProxyPort"]));
-          WebProxyCredentials pcred = new WebProxyCredentials(
-                                        _settings["ProxyCredentialToken"],
-                                        _settings["ProxyHost"],
-                                        Convert.ToInt32(_settings["ProxyPort"]));
-          if (pcred.isEncrypted) pcred.Decrypt();
+          WebProxyCredentials pcred = _settings.GetWebProxyCredentials();
+          endpoint.Proxy = pcred.GetWebProxy() as WebProxy;
           endpoint.ProxyCredentials = pcred.GetNetworkCredential();
         }
 

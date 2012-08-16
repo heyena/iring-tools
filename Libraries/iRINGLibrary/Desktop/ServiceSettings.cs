@@ -100,19 +100,23 @@ namespace org.iringtools.library
     {
       WebProxyCredentials proxyCredentials = null;
 
-      if (this["ProxyCredentialToken"] == String.Empty)
+      if (String.IsNullOrEmpty( this["ProxyCredentialToken"]) )
       {
         proxyCredentials = new WebProxyCredentials();
       }
       else
       {
+        // Settings included an encrypted credential string so hopefully the ProxyPort and ProxyHost have also been provided
+        // Note that ProxyBypassOnLocal and ProxyBypassList are optional
         int portNumber = 8080;
         Int32.TryParse(this["ProxyPort"], out portNumber);
 
         proxyCredentials = new WebProxyCredentials(
           this["ProxyCredentialToken"],
           this["ProxyHost"], 
-          portNumber);
+          portNumber,
+          this["ProxyBypassOnLocal"],
+          this["ProxyBypassList"]);
       }
 
       return proxyCredentials;
