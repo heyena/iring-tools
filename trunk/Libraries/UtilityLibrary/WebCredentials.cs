@@ -116,15 +116,25 @@ namespace org.iringtools.utility
       : base()
     {
       this.proxyHost = string.Empty;
-      this.proxyPort = 0;      
+      this.proxyPort = 0;
     }
 
     public WebProxyCredentials(string encryptedCredentials, string hostName, int port)
       : base(encryptedCredentials)
     {
-        Decrypt();
-        this.proxyHost = hostName;
-        this.proxyPort = port;     
+      Decrypt();
+      this.proxyHost = hostName;
+      this.proxyPort = port;
+    }
+
+    public WebProxyCredentials(string encryptedCredentials, string hostName, int port, string bypassOnLocal, string bypassList)
+      : base(encryptedCredentials)
+    {
+      Decrypt();
+      this.proxyHost = hostName;
+      this.proxyPort = port;
+      this.proxyBypassOnLocal = bypassOnLocal;
+      this.proxyBypassList = bypassList;
     }
 
     [DataMember(EmitDefaultValue = false)]
@@ -133,12 +143,24 @@ namespace org.iringtools.utility
     [DataMember(EmitDefaultValue = false)]
     public int proxyPort { get; set; }
 
-        public IWebProxy GetWebProxy()
-    {
-            IWebProxy webProxy = null;
+    [DataMember(EmitDefaultValue = false)]
+    public string proxyBypassList { get; set; }
 
-      if (proxyHost != string.Empty)
-        webProxy = new WebProxy(proxyHost, proxyPort);
+    [DataMember(EmitDefaultValue = false)]
+    public string proxyBypassOnLocal { get; set; }
+
+    public IWebProxy GetWebProxy()
+    {
+      IWebProxy webProxy = null;
+
+      if (!string.IsNullOrEmpty(proxyHost))
+      {
+        // proxyBypassList is a list of regular expressions separated by ";" used to match against URL's that should bypass the proxy
+        string[] bypassList = string.IsNullOrEmpty(proxyBypassList) ? null : proxyBypassList.Split(';');
+        Boolean bypassOnLocal = string.IsNullOrEmpty(proxyBypassOnLocal) ? true : (proxyBypassOnLocal.ToLower() == "true");
+        string proxyAddress = proxyHost + ":" + proxyPort.ToString();
+        webProxy = new WebProxy(proxyAddress, true, bypassList); // NB" 2nd Parameter = "true" indicates to bypass proxy for local addresses
+      }
       else
         webProxy = WebRequest.GetSystemWebProxy();
 

@@ -42,10 +42,7 @@ namespace iRINGTools.Web.Models
      
         if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
-          webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-
-          webProxy.Credentials = _settings.GetProxyCredential();
-
+          webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
           _dataServiceClient = new WebHttpClient(dataServiceUri, null, webProxy);
         }
         else
@@ -146,8 +143,7 @@ namespace iRINGTools.Web.Models
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
-        webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        webProxy.Credentials = _settings.GetProxyCredential();
+        webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
         _newServiceClient = new WebHttpClient(serviceUri, null, webProxy);
       }
       else

@@ -38,8 +38,7 @@ namespace org.iringtools.web.Models
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
-        webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        webProxy.Credentials = _settings.GetProxyCredential();
+        webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy; 
         _facadeServiceClient = new WebHttpClient(facadeServiceUri, null, webProxy);
       }
       else
