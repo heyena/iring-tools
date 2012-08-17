@@ -84,7 +84,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         SetContextEndpoint(form);
-        string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDataLayer, SpreadsheetLibrary";
+        string datalayer = form["DataLayer"];
         string savedFileName = string.Empty;
 
         HttpFileCollectionBase files = Request.Files;
@@ -378,9 +378,9 @@ namespace org.iringtools.adapter.datalayer
 
     private void SetContextEndpoint(FormCollection form)
     {
-      _context = form["contextName"];
+      _context = form["context"];
       _endpoint = form["endpoint"];
-      _baseUrl = form["baseUrl"];
+      _baseUrl = form["baseurl"];
     }
   }
 }

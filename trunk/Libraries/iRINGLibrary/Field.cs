@@ -9,65 +9,64 @@ namespace org.iringtools.library
 		[DataMember(Name = "name", IsRequired = true, Order = 0)]
 		public string name { get; set; }  // header
 
-		[DataMember(Name = "dataIndex", IsRequired = true, Order = 1)]
-		public string dataIndex { get; set; }
+    [DataMember(Name = "header", IsRequired = true, Order = 1)]
+    public string header { get; set; }
 
-		[DataMember(Name = "type", IsRequired = true, Order = 2)]
-		public string type { get; set; }  // data type
+		[DataMember(Name = "dataIndex", IsRequired = true, Order = 2)]
+		public string dataIndex { get; set; }			
 
-		[DataMember(Name = "width", IsRequired = true, Order = 3)]
-		public int width { get; set; }
-
-		[DataMember(Name = "fix", IsRequired = true, Order = 4)]
-		public bool fix = false;  // fixed width
-
-		[DataMember(Name = "filterable", IsRequired = true, Order = 5)]
-		public bool filterable = true;
-
-		[DataMember(Name = "sortable", IsRequired = true, Order = 6)]
+		[DataMember(Name = "sortable", IsRequired = true, Order = 3)]
 		public bool sortable = true;
 
-    [DataMember(Name = "keytype", IsRequired = true, Order = 7)]
-    public string keytype = null;
+    [DataMember(Name = "type", IsRequired = true, Order = 4)]
+    public string type { get; set; }  // data type	
 
-    public void setKeytype(string keytype)
+    [DataMember(Name = "filterable", IsRequired = true, Order = 5)]
+    public bool filterable = true;
+
+    //[DataMember(Name = "keytype", IsRequired = true, Order = 5)]
+    //public string keytype = null;
+
+    public void setSortable(bool sortable)
     {
-      this.keytype = keytype;
+      this.sortable = sortable;
     }
 
-    public string getKeytype()
+    public bool getSortable()
     {
-      return keytype;
-    }
+      return sortable;
+    } 
 
-		public void setFixed(bool fix)
-		{
-			this.fix = fix;
-		}
+    //public void setKeytype(string keytype)
+    //{
+    //  this.keytype = keytype;
+    //}
+
+    //public string getKeytype()
+    //{
+    //  return keytype;
+    //}
+
+    //public void setFixed(bool fix)
+    //{
+    //  this.fix = fix;
+    //}
   
-		public bool getFixed()
-		{
-			return fix;
-		}
+    //public bool getFixed()
+    //{
+    //  return fix;
+    //}
 
-		public void setFilterable(bool filterable)
-		{
-			this.filterable = filterable;
-		}
+    //public void setFilterable(bool filterable)
+    //{
+    //  this.filterable = filterable;
+    //}
 
-		public bool getFilterable()
-		{
-			return filterable;
-		}
+    //public bool getFilterable()
+    //{
+    //  return filterable;
+    //}
 
-		public void setSortable(bool sortable)
-		{
-			this.sortable = sortable;
-		}
-
-		public bool getSortable()
-		{
-			return sortable;
-		} 
+		
 	}
 }

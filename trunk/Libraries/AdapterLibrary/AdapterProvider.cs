@@ -3644,33 +3644,35 @@ namespace org.iringtools.adapter
         }
 
         InitializeScope(projectName, applicationName, false);
-
-        string dataLayer = httpRequest.Form["DataLayer"];
+        //XElement bindingConfig = Utility.ReadXml(_settings["BindingConfigurationPath"]);
+        
+        //string dataLayer = httpRequest.Form["DataLayer"];
         // Check request whether have Configuration in Request or not. SP & ID don't have this ----------------------
         if (httpRequest.Form["Configuration"] != null)
         {
           configuration = Utility.DeserializeXml<XElement>(httpRequest.Form["Configuration"]);
 
-          binding = new XElement("module",
-             new XAttribute("name", _settings["Scope"]),
-               new XElement("bind",
-                 new XAttribute("name", "DataLayer"),
-                 new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-                 new XAttribute("to", dataLayer)
-               )
-             );
+          //binding = new XElement("module",
+          //   new XAttribute("name", _settings["Scope"]),
+          //     new XElement("bind",
+          //       new XAttribute("name", "DataLayer"),
+          //       new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+          //       new XAttribute("to", dataLayer)
+          //     )
+          //   );
 
-          binding.Save(_settings["BindingConfigurationPath"]);
-          try
-          {
-            _kernel.Load(_settings["BindingConfigurationPath"]);
-          }
-          catch
-          {
-            ///ignore error if already loaded
-            ///this is required for Spreadsheet Datalayer 
-            ///when spreadsheet is re-uploaded
-          }
+
+          //bindingConfig.Save(_settings["BindingConfigurationPath"]);
+          //try
+          //{
+          //  _kernel.Load(_settings["BindingConfigurationPath"]);
+          //}
+          //catch
+          //{
+          //  ///ignore error if already loaded
+          //  ///this is required for Spreadsheet Datalayer 
+          //  ///when spreadsheet is re-uploaded
+          //}
         }
         InitializeDataLayer(false);
         if (httpRequest.Form["Configuration"] != null)

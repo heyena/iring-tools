@@ -59,6 +59,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject.Extensions.Xml, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject.Web.Mvc">
       <HintPath>..\ExternalBinaries\Ninject2\extensions\Ninject.Web.Mvc.dll</HintPath>
     </Reference>
@@ -151,10 +155,8 @@
     <Content Include="about.aspx" />
     <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
-    <Content Include="Content\css\GridFilters.css" />
     <Content Include="Content\css\interface.css" />
     <Content Include="Content\css\iring-tools.css" />
-    <Content Include="Content\css\RangeMenu.css" />
     <Content Include="Content\css\reset.css" />
     <Content Include="Content\css\sparql.css" />
     <Content Include="Content\img\16x16\document-new.png" />
@@ -176,14 +178,19 @@
     <Content Include="Content\img\class.png" />
     <Content Include="Content\img\document-properties.png" />
     <Content Include="Content\img\document-save.png" />
+    <Content Include="Content\img\equals.png" />
     <Content Include="Content\img\fade.png" />
     <Content Include="Content\img\file-mapping.png" />
+    <Content Include="Content\img\find.png" />
     <Content Include="Content\img\folder-close.png" />
     <Content Include="Content\img\folder-open.png" />
     <Content Include="Content\img\folder.png" />
+    <Content Include="Content\img\greater_than.png" />
+    <Content Include="Content\img\image_add.png" />
     <Content Include="Content\img\internet-web-browser.png" />
     <Content Include="Content\img\iring-tools-logo.png" />
     <Content Include="Content\img\iRINGTools_logo.png" />
+    <Content Include="Content\img\less_than.png" />
     <Content Include="Content\img\list-add.png" />
     <Content Include="Content\img\list-remove.png" />
     <Content Include="Scripts\AM\controller\AdapterManager.js" />
@@ -207,9 +214,7 @@
     <Content Include="Scripts\AM\store\AvailItemsStore.js" />
     <Content Include="Scripts\AM\store\NHibernateTreeStore.js" />
     <Content Include="Scripts\AM\store\ProviderStore.js" />
-    <Content Include="Scripts\AM\ux\Filter.js" />
     <Content Include="Scripts\AM\ux\GridPageSizer.js" />
-    <Content Include="Scripts\AM\ux\ListFilter.js" />
     <Content Include="Scripts\AM\ux\PagingToolbar.js" />
     <Content Include="Scripts\AM\ux\plugin\GridPageSizer.js" />
     <Content Include="Scripts\AM\ux\RowExpander.js" />
@@ -2496,7 +2501,7 @@
     <Content Include="Scripts\extjs407\resources\themes\images\gray\window\icon-warning.gif" />
     <Content Include="Scripts\extjs407\resources\themes\images\gray\window\window-default-corners.gif" />
     <Content Include="Scripts\extjs407\resources\themes\images\gray\window\window-default-sides.gif" />
-    <Content Include="Views\Directory\Index.ascx" />
+    <Content Include="Views\Directory\Index.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

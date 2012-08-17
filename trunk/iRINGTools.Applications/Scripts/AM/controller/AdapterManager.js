@@ -177,6 +177,7 @@
         node = tree.getSelectedNode(),
         contextName = node.data.property.context,
         endpointName = node.data.property.endpoint,
+        baseurl = node.data.property.baseUrl,
         graph = node.data.text;
     var conf = {
       title: contextName + '.' + endpointName + '.' + graph,
@@ -185,6 +186,7 @@
       //start: 0,
       //limit: 25,
       endpoint: endpointName,
+      baseUrl: baseurl,
       graph: graph
     };
     var exist = content.items.map[conf.id];
@@ -200,6 +202,7 @@
       store.proxy.extraParams.start = (store.currentPage - 1) * store.pageSize;
       store.proxy.extraParams.limit = store.pageSize;
       store.proxy.extraParams.endpoint = endpointName;
+      store.proxy.extraParams.baseUrl = baseurl;
       store.proxy.extraParams.graph = graph;
     }, this);
 
@@ -208,8 +211,9 @@
     }, this);
 
     newtab.store.on('load', function (store, action) {
-      newtab.reconfigure(newtab.store, newtab.store.proxy.reader.fields);
-      newtab.doLayout();        
+      //the following line breaks unselecting numeric filter 
+      //newtab.reconfigure(newtab.store, newtab.store.proxy.reader.fields);
+      newtab.doLayout();
     }, this);
 
     newtab.store.load({

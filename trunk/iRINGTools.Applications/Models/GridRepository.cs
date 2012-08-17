@@ -70,16 +70,33 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public DataDictionary GetDictionary(string relUri, string baseUrl)
+    //public DataDictionary GetDictionary(string relUri, string baseUrl)
+    //{
+    //  WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+    //  string relativeUrl = string.Format("/{0}/dictionary?format=xml", relUri);
+    //  return _newServiceClient.Get<DataDictionary>(relativeUrl, true);
+    //}
+
+    public DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl)
     {
-      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-      string relativeUrl = string.Format("/{0}/dictionary?format=xml", relUri);
-      return _newServiceClient.Get<DataDictionary>(relativeUrl, true);
+      DataDictionary obj = null;
+
+      try
+      {
+        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "data");
+        obj = _newServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", endpoint, contextName), true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return obj;
     }
 
     public DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit, string baseUrl)
     {
-      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");      
+      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "data");      
       string fmt = "json";
       string relUrl = string.Format("/{0}/{1}/{2}/filter?format={3}&start={4}&limit={5}", endpoint, context, graph, fmt, start, limit);
       string json = _newServiceClient.Post<DataFilter, string>(relUrl, dataFilter, fmt, true);

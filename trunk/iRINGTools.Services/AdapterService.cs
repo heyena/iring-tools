@@ -189,12 +189,12 @@ namespace org.iringtools.services
     }
 
     [Description("Creates a new application in a specific scope.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}/apps")]
-    public Response AddApplication(string scope, EndpointApplication newApplication)
+    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{application}/apps")]
+    public Response AddApplication(string application, EndpointApplication newApplication)
     {
       try
       {
-        return _adapterProvider.AddApplication(scope, newApplication);
+        return _adapterProvider.AddApplication(application, newApplication);
       }
       catch (Exception ex)
       {

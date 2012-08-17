@@ -888,16 +888,18 @@
   },
 
   onSaveSpreadsheet: function (btn, evt) {
-    var thisForm = btn.up('form');
-    var contextName = thisForm.contextName;
+    var thisForm = btn.up('panel');
+    var contextName = thisForm.context;
     var endpoint = thisForm.endpoint;
-    var datalayer = thisForm.DataLayer;
+    var datalayer = thisForm.datalayer;
     var baseUrl = thisForm.baseurl;
     var me = this;
     Ext.Ajax.request({
-      url: 'spreadsheet/configure',    // where you wanna post
+      url: 'Spreadsheet/Configure',    // where you wanna post
       method: 'POST',
       success: function (f, a) {
+        showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);          
+        var navpanel = me.getDirTree();
         navpanel.onReload();
       },   // function called on success
       failure: function (f, a) {
@@ -905,7 +907,7 @@
       },
       params: {
         context: contextName,
-        endpoint: endpointName,
+        endpoint: endpoint,
         baseurl: baseUrl,
         DataLayer: datalayer
       }
@@ -913,21 +915,20 @@
   },
 
   onUploadspreadsheet: function (btn, evt) {
-    var thisForm = btn.up('form');
-    var contextName = thisForm.contextName;
+    var thisForm = btn.up('panel');
+    var contextName = thisForm.context;
     var endpoint = thisForm.endpoint;
-    var datalayer = thisForm.DataLayer;
+    var datalayer = thisForm.datalayer;
     var baseUrl = thisForm.baseurl;
     var that = this;
-    var sourceconf = {
-      width: 420,
+    var sourceconf = {      
       title: 'Upload Spreadsheet for ' + contextName + '.' + endpoint,
       context: contextName,
       endpoint: endpoint,
-      DataLayer: datalayer,
+      dataLayer: datalayer,
       baseurl: baseUrl,
       method: 'POST',
-      url: 'spreadsheet/upload'
+      url: 'Spreadsheet/Upload'
     },
 
     form = Ext.widget('spreadsheetsource', sourceconf);
@@ -939,11 +940,11 @@
   },
 
   onDownloadspreadsheet: function (btn, evt) {
-    var thisForm = btn.up('form');
-    var contextName = thisForm.contextName;
+    var thisForm = btn.up('panel');
+    var contextName = thisForm.context;
     var endpoint = thisForm.endpoint;
     var baseurl = thisForm.baseurl;
-    var downloadUrl = '/spreadsheet/export';
+    var downloadUrl = '/Spreadsheet/Export';
     frm.getForm().submit({
       waitMsg: 'Uploading file...',
       url: this.url,
