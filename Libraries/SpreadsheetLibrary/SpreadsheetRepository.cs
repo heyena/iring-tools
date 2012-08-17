@@ -51,8 +51,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
-        webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        webProxy.Credentials = _settings.GetProxyCredential();
+        webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
         _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);        
       }
       else

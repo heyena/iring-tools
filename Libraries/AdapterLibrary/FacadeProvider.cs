@@ -84,10 +84,7 @@ namespace org.iringtools.facade
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
-        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-
-        webProxy.Credentials = _settings.GetProxyCredential();
-
+        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
         _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
       }
       else
@@ -364,10 +361,8 @@ namespace org.iringtools.facade
 
           if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort) && !String.IsNullOrEmpty(proxyCredsToken))
           {
-            endpoint.Proxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-
-            WebProxyCredentials proxyCreds = new WebProxyCredentials(proxyCredsToken, proxyHost, Int32.Parse(proxyPort));
-            if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
+            WebProxyCredentials proxyCreds = _settings.GetWebProxyCredentials();
+            endpoint.Proxy = proxyCreds.GetWebProxy() as WebProxy;
             endpoint.ProxyCredentials = proxyCreds.GetNetworkCredential();
           }
 

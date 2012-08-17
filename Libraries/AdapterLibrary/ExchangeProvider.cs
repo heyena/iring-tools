@@ -206,16 +206,9 @@ namespace org.iringtools.exchange
         string proxyPort = _settings["ProxyPort"];
         if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
-          WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-
           WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
-          if (proxyCrendentials != null)
-          {
-            webProxy.Credentials = _settings.GetProxyCredential();
-          }
-      
-          endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password, proxyCrendentials.domain);
-          endpoint.SetProxy(webProxy.Address);
+          endpoint.Proxy = proxyCrendentials.GetWebProxy() as WebProxy;
+          endpoint.ProxyCredentials = proxyCrendentials.GetNetworkCredential();
         }
 
         String query = "CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}";

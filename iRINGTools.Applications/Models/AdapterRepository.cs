@@ -54,8 +54,7 @@ namespace iRINGTools.Web.Models
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
-        webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        webProxy.Credentials = _settings.GetProxyCredential();
+        webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
         _javaServiceClient = new WebHttpClient(javaCoreUri, null, webProxy);
         _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
