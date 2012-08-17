@@ -57,6 +57,7 @@ namespace org.iringtools.web.controllers
         int.TryParse(form["limit"], out limit);
         string currFilter = filter + "/" + sort + "/" + dir;
         DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
+        //DataFilter dataFilter = null;
         bool found = false;
 
         if (((DataDictionary)Session[_key]) == null)
@@ -72,13 +73,15 @@ namespace org.iringtools.web.controllers
             Field field = new Field
                        {
                          name = dataProperty.propertyName,
-                         //header = dataPropergty.propertyName,
+                         header = dataProperty.propertyName,
                          dataIndex = dataProperty.propertyName,
-                         sortable = true
+                         sortable = true,
+                         type = ToExtJsType(dataProperty.dataType),
+                         filterable = true
                        };
 
-            if (dataProperty.keyType == KeyType.assigned || dataProperty.keyType == KeyType.foreign)
-              field.keytype = "key";
+            //if (dataProperty.keyType == KeyType.assigned || dataProperty.keyType == KeyType.foreign)
+            //  field.keytype = "key";
 
             fields.Add(field);
           }
@@ -232,10 +235,9 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        string reluri = string.Format("{0}/{1}/{2}", endpoint, context, baseurl);
         if (Session[_key] == null)
         {
-          Session[_key] = _repository.GetDictionary(reluri, baseurl);
+          Session[_key] = _repository.GetDictionary(context, endpoint, baseurl);
         }
         dataDict = (DataDictionary)Session[_key];
         if (dataDict.dataObjects.Count == 0)
@@ -276,6 +278,34 @@ namespace org.iringtools.web.controllers
       _context = form["context"];
       _endpoint = form["endpoint"];
       _baseUrl = form["baseUrl"];
+    }
+
+    private String ToExtJsType(org.iringtools.library.DataType dataType)
+    {
+      switch (dataType)
+      {
+        case org.iringtools.library.DataType.Boolean:
+          return "boolean";
+
+        case org.iringtools.library.DataType.Char:
+        case org.iringtools.library.DataType.String:
+        case org.iringtools.library.DataType.DateTime:
+          return "string";
+
+        case org.iringtools.library.DataType.Byte:
+        case org.iringtools.library.DataType.Int16:
+        case org.iringtools.library.DataType.Int32:
+        case org.iringtools.library.DataType.Int64:
+          return "int";
+
+        case org.iringtools.library.DataType.Single:
+        case org.iringtools.library.DataType.Double:
+        case org.iringtools.library.DataType.Decimal:
+          return "float";
+
+        default:
+          return "auto";
+      }
     }
 
   }

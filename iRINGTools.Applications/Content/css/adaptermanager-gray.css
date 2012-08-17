@@ -15,6 +15,9 @@ a:active {color: black}
 .x-tree { 
 	background-color: #fff; 
 }
+.upload-icon {
+     background: url('../img/image_add.png') no-repeat 0 0 !important;
+}
 .x-tree-panel .x-grid-row .x-grid-cell-inner .scopes {
   background-image: url("../img/internet-web-browser.png") !important;
 }
