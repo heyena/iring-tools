@@ -45,7 +45,7 @@ If you are unsure which license is appropriate for your use, please contact the 
         }
     }
 
-    if (queryString.match('(\\?|&)debug') !== null) {
+    if (queryString.match('(\\?|&)debug-w-comments') !== null) {
         isDevelopment = true;
     }
     else if (queryString.match('(\\?|&)nodebug') !== null) {

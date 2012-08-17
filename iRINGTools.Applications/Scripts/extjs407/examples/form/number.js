@@ -24,6 +24,7 @@ Ext.onReady(function() {
         fieldDefaults: {
             labelAlign: 'left',
             labelWidth: 105,
+            decimalPrecision: 10,
             anchor: '100%'
         },
         items: [{
