@@ -690,13 +690,16 @@ function getPropertyName(columnName, pairArray) {
   } 
 };
 
-function setDataObject (me, editor, node, contextName, endpoint) {
+function setDataObject (me, editor, node, contextName, endpoint, tree, dbDict) {
   if (editor) {
     var conf = {
       contextName: contextName,
       node: node,
       region: 'center',
       endpoint: endpoint,
+      tree: tree,
+      dbDict: dbDict,
+      editor: editor,
       id: contextName + '.' + endpoint + '.' + node.id + '.setdataobject'
     };
     var setdop = editor.items.map[conf.id];

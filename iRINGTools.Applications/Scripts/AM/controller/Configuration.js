@@ -110,7 +110,7 @@
     var dbDict = thisForm.dbDict;
 
     if (dataNode) {
-      var treeNodeProps = node.data.property;
+      var treeNodeProps = dataNode.data.property;
       var objectNameField = form.findField('objectName');
       var objNam;
 
@@ -214,7 +214,7 @@
     if (nodeType) {
       switch (nodeType) {
         case 'DATAOBJECT':
-          setDataObject(me, editor, dataNode, contextName, endpoint);
+          setDataObject(me, editor, dataNode, contextName, endpoint, tree, dbDict);
           break;
         case 'KEYS':
           setKeysFolder(me, editor, dataNode, contextName, endpoint);
