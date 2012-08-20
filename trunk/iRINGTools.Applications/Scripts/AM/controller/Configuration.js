@@ -3,6 +3,7 @@
   views: [
      'spreadsheet.SpreadsheetSource',
      'spreadsheet.SpreadsheetConfigPanel',
+     'spreadsheet.FileDownload',
      'common.PropertyPanel',
      'common.ContentPanel',
      'common.CenterPanel',
@@ -944,32 +945,36 @@
     var contextName = thisForm.context;
     var endpoint = thisForm.endpoint;
     var baseurl = thisForm.baseurl;
-    var downloadUrl = '/Spreadsheet/Export';
-    frm.getForm().submit({
-      waitMsg: 'Uploading file...',
-      url: this.url,
-      method: 'POST',
-      success: function (f, a) {
-        var htmlString = '<form action= ' + downloadUrl + ' target=\"_blank\" method=\"post\" style=\"display:none\">' +
-                '<input type=\"text\" name=\"context\" value=' + contextName +
-                '></input><input type=\"text\" name=\"endpoint\" value=' + endpoint +
-                '></input><input type=\"text\" name=\"baseurl\" value=' + baseurl +
-                '></input><input type=\"submit\"></input></form>'
-        button.el.insertHtml(
-                  'beforeBegin',
-                  htmlString
-              ).submit();
-      },
-      failure: function (response, request) {
-        showDialog(500, 150, 'Error', 'The file does not exist. Need to upload a spreadsheet first.', Ext.Msg.OK, null);
-      },
-      params: {
-        context: contextName,
-        endpoint: endpoint,
-        baseurl: baseurl
-      }
-    });
+    var downloadUrl = 'Spreadsheet/Export';    
+
+    var htmlString = '<form action= ' + downloadUrl + ' target=\"_blank\" method=\"post\" style=\"display:none\">' +
+      '<input type=\"text\" name=\"context\" value=' + contextName +
+      '></input><input type=\"text\" name=\"endpoint\" value=' + endpoint +
+      '></input><input type=\"text\" name=\"baseurl\" value=' + baseurl +
+      '></input><input type=\"submit\"></input></form>'
+    thisForm.getEl().insertHtml(
+      'beforeBegin',
+      htmlString
+    ).submit();
   },
+
+
+//  onDownloadspreadsheet: function (btn, evt) {
+//    var thisForm = btn.up('panel');
+//    var contextName = thisForm.context;
+//    var endpoint = thisForm.endpoint;
+//    var datalayer = thisForm.datalayer;
+//    var baseurl = thisForm.baseurl;
+//    var downloadUrl = 'Spreadsheet/Export';
+//    var me = this;
+//    var conf = {      
+//    };
+//    var downloader = Ext.widget('filedownloader', conf);
+//    downloader.load({
+//      url: 'Spreadsheet/Export'
+//    });
+
+//  },
 
   onReloadSpreadsheet: function () {
     this.getMainContent().items.items[0].items.items[0].getStore().load();
