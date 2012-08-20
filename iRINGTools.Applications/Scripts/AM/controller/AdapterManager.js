@@ -213,6 +213,7 @@
     newtab.store.on('load', function (store, action) {
       //the following line breaks unselecting numeric filter 
       //newtab.reconfigure(newtab.store, newtab.store.proxy.reader.fields);
+
       newtab.doLayout();
     }, this);
 

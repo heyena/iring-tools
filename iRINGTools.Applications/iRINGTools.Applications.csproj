@@ -178,19 +178,15 @@
     <Content Include="Content\img\class.png" />
     <Content Include="Content\img\document-properties.png" />
     <Content Include="Content\img\document-save.png" />
-    <Content Include="Content\img\equals.png" />
     <Content Include="Content\img\fade.png" />
     <Content Include="Content\img\file-mapping.png" />
-    <Content Include="Content\img\find.png" />
     <Content Include="Content\img\folder-close.png" />
     <Content Include="Content\img\folder-open.png" />
     <Content Include="Content\img\folder.png" />
-    <Content Include="Content\img\greater_than.png" />
     <Content Include="Content\img\image_add.png" />
     <Content Include="Content\img\internet-web-browser.png" />
     <Content Include="Content\img\iring-tools-logo.png" />
     <Content Include="Content\img\iRINGTools_logo.png" />
-    <Content Include="Content\img\less_than.png" />
     <Content Include="Content\img\list-add.png" />
     <Content Include="Content\img\list-remove.png" />
     <Content Include="Scripts\AM\controller\AdapterManager.js" />
@@ -253,6 +249,7 @@
     <Content Include="Scripts\AM\view\nhibernate\Utility.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchTree.js" />
+    <Content Include="Scripts\AM\view\spreadsheet\FileDownload.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetConfigPanel.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetSource.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
