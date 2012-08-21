@@ -249,7 +249,6 @@
     <Content Include="Scripts\AM\view\nhibernate\Utility.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchTree.js" />
-    <Content Include="Scripts\AM\view\spreadsheet\FileDownload.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetConfigPanel.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetSource.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
