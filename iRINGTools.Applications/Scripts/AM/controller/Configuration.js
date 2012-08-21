@@ -2,8 +2,7 @@
   extend: 'Ext.app.Controller',
   views: [
      'spreadsheet.SpreadsheetSource',
-     'spreadsheet.SpreadsheetConfigPanel',
-     'spreadsheet.FileDownload',
+     'spreadsheet.SpreadsheetConfigPanel',     
      'common.PropertyPanel',
      'common.ContentPanel',
      'common.CenterPanel',
@@ -957,24 +956,6 @@
       htmlString
     ).submit();
   },
-
-
-//  onDownloadspreadsheet: function (btn, evt) {
-//    var thisForm = btn.up('panel');
-//    var contextName = thisForm.context;
-//    var endpoint = thisForm.endpoint;
-//    var datalayer = thisForm.datalayer;
-//    var baseurl = thisForm.baseurl;
-//    var downloadUrl = 'Spreadsheet/Export';
-//    var me = this;
-//    var conf = {      
-//    };
-//    var downloader = Ext.widget('filedownloader', conf);
-//    downloader.load({
-//      url: 'Spreadsheet/Export'
-//    });
-
-//  },
 
   onReloadSpreadsheet: function () {
     this.getMainContent().items.items[0].items.items[0].getStore().load();
