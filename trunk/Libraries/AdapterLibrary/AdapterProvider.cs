@@ -2313,11 +2313,19 @@ namespace org.iringtools.adapter
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;
 
-        DataFilter filter = new DataFilter();
+                DataFilter dataFilter = new DataFilter();
 
-        if (parameters != null)
-        {
-          _logger.Debug("Preparing Filter from parameters.");
+                if (parameters != null)
+                {
+                    string filter = parameters["filter"];
+
+                    if (filter != null)
+                    {
+                        dataFilter = Utility.DeserializeJson<DataFilter>(filter, true);
+                    }
+                    else
+                    {
+                        _logger.Debug("Preparing Filter from parameters.");
 
           foreach (string key in parameters.AllKeys)
           {
@@ -2347,14 +2355,15 @@ namespace org.iringtools.adapter
                 IsCaseSensitive = false,
               };
 
-              if (filter.Expressions.Count > 0)
-              {
-                expression.LogicalOperator = LogicalOperator.And;
-              }
+                                if (dataFilter.Expressions.Count > 0)
+                                {
+                                    expression.LogicalOperator = LogicalOperator.And;
+                                }
 
-              filter.Expressions.Add(expression);
-            }
-          }
+                                dataFilter.Expressions.Add(expression);
+                            }
+                        }
+                    }
 
           if (!String.IsNullOrEmpty(sortBy))
           {
@@ -2372,21 +2381,21 @@ namespace org.iringtools.adapter
               orderBy.SortOrder = SortOrder.Asc;
             }
 
-            filter.OrderExpressions.Add(orderBy);
-          }
+                        dataFilter.OrderExpressions.Add(orderBy);
+                    }
 
-          _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
-          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
-          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
-          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-        }
-        else
-        {
-          _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
-          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, new DataFilter(), limit, start);
-          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
-          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-        }
+                    _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+                    _dataObjects = _dataLayer.Get(_dataObjDef.objectName, dataFilter, limit, start);
+                    _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, dataFilter);
+                    _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
+                }
+                else
+                {
+                    _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+                    _dataObjects = _dataLayer.Get(_dataObjDef.objectName, new DataFilter(), limit, start);
+                    _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
+                    _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
+                }
 
         _projectionEngine.FullIndex = fullIndex;
         _projectionEngine.BaseURI = (projectName.ToLower() == "all")
