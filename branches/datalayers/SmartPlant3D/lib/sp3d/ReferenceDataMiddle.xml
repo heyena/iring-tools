@@ -1,0 +1,3564 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ReferenceDataMiddle</name>
+    </assembly>
+    <members>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.ReferenceStandard">
+            <summary>
+            Represents the specification information for a grouping of catalog parts conforming to a specification or convention. 
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.ReferenceStandard.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="privateBusinessObject">Private business object.</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.ReferenceStandard.ToString">
+            <summary>
+            Returns the name of the reference standard.
+            </summary>
+            <returns>Name that represents this instance.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNameException">Exception raised if an error is encountered when getting or setting name of the reference standard.</exception>
+            <example>
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper() 
+            Dim sCrossSectionStandard As String = "AISC-LRFD-3.1"
+            Dim oCrossSectionStandard As CrossSectionStandard = oCatalogStructHelper.GetCrossSectionStandard(sCrossSectionStandard)
+            Dim sReferenceStandardName As String = oCrossSectionStandard.ToString()
+            </code>        
+            </example>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ReferenceStandard.Name">
+            <summary>
+            Gets the read-only name of the reference standard.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNameException">Exception raised if an error is encountered when getting the name of reference standard.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ReferenceStandard.Description">
+            <summary>
+            Gets the read-only description of the reference standard.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataDescriptionException">Exception raised if an error is encountered when getting the description of the reference standard.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ReferenceStandard.Organization">
+            <summary>
+            Gets the read-only organization name of the reference standard.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataOrganizationException">Exception raised if an error is encountered when getting the organization name of the reference standard.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ReferenceStandard.Date">
+            <summary>
+            Gets the read-only creation date of the reference standard.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataDateException">Exception raised if an error is encountered when getting the date of the reference standard.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ReferenceStandard.Version">
+            <summary>
+            Gets the read-only creation version of the reference standard.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataVersionException">Exception raised if an error is encountered when getting the version of the reference standard.</exception>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.PipeInsulationSpec">
+            <summary>
+            PipeInsulationSpec is a .NET wrapper class for PipeInsulationSpecification object.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.PipeInsulationSpec.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            Private constructor for the PipeInsulationSpec base class.
+            </summary>
+            <param name="oBOP">Private business object</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.PipeInsulationSpec.Finalize">
+            <summary>
+            Destructor for the PipeInsulationSpec base class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeInsulationSpec.Material">
+            <summary>
+            Gets specification's material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeInsulationSpec.Purpose">
+            <summary>
+            Gets specification's purpose.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeInsulationSpec.InsulationType">
+            <summary>
+            Gets specification's insulation type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeInsulationSpec.InsulationRequirement">
+            <summary>
+            Gets the insulation requirement.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CablewaySpec">
+            <summary>
+            CablewaySpec is a .NET wrapper class for cableway specification.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            Private constructor for the CablewaySpec base class.
+            </summary>
+            <param name="oBOP">Private business object</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.Finalize">
+            <summary>
+            Destructor for the CablewaySpec base class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.Material">
+            <summary>
+            Gets specification material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.TrayType">
+            <summary>
+            Gets the specification tray type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.Manufacturer">
+            <summary>
+            Gets specification's manufacturer.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.TraySpecificationType">
+            <summary>
+            Gets tray specification type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.DefaultBendRadius">
+            <summary>
+            Gets default bend radius.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.RungSpacing">
+            <summary>
+            Gets rung spacing.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.LoadSpanClassification">
+            <summary>
+            Gets the load span classification value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.LoadSpanClassificationPractice">
+            <summary>
+            Gets the load span classification practice.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablewaySpec.TrayLength">
+            <summary>
+            Gets the tray length.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.PlateStock">
+            <summary>
+            Represents the dimensional enumeration of a plate stock.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.PlateStock.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="privateBusinessObject">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PlateStock.Thickness">
+            <summary>
+            Gets the read-only thickness value of the plate stock.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateThicknessException">Exception raised if an error is encountered when getting the thickness value of the plate stock.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PlateStock.Description">
+            <summary>
+            Gets the read-only description of the plate stock.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateDescriptionException">Exception raised if an error is encountered when getting the description of the plate stock.</exception>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CrossSection">
+            <summary>
+            Represents the dimensional enumeration of a cross-section shape;
+            e.g., W10x12 section.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSection.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="privateBusinessObject">Private Business object.</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSection.ToString">
+            <summary>
+            Returns the name of the cross section.
+            </summary>
+            <returns>Name that represents this instance.</returns>
+            <example>
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim sReferenceStandardName As String = "AISC-LRFD-3.1"
+            Dim sSectionName As String = "W18x35"
+            Dim oCrossSection As CrossSection = oCatalogStructHelper.GetCrossSection(sReferenceStandardName, sSectionName)
+            
+            'Get the CrossSection name string. 
+            Dim sCrossSectionName As String = oCrossSection.ToString()
+            </code>
+            </example>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSection.Name">
+            <summary>
+            Read-only property to get the name of the cross section.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSection.CrossSectionStandard">
+            <summary>
+            Read-only property to get cross-section standard from the cross section.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionClassException">Exception raised if an error is encountered when unable to get cross section class from cross section.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionStandardException">Exception raised if an error is encountered when unable to get cross section standard from cross section class.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSection.CrossSectionClass">
+            <summary>
+            Read-only property to get cross-section class from the cross section.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionClassException">Exception raised if an error is encountered when unable to get cross section class from cross section.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSection.CrossSectionType">
+            <summary>
+            Returns the type object of the cross section.
+            </summary>
+            <value>The type of the cross section. Can be null if CrossSectionType is not defined for the CrossSection.</value>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSection.GetCrossSectionPartClass">
+            <summary>
+            Gets the CrossSection part class from the cross section object. 
+            </summary>        
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionClassException">Exception raised if an error is encountered when unable to get cross section class from cross section.</exception>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Material">
+            <summary>
+            The Material class is a .NET wrapper class for COM-based CMaterial.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Material.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="privateBusinessObject">Private Business object.</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Material.GetPlateStock(System.Double)">
+            <summary>
+            Gets the plate stock for the given thickness.
+            </summary>
+            <param name="thickness">The plate thickness.</param>
+            <returns>If found returns the PlateStock of the matching thickness.  Otherwise, returns
+            null if unable to find a PlateStock with the specified thickness.</returns>
+            <exception cref="T:Ingr.SP3D.Common.Middle.CmnException">Unable to retrieve the PlateStocks.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.PlateStocks">
+            <summary>
+            Gets the read-only plate stocks associated with the material. 
+            Returns null when there are no plate stocks available for the material.
+            </summary>
+            <exception cref="T:Ingr.SP3D.Common.Middle.CmnException">Unspecified error in PlateDimensions property of the business object.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.MaterialType">
+            <summary>
+            Gets the material type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.MaterialGrade">
+            <summary>
+            Gets the material grade.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.ElasticModulus">
+            <summary>
+            Gets the elastic modulus of material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.PoissonRatio">
+            <summary>
+            Gets the poisson's ratio of material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.ShearModulus">
+            <summary>
+            Gets the shear modulus of material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.ThermalExpansionCoefficient">
+            <summary>
+            Gets the thermal expansion coeffient of material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.Density">
+            <summary>
+            Gets the density of material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.MaximumCompression">
+            <summary>
+            Gets the maximum compression.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.MaximumTension">
+            <summary>
+            Gets the maximum tension.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.MaximumShear">
+            <summary>
+            Gets the maximum shear.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.YieldStress">
+            <summary>
+            Gets the yield stress value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.UltimateStress">
+            <summary>
+            Gets the ultimate stress value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.DampingCoefficient">
+            <summary>
+            Gets the damping coefficient value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.SpecificHeat">
+            <summary>
+            Gets the specific heat value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.ThermalConductivity">
+            <summary>
+            Gets the thermal conductivity value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Material.Emissivity">
+            <summary>
+            Gets the emissivity value.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CrossSectionClass">
+            <summary>
+            Represents the geometric type of a group of cross sections; 
+            e.g., all W sections.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionClass.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="privateBusinessObject">Private business object.</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionClass.ToString">
+            <summary>
+            Returns the name of the cross-section class.
+            </summary>
+            <returns>Name that represents this instance.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetCrossSectionClassNameException">Exception raised if an error is encountered when getting the name from cross-section class.</exception>
+            <example>
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim sReferenceStandardName As String = "AISC-LRFD-3.1"
+            Dim sSectionName As String = "W18x35"
+            Dim oCrossSection As CrossSection = oCatalogStructHelper.GetCrossSection(sReferenceStandardName, sSectionName)
+            Dim oCrossSectionClass As CrossSectionClass = oCrossSection.CrossSectionClass
+            Dim sCrossSectionClassName As String = oCrossSectionClass.ToString() 
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionClass.GetAllCrossSections">
+            <summary>
+            Gets all the cross sections from the cross section types.
+            </summary>
+            <returns>Read-only collection of cross section.</returns>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSectionClass.Name">
+            <summary>
+            Read-only property to get the name of the cross-section class.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetCrossSectionClassNameException">Exception raised if an error is encountered when getting the name from cross-section class.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSectionClass.CrossSectionStandard">
+            <summary>
+            Read-only property to get cross section standard from the cross-section class.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionStandardException">Exception raised if an error is encountered when unable to get cross-section standard from cross-section class.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSectionClass.CrossSections">
+            <summary>
+            Read-only property to get all the cross sections of this cross-section class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSectionClass.CrossSectionType">
+            <summary>
+            Read-only property to get the cross section type from the cross-section class.
+            Can be returned null if the cross-section type is not found in the cross-section class.  
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.IPipeComponent">
+            <summary>
+            Interface IPipeComponent definition.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipeComponent.ValveOperator">
+            <summary>
+            Gets a valve operator part. 
+            Null will be returned if there is no operator.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipeComponent.ValveOperatorsForMultiPortComponent">
+            <summary>
+            Gets a collection of multi-port valve operators. 
+            If the port has no valve operator, then the corresponding field in the output collection will be set to null.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.PartClass">
+            <summary>
+            The PartClass is a .NET wrapper class that maps to CPartClass in COM. 
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.PartClass.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PartClass.Parts">
+            <summary>
+            Gets the read-only collection of parts. Returns an empty collection if PartClass is empty.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoPartsException">When no parts are found. </exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PartClass.PartClassName">
+            <summary>
+            Gets part class name.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PartClass.PartClassType">
+            <summary>
+            Gets the part class type.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Part">
+            <summary>
+            The Part is a .NET wrapper class that maps to CPart in COM. 
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Part.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Part.PortDefinitions">
+            <summary>
+            Gets a collection of ports or nozzles attached to the part. 
+            The output collection is an ordered collection based on the port index.
+            Returns an empty collection when there are no ports.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Part.PartClass">
+            <summary>
+            Gets the PartClass business object.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Part.PartNumber">
+            <summary>
+            Gets the part number of the catalog part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Part.PartDescription">
+            <summary>
+            Gets the part description of the catalog part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Part.MirrorBehaviorOption">
+            <summary>
+            Gets the mirror behavior option of the catalog part.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.InsulationMaterial">
+            <summary>
+            InsulationMaterial class implementation.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.InsulationMaterial.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.InsulationMaterial.AllowableThicknesses(Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes)">
+            <summary>
+            Returns the read-only collection of allowable thickness values of a material. 
+            </summary>
+            <param name="materialtype">Enumerated InsulationMaterialTypes value.</param>
+            <returns>List of double values.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataNoAllowableThicknessException">Raised when there are no allowable thickness values defined.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.InsulationMaterial.MaterialType">
+            <summary>
+            Gets the material type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.InsulationMaterial.Density">
+            <summary>
+            Gets the density of insulation material.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.EquipmentPart">
+            <summary>
+            The EquipmentPart is a .NET wrapper class that maps to CPSmartEquipmentPart in COM. 
+            This class inherits the part.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.ISymbolDefinition">
+            <summary>
+            Interface for the symbol definition.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ISymbolDefinition.SymbolDefinition">
+            <summary>
+            Gets the ProgID of the symbol.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ISymbolDefinition.CodeBase">
+            <summary>
+            Gets the codebase.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.ICatalogWtAndCG">
+            <summary>
+            Interface for the catalog weight and center of gravity definition.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICatalogWtAndCG.DryWeight">
+            <summary>
+            Gets the dry weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICatalogWtAndCG.WaterWeight">
+            <summary>
+            Gets the water weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICatalogWtAndCG.DryCenterOfGravity">
+            <summary>
+            Gets the dry center of gravity position.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICatalogWtAndCG.WaterCenterOfGravity">
+            <summary>
+            Gets the water center of gravity position.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.ReplacementParts">
+            <summary>
+            Gets the ReadOnlyCollection of replacement parts if the MirrorBehaviourOption is set to ReplacementRequired;
+            otherwise, it returns null.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataReplacementNotRequiredException">Raised when replacement is not required.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataReplacementPartNotFoundException">Raised when replacement part is not found.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.SymbolDefinition">
+            <summary>
+            Gets the symbol definition (ProgID).
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.CodeBase">
+            <summary>
+            Gets the codebase value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.DryWeight">
+            <summary>
+            Gets the dry weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.WaterWeight">
+            <summary>
+            Gets the water weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.DryCenterOfGravity">
+            <summary>
+            Gets the dry center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.WaterCenterOfGravity">
+            <summary>
+            Gets the water center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.ParameterRule">
+            <summary>
+            Gets the parameter rule.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.Name">
+            <summary>
+            Gets the part name.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentPart.ReplacementPartNumber">
+            <summary>
+            Gets the replacement part number.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.PipeComponent">
+            <summary>
+            The PipeComponent is a .NET wrapper class that maps to CPPipeComponent in COM. 
+            This class inherits the part.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.PipeComponent.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.ReplacementParts">
+            <summary>
+            Gets a replacement part if the MirrorBehaviourOption is set to ReplacementRequired;
+            otherwise, it returns null.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataReplacementNotRequiredException">Raised when replace is not required.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataReplacementPartNotFoundException">Raised when replacement part not found.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.ValveOperator">
+            <summary>
+            Gets a valve operator part and returns null if there is no operator.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.ValveOperatorsForMultiPortComponent">
+            <summary>
+            Gets a collection of multi-port valve operators. 
+            If the port has no valve operator, then the corresponding field in the output collection will be set to null.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.IndustryCommodityCode">
+            <summary>
+            Gets the industry commodity code value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.PrimaryNPD">
+            <summary>
+            Gets the primary nominal pipe diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.SecondaryNPD">
+            <summary>
+            Gets the secondary nominal pipe diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.MaterialGrade">
+            <summary>
+            Gets the material grade.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.MaterialCategory">
+            <summary>
+            Gets the material category.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.MaterialsGradePractice">
+            <summary>
+            Gets the materials grade practice.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.PipingCommodityType">
+            <summary>
+            Gets the piping commodity type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.PipingCommoditySubClass">
+            <summary>
+            Gets the piping commodity subclass.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.PipingCommodityClass">
+            <summary>
+            Gets the piping commodity class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.BendRadius">
+            <summary>
+            Gets the bend radius.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.VolumetricCapacity">
+            <summary>
+            Gets the volumetric capacity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.SurfaceArea">
+            <summary>
+            Gets the surface area.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.BendRadiusMultiplier">
+            <summary>
+            Gets the bend radius multiplier.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.GeometryType">
+            <summary>
+            Gets the geometry type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.PartDataBasis">
+            <summary>
+            Gets the part data basis.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.GeometricIndustryStandard">
+            <summary>
+            Gets the geometric industry standard.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.GeometricIndustryPractice">
+            <summary>
+            Gets the geometric industry practice.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.ProcurementClientCommodityCode">
+            <summary>
+            Gets the procurement client commodity code.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.ProcurementCIMISCommodityCode">
+            <summary>
+            Gets the procurement Common Industry Material Identification Standards (CIMIS) commodity code.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.ProcurementVendorPartNumber">
+            <summary>
+            Gets the procurement vendor part number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.ProcurementManufacturerPartNumber">
+            <summary>
+            Gets the procurement manufacturer part number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.UnitCost">
+            <summary>
+            Gets the cost per unit.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.RequisitionNumber">
+            <summary>
+            Gets the requisition number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.InstallationManHours">
+            <summary>
+            Gets the installation manhours.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.MaintenanceManHours">
+            <summary>
+            Gets the maintenance manhours value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.SymbolDefinition">
+            <summary>
+            Gets symbol definition (ProgID).
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.CodeBase">
+            <summary>
+            Gets the codebase value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.DryWeight">
+            <summary>
+            Gets the dry weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.WaterWeight">
+            <summary>
+            Gets the water weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.DryCenterOfGravity">
+            <summary>
+            Gets the dry center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeComponent.WaterCenterOfGravity">
+            <summary>
+            Gets the water center of gravity.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart">
+            <summary>
+            The EquipmentComponentPart is a .NET wrapper class for COM-based CEquipmentComponentPart.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.SymbolDefinition">
+            <summary>
+            Gets the symbol definition (ProgID).
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.CodeBase">
+            <summary>
+            Gets the codebase value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.DryWeight">
+            <summary>
+            Gets the dry weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.WaterWeight">
+            <summary>
+            Gets the water weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.DryCenterOfGravity">
+            <summary>
+            Gets the dry center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.WaterCenterOfGravity">
+            <summary>
+            Gets the water center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.ReplacementPartNumber">
+            <summary>
+            Gets the replacement part number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.ParameterRule">
+            <summary>
+            Gets the parameter rule.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.EquipmentComponentPart.Name">
+            <summary>
+            Gets the name.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.PipePortDef">
+            <summary>
+            The PipePortDef is a .NET wrapper class for COM-based catalog PipePort class.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.IPipePort">
+            <summary>
+            All pipe ports implement this interface.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.EndPractice">
+            <summary>
+            Gets or sets the port's end practice value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.EndPreparation">
+            <summary>
+            Gets or sets the end preperation value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.EndStandard">
+            <summary>
+            Gets or sets the end standard value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.FlangeOrHubOutsideDiameter">
+            <summary>
+            Gets the flange or hub outside diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.FlangeOrHubThickness">
+            <summary>
+            Gets the flange of hub thickness.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.FlangeOrMechanicalGrooveWidth">
+            <summary>
+            Gets the flange or mechanical groove width.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.FlangeProjectionOrSocketOffset">
+            <summary>
+            Gets the flange projection or socket offset.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.FlowDirection">
+            <summary>
+            Gets the flow direction.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.Id">
+            <summary>
+            Gets the port ID.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.LinerThicknessAtFaceOfFlange">
+            <summary>
+            Gets the port's linear thickness at face of flange.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.LinerThicknessAtInsideDiameter">
+            <summary>
+            Gets the linear thickness at inside diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.NPD">
+            <summary>
+            Gets or sets the port's nominal diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.PipingOutsideDiameter">
+            <summary>
+            Gets the piping outside diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.PipingPointBasis">
+            <summary>
+            Gets or sets the piping point basis.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.PortIndex">
+            <summary>
+            Gets or sets the port index.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.PressureRating">
+            <summary>
+            Gets or sets the pressure rating.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.RaisedFaceOrSocketDiameter">
+            <summary>
+            Gets the value of raised face or socket diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.RatingPractice">
+            <summary>
+            Gets or sets the rating practice.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.ReinforcedWallThickness">
+            <summary>
+            Gets the reinforced wall thickness.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.SchedulePractice">
+            <summary>
+            Gets or sets the scheduled practice.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.ScheduleThickness">
+            <summary>
+            Gets or sets the scheduled thickness.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.SeatingOrGrooveOrSocketDepth">
+            <summary>
+            Gets the depth of seating, groove or socket.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.TerminationClass">
+            <summary>
+            Gets or sets the termination class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.TerminationSubClass">
+            <summary>
+            Gets or sets the termination subclass.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IPipePort.WallThicknessOrGrooveSetback">
+            <summary>
+            Gets the wall thickness or groove set back.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.PipePortDef.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.Id">
+            <summary>
+            Gets the port ID property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.PortIndex">
+            <summary>
+            Gets the port index property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.NPD">
+            <summary>
+            Gets nominal diameter of pipe port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.EndPreparation">
+            <summary>
+            Gets the end preparation property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.TerminationClass">
+            <summary>
+            Gets the termination class property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.TerminationSubClass">
+            <summary>
+            Gets the termination subclass property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.ScheduleThickness">
+            <summary>
+            Gets the schedule thickness property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.SchedulePractice">
+            <summary>
+            Gets the schedule practice property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.PipingPointBasis">
+            <summary>
+            Gets the piping point basis property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.EndStandard">
+            <summary>
+            Gets the end standard property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.EndPractice">
+            <summary>
+            Gets the end practice value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.PressureRating">
+            <summary>
+             Gets the pressure rating value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.RatingPractice">
+            <summary>
+             Gets the rating practice value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.FlowDirection">
+            <summary>
+            Gets the flow direction value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.FlangeOrHubOutsideDiameter">
+            <summary>
+            Gets the flange or hub outside diameter value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.WallThicknessOrGrooveSetback">
+            <summary>
+            Gets the wall thickness or groove setback value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.RaisedFaceOrSocketDiameter">
+            <summary>
+            Gets the raised face or socket diameter value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.FlangeOrHubThickness">
+            <summary>
+            Gets the flange or hub thickness value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.FlangeOrMechanicalGrooveWidth">
+            <summary>
+            Gets the flange or mechanical groove width value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.FlangeProjectionOrSocketOffset">
+            <summary>
+            Gets the flange projection or socket offset value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.SeatingOrGrooveOrSocketDepth">
+            <summary>
+            Gets the seating, groove, or socket depth value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.PipingOutsideDiameter">
+            <summary>
+            Gets the piping outside diameter value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.LinerThicknessAtFaceOfFlange">
+            <summary>
+             Gets the liner thickness at face of flange value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.LinerThicknessAtInsideDiameter">
+            <summary>
+            Gets the liner thickness at inside diameter value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.ReinforcedWallThickness">
+            <summary>
+            Gets the reinforced wall thickness value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipePortDef.PipingInsideDiameter">
+            <summary>
+            Gets the piping inside diameter value.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.HvacPortDef">
+            <summary>
+            HvacPortDef is a .NET wrapper class for COM-based catalog HvacPort class.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.IDuctPort">
+            <summary>
+            All duct ports implement this interface.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IDuctPort.ConnectPortOffset">
+            <summary>
+            Gets or sets the connect port offset value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IDuctPort.EndPreparation">
+            <summary>
+            Gets or sets the end preparation value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IDuctPort.FlangeWidth">
+            <summary>
+            Gets or sets the flange width.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IDuctPort.FlowDirection">
+            <summary>
+            Gets or sets the distribution flow direction.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IDuctPort.PortDepth">
+            <summary>
+            Gets or sets the port depth.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IDuctPort.PortIndex">
+            <summary>
+            Gets or sets the port index.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IDuctPort.Thickness">
+            <summary>
+            Gets or sets the thickness.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business Object</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.CrossSection">
+            <summary>
+            Gets the cross section of a duct.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoCrossSectionException">Raised when the cross section is not defined on the port.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.EndPreparation">
+            <summary>
+            Gets the end preparation value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.ConnectPortOffset">
+            <summary>
+            Gets the connect port offset value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.FlangeWidth">
+            <summary>
+            Gets the flange width value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.FlowDirection">
+            <summary>
+            Gets the flow direction value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.PortDepth">
+            <summary>
+            Gets the port depth value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.PortIndex">
+            <summary>
+            Gets the port index value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.Thickness">
+            <summary>
+            Gets the thickness value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPortDef.ID">
+            <summary>
+            Gets the port ID of a duct port.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.ElectricalPortDef">
+            <summary>
+            The ElectricalPortDef is a .NET wrapper class for COM-based CPElectricalPort class.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.ElectricalPortDef.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ElectricalPortDef.ID">
+            <summary>
+            Gets the port ID of an electrical port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ElectricalPortDef.Receptacle">
+            <summary>
+            Gets the receptacle.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef">
+            <summary>
+            The FoundationPortDef is a .NET wrapper class for COM-based CPCatalogFoundationPort class.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.GetHoles">
+            <summary>
+            Returns the read-only collection of the position of holes on a foundation port.
+            </summary>
+            <returns>ReadOnlyCollection of Position objects.</returns>
+            <example>This example explains how to get the holes on a foundation port.
+            <code>
+            'Declare foundation port.
+            Dim oFoundationPortDef As FoundationPortDef = Nothing        
+            'Call GetHoles() method to get the holes information.
+            Dim oHolesColl As ReadOnlyCollection(Of Position) = Nothing
+            oHolesColl = oFoundationPortDef.GetHoles()       
+            </code>
+            </example>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.FoundationPortType">
+            <summary>
+            Gets the foundation port type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.DefaultFoundation">
+            <summary>
+            Gets the default foundation.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.LinerThickness">
+            <summary>
+            Gets the liner thickness.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.BoltCircleDiameter">
+            <summary>
+            Gets the bolt circle diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.NumberOfHolesAlongX">
+            <summary>
+            Gets the number of holes along the X-direction.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.NumberOfHolesAlongY">
+            <summary>
+            Gets the number of holes along the Y-direction.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.DistanceBetweenHolesAlongX">
+            <summary>
+            Gets the distance between holes along the X-direction.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.DistanceBetweenHolesAlongY">
+            <summary>
+            Gets the distance between holes along the Y-direction.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.FootprintOffset">
+            <summary>
+            Gets the footprint offset.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.FoundationPortDef.ID">
+            <summary>
+            Gets the nozzle ID.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef">
+            <summary>
+            The CableTrayPortDef is a .NET wrapper class that maps to the CCableTrayPort class in COM.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.ICableTrayPort">
+            <summary>
+            All cable tray ports implement this interface.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICableTrayPort.ActualDepth">
+            <summary>
+            Gets or sets the port's actual depth.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICableTrayPort.ActualWidth">
+            <summary>
+            Gets or sets the actual width.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICableTrayPort.LoadDepth">
+            <summary>
+            Gets or sets the load depth.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICableTrayPort.LoadWidth">
+            <summary>
+            Gets or sets the load width.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICableTrayPort.NominalDepth">
+            <summary>
+            Gets or sets the nominal depth.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICableTrayPort.NominalWidth">
+            <summary>
+            Gets or sets the nominal width.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ICableTrayPort.PortIndex">
+            <summary>
+            Gets or sets the port index.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.PortIndex">
+            <summary>
+            Gets the port index of the cable tray port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.ActualWidth">
+            <summary>
+            Gets the actual width of the cable tray port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.ActualDepth">
+            <summary>
+            Gets the actual depth of the cable tray port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.LoadDepth">
+            <summary>
+            Gets the load depth of the cable tray port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.LoadWidth">
+            <summary>
+            Gets the load width of the cable tray port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.NominalWidth">
+            <summary>
+            Gets the nominal width of the cable tray port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.NominalDepth">
+            <summary>
+            Gets the nominal depth of the cable tray port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPortDef.ID">
+            <summary>
+            Gets the port ID.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.OutfittingCrossSection">
+            <summary>
+            The OutfittingCrossSection class is a .NET wrapper class for COM-based CPOutfittingCrossSection.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.OutfittingCrossSection.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.OutfittingCrossSection.Width">
+            <summary>
+            Gets the width of an outfitting cross section.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.OutfittingCrossSection.Depth">
+            <summary>
+            Gets the depth of an outfitting cross section.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.OutfittingCrossSection.CornerRadius">
+            <summary>
+            Gets the corner radius of an outfitting cross section.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.OutfittingCrossSection.DimensionBaseOuter">
+            <summary>
+            Gets the dimension base outer.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.OutfittingCrossSection.CrossSectionShape">
+            <summary>
+            Gets the cross section shape type.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CableTrayPart">
+            <summary>
+            CableTrayPart is the .NET wrapper class for the COM-based CPCableTrayPart.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private Business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.SymbolDefinition">
+            <summary>
+            Gets the symbol definition (ProgID).
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.CodeBase">
+            <summary>
+            Gets the codebase.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.DryWeight">
+            <summary>
+            Gets the dry weight.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.WaterWeight">
+            <summary>
+            Gets the water weight.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.DryCenterOfGravity">
+            <summary>
+            Gets the dry center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.WaterCenterOfGravity">
+            <summary>
+            Gets the water center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.NominalWidth">
+            <summary>
+            Gets the nominal width of a cable tray part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.NominalDepth">
+            <summary>
+            Gets the nominal depth of a cable tray part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.ReducingSize">
+            <summary>
+            Gets the reducing size of a cable tray part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.CableTrayComponentType">
+            <summary>
+            Gets the cable tray component type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.CableTrayComponentClass">
+            <summary>
+            Gets the cable tray component class value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.CableTrayMaterial">
+            <summary>
+            Gets the cable tray material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.CableTrayLength">
+            <summary>
+            Gets the cable tray length.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.BendRadius">
+            <summary>
+            Gets the bend radius of a cable tray part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.Manufacturer">
+            <summary>
+            Gets the manufacurer of a cable tray part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.CableTrayType">
+            <summary>
+            Gets the cable tray type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.LoadSpanClassification">
+            <summary>
+            Gets the load span classification.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.LoadSpanClassificationPractice">
+            <summary>
+            Gets the load span classification practice value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.RungSpacing">
+            <summary>
+            Gets the rung spacing value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.TangentLength">
+            <summary>
+            Gets the cable tray part tangent length.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.DividerPartNumber">
+            <summary>
+            Gets the divider part number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.CoverPartNumber">
+            <summary>
+            Gets the cover part number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.AssociatedPartNumber">
+            <summary>
+            Gets the cable tray part's associated part number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.QuantityOfAssociatedParts">
+            <summary>
+            Gets the quantity of associated parts.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.PartDataBasis">
+            <summary>
+            Gets the part data basis.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.InsertionDepth">
+            <summary>
+            Gets the insertion depth of cable tray part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CableTrayPart.ReplacementPartNumber">
+            <summary>
+            Gets the replacement part number.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.HvacPart">
+            <summary>
+            HvacPart is the .NET wrapper class for the COM-based CPHvacPart.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.HvacPart.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.DryWeight">
+            <summary>
+            Gets the dry weight value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.WaterWeight">
+            <summary>
+            Gets the water weight property value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.DryCenterOfGravity">
+            <summary>
+            Gets the dry center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.WaterCenterOfGravity">
+            <summary>
+            Gets the water center of gravity.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.ReplacementPartNumber">
+            <summary>
+            Gets the replacement part number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.FaceWidth">
+            <summary>
+            Gets the face width.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.FaceDepth">
+            <summary>
+            Gets the face depth.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.CrossSectionShape">
+            <summary>
+            Gets the cross section shape.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.CornerRadius">
+            <summary>
+            Gets the corner radius.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.DimensionBaseOuter">
+            <summary>
+            Gets the dimension base outer.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.HvacComponentType">
+            <summary>
+            Gets the HVAC component type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.WeightPerUnitLength">
+            <summary>
+            Gets the weight per unit length.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HvacPart.PartDataBasis">
+            <summary>
+            Gets the part data basis.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CablePart">
+            <summary>
+            CablePart is the .NET wrapper class for the COM-based CPCablePart.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CablePart.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="oPBO">Private business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablePart.UnitWeight">
+             <summary>
+             Gets the weight per unit length.
+             </summary>
+            <example>Example explains how to get the unit weight of a cable.
+            <code>
+            'Define CablePart.
+            Dim oCablePart As CablePart = Nothing 
+            'Get unit weight.
+            Dim oCableDia As Double = oCablePart.UnitWeight 
+            </code>
+            </example>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablePart.Diameter">
+             <summary>
+             Gets the diameter of a cable.
+             </summary>
+            <example>Example explains how to get the diameter of a cable.
+            <code>
+            'Define CablePart.
+            Dim oCablePart As CablePart = Nothing 
+            'Get cable diameter.
+            Dim oCableDia As Double = oCablePart.Diameter 
+            </code>
+            </example>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablePart.MinimumBendRadius">
+             <summary>
+             Gets the minimum bend radius of a cable.
+             </summary>
+            <example>Example explains how to get the minimum bend radius of a cable.
+            <code>
+            'Define CablePart.
+            Dim oCablePart As CablePart = Nothing 
+            'Get minimun bend radius of cable.
+            Dim oCableDia As Double = oCablePart.MinimumBendRadius 
+            </code>
+            </example>          
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablePart.NumberOfConductors">
+            <summary>
+            Gets the number of conductors of a cable part.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CablePart.Name">
+            <summary>
+            Gets the part name.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CrossSectionShapeTypes">
+            <summary>
+            Enumerated types of cross sections for cableways and ducts.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.CrossSectionShapeTypes.Rectangular">
+            <summary>
+            Rectangular shape cross section = 1.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.CrossSectionShapeTypes.FlatOval">
+            <summary>
+            Flat oval shape cross section = 3.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.CrossSectionShapeTypes.Round">
+            <summary>
+            Circular shape cross section = 4.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes">
+            <summary>
+            Enumerated types of components for ducts.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes.HVAC_TURN">
+            <summary>
+            Turn component = 1.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes.HVAC_SPLIT">
+            <summary>
+            Split component = 2.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes.HVAC_BRANCH">
+            <summary>
+            Branch component = 3.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes.HVAC_END">
+            <summary>
+            End component = 4.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes.HVAC_INLINE">
+            <summary>
+            Inline component = 5.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes.HVAC_SURFACE">
+            <summary>
+            Surface component = 6.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes.HVAC_ENDLEG">
+            <summary>
+            End leg component = 7.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.HvacComponentTypes.HVAC_DIVISIONS">
+            <summary>
+            Division component = 8.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.IConduitPort">
+            <summary>
+            All conduit ports implement this interface.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.ConduitDiameter">
+            <summary>
+            Gets the conduit diameter.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.EndPractice">
+            <summary>
+            Gets or sets the end practice value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.EndPreparation">
+            <summary>
+            Gets or sets the end preparation value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.EndStandard">
+            <summary>
+            Gets or sets the end standard value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.HubOutsideDiameter">
+            <summary>
+            Gets the hub outside diameter value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.HubThickness">
+            <summary>
+            Gets the hub thickness.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.ID">
+            <summary>
+            Gets or sets the port ID.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.NCD">
+            <summary>
+            Gets or sets the nominal diameter of a conduit port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.PortIndex">
+            <summary>
+            Gets or sets the port index of a conduit port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.SchedulePractice">
+            <summary>
+            Gets or sets the scheduled practice value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.ScheduleThickness">
+            <summary>
+            Gets or sets the schedule thickness value.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IConduitPort.WallThickness">
+            <summary>
+            Gets the wall thickness value.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.IOutfittingCrossSection">
+            <summary>
+            All duct ports implement this interface.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IOutfittingCrossSection.Width">
+            <summary>
+            Gets cross-section width of a duct port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IOutfittingCrossSection.Depth">
+            <summary>
+            Gets cross-section depth of a duct port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IOutfittingCrossSection.CornerRadius">
+            <summary>
+            Gets corner radius of duct port.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IOutfittingCrossSection.DimensionBaseOuter">
+            <summary>
+            Returns True if it is dimension base outer.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.IOutfittingCrossSection.CrossSectionShape">
+            <summary>
+            Gets cross-section shape of a duct port.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.FlowDirection">
+            <summary>
+            Enumerated values for flow direction.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.FlowDirection.UNDEFINED">
+            <summary>
+            Undefined direction = 0.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.FlowDirection.OUT">
+            <summary>
+            Out flow direction = 1.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.FlowDirection.IN">
+            <summary>
+            In flow direction = 2.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.FlowDirection.BOTH">
+            <summary>
+            In and out flow direction = 3.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.FlowDirection.NOFLOW">
+            <summary>
+            No flow direction = 4.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.ISectionCalculator">
+            <summary>
+            This interface needs to be implemented by classes for customizing the calculation for design properties.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.ISectionCalculator.CalculateSectionProperties(System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>
+            Calculates the section design properties.
+            </summary>
+            <param name="inputProperties">The minimum required input properties.</param>
+            <param name="crossSectionType">Cross-section type name.</param>
+            <returns>Dictionary of design property name and value.</returns>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.RefDatResourceIDs">
+            <summary>
+            Resource ids of RefData exception strings.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.RefDatResourceIDs.DEFAULT_RESOURCE">
+            <summary>
+            RefData localizer Resource.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.RefDatResourceIDs.DEFAULT_ASSEMBLY">
+            <summary>
+            RefData localizer Assembly.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.HVACSpec">
+            <summary>
+            HVACSpec is a .NET wrapper class for HVAC specification.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.HVACSpec.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            Private constructor for the HVACSpec base class.
+            </summary>
+            <param name="oBOP">Private business object</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.HVACSpec.Finalize">
+            <summary>
+            Destructor for the HVACSpec base class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HVACSpec.Service">
+            <summary>
+            Gets service.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HVACSpec.PressureClass">
+            <summary>
+            Gets the specification's pressure class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HVACSpec.HvacPartGenerationBasis">
+            <summary>
+            Gets HVAC part generation basis.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.HVACSpec.WidthAndDepthControl">
+            <summary>
+            Gets the width and depth control.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.WeldContour">
+            <summary>
+            Enumerated values for weld contour.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.WeldContour.Flush">
+            <summary>
+            Flush weld contour.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.WeldContour.Concave">
+            <summary>
+            Concave weld contour.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.WeldContour.Convex">
+            <summary>
+            Convex weld contour.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.WeldContour.Flat">
+            <summary>
+            Flat weld contour.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.WeldContour.SmoothlyBlended">
+            <summary>
+            Smoothly blended weld contour.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Weld">
+            <summary>
+            Weld class represents a weld physical connection catalog part.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Weld.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="privateBusinessObject">Private business object.</param>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Weld.Contour">
+            <summary>
+            Read-only property to get the contour.
+            </summary>
+            <value>The contour.</value>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Weld.EdgePreparation">
+            <summary>
+            Read-only property to get the edge preparation.
+            </summary>
+            <value>The edge preparation.</value>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Weld.MinimumThickness">
+            <summary>
+            Read-only property to get the minimum thickness.
+            </summary>
+            <value>The minimum thickness.</value>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Weld.MaximumThickness">
+            <summary>
+            Read-only property to get the maximum thickness.
+            </summary>
+            <value>The maximum thickness.</value>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Weld.IsFlatPosition">
+            <summary>
+            Read-only property to determine whether this weld is in a flat position.
+            </summary>
+            <value>True if this instance is a flat position; otherwise, False.</value>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Weld.IsHorizontalPosition">
+            <summary>
+            Read-only property to determine whether this weld is in a horizontal position.
+            </summary>
+            <value>True if this instance is a horizontal position; otherwise, False.</value>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Weld.IsVerticalPosition">
+            <summary>
+            Read-only property to determine whether this weld is in a vertical position.
+            </summary>
+            <value>True if this instance is a vertical position; otherwise, False.</value>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Weld.IsOverheadPosition">
+            <summary>
+            Read-only property to get whether this weld is in a overhead position.
+            </summary>
+            <value>True if this instance is an overhead position; otherwise, False.</value>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataReplacementNotRequiredException">
+            <summary>
+            This exception is raised when replacement is not required in the calling routines.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataReplacementNotRequiredException.#ctor">
+            <summary>
+            RefDataReplacementNotRequiredException Constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataReplacementPartNotFoundException">
+            <summary>
+            This exception is raised when replacement part is not found in the calling routines.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataReplacementPartNotFoundException.#ctor">
+            <summary>
+            RefDataReplacementPartNotFoundException constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoPartsException">
+            <summary>
+            This exception is raised when part is not found in the calling routines.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoPartsException.#ctor">
+            <summary>
+            RefDataNoPartsException constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataNoAllowableThicknessException">
+            <summary>
+            This exception is raised in case no allowable thicknesses are in the calling routines.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefdataNoAllowableThicknessException.#ctor">
+            <summary>
+            RefdataNoAllowableThicknessException constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoCrossSectionException">
+            <summary>
+            This exception is raised in case no cross section is in the calling routines.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoCrossSectionException.#ctor(System.Exception)">
+            <summary>
+            RefDataNoCrossSectionException constructor accepts exception as an argument.
+            </summary>
+            <param name="inner">Exception</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPurposeListNotFoundException">
+            <summary>
+            This exception is raised in case no purpose list entries are found in the database.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataPurposeListNotFoundException.#ctor(System.Exception)">
+            <summary>
+            RefDataPurposeListNotFoundException constructor accepts exception as an argument.
+            </summary>
+            <param name="inner">Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGenericDataNotFoundException">
+            <summary>
+            This exception is raised when no generic data is found.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataGenericDataNotFoundException.#ctor">
+            <summary>
+            RefDataGenericDataNotFoundException constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionNotFoundException">
+            <summary>
+            This exception is raised when no cross section is found.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionNotFoundException.#ctor">
+            <summary>
+            RefdataCrossSectionNotFoundException constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataMaterialNotFoundException">
+            <summary>
+            This exception is raised when no cross section is found.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataMaterialNotFoundException.#ctor">
+            <summary>
+            RefDataMaterialNotFoundException constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataCrossSectionStandardNotFoundException">
+            <summary>
+            This exception is raised when no cross-section standard is found.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataCrossSectionStandardNotFoundException.#ctor">
+            <summary>
+            RefDataCrossSectionStandardNotFoundException constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateStocksNotFoundException">
+            <summary>
+            This exception is raised when no plate stocks are found.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateStocksNotFoundException.#ctor">
+            <summary>
+            RefDataPlateStocksNotFoundException constructor.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoEndGenericDataException">
+            <summary>
+            This exception is raised when no end generic data is found.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoEndGenericDataException.#ctor(System.Exception)">
+            <summary>
+            RefDataNoEndGenericDataException constructor accepts exception as an argument.
+            </summary>
+            <param name="inner">Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoValveOperatorPartFoundException">
+            <summary>
+            This exception is raised when no valve operator is found.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoValveOperatorPartFoundException.#ctor(System.Runtime.InteropServices.COMException)">
+            <summary>
+            RefDataNoValveOperatorPartFoundException constructor accepts as an argument.
+            </summary>
+            <param name="oCe">Exception</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoOperatorDefinedException">
+            <summary>
+            This exception is raised when no operation required.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoOperatorDefinedException.#ctor(System.Runtime.InteropServices.COMException)">
+            <summary>
+            RefDataNoOperatorDefinedException constructor accepts exception as an argument.
+            </summary>
+            <param name="Ce">Exception</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataSpecificationNotFoundException">
+            <summary>
+            This exception is raised when no specification is found by a given name.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataSpecificationNotFoundException.#ctor(System.String)">
+            <summary>
+            RefDataSpecificationNotFoundException constructor accepts specification as an argument.
+            </summary>
+            <param name="sSpecName">Specification name.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataReferenceStandardException">
+            <summary>
+            This exception is raised if an error is encountered during getting Reference Standard.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataReferenceStandardException.#ctor(System.String)">
+            <summary>
+            This exception is raised if an error is encountered during getting Reference Standard.
+            </summary>
+            <param name="strMessage">Error message.</param>        
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataReferenceStandardException.#ctor(System.String,System.Exception)">
+            <summary>
+            This exception is raised if an error is encountered during getting Reference Standard.
+            </summary>
+            <param name="strMessage">Error message.</param>
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetCrossSectionTypeNameException">
+            <summary>
+            Exception raised if an error is encountered when getting a name of a cross-section type.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetCrossSectionTypeNameException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting a name of a cross-section type.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetCrossSectionClassNameException">
+            <summary>
+            Exception raised if an error is encountered when getting a name of a cross-section class.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetCrossSectionClassNameException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting a name of a cross-section class.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNameException">
+            <summary>
+            Exception raised if an error is encountered when getting the name of Reference Standard.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataNameException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting the name of Reference Standard.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataDescriptionException">
+            <summary>
+            Exception raised if an error is encountered when getting the description of Reference Standard.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataDescriptionException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting the description of Reference Standard.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataOrganizationException">
+            <summary>
+            Exception raised if an error is encountered when getting the organization name of Reference Standard.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataOrganizationException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting the organization name of Reference Standard.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataDateException">
+            <summary>
+            Exception raised if an error is encountered when getting the date of Reference Standard.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataDateException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting the date of Reference Standard.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataVersionException">
+            <summary>
+            Exception raised if an error is encountered when getting the version of Reference Standard.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataVersionException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting the version of Reference Standard.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetRootException">
+            <summary>
+            This exception is raised if an error is encountered during getting root object.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetRootException.#ctor">
+            <summary>
+            This exception is raised if an error is encountered during getting root object.
+            </summary>            
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetRootException.#ctor(System.Exception)">
+            <summary>
+            This exception is raised if an error is encountered during getting root object.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.InvalidConnectionException">
+            <summary>
+            This exception is raised if an invalid connection is passed in.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.InvalidConnectionException.#ctor(System.String)">
+            <summary>
+            This exception is raised if an invalid connection is passed in.
+            </summary>
+            <param name="strMessage">Error message.</param>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateThicknessException">
+            <summary>
+            Exception raised if an error is encountered when getting the thickness value of the plate stock.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateThicknessException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting the thickness value of the plate stock.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateDescriptionException">
+            <summary>
+            Exception raised if an error is encountered when getting the description of the plate stock.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateDescriptionException.#ctor(System.Exception)">
+            <summary>
+            Instantiates if an error is encountered when getting the description of the plate stock.
+            </summary>        
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataCrossSectionTypeException">
+            <summary>
+            Exception raised if an error is encountered while getting the cross-section type from cross-section class.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefDataCrossSectionTypeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Instantiates if an error is encountered while getting the cross-section type from cross-section class.
+            </summary>
+            <param name="strMessage">Error message.</param>
+             <param name="inner">The COM Exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionClassException">
+            <summary>
+            Exception raised if an error is encountered while unable to get cross-section from cross section.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionClassException.#ctor">
+            <summary>
+            Instantiates if an error is encountered while unable to get cross-section class from cross section.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionStandardException">
+            <summary>
+            Exception raised if an error is encountered while unable to get cross-section standard from cross-section class.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionStandardException.#ctor">
+            <summary>
+            Instantiates if an error is encountered while unable to get cross-section standard from cross-section class.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.CrossSectionClassNotFoundException">
+            <summary>
+            Exception raised if an error is encountered on trying to get a cross-section class from the catalog.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.CrossSectionClassNotFoundException.#ctor">
+            <summary>
+            Instantiates if an error is encountered on trying to get a cross-section class from the catalog.
+            </summary>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Exceptions.ExceptionHandler">
+            <summary>
+            Internal class to deligate the COM exception to the Common exception handler.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Exceptions.ExceptionHandler.HandleCOMException(System.Runtime.InteropServices.COMException)">
+            <summary>
+            Internal method to call common exception handler which will handle all generic the COM exceptions related to db success and BO state.
+            This method will thorow the required exception if required.
+            </summary>
+            <param name="comException">The COM exception.</param>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CrossSectionStandard">
+            <summary>
+            Represents the specification information for cross sections conforming to a specification or convention; 
+            e.g., AISC-LRFD-3.1 standard for member cross sections. 
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionStandard.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="privateBusinessObject">Private business object.</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionStandard.GetCrossSections(System.String)">
+            <summary>
+            Gets all the cross sections for a particular section type.
+            </summary>
+            <param name="sectionType">Section type; e.g., W, HW, CS.</param>
+            <returns>Read-only collection of cross sections for a particular section type.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the passed argument is null.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionNotFoundException">Raised when the cross section is not found.</exception>
+            <example>
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper() 
+            Dim sCrossSectionStandard As String = "AISC-LRFD-3.1"
+            Dim oCrossSectionStandard As CrossSectionStandard = oCatalogStructHelper.GetCrossSectionStandard(sCrossSectionStandard)
+            
+            'Get all the cross sections under this cross-section standard based on the section type. 
+            Dim sSectionType As String = "M"
+            Dim oCrossSectionColl As ReadOnlyCollection(Of CrossSection) = oCrossSectionStandard.GetCrossSections(sSectionType)
+            </code>        
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionStandard.GetCrossSectionClass(System.String)">
+            <summary>
+            Gets the cross-section class from the standard.
+            </summary>
+            <param name="crossSectionClassName">Name of the cross-section class.</param>
+            <returns>The cross-section class, if found.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.CrossSectionClassNotFoundException">Raised when the cross-section class with the given name is not found in the catalog.</exception>
+            <example>This is an example of GetCrossSectionClass method to get a cross-section class with the given name.
+            <code>
+            Dim catalogStructHelper As New CatalogStructHelper() 
+            Dim crossSectionStandard As CrossSectionStandard = catalogStructHelper.GetCrossSectionStandard("AISC-LRFD-3.1")
+            Dim crossSectionClass as CrossSectionClass = crossSectionStandard.GetCrossSectionClass("L")
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionStandard.GetAllCrossSections">
+            <summary>
+            Gets all the cross sections from the cross section standard.
+            </summary>
+            <returns>Read-only collection of cross section.</returns>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionStandard.GetAllCrossSectionsBySectionType(System.String)">
+            <summary>
+            Gets all the cross sections of a particular section type.
+            </summary>
+            <param name="sectionType">Name of the section type.</param>
+            <returns>Read-only collection of cross sections under the section type passed in.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the passed argument is null.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionNotFoundException">When cross section is not found.</exception>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSectionStandard.CrossSectionClasses">
+            <summary>
+            Read-only property to get all the cross-section classes under this cross-section standard.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSectionStandard.CrossSections">
+            <summary>
+            Read-only property to get all cross sections of this cross-section standard.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.ConduitSpec">
+            <summary>
+            ConduitSpec is a .NET wrapper class for the Conduit Specification object.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.ConduitSpec.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            Private constructor for the ConduitSpec base class.
+            </summary>
+            <param name="oBOP">Private business object</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.ConduitSpec.Finalize">
+            <summary>
+            Destructor for the ConduitSpec base class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ConduitSpec.Material">
+            <summary>
+            Gets specfication's material.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.ConduitSpec.Service">
+            <summary>
+            Gets service.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.CrossSectionType">
+            <summary>
+            Represents the geometric family type of a group of cross-section classes. 
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionType.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            This constructor is used when an existing COM object is obtained from the database.
+            </summary>
+            <param name="privateBusinessObject">Private business object.</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.CrossSectionType.ToString">
+            <summary>
+            Returns the name of the cross-section type.
+            </summary>
+            <returns>Name that represents this instance.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetCrossSectionTypeNameException">Exception raised if an error is encountered when getting a name of a cross-section type.</exception>
+            <example>
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim sReferenceStandardName As String = "AISC-LRFD-3.1"
+            Dim sSectionName As String = "W18x35"
+            Dim oCrossSection As CrossSection = oCatalogStructHelper.GetCrossSection(sReferenceStandardName, sSectionName)
+            Dim oCrossSectionClass As CrossSectionClass = oCrossSection.CrossSectionClass
+            Dim oCrossSectionType As CrossSectionType = oCrossSectionClass.CrossSectionType
+            Dim sCrossSectionTypeName As String = oCrossSectionType.ToString() 
+            </code>
+            </example>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.CrossSectionType.Name">
+            <summary>
+            Gets the read-only name of the cross-section type.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetCrossSectionTypeNameException">Exception raised if an error is encountered when getting a name of a cross-section type.</exception>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions">
+            <summary>
+            Holds the port generic data.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.FlangeOrHubOutsideDiameter">
+            <summary>
+            Consists of FlangeOrHubOutsideDiameter property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.WallThicknessOrGrooveSetback">
+            <summary>
+            Consists of WallThicknessOrGrooveSetback property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.RaisedFaceOrSocketDiameter">
+            <summary>
+            Consists of RaisedFaceOrSocketDiameter property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.FlangeOrHubThickness">
+            <summary>
+            Consists of FlangeOrHubThickness property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.FlangeOrMechanicalGrooveWidth">
+            <summary>
+            Consists of FlangeOrMechanicalGrooveWidth property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.FlangeProjectionOrSocketOffset">
+            <summary>
+            Consists of FlangeProjectionOrSocketOffset property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.SeatingOrGrooveOrSocketDepth">
+            <summary>
+            Consists of SeatingOrGrooveOrSocketDepth property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.PipingOutsideDiameter">
+            <summary>
+            Consists of PipingOutsideDiameter property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.LinerThicknessAtFaceOfFlange">
+            <summary>
+            Consists of LinerThicknessAtFaceOfFlange property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.LinerThicknessAtInsideDiameter">
+            <summary>
+            Consists of LinerThicknessAtInsideDiameter property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.ReinforcedWallThickness">
+            <summary>
+            Consists of ReinforcedWallThickness property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PortGenericDimensions.PipingInsideDiameter">
+            <summary>
+            Consists of PipingInsideDiameter property value.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties">
+            <summary>
+            Holds the pipe and conduit port properties.
+            </summary>
+            
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.EndPreparation">
+            <summary>
+            Consists of EndPreparation property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.TerminationClass">
+            <summary>
+            Consists of TerminationClass property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.TerminationSubClass">
+            <summary>
+            Consists of TerminationSubClass property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.PressureRating">
+            <summary>
+            Consists of PressureRating property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.Schedule">
+            <summary>
+            Consists of Schedule property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.EndStandard">
+            <summary>
+            Consists of EndStandard property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.GeometricIndustryStd">
+            <summary>
+            Consists of GeometricIndustryStd property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.LiningMaterial">
+            <summary>
+            Consists of LiningMaterial property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.PipingPointBasis">
+            <summary>
+            Consists of PipingPointBasis property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.Npd">
+            <summary>
+            Consists of Npd property value.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties.NpdUnitType">
+            <summary>
+            Consists of NpdUnitType property value.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes">
+            <summary>
+            Enumerators of part class types.
+            </summary>
+            
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.ModuleClass">
+            <summary>
+            ModuleClass part class = 2.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.EquipmentClass">
+            <summary>
+            EquipmentClass part class = 5.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.PipeComponentClass">
+            <summary>
+            PipeComponentClass part class = 10.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.HvacPartClass">
+            <summary>
+            HvacPartClass part class = 15.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.CrossSectionClass">
+            <summary>
+            CrossSectionClass part class = 25.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.FeatureClass">
+            <summary>
+            FeatureClass part class = 2.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.JointClass">
+            <summary>
+            JointClass part class = 30.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.MolderFormOpeningClass">
+            <summary>
+            MolderFormOpeningClass part class = 35.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.SpacePartClass">
+            <summary>
+            SpacePartClass part class = 45.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.CablePartClass">
+            <summary>
+            CablePartClass part class = 50.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.HgrRulesClass">
+            <summary>
+            HgrRulesClass part class = 61.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.StandardSupportComponentClass">
+            <summary>
+            StandardSupportComponentClass part class = 62.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.ConnectionSupportComponentClass">
+            <summary>
+            ConnectionSupportComponentClass part class = 63.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.LogicalSupportComponentClass">
+            <summary>
+            LogicalSupportComponentClass part class = 64.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.HgrGTypeComponentClass">
+            <summary>
+            HgrGTypeComponentClass part class = 65.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.HgrDefinitionClass">
+            <summary>
+            HgrDefinitionClass part class = 66.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.HgrFaceSelectionClass">
+            <summary>
+            HgrFaceSelectionClass part class = 67.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.HgrSupportingClass">
+            <summary>
+            HgrSupportingClass part class = 68.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.HgrDisciplineClass">
+            <summary>
+            HgrDisciplineClass part class = 69.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.PipeStockClass">
+            <summary>
+            PipeStockClass part class = 70.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.ValveOperatorClass">
+            <summary>
+            ValveOperatorClass part class = 75.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.ConduitStockClass">
+            <summary>
+            ConduitStockClass part class = 76.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.ConduitComponentClass">
+            <summary>
+            ConduitComponentClass part class = 77.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.InstrumentsClass">
+            <summary>
+            InstrumentsClass part class = 78.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.SpecialtyClass">
+            <summary>
+            SpecialtyClass part class = 79.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.PipeSupportDefinitionClass">
+            <summary>
+            PipeSupportDefinitionClass part class = 135.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.CableTraySupportDefinitionClass">
+            <summary>
+            CableTraySupportDefinitionClass part class = 140.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.DuctSupportDefinitionClass">
+            <summary>
+            DuctSupportDefinitionClass part class = 145.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.StructFrameConnectionClass">
+            <summary>
+            StructFrameConnectionClass part class = 190.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.DesignPipeSupportDefinitionClass">
+            <summary>
+            DesignPipeSupportDefinitionClass part class = 195.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.DesignCableTraySupportDefinitionClass">
+            <summary>
+            DesignCableTraySupportDefinitionClass part class = 200.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.DesignDuctSupportDefinitionClass">
+            <summary>
+            DesignDuctSupportDefinitionClass part class = 205.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.StructFootingClass">
+            <summary>
+            StructFootingClass part class = 240.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.StructFootingComponentClass">
+            <summary>
+            StructFootingComponentClass part class = 245.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.EquipFoundationClass">
+            <summary>
+            EquipFoundationClass part class = 255.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.FoundationComponentClass">
+            <summary>
+            FoundationComponentClass part class = 260.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.HgrTraySectionDeltaClass">
+            <summary>
+            HgrTraySectionDeltaClass part class = 265.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.StructSplitConnClass">
+            <summary>
+            StructSplitConnClass part class = 270.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.StructMemFireproofingClass">
+            <summary>
+            StructMemFireproofingClass part class = 275.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.EquipmentAssemblyClass">
+            <summary>
+            EquipmentAssemblyClass part class = 280.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.EquipmentComponentAssemblyClass">
+            <summary>
+            EquipmentComponentAssemblyClass part class = 285.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes.CrossSectionSmartClass">
+            <summary>
+            CrossSectionSmartClass part class = 290.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes">
+            <summary>
+            Enumeration for insulation material types. 
+            </summary>
+            
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes.Piping">
+            <summary>
+            Insulation material type for piping = 1.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes.Equipment">
+            <summary>
+            Insulation material type for equipment = 2.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes.HVAC">
+            <summary>
+            Insulation material type for HVAC = 3.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes.ALL">
+            <summary>
+            Insulation material type for all = 4.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes">
+            <summary>
+            Enumeration of the specification types.
+            </summary>
+            
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes.Piping">
+            <summary>
+            Piping specification type.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes.Insulation">
+            <summary>
+            Insulation specification type.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes.Hvac">
+            <summary>
+            HVAC specification type.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes.CableWay">
+            <summary>
+            Cableway specification type.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes.Conduit">
+            <summary>
+            Conduit specification type.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes.All">
+            <summary>
+            All specification type.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.RefDataErrorResults">
+            <summary>
+            Enumerators representing different errors returned from the ReferenceData COM business object.
+            </summary>
+            
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule">
+            <summary>
+            Describes the SpoolRule class.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.BreakAtUnion">
+            <summary>
+            Gets or sets a boolean to determine whether to break at the union.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.IncludeStubIn">
+            <summary>
+            Gets or sets a boolean to determine whether to include the stub.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.DeleteOldSpools">
+            <summary>
+            Gets or sets a boolean to determine whether to delete old spools.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.IgnoreBoundary">
+            <summary>
+            Gets or sets a boolean to determine whether to ignore the boundary.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.MaximumLength">
+            <summary>
+            Gets or sets the maximum length.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.MaximumWidth">
+            <summary>
+            Gets or sets the maximum width.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.MaximumHeight">
+            <summary>
+            Gets or sets the maximum height.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.NameRule">
+            <summary>
+            Gets or sets the name rule.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.SpoolInclusionBehavior">
+            <summary>
+            Gets or sets the spool inclusion behavior.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.SpoolBreakByControlPoint">
+            <summary>
+            Gets or sets the spool break by control point.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.SpoolRule.SpoolingBasis">
+            <summary>
+            Gets or sets the spooling basis.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.SpoolInclusionBehavior">
+            <summary>
+            Enumerator for spool inclusion behavior.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolInclusionBehavior.None">
+            <summary>
+            None of the type = 5.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolInclusionBehavior.PipeAttachmentOnly">
+            <summary>
+            Include pipe attachment only = 10.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolInclusionBehavior.PipeAttachmentWithAllShopParts">
+            <summary>
+            Include pipe attachment with all shop parts = 15.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolInclusionBehavior.PipeAttachmentWithAssembly">
+            <summary>
+            Include pipe attachment with assembly = 20.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.SpoolBreakByControlPoint">
+            <summary>
+            Enumerator for spool break by control point.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolBreakByControlPoint.IgnoreControlPoints">
+            <summary>
+            Ignore control points = 5.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolBreakByControlPoint.BreakAtControlPoints">
+            <summary>
+            Break at control points = 10.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolBreakByControlPoint.BreakOnlyAtControlPoints">
+            <summary>
+            Include break only at control points = 15.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.SpoolingBasis">
+            <summary>
+            Enumerator for spooling basis.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolingBasis.Pipeline">
+            <summary>
+            Include pipeline = 0.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolingBasis.Block">
+            <summary>
+            Include block = 1.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolingBasis.WBSItem">
+            <summary>
+            Include WBSItem = 2.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.SpoolingType">
+            <summary>
+            Enumerator for spooling type.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolingType.PenetrationSpool">
+            <summary>
+            Penetration spool type = 0.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolingType.PipeSpool">
+            <summary>
+            Pipe spool type = 1.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.SpoolingType.DuctSpool">
+            <summary>
+            Duct spool type = 2.
+            </summary>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper">
+            <summary>
+            The class contains the general catalog data access methods which are applicable to 
+            all disciplines.
+            </summary>
+        </member>
+        <member name="F:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.m_oCatalogConnection">
+            <summary>
+            Catalog connection object.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.#ctor">
+            <summary>
+            Creates a Catalog Base Helper object and initializes it with the active catalog connection. 
+            </summary>
+            <example>This is an example to create CatalogBaseHelper with the active catalog connection.
+            <code>
+            Dim oCatalogBaseHelper As New CatalogBaseHelper()
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.#ctor(Ingr.SP3D.Common.Middle.Services.SP3DConnection)">
+            <summary>
+            Constructor to pass in the catalog connection explicitly.
+            </summary>
+            <param name="catalogConnection">Catalog connection.</param>
+            <example>This is an example to create CatalogBaseHelper by providing the catalog connection explicitly.
+            <code>
+            Dim oCatalogConnection As SP3DConnection = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantCatalog
+            Dim oCatalogBaseHelper As New CatalogBaseHelper(oCatalogConnection)
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.GetPart(System.String)">
+            <summary>
+            Returns the part given its unique part number.
+            </summary>
+            <param name="partNumber">Part number string.</param>
+            <returns>Returns the Part object.</returns>
+            <exception cref="T:Ingr.SP3D.Common.Exceptions.CmnNoObjectForMonikerException">Raised when the part is not found.</exception>
+            <exception cref="T:System.ArgumentNullException"> Raised when the part number is null.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.GetPart(System.String,System.String)">
+            <summary>
+            Returns the part given a part class name/part number or type/composition pair. 
+            This method can be used to get a part in cases where the unique part number can only be obtained by a pair; 
+            e.g, SketchCrossSection, which is obtained from the part class and a part name pair or a wall/slab part, which is 
+            obtained from a pair of type and composition.
+            </summary>
+            <param name="partClassNameOrType">Part class name or type string.</param>
+            <param name="partNumberOrComposition">Part number or composition string.</param>
+            <returns>Part as IPart.</returns>
+            <exception cref="T:Ingr.SP3D.Common.Exceptions.CmnNoObjectForMonikerException">Raised when part is not found.</exception>
+            <exception cref="T:System.ArgumentNullException"> Raised when part number is null.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.GetPartClassNames(Ingr.SP3D.ReferenceData.Middle.Services.PartClassTypes)">
+            <summary>
+            Returns a list of part class names for a given part class type.
+            </summary>
+            <param name="type">PartClassTypes</param>
+            <returns>Returns as a list of string values.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the input argument type is null.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.GetPartClass(System.String)">
+            <summary>
+            Returns PartClass for the given part class name.
+            </summary>
+            <param name="partClassName">Part class name string.</param>
+            <returns>Returns as a BusinessObject.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the input argument type is null.</exception>
+            <exception cref="T:Ingr.SP3D.Common.Exceptions.CmnNoObjectForMonikerException">Raised when the part class is not found.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.GetNamingRules(System.String)">
+            <summary>
+            Returns the read-only collection of Naming Rules for a given entity class.
+            </summary>
+            <param name="entityClassName">Entity class name string.</param>
+            <returns>Empty collection when there are no applicable name rules.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when input argument is null.</exception>
+            <exception cref="T:System.Runtime.InteropServices.COMException">Raised when E_FAIL is returned from a COM method.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.GetInsulationPurposeList">
+            <summary>
+            Returns the read-only collection of insulation purpose list items.
+            </summary>
+            <returns>Returns as the read-only collection of codelist items.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPurposeListNotFoundException">Raised in case no purpose list entries are found in the database.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.GetInsulationMaterials(Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes)">
+            <summary>
+            Returns insulation materials for the given insulation material type.
+            </summary>
+            <param name="materialType">InsulationMaterialTypes</param>
+            <returns>A read-only collection of InsulationMaterial.</returns>
+            <exception cref="T:System.ArgumentNullException">In case of null arguments.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogBaseHelper.GetEndGenericData(Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties)">
+            <summary>
+            Returns the EndGenericData for the given PipePort properties.
+            </summary>
+            <param name="props">PipePortProperties</param>
+            <returns>Returns as PortGenericDimensions.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGenericDataNotFoundException">Raised when no generic data is found.</exception>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper">
+            <summary>
+            The CatalogStructHelper class inherits CatalogBaseHelper class and implements the structure-specific APIs in addition to what CatalogBaseHelper provides.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.#ctor">
+            <summary>
+            Creates a CatalogStructHelper object and initializes it with the active catalog connection. 
+            </summary>
+            <example>This is an example to create the CatalogStructHelper with the active catalog connection.
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.#ctor(Ingr.SP3D.Common.Middle.Services.SP3DConnection)">
+            <summary>
+            Creates a CatalogStructHelper object by providing catalog connection explicitly.
+            </summary>
+            <param name="catalogConnection">Catalog connection.</param>
+            <example>This is an example to create CatalogStructHelper by providing the catalog connection explicitly.
+            <code>
+            Dim oCatalogConnection As SP3DConnection = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantCatalog
+            Dim oCatalogStructHelper As New CatalogStructHelper(oCatalogConnection)
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.GetCrossSection(System.String,System.String,System.String)">
+            <summary>
+            Returns a cross-section definition object given reference standard, section type, and section name.
+            </summary>
+            <param name="referenceStandardName">Reference standard name; e.g., AISC-LRFD-3.1, Wall Cross Sections, Misc.</param>
+            <param name="sectionType">Section type; e.g., W, HW, CS.</param>
+            <param name="sectionName">Section name; e.g., W18x35, HW118"x60", CS1.</param>
+            <returns>Cross section definition object.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the passed argument is null.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionNotFoundException">When a cross section is not found.</exception>
+            <example>This is an example of GetCrossSection method providing reference standard, section type, and section name.
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim sReferenceStandardName As String = "AISC-LRFD-3.1"
+            Dim sSectionType As String = "W"
+            Dim sSectionName As String = "W18x35"
+            Dim oCrossSection As CrossSection = oCatalogStructHelper.GetCrossSection(sReferenceStandardName, sSectionType, sSectionName)
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.GetCrossSection(System.String,System.String)">
+            <summary>
+            Returns a cross-section definition object given a reference standard and section name.
+            </summary>
+            <param name="referenceStandardName">Reference standard name; e.g., AISC-LRFD-3.1, Wall Cross-Sections, misc.</param>
+            <param name="sectionName">Section name; e.g., W18x35, HW118"x60", CS1.</param>
+            <returns>Cross-section definition object.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the passed argument is null.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefdataCrossSectionNotFoundException">When a cross section is not found.</exception>
+            <example>This is an example of GetCrossSection method providing a reference standard and section name.
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim sReferenceStandardName As String = "AISC-LRFD-3.1"
+            Dim sSectionName As String = "W18x35"
+            Dim oCrossSection As CrossSection = oCatalogStructHelper.GetCrossSection(sReferenceStandardName, sSectionName)
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.GetMaterials(System.String)">
+            <summary>
+            Gets a read-only collection of material objects by providing the material type.
+            </summary>
+            <param name="materialType">Material type; e.g., Steel - Carbon, Concrete, Steel - High Strength Low Alloy.</param>
+            <returns>Read-only collection of material objects; an empty collection will be returned when no material is found.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the passed argument is null.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataMaterialNotFoundException">When the material is not found.</exception>
+            <example>This is an example of GetMaterials method providing the material type.
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim sMaterialType As String = "Steel - Carbon"
+            Dim oMaterialColl As ReadOnlyCollection(Of Material) = oCatalogStructHelper.GetMaterials(sMaterialType)
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.GetMaterial(System.String,System.String)">
+            <summary>
+            Gets a material object providing the material type and grade.
+            </summary>
+            <param name="materialType">Material type; e.g., Steel - Carbon, Concrete, Steel - High Strength Low Alloy.</param>
+            <param name="materialGrade">Material grade; e.g., A, Fc 3000, 480W.</param>
+            <returns>Material object.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the passed argument is null.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataMaterialNotFoundException">Raised when the material is not found.</exception>
+            <example>This is an example of GetMaterial method providing the material type and grade.
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim sMaterialType As String = "Steel - Carbon"
+            Dim sMaterialGrade As String = "A"
+            Dim oMaterial As Material = oCatalogStructHelper.GetMaterial(sMaterialType, sMaterialGrade)
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.GetPlateStocks(System.String,System.String)">
+            <summary>
+            Returns a read-only collection of plate stock objects for a given material type and material grade.
+            </summary>
+            <param name="materialType">Material type; e.g., Steel - Carbon, Concrete, Steel - High Strength Low Alloy.</param>
+            <param name="materialGrade">Material grade; e.g., A, Fc 3000, 480W.</param>
+            <returns>Read-only collection of plate stock objects.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the passed argument is null.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPlateStocksNotFoundException">When plate stocks are not found.</exception>
+            <example>This is an example of GetPlateStocks method providing the material type and material grade.
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim sMaterialType As String = "Steel - Carbon"
+            Dim sMaterialGrade As String = "A"
+            Dim oPlateStockColl As ReadOnlyCollection(Of PlateStock) = oCatalogStructHelper.GetPlateStocks(sMaterialType, sMaterialGrade)
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.GetCrossSectionStandard(System.String)">
+            <summary>
+            Gets the cross-section standard object under the Structure -&gt; Shapes root by providing the cross-section standard name.
+            </summary>
+            <param name="crossSectionStandardName">Cross-section standard name; e.g., AISC-LRFD-3.1, Wall Cross Sections, Misc.</param>
+            <returns>Cross section standard object.</returns>
+            <exception cref="T:System.ArgumentNullException">Raised when the passed argument is null.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetRootException">This exception is raised if an error is encountered while getting the root object.</exception>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataCrossSectionStandardNotFoundException">When the cross-section standard is not found.</exception>
+            <example>This is an example of GetCrossSectionStandard method providing the cross-section standard name.
+            <code>
+            Dim oCatalogStructHelper As New CatalogStructHelper()
+            Dim oCrossSectionStandard As CrossSectionStandard = oCatalogStructHelper.GetCrossSectionStandard("AISC-LRFD-3.1")
+            </code>
+            </example>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.GetCrossSectionClass(System.String,System.String)">
+            <summary>
+            Gets the cross-section class from a given standard name.
+            </summary>
+            <param name="crossSectionStandardName">Name of the cross-section standard.</param>
+            <param name="crossSectionClassName">Name of the cross-section class.</param>
+            <returns>The cross-section class, if found.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.CrossSectionClassNotFoundException">Raised when cross-section class with the given name is not found in the catalog.</exception>
+            <example>This is an example of GetCrossSectionClass method to get a cross-section class with the given cross-section standard name and cross-section name.
+            <code>
+            Dim catalogStructHelper As New CatalogStructHelper()
+            Dim crossSectionClass As CrossSectionClass = catalogStructHelper.GetCrossSectionClass("AISC-LRFD-3.1","L")
+            </code>
+            </example>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.Materials">
+            <summary>
+            Read-only property to get all the material objects.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.CatalogStructHelper.CrossSectionStandards">
+            <summary>
+            Gets a read-only collection of all cross-section standard objects under the Structure -&gt; Shapes root.
+            </summary>
+            <returns>Read-only collection of cross-section standard objects.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataGetRootException">This exception is raised if an error is encountered while getting the root object.</exception>        
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper">
+            <summary>
+            The CatalogOutfittingHelper class inherits the CatalogBaseHelper class and implements the outfitting specific 
+            APIs in addition to that which CatalogBaseHelper provides.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.#ctor">
+            <summary>
+            Creates a CatalogOutfittingHelper object and initializes it with the active catalog connection. 
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.#ctor(Ingr.SP3D.Common.Middle.Services.SP3DConnection)">
+            <summary>
+            Constructor to pass in the catalog connection explicitly.
+            </summary>
+            <param name="oConnection">SP3DConnection</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.GetInsulationMaterials(Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes)">
+            <summary>
+            Returns insulation materials given a material type.
+            </summary>
+            <param name="materialType">InsulationMaterialTypes</param>
+            <returns>Empty collection when no materials are found.</returns>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.GetEndGenericData(Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties)">
+            <summary>
+            Returns generic dimensions of a pipe port.
+            </summary>
+            <param name="props">PipePortProperties</param>
+            <returns>Returns as PortGenericDimensions.</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoEndGenericDataException">Raised when end generic data is not found.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.GetSpecifications(Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes)">
+            <summary>
+            Returns a read-only collection of specification objects given a discipline.
+            </summary>
+            <returns>Returns as a read-only collection of Business Objects.</returns>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.GetSpecificationByName(Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes,System.String)">
+            <summary>
+            Returns a business object of the specification of the given type.
+            </summary>
+            <param name="discipline">Specification type defined by the enumerator (All,  CableWay, Conduit, Insulation, Hvac, Piping).</param>
+            <param name="specName">The specific name of the specification.</param>
+            <returns>Returns the BusinessObject of the specification found.</returns>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.GetSpecificationName(Ingr.SP3D.ReferenceData.Middle.Services.SpecTypes,Ingr.SP3D.Common.Middle.BusinessObject)">
+            <summary>
+            Gets the name of a Specification object given a discipline.
+            </summary>
+            <param name="discipline">The type of specification such as Piping, HVAC, Cableway.</param>
+            <param name="oBusObj">The Specification business object from which to get the name.</param>
+            <returns>Returns a string that is equal to the name.</returns>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.GetSpoolRule">
+            <summary>
+            Gets the spool rule from the catalog.
+            </summary>
+            <example>This example shows how to get the spool rule from catalog.
+            <code>
+             'Create Catalogoutfittinghelper class object.
+             Dim oCatalogOutfittingHlpr As New CatalogOutfittingHelper
+             'Get the spool rule.
+             Dim oSpoolRule As SpoolRule = oCatalogOutfittingHlpr.GetSpoolRule()
+            </code>
+            </example>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.Services.CatalogOutfittingHelper.InsulationPurposeList">
+            <summary>
+            Returns the insulation purpose values.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPurposeListNotFoundException">When the insulation purpose list is not found.</exception>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.CatalogEquipmentHelper">
+            <summary>
+            Implementation of the CatalogEquipmentHelper class, which is derived from the CatalogBaseHelper.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogEquipmentHelper.#ctor">
+            <summary>
+            Creates a CatalogEquipmentHelper object and initializes it with the active catalog connection. 
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogEquipmentHelper.#ctor(Ingr.SP3D.Common.Middle.Services.SP3DConnection)">
+            <summary>
+            Constructor to pass in the catalog connection explicitly.
+            </summary>
+            <param name="oConnection">SP3DConnection</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogEquipmentHelper.GetInsulationPurposeList">
+            <summary>
+            Returns the insulation purpose values.
+            </summary>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataPurposeListNotFoundException">Exception for purpose list not found.</exception>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogEquipmentHelper.GetInsulationMaterials(Ingr.SP3D.ReferenceData.Middle.Services.InsulationMaterialTypes)">
+            <summary>
+            Returns insulation materials given a material type.
+            </summary>
+            <param name="materialType">InsulationMaterialTypes</param>
+            <returns>Empty collection when no materials are found.</returns>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.CatalogEquipmentHelper.GetEndGenericData(Ingr.SP3D.ReferenceData.Middle.Services.PipePortProperties)">
+            <summary>
+            Returns generic dimensions of a pipe port.
+            </summary>
+            <param name="props">PipePortProperties</param>
+            <returns>PortGenericDimensions</returns>
+            <exception cref="T:Ingr.SP3D.ReferenceData.Exceptions.RefDataNoEndGenericDataException">Exception for no end generic data.</exception>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.Services.GenericPropertyHelper">
+            <summary>
+            Internal class to get the property values via generic property acess.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.Services.GenericPropertyHelper.GetStringProperty(Ingr.SP3D.Common.Middle.BusinessObject,System.String,System.String)">
+            <summary>
+            Gets a string property for the given business object using generic property access.
+            </summary>
+            <param name="businessObject">Business object implementing the interface.</param>
+            <param name="interfaceName">Interface name.</param>
+            <param name="propertyName">Property name on the interface.</param>
+            <returns>The string property value.</returns>
+        </member>
+        <member name="T:Ingr.SP3D.ReferenceData.Middle.PipeSpec">
+            <summary>
+            PipeSpec is a .NET wrapper class for the PipingSpecification object.
+            </summary>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.PipeSpec.#ctor(Ingr.SP3D.Common.Middle.PrivateBusinessObject)">
+            <summary>
+            Private constructor for the PipeSpec base class.
+            </summary>
+            <param name="oBOP">Private business object</param>
+        </member>
+        <member name="M:Ingr.SP3D.ReferenceData.Middle.PipeSpec.Finalize">
+            <summary>
+            Destructor for the PipeSpec base class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeSpec.MaterialofConstructionClass">
+            <summary>
+            Gets material of construction class.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeSpec.DesignStandard">
+            <summary>
+            Gets design standard.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeSpec.RevisionNumber">
+            <summary>
+            Gets revision number.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeSpec.PipingCommodityOverrideOption">
+            <summary>
+            Gets piping commodity override option.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeSpec.MaterialsType">
+            <summary>
+            Gets materials type.
+            </summary>
+        </member>
+        <member name="P:Ingr.SP3D.ReferenceData.Middle.PipeSpec.MaterialsGroup">
+            <summary>
+            Gets materials group.
+            </summary>
+        </member>
+    </members>
+</doc>
