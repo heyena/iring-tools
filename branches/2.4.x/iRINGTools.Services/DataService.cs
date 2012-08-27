@@ -121,14 +121,14 @@ namespace org.iringtools.services
     }
 
     [Description("Gets specified object definition of an application.")]
-    [WebGet(UriTemplate = "/{app}/{project}/dictionary/{graph}?format={format}")]
-    public void GetDictionaryGraph(string project, string app, string graph, string format)
+    [WebGet(UriTemplate = "/{app}/{project}/dictionary/{resource}?format={format}")]
+    public void GetDictionaryGraph(string project, string app, string resource, string format)
     {
         format = MapContentType(format);
 
         DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
 
-        DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == graph.ToLower());
+        DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == resource.ToLower());
 
         if (dataObject == null)
             ExceptionHandler(new FileNotFoundException());
@@ -136,9 +136,9 @@ namespace org.iringtools.services
         _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
     }
 
-    [Description("Gets an XML or JSON projection of the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
-    [WebGet(UriTemplate = "/{app}/{project}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void GetList(string project, string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    [Description("Gets an XML or JSON projection of the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       try
       {
@@ -148,7 +148,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
         _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -157,9 +157,9 @@ namespace org.iringtools.services
       }
     }
 
-    //[Description("Gets the Header of the specified project, application and graph.")]
-    //[WebInvoke(Method="HEAD", UriTemplate = "/{app}/{project}/{graph}")]
-    //public void GetHeader(string project, string app, string graph)
+    //[Description("Gets the Header of the specified project, application and resource.")]
+    //[WebInvoke(Method="HEAD", UriTemplate = "/{app}/{project}/{resource}")]
+    //public void GetHeader(string project, string app, string resource)
     //{
     //    try
     //    {
@@ -171,13 +171,13 @@ namespace org.iringtools.services
     //    }
     //}
 
-    [Description("Gets an XML or JSON projection of a single item in the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
-    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
-    public void GetItem(string project, string app, string graph, string id, string format)
+    [Description("Gets an XML or JSON projection of a single item in the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
+    public void GetItem(string project, string app, string resource, string id, string format)
     {
       try
       {
-        object content = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, ref format, false);
+        object content = _adapterProvider.GetDataProjection(project, app, resource, String.Empty, id, ref format, false);
         _adapterProvider.FormatOutgoingMessage(content, format);
       }
       catch (Exception ex)
@@ -224,9 +224,9 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets an XML or JSON projection of a filtered set in the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
-    public void GetWithFilter(string project, string app, string graph, string format, int start, int limit, string indexStyle, Stream stream)
+    [Description("Gets an XML or JSON projection of a filtered set in the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    public void GetWithFilter(string project, string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
     {
       try
       {
@@ -238,7 +238,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, filter, ref format, start, limit, fullIndex);
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
         _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -247,9 +247,9 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{app}/{project}/{graph}/search?q={query}&format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void GetSearch(string project, string app, string graph, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    [Description("Gets an XML projection of the specified scope and resource in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{resource}/search?q={query}&format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetSearch(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       try
       {
@@ -259,7 +259,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
         _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -269,9 +269,9 @@ namespace org.iringtools.services
     }
 
     //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
-    [Description("Gets an individual if it is part 7 (/{app}/{project}/{graph}/{clazz}/{id}?format={p7format}) or related items of an individual otherwise.")]
-    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}/{related}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}")]
-    public void GetIndividual(string project, string app, string graph, string id, string related, string format, int start, int limit, string sortOrder, string sortBy)
+    [Description("Gets an individual if it is part 7 (/{app}/{project}/{resource}/{clazz}/{id}?format={p7format}) or related items of an individual otherwise.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetIndividual(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       try
       {
@@ -283,13 +283,19 @@ namespace org.iringtools.services
           if (format == "rdf" || format == "dto" || format == "p7xml")
           {
             // id is clazz, related is individual
-            object content = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, false);
+            object content = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, false);
             _adapterProvider.FormatOutgoingMessage(content, format);
           }
         }
         else
         {
-          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, start, limit);
+          NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+          bool fullIndex = false;
+          if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+            fullIndex = true;
+
+          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
           _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
         }
       }
@@ -327,9 +333,9 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
-    public void UpdateList(string project, string app, string graph, string format, Stream stream)
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}?format={format}")]
+    public void UpdateList(string project, string app, string resource, string format, Stream stream)
     {
       format = MapContentType(format);
 
@@ -341,15 +347,15 @@ namespace org.iringtools.services
       {
         XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
-        Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+        Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
 
         _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
       }
     }
 
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
-    public void UpdateItem(string project, string app, string graph, string id, string format, Stream stream)
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
+    public void UpdateItem(string project, string app, string resource, string id, string format, Stream stream)
     {
       _logger.Debug("I'm in!");
 
@@ -358,7 +364,7 @@ namespace org.iringtools.services
       Response response = new Response();
       if (format == "raw")
       {
-        response = _adapterProvider.PostContent(project, app, graph, format, id, stream);
+        response = _adapterProvider.PostContent(project, app, resource, format, id, stream);
       }
       else
       {
@@ -366,15 +372,15 @@ namespace org.iringtools.services
 
         _logger.Debug("Deserialized!");
 
-        response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+        response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
       }
 
       _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
     }
 
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
-    public void CreateItem(string project, string app, string graph, string format, Stream stream)
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}?format={format}")]
+    public void CreateItem(string project, string app, string resource, string format, Stream stream)
     {
       format = MapContentType(format);
 
@@ -386,22 +392,22 @@ namespace org.iringtools.services
       {
         XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
-        Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+        Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
 
         _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
       }
     }
 
-    [Description("Deletes a graph in the specified application.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
-    public void DeleteItem(string project, string app, string graph, string id, string format)
+    [Description("Deletes a resource in the specified application.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
+    public void DeleteItem(string project, string app, string resource, string id, string format)
     {
       try
       {
       
           format = MapContentType(format);
 
-          Response response = _adapterProvider.DeleteIndividual(project, app, graph, id, format);
+          Response response = _adapterProvider.DeleteIndividual(project, app, resource, id, format);
 
           _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
 
@@ -439,32 +445,32 @@ namespace org.iringtools.services
       GetDictionary("all", app, format);
     }
 
-    [Description("Gets an XML or JSON projection of the specified application and graph in the format specified.")]
-    [WebGet(UriTemplate = "/all/{app}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void GetListAll(string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    [Description("Gets an XML or JSON projection of the specified application and resource in the format specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetListAll(string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
-      GetList("all", app, graph, format, start, limit, sortOrder, sortBy, indexStyle);
+      GetList("all", app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
     }
 
-    [Description("Gets an XML or JSON projection of a single item in the specified application and graph in the format specified.")]
-    [WebGet(UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
-    public void GetItemAll(string app, string graph, string id, string format)
+    [Description("Gets an XML or JSON projection of a single item in the specified application and resource in the format specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
+    public void GetItemAll(string app, string resource, string id, string format)
     {
-      GetItem("all", app, graph, id, format);
+      GetItem("all", app, resource, id, format);
     }
 
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
-    public void GetWithFilterAll(string app, string graph, string format, int start, int limit, string indexStyle, Stream stream)
+    [Description("Gets an XML projection of the specified scope and resource in the format (xml, dto, rdf ...) specified.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{resource}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    public void GetWithFilterAll(string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
     {
-      GetWithFilter("all", app, graph, format, start, limit, indexStyle, stream);
+      GetWithFilter("all", app, resource, format, start, limit, indexStyle, stream);
     }
 
-    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}")]
-    public void GetIndividualAll(string app, string graph, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy)
+    [Description("Gets an XML projection of the specified scope, resource and id in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{resource}/{clazz}/{id}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetIndividualAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
-      GetIndividual("all", app, graph, clazz, id, format, start, limit, sortOrder, sortBy);
+      GetIndividual("all", app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
     }
 
     [Description("Gets individual of a related item.")]
@@ -474,32 +480,32 @@ namespace org.iringtools.services
       GetRelatedItem("all", app, resource, id, related, relatedId, format);
     }
 
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{graph}?format={format}")]
-    public void UpdateListAll(string app, string graph, string format, Stream stream)
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{resource}?format={format}")]
+    public void UpdateListAll(string app, string resource, string format, Stream stream)
     {
-      UpdateList("all", app, graph, format, stream);
+      UpdateList("all", app, resource, format, stream);
     }
 
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
-    public void UpdateItemAll(string app, string graph, string id, string format, Stream stream)
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
+    public void UpdateItemAll(string app, string resource, string id, string format, Stream stream)
     {
-      UpdateItem("all", app, graph, id, format, stream);
+      UpdateItem("all", app, resource, id, format, stream);
     }
 
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}?format={format}")]
-    public void CreateItemAll(string app, string graph, string format, Stream stream)
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{resource}?format={format}")]
+    public void CreateItemAll(string app, string resource, string format, Stream stream)
     {
-      CreateItem("all", app, graph, format, stream);
+      CreateItem("all", app, resource, format, stream);
     }
 
-    [Description("Deletes a graph in the specified application.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
-    public void DeleteItemAll(string app, string graph, string id, string format)
+    [Description("Deletes a resource in the specified application.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
+    public void DeleteItemAll(string app, string resource, string id, string format)
     {
-      DeleteItem("all", app, graph, id, format);
+      DeleteItem("all", app, resource, id, format);
     }
     #endregion
 
