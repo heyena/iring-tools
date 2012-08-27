@@ -102,14 +102,14 @@ namespace org.iringtools.adapter
 
             if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
             {
-        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-        _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
-      }
-      else
-      {
-        _webHttpClient = new WebHttpClient(rdsUri);
-      }
-      #endregion
+                WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+                _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
+            }
+            else
+            {
+                _webHttpClient = new WebHttpClient(rdsUri);
+            }
+            #endregion
 
             string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
             _settings["ScopesPath"] = scopesPath;
@@ -2553,8 +2553,8 @@ namespace org.iringtools.adapter
 
         //Related
         public XDocument GetDataProjection(
-            string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
-            ref string format, int start, int limit)
+                string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
+                ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex, NameValueCollection parameters)
         {
             try
             {
@@ -2575,13 +2575,34 @@ namespace org.iringtools.adapter
 
                 _projectionEngine.Start = start;
                 _projectionEngine.Limit = limit;
+                _projectionEngine.FullIndex = fullIndex;
 
                 _projectionEngine.BaseURI = (projectName.ToLower() == "all")
                     ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
                     : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
 
                 _projectionEngine.Count = _dataLayer.GetRelatedCount(parentDataObject, relatedObjectType);
-                _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
+
+                //if (parameters == null)
+                //{
+                //    _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
+                //}
+                //else
+                //{
+                    DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
+
+                    foreach (PropertyMap propMap in dataRelationship.propertyMaps)
+                    {
+                        filter.Expressions.Add(new Expression()
+                        {
+                            PropertyName = propMap.relatedPropertyName,
+                            RelationalOperator = RelationalOperator.EqualTo,
+                            Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
+                        });
+                    }
+
+                    _dataObjects = _dataLayer.Get(relatedObjectType, filter, limit, start);
+                //}
 
                 XDocument xdoc = _projectionEngine.ToXml(relatedObjectType, ref _dataObjects);
                 return xdoc;
@@ -3637,6 +3658,74 @@ namespace org.iringtools.adapter
             }
 
             return graph;
+        }
+
+        private DataFilter CreateDataFilter(NameValueCollection parameters, string sortOrder, string sortBy)
+        {
+            DataFilter filter = new DataFilter();
+
+            if (parameters != null)
+            {
+                _logger.Debug("Preparing Filter from parameters.");
+
+                foreach (string key in parameters.AllKeys)
+                {
+                    string[] expectedParameters = { 
+                          "project",
+                          "app",
+                          "format", 
+                          "start", 
+                          "limit", 
+                          "sortBy", 
+                          "sortOrder",
+                          "indexStyle",
+                          "_dc",
+                          "page",
+                          "callback",
+                        };
+
+                    if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
+                    {
+                        string value = parameters[key];
+
+                        Expression expression = new Expression
+                        {
+                            PropertyName = key,
+                            RelationalOperator = RelationalOperator.EqualTo,
+                            Values = new Values { value },
+                            IsCaseSensitive = false,
+                        };
+
+                        if (filter.Expressions.Count > 0)
+                        {
+                            expression.LogicalOperator = LogicalOperator.And;
+                        }
+
+                        filter.Expressions.Add(expression);
+                    }
+                }
+
+                if (!String.IsNullOrEmpty(sortBy))
+                {
+                    OrderExpression orderBy = new OrderExpression
+                    {
+                        PropertyName = sortBy,
+                    };
+
+                    if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
+                    {
+                        orderBy.SortOrder = SortOrder.Desc;
+                    }
+                    else
+                    {
+                        orderBy.SortOrder = SortOrder.Asc;
+                    }
+
+                    filter.OrderExpressions.Add(orderBy);
+                }
+            }
+
+            return filter;
         }
     }
 }
