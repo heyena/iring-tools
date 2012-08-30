@@ -2352,18 +2352,18 @@ namespace org.iringtools.adapter
                         foreach (string key in parameters.AllKeys)
                         {
                             string[] expectedParameters = { 
-                              "project",
-                              "app",
-                              "format", 
-                              "start", 
-                              "limit", 
-                              "sortBy", 
-                              "sortOrder",
-                              "indexStyle",
-                              "_dc",
-                              "page",
-                              "callback",
-                            };
+                          "project",
+                          "app",
+                          "format", 
+                          "start", 
+                          "limit", 
+                          "sortBy", 
+                          "sortOrder",
+                          "indexStyle",
+                          "_dc",
+                          "page",
+                          "callback",
+                        };
 
                             if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
                             {
@@ -2793,6 +2793,97 @@ namespace org.iringtools.adapter
                 InitializeDataLayer();
 
                 InitializeProjection(graphName, ref format, false);
+
+                IList<IDataObject> dataObjects = null;
+                if (_isProjectionPart7)
+                {
+                    dataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
+                }
+                else
+                {
+                    dataObjects = _projectionEngine.ToDataObjects(_dataObjDef.objectName, ref xml);
+                }
+
+                //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+                //IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+                response = _dataLayer.Post(dataObjects);
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Success;
+
+                string baseUri = _settings["GraphBaseUri"] +
+                                 _settings["ApplicationName"] + "/" +
+                                 _settings["ProjectName"] + "/" +
+                                 graphName + "/";
+
+                response.PrepareResponse(baseUri);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error in Post: " + ex);
+                if (response == null)
+                {
+                    response = new Response();
+                }
+
+                Status status = new Status
+                {
+                    Level = StatusLevel.Error,
+                    Messages = new Messages { ex.Message },
+                };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+
+        public Response Post(string projectName, string applicationName, string graphName, string format, DataItems dataItems)
+        {
+            Response response = null;
+
+            try
+            {
+                InitializeScope(projectName, applicationName);
+
+                if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+                {
+                    string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
+                    _logger.Error(message);
+
+                    response = new Response();
+                    response.DateTimeStamp = DateTime.Now;
+                    response.Level = StatusLevel.Error;
+                    response.Messages = new Messages() { message };
+
+                    return response;
+                }
+
+                InitializeDataLayer();
+
+                InitializeProjection(graphName, ref format, false);
+
+                foreach (DataItem dataItem in dataItems.items)
+                {
+                    if (dataItem.id != null && dataItem.id.ToString() != String.Empty)
+                    {
+                        string[] keyValues = !String.IsNullOrEmpty(_dataObjDef.keyDelimeter)
+                                ? dataItem.id.Split(new string[] { _dataObjDef.keyDelimeter }, StringSplitOptions.None)
+                                : new string[] { dataItem.id };
+
+                        int i = 0;
+                        foreach (KeyProperty key in _dataObjDef.keyProperties)
+                        {
+                            dataItem.properties[key.keyPropertyName] = keyValues[i];
+                            i++;
+                        }
+                    }
+                }
+
+                XDocument xml = new XDocument(dataItems.ToXElement<DataItems>());
 
                 IList<IDataObject> dataObjects = null;
                 if (_isProjectionPart7)
@@ -3468,22 +3559,6 @@ namespace org.iringtools.adapter
             return response;
         }
 
-        public DocumentBytes GetResourceData(string projectName, string applicationName)
-        {
-            try
-            {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-
-                return _dataLayer.GetResourceData();
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
-                throw new Exception(string.Format("Error getting configuration: {0}", ex));
-            }
-        }
-
         public XElement GetConfiguration(string projectName, string applicationName)
         {
             try
@@ -3629,15 +3704,25 @@ namespace org.iringtools.adapter
             }
             else
             {
-                DataItemSerializer serializer = new DataItemSerializer(
-                    _settings["JsonIdField"], _settings["JsonLinksField"], bool.Parse(_settings["DisplayLinks"]));
-                string json = Utility.ReadString(stream);
-                DataItems dataItems = serializer.Deserialize<DataItems>(json, false);
-                stream.Close();
+                DataItems dataItems = FormatIncomingMessage(stream);
+
                 xElement = dataItems.ToXElement<DataItems>();
             }
 
             return xElement;
+        }
+
+        public DataItems FormatIncomingMessage(Stream stream)
+        {
+            DataItems dataItems = null;
+
+            DataItemSerializer serializer = new DataItemSerializer(
+                _settings["JsonIdField"], _settings["JsonLinksField"], bool.Parse(_settings["DisplayLinks"]));
+            string json = Utility.ReadString(stream);
+            dataItems = serializer.Deserialize<DataItems>(json, false);
+            stream.Close();
+
+            return dataItems;
         }
 
         public T FormatIncomingMessage<T>(Stream stream, string format, bool useDataContractSerializer)

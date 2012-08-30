@@ -375,9 +375,30 @@ namespace org.iringtools.services
         response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
       }
 
-      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-    }
+            PrepareResponse(ref response);
 
+            _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        private void PrepareResponse(ref Response response)
+        {
+            switch (response.Level)
+            {
+                case StatusLevel.Error:
+                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    break;
+                default:
+                    response.StatusCode = HttpStatusCode.OK;
+                    break;
+            }
+
+            foreach (Status status in response.StatusList)
+            {
+                foreach (string msg in status.Messages)
+                {
+                    response.StatusText += msg;
+                }
+            }
     [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}?format={format}")]
     public void CreateItem(string project, string app, string resource, string format, Stream stream)
@@ -394,9 +415,11 @@ namespace org.iringtools.services
 
         Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
 
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-      }
-    }
+                PrepareResponse(ref response);
+
+                _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+            }
+        }
 
     [Description("Deletes a resource in the specified application.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
@@ -408,6 +431,8 @@ namespace org.iringtools.services
           format = MapContentType(format);
 
           Response response = _adapterProvider.DeleteIndividual(project, app, resource, id, format);
+
+                PrepareResponse(ref response);
 
           _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
 

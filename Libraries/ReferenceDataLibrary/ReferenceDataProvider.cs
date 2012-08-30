@@ -168,6 +168,8 @@ namespace org.iringtools.refdata
 
     public RefDataEntities SearchPage(string query, int start, int limit)
     {
+        _logger.Debug("SearchPage");
+
       RefDataEntities entities = null;
       int counter = 0;
       Entity resultEntity = null;
@@ -178,29 +180,64 @@ namespace org.iringtools.refdata
 
         if (_searchHistory.ContainsKey(query))
         {
+            _logger.Debug("SearchPage: Using History");
+
           entities = _searchHistory[query];
         }
         else
         {
           RefDataEntities resultEntities = new RefDataEntities();
 
+          _logger.Debug("SearchPage: Preparing Queries");
+
           Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearch").Query;
+
+          _logger.Debug("SearchPage: Got Contains Search");
+
           QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-          Query queryContainsSearchJORD = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearchJORD").Query;
+          _logger.Debug("SearchPage: Got Bindings");
+
+          foreach (QueryItem q in _queries)
+          {
+              _logger.DebugFormat("SearchPage: Looging for ContainsSearchJORD: {0}", q.Key);
+          }
+
+          QueryItem queryItem = _queries.FirstOrDefault(c => c.Key == "ContainsSearchJORD");
+
+          if (queryItem != null)
+          {
+              _logger.Debug("SearchPage: Got QueryItem");
+          }
+
+            Query queryContainsSearchJORD = queryItem.Query;
+
+          //Query queryContainsSearchJORD = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearchJORD").Query;
+
+          _logger.Debug("SearchPage: Got Contains Search JORD");
+
           QueryBindings queryBindingsJORD = queryContainsSearchJORD.Bindings;
+
+          _logger.Debug("SearchPage: Got JORD Bindings");
+            
           foreach (Repository repository in _repositories)
           {
             if (repository.RepositoryType == RepositoryType.JORD)
             {
+                _logger.Debug("SearchPage: JORD!");
+
               sparql = ReadSPARQL(queryContainsSearchJORD.FileName);
               sparql = sparql.Replace("param1", query);
             }
             else
             {
+                _logger.Debug("SearchPage: Other!");
+
               sparql = ReadSPARQL(queryContainsSearch.FileName);
               sparql = sparql.Replace("param1", query);
             }
+
+            _logger.Debug("SearchPage: Query Repo");
 
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 

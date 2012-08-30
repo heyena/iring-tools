@@ -287,12 +287,22 @@ namespace org.iringtools.adapter
 
         if (_settings["MultiGetDTIs"] != null && bool.Parse(_settings["MultiGetDTIs"]))
         {
+            _logger.Debug("Multi-threading enabled!");
+
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
         else
         {
+            _logger.Debug("Single threading...");
+
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-          List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+
+          _logger.Debug("Fetching Data...");
+            
+            List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+
+            _logger.Debug("Transforming into DTI");
+
           dataTransferIndices = projectionLayer.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
         }
       }
@@ -970,17 +980,26 @@ namespace org.iringtools.adapter
     private DataTransferIndices MultiGetDataTransferIndices(DataFilter filter)
     {
       DataTransferIndices dataTransferIndices = new DataTransferIndices();
+
+      _logger.Debug("Getting the count...");
+
       long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
       
       if (total > 0)
       {
-        int itemsPerThread = Math.Max((int)(total / MAX_THREADS), MAX_THREADS);  
-      
+        int itemsPerThread = Math.Max((int)(total / MAX_THREADS), MAX_THREADS);
+
+        _logger.Debug("Items Per Thread: " + itemsPerThread);
+
         int numOfThreads = (int)(total / itemsPerThread);
         numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
 
+        _logger.Debug("Number of Threads: " + numOfThreads);
+
         ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
         DataTransferIndicesTask[] dtiTasks = new DataTransferIndicesTask[numOfThreads];
+
+        _logger.Debug("Getting Data ...");
 
         for (int i = 0; i < numOfThreads; i++)
         {
@@ -999,6 +1018,8 @@ namespace org.iringtools.adapter
         // wait for all tasks to complete
         WaitHandle.WaitAll(doneEvents);
 
+        _logger.Debug("Got Data!");
+
         // collect DTIs from the tasks
         for (int i = 0; i < numOfThreads; i++)
         {
@@ -1009,6 +1030,8 @@ namespace org.iringtools.adapter
             dataTransferIndices.DataTransferIndexList.AddRange(dtis.DataTransferIndexList);
           }
         }
+
+        _logger.Debug("Assembled!");
       }
 
       return dataTransferIndices;

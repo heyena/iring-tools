@@ -31,6 +31,7 @@ using System.Xml.Serialization;
 using System.Linq;
 using System;
 using System.Text;
+using System.Net;
 
 namespace org.iringtools.library
 {
@@ -53,6 +54,14 @@ namespace org.iringtools.library
     [XmlElement]
     [DataMember(Name = "messages", Order = 3, EmitDefaultValue = false)]
     public Messages Messages { get; set; }
+
+    [XmlElement]
+    [DataMember(Name = "status_code", Order = 4)]
+    public HttpStatusCode StatusCode { get; set; }
+
+    [XmlElement]
+    [DataMember(Name = "status_text", Order = 5)]
+    public string StatusText { get; set; }
 
     public Response()
     {

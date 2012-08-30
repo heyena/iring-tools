@@ -348,7 +348,7 @@ namespace org.iringtools.library
               value = String.Join("','", expression.Values.ToArray()).ToUpper();
             }
 
-            sqlExpression.Append(qualColumnName + " IN ('" + value.Replace("'", "''") + "')");
+            sqlExpression.Append(qualColumnName + " IN ('" + value + "')");
           }
           else if (dataProperty.dataType == DataType.DateTime)
           {
