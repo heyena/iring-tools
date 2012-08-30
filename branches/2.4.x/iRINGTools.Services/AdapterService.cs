@@ -95,16 +95,16 @@ namespace org.iringtools.services
     #endregion
 
     #region GetResourceData
-    /// <summary>
-    /// Gets the resource data for a datalayer.
-    /// </summary>
-    /// <returns>Returns a list of service settings.</returns>
-    [Description("Gets datalayer resource data.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/resourcedata")]
-    public DocumentBytes GetResourceData(string scope, string app)
-    {
-      return _adapterProvider.GetResourceData(scope, app);
-    }
+    ///// <summary>
+    ///// Gets the resource data for a datalayer.
+    ///// </summary>
+    ///// <returns>Returns a list of service settings.</returns>
+    //[Description("Gets datalayer resource data.")]
+    //[WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/resourcedata")]
+    //public DocumentBytes GetResourceData(string scope, string app)
+    //{
+    //  return _adapterProvider.GetResourceData(scope, app);
+    //}
     #endregion
 
     #region Config methods
