@@ -380,25 +380,27 @@ namespace org.iringtools.services
             _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
         }
 
-        private void PrepareResponse(ref Response response)
+    private void PrepareResponse(ref Response response)
+    {
+        switch (response.Level)
         {
-            switch (response.Level)
-            {
-                case StatusLevel.Error:
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    break;
-                default:
-                    response.StatusCode = HttpStatusCode.OK;
-                    break;
-            }
+            case StatusLevel.Error:
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                break;
+            default:
+                response.StatusCode = HttpStatusCode.OK;
+                break;
+        }
 
-            foreach (Status status in response.StatusList)
+        foreach (Status status in response.StatusList)
+        {
+            foreach (string msg in status.Messages)
             {
-                foreach (string msg in status.Messages)
-                {
-                    response.StatusText += msg;
-                }
+                response.StatusText += msg;
             }
+        }
+    }
+
     [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}?format={format}")]
     public void CreateItem(string project, string app, string resource, string format, Stream stream)
