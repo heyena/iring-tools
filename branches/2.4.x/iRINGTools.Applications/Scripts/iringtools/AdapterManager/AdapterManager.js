@@ -231,7 +231,7 @@ Ext.onReady(function () {
       contentPanel.add(newConfig);
       contentPanel.activate(newConfig);
     }
-    else if (dataLayerValue == 'NHibernateLibrary') {
+    else if (dataLayerValue == 'NHibernateLibrary' || dataLayerValue == 'EQMSDataLayer') {
       var nhConfigId = scope + '.' + application + '.-nh-config';
       var nhConfigWizard = contentPanel.getItem(nhConfigId);
 
