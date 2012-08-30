@@ -67,13 +67,19 @@ namespace org.iringtools.adapter
           this[key] = format;
         }
 
-        //Protect existing settings, but add new ones.
-        if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))
+        //Protect existing and identity settings, but add new ones.
+        string lowerCaseKey = key.ToLower();
+
+        if (!(this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase) || 
+            lowerCaseKey.Contains("username") || lowerCaseKey.Contains("domain") ||
+            lowerCaseKey.Contains("emailaddress")))
         {
           this.Add(key, settings[key].ToString());
         }
         else if (this[key] == String.Empty)
+        {
           this[key] = settings[key].ToString();
+        }
       }
     }
 
