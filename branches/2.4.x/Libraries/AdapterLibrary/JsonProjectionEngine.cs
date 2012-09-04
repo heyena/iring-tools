@@ -89,7 +89,12 @@ namespace org.iringtools.adapter.projection
 
                   if (dataObject.isKeyProperty(dataProperty.propertyName))
                   {
-                    dataItem.id = valueStr;
+                    if (!string.IsNullOrEmpty(dataItem.id))
+                    {
+                      dataItem.id += dataObject.keyDelimeter;
+                    }
+
+                    dataItem.id += valueStr;
                   }
                 }
                 else if (showNullValue) 
