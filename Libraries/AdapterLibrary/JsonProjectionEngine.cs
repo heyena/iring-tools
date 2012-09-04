@@ -71,6 +71,31 @@ namespace org.iringtools.adapter.projection
                 properties = new Dictionary<string, string>()
               };
 
+              foreach (KeyProperty keyProperty in dataObject.keyProperties)
+              {
+                DataProperty dataProperty = dataObject.dataProperties.Find(x => keyProperty.keyPropertyName.ToLower() == x.propertyName.ToLower());
+
+                if (dataProperty != null)
+                {
+                  object value = dataObj.GetPropertyValue(keyProperty.keyPropertyName);
+
+                  if (value != null)
+                  {
+                    string valueStr = Convert.ToString(value);
+
+                    if (dataProperty.dataType == DataType.DateTime)
+                      valueStr = Utility.ToXsdDateTime(valueStr);
+
+                    if (!string.IsNullOrEmpty(dataItem.id))
+                    {
+                      dataItem.id += dataObject.keyDelimeter;
+                    }
+
+                    dataItem.id += valueStr;
+                  }
+                }
+              }
+
               foreach (DataProperty dataProperty in dataObject.dataProperties)
               {
                 object value = dataObj.GetPropertyValue(dataProperty.propertyName);
@@ -85,17 +110,7 @@ namespace org.iringtools.adapter.projection
                   if (!dataProperty.isHidden)
                   {
                     dataItem.properties.Add(dataProperty.propertyName, valueStr);
-                  }
-
-                  if (dataObject.isKeyProperty(dataProperty.propertyName))
-                  {
-                    if (!string.IsNullOrEmpty(dataItem.id))
-                    {
-                      dataItem.id += dataObject.keyDelimeter;
-                    }
-
-                    dataItem.id += valueStr;
-                  }
+                  }                  
                 }
                 else if (showNullValue) 
                 {
