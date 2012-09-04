@@ -2809,7 +2809,7 @@ namespace org.iringtools.adapter
                 response = _dataLayer.Post(dataObjects);
 
                 response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Success;
+                //response.Level = StatusLevel.Success;
 
                 string baseUri = _settings["GraphBaseUri"] +
                                  _settings["ApplicationName"] + "/" +
@@ -2900,7 +2900,7 @@ namespace org.iringtools.adapter
                 response = _dataLayer.Post(dataObjects);
 
                 response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Success;
+                //response.Level = StatusLevel.Success;
 
                 string baseUri = _settings["GraphBaseUri"] +
                                  _settings["ApplicationName"] + "/" +
@@ -2972,7 +2972,7 @@ namespace org.iringtools.adapter
 
                 response = _dataLayer.Post(dataObjects);
                 response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Success;
+                //response.Level = StatusLevel.Success;
             }
             catch (Exception ex)
             {
@@ -3017,7 +3017,7 @@ namespace org.iringtools.adapter
                 }
 
                 response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Success;
+                //response.Level = StatusLevel.Success;
             }
             catch (Exception ex)
             {
