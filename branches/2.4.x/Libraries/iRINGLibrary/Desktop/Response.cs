@@ -56,11 +56,11 @@ namespace org.iringtools.library
     public Messages Messages { get; set; }
 
     [XmlElement]
-    [DataMember(Name = "status_code", Order = 4)]
+    [DataMember(Name = "status_code", Order = 4, EmitDefaultValue = false)]
     public HttpStatusCode StatusCode { get; set; }
 
     [XmlElement]
-    [DataMember(Name = "status_text", Order = 5)]
+    [DataMember(Name = "status_text", Order = 5, EmitDefaultValue = false)]
     public string StatusText { get; set; }
 
     public Response()
