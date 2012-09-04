@@ -377,7 +377,8 @@ namespace org.iringtools.services
         OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
         context.ContentType = "application/xml";
 
-        return _adapterProvider.RefreshDataObjects(scope, app);
+        Response response = _adapterProvider.RefreshDataObjects(scope, app);
+        return response;
       }
       catch (Exception ex)
       {
