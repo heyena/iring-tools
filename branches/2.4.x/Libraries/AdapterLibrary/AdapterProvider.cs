@@ -2960,17 +2960,21 @@ namespace org.iringtools.adapter
                 IList<string> identifiers = new List<string> { identifier };
                 dataObjects = _dataLayer.Create(graphName, identifiers);
 
-                IContentObject contentObject = (IContentObject)dataObjects[0];
-                contentObject.content = stream;
+                //IContentObject contentObject = (IContentObject)dataObjects[0];
+                //contentObject.content = stream;
 
-                IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
-                string contentType = request.ContentType;
-                contentObject.contentType = contentType;
+                //IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
+                //string contentType = request.ContentType;
+                //contentObject.contentType = contentType;
 
-                dataObjects = new List<IDataObject>();
-                dataObjects.Add(contentObject);
+                //dataObjects = new List<IDataObject>();
+                //dataObjects.Add(contentObject);
 
-                response = _dataLayer.Post(dataObjects);
+                IList<IDataObject>  newdataObjects = new List<IDataObject>();
+                newdataObjects.Add(dataObjects[0]); //Taking Idataobject directly rather than converting to IContentObject.  
+
+               // response = _dataLayer.Post(dataObjects);
+                response = _dataLayer.Post(newdataObjects);  
                 response.DateTimeStamp = DateTime.Now;
                 //response.Level = StatusLevel.Success;
             }
