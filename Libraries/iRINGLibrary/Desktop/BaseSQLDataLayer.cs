@@ -357,7 +357,7 @@ namespace org.iringtools.library
       {
         foreach (DataObject dataObject in _dbDictionary.dataObjects)
         {
-          if (dataObject.objectName.ToLower() == objectType.ToLower())
+            if (dataObject.objectName.ToLower() == objectType.ToLower())
           {
             return dataObject.tableName;
           }
@@ -501,53 +501,56 @@ namespace org.iringtools.library
 
           foreach (DataProperty objectProperty in objectDefinition.dataProperties)
           {
-            object value = dataObject.GetPropertyValue(objectProperty.propertyName);
-
-            if (value != null && value.ToString().Trim().Length > 0 && !objectProperty.propertyName.Contains("_URL") ) 
-            {
-              switch (objectProperty.dataType)
+              if (!objectProperty.propertyName.Contains("_URL"))
               {
-                case DataType.Boolean:
-                  dataRow[objectProperty.columnName] = Convert.ToBoolean(value);
-                  break;
-                case DataType.Byte:
-                  dataRow[objectProperty.columnName] = Convert.ToByte(value);
-                  break;
-                case DataType.Int16:
-                  dataRow[objectProperty.columnName] = Convert.ToInt16(value);
-                  break;
-                case DataType.Int32:
-                  dataRow[objectProperty.columnName] = Convert.ToInt32(value);
-                  break;
-                case DataType.Int64:
-                  dataRow[objectProperty.columnName] = Convert.ToInt64(value);
-                  break;
-                case DataType.Decimal:
-                  dataRow[objectProperty.columnName] = Convert.ToDecimal(value);
-                  break;
-                case DataType.Single:
-                  dataRow[objectProperty.columnName] = Convert.ToSingle(value);
-                  break;
-                case DataType.Double:
-                  dataRow[objectProperty.columnName] = Convert.ToDouble(value);
-                  break;
-                case DataType.DateTime:
-                  dataRow[objectProperty.columnName] = Convert.ToDateTime(value);
-                  break;
-                default:
-                  dataRow[objectProperty.columnName] = value;
-                  break;
+                  object value = dataObject.GetPropertyValue(objectProperty.propertyName);
+
+                  if (value != null && value.ToString().Trim().Length > 0)
+                  {
+                      switch (objectProperty.dataType)
+                      {
+                          case DataType.Boolean:
+                              dataRow[objectProperty.columnName] = Convert.ToBoolean(value);
+                              break;
+                          case DataType.Byte:
+                              dataRow[objectProperty.columnName] = Convert.ToByte(value);
+                              break;
+                          case DataType.Int16:
+                              dataRow[objectProperty.columnName] = Convert.ToInt16(value);
+                              break;
+                          case DataType.Int32:
+                              dataRow[objectProperty.columnName] = Convert.ToInt32(value);
+                              break;
+                          case DataType.Int64:
+                              dataRow[objectProperty.columnName] = Convert.ToInt64(value);
+                              break;
+                          case DataType.Decimal:
+                              dataRow[objectProperty.columnName] = Convert.ToDecimal(value);
+                              break;
+                          case DataType.Single:
+                              dataRow[objectProperty.columnName] = Convert.ToSingle(value);
+                              break;
+                          case DataType.Double:
+                              dataRow[objectProperty.columnName] = Convert.ToDouble(value);
+                              break;
+                          case DataType.DateTime:
+                              dataRow[objectProperty.columnName] = Convert.ToDateTime(value);
+                              break;
+                          default:
+                              dataRow[objectProperty.columnName] = value;
+                              break;
+                      }
+                  }
+                  else if (objectProperty.dataType == DataType.String || objectProperty.isNullable)
+                  {
+                      dataRow[objectProperty.columnName] = DBNull.Value;
+                  }
+                  else
+                  {
+                      _logger.Error("Object property is set to not nullable but received a null value.");
+                      return null;
+                  }
               }
-            }
-            else if (objectProperty.dataType == DataType.String || objectProperty.isNullable)
-            {
-              dataRow[objectProperty.columnName] = DBNull.Value;
-            }
-            else
-            {
-              _logger.Error("Object property is set to not nullable but received a null value.");
-              return null;
-            }
           }
         }
         catch (Exception ex)
@@ -796,7 +799,7 @@ namespace org.iringtools.library
         throw new Exception("Related data table [" + relatedTableName + "] not found.");
       }
 
-      DataRelationship dataRelationship = parentDataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedDataObject.tableName.ToLower());
+      DataRelationship dataRelationship = parentDataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedDataObject.objectName.ToLower());
       if (dataRelationship == null)
       {
         throw new Exception("Relationship between data table [" + parentDataRow.Table.TableName +
