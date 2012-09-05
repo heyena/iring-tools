@@ -1,0 +1,147 @@
+{
+    "type": "gridpanel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "nhibernate.MultiSelectionGrid",
+        "designer|userAlias": "multiselectiongrid",
+        "height": null,
+        "width": null,
+        "header": null,
+        "title": null,
+        "enableColumnHide": false,
+        "enableColumnMove": false,
+        "enableColumnResize": false,
+        "sortableColumns": false,
+        "store": "MultiStore"
+    },
+    "id": "ExtBox1-ext-gen55549",
+    "designerId": "806180c3-0c42-425f-b6f1-5b85a7b5017b",
+    "cn": [
+        {
+            "type": "gridcolumn",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyColumn1",
+                "sortable": false,
+                "dataIndex": "DisplayField",
+                "flex": 1,
+                "menuDisabled": null,
+                "menuText": false,
+                "text": null
+            },
+            "designerId": "6b904bab-a2c1-448c-a730-ce9175705a2d"
+        },
+        {
+            "type": "gridview",
+            "reference": {
+                "name": "viewConfig",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyGridView1"
+            },
+            "designerId": "b8c31973-7b73-45a7-b991-045881f35b6f"
+        },
+        {
+            "type": "checkboxselectionmodel",
+            "reference": {
+                "name": "selModel",
+                "type": "object"
+            },
+            "codeClass": "Ext.selection.CheckboxModel",
+            "userConfig": {
+                "designer|userClassName": "MyCheckboxSelectionModel"
+            },
+            "designerId": "a0c5c68b-1815-4f5c-93fc-53723b5e59f5"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "loadItems",
+                "fn": "loadItems",
+                "designer|params": [
+                    "items"
+                ],
+                "implHandler": [
+                    "var me = this;\r",
+                    "var store = me.getStore();\r",
+                    "\r",
+                    "var records = [];\r",
+                    "\r",
+                    "Ext.each(items, function(item) {\r",
+                    "  records.push({'DisplayField': item});\r",
+                    "});\r",
+                    "\r",
+                    "store.add(records);"
+                ]
+            },
+            "designerId": "7288c958-b431-4082-8850-fad847e355e2"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "selectItems",
+                "fn": "selectItems",
+                "designer|params": [
+                    "items"
+                ],
+                "implHandler": [
+                    "var me = this;\r",
+                    "var store = me.getStore();\r",
+                    "var selectionModel = me.getSelectionModel();\r",
+                    "\r",
+                    "Ext.each(items, function(item) {\r",
+                    "  var record = store.find('DisplayField', item);\r",
+                    "  if(record) {\r",
+                    "    selectionModel.select(record); \r",
+                    "  }           \r",
+                    "});\r",
+                    ""
+                ]
+            },
+            "designerId": "029ebf7a-d52a-43fe-b6fa-dc367fcae10b"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "getSelectedItems",
+                "fn": "getSelectedItems",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var store = me.getStore();\r",
+                    "var selectionModel = me.getSelectionModel();\r",
+                    "var items = [];\r",
+                    "\r",
+                    "Ext.each(selectionModel.getSelection(), function(record) {\r",
+                    "  items.push(record.get('DisplayField'));\r",
+                    "});"
+                ]
+            },
+            "designerId": "89b2cd7e-33f8-4f96-b5dc-4740922f8384"
+        }
+    ]
+}

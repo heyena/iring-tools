@@ -1,0 +1,377 @@
+{
+    "type": "form",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "baseUrl": "",
+        "designer|userClassName": "nhibernate.ConnectionStringForm",
+        "designer|userAlias": "connectionstringform",
+        "height": null,
+        "width": null,
+        "bodyPadding": null,
+        "bodyStyle": [
+            "background:#eee;padding:10px 0px 0px 10px"
+        ],
+        "title": null
+    },
+    "id": "ExtBox1-ext-gen3592",
+    "designerId": "9ee7d1e0-1914-4b89-bc09-139012f29114",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "baseUrl",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyLabel1",
+                "cls": "x-form-item",
+                "style": [
+                    "font-weight:bold"
+                ],
+                "text": "Configure Data Source"
+            },
+            "designerId": "78ae07c7-b64d-487d-ad16-49e9ace99a89"
+        },
+        {
+            "type": "combobox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "dock": null,
+                "designer|userClassName": "MyComboBox7",
+                "itemId": "providerCombo",
+                "name": "dbProvider",
+                "value": [
+                    "MsSql2008"
+                ],
+                "fieldLabel": "Database Provider",
+                "labelWidth": 150,
+                "editable": false,
+                "displayField": "provider",
+                "hiddenName": "dbProvider",
+                "queryMode": "local",
+                "store": "ProviderStore",
+                "valueField": "provider"
+            },
+            "designerId": "28a2b72e-e4ad-4c8d-8397-dec1161e8e2b"
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyTextField9",
+                "name": "dbServer",
+                "value": [
+                    "localhost\r",
+                    ""
+                ],
+                "fieldLabel": "Database Server",
+                "labelWidth": 150,
+                "allowBlank": false
+            },
+            "designerId": "84fd7818-4ffe-41cf-a342-5bc765f8e83f"
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyTextField9",
+                "hidden": true,
+                "name": "host",
+                "value": null,
+                "fieldLabel": "Host Name",
+                "labelWidth": 150,
+                "allowBlank": false
+            },
+            "designerId": "e54344fc-d8e2-4b1b-a1b7-dc478cfeac70"
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyTextField9",
+                "hidden": true,
+                "name": "portNumber",
+                "value": [
+                    "1433"
+                ],
+                "fieldLabel": "Port Number",
+                "labelWidth": 150,
+                "allowBlank": false
+            },
+            "designerId": "d390d424-b2e1-4286-8064-c871ae014966"
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyTextField9",
+                "hidden": false,
+                "name": "dbInstance",
+                "value": [
+                    "default"
+                ],
+                "fieldLabel": "Database Instance",
+                "labelWidth": 150,
+                "allowBlank": false
+            },
+            "designerId": "e0bcb17f-d99c-4014-98e1-0a5626bc5edb"
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyTextField9",
+                "hidden": false,
+                "name": "dbName",
+                "value": null,
+                "fieldLabel": "Database Name",
+                "labelWidth": 150,
+                "allowBlank": false
+            },
+            "designerId": "971e0bfa-65ce-4053-a4ed-cfed658045dd"
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyTextField9",
+                "hidden": false,
+                "name": "dbUserName",
+                "value": null,
+                "fieldLabel": "User Name",
+                "labelWidth": 150,
+                "allowBlank": false
+            },
+            "designerId": "80ce93ff-4588-427d-90a5-4d72c93c109e",
+            "cn": [
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "onDbUserChange",
+                        "fn": "onDbUserChange",
+                        "implHandler": [
+                            "var me = this; \r",
+                            "var dbProvider = me.getForm().findField('dbProvider').getValue().toUpperCase();\r",
+                            "if (dbProvider.indexOf('ORACLE') > -1) {\r",
+                            "  var dbSchema = me.getForm().findField('dbSchema');\r",
+                            "  dbSchema.setValue(newValue);\r",
+                            "  dbSchema.show();\r",
+                            "}"
+                        ],
+                        "name": "change",
+                        "scope": "me"
+                    },
+                    "designerId": "26d0d05b-9bdc-4bbf-878b-31fb17edc3ce"
+                }
+            ]
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyTextField9",
+                "hidden": false,
+                "inputType": "password",
+                "name": "dbPassword",
+                "value": null,
+                "fieldLabel": "Password",
+                "labelWidth": 150,
+                "allowBlank": false
+            },
+            "designerId": "a2ab3a20-710f-4069-b718-10c657da8130"
+        },
+        {
+            "type": "panel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "labelWidth": 150,
+                "items": "[]",
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyPanel6",
+                "border": false,
+                "frame": false,
+                "layout": "fit",
+                "bodyStyle": [
+                    "background:#eee"
+                ],
+                "title": null
+            },
+            "configAlternates": {
+                "border": "boolean"
+            },
+            "designerId": "4b27421a-43db-448a-8590-82af538c7c64",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "labelWidth",
+                    "type": "number"
+                },
+                {
+                    "group": "(Custom Properties)",
+                    "name": "items",
+                    "type": "array"
+                }
+            ]
+        },
+        {
+            "type": "toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "designer|userClassName": "MyToolbar15"
+            },
+            "designerId": "607a5997-199f-409c-9d50-c3bad39b80b7",
+            "cn": [
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "connecttodatabase",
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton27",
+                        "icon": "Content/img/16x16/document-properties.png",
+                        "text": "Connect",
+                        "tooltip": [
+                            "Connect"
+                        ]
+                    },
+                    "designerId": "c7b10da2-2a7a-40eb-855a-a3fb048ea11c",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ],
+                    "cn": [
+                        {
+                            "type": "basicfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "designer|userClassName": "setActiveRecord",
+                                "fn": "setActiveRecord",
+                                "designer|params": [
+                                    "record"
+                                ],
+                                "implHandler": [
+                                    "var me = this;\r",
+                                    "if (record) {\r",
+                                    "  me.getForm().setValues(record);\r",
+                                    "} else {\r",
+                                    "  me.getForm().reset();\r",
+                                    "}"
+                                ]
+                            },
+                            "designerId": "53c65d43-a403-4dd8-8a64-807ea255b622"
+                        }
+                    ]
+                },
+                {
+                    "type": "tbseparator",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySeparator8"
+                    },
+                    "designerId": "e19fa93b-abac-457f-9e45-204f24cf3acb"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton28",
+                        "icon": "Content/img/16x16/edit-clear.png",
+                        "text": "Reset",
+                        "tooltip": [
+                            "Reset to the latest applied changes"
+                        ]
+                    },
+                    "designerId": "c07b140b-4391-45f6-bf57-145a0e921c0c"
+                }
+            ]
+        }
+    ]
+}

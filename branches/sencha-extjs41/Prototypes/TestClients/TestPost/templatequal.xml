@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="yes"?>
+<qmxf xmlns="http://ns.ids-adi.org/qxf/model#">
+  <template-qualification qualifies="http://tpl.rdlfacade.org/data#R71909476190">
+    <name>Project Name</name>
+    <description />
+    <textual-definition />
+    <role-qualification qualifies="http://tpl.rdlfacade.org/data#R27212951029" range="http://rdl.rdlfacade.org/data#R51988624155">
+      <name>object</name>
+    </role-qualification>
+    <status />
+  </template-qualification>
+</qmxf>

@@ -1,0 +1,44 @@
+{
+    "type": "arraystore",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "SearchCmbStore",
+        "autoLoad": true,
+        "storeId": "searchcmbstore",
+        "data": "[['50', 50], ['100', 100], ['200', 200], ['400', 400]]"
+    },
+    "id": "ExtBox1-ext-gen53597",
+    "designerId": "cdfeedca-6f01-4cca-8571-032eb19b8cdc",
+    "cn": [
+        {
+            "type": "datafield",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyField45",
+                "name": "name"
+            },
+            "designerId": "05aef29d-1e52-4e5d-b769-d5e75957e0cd"
+        },
+        {
+            "type": "datafield",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyField46",
+                "name": "value"
+            },
+            "designerId": "01b8c596-fcf0-47ca-81f9-89671ab4d939"
+        }
+    ]
+}

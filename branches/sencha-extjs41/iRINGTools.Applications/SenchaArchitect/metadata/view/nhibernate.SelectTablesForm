@@ -1,0 +1,190 @@
+{
+    "type": "form",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "dbInfo": "",
+        "dataTree": "",
+        "context": "",
+        "endpoint": "",
+        "dbDict": "",
+        "baseUrl": "",
+        "designer|userClassName": "nhibernate.SelectTablesForm",
+        "designer|userAlias": "selecttablesform",
+        "uses": [
+            "Ext.ux.form.ItemSelector"
+        ],
+        "border": false,
+        "frame": false,
+        "height": null,
+        "padding": null,
+        "width": null,
+        "bodyBorder": null,
+        "bodyPadding": 2,
+        "bodyStyle": [
+            "background:#eee;padding:10px 0px 0px 10px"
+        ],
+        "title": null
+    },
+    "configAlternates": {
+        "border": "boolean"
+    },
+    "id": "ExtBox1-ext-gen83723",
+    "designerId": "05fae04d-5364-4b78-98b9-ee7f6b53db35",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "dbInfo",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "dataTree",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "context",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "endpoint",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "dbDict",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "baseUrl",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "fieldset",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyFieldSet3",
+                "anchorSize": null,
+                "title": "Database Tables"
+            },
+            "designerId": "222eeb8e-a8c5-48e6-8aae-8c23673d5dd2",
+            "cn": [
+                {
+                    "type": "linkedinstance",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "minHeight": 300
+                    },
+                    "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
+                    "masterInstanceId": "ExtBox1-ext-gen55549"
+                }
+            ]
+        },
+        {
+            "type": "toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "designer|userClassName": "MyToolbar19"
+            },
+            "designerId": "e779d4b1-634a-4a69-84b7-c87450211e57",
+            "cn": [
+                {
+                    "type": "tbspacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySpacer5",
+                        "width": 4
+                    },
+                    "designerId": "4cdd8c9c-836d-4fd2-91b8-e9576063f711"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "applyobjects",
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton36",
+                        "icon": "Content/img/16x16/apply.png",
+                        "text": "Apply"
+                    },
+                    "designerId": "1899cc11-47d7-4b50-aa53-ad61f9b5f01b",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "type": "tbspacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySpacer5",
+                        "width": 4
+                    },
+                    "designerId": "9f9298ae-495e-4c42-a762-6fc826d563d3"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "resetobjects",
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton36",
+                        "icon": "Content/img/16x16/edit-clear.png",
+                        "text": "Reset"
+                    },
+                    "designerId": "422ded33-7aef-47a5-97f0-9b24a500ec68",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
