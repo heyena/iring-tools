@@ -262,6 +262,7 @@ namespace org.iringtools.web.controllers
         }
 
         graphMap.AddTemplateMap(selectedClassMap, templateMap);
+        //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       }
       catch (Exception ex)
       {
@@ -819,6 +820,7 @@ namespace org.iringtools.web.controllers
           graphMap.AddClassMap(null, classMap);
           mapping.graphMaps.Add(graphMap);
           nodes.Add(CreateGraphNode(context, graphMap, classMap));
+          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
         else
         {
@@ -833,7 +835,7 @@ namespace org.iringtools.web.controllers
           ctm.classMap.id = _qn ? _qName : classId;
           ctm.classMap.identifiers.Clear();
           ctm.classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)
@@ -883,7 +885,7 @@ namespace org.iringtools.web.controllers
         if (graphMap != null)
         {
           mapping.graphMaps.Remove(graphMap);
-          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)
@@ -1099,7 +1101,7 @@ namespace org.iringtools.web.controllers
           if (valuelistMap.valueMaps == null)
             valuelistMap.valueMaps = new ValueMaps();
           valuelistMap.valueMaps.Add(valueMap);
-          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
         else
         {
@@ -1109,7 +1111,7 @@ namespace org.iringtools.web.controllers
             valueMap.internalValue = internalName;
             valueMap.uri = _qName;
             valueMap.label = classLabel;
-            _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+            //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
           }
         }
       }
@@ -1140,7 +1142,7 @@ namespace org.iringtools.web.controllers
         ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
         if (valueMap != null)
           valuelistMap.valueMaps.Remove(valueMap);
-        _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+        //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       }
       catch (Exception ex)
       {
@@ -1180,12 +1182,12 @@ namespace org.iringtools.web.controllers
           };
 
           mapping.valueListMaps.Add(valuelistMap);
-          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
         else
         {
           valueListMap.name = newvalueList;
-          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)

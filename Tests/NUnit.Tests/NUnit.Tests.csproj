@@ -75,7 +75,6 @@
     <Compile Include="DxfrTest.cs" />
     <Compile Include="NHibernateTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferenceDataTests.cs" />
     <Compile Include="XmlTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -306,17 +305,9 @@
       <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
       <Name>iRINGLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\NHibernateExtension\NHibernateExtension.csproj">
-      <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
-      <Name>NHibernateExtension</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
-      <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
-      <Name>ReferenceDataLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
       <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>

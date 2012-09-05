@@ -12,18 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		build.xml = build.xml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QMXFTransforms", "QMXFTransforms", "{0A204D3D-73E9-4C85-A601-D91282B4CA16}"
-	ProjectSection(SolutionItems) = preProject
-		Utilities\QMXFTransforms\entities.dtd = Utilities\QMXFTransforms\entities.dtd
-		Utilities\QMXFTransforms\QMXF.xml = Utilities\QMXFTransforms\QMXF.xml
-		Utilities\QMXFTransforms\qmxf2qxf.xsl = Utilities\QMXFTransforms\qmxf2qxf.xsl
-		Utilities\QMXFTransforms\QXF.xml = Utilities\QMXFTransforms\QXF.xml
-		Utilities\QMXFTransforms\qxf.xsd = Utilities\QMXFTransforms\qxf.xsd
-		Utilities\QMXFTransforms\qxf2rdf.xsl = Utilities\QMXFTransforms\qxf2rdf.xsl
-		Utilities\QMXFTransforms\RDF.xml = Utilities\QMXFTransforms\RDF.xml
-		Utilities\QMXFTransforms\schema.dtd = Utilities\QMXFTransforms\schema.dtd
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterLibrary", "Libraries\AdapterLibrary\AdapterLibrary.csproj", "{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdfImportExport", "Utilities\RdfImportExport\RdfImportExport\RdfImportExport.csproj", "{FFBAFDB9-201D-42BB-8BA4-A5F6180F0333}"
@@ -519,7 +507,6 @@ Global
 		{B6362A98-B4C0-4729-AFE8-04F93F1B6C79} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
 		{2EEBBD3F-C066-4990-8154-26E287464E09} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
 		{45FF71E8-CA94-4ED4-8058-D29BB2DE052D} = {8DC0E577-3416-41FD-80BA-11DDE04C1BAE}
-		{0A204D3D-73E9-4C85-A601-D91282B4CA16} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{FFBAFDB9-201D-42BB-8BA4-A5F6180F0333} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{47F8BAD7-332C-4463-8AA1-5BC7F9B3A663} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{66E98657-D742-4775-82A3-9B02BB17B035} = {0CE13F71-3913-4C34-863E-FF1A7788C177}

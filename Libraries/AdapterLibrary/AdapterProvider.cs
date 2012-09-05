@@ -3192,7 +3192,14 @@ namespace org.iringtools.adapter
               {
                 if (File.Exists(_settings["BindingConfigurationPath"]))
                 {
-                  _kernel.Load(_settings["BindingConfigurationPath"]);
+                  try
+                  {
+                    _kernel.Load(_settings["BindingConfigurationPath"]);
+                  }
+                  catch
+                  {
+                    ///binding already loaded
+                  }
                 }
                 else
                 {

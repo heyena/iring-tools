@@ -8,7 +8,7 @@
             <id>rdl:R19192462550</id>
             <name>PIPING NETWORK SYSTEM</name>
             <identifiers>
-              <identifier>LINES.TAG</identifier>
+              <identifier>EQUIPMENT.TAG</identifier>
             </identifiers>
           </classMap>
           <templateMaps>
@@ -45,22 +45,12 @@
           </templateMaps>
         </classTemplateMap>
       </classTemplateMaps>
-      <dataObjectName>LINES</dataObjectName>
+      <dataObjectName>EQUIPMENT</dataObjectName>
     </graphMap>
   </graphMaps>
   <valueListMaps>
     <valueListMap>
       <name>Length</name>
-      <valueMaps>
-        <valueMap>
-          <internalValue>mm</internalValue>
-          <uri>rdl:R52054275374</uri>
-          <label>MILLIMETRE  </label>
-        </valueMap>
-      </valueMaps>
-    </valueListMap>
-    <valueListMap>
-      <name>test</name>
       <valueMaps/>
     </valueListMap>
   </valueListMaps>

@@ -1,0 +1,133 @@
+{
+    "type": "class",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "keyStr": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+        "designer|userClassName": "nhibernate.Utility",
+        "designer|userAlias": "nhibernateutility",
+        "singleton": true,
+        "extend": "Ext.AbstractManager"
+    },
+    "id": "ExtBox1-ext-gen9791",
+    "designerId": "1a271683-7a34-49a9-b59e-89ab4347ee43",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "keyStr",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "encode",
+                "fn": "encode",
+                "designer|params": [
+                    "input"
+                ],
+                "implHandler": [
+                    "input = escape(input);\r",
+                    "var output = \"\";\r",
+                    "var chr1, chr2, chr3 = \"\";\r",
+                    "var enc1, enc2, enc3, enc4 = \"\";\r",
+                    "var i = 0;\r",
+                    "\r",
+                    "do {\r",
+                    "    chr1 = input.charCodeAt(i++);\r",
+                    "    chr2 = input.charCodeAt(i++);\r",
+                    "    chr3 = input.charCodeAt(i++);\r",
+                    "\r",
+                    "    enc1 = chr1 >> 2;\r",
+                    "    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);\r",
+                    "    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);\r",
+                    "    enc4 = chr3 & 63;\r",
+                    "\r",
+                    "    if (isNaN(chr2)) {\r",
+                    "        enc3 = enc4 = 64;\r",
+                    "    } else if (isNaN(chr3)) {\r",
+                    "        enc4 = 64;\r",
+                    "    }\r",
+                    "\r",
+                    "    output = output + this.keyStr.charAt(enc1) + \r",
+                    "      this.keyStr.charAt(enc2) + this.keyStr.charAt(enc3) + \r",
+                    "      this.keyStr.charAt(enc4);\r",
+                    "    chr1 = chr2 = chr3 = \"\";\r",
+                    "    enc1 = enc2 = enc3 = enc4 = \"\";\r",
+                    "} while (i < input.length);\r",
+                    "\r",
+                    "return output;"
+                ]
+            },
+            "designerId": "d50bf0df-35a4-484d-9d3e-1024bb5f30c9"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "decode",
+                "fn": "decode",
+                "designer|params": [
+                    "input"
+                ],
+                "implHandler": [
+                    "var output = \"\";\r",
+                    "var chr1, chr2, chr3 = \"\";\r",
+                    "var enc1, enc2, enc3, enc4 = \"\";\r",
+                    "var i = 0;\r",
+                    "\r",
+                    "var base64test = /[^A-Za-z0-9\\+\\/\\=]/g;\r",
+                    "if (base64test.exec(input)) {\r",
+                    "    Ext.Msg.alert(\"Warning\", \"The document contains invalid characters. Errors can occur when decoding it.\");\r",
+                    "}\r",
+                    "\r",
+                    "if (input !== null) {\r",
+                    "    input = input.replace(/[^A-Za-z0-9\\+\\/\\=]/g, \"\");\r",
+                    "}\r",
+                    "else {\r",
+                    "    input = \"\";\r",
+                    "}\r",
+                    "\r",
+                    "do {\r",
+                    "    enc1 = this.keyStr.indexOf(input.charAt(i++));\r",
+                    "    enc2 = this.keyStr.indexOf(input.charAt(i++));\r",
+                    "    enc3 = this.keyStr.indexOf(input.charAt(i++));\r",
+                    "    enc4 = this.keyStr.indexOf(input.charAt(i++));\r",
+                    "\r",
+                    "    chr1 = (enc1 << 2) | (enc2 >> 4);\r",
+                    "    chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);\r",
+                    "    chr3 = ((enc3 & 3) << 6) | enc4;\r",
+                    "\r",
+                    "    output = output + String.fromCharCode(chr1);\r",
+                    "\r",
+                    "    if (enc3 != 64) {\r",
+                    "        output = output + String.fromCharCode(chr2);\r",
+                    "    }\r",
+                    "    if (enc4 != 64) {\r",
+                    "        output = output + String.fromCharCode(chr3);\r",
+                    "    }\r",
+                    "\r",
+                    "    chr1 = chr2 = chr3 = \"\";\r",
+                    "    enc1 = enc2 = enc3 = enc4 = \"\";\r",
+                    "} while (i < input.length);\r",
+                    "\r",
+                    "return unescape(output);"
+                ]
+            },
+            "designerId": "6fa61e35-f63f-4837-903f-39e846a38791"
+        }
+    ]
+}

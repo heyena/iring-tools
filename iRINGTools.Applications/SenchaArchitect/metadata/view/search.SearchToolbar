@@ -1,0 +1,187 @@
+{
+    "type": "toolbar",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "search.SearchToolbar",
+        "designer|userAlias": "searchtoolbar"
+    },
+    "id": "ExtBox1-ext-gen44358",
+    "designerId": "04f491e5-2e6e-4a0d-97a5-458d4166966b",
+    "cn": [
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|flex": null,
+                "designer|userClassName": "MyTextField",
+                "id": "referencesearch",
+                "width": 200,
+                "name": "referencesearch",
+                "fieldLabel": null,
+                "labelWidth": 200
+            },
+            "designerId": "50cd3b71-dd13-4c1a-a2d7-28b67f38fece",
+            "cn": [
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "onSpecialkey",
+                        "fn": "onSpecialkey",
+                        "implHandler": [
+                            "var me = this;\r",
+                            "if (e.getKey() === e.ENTER) {\r",
+                            "   me.onSearch();\r",
+                            "}"
+                        ],
+                        "name": "specialkey",
+                        "scope": "me"
+                    },
+                    "designerId": "1f2d1842-b8d7-42e2-8f83-6d3d7984cd18"
+                }
+            ]
+        },
+        {
+            "type": "button",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "search",
+                "layout|flex": null,
+                "designer|userClassName": "MyButton",
+                "style": [
+                    "marginLeft: 5px"
+                ],
+                "icon": "Content/img/16x16/document-properties.png",
+                "text": "Search"
+            },
+            "designerId": "981c30ff-2f64-41a6-a3a0-799a5b26f200",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "checkboxfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|flex": null,
+                "designer|userClassName": "MyCheckbox",
+                "autoShow": true,
+                "style": [
+                    "{marginLeft: '5px', marginBottom: '8px'}"
+                ],
+                "name": "reset",
+                "fieldLabel": null,
+                "boxLabel": null
+            },
+            "designerId": "f31abf99-56f8-4e6a-97d1-1ca48cb92433"
+        },
+        {
+            "type": "tbspacer",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|flex": null,
+                "designer|userClassName": "MySpacer"
+            },
+            "designerId": "4c108aea-4e37-4963-9894-346c858b431e"
+        },
+        {
+            "type": "label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|flex": null,
+                "designer|userClassName": "MyLabel",
+                "text": "Reset"
+            },
+            "designerId": "5c7b238e-c73f-403f-8a20-89ec893d0b39"
+        },
+        {
+            "type": "tbspacer",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|flex": null,
+                "designer|userClassName": "MySpacer1"
+            },
+            "designerId": "2322078d-e721-4fbc-9710-1b9ff79f1a39"
+        },
+        {
+            "type": "combobox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|flex": null,
+                "designer|userClassName": "MyComboBox",
+                "width": 90,
+                "value": [
+                    "50"
+                ],
+                "fieldLabel": "Limit",
+                "labelWidth": 40,
+                "editable": false,
+                "displayField": "name",
+                "forceSelection": false,
+                "queryCaching": null,
+                "queryMode": "local",
+                "store": "SearchCmbStore",
+                "valueField": "name"
+            },
+            "designerId": "7c8b24a4-c26f-408b-a507-28cdf5935fe4"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "onSearch",
+                "fn": "onSearch",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var btn = me.down('button');\r",
+                    "    btn.fireEvent('click', btn);"
+                ]
+            },
+            "designerId": "ce18d635-bddb-469a-842c-e6529a0171d6"
+        }
+    ]
+}
