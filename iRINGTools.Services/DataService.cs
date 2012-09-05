@@ -124,16 +124,16 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{app}/{project}/dictionary/{resource}?format={format}")]
     public void GetDictionaryGraph(string project, string app, string resource, string format)
     {
-        format = MapContentType(format);
+      format = MapContentType(format);
 
-        DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+      DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
 
-        DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == resource.ToLower());
+      DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == resource.ToLower());
 
-        if (dataObject == null)
-            ExceptionHandler(new FileNotFoundException());
+      if (dataObject == null)
+        ExceptionHandler(new FileNotFoundException());
 
-        _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
+      _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
     }
 
     [Description("Gets an XML or JSON projection of the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
@@ -232,7 +232,7 @@ namespace org.iringtools.services
       {
         format = MapContentType(format);
         DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
-        
+
         bool fullIndex = false;
 
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
@@ -362,9 +362,21 @@ namespace org.iringtools.services
       format = MapContentType(format);
 
       Response response = new Response();
+
       if (format == "raw")
       {
         response = _adapterProvider.PostContent(project, app, resource, format, id, stream);
+      }
+      else if (format == "json")
+      {
+        DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
+
+        if (dataItems != null && dataItems.items.Count > 0)
+        {
+          dataItems.items[0].id = id;
+          XElement xElement = dataItems.ToXElement();
+          response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
+        }
       }
       else
       {
@@ -375,30 +387,30 @@ namespace org.iringtools.services
         response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
       }
 
-            PrepareResponse(ref response);
+      PrepareResponse(ref response);
 
-            _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-        }
+      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+    }
 
     private void PrepareResponse(ref Response response)
     {
-        switch (response.Level)
-        {
-            case StatusLevel.Error:
-                response.StatusCode = HttpStatusCode.InternalServerError;
-                break;
-            default:
-                response.StatusCode = HttpStatusCode.OK;
-                break;
-        }
+      switch (response.Level)
+      {
+        case StatusLevel.Error:
+          response.StatusCode = HttpStatusCode.InternalServerError;
+          break;
+        default:
+          response.StatusCode = HttpStatusCode.OK;
+          break;
+      }
 
-        foreach (Status status in response.StatusList)
+      foreach (Status status in response.StatusList)
+      {
+        foreach (string msg in status.Messages)
         {
-            foreach (string msg in status.Messages)
-            {
-                response.StatusText += msg;
-            }
+          response.StatusText += msg;
         }
+      }
     }
 
     [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
@@ -417,11 +429,11 @@ namespace org.iringtools.services
 
         Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
 
-                PrepareResponse(ref response);
+        PrepareResponse(ref response);
 
-                _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-            }
-        }
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+      }
+    }
 
     [Description("Deletes a resource in the specified application.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
@@ -429,19 +441,19 @@ namespace org.iringtools.services
     {
       try
       {
-      
-          format = MapContentType(format);
 
-          Response response = _adapterProvider.DeleteIndividual(project, app, resource, id, format);
+        format = MapContentType(format);
 
-                PrepareResponse(ref response);
+        Response response = _adapterProvider.DeleteIndividual(project, app, resource, id, format);
 
-          _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        PrepareResponse(ref response);
+
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
 
       }
       catch (Exception ex)
       {
-          ExceptionHandler(ex);
+        ExceptionHandler(ex);
       }
     }
 
@@ -454,7 +466,7 @@ namespace org.iringtools.services
         IList<Object> objects = _adapterProvider.GetSummary(project, app);
         JavaScriptSerializer serializer = new JavaScriptSerializer();
         String json = serializer.Serialize(objects);
-        
+
         HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
         HttpContext.Current.Response.Write(json);
       }
@@ -542,7 +554,7 @@ namespace org.iringtools.services
       IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
 
       string contentType = request.ContentType;
-      
+
       // if it's a known format then return it
       if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("json") ||
         format.ToLower().Contains("dto") || format.ToLower().Contains("rdf")))
@@ -586,11 +598,11 @@ namespace org.iringtools.services
       }
       else if (ex is WebFaultException)
       {
-          context.StatusCode = ((WebFaultException)ex).StatusCode;
+        context.StatusCode = ((WebFaultException)ex).StatusCode;
       }
       else
       {
-          context.StatusCode = HttpStatusCode.InternalServerError;
+        context.StatusCode = HttpStatusCode.InternalServerError;
       }
 
       HttpContext.Current.Response.ContentType = "text/html";

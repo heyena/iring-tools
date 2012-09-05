@@ -194,7 +194,7 @@ namespace org.iringtools.adapter.projection
 
           foreach (DataItem dataItem in dataItems.items)
           {
-            IDataObject dataObject = _dataLayer.Create(graphName, null)[0];
+            IDataObject dataObject = _dataLayer.Create(graphName, new List<string>{ dataItem.id })[0];
 
             foreach (var pair in dataItem.properties)
             {
