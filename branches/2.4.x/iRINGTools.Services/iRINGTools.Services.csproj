@@ -73,6 +73,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="MyIdentityProvider">
+      <HintPath>..\..\..\..\svncorp-dmz\ipix_iringtools\trunk\identity\MyIdentityProvider\MyIdentityProvider\bin\Debug\MyIdentityProvider.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\Json.NET 4.5\Newtonsoft.Json.dll</HintPath>
@@ -98,8 +101,12 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TWDataLayer">
+    <Reference Include="TWDataLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\svncorp-dmz\iringtools_datalayers\tw_datalayer\trunk\TWDataLayer\bin\Debug\TWDataLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="WITSDataLayer">
+      <HintPath>..\..\..\..\svncorp-dmz\iringtools_datalayers\wits_datalayer\trunk\WITSDataLayer\bin\Debug\WITSDataLayer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

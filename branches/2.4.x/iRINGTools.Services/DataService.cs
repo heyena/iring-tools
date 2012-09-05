@@ -380,11 +380,13 @@ namespace org.iringtools.services
       }
       else
       {
-        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+          DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
+
+        dataItems.items[0].id = id;
 
         _logger.Debug("Deserialized!");
 
-        response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
+        response = _adapterProvider.Post(project, app, resource, format, dataItems);
       }
 
       PrepareResponse(ref response);
