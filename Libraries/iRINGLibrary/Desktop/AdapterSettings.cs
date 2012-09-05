@@ -71,8 +71,8 @@ namespace org.iringtools.adapter
         string lowerCaseKey = key.ToLower();
 
         if (!(this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase) || 
-            lowerCaseKey.Contains("username") || lowerCaseKey.Contains("domain") ||
-            lowerCaseKey.Contains("emailaddress")))
+            lowerCaseKey == "username" || lowerCaseKey == "domain" ||
+            lowerCaseKey == "emailaddress"))
         {
           this.Add(key, settings[key].ToString());
         }
