@@ -324,7 +324,6 @@ namespace org.iringtools.refdata
         Query query = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabel").Query;
         Query queryEquivalent = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabelRdlEquivalent").Query;
 
-
         foreach (Repository repository in _repositories)
         {
           if (repository.RepositoryType == RepositoryType.JORD && uri.Contains("#"))
@@ -424,13 +423,20 @@ namespace org.iringtools.refdata
       {
         Classification classification = new Classification();
         string uri = String.Empty;
-        if (result.HasValue("uri"))
+
+        if (result.HasValue("uri") && result["uri"] != null)
         {
-          string pref = nsMap.GetPrefix(new Uri(result["uri"].ToString().Substring(0, result["uri"].ToString().IndexOf("#") + 1)));
+          string pref = nsMap.GetPrefix(new Uri(result["uri"].ToString().Substring(0, result["uri"].ToString().IndexOf("#") + 1))); 
+          
           if (pref.Equals("owl") || pref.Contains("dm")) continue;
+
           uri = result["uri"].ToString();
-          classification.reference = uri;
         }
+        else if (result.HasValue("rdsuri") && result["rdsuri"] != null)
+        {
+          classification.reference = result["rdsuri"].ToString();
+        }
+
         foreach (var v in result.Variables)
         {
           INode node = result[v];
