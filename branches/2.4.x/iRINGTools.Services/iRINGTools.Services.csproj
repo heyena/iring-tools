@@ -95,10 +95,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TWDataLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\svncorp-dmz\iringtools_datalayers\tw_datalayer\trunk\TWDataLayer\bin\Debug\TWDataLayer.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BindingConfiguration.Adapter.xml">
@@ -199,6 +195,10 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Libraries\AdapterLibrary\AdapterLibrary.csproj">
+      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
+      <Name>AdapterLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
@@ -206,10 +206,6 @@
     <ProjectReference Include="..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\AdapterLibrary\AdapterLibrary.csproj">
-      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
-      <Name>AdapterLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
