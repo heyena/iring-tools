@@ -90,7 +90,7 @@ Ext.define('Ext.ux.form.MultiSelect', {
      * Validation message displayed when {@link #maxSelections} is not met
      * The {0} token will be replaced by the value of {@link #maxSelections}.
      */
-    maxSelectionsText: 'Maximum {0} item(s) required',
+    maxSelectionsText: 'Minimum {0} item(s) required',
 
     /**
      * @cfg {String} [delimiter=","] The string used to delimit the selected values when {@link #getSubmitValue submitting}

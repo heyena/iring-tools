@@ -20,8 +20,8 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyField43",
-                "mapping": "dataObjects",
                 "name": "text",
+                "mapping": "dataObjects",
                 "type": "string"
             },
             "designerId": "a46a78ac-92f3-41ee-a5ac-50293b55f12a"
@@ -35,8 +35,8 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyField44",
-                "mapping": "dataObjects",
                 "name": "tableName",
+                "mapping": "dataObjects",
                 "type": "string"
             },
             "designerId": "163df5fd-baed-431d-a1db-b2e51d24117b"

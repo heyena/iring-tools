@@ -18,13 +18,13 @@ Ext.define('AM.model.TableSelectModel', {
 
   fields: [
     {
-      mapping: 'dataObjects',
       name: 'text',
+      mapping: 'dataObjects',
       type: 'string'
     },
     {
-      mapping: 'dataObjects',
       name: 'tableName',
+      mapping: 'dataObjects',
       type: 'string'
     }
   ]

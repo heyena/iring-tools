@@ -7,6 +7,9 @@
     "codeClass": null,
     "userConfig": {
         "baseUrl": "",
+        "dirNode": "",
+        "value": "",
+        "serName": "",
         "designer|userClassName": "nhibernate.ConnectionStringForm",
         "designer|userAlias": "connectionstringform",
         "height": null,
@@ -23,6 +26,21 @@
         {
             "group": "(Custom Properties)",
             "name": "baseUrl",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "dirNode",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "value",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "serName",
             "type": "string"
         }
     ],
@@ -64,11 +82,11 @@
                 "fieldLabel": "Database Provider",
                 "labelWidth": 150,
                 "editable": false,
-                "displayField": "provider",
-                "hiddenName": "dbProvider",
+                "displayField": "Provider",
+                "hiddenName": null,
                 "queryMode": "local",
                 "store": "ProviderStore",
-                "valueField": "provider"
+                "valueField": "Provider"
             },
             "designerId": "28a2b72e-e4ad-4c8d-8397-dec1161e8e2b"
         },
@@ -239,39 +257,166 @@
             "designerId": "a2ab3a20-710f-4069-b718-10c657da8130"
         },
         {
-            "type": "panel",
+            "type": "textfield",
             "reference": {
                 "name": "items",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "labelWidth": 150,
-                "items": "[]",
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyPanel6",
-                "border": false,
-                "frame": false,
-                "layout": "fit",
-                "bodyStyle": [
-                    "background:#eee"
+                "designer|userClassName": "MyTextField9",
+                "hidden": false,
+                "name": "dbSchema",
+                "value": [
+                    "dbo"
                 ],
-                "title": null
+                "fieldLabel": "Schema Name",
+                "labelWidth": 150,
+                "allowBlank": false
             },
-            "configAlternates": {
-                "border": "boolean"
+            "designerId": "f1e420e8-675b-4500-b178-8bb16af3fe48"
+        },
+        {
+            "type": "container",
+            "reference": {
+                "name": "items",
+                "type": "array"
             },
-            "designerId": "4b27421a-43db-448a-8590-82af538c7c64",
-            "customConfigs": [
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyContainer10",
+                "hidden": true,
+                "itemId": "oraclecontainer",
+                "layout": "column"
+            },
+            "designerId": "4c1078b5-ad4b-4ed6-95f4-a0a636ceac07",
+            "cn": [
                 {
-                    "group": "(Custom Properties)",
-                    "name": "labelWidth",
-                    "type": "number"
+                    "type": "radiogroup",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "MyRadioGroup",
+                        "width": 25,
+                        "fieldLabel": null,
+                        "columns": [
+                            "1\r",
+                            ""
+                        ]
+                    },
+                    "designerId": "e503f76b-9dba-461a-aff6-0c3d40af0d1c",
+                    "cn": [
+                        {
+                            "type": "radiofield",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "designer|userClassName": "MyRadio",
+                                "style": null,
+                                "name": "sid",
+                                "fieldLabel": null,
+                                "labelWidth": 125,
+                                "boxLabel": null,
+                                "inputValue": "off"
+                            },
+                            "designerId": "33b9f0a3-c3bd-4974-8022-70adbe8c789a"
+                        },
+                        {
+                            "type": "radiofield",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "designer|userClassName": "MyRadio1",
+                                "style": null,
+                                "name": "service",
+                                "fieldLabel": null,
+                                "boxLabel": null
+                            },
+                            "designerId": "2fb6bfbf-6615-4ae1-9d6f-868ab6bcdfbf"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "designer|userClassName": "onRadiogroupChange",
+                                "fn": "onRadiogroupChange",
+                                "implHandler": [
+                                    "var me = this; \r",
+                                    "var form = me.getForm();\r",
+                                    "if (newValue) {\r",
+                                    "  var value = field.getValue().sid;\r",
+                                    "  if (value == 'off') {\r",
+                                    "    form.findField('field_serviceName').disable();\r",
+                                    "    form.findField('field_serviceName').clearInvalid();\r",
+                                    "    form.findField('field_sid').enable();\r",
+                                    "    form.findField('field_sid').focus();\r",
+                                    "    me.serName = 'SID';\r",
+                                    "  }\r",
+                                    "  else {\r",
+                                    "    form.findField('field_sid').clearInvalid();\r",
+                                    "    form.findField('field_sid').disable();\r",
+                                    "    form.findField('field_serviceName').enable();\r",
+                                    "    form.findField('field_serviceName').focus();\r",
+                                    "    me.serName = 'SERVICE_NAME';\r",
+                                    "  }\r",
+                                    "}"
+                                ],
+                                "name": "change",
+                                "scope": "me"
+                            },
+                            "designerId": "9687009a-c251-4c40-98df-3c5a6807f021"
+                        }
+                    ]
                 },
                 {
-                    "group": "(Custom Properties)",
-                    "name": "items",
-                    "type": "array"
+                    "type": "textfield",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|columnWidth": 1,
+                        "designer|userClassName": "MyTextField18",
+                        "disabled": true,
+                        "name": "field_sid",
+                        "fieldLabel": "Sid",
+                        "labelWidth": 125,
+                        "allowBlank": false
+                    },
+                    "designerId": "0c25464c-db3d-4f91-b7ce-c52df611402f"
+                },
+                {
+                    "type": "textfield",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|columnWidth": 1,
+                        "designer|userClassName": "MyTextField18",
+                        "disabled": true,
+                        "name": "field_serviceName",
+                        "fieldLabel": "Service Name",
+                        "labelWidth": 125,
+                        "allowBlank": false
+                    },
+                    "designerId": "a72c7ac0-fbcf-42dc-820f-9ae5fb44ec2e"
                 }
             ]
         },
@@ -299,7 +444,8 @@
                         "action": "connecttodatabase",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton27",
-                        "icon": "Content/img/16x16/document-properties.png",
+                        "icon": null,
+                        "iconCls": "am-document-properties",
                         "text": "Connect",
                         "tooltip": [
                             "Connect"
@@ -363,7 +509,8 @@
                     "userConfig": {
                         "layout|flex": null,
                         "designer|userClassName": "MyButton28",
-                        "icon": "Content/img/16x16/edit-clear.png",
+                        "icon": null,
+                        "iconCls": "am-edit-clear",
                         "text": "Reset",
                         "tooltip": [
                             "Reset to the latest applied changes"

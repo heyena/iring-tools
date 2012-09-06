@@ -131,7 +131,8 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-    var content = me.getMainContent(),   context = node.data.property.context,
+    var content = me.getMainContent(),
+    context = node.data.property.context,
     endpoint = node.data.property.endpoint,
     baseUrl = node.data.property.baseUrl,
     graphName = node.data.text,

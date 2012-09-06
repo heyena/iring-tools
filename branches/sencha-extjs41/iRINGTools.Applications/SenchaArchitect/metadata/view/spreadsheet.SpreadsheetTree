@@ -15,7 +15,7 @@
         "datalayer": "",
         "designer|userClassName": "spreadsheet.SpreadsheetTree",
         "designer|userAlias": "spreadsheettree",
-        "border": true,
+        "border": "true",
         "height": null,
         "width": null,
         "title": null,
@@ -100,7 +100,8 @@
                         "action": "reloadspreadsheet",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton22",
-                        "icon": "Content/img/16x16/view-refresh.png",
+                        "icon": null,
+                        "iconCls": "am-view-refresh",
                         "text": "Reload"
                     },
                     "designerId": "66c03a92-bd82-41cf-ba17-85f17ddef6a4",
@@ -123,7 +124,8 @@
                         "action": "savespreadsheet",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton23",
-                        "icon": "Content/img/16x16/document-save.png",
+                        "icon": null,
+                        "iconCls": "am-document-save",
                         "text": "Save"
                     },
                     "designerId": "d3e8fa8a-e20a-429b-8dd9-b4ac5017b691",
@@ -146,7 +148,8 @@
                         "action": "openuploadform",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton24",
-                        "icon": "Content/img/16x16/document-up.png",
+                        "icon": null,
+                        "iconCls": "am-document-up",
                         "text": "Upload"
                     },
                     "designerId": "67143565-a25e-4fca-b78f-9e6a3097231d",
@@ -169,7 +172,8 @@
                         "action": "downloadspreadsheet",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton25",
-                        "icon": "Content/img/16x16/document-down.png",
+                        "icon": null,
+                        "iconCls": "am-document-down",
                         "text": "Download"
                     },
                     "designerId": "92756b5d-480b-41af-a9f3-16cfd48a45ac",

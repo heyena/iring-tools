@@ -235,23 +235,44 @@ a:active {color: black}
     margin: 0;
 }
 
-.x-form-itemselector-top {
-    background-image: url(../img/top2.gif);
+.am-edit-clear
+{
+  background-image: url("../img/16x16/edit-clear.png")
 }
-.x-form-itemselector-up {
-    background-image: url(../img/up2.gif);
+
+.am-list-add
+{
+  background-image: url("../img/16x16/list-add.png")
 }
-.x-form-itemselector-add {
-    background-image: url(../img/right2.gif);
+
+.am-list-remove
+{
+  background-image: url("../img/16x16/list-remove.png")
 }
-.x-form-itemselector-remove {
-    background-image: url(../img/left2.gif);
+
+.am-view-refresh
+{
+  background-image: url("../img/16x16/view-refresh.png")
 }
-.x-form-itemselector-down {
-    background-image: url(../img/down2.gif);
+
+.am-document-properties
+{
+  background-image: url("../img/16x16/document-properties.png")
 }
-.x-form-itemselector-bottom {
-    background-image: url(../img/bottom2.gif);
+
+.am-document-save
+{
+  background-image: url("../img/16x16/document-save.png")
+}
+
+.am-document-up
+{
+  background-image: url("../img/16x16/document-up.png")
+}
+
+.am-document-down
+{
+  background-image: url("../img/16x16/document-down.png")
 }
 
 .mapping-target {

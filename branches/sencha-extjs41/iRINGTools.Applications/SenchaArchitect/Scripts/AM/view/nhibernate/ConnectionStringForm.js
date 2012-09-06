@@ -18,6 +18,9 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
   alias: 'widget.connectionstringform',
 
   baseUrl: '',
+  dirNode: '',
+  value: '',
+  serName: '',
   bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
 
   initComponent: function() {
@@ -41,11 +44,10 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
           fieldLabel: 'Database Provider',
           labelWidth: 150,
           editable: false,
-          displayField: 'provider',
-          hiddenName: 'dbProvider',
+          displayField: 'Provider',
           queryMode: 'local',
           store: 'ProviderStore',
-          valueField: 'provider'
+          valueField: 'Provider'
         },
         {
           xtype: 'textfield',
@@ -120,18 +122,65 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
           allowBlank: false
         },
         {
-          xtype: 'panel',
-          labelWidth: 150,
-          items: [
-            
-          ],
+          xtype: 'textfield',
           anchor: '100%',
-          border: false,
-          frame: false,
+          hidden: false,
+          name: 'dbSchema',
+          value: 'dbo',
+          fieldLabel: 'Schema Name',
+          labelWidth: 150,
+          allowBlank: false
+        },
+        {
+          xtype: 'container',
+          hidden: true,
+          itemId: 'oraclecontainer',
           layout: {
-            type: 'fit'
+            type: 'column'
           },
-          bodyStyle: 'background:#eee'
+          items: [
+            {
+              xtype: 'radiogroup',
+              width: 25,
+              columns: 1,
+              items: [
+                {
+                  xtype: 'radiofield',
+                  name: 'sid',
+                  labelWidth: 125,
+                  inputValue: 'off'
+                },
+                {
+                  xtype: 'radiofield',
+                  name: 'service'
+                }
+              ],
+              listeners: {
+                change: {
+                  fn: me.onRadiogroupChange,
+                  scope: me
+                }
+              }
+            },
+            {
+              xtype: 'textfield',
+              columnWidth: 1,
+              disabled: true,
+              name: 'field_sid',
+              fieldLabel: 'Sid',
+              labelWidth: 125,
+              allowBlank: false
+            },
+            {
+              xtype: 'textfield',
+              columnWidth: 1,
+              disabled: true,
+              name: 'field_serviceName',
+              fieldLabel: 'Service Name',
+              labelWidth: 125,
+              allowBlank: false
+            }
+          ]
         }
       ],
       dockedItems: [
@@ -150,7 +199,7 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
                 }
               },
               action: 'connecttodatabase',
-              icon: 'Content/img/16x16/document-properties.png',
+              iconCls: 'am-document-properties',
               text: 'Connect',
               tooltip: 'Connect'
             },
@@ -159,7 +208,7 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
             },
             {
               xtype: 'button',
-              icon: 'Content/img/16x16/edit-clear.png',
+              iconCls: 'am-edit-clear',
               text: 'Reset',
               tooltip: 'Reset to the latest applied changes'
             }
@@ -178,6 +227,28 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
       var dbSchema = me.getForm().findField('dbSchema');
       dbSchema.setValue(newValue);
       dbSchema.show();
+    }
+  },
+
+  onRadiogroupChange: function(field, newValue, oldValue, options) {
+    var me = this; 
+    var form = me.getForm();
+    if (newValue) {
+      var value = field.getValue().sid;
+      if (value == 'off') {
+        form.findField('field_serviceName').disable();
+        form.findField('field_serviceName').clearInvalid();
+        form.findField('field_sid').enable();
+        form.findField('field_sid').focus();
+        me.serName = 'SID';
+      }
+      else {
+        form.findField('field_sid').clearInvalid();
+        form.findField('field_sid').disable();
+        form.findField('field_serviceName').enable();
+        form.findField('field_serviceName').focus();
+        me.serName = 'SERVICE_NAME';
+      }
     }
   }
 

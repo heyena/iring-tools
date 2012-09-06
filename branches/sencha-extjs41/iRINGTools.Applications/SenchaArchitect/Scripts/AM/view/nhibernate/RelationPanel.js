@@ -17,7 +17,7 @@ Ext.define('AM.view.nhibernate.RelationPanel', {
   extend: 'Ext.panel.Panel',
   alias: 'widget.relationpanel',
 
-  border: false,
+  border: 'false',
   frame: false,
   anchorSize: 100% -10,
   bodyStyle: 'background:#eee',

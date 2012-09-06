@@ -12,6 +12,7 @@
         "width": null,
         "layout": "border",
         "closable": true,
+        "iconCls": null,
         "title": null
     },
     "id": "ExtBox1-ext-gen45156",

@@ -10,7 +10,8 @@
         "designer|userAlias": "multiselectiongrid",
         "height": null,
         "width": null,
-        "header": null,
+        "frameHeader": false,
+        "header": false,
         "title": null,
         "enableColumnHide": false,
         "enableColumnMove": false,
@@ -30,6 +31,7 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyColumn1",
+                "draggable": false,
                 "sortable": false,
                 "dataIndex": "DisplayField",
                 "flex": 1,
@@ -59,7 +61,8 @@
             },
             "codeClass": "Ext.selection.CheckboxModel",
             "userConfig": {
-                "designer|userClassName": "MyCheckboxSelectionModel"
+                "designer|userClassName": "MyCheckboxSelectionModel",
+                "showHeaderCheckbox": false
             },
             "designerId": "a0c5c68b-1815-4f5c-93fc-53723b5e59f5"
         },
@@ -108,7 +111,7 @@
                     "var me = this;\r",
                     "var store = me.getStore();\r",
                     "var selectionModel = me.getSelectionModel();\r",
-                    "\r",
+                    "var view = me.getView();\r",
                     "Ext.each(items, function(item) {\r",
                     "  var record = store.find('DisplayField', item);\r",
                     "  if(record) {\r",

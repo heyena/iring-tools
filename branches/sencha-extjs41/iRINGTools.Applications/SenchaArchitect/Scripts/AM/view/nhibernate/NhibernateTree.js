@@ -48,7 +48,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                 me.onReload()
               },
               action: 'reloaddataobjects',
-              icon: 'Content/img/16x16/view-refresh.png',
+              iconCls: 'am-view-refresh',
               text: 'Reload',
               tooltip: 'Reload Data Objects'
             },
@@ -59,7 +59,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
             {
               xtype: 'button',
               action: 'editdbconnection',
-              icon: 'Content/img/16x16/document-properties.png',
+              iconCls: 'am-document-properties',
               text: 'Edit Connection'
             },
             {
@@ -69,7 +69,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
             {
               xtype: 'button',
               action: 'savedbobjectstree',
-              icon: 'Content/img/16x16/document-save.png',
+              iconCls: 'am-document-save',
               text: 'Save',
               tooltip: 'Save the data objects tree to the back-end server'
             }

@@ -511,7 +511,7 @@ Ext.define('AM.controller.Directory', {
       me.application.fireEvent('configspreadsheet', me);
       break;
       default:
-      showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
+      showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.Msg.OK, null);
       break;
     }
 

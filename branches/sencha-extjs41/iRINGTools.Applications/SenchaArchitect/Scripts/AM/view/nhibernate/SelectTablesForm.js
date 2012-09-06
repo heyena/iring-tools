@@ -30,7 +30,7 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
   endpoint: '',
   dbDict: '',
   baseUrl: '',
-  border: false,
+  border: 'false',
   frame: false,
   bodyPadding: 2,
   bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',

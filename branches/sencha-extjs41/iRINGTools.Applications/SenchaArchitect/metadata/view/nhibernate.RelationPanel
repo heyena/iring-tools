@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "nhibernate.RelationPanel",
         "designer|userAlias": "relationpanel",
-        "border": false,
+        "border": "false",
         "frame": false,
         "anchorSize": [
             "100% -10"

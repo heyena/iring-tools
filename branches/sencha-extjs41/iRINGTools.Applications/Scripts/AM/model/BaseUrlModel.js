@@ -18,8 +18,8 @@ Ext.define('AM.model.BaseUrlModel', {
 
   fields: [
     {
-      mapping: 'Urlocator',
-      name: 'baseurl'
+      name: 'baseurl',
+      mapping: 'Urlocator'
     }
   ]
 });

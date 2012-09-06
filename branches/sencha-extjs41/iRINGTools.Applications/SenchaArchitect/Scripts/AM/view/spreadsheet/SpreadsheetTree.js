@@ -29,7 +29,7 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
   endpoint: '',
   baseUrl: '',
   datalayer: '',
-  border: true,
+  border: 'true',
   store: 'SpreadsheetStore',
 
   initComponent: function() {
@@ -51,25 +51,25 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
             {
               xtype: 'button',
               action: 'reloadspreadsheet',
-              icon: 'Content/img/16x16/view-refresh.png',
+              iconCls: 'am-view-refresh',
               text: 'Reload'
             },
             {
               xtype: 'button',
               action: 'savespreadsheet',
-              icon: 'Content/img/16x16/document-save.png',
+              iconCls: 'am-document-save',
               text: 'Save'
             },
             {
               xtype: 'button',
               action: 'openuploadform',
-              icon: 'Content/img/16x16/document-up.png',
+              iconCls: 'am-document-up',
               text: 'Upload'
             },
             {
               xtype: 'button',
               action: 'downloadspreadsheet',
-              icon: 'Content/img/16x16/document-down.png',
+              iconCls: 'am-document-down',
               text: 'Download'
             }
           ]

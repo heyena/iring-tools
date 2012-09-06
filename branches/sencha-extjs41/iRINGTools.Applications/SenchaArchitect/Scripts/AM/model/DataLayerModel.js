@@ -18,16 +18,16 @@ Ext.define('AM.model.DataLayerModel', {
 
   fields: [
     {
-      mapping: 'Assembly',
-      name: 'assembly'
+      name: 'assembly',
+      mapping: 'Assembly'
     },
     {
-      mapping: 'Name',
-      name: 'name'
+      name: 'name',
+      mapping: 'Name'
     },
     {
-      mapping: 'Configurable',
-      name: 'configurable'
+      name: 'configurable',
+      mapping: 'Configurable'
     }
   ]
 });

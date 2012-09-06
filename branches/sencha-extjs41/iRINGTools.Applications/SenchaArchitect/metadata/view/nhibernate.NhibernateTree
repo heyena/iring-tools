@@ -77,7 +77,8 @@
                         "action": "reloaddataobjects",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton32",
-                        "icon": "Content/img/16x16/view-refresh.png",
+                        "icon": null,
+                        "iconCls": "am-view-refresh",
                         "text": "Reload",
                         "tooltip": [
                             "Reload Data Objects"
@@ -139,7 +140,8 @@
                         "action": "editdbconnection",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton33",
-                        "icon": "Content/img/16x16/document-properties.png",
+                        "icon": null,
+                        "iconCls": "am-document-properties",
                         "text": "Edit Connection"
                     },
                     "designerId": "a1bc84d2-f24d-429a-97f7-581bebceb40e",
@@ -176,7 +178,8 @@
                         "action": "savedbobjectstree",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton34",
-                        "icon": "Content/img/16x16/document-save.png",
+                        "icon": null,
+                        "iconCls": "am-document-save",
                         "text": "Save",
                         "tooltip": [
                             "Save the data objects tree to the back-end server"
