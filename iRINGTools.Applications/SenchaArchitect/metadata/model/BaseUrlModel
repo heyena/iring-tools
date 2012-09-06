@@ -20,8 +20,8 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyField1",
-                "mapping": "Urlocator",
-                "name": "baseurl"
+                "name": "baseurl",
+                "mapping": "Urlocator"
             },
             "designerId": "018c4c68-73d4-4a5a-959d-63b3964e9787"
         }

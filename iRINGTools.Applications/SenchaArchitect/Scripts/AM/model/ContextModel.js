@@ -18,8 +18,8 @@ Ext.define('AM.model.ContextModel', {
 
   fields: [
     {
-      mapping: 'Context',
-      name: 'context'
+      name: 'context',
+      mapping: 'Context'
     }
   ]
 });

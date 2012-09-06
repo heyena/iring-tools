@@ -20,8 +20,8 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyField2",
-                "mapping": "Context",
-                "name": "context"
+                "name": "context",
+                "mapping": "Context"
             },
             "designerId": "c6cd1ba2-52ed-4a47-9e4b-ad527a44706f"
         }

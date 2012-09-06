@@ -36,7 +36,7 @@ Ext.define('AM.controller.NHibernate', {
     'nhibernate.SelectTablesForm',
     'nhibernate.MultiSelectionGrid',
     'nhibernate.NhibernatePanel',
-    'nhibernate.KeyPropertyForm'
+    'nhibernate.PropertyGrid'
   ],
 
   refs: [
@@ -117,6 +117,78 @@ Ext.define('AM.controller.NHibernate', {
 
   },
 
+  onConnectToDatabase: function(button, e, options) {
+    var me = this;
+    var form = button.up('connectionstringform');
+    var panel = form.up('nhibernatepanel');
+    var dataTree = panel.down('nhibernatetree');
+    var dirNode = form.dirNode;
+    var context = dirNode.data.record.context;
+    var endpoint = dirNode.data.record.endpoint;
+    var baseUrl = dirNode.data.record.BaseUrl;
+    var content = me.getMainContent();
+    var dbProvider = form.getForm().findField('dbProvider').getValue().toUpperCase();
+    var dbName = form.getForm().findField('dbName');
+    var portNumber = form.getForm().findField('portNumber');
+    var host = form.getForm().findField('host');
+    var dbServer = form.getForm().findField('dbServer');
+    var dbInstance = form.getForm().findField('dbInstance');
+    var serviceNamePane = form.items.items[10];
+    var dbSchema = form.getForm().findField('dbSchema');
+    var servieName = '';
+    var serName = '';
+
+    dirNode.data.record.dbDict.Provider = dbProvider;
+
+    if (dbProvider.indexOf('ORACLE') > -1) {
+      dbServer.setValue(host.getValue());
+      dbName.setValue(dbSchema.getValue());
+      servieName = serviceNamePane.items.items[0].value;
+      serName = serviceNamePane.items.items[0].serName;
+      dbInstance.setValue(servieName);
+    }
+    else if (dbProvider.indexOf('MSSQL') > -1) {
+      host.setValue(dbServer.getValue());
+      serviceName = dbInstance.getValue();
+    }
+    else if (dbProvider.indexOf('MYSQL') > -1) {
+      dbName.setValue(dbSchema.getValue());
+      dbInstance.setValue(dbSchema.getValue());
+    }
+
+    form.getForm().submit({
+      url: 'nhibernate/TableNames',
+      timeout: 600000,
+      params: {
+        scope: context,
+        app: endpoint,
+        serName: serName,
+        baseUrl: baseUrl
+      },
+      success: function (f, a) {
+        dirNode.data.record.dbInfo = form.getForm().getValues();
+        var dbInfo = dirNode.data.record.dbInfo;
+
+        dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
+        me.showTableSelectionForm(panel, dirNode);
+        return;
+
+      },
+      failure: function (f, a) {
+        if (a.response)
+        showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+        else {
+          showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
+        }
+      }//,
+      // waitMsg: 'Loading ...'
+    });
+  },
+
+  onSaveDbTables: function(button, e, options) {
+
+  },
+
   onConfignhibernate: function() {
     var me = this;
     var dirTree = me.getDirTree(),
@@ -182,7 +254,7 @@ Ext.define('AM.controller.NHibernate', {
 
           if (dbDict !== null && dbDict !== undefined)
           dirNode.data.record.dbDict = dbDict;
-          me.showConnectionStringForm(panel, node);
+          me.showConnectionStringForm(panel, dirNode);
           tree.disable();
 
         }
@@ -206,6 +278,12 @@ Ext.define('AM.controller.NHibernate', {
       },
       "selecttablesform button[action=resetobjects]": {
         click: this.onDbObjectsReset
+      },
+      "button[action=connecttodatabase]": {
+        click: this.onConnectToDatabase
+      },
+      "button[action=applyobjects]": {
+        click: this.onSaveDbTables
       }
     });
 
@@ -333,23 +411,29 @@ Ext.define('AM.controller.NHibernate', {
     panel.add(form);
     panel.doLayout();
 
+    Ext.getBody().unmask();
+
   },
 
   showConnectionStringForm: function(nhibernatePanel, node) {
     var me = this,
     form = me.getConnectionStringForm();
+    form.dirNode = node;
+    var dbDict = node.data.record.dbDict;
     var combo = form.down('#providerCombo');
     combo.on('select', function (combo, record, options) {
       var dbProvider = record[0].data.Provider.toUpperCase();
-      var dbName = me.getForm().findField('dbName');
-      var portNumber = me.getForm().findField('portNumber');
-      var host = me.getForm().findField('host');
-      var dbServer = me.getForm().findField('dbServer');
-      var dbInstance = me.getForm().findField('dbInstance');
-      var serviceName = me.items.items[10];
-      var dbSchema = me.getForm().findField('dbSchema');
-      var userName = me.getForm().findField('dbUserName');
-      var password = me.getForm().findField('dbPassword');
+      var dbName = form.getForm().findField('dbName');
+      var portNumber = form.getForm().findField('portNumber');
+      var host = form.getForm().findField('host');
+      var dbServer = form.getForm().findField('dbServer');
+      var dbInstance = form.getForm().findField('dbInstance');
+      var serviceName = form.down('#oraclecontainer');
+      var dbSchema = form.getForm().findField('dbSchema');
+      var userName = form.getForm().findField('dbUserName');
+      var password = form.getForm().findField('dbPassword');
+      var sid = form.getForm().findField('field_sid');
+      var serName = form.getForm().findField('field_serviceName');
 
       if (dbProvider.indexOf('ORACLE') > -1) {
         if (dbName.hidden === false) {
@@ -362,18 +446,19 @@ Ext.define('AM.controller.NHibernate', {
           if (dbDict.Provider) {
             if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
               host.setValue(dbInfo.dbServer);
+              sid.setValue(dbInfo.dbInstance);
+              serName.setValue(dbInfo.serName);
               serviceName.show();
-              creatRadioField(serviceName, dbInfo.dbInstance, dbInfo.serName, contextName, endpoint);
               host.show();
               userName.setValue(dbInfo.dbUserName);
               password.setValue(dbInfo.dbPassword);
               dbSchema.setValue(dbDict.SchemaName);
             }
             else
-            changeConfigOracle(host, dbSchema, userName, password, serviceName, contextName, endpoint);
+            me.resetConfigOracle(host, dbSchema, userName, password, serviceName);
           }
           else
-          changeConfigOracle(host, dbSchema, userName, password, serviceName, contextName, endpoint);
+          me.resetConfigOracle(host, dbSchema, userName, password, serviceName);
 
           portNumber.setValue('1521');
           portNumber.show();
@@ -400,10 +485,10 @@ Ext.define('AM.controller.NHibernate', {
               password.setValue(dbInfo.dbPassword);
             }
             else
-            changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password);
+            me.resetConfigMsSql(dbName, dbServer, dbInstance, dbSchema, userName, password);
           }
           else
-          changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password);
+          me.resetConfigMsSql(dbName, dbServer, dbInstance, dbSchema, userName, password);
         }
 
         portNumber.setValue('1433');
@@ -533,6 +618,44 @@ Ext.define('AM.controller.NHibernate', {
         showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
       }
     });
+  },
+
+  resetConfigOracle: function(host, dbSchema, userName, password, serviceName) {
+    host.setValue('');
+    host.clearInvalid();
+
+    host.show();
+
+    dbSchema.setValue('');
+    dbSchema.clearInvalid();
+
+    userName.setValue('');
+    userName.clearInvalid();
+
+    password.setValue('');
+    password.clearInvalid();
+    serviceName.show();
+    //creatRadioField(serviceName, '', '', 1, context, endpoint);  
+  },
+
+  resetConfigMsSql: function(dbName, dbServer, dbInstance, dbSchema, userName, password) {
+    dbName.setValue('');
+    dbName.clearInvalid();
+    dbName.show();
+
+    dbServer.setValue('localhost');
+    dbServer.show();
+
+    dbInstance.setValue('default');
+    dbInstance.show();
+
+    dbSchema.setValue('dbo');
+
+    userName.setValue('');
+    userName.clearInvalid();
+
+    password.setValue('');
+    password.clearInvalid();
   }
 
 });

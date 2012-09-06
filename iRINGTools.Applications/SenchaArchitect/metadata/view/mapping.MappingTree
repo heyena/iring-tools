@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "mapping.MappingTree",
         "designer|userAlias": "mappingtree",
-        "border": true,
+        "border": "true",
         "height": null,
         "minWidth": null,
         "width": null,

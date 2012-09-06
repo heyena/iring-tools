@@ -3,15 +3,15 @@
     "settings": {
         "urlPrefix": "http://localhost:23456/",
         "spacesToIndent": 2,
-        "exportPath": "E:/iring-tools/trunk/iRINGTools.Applications",
+        "exportPath": "E:/iring-tools/branches/sencha-extjs41/iRINGTools.Applications",
         "lineEnding": "CRLF",
         "genTimestamps": false,
         "cacheBust": false
     },
     "xdsVersion": "2.1.0",
-    "xdsBuild": 588,
+    "xdsBuild": 609,
     "schemaVersion": 1,
-    "upgradeVersion": 210000000495,
+    "upgradeVersion": 210000000497,
     "framework": "ext41",
     "topInstanceFileMap": {
         "be3f23ad-f579-463e-98fb-9e65fd3b6f6a": {
@@ -779,13 +779,13 @@
             ],
             "className": "nhibernate.Utility"
         },
-        "28e89700-aff9-448e-b68f-493602cf4d80": {
+        "02e5600b-0e29-4250-9b2b-34467449933a": {
             "paths": [
-                "metadata/view/nhibernate.KeyPropertyForm",
-                "Scripts/AM/view/override/nhibernate/KeyPropertyForm.js",
-                "Scripts/AM/view/nhibernate/KeyPropertyForm.js"
+                "metadata/view/nhibernate.PropertyGrid",
+                "Scripts/AM/view/override/nhibernate/PropertyGrid.js",
+                "Scripts/AM/view/nhibernate/PropertyGrid.js"
             ],
-            "className": "nhibernate.KeyPropertyForm"
+            "className": "nhibernate.PropertyGrid"
         }
     },
     "viewOrderMap": {
@@ -851,7 +851,7 @@
             "05fae04d-5364-4b78-98b9-ee7f6b53db35",
             "806180c3-0c42-425f-b6f1-5b85a7b5017b",
             "1a271683-7a34-49a9-b59e-89ab4347ee43",
-            "28e89700-aff9-448e-b68f-493602cf4d80"
+            "02e5600b-0e29-4250-9b2b-34467449933a"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

@@ -21,6 +21,8 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
     'AM.view.override.nhibernate.MultiSelectionGrid'
   ],
 
+  frameHeader: false,
+  header: false,
   enableColumnHide: false,
   enableColumnMove: false,
   enableColumnResize: false,
@@ -34,6 +36,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
       columns: [
         {
           xtype: 'gridcolumn',
+          draggable: false,
           sortable: false,
           dataIndex: 'DisplayField',
           flex: 1,
@@ -44,7 +47,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
 
       },
       selModel: Ext.create('Ext.selection.CheckboxModel', {
-
+        showHeaderCheckbox: false
       })
     });
 
@@ -68,7 +71,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
     var me = this;
     var store = me.getStore();
     var selectionModel = me.getSelectionModel();
-
+    var view = me.getView();
     Ext.each(items, function(item) {
       var record = store.find('DisplayField', item);
       if(record) {

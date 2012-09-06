@@ -17,7 +17,7 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.valuelistmapform',
 
-  border: false,
+  border: 'false',
   frame: false,
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
@@ -82,7 +82,7 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
         {
           xtype: 'container',
           anchor: '100%',
-          border: true,
+          border: 'true',
           html: 'Drop a Class Node here.',
           itemId: 'vlmfccontainer',
           style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',

@@ -17,7 +17,7 @@
         "uses": [
             "Ext.ux.form.ItemSelector"
         ],
-        "border": false,
+        "border": "false",
         "frame": false,
         "height": null,
         "padding": null,

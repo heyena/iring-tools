@@ -18,7 +18,7 @@ Ext.define('AM.model.ProviderModel', {
 
   fields: [
     {
-      name: 'provider'
+      name: 'Provider'
     }
   ],
 

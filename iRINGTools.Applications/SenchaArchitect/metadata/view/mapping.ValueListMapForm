@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "mapping.ValueListMapForm",
         "designer|userAlias": "valuelistmapform",
-        "border": false,
+        "border": "false",
         "frame": false,
         "height": null,
         "width": null,
@@ -383,7 +383,7 @@
                 "designer|userClassName": "mapping.ClassContainer",
                 "designer|userAlias": "classcontainer",
                 "designer|displayName": "",
-                "border": true,
+                "border": "true",
                 "height": null,
                 "html": [
                     "Drop a Class Node here."
