@@ -6,6 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
+        "dirNode": "",
         "designer|userClassName": "nhibernate.NhibernateTree",
         "designer|userAlias": "nhibernatetree",
         "height": null,
@@ -26,6 +27,13 @@
     },
     "id": "ExtBox1-ext-gen4285",
     "designerId": "c72f1844-42ae-497d-ac17-9b294bfd2e8c",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "dirNode",
+            "type": "string"
+        }
+    ],
     "cn": [
         {
             "type": "treeview",
@@ -108,7 +116,7 @@
                                     "event"
                                 ],
                                 "implHandler": [
-                                    "me.onReload()"
+                                    "me.onReload();"
                                 ]
                             },
                             "designerId": "f7776a1e-670d-4824-af50-95fa9c2a4a83"
@@ -219,6 +227,24 @@
                 ]
             },
             "designerId": "19483211-1f6c-4fc2-be1e-95e30f6e7430"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "getSelectedNode",
+                "fn": "getSelectedNode",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var selection = me.getSelectionModel().getSelection();\r",
+                    "return selection[0];"
+                ]
+            },
+            "designerId": "1e9b78d6-79fa-40c8-8d83-f17ee28c3605"
         }
     ]
 }

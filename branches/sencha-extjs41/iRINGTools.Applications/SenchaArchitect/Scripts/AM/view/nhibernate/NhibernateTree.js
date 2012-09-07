@@ -17,6 +17,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.nhibernatetree',
 
+  dirNode: '',
   bodyStyle: 'padding:0.5px 0px 1px 1px',
   store: 'NHibernateTreeStore',
 
@@ -45,7 +46,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
             {
               xtype: 'button',
               handler: function(button, event) {
-                me.onReload()
+                me.onReload();
               },
               action: 'reloaddataobjects',
               iconCls: 'am-view-refresh',
@@ -91,6 +92,12 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
     node.set('expanded', false);
     node.set('loaded', false);
     node.expand();
+  },
+
+  getSelectedNode: function() {
+    var me = this;
+    var selection = me.getSelectionModel().getSelection();
+    return selection[0];
   }
 
 });

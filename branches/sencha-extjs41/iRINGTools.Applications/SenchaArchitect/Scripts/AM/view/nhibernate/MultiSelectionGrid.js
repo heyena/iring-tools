@@ -17,10 +17,6 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.multiselectiongrid',
 
-  requires: [
-    'AM.view.override.nhibernate.MultiSelectionGrid'
-  ],
-
   frameHeader: false,
   header: false,
   enableColumnHide: false,
@@ -47,11 +43,21 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
 
       },
       selModel: Ext.create('Ext.selection.CheckboxModel', {
-        showHeaderCheckbox: false
-      })
+
+      }),
+      listeners: {
+        select: {
+          fn: me.onGridpanelSelect,
+          scope: me
+        }
+      }
     });
 
     me.callParent(arguments);
+  },
+
+  onGridpanelSelect: function(selModel, record, index, options) {
+    //alert('Selection Changed');
   },
 
   loadItems: function(items) {
@@ -69,15 +75,19 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
 
   selectItems: function(items) {
     var me = this;
-    var store = me.getStore();
+
+    var vw = me.view;
     var selectionModel = me.getSelectionModel();
-    var view = me.getView();
+    var store = me.getStore();
+    //selctionModel.views.add(vw);
+    //selectionModel.store = store;
     Ext.each(items, function(item) {
-      var record = store.find('DisplayField', item);
+      var record = store.findRecord('DisplayField', item);
       if(record) {
-        selectionModel.select(record); 
+        selectionModel.select(record, false, true); 
       }           
     });
+
 
   },
 

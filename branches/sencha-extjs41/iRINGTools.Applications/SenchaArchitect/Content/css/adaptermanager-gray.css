@@ -240,6 +240,11 @@ a:active {color: black}
   background-image: url("../img/16x16/edit-clear.png")
 }
 
+.am-apply
+{
+  background-image: url("../img/16x16/apply.png")
+}
+
 .am-list-add
 {
   background-image: url("../img/16x16/list-add.png")

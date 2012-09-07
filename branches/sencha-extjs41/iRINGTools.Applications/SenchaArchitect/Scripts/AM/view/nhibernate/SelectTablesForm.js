@@ -17,22 +17,15 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.selecttablesform',
 
-  uses: [
-    'Ext.ux.form.ItemSelector'
-  ],
   requires: [
     'AM.view.nhibernate.MultiSelectionGrid'
   ],
 
-  dbInfo: '',
-  dataTree: '',
-  context: '',
-  endpoint: '',
-  dbDict: '',
-  baseUrl: '',
+  dirNode: '',
   border: 'false',
   frame: false,
-  bodyPadding: 2,
+  autoScroll: true,
+  bodyPadding: 5,
   bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
 
   initComponent: function() {
@@ -41,15 +34,32 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
     Ext.applyIf(me, {
       items: [
         {
-          xtype: 'fieldset',
-          anchor: '100%',
-          title: 'Database Tables',
+          xtype: 'container',
+          height: 22,
+          layout: {
+            type: 'fit'
+          },
           items: [
             {
-              xtype: 'multiselectiongrid',
-              minHeight: 300
+              xtype: 'label',
+              border: 2,
+              text: 'Database Tables'
             }
           ]
+        },
+        {
+          xtype: 'multiselectiongrid',
+          minHeight: 200,
+          autoScroll: true
+        },
+        {
+          xtype: 'checkboxfield',
+          anchor: '100%',
+          name: 'enableSummary',
+          value: 'off',
+          fieldLabel: 'Enable Summary:',
+          labelWidth: 150,
+          inputValue: 'off'
         }
       ],
       dockedItems: [
@@ -64,7 +74,7 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
             {
               xtype: 'button',
               action: 'applyobjects',
-              icon: 'Content/img/16x16/apply.png',
+              iconCls: 'am-apply',
               text: 'Apply'
             },
             {
@@ -74,7 +84,7 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
             {
               xtype: 'button',
               action: 'resetobjects',
-              icon: 'Content/img/16x16/edit-clear.png',
+              iconCls: 'am-edit-clear',
               text: 'Reset'
             }
           ]

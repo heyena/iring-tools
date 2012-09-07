@@ -43,7 +43,8 @@
             },
             "codeClass": null,
             "userConfig": {
-                "layout|region": "south"
+                "layout|region": "south",
+                "layout|split": true
             },
             "designerId": "59615ede-a060-45c5-8dd9-6f40b19c9085",
             "masterInstanceId": "ExtBox1-ext-gen40195"

@@ -6,6 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
+        "dirNode": "",
         "designer|userClassName": "nhibernate.NhibernatePanel",
         "designer|userAlias": "nhibernatepanel",
         "border": "false",
@@ -20,6 +21,13 @@
     },
     "id": "ExtBox1-ext-gen3673",
     "designerId": "5af3046f-215b-4db5-9b98-11970c954bdf",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "dirNode",
+            "type": "string"
+        }
+    ],
     "cn": [
         {
             "type": "linkedinstance",

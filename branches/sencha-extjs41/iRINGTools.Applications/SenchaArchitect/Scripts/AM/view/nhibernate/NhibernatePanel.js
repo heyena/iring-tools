@@ -21,6 +21,7 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
     'AM.view.nhibernate.NhibernateTree'
   ],
 
+  dirNode: '',
   border: 'false',
   layout: {
     type: 'border'

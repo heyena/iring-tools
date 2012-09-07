@@ -54,19 +54,6 @@
             "designerId": "b8c31973-7b73-45a7-b991-045881f35b6f"
         },
         {
-            "type": "checkboxselectionmodel",
-            "reference": {
-                "name": "selModel",
-                "type": "object"
-            },
-            "codeClass": "Ext.selection.CheckboxModel",
-            "userConfig": {
-                "designer|userClassName": "MyCheckboxSelectionModel",
-                "showHeaderCheckbox": false
-            },
-            "designerId": "a0c5c68b-1815-4f5c-93fc-53723b5e59f5"
-        },
-        {
             "type": "basicfunction",
             "reference": {
                 "name": "items",
@@ -109,15 +96,19 @@
                 ],
                 "implHandler": [
                     "var me = this;\r",
-                    "var store = me.getStore();\r",
+                    "\r",
+                    "var vw = me.view;\r",
                     "var selectionModel = me.getSelectionModel();\r",
-                    "var view = me.getView();\r",
+                    "var store = me.getStore();\r",
+                    "//selctionModel.views.add(vw);\r",
+                    "//selectionModel.store = store;\r",
                     "Ext.each(items, function(item) {\r",
-                    "  var record = store.find('DisplayField', item);\r",
+                    "  var record = store.findRecord('DisplayField', item);\r",
                     "  if(record) {\r",
-                    "    selectionModel.select(record); \r",
+                    "    selectionModel.select(record, false, true); \r",
                     "  }           \r",
                     "});\r",
+                    "\r",
                     ""
                 ]
             },
@@ -145,6 +136,36 @@
                 ]
             },
             "designerId": "89b2cd7e-33f8-4f96-b5dc-4740922f8384"
+        },
+        {
+            "type": "checkboxselectionmodel",
+            "reference": {
+                "name": "selModel",
+                "type": "object"
+            },
+            "codeClass": "Ext.selection.CheckboxModel",
+            "userConfig": {
+                "designer|userClassName": "MyCheckboxSelectionModel"
+            },
+            "designerId": "64eee485-303b-475a-b9e9-035493c7ee96"
+        },
+        {
+            "type": "basiceventbinding",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "onGridpanelSelect",
+                "fn": "onGridpanelSelect",
+                "implHandler": [
+                    "//alert('Selection Changed');"
+                ],
+                "name": "select",
+                "scope": "me"
+            },
+            "designerId": "a5430140-07f9-4927-9622-5fa1dd141196"
         }
     ]
 }
