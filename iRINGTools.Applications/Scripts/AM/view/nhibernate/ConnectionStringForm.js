@@ -147,12 +147,12 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
                 {
                   xtype: 'radiofield',
                   name: 'sid',
-                  labelWidth: 125,
-                  inputValue: 'off'
+                  labelWidth: 125
                 },
                 {
                   xtype: 'radiofield',
-                  name: 'service'
+                  name: 'sid',
+                  inputValue: 'off'
                 }
               ],
               listeners: {
@@ -235,9 +235,9 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
     var form = me.getForm();
     if (newValue) {
       var value = field.getValue().sid;
-      if (value == 'off') {
-        form.findField('field_serviceName').disable();
+      if (value === 'on') {
         form.findField('field_serviceName').clearInvalid();
+        form.findField('field_serviceName').disable();
         form.findField('field_sid').enable();
         form.findField('field_sid').focus();
         me.serName = 'SID';

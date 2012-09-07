@@ -6,24 +6,17 @@
     },
     "codeClass": null,
     "userConfig": {
-        "dbInfo": "",
-        "dataTree": "",
-        "context": "",
-        "endpoint": "",
-        "dbDict": "",
-        "baseUrl": "",
+        "dirNode": "",
         "designer|userClassName": "nhibernate.SelectTablesForm",
         "designer|userAlias": "selecttablesform",
-        "uses": [
-            "Ext.ux.form.ItemSelector"
-        ],
         "border": "false",
         "frame": false,
         "height": null,
         "padding": null,
         "width": null,
+        "autoScroll": true,
         "bodyBorder": null,
-        "bodyPadding": 2,
+        "bodyPadding": 5,
         "bodyStyle": [
             "background:#eee;padding:10px 0px 0px 10px"
         ],
@@ -37,65 +30,55 @@
     "customConfigs": [
         {
             "group": "(Custom Properties)",
-            "name": "dbInfo",
-            "type": "string"
-        },
-        {
-            "group": "(Custom Properties)",
-            "name": "dataTree",
-            "type": "string"
-        },
-        {
-            "group": "(Custom Properties)",
-            "name": "context",
-            "type": "string"
-        },
-        {
-            "group": "(Custom Properties)",
-            "name": "endpoint",
-            "type": "string"
-        },
-        {
-            "group": "(Custom Properties)",
-            "name": "dbDict",
-            "type": "string"
-        },
-        {
-            "group": "(Custom Properties)",
-            "name": "baseUrl",
+            "name": "dirNode",
             "type": "string"
         }
     ],
     "cn": [
         {
-            "type": "fieldset",
+            "type": "container",
             "reference": {
                 "name": "items",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "layout|anchor": "100%",
-                "designer|userClassName": "MyFieldSet3",
-                "anchorSize": null,
-                "title": "Database Tables"
+                "designer|userClassName": "MyContainer11",
+                "height": 22,
+                "layout": "fit"
             },
-            "designerId": "222eeb8e-a8c5-48e6-8aae-8c23673d5dd2",
+            "designerId": "00e5aec8-b8a3-49c8-8658-45d3f0a956f9",
             "cn": [
                 {
-                    "type": "linkedinstance",
+                    "type": "label",
                     "reference": {
                         "name": "items",
                         "type": "array"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "minHeight": 300
+                        "designer|userClassName": "MyLabel3",
+                        "border": 2,
+                        "text": "Database Tables"
                     },
-                    "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
-                    "masterInstanceId": "ExtBox1-ext-gen55549"
+                    "designerId": "0f652a17-4208-4d1b-90bc-5b0d2fb59c68"
                 }
             ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "minHeight": 200,
+                "autoScroll": true,
+                "title": null
+            },
+            "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
+            "masterInstanceId": "ExtBox1-ext-gen55549"
         },
         {
             "type": "toolbar",
@@ -135,7 +118,8 @@
                         "action": "applyobjects",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton36",
-                        "icon": "Content/img/16x16/apply.png",
+                        "icon": null,
+                        "iconCls": "am-apply",
                         "text": "Apply"
                     },
                     "designerId": "1899cc11-47d7-4b50-aa53-ad61f9b5f01b",
@@ -172,7 +156,8 @@
                         "action": "resetobjects",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton36",
-                        "icon": "Content/img/16x16/edit-clear.png",
+                        "icon": null,
+                        "iconCls": "am-edit-clear",
                         "text": "Reset"
                     },
                     "designerId": "422ded33-7aef-47a5-97f0-9b24a500ec68",
@@ -185,6 +170,27 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "checkboxfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyCheckbox3",
+                "name": "enableSummary",
+                "value": [
+                    "off"
+                ],
+                "fieldLabel": "Enable Summary:",
+                "labelWidth": 150,
+                "boxLabel": null,
+                "inputValue": "off"
+            },
+            "designerId": "a28b81f3-4b5e-4856-894d-cadba9b88a8a"
         }
     ]
 }

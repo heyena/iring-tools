@@ -16,6 +16,7 @@
 Ext.define('AM.controller.NHibernate', {
   extend: 'Ext.app.Controller',
 
+  dataTypes: '',
   models: [
     'AvailItemsModel',
     'TableSelectModel',
@@ -41,16 +42,6 @@ Ext.define('AM.controller.NHibernate', {
 
   refs: [
     {
-      ref: 'dirTree',
-      selector: 'viewport > directorypanel > directorytree',
-      xtype: 'directorytree'
-    },
-    {
-      ref: 'mainContent',
-      selector: 'viewport > centerpanel > contentpanel',
-      xtype: 'contentpanel'
-    },
-    {
       autoCreate: true,
       forceCreate: true,
       ref: 'selectTablesForm',
@@ -63,14 +54,72 @@ Ext.define('AM.controller.NHibernate', {
       ref: 'connectionStringForm',
       selector: 'connectionstringform',
       xtype: 'connectionstringform'
+    },
+    {
+      ref: 'dirTree',
+      selector: 'viewport > directorypanel > directorytree',
+      xtype: 'directorytree'
+    },
+    {
+      ref: 'mainContent',
+      selector: 'viewport > centerpanel > contentpanel',
+      xtype: 'contentpanel'
     }
   ],
+
+  onSaveDbObjectTree: function(button, e, options) {
+    var me = this;
+    var content = this.getMainContent();
+    content.body.mask('Loading...', 'x-mask-loading');
+    var nhPanel = button.up('nhibernatepanel');
+    var tableGrid = nhPanel.down('multiselectiongrid');
+    var dbObjectsTree = nhPanel.down('nhibernatetree');
+    var gridSelected = tableGrid.getSelectionModel().getSelection();
+    var dirNode = dbObjectsTree.dirNode;
+    var contextName = dirNode.data.record.context;
+    var endpoint = dirNode.data.record.endpoint;
+    var baseUrl = dirNode.data.record.baseUrl;
+
+    var rootNode = dbObjectsTree.getRootNode();
+    var treeProperty = me.getJsonTree(rootNode, dirNode, gridSelected);
+
+    Ext.Ajax.request({
+      url: 'NHibernate/Trees',
+      timeout: 600000,
+      method: 'POST',
+      params: {
+        scope: contextName,
+        app: endpoint,
+        tree: JSON.stringify(treeProperty)
+      },
+      success: function (response, request) {
+        var rtext = response.responseText;
+        var error = 'SUCCESS = FALSE';
+        var index = rtext.toUpperCase().indexOf(error);
+        if (index == -1) {
+          showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
+          var navpanel = me.getDirTree();
+          navpanel.onReload();
+          content.body.unmask();
+        }
+        else {
+          var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+          showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
+          content.body.unmask();
+        }
+      },
+      failure: function (response, request) {
+        showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
+        content.body.unmask();
+      }
+    });
+  },
 
   onTreepanelItemClick: function(tablepanel, record, item, index, e, options) {
     var me = this;
     var content = me.getMainContent();
     var dirTree = me.getDirTree();
-    var node = dirTree.getSelectedNode();
+
     var panel = tablepanel.up('nhibernatepanel');
     var dataNode = record.store.getAt(index);
     var nodeType = dataNode.data.type.toUpperCase();
@@ -80,10 +129,10 @@ Ext.define('AM.controller.NHibernate', {
     if (nodeType) {
       switch (nodeType) {
         case 'DATAOBJECTS':
-        me.showTableSelectionForm(panel, node);
+        me.showTableSelectionForm(panel);
         break;
         case 'DATAOBJECT':
-        me.showTableSelectionForm(panel, node);
+        //    me.showTableSelectionForm(panel, dirNode);
         break;
         case 'KEYS':
         //setKeysFolder(me, editor, dataNode, contextName, endpoint);
@@ -122,7 +171,7 @@ Ext.define('AM.controller.NHibernate', {
     var form = button.up('connectionstringform');
     var panel = form.up('nhibernatepanel');
     var dataTree = panel.down('nhibernatetree');
-    var dirNode = form.dirNode;
+    var dirNode = dataTree.dirNode;
     var context = dirNode.data.record.context;
     var endpoint = dirNode.data.record.endpoint;
     var baseUrl = dirNode.data.record.BaseUrl;
@@ -158,6 +207,7 @@ Ext.define('AM.controller.NHibernate', {
 
     form.getForm().submit({
       url: 'nhibernate/TableNames',
+      method: 'POST',
       timeout: 600000,
       params: {
         scope: context,
@@ -170,6 +220,8 @@ Ext.define('AM.controller.NHibernate', {
         var dbInfo = dirNode.data.record.dbInfo;
 
         dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
+        panel.dirNode = dirNode;
+
         me.showTableSelectionForm(panel, dirNode);
         return;
 
@@ -186,7 +238,77 @@ Ext.define('AM.controller.NHibernate', {
   },
 
   onSaveDbTables: function(button, e, options) {
+    var me = this;
+    var content = this.getMainContent();
+    var panel = button.up('nhibernatepanel');
+    var dbObjectsTree = panel.down('nhibernatetree');
+    var rootNode = dbObjectsTree.getRootNode();
+    var form = panel.down('selecttablesform');
+    var objectGrid = form.down('multiselectiongrid');
+    var selected = objectGrid.getSelectionModel().getSelection();
+    var dbProvider = '';
+    var dbServer = '';
+    var dbInstance = '';
+    var dbName = '';
+    var dbSchema = '';
+    var dbUserName = '';
+    var dbPassword = '';
+    var portNumber = '';
+    var serName = '';
+    var dbInfo = dbObjectsTree.dirNode.data.record.dbInfo;
+    var dbDict = dbObjectsTree.dirNode.data.record.dbDict;
+    dbDict.enableSummary = form.getForm().findField('enableSummary').value;
+    if (dbObjectsTree.disabled) {
+      dbObjectsTree.enable();
+    }
 
+    if (dbInfo.serName)
+    serName = dbInfo.serName;
+
+    if (selected.length < 1) {
+      while (rootNode.firstChild) {
+        rootNode.removeChild(rootNode.firstChild);
+      }
+      showDialog(200, 100, 'Warning', 'No tables selected....', Ext.Msg.OK, null);
+      return;
+    } else {
+
+      userTableNames = [];
+      Ext.each(selected, function (table) {
+        userTableNames.push(table.data.DisplayField);
+      });
+    }
+
+    dbProvider = dbDict.Provider;
+    dbServer = dbInfo.dbServer;
+    dbInstance = dbInfo.dbInstance;
+    dbName = dbInfo.dbName;
+    dbSchema = dbInfo.dbSchema;
+    dbUserName = dbInfo.dbUserName;
+    dbPassword = dbInfo.dbPassword;
+    portNumber = dbInfo.portNumber;
+
+    var store = dbObjectsTree.getStore();
+    dbObjectsTree.on('beforeload', function (store, operation) {
+      var params = store.proxy.extraParams;
+      params.dbProvider = dbProvider;
+      params.dbServer = dbServer;
+      params.dbInstance = dbInstance;
+      params.dbName = dbName;
+      params.dbSchema = dbSchema;
+      params.dbPassword = dbPassword;
+      params.dbUserName = dbUserName;
+      params.portNumber = portNumber;
+      params.tableNames = userTableNames;
+      params.serName = serName;
+      params.contextName = dbObjectsTree.dirNode.data.record.context;
+      params.endpoint = dbObjectsTree.dirNode.data.record.endpoint;
+      params.baseUrl = dbObjectsTree.dirNode.data.record.BaseUrl;
+    }, me);
+
+    panel.body.mask('Loading...', 'x-mask-loading');
+    store.load();
+    panel.body.unmask();
   },
 
   onConfignhibernate: function() {
@@ -212,6 +334,7 @@ Ext.define('AM.controller.NHibernate', {
       content.add(panel);
 
       var tree = panel.down('nhibernatetree');
+      tree.dirNode = dirNode;
       var treeStore = tree.getStore();
       var treeProxy = treeStore.getProxy();
 
@@ -254,7 +377,7 @@ Ext.define('AM.controller.NHibernate', {
 
           if (dbDict !== null && dbDict !== undefined)
           dirNode.data.record.dbDict = dbDict;
-          me.showConnectionStringForm(panel, dirNode);
+          me.showConnectionStringForm(panel);
           tree.disable();
 
         }
@@ -270,6 +393,9 @@ Ext.define('AM.controller.NHibernate', {
     me.application.addEvents('confignhibernate');
 
     this.control({
+      "nhibernatepanel button[action=savedbobjectstree]": {
+        click: this.onSaveDbObjectTree
+      },
       "nhibernatetree": {
         itemclick: this.onTreepanelItemClick
       },
@@ -392,16 +518,24 @@ Ext.define('AM.controller.NHibernate', {
     return selectedItems;
   },
 
-  showTableSelectionForm: function(nhibernatePanel, node) {
+  showTableSelectionForm: function(nhibernatePanel) {
     var me = this, 
     form = me.getSelectTablesForm();
     var selected = [];
-    var tables = node.data.record.dbInfo.dbTableNames.items;
-    var dict = node.data.record.dbDict.dataObjects;
+    var dataTree = nhibernatePanel.down('nhibernatetree');
+    var dirNode = dataTree.dirNode;
+    var tables = dirNode.data.record.dbInfo.dbTableNames.items;
+
+
+    var context = dirNode.data.record.context;
+    var endpoint = dirNode.data.record.endpoint;
+    var baseUrl = dirNode.data.record.baseUrl;
+    var dict = dirNode.data.record.dbDict.dataObjects;
     Ext.each(dict, function(table) {
       selected.push(table.tableName);
     });
     var grid = form.down('multiselectiongrid');
+
     grid.loadItems(tables);
     grid.selectItems(selected);
     panel = nhibernatePanel.down('#nhibernateContent');
@@ -415,11 +549,16 @@ Ext.define('AM.controller.NHibernate', {
 
   },
 
-  showConnectionStringForm: function(nhibernatePanel, node) {
+  showConnectionStringForm: function(nhibernatePanel) {
     var me = this,
+
     form = me.getConnectionStringForm();
-    form.dirNode = node;
-    var dbDict = node.data.record.dbDict;
+    var dataTree = nhibernatePanel.down('nhibernatetree');
+    var dirTree = me.getDirTree();
+    var dirStore = dirTree.getStore();
+
+    var dirNode = dataTree.dirNode;
+    var dbDict = dirNode.data.record.dbDict;
     var combo = form.down('#providerCombo');
     combo.on('select', function (combo, record, options) {
       var dbProvider = record[0].data.Provider.toUpperCase();
@@ -455,10 +594,10 @@ Ext.define('AM.controller.NHibernate', {
               dbSchema.setValue(dbDict.SchemaName);
             }
             else
-            me.resetConfigOracle(host, dbSchema, userName, password, serviceName);
+            me.resetConfigOracle(host, dbSchema, userName, password, serviceName, sid, serName);
           }
           else
-          me.resetConfigOracle(host, dbSchema, userName, password, serviceName);
+          me.resetConfigOracle(host, dbSchema, userName, password, serviceName, sid, serName);
 
           portNumber.setValue('1521');
           portNumber.show();
@@ -468,6 +607,10 @@ Ext.define('AM.controller.NHibernate', {
         if (host.hidden === false) {
           portNumber.hide();
           host.hide();
+          sid.clearInvalid();
+          sid.disable();
+          serName.clearInvalid();
+          serName.disable();
           serviceName.hide();
         }
 
@@ -480,6 +623,10 @@ Ext.define('AM.controller.NHibernate', {
               dbName.show();
               dbServer.show();
               dbInstance.show();
+              sid.clearInvalid();
+              sid.disable();
+              serName.clearInvalid();
+              serName.disable();
               dbSchema.setValue(dbDict.SchemaName);
               userName.setValue(dbInfo.dbUserName);
               password.setValue(dbInfo.dbPassword);
@@ -503,6 +650,10 @@ Ext.define('AM.controller.NHibernate', {
         if (host.hidden === false) {
           portNumber.hide();
           host.hide();
+          sid.clearInvalid();
+          sid.disable();
+          serName.clearInvalid();
+          serName.disable();
           serviceName.hide();
           portNumber.setValue('3306');
         }
@@ -596,20 +747,340 @@ Ext.define('AM.controller.NHibernate', {
     return dirNode.data.record.dbInfo;
   },
 
+  getJsonTree: function(rootNode, dirNode, selectedTables) {
+    var me = this; 
+    var treeProperty = {};
+    treeProperty.dataObjects = [];
+    treeProperty.IdentityConfiguration = null;
+    var dbInfo = dirNode.data.record.dbInfo;
+    var dbDict = dirNode.data.record.dbDict;
+    var tProp = me.setTreeProperty(dbInfo, dbDict, selectedTables);
+    treeProperty.connectionString = tProp.connectionString;
+    if (treeProperty.connectionString !== null && treeProperty.connectionString.length > 0) {
+      var base64 = AM.view.nhibernate.Utility;
+      treeProperty.connectionString = base64.encode(tProp.connectionString);
+    }
+    treeProperty.schemaName = tProp.schemaName;
+    treeProperty.provider = tProp.provider;
+    treeProperty.enableSummary = tProp.enableSummary;
+
+    var keyName;
+    for (var i = 0; i < rootNode.childNodes.length; i++) {
+      var folder = me.getFolderFromChildNode(rootNode.childNodes[i]);
+      treeProperty.dataObjects.push(folder);
+    }
+
+    dbDict.ConnectionString = treeProperty.connectionString;
+    dbDict.SchemaName = treeProperty.schemaName;
+    dbDict.Provider = treeProperty.provider;
+    dbDict.dataObjects = treeProperty.dataObjects;
+    dbDict.enableSummary = treeProperty.enableSummary;
+    return treeProperty;
+  },
+
+  setTreeProperty: function(dbInfo, dbDict, selected) {
+    var me = this;
+    var treeProperty = {};
+    if (selected) {
+      treeProperty.enableSummary = dbDict.enableSummary;
+      treeProperty.provider = dbInfo.dbProvider;
+    }  else if (dbDict.enableSummary)
+    treeProperty.enableSummary = dbDict.enableSummary;
+    else
+    treeProperty.enableSummary = false;
+
+    if (dbInfo) {
+      var dbServer = dbInfo.dbServer;
+      dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbServer);
+      var upProvider = treeProperty.provider.toUpperCase();
+      var serviceName = '';
+      var serName = '';
+      if (dbInfo.serName) {
+        serviceName = serviceNamePane.items.items[0].value;
+        serName = serviceNamePane.items.items[0].serName;
+      }
+      else if (dbInfo) {
+        if (dbInfo.dbInstance)
+        serviceName = dbInfo.dbInstance;
+        if (dbInfo.serName)
+        serName = dbInfo.serName;
+      }
+
+      if (upProvider.indexOf('MSSQL') > -1) {
+        var dbInstance = dbInfo.dbInstance;
+        var dbDatabase = dbInfo.dbName;
+        if (dbInstance.toUpperCase() == "DEFAULT") {
+          var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbDatabase;
+        } else {
+          var dataSrc = 'Data Source=' + dbServer + '\\' + dbInstance + ';Initial Catalog=' + dbDatabase;
+        }
+      }
+      else if (upProvider.indexOf('ORACLE') > -1)
+      var dataSrc = 'Data Source=' + 
+      '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + 
+      dbServer + ')(PORT=' + dbInfo.portNumber + 
+      ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + serName + '=' + serviceName + ')))';
+      else if (upProvider.indexOf('MYSQL') > -1)
+      var dataSrc = 'Data Source=' + dbServer;
+      treeProperty.connectionString = dataSrc + ';User ID=' + dbInfo.dbUserName + ';Password=' + dbInfo.dbPassword;
+      treeProperty.schemaName = dbInfo.dbSchema;
+    }
+    else {
+      treeProperty.provider = dbDict.Provider;
+      var dbServer = dbInfo.dbServer;
+      var upProvider = treeProperty.provider.toUpperCase();
+      dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbServer);
+
+      if (upProvider.indexOf('MSSQL') > -1) {
+        if (dbInfo.dbInstance) {
+          if (dbInfo.dbInstance.toUpperCase() == "DEFAULT") {
+            var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbInfo.dbName;
+          } else {
+            var dataSrc = 'Data Source=' + dbServer + '\\' + dbInfo.dbInstance + ';Initial Catalog=' + dbInfo.dbName;
+          }
+        }
+      }
+      else if (upProvider.indexOf('ORACLE') > -1)
+      var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + 
+      dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + 
+      dbInfo.serName + '=' + dbInfo.dbInstance + ')))';
+      else if (upProvider.indexOf('MYSQL') > -1)
+      var dataSrc = 'Data Source=' + dbServer;
+
+      treeProperty.connectionString = dataSrc + ';User ID=' + dbInfo.dbUserName + ';Password=' + dbInfo.dbPassword;
+      treeProperty.schemaName = dbDict.SchemaName;
+    }
+    return treeProperty;
+  },
+
+  getFolderFromChildNode: function(folderNode) {
+    var me = this;
+    var folderNodeProp = folderNode.data.property;
+    var folder = {};
+    var keyName = '';
+
+    folder.tableName = folderNodeProp.tableName;
+    folder.objectNamespace = folderNodeProp.objectNamespace;
+    folder.objectName = folderNodeProp.objectName;
+    folder.description = folderNodeProp.description;
+
+    if (folderNodeProp.keyDelimiter && folderNodeProp.keyDelimiter != 'null')
+    folder.keyDelimeter = folderNodeProp.keyDelimiter;    
+    else
+    folder.keyDelimeter = '_';
+
+    folder.keyProperties = [];
+    folder.dataProperties = [];
+    folder.dataRelationships = [];
+
+    for (var j = 0; j < folderNode.childNodes.length; j++) {
+      if (folderNode.childNodes[1])
+      var propertyFolderNode = folderNode.childNodes[1];    
+
+      if (folderNode.childNodes[0])
+      var keyFolderNode = folderNode.childNodes[0];   
+
+      if (folderNode.childNodes[2])
+      var relationFolderNode = folderNode.childNodes[2];   
+
+      if (folderNode.childNodes[j])
+      subFolderNodeText = folderNode.childNodes[j].data.text;
+
+      switch (subFolderNodeText) {
+        case 'Keys':
+        if (keyFolderNode)
+        var keyChildenNodes = keyFolderNode.childNodes;       
+
+        for (var k = 0; k < keyChildenNodes.length; k++) {
+          var keyNode = keyChildenNodes[k];          
+          var keyProps = {};
+
+          if (keyNode.data.property)
+          var keyNodeProf = keyNode.data.property;         
+
+          keyProps.keyPropertyName = keyNode.data.text;
+          keyName = keyNode.data.text;
+          folder.keyProperties.push(keyProps);
+          var tagProps = {};
+          tagProps.columnName = keyNodeProf.columnName;
+          tagProps.propertyName = keyNode.data.text;
+
+          if (typeof keyNodeProf.dataType == 'string')
+          tagProps.dataType = me.getDataTypeIndex(keyNodeProf.dataType);
+          else
+          tagProps.dataType = keyNodeProf.dataType;
+
+          tagProps.dataLength = keyNodeProf.dataLength;
+
+          if (keyNodeProf.nullable)
+          tagProps.isNullable = keyNodeProf.nullable.toString().toLowerCase();
+          else
+          tagProps.isNullable = 'false';
+
+          tagProps.isHidden = 'false';
+
+          if (!keyNodeProf.keyType)
+          tagProps.keyType = 1;
+          else
+          if (typeof keyNodeProf.keyType != 'string')
+          tagProps.keyType = keyNodeProf.keyType;
+          else {
+            switch (keyNodeProf.keyType.toLowerCase()) {
+              case 'assigned':
+              tagProps.keyType = 1;
+              break;
+              case 'unassigned':
+              tagProps.keyType = 0;
+              break;
+              default:
+              tagProps.keyType = 1;
+              break;
+            }
+          }
+
+          if (keyNodeProf.showOnIndex)
+          tagProps.showOnIndex = keyNodeProf.showOnIndex.toString().toLowerCase();
+          else
+          tagProps.showOnIndex = 'false';
+
+          tagProps.numberOfDecimals = keyNodeProf.numberOfDecimals;
+          folder.dataProperties.push(tagProps);    
+        }
+        break;
+        case 'Properties':
+        if (folderNode.childNodes[1]) {
+          var propChildenNodes = propertyFolderNode.childNodes;
+          if(propChildenNodes.length > 0)
+          folder = me.prepareProperties(folder, propChildenNodes, 'false', keyName);
+        }
+        break;
+        case 'Relationships':
+        if (!relationFolderNode)
+        break;
+
+        if (relationFolderNode.childNodes)
+        var relChildenNodes = relationFolderNode.childNodes;       
+
+        if (relChildenNodes)
+        for (var k = 0; k < relChildenNodes.length; k++) {
+          var relationNode = relChildenNodes[k];
+          var found = false;
+          for (var ik = 0; ik < folder.dataRelationships.length; ik++)
+          if (relationNode.text.toLowerCase() == folder.dataRelationships[ik].relationshipName.toLowerCase()) {
+            found = true;
+            break;
+          }
+
+          if (found || relationNode.data.text === '')
+          continue;
+
+          relationNodeAttr = relationNode.data;
+          var relation = {};
+          relation.propertyMaps = [];
+
+          for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
+            var propertyPairNode = relationNodeAttr.propertyMap[m];
+            var propertyPair = {};
+
+            propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;
+            propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName;
+            relation.propertyMaps.push(propertyPair);
+          }
+
+          relation.relatedObjectName = relationNodeAttr.relatedObjectName;
+          relation.relationshipName = relationNodeAttr.text;
+          relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
+          folder.dataRelationships.push(relation);
+        }
+        break;
+      }
+    }
+    return folder;
+  },
+
+  prepareProperties: function(folder, propChildNodes, ifHidden, keyName) {
+    var hasData = false;
+    if(propChildNodes.length === 0) return folder;
+    for (var k = 0; k < propChildenNodes.length; k++) {
+      var propertyNode = propChildenNodes[k];
+
+      if (propertyNode.data !== undefined) {
+        if (propertyNode.data.property !== undefined) {
+          var propertyNodeProf = propertyNode.data.property;
+          hasData = true;
+        }
+      }
+
+      if (!hasData)
+      var propertyNodeProf = propertyNode.property;
+
+      var props = {};
+      props.columnName = propertyNodeProf.columnName;
+      props.propertyName = propertyNodeProf.propertyName;
+
+      if (typeof propertyNodeProf.dataType.toLowerCase() == 'string')
+      props.dataType = getDataTypeIndex(propertyNodeProf.dataType);
+      else
+      props.dataType = propertyNodeProf.dataType;
+
+      props.dataLength = propertyNodeProf.dataLength;
+
+      if (propertyNodeProf.nullable)
+      props.isNullable = propertyNodeProf.nullable.toString().toLowerCase();
+      else
+      props.isNullable = 'false';
+
+      if (keyName !== '') {
+        if (props.columnName == keyName)
+        props.keyType = 1;
+        else
+        props.keyType = 0;
+      }
+      else
+      props.keyType = 0;
+
+      if (propertyNodeProf.showOnIndex)
+      props.showOnIndex = propertyNodeProf.showOnIndex.toString().toLowerCase();
+      else
+      props.showOnIndex = 'false';
+
+      props.isHidden = ifHidden;
+      props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
+      folder.dataProperties.push(props);
+    }
+    return folder;
+  },
+
+  getDataTypeIndex: function(dataType) {
+    var me = this;
+    if (me.dataTypes === undefined)
+    return;
+
+    var i = 0;
+
+    while (me.dataTypes[i] === undefined)
+    i++;
+
+    for (var k = i; k < me.dataTypes.length; k++) {
+      if (me.dataTypes[k][1] == dataType)
+      return me.dataTypes[k][0];
+    }
+  },
+
   getDataTypes: function() {
+    var me = this;
     Ext.Ajax.request({
       url: 'NHibernate/DataType',
       method: 'GET',
       timeout: 6000000,
       success: function (response, request) {
         var dataTypeName = Ext.JSON.decode(response.responseText);
-        AM.view.nhibernate.dataTypes = [];
-        dataTypes = [];
+        me.dataTypes = [];
         var i = 0;
         while (!dataTypeName[i])
         i++;
         while (dataTypeName[i]) {
-          AM.view.nhibernate.dataTypes.push([i, dataTypeName[i]]);
+          me.dataTypes.push([i, dataTypeName[i]]);
           i++;
         }
       },
@@ -620,7 +1091,7 @@ Ext.define('AM.controller.NHibernate', {
     });
   },
 
-  resetConfigOracle: function(host, dbSchema, userName, password, serviceName) {
+  resetConfigOracle: function(host, dbSchema, userName, password, serviceName, sid, serName) {
     host.setValue('');
     host.clearInvalid();
 
@@ -635,7 +1106,12 @@ Ext.define('AM.controller.NHibernate', {
     password.setValue('');
     password.clearInvalid();
     serviceName.show();
-    //creatRadioField(serviceName, '', '', 1, context, endpoint);  
+
+    sid.setValue('');
+    sid.clearInvalid();
+
+    sid.setValue('');
+    sid.clearInvalid(); 
   },
 
   resetConfigMsSql: function(dbName, dbServer, dbInstance, dbSchema, userName, password) {

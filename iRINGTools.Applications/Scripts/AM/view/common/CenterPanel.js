@@ -40,7 +40,8 @@ Ext.define('AM.view.common.CenterPanel', {
         },
         {
           xtype: 'searchpanel',
-          region: 'south'
+          region: 'south',
+          split: true
         }
       ]
     });

@@ -190,7 +190,6 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Content\img\list-add.png" />
     <Content Include="Content\img\list-remove.png" />
-    <Content Include="Scripts\AM\controller\Configuration.js" />
     <Content Include="Scripts\AM\controller\Directory.js" />
     <Content Include="Scripts\AM\controller\Mapping.js" />
     <Content Include="Scripts\AM\controller\NHibernate.js" />

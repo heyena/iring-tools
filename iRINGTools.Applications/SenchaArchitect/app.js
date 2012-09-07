@@ -23,7 +23,11 @@ Ext.Loader.setConfig({
 
 Ext.application({
   views: [
-    'AMViewport'
+    'AMViewport',
+    'search.SearchTree',
+    'directory.DirectoryTree',
+    'mapping.MappingTree',
+    'nhibernate.NhibernateTree'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,
