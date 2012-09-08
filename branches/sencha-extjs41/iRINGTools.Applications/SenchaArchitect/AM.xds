@@ -810,6 +810,14 @@
                 "Scripts/AM/view/nhibernate/SelectDataKeysForm.js"
             ],
             "className": "nhibernate.SelectDataKeysForm"
+        },
+        "ec59aff5-4f53-425e-b721-7a31fd5f30f5": {
+            "paths": [
+                "metadata/view/nhibernate.SelectPropertiesForm",
+                "Scripts/AM/view/override/nhibernate/SelectPropertiesForm.js",
+                "Scripts/AM/view/nhibernate/SelectPropertiesForm.js"
+            ],
+            "className": "nhibernate.SelectPropertiesForm"
         }
     },
     "viewOrderMap": {
@@ -860,6 +868,7 @@
             "1fac45c3-2ccd-492d-bbfa-a9e3c3c2c427",
             "29d484ee-d238-403e-80d3-e37beae94517",
             "37ca6ad3-7180-4c3d-bcd8-22f9493320a6",
+            "ec59aff5-4f53-425e-b721-7a31fd5f30f5",
             "c72f1844-42ae-497d-ac17-9b294bfd2e8c",
             "b7622ca2-41f1-493c-9625-bda146463a7d",
             "ce6504c7-08bb-4a89-a41b-4128aec9f385",

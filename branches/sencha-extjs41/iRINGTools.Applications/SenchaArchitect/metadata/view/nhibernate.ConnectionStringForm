@@ -522,6 +522,30 @@
                     "designerId": "c07b140b-4391-45f6-bf57-145a0e921c0c"
                 }
             ]
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "setActive",
+                "fn": "setActive",
+                "designer|params": [
+                    "record"
+                ],
+                "implHandler": [
+                    "var me = this;\r",
+                    "if (record) {\r",
+                    "  me.getForm().setValues(record);\r",
+                    "} else {\r",
+                    "  me.getForm().reset();\r",
+                    "}"
+                ]
+            },
+            "designerId": "5c93e62c-cc66-4bb2-bc02-7f4895c75d07"
         }
     ]
 }

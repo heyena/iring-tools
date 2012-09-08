@@ -42,6 +42,7 @@ Ext.define('AM.view.Viewport', {
     'AM.view.mapping.MapValueListWindow',
     'AM.view.mapping.ValueListWindow',
     'AM.view.search.SearchTree',
+    'AM.view.nhibernate.SelectPropertiesForm',
     'AM.view.spreadsheet.SpreadsheetWindow',
     'AM.view.nhibernate.RelationsForm',
     'AM.view.nhibernate.ConnectionStringForm',
