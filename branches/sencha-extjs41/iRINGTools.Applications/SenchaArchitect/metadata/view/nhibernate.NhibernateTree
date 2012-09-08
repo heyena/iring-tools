@@ -225,11 +225,15 @@
                     "var selection = me.getSelectionModel();\r",
                     "var store = me.store;\r",
                     "var node = selection.getSelection()[0];\r",
-                    "node.removeAll();\r",
-                    "node.set('leaf', false);\r",
-                    "node.set('expanded', false);\r",
-                    "node.set('loaded', false);\r",
-                    "node.expand();"
+                    "//node.removeAll();\r",
+                    "//node.set('leaf', false);\r",
+                    "if(node){\r",
+                    "  if(node.isExpanded())\r",
+                    "    node.collapse();\r",
+                    "  //node.set('expanded', false);\r",
+                    "  //node.set('loaded', false);\r",
+                    "  node.expand();\r",
+                    "}"
                 ]
             },
             "designerId": "19483211-1f6c-4fc2-be1e-95e30f6e7430"

@@ -6,9 +6,12 @@
     },
     "codeClass": null,
     "userConfig": {
+        "stores": [
+            "RelatedObjectStore"
+        ],
         "views": [
             "AMViewport",
-            "nhibernate.SelectPropertiesForm"
+            "nhibernate.SetRelationForm"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

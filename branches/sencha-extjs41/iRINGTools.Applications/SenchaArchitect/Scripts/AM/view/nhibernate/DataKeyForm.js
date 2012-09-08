@@ -116,7 +116,7 @@ Ext.define('AM.view.nhibernate.DataKeyForm', {
             },
             {
               xtype: 'button',
-              action: 'savekeyfields',
+              action: 'savekeyfield',
               iconCls: 'am-apply',
               text: 'Apply'
             },
@@ -126,7 +126,7 @@ Ext.define('AM.view.nhibernate.DataKeyForm', {
             },
             {
               xtype: 'button',
-              action: 'resetkeys',
+              action: 'resetkeyproperty',
               iconCls: 'am-edit-clear',
               text: 'Reset'
             }

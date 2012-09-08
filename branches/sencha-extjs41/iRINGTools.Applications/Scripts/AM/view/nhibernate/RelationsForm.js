@@ -17,10 +17,6 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.relationsform',
 
-  requires: [
-    'AM.view.nhibernate.RelationPanel'
-  ],
-
   initComponent: function() {
     var me = this;
 
@@ -47,9 +43,6 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
               scope: me
             }
           }
-        },
-        {
-          xtype: 'relationpanel'
         }
       ],
       dockedItems: [

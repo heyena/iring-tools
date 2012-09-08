@@ -75,16 +75,6 @@
             ]
         },
         {
-            "type": "linkedinstance",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "designerId": "f6f463e6-f2bb-4a06-9a86-f380293f4202",
-            "masterInstanceId": "ExtBox1-ext-gen17374"
-        },
-        {
             "type": "toolbar",
             "reference": {
                 "name": "dockedItems",
