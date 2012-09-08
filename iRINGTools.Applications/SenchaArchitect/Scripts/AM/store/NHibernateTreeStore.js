@@ -24,11 +24,11 @@ Ext.define('AM.store.NHibernateTreeStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
+      autoLoad: false,
       storeId: 'NHibernateTreeStore',
       model: 'AM.model.NHibernateTreeModel',
       root: {
         expanded: true,
-        type: 'DATAOBJECTS',
         text: 'Data Objects',
         iconCls: 'folder'
       },
@@ -36,6 +36,21 @@ Ext.define('AM.store.NHibernateTreeStore', {
         type: 'ajax',
         actionMethods: {
           read: 'POST'
+        },
+        extraParams: {
+          contextName: null,
+          endpoint: null,
+          dbProvider: null,
+          dbServer: null,
+          dbInstance: null,
+          dbName: null,
+          dbSchema: null,
+          dbUserName: null,
+          dbPassword: null,
+          portNumber: null,
+          tableNames: null,
+          serName: null,
+          baseUrl: null
         },
         timeout: 600000,
         url: 'NHibernate/DBObjects',

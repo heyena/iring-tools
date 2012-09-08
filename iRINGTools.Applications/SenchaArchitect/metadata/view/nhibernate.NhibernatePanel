@@ -7,6 +7,7 @@
     "codeClass": null,
     "userConfig": {
         "dirNode": "",
+        "treeNode": "",
         "designer|userClassName": "nhibernate.NhibernatePanel",
         "designer|userAlias": "nhibernatepanel",
         "border": "false",
@@ -26,6 +27,11 @@
             "group": "(Custom Properties)",
             "name": "dirNode",
             "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "treeNode",
+            "type": "string"
         }
     ],
     "cn": [
@@ -37,8 +43,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "width": 300,
+                "width": 280,
                 "layout|flex": 1,
+                "layout|floatable": false,
                 "layout|region": "center"
             },
             "designerId": "4cd3060f-2f7c-4e42-923d-3255343fab45",
@@ -53,6 +60,7 @@
             "codeClass": null,
             "userConfig": {
                 "layout|flex": 2,
+                "layout|floatable": false,
                 "layout|region": "east",
                 "layout|split": true,
                 "designer|userClassName": "MyContainer13",

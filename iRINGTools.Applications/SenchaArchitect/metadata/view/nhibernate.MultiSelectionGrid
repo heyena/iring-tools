@@ -9,13 +9,17 @@
         "designer|userClassName": "nhibernate.MultiSelectionGrid",
         "designer|userAlias": "multiselectiongrid",
         "height": null,
+        "maxHeight": 260,
+        "maxWidth": null,
         "width": null,
+        "autoScroll": true,
         "frameHeader": false,
         "header": false,
         "title": null,
         "enableColumnHide": false,
         "enableColumnMove": false,
         "enableColumnResize": false,
+        "scroll": "vertical",
         "sortableColumns": false,
         "store": "MultiStore"
     },
@@ -32,6 +36,8 @@
             "userConfig": {
                 "designer|userClassName": "MyColumn1",
                 "draggable": false,
+                "maxWidth": 400,
+                "anchorSize": null,
                 "sortable": false,
                 "dataIndex": "DisplayField",
                 "flex": 1,
@@ -69,7 +75,7 @@
                 "implHandler": [
                     "var me = this;\r",
                     "var store = me.getStore();\r",
-                    "\r",
+                    "store.removeAll();\r",
                     "var records = [];\r",
                     "\r",
                     "Ext.each(items, function(item) {\r",
@@ -96,9 +102,7 @@
                 ],
                 "implHandler": [
                     "var me = this;\r",
-                    "\r",
-                    "var vw = me.view;\r",
-                    "var selectionModel = me.getSelectionModel();\r",
+                    "var selectionModel = me.view.getSelectionModel();\r",
                     "var store = me.getStore();\r",
                     "//selctionModel.views.add(vw);\r",
                     "//selectionModel.store = store;\r",
@@ -136,6 +140,26 @@
                 ]
             },
             "designerId": "89b2cd7e-33f8-4f96-b5dc-4740922f8384"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "getAllItemNames",
+                "fn": "getAllItemNames",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var store = me.getStore();\r",
+                    "var items = [];\r",
+                    "var count = store.getCount();\r",
+                    ""
+                ]
+            },
+            "designerId": "11b00b3c-148f-4b21-983a-2c93abe50fe0"
         },
         {
             "type": "checkboxselectionmodel",

@@ -8,10 +8,7 @@
     "userConfig": {
         "views": [
             "AMViewport",
-            "search.SearchTree",
-            "directory.DirectoryTree",
-            "mapping.MappingTree",
-            "nhibernate.NhibernateTree"
+            "nhibernate.SelectDataKeysForm"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

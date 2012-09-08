@@ -18,7 +18,7 @@ Ext.define('AM.view.spreadsheet.SourceWindow', {
   alias: 'widget.spreadsheetsourcewindow',
 
   requires: [
-    'AM.view.spreadshhet.SourceForm'
+    'AM.view.spreadsheet.SourceForm'
   ],
 
   datalayer: '',

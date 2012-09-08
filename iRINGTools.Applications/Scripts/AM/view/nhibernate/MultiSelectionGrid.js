@@ -63,7 +63,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
   loadItems: function(items) {
     var me = this;
     var store = me.getStore();
-
+    store.removeAll();
     var records = [];
 
     Ext.each(items, function(item) {
@@ -75,7 +75,6 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
 
   selectItems: function(items) {
     var me = this;
-
     var vw = me.view;
     var selectionModel = me.getSelectionModel();
     var store = me.getStore();
@@ -100,6 +99,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
     Ext.each(selectionModel.getSelection(), function(record) {
       items.push(record.get('DisplayField'));
     });
+
   }
 
 });
