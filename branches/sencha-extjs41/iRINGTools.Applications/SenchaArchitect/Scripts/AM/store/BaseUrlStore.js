@@ -25,7 +25,7 @@ Ext.define('AM.store.BaseUrlStore', {
     cfg = cfg || {};
     me.callParent([Ext.apply({
       autoLoad: true,
-      storeId: 'MyJsonStore3',
+      storeId: 'BaseUrlStore',
       model: 'AM.model.BaseUrlModel',
       proxy: {
         type: 'ajax',

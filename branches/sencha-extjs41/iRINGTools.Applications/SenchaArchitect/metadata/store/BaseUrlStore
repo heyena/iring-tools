@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "BaseUrlStore",
         "autoLoad": true,
-        "storeId": "MyJsonStore3",
+        "storeId": "BaseUrlStore",
         "model": "BaseUrlModel"
     },
     "id": "ExtBox1-ext-gen27764",

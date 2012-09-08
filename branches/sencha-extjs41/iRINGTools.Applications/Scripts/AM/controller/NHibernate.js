@@ -37,7 +37,10 @@ Ext.define('AM.controller.NHibernate', {
     'nhibernate.SelectTablesForm',
     'nhibernate.MultiSelectionGrid',
     'nhibernate.NhibernatePanel',
-    'nhibernate.PropertyGrid'
+    'nhibernate.PropertyGrid',
+    'nhibernate.DataObjectForm',
+    'nhibernate.DataKeyForm',
+    'nhibernate.NhibernateTree'
   ],
 
   refs: [
@@ -56,6 +59,27 @@ Ext.define('AM.controller.NHibernate', {
       xtype: 'connectionstringform'
     },
     {
+      autoCreate: true,
+      forceCreate: true,
+      ref: 'dataObjectForm',
+      selector: 'dataobjectform',
+      xtype: 'dataobjectform'
+    },
+    {
+      autoCreate: true,
+      forceCreate: true,
+      ref: 'dataKeyForm',
+      selector: 'datakeyform',
+      xtype: 'datakeyform'
+    },
+    {
+      autoCreate: true,
+      forceCreate: true,
+      ref: 'selectKeyFieldsForm',
+      selector: 'selectdatakeysform',
+      xtype: 'selectdatakeysform'
+    },
+    {
       ref: 'dirTree',
       selector: 'viewport > directorypanel > directorytree',
       xtype: 'directorytree'
@@ -72,14 +96,14 @@ Ext.define('AM.controller.NHibernate', {
     var content = this.getMainContent();
     content.body.mask('Loading...', 'x-mask-loading');
     var nhPanel = button.up('nhibernatepanel');
-    var tableGrid = nhPanel.down('multiselectiongrid');
+
     var dbObjectsTree = nhPanel.down('nhibernatetree');
-    var gridSelected = tableGrid.getSelectionModel().getSelection();
+    var gridSelected = dbObjectsTree.selectedTables;
     var dirNode = dbObjectsTree.dirNode;
     var contextName = dirNode.data.record.context;
     var endpoint = dirNode.data.record.endpoint;
     var baseUrl = dirNode.data.record.baseUrl;
-
+    dirNode.data.record.dbInfo.dbProvider = dirNode.data.record.dbDict.Provider;
     var rootNode = dbObjectsTree.getRootNode();
     var treeProperty = me.getJsonTree(rootNode, dirNode, gridSelected);
 
@@ -115,30 +139,250 @@ Ext.define('AM.controller.NHibernate', {
     });
   },
 
+  onSaveDataObject: function(button, e, options) {
+    var me = this; 
+    var form = button.up('dataobjectform');
+    var panel = form.up('nhibernatepanel');
+    var tree = panel.down('nhibernatetree');
+    var treeNode = tree.getSelectedNode();
+    var dbDict = tree.dirNode.data.record.dbDict;
+    if (treeNode) {
+      var treeNodeProps = treeNode.data.property;
+      var objectNameField = form.getForm().findField('objectName');
+      var objNam = objectNameField.getValue();
+
+      if (objectNameField.validate())
+      treeNodeProps.objectName = objNam;
+      else {
+        showDialog(400, 100, 'Warning', "Object Name is not valid. A valid object name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
+        return;
+      }
+
+      var oldObjNam = treeNodeProps.objectName;
+      treeNodeProps.tableName = form.getForm().findField('tableName').getValue();
+      treeNodeProps.objectName = objNam;
+      treeNodeProps.keyDelimiter = form.getForm().findField('keyDelimiter').getValue();
+      treeNodeProps.description = form.getForm().findField('description').getValue();
+
+      for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
+        var dataObject = dbDict.dataObjects[ijk];
+        if (treeNode.data.text.toUpperCase() != dataObject.objectName.toUpperCase())
+        continue;
+        dataObject.objectName = objNam;
+      }
+
+      treeNode.set('text', objNam);
+      var rootNode = tree.getRootNode();
+
+      for (var i = 0; i < rootNode.childNodes.length; i++) {
+        var folderNode = rootNode.childNodes[i];
+        var folderNodeProp = folderNode.data.property;
+        if (folderNode.childNodes[2])
+        var relationFolderNode = folderNode.childNodes[2];
+        else
+        var relationFolderNode = folderNode.attributes.children[2];
+
+        if (!relationFolderNode)
+        continue;
+
+        if (relationFolderNode.childNodes)
+        var relChildenNodes = relationFolderNode.childNodes;
+        else
+        var relChildenNodes = relationFolderNode.children;
+
+        if (relChildenNodes) {
+          for (var k = 0; k < relChildenNodes.length; k++) {
+            var relationNode = relChildenNodes[k];
+
+            if (relationNode.text == '')
+            continue;
+
+            if (relationNode.data)
+            var relationNodeAttr = relationNode.data
+
+            var relObjNam = relationNodeAttr.relatedObjectName;
+            if (relObjNam.toLowerCase() != objNam.toLowerCase() && relObjNam.toLowerCase() == oldObjNam.toLowerCase())
+            relationNodeAttr.relatedObjectName = objNam;
+
+            if (relationNodeAttr.relatedObjMap) {
+              var relatedObjPropMap = relationNodeAttr.relatedObjMap;
+
+              for (var iki = 0; iki < relatedObjPropMap.length; iki++) {
+                if (relatedObjPropMap[iki].relatedObjName.toLowerCase() == oldObjNam.toLowerCase())
+                relatedObjPropMap[iki].relatedObjName = objNam;
+              }
+            }
+          }
+        }
+      }
+
+      //  var items = editor.items.items;
+
+      //  for (var i = 0; i < items.length; i++) {
+      //    var relateObjField = items[i].getForm().findField('relatedObjectName');
+      //    if (relateObjField)
+      //      if (relateObjField.getValue().toLowerCase() == oldObjNam.toLowerCase())
+      //        relateObjField.setValue(objNam);
+      //  }
+    }
+  },
+
+  onResetDataObject: function(button, e, options) {
+    var form = button.up('dataobjectform');
+    var panel = form.up('nhibernatepanel');
+    var tree = panel.down('nhibernatetree');
+    var dbDict = tree.dirNode.data.record.dbDict;
+    var treeNode = tree.getSelectedNode();
+    var dObject;
+    Ext.each(dbDict.dataObjects, function (dataObject) {
+      if(dataObject.objectName == treeNode.data.property.objectName)
+      dObject = dataObject;
+    });
+
+    if (treeNode.data.property) {
+      form.getForm().findField('objectName').setValue(dObject.objectName);
+      form.getForm().findField('objectNamespace').setValue(dObject.objectNamespace);
+      form.getForm().findField('keyDelimiter').setValue(dObject.keyDelimeter);
+      form.getForm().findField('description').setValue(dObject.description);
+    }
+  },
+
+  onSaveDataKeys: function(button, e, options) {
+    var me = this;
+    var content = this.getMainContent();
+    var panel = button.up('nhibernatepanel');
+    var dbObjectsTree = panel.down('nhibernatetree');
+    var treeStore = dbObjectsTree.getStore();
+    var treeNode = treeStore.getNodeById(panel.treeNode.internalId);
+    var rootNode = dbObjectsTree.getRootNode();
+    var dirNode = dbObjectsTree.dirNode;
+    var form = panel.down('selectdatakeysform');
+    var objectGrid = form.down('multiselectiongrid');
+    var selected = objectGrid.getSelectionModel().getSelection();
+    var selectValues = [];
+    Ext.each(selected, function(item) {
+      selectValues.push(item.data.DisplayField);
+    });
+
+    var keysNode = panel.treeNode;
+    var propertiesNode = keysNode.parentNode.childNodes[1];
+    var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;
+
+    for (var i = 0; i < keysNode.childNodes.length; i++) {
+      var found = false;
+
+      for (var j = 0; j < selectValues.length; j++) {
+        if (selectValues[j].toLowerCase() == keysNode.childNodes[i].data.text.toLowerCase()) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        if (keysNode.childNodes[i].data.property)
+        var properties = keysNode.childNodes[i].data.property;
+
+        if (properties) {
+          properties.isNullable = true;
+          delete properties.keyType;
+
+          propertiesNode.appendChild({
+            text: keysNode.childNodes[i].data.text,
+            type: "dataProperty",
+            leaf: true,
+            iconCls: 'treeProperty',
+            property: properties
+          });
+
+          keysNode.removeChild(keysNode.childNodes[i], true);
+          i--;
+        }
+      }
+    }
+
+    var nodeChildren = [];
+    for (var j = 0; j < keysNode.childNodes.length; j++)
+    nodeChildren.push(keysNode.childNodes[j].data.text);
+
+    for (var j = 0; j < selectValues.length; j++) {
+      var found = false;
+      for (var i = 0; i < nodeChildren.length; i++) {
+        if (selectValues[j].toLowerCase() == nodeChildren[i].toLowerCase()) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        var newKeyNode;
+
+        for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
+          if (propertiesNode.childNodes[jj].data.text.toLowerCase() == selectValues[j].toLowerCase()) {
+            var properties = propertiesNode.childNodes[jj].data.property;
+            properties.keyType = 'assigned';
+            properties.nullable = false;
+
+            keysNode.appendChild({
+              text: selectValues[j],
+              type: "keyProperty",
+              leaf: true,
+              iconCls: 'treeKey',
+              hidden: false,
+              property: properties
+            });
+
+            propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
+            break;
+          }
+        }
+
+        for (var jj = 0; jj < hiddenRootNode.children.length; jj++) {
+          if (hiddenRootNode.children[jj].text.toLowerCase() == selectValues[j].toLowerCase()) {
+            var properties = hiddenRootNode.children[jj].property;
+            properties.keyType = 'assigned';
+            properties.nullable = false;
+
+            keysNode.appendChild({
+              text: selectValues[j],
+              type: "keyProperty",
+              leaf: true,
+              iconCls: 'treeKey',
+              hidden: false,
+              property: properties
+            });
+
+            hiddenRootNode.children.splice(jj, 1);
+            jj--;
+            break;
+          }
+        }
+      }
+    }
+
+    if (keysNode.expanded === false)
+    keysNode.expand();
+  },
+
   onTreepanelItemClick: function(tablepanel, record, item, index, e, options) {
     var me = this;
-    var content = me.getMainContent();
-    var dirTree = me.getDirTree();
-
     var panel = tablepanel.up('nhibernatepanel');
     var dataNode = record.store.getAt(index);
+    panel.treeNode = dataNode;
     var nodeType = dataNode.data.type.toUpperCase();
-    if (dataNode.isRoot) {
-
+    if (dataNode.isRoot()) {
+      me.showSelectTablesForm(panel);
     }
+
     if (nodeType) {
       switch (nodeType) {
-        case 'DATAOBJECTS':
-        me.showTableSelectionForm(panel);
-        break;
         case 'DATAOBJECT':
-        //    me.showTableSelectionForm(panel, dirNode);
+        me.showDataObjectForm(panel);
         break;
         case 'KEYS':
-        //setKeysFolder(me, editor, dataNode, contextName, endpoint);
+        me.showSelectKeyFieldsForm(panel);
         break;
         case 'KEYPROPERTY':
-        //setKeyProperty(me, editor, dataNode, contextName, endpoint);
+        me.showDataKeyForm(panel);
         break;
         case 'PROPERTIES':
         //setPropertiesFolder(me, editor, dataNode, contextName, endpoint);
@@ -159,10 +403,6 @@ Ext.define('AM.controller.NHibernate', {
   },
 
   onDbObjectChanges: function(button, e, options) {
-
-  },
-
-  onDbObjectsReset: function(button, e, options) {
 
   },
 
@@ -222,7 +462,7 @@ Ext.define('AM.controller.NHibernate', {
         dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
         panel.dirNode = dirNode;
 
-        me.showTableSelectionForm(panel, dirNode);
+        me.showDataObjectsForm(panel);
         return;
 
       },
@@ -237,7 +477,7 @@ Ext.define('AM.controller.NHibernate', {
     });
   },
 
-  onSaveDbTables: function(button, e, options) {
+  onSaveDataObjects: function(button, e, options) {
     var me = this;
     var content = this.getMainContent();
     var panel = button.up('nhibernatepanel');
@@ -257,6 +497,7 @@ Ext.define('AM.controller.NHibernate', {
     var serName = '';
     var dbInfo = dbObjectsTree.dirNode.data.record.dbInfo;
     var dbDict = dbObjectsTree.dirNode.data.record.dbDict;
+    dbInfo.dbSchema = dbDict.SchemaName;
     dbDict.enableSummary = form.getForm().findField('enableSummary').value;
     if (dbObjectsTree.disabled) {
       dbObjectsTree.enable();
@@ -278,6 +519,7 @@ Ext.define('AM.controller.NHibernate', {
         userTableNames.push(table.data.DisplayField);
       });
     }
+    dbObjectsTree.selectedTables = userTableNames;
 
     dbProvider = dbDict.Provider;
     dbServer = dbInfo.dbServer;
@@ -288,8 +530,8 @@ Ext.define('AM.controller.NHibernate', {
     dbPassword = dbInfo.dbPassword;
     portNumber = dbInfo.portNumber;
 
-    var store = dbObjectsTree.getStore();
-    dbObjectsTree.on('beforeload', function (store, operation) {
+    var treeStore = dbObjectsTree.getStore();
+    treeStore.on('beforeload', function (store, operation) {
       var params = store.proxy.extraParams;
       params.dbProvider = dbProvider;
       params.dbServer = dbServer;
@@ -307,8 +549,45 @@ Ext.define('AM.controller.NHibernate', {
     }, me);
 
     panel.body.mask('Loading...', 'x-mask-loading');
-    store.load();
+    treeStore.load();
     panel.body.unmask();
+  },
+
+  onResetDataObjects: function(button, e, options) {
+    var form = button.up('selecttablesform');
+    var grid = form.down('multiselectiongrid');
+
+    var panel = form.up('nhibernatepanel');
+    var dataTree = panel.down('nhibernatetree');
+    var dirNode = dataTree.dirNode;
+    var dbInfo = dirNode.data.record.dbInfo;
+    var dbDict = dirNode.data.record.dbDict;
+    var rootNode = dataTree.getRootNode();
+    var selectTableNamesSingle = [];
+    var availTableName = [];
+    var found = false;
+    var repeatItem;
+    for (var i = 0; i < dbInfo.dbTableNames.items.length; i++) {
+      repeatItem = dbInfo.dbTableNames.items[i];
+      availTableName.push([repeatItem, repeatItem]);
+    }
+
+    for (var j = 0; j < availTableName.length; j++)
+    for (var i = 0; i < rootNode.childNodes.length; i++) {
+      if (rootNode.childNodes[i].data.property.tableName.toLowerCase() == availTableName[j][0].toLowerCase()) {
+        found = true;
+        availTableName.splice(j, 1);
+        j--;
+        break;
+      }
+    }
+
+    for (var i = 0; i < rootNode.childNodes.length; i++) {
+      var nodeText = rootNode.childNodes[i].data.property.tableName;
+      selectTableNamesSingle.push(nodeText);
+    }
+
+    grid.selectItems(selectTableNamesSingle);
   },
 
   onConfignhibernate: function() {
@@ -371,7 +650,7 @@ Ext.define('AM.controller.NHibernate', {
             }
           }
         } else {
-          me.getDataTypes();
+
           if (dbInfo !== null && dbInfo !== undefined)
           dirNode.data.record.dbInfo = dbInfo;
 
@@ -384,7 +663,7 @@ Ext.define('AM.controller.NHibernate', {
       });
 
     }
-
+    me.getDataTypes();
     content.setActiveTab(panel);
   },
 
@@ -396,20 +675,29 @@ Ext.define('AM.controller.NHibernate', {
       "nhibernatepanel button[action=savedbobjectstree]": {
         click: this.onSaveDbObjectTree
       },
+      "dataobjectform button[action=dataobjectformapply]": {
+        click: this.onSaveDataObject
+      },
+      "dataobjectform button[action=dataobjectformreset]": {
+        click: this.onResetDataObject
+      },
+      "selectdatakeysform button[action=saveselectkeys]": {
+        click: this.onSaveDataKeys
+      },
       "nhibernatetree": {
         itemclick: this.onTreepanelItemClick
       },
       "selecttablesform button[action=applyobjects]": {
         click: this.onDbObjectChanges
       },
-      "selecttablesform button[action=resetobjects]": {
-        click: this.onDbObjectsReset
-      },
       "button[action=connecttodatabase]": {
         click: this.onConnectToDatabase
       },
       "button[action=applyobjects]": {
-        click: this.onSaveDbTables
+        click: this.onSaveDataObjects
+      },
+      "selecttablesform button[action=resetobjects]": {
+        click: this.onResetDataObjects
       }
     });
 
@@ -516,24 +804,32 @@ Ext.define('AM.controller.NHibernate', {
       selectedItems.push([keyName, keyName]);
     }
     return selectedItems;
+
   },
 
-  showTableSelectionForm: function(nhibernatePanel) {
+  getSelectItems: function(node) {
+    var selectItems = [];
+
+    for (var i = 0; i < node.childNodes.length; i++) {
+      var keyName = node.childNodes[i].data.text;
+      selectItems.push(keyName);
+    }
+
+    return selectItems;
+  },
+
+  showSelectTablesForm: function(nhibernatePanel) {
     var me = this, 
     form = me.getSelectTablesForm();
     var selected = [];
     var dataTree = nhibernatePanel.down('nhibernatetree');
     var dirNode = dataTree.dirNode;
-    var tables = dirNode.data.record.dbInfo.dbTableNames.items;
 
-
-    var context = dirNode.data.record.context;
-    var endpoint = dirNode.data.record.endpoint;
-    var baseUrl = dirNode.data.record.baseUrl;
     var dict = dirNode.data.record.dbDict.dataObjects;
     Ext.each(dict, function(table) {
       selected.push(table.tableName);
     });
+    var tables = dirNode.data.record.dbInfo.dbTableNames.items; 
     var grid = form.down('multiselectiongrid');
 
     grid.loadItems(tables);
@@ -541,11 +837,11 @@ Ext.define('AM.controller.NHibernate', {
     panel = nhibernatePanel.down('#nhibernateContent');
 
     panel.removeAll();
+    panel.doLayout();
 
     panel.add(form);
     panel.doLayout();
 
-    Ext.getBody().unmask();
 
   },
 
@@ -674,6 +970,34 @@ Ext.define('AM.controller.NHibernate', {
     panel.add(form);
   },
 
+  showDataObjectForm: function(nhibernatePanel) {
+    var me = this, 
+    form = me.getDataObjectForm();
+    var keyDelimiter;
+    var dataTree = nhibernatePanel.down('nhibernatetree');
+    var dirNode = dataTree.dirNode;
+    var treeNode = dataTree.getSelectedNode();
+
+    if (treeNode.data.property.keyDelimiter === 'null' || 
+    !treeNode.data.property.keyDelimiter || treeNode.data.property.keyDelimiter === undefined) {
+      keyDelimiter = '_';
+    }   else {
+      keyDelimiter = treeNode.data.property.keyDelimiter;
+    }
+
+    form.getForm().findField('tableName').setValue(treeNode.data.property.tableName);
+    form.getForm().findField('objectNamespace').setValue(treeNode.data.property.objectNamespace);
+    form.getForm().findField('objectName').setValue(treeNode.data.property.objectName);
+    form.getForm().findField('keyDelimiter').setValue(keyDelimiter);
+
+    panel = nhibernatePanel.down('#nhibernateContent');
+
+    panel.removeAll();
+
+    panel.add(form);
+    panel.doLayout();
+  },
+
   getConnStringParts: function(connString, dirNode) {
     var me = this;
     var dsValue, serName;
@@ -745,6 +1069,70 @@ Ext.define('AM.controller.NHibernate', {
       }
     }
     return dirNode.data.record.dbInfo;
+  },
+
+  showSelectKeyFieldsForm: function(nhibernatePanel) {
+    var me = this, 
+    form = me.getSelectKeyFieldsForm();
+    var selected = [];
+    var dataTree = nhibernatePanel.down('nhibernatetree');
+    var dataNode = dataTree.getSelectedNode();
+    var dirNode = dataTree.dirNode;
+
+
+    var context = dirNode.data.record.context;
+    var endpoint = dirNode.data.record.endpoint;
+    var baseUrl = dirNode.data.record.baseUrl;
+
+    var grid = form.down('multiselectiongrid');
+
+    var availItems = [];
+    var propertiesNode = dataNode.parentNode.childNodes[1];
+    var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;
+
+    var selectItems = me.getSelectItems(dataNode);
+    Ext.each(selectItems, function (item) {
+      availItems.push(item);
+    });
+
+    for (var i = 0; i < hiddenRootNode.children.length; i++) {
+      var itemName = hiddenRootNode.children[i].text;
+      availItems.push(itemName);
+    }
+
+
+    grid.loadItems(availItems);
+    grid.selectItems(selectItems);
+    panel = nhibernatePanel.down('#nhibernateContent');
+
+    panel.removeAll();
+
+    panel.add(form);
+    panel.doLayout();
+
+    Ext.getBody().unmask();
+
+
+  },
+
+  showDataKeyForm: function(nhibernatePanel) {
+    var me = this, 
+    form = me.getDataKeyForm();
+
+    var dataTree = nhibernatePanel.down('nhibernatetree');
+    var dirNode = dataTree.dirNode;
+    var treeNode = nhibernatePanel.treeNode;
+
+    form.setActiveRecord(treeNode.data.property);
+
+    panel = nhibernatePanel.down('#nhibernateContent');
+
+    panel.removeAll();
+
+    panel.add(form);
+    panel.doLayout();
+
+    Ext.getBody().unmask();
   },
 
   getJsonTree: function(rootNode, dirNode, selectedTables) {

@@ -24,10 +24,7 @@ Ext.Loader.setConfig({
 Ext.application({
   views: [
     'AMViewport',
-    'search.SearchTree',
-    'directory.DirectoryTree',
-    'mapping.MappingTree',
-    'nhibernate.NhibernateTree'
+    'nhibernate.SelectDataKeysForm'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

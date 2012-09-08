@@ -17,11 +17,14 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.multiselectiongrid',
 
+  maxHeight: 260,
+  autoScroll: true,
   frameHeader: false,
   header: false,
   enableColumnHide: false,
   enableColumnMove: false,
   enableColumnResize: false,
+  scroll: 'vertical',
   sortableColumns: false,
   store: 'MultiStore',
 
@@ -33,6 +36,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
         {
           xtype: 'gridcolumn',
           draggable: false,
+          maxWidth: 400,
           sortable: false,
           dataIndex: 'DisplayField',
           flex: 1,
@@ -63,7 +67,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
   loadItems: function(items) {
     var me = this;
     var store = me.getStore();
-
+    store.removeAll();
     var records = [];
 
     Ext.each(items, function(item) {
@@ -75,9 +79,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
 
   selectItems: function(items) {
     var me = this;
-
-    var vw = me.view;
-    var selectionModel = me.getSelectionModel();
+    var selectionModel = me.view.getSelectionModel();
     var store = me.getStore();
     //selctionModel.views.add(vw);
     //selectionModel.store = store;
@@ -100,6 +102,14 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
     Ext.each(selectionModel.getSelection(), function(record) {
       items.push(record.get('DisplayField'));
     });
+  },
+
+  getAllItemNames: function() {
+    var me = this;
+    var store = me.getStore();
+    var items = [];
+    var count = store.getCount();
+
   }
 
 });

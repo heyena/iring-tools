@@ -62,23 +62,43 @@
                         "text": "Database Tables"
                     },
                     "designerId": "0f652a17-4208-4d1b-90bc-5b0d2fb59c68"
+                },
+                {
+                    "type": "linkedinstance",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": null,
+                        "minHeight": 200,
+                        "title": null
+                    },
+                    "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
+                    "masterInstanceId": "ExtBox1-ext-gen55549"
+                },
+                {
+                    "type": "checkboxfield",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "MyCheckbox3",
+                        "name": "enableSummary",
+                        "value": [
+                            "off"
+                        ],
+                        "fieldLabel": "Enable Summary:",
+                        "labelWidth": 150,
+                        "boxLabel": null,
+                        "inputValue": "off"
+                    },
+                    "designerId": "a28b81f3-4b5e-4856-894d-cadba9b88a8a"
                 }
             ]
-        },
-        {
-            "type": "linkedinstance",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "minHeight": 200,
-                "autoScroll": true,
-                "title": null
-            },
-            "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
-            "masterInstanceId": "ExtBox1-ext-gen55549"
         },
         {
             "type": "toolbar",
@@ -170,27 +190,6 @@
                     ]
                 }
             ]
-        },
-        {
-            "type": "checkboxfield",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": "100%",
-                "designer|userClassName": "MyCheckbox3",
-                "name": "enableSummary",
-                "value": [
-                    "off"
-                ],
-                "fieldLabel": "Enable Summary:",
-                "labelWidth": 150,
-                "boxLabel": null,
-                "inputValue": "off"
-            },
-            "designerId": "a28b81f3-4b5e-4856-894d-cadba9b88a8a"
         }
     ]
 }

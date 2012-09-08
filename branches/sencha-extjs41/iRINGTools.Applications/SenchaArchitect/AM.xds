@@ -727,11 +727,11 @@
         },
         "4b8f1077-8bf1-48bd-a264-cc9b6d607fd6": {
             "paths": [
-                "metadata/view/spreadshhet.SourceForm",
-                "Scripts/AM/view/override/spreadshhet/SourceForm.js",
-                "Scripts/AM/view/spreadshhet/SourceForm.js"
+                "metadata/view/spreadsheet.SourceForm",
+                "Scripts/AM/view/override/spreadsheet/SourceForm.js",
+                "Scripts/AM/view/spreadsheet/SourceForm.js"
             ],
-            "className": "spreadshhet.SourceForm"
+            "className": "spreadsheet.SourceForm"
         },
         "05fae04d-5364-4b78-98b9-ee7f6b53db35": {
             "paths": [
@@ -786,6 +786,30 @@
                 "Scripts/AM/view/nhibernate/PropertyGrid.js"
             ],
             "className": "nhibernate.PropertyGrid"
+        },
+        "926170c4-1014-4c33-b926-bf1625034d16": {
+            "paths": [
+                "metadata/view/nhibernate.DataObjectForm",
+                "Scripts/AM/view/override/nhibernate/DataObjectForm.js",
+                "Scripts/AM/view/nhibernate/DataObjectForm.js"
+            ],
+            "className": "nhibernate.DataObjectForm"
+        },
+        "d98d58c9-72b2-46e0-89c3-f2258251b26f": {
+            "paths": [
+                "metadata/view/nhibernate.DataKeyForm",
+                "Scripts/AM/view/override/nhibernate/DataKeyForm.js",
+                "Scripts/AM/view/nhibernate/DataKeyForm.js"
+            ],
+            "className": "nhibernate.DataKeyForm"
+        },
+        "fc9cda16-dcc7-4f94-a9a7-8ed183eef987": {
+            "paths": [
+                "metadata/view/nhibernate.SelectDataKeysForm",
+                "Scripts/AM/view/override/nhibernate/SelectDataKeysForm.js",
+                "Scripts/AM/view/nhibernate/SelectDataKeysForm.js"
+            ],
+            "className": "nhibernate.SelectDataKeysForm"
         }
     },
     "viewOrderMap": {
@@ -851,7 +875,10 @@
             "05fae04d-5364-4b78-98b9-ee7f6b53db35",
             "806180c3-0c42-425f-b6f1-5b85a7b5017b",
             "1a271683-7a34-49a9-b59e-89ab4347ee43",
-            "02e5600b-0e29-4250-9b2b-34467449933a"
+            "02e5600b-0e29-4250-9b2b-34467449933a",
+            "926170c4-1014-4c33-b926-bf1625034d16",
+            "d98d58c9-72b2-46e0-89c3-f2258251b26f",
+            "fc9cda16-dcc7-4f94-a9a7-8ed183eef987"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

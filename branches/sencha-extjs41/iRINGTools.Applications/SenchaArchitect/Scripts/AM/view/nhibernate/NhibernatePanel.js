@@ -22,6 +22,7 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
   ],
 
   dirNode: '',
+  treeNode: '',
   border: 'false',
   layout: {
     type: 'border'
@@ -35,13 +36,15 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
       items: [
         {
           xtype: 'nhibernatetree',
-          width: 300,
+          width: 280,
           flex: 1,
+          floatable: false,
           region: 'center'
         },
         {
           xtype: 'container',
           flex: 2,
+          floatable: false,
           region: 'east',
           split: true,
           itemId: 'nhibernateContent',

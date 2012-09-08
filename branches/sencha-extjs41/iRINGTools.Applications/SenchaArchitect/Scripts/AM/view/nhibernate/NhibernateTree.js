@@ -18,6 +18,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
   alias: 'widget.nhibernatetree',
 
   dirNode: '',
+  selectedTables: '',
   bodyStyle: 'padding:0.5px 0px 1px 1px',
   store: 'NHibernateTreeStore',
 
@@ -55,7 +56,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
             },
             {
               xtype: 'tbspacer',
-              width: 4
+              width: 2
             },
             {
               xtype: 'button',
@@ -65,7 +66,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
             },
             {
               xtype: 'tbspacer',
-              width: 4
+              width: 2
             },
             {
               xtype: 'button',

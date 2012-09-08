@@ -7,15 +7,15 @@
     "codeClass": null,
     "userConfig": {
         "designer|userClassName": "NHibernateTreeStore",
+        "autoLoad": false,
         "storeId": "NHibernateTreeStore",
         "model": "NHibernateTreeModel",
         "root": [
             "{\r",
-            "          expanded: true,\r",
-            "          type: 'DATAOBJECTS',\r",
-            "          text: 'Data Objects',\r",
-            "          iconCls: 'folder'\r",
-            "        }"
+            "        expanded: true,\r",
+            "        text: 'Data Objects',\r",
+            "        iconCls: 'folder'\r",
+            "    }"
         ]
     },
     "id": "ExtBox1-ext-gen22120",
@@ -33,7 +33,23 @@
                     "{\"read\":\"POST\"}"
                 ],
                 "designer|userClassName": "MyAjaxProxy6",
-                "extraParams": null,
+                "extraParams": [
+                    "{\r",
+                    "  contextName: null,\r",
+                    "  endpoint: null,\r",
+                    "  dbProvider: null,\r",
+                    "  dbServer: null,\r",
+                    "  dbInstance: null,\r",
+                    "  dbName: null,\r",
+                    "  dbSchema: null,\r",
+                    "  dbUserName: null,\r",
+                    "  dbPassword: null,\r",
+                    "  portNumber: null,\r",
+                    "  tableNames: null,\r",
+                    "  serName: null,\r",
+                    "  baseUrl:null\r",
+                    "}"
+                ],
                 "timeout": 600000,
                 "url": "NHibernate/DBObjects"
             },

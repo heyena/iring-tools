@@ -7,6 +7,7 @@
     "codeClass": null,
     "userConfig": {
         "dirNode": "",
+        "selectedTables": "",
         "designer|userClassName": "nhibernate.NhibernateTree",
         "designer|userAlias": "nhibernatetree",
         "height": null,
@@ -31,6 +32,11 @@
         {
             "group": "(Custom Properties)",
             "name": "dirNode",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "selectedTables",
             "type": "string"
         }
     ],
@@ -133,7 +139,7 @@
                     "userConfig": {
                         "layout|flex": null,
                         "designer|userClassName": "MySpacer3",
-                        "width": 4
+                        "width": 2
                     },
                     "designerId": "11969168-77af-4831-8f7c-526532c75a67"
                 },
@@ -171,7 +177,7 @@
                     "userConfig": {
                         "layout|flex": null,
                         "designer|userClassName": "MySpacer4",
-                        "width": 4
+                        "width": 2
                     },
                     "designerId": "88ee6909-7a21-43d9-8b27-ea1e0d88da93"
                 },

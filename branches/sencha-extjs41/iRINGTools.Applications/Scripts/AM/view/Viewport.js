@@ -52,6 +52,9 @@ Ext.define('AM.view.Viewport', {
     'AM.view.spreadsheet.SourceWindow',
     'AM.view.nhibernate.SelectTablesForm',
     'AM.view.nhibernate.Utility',
-    'AM.view.nhibernate.PropertyGrid'
+    'AM.view.nhibernate.PropertyGrid',
+    'AM.view.nhibernate.DataObjectForm',
+    'AM.view.nhibernate.DataKeyForm',
+    'AM.view.nhibernate.SelectDataKeysForm'
   ]
 });
