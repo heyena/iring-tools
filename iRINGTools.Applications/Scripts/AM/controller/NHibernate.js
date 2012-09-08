@@ -33,7 +33,6 @@ Ext.define('AM.controller.NHibernate', {
   views: [
     'nhibernate.ConnectionStringForm',
     'nhibernate.RelationsForm',
-    'nhibernate.RelationPanel',
     'nhibernate.SelectTablesForm',
     'nhibernate.MultiSelectionGrid',
     'nhibernate.NhibernatePanel',
@@ -42,7 +41,8 @@ Ext.define('AM.controller.NHibernate', {
     'nhibernate.DataKeyForm',
     'nhibernate.NhibernateTree',
     'nhibernate.SelectPropertiesForm',
-    'nhibernate.SelectDataKeysForm'
+    'nhibernate.SelectDataKeysForm',
+    'nhibernate.SetPropertyForm'
   ],
 
   refs: [
@@ -87,6 +87,13 @@ Ext.define('AM.controller.NHibernate', {
       ref: 'selectPropertiesForm',
       selector: 'selectpropertiesform',
       xtype: 'selectpropertiesform'
+    },
+    {
+      autoCreate: true,
+      forceCreate: true,
+      ref: 'dataPropertyForm',
+      selector: 'setpropertyform',
+      xtype: 'setpropertyform'
     },
     {
       ref: 'dirTree',
@@ -477,6 +484,82 @@ Ext.define('AM.controller.NHibernate', {
     me.showConnectionStringForm(panel);
   },
 
+  onSaveKeyProperty: function(button, e, options) {
+    var me = this;
+    form = button.up('datakeyform');
+    var panel = form.up('nhibernatepanel');
+    var tree = panel.down('nhibernatetree');
+    var node = tree.getSelectedNode();
+    var propertyNameField = form.getForm().findField('propertyName');
+    var propertyName = propertyNameField.getValue();
+
+    if (propertyNameField.validate()) {
+      node.data.property.propertyName = propertyName;
+      node.set('text', propertyName);
+    }
+    else {
+      showDialog(400, 100, 'Warning', "Key Property Name is not valid. A valid key property name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
+    }         
+  },
+
+  onResetKeyProperty: function(button, e, options) {
+    var me = this;
+    form = button.up('datakeyform');
+    var panel = form.up('nhibernatepanel');
+    var tree = panel.down('nhibernatetree');
+    var node = tree.getSelectedNode();
+    var propertyNameField = form.getForm().findField('propertyName');
+    propertyNameField.setValue(node.data.record.Name);
+    var propertyName = propertyNameField.getValue();
+
+    if (propertyNameField.validate()) {
+      node.data.property.propertyName = propertyName;
+      node.set('text', propertyName);
+    }
+    else {
+      showDialog(400, 100, 'Warning', "Key Property Name is not valid. A valid key property name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
+    } 
+
+  },
+
+  onSaveDataProperty: function(button, e, options) {
+    var me = this;
+    form = button.up('setpropertyform');
+    var panel = form.up('nhibernatepanel');
+    var tree = panel.down('nhibernatetree');
+    var node = tree.getSelectedNode();
+    var propertyNameField = form.getForm().findField('propertyName');
+    var propertyName = propertyNameField.getValue();
+
+    if (propertyNameField.validate()) {
+      node.data.property.propertyName = propertyName;
+      node.set('text', propertyName);
+    }
+    else {
+      showDialog(400, 100, 'Warning', "Property Name is not valid. A valid property name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
+    }         
+  },
+
+  onResetDataProperty: function(button, e, options) {
+    var me = this;
+    form = button.up('setpropertyform');
+    var panel = form.up('nhibernatepanel');
+    var tree = panel.down('nhibernatetree');
+    var node = tree.getSelectedNode();
+    var propertyNameField = form.getForm().findField('propertyName');
+    propertyNameField.setValue(node.data.record.Name);
+    var propertyName = propertyNameField.getValue();
+
+    if (propertyNameField.validate()) {
+      node.data.property.propertyName = propertyName;
+      node.set('text', propertyName);
+    }
+    else {
+      showDialog(400, 100, 'Warning', "Property Name is not valid. A valid property name should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters", Ext.Msg.OK, null);
+    } 
+
+  },
+
   onTreepanelItemClick: function(tablepanel, record, item, index, e, options) {
     var me = this;
     var panel = tablepanel.up('nhibernatepanel');
@@ -502,7 +585,7 @@ Ext.define('AM.controller.NHibernate', {
         me.showSelectPropertiesForm(panel);
         break;
         case 'DATAPROPERTY':
-        //setDataProperty(me, editor, dataNode, contextName, endpoint);
+        me.showDataPropertyForm(panel);
         break;
         case 'RELATIONSHIPS':
         //setRelations(editor, tree, dataNode, contextName, endpoint);
@@ -803,6 +886,18 @@ Ext.define('AM.controller.NHibernate', {
       },
       "nhibernatetree button[action=editdbconnection]": {
         click: this.onEditDbConnection
+      },
+      "button[action=savekeyfield]": {
+        click: this.onSaveKeyProperty
+      },
+      "datakeyform button[action=resetkeyproperty]": {
+        click: this.onResetKeyProperty
+      },
+      "setpropertyform button[action=savedataproperty]": {
+        click: this.onSaveDataProperty
+      },
+      "setpropertyform button[action=resetdataproperty]": {
+        click: this.onResetDataProperty
       },
       "nhibernatetree": {
         itemclick: this.onTreepanelItemClick
@@ -1288,6 +1383,26 @@ Ext.define('AM.controller.NHibernate', {
   showDataKeyForm: function(nhibernatePanel) {
     var me = this, 
     form = me.getDataKeyForm();
+
+    var dataTree = nhibernatePanel.down('nhibernatetree');
+    var dirNode = dataTree.dirNode;
+    var treeNode = nhibernatePanel.treeNode;
+
+    form.setActiveRecord(treeNode.data.property);
+
+    panel = nhibernatePanel.down('#nhibernateContent');
+
+    panel.removeAll();
+
+    panel.add(form);
+    panel.doLayout();
+
+    Ext.getBody().unmask();
+  },
+
+  showDataPropertyForm: function(nhibernatePanel) {
+    var me = this, 
+    form = me.getDataPropertyForm();
 
     var dataTree = nhibernatePanel.down('nhibernatetree');
     var dirNode = dataTree.dirNode;

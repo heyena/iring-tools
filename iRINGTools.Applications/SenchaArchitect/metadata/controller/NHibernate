@@ -24,7 +24,6 @@
         "views": [
             "nhibernate.ConnectionStringForm",
             "nhibernate.RelationsForm",
-            "nhibernate.RelationPanel",
             "nhibernate.SelectTablesForm",
             "nhibernate.MultiSelectionGrid",
             "nhibernate.NhibernatePanel",
@@ -33,7 +32,8 @@
             "nhibernate.DataKeyForm",
             "nhibernate.NhibernateTree",
             "nhibernate.SelectPropertiesForm",
-            "nhibernate.SelectDataKeysForm"
+            "nhibernate.SelectDataKeysForm",
+            "nhibernate.SetPropertyForm"
         ]
     },
     "id": "ExtBox1-ext-gen3053",
@@ -520,6 +520,146 @@
             "designerId": "a3224a9f-f7c9-4f37-ab64-555ca1312e30"
         },
         {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "onSaveKeyProperty",
+                "fn": "onSaveKeyProperty",
+                "implHandler": [
+                    "var me = this;\r",
+                    "form = button.up('datakeyform');\r",
+                    "var panel = form.up('nhibernatepanel');\r",
+                    "var tree = panel.down('nhibernatetree');\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "var propertyNameField = form.getForm().findField('propertyName');\r",
+                    "var propertyName = propertyNameField.getValue();\r",
+                    "\r",
+                    "if (propertyNameField.validate()) {\r",
+                    "  node.data.property.propertyName = propertyName;\r",
+                    "  node.set('text', propertyName);\r",
+                    "}\r",
+                    "else {\r",
+                    "  showDialog(400, 100, 'Warning', \"Key Property Name is not valid. A valid key property name should start with alphabet or \\\"_\\\", and follow by any number of \\\"_\\\", alphabet, or number characters\", Ext.Msg.OK, null);\r",
+                    "}         "
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.button.Button",
+                "designer|controlQuery": "button[action=savekeyfield]"
+            },
+            "designerId": "4bfa6886-5a14-4cc5-85fa-e136dd0591c2"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "onResetKeyProperty",
+                "fn": "onResetKeyProperty",
+                "implHandler": [
+                    "var me = this;\r",
+                    "form = button.up('datakeyform');\r",
+                    "var panel = form.up('nhibernatepanel');\r",
+                    "var tree = panel.down('nhibernatetree');\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "var propertyNameField = form.getForm().findField('propertyName');\r",
+                    "propertyNameField.setValue(node.data.record.Name);\r",
+                    "var propertyName = propertyNameField.getValue();\r",
+                    "\r",
+                    "if (propertyNameField.validate()) {\r",
+                    "  node.data.property.propertyName = propertyName;\r",
+                    "  node.set('text', propertyName);\r",
+                    "}\r",
+                    "else {\r",
+                    "  showDialog(400, 100, 'Warning', \"Key Property Name is not valid. A valid key property name should start with alphabet or \\\"_\\\", and follow by any number of \\\"_\\\", alphabet, or number characters\", Ext.Msg.OK, null);\r",
+                    "} \r",
+                    ""
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.button.Button",
+                "designer|controlQuery": "datakeyform button[action=resetkeyproperty]"
+            },
+            "designerId": "b4ae9c45-855a-464e-8527-4c8843722675"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "onSaveDataProperty",
+                "fn": "onSaveDataProperty",
+                "implHandler": [
+                    "var me = this;\r",
+                    "form = button.up('setpropertyform');\r",
+                    "var panel = form.up('nhibernatepanel');\r",
+                    "var tree = panel.down('nhibernatetree');\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "var propertyNameField = form.getForm().findField('propertyName');\r",
+                    "var propertyName = propertyNameField.getValue();\r",
+                    "\r",
+                    "if (propertyNameField.validate()) {\r",
+                    "  node.data.property.propertyName = propertyName;\r",
+                    "  node.set('text', propertyName);\r",
+                    "}\r",
+                    "else {\r",
+                    "  showDialog(400, 100, 'Warning', \"Property Name is not valid. A valid property name should start with alphabet or \\\"_\\\", and follow by any number of \\\"_\\\", alphabet, or number characters\", Ext.Msg.OK, null);\r",
+                    "}         "
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.button.Button",
+                "designer|controlQuery": "setpropertyform button[action=savedataproperty]"
+            },
+            "designerId": "cb53080a-76ca-40dc-831e-6c276816d674"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "onResetDataProperty",
+                "fn": "onResetDataProperty",
+                "implHandler": [
+                    "var me = this;\r",
+                    "form = button.up('setpropertyform');\r",
+                    "var panel = form.up('nhibernatepanel');\r",
+                    "var tree = panel.down('nhibernatetree');\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "var propertyNameField = form.getForm().findField('propertyName');\r",
+                    "propertyNameField.setValue(node.data.record.Name);\r",
+                    "var propertyName = propertyNameField.getValue();\r",
+                    "\r",
+                    "if (propertyNameField.validate()) {\r",
+                    "  node.data.property.propertyName = propertyName;\r",
+                    "  node.set('text', propertyName);\r",
+                    "}\r",
+                    "else {\r",
+                    "  showDialog(400, 100, 'Warning', \"Property Name is not valid. A valid property name should start with alphabet or \\\"_\\\", and follow by any number of \\\"_\\\", alphabet, or number characters\", Ext.Msg.OK, null);\r",
+                    "} \r",
+                    ""
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.button.Button",
+                "designer|controlQuery": "setpropertyform button[action=resetdataproperty]"
+            },
+            "designerId": "8523203d-be36-4ed0-9633-afaa76a23787"
+        },
+        {
             "type": "controllerref",
             "reference": {
                 "name": "items",
@@ -620,6 +760,23 @@
                 "xtype": "selectpropertiesform"
             },
             "designerId": "e7905506-2df6-463a-bf73-35b8995ef35d"
+        },
+        {
+            "type": "controllerref",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "dataPropertyForm",
+                "autoCreate": true,
+                "forceCreate": true,
+                "ref": "dataPropertyForm",
+                "selector": "setpropertyform",
+                "xtype": "setpropertyform"
+            },
+            "designerId": "9010516a-8609-4f68-a31d-77c73694edaa"
         },
         {
             "type": "controllerref",
@@ -784,21 +941,21 @@
                     "\r",
                     "if (nodeType) {\r",
                     "  switch (nodeType) {\r",
-                    "    case 'DATAOBJECT':\r",
-                    "    me.showDataObjectForm(panel);\r",
+                    "      case 'DATAOBJECT':\r",
+                    "      me.showDataObjectForm(panel);\r",
                     "    break;\r",
-                    "    case 'KEYS':\r",
-                    "    me.showSelectKeyFieldsForm(panel);\r",
+                    "      case 'KEYS':\r",
+                    "      me.showSelectKeyFieldsForm(panel);\r",
                     "    break;\r",
                     "    case 'KEYPROPERTY':\r",
-                    "    me.showDataKeyForm(panel);\r",
-                    "    break;\r",
+                    "      me.showDataKeyForm(panel);\r",
+                    "      break;\r",
                     "    case 'PROPERTIES':\r",
-                    "    me.showSelectPropertiesForm(panel);\r",
-                    "    break;\r",
+                    "      me.showSelectPropertiesForm(panel);\r",
+                    "      break;\r",
                     "    case 'DATAPROPERTY':\r",
-                    "    //setDataProperty(me, editor, dataNode, contextName, endpoint);\r",
-                    "    break;\r",
+                    "      me.showDataPropertyForm(panel);\r",
+                    "      break;\r",
                     "    case 'RELATIONSHIPS':\r",
                     "    //setRelations(editor, tree, dataNode, contextName, endpoint);\r",
                     "    break;\r",
@@ -1530,6 +1687,41 @@
                 ]
             },
             "designerId": "74077bb2-8e49-45e8-a8ad-a44d705325d4"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "showDataPropertyForm",
+                "fn": "showDataPropertyForm",
+                "designer|params": [
+                    "nhibernatePanel"
+                ],
+                "implHandler": [
+                    "var me = this, \r",
+                    "form = me.getDataPropertyForm();\r",
+                    "\r",
+                    "var dataTree = nhibernatePanel.down('nhibernatetree');\r",
+                    "var dirNode = dataTree.dirNode;\r",
+                    "var treeNode = nhibernatePanel.treeNode;\r",
+                    "\r",
+                    "form.setActiveRecord(treeNode.data.property);\r",
+                    "\r",
+                    "panel = nhibernatePanel.down('#nhibernateContent');\r",
+                    "\r",
+                    "panel.removeAll();\r",
+                    "\r",
+                    "panel.add(form);\r",
+                    "panel.doLayout();\r",
+                    "\r",
+                    "Ext.getBody().unmask();"
+                ]
+            },
+            "designerId": "e9b65513-4689-4265-8561-042d743fe9f5"
         },
         {
             "type": "basicfunction",

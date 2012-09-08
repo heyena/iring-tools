@@ -88,11 +88,15 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
     var selection = me.getSelectionModel();
     var store = me.store;
     var node = selection.getSelection()[0];
-    node.removeAll();
-    node.set('leaf', false);
-    node.set('expanded', false);
-    node.set('loaded', false);
-    node.expand();
+    //node.removeAll();
+    //node.set('leaf', false);
+    if(node){
+      if(node.isExpanded())
+      node.collapse();
+      //node.set('expanded', false);
+      //node.set('loaded', false);
+      node.expand();
+    }
   },
 
   getSelectedNode: function() {

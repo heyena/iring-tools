@@ -22,9 +22,12 @@ Ext.Loader.setConfig({
 });
 
 Ext.application({
+  stores: [
+    'RelatedObjectStore'
+  ],
   views: [
     'AMViewport',
-    'nhibernate.SelectPropertiesForm'
+    'nhibernate.SetRelationForm'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

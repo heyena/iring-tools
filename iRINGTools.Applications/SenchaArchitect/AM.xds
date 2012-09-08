@@ -637,14 +637,6 @@
             ],
             "className": "nhibernate.RelationsForm"
         },
-        "b28542b4-a9aa-4224-96f9-cef4422f5336": {
-            "paths": [
-                "metadata/view/nhibernate.RelationPanel",
-                "Scripts/AM/view/override/nhibernate/RelationPanel.js",
-                "Scripts/AM/view/nhibernate/RelationPanel.js"
-            ],
-            "className": "nhibernate.RelationPanel"
-        },
         "65df1f92-f476-4bca-b264-de0fd62a3eca": {
             "paths": [
                 "metadata/view/mapping.MappingPanel",
@@ -818,6 +810,30 @@
                 "Scripts/AM/view/nhibernate/SelectPropertiesForm.js"
             ],
             "className": "nhibernate.SelectPropertiesForm"
+        },
+        "d1c34e2a-9007-4641-b713-a25c592fadbd": {
+            "paths": [
+                "metadata/view/nhibernate.SetPropertyForm",
+                "Scripts/AM/view/override/nhibernate/SetPropertyForm.js",
+                "Scripts/AM/view/nhibernate/SetPropertyForm.js"
+            ],
+            "className": "nhibernate.SetPropertyForm"
+        },
+        "ef191768-2bd4-46be-864b-6386fbb488a5": {
+            "paths": [
+                "metadata/view/nhibernate.SetRelationForm",
+                "Scripts/AM/view/override/nhibernate/SetRelationForm.js",
+                "Scripts/AM/view/nhibernate/SetRelationForm.js"
+            ],
+            "className": "nhibernate.SetRelationForm"
+        },
+        "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd": {
+            "paths": [
+                "metadata/store/RelatedObjectStore",
+                "Scripts/AM/store/override/RelatedObjectStore.js",
+                "Scripts/AM/store/RelatedObjectStore.js"
+            ],
+            "className": "RelatedObjectStore"
         }
     },
     "viewOrderMap": {
@@ -874,7 +890,6 @@
             "ce6504c7-08bb-4a89-a41b-4128aec9f385",
             "ee4b18be-7210-4e88-9a5c-50e9ca131349",
             "9ee7d1e0-1914-4b89-bc09-139012f29114",
-            "b28542b4-a9aa-4224-96f9-cef4422f5336",
             "65df1f92-f476-4bca-b264-de0fd62a3eca",
             "cc1939a2-a481-40e0-98f8-931125e7aa86",
             "fa0cc7c0-9539-4b11-858b-bfefff02b36c",
@@ -887,7 +902,9 @@
             "02e5600b-0e29-4250-9b2b-34467449933a",
             "926170c4-1014-4c33-b926-bf1625034d16",
             "d98d58c9-72b2-46e0-89c3-f2258251b26f",
-            "fc9cda16-dcc7-4f94-a9a7-8ed183eef987"
+            "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
+            "d1c34e2a-9007-4641-b713-a25c592fadbd",
+            "ef191768-2bd4-46be-864b-6386fbb488a5"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",
@@ -902,7 +919,8 @@
             "f38a99b9-b2d4-4f72-9e08-b126caa893b7",
             "bd0c2146-a07f-405b-85d7-72edd111ce14",
             "88fb5df4-c2c7-4ed8-a325-8140a2eb98bf",
-            "82edf86f-a5e2-4e95-8ce8-b5152d4a2cd6"
+            "82edf86f-a5e2-4e95-8ce8-b5152d4a2cd6",
+            "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd"
         ],
         "controller": [
             "06f88f22-c6f5-473b-a55b-a40aae8ad3b2",

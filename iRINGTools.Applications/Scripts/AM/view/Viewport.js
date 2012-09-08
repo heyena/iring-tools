@@ -56,6 +56,8 @@ Ext.define('AM.view.Viewport', {
     'AM.view.nhibernate.PropertyGrid',
     'AM.view.nhibernate.DataObjectForm',
     'AM.view.nhibernate.DataKeyForm',
-    'AM.view.nhibernate.SelectDataKeysForm'
+    'AM.view.nhibernate.SelectDataKeysForm',
+    'AM.view.nhibernate.SetPropertyForm',
+    'AM.view.nhibernate.SetRelationForm'
   ]
 });
