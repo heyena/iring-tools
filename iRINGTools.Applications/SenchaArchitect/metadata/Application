@@ -8,7 +8,7 @@
     "userConfig": {
         "views": [
             "AMViewport",
-            "nhibernate.SelectDataKeysForm"
+            "nhibernate.SelectPropertiesForm"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

@@ -24,7 +24,7 @@ Ext.Loader.setConfig({
 Ext.application({
   views: [
     'AMViewport',
-    'nhibernate.SelectDataKeysForm'
+    'nhibernate.SelectPropertiesForm'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

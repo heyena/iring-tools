@@ -250,6 +250,15 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
         me.serName = 'SERVICE_NAME';
       }
     }
+  },
+
+  setActive: function(record) {
+    var me = this;
+    if (record) {
+      me.getForm().setValues(record);
+    } else {
+      me.getForm().reset();
+    }
   }
 
 });

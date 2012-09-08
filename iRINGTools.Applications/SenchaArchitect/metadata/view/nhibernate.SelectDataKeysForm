@@ -1,0 +1,162 @@
+{
+    "type": "form",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "nhibernate.SelectDataKeysForm",
+        "designer|userAlias": "selectdatakeysform",
+        "height": null,
+        "width": null,
+        "layout": "fit",
+        "bodyPadding": null,
+        "bodyStyle": [
+            "background:#eee;padding:10px 10px 0px 10px"
+        ],
+        "title": null
+    },
+    "id": "ExtBox1-ext-gen48541",
+    "designerId": "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
+    "cn": [
+        {
+            "type": "container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyContainer12",
+                "layout": "anchor"
+            },
+            "designerId": "8e843b4d-5f71-4794-b506-2cf9f0f6ce6c",
+            "cn": [
+                {
+                    "type": "label",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "MyLabel6",
+                        "cls": "x-form-item",
+                        "style": [
+                            "font-weight:bold"
+                        ],
+                        "text": "Select Keys"
+                    },
+                    "designerId": "d57e65d7-051d-4757-87ca-4f702803d2d7"
+                },
+                {
+                    "type": "linkedinstance",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "id": null,
+                        "itemId": null,
+                        "maxHeight": 250,
+                        "minHeight": 200,
+                        "minWidth": null
+                    },
+                    "designerId": "bcd5e90b-8818-44da-b9fb-de74ae6d23e9",
+                    "masterInstanceId": "ExtBox1-ext-gen55549"
+                }
+            ]
+        },
+        {
+            "type": "toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "designer|userClassName": "MyToolbar22"
+            },
+            "designerId": "97a8deea-c724-4706-adbd-a7fd3e4cd6aa",
+            "cn": [
+                {
+                    "type": "tbspacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySpacer13",
+                        "width": 4
+                    },
+                    "designerId": "76c9aa5a-d8af-4b09-80c9-cdca1c7d8591"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "saveselectkeys",
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton44",
+                        "iconCls": "am-apply",
+                        "text": "Apply"
+                    },
+                    "designerId": "f9817153-1248-43df-9eb7-287a228eb891",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "type": "tbspacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySpacer13",
+                        "width": 4
+                    },
+                    "designerId": "7e786d86-b75d-45a0-8fea-6f4f8a42f6be"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "resetselectkeys",
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton44",
+                        "iconCls": "am-edit-clear",
+                        "text": "Reset"
+                    },
+                    "designerId": "724accbb-c56a-4777-825e-65be57d0132b",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
