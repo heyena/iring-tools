@@ -78,6 +78,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
+                "container|padding": 4,
                 "designer|userClassName": "MyToolbar22"
             },
             "designerId": "99643c4a-4835-4fe3-882d-a4a3e0874a3d",

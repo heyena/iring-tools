@@ -109,6 +109,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
+                "container|padding": 4,
                 "designer|userClassName": "MyToolbar19"
             },
             "designerId": "e779d4b1-634a-4a69-84b7-c87450211e57",

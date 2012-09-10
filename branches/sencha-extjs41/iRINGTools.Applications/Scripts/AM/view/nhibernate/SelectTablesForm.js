@@ -44,28 +44,30 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
               xtype: 'label',
               border: 2,
               text: 'Database Tables'
+            },
+            {
+              xtype: 'multiselectiongrid',
+              minHeight: 200
+            },
+            {
+              xtype: 'checkboxfield',
+              name: 'enableSummary',
+              value: 'off',
+              fieldLabel: 'Enable Summary:',
+              labelWidth: 150,
+              inputValue: 'off'
             }
           ]
-        },
-        {
-          xtype: 'multiselectiongrid',
-          minHeight: 200,
-          autoScroll: true
-        },
-        {
-          xtype: 'checkboxfield',
-          anchor: '100%',
-          name: 'enableSummary',
-          value: 'off',
-          fieldLabel: 'Enable Summary:',
-          labelWidth: 150,
-          inputValue: 'off'
         }
       ],
       dockedItems: [
         {
           xtype: 'toolbar',
           dock: 'top',
+          layout: {
+            padding: 4,
+            type: 'hbox'
+          },
           items: [
             {
               xtype: 'tbspacer',

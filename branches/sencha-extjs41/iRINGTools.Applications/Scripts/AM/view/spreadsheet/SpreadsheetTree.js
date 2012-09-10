@@ -47,6 +47,10 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
         {
           xtype: 'toolbar',
           dock: 'top',
+          layout: {
+            padding: 4,
+            type: 'hbox'
+          },
           items: [
             {
               xtype: 'button',

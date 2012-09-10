@@ -21,6 +21,10 @@ Ext.define('AM.view.search.SearchToolbar', {
     var me = this;
 
     Ext.applyIf(me, {
+      layout: {
+        padding: 4,
+        type: 'hbox'
+      },
       items: [
         {
           xtype: 'textfield',
@@ -39,7 +43,7 @@ Ext.define('AM.view.search.SearchToolbar', {
           xtype: 'button',
           action: 'search',
           style: 'marginLeft: 5px',
-          icon: 'Content/img/16x16/document-properties.png',
+          iconCls: 'am-document-properties',
           text: 'Search'
         },
         {
