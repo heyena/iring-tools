@@ -237,47 +237,47 @@ a:active {color: black}
 
 .am-edit-clear
 {
-  background-image: url("../img/16x16/edit-clear.png")
+  background-image: url("../img/16x16/edit-clear.png") !important;
 }
 
 .am-apply
 {
-  background-image: url("../img/16x16/apply.png")
+  background-image: url("../img/16x16/apply.png") !important;
 }
 
 .am-list-add
 {
-  background-image: url("../img/16x16/list-add.png")
+  background-image: url("../img/16x16/list-add.png") !important;
 }
 
 .am-list-remove
 {
-  background-image: url("../img/16x16/list-remove.png")
+  background-image: url("../img/16x16/list-remove.png") !important;
 }
 
 .am-view-refresh
 {
-  background-image: url("../img/16x16/view-refresh.png")
+  background-image: url("../img/16x16/view-refresh.png") !important;
 }
 
 .am-document-properties
 {
-  background-image: url("../img/16x16/document-properties.png")
+  background-image: url("../img/16x16/document-properties.png") !important;
 }
 
 .am-document-save
 {
-  background-image: url("../img/16x16/document-save.png")
+  background-image: url("../img/16x16/document-save.png") !important;
 }
 
 .am-document-up
 {
-  background-image: url("../img/16x16/document-up.png")
+  background-image: url("../img/16x16/document-up.png") !important;
 }
 
 .am-document-down
 {
-  background-image: url("../img/16x16/document-down.png")
+  background-image: url("../img/16x16/document-down.png") !important;
 }
 
 .mapping-target {

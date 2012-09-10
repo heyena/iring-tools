@@ -45,13 +45,17 @@ Ext.define('AM.view.directory.DirectoryTree', {
         {
           xtype: 'toolbar',
           dock: 'top',
+          layout: {
+            padding: 4,
+            type: 'hbox'
+          },
           items: [
             {
               xtype: 'button',
               handler: function(button, event) {
                 me.onReload();
               },
-              icon: 'Content/img/16x16/view-refresh.png',
+              iconCls: 'am-view-refresh',
               text: 'Reload Tree'
             }
           ]

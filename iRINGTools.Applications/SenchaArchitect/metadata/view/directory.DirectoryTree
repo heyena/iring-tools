@@ -72,6 +72,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
+                "container|padding": 4,
                 "designer|userClassName": "MyToolbar4"
             },
             "designerId": "d6c514dc-06dc-4f44-a592-77d3c55ffc8d",
@@ -86,7 +87,8 @@
                     "userConfig": {
                         "layout|flex": null,
                         "designer|userClassName": "MyButton1",
-                        "icon": "Content/img/16x16/view-refresh.png",
+                        "icon": null,
+                        "iconCls": "am-view-refresh",
                         "text": "Reload Tree"
                     },
                     "designerId": "da9e4018-f3fc-4bee-b0b3-bee73985e3fa",

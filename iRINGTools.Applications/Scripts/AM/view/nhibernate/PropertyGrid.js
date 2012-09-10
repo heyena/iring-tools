@@ -60,6 +60,10 @@ Ext.define('AM.view.nhibernate.PropertyGrid', {
         {
           xtype: 'toolbar',
           dock: 'top',
+          layout: {
+            padding: 4,
+            type: 'hbox'
+          },
           items: [
             {
               xtype: 'tbspacer',

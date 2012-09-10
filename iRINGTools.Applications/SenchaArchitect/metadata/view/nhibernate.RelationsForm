@@ -83,6 +83,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
+                "container|padding": 4,
                 "designer|userClassName": "MyToolbar16"
             },
             "designerId": "28eb23e4-2399-4877-9715-461f19554fbb",
@@ -97,7 +98,8 @@
                     "userConfig": {
                         "layout|flex": null,
                         "designer|userClassName": "MyButton29",
-                        "icon": "Content/img/16x16/apply.png",
+                        "icon": null,
+                        "iconCls": "am-apply",
                         "text": "Apply",
                         "tooltip": [
                             "Apply the current changes to the data objects tree"
@@ -130,6 +132,7 @@
                         "layout|flex": null,
                         "designer|userClassName": "MyButton30",
                         "icon": "Content/img/16x16/edit-clear.png",
+                        "iconCls": "am-edit-clear",
                         "text": "Reset",
                         "tooltip": [
                             "Reset to the latest applied changes"

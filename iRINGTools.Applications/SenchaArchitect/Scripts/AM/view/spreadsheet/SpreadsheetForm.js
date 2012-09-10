@@ -33,6 +33,10 @@ Ext.define('AM.view.spreadsheet.SpreadsheetForm', {
         {
           xtype: 'toolbar',
           dock: 'bottom',
+          layout: {
+            padding: 4,
+            type: 'hbox'
+          },
           items: [
             {
               xtype: 'tbfill'

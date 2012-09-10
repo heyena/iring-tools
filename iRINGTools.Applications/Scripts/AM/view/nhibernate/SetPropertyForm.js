@@ -96,6 +96,10 @@ Ext.define('AM.view.nhibernate.SetPropertyForm', {
         {
           xtype: 'toolbar',
           dock: 'top',
+          layout: {
+            padding: 4,
+            type: 'hbox'
+          },
           items: [
             {
               xtype: 'tbspacer',

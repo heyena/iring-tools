@@ -46,7 +46,7 @@ Ext.define('AM.view.spreadsheet.SourceForm', {
             {
               xtype: 'button',
               action: 'uploadspreadsheet',
-              icon: 'Content/img/16x16/document-up.png',
+              iconCls: 'am-document-up',
               text: 'Upload'
             }
           ]

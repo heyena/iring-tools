@@ -6,6 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
+        "container|padding": 4,
         "designer|userClassName": "search.SearchToolbar",
         "designer|userAlias": "searchtoolbar"
     },
@@ -67,7 +68,8 @@
                 "style": [
                     "marginLeft: 5px"
                 ],
-                "icon": "Content/img/16x16/document-properties.png",
+                "icon": null,
+                "iconCls": "am-document-properties",
                 "text": "Search"
             },
             "designerId": "981c30ff-2f64-41a6-a3a0-799a5b26f200",

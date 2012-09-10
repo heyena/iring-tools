@@ -64,7 +64,8 @@
                         "action": "uploadspreadsheet",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton35",
-                        "icon": "Content/img/16x16/document-up.png",
+                        "icon": null,
+                        "iconCls": "am-document-up",
                         "text": "Upload"
                     },
                     "designerId": "e1cb352b-fe7b-4ba8-a730-0152556f8946",

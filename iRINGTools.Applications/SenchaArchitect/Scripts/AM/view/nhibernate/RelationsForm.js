@@ -49,10 +49,14 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
         {
           xtype: 'toolbar',
           dock: 'top',
+          layout: {
+            padding: 4,
+            type: 'hbox'
+          },
           items: [
             {
               xtype: 'button',
-              icon: 'Content/img/16x16/apply.png',
+              iconCls: 'am-apply',
               text: 'Apply',
               tooltip: 'Apply the current changes to the data objects tree'
             },
@@ -63,6 +67,7 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
             {
               xtype: 'button',
               icon: 'Content/img/16x16/edit-clear.png',
+              iconCls: 'am-edit-clear',
               text: 'Reset',
               tooltip: 'Reset to the latest applied changes'
             }

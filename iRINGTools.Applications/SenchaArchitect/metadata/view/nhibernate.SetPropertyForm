@@ -167,6 +167,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
+                "container|padding": 4,
                 "designer|userClassName": "MyToolbar24"
             },
             "designerId": "6bf00d34-09cc-4a30-829f-d7e86a39f428",
@@ -193,8 +194,8 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
                         "action": "savedataproperty",
+                        "layout|flex": null,
                         "designer|userClassName": "MyButton48",
                         "iconCls": "am-apply",
                         "text": "Apply"
@@ -230,8 +231,8 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
                         "action": "resetdataproperty",
+                        "layout|flex": null,
                         "designer|userClassName": "MyButton48",
                         "iconCls": "am-edit-clear",
                         "text": "Reset"
