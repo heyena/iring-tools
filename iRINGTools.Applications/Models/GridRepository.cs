@@ -17,15 +17,15 @@ namespace iRINGTools.Web.Models
     {
       //private NameValueCollection _settings = null;
       private WebHttpClient _dataServiceClient = null;
-			private DataDictionary dataDict;
-			private DataItems dataItems;
-			private Grid dataGrid;
-			private string graph;
-			private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
-			private string response = "";
+      private DataDictionary dataDict;
+      private DataItems dataItems;
+      private Grid dataGrid;
+      private string graph;
+      private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
+      private string response = "";
 
-			[Inject]
-			public GridRepository()
+      [Inject]
+      public GridRepository()
       {
         dataGrid = new Grid();
 
@@ -59,57 +59,57 @@ namespace iRINGTools.Web.Models
         #endregion
       }
 
-			public string getResponse()
-			{
-				return response;
-			}
+      public string GetResponse()
+      {
+        return response;
+      }
 
-			public Grid getGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
-			{
+      public Grid GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
+      {
         if (response != "")
           return null;
 
-				this.graph = graph;
-				getDatadictionary(scope, app);
-
-				if (response != "")
-					return null;
-
-				getDataItems(scope, app, graph, filter, sort, dir, start, limit);
-
-				if (response != "")
-					return null;
-
-        getDataGrid();
+        this.graph = graph;
+        GetDatadictionary(scope, app);
 
         if (response != "")
           return null;
 
-				return dataGrid;
-			}			
+        GetDataItems(scope, app, graph, filter, sort, dir, start, limit);
 
-			private void getDatadictionary(String scope, String app)
-			{
-				try
+        if (response != "")
+          return null;
+
+        GetDataGrid();
+
+        if (response != "")
+          return null;
+
+        return dataGrid;
+      }			
+
+      private void GetDatadictionary(String scope, String app)
+      {
+        try
         {
-					dataDict = _dataServiceClient.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
+          dataDict = _dataServiceClient.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
 
-					if (dataDict == null || dataDict.dataObjects.Count == 0)
-						response = response + "Data dictionary of [" + app + "] is empty.";
+          if (dataDict == null || dataDict.dataObjects.Count == 0)
+            response = response + "Data dictionary of [" + app + "] is empty.";
         }
         catch (Exception ex)
         {
-					_logger.Error("Error getting dictionary." + ex);
-					response = response + " " + ex.Message.ToString();
+          _logger.Error("Error getting dictionary." + ex);
+          response = response + " " + ex.Message.ToString();
         }
       }
 
-      private void getDataItems(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
+      private void GetDataItems(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
       {
         try
         {
           string format = "json";
-          DataFilter dataFilter = createDataFilter(filter, sort, dir);
+          DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
           string dataItemsJson = _dataServiceClient.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
           
@@ -119,30 +119,30 @@ namespace iRINGTools.Web.Models
         catch (Exception ex)
         {
           _logger.Error("Error getting data items." + ex);
-					response = response + " " + ex.Message.ToString();
+          response = response + " " + ex.Message.ToString();
         }
       }
 
-			private void getDataGrid()
-			{				
-				List<List<string>> gridData = new List<List<string>>();
-				List<Field> fields = new List<Field>();
-				createFields(ref fields, ref gridData);
+      private void GetDataGrid()
+      {				
+        List<List<string>> gridData = new List<List<string>>();
+        List<Field> fields = new List<Field>();
+        CreateFields(ref fields, ref gridData);
         dataGrid.total = dataItems.total;
-				dataGrid.fields = fields;
-				dataGrid.data = gridData;
-			}
+        dataGrid.fields = fields;
+        dataGrid.data = gridData;
+      }
 
-			private void createFields(ref List<Field> fields, ref List<List<string>> gridData)
-			{
-				foreach (DataObject dataObj in dataDict.dataObjects)
-				{
-					if (dataObj.objectName.ToUpper() != graph.ToUpper())
-						continue;
-					else
-					{
-						foreach (DataProperty dataProp in dataObj.dataProperties)
-						{
+      private void CreateFields(ref List<Field> fields, ref List<List<string>> gridData)
+      {
+        foreach (DataObject dataObj in dataDict.dataObjects)
+        {
+          if (dataObj.objectName.ToUpper() != graph.ToUpper())
+            continue;
+          else
+          {
+            foreach (DataProperty dataProp in dataObj.dataProperties)
+            {
               if (!dataProp.isHidden)
               {
                 Field field = new Field();
@@ -168,20 +168,20 @@ namespace iRINGTools.Web.Models
 
                 fields.Add(field);
               }
-						}
-					}
-				}
+            }
+          }
+        }
 
-				int newWid;
-				foreach (DataItem dataItem in dataItems.items)
-				{
-					List<string> rowData = new List<string>();
-					foreach (Field field in fields)
-					{
+        int newWid;
+        foreach (DataItem dataItem in dataItems.items)
+        {
+          List<string> rowData = new List<string>();
+          foreach (Field field in fields)
+          {
             bool found = false;
 
-						foreach (KeyValuePair<string, string> property in dataItem.properties)
-						{
+            foreach (KeyValuePair<string, string> property in dataItem.properties)
+            {
               if (field.dataIndex.ToLower() == property.Key.ToLower())
               {
                 rowData.Add(property.Value);
@@ -191,16 +191,16 @@ namespace iRINGTools.Web.Models
                 found = true;
                 break;
               }
-						}
+            }
 
             if (!found)
             {
               rowData.Add("");
             }
-					}
-					gridData.Add(rowData);
-				}
-			}
+          }
+          gridData.Add(rowData);
+        }
+      }
 
       private String ToExtJsType(org.iringtools.library.DataType dataType)
       {
@@ -230,103 +230,103 @@ namespace iRINGTools.Web.Models
         }
       }
 
-			private RelationalOperator getOpt(string opt)
-			{
-				switch(opt.ToLower())
-				{
-					case "eq":
-						return RelationalOperator.EqualTo;
-					case "lt":
-						return RelationalOperator.LesserThan;
-					case "gt":
-						return RelationalOperator.GreaterThan;
-				}
-				return RelationalOperator.EqualTo;
-			}
+      private RelationalOperator GetOpt(string opt)
+      {
+        switch(opt.ToLower())
+        {
+          case "eq":
+            return RelationalOperator.EqualTo;
+          case "lt":
+            return RelationalOperator.LesserThan;
+          case "gt":
+            return RelationalOperator.GreaterThan;
+        }
+        return RelationalOperator.EqualTo;
+      }
 
-			private DataFilter createDataFilter(string filter, string sortBy, string sortOrder)
-			{
-				DataFilter dataFilter = new DataFilter();
-				
-				// process filtering
-				if (filter != null && filter.Count() > 0)
-				{
-					try
-					{
+      private DataFilter CreateDataFilter(string filter, string sortBy, string sortOrder)
+      {
+        DataFilter dataFilter = new DataFilter();
+        
+        // process filtering
+        if (filter != null && filter.Count() > 0)
+        {
+          try
+          {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
-						List<Dictionary<String, String>> filterExpressions = 
+            List<Dictionary<String, String>> filterExpressions = 
               (List<Dictionary<String, String>>)serializer.Deserialize(filter, typeof(List<Dictionary<String, String>>));
-						
-						if (filterExpressions != null && filterExpressions.Count > 0)
-						{
-							List<Expression> expressions = new List<Expression>();
-							dataFilter.Expressions = expressions;
+            
+            if (filterExpressions != null && filterExpressions.Count > 0)
+            {
+              List<Expression> expressions = new List<Expression>();
+              dataFilter.Expressions = expressions;
 
-							foreach (Dictionary<String, String> filterExpression in filterExpressions)
-							{
-								Expression expression = new Expression();
-								expressions.Add(expression);
+              foreach (Dictionary<String, String> filterExpression in filterExpressions)
+              {
+                Expression expression = new Expression();
+                expressions.Add(expression);
 
-								if (expressions.Count > 1)
-								{
-									expression.LogicalOperator = LogicalOperator.And;
-								}
+                if (expressions.Count > 1)
+                {
+                  expression.LogicalOperator = LogicalOperator.And;
+                }
 
-								if (filterExpression["comparison"] != null)
-								{										
-									RelationalOperator optor = getOpt(filterExpression["comparison"]);
-									expression.RelationalOperator = optor;
-								}
-								else
-								{
-									expression.RelationalOperator = RelationalOperator.EqualTo;
-								}
+                if (filterExpression["comparison"] != null)
+                {										
+                  RelationalOperator optor = GetOpt(filterExpression["comparison"]);
+                  expression.RelationalOperator = optor;
+                }
+                else
+                {
+                  expression.RelationalOperator = RelationalOperator.EqualTo;
+                }
 
-								expression.PropertyName = filterExpression["field"];
+                expression.PropertyName = filterExpression["field"];
 
-								Values values = new Values();
-								expression.Values = values;
-								string value = filterExpression["value"];
-								values.Add(value);
-							}
-						}
-					}
-					catch (Exception ex)
-					{
-						_logger.Error("Error deserializing filter: " + ex);
-						response = response + " " + ex.Message.ToString();
-					}
-				}
+                Values values = new Values();
+                expression.Values = values;
+                string value = filterExpression["value"];
+                values.Add(value);
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            _logger.Error("Error deserializing filter: " + ex);
+            response = response + " " + ex.Message.ToString();
+          }
+        }
 
-				// process sorting
-				if (sortBy != null && sortBy.Count() > 0 && sortOrder != null && sortOrder.Count() > 0)
-				{
-					List<OrderExpression> orderExpressions = new List<OrderExpression>();
-					dataFilter.OrderExpressions = orderExpressions;
+        // process sorting
+        if (sortBy != null && sortBy.Count() > 0 && sortOrder != null && sortOrder.Count() > 0)
+        {
+          List<OrderExpression> orderExpressions = new List<OrderExpression>();
+          dataFilter.OrderExpressions = orderExpressions;
 
-					OrderExpression orderExpression = new OrderExpression();
-					orderExpressions.Add(orderExpression);
+          OrderExpression orderExpression = new OrderExpression();
+          orderExpressions.Add(orderExpression);
 
-					if (sortBy != null)
-						orderExpression.PropertyName = sortBy;
+          if (sortBy != null)
+            orderExpression.PropertyName = sortBy;
 
-					string sortOrderEnumVal = sortOrder.Substring(0, 1).ToUpper() + sortOrder.Substring(1).ToLower();
+          string sortOrderEnumVal = sortOrder.Substring(0, 1).ToUpper() + sortOrder.Substring(1).ToLower();
 
-					if (sortOrderEnumVal != null)
-					{
-						try
-						{
-							orderExpression.SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), sortOrderEnumVal);
-						}
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-							response = response + " " + ex.Message.ToString();
-						}
-					}
-				}
+          if (sortOrderEnumVal != null)
+          {
+            try
+            {
+              orderExpression.SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), sortOrderEnumVal);
+            }
+            catch (Exception ex)
+            {
+              _logger.Error(ex.ToString());
+              response = response + " " + ex.Message.ToString();
+            }
+          }
+        }
 
-				return dataFilter;
-			}
-		}
+        return dataFilter;
+      }
+    }
 }

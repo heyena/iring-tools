@@ -422,6 +422,7 @@ namespace org.iringtools.refdata
       foreach (SparqlResult result in sparqlResults)
       {
         Classification classification = new Classification();
+        classification.repository = repository.Name;
         string uri = String.Empty;
 
         if (result.HasValue("uri") && result["uri"] != null)
@@ -477,8 +478,11 @@ namespace org.iringtools.refdata
 
         foreach (Repository repository in _repositories)
         {
-          if (rep != null)
-            if (rep.Name != repository.Name) continue;
+          ///
+          ///  Need to check all repos for specializations
+          ///
+      //    if (rep != null)
+      //      if (rep.Name != repository.Name) continue;
 
           switch (repository.RepositoryType)
           {
@@ -490,6 +494,7 @@ namespace org.iringtools.refdata
               foreach (SparqlResult result in sparqlResults)
               {
                 Specialization specialization = new Specialization();
+                specialization.repository = repository.Name;
                 string uri = string.Empty;
 
                 foreach (var v in result.Variables)
@@ -526,6 +531,7 @@ namespace org.iringtools.refdata
               foreach (SparqlResult result in sparqlResults)
               {
                 Specialization specialization = new Specialization();
+                specialization.repository = repository.Name;
                 string uri = string.Empty;
 
                 foreach (var v in result.Variables)
@@ -560,6 +566,7 @@ namespace org.iringtools.refdata
               foreach (SparqlResult result in sparqlResults)
               {
                 Specialization specialization = new Specialization();
+                specialization.repository = repository.Name;
                 string uri = string.Empty;
 
                 foreach (var v in result.Variables)
@@ -893,8 +900,9 @@ namespace org.iringtools.refdata
 
         foreach (Repository repository in _repositories)
         {
-          if (repo != null)
-            if (repository.Name != repo.Name) continue;
+
+          //if (repo != null)
+          //  if (repository.Name != repo.Name) continue;
 
           if (repository.RepositoryType == RepositoryType.Part8)
           {
@@ -912,6 +920,7 @@ namespace org.iringtools.refdata
           foreach (SparqlResult result in sparqlResults)
           {
             resultEntity = new Entity();
+            resultEntity.Repository = repository.Name;
             foreach (var v in result.Variables)
             {
               INode node = result[v];
@@ -967,8 +976,11 @@ namespace org.iringtools.refdata
 
         foreach (Repository repository in _repositories)
         {
-          if (repo != null)
-            if (repository.Name != repo.Name) continue;
+          ///
+          /// Need to check all repos for subclasses
+          ///
+ //         if (repo != null)      
+ //           if (repository.Name != repo.Name) continue;
 
           if (repository.RepositoryType == RepositoryType.Part8)
           {
@@ -1092,17 +1104,19 @@ namespace org.iringtools.refdata
       {
         string sparql = String.Empty;
         string sparqlPart8 = String.Empty;
+        string sparqlJord = String.Empty;
         string relativeUri = String.Empty;
 
         Query queryGetSubClasses = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassesCount").Query;
+        Query queryGetSubClassesJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassesCountJORD").Query;
 
-        sparql = ReadSPARQL(queryGetSubClasses.FileName);
-        sparql = sparql.Replace("param1", id);
+        sparqlJord = ReadSPARQL(queryGetSubClassesJord.FileName).Replace("param1", id);
+
+        sparql = ReadSPARQL(queryGetSubClasses.FileName).Replace("param1", id);
 
         Query queryGetSubClassOfInverse = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOfCount").Query;
 
-        sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.FileName);
-        sparqlPart8 = sparqlPart8.Replace("param1", id);
+        sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.FileName).Replace("param1", id);
 
         int count = 0;
         foreach (Repository repository in _repositories)
@@ -1110,6 +1124,18 @@ namespace org.iringtools.refdata
           if (repository.RepositoryType == RepositoryType.Part8)
           {
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlPart8);
+
+            foreach (SparqlResult result in sparqlResults)
+            {
+              foreach (var v in result.Variables)
+              {
+                count += Convert.ToInt32(((LiteralNode)result[v]).Value);
+              }
+            }
+          }
+          else if (repository.RepositoryType == RepositoryType.JORD) 
+          {
+            SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlJord);
 
             foreach (SparqlResult result in sparqlResults)
             {
@@ -2040,6 +2066,7 @@ namespace org.iringtools.refdata
       try
       {
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(repository.Uri));
+        
         string encryptedCredentials = repository.EncryptedCredentials;
         WebCredentials cred = new WebCredentials(encryptedCredentials);
         if (cred.isEncrypted) cred.Decrypt();
@@ -2055,8 +2082,8 @@ namespace org.iringtools.refdata
         endpoint.Credentials = cred.GetNetworkCredential();
 
         SparqlResultSet resultSet = endpoint.QueryWithResultSet(sparql);
-
-        return resultSet;
+        //endpoint.QueryWithResultSet(resultHandler, sparql);
+         return resultSet;
       }
       catch (Exception ex)
       {
@@ -2120,19 +2147,19 @@ namespace org.iringtools.refdata
       }
     }
 
-    private RefDataEntities GetRequestedPage(RefDataEntities entities, int startIdx, int pageSize)
+    private RefDataEntities GetRequestedPage(RefDataEntities rde, int startIdx, int pageSize)
     {
       try
       {
         RefDataEntities page = new RefDataEntities();
-        page.Total = entities.Entities.Count;
+        page.Total = rde.Entities.Count;
 
         for (int i = startIdx; i < startIdx + pageSize; i++)
         {
-          if (entities.Entities.Count == i) break;
+          if (rde.Entities.Count == i) break;
 
-          string key = entities.Entities.Keys[i];
-          Entity entity = entities.Entities[key];
+          string key = rde.Entities.Keys[i];
+          Entity entity = rde.Entities[key];
           page.Entities.Add(key, entity);
         }
 
@@ -2941,11 +2968,15 @@ namespace org.iringtools.refdata
       Graph delete = new Graph();
       Graph insert = new Graph();
       //add namespaces to graphs 
-      delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
-      delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
-      delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
-      delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
-      delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+      foreach (var pref in nsMap.Prefixes)
+      {
+        delete.NamespaceMap.AddNamespace(pref, nsMap.GetNamespaceUri(pref));
+      }
+      //delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+      //delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+      //delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+      //delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+      //delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
       insert.NamespaceMap.Import(delete.NamespaceMap);
 
       Response response = new Response();

@@ -1016,6 +1016,7 @@ namespace org.iringtools.utility
 
     public static T DeserializeFromStream<T>(Stream stream, bool useDataContractSerializer)
     {
+      
       T graph;
       XmlDictionaryReader reader = null;
       try

@@ -84,6 +84,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Activation" />
@@ -138,6 +140,7 @@
     <Content Include="SPARQL\GetRoleInfo.txt" />
     <Content Include="SPARQL\GetRoles.txt" />
     <Content Include="SPARQL\GetStatus.txt" />
+    <Content Include="SPARQL\GetSubClassCountJORD.txt" />
     <Content Include="SPARQL\GetSubClassJORD.txt" />
     <Content Include="SPARQL\GetSubClassOf.txt" />
     <Content Include="SPARQL\GetSubClassSandbox.txt" />

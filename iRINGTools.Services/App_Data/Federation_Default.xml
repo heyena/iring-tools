@@ -86,6 +86,17 @@
       <updateuri i:nil="true"/>
       <uri>http://www.iringsandbox.org/repositories/sandbox/query</uri>
     </repository>
+        <repository>
+      <description>Hatch Sandbox</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>0</id>
+      <isreadonly>true</isreadonly>
+      <name>Hatch Sandbox</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>Part8</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://iring.hatch.com.au/services/sandbox/query</uri>
+    </repository>
     <repository>
       <description>RDS/WIP Part 4 Reference Data Library</description>
       <encryptedcredentials i:nil="true"/>
