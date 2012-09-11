@@ -2,24 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-using System.Net;
-using System.Web;
-using System.Xml.Linq;
+using ExtremeML.Packaging;
+using ExtremeML.Spreadsheet.Address;
 using IDS_ADI.InformationModel;
 using org.ids_adi.qmxf;
-using org.iringtools.utility;
-using ExtremeML.Packaging;
-using ExtremeML.Spreadsheet;
-using System.Text.RegularExpressions;
-using ExtremeML.Spreadsheet.Address;
 using org.iringtools.library;
+using org.iringtools.utility;
 
 namespace QMXFGenerator
 {
-  class Program
+  internal class Program
   {
     #region Private Members
+
     private static string _excelFilePath = String.Empty;
     private static string _qmxfFilePath = String.Empty;
     private static string _processedFilePath = String.Empty;
@@ -45,11 +40,11 @@ namespace QMXFGenerator
     private static List<ArrayList> _baseTemplates = new List<ArrayList>();
     private static List<ArrayList> _siTemplates = new List<ArrayList>();
     private static List<ArrayList> _roles = new List<ArrayList>();
-    #endregion
 
-    static void Main(string[] args)
+    #endregion Private Members
+
+    private static void Main(string[] args)
     {
-
       try
       {
         {
@@ -137,7 +132,6 @@ namespace QMXFGenerator
                       Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\n", "error.log", true);
                       error = true;
                     }
-
                   }
                   if (error)
                   {
@@ -229,7 +223,6 @@ namespace QMXFGenerator
 
     private string GetCellValue(WorksheetPartWrapper part, int startCol, int startRow)
     {
-
       var row = part.Worksheet.SheetData.Rows.FirstOrDefault(c => c.RowIndex == startRow);
       return row.GetCell(startCol, false).CellValue.Value;
     }
@@ -260,6 +253,7 @@ namespace QMXFGenerator
       {
       }
     }
+
     private static bool Initialize(string[] args)
     {
       try
@@ -274,7 +268,6 @@ namespace QMXFGenerator
         else
         {
           _excelFilePath = args[0];
-
         }
 
         if (_excelFilePath == String.Empty)
@@ -349,8 +342,8 @@ namespace QMXFGenerator
                 };
 
                 classDefinition.name = new List<QMXFName>
-                { 
-                  englishUSName 
+                {
+                  englishUSName
                 };
               }
             }
@@ -372,7 +365,7 @@ namespace QMXFGenerator
                 lang = "en",
                 value = description.ToString(),
               };
-              classDefinition.description = new List<Description> 
+              classDefinition.description = new List<Description>
               {
                 englishUSDescription,
               };
@@ -412,18 +405,13 @@ namespace QMXFGenerator
     {
       try
       {
-        string identifier = String.Empty;
-
-
         if (!string.IsNullOrEmpty(registryBase))
-          return string.Format("{0}R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", "").Replace("-", ""));
+          return string.Format("{0}R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", "").Replace("-", "").ToUpper());
         else
         {
-           Utility.WriteString("Failed to create id for "+ name , "error.log");
-          throw new Exception("CreateIdsAdiId: Failed to create id ");
-
+          Utility.WriteString("Failed to create id for " + name, "error.log");
+          throw new Exception("GenerateID: Failed to create id ");
         }
-      
       }
       catch (Exception ex)
       {
@@ -522,8 +510,8 @@ namespace QMXFGenerator
                   value = name,
                 };
                 templateDefinition.name = new List<QMXFName>
-                                { 
-                                  englishUSName 
+                                {
+                                  englishUSName
                                 };
               }
             }
@@ -549,7 +537,7 @@ namespace QMXFGenerator
                 lang = "en",
                 value = description.ToString(),
               };
-              templateDefinition.description = new List<Description> 
+              templateDefinition.description = new List<Description>
                             {
                                 englishUSDescription,
                             };
@@ -559,7 +547,6 @@ namespace QMXFGenerator
             templateDefinitions.Add(templateDefinition);
             idx++;
           }
-
         }
         Console.WriteLine("  processed " + idx + " base templates.");
         return templateDefinitions;
@@ -598,8 +585,8 @@ namespace QMXFGenerator
             };
 
             roleDefinition.name = new List<QMXFName>
-            { 
-              englishUSName 
+            {
+              englishUSName
             };
 
             if (identifier == null || identifier.ToString() == String.Empty)
@@ -686,8 +673,8 @@ namespace QMXFGenerator
                   value = name,
                 };
                 templateQualification.name = new List<QMXFName>
-                    { 
-                      englishUSName 
+                    {
+                      englishUSName
                     };
               }
             }
@@ -707,7 +694,7 @@ namespace QMXFGenerator
                 lang = "en",
                 value = description.ToString(),
               };
-              templateQualification.description = new List<Description> 
+              templateQualification.description = new List<Description>
                   {
                     englishUSDescription,
                   };
@@ -743,7 +730,6 @@ namespace QMXFGenerator
             else
               Utility.WriteString("Template Qualification \"" + templateQualification.identifier + "\" RoleQualifications failed.\n", "error.log", true);
           }
-
         }
         Console.WriteLine("  processed " + idx + " Specialized templates.");
         return templateQualifications;
@@ -795,8 +781,8 @@ namespace QMXFGenerator
             };
 
             roleQualification.name = new List<QMXFName>
-            { 
-              englishUSName 
+            {
+              englishUSName
             };
 
             if (description != null && description.ToString() != String.Empty)

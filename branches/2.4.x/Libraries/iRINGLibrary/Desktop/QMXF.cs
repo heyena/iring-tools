@@ -331,6 +331,11 @@ namespace org.ids_adi.qmxf
 
     [DataMember(EmitDefaultValue = false)]
     [XmlAttribute]
+    public string repository { get; set; }
+
+
+    [DataMember(EmitDefaultValue = false)]
+    [XmlAttribute]
     public string lang { get; set; }
 
     public static IComparer<Classification> sortAscending()
@@ -361,6 +366,10 @@ namespace org.ids_adi.qmxf
     [DataMember(EmitDefaultValue = false)]
     [XmlAttribute]
     public string label { get; set; }
+
+    [DataMember(EmitDefaultValue = false)]
+    [XmlAttribute]
+    public string repository { get; set; }
 
     [DataMember(EmitDefaultValue = false)]
     [XmlAttribute]
