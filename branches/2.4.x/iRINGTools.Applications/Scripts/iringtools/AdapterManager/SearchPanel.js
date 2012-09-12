@@ -9,7 +9,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   border: true,
   split: true,
   searchUrl: null,
-  limit: 100,
+  limit: 500,
   refClassTabPanel: null,
   propertyPanel: null,
   searchStore: null,
