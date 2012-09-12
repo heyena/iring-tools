@@ -432,6 +432,7 @@ namespace org.iringtools.refdata
           if (pref.Equals("owl") || pref.Contains("dm")) continue;
 
           uri = result["uri"].ToString();
+          classification.reference = uri;
         }
         else if (result.HasValue("rdsuri") && result["rdsuri"] != null)
         {
@@ -2241,7 +2242,7 @@ namespace org.iringtools.refdata
               string roleDefinition = string.Empty;
               int index = 1;
               if (!string.IsNullOrEmpty(newTDef.identifier))
-                templateId = Utility.GetIdFromURI(newTDef.identifier);
+                templateId = newTDef.identifier;
 
               templateName = newTDef.name[0].value;
               //check for exisitng template
@@ -2256,7 +2257,7 @@ namespace org.iringtools.refdata
                   generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, templateName);
                 else
                   generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, templateName);
-                templateId = Utility.GetIdFromURI(generatedId);
+                templateId = generatedId;
               }
 
               #region Form Delete/Insert
@@ -2321,33 +2322,32 @@ namespace org.iringtools.refdata
                       {
                         foreach (QMXFName name in nrd.name)
                         {
-                          GenerateName(ref insert, name, Utility.GetIdFromURI(newRoleID), nrd);
+                          GenerateName(ref insert, name, newRoleID, nrd);
                         }
                         if (nrd.description != null)
                         {
-                          GenerateDescription(ref insert, nrd.description, Utility.GetIdFromURI(newRoleID));
+                          GenerateDescription(ref insert, nrd.description, newRoleID);
                         }
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateTypesPart8(ref insert, Utility.GetIdFromURI(newRoleID), templateId, nrd);
-                          GenerateRoleIndexPart8(ref insert, Utility.GetIdFromURI(newRoleID), index, nrd);
+                          GenerateTypesPart8(ref insert, newRoleID, templateId, nrd);
+                          GenerateRoleIndexPart8(ref insert, newRoleID, index, nrd);
                         }
                         else
                         {
-                          GenerateTypes(ref insert, Utility.GetIdFromURI(newRoleID), templateId, nrd);
-                          GenerateRoleIndex(ref insert, Utility.GetIdFromURI(newRoleID), index);
+                          GenerateTypes(ref insert, newRoleID, templateId, nrd);
+                          GenerateRoleIndex(ref insert, newRoleID, index);
                         }
                       }
                       if (nrd.range != null)
                       {
-                        //qn = nsMap.ReduceToQName(nrd.range, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
                           GenerateRoleFillerType(ref insert, newRoleID, nrd.range);
                         }
                         else
                         {
-                          GenerateRoleDomain(ref insert, Utility.GetIdFromURI(newRoleID), templateId);
+                          GenerateRoleDomain(ref insert, newRoleID, templateId);
                         }
                       }
                     }
@@ -2361,33 +2361,32 @@ namespace org.iringtools.refdata
                       {
                         foreach (QMXFName name in ord.name)
                         {
-                          GenerateName(ref delete, name, Utility.GetIdFromURI(ord.identifier), ord);
+                          GenerateName(ref delete, name, ord.identifier, ord);
                         }
                         if (ord.description != null)
                         {
-                          GenerateDescription(ref delete, ord.description, Utility.GetIdFromURI(ord.identifier));
+                          GenerateDescription(ref delete, ord.description, ord.identifier);
                         }
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateTypesPart8(ref delete, Utility.GetIdFromURI(ord.identifier), templateId, ord);
-                          GenerateRoleIndexPart8(ref delete, Utility.GetIdFromURI(ord.identifier), index, ord);
+                          GenerateTypesPart8(ref delete, ord.identifier, templateId, ord);
+                          GenerateRoleIndexPart8(ref delete, ord.identifier, index, ord);
                         }
                         else
                         {
-                          GenerateTypes(ref delete, Utility.GetIdFromURI(ord.identifier), templateId, ord);
-                          GenerateRoleIndex(ref delete, Utility.GetIdFromURI(ord.identifier), index);
+                          GenerateTypes(ref delete, ord.identifier, templateId, ord);
+                          GenerateRoleIndex(ref delete, ord.identifier, index);
                         }
                       }
                       if (ord.range != null)
                       {
-                        //qn = nsMap.ReduceToQName(ord.range, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
                           GenerateRoleFillerType(ref delete, ord.identifier, ord.range);
                         }
                         else
                         {
-                          GenerateRoleDomain(ref delete, Utility.GetIdFromURI(ord.identifier), templateId);
+                          GenerateRoleDomain(ref delete, ord.identifier, templateId);
                         }
                       }
                     }
@@ -2444,11 +2443,11 @@ namespace org.iringtools.refdata
                       generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, genName);
                     else
                       generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, genName);
-                    newRoleID = Utility.GetIdFromURI(generatedId);
+                    newRoleID = generatedId;
                   }
                   else
                   {
-                    newRoleID = Utility.GetIdFromURI(newRole.identifier);
+                    newRoleID = newRole.identifier;
                   }
                   foreach (QMXFName newName in newRole.name)
                   {
@@ -2472,7 +2471,6 @@ namespace org.iringtools.refdata
                   }
                   if (!string.IsNullOrEmpty(newRole.range))
                   {
-                    //qn = nsMap.ReduceToQName(newRole.range, out qName);
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
                       GenerateRoleFillerType(ref insert, newRoleID, newRole.range);
@@ -2547,14 +2545,13 @@ namespace org.iringtools.refdata
                 else
                   generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, templateName);
 
-                templateID = Utility.GetIdFromURI(generatedId);
+                templateID = generatedId;
               }
               #region Form Delete/Insert SPARQL
               if (oldQmxf.templateQualifications.Count > 0)
               {
                 foreach (TemplateQualification oldTQ in oldQmxf.templateQualifications)
                 {
-                  //qn = nsMap.ReduceToQName(oldTQ.qualifies, out qName);
                   foreach (QMXFName nn in newTQ.name)
                   {
                     templateName = nn.value;
@@ -2649,24 +2646,22 @@ namespace org.iringtools.refdata
                       {
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateTypesPart8(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                          GenerateTypesPart8(ref insert, newRoleID, templateID, nrq);
                           foreach (QMXFName nn in nrq.name)
                           {
-                            GenerateName(ref insert, nn, Utility.GetIdFromURI(newRoleID), nrq);
+                            GenerateName(ref insert, nn, newRoleID, nrq);
                           }
-                          GenerateRoleIndexPart8(ref insert, Utility.GetIdFromURI(newRoleID), ++count, nrq);
-                          GenerateHasTemplate(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
-                          GenerateHasRole(ref insert, templateID, Utility.GetIdFromURI(newRoleID), newTQ);
+                          GenerateRoleIndexPart8(ref insert, newRoleID, ++count, nrq);
+                          GenerateHasTemplate(ref insert, newRoleID, templateID, nrq);
+                          GenerateHasRole(ref insert, templateID, newRoleID, newTQ);
                           if (!string.IsNullOrEmpty(nrq.range))
                           {
-                            //qn = nsMap.ReduceToQName(nrq.range, out qName);
                             GenerateRoleFillerType(ref insert, newRoleID, nrq.range);
                           }
                           else if (nrq.value != null)
                           {
                             if (nrq.value.reference != null)
                             {
-                              //qn = nsMap.ReduceToQName(nrq.value.reference, out qName);
                               GenerateRoleFillerType(ref insert, newRoleID, nrq.value.reference);
                             }
                             else if (nrq.value.text != null)
@@ -2679,7 +2674,6 @@ namespace org.iringtools.refdata
                         {
                           if (!string.IsNullOrEmpty(nrq.range)) //range restriction
                           {
-                            //qn = nsMap.ReduceToQName(nrq.range, out qName);
                             GenerateRange(ref insert, newRoleID, nrq.range, nrq);
                             GenerateTypes(ref insert, newRoleID, templateID, nrq);
                             GenerateQualifies(ref insert, newRoleID, nrq.qualifies, nrq);
@@ -2690,17 +2684,16 @@ namespace org.iringtools.refdata
                             {
                               GenerateReferenceType(ref insert, newRoleID, templateID, nrq);
                               GenerateReferenceQual(ref insert, newRoleID, nrq.qualifies, nrq);
-                              //qn = nsMap.ReduceToQName(nrq.value.reference, out qName);
                               GenerateReferenceTpl(ref insert, newRoleID, nrq.value.reference, nrq);
                             }
                             else if (nrq.value.text != null)// value restriction
                             {
-                              GenerateValue(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                              GenerateValue(ref insert, newRoleID, templateID, nrq);
                             }
                           }
-                          GenerateTypes(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
-                          GenerateRoleDomain(ref insert, Utility.GetIdFromURI(newRoleID), templateID);
-                          GenerateRoleIndex(ref insert, Utility.GetIdFromURI(newRoleID), ++count);
+                          GenerateTypes(ref insert, newRoleID, templateID, nrq);
+                          GenerateRoleDomain(ref insert, newRoleID, templateID);
+                          GenerateRoleIndex(ref insert, newRoleID, ++count);
                         }
                       }
                     }
@@ -2726,24 +2719,22 @@ namespace org.iringtools.refdata
                       {
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateTypesPart8(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                          GenerateTypesPart8(ref delete, newRoleID, templateID, orq);
                           foreach (QMXFName nn in orq.name)
                           {
-                            GenerateName(ref delete, nn, Utility.GetIdFromURI(newRoleID), orq);
+                            GenerateName(ref delete, nn, newRoleID, orq);
                           }
-                          GenerateRoleIndexPart8(ref delete, Utility.GetIdFromURI(newRoleID), ++count, orq);
-                          GenerateHasTemplate(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
-                          GenerateHasRole(ref delete, templateID, Utility.GetIdFromURI(newRoleID), oldTQ);
+                          GenerateRoleIndexPart8(ref delete, newRoleID, ++count, orq);
+                          GenerateHasTemplate(ref delete, newRoleID, templateID, orq);
+                          GenerateHasRole(ref delete, templateID, newRoleID, oldTQ);
                           if (!string.IsNullOrEmpty(orq.range))
                           {
-                            //qn = nsMap.ReduceToQName(orq.range, out qName);
                             GenerateRoleFillerType(ref delete, newRoleID, orq.range);
                           }
                           else if (orq.value != null)
                           {
                             if (orq.value.reference != null)
                             {
-                              //qn = nsMap.ReduceToQName(orq.value.reference, out qName);
                               GenerateRoleFillerType(ref delete, newRoleID, orq.value.reference);
                             }
                             else if (nrq.value.text != null)
@@ -2756,7 +2747,6 @@ namespace org.iringtools.refdata
                         {
                           if (!string.IsNullOrEmpty(orq.range)) //range restriction
                           {
-                            //qn = nsMap.ReduceToQName(orq.range, out qName);
                             GenerateRange(ref delete, newRoleID, orq.range, orq);
                             GenerateTypes(ref delete, newRoleID, templateID, nrq);
                             GenerateQualifies(ref delete, newRoleID, orq.qualifies, orq);
@@ -2765,9 +2755,8 @@ namespace org.iringtools.refdata
                           {
                             if (orq.value.reference != null) //reference restriction
                             {
-                              GenerateReferenceType(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
-                              GenerateReferenceQual(ref delete, Utility.GetIdFromURI(newRoleID), orq.qualifies.Split('#')[1], orq);
-                              //qn = nsMap.ReduceToQName(orq.value.reference, out qName);
+                              GenerateReferenceType(ref delete, newRoleID, templateID, orq);
+                              GenerateReferenceQual(ref delete, newRoleID, orq.qualifies.Split('#')[1], orq);
                               GenerateReferenceTpl(ref insert, newRoleID, orq.value.reference, orq);
                             }
                             else if (orq.value.text != null)// value restriction
@@ -2777,7 +2766,7 @@ namespace org.iringtools.refdata
                           }
                           GenerateTypes(ref delete, newRoleID, templateID, orq);
                           GenerateRoleDomain(ref delete, newRoleID, templateID);
-                          GenerateRoleIndex(ref delete, Utility.GetIdFromURI(newRoleID), ++count);
+                          GenerateRoleIndex(ref delete, newRoleID, ++count);
                         }
                       }
                     }
@@ -2813,13 +2802,13 @@ namespace org.iringtools.refdata
                 if (repository.RepositoryType == RepositoryType.Part8)
                 {
                   GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
-                  //qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
+
                   GenerateTypesPart8(ref insert, templateID, newTQ.qualifies, newTQ);
                 }
                 else
                 {
                   GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
-                  //qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
+
                   GenerateTypes(ref insert, templateID, newTQ.qualifies, newTQ);
 
                 }
@@ -2870,14 +2859,12 @@ namespace org.iringtools.refdata
                     GenerateHasRole(ref insert, templateID, roleID, newTQ);
                     if (!string.IsNullOrEmpty(newRole.range))
                     {
-                      //qn = nsMap.ReduceToQName(newRole.range, out qName);
                       GenerateRoleFillerType(ref insert, roleID, newRole.range);
                     }
                     else if (newRole.value != null)
                     {
                       if (newRole.value.reference != null)
                       {
-                        //qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
                         GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
                       }
                       else if (newRole.value.text != null)
@@ -2890,8 +2877,6 @@ namespace org.iringtools.refdata
                   {
                     if (!string.IsNullOrEmpty(newRole.range)) //range restriction
                     {
-
-                      //qn = nsMap.ReduceToQName(newRole.range, out qName);
                       GenerateRange(ref insert, roleID, newRole.range, newRole);
                       GenerateTypes(ref insert, roleID, templateID, newRole);
                       GenerateQualifies(ref insert, roleID, newRole.qualifies, newRole);
@@ -2902,7 +2887,6 @@ namespace org.iringtools.refdata
                       {
                         GenerateReferenceType(ref insert, roleID, templateID, newRole);
                         GenerateReferenceQual(ref insert, roleID, newRole.qualifies, newRole);
-                        //qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
                         GenerateReferenceTpl(ref insert, roleID, newRole.value.reference, newRole);
                       }
                       else if (newRole.value.text != null)// value restriction
@@ -3050,7 +3034,6 @@ namespace org.iringtools.refdata
                       Specialization ns = newClsDef.specialization.Find(s => s.reference == os.reference);
                       if (ns == null)
                       {
-                        //qn = nsMap.ReduceToQName(os.reference, out qName);
                         GenerateRdfSubClass(ref delete, clsId, os.reference);
                       }
                     }
@@ -3062,7 +3045,6 @@ namespace org.iringtools.refdata
                       Specialization os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
                       if (os == null)
                       {
-                        //qn = nsMap.ReduceToQName(ns.reference, out qName);
                         GenerateRdfSubClass(ref insert, clsId, ns.reference);
                       }
                     }
@@ -3079,7 +3061,6 @@ namespace org.iringtools.refdata
                       Classification nc = newClsDef.classification.Find(c => c.reference == oc.reference);
                       if (nc == null)
                       {
-                        //qn = nsMap.ReduceToQName(oc.reference, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
                           GenerateSuperClass(ref delete, oc.reference, clsId); ///delete from old
@@ -3134,7 +3115,6 @@ namespace org.iringtools.refdata
               /// append entity type
               if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
               {
-              ///qn = nsMap.ReduceToQName(newClsDef.entityType.reference, out qName);
                 GenerateTypesPart8(ref insert, clsId, newClsDef.entityType.reference, newClsDef);
               }
               /// append specialization
@@ -3142,7 +3122,6 @@ namespace org.iringtools.refdata
               {
                 if (!String.IsNullOrEmpty(ns.reference))
                 {
-                  //qn = nsMap.ReduceToQName(ns.reference, out qName);
                   if (repository.RepositoryType == RepositoryType.Part8)
                   {
                     GenerateRdfSubClass(ref insert, clsId, ns.reference);
@@ -3171,7 +3150,6 @@ namespace org.iringtools.refdata
               {
                 if (!string.IsNullOrEmpty(nc.reference))
                 {
-                  //qn = nsMap.ReduceToQName(nc.reference, out qName);
                   if (repository.RepositoryType == RepositoryType.Part8)
                   {
                     GenerateSuperClass(ref insert, nc.reference, clsId);
@@ -3294,10 +3272,10 @@ namespace org.iringtools.refdata
     {
       RoleQualification role = (RoleQualification)gobj;
       pred = work.CreateUriNode("tpl:R56456315674");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("tpl:R89867215482");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("tpl:R29577887690");
       obj = work.CreateLiteralNode(role.value.text, string.IsNullOrEmpty(role.value.lang) ? defaultLanguage : role.value.lang);
@@ -3306,55 +3284,55 @@ namespace org.iringtools.refdata
 
     private void GenerateReferenceQual(ref Graph work, string subjId, string objId, object gobj)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("tpl:R30741601855");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateReferenceType(ref Graph work, string subjId, string objId, object gobj)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode(rdfType);
       obj = work.CreateUriNode("tpl:R40103148466");
       work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("tpl:R49267603385");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateReferenceTpl(ref Graph work, string subjId, string objId, object gobj)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("tpl:R21129944603");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateQualifies(ref Graph work, string subjId, string objId, object gobj)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("tpl:R91125890543");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateRange(ref Graph work, string subjId, string objId, object gobj)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("rdfs:range");
       obj = work.CreateUriNode(objId);
       work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("tpl:R98983340497");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateHasRole(ref Graph work, string subjId, string objId, object gobj)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("p8:hasRole");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
@@ -3362,16 +3340,19 @@ namespace org.iringtools.refdata
     {
       if (gobj is RoleDefinition || gobj is RoleQualification)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode("p8:hasTemplate");
-        obj = work.CreateUriNode(string.Format("<{0}>", objId));
-        work.Assert(new Triple(subj, pred, obj));
+        var uri = new Uri(objId);        
+        obj = work.CreateUriNode(uri);
+        var triple = new Triple(subj, pred, obj);
+        Console.WriteLine(triple.ToString());
+        work.Assert(triple);
       }
     }
 
     private void GenerateRoleIndex(ref Graph work, string subjId, int index)
     {
-      subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("tpl:R97483568938");
       obj = work.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
       work.Assert(new Triple(subj, pred, obj));
@@ -3381,7 +3362,7 @@ namespace org.iringtools.refdata
     {
       if (gobj is RoleDefinition || gobj is RoleQualification)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode("p8:valRoleIndex");
         obj = work.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
         work.Assert(new Triple(subj, pred, obj));
@@ -3390,17 +3371,17 @@ namespace org.iringtools.refdata
 
     private void GenerateRoleDomain(ref Graph work, string subjId, string objId)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("rdfs:domain");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateRoleFillerType(ref Graph work, string subjId, string range)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("p8:hasRoleFillerType");
-      obj = work.CreateUriNode(string.Format("<{0}>", range));
+      obj = work.CreateUriNode(new Uri(range));
       work.Assert(new Triple(subj, pred, obj));
     }
 
@@ -3408,7 +3389,7 @@ namespace org.iringtools.refdata
     {
       if (gobj is TemplateDefinition || gobj is TemplateQualification)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode("tpl:R35529169909");
         obj = work.CreateLiteralNode(Convert.ToString(rolecount), new Uri("xsd:integer"));
         work.Assert(new Triple(subj, pred, obj));
@@ -3419,7 +3400,7 @@ namespace org.iringtools.refdata
     {
       if (gobj is TemplateDefinition || gobj is TemplateQualification)
       {
-        subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode("p8:valNumberOfRoles");
         obj = work.CreateLiteralNode(Convert.ToString(rolecount), new Uri("xsd:integer"));
         work.Assert(new Triple(subj, pred, obj));
@@ -3431,7 +3412,7 @@ namespace org.iringtools.refdata
     {
       if (gobj is TemplateDefinition)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
         //obj = work.CreateUriNode("p8:TemplateDescription");
@@ -3442,37 +3423,31 @@ namespace org.iringtools.refdata
       }
       else if (gobj is RoleQualification)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("p8:TemplateRoleDescription");
         work.Assert(new Triple(subj, pred, obj));
-        pred = work.CreateUriNode("p8:hasTemplate");
-        obj = work.CreateUriNode(string.Format("tpl:{0}", objectId));
-        work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("p8:hasRoleFillerType");
-        obj = work.CreateUriNode(string.Format("<{0}>", ((RoleQualification)gobj).range));
+        obj = work.CreateUriNode(new Uri(((RoleQualification)gobj).range));
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleDefinition)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("p8:TemplateRoleDescription");
         work.Assert(new Triple(subj, pred, obj));
-        pred = work.CreateUriNode("p8:hasTemplate");
-        obj = work.CreateUriNode(string.Format("<{0}>", objectId));
-        work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("p8:hasRoleFillerType");
-        obj = work.CreateUriNode(string.Format("<{0}>", ((RoleDefinition)gobj).range));
+        obj = work.CreateUriNode(new Uri(((RoleDefinition)gobj).range));
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is TemplateQualification)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         //obj = work.CreateUriNode("p8:TemplateDescription");
         //work.Assert(new Triple(subj, pred, obj));
@@ -3482,14 +3457,14 @@ namespace org.iringtools.refdata
         obj = work.CreateUriNode("p8:SpecializedTemplateStatement");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
-        obj = work.CreateUriNode(string.Format("<{0}>", objectId));
+        obj = work.CreateUriNode(new Uri(objectId));
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is ClassDefinition)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
-        obj = work.CreateUriNode(string.Format("<{0}>", objectId));
+        obj = work.CreateUriNode(new Uri(objectId));
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Class");
@@ -3501,37 +3476,37 @@ namespace org.iringtools.refdata
     {
       if (gobj is TemplateDefinition)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R16376066707");
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleDefinition)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R74478971040");
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is TemplateQualification)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", objId));
+        subj = work.CreateUriNode(new Uri(objId));
         pred = work.CreateUriNode("dm:hasSubclass");
-        obj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        obj = work.CreateUriNode(new Uri(subjId));
         work.Assert(new Triple(subj, pred, obj));
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode("dm:hasSuperclass");
-        obj = work.CreateUriNode(string.Format("<{0}>", objId));
+        obj = work.CreateUriNode(new Uri(objId));
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleQualification)
       {
-        subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+        subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R76288246068");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("tpl:R99672026745");
-        obj = work.CreateUriNode(string.Format("<{0}>", objId));
+        obj = work.CreateUriNode(new Uri(objId));
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R67036823327");
@@ -3541,7 +3516,7 @@ namespace org.iringtools.refdata
 
     private void GenerateName(ref Graph work, QMXFName name, string subjId, object gobj)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("rdfs:label");
       obj = work.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
       work.Assert(new Triple(subj, pred, obj));
@@ -3556,7 +3531,7 @@ namespace org.iringtools.refdata
     }
     private void GenerateDescription(ref Graph work, Description descr, string subjectId)
     {
-      subj = work.CreateUriNode(string.Format("tpl:{0}", subjectId));
+      subj = work.CreateUriNode(new Uri(subjectId));
       pred = work.CreateUriNode("rdfs:comment");
       obj = work.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
       work.Assert(new Triple(subj, pred, obj));
@@ -3572,25 +3547,25 @@ namespace org.iringtools.refdata
 
     private void GenerateSuperClass(ref Graph work, string subjId, string objId)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("rdfs:subClassOf");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateRdfSubClass(ref Graph work, string subjId, string objId)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("rdfs:subClassOf");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateDmClassification(ref Graph work, string subjId, string objId)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("dm:hasClassified");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("dm:hasClassifier");
       work.Assert(new Triple(subj, pred, obj));
@@ -3598,9 +3573,9 @@ namespace org.iringtools.refdata
 
     private void GenerateDmSubClass(ref Graph work, string subjId, string objId)
     {
-      subj = work.CreateUriNode(string.Format("<{0}>", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("dm:hasSubclass");
-      obj = work.CreateUriNode(string.Format("<{0}>", objId));
+      obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
           #endregion
