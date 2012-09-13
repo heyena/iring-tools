@@ -212,11 +212,14 @@ namespace org.iringtools.services
       format = MapContentType(format);
       try
       {
-        Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
+          Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
+
+        XElement xml = obj.ToXElement<Picklists>();
+
         if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
-          _adapterProvider.FormatOutgoingMessage<Picklists>(obj, format, true);
+            _adapterProvider.FormatOutgoingMessage(xml, format);
         else
-          _adapterProvider.FormatOutgoingMessage<Picklists>(obj, format, false);
+          _adapterProvider.FormatOutgoingMessage(xml, format);
       }
       catch (Exception ex)
       {
