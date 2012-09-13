@@ -239,7 +239,13 @@ namespace org.iringtools.adapter.projection
             }
 
             dti.InternalIdentifier = internalIdentifier.ToString();
-            dti.HashValue = Utility.MD5Hash(propertyValues.ToString());
+
+            string values = propertyValues.ToString();
+            dti.HashValue = Utility.MD5Hash(values);
+
+            _logger.Debug("Hash: " + dti.HashValue);
+            _logger.Debug("Values: " + values);
+
             dtis.DataTransferIndexList.Add(dti);
           }
         }
