@@ -6,11 +6,13 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [DataContract(Namespace = "http://www.iringtools.org/data", Name = "Picklists")]
+  [DataContract(Namespace = "http://www.iringtools.org/data", Name = "DataItems")]
   public class Picklists : DataItems
   {
     public Picklists() : base()
-    {}
+    {
+        items = new List<DataItem>();
+    }
 
     [DataMember(IsRequired = false, Order = 1)]
     public string title { get; set; }
@@ -19,10 +21,14 @@ namespace org.iringtools.library
     public int valueColumnIndex { get; set; }
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/data", Name = "PicklistItem")]
-  public class PicklistItem : DataItem
-  {}
-
+//  [DataContract(Namespace = "http://www.iringtools.org/data", Name = "DataItem")]
+//  public class PicklistItem : DataItem
+//  {
+//    public PicklistItem() : base()
+//    {
+//      properties = new Dictionary<string, string>();
+//    }
+//}
   //public class PicklistColumn
   //{
   //  [DataMember(IsRequired = true, Order = 0)]
