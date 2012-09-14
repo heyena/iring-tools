@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
-<Properties><Property Name="Solution" Value="SSOSupplierDemo">
-</Property><Property Name="Solution File" Value="C:\Users\rpdecarl\iring-tools\Prototypes\SSOSupplierDemo\SSOSupplierDemo.sln">
-</Property><Property Name="Date" Value="Friday, December 03, 2010">
-</Property><Property Name="Time" Value="10:27:04 AM">
-</Property></Properties><Event ErrorLevel="0" Project="SSOSupplierDemo" Source="SSOSupplierDemo.csproj" Description="Project converted successfully">
-</Event><Event ErrorLevel="3" Project="SSOSupplierDemo" Source="SSOSupplierDemo.csproj" Description="Converted">
-</Event><Event ErrorLevel="0" Project="SSOSupplierDemo" Source="SSOSupplierDemo.csproj" Description="Scan complete: Upgrade not required for project files.">
-</Event></UpgradeLog>

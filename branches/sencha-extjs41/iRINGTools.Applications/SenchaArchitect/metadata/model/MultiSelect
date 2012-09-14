@@ -20,20 +20,8 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyField47",
-                "name": "ValueField"
-            },
-            "designerId": "a1c2ab63-d9d1-4774-b572-8224c0663a98"
-        },
-        {
-            "type": "datafield",
-            "reference": {
-                "name": "fields",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyField47",
-                "name": "DisplayField"
+                "name": "DisplayField",
+                "type": "string"
             },
             "designerId": "de6d1f64-e170-495d-ae1a-e7e19bd137ee"
         }

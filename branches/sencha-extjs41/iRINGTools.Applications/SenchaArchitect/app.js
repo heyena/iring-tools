@@ -26,8 +26,7 @@ Ext.application({
     'RelatedObjectStore'
   ],
   views: [
-    'AMViewport',
-    'nhibernate.SetRelationForm'
+    'AMViewport'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

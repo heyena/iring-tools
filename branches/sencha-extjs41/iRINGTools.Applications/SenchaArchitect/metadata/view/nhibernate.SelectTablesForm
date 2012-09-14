@@ -36,71 +36,6 @@
     ],
     "cn": [
         {
-            "type": "container",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyContainer11",
-                "height": 22,
-                "layout": "fit"
-            },
-            "designerId": "00e5aec8-b8a3-49c8-8658-45d3f0a956f9",
-            "cn": [
-                {
-                    "type": "label",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "designer|userClassName": "MyLabel3",
-                        "border": 2,
-                        "text": "Database Tables"
-                    },
-                    "designerId": "0f652a17-4208-4d1b-90bc-5b0d2fb59c68"
-                },
-                {
-                    "type": "linkedinstance",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "itemId": null,
-                        "minHeight": 200,
-                        "title": null
-                    },
-                    "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
-                    "masterInstanceId": "ExtBox1-ext-gen55549"
-                },
-                {
-                    "type": "checkboxfield",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "designer|userClassName": "MyCheckbox3",
-                        "name": "enableSummary",
-                        "value": [
-                            "off"
-                        ],
-                        "fieldLabel": "Enable Summary:",
-                        "labelWidth": 150,
-                        "boxLabel": null,
-                        "inputValue": "off"
-                    },
-                    "designerId": "a28b81f3-4b5e-4856-894d-cadba9b88a8a"
-                }
-            ]
-        },
-        {
             "type": "toolbar",
             "reference": {
                 "name": "dockedItems",
@@ -191,6 +126,41 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "tablesSelectionGrid",
+                "minHeight": 200,
+                "title": null
+            },
+            "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
+            "masterInstanceId": "ExtBox1-ext-gen55549"
+        },
+        {
+            "type": "checkboxfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyCheckbox3",
+                "name": "enableSummary",
+                "value": [
+                    "off"
+                ],
+                "fieldLabel": "Enable Summary:",
+                "labelWidth": 150,
+                "boxLabel": null,
+                "inputValue": "off"
+            },
+            "designerId": "a28b81f3-4b5e-4856-894d-cadba9b88a8a"
         }
     ]
 }

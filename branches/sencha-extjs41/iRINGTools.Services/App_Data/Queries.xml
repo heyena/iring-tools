@@ -172,7 +172,19 @@
           <type>Literal</type>
         </queryBinding>
       </bindings>
-      <fileName>GetSubClass.txt</fileName>
+      <fileName>GetSubClassJORD.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetSubClassesCountJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSubClassCountJORD.txt</fileName>
     </query>
   </queryItem>
   <queryItem>

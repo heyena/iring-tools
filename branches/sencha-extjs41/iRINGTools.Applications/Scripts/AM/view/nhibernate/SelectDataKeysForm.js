@@ -30,27 +30,6 @@ Ext.define('AM.view.nhibernate.SelectDataKeysForm', {
     var me = this;
 
     Ext.applyIf(me, {
-      items: [
-        {
-          xtype: 'container',
-          layout: {
-            type: 'anchor'
-          },
-          items: [
-            {
-              xtype: 'label',
-              cls: 'x-form-item',
-              style: 'font-weight:bold',
-              text: 'Select Keys'
-            },
-            {
-              xtype: 'multiselectiongrid',
-              maxHeight: 250,
-              minHeight: 200
-            }
-          ]
-        }
-      ],
       dockedItems: [
         {
           xtype: 'toolbar',
@@ -81,6 +60,12 @@ Ext.define('AM.view.nhibernate.SelectDataKeysForm', {
               text: 'Reset'
             }
           ]
+        }
+      ],
+      items: [
+        {
+          xtype: 'multiselectiongrid',
+          itemId: 'multiSelectDataKeys'
         }
       ]
     });
