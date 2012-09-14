@@ -32,36 +32,27 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
     var me = this;
 
     Ext.applyIf(me, {
-      columns: [
-        {
-          xtype: 'gridcolumn',
-          draggable: false,
-          maxWidth: 400,
-          sortable: false,
-          dataIndex: 'DisplayField',
-          flex: 1,
-          menuText: false
-        }
-      ],
       viewConfig: {
 
       },
-      selModel: Ext.create('Ext.selection.CheckboxModel', {
-
+      selModel: Ext.create('Ext.selection.RowModel', {
+        mode: 'MULTI'
       }),
-      listeners: {
-        select: {
-          fn: me.onGridpanelSelect,
-          scope: me
+      columns: [
+        {
+          xtype: 'gridcolumn',
+          setText: function(text) {
+            this.text = text;
+          },
+          width: 220,
+          align: 'center',
+          dataIndex: 'DisplayField',
+          text: 'DisplayField'
         }
-      }
+      ]
     });
 
     me.callParent(arguments);
-  },
-
-  onGridpanelSelect: function(selModel, record, index, options) {
-    //alert('Selection Changed');
   },
 
   loadItems: function(items) {
@@ -79,16 +70,20 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
 
   selectItems: function(items) {
     var me = this;
-    var selectionModel = me.view.getSelectionModel();
+    var sm = me.getSelectionModel();
+    var selected = sm.getSelection();
     var store = me.getStore();
-    //selctionModel.views.add(vw);
-    //selectionModel.store = store;
+    sm.bindStore(store);
+    var records = [];
     Ext.each(items, function(item) {
       var record = store.findRecord('DisplayField', item);
       if(record) {
-        selectionModel.select(record, false, true); 
+        records.push(record); 
       }           
     });
+
+    sm.select(records, true, true);
+
 
 
   },

@@ -27,39 +27,6 @@
     "designerId": "806180c3-0c42-425f-b6f1-5b85a7b5017b",
     "cn": [
         {
-            "type": "gridcolumn",
-            "reference": {
-                "name": "columns",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyColumn1",
-                "draggable": false,
-                "maxWidth": 400,
-                "anchorSize": null,
-                "sortable": false,
-                "dataIndex": "DisplayField",
-                "flex": 1,
-                "menuDisabled": null,
-                "menuText": false,
-                "text": null
-            },
-            "designerId": "6b904bab-a2c1-448c-a730-ce9175705a2d"
-        },
-        {
-            "type": "gridview",
-            "reference": {
-                "name": "viewConfig",
-                "type": "object"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyGridView1"
-            },
-            "designerId": "b8c31973-7b73-45a7-b991-045881f35b6f"
-        },
-        {
             "type": "basicfunction",
             "reference": {
                 "name": "items",
@@ -102,16 +69,20 @@
                 ],
                 "implHandler": [
                     "var me = this;\r",
-                    "var selectionModel = me.view.getSelectionModel();\r",
+                    "var sm = me.getSelectionModel();\r",
+                    "var selected = sm.getSelection();\r",
                     "var store = me.getStore();\r",
-                    "//selctionModel.views.add(vw);\r",
-                    "//selectionModel.store = store;\r",
+                    "sm.bindStore(store);\r",
+                    "var records = [];\r",
                     "Ext.each(items, function(item) {\r",
                     "  var record = store.findRecord('DisplayField', item);\r",
                     "  if(record) {\r",
-                    "    selectionModel.select(record, false, true); \r",
+                    "    records.push(record); \r",
                     "  }           \r",
                     "});\r",
+                    "\r",
+                    "sm.select(records, true, true);\r",
+                    "\r",
                     "\r",
                     ""
                 ]
@@ -162,34 +133,66 @@
             "designerId": "11b00b3c-148f-4b21-983a-2c93abe50fe0"
         },
         {
-            "type": "checkboxselectionmodel",
+            "type": "gridview",
+            "reference": {
+                "name": "viewConfig",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyGridView1"
+            },
+            "designerId": "b8b8dc12-7072-478f-9f73-ca3931d6f06c"
+        },
+        {
+            "type": "rowselectionmodel",
             "reference": {
                 "name": "selModel",
                 "type": "object"
             },
-            "codeClass": "Ext.selection.CheckboxModel",
+            "codeClass": "Ext.selection.RowModel",
             "userConfig": {
-                "designer|userClassName": "MyCheckboxSelectionModel"
+                "designer|userClassName": "MyRowSelectionModel",
+                "mode": "MULTI"
             },
-            "designerId": "64eee485-303b-475a-b9e9-035493c7ee96"
+            "designerId": "81422dda-83e9-4cb4-8811-f0178769bc3b"
         },
         {
-            "type": "basiceventbinding",
+            "type": "gridcolumn",
             "reference": {
-                "name": "listeners",
+                "name": "columns",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onGridpanelSelect",
-                "fn": "onGridpanelSelect",
-                "implHandler": [
-                    "//alert('Selection Changed');"
-                ],
-                "name": "select",
-                "scope": "me"
+                "designer|userClassName": "MyColumn6",
+                "width": 220,
+                "align": "center",
+                "dataIndex": "DisplayField",
+                "text": "DisplayField"
             },
-            "designerId": "a5430140-07f9-4927-9622-5fa1dd141196"
+            "designerId": "a4be971a-e012-42f6-be4d-5f879c0fe725",
+            "cn": [
+                {
+                    "type": "basicfunction",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "setText",
+                        "fn": "setText",
+                        "designer|params": [
+                            "text"
+                        ],
+                        "implHandler": [
+                            "this.text = text;"
+                        ]
+                    },
+                    "designerId": "5ecaca99-216b-4945-bd35-31638c930292"
+                }
+            ]
         }
     ]
 }

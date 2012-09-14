@@ -122,7 +122,7 @@ Ext.define('AM.controller.NHibernate', {
     }
     var contextName = dirNode.data.record.context;
     var endpoint = dirNode.data.record.endpoint;
-    var baseUrl = dirNode.data.record.baseUrl;
+    var baseUrl = dirNode.data.record.BaseUrl;
     dirNode.data.record.dbInfo.dbProvider = dirNode.data.record.dbDict.Provider;
     var rootNode = dbObjectsTree.getRootNode();
     var treeProperty = me.getJsonTree(rootNode, dirNode, gridSelected);
@@ -134,6 +134,7 @@ Ext.define('AM.controller.NHibernate', {
       params: {
         scope: contextName,
         app: endpoint,
+        baseUrl: baseUrl,
         tree: JSON.stringify(treeProperty)
       },
       success: function (response, request) {
@@ -249,6 +250,7 @@ Ext.define('AM.controller.NHibernate', {
   },
 
   onResetDataObject: function(button, e, options) {
+    var me = this;
     var form = button.up('dataobjectform');
     var panel = form.up('nhibernatepanel');
     var tree = panel.down('nhibernatetree');
@@ -620,11 +622,10 @@ Ext.define('AM.controller.NHibernate', {
 
   onConnectToDatabase: function(button, e, options) {
     var me = this;
-    var dirTree = me.getDirtree();
     var form = button.up('connectionstringform');
     var panel = form.up('nhibernatepanel');
     var dataTree = panel.down('nhibernatetree');
-    var dirNode = dirTree.getNodeById(dataTree.dirNode);
+    var dirNode = me.getDirNode(dataTree.dirNode);
     var context = dirNode.data.record.context;
     var endpoint = dirNode.data.record.endpoint;
     var baseUrl = dirNode.data.record.BaseUrl;
@@ -700,14 +701,7 @@ Ext.define('AM.controller.NHibernate', {
     var form = panel.down('selecttablesform');
     var objectGrid = form.down('multiselectiongrid');
     var selected = objectGrid.getSelectionModel().getSelection();
-    var dbProvider = '';
-    var dbServer = '';
-    var dbInstance = '';
-    var dbName = '';
-    var dbSchema = '';
-    var dbUserName = '';
-    var dbPassword = '';
-    var portNumber = '';
+
     var serName = '';
     var dbInfo = dirNode.data.record.dbInfo;
     var dbDict = dirNode.data.record.dbDict;
@@ -735,31 +729,22 @@ Ext.define('AM.controller.NHibernate', {
     }
     dbObjectsTree.selectedTables = userTableNames;
 
-    dbProvider = dbDict.Provider;
-    dbServer = dbInfo.dbServer;
-    dbInstance = dbInfo.dbInstance;
-    dbName = dbInfo.dbName;
-    dbSchema = dbInfo.dbSchema;
-    dbUserName = dbInfo.dbUserName;
-    dbPassword = dbInfo.dbPassword;
-    portNumber = dbInfo.portNumber;
-
     var treeStore = dbObjectsTree.getStore();
     treeStore.on('beforeload', function (store, operation) {
       var params = store.proxy.extraParams;
-      params.dbProvider = dbProvider;
-      params.dbServer = dbServer;
-      params.dbInstance = dbInstance;
-      params.dbName = dbName;
-      params.dbSchema = dbSchema;
-      params.dbPassword = dbPassword;
-      params.dbUserName = dbUserName;
-      params.portNumber = portNumber;
+      params.dbProvider = dbDict.Provider;
+      params.dbServer = dbInfo.dbServer;
+      params.dbInstance = dbInfo.dbInstance;
+      params.dbName = dbInfo.dbName;
+      params.dbSchema = dbInfo.dbSchema;
+      params.dbPassword = dbInfo.dbPassword;
+      params.dbUserName = dbInfo.dbUserName;
+      params.portNumber = dbInfo.portNumber;
       params.tableNames = userTableNames;
       params.serName = serName;
-      params.contextName = dbObjectsTree.dirNode.data.record.context;
-      params.endpoint = dbObjectsTree.dirNode.data.record.endpoint;
-      params.baseUrl = dbObjectsTree.dirNode.data.record.BaseUrl;
+      params.contextName = dirNode.data.record.context;
+      params.endpoint = dirNode.data.record.endpoint;
+      params.baseUrl = dirNode.data.record.BaseUrl;
     }, me);
 
     panel.body.mask('Loading...', 'x-mask-loading');
@@ -768,6 +753,7 @@ Ext.define('AM.controller.NHibernate', {
   },
 
   onResetDataObjects: function(button, e, options) {
+    var me = this;
     var form = button.up('selecttablesform');
     var grid = form.down('multiselectiongrid');
 
@@ -1068,9 +1054,10 @@ Ext.define('AM.controller.NHibernate', {
       selected.push(table.tableName);
     });
     var tables = dirNode.data.record.dbInfo.dbTableNames.items; 
-    var grid = form.down('multiselectiongrid');
-
+    var grid = form.down('#tablesSelectionGrid');
     grid.loadItems(tables);
+
+    grid.down('gridcolumn').setText('Select Data Tables');
     grid.selectItems(selected);
     panel = nhibernatePanel.down('#nhibernateContent');
 
@@ -1322,7 +1309,9 @@ Ext.define('AM.controller.NHibernate', {
     var endpoint = dirNode.data.record.endpoint;
     var baseUrl = dirNode.data.record.baseUrl;
 
-    var grid = form.down('multiselectiongrid');
+    var grid = form.down('#multiSelectDataKeys');
+
+    grid.down('gridcolumn').setText('Select Key Properties');
 
     var availItems = [];
     var propertiesNode = dataNode.parentNode.childNodes[1];
@@ -1364,7 +1353,8 @@ Ext.define('AM.controller.NHibernate', {
     var endpoint = dirNode.data.record.endpoint;
     var baseUrl = dirNode.data.record.baseUrl;
 
-    var grid = form.down('multiselectiongrid');
+    var grid = form.down('#propertiesSelectionGrid');
+    grid.down('gridcolumn').setText('Select Data Properties');
 
     var availItems = [];
     var propertiesNode = dataNode.parentNode.childNodes[1];
@@ -1474,7 +1464,7 @@ Ext.define('AM.controller.NHibernate', {
     var treeProperty = {};
     if (selected) {
       treeProperty.enableSummary = dbDict.enableSummary;
-      treeProperty.provider = dbInfo.dbProvider;
+      treeProperty.provider = dbDict.Provider;
     }  else if (dbDict.enableSummary)
     treeProperty.enableSummary = dbDict.enableSummary;
     else
@@ -1514,7 +1504,7 @@ Ext.define('AM.controller.NHibernate', {
       else if (upProvider.indexOf('MYSQL') > -1)
       var dataSrc = 'Data Source=' + dbServer;
       treeProperty.connectionString = dataSrc + ';User ID=' + dbInfo.dbUserName + ';Password=' + dbInfo.dbPassword;
-      treeProperty.schemaName = dbInfo.dbSchema;
+      treeProperty.schemaName = dbDict.SchemaName;
     }
     else {
       treeProperty.provider = dbDict.Provider;

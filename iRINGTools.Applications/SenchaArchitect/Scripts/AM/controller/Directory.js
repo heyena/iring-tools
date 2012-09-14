@@ -463,8 +463,14 @@ Ext.define('AM.controller.Directory', {
 
       gridStore.load({
         callback: function (records, response) {
-          gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.fields);
-          content.getEl().unmask();
+          if(records[0].store.proxy.reader.metaData) {
+            gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.fields);
+            content.getEl().unmask();
+          } else {
+            if(response)
+            showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
+            return true;
+          }
         }
       });
       content.getEl().unmask();

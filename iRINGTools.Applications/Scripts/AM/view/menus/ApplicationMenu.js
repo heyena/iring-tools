@@ -18,7 +18,7 @@ Ext.define('AM.view.menus.ApplicationMenu', {
   alias: 'widget.applicationmenu',
 
   floating: true,
-  width: 130,
+  width: 140,
   minButtonWidth: 85,
 
   initComponent: function() {

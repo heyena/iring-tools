@@ -1,10 +1,4 @@
 ﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
-  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.EQUIPMENT, App_Code" table="&quot;EQUIPMENT&quot;">
-    <id name="Id" column="&quot;TAG&quot;">
-      <generator class="assigned" />
-    </id>
-    <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
-  </class>
   <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.INSTRUMENTS, App_Code" table="&quot;INSTRUMENTS&quot;">
     <id name="Id" column="&quot;TAG&quot;">
       <generator class="assigned" />

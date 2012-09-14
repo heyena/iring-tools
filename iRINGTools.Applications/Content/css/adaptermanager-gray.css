@@ -13,7 +13,7 @@ a:hover {color: black}
 a:active {color: black}
 
 .x-tree { 
-	background-color: #fff; 
+  background-color: #fff; 
 }
 .upload-icon {
      background: url('../img/image_add.png') no-repeat 0 0 !important;
@@ -121,8 +121,8 @@ a:active {color: black}
   background-image: url(../img/blue-fade.png);
   background-repeat: repeat-x;
   -webkit-user-select: none;
-	-moz-user-select: none;
-	cursor: default;
+  -moz-user-select: none;
+  cursor: default;
 }
 
 /* change default property grid */
@@ -136,19 +136,19 @@ a:active {color: black}
 }
 
 .sync {
-	color: #000000;
+  color: #000000;
 }
 
 .add {
-	color: #df0000;
+  color: #df0000;
 }
 
 .change {
-	color: #0000df;
+  color: #0000df;
 }
 
 .delete {
-	color: #00df00;
+  color: #00df00;
 }
 
 

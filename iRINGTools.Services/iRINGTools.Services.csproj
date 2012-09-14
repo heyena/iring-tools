@@ -51,27 +51,6 @@
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Bechtel.Common">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\Bechtel.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.Common">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\Bechtel.TEAMWorks.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.Services">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\Bechtel.TEAMWorks.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.TWCommon">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\Bechtel.TEAMWorks.TWCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.TWScriptEngine">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\Bechtel.TEAMWorks.TWScriptEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.WinClient">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\Bechtel.TEAMWorks.WinClient.exe</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.WITS.WeldServices">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\Bechtel.WITS.WeldServices.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
@@ -112,12 +91,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WITS">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\WITS.exe</HintPath>
-    </Reference>
-    <Reference Include="WITSDataLayer">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\wits_dataLayer\trunk\WITSDataLayer\bin\Debug\WITSDataLayer.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\default.css" />

@@ -21,55 +21,6 @@
     "designerId": "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
     "cn": [
         {
-            "type": "container",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyContainer12",
-                "layout": "anchor"
-            },
-            "designerId": "8e843b4d-5f71-4794-b506-2cf9f0f6ce6c",
-            "cn": [
-                {
-                    "type": "label",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "designer|userClassName": "MyLabel6",
-                        "cls": "x-form-item",
-                        "style": [
-                            "font-weight:bold"
-                        ],
-                        "text": "Select Keys"
-                    },
-                    "designerId": "d57e65d7-051d-4757-87ca-4f702803d2d7"
-                },
-                {
-                    "type": "linkedinstance",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "id": null,
-                        "itemId": null,
-                        "maxHeight": 250,
-                        "minHeight": 200,
-                        "minWidth": null
-                    },
-                    "designerId": "bcd5e90b-8818-44da-b9fb-de74ae6d23e9",
-                    "masterInstanceId": "ExtBox1-ext-gen55549"
-                }
-            ]
-        },
-        {
             "type": "toolbar",
             "reference": {
                 "name": "dockedItems",
@@ -158,6 +109,19 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "multiSelectDataKeys"
+            },
+            "designerId": "3a4abf9c-20b0-40dc-a9ba-ea4250196ba5",
+            "masterInstanceId": "ExtBox1-ext-gen55549"
         }
     ]
 }
