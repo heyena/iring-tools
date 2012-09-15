@@ -51,7 +51,7 @@ Ext.define('AM.controller.Search', {
     isreset = pan.dockedItems.items[1].items.items[2].checked,
     content = me.getSearchContent(),
     propPanel = me.getSearchProperty(),
-    value = pan.dockedItems.items[1].items.items[6].value;
+    value = pan.down('#searchLimitCombo').value;
     if (!searchText && searchText.length === 0) return;
 
     var conf = {
@@ -79,7 +79,6 @@ Ext.define('AM.controller.Search', {
           repo = action.node.parentNode.data.text;
         }
       }
-
       params.type = (action.node.data.type === '' ? 'SearchNode' : action.node.data.type);
       if (searchText !== undefined && searchText !== '') {
         params.query = searchText;

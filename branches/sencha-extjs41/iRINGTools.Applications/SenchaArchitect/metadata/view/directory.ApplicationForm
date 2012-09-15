@@ -8,7 +8,7 @@
     "userConfig": {
         "record": "",
         "designer|userClassName": "directory.ApplicationForm",
-        "designer|userAlias": "applicatioform",
+        "designer|userAlias": "applicationform",
         "border": "true",
         "frame": false,
         "height": null,

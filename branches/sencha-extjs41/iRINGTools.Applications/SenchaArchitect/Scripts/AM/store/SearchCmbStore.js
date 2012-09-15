@@ -20,32 +20,42 @@ Ext.define('AM.store.SearchCmbStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
-      autoLoad: true,
       storeId: 'searchcmbstore',
+      clearOnPageLoad: false,
       data: [
-        [
-          '50',
-          50
-        ],
-        [
-          '100',
-          100
-        ],
-        [
-          '200',
-          200
-        ],
-        [
-          '400',
-          400
-        ]
+        {
+          limit: '50',
+          value: 50
+        },
+        {
+          limit: '100',
+          value: 100
+        },
+        {
+          limit: '200',
+          value: 200
+        },
+        {
+          limit: '400',
+          value: 400
+        },
+        {
+          limit: '600',
+          value: 600
+        },
+        {
+          limit: '800',
+          value: 800
+        }
       ],
       fields: [
         {
-          name: 'name'
+          name: 'limit',
+          type: 'string'
         },
         {
-          name: 'value'
+          name: 'value',
+          type: 'string'
         }
       ]
     }, cfg)]);

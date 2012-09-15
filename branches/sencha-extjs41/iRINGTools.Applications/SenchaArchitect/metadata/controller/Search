@@ -82,7 +82,7 @@
                     "isreset = pan.dockedItems.items[1].items.items[2].checked,\r",
                     "content = me.getSearchContent(),\r",
                     "propPanel = me.getSearchProperty(),\r",
-                    "value = pan.dockedItems.items[1].items.items[6].value;\r",
+                    "value = pan.down('#searchLimitCombo').value;\r",
                     "if (!searchText && searchText.length === 0) return;\r",
                     "\r",
                     "var conf = {\r",
@@ -110,7 +110,6 @@
                     "      repo = action.node.parentNode.data.text;\r",
                     "    }\r",
                     "  }\r",
-                    "\r",
                     "  params.type = (action.node.data.type === '' ? 'SearchNode' : action.node.data.type);\r",
                     "  if (searchText !== undefined && searchText !== '') {\r",
                     "    params.query = searchText;\r",
@@ -175,7 +174,7 @@
                 "implHandler": [
                     "var me = this;\r",
                     "var content = me.getSearchContent(),\r",
-                    "  propPanel = me.getSearchProperty();\r",
+                    "propPanel = me.getSearchProperty();\r",
                     "var node = model.store.getAt(idx);\r",
                     "try {\r",
                     "  node.on('expand', function () {\r",
@@ -187,7 +186,7 @@
                     "    propPanel.setSource(node.data.record);\r",
                     "  }\r",
                     "} catch (e) { }\r",
-                    "node.expand();"
+                    "  node.expand();"
                 ]
             },
             "designerId": "771aed73-9b15-45af-ad15-24ee667ed02b"

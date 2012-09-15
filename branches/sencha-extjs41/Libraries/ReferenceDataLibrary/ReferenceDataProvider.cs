@@ -624,7 +624,7 @@ namespace org.iringtools.refdata
     public QMXF GetClass(string id, string namespaceUrl, Repository rep)
     {
       QMXF qmxf = new QMXF();
-
+      if (!id.StartsWith("R")) return qmxf;
       try
       {
         QMXFName name;
