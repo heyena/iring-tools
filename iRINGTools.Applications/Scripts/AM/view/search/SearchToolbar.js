@@ -67,16 +67,27 @@ Ext.define('AM.view.search.SearchToolbar', {
         },
         {
           xtype: 'combobox',
+          itemId: 'searchLimitCombo',
           width: 90,
+          name: 'searchLimit',
+          submitValue: false,
           value: 50,
           fieldLabel: 'Limit',
+          hideEmptyLabel: false,
+          hideLabel: false,
           labelWidth: 40,
-          editable: false,
-          displayField: 'name',
+          allowBlank: false,
+          displayField: 'limit',
           forceSelection: false,
           queryMode: 'local',
           store: 'SearchCmbStore',
-          valueField: 'name'
+          valueField: 'value',
+          listeners: {
+            beforerender: {
+              fn: me.onComboboxBeforeRender,
+              scope: me
+            }
+          }
         }
       ]
     });
@@ -89,6 +100,10 @@ Ext.define('AM.view.search.SearchToolbar', {
     if (e.getKey() === e.ENTER) {
       me.onSearch();
     }
+  },
+
+  onComboboxBeforeRender: function(abstractcomponent, options) {
+    abstractcomponent.getStore().load();
   },
 
   onSearch: function() {

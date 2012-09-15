@@ -44,7 +44,7 @@ Ext.define('AM.view.directory.ApplicationWindow', {
     Ext.applyIf(me, {
       items: [
         {
-          xtype: 'applicatioform'
+          xtype: 'applicationform'
         }
       ]
     });

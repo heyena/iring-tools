@@ -834,6 +834,22 @@
                 "Scripts/AM/store/RelatedObjectStore.js"
             ],
             "className": "RelatedObjectStore"
+        },
+        "17fb1af5-2569-49f4-927f-dd778c03c1a1": {
+            "paths": [
+                "metadata/view/nhibernate.RelationsGrid",
+                "Scripts/AM/view/override/nhibernate/RelationsGrid.js",
+                "Scripts/AM/view/nhibernate/RelationsGrid.js"
+            ],
+            "className": "nhibernate.RelationsGrid"
+        },
+        "b93d62e3-52fe-4c8d-af23-be3ef7516ff4": {
+            "paths": [
+                "metadata/store/RelationsStore",
+                "Scripts/AM/store/override/RelationsStore.js",
+                "Scripts/AM/store/RelationsStore.js"
+            ],
+            "className": "RelationsStore"
         }
     },
     "viewOrderMap": {
@@ -904,7 +920,8 @@
             "d98d58c9-72b2-46e0-89c3-f2258251b26f",
             "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
             "d1c34e2a-9007-4641-b713-a25c592fadbd",
-            "ef191768-2bd4-46be-864b-6386fbb488a5"
+            "ef191768-2bd4-46be-864b-6386fbb488a5",
+            "17fb1af5-2569-49f4-927f-dd778c03c1a1"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",
@@ -920,7 +937,8 @@
             "bd0c2146-a07f-405b-85d7-72edd111ce14",
             "88fb5df4-c2c7-4ed8-a325-8140a2eb98bf",
             "82edf86f-a5e2-4e95-8ce8-b5152d4a2cd6",
-            "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd"
+            "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd",
+            "b93d62e3-52fe-4c8d-af23-be3ef7516ff4"
         ],
         "controller": [
             "06f88f22-c6f5-473b-a55b-a40aae8ad3b2",

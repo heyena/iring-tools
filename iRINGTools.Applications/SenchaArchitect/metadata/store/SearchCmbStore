@@ -7,9 +7,10 @@
     "codeClass": null,
     "userConfig": {
         "designer|userClassName": "SearchCmbStore",
-        "autoLoad": true,
+        "autoLoad": null,
         "storeId": "searchcmbstore",
-        "data": "[['50', 50], ['100', 100], ['200', 200], ['400', 400]]"
+        "clearOnPageLoad": false,
+        "data": "[\r\n  {\"limit\":\"50\", \"value\":50},\r\n  {\"limit\":\"100\", \"value\":100},\r\n  {\"limit\":\"200\", \"value\":200},\r\n  {\"limit\":\"400\", \"value\":400},\r\n  {\"limit\":\"600\", \"value\":600},\r\n  {\"limit\":\"800\", \"value\":800}\r\n]\r\n"
     },
     "id": "ExtBox1-ext-gen53597",
     "designerId": "cdfeedca-6f01-4cca-8571-032eb19b8cdc",
@@ -23,7 +24,9 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyField45",
-                "name": "name"
+                "name": "limit",
+                "persist": null,
+                "type": "string"
             },
             "designerId": "05aef29d-1e52-4e5d-b769-d5e75957e0cd"
         },
@@ -36,7 +39,8 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyField46",
-                "name": "value"
+                "name": "value",
+                "type": "string"
             },
             "designerId": "01b8c596-fcf0-47ca-81f9-89671ab4d939"
         }

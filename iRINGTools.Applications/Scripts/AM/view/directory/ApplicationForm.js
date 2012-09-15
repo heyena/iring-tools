@@ -15,7 +15,7 @@
 
 Ext.define('AM.view.directory.ApplicationForm', {
   extend: 'Ext.form.Panel',
-  alias: 'widget.applicatioform',
+  alias: 'widget.applicationform',
 
   requires: [
     'AM.view.directory.DataLayerCombo',

@@ -34,7 +34,7 @@
                     "                type: null,\r",
                     "                query: null,\r",
                     "                reset: null,\r",
-                    "                limit: null,\r",
+                    "                limit: 100,\r",
                     " start: 0}"
                 ],
                 "timeout": 600000,

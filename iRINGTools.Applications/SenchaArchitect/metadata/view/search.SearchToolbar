@@ -150,22 +150,48 @@
             "codeClass": null,
             "userConfig": {
                 "layout|flex": null,
-                "designer|userClassName": "MyComboBox",
+                "designer|userClassName": "search.SearchCombo",
+                "designer|userAlias": "searchcombo",
+                "itemId": "searchLimitCombo",
                 "width": 90,
+                "name": "searchLimit",
+                "submitValue": false,
                 "value": [
                     "50"
                 ],
                 "fieldLabel": "Limit",
+                "hideEmptyLabel": false,
+                "hideLabel": false,
                 "labelWidth": 40,
-                "editable": false,
-                "displayField": "name",
+                "allowBlank": false,
+                "displayField": "limit",
                 "forceSelection": false,
                 "queryCaching": null,
                 "queryMode": "local",
                 "store": "SearchCmbStore",
-                "valueField": "name"
+                "valueField": "value"
             },
-            "designerId": "7c8b24a4-c26f-408b-a507-28cdf5935fe4"
+            "designerId": "13f2773d-1c74-43b4-bc48-654d33e2bf27",
+            "cn": [
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "onComboboxBeforeRender",
+                        "fn": "onComboboxBeforeRender",
+                        "implHandler": [
+                            "abstractcomponent.getStore().load();"
+                        ],
+                        "name": "beforerender",
+                        "scope": "me"
+                    },
+                    "designerId": "4158267c-1784-4a3f-9957-ee6a7cddb6b1"
+                }
+            ]
         },
         {
             "type": "basicfunction",

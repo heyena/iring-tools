@@ -40,7 +40,7 @@ Ext.define('AM.store.SearchStore', {
           type: null,
           query: null,
           reset: null,
-          limit: null,
+          limit: 100,
           start: 0
         },
         timeout: 600000,
