@@ -1,0 +1,48 @@
+{
+    "type": "gridpanel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "nhibernate.RelationsGrid",
+        "designer|userAlias": "relationsgrid",
+        "frame": false,
+        "height": null,
+        "width": null,
+        "title": null,
+        "store": "RelationsStore"
+    },
+    "id": "ExtBox1-ext-gen3617",
+    "designerId": "17fb1af5-2569-49f4-927f-dd778c03c1a1",
+    "cn": [
+        {
+            "type": "gridview",
+            "reference": {
+                "name": "viewConfig",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyGridView3"
+            },
+            "designerId": "35dff96c-8b35-4b48-b88f-49375f2929f1"
+        },
+        {
+            "type": "gridcolumn",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyColumn7",
+                "dataIndex": "relationName",
+                "flex": 1,
+                "text": "Data Relationship Name"
+            },
+            "designerId": "f6cd348b-ea01-4063-8a26-ac7a14217b68"
+        }
+    ]
+}
