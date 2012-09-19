@@ -290,7 +290,21 @@ namespace org.iringtools.library
       try
       {
         IList<DataTable> dataTables = ToDataTables(dataObjects);
-        return PostDataTables(dataTables);
+
+        if (dataTables.Count > 0)
+        {
+          return PostDataTables(dataTables);
+        }
+        else
+        {
+          Response response = new Response()
+          {
+            Level = StatusLevel.Warning,
+            Messages = new Messages() { "No records to post." }
+          };
+
+          return response;
+        }
       }
       catch (Exception ex)
       {
@@ -674,29 +688,31 @@ namespace org.iringtools.library
               IList<string> identifiers = objectTypesIdentifiers[pair.Key];
               DataTable dataTable = GetDataTable(objectDefinition.tableName, pair.Value);
 
-              for (int i = 0; i < identifiers.Count; i++)
+              if (dataTable != null && dataTable.Rows.Count > 0)
               {
+                for (int i = 0; i < identifiers.Count; i++)
+                {
                   DataRow dataRow = null;
                   string identifier = identifiers[i];
 
                   // check if data row exists
                   foreach (DataRow row in dataTable.Rows)
                   {
-                      string rowIdentifier = GetIdentifier(objectDefinition, row);
+                    string rowIdentifier = GetIdentifier(objectDefinition, row);
 
-                      if (rowIdentifier == identifier)
-                      {
-                          dataRow = row;
-                          dataTable.AcceptChanges();
-                          break;
-                      }
+                    if (rowIdentifier == identifier)
+                    {
+                      dataRow = row;
+                      dataTable.AcceptChanges();
+                      break;
+                    }
                   }
 
                   // if row does not exist, create new one
                   if (dataRow == null)
                   {
-                      dataRow = dataTable.NewRow();
-                      dataTable.Rows.Add(dataRow);
+                    dataRow = dataTable.NewRow();
+                    dataTable.Rows.Add(dataRow);
                   }
 
                   // update or fill row values from data object properties
@@ -704,59 +720,61 @@ namespace org.iringtools.library
 
                   foreach (DataProperty objectProperty in objectDefinition.dataProperties)
                   {
-                      if (dataRow.RowState == DataRowState.Added || !objectProperty.isReadOnly)
-                      {
-                          object value = dataObject.GetPropertyValue(objectProperty.propertyName);
-                          dataRow.Table.Columns[objectProperty.columnName].ReadOnly = false;
+                    if (dataRow.RowState == DataRowState.Added || !objectProperty.isReadOnly)
+                    {
+                      object value = dataObject.GetPropertyValue(objectProperty.propertyName);
+                      dataRow.Table.Columns[objectProperty.columnName].ReadOnly = false;
 
-                          if (value != null && value.ToString().Trim().Length > 0)
-                          {
-                              switch (objectProperty.dataType)
-                              {
-                                  case DataType.Boolean:
-                                      dataRow[objectProperty.columnName] = Convert.ToBoolean(value);
-                                      break;
-                                  case DataType.Byte:
-                                      dataRow[objectProperty.columnName] = Convert.ToByte(value);
-                                      break;
-                                  case DataType.Int16:
-                                      dataRow[objectProperty.columnName] = Convert.ToInt16(value);
-                                      break;
-                                  case DataType.Int32:
-                                      dataRow[objectProperty.columnName] = Convert.ToInt32(value);
-                                      break;
-                                  case DataType.Int64:
-                                      dataRow[objectProperty.columnName] = Convert.ToInt64(value);
-                                      break;
-                                  case DataType.Decimal:
-                                      dataRow[objectProperty.columnName] = Convert.ToDecimal(value);
-                                      break;
-                                  case DataType.Single:
-                                      dataRow[objectProperty.columnName] = Convert.ToSingle(value);
-                                      break;
-                                  case DataType.Double:
-                                      dataRow[objectProperty.columnName] = Convert.ToDouble(value);
-                                      break;
-                                  case DataType.DateTime:
-                                      dataRow[objectProperty.columnName] = Convert.ToDateTime(value);
-                                      break;
-                                  default:
-                                      dataRow[objectProperty.columnName] = value;
-                                      break;
-                              }
-                          }
-                          else if (objectProperty.dataType == DataType.String || objectProperty.isNullable)
-                          {
-                              dataRow[objectProperty.columnName] = DBNull.Value;
-                          }
-                          else
-                          {
-                              _logger.Error(string.Format("Object property [{0}] does not allow null value.", objectProperty.propertyName));
-                          }
+                      if (value != null && value.ToString().Trim().Length > 0)
+                      {
+                        switch (objectProperty.dataType)
+                        {
+                          case DataType.Boolean:
+                            dataRow[objectProperty.columnName] = Convert.ToBoolean(value);
+                            break;
+                          case DataType.Byte:
+                            dataRow[objectProperty.columnName] = Convert.ToByte(value);
+                            break;
+                          case DataType.Int16:
+                            dataRow[objectProperty.columnName] = Convert.ToInt16(value);
+                            break;
+                          case DataType.Int32:
+                            dataRow[objectProperty.columnName] = Convert.ToInt32(value);
+                            break;
+                          case DataType.Int64:
+                            dataRow[objectProperty.columnName] = Convert.ToInt64(value);
+                            break;
+                          case DataType.Decimal:
+                            dataRow[objectProperty.columnName] = Convert.ToDecimal(value);
+                            break;
+                          case DataType.Single:
+                            dataRow[objectProperty.columnName] = Convert.ToSingle(value);
+                            break;
+                          case DataType.Double:
+                            dataRow[objectProperty.columnName] = Convert.ToDouble(value);
+                            break;
+                          case DataType.DateTime:
+                            dataRow[objectProperty.columnName] = Convert.ToDateTime(value);
+                            break;
+                          default:
+                            dataRow[objectProperty.columnName] = value;
+                            break;
+                        }
                       }
+                      else if (objectProperty.dataType == DataType.String || objectProperty.isNullable)
+                      {
+                        dataRow[objectProperty.columnName] = DBNull.Value;
+                      }
+                      else
+                      {
+                        _logger.Error(string.Format("Object property [{0}] does not allow null value.", objectProperty.propertyName));
+                      }
+                    }
                   }
+                }
+
+                dataTables.Add(dataTable);
               }
-              dataTables.Add(dataTable);
           }
         }
 
