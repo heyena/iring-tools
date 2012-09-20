@@ -24,7 +24,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
   method: 'POST',
   url: 'mapping/graphMap',
 
-  initComponent: function() {
+  initComponent: function () {
     var me = this;
 
     me.addEvents(
@@ -132,14 +132,14 @@ Ext.define('AM.view.directory.GraphMapForm', {
             },
             {
               xtype: 'button',
-              handler: function(button, event) {
+              handler: function (button, event) {
                 me.onSave();
               },
               text: 'Ok'
             },
             {
               xtype: 'button',
-              handler: function(button, event) {
+              handler: function (button, event) {
                 me.onReset();
               },
               text: 'Cancel'
@@ -152,7 +152,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
     me.callParent(arguments);
   },
 
-  onFormAfterRender: function(abstractcomponent, options) {
+  onFormAfterRender: function (abstractcomponent, options) {
     var me = this;
     var ptarget = me.down('#gmfpcontainer');
     var ctarget = me.down('#gmfccontainer');
@@ -161,43 +161,46 @@ Ext.define('AM.view.directory.GraphMapForm', {
       ddGroup: 'propertyGroup',
       notifyEnter: function (propertyDd, e, data) {
         if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
-        return this.dropNotAllowed;
+          return this.dropNotAllowed;
         else
-        return this.dropAllowed;
+          return this.dropAllowed;
       },
       notifyOver: function (propertyDd, e, data) {
         if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
-        return this.dropNotAllowed;
+          return this.dropNotAllowed;
         else
-        return this.dropAllowed;
-      },  
+          return this.dropAllowed;
+      },
       notifyDrop: function (propertyDd, e, data) {
         if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {
           return false;
         }
         else {
-          me.getForm().findField('objectName').setValue(getLastXString(data.records[0].data.id, 2));
-          var msg = 'Identifier: ' + getLastXString(data.records[0].data.id, 1);
-          me.getForm().findField('keyProperty').setValue(getLastXString(data.records[0].data.id, 1));
+          var ident = getLastXString(data.records[0].data.id, 1);
+          var object = getLastXString(data.records[0].data.id, 2);
+          var key = getLastXString(data.records[0].data.id, 1);
+          me.getForm().findField('objectName').setValue(object);
+          var msg = 'Identifier: ' + ident;
+          me.getForm().findField('keyProperty').setValue(key);
           ptarget.update(msg);
           return true;
         }
-      }   
+      }
     });
 
     var classdd = new Ext.dd.DropTarget(ctarget.getEl(), {
       ddGroup: 'refdataGroup',
       notifyEnter: function (classdd, e, data) {
         if (data.records[0].data.type != 'ClassNode')
-        return this.dropNotAllowed;
+          return this.dropNotAllowed;
         else
-        return this.dropAllowed;
+          return this.dropAllowed;
       },
       notifyOver: function (classdd, e, data) {
         if (data.records[0].data.type != 'ClassNode')
-        return this.dropNotAllowed;
+          return this.dropNotAllowed;
         else
-        return this.dropAllowed;
+          return this.dropAllowed;
       },
       notifyDrop: function (classdd, e, data) {
         if (data.records[0].data.type != 'ClassNode') {
@@ -217,16 +220,16 @@ Ext.define('AM.view.directory.GraphMapForm', {
           ctarget.update(msg);
           return true;
         }
-      } 
-    }); 
+      }
+    });
   },
 
-  updateDDContainers: function(record) {
+  updateDDContainers: function (record) {
     var me = this;
     var pcon = me.down('#gmfpcontainer');
     var ccon = me.down('#gmfccontainer');
     var identifier, label;
-    if(record.record) {
+    if (record.record) {
       identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];
       label = record.record.classTemplateMaps[0].classMap.name;
     } else {
@@ -239,18 +242,18 @@ Ext.define('AM.view.directory.GraphMapForm', {
     ccon.update(classlabel);
   },
 
-  onReset: function() {
+  onReset: function () {
     var me = this;
     var win = me.up('window');
     win.fireEvent('reset', me);
 
   },
 
-  onSave: function() {
+  onSave: function () {
     var me = this;
     var win = me.up('window');
-    if (me.getForm().findField('objectName').getValue() === '' || 
-    me.getForm().findField('graphName').getValue() === '' || 
+    if (me.getForm().findField('objectName').getValue() === '' ||
+    me.getForm().findField('graphName').getValue() === '' ||
     me.getForm().findField('classLabel').getValue() === '') {
       showDialog(400, 50, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
       return;

@@ -820,7 +820,7 @@ namespace org.iringtools.web.controllers
           graphMap.AddClassMap(null, classMap);
           mapping.graphMaps.Add(graphMap);
           nodes.Add(CreateGraphNode(context, graphMap, classMap));
-          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
         else
         {
@@ -835,13 +835,13 @@ namespace org.iringtools.web.controllers
           ctm.classMap.id = _qn ? _qName : classId;
           ctm.classMap.identifiers.Clear();
           ctm.classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)
       {
         _logger.Error(ex.ToString());
-        return Json(nodes, JsonRequestBehavior.AllowGet);
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
