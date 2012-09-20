@@ -237,6 +237,7 @@ Ext.define('AM.controller.Mapping', {
 
   addClassMap: function(item, e, options) {
     var me = this;
+    var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
     node = tree.getSelectedNode(),
@@ -277,6 +278,7 @@ Ext.define('AM.controller.Mapping', {
 
   mapProperty: function(item, e, options) {
     var me = this;
+    var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
     node = tree.getSelectedNode(),

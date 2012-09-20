@@ -377,6 +377,7 @@
                 "fn": "addClassMap",
                 "implHandler": [
                     "var me = this;\r",
+                    "var content = me.getMainContent();\r",
                     "var mapPanel = content.down('mappingpanel');\r",
                     "var tree = mapPanel.down('mappingtree'),\r",
                     "node = tree.getSelectedNode(),\r",
@@ -433,6 +434,7 @@
                 "fn": "mapProperty",
                 "implHandler": [
                     "var me = this;\r",
+                    "var content = me.getMainContent();\r",
                     "var mapPanel = content.down('mappingpanel');\r",
                     "var tree = mapPanel.down('mappingtree'),\r",
                     "node = tree.getSelectedNode(),\r",
