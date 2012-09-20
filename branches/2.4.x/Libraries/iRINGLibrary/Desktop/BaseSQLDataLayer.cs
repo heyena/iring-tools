@@ -687,6 +687,7 @@ namespace org.iringtools.library
           {
               IList<string> identifiers = objectTypesIdentifiers[pair.Key];
               DataTable dataTable = GetDataTable(objectDefinition.tableName, pair.Value);
+              dataTable.TableName = objectDefinition.tableName;
 
               if (dataTable != null && dataTable.Rows.Count > 0)
               {
