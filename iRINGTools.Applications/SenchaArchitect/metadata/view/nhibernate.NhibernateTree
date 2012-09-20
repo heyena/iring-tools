@@ -226,13 +226,9 @@
                     "var selection = me.getSelectionModel();\r",
                     "var store = me.store;\r",
                     "var node = selection.getSelection()[0];\r",
-                    "//node.removeAll();\r",
-                    "//node.set('leaf', false);\r",
+                    "\r",
                     "if(node){\r",
-                    "  if(node.isExpanded())\r",
-                    "    node.collapse();\r",
-                    "  //node.set('expanded', false);\r",
-                    "  //node.set('loaded', false);\r",
+                    "store.load(node);\r",
                     "  node.expand();\r",
                     "}"
                 ]

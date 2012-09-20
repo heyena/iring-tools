@@ -22,10 +22,10 @@ Ext.define('AM.view.mapping.MappingPanel', {
     'AM.view.common.PropertyPanel'
   ],
 
-  context: '',
   endpoint: '',
   baseUrl: '',
   graphName: '',
+  contextName: '',
   layout: {
     type: 'border'
   },

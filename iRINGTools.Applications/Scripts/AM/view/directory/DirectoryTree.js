@@ -237,20 +237,17 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
   onReload: function() {
     var me = this;
-    var selection = me.getSelectionModel();
+    var node = me.getSelectedNode();
     var store = me.store;
-    var node;
-    if (selection.getSelection().length > 0) {
-      node = selection.getSelection()[0];
-    } else {
-      node = me.getRootNode();
-    }
-    if (node.data.type == 'folder') return;
-    node.removeAll();
-    node.set('leaf', false);
-    node.set('expanded', false);
-    node.set('loaded', false);
-    node.expand();
+
+    if (!node)
+    node = me.getRootNode();
+
+    var path = node.getPath('text');
+    store.load(node);
+    if(node.isExpanded())
+    node.collapse();
+    me.expandPath(path, 'text');
   },
 
   getSelectedNode: function() {

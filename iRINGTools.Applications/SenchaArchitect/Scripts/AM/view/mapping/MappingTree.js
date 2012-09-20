@@ -116,7 +116,7 @@ Ext.define('AM.view.mapping.MappingTree', {
           label: label,
           roleId: roleId,
           roleName: roleName,
-          contextName: pan.context,
+          contextName: pan.contextName,
           endpoint: pan.endpoint,
           index: index,
           graphName: graphName,
@@ -147,7 +147,7 @@ Ext.define('AM.view.mapping.MappingTree', {
         url: 'mapping/addtemplatemap',
         method: 'POST',
         params: {
-          contextName: pan.context,
+          contextName: pan.contextName,
           endpoint: pan.endpoint,
           baseUrl: pan.baseUrl,
           nodetype: thistype,
@@ -232,19 +232,17 @@ Ext.define('AM.view.mapping.MappingTree', {
 
   onReload: function() {
     var me = this;
-    var selection = me.getSelectionModel().getSelection();
+    var node = me.getSelectedNode();
     var store = me.store;
-    var node;
-    if (selection.length > 0) {
-      node = selection[0];
-    } else {
-      node = me.getRootNode();
-    }
-    node.removeAll();
-    node.set('leaf', false);
-    node.set('expanded', false);
-    node.set('loaded', false);
-    node.expand();
+
+    if (!node)
+    node = me.getRootNode();
+
+    var path = node.getPath('text');
+    store.load(node);
+    if(node.isExpanded())
+    node.collapse();
+    me.expandPath(path, 'text');
   },
 
   onSave: function() {

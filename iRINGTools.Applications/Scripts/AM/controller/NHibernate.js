@@ -28,7 +28,9 @@ Ext.define('AM.controller.NHibernate', {
     'AvailItemsStore',
     'ProviderStore',
     'NHibernateTreeStore',
-    'MultiStore'
+    'MultiStore',
+    'RelatedObjectStore',
+    'RelationsStore'
   ],
   views: [
     'nhibernate.ConnectionStringForm',
@@ -168,6 +170,7 @@ Ext.define('AM.controller.NHibernate', {
     var treeNode = tree.getSelectedNode();
     var dirNode = me.getDirNode(tree.dirNode);
     var dbDict = dirNode.data.record.dbDict;
+    var relationFolderNode;
     if (treeNode) {
       var treeNodeProps = treeNode.data.property;
       var objectNameField = form.getForm().findField('objectName');
@@ -200,9 +203,9 @@ Ext.define('AM.controller.NHibernate', {
         var folderNode = rootNode.childNodes[i];
         var folderNodeProp = folderNode.data.property;
         if (folderNode.childNodes[2])
-        var relationFolderNode = folderNode.childNodes[2];
+        relationFolderNode = folderNode.childNodes[2];
         else
-        var relationFolderNode = folderNode.attributes.children[2];
+        relationFolderNode = folderNode.attributes.children[2];
 
         if (!relationFolderNode)
         continue;

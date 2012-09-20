@@ -19,7 +19,9 @@
             "AvailItemsStore",
             "ProviderStore",
             "NHibernateTreeStore",
-            "MultiStore"
+            "MultiStore",
+            "RelatedObjectStore",
+            "RelationsStore"
         ],
         "views": [
             "nhibernate.ConnectionStringForm",

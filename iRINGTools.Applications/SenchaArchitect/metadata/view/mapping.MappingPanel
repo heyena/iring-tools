@@ -6,10 +6,11 @@
     },
     "codeClass": null,
     "userConfig": {
-        "context": "",
+        "context": null,
         "endpoint": "",
         "baseUrl": "",
         "graphName": "",
+        "contextName": "",
         "designer|userClassName": "mapping.MappingPanel",
         "designer|userAlias": "mappingpanel",
         "height": null,
@@ -40,6 +41,11 @@
         {
             "group": "(Custom Properties)",
             "name": "graphName",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "contextName",
             "type": "string"
         }
     ],

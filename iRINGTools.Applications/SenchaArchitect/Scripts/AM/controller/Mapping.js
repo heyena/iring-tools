@@ -51,6 +51,39 @@ Ext.define('AM.controller.Mapping', {
     }
   ],
 
+  onDeleteTemplateMap: function(item, e, options) {
+    var me = this;
+    var content = me.getMainContent();
+    var dirTree = me.getDirTree();
+    var panel = content.down('mappingpanel');
+    var tree = content.down('mappingtree'),
+    node = tree.getSelectedNode(),
+    index = node.parentNode.indexOf(node),
+    contextName = panel.contextName,
+    endpoint = panel.endpoint,
+    baseUrl = panel.baseUrl;
+
+    me.getParentClass(node);
+    Ext.Ajax.request({
+      url: 'mapping/deleteTemplateMap',
+      method: 'POST',
+      params: {
+        contextName: contextName,
+        endpoint: endpoint,
+        baseUrl: baseUrl,
+        mappingNode: node.data.id,
+        parentIdentifier: me.parentClass,
+        identifier: node.data.identifier,
+        index: index
+      },
+      success: function () {
+        tree.onReload();
+
+      },
+      failure: function () { }
+    });
+  },
+
   onEditOrNewGraph: function(item, e, options) {
     var me = this;
     var nodeId, contextName, endpoint, baseUrl, graphName, 
@@ -143,7 +176,7 @@ Ext.define('AM.controller.Mapping', {
     if(!mapPanel) {
       mapPanel = Ext.widget('mappingpanel', {
         'title': title, 
-        'context': context,
+        'contextName': context,
         'baseUrl': baseUrl, 
         'graphName': graphName,
         'endpoint': endpoint
@@ -207,13 +240,13 @@ Ext.define('AM.controller.Mapping', {
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
     node = tree.getSelectedNode(),
-    graphName = tree.graphName;
+    graphName = mapPanel.graphName;
 
     me.getParentClass(node);
 
     var conf = {
       mappingNode: node,
-      formid: 'propertytarget-' + tree.contextName + '-' + tree.endpoint
+      formid: 'propertytarget-' + mapPanel.contextName + '-' + mapPanel.endpoint
     };
 
     var index = node.parentNode.parentNode.indexOf(node.parentNode);
@@ -231,11 +264,11 @@ Ext.define('AM.controller.Mapping', {
 
     var form = win.down('form').getForm();
 
-    form.findField('contextName').setValue(tree.contextName);
-    form.findField('endpoint').setValue(tree.endpoint);
-    form.findField('baseUrl').setValue(tree.baseUrl);
-    form.findField('graphName').setValue(tree.graphName);
-    form.findField('index').setValue(tree.index);
+    form.findField('contextName').setValue(mapPanel.contextName);
+    form.findField('endpoint').setValue(mapPanel.endpoint);
+    form.findField('baseUrl').setValue(mapPanel.baseUrl);
+    form.findField('graphName').setValue(mapPanel.graphName);
+    form.findField('index').setValue(index);
 
 
     win.show();
@@ -247,10 +280,10 @@ Ext.define('AM.controller.Mapping', {
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
     node = tree.getSelectedNode(),
-    contextName = tree.contextName,
-    endpoint = tree.endpoint,
-    baseUrl = tree.baseUrl,
-    graphName = tree.graphName,
+    contextName = mapPanel.contextName,
+    endpoint = mapPanel.endpoint,
+    baseUrl = mapPanel.baseUrl,
+    graphName = mapPanel.graphName,
     conf = {
       classId: node.parentNode.parentNode.data.identifier,
       mappingNode: node
@@ -267,10 +300,10 @@ Ext.define('AM.controller.Mapping', {
 
     var form = win.down('form').getForm();
 
-    form.findField('contextName').setValue(tree.contextName);
-    form.findField('endpoint').setValue(tree.endpoint);
-    form.findField('baseUrl').setValue(tree.baseUrl);
-    form.findField('graphName').setValue(tree.graphName);
+    form.findField('contextName').setValue(contextName);
+    form.findField('endpoint').setValue(endpoint);
+    form.findField('baseUrl').setValue(baseUrl);
+    form.findField('graphName').setValue(graphName);
     form.findField('index').setValue(index);
     form.findField('roleName').setValue(roleName);
 
@@ -282,14 +315,15 @@ Ext.define('AM.controller.Mapping', {
 
   onMakeReference: function(item, e, options) {
     var me = this;
+    var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
     node = tree.getSelectedNode(),
     index = node.parentNode.parentNode.indexOf(node.parentNode),
-    graphName = tree.graphName,
-    contextName = tree.contextName,
-    baseUrl = tree.baseUrl,
-    endpoint = tree.endpoint;
+    graphName = mapPanel.graphName,
+    contextName = mapPanel.contextName,
+    baseUrl = mapPanel.baseUrl,
+    endpoint = mapPanel.endpoint;
     Ext.Ajax.request({
       url: 'mapping/makereference',
       method: 'POST',
@@ -396,14 +430,15 @@ Ext.define('AM.controller.Mapping', {
 
   onResetMapping: function(item, e, options) {
     var me = this;
+    var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
     node = tree.getSelectedNode(),
     index = node.parentNode.parentNode.indexOf(node.parentNode),
-    contextName = tree.contextName,
-    endpoint = tree.endpoint,
-    baseUrl = tree.baseUrl,
-    graphName = tree.graphName;
+    contextName = mapPanel.contextName,
+    endpoint = mapPanel.endpoint,
+    baseUrl = mapPanel.baseUrl,
+    graphName = mapPanel.graphName;
 
     me.getParentClass(node);
     Ext.Ajax.request({
@@ -431,10 +466,10 @@ Ext.define('AM.controller.Mapping', {
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
     node = tree.getSelectedNode(),
-    graphName = tree.graphName,
-    contextName = tree.contextName,
-    endpoint = tree.endpoint,
-    baseUrl = tree.baseUrl;
+    graphName = mapPanel.graphName,
+    contextName = mapPanel.contextName,
+    endpoint = mapPanel.endpoint,
+    baseUrl = mapPanel.baseUrl;
 
     var roleName = node.data.record.name;
     var index = node.parentNode.parentNode.indexOf(node.parentNode);
@@ -515,14 +550,15 @@ Ext.define('AM.controller.Mapping', {
 
   onMakePossessor: function(item, e, options) {
     var me = this;
+    var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
     node = tree.getSelectedNode(),
     index = node.parentNode.parentNode.indexOf(node.parentNode),
-    graphName = tree.graphName,
-    contextName = tree.contextName,
-    baseUrl = tree.baseUrl,
-    endpoint = tree.endpoint;
+    graphName = mapPanel.graphName,
+    contextName = mapPanel.contextName,
+    baseUrl = mapPanel.baseUrl,
+    endpoint = mapPanel.endpoint;
     Ext.Ajax.request({
       url: 'mapping/makePossessor',
       method: 'POST',
@@ -629,6 +665,9 @@ Ext.define('AM.controller.Mapping', {
 
   init: function(application) {
     this.control({
+      "menuitem[action=templatemapdelete]": {
+        click: this.onDeleteTemplateMap
+      },
       "menuitem[action=editnewgraph]": {
         click: this.onEditOrNewGraph
       },

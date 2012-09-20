@@ -22,10 +22,6 @@ Ext.Loader.setConfig({
 });
 
 Ext.application({
-  stores: [
-    'RelatedObjectStore',
-    'RelationsStore'
-  ],
   views: [
     'AMViewport',
     'nhibernate.RelationsGrid'
