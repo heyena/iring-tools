@@ -6,6 +6,9 @@
     },
     "codeClass": null,
     "userConfig": {
+        "contextName": null,
+        "endpoint": null,
+        "baseUrl": null,
         "designer|userClassName": "mapping.MappingTree",
         "designer|userAlias": "mappingtree",
         "border": "true",
@@ -24,6 +27,23 @@
     },
     "id": "ExtBox1-ext-gen54902",
     "designerId": "37ca6ad3-7180-4c3d-bcd8-22f9493320a6",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "contextName",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "endpoint",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "baseUrl",
+            "type": "string"
+        }
+    ],
     "cn": [
         {
             "type": "treeview",
@@ -87,7 +107,7 @@
                                     "      label: label,\r",
                                     "      roleId: roleId,\r",
                                     "      roleName: roleName,\r",
-                                    "      contextName: pan.context,\r",
+                                    "      contextName: pan.contextName,\r",
                                     "      endpoint: pan.endpoint,\r",
                                     "      index: index,\r",
                                     "      graphName: graphName,\r",
@@ -118,7 +138,7 @@
                                     "    url: 'mapping/addtemplatemap',\r",
                                     "    method: 'POST',\r",
                                     "    params: {\r",
-                                    "      contextName: pan.context,\r",
+                                    "      contextName: pan.contextName,\r",
                                     "      endpoint: pan.endpoint,\r",
                                     "      baseUrl: pan.baseUrl,\r",
                                     "      nodetype: thistype,\r",
@@ -347,19 +367,17 @@
                 "fn": "onReload",
                 "implHandler": [
                     "var me = this;\r",
-                    "var selection = me.getSelectionModel().getSelection();\r",
+                    "var node = me.getSelectedNode();\r",
                     "var store = me.store;\r",
-                    "var node;\r",
-                    "if (selection.length > 0) {\r",
-                    "  node = selection[0];\r",
-                    "} else {\r",
+                    "\r",
+                    "if (!node)\r",
                     "  node = me.getRootNode();\r",
-                    "}\r",
-                    "node.removeAll();\r",
-                    "node.set('leaf', false);\r",
-                    "node.set('expanded', false);\r",
-                    "node.set('loaded', false);\r",
-                    "node.expand();"
+                    "\r",
+                    "var path = node.getPath('text');\r",
+                    "store.load(node);\r",
+                    "if(node.isExpanded())\r",
+                    "  node.collapse();\r",
+                    "me.expandPath(path, 'text');"
                 ]
             },
             "designerId": "73376ff7-78cf-4038-96dd-5bfbe415812b"

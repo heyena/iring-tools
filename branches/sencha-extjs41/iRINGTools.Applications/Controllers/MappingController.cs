@@ -885,7 +885,7 @@ namespace org.iringtools.web.controllers
         if (graphMap != null)
         {
           mapping.graphMaps.Remove(graphMap);
-          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
+          _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)
@@ -1009,7 +1009,7 @@ namespace org.iringtools.web.controllers
       try
       {
         SetContextEndpoint(form);
-        string parentNode = form["mappingNode"].Split('/')[2];
+        string parentNode = form["mappingNode"].Split('/')[1];
         string templateId = form["identifier"];
         string parentClassId = form["parentIdentifier"];
         int index = Convert.ToInt16(form["index"]);

@@ -6,10 +6,6 @@
     },
     "codeClass": null,
     "userConfig": {
-        "stores": [
-            "RelatedObjectStore",
-            "RelationsStore"
-        ],
         "views": [
             "AMViewport",
             "nhibernate.RelationsGrid"

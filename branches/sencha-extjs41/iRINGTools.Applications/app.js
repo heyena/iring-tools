@@ -22,11 +22,9 @@ Ext.Loader.setConfig({
 });
 
 Ext.application({
-  stores: [
-    'RelatedObjectStore'
-  ],
   views: [
-    'AMViewport'
+    'AMViewport',
+    'nhibernate.RelationsGrid'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

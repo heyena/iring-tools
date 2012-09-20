@@ -343,20 +343,17 @@
                 "fn": "onReload",
                 "implHandler": [
                     "var me = this;\r",
-                    "var selection = me.getSelectionModel();\r",
+                    "var node = me.getSelectedNode();\r",
                     "var store = me.store;\r",
-                    "var node;\r",
-                    "if (selection.getSelection().length > 0) {\r",
-                    "  node = selection.getSelection()[0];\r",
-                    "} else {\r",
+                    "\r",
+                    "if (!node)\r",
                     "  node = me.getRootNode();\r",
-                    "}\r",
-                    "if (node.data.type == 'folder') return;\r",
-                    "node.removeAll();\r",
-                    "node.set('leaf', false);\r",
-                    "node.set('expanded', false);\r",
-                    "node.set('loaded', false);\r",
-                    "node.expand();"
+                    "\r",
+                    "var path = node.getPath('text');\r",
+                    "store.load(node);\r",
+                    "if(node.isExpanded())\r",
+                    "  node.collapse();\r",
+                    "me.expandPath(path, 'text');"
                 ]
             },
             "designerId": "3f0c4b56-94b4-4ff2-b544-8280aa254637"

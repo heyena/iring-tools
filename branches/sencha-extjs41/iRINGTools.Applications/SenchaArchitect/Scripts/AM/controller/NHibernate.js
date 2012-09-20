@@ -28,7 +28,9 @@ Ext.define('AM.controller.NHibernate', {
     'AvailItemsStore',
     'ProviderStore',
     'NHibernateTreeStore',
-    'MultiStore'
+    'MultiStore',
+    'RelatedObjectStore',
+    'RelationsStore'
   ],
   views: [
     'nhibernate.ConnectionStringForm',
