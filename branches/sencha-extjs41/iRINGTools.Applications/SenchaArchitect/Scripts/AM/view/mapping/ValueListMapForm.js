@@ -65,10 +65,6 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
         },
         {
           xtype: 'hiddenfield',
-          name: 'internalName'
-        },
-        {
-          xtype: 'hiddenfield',
           name: 'classUrl'
         },
         {
@@ -82,7 +78,6 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
         {
           xtype: 'container',
           anchor: '100%',
-          border: 'true',
           html: 'Drop a Class Node here.',
           itemId: 'vlmfccontainer',
           style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',

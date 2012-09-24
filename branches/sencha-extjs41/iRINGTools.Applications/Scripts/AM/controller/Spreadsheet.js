@@ -116,26 +116,6 @@ Ext.define('AM.controller.Spreadsheet', {
     });
   },
 
-  onDownloadSpreadsheet: function(button, e, options) {
-    var me = this;
-    var pan = me.getSpreadsheetPanel();
-    var tree = pan.down('spreadsheettree');
-    var contextName = tree.context;
-    var endpoint = tree.endpoint;
-    var baseurl = tree.baseUrl;
-    var downloadUrl = 'Spreadsheet/Export';    
-
-    var htmlString = '<form action= ' + downloadUrl + ' target=\"_blank\" method=\"post\" style=\"display:none\">' +
-    '<input type=\"text\" name=\"context\" value=' + contextName +
-    '></input><input type=\"text\" name=\"endpoint\" value=' + endpoint +
-    '></input><input type=\"text\" name=\"baseurl\" value=' + baseurl +
-    '></input><input type=\"submit\"></input></form>';
-    tree.getEl().insertHtml(
-    'beforeBegin',
-    htmlString
-    ).submit();
-  },
-
   init: function(application) {
     var me = this;
     me.application.addEvents('configspreadsheet');
@@ -149,9 +129,6 @@ Ext.define('AM.controller.Spreadsheet', {
       },
       "spreadsheetpanel button[action=savespreadsheet]": {
         click: this.onSaveSpreadsheet
-      },
-      "spreadsheetpanel button[action=downloadspreadsheet]": {
-        click: this.onDownloadSpreadsheet
       }
     });
 

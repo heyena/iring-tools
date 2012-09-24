@@ -367,17 +367,28 @@
                 "fn": "onReload",
                 "implHandler": [
                     "var me = this;\r",
+                    "var graphName = me.up('mappingpanel').graphName;\r",
+                    "var path, graphNode;\r",
                     "var node = me.getSelectedNode();\r",
                     "var store = me.store;\r",
+                    "var root = me.getRootNode();\r",
+                    "root.eachChild(function(child) {\r",
+                    "  if(child.data.text == graphName)\r",
+                    "    graphNode = child;\r",
+                    "});\r",
                     "\r",
-                    "if (!node)\r",
-                    "  node = me.getRootNode();\r",
-                    "\r",
-                    "var path = node.getPath('text');\r",
-                    "store.load(node);\r",
+                    "if (node) {\r",
+                    "  path = node.getPath('text');\r",
+                    "  store.load(node);\r",
                     "if(node.isExpanded())\r",
                     "  node.collapse();\r",
-                    "me.expandPath(path, 'text');"
+                    "}\r",
+                    "\r",
+                    "if(path) {\r",
+                    " // alert(path);\r",
+                    "  me.expandPath(path, 'text');\r",
+                    "  me.getSelectionModel().select(node);\r",
+                    "}"
                 ]
             },
             "designerId": "73376ff7-78cf-4038-96dd-5bfbe415812b"
@@ -481,6 +492,18 @@
                 ]
             },
             "designerId": "d33a65fb-af75-4cf5-93fe-b8e94ffef6e3"
+        },
+        {
+            "type": "rowselectionmodel",
+            "reference": {
+                "name": "selModel",
+                "type": "object"
+            },
+            "codeClass": "Ext.selection.RowModel",
+            "userConfig": {
+                "designer|userClassName": "MyRowSelectionModel1"
+            },
+            "designerId": "9a74fcfe-3f6f-4073-b6f8-8efa93d36867"
         }
     ]
 }

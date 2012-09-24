@@ -1054,6 +1054,7 @@ namespace org.iringtools.web.controllers
     // added string baseUrl = form["baseUrl"];   
     public ActionResult ValueListMap(FormCollection form)
     {
+      Mapping mapping = null;
       try
       {
         SetContextEndpoint(form);
@@ -1084,7 +1085,7 @@ namespace org.iringtools.web.controllers
           }
         }
 
-        Mapping mapping = GetMapping(_baseUrl);
+        mapping = GetMapping(_baseUrl);
         ValueListMap valuelistMap = null;
 
         if (mapping.valueListMaps != null)
@@ -1101,7 +1102,6 @@ namespace org.iringtools.web.controllers
           if (valuelistMap.valueMaps == null)
             valuelistMap.valueMaps = new ValueMaps();
           valuelistMap.valueMaps.Add(valueMap);
-          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
         else
         {
@@ -1111,7 +1111,6 @@ namespace org.iringtools.web.controllers
             valueMap.internalValue = internalName;
             valueMap.uri = _qName;
             valueMap.label = classLabel;
-            //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
           }
         }
       }
@@ -1120,20 +1119,21 @@ namespace org.iringtools.web.controllers
         _logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
-
+      _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     // added string baseUrl = form["baseUrl"];   
     public JsonResult DeleteValueMap(FormCollection form)
     {
+      Mapping mapping = null;
       try
       {
         SetContextEndpoint(form);
         string valueList = form["valueList"];
         //?
         string oldClassUrl = form["oldClassUrl"];
-        Mapping mapping = GetMapping(_baseUrl);
+        mapping = GetMapping(_baseUrl);
         ValueListMap valuelistMap = null;
 
         if (mapping.valueListMaps != null)
@@ -1142,20 +1142,20 @@ namespace org.iringtools.web.controllers
         ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
         if (valueMap != null)
           valuelistMap.valueMaps.Remove(valueMap);
-        //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       }
       catch (Exception ex)
       {
         _logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
-
+      _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     // added string baseUrl = form["baseUrl"];   
     public ActionResult ValueList(FormCollection form)
     {
+      Mapping mapping = null;
       try
       {
         SetContextEndpoint(form);
@@ -1164,7 +1164,7 @@ namespace org.iringtools.web.controllers
 
         oldValueList = form["oldValueList"];
 
-        Mapping mapping = GetMapping(_baseUrl);
+        mapping = GetMapping(_baseUrl);
         string newvalueList = form["valueList"];
 
         if (mapping.valueListMaps != null)
@@ -1182,12 +1182,10 @@ namespace org.iringtools.web.controllers
           };
 
           mapping.valueListMaps.Add(valuelistMap);
-          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
         else
         {
           valueListMap.name = newvalueList;
-          //_repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
         }
       }
       catch (Exception ex)
@@ -1195,7 +1193,7 @@ namespace org.iringtools.web.controllers
         _logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
-
+      _repository.UpdateMapping(mapping, _contextName, _endpoint, _baseUrl);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 

@@ -264,18 +264,18 @@
                     "var pan = me.getSpreadsheetPanel();\r",
                     "var tree = pan.down('spreadsheettree');\r",
                     "var context = pan.context;\r",
-                    "    var endpoint = pan.endpoint;\r",
-                    "    var datalayer = pan.datalayer;\r",
-                    "    var baseUrl = pan.baseUrl;\r",
+                    "var endpoint = pan.endpoint;\r",
+                    "var datalayer = pan.datalayer;\r",
+                    "var baseUrl = pan.baseUrl;\r",
                     "\r",
                     "Ext.Ajax.request({\r",
                     "  url: 'Spreadsheet/Configure',    // where you wanna post\r",
                     "  method: 'POST',\r",
-                    "    params: {\r",
-                    "      'context': context,\r",
-                    "      'endpoint': endpoint,\r",
-                    "      'baseurl': baseUrl,\r",
-                    "      'DataLayer': datalayer\r",
+                    "  params: {\r",
+                    "    'context': context,\r",
+                    "    'endpoint': endpoint,\r",
+                    "    'baseurl': baseUrl,\r",
+                    "    'DataLayer': datalayer\r",
                     "  },\r",
                     "  success: function (f, a) {\r",
                     "    showDialog(350, 80, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);          \r",
@@ -292,42 +292,6 @@
                 "designer|controlQuery": "spreadsheetpanel button[action=savespreadsheet]"
             },
             "designerId": "86d87efd-0845-47e9-bbe9-85497d2c6ed9"
-        },
-        {
-            "type": "controlleraction",
-            "reference": {
-                "name": "listeners",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "onDownloadSpreadsheet",
-                "fn": "onDownloadSpreadsheet",
-                "implHandler": [
-                    "var me = this;\r",
-                    "var pan = me.getSpreadsheetPanel();\r",
-                    "var tree = pan.down('spreadsheettree');\r",
-                    "    var contextName = tree.context;\r",
-                    "    var endpoint = tree.endpoint;\r",
-                    "    var baseurl = tree.baseUrl;\r",
-                    "    var downloadUrl = 'Spreadsheet/Export';    \r",
-                    "\r",
-                    "    var htmlString = '<form action= ' + downloadUrl + ' target=\\\"_blank\\\" method=\\\"post\\\" style=\\\"display:none\\\">' +\r",
-                    "      '<input type=\\\"text\\\" name=\\\"context\\\" value=' + contextName +\r",
-                    "      '></input><input type=\\\"text\\\" name=\\\"endpoint\\\" value=' + endpoint +\r",
-                    "      '></input><input type=\\\"text\\\" name=\\\"baseurl\\\" value=' + baseurl +\r",
-                    "      '></input><input type=\\\"submit\\\"></input></form>';\r",
-                    "    tree.getEl().insertHtml(\r",
-                    "      'beforeBegin',\r",
-                    "      htmlString\r",
-                    "    ).submit();"
-                ],
-                "name": "click",
-                "scope": "me",
-                "designer|targetType": "Ext.button.Button",
-                "designer|controlQuery": "spreadsheetpanel button[action=downloadspreadsheet]"
-            },
-            "designerId": "778fcaca-b1a8-4b1c-997a-503a3ad9b1d3"
         }
     ]
 }

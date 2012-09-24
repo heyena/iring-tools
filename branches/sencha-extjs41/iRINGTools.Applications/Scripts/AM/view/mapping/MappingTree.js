@@ -84,7 +84,10 @@ Ext.define('AM.view.mapping.MappingTree', {
           fn: me.onBeforeLoad,
           scope: me
         }
-      }
+      },
+      selModel: Ext.create('Ext.selection.RowModel', {
+
+      })
     });
 
     me.callParent(arguments);
@@ -232,17 +235,28 @@ Ext.define('AM.view.mapping.MappingTree', {
 
   onReload: function() {
     var me = this;
+    var graphName = me.up('mappingpanel').graphName;
+    var path, graphNode;
     var node = me.getSelectedNode();
     var store = me.store;
+    var root = me.getRootNode();
+    root.eachChild(function(child) {
+      if(child.data.text == graphName)
+      graphNode = child;
+    });
 
-    if (!node)
-    node = me.getRootNode();
+    if (node) {
+      path = node.getPath('text');
+      store.load(node);
+      if(node.isExpanded())
+      node.collapse();
+    }
 
-    var path = node.getPath('text');
-    store.load(node);
-    if(node.isExpanded())
-    node.collapse();
-    me.expandPath(path, 'text');
+    if(path) {
+      // alert(path);
+      me.expandPath(path, 'text');
+      me.getSelectionModel().select(node);
+    }
   },
 
   onSave: function() {
