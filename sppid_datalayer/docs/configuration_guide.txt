@@ -1,0 +1,83 @@
+<configuration>
+  <!-- project variable assignments that apply to all queries -->
+  <assignments>
+    <assignment name="@" value="" />
+  </assignments>
+  
+  <!-- project text replacements that apply to all queries -->
+  <replacements>
+    <!-- 
+      place holder is a pair of characters that wrap around the replacement name to indicate a replacement;
+      for example <replacement name="IncludeStockpileJoin" placeHolder="{}" value="left"/> will replace all 
+      "{IncludeStockpileJoin}" with "left" in the query.
+    !-->
+    <replacement placeHolder="" name="" value=""/>  
+    ...
+  </replacement>
+  
+  <queries>
+    <!-- 
+      !SiteData query is special query that provides schema mapping information for every project in the site;
+      all others are for configuring staging tables. Destination is the staging table name.
+    -->
+    <query name="" destination=""/>
+      <description></description>
+      
+      <declarations>
+        <declaration name="@" value="" datatype=""/>
+        ...
+      </declarations>
+      
+      <!-- local text replacements -->
+      <replacements>
+        <replacement placeHolder="" name="" value=""/>
+        ...
+      </replacements>
+      
+      <selections>
+        <selection></selection>
+        ...
+      </selections>
+      
+      <!-- 
+        for SPPID, schema is NOT the actual schema name because this may change from project to project;
+        instead, it denotes the SPPID schema type name. From this, the true schema name can be derived from the SPPID Site DB
+			-->
+      <sources>
+        <!-- 
+          joinToText indicates that the right field name should not be concatenated with the rightSource; 
+          instead, it will be single quoted as a constant. 
+        -->
+        <source name="" schema="" joinType="" alias="">
+          <!-- the first relation clause must always have an empty conjunction; all others must specify -->
+          <relation leftSource="" leftField="" rightSource="" rightField="" joinToText="" operator="" conjunction=""/>
+          ...
+        </source>
+      </sources>
+      
+      <fields>
+        <!-- source should generally reference the source alias if there is one; otherwise the source name -->
+        <field source="" name="" datatype="" alias=""/>
+        ...
+      </fields>
+      
+      <keys delimiter="">
+        <!-- if key name is not in the field list, then create a single key with that name and set it to autoincrement -->
+        <key name="" type="auto|assigned"/>
+      </keys>
+      
+      <filters>
+        <!-- the first filter will always have an empty conjunction; all others must specify -->
+        <filter preParenCount="" source="" field="" operator="" value="" postParenCount="" conjunction=""/>
+        ...
+      </fitlers>
+      
+      <!-- HAVING and GROUP BY clause are not supported. It is unclear if they will ever be used to extract data from SPPID -->
+      
+      <sorts>
+        <sort source="" field="" direction=""/>
+        ...
+      </sorts>
+    </query>
+  </queries>
+</configuration>
