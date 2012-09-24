@@ -170,7 +170,6 @@ Ext.define('AM.controller.Directory', {
     var form = win.down('form');
     form.node = node;
 
-
     var combo = me.getContextCombo();
 
     combo.store.on('load', function(store, action) {
@@ -245,11 +244,6 @@ Ext.define('AM.controller.Directory', {
       state = 'edit';
     } else {
       wintitle = 'Add New Endpoint';
-      name = '';
-      description = '';
-      datalayer = '';
-      assembly = '';
-      baseurl = '';
       state = 'new';
       path = node.internalId;
     }

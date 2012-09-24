@@ -72,9 +72,16 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
             },
             {
               xtype: 'button',
-              action: 'downloadspreadsheet',
+              href: 'spreadsheet/export',
+              hrefTarget: '_blank',
               iconCls: 'am-document-down',
-              text: 'Download'
+              text: 'Download',
+              listeners: {
+                click: {
+                  fn: me.onButtonClick,
+                  scope: me
+                }
+              }
             }
           ]
         }
@@ -82,6 +89,16 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
     });
 
     me.callParent(arguments);
+  },
+
+  onButtonClick: function(button, e, options) {
+    var tree = button.up('spreadsheettree');
+    var params = {
+      'context': tree.context,
+      'endpoint': tree.endpoint,
+      'baseurl': tree.baseUrl
+    };
+    button.setParams(params);
   },
 
   onReload: function() {

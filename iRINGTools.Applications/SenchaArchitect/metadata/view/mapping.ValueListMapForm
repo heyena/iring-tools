@@ -128,21 +128,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField50",
-                "name": "internalName",
-                "fieldLabel": null
-            },
-            "designerId": "b3f0aaa6-ead0-4274-b5a7-4d2048530655"
-        },
-        {
-            "type": "hiddenfield",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField51",
                 "name": "classUrl",
                 "fieldLabel": null
@@ -383,7 +368,7 @@
                 "designer|userClassName": "mapping.ClassContainer",
                 "designer|userAlias": "classcontainer",
                 "designer|displayName": "",
-                "border": "true",
+                "border": null,
                 "height": null,
                 "html": [
                     "Drop a Class Node here."

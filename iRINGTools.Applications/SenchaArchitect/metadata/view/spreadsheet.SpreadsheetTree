@@ -170,19 +170,41 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "action": "downloadspreadsheet",
                         "layout|flex": null,
                         "designer|userClassName": "MyButton25",
+                        "baseParams": null,
+                        "href": "spreadsheet/export",
+                        "hrefTarget": "_blank",
                         "icon": null,
                         "iconCls": "am-document-down",
+                        "params": null,
                         "text": "Download"
                     },
                     "designerId": "92756b5d-480b-41af-a9f3-16cfd48a45ac",
-                    "customConfigs": [
+                    "cn": [
                         {
-                            "group": "(Custom Properties)",
-                            "name": "action",
-                            "type": "string"
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "designer|userClassName": "onButtonClick",
+                                "fn": "onButtonClick",
+                                "implHandler": [
+                                    "var tree = button.up('spreadsheettree');\r",
+                                    "var params = {\r",
+                                    "  'context': tree.context,\r",
+                                    "  'endpoint': tree.endpoint,\r",
+                                    "  'baseurl': tree.baseUrl\r",
+                                    "};\r",
+                                    "button.setParams(params);"
+                                ],
+                                "name": "click",
+                                "scope": "me"
+                            },
+                            "designerId": "ac13ce01-358c-4f00-a973-568811809386"
                         }
                     ]
                 }
