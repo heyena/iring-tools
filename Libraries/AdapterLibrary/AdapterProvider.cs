@@ -2777,7 +2777,11 @@ namespace org.iringtools.adapter
             {
                 InitializeScope(projectName, applicationName);
 
-                if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+                InitializeDataLayer();
+
+                InitializeProjection(graphName, ref format, false);
+
+                if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
                 {
                     string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
                     _logger.Error(message);
@@ -2789,10 +2793,6 @@ namespace org.iringtools.adapter
 
                     return response;
                 }
-
-                InitializeDataLayer();
-
-                InitializeProjection(graphName, ref format, false);
 
                 IList<IDataObject> dataObjects = null;
                 if (_isProjectionPart7)
@@ -2839,9 +2839,8 @@ namespace org.iringtools.adapter
 
             return response;
         }
-
-
-        public Response Post(string projectName, string applicationName, string graphName, string format, DataItems dataItems)
+      
+        public Response PostRelated(string projectName, string applicationName, string graphName,string id,string relatedResource, string format, XDocument xml)
         {
             Response response = null;
 
@@ -2849,7 +2848,11 @@ namespace org.iringtools.adapter
             {
                 InitializeScope(projectName, applicationName);
 
-                if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+                InitializeDataLayer();
+
+                InitializeProjection(graphName, ref format, false);
+
+                if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
                 {
                     string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
                     _logger.Error(message);
@@ -2861,10 +2864,88 @@ namespace org.iringtools.adapter
 
                     return response;
                 }
+                IList<IDataObject> parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id });
+               
+                IList<IDataObject> childdataObjects = null;
+                if (_isProjectionPart7)
+                {
+                    childdataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
+                }
+                else
+                {
+                    childdataObjects = _projectionEngine.ToDataObjects(relatedResource, ref xml);
+                }
+
+                //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+                //IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+                IList<IDataObject> MeregedDataObjects = new List<IDataObject>();
+                MeregedDataObjects = parentDataObject;
+                foreach(IDataObject obj in  childdataObjects)
+                {
+                 MeregedDataObjects.Add(obj);
+                }
+                //MeregedDataObjects.Concat(parentDataObject);
+               // MeregedDataObjects.Concat(childdataObjects);
+
+                response = _dataLayer.Post(MeregedDataObjects);
+
+                response.DateTimeStamp = DateTime.Now;
+                //response.Level = StatusLevel.Success;
+
+                string baseUri = _settings["GraphBaseUri"] +
+                                 _settings["ApplicationName"] + "/" +
+                                 _settings["ProjectName"] + "/" +
+                                 graphName + "/";
+
+                response.PrepareResponse(baseUri);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error in Post: " + ex);
+                if (response == null)
+                {
+                    response = new Response();
+                }
+
+                Status status = new Status
+                {
+                    Level = StatusLevel.Error,
+                    Messages = new Messages { ex.Message },
+                };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+
+        public Response Post(string projectName, string applicationName, string graphName, string format, DataItems dataItems)
+        {
+            Response response = null;
+
+            try
+            {
+                InitializeScope(projectName, applicationName);
 
                 InitializeDataLayer();
 
                 InitializeProjection(graphName, ref format, false);
+
+                if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+                {
+                    string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
+                    _logger.Error(message);
+
+                    response = new Response();
+                    response.DateTimeStamp = DateTime.Now;
+                    response.Level = StatusLevel.Error;
+                    response.Messages = new Messages() { message };
+
+                    return response;
+                }
 
                 foreach (DataItem dataItem in dataItems.items)
                 {
@@ -2939,7 +3020,9 @@ namespace org.iringtools.adapter
             {
                 InitializeScope(projectName, applicationName);
 
-                if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+                InitializeDataLayer();
+
+                if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
                 {
                     string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
                     _logger.Error(message);
@@ -2951,8 +3034,6 @@ namespace org.iringtools.adapter
 
                     return response;
                 }
-
-                InitializeDataLayer();
 
                 //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
 
@@ -3006,6 +3087,19 @@ namespace org.iringtools.adapter
                 InitializeDataLayer();
 
                 InitializeProjection(graphName, ref format, false);
+                
+                if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+                {
+                    string message = "Can not perform delete on read-only data layer of [" + projectName + "." + applicationName + "].";
+                    _logger.Error(message);
+
+                    response = new Response();
+                    response.DateTimeStamp = DateTime.Now;
+                    response.Level = StatusLevel.Error;
+                    response.Messages = new Messages() { message };
+
+                    return response;
+                }
 
                 if (_isProjectionPart7)
                 {
@@ -3040,6 +3134,65 @@ namespace org.iringtools.adapter
 
             return response;
         }
+
+        public Response DeleteRelated(string projectName, string applicationName, string graphName, string parentidentifier, string relatedResource, string id, string format)
+        {
+            Response response = null;
+
+            try
+            {
+                InitializeScope(projectName, applicationName);
+                InitializeDataLayer();
+
+                InitializeProjection(graphName, ref format, false);
+
+                if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+                {
+                    string message = "Can not perform delete on read-only data layer of [" + projectName + "." + applicationName + "].";
+                    _logger.Error(message);
+
+                    response = new Response();
+                    response.DateTimeStamp = DateTime.Now;
+                    response.Level = StatusLevel.Error;
+                    response.Messages = new Messages() { message };
+
+                    return response;
+                }
+
+                if (_isProjectionPart7)
+                {//TODO:talk to rob
+                    response = _dataLayer.Delete(_graphMap.name, new List<String> { id });
+                }
+                else
+                {
+                    response = _dataLayer.Delete(relatedResource, new List<String> { id });
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                //response.Level = StatusLevel.Success;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error in DeleteIndividual: " + ex);
+                if (response == null)
+                {
+                    response = new Response();
+                }
+
+                Status status = new Status
+                {
+                    Level = StatusLevel.Error,
+                    Messages = new Messages { ex.Message },
+                };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
         #endregion
 
         #region private methods
