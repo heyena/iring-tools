@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using org.iringtools.library;
-using Ninject;
-using log4net;
-using System.IO;
-using IU=org.iringtools.utility;
 using System.Data;
 using System.Data.SqlClient;
-using Oracle.DataAccess.Client;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Xml.Linq;
-using org.iringtools.utility;
+using log4net;
+using Ninject;
+using org.iringtools.library;
+using IU = org.iringtools.utility;
 
 namespace org.iringtools.adapter.datalayer.sppid
 {
@@ -97,21 +95,24 @@ namespace org.iringtools.adapter.datalayer.sppid
         // Rebuild staging table and refetch data
         //
         XDocument configDoc = XDocument.Load(configPath);
-        response.Append(Refresh(configDoc, tableName));
+        Response stagingRefresh = Refresh(configDoc, tableName);
 
         //
         // Cache data dictionary
         //
-        string path = string.Format(@"{0}DataDictionary.{1}.{2}.xml", _dataPath, _project, _application);
-        IU.Utility.Write<DataDictionary>(_dataDictionary, path);
-
-        response.StatusList.Add(new Status()
+        if (stagingRefresh.Level != StatusLevel.Error)
         {
-          Messages = new Messages()
+          string path = string.Format(@"{0}DataDictionary.{1}.{2}.xml", _dataPath, _project, _application);
+          IU.Utility.Write<DataDictionary>(_dataDictionary, path);
+
+          response.StatusList.Add(new Status()
+          {
+            Messages = new Messages()
           {
             "Data dictionary refreshed successfully."
           }
-        });
+          });
+        }
       }
       catch (Exception ex)
       {

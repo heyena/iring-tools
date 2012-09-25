@@ -174,6 +174,27 @@ namespace org.iringtools.adapter.datalayer.sppid
       }
     }
 
+    public string GetVersion(string connStr)
+    {
+      DbConnection dbConn = null;
+
+      try
+      {
+        dbConn = OpenConnection(connStr);
+        return dbConn.ServerVersion;
+      }
+      catch (Exception ex)
+      {
+        string error = "Error getting DB version: " + ex.Message;
+        _logger.Error(error);
+        throw new Exception(error);
+      }
+      finally
+      {
+        CloseConnection(dbConn);
+      }
+    }
+
     #region helper methods
     private DbConnection OpenConnection(string connStr)
     {

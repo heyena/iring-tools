@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using org.iringtools.library;
 using log4net;
+using org.iringtools.library;
 
 namespace org.iringtools.adapter.datalayer.sppid
 {
