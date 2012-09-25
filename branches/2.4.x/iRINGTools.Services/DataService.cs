@@ -357,6 +357,26 @@ namespace org.iringtools.services
     }
 
     [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedResource}?format={format}")]
+    public void UpdateRelatedList(string project, string app, string resource, string parentid, string relatedResource, string format, Stream stream)
+    {
+        format = MapContentType(format);
+
+        if (format == "raw")
+        {
+            throw new Exception("");
+        }
+        else
+        {
+            XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+            Response response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedResource, format, new XDocument(xElement));
+
+            _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+    }
+
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
     public void UpdateItem(string project, string app, string resource, string id, string format, Stream stream)
     {
@@ -395,6 +415,47 @@ namespace org.iringtools.services
       PrepareResponse(ref response);
 
       _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+    }
+
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedresource}/{id}?format={format}")]
+    public void UpdateRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format, Stream stream)
+    {
+        _logger.Debug("I'm in!");
+
+        format = MapContentType(format);
+
+        Response response = new Response();
+
+        if (format == "raw")
+        {
+            response = _adapterProvider.PostContent(project, app, resource, format, id, stream);
+        }
+        else if (format == "json")
+        {
+            DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
+
+            if (dataItems != null && dataItems.items.Count > 0)
+            {
+                dataItems.items[0].id = id;
+                XElement xElement = dataItems.ToXElement();
+                response = _adapterProvider.PostRelated(project, app, resource,parentid,relatedresource, format, new XDocument(xElement));
+            }
+        }
+        else
+        {
+            DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
+
+            dataItems.items[0].id = id;
+
+            _logger.Debug("Deserialized!");
+
+            response = _adapterProvider.Post(project, app, resource, format, dataItems);
+        }
+
+        PrepareResponse(ref response);
+
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
     }
 
     private void PrepareResponse(ref Response response)
@@ -440,6 +501,28 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedresource}?format={format}")]
+    public void CreateRelatedItem(string project, string app, string resource, string format, string parentid, string relatedresource, Stream stream)
+    {
+        format = MapContentType(format);
+
+        if (format == "raw")
+        {
+            throw new Exception("");
+        }
+        else
+        {
+            XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+            Response response = _adapterProvider.PostRelated(project, app, resource,parentid,relatedresource, format, new XDocument(xElement));
+
+            PrepareResponse(ref response);
+
+            _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+    }
+
     [Description("Deletes a resource in the specified application.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
     public void DeleteItem(string project, string app, string resource, string id, string format)
@@ -460,6 +543,28 @@ namespace org.iringtools.services
       {
         ExceptionHandler(ex);
       }
+    }
+
+    [Description("Deletes a resource in the specified application.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedresource}/{id}?format={format}")]
+    public void DeleteRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format)
+    {
+        try
+        {
+
+            format = MapContentType(format);
+
+            Response response = _adapterProvider.DeleteRelated(project, app, resource,parentid,relatedresource,id,format);
+
+            PrepareResponse(ref response);
+
+            _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler(ex);
+        }
     }
 
     [Description("Get summary of an application based on configuration.")]
