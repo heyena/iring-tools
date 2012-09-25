@@ -487,20 +487,53 @@ namespace org.iringtools.adapter.datalayer.sppid
 
       return response;
     }
-    
-    public override long GetRelatedCount(DataRow dataRow, string relatedTableName)
+
+    public override long GetRelatedCount(DataRow parentRow, string relatedTableName)
     {
-      throw new NotImplementedException();
+      try
+      {
+        string whereClause = FormWhereClause(parentRow, relatedTableName);
+        long count = GetCount(relatedTableName, whereClause);
+        return count;
+      }
+      catch (Exception ex)
+      {
+        string error = "Error getting related count: " + ex.Message;
+        _logger.Error(error);
+        throw new Exception(error);
+      }
     }
 
-    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit)
+    public override DataTable GetRelatedDataTable(DataRow parentRow, string relatedTableName, long start, long limit)
     {
-      throw new NotImplementedException();
+      try
+      {
+        string whereClause = FormWhereClause(parentRow, relatedTableName);
+        DataTable result = GetDataTable(relatedTableName, whereClause, start, limit);
+        return result;
+      }
+      catch (Exception ex)
+      {
+        string error = "Error getting related rows: " + ex.Message;
+        _logger.Error(error);
+        throw new Exception(error);
+      }
     }
 
-    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName)
+    public override DataTable GetRelatedDataTable(DataRow parentRow, string relatedTableName)
     {
-      throw new NotImplementedException();
+      try
+      {
+        string whereClause = FormWhereClause(parentRow, relatedTableName);
+        DataTable result = GetDataTable(relatedTableName, whereClause, 1, int.MaxValue);
+        return result;
+      }
+      catch (Exception ex)
+      {
+        string error = "Error getting related rows: " + ex.Message;
+        _logger.Error(error);
+        throw new Exception(error);
+      }
     }
     #endregion
 
@@ -852,6 +885,60 @@ namespace org.iringtools.adapter.datalayer.sppid
         _logger.Error(error);
         throw new Exception(error);
       }
+    }
+
+    private string FormWhereClause(DataRow parentRow, string relatedTableName)
+    {
+      //
+      // validate relationship
+      //
+      if (parentRow == null)
+        throw new Exception("Parent data row is empty.");
+
+      DataObject parentObjDef = _dbDictionary.dataObjects.Find(x => x.tableName.ToUpper() == parentRow.Table.TableName.ToUpper());
+
+      if (parentObjDef == null)
+        throw new Exception("Parent object [" + parentRow.Table.TableName + " not found.");
+
+      DataObject childObjDef = _dbDictionary.dataObjects.Find(x => x.tableName.ToUpper() == relatedTableName.ToUpper());
+
+      if (childObjDef == null)
+        throw new Exception("Child object [" + relatedTableName + " not found.");
+
+      DataRelationship relationship = parentObjDef.dataRelationships.Find(x => x.relatedObjectName.ToUpper() == childObjDef.objectName.ToUpper());
+
+      if (relationship == null)
+        throw new Exception("Relationship between [" + parentRow.Table.TableName + "] and [" + relatedTableName + " not found.");
+
+      //
+      // build WHERE clause 
+      //
+      StringBuilder builder = new StringBuilder();
+
+      foreach (PropertyMap propMap in relationship.propertyMaps)
+      {
+        DataProperty relatedProp = childObjDef.dataProperties.Find(x => x.propertyName.ToUpper() == propMap.relatedPropertyName.ToUpper());
+
+        if (relatedProp == null)
+          throw new Exception("Related property [" + propMap.relatedPropertyName + "] not found.");
+
+        string value = parentRow[propMap.dataPropertyName].ToString();
+
+        if (!Utility.IsNumeric(relatedProp.dataType))
+        {
+          value = "'" + value + "'";
+        }
+
+        if (builder.Length > 0)
+          builder.Append(" and ");
+
+        builder.Append(propMap.dataPropertyName + " = " + value);
+      }
+
+      if (builder.Length > 0)
+        builder.Insert(0, " WHERE ");
+
+      return builder.ToString();
     }
 
     private List<string> FormIdentifiers(DataObject objDef, DataTable dataTable)
