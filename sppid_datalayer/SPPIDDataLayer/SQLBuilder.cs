@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using log4net;
-using System;
 
 namespace org.iringtools.adapter.datalayer.sppid
 {

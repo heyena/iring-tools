@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
+using log4net;
 
 namespace org.iringtools.adapter.datalayer.sppid
 {
   public class WorkingSet
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(WorkingSet));
     private Dictionary<string, string> _connStrs = new Dictionary<string, string>();
     private DBType _dbType;
     private string _plantSchema = string.Empty;
@@ -50,7 +50,17 @@ namespace org.iringtools.adapter.datalayer.sppid
     {
       foreach (string connStr in _connStrs.Values)
       {
-        GrantPrivileges(connStr, privileges, _plantSchema);
+        try
+        {
+          if (connStr != _connStrs[Constants.SPPID_PLANT_SCHEMA])
+          {
+            GrantPrivileges(connStr, privileges, _plantSchema);
+          }
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error granting privilege: " + ex.Message);
+        }
       }
     }
 
@@ -63,7 +73,17 @@ namespace org.iringtools.adapter.datalayer.sppid
     {
       foreach (string connStr in _connStrs.Values)
       {
-        GrantPrivileges(connStr, privileges, _plantSchema);
+        try
+        {
+          if (connStr != _connStrs[Constants.SPPID_PLANT_SCHEMA])
+          {
+            GrantPrivileges(connStr, privileges, _plantSchema);
+          }
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error revoking privilege: " + ex.Message);
+        }
       }
     }
 
@@ -84,7 +104,23 @@ namespace org.iringtools.adapter.datalayer.sppid
 
       if (_dbType == DBType.ORACLE)
       {
-        grantCmd = string.Format(Constants.ORACLE_GRANT_PRVILEGES_TEMPLATE, privilegeStr, user);
+        string version = DBManager.Instance.GetVersion(connStr);
+
+        if (string.Compare(version, "11.") > 0)
+        {
+          grantCmd = string.Format(Constants.ORACLE_GRANT_PRVILEGES_TEMPLATE, privilegeStr, user);
+        }
+        else
+        {
+          DataTable tableResult = DBManager.Instance.ExecuteQuery(connStr, Constants.ORACLE_GET_USER_TABLES);
+
+          foreach (DataRow row in tableResult.Rows)
+          {
+            string tname = row["TNAME"].ToString();
+            string cmd = "GRANT " + privilegeStr + " ON " + tname + " TO " + user;
+            DBManager.Instance.ExecuteNonQuery(connStr, cmd);
+          }
+        }
       }
       else if (_dbType == DBType.SQLServer)
       {
@@ -122,7 +158,23 @@ namespace org.iringtools.adapter.datalayer.sppid
 
       if (_dbType == DBType.ORACLE)
       {
-        revokeCmd = string.Format(Constants.ORACLE_REVOKE_PRVILEGES_TEMPLATE, privilegeStr, user);
+        string version = DBManager.Instance.GetVersion(connStr);
+
+        if (string.Compare(version, "11.") > 0)
+        {
+          revokeCmd = string.Format(Constants.ORACLE_REVOKE_PRVILEGES_TEMPLATE, privilegeStr, user);
+        }
+        else
+        {
+          DataTable tableResult = DBManager.Instance.ExecuteQuery(connStr, Constants.ORACLE_GET_USER_TABLES);
+
+          foreach (DataRow row in tableResult.Rows)
+          {
+            string tname = row["TNAME"].ToString();
+            string cmd = "REVOKE " + privilegeStr + " ON " + tname + " FROM " + user;
+            DBManager.Instance.ExecuteNonQuery(connStr, cmd);
+          }
+        }
       }
       else if (_dbType == DBType.SQLServer)
       {
