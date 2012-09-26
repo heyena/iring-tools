@@ -1,148 +1,186 @@
-﻿using System.Collections.Generic;
-using NUnit.Framework;
-using org.iringtools.library;
-using IU=org.iringtools.utility;
-using StaticDust.Configuration;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using System;
+using NUnit.Framework;
+using org.iringtools.adapter;
+using org.iringtools.library;
+using org.iringtools.utility;
+using StaticDust.Configuration;
+using System.Data;
+using System.Text;
+using log4net;
+using org.iringtools.test;
+using org.iringtools.adapter.datalayer.sppid;
 
-namespace org.iringtools.adapter.datalayer.sppid.test
+namespace org.iringtools.adapter.datalayer.test
 {
   [TestFixture]
   public class Tests
   {
-    private IDataLayer2 _dataLayer;
-    private AdapterSettings _settings;
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(Tests));
+    private IDataLayer2 _dataLayer = null;
+    private Scenarios _scenarios = null;
 
     public Tests()
     {
       string baseDir = Directory.GetCurrentDirectory();
       Directory.SetCurrentDirectory(baseDir.Substring(0, baseDir.LastIndexOf("\\bin")));
 
-      _settings = new AdapterSettings();
-      _settings.AppendSettings(new AppSettingsReader("app.config"));
+      AdapterSettings adapterSettings = new AdapterSettings();
+      adapterSettings.AppendSettings(new AppSettingsReader("App.config"));
 
-      _dataLayer = new SPPIDDataLayer(_settings);
-      _dataLayer.GetDictionary();
-    }
+      FileInfo log4netConfig = new FileInfo("Log4net.config");
+      log4net.Config.XmlConfigurator.Configure(log4netConfig);
 
-    //[Test]
-    public void TestRefresh()
-    {
-      Response response = _dataLayer.Refresh(string.Empty);
-      Assert.AreEqual(response.Level, StatusLevel.Success);
+      _dataLayer = new SPPIDDataLayer(adapterSettings);
+      _scenarios = org.iringtools.utility.Utility.Read<Scenarios>("Scenarios.xml");
     }
 
     [Test]
-    public void TestCount()
+    public void TestDataObjects()
     {
-      long count = _dataLayer.GetCount("Equipment", new DataFilter());
-      Assert.Greater(count, 0);
-    }
+      int MAX_ITEMS = 25;
+      string result = string.Empty;
 
-    [Test]
-    public void TestGetPage()
-    {
-      IList<IDataObject> dataObjects = _dataLayer.Get("Equipment", new DataFilter(), 5, 0);
-      Assert.Greater(dataObjects.Count, 0);
-    }
-
-    [Test]
-    public void TestGetWithIdentifiers()
-    {
-      IList<string> identifiers = new List<string> 
-        { "C7215C9E75DD4A85BB5779C3D29A883D", "51BD7C1DAD8743D99C813083322C14D8" };
-      IList<IDataObject> dataObjects = _dataLayer.Get("Equipment", identifiers);
-      Assert.Greater(dataObjects.Count, 0);
-    }
-
-    [Test]
-    public void TestGetIdentifiers()
-    {
-      string filterPath = string.Format("{0}{1}.{2}.filter.xml",
-        _settings[Constants.DATA_PATH],
-        _settings[Constants.PROJECT],
-        _settings[Constants.APPLICATION]);
-
-      DataFilter filter = IU.Utility.Read<DataFilter>(filterPath);
-      IList<string> identifiers = _dataLayer.GetIdentifiers("Equipment", filter);
-      Assert.Greater(identifiers.Count, 0);
-    }
-
-    [Test]
-    public void TestCreateWithNoIdentifier()
-    {
-      IList<string> identifiers = new List<string>();
-      IList<IDataObject> dataObjects = _dataLayer.Create("Equipment", identifiers);
-      Assert.Greater(dataObjects.Count, 0);
-    }
-
-    [Test]
-    public void TestCreateWithExistAndNonExistingIdentifiers()
-    {
-      IList<string> identifiers = new List<string> { 
-        "C7215C9E75DD4A85BB5779C3D29A883D", 
-        "12345",
-        "" 
-      };
-
-      IList<IDataObject> dataObjects = _dataLayer.Create("Equipment", identifiers);
-      Assert.Greater(dataObjects.Count, 0);
-    }
-
-    //[Test]
-    public void TestDeleteWithIdentifiers()
-    {
-      IList<string> identifiers = new List<string> { 
-        "C7215C9E75DD4A85BB5779C3D29A883D",
-        "12345"
-      };
-
-      Response response = _dataLayer.Delete("Equipment", identifiers);
-      Assert.AreNotEqual(response.Level, StatusLevel.Error);
-    }
-
-    //[Test]
-    public void TestDeleteWithFilter()
-    {
-      string filterPath = string.Format("{0}{1}.{2}.filter.xml",
-        _settings[Constants.DATA_PATH],
-        _settings[Constants.PROJECT],
-        _settings[Constants.APPLICATION]);
-
-      DataFilter filter = IU.Utility.Read<DataFilter>(filterPath);
-      Response response = _dataLayer.Delete("Equipment", filter);
-      Assert.AreNotEqual(response.Level, StatusLevel.Error);
-    }
-
-    [Test]
-    public void TestAddAndUpdate()
-    {
-      IList<IDataObject> dataObjects = _dataLayer.Get("Equipment",
-        new List<string> { "12345" });
-
-      foreach (IDataObject dataObject in dataObjects)
-      {
-        dataObject.SetPropertyValue("SupplyByID", Guid.NewGuid().ToString());
-      }
-
-      // create new data object
-      IDataObject newDataObject = _dataLayer.Create("Equipment", null)[0];
+      #region Test dictionary
+      Console.WriteLine("\nTesting get dictionary ...");
       DataDictionary dictionary = _dataLayer.GetDictionary();
-      DataObject objDef = dictionary.dataObjects.Find(x => x.objectName == "Equipment");
+      Assert.Greater(dictionary.dataObjects.Count, 0);
+      result = (dictionary.dataObjects.Count > 0) ? "passed." : "failed.";
+      _logger.Info("Test get dictionary " + result);
+      #endregion
 
-      foreach (DataProperty prop in objDef.dataProperties)
+      #region Test refresh dictionary
+      Console.WriteLine("Testing refresh dictionary ...");
+      Response response = _dataLayer.RefreshAll();
+      Assert.AreEqual(response.Level, StatusLevel.Success);
+      result = (dictionary.dataObjects.Count > 0) ? "passed." : "failed.";
+      _logger.Info("Test refresh dictionary " + result);
+      #endregion
+
+      foreach (Scenario scenario in _scenarios)
       {
-        string propName = prop.propertyName;
-        newDataObject.SetPropertyValue(propName, dataObjects[0].GetPropertyValue(propName));
+        Console.WriteLine(string.Format("\nExecuting scenario [{0}] ...", scenario.Name));
+
+        string objectType = scenario.ObjectType;
+        string padding = scenario.IdentifierPadding;
+        org.iringtools.test.Properties properties = scenario.Properties;
+        DataFilter filter = !string.IsNullOrEmpty(scenario.DataFilter)
+          ? org.iringtools.utility.Utility.DeserializeDataContract<DataFilter>(scenario.DataFilter)
+          : new DataFilter();
+
+        #region Test get count
+        Console.WriteLine("Testing get count ...");
+        long count = _dataLayer.GetCount(objectType, filter);
+        Assert.Greater(count, 0);
+        result = (count > 0) ? "passed." : "failed.";
+        _logger.Info("Test get count " + result);
+        #endregion
+
+        if (count > MAX_ITEMS) count = MAX_ITEMS;
+
+        #region Test get page
+        Console.WriteLine("Testing get page ...");
+        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, (int)count, 0);
+        Assert.Greater(dataObjects.Count, 0);
+        result = (dataObjects.Count > 0) ? "passed." : "failed.";
+        _logger.Info("Test get page " + result);
+        #endregion
+
+        #region Test get identifiers
+        Console.WriteLine("Testing get identifiers ...");
+        IList<string> identifiers = _dataLayer.GetIdentifiers(objectType, filter);
+        Assert.Greater(identifiers.Count, 0);
+        result = (identifiers.Count > 0) ? "passed." : "failed.";
+        _logger.Info("Test get identifires " + result);
+        #endregion
+
+        #region Test get by identifiers
+        Console.WriteLine("Testing get by identifiers ...");
+        if (identifiers.Count > MAX_ITEMS)
+          dataObjects = _dataLayer.Get(objectType, (((List<string>)identifiers).GetRange(0, MAX_ITEMS - 1)));
+        else
+          dataObjects = _dataLayer.Get(objectType, identifiers);
+        Assert.Greater(dataObjects.Count, 0);
+        result = (dataObjects.Count > 0) ? "passed." : "failed.";
+        _logger.Info("Test get by identifires " + result);
+        #endregion
+
+        //
+        // Create a data object to post and delete
+        //
+        IDataObject dataObject = dataObjects[0];
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        string keyPropName = objDef.keyProperties[0].keyPropertyName;
+        string keyPropValue = Convert.ToString(dataObject.GetPropertyValue(keyPropName)) + padding;
+
+        // Set key property
+        dataObject.SetPropertyValue(keyPropName, keyPropValue);
+
+        // Set configured properties
+        foreach (Property prop in properties)
+        {
+          dataObject.SetPropertyValue(prop.Name, prop.Value);
+        }
+
+        #region Test post
+        Console.WriteLine("Testing post ...");
+        response = _dataLayer.Post(new List<IDataObject>() { dataObject });
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+        result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
+        _logger.Info("Test post " + result);
+        #endregion
+
+        #region Test delete by identifiers
+        Console.WriteLine("Testing delete by identifiers ...");
+        response = _dataLayer.Delete(objectType, new List<string>() { keyPropValue });
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+        result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
+        _logger.Info("Test delete by identifiers " + result);
+        #endregion
+
+        #region Test create
+        Console.WriteLine("Testing create ...");
+        IDataObject newDataObject = _dataLayer.Create(objectType, null)[0];
+        Assert.AreNotEqual(newDataObject, null);
+        result = (newDataObject != null) ? "passed." : "failed.";
+        _logger.Info("Test create " + result);
+        #endregion
+
+        #region Test delete by filter
+        Console.WriteLine("Testing delete by filter ...");
+        // Prepare data object to post
+        foreach (DataProperty prop in objDef.dataProperties)
+        {
+          newDataObject.SetPropertyValue(prop.propertyName, dataObject.GetPropertyValue(prop.propertyName));
+        }
+
+        // Post it
+        response = _dataLayer.Post(new List<IDataObject>() { newDataObject });
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+
+        // Prepare filter to delete
+        filter = new DataFilter()
+        {
+          Expressions = new List<Expression>()
+          {
+            new Expression()
+            {
+              PropertyName = keyPropName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              Values = new Values() { keyPropValue }
+            }
+          }
+        };
+
+        // Execute delete
+        _dataLayer.Delete(objectType, filter);
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+        result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
+        _logger.Info("Test delete by filter " + result);
+        #endregion
       }
-
-      newDataObject.SetPropertyValue("SP_ID", "123456");
-      newDataObject.SetPropertyValue("SupplyByID", Guid.NewGuid().ToString());
-      dataObjects.Add(newDataObject);
-
-      Response response = _dataLayer.Post(dataObjects);
-      Assert.AreNotEqual(response.Level, StatusLevel.Error);
     }
   }
 }

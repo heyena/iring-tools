@@ -198,6 +198,10 @@ namespace org.iringtools.adapter.datalayer.sppid
         {
           query = string.Format("SELECT * FROM {0} {1}", tableName, whereClause);
         }
+        else
+        {
+          throw new Exception("Invalid request.");
+        }
 
         result = DBManager.Instance.ExecuteQuery(_stagingConnStr, query);
       }
