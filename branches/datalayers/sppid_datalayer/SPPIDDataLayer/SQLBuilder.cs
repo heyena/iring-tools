@@ -59,15 +59,6 @@ namespace org.iringtools.adapter.datalayer.sppid
         return string.Empty;
       }
       
-      // apply schema maps
-      if (_schemaMap != null && _schemaMap.Count > 0)
-      {
-        foreach (var pair in _schemaMap)
-        {
-          queryBuilder.Replace(pair.Key + ".", pair.Value + ".");
-        }
-      }
-
       // apply text replacements
       foreach (var textReplacement in _replacements)
       {
@@ -201,7 +192,12 @@ namespace org.iringtools.adapter.datalayer.sppid
                 fromBuilder.Append(" " + sourceElt.Attribute("joinType").Value + " join ");
               }
 
-              string qualSourceName = string.Format("{0}.{1}", sourceElt.Attribute("schema").Value, sourceElt.Attribute("name").Value);
+              string schema = sourceElt.Attribute("schema").Value;
+
+              if (_schemaMap.ContainsKey(schema))
+                schema = _schemaMap[schema];
+
+              string qualSourceName = string.Format("{0}.{1}", schema , sourceElt.Attribute("name").Value);
               fromBuilder.Append(qualSourceName);
 
               if (!string.IsNullOrEmpty(alias))
@@ -304,7 +300,7 @@ namespace org.iringtools.adapter.datalayer.sppid
 
               if (string.IsNullOrEmpty(dataType))
               {
-                dataType = "nvarchar(45)";
+                dataType = "nvarchar(max)";
               }
 
               // make all fields that are not keys nullable to be safe
