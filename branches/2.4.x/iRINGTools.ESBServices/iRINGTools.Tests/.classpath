@@ -9,6 +9,6 @@
 	<classpathentry kind="lib" path="/iRINGTools.Services/WebContent/WEB-INF/lib"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j-1.2.16"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-codec-1.4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
