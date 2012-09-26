@@ -67,16 +67,16 @@
         <relation leftSource="Dr" leftField="SP_ID" rightSource="Rep" rightField="SP_DrawingID"
         joinToText="" operator="=" conjunction="" />
       </source>
-      <source name="T_Unit" schema="SPAPLANT" joinType="{IncludeStockpileJoin}" alias="U" >
+      <!--<source name="T_Unit" schema="SPAPLANT" joinType="{IncludeStockpileJoin}" alias="U" >
         <relation leftSource="PG" leftField="SP_ID" rightSource="U" rightField="SP_ID"
         joinToText="" operator="=" conjunction="" />
-      </source>
+      </source>-->
       <source name="T_PlantItem" schema="SPPID" joinType="inner" alias="PlI">
-        <relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="U" rightField="SP_ID"
-        joinToText="" operator="=" conjunction="" />
+        <!--<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="U" rightField="SP_ID"
+        joinToText="" operator="=" conjunction="" />-->
         <relation leftSource="PlI" leftField="SP_ID" rightSource="Rep" rightField="SP_ModelItemID"
-        joinToText="" operator="=" conjunction="and" />
-        <relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="PG" rightField="SP_ID"
+        joinToText="" operator="=" conjunction="" />
+        "<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="PG" rightField="SP_ID"
         joinToText="" operator="=" conjunction="and" />
       </source>
       <source name="T_Equipment" schema="SPPID" joinType="inner" alias="Eq">
@@ -166,7 +166,7 @@
       <field source="Cl_CR" name="codeList_text" alias="CoatingRequirements" datatype="" />
 
       <field source="Rep" name="InStockPile" alias="" datatype="" />
-      <field source="U" name="UnitCode" alias="PidUnitCode" datatype="" />
+      <!--<field source="U" name="UnitCode" alias="PidUnitCode" datatype="" />-->
     </fields>
     <keys delimiter="">
       <key name="SP_ID" type="auto"/>
@@ -203,15 +203,15 @@
         <relation leftSource="Dr" leftField="SP_ID" rightSource="Rep" rightField="SP_DrawingID"
         joinToText="" operator="=" conjunction="" />
       </source>
-      <source name="T_Unit" schema="SPAPLANT" joinType="{IncludeStockpileJoin}" alias="U" >
+      <!--<source name="T_Unit" schema="SPAPLANT" joinType="{IncludeStockpileJoin}" alias="U" >
         <relation leftSource="PG" leftField="SP_ID" rightSource="U" rightField="SP_ID"
         joinToText="" operator="=" conjunction="" />
-      </source>
+      </source>-->
       <source name="T_PlantItem" schema="SPPID" joinType="inner" alias="PlI">
-        <relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="U" rightField="SP_ID"
-        joinToText="" operator="=" conjunction="" />
+        <!--<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="U" rightField="SP_ID"
+        joinToText="" operator="=" conjunction="" />-->
         <relation leftSource="PlI" leftField="SP_ID" rightSource="Rep" rightField="SP_ModelItemID"
-        joinToText="" operator="=" conjunction="and" />
+        joinToText="" operator="=" conjunction="" />
         <relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="PG" rightField="SP_ID"
         joinToText="" operator="=" conjunction="and" />
       </source>
@@ -296,7 +296,7 @@
       <field source="PR" name="OperFluidCode" alias="" datatype="" />
 
       <field source="Rep" name="InStockPile" alias="" datatype="" />
-      <field source="U" name="UnitCode" alias="PidUnitCode" datatype="" />
+      <!--<field source="U" name="UnitCode" alias="PidUnitCode" datatype="" />-->
     </fields>
     <keys delimiter="">
       <key name="SP_ID"/>
@@ -304,7 +304,7 @@
     <filters>
       <filter preParenCount="0" source="En" field="Name" operator="=" value="@EquipmentClassName" postParenCount="0" conjunction="" />
       <filter preParenCount="0" source="PlI" field="SP_PlantGroupID" operator="=" value="@PlantGroupID" postParenCount="0" conjunction="and" />
-      <filter preParenCount="0" source="U" field="UnitCode" operator="=" value="@UnitCode" postParenCount="0" conjunction="and" />
+      <!--<filter preParenCount="0" source="U" field="UnitCode" operator="=" value="@UnitCode" postParenCount="0" conjunction="and" />-->
       <filter preParenCount="0" source="Dr" field="DrawingNumber" operator="=" value="@DrawingNumber" postParenCount="0" conjunction="and" />
     </filters>
     <sorts/>
@@ -334,15 +334,15 @@
         <relation leftSource="Dr" leftField="SP_ID" rightSource="Rep" rightField="SP_DrawingID"
         joinToText="" operator="=" conjunction="" />
       </source>
-      <source name="T_Unit" schema="SPAPLANT" joinType="{IncludeStockpileJoin}" alias="U" >
+      <!--<source name="T_Unit" schema="SPAPLANT" joinType="{IncludeStockpileJoin}" alias="U" >
         <relation leftSource="PG" leftField="SP_ID" rightSource="U" rightField="SP_ID"
         joinToText="" operator="=" conjunction="" />
-      </source>
+      </source>-->
       <source name="T_PlantItem" schema="SPPID" joinType="inner" alias="PlI">
-        <relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="U" rightField="SP_ID"
-        joinToText="" operator="=" conjunction="" />
+        <!--<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="U" rightField="SP_ID"
+        joinToText="" operator="=" conjunction="" />-->
         <relation leftSource="PlI" leftField="SP_ID" rightSource="Rep" rightField="SP_ModelItemID"
-        joinToText="" operator="=" conjunction="and" />
+        joinToText="" operator="=" conjunction="" />
         <relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="PG" rightField="SP_ID"
         joinToText="" operator="=" conjunction="and" />
       </source>
@@ -424,14 +424,14 @@
       <field source="Cl_CR" name="codeList_text" alias="CoatingRequirements" datatype="" />
 
       <field source="Rep" name="InStockPile" alias="" datatype="" />
-      <field source="U" name="UnitCode" alias="PidUnitCode" datatype="" />
+      <!--<field source="U" name="UnitCode" alias="PidUnitCode" datatype="" />-->
     </fields>
     <keys delimiter="">
       <key name="SP_ID"/>
     </keys>
     <filters>
       <filter preParenCount="0" source="PlI" field="SP_PlantGroupID" operator="=" value="@PlantGroupID" postParenCount="0" conjunction="" />
-      <filter preParenCount="0" source="U" field="UnitCode" operator="=" value="@UnitCode" postParenCount="0" conjunction="and" />
+      <!--<filter preParenCount="0" source="U" field="UnitCode" operator="=" value="@UnitCode" postParenCount="0" conjunction="and" />-->
       <filter preParenCount="0" source="Dr" field="DrawingNumber" operator="=" value="@DrawingNumber" postParenCount="0" conjunction="and" />
       <filter preParenCount="0" source="Cl_PRT" field="PipeRunType" operator="=" value="@PipeRunType" postParenCount="0" conjunction="and" />
     </filters>
@@ -474,10 +474,10 @@
         <relation leftSource="PG" leftField="SP_ID" rightSource="PlI2" rightField="SP_PlantGroupID"
         joinToText="" operator="=" conjunction="" />
       </source>
-      <source name="T_Unit" schema="SPAPLANT" joinType="{IncludeStockpileJoin}" alias="U" >
+      <!--source name="T_Unit" schema="SPAPLANT" joinType="{IncludeStockpileJoin}" alias="U" >
         <relation leftSource="U" leftField="SP_ID" rightSource="PG" rightField="SP_ID"
         joinToText="" operator="=" conjunction="" />
-      </source>
+      </source>-->
       <source name="T_Representation" schema="SPPID" joinType="left" alias="Rep">
         <relation leftSource="Rep" leftField="SP_ModelItemID" rightSource="PlI" rightField="SP_ID"
         joinToText="" operator="=" conjunction="" />
@@ -575,7 +575,7 @@
       <field source="PG" name="Name" alias="PidUnitName" datatype="" />
       <field source="PG" name="Description" alias="PidUnitDescription" datatype="" />
 
-      <field source="U" name="UnitCode" alias="PidUnitCode" datatype="" />
+      <!--<field source="U" name="UnitCode" alias="PidUnitCode" datatype="" />-->
       <field source="Rep" name="InStockPile" alias="" datatype="" />
 
       <field source="Dr" name="DrawingNumber" alias="" datatype="" />
@@ -596,11 +596,10 @@
     </fields>
     <keys delimiter="-">
       <key name="SP_ID"/>
-      <key name="PipingCompTypeID"/>
     </keys>
     <filters>
       <filter preParenCount="0" source="PlI" field="SP_PlantGroupID" operator="=" value="@PlantGroupID" postParenCount="0" conjunction="" />
-      <filter preParenCount="0" source="U" field="UnitCode" operator="=" value="@UnitCode" postParenCount="0" conjunction="and" />
+      <!--<filter preParenCount="0" source="U" field="UnitCode" operator="=" value="@UnitCode" postParenCount="0" conjunction="and" />-->
       <filter preParenCount="0" source="Dr" field="DrawingNumber" operator="=" value="@DrawingNumber" postParenCount="0" conjunction="and" />
       <filter preParenCount="0" source="CL_PCT" field="codelist_text" operator="=" value="@PipingComponentType" postParenCount="0" conjunction="and" />
     </filters>
