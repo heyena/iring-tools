@@ -82,9 +82,6 @@
     <Reference Include="log4net">
       <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="SPPIDDataLayer">
-      <HintPath>..\..\..\..\datalayers\SPPIDDataLayer\SPPIDDataLayer\bin\Debug\SPPIDDataLayer.dll</HintPath>
-    </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>

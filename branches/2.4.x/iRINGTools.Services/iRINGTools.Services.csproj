@@ -86,9 +86,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="RestDatalayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\iRing\trunk\datalayers\RestDatalayer\RestDatalayer\bin\Debug\RestDatalayer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
