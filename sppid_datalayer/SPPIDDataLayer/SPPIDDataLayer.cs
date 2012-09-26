@@ -652,6 +652,37 @@ namespace org.iringtools.adapter.datalayer.sppid
 
         DBType stagingDbType = Utility.GetDBType(_stagingConnStr);
 
+        //   NOTE - although it is possible to make use of an INTO clause to create a selection query that will 
+        //   also automatically create the destination table, this has limitations, the most serious of which is
+        //   it is not safe to assume that the Source DB and Staging DB have the same security requirements. Instead,
+        //   we will always assume that security is separate for these two databases and that the connection strings for the 
+        //   Source and Staging connections provide this information for each individual location. We also cannot assume that
+        //   the specified credentials have the power to create a Linked Server connection or that both SQL Server instances
+        //   allow ad hoc (OpenDataSource) queries. Instead, the provided credentials are used to copy the data to the 
+        //   local machine and then bulk copied out to the staging server, bypassing the need for a more sophisticated security
+        //   check/edit)
+
+        DBType plantDbType = Utility.GetDBType(_settings[Constants.SPPID_PLANT_SCHEMA]);
+
+        if (plantDbType == DBType.ORACLE)
+        {
+          _workingSet = new WorkingSet(
+            _settings[Constants.SPPID_PLANT_SCHEMA],
+            _settings[Constants.SPPID_PLANT_DICTIONARY],
+            _settings[Constants.SPPID_PID_SCHEMA],
+            _settings[Constants.SPPID_PID_DICTIONARY]);
+        }
+        else if (plantDbType == DBType.SQLServer)
+        {
+          _workingSet = new WorkingSet(_settings[Constants.SPPID_PLANT_SCHEMA]);
+        }
+        else
+        {
+          throw new Exception("SPPID DB type not supported.");
+        }
+
+        _workingSet.GrantPrivilege("SELECT");
+
         foreach (XElement queryElt in queryElts)
         {
           sqlBuilder = new SQLBuilder(stagingDbType, queryElt, schemaMap, projectAssignments, projectReplacements, true);
@@ -685,37 +716,6 @@ namespace org.iringtools.adapter.datalayer.sppid
             }
           });
 
-          //   NOTE - although it is possible to make use of an INTO clause to create a selection query that will 
-          //   also automatically create the destination table, this has limitations, the most serious of which is
-          //   it is not safe to assume that the Source DB and Staging DB have the same security requirements. Instead,
-          //   we will always assume that security is separate for these two databases and that the connection strings for the 
-          //   Source and Staging connections provide this information for each individual location. We also cannot assume that
-          //   the specified credentials have the power to create a Linked Server connection or that both SQL Server instances
-          //   allow ad hoc (OpenDataSource) queries. Instead, the provided credentials are used to copy the data to the 
-          //   local machine and then bulk copied out to the staging server, bypassing the need for a more sophisticated security
-          //   check/edit)
-
-          DBType plantDbType = Utility.GetDBType(_settings[Constants.SPPID_PLANT_SCHEMA]);
-
-          if (plantDbType == DBType.ORACLE)
-          {
-            _workingSet = new WorkingSet(
-              _settings[Constants.SPPID_PLANT_SCHEMA],
-              _settings[Constants.SPPID_PLANT_DICTIONARY],
-              _settings[Constants.SPPID_PID_SCHEMA],
-              _settings[Constants.SPPID_PID_DICTIONARY]);
-          }
-          else if (plantDbType == DBType.SQLServer)
-          {
-            _workingSet = new WorkingSet(_settings[Constants.SPPID_PLANT_SCHEMA]);
-          }
-          else
-          {
-            throw new Exception("SPPID DB type not supported.");
-          }
-
-          _workingSet.GrantPrivilege("SELECT");
-
           //
           // Fetch data
           //
@@ -729,8 +729,6 @@ namespace org.iringtools.adapter.datalayer.sppid
               "New data fetched."
             }
           });
-
-          _workingSet.RevokePrivilege("SELECT");
 
           //
           // Bulk copy data to staging table
@@ -786,6 +784,8 @@ namespace org.iringtools.adapter.datalayer.sppid
 
           _dataDictionary.dataObjects.Add(objDef);
         }
+
+        _workingSet.RevokePrivilege("SELECT");
       }
       catch (Exception ex)
       {
