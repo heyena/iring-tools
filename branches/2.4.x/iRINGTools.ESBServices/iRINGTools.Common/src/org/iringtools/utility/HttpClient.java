@@ -359,15 +359,15 @@ public class HttpClient
       conn.setDoInput(true);
     }
     
-    if (url.getProtocol().equalsIgnoreCase("https"))
+    /*if (url.getProtocol().equalsIgnoreCase("https"))
     {
       ignoreSslErrors(conn);
-    }
+    }*/
     
     return conn;
   }
 
-  private String createCredentialsToken(String userName, String password, String domain)
+  public String createCredentialsToken(String userName, String password, String domain)
   {
     String creds = userName + ":" + password;
 
@@ -379,7 +379,7 @@ public class HttpClient
     return new String(Base64.encodeBase64(creds.getBytes()));
   }
   
-  private void ignoreSslErrors(URLConnection connection) 
+  public void ignoreSslErrors(URLConnection connection) 
   {
     try
     {
