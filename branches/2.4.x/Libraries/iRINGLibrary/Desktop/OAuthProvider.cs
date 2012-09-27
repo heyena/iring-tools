@@ -32,6 +32,8 @@ namespace org.iringtools.adapter.security
       // Case 1: the user has already logged in and the application has already processed the SSO event
       if (HttpContext.Current.Request.Cookies[LOGON_COOKIE_NAME] != null)
       {
+        _logger.Debug("the user has already logged in and the application has already processed the SSO event.");
+
         allClaims = new Dictionary<String, String>();
 
         HttpCookie authCookie = HttpContext.Current.Request.Cookies[LOGON_COOKIE_NAME];
@@ -51,6 +53,7 @@ namespace org.iringtools.adapter.security
       else
       {
         // Case 3: the user has logged in but the application needs to process the SSO event
+        _logger.Debug("the user has logged in but the application needs to process the SSO event.");
 
         //the REF key will be different each time even for the same user
         //it's only good for a few seconds, use it quick
@@ -78,6 +81,8 @@ namespace org.iringtools.adapter.security
           }
 
           //get the response from the service 
+          _logger.Debug("Request AuthenticationWebServiceAddress: [" + req.RequestUri + "].");
+
           WebResponse resp = req.GetResponse();
           StreamReader stream = new StreamReader(resp.GetResponseStream());
           string response = stream.ReadToEnd();
@@ -202,6 +207,7 @@ namespace org.iringtools.adapter.security
         else
         {
           // Case 2: the user needs to login
+          _logger.Debug("the user needs to login.");
 
           string port = HttpContext.Current.Request.ServerVariables["SERVER_PORT"];
           if (port == null || port == "80" || port == "443")
