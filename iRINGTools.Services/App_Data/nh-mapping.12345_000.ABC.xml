@@ -4,6 +4,19 @@
       <generator class="assigned" />
     </id>
     <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
+    <property name="TAG_NO" column="&quot;TAG_NO&quot;" />
+    <property name="TAG_CODE" column="&quot;TAG_CODE&quot;" />
+    <property name="IAREA" column="&quot;IAREA&quot;" />
+    <property name="ITRAIN" column="&quot;ITRAIN&quot;" />
+    <property name="ITYP" column="&quot;ITYP&quot;" />
+    <property name="INUM" column="&quot;INUM&quot;" />
+    <property name="ISUFFIX" column="&quot;ISUFFIX&quot;" />
+    <property name="TAG_TYPE" column="&quot;TAG_TYPE&quot;" />
+    <property name="DESCRIPT" column="&quot;DESCRIPT&quot;" />
+    <property name="STD_DETAIL" column="&quot;STD_DETAIL&quot;" />
+    <property name="PROJ_STAT" column="&quot;PROJ_STAT&quot;" />
+    <property name="PID_NO" column="&quot;PID_NO&quot;" />
+    <property name="CONST_TYPE" column="&quot;CONST_TYPE&quot;" />
   </class>
   <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.LINES, App_Code" table="&quot;LINES&quot;">
     <id name="Id" column="&quot;TAG&quot;">
