@@ -19,6 +19,9 @@ namespace org.iringtools.adapter.datalayer.test
   public class Tests
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(Tests));
+    private const string project = "test";
+    private const string app = "sppid";
+
     private IDataLayer2 _dataLayer = null;
     private Scenarios _scenarios = null;
 
@@ -28,11 +31,12 @@ namespace org.iringtools.adapter.datalayer.test
       Directory.SetCurrentDirectory(baseDir.Substring(0, baseDir.LastIndexOf("\\bin")));
 
       AdapterSettings adapterSettings = new AdapterSettings();
-      adapterSettings.AppendSettings(new AppSettingsReader("App.config"));
+      adapterSettings["ProjectName"] = project;
+      adapterSettings["ApplicationName"] = app;
 
-      FileInfo log4netConfig = new FileInfo("Log4net.config");
-      log4net.Config.XmlConfigurator.Configure(log4netConfig);
-
+      string appConfigPath = string.Format("App_Data\\{0}.{1}.config", project, app);
+      adapterSettings.AppendSettings(new AppSettingsReader(appConfigPath));
+      
       _dataLayer = new SPPIDDataLayer(adapterSettings);
       _scenarios = org.iringtools.utility.Utility.Read<Scenarios>("Scenarios.xml");
     }
