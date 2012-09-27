@@ -686,11 +686,12 @@ namespace org.iringtools.library
           if (!objectDefinition.isReadOnly)
           {
               IList<string> identifiers = objectTypesIdentifiers[pair.Key];
-              DataTable dataTable = GetDataTable(objectDefinition.tableName, pair.Value);
-              dataTable.TableName = objectDefinition.tableName;
-
+              DataTable dataTable = CreateDataTable(objectDefinition.tableName, pair.Value);
+              
               if (dataTable != null && dataTable.Rows.Count > 0)
               {
+                dataTable.TableName = objectDefinition.tableName;
+
                 for (int i = 0; i < identifiers.Count; i++)
                 {
                   DataRow dataRow = null;

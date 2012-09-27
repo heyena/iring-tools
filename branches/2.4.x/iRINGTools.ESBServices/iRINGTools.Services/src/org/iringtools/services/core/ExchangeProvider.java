@@ -556,7 +556,7 @@ public class ExchangeProvider
     if (dtis == null)
     {
       exchangeResponse.setLevel(Level.ERROR);
-      exchangeResponse.setSummary("No data transfer objects found.");
+      exchangeResponse.setSummary("No data transfer indices found.");
       return exchangeResponse;
     }
     
@@ -590,7 +590,7 @@ public class ExchangeProvider
     }
 
     //
-    // create directory for logging exchange
+    // create directory for logging the exchange
     //
     String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
     File dirPath = new File(path);
@@ -690,10 +690,18 @@ public class ExchangeProvider
       try
       {
         manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
+        
+        logger.debug("Requesting source DTOs from [" + sourceDtoUrl + "]");
+        logger.debug(JaxbUtils.toXml(sourceDtosRequest, false));
+        
         sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtosRequest);
+        
+        logger.debug("Source DTOs response: ");
+        logger.debug(JaxbUtils.toXml(sourceDtos, false));
+        
         sourceDtosRequest = null;
       }
-      catch (HttpClientException e)
+      catch (Exception e)
       {
         logger.error(e.getMessage());
         throw new ServiceProviderException(e.getMessage());
@@ -719,9 +727,18 @@ public class ExchangeProvider
           String targetUrl = targetGraphUrl + "?format=stream";
           
           String poolRange = i + " - " + (i + actualPoolSize);
+          
           logger.info("Processing pool [" + poolRange + "] of [" + dxIndices.size() + "]...");
           exchangeProgresses.put(exchangeKey, String.format(progressFormat, i, (i+actualPoolSize), dxIndices.size()));
+          
+          logger.debug("Sending pool DTOs to [" + targetUrl + "]");
+          logger.debug(JaxbUtils.toXml(poolDtos, false));
+          
           poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
+          
+          logger.debug("Pool DTOs exchange result:");
+          logger.debug(JaxbUtils.toXml(poolResponse, false));
+          
           logger.info("Pool [" + poolRange + "] completed.");          
           
           // free up resources
@@ -729,7 +746,7 @@ public class ExchangeProvider
           sourceDtos = null;
           poolDtiItems = null;
         }
-        catch (HttpClientException e)
+        catch (Exception e)
         {
           logger.error(e.getMessage());
           throw new ServiceProviderException(e.getMessage());

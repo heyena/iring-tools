@@ -763,7 +763,7 @@ namespace org.iringtools.adapter.projection
 
     private string ParsePropertyValue(RoleMap propertyRole, string propertyValue, ref string keyValue)
     {
-      string value = propertyValue;
+      string value = propertyValue.Trim();
 
       if (String.IsNullOrEmpty(propertyRole.valueListName))
       {
