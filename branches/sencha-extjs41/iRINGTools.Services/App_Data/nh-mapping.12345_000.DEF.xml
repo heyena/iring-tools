@@ -1,20 +1,19 @@
 ﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
-  <class name="org.iringtools.adapter.datalayer.proj_12345_000.DEF.INSTRUMENTS, App_Code" table="&quot;INSTRUMENTS&quot;">
-    <id name="Id" column="&quot;TAG&quot;">
-      <generator class="assigned" />
-    </id>
-    <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
-  </class>
-  <class name="org.iringtools.adapter.datalayer.proj_12345_000.DEF.LINES, App_Code" table="&quot;LINES&quot;">
-    <id name="Id" column="&quot;TAG&quot;">
-      <generator class="assigned" />
-    </id>
-    <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
-  </class>
   <class name="org.iringtools.adapter.datalayer.proj_12345_000.DEF.EQUIPMENT, App_Code" table="&quot;EQUIPMENT&quot;">
     <id name="Id" column="&quot;TAG&quot;">
       <generator class="assigned" />
     </id>
     <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
+    <property name="AREA" column="&quot;AREA&quot;" />
+    <property name="TRAINNUMBER" column="&quot;TRAINNUMBER&quot;" />
+    <property name="EQTYPE" column="&quot;EQTYPE&quot;" />
+    <property name="EQPPREFIX" column="&quot;EQPPREFIX&quot;" />
+    <property name="EQSEQNO" column="&quot;EQSEQNO&quot;" />
+    <property name="EQPSUFF" column="&quot;EQPSUFF&quot;" />
+    <property name="EQUIPDESC1" column="&quot;EQUIPDESC1&quot;" />
+    <property name="CONSTTYPE" column="&quot;CONSTTYPE&quot;" />
+    <property name="EWP" column="&quot;EWP&quot;" />
+    <property name="TAGSTATUS" column="&quot;TAGSTATUS&quot;" />
+    <property name="COMMODITY" column="&quot;COMMODITY&quot;" />
   </class>
 </hibernate-mapping>

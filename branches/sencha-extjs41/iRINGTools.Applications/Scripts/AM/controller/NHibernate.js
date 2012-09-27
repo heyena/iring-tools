@@ -240,15 +240,6 @@ Ext.define('AM.controller.NHibernate', {
           }
         }
       }
-
-      //  var items = editor.items.items;
-
-      //  for (var i = 0; i < items.length; i++) {
-      //    var relateObjField = items[i].getForm().findField('relatedObjectName');
-      //    if (relateObjField)
-      //      if (relateObjField.getValue().toLowerCase() == oldObjNam.toLowerCase())
-      //        relateObjField.setValue(objNam);
-      //  }
     }
   },
 
@@ -645,6 +636,7 @@ Ext.define('AM.controller.NHibernate', {
     var serName = '';
 
     dirNode.data.record.dbDict.Provider = dbProvider;
+    dirNode.data.record.dbDict.SchemaName = dbSchema.getValue();
 
     if (dbProvider.indexOf('ORACLE') > -1) {
       dbServer.setValue(host.getValue());
