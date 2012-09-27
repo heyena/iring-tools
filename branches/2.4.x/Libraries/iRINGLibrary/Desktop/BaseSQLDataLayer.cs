@@ -695,14 +695,13 @@ namespace org.iringtools.library
                 for (int i = 0; i < identifiers.Count; i++)
                 {
                   DataRow dataRow = null;
-                  string identifier = identifiers[i];
 
                   // check if data row exists
                   foreach (DataRow row in dataTable.Rows)
                   {
                     string rowIdentifier = GetIdentifier(objectDefinition, row);
 
-                    if (rowIdentifier == identifier)
+                    if (identifiers.Contains(rowIdentifier))
                     {
                       dataRow = row;
                       dataTable.AcceptChanges();
