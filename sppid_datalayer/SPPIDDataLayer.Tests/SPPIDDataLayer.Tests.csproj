@@ -68,13 +68,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App_Data\test.sppid.config">
-      <SubType>Designer</SubType>
-    </None>
+    <Content Include="Scenarios.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\test.sppid.configuration.xml" />
-    <Content Include="Scenarios.xml" />
+    <Folder Include="App_Data\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
