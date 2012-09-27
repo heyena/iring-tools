@@ -68,15 +68,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
+    <None Include="App_Data\test.sppid.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\pilot.sppid.configuration.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\pilot.sppid.filter.xml" />
+    <Content Include="App_Data\test.sppid.configuration.xml" />
     <Content Include="Scenarios.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

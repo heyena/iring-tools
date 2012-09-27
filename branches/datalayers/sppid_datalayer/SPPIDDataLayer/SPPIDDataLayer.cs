@@ -378,120 +378,197 @@ namespace org.iringtools.adapter.datalayer.sppid
       return response;
     }
 
-    public override Response PostDataTables(IList<DataTable> dataTables)
+    public override Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
 
-      if (dataTables == null || dataTables.Count == 0)
+      try
       {
-        response.Level = StatusLevel.Error;
-        response.Messages = new Messages() { "No data tables to delete." };
-        return response;
-      }
-      
-      foreach (DataTable dataTable in dataTables)
-      {
-        try
+        IList<DataTable> dataTables = new List<DataTable>();
+
+        Dictionary<string, DataObject> objectTypesObjectDefinitions = new Dictionary<string, DataObject>();
+        Dictionary<string, IList<string>> objectTypesIdentifiers = new Dictionary<string, IList<string>>();
+        Dictionary<string, IList<IDataObject>> objectTypesDataObjects = new Dictionary<string, IList<IDataObject>>();
+
+        if (dataObjects != null)
         {
-          if (dataTable == null || dataTable.Rows.Count == 0)
+          foreach (IDataObject dataObject in dataObjects)
           {
-            Status status = new Status()
+            string objectType = dataObject.GetType().Name;
+
+            if (objectType == typeof(GenericDataObject).Name)
             {
-              Level = StatusLevel.Error,
-              Messages = new Messages() { "No rows in [" + dataTable.TableName + "] to update." }
-            };
-
-            response.StatusList.Add(status);
-          }
-          else
-          {
-            string tableName = dataTable.TableName;
-            DataObject objDef = _dbDictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower());
-            Dictionary<string, string> idCmdMap = new Dictionary<string, string>();
-            
-            foreach (DataRow row in dataTable.Rows)
-            {
-              string identifier = FormIdentifier(objDef, row);
-              string updateCmd = string.Empty;
-              int columnCount = dataTable.Columns.Count;
-
-              if (row.RowState == DataRowState.Added)
-              {
-                StringBuilder colsBuilder = new StringBuilder();
-                StringBuilder valsBuilder = new StringBuilder();
-
-                foreach (DataColumn col in dataTable.Columns)
-                {
-                  if (row[col.ColumnName] != DBNull.Value && row[col.ColumnName] != null)
-                  {
-                    colsBuilder.Append("," + col.ColumnName);
-
-                    if (Utility.IsNumeric(col.DataType))
-                    {
-                      valsBuilder.Append("," + row[col.ColumnName].ToString());
-                    }
-                    else
-                    {
-                      valsBuilder.Append("," + "'" + row[col.ColumnName].ToString() + "'");
-                    }
-                  }
-                }
-
-                updateCmd = string.Format(Constants.SQL_INSERT_TEMPLATE, tableName, colsBuilder.Remove(0, 1), valsBuilder.Remove(0, 1));
-              }
-              else if (row.RowState == DataRowState.Modified) // || row.RowState == DataRowState.Deleted)
-              {
-                StringBuilder builder = new StringBuilder();
-                string whereClause = FormWhereClause(objDef, row);
-
-                foreach (DataColumn col in dataTable.Columns)
-                {
-                  if (row[col.ColumnName] != DBNull.Value && row[col.ColumnName] != null)
-                  {
-                    if (Utility.IsNumeric(col.DataType))
-                    {
-                      builder.Append("," + col.ColumnName + "=" + row[col.ColumnName].ToString());
-                    }
-                    else
-                    {
-                      builder.Append("," + col.ColumnName + "='" + row[col.ColumnName].ToString() + "'");
-                    }
-                  }
-                }
-
-                if (row.RowState == DataRowState.Modified)
-                {
-                  updateCmd = string.Format(Constants.SQL_UPDATE_TEMPLATE, tableName, builder.Remove(0, 1), whereClause);
-                }
-                //else
-                //{
-                //  updateCmd = string.Format(Constants.SQL_DELETE_TEMPLATE, tableName, whereClause);
-                //}
-              }
-
-              if (!string.IsNullOrEmpty(identifier) && !string.IsNullOrEmpty(updateCmd))
-              {
-                idCmdMap[identifier] = updateCmd;
-              }
-              else
-              {
-                _logger.Error("[" + identifier + "] not found or unchanged.");
-              }
+              objectType = ((GenericDataObject)dataObject).ObjectType;
             }
 
-            Response updateResponse = DBManager.Instance.ExecuteUpdate(_stagingConnStr, idCmdMap);
-            response.Append(updateResponse);
+            if (objectTypesIdentifiers.ContainsKey(objectType))
+            {
+              DataObject objectDefinition = objectTypesObjectDefinitions[objectType];
+              string identifier = GetIdentifier(objectDefinition, dataObject);
+              objectTypesIdentifiers[objectType].Add(identifier);
+              objectTypesDataObjects[objectType].Add(dataObject);
+            }
+            else
+            {
+              DataObject objectDefinition = GetObjectDefinition(objectType);
+              string identifier = GetIdentifier(objectDefinition, dataObject);
+              objectTypesObjectDefinitions[objectType] = objectDefinition;
+              objectTypesIdentifiers[objectType] = new List<string>() { identifier };
+              objectTypesDataObjects[objectType] = new List<IDataObject>() { dataObject };
+            }
           }
         }
-        catch (Exception ex)
+
+        foreach (var pair in objectTypesIdentifiers)
         {
-          string error = "Error updating [" + dataTable.TableName + "]: " + ex.Message;
+          DataObject objectDefinition = objectTypesObjectDefinitions[pair.Key];
 
-          response.Level = StatusLevel.Error;
-          response.Messages.Add(error);
+          if (!objectDefinition.isReadOnly)
+          {
+            IList<string> identifiers = objectTypesIdentifiers[pair.Key];
+            DataTable dataTable = CreateDataTable(objectDefinition.tableName, pair.Value);
 
-          _logger.Error(error);
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+              dataTable.TableName = objectDefinition.tableName;
+              dataTables.Add(dataTable);
+            }
+          }
         }
+
+        if (dataTables.Count == 0)
+        {
+          response.Level = StatusLevel.Warning;
+          response.Messages = new Messages() { "No data to post." };
+
+          return response;
+        }
+
+        foreach (DataTable dataTable in dataTables)
+        {
+          Response res = PostDataTable(dataTable);
+          response.Append(res);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error posting data objects: " + ex);
+        throw ex;
+      }
+
+      return response;
+    }
+
+    // this method should not be called since Post(IList<IDataObject>) has been overriden
+    public override Response PostDataTables(IList<DataTable> dataTables)
+    {
+      return new Response();
+    }
+
+    protected Response PostDataTable(DataTable dataTable)
+    {
+      Response response = new Response();
+            
+      try
+      {
+        if (dataTable == null || dataTable.Rows.Count == 0)
+        {
+          Status status = new Status()
+          {
+            Level = StatusLevel.Error,
+            Messages = new Messages() { "No rows in [" + dataTable.TableName + "] to update." }
+          };
+
+          response.StatusList.Add(status);
+        }
+        else
+        {
+          string tableName = dataTable.TableName;
+          DataObject objDef = _dbDictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower());
+          Dictionary<string, string> idCmdMap = new Dictionary<string, string>();
+            
+          foreach (DataRow row in dataTable.Rows)
+          {
+            string identifier = FormIdentifier(objDef, row);
+            string updateCmd = string.Empty;
+            int columnCount = dataTable.Columns.Count;
+
+            if (row.RowState == DataRowState.Added)
+            {
+              StringBuilder colsBuilder = new StringBuilder();
+              StringBuilder valsBuilder = new StringBuilder();
+
+              foreach (DataColumn col in dataTable.Columns)
+              {
+                if (row[col.ColumnName] != DBNull.Value && row[col.ColumnName] != null)
+                {
+                  colsBuilder.Append("," + col.ColumnName);
+
+                  if (Utility.IsNumeric(col.DataType))
+                  {
+                    valsBuilder.Append("," + row[col.ColumnName].ToString());
+                  }
+                  else
+                  {
+                    valsBuilder.Append("," + "'" + row[col.ColumnName].ToString() + "'");
+                  }
+                }
+              }
+
+              updateCmd = string.Format(Constants.SQL_INSERT_TEMPLATE, tableName, colsBuilder.Remove(0, 1), valsBuilder.Remove(0, 1));
+            }
+            else if (row.RowState == DataRowState.Modified) // || row.RowState == DataRowState.Deleted)
+            {
+              StringBuilder builder = new StringBuilder();
+              string whereClause = FormWhereClause(objDef, row);
+
+              foreach (DataColumn col in dataTable.Columns)
+              {
+                if (row[col.ColumnName] != DBNull.Value && row[col.ColumnName] != null)
+                {
+                  if (Utility.IsNumeric(col.DataType))
+                  {
+                    builder.Append("," + col.ColumnName + "=" + row[col.ColumnName].ToString());
+                  }
+                  else
+                  {
+                    builder.Append("," + col.ColumnName + "='" + row[col.ColumnName].ToString() + "'");
+                  }
+                }
+              }
+
+              if (row.RowState == DataRowState.Modified)
+              {
+                updateCmd = string.Format(Constants.SQL_UPDATE_TEMPLATE, tableName, builder.Remove(0, 1), whereClause);
+              }
+              //else
+              //{
+              //  updateCmd = string.Format(Constants.SQL_DELETE_TEMPLATE, tableName, whereClause);
+              //}
+            }
+
+            if (!string.IsNullOrEmpty(identifier) && !string.IsNullOrEmpty(updateCmd))
+            {
+              idCmdMap[identifier] = updateCmd;
+            }
+            else
+            {
+              _logger.Error("[" + identifier + "] not found or unchanged.");
+            }
+          }
+
+          Response updateResponse = DBManager.Instance.ExecuteUpdate(_stagingConnStr, idCmdMap);
+          response.Append(updateResponse);
+        }
+      }
+      catch (Exception ex)
+      {
+        string error = "Error updating [" + dataTable.TableName + "]: " + ex.Message;
+
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(error);
+
+        _logger.Error(error);
       }
 
       return response;
