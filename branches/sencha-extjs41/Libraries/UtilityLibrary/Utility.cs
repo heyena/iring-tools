@@ -1446,26 +1446,60 @@ namespace org.iringtools.utility
       return mimeType;
     }
 
-    public static string EncodeTo64(string toEncode)
-    {
-      if (!String.IsNullOrEmpty(toEncode))
-      {
-        byte[] toEncodeAsBytes = ASCIIEncoding.ASCII.GetBytes(toEncode);
-        return Convert.ToBase64String(toEncodeAsBytes);
-      }
+    //public static string EncodeTo64(string toEncode)
+    //{
+    //  if (!String.IsNullOrEmpty(toEncode))
+    //  {
+    //    byte[] toEncodeAsBytes = ASCIIEncoding.ASCII.GetBytes(toEncode);
+    //    return Convert.ToBase64String(toEncodeAsBytes);
+    //  }
 
-      return toEncode;
+    //  return toEncode;
+    //}
+
+    //public static string DecodeFrom64(string encodedData)
+    //{
+    //  if (!String.IsNullOrEmpty(encodedData))
+    //  {
+    //    byte[] encodedDataAsBytes = Convert.FromBase64String(encodedData);
+    //    return ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
+    //  }
+
+    //  return encodedData;
+    //}
+
+    public static string EncodeTo64(string data)
+    {
+      try
+      {
+        byte[] encDatabytes = new byte[data.Length];
+        encDatabytes = System.Text.Encoding.UTF8.GetBytes(data);
+        string encodedData = Convert.ToBase64String(encDatabytes);
+        return encodedData;
+      }
+      catch (Exception e)
+      {
+        throw new Exception("Error in EncodeTo64" + e.Message);
+      }
     }
 
-    public static string DecodeFrom64(string encodedData)
+    public static string DecodeFrom64(string data)
     {
-      if (!String.IsNullOrEmpty(encodedData))
+      try
       {
-        byte[] encodedDataAsBytes = Convert.FromBase64String(encodedData);
-        return ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
+        System.Text.UTF8Encoding encoder = new System.Text.UTF8Encoding();
+        System.Text.Decoder utf8Decode = encoder.GetDecoder();
+        byte[] toDecodeBytes = Convert.FromBase64String(data);
+        int charCount = utf8Decode.GetCharCount(toDecodeBytes, 0, toDecodeBytes.Length);
+        char[] decodedCharArray = new char[charCount];
+        utf8Decode.GetChars(toDecodeBytes, 0, toDecodeBytes.Length, decodedCharArray, 0);
+        string result = new String(decodedCharArray);
+        return result;
       }
-
-      return encodedData;
+      catch (Exception e)
+      {
+        throw new Exception("Error in DecodeFrom64" + e.Message);
+      }
     }
 
     private static string GetMapUri(Properties uriMaps, string uri)

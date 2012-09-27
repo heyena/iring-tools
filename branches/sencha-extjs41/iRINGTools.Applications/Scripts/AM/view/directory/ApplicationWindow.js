@@ -22,7 +22,7 @@ Ext.define('AM.view.directory.ApplicationWindow', {
   ],
 
   node: '',
-  border: 'false',
+  border: false,
   floating: true,
   frame: false,
   height: 260,

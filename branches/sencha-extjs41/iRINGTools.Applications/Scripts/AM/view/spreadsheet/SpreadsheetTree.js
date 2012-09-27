@@ -29,7 +29,7 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
   endpoint: '',
   baseUrl: '',
   datalayer: '',
-  border: 'true',
+  border: true,
   store: 'SpreadsheetStore',
 
   initComponent: function() {

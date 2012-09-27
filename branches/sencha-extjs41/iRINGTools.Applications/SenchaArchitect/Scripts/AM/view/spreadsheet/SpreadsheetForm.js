@@ -17,7 +17,7 @@ Ext.define('AM.view.spreadsheet.SpreadsheetForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.spreadsheetform',
 
-  border: 'false',
+  border: false,
   frame: false,
   bodyStyle: 'padding:10px 5px 0',
 

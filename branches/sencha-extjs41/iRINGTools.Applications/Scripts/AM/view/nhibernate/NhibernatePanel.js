@@ -23,7 +23,7 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
 
   dirNode: '',
   treeNode: '',
-  border: 'false',
+  border: false,
   layout: {
     type: 'border'
   },

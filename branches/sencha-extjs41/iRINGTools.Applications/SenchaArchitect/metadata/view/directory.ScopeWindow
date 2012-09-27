@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "directory.ScopeWindow",
         "designer|userAlias": "scopewindow",
-        "border": "false",
+        "border": false,
         "floating": true,
         "frame": false,
         "height": 200,

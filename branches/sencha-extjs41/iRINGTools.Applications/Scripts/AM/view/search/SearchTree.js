@@ -22,7 +22,7 @@ Ext.define('AM.view.search.SearchTree', {
   ],
 
   region: 'center',
-  border: 'false',
+  border: false,
   style: 'padding-left:5px;',
   closable: true,
   store: 'SearchStore',

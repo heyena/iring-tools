@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "directory.DataLayerForm",
         "designer|userAlias": "datalayerform",
-        "border": "false",
+        "border": false,
         "frame": false,
         "height": null,
         "width": null,

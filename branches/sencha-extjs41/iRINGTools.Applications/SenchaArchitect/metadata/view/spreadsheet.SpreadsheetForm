@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "spreadsheet.SpreadsheetForm",
         "designer|userAlias": "spreadsheetform",
-        "border": "false",
+        "border": false,
         "frame": false,
         "height": null,
         "width": null,

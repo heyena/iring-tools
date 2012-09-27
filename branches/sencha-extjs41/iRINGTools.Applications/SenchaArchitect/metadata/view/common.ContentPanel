@@ -9,7 +9,7 @@
         "split": true,
         "designer|userClassName": "common.ContentPanel",
         "designer|userAlias": "contentpanel",
-        "border": "true",
+        "border": true,
         "height": null,
         "width": null,
         "collapsible": false,

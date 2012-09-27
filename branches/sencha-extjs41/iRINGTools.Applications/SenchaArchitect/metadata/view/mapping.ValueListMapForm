@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "mapping.ValueListMapForm",
         "designer|userAlias": "valuelistmapform",
-        "border": "false",
+        "border": false,
         "frame": false,
         "height": null,
         "width": null,

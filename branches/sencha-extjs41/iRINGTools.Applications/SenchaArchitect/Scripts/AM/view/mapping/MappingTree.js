@@ -21,7 +21,7 @@ Ext.define('AM.view.mapping.MappingTree', {
     'AM.view.override.mapping.MappingTree'
   ],
 
-  border: 'true',
+  border: true,
   stateful: true,
   store: 'MappingStore',
   rootVisible: false,

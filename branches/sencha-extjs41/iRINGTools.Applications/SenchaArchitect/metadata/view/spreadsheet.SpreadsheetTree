@@ -15,7 +15,7 @@
         "datalayer": "",
         "designer|userClassName": "spreadsheet.SpreadsheetTree",
         "designer|userAlias": "spreadsheettree",
-        "border": "true",
+        "border": true,
         "height": null,
         "width": null,
         "title": null,

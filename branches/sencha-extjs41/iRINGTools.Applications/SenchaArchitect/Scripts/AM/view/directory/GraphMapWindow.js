@@ -21,7 +21,7 @@ Ext.define('AM.view.directory.GraphMapWindow', {
     'AM.view.directory.GraphMapForm'
   ],
 
-  border: 'false',
+  border: false,
   floating: true,
   frame: false,
   height: 200,

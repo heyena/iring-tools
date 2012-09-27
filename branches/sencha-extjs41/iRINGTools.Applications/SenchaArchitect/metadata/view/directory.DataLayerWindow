@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "directory.DataLayerWindow",
         "designer|userAlias": "datalayerwindow",
-        "border": "false",
+        "border": false,
         "floating": true,
         "frame": false,
         "height": 180,

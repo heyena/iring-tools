@@ -9,7 +9,7 @@
         "split": true,
         "designer|userClassName": "directory.DirectoryPanel",
         "designer|userAlias": "directorypanel",
-        "border": "true",
+        "border": true,
         "height": null,
         "padding": 2,
         "width": 250,

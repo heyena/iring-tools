@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "directory.GraphMapWindow",
         "designer|userAlias": "graphmapwindow",
-        "border": "false",
+        "border": false,
         "floating": true,
         "frame": false,
         "height": 200,

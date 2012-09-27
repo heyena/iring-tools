@@ -17,7 +17,7 @@ Ext.define('AM.view.common.PropertyPanel', {
   extend: 'Ext.grid.property.Grid',
   alias: 'widget.propertypanel',
 
-  border: 'true',
+  border: true,
   frame: false,
   autoScroll: true,
   collapsed: false,

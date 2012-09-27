@@ -22,7 +22,7 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
   ],
 
   dirNode: '',
-  border: 'false',
+  border: false,
   frame: false,
   autoScroll: true,
   bodyPadding: 5,

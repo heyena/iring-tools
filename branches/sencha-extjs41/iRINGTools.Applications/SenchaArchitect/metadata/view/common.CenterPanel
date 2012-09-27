@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "common.CenterPanel",
         "designer|userAlias": "centerpanel",
-        "border": "true",
+        "border": true,
         "height": null,
         "width": null,
         "layout": "border",

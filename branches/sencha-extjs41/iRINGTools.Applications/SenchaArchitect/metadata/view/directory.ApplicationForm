@@ -9,7 +9,7 @@
         "record": "",
         "designer|userClassName": "directory.ApplicationForm",
         "designer|userAlias": "applicationform",
-        "border": "true",
+        "border": true,
         "frame": false,
         "height": null,
         "width": null,
@@ -404,7 +404,7 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyForm12",
-                "border": "false",
+                "border": false,
                 "frame": false,
                 "itemId": "baseurlform",
                 "layout": "column",

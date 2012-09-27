@@ -9,7 +9,7 @@
         "dirNode": "",
         "designer|userClassName": "nhibernate.SelectTablesForm",
         "designer|userAlias": "selecttablesform",
-        "border": "false",
+        "border": false,
         "frame": false,
         "height": null,
         "padding": null,

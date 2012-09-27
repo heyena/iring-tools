@@ -21,7 +21,7 @@ Ext.define('AM.view.mapping.ValueListWindow', {
     'AM.view.mapping.ValueListForm'
   ],
 
-  border: 'false',
+  border: false,
   floating: true,
   frame: false,
   height: 110,

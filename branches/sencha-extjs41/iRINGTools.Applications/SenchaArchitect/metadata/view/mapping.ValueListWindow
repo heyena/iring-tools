@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "mapping.ValueListWindow",
         "designer|userAlias": "valuelistwindow",
-        "border": "false",
+        "border": false,
         "floating": true,
         "frame": false,
         "height": 110,
