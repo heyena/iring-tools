@@ -17,7 +17,7 @@ Ext.define('AM.view.directory.DataLayerForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.datalayerform',
 
-  border: 'false',
+  border: false,
   frame: false,
   bodyPadding: 10,
   bodyStyle: 'padding:10px 5px 0',

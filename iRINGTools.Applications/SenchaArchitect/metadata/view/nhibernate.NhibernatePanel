@@ -10,7 +10,7 @@
         "treeNode": "",
         "designer|userClassName": "nhibernate.NhibernatePanel",
         "designer|userAlias": "nhibernatepanel",
-        "border": "false",
+        "border": false,
         "height": null,
         "width": null,
         "layout": "border",

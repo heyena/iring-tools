@@ -23,7 +23,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
   ],
 
   record: '',
-  border: 'true',
+  border: true,
   frame: false,
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
@@ -117,7 +117,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
         },
         {
           xtype: 'form',
-          border: 'false',
+          border: false,
           frame: false,
           itemId: 'baseurlform',
           layout: {

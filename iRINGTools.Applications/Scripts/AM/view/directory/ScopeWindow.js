@@ -21,7 +21,7 @@ Ext.define('AM.view.directory.ScopeWindow', {
     'AM.view.directory.ScopeForm'
   ],
 
-  border: 'false',
+  border: false,
   floating: true,
   frame: false,
   height: 200,

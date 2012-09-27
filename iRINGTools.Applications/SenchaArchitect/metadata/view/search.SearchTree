@@ -9,7 +9,7 @@
         "region": "center",
         "designer|userClassName": "search.SearchTree",
         "designer|userAlias": "searchtree",
-        "border": "false",
+        "border": false,
         "height": null,
         "style": [
             "padding-left:5px;"

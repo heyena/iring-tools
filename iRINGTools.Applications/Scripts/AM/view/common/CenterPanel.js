@@ -22,7 +22,7 @@ Ext.define('AM.view.common.CenterPanel', {
     'AM.view.search.SearchPanel'
   ],
 
-  border: 'true',
+  border: true,
   layout: {
     type: 'border'
   },

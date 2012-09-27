@@ -11,7 +11,7 @@
         ],
         "designer|userClassName": "common.PropertyPanel",
         "designer|userAlias": "propertypanel",
-        "border": "true",
+        "border": true,
         "frame": false,
         "height": null,
         "width": null,

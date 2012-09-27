@@ -21,7 +21,7 @@ Ext.define('AM.view.spreadsheet.SpreadsheetWindow', {
     'AM.view.spreadsheet.SpreadsheetForm'
   ],
 
-  border: 'false',
+  border: false,
   floating: true,
   frame: false,
   height: 130,

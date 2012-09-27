@@ -25,7 +25,7 @@ Ext.define('AM.view.spreadsheet.SourceWindow', {
   context: '',
   baseUrl: '',
   endpoint: '',
-  border: 'false',
+  border: false,
   floating: true,
   frame: false,
   height: 130,

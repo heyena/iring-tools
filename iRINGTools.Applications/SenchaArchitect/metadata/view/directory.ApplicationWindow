@@ -9,7 +9,7 @@
         "node": "",
         "designer|userClassName": "directory.ApplicationWindow",
         "designer|userAlias": "applicationwindow",
-        "border": "false",
+        "border": false,
         "floating": true,
         "frame": false,
         "height": 260,

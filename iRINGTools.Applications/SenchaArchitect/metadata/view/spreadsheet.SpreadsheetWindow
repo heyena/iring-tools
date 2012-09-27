@@ -8,7 +8,7 @@
     "userConfig": {
         "designer|userClassName": "spreadsheet.SpreadsheetWindow",
         "designer|userAlias": "spreadsheetwindow",
-        "border": "false",
+        "border": false,
         "floating": true,
         "frame": false,
         "height": 130,

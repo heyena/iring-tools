@@ -18,7 +18,7 @@ Ext.define('AM.view.common.ContentPanel', {
   alias: 'widget.contentpanel',
 
   split: true,
-  border: 'true',
+  border: true,
   collapsible: false,
 
   initComponent: function() {

@@ -21,7 +21,7 @@ Ext.define('AM.view.directory.DataLayerWindow', {
     'AM.view.directory.DataLayerForm'
   ],
 
-  border: 'false',
+  border: false,
   floating: true,
   frame: false,
   height: 180,

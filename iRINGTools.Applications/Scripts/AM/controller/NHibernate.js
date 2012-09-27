@@ -791,7 +791,7 @@ Ext.define('AM.controller.NHibernate', {
     dirNode = dirTree.getSelectedNode(),
     content = me.getMainContent();
 
-    var dbDict, dbInfo;
+    var dbDict, dbInfo, tree;
 
     var context = dirNode.data.record.context;
     var datalayer = dirNode.data.record.DataLayer;
@@ -807,7 +807,8 @@ Ext.define('AM.controller.NHibernate', {
       });  
       content.add(panel);
 
-      var tree = panel.down('nhibernatetree');
+      tree = panel.down('nhibernatetree');
+
       tree.dirNode = dirNode.internalId;
       var treeStore = tree.getStore();
       var treeProxy = treeStore.getProxy();
@@ -845,7 +846,6 @@ Ext.define('AM.controller.NHibernate', {
             }
           }
         } else {
-
           if (dbInfo !== null && dbInfo !== undefined)
           dirNode.data.record.dbInfo = dbInfo;
 

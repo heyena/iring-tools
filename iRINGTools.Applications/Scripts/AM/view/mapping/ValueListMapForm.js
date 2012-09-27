@@ -17,7 +17,7 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.valuelistmapform',
 
-  border: 'false',
+  border: false,
   frame: false,
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
