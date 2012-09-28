@@ -271,7 +271,7 @@ namespace org.iringtools.adapter.datalayer.sppid
 
         //
         // if number of rows returned does not match number of identifiers passed in, it means some identifiers exist
-        // and some don't. Create empty data objects with only key properties set for the ones that don't.
+        // and some don't. Create new rows with only key properties set for the ones that don't.
         //
         if (result.Rows.Count < identifiers.Count)
         {
@@ -378,91 +378,17 @@ namespace org.iringtools.adapter.datalayer.sppid
       return response;
     }
 
-    public override Response Post(IList<IDataObject> dataObjects)
+    public override Response PostDataTables(IList<DataTable> dataTables)
     {
       Response response = new Response();
 
-      try
+      foreach (DataTable dataTable in dataTables)
       {
-        IList<DataTable> dataTables = new List<DataTable>();
-
-        Dictionary<string, DataObject> objectTypesObjectDefinitions = new Dictionary<string, DataObject>();
-        Dictionary<string, IList<string>> objectTypesIdentifiers = new Dictionary<string, IList<string>>();
-        Dictionary<string, IList<IDataObject>> objectTypesDataObjects = new Dictionary<string, IList<IDataObject>>();
-
-        if (dataObjects != null)
-        {
-          foreach (IDataObject dataObject in dataObjects)
-          {
-            string objectType = dataObject.GetType().Name;
-
-            if (objectType == typeof(GenericDataObject).Name)
-            {
-              objectType = ((GenericDataObject)dataObject).ObjectType;
-            }
-
-            if (objectTypesIdentifiers.ContainsKey(objectType))
-            {
-              DataObject objectDefinition = objectTypesObjectDefinitions[objectType];
-              string identifier = GetIdentifier(objectDefinition, dataObject);
-              objectTypesIdentifiers[objectType].Add(identifier);
-              objectTypesDataObjects[objectType].Add(dataObject);
-            }
-            else
-            {
-              DataObject objectDefinition = GetObjectDefinition(objectType);
-              string identifier = GetIdentifier(objectDefinition, dataObject);
-              objectTypesObjectDefinitions[objectType] = objectDefinition;
-              objectTypesIdentifiers[objectType] = new List<string>() { identifier };
-              objectTypesDataObjects[objectType] = new List<IDataObject>() { dataObject };
-            }
-          }
-        }
-
-        foreach (var pair in objectTypesIdentifiers)
-        {
-          DataObject objectDefinition = objectTypesObjectDefinitions[pair.Key];
-
-          if (!objectDefinition.isReadOnly)
-          {
-            IList<string> identifiers = objectTypesIdentifiers[pair.Key];
-            DataTable dataTable = CreateDataTable(objectDefinition.tableName, pair.Value);
-
-            if (dataTable != null && dataTable.Rows.Count > 0)
-            {
-              dataTable.TableName = objectDefinition.tableName;
-              dataTables.Add(dataTable);
-            }
-          }
-        }
-
-        if (dataTables.Count == 0)
-        {
-          response.Level = StatusLevel.Warning;
-          response.Messages = new Messages() { "No data to post." };
-
-          return response;
-        }
-
-        foreach (DataTable dataTable in dataTables)
-        {
-          Response res = PostDataTable(dataTable);
-          response.Append(res);
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error posting data objects: " + ex);
-        throw ex;
+        Response res = PostDataTable(dataTable);
+        response.Append(res);
       }
 
       return response;
-    }
-
-    // this method should not be called since Post(IList<IDataObject>) has been overriden
-    public override Response PostDataTables(IList<DataTable> dataTables)
-    {
-      return new Response();
     }
 
     protected Response PostDataTable(DataTable dataTable)
@@ -1049,38 +975,6 @@ namespace org.iringtools.adapter.datalayer.sppid
       }
 
       return identifiers;
-    }
-
-    private string FormIdentifier(DataObject objDef, DataRow dataRow)
-    {
-      try
-      {
-        string[] identifierParts = new string[objDef.keyProperties.Count];
-        IDataObject dataObject = ToDataObject(dataRow, objDef);
-
-        for (int i = 0; i < objDef.keyProperties.Count; i++)
-        {
-          KeyProperty keyProp = objDef.keyProperties[i];
-          object value = dataObject.GetPropertyValue(keyProp.keyPropertyName);
-
-          if (value != null)
-          {
-            identifierParts[i] = value.ToString();
-          }
-          else
-          {
-            identifierParts[i] = String.Empty;
-          }
-        }
-
-        return string.Join(objDef.keyDelimeter, identifierParts);
-      }
-      catch (Exception ex)
-      {
-        string error = "Error forming identifier from data object: " + ex.Message;
-        _logger.Error(error);
-        throw new Exception(error);
-      }
     }
 
     private void SetKeyProperties(DataRow dataRow, DataObject objDef, string identifier)
