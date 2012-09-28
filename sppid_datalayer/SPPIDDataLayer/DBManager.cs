@@ -147,7 +147,11 @@ namespace org.iringtools.adapter.datalayer.sppid
             dbCmd = new SqlCommand(pair.Value, (SqlConnection)dbConn);
           }
 
+          DbTransaction dbTransaction = dbConn.BeginTransaction();
+          dbCmd.Transaction = dbTransaction;
           int affectedRows = dbCmd.ExecuteNonQuery();
+          dbTransaction.Commit();
+
           string message = (affectedRows > 0) ? "[" + pair.Key + "] saved." : "Saving [" + pair.Key + "] failed.";
 
           Status status = new Status()
