@@ -46,6 +46,8 @@ namespace org.iringtools.adapter.datalayer.test
     {
       int MAX_ITEMS = 25;
       string result = string.Empty;
+      Response response = null;
+      IList<IDataObject> dataObjects;
 
       #region Test dictionary
       Console.WriteLine("\nTesting get dictionary ...");
@@ -57,7 +59,7 @@ namespace org.iringtools.adapter.datalayer.test
 
       #region Test refresh dictionary
       Console.WriteLine("Testing refresh dictionary ...");
-      Response response = _dataLayer.RefreshAll();
+      response = _dataLayer.RefreshAll();
       Assert.AreEqual(response.Level, StatusLevel.Success);
       result = (dictionary.dataObjects.Count > 0) ? "passed." : "failed.";
       _logger.Info("Test refresh dictionary " + result);
@@ -86,7 +88,7 @@ namespace org.iringtools.adapter.datalayer.test
 
         #region Test get page
         Console.WriteLine("Testing get page ...");
-        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, (int)count, 0);
+        dataObjects = _dataLayer.Get(objectType, filter, (int)count, 0);
         Assert.Greater(dataObjects.Count, 0);
         result = (dataObjects.Count > 0) ? "passed." : "failed.";
         _logger.Info("Test get page " + result);
@@ -112,25 +114,40 @@ namespace org.iringtools.adapter.datalayer.test
         #endregion
 
         //
-        // Create a data object to post and delete
+        // Create a data object to post
         //
-        IDataObject dataObject = dataObjects[0];
+        dataObjects = _dataLayer.Get(objectType, new DataFilter(), 2, 1);
+        IDataObject clonedDataObject = dataObjects[0];
         DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
         string keyPropName = objDef.keyProperties[0].keyPropertyName;
-        string keyPropValue = Convert.ToString(dataObject.GetPropertyValue(keyPropName)) + padding;
+        string keyPropValue = Convert.ToString(clonedDataObject.GetPropertyValue(keyPropName)) + padding;
 
         // Set key property
-        dataObject.SetPropertyValue(keyPropName, keyPropValue);
+        clonedDataObject.SetPropertyValue(keyPropName, keyPropValue);
 
         // Set configured properties
         foreach (Property prop in properties)
         {
-          dataObject.SetPropertyValue(prop.Name, prop.Value);
+          string value = Guid.NewGuid().ToString("N");
+          clonedDataObject.SetPropertyValue(prop.Name, value);
+
+          // change another data object if available to test mixed of new and updated list
+          if (dataObjects.Count > 1)
+          {
+            dataObjects[1].SetPropertyValue(prop.Name, value);
+          }
         }
 
         #region Test post
         Console.WriteLine("Testing post ...");
-        response = _dataLayer.Post(new List<IDataObject>() { dataObject });
+        IList<IDataObject> postDataObjects = new List<IDataObject>() { clonedDataObject };
+
+        if (dataObjects.Count > 1)
+        {
+          postDataObjects.Add(dataObjects[1]);
+        }
+
+        response = _dataLayer.Post(postDataObjects);
         Assert.AreEqual(response.Level, StatusLevel.Success);
         result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
         _logger.Info("Test post " + result);
@@ -157,7 +174,7 @@ namespace org.iringtools.adapter.datalayer.test
         // Prepare data object to post
         foreach (DataProperty prop in objDef.dataProperties)
         {
-          newDataObject.SetPropertyValue(prop.propertyName, dataObject.GetPropertyValue(prop.propertyName));
+          newDataObject.SetPropertyValue(prop.propertyName, clonedDataObject.GetPropertyValue(prop.propertyName));
         }
 
         // Post it

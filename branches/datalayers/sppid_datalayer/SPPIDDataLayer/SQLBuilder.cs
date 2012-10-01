@@ -324,7 +324,7 @@ namespace org.iringtools.adapter.datalayer.sppid
                 dataLength = 24;
               }
 
-              _fields.Add(new DBField(alias, dataType, dataLength, nullable));
+              _fields.Add(new DBField(source, alias, dataType, dataLength, nullable));
             }
 
             if (selsBuilder.Length > 0)
@@ -354,13 +354,15 @@ namespace org.iringtools.adapter.datalayer.sppid
                   string trigger = string.Format(Constants.ORACLE_SEQUENCE_TRIGGER_TEMPLATE, triggerName, _tableName, sequenceName);
                   Add(SQLPart.TRIGGER, trigger);
                   
-                  _fields.Add(new DBField(keyName, "NUMBER", 32, false));
+                  //TODO: use staging schema for source
+                  _fields.Add(new DBField(string.Empty, keyName, "NUMBER", 32, false));
                 }
                 else if (_dbType == DBType.SQLServer)
                 {
                   createBuilder.Insert(0, keyName + " int IDENTITY(1,1),");
 
-                  _fields.Add(new DBField(keyName, "int", 32, false));
+                  //TODO: use staging schema for source
+                  _fields.Add(new DBField(string.Empty, keyName, "int", 32, false));
                 }
               }
 
@@ -385,10 +387,11 @@ namespace org.iringtools.adapter.datalayer.sppid
             //TODO: validate filtered column 
             foreach (XElement filterElt in filterElts)
             {
+              string sourceName = filterElt.Attribute("source").Value;
+              string fieldName = filterElt.Attribute("field").Value;
               string filterValue = filterElt.Attribute("value").Value;
 
-              // filter value is variable 
-              if (filterValue.StartsWith("@"))
+              if (filterValue.StartsWith("@"))  // filter value is variable 
               {
                 if (decElts != null)
                 {
@@ -428,10 +431,16 @@ namespace org.iringtools.adapter.datalayer.sppid
                   continue;
                 }
               }
-              else
+              else  // filter value is fixed
               {
-                //TODO: wrap value with quotes for non numeric types only
-                filterValue = "'" + filterValue + "'";
+                DBField field = _fields.Find(x => x.Source.ToUpper() == sourceName.ToUpper() &&
+                  x.Name.ToUpper() == fieldName.ToUpper());
+
+                if (field != null && !Utility.IsNumeric(field.DataType))
+                {
+                  // wrap filter value with quotes for non numeric types only
+                  filterValue = "'" + filterValue + "'";
+                }
               }
 
               if (filtersBuilder.Length > 0)
@@ -440,7 +449,7 @@ namespace org.iringtools.adapter.datalayer.sppid
               }
 
               filtersBuilder.Append(new string('(', int.Parse(filterElt.Attribute("preParenCount").Value)));
-              filtersBuilder.Append(filterElt.Attribute("source").Value + "." + filterElt.Attribute("field").Value);
+              filtersBuilder.Append(sourceName + "." + fieldName);
               filtersBuilder.Append(filterElt.Attribute("operator").Value + filterValue);
               filtersBuilder.Append(new string(')', int.Parse(filterElt.Attribute("postParenCount").Value)));
             }
@@ -504,7 +513,6 @@ namespace org.iringtools.adapter.datalayer.sppid
       return queryBuilder;
     }
 
-    //TODO: define/generate primary key
     private StringBuilder BuildCreate()
     {
       StringBuilder queryBuilder = new StringBuilder();
@@ -587,14 +595,16 @@ namespace org.iringtools.adapter.datalayer.sppid
   {
     public DBField() {}
 
-    public DBField(string name, string dataType, int dataLength, bool nullable)
+    public DBField(string source, string name, string dataType, int dataLength, bool nullable)
     {
+      Source = source;
       Name = name;
       DataType = dataType;
       DataLength = dataLength;
       Nullable = nullable;
     }
 
+    public string Source { get; set; }
     public string Name { get; set; }
     public string DataType { get; set; }
     public int DataLength { get; set; }
