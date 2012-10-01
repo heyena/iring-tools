@@ -74,12 +74,12 @@
   
   <Target Name="CreatePackages" DependsOnTargets="CreateDist">
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile)$(Major).$(Minor).$(Build).zip %(DeploymentPackage.FileSet)" />
-	<RemoveDir Directories="$(DistDir)\conf;$(DistDir)\bin" />
-	<Copy SourceFiles="@(InstallFiles)"
-	      DestinationFiles="@(InstallFiles ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-	<Copy SourceFiles="@(DocsFiles)"
-	      DestinationFiles="@(DocsFiles ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-	<Copy SourceFiles="@(TestResults)"
+    <RemoveDir Directories="$(DistDir)\conf;$(DistDir)\bin" />
+    <Copy SourceFiles="@(InstallFiles)"
+        DestinationFiles="@(InstallFiles ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(DocsFiles)"
+        DestinationFiles="@(DocsFiles ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(TestResults)"
 	      DestinationFiles="@(TestResults ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
   
