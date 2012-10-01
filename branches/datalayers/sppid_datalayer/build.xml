@@ -5,11 +5,11 @@
     <ZipCmd>"$(MSBuildProjectDirectory)\lib\7-zip\7z.exe"</ZipCmd>
     <NUnit-ToolPath>$(MSBuildProjectDirectory)\lib\Nunit\</NUnit-ToolPath>
     <SolutionFile>SPPIDDataLayer.sln</SolutionFile>
-	<BinDir>$(MSBuildProjectDirectory)\SPPIDDataLayer\bin\Debug</BinDir>
-	<ConfDir>$(MSBuildProjectDirectory)\conf</ConfDir>
-	<DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
-	<DocsDir>$(MSBuildProjectDirectory)\docs</DocsDir>
-	<InstallDir>$(MSBuildProjectDirectory)\install</InstallDir>
+    <BinDir>$(MSBuildProjectDirectory)\SPPIDDataLayer\bin\Debug</BinDir>
+    <ConfDir>$(MSBuildProjectDirectory)\conf</ConfDir>
+    <DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
+    <DocsDir>$(MSBuildProjectDirectory)\docs</DocsDir>
+    <InstallDir>$(MSBuildProjectDirectory)\install</InstallDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -93,7 +93,4 @@
   </Target>
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
-
-  <!--<Target Name="All" DependsOnTargets="Rebuild; CreatePackages"/>-->
-  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>
