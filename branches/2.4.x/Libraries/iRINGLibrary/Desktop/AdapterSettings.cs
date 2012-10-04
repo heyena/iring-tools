@@ -56,15 +56,22 @@ namespace org.iringtools.adapter
             baseAddress = baseAddress + "/";
           
           this[key] = baseAddress;
+
+          continue;
         }
 
         if (key.Equals("DefaultProjectionFormat") ||
             key.Equals("ValidateLinks") ||
             key.Equals("DisplayLinks") ||
-            key.Equals("ShowJsonNullValues"))
+            key.Equals("ShowJsonNullValues") ||
+            key.Equals("MultiGetDTIs") ||
+            key.Equals("MultiGetDTOs") ||
+            key.Equals("MultiPostDTOs"))
         {
           string format = settings[key].ToString();
           this[key] = format;
+
+          continue;
         }
 
         //Protect existing and identity settings, but add new ones.

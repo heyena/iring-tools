@@ -146,14 +146,14 @@ namespace org.iringtools.adapter
       };
     }
 
-	  public Manifest GetManifest(string scope, string app)
+    public Manifest GetManifest(string scope, string app)
     {
       Manifest manifest = new Manifest()
       {
         graphs = new Graphs(),
         version = "2.3.1",
         valueListMaps = new ValueListMaps()
-      };      
+      };
 
       try
       {
@@ -164,9 +164,10 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          Graph manifestGraph = new Graph { 
+          Graph manifestGraph = new Graph
+          {
             classTemplatesList = new ClassTemplatesList(),
-            name = graphMap.name             
+            name = graphMap.name
           };
           manifest.graphs.Add(manifestGraph);
 
@@ -216,7 +217,7 @@ namespace org.iringtools.adapter
                 foreach (RoleMap roleMap in templateMap.roleMaps)
                 {
                   Role manifestRole = new Role
-                  { 
+                  {
                     type = roleMap.type,
                     id = roleMap.id,
                     name = roleMap.name,
@@ -246,7 +247,7 @@ namespace org.iringtools.adapter
                   }
 
                   if (roleMap.classMap != null)
-                  {                    
+                  {
                     Cardinality cardinality = graphMap.GetCardinality(roleMap, _dataDictionary, _fixedIdentifierBoundary);
                     manifestRole.cardinality = cardinality;
 
@@ -285,24 +286,20 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(manifest, graph);
         DataFilter filter = GetPredeterminedFilter();
 
-        if (_settings["MultiGetDTIs"] != null && bool.Parse(_settings["MultiGetDTIs"]))
+        if (_settings["MultiGetDTIs"] == null || bool.Parse(_settings["MultiGetDTIs"]))
         {
-            _logger.Debug("Multi-threading enabled!");
-
+          _logger.Debug("Multi-threading enabled!");
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
         else
         {
-            _logger.Debug("Single threading...");
-
+          _logger.Debug("Single threading...");
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
 
           _logger.Debug("Fetching Data...");
-            
-            List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
 
-            _logger.Debug("Transforming into DTI");
-
+          _logger.Debug("Transforming into DTI");
           dataTransferIndices = projectionLayer.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
         }
       }
@@ -313,7 +310,7 @@ namespace org.iringtools.adapter
       }
 
       return dataTransferIndices;
-    }    
+    }
 
     public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
@@ -329,10 +326,10 @@ namespace org.iringtools.adapter
         DataFilter filter = request.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-        filter.AppendFilter(GetPredeterminedFilter());        
+        filter.AppendFilter(GetPredeterminedFilter());
 
         // get sort index
-        string sortIndex = String.Empty;        
+        string sortIndex = String.Empty;
         string sortOrder = String.Empty;
 
         if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
@@ -341,7 +338,7 @@ namespace org.iringtools.adapter
           sortOrder = filter.OrderExpressions.First().SortOrder.ToString();
         }
 
-        if (_settings["MultiGetDTIs"] != null && bool.Parse(_settings["MultiGetDTIs"]))
+        if (_settings["MultiGetDTIs"] == null || bool.Parse(_settings["MultiGetDTIs"]))
         {
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
@@ -419,7 +416,7 @@ namespace org.iringtools.adapter
 
           if (identifiers.Count > 0)
           {
-            if (_settings["MultiGetDTOs"] != null && bool.Parse(_settings["MultiGetDTOs"]))
+            if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
             {
               dataTransferObjects = MultiGetDataTransferObjects(identifiers);
             }
@@ -561,8 +558,8 @@ namespace org.iringtools.adapter
 
         if (response.Level != StatusLevel.Success)
         {
-            string dtoFilename = String.Format(_settings["BaseDirectoryPath"] + "/Logs/DTO_{0}.{1}.{2}.xml", scope, app, graph);
-            Utility.Write<DataTransferObjects>(dataTransferObjects, dtoFilename, true);
+          string dtoFilename = String.Format(_settings["BaseDirectoryPath"] + "/Logs/DTO_{0}.{1}.{2}.xml", scope, app, graph);
+          Utility.Write<DataTransferObjects>(dataTransferObjects, dtoFilename, true);
         }
       }
       catch (Exception ex)
@@ -641,9 +638,9 @@ namespace org.iringtools.adapter
 
           if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
 
-          _settings["ProjectName"] =  projectName;
+          _settings["ProjectName"] = projectName;
           _settings["ApplicationName"] = applicationName;
-          _settings["Scope"] =  scope;
+          _settings["Scope"] = scope;
 
           string appSettingsPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope);
 
@@ -685,7 +682,7 @@ namespace org.iringtools.adapter
           {
             try
             {
-              _mapping = Utility.Read<Mapping>(mappingPath);              
+              _mapping = Utility.Read<Mapping>(mappingPath);
             }
             catch (Exception legacyEx)
             {
@@ -811,7 +808,7 @@ namespace org.iringtools.adapter
 
       return dataFilter;
     }
-    
+
     private void RecurBuildCrossGraphMap(ref Graph manifestGraph, Class manifestClass, GraphMap mappingGraph, ClassMap mappingClass)
     {
       List<Template> manifestTemplates = null;
@@ -844,14 +841,14 @@ namespace org.iringtools.adapter
             foreach (Template manifestTemplate in manifestTemplates)
             {
               TemplateMap crossedTemplate = null;
-              
+
               foreach (TemplateMap mappingTemplate in mappingTemplates)
               {
                 if (mappingTemplate.id == manifestTemplate.id)
                 {
                   List<string> unmatchedRoleIds = new List<string>();
                   int rolesMatchedCount = 0;
-                  
+
                   for (int i = 0; i < mappingTemplate.roleMaps.Count; i++)
                   {
                     RoleMap roleMap = mappingTemplate.roleMaps[i];
@@ -887,7 +884,7 @@ namespace org.iringtools.adapter
 
                   if (rolesMatchedCount == manifestTemplate.roles.Count)
                   {
-                   crossedTemplate = CloneTemplateMap(mappingTemplate);
+                    crossedTemplate = CloneTemplateMap(mappingTemplate);
 
                     if (unmatchedRoleIds.Count > 0)
                     {
@@ -949,7 +946,7 @@ namespace org.iringtools.adapter
       {
         id = templateMap.id,
         name = templateMap.name,
-        type = templateMap.type        
+        type = templateMap.type
       };
 
       foreach (RoleMap roleMap in templateMap.roleMaps)
@@ -984,17 +981,19 @@ namespace org.iringtools.adapter
       _logger.Debug("Getting the count...");
 
       long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
-      
+
       if (total > 0)
       {
-        int itemsPerThread = Math.Max((int)(total / MAX_THREADS), MAX_THREADS);
+        long numOfThreads = Math.Min(total, MAX_THREADS);
+        int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
-        _logger.Debug("Items Per Thread: " + itemsPerThread);
+        if (itemsPerThread * numOfThreads > total)
+        {
+          numOfThreads = (int)Math.Ceiling((double)total / itemsPerThread);
+        }
 
-        int numOfThreads = (int)(total / itemsPerThread);
-        numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
-
-        _logger.Debug("Number of Threads: " + numOfThreads);
+        _logger.Debug("Number of threads [" + numOfThreads + "].");
+        _logger.Debug("Items per thread [" + itemsPerThread + "].");
 
         ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
         DataTransferIndicesTask[] dtiTasks = new DataTransferIndicesTask[numOfThreads];
@@ -1040,12 +1039,18 @@ namespace org.iringtools.adapter
     private DataTransferObjects MultiGetDataTransferObjects(List<string> identifiers)
     {
       DataTransferObjects dataTransferObjects = new DataTransferObjects();
-      int total = identifiers.Count;
       
-      int itemsPerThread = Math.Max((int)(total / MAX_THREADS), MAX_THREADS);
+      int total = identifiers.Count;
+      int numOfThreads = Math.Min(total, MAX_THREADS);
+      int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
-      int numOfThreads = (int)(total / itemsPerThread);
-      numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
+      if (itemsPerThread * numOfThreads > total)
+      {
+        numOfThreads = (int)Math.Ceiling((double)total / itemsPerThread);
+      }
+
+      _logger.Debug("Number of threads [" + numOfThreads + "].");
+      _logger.Debug("Items per thread [" + itemsPerThread + "].");
 
       ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
       OutboundDtoTask[] dtoTasks = new OutboundDtoTask[numOfThreads];
@@ -1088,11 +1093,17 @@ namespace org.iringtools.adapter
       if (dataTransferObjects != null && dataTransferObjects.DataTransferObjectList.Count > 0)
       {
         int total = dataTransferObjects.DataTransferObjectList.Count;
-        int itemsPerThread = Math.Max((int)(total / MAX_THREADS), MAX_THREADS);  
-      
-        int numOfThreads = (int)(total / itemsPerThread);
-        numOfThreads += (total % itemsPerThread > 0) ? 1 : 0;
+        int numOfThreads = Math.Min(total, MAX_THREADS);
+        int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
+        if (itemsPerThread * numOfThreads > total)
+        {
+          numOfThreads = (int)Math.Ceiling((double)total / itemsPerThread);
+        }
+
+        _logger.Debug("Number of threads [" + numOfThreads + "].");
+        _logger.Debug("Items per thread [" + itemsPerThread + "].");
+        
         ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
         DataTransferObjectsTask[] dtoTasks = new DataTransferObjectsTask[numOfThreads];
 
