@@ -46,11 +46,26 @@ public class HttpClient
     this(baseUri, null);
   }
 
+  public HttpClient(String baseUri, boolean async)
+  {
+    this(baseUri, null, async);
+  }
+  
   public HttpClient(String baseUri, NetworkCredentials networkCredentials)
+  {
+    this(baseUri, networkCredentials, false);
+  }
+  
+  public HttpClient(String baseUri, NetworkCredentials networkCredentials, boolean async)
   {
     setBaseUri(baseUri);
     setNetworkCredentials(networkCredentials);
     headers = new HashMap<String, String>();
+    
+    if (async)
+    {
+      addHeader("async", "true");
+    }
   }
 
   public <T> T get(Class<T> responseClass, String relativeUri) throws HttpClientException
@@ -60,22 +75,47 @@ public class HttpClient
     try
     {
       conn = getConnection(GET_METHOD, relativeUri);
+      int responseCode = conn.getResponseCode();
 
-      if (conn.getResponseCode() == HttpURLConnection.HTTP_OK)
+      if (responseCode == HttpURLConnection.HTTP_NO_CONTENT)
+        return null;
+      
+      if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_ACCEPTED)
       {
         InputStream responseStream = conn.getInputStream();
+        
+        if (responseStream == null || responseStream.available() == 0)
+          return null;
+        
         return JaxbUtils.toObject(responseClass, responseStream);
       }
       else
       {
-        InputStream errorStream = conn.getErrorStream();
-        String error = IOUtils.toString(errorStream);
-        throw new HttpClientException(error);
+        String error = "";
+        
+        try
+        {
+          InputStream errorStream = conn.getErrorStream();
+          error = IOUtils.toString(errorStream);
+        }
+        catch (Exception e)
+        {
+          logger.debug(e.getMessage());
+        }
+        
+        throw new HttpClientException(responseCode, error);
       }
     }
     catch (Exception e)
     {
-      throw new HttpClientException(e);
+      try
+      {
+        throw new HttpClientException(conn.getResponseCode(), conn.getResponseMessage());
+      }
+      catch (IOException ioe)
+      {
+        logger.error("Error in HttpClient: " + ioe);
+      }
     }
     finally
     {
@@ -85,6 +125,8 @@ public class HttpClient
         conn = null;
       }
     }
+    
+    return null;
   }
 
   public <T> T get(Class<T> responseClass) throws HttpClientException
@@ -119,21 +161,47 @@ public class HttpClient
       outputStream.flush();
       outputStream.close();
 
-      if (conn.getResponseCode() == HttpURLConnection.HTTP_OK)
+      int responseCode = conn.getResponseCode();
+
+      if (responseCode == HttpURLConnection.HTTP_NO_CONTENT)
+        return null;
+      
+      if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_ACCEPTED)
       {
         InputStream responseStream = conn.getInputStream();
+        
+        if (responseStream == null || responseStream.available() == 0)
+          return null;
+        
         return JaxbUtils.toObject(responseClass, responseStream);
       }
       else
       {
-        InputStream errorStream = conn.getErrorStream();
-        String error = IOUtils.toString(errorStream);
-        throw new HttpClientException(error);
+        String error = "";
+        
+        try
+        {
+          InputStream errorStream = conn.getErrorStream();
+          error = IOUtils.toString(errorStream);
+        }
+        catch (Exception e)
+        {
+          logger.debug(e.getMessage());
+        }
+        
+        throw new HttpClientException(responseCode, error);
       }
     }
     catch (Exception e)
     {
-      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.getMessage());
+      try
+      {
+        throw new HttpClientException(conn.getResponseCode(), conn.getResponseMessage());
+      }
+      catch (IOException ioe)
+      {
+        logger.error("Error in HttpClient: " + ioe);
+      }
     }
     finally
     {
@@ -143,6 +211,8 @@ public class HttpClient
         conn = null;
       }
     }
+    
+    return null;
   }
 
   public <R> R postByteData(Class<R> responseClass, String relativeUri, byte[] data) throws HttpClientException
@@ -249,7 +319,6 @@ public class HttpClient
   public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData)
       throws HttpClientException
   {
-    Map<String, String> headers = new HashMap<String, String>();
     headers.put("Content-Type", "application/x-www-form-urlencoded");
     return postFormData(responseClass, relativeUri, formData, headers);
   }
@@ -269,7 +338,6 @@ public class HttpClient
   private <T> T postSparql(Class<T> responseClass, String relativeUri, String postType, String query,
       String defaultGraphUri) throws HttpClientException
   {
-    Map<String, String> headers = new HashMap<String, String>();
     headers.put("Content-Type", "application/x-www-form-urlencoded");
     headers.put("Accept", "application/sparql-results+xml");
 

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
+import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.manifest.Graph;
@@ -91,7 +92,7 @@ public class ExchangeDataModel extends DataModel
     Manifest manifest = getManifest(serviceUri, manifestRelativePath);
     DataTransferIndices dtis = getCachedDtis(exchangeRelativePath);    
 
-    ExchangeResponse response;
+    ExchangeResponse xRes = null;
     ExchangeRequest request = new ExchangeRequest();
     request.setManifest(manifest);
     request.setDataTransferIndices(dtis);
@@ -99,35 +100,70 @@ public class ExchangeDataModel extends DataModel
 
     try
     {
-      HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath);
+     // 
+      // submit asynchronous exchange
+      //
+      HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath, true);
+      HttpUtils.addHttpHeaders(session, httpClient);
+      String token = httpClient.post(String.class, "/submit", request);
+      
+      // 
+      // get request timeout and pooling interval from exchange definition
+      //
+      httpClient = new HttpClient(serviceUri + exchangeRelativePath);
+      HttpUtils.addHttpHeaders(session, httpClient); 
+      ExchangeDefinition xdef = httpClient.get(ExchangeDefinition.class);
+      
+      Long exchangeTimeout = xdef.getExchangeTimeout();
+      if (exchangeTimeout == null) exchangeTimeout = (long)864000;
+      
+      Integer poolingInterval = xdef.getPollingInterval();
+      if (poolingInterval == null) poolingInterval = 1;
+      
+      // 
+      // wait for exchange result
+      //
+      httpClient = new HttpClient(serviceUri + "/results/" + token);
       HttpUtils.addHttpHeaders(session, httpClient);
       
-      response = httpClient.post(ExchangeResponse.class, "/submit", request);
-
-      if (response.getLevel() == Level.SUCCESS)
+      long timeoutCount = 0;
+      
+      do 
       {
-        // remove cache data related to this exchange including the app data
-        String appRelativePath = response.getReceiverScope() + "/" + response.getReceiverApp() + "/"
-          + response.getReceiverGraph();
+        timeoutCount += poolingInterval;
         
-        for (String key : session.keySet())
+        if (timeoutCount > exchangeTimeout)
         {
-          if (key.contains(exchangeRelativePath) || key.contains(appRelativePath))
-            removeSessionData(key);
+          throw new Exception("Exchange timed out.");
         }
-      }
+        
+        try
+        {
+          Thread.sleep(poolingInterval * 1000);  // convert to milliseconds
+          xRes = httpClient.get(ExchangeResponse.class);
+        }
+        catch (HttpClientException e)
+        {
+          int errorCode = e.getErrorCode();
+          
+          if (errorCode != 404)
+          {
+            break;
+          }
+        }
+      } while (xRes == null);
     }
-    catch (HttpClientException ex)
+    catch (Exception ex)
     {
       String error = "Error in submitExchange: " + ex.getMessage();
       logger.error(error);
 
-      response = new ExchangeResponse();
-      response.setSummary(error);
-      response.setLevel(Level.ERROR);
+      xRes = new ExchangeResponse();
+      xRes.setSummary(error);
+      xRes.setLevel(Level.ERROR);
     }
 
-    return response;
+    return xRes;
   }
 
   private String format(GregorianCalendar gcal)

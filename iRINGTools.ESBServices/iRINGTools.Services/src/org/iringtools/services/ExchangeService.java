@@ -10,9 +10,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
+import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.manifest.Manifest;
@@ -163,8 +165,6 @@ public class ExchangeService extends AbstractService
       @PathParam("id") String id,
       ExchangeRequest exchangeRequest)
   {
-    ExchangeResponse exchangeResponse = null;
-  
     try
     {
       initService(SERVICE_NAME);
@@ -177,23 +177,47 @@ public class ExchangeService extends AbstractService
     try
     {
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-      exchangeResponse = exchangeProvider.submitExchange(scope, id, exchangeRequest);
+      Response response = exchangeProvider.submitExchange(scope, id, exchangeRequest);
+      return response;
     }
     catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
-    
-    return Response.ok().entity(exchangeResponse).build();
   }
   
   @GET
-  @Path("/{scope}/exchanges/{id}/progress")
-  @Produces(MediaType.TEXT_PLAIN)
-  public Response getProgress( @PathParam("scope") String scope, @PathParam("id") String id) 
+  @Path("/{scope}/exchanges/{id}")
+  public Response getExchange(@PathParam("scope") String scope, @PathParam("id") String id)
   {
-    String progress = "";
-    
+    ExchangeDefinition xdef = null;
+
+    try
+    {
+      initService(SERVICE_NAME);
+    }
+    catch (AuthorizationException e)
+    {
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+
+    try
+    {
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      xdef = exchangeProvider.getExchangeDefinition(scope, id);
+    }
+    catch (Exception e)
+    {
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+    }
+
+    return Response.ok().entity(xdef).build();
+  }
+  
+  @GET
+  @Path("/results/{xtoken}")
+  public Response getExchangeResult(@PathParam("xtoken") String xtoken) 
+  {
     try
     {
       initService(SERVICE_NAME);
@@ -204,15 +228,18 @@ public class ExchangeService extends AbstractService
     }
     
     try
-    {
+    {      
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-      progress = exchangeProvider.getProgress(scope, id);
+      ExchangeResponse result = exchangeProvider.getExchangeResult(xtoken);
+      
+      if (result == null)
+        return Response.status(Status.NOT_FOUND).build();
+      
+      return Response.ok().entity(result).build();
     }
     catch (Exception e)
     {
-      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
     }
-    
-    return Response.ok().entity(progress).build();
-  }
+  }  
 }

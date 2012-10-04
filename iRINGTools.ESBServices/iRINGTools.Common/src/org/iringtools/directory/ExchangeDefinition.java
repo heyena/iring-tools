@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="targetGraphName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="hashAlgorithm" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="poolSize" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="exchangeTimeout" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="pollingInterval" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -51,7 +53,9 @@ import javax.xml.bind.annotation.XmlType;
     "targetAppName",
     "targetGraphName",
     "hashAlgorithm",
-    "poolSize"
+    "poolSize",
+    "exchangeTimeout",
+    "pollingInterval"
 })
 @XmlRootElement(name = "exchangeDefinition")
 public class ExchangeDefinition {
@@ -77,6 +81,8 @@ public class ExchangeDefinition {
     protected String targetGraphName;
     protected String hashAlgorithm;
     protected Integer poolSize;
+    protected Long exchangeTimeout;
+    protected Integer pollingInterval;
 
     /**
      * Gets the value of the id property.
@@ -364,6 +370,54 @@ public class ExchangeDefinition {
      */
     public void setPoolSize(Integer value) {
         this.poolSize = value;
+    }
+
+    /**
+     * Gets the value of the exchangeTimeout property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *     
+     */
+    public Long getExchangeTimeout() {
+        return exchangeTimeout;
+    }
+
+    /**
+     * Sets the value of the exchangeTimeout property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *     
+     */
+    public void setExchangeTimeout(Long value) {
+        this.exchangeTimeout = value;
+    }
+
+    /**
+     * Gets the value of the pollingInterval property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getPollingInterval() {
+        return pollingInterval;
+    }
+
+    /**
+     * Sets the value of the pollingInterval property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setPollingInterval(Integer value) {
+        this.pollingInterval = value;
     }
 
 }
