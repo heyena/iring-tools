@@ -55,7 +55,7 @@ namespace org.iringtools.adapter
   public class DtoProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProvider));
-    private const int MAX_THREADS = 50;
+    private const int MAX_THREADS = 10;
 
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
@@ -1090,7 +1090,6 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
 
-      if (dataTransferObjects != null && dataTransferObjects.DataTransferObjectList.Count > 0)
       {
         int total = dataTransferObjects.DataTransferObjectList.Count;
         int numOfThreads = Math.Min(total, MAX_THREADS);

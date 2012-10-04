@@ -30,6 +30,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Graphs }
+     * 
+     */
+    public Graphs createGraphs() {
+        return new Graphs();
+    }
+
+    /**
+     * Create an instance of {@link Exchanges }
+     * 
+     */
+    public Exchanges createExchanges() {
+        return new Exchanges();
+    }
+
+    /**
+     * Create an instance of {@link ApplicationData }
+     * 
+     */
+    public ApplicationData createApplicationData() {
+        return new ApplicationData();
+    }
+
+    /**
      * Create an instance of {@link Application }
      * 
      */
@@ -43,54 +67,6 @@ public class ObjectFactory {
      */
     public DataExchanges createDataExchanges() {
         return new DataExchanges();
-    }
-
-    /**
-     * Create an instance of {@link Directory }
-     * 
-     */
-    public Directory createDirectory() {
-        return new Directory();
-    }
-
-    /**
-     * Create an instance of {@link Graphs }
-     * 
-     */
-    public Graphs createGraphs() {
-        return new Graphs();
-    }
-
-    /**
-     * Create an instance of {@link ApplicationData }
-     * 
-     */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link Exchanges }
-     * 
-     */
-    public Exchanges createExchanges() {
-        return new Exchanges();
-    }
-
-    /**
-     * Create an instance of {@link ExchangeDefinition }
-     * 
-     */
-    public ExchangeDefinition createExchangeDefinition() {
-        return new ExchangeDefinition();
-    }
-
-    /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
     }
 
     /**
@@ -115,6 +91,30 @@ public class ObjectFactory {
      */
     public Graph createGraph() {
         return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link ExchangeDefinition }
+     * 
+     */
+    public ExchangeDefinition createExchangeDefinition() {
+        return new ExchangeDefinition();
+    }
+
+    /**
+     * Create an instance of {@link Directory }
+     * 
+     */
+    public Directory createDirectory() {
+        return new Directory();
+    }
+
+    /**
+     * Create an instance of {@link Commodity }
+     * 
+     */
+    public Commodity createCommodity() {
+        return new Commodity();
     }
 
 }
