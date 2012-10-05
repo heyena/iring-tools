@@ -143,8 +143,6 @@ public class OAuthFilter implements Filter
     }
     else  // case 3: the user has already logged in and the application has already processed the SSO event
     {
-      logger.debug("Retrieve user info");
-      
       String authCookieMultiValue = authCookie.getValue();      
       logger.debug("User info [" + authCookieMultiValue + "]");
       
