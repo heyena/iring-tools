@@ -67,7 +67,8 @@ namespace org.iringtools.adapter
             key.Equals("ShowJsonNullValues") ||
             key.Equals("MultiGetDTIs") ||
             key.Equals("MultiGetDTOs") ||
-            key.Equals("MultiPostDTOs"))
+            key.Equals("MultiPostDTOs") ||
+            key.Equals("MaxThreads"))
         {
           string format = settings[key].ToString();
           this[key] = format;

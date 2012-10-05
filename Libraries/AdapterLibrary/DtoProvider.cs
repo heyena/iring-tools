@@ -55,7 +55,6 @@ namespace org.iringtools.adapter
   public class DtoProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProvider));
-    //private const int MAX_THREADS = 50;
 
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
@@ -981,11 +980,12 @@ namespace org.iringtools.adapter
       _logger.Debug("Getting the count...");
 
       long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+      int maxThreads = int.Parse(_settings["MaxThreads"]);
 
       if (total > 0)
       {
-        long numOfThreads = Math.Min(total, _maxThreads);
-        int itemsPerThread = Math.Max((int)(total / _maxThreads), _maxThreads);
+        long numOfThreads = Math.Min(total, maxThreads);
+        int itemsPerThread = Math.Max((int)(total / maxThreads), maxThreads);
 
         if (itemsPerThread * numOfThreads > total)
         {
@@ -1041,8 +1041,10 @@ namespace org.iringtools.adapter
       DataTransferObjects dataTransferObjects = new DataTransferObjects();
       
       int total = identifiers.Count;
-      int numOfThreads = Math.Min(total, _maxThreads);
-      int itemsPerThread = Math.Max((int)(total / _maxThreads), _maxThreads);
+      int maxThreads = int.Parse(_settings["MaxThreads"]);
+
+      int numOfThreads = Math.Min(total, maxThreads);
+      int itemsPerThread = Math.Max((int)(total / maxThreads), maxThreads);
 
       if (itemsPerThread * numOfThreads > total)
       {
@@ -1092,8 +1094,10 @@ namespace org.iringtools.adapter
 
       {
         int total = dataTransferObjects.DataTransferObjectList.Count;
-        int numOfThreads = Math.Min(total, _maxThreads);
-        int itemsPerThread = Math.Max((int)(total / _maxThreads), _maxThreads);  
+        int maxThreads = int.Parse(_settings["MaxThreads"]);
+
+        int numOfThreads = Math.Min(total, maxThreads);
+        int itemsPerThread = Math.Max((int)(total / maxThreads), maxThreads);  
 
         if (itemsPerThread * numOfThreads > total)
         {
