@@ -162,6 +162,19 @@ public class ExchangeDataModel extends DataModel
       xRes.setSummary(error);
       xRes.setLevel(Level.ERROR);
     }
+    
+    if (xRes.getLevel() == Level.SUCCESS)
+    {
+      // remove cache data related to this exchange including the app data
+      String appRelativePath = xRes.getReceiverScope() + "/" + xRes.getReceiverApp() + "/"
+        + xRes.getReceiverGraph();
+      
+      for (String key : session.keySet())
+      {
+        if (key.contains(exchangeRelativePath) || key.contains(appRelativePath))
+          removeSessionData(key);
+      }
+    }
 
     return xRes;
   }

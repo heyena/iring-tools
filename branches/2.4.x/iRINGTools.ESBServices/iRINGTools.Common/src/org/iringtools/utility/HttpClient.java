@@ -71,11 +71,14 @@ public class HttpClient
   public <T> T get(Class<T> responseClass, String relativeUri) throws HttpClientException
   {
     HttpURLConnection conn = null;
+    int responseCode = 0;
 
     try
     {
       conn = getConnection(GET_METHOD, relativeUri);
-      int responseCode = conn.getResponseCode();
+      
+      responseCode = conn.getResponseCode();      
+      logger.debug("Response Code: " + responseCode);
 
       if (responseCode == HttpURLConnection.HTTP_NO_CONTENT)
         return null;
@@ -83,8 +86,9 @@ public class HttpClient
       if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_ACCEPTED)
       {
         InputStream responseStream = conn.getInputStream();
-        
-        if (responseStream == null || responseStream.available() == 0)
+        logger.debug("Content Length: " + conn.getContentLength());
+                
+        if (conn.getContentLength() == 0)
           return null;
         
         return JaxbUtils.toObject(responseClass, responseStream);
@@ -108,14 +112,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      try
-      {
-        throw new HttpClientException(conn.getResponseCode(), conn.getResponseMessage());
-      }
-      catch (IOException ioe)
-      {
-        logger.error("Error in HttpClient: " + ioe);
-      }
+      throw new HttpClientException(responseCode, e.getMessage());
     }
     finally
     {
@@ -125,8 +122,6 @@ public class HttpClient
         conn = null;
       }
     }
-    
-    return null;
   }
 
   public <T> T get(Class<T> responseClass) throws HttpClientException
@@ -147,6 +142,7 @@ public class HttpClient
   public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity, String contentType) throws HttpClientException
   {
     HttpURLConnection conn = null;
+    int responseCode = 0;
 
     try
     {
@@ -161,16 +157,18 @@ public class HttpClient
       outputStream.flush();
       outputStream.close();
 
-      int responseCode = conn.getResponseCode();
+      responseCode = conn.getResponseCode();
+      logger.debug("Response Code: " + responseCode);
 
       if (responseCode == HttpURLConnection.HTTP_NO_CONTENT)
         return null;
       
       if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_ACCEPTED)
       {
-        InputStream responseStream = conn.getInputStream();
+        InputStream responseStream = conn.getInputStream();        
+        logger.debug("Content Length: " + conn.getContentLength());
         
-        if (responseStream == null || responseStream.available() == 0)
+        if (conn.getContentLength() == 0)
           return null;
         
         return JaxbUtils.toObject(responseClass, responseStream);
@@ -194,14 +192,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      try
-      {
-        throw new HttpClientException(conn.getResponseCode(), conn.getResponseMessage());
-      }
-      catch (IOException ioe)
-      {
-        logger.error("Error in HttpClient: " + ioe);
-      }
+      throw new HttpClientException(responseCode, e.getMessage());
     }
     finally
     {
@@ -211,8 +202,6 @@ public class HttpClient
         conn = null;
       }
     }
-    
-    return null;
   }
 
   public <R> R postByteData(Class<R> responseClass, String relativeUri, byte[] data) throws HttpClientException
@@ -263,7 +252,7 @@ public class HttpClient
 
     try
     {
-      conn = (HttpURLConnection) getConnection(POST_METHOD, relativeUri);
+      conn = getConnection(POST_METHOD, relativeUri);
 
       for (Entry<String, String> pair : headers.entrySet())
       {
@@ -382,7 +371,7 @@ public class HttpClient
     logger.debug("Opening URL connection [" + url + "]");
     
     HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
-
+    
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
@@ -431,7 +420,7 @@ public class HttpClient
     {
       ignoreSslErrors(conn);
     }*/
-    
+
     return conn;
   }
 
