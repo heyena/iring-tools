@@ -26,6 +26,7 @@ namespace org.iringtools.adapter
       this.Add("ValidateLinks", "False");
       this.Add("DisplayLinks", "False");
       this.Add("ShowJsonNullValues", "False");
+      this.Add("MaxThreads", "50");
 
       if (OperationContext.Current != null)
       {
