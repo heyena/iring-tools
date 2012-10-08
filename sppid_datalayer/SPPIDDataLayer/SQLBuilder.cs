@@ -278,6 +278,10 @@ namespace org.iringtools.adapter.datalayer.sppid
                 hasKey = true;
                 nullable = false;
               }
+              else if (fieldElt.Attribute("nullable") != null)
+              {
+                nullable = bool.Parse(fieldElt.Attribute("nullable").Value);
+              }
 
               if (!XElement.ReferenceEquals(fieldElt, fieldElts.First<XElement>()))
               {
