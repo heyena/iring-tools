@@ -486,16 +486,13 @@ namespace org.iringtools.nhibernate
           string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
           int dataLength = Convert.ToInt32(metadata[2]);
           bool isIdentity = Convert.ToBoolean(metadata[3]);
-          bool isNullable;
-          try
-          {
-            isNullable = Convert.ToBoolean(metadata[4]);
-          }
-          catch
-          {
-            string nullable = Convert.ToString(metadata[4]).ToUpper();
-            isNullable = (nullable == "Y" || nullable == "TRUE" || nullable == "1");
-          }
+          string nullable = Convert.ToString(metadata[4]).ToUpper();
+          //   bool isNullable = CheckNullable(dbProvider, nullable);
+          bool isNullable = (nullable == "Y" || nullable == "TRUE" || nullable == "1");
+            if(dataType == "Char" && dataLength > 1)
+            {
+                dataType = "String";
+            }
           string constraint = Convert.ToString(metadata[5]);
 
           if (String.IsNullOrEmpty(constraint)) // process columns
@@ -545,8 +542,8 @@ namespace org.iringtools.nhibernate
 
       return dataObjects;
     }
-    #endregion
 
+    #endregion
     #region private methods
     private string getMssqlInstanceName ()
     {
