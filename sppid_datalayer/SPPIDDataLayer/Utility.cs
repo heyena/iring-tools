@@ -115,6 +115,12 @@ namespace org.iringtools.adapter.datalayer.sppid
       return DBType.SQLServer;
     }
 
+    public static bool IsBase64Encoded(string text)
+    {
+      string pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
+      return Regex.IsMatch(text, pattern);
+    }
+
     public static bool IsNumeric(string sqlDataType)
     {
       string dataType = sqlDataType.ToLower();

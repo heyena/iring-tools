@@ -10,6 +10,7 @@ using log4net;
 using Ninject;
 using org.iringtools.library;
 using IU = org.iringtools.utility;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.datalayer.sppid
 {
@@ -21,6 +22,8 @@ namespace org.iringtools.adapter.datalayer.sppid
     private string _project;
     private string _application;
     private WorkingSet _workingSet;
+    private string _siteConnStr;
+    private string _plantSchemaConnStr;
     private string _stagingConnStr;
     private DataDictionary _dataDictionary;
 
@@ -33,7 +36,24 @@ namespace org.iringtools.adapter.datalayer.sppid
         _dataPath = _settings["DataLayerPath"] ?? _settings[Constants.DATA_PATH];
         _project = _settings[Constants.PROJECT];
         _application = _settings[Constants.APPLICATION];
+
+        _siteConnStr = _settings[Constants.SPPID_SITE_SCHEMA];
+        if (Utility.IsBase64Encoded(_siteConnStr))
+        {
+          _siteConnStr = EncryptionUtility.Decrypt(_siteConnStr);
+        }
+
+        _plantSchemaConnStr = _settings[Constants.SPPID_PLANT_SCHEMA];
+        if (Utility.IsBase64Encoded(_plantSchemaConnStr))
+        {
+          _plantSchemaConnStr = EncryptionUtility.Decrypt(_plantSchemaConnStr);
+        }
+
         _stagingConnStr = _settings[Constants.SPPID_STAGING];
+        if (Utility.IsBase64Encoded(_stagingConnStr))
+        {
+          _stagingConnStr = EncryptionUtility.Decrypt(_stagingConnStr);
+        }
       }
       catch (Exception ex)
       {
@@ -59,7 +79,7 @@ namespace org.iringtools.adapter.datalayer.sppid
 
         _dbDictionary = new DatabaseDictionary()
         {
-          Provider = Utility.GetDBType(_settings[Constants.SPPID_STAGING]).ToString(),
+          Provider = Utility.GetDBType(_stagingConnStr).ToString(),
           dataObjects = dataDictionary.dataObjects
         };
       }
@@ -609,9 +629,8 @@ namespace org.iringtools.adapter.datalayer.sppid
         //
         IEnumerable<XElement> queryElts = config.Elements("query");
 
-        string siteConnStr = _settings[Constants.SPPID_SITE_SCHEMA];
-        DBType siteDbType = Utility.GetDBType(siteConnStr);
-        DataTable siteSchemaResult = DBManager.Instance.ExecuteQuery(siteConnStr, Constants.ORACLE_GET_CURRENT_SCHEMA);
+        DBType siteDbType = Utility.GetDBType(_siteConnStr);
+        DataTable siteSchemaResult = DBManager.Instance.ExecuteQuery(_siteConnStr, Constants.ORACLE_GET_CURRENT_SCHEMA);
         string siteSchema = siteSchemaResult.Rows[0][0].ToString();
 
         //
@@ -626,7 +645,7 @@ namespace org.iringtools.adapter.datalayer.sppid
 
         sqlBuilder = new SQLBuilder(siteDbType, siteQueryElt, siteSchemaMap, projectAssignments, projectReplacements);
         string siteSelectQuery = sqlBuilder.Build(SQLCommand.SELECT);
-        DataTable siteInfo = DBManager.Instance.ExecuteQuery(siteConnStr, siteSelectQuery);
+        DataTable siteInfo = DBManager.Instance.ExecuteQuery(_siteConnStr, siteSelectQuery);
 
         // 
         // Get actual schemas from !SiteData query
@@ -669,19 +688,33 @@ namespace org.iringtools.adapter.datalayer.sppid
         //   local machine and then bulk copied out to the staging server, bypassing the need for a more sophisticated security
         //   check/edit)
 
-        DBType plantDbType = Utility.GetDBType(_settings[Constants.SPPID_PLANT_SCHEMA]);
+        DBType plantDbType = Utility.GetDBType(_plantSchemaConnStr);
 
         if (plantDbType == DBType.ORACLE)
         {
-          _workingSet = new WorkingSet(
-            _settings[Constants.SPPID_PLANT_SCHEMA],
-            _settings[Constants.SPPID_PLANT_DICTIONARY],
-            _settings[Constants.SPPID_PID_SCHEMA],
-            _settings[Constants.SPPID_PID_DICTIONARY]);
+          string plantDictConnStr = _settings[Constants.SPPID_PLANT_DICTIONARY];
+          if (Utility.IsBase64Encoded(plantDictConnStr))
+          {
+            plantDictConnStr = EncryptionUtility.Decrypt(plantDictConnStr);
+          }
+
+          string pidSchemaConnStr = _settings[Constants.SPPID_PID_SCHEMA];
+          if (Utility.IsBase64Encoded(pidSchemaConnStr))
+          {
+            pidSchemaConnStr = EncryptionUtility.Decrypt(pidSchemaConnStr);
+          }
+
+          string pidDictConnStr = _settings[Constants.SPPID_PID_DICTIONARY];
+          if (Utility.IsBase64Encoded(pidDictConnStr))
+          {
+            pidDictConnStr = EncryptionUtility.Decrypt(pidDictConnStr);
+          }
+
+          _workingSet = new WorkingSet(_plantSchemaConnStr, plantDictConnStr, pidSchemaConnStr, pidDictConnStr);
         }
         else if (plantDbType == DBType.SQLServer)
         {
-          _workingSet = new WorkingSet(_settings[Constants.SPPID_PLANT_SCHEMA]);
+          _workingSet = new WorkingSet(_plantSchemaConnStr);
         }
         else
         {
@@ -727,7 +760,7 @@ namespace org.iringtools.adapter.datalayer.sppid
           // Fetch data
           //
           string selectQuery = sqlBuilder.Build(SQLCommand.SELECT);
-          DataTable result = DBManager.Instance.ExecuteQuery(_settings[Constants.SPPID_PLANT_SCHEMA], selectQuery);
+          DataTable result = DBManager.Instance.ExecuteQuery(_plantSchemaConnStr, selectQuery);
 
           response.StatusList.Add(new Status()
           {
