@@ -707,6 +707,11 @@ namespace org.iringtools.library
       }
     }
 
+    protected string GetIdentifier(DataObject objDef, DataRow dataRow)
+    {
+      return FormIdentifier(objDef, dataRow);
+    }
+
     protected void PopulateColumnValues(DataRow dataRow, DataObject objDef, IDataObject dataObject)
     {
       foreach (DataProperty prop in objDef.dataProperties)
