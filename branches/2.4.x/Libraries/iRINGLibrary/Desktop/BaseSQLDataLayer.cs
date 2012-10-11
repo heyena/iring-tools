@@ -712,6 +712,13 @@ namespace org.iringtools.library
       return FormIdentifier(objDef, dataRow);
     }
 
+    protected DataRow CreateDataRow(DataTable dataTable, IDataObject dataObject, DataObject objDef)
+    {
+      DataRow dataRow = dataTable.NewRow();
+      PopulateColumnValues(dataRow, objDef, dataObject);
+      return dataRow;
+    }
+
     protected void PopulateColumnValues(DataRow dataRow, DataObject objDef, IDataObject dataObject)
     {
       foreach (DataProperty prop in objDef.dataProperties)
