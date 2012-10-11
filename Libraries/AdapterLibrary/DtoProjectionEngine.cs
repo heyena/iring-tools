@@ -246,7 +246,14 @@ namespace org.iringtools.adapter.projection
             _logger.Debug("Hash: " + dti.HashValue);
             _logger.Debug("Values: " + values);
 
-            dtis.DataTransferIndexList.Add(dti);
+            if (string.IsNullOrEmpty(dti.Identifier))
+            {
+              _logger.Error("DTI has no identifier: [" + values + "]");
+            }
+            else
+            {
+              dtis.DataTransferIndexList.Add(dti);
+            }
           }
         }
 
