@@ -28,8 +28,6 @@ public class RefDataService extends AbstractService
 {
   private final String SERVICE_NAME = "RefDataService";
   
-  
-
   @POST
   @Path("/federation")
   public Response saveFederation(Federation federation)

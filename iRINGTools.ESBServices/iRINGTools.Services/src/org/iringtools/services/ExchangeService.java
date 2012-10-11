@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -29,7 +28,6 @@ import org.iringtools.services.core.ExchangeProvider;
 @Produces(MediaType.APPLICATION_XML)
 public class ExchangeService extends AbstractService
 {
-  private static final Logger logger = Logger.getLogger(AbstractService.class);
   private final String SERVICE_NAME = "ExchangeService";
   
   @GET
@@ -44,7 +42,6 @@ public class ExchangeService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      logger.error("Error initializing ExchangeService: " + e);
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
