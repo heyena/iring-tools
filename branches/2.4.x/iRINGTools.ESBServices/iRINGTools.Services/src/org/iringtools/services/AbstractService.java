@@ -18,6 +18,7 @@ import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.apache.log4j.Logger;
 import org.iringtools.security.AuthorizationException;
 import org.iringtools.utility.HttpUtils;
+import org.iringtools.utility.IOUtils;
 
 public abstract class AbstractService
 {
@@ -130,6 +131,8 @@ public abstract class AbstractService
   
   protected Response prepareErrorResponse(int errorCode, Exception e)
   {
+    logger.error(e.getMessage());
+    logger.error(IOUtils.getStackTrace(e));
     return prepareErrorResponse(errorCode, e.getMessage());
   }
   

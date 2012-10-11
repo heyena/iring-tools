@@ -19,7 +19,7 @@ import org.iringtools.services.core.DifferencingProvider;
 @Consumes("application/xml")
 public class DifferencingService extends AbstractService
 {  
-  private final String SERVICE_TYPE = "coreService";
+  private final String SERVICE_TYPE = "DifferencingService";
   
   @POST
   @Path("/dxi")
