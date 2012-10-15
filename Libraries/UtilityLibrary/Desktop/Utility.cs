@@ -1521,5 +1521,40 @@ namespace org.iringtools.utility
 
       return endpointBaseUri;
     }
+
+    //Converting special character names to character
+    public static string ConvertSpecialCharInbound(string identifier, string[] arrSpecialcharlist, string[] arrSpecialcharValue)
+    {
+        if (arrSpecialcharlist != null && arrSpecialcharValue != null)
+        {
+            foreach (string str in arrSpecialcharValue)
+            {
+                if (identifier.Contains(str))
+                {
+                    identifier = identifier.Replace(str, arrSpecialcharlist[Array.IndexOf(arrSpecialcharValue, str)]);
+                    break;
+                }
+            }
+        }
+        return identifier;
+    }
+
+    //Converting special character  to character names
+    public static string ConvertSpecialCharOutbound(string identifier, string[] arrSpecialcharlist, string[] arrSpecialcharValue)
+    {
+        if (arrSpecialcharlist != null && arrSpecialcharValue != null)
+        {
+            foreach (string str in arrSpecialcharlist) 
+            {
+                if (identifier.Contains(str))
+                {
+                    identifier = identifier.Replace(str, arrSpecialcharValue[Array.IndexOf(arrSpecialcharlist, str)]);
+                    break;
+                }
+            }
+        }
+        return identifier;
+    }
+  
   }
 }

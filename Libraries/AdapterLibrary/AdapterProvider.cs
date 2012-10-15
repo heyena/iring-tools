@@ -82,6 +82,8 @@ namespace org.iringtools.adapter
 
         private bool _isScopeInitialized = false;
         private bool _isDataLayerInitialized = false;
+        string[] arrSpecialcharlist;
+        string[] arrSpecialcharValue;
 
         [Inject]
         public AdapterProvider(NameValueCollection settings)
@@ -135,6 +137,11 @@ namespace org.iringtools.adapter
             _kernel.Load(bindingConfigurationPath);
 
             InitializeIdentity();
+            if (_settings["SpCharList"] !=null &&  _settings["SpCharValue"] !=null)
+            {
+                arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
+                arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
+            }
         }
 
         #region application methods
@@ -2461,6 +2468,7 @@ namespace org.iringtools.adapter
                     }
                     else
                     {
+                       classIdentifier = Utility.ConvertSpecialCharInbound(classIdentifier, arrSpecialcharlist, arrSpecialcharValue);    //Handling special Characters here.
                         List<string> identifiers = new List<string> { classIdentifier };
                         _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
                     }
@@ -2562,6 +2570,7 @@ namespace org.iringtools.adapter
                 InitializeDataLayer();
                 InitializeProjection(resourceName, ref format, false);
 
+                id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                 IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
                 if (parentDataObject == null) return new XDocument();
 
@@ -2623,6 +2632,7 @@ namespace org.iringtools.adapter
                 InitializeDataLayer();
                 InitializeProjection(resourceName, ref format, false);
 
+                id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                 IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
                 if (parentDataObject == null) return new XDocument();
 
@@ -3107,6 +3117,7 @@ namespace org.iringtools.adapter
                 }
                 else
                 {
+                    identifier = Utility.ConvertSpecialCharOutbound(identifier, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                     response = _dataLayer.Delete(_dataObjDef.objectName, new List<String> { identifier });
                 }
 
@@ -3165,6 +3176,7 @@ namespace org.iringtools.adapter
                 }
                 else
                 {
+                    id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                     response = _dataLayer.Delete(relatedResource, new List<String> { id });
                 }
 

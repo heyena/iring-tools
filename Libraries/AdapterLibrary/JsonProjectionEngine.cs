@@ -17,6 +17,8 @@ namespace org.iringtools.adapter.projection
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(JsonProjectionEngine));
     private DataDictionary _dictionary = null;
+    string[] arrSpecialcharlist;
+    string[] arrSpecialcharValue;
 
     [Inject]
     public JsonProjectionEngine(AdapterSettings settings, DataDictionary dictionary, IDataLayer2 dataLayer)
@@ -25,14 +27,21 @@ namespace org.iringtools.adapter.projection
       _settings = settings;
       _dictionary = dictionary;
       _dataLayer = dataLayer;
+      if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
+      {
+          arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
+          arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
+      }
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
       try
       {
+      
         string app = _settings["ApplicationName"].ToLower();
         string proj = _settings["ProjectName"].ToLower();
+
         string resource = graphName.ToLower();
 
         DataItems dataItems = new DataItems()
@@ -78,10 +87,10 @@ namespace org.iringtools.adapter.projection
                 if (dataProperty != null)
                 {
                   object value = dataObj.GetPropertyValue(keyProperty.keyPropertyName);
-
                   if (value != null)
                   {
                     string valueStr = Convert.ToString(value);
+                    valueStr = Utility.ConvertSpecialCharOutbound(valueStr, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
 
                     if (dataProperty.dataType == DataType.DateTime)
                       valueStr = Utility.ToXsdDateTime(valueStr);
@@ -194,6 +203,7 @@ namespace org.iringtools.adapter.projection
 
           foreach (DataItem dataItem in dataItems.items)
           {
+            dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
             IDataObject dataObject = _dataLayer.Create(graphName, new List<string>{ dataItem.id })[0];
 
             foreach (var pair in dataItem.properties)
