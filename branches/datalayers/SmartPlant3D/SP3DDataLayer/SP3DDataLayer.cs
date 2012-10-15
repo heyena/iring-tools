@@ -34,6 +34,7 @@ namespace iringtools.sdk.sp3ddatalayer
     private SP3DProvider sp3dProvider = null;
     private DataDictionary _dataDictionary = null;
     Dictionary<string, IList<IDataObject>> _sourceDataObjects = null;
+    List<string> _filtertedKeys = null;
 
     [Inject]
     public SP3DDataLayer(AdapterSettings settings)
@@ -123,11 +124,13 @@ namespace iringtools.sdk.sp3ddatalayer
       DataObject objectDefinition = null;
       string propertyName = string.Empty;
       List<IDataObject> dataObjects = new List<IDataObject>();
+      List<IDataObject> filteredDataObjects = new List<IDataObject>();
       string rowPropertyName = string.Empty;
       string oidOrigin = string.Empty;        
 
       BusinessObject bObj = bo.GetBusinessObject(objectName);
       DataObject objectDef = _dataDictionary.GetDataObject(objectName);
+      string key = bObj.businessKeyProperties.First().columnName;
 
       try
       {
@@ -182,30 +185,49 @@ namespace iringtools.sdk.sp3ddatalayer
 
           foreach (IDataObject addItem in IdataObjects)
             dataObjects.Add(addItem);
-        }
-
+        }           
+        
         foreach (IDataObject row in dataObjects)
-        {          
-          foreach (string connectedEntityName in bObj.rightClassNames)
+        {
+          if (_filtertedKeys.Contains(row.GetPropertyValue(key).ToString().ToLower()))
           {
-            BusinessRelation relation = bObj.GetRelation(connectedEntityName);
-            oidOrigin = row.GetPropertyValue(relation.relationName + "_" + relation.businessKeyProperties.First().columnName).ToString();
-
-            foreach (string con in relation.rightClassNames)
+            filteredDataObjects.Add(row);
+            foreach (string connectedEntityName in bObj.rightClassNames)
             {
-              RelatedObject relatedObject = bObj.GetRelatedObject(con);
-              setRow(row, oidOrigin, relatedObject, bObj);
+              BusinessRelation relation = bObj.GetRelation(connectedEntityName);
+              oidOrigin = row.GetPropertyValue(relation.relationName + "_" + relation.businessKeyProperties.First().columnName).ToString();
+
+              foreach (string con in relation.rightClassNames)
+              {
+                RelatedObject relatedObject = bObj.GetRelatedObject(con);
+                setRow(row, oidOrigin, relatedObject, bObj);
+              }
             }
-          }
+          }          
         }
 
-        return dataObjects;
+        return filteredDataObjects;
       }
       catch (Exception ex)
       {
         _logger.Error("Error in Get: " + ex);
         throw new Exception(string.Format("Error while getting a list of data objects of type [{0}.{1}]. {2}", commodityName, objectName, ex));
       }
+    }
+
+    private void GetFilteredKeys(BusinessCommodity bco)
+    {
+      FilterBase filterBase = sp3dProvider.FindFilter(bco.businessFilter.filterName);
+      System.Collections.ObjectModel.ReadOnlyCollection<Ingr.SP3D.Common.Middle.BusinessObject> filteredObjects = filterBase.Apply();
+      _filtertedKeys = new List<string>();
+      string temp = string.Empty;
+
+      foreach (Ingr.SP3D.Common.Middle.BusinessObject businessObj in filteredObjects)
+      {
+        _filtertedKeys.Add(businessObj.ObjectID.Substring(1, businessObj.ObjectID.Length - 2).ToLower());          
+      }
+
+      //Utility.Write<List<string>>(_filtertedKeys, "C:\\temp\\filteredOids.txt");
     }
 
     private void setRow(IDataObject targetRow, string oidOrigin, RelatedObject relatedObject, BusinessObject bObj)
@@ -275,6 +297,7 @@ namespace iringtools.sdk.sp3ddatalayer
             BusinessCommodity businessCommodity = sp3dProvider._sp3dDataBaseDictionary.GetBusinessCommoditiy(objectType);
             numberOfObjects = businessCommodity.businessObjects.Count;
             commodityName = objectType.ToLower();
+            GetFilteredKeys(businessCommodity);     
 
             if (_dataDictionary != null)
             {
