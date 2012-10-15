@@ -29,6 +29,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using org.iringtools.library;
 using System.Linq;
+using org.iringtools.utility;
 
 namespace iringtools.sdk.sp3ddatalayer
 {
@@ -37,11 +38,55 @@ namespace iringtools.sdk.sp3ddatalayer
   {
     public BusinessObjectConfiguration()
     {
-      businessObjects = new List<BusinessObject>();
+      businessCommodities = new List<BusinessCommodity>();
     }
 
     [DataMember(Order = 0)]
+    public List<BusinessCommodity> businessCommodities { get; set; }
+
+    [DataMember(Name = "provider", IsRequired = true, Order = 1)]
+    public string Provider { get; set; }
+
+    [DataMember(Name = "connectionString", IsRequired = true, Order = 2)]
+    public string ConnectionString { get; set; }
+
+    [DataMember(Name = "schemaName", IsRequired = true, Order = 3)]
+    public string SchemaName { get; set; }
+
+    public BusinessCommodity GetBusinessCommoditiy(string name)
+    {
+      BusinessCommodity businessCommoditiy = null;
+      businessCommoditiy = this.businessCommodities.FirstOrDefault<BusinessCommodity>(o => o.commodityName.ToLower() == name.ToLower());
+      return businessCommoditiy;
+    }
+  }
+
+  [DataContract(Name = "businessCommodity", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
+  public class BusinessCommodity
+  {
+    public BusinessCommodity()
+    {
+      businessObjects = new List<BusinessObject>();
+      relatedObjects = new List<RelatedObject>();
+    }
+
+    [DataMember(Order = 0)]
+    public string commodityName { get; set; }
+
+    [DataMember(IsRequired = false, Order = 1, EmitDefaultValue = false)]
+    public string objectNamespace { get; set; }
+
+    [DataMember(Order = 2)]
     public List<BusinessObject> businessObjects { get; set; }
+
+    [DataMember(IsRequired = false, Order = 3, EmitDefaultValue = false)]
+    public List<RelatedObject> relatedObjects { get; set; }
+
+    [DataMember(IsRequired = false, Order = 4, EmitDefaultValue = false)]
+    public DataFilter dataFilter { get; set; }
+
+    [DataMember(IsRequired = false, Order = 5, EmitDefaultValue = false)]
+    public bool soleBusinessObject { get; set; }
 
     public BusinessObject GetBusinessObject(string name)
     {
@@ -50,11 +95,14 @@ namespace iringtools.sdk.sp3ddatalayer
       return BusinessObject;
     }
 
-    public BusinessObject GetTableObject(string name)
+    public bool hasMinusOrZeroRowNumbers()
     {
-      BusinessObject BusinessObject = null;
-      BusinessObject = this.businessObjects.FirstOrDefault<BusinessObject>(o => (o.objectName).ToLower() == name.ToLower());
-      return BusinessObject;
+      foreach (BusinessObject businessObject in this.businessObjects)
+      {
+        if (businessObject.rowNumber <= 0)
+          return true;
+      }
+      return false;
     }
   }
 
@@ -69,7 +117,7 @@ namespace iringtools.sdk.sp3ddatalayer
     [DataMember(IsRequired = true, Order = 0)]
     public string interfaceName { get; set; }
 
-    [DataMember(IsRequired = true, Order = 2)]
+    [DataMember(IsRequired = false, Order = 2, EmitDefaultValue = false)]
     public string tableName { get; set; }
 
     [DataMember(IsRequired = true, Order = 3)]
@@ -90,35 +138,146 @@ namespace iringtools.sdk.sp3ddatalayer
   }
 
   [DataContract(Name = "businessObject", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
-  public class BusinessObject
+  public class BusinessObject : RootBusinessObject
   {
     public BusinessObject()
     {
-      businessKeyProperties = new List<BusinessKeyProperty>();
-      businessInterfaces = new List<BusinessInterface>();
-      businessRelationships = new List<BusinessRelationship>();
+      nodeType = NodeType.StartObject;
+    }
+   
+    public BusinessRelation GetRelation(string relationName)
+    {
+      BusinessRelation relation = null;
+      relation = this.relations.FirstOrDefault<BusinessRelation>(o => o.relationName.ToLower() == relationName.ToLower());
+      return relation;
     }
 
-    [DataMember(IsRequired = true, Order = 0)]
+    public RelatedObject GetRelatedObject(string objectName)
+    {
+      RelatedObject relatedObject = null;
+      relatedObject = this.relatedObjects.FirstOrDefault<RelatedObject>(o => o.objectName.ToLower() == objectName.ToLower());
+      return relatedObject;
+    }
+
+    public void setUniqueRelation(RelatedObject rObj)
+    {
+      int suffix = 0;
+      if (GetRelation(rObj.relationName) != null)
+      {
+        rObj.relationName += "_";
+
+        do
+        {
+          rObj.relationName = rObj.relationName.Substring(0, rObj.relationName.LastIndexOf('_'));
+          rObj.relationName += "_" + suffix;
+          suffix++;
+        }
+        while (GetRelation(rObj.relationName) != null);
+      }
+    }
+
+    public BusinessRelation addUniqueRelation(RelatedObject rObj, RootBusinessObject parentNode)
+    {
+      BusinessRelation relation = null;
+      setUniqueRelation(rObj);      
+      relation = rObj.createBusinessRelation();
+      relations.Add(relation);
+        
+      if (parentNode.nodeType == NodeType.StartObject)
+      {
+        rightClassNames.Add(rObj.relationName);
+      }
+
+      return relation;
+    }
+
+    public void addUniqueRelatedObject(RelatedObject rObj)
+    {
+      int suffix = 0;
+
+      if (relatedObjects.Contains(rObj))
+      {
+        rObj.objectName += "_";
+
+        do
+        {
+          rObj.objectName = rObj.objectName.Substring(0, rObj.objectName.LastIndexOf('_'));
+          rObj.objectName += "_" + suffix;
+          suffix++;
+        }
+        while (relatedObjects.Contains(rObj));
+      }
+
+      relatedObjects.Add(rObj);
+    }
+  }  
+
+  [DataContract(Name = "rootBusinessObject", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
+  public class RootBusinessObject
+  {
+    public RootBusinessObject()
+    {
+      businessKeyProperties = new List<BusinessKeyProperty>();
+      businessInterfaces = new List<BusinessInterface>();
+      businessProperties = new List<BusinessProperty>();
+      relatedObjects = new List<RelatedObject>();
+      relations = new List<BusinessRelation>();
+      leftClassNames = new List<string>();
+      rightClassNames = new List<string>();
+    }
+
+    [DataMember(IsRequired = false, Order = 0, EmitDefaultValue = false)]
     public string objectName { get; set; }
 
-    [DataMember(IsRequired = true, Order = 1)]
-    public List<BusinessKeyProperty> businessKeyProperties { get; set; }
+    [DataMember(IsRequired = false, Order = 1, EmitDefaultValue = false)]
+    public string objectNamespace { get; set; }
 
     [DataMember(IsRequired = false, Order = 2, EmitDefaultValue = false)]
-    public List<BusinessInterface> businessInterfaces { get; set; }
+    public string tableName { get; set; }
 
     [DataMember(IsRequired = false, Order = 3, EmitDefaultValue = false)]
-    public List<BusinessRelationship> businessRelationships { get; set; }
+    public string relationName { get; set; }
 
     [DataMember(IsRequired = false, Order = 4, EmitDefaultValue = false)]
-    public bool isReadOnly { get; set; }
+    public string relationTableName { get; set; }
 
     [DataMember(IsRequired = false, Order = 5, EmitDefaultValue = false)]
-    public string description { get; set; }
+    public string startObjectName { get; set; }
 
     [DataMember(IsRequired = false, Order = 6, EmitDefaultValue = false)]
-    public DataFilter dataFilter { get; set; }
+    public NodeType nodeType { get; set; }
+
+    [DataMember(IsRequired = false, Order = 7, EmitDefaultValue = false)]
+    public List<BusinessInterface> businessInterfaces { get; set; }
+
+    [DataMember(IsRequired = false, Order = 8, EmitDefaultValue = false)]
+    public List<RelatedObject> relatedObjects { get; set; }
+
+    [DataMember(IsRequired = false, Order = 9, EmitDefaultValue = false)]
+    public List<BusinessRelation> relations { get; set; }
+
+    [DataMember(IsRequired = false, Order = 10, EmitDefaultValue = false)]
+    public List<string> leftClassNames { get; set; }
+
+    [DataMember(IsRequired = false, Order = 10, EmitDefaultValue = false)]
+    public List<string> rightClassNames { get; set; }
+
+    [DataMember(IsRequired = false, Order = 11, EmitDefaultValue = false)]
+    public List<BusinessKeyProperty> businessKeyProperties { get; set; }
+
+    [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
+    public List<BusinessProperty> businessProperties { get; set; }
+
+   
+
+    [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
+    public bool isReadOnly { get; set; }
+
+    [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
+    public string description { get; set; }
+
+    [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
+    public long rowNumber { get; set; }
 
     public bool isKeyProperty(string propertyName)
     {
@@ -131,49 +290,135 @@ namespace iringtools.sdk.sp3ddatalayer
       return false;
     }
 
-    public BusinessProperty getKeyProperty(string keyPropertyName, string interfaceName)
+    public BusinessKeyProperty getKeyProperty(string keyPropertyName)
     {
-      foreach (BusinessInterface businessInterface in businessInterfaces)
+      BusinessKeyProperty keyProperty = null;
+      keyProperty = this.businessKeyProperties.FirstOrDefault<BusinessKeyProperty>(o => o.keyPropertyName.ToLower() == keyPropertyName.ToLower());
+      return keyProperty;
+    }
+
+    public BusinessProperty convertKeyPropertyToProperyt(BusinessKeyProperty businessKeyProperty)
+    {
+      BusinessProperty businessProperty = new BusinessProperty();
+      businessProperty.datatype = businessKeyProperty.datatype;
+      businessProperty.dataType = businessKeyProperty.dataType;
+      businessProperty.columnName = businessKeyProperty.columnName;
+      businessProperty.description = businessKeyProperty.description;
+      businessProperty.propertyName = businessKeyProperty.keyPropertyName;
+      businessProperty.isNullable = businessKeyProperty.isNullable;
+      businessProperty.isReadOnly = businessKeyProperty.isReadOnly;
+      businessProperty.keyType = KeyType.assigned;
+      return businessProperty;
+    }
+
+    public BusinessProperty convertDataPropertyToProperyt(DataProperty dataProperty)
+    {
+      BusinessProperty businessProperty = new BusinessProperty();
+      businessProperty.datatype = dataProperty.dataType.ToString();
+      businessProperty.dataType = dataProperty.dataType;
+      businessProperty.columnName = dataProperty.columnName;
+      businessProperty.description = dataProperty.description;
+      businessProperty.propertyName = dataProperty.propertyName;
+      businessProperty.isNullable = dataProperty.isNullable;
+      businessProperty.isReadOnly = dataProperty.isReadOnly;
+      businessProperty.keyType = dataProperty.keyType;
+      return businessProperty;
+    }
+
+    public bool containProperty(BusinessProperty dataProperty)
+    {
+      if (businessInterfaces != null)
       {
-        if (businessInterface.interfaceName.ToLower() == interfaceName.ToLower())
+        foreach (BusinessInterface businessInterface in businessInterfaces)
         {
-          if (businessInterface.businessProperties.Count > 0)
+          foreach (BusinessProperty property in businessInterface.businessProperties)
           {
-            foreach (BusinessProperty businessProperty in businessInterface.businessProperties)
+            if (dataProperty.propertyName.ToLower() == property.propertyName.ToLower())
             {
-              if (businessProperty != null)
-                if (businessProperty.propertyName.ToLower() == keyPropertyName.ToLower())
-                  return businessProperty;
+              return true;
             }
           }
-          else
-            return null;
+        }
+
+        foreach (BusinessKeyProperty keyProperty in businessKeyProperties)
+        {
+          if (keyProperty.keyPropertyName.ToLower() == dataProperty.propertyName.ToLower())
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    public BusinessProperty getProperty(string dataProperty)
+    {
+      if (businessInterfaces != null)
+      {
+        foreach (BusinessInterface businessInterface in businessInterfaces)
+        {
+          foreach (BusinessProperty property in businessInterface.businessProperties)
+          {
+            if (dataProperty.ToLower() == property.propertyName.ToLower())
+            {
+              return property;
+            }
+          }
         }
       }
 
       return null;
     }
 
-    public bool deleteProperty(BusinessProperty dataProperty)
+    public bool containProperty(string dataProperty)
     {
-      foreach (BusinessInterface businessInterface in businessInterfaces)
+      if (businessInterfaces != null)
       {
-        foreach (BusinessProperty property in businessInterface.businessProperties)
+        foreach (BusinessInterface businessInterface in businessInterfaces)
         {
-          if (dataProperty == property)
+          foreach (BusinessProperty property in businessInterface.businessProperties)
           {
-            businessInterface.businessProperties.Remove(dataProperty);
-            break;
+            if (dataProperty.ToLower() == property.propertyName.ToLower())
+            {
+              return true;
+            }
+          }
+        }
+
+        foreach (BusinessKeyProperty keyProperty in businessKeyProperties)
+        {
+          if (keyProperty.keyPropertyName.ToLower() == dataProperty.ToLower())
+          {
+            return true;
           }
         }
       }
+      return false;
+    }
 
-      foreach (BusinessKeyProperty keyProperty in businessKeyProperties)
+    public bool deleteProperty(BusinessProperty dataProperty)
+    {
+      if (businessInterfaces != null)
       {
-        if (keyProperty.keyPropertyName.ToLower() == dataProperty.propertyName.ToLower())
+        foreach (BusinessInterface businessInterface in businessInterfaces)
         {
-          businessKeyProperties.Remove(keyProperty);
-          break;
+          foreach (BusinessProperty property in businessInterface.businessProperties)
+          {
+            if (dataProperty == property)
+            {
+              businessInterface.businessProperties.Remove(dataProperty);
+              break;
+            }
+          }
+        }
+
+        foreach (BusinessKeyProperty keyProperty in businessKeyProperties)
+        {
+          if (keyProperty.keyPropertyName.ToLower() == dataProperty.propertyName.ToLower())
+          {
+            businessKeyProperties.Remove(keyProperty);
+            break;
+          }
         }
       }
       return true;
@@ -192,24 +437,46 @@ namespace iringtools.sdk.sp3ddatalayer
 
       this.businessKeyProperties.Add(new BusinessKeyProperty { keyPropertyName = keyProperty.propertyName });
       return true;
+    }    
+  }
+
+  [DataContract(Name = "businessDataType", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
+  public class BusinessDataType
+  {
+    public DataType GetDatatype(string datatype)
+    {
+      if (datatype == null)
+        return DataType.String;
+
+      switch (datatype.ToLower())
+      {
+        case "string":
+          return DataType.String;
+        case "bool":
+        case "boolean":
+          return DataType.Boolean;
+        case "float":
+        case "decimal":
+        case "double":
+          return DataType.Double;
+        case "integer":
+        case "int":
+        case "number":
+          return DataType.Int64;
+        default:
+          return DataType.String;
+      }
     }
   }
 
   [DataContract(Name = "businessKeyProperty", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
-  public class BusinessKeyProperty
+  public class BusinessKeyProperty : BusinessDataType
   {
     [DataMember(IsRequired = true, Order = 0)]
-    public string keyPropertyName { get; set; }    
-  }
-
-  [DataContract(Name = "businessProperty", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
-  public class BusinessProperty
-  {
-    [DataMember(IsRequired = true, Order = 0)]
-    public string propertyName { get; set; }
+    public string keyPropertyName { get; set; }
 
     [DataMember(IsRequired = false, Order = 1, EmitDefaultValue = false)]
-    public string dataType { get; set; }
+    public string datatype { get; set; }
 
     [DataMember(IsRequired = false, Order = 2, EmitDefaultValue = false)]
     public bool isNullable { get; set; }
@@ -221,25 +488,207 @@ namespace iringtools.sdk.sp3ddatalayer
     public string description { get; set; }
 
     [DataMember(IsRequired = false, Order = 5, EmitDefaultValue = false)]
-    public string dbColumn { get; set; }
-  }
+    public string columnName { get; set; }
 
-  [DataContract(Name = "businessRelationship", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
-  public class BusinessRelationship
-  {
-    public BusinessRelationship()
+    [DataMember(IsRequired = false, Order = 6, EmitDefaultValue = false)]
+    public KeyType keyType { get; set; }
+
+    [DataMember(IsRequired = false, Order = 7, EmitDefaultValue = false)]
+    public DataType dataType { get; set; }
+
+    [DataMember(IsRequired = false, Order = 8, EmitDefaultValue = false)]
+    public bool returnNull { get; set; }
+
+    public BusinessProperty convertKeyPropertyToProperty()
     {
-      this.businessRelatedInterfaces = new List<BusinessInterface>();
+      BusinessProperty businessProperty = new BusinessProperty();
+      businessProperty.datatype = datatype;
+      businessProperty.dataType = dataType;
+      businessProperty.columnName = columnName;
+      businessProperty.description = description;
+      businessProperty.propertyName = keyPropertyName;
+      businessProperty.isNullable = isNullable;
+      businessProperty.isReadOnly = isReadOnly;
+      businessProperty.keyType = KeyType.assigned;
+      return businessProperty;
     }
 
-    [DataMember(Order = 0, Name = "businessRelatedInterfaces", IsRequired = true)]
-    public List<BusinessInterface> businessRelatedInterfaces { get; set; }
-
-    [DataMember(Order = 1, Name = "relatedObjectName", IsRequired = true)]
-    public string relatedObjectName { get; set; }
-
-    [DataMember(Order = 2, Name = "relationshipName", IsRequired = true)]
-    public string relationshipName { get; set; }
+    public DataProperty convertKeyPropertyToDataProperty()
+    {
+      DataProperty Property = new DataProperty();
+      Property.dataType = GetDatatype(datatype);
+      Property.dataType = dataType;
+      Property.columnName = columnName;
+      Property.description = description;
+      Property.propertyName = keyPropertyName;
+      Property.isNullable = isNullable;
+      Property.isReadOnly = isReadOnly;
+      Property.keyType = KeyType.assigned;
+      return Property;
+    }
   }
 
+  [DataContract(Name = "businessProperty", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
+  public class BusinessProperty : BusinessDataType
+  {
+    public BusinessProperty()
+    {
+    }
+
+    [DataMember(IsRequired = true, Order = 0)]
+    public string propertyName { get; set; }
+
+    [DataMember(IsRequired = false, Order = 1, EmitDefaultValue = false)]
+    public string datatype { get; set; }
+
+    [DataMember(IsRequired = false, Order = 2, EmitDefaultValue = false)]
+    public bool isNullable { get; set; }
+
+    [DataMember(IsRequired = false, Order = 3, EmitDefaultValue = false)]
+    public bool isReadOnly { get; set; }
+
+    [DataMember(IsRequired = false, Order = 4, EmitDefaultValue = false)]
+    public string description { get; set; }
+
+    [DataMember(IsRequired = false, Order = 5, EmitDefaultValue = false)]
+    public string columnName { get; set; }
+
+    [DataMember(IsRequired = false, Order = 6, EmitDefaultValue = false)]
+    public KeyType keyType { get; set; }
+
+    [DataMember(IsRequired = false, Order = 7, EmitDefaultValue = false)]
+    public DataType dataType { get; set; }
+
+    [DataMember(IsRequired = false, Order = 8, EmitDefaultValue = false)]
+    public bool returnNull { get; set; }    
+
+    public DataProperty convertPropertyToDataProperty()
+    {
+      DataProperty Property = new DataProperty();
+      Property.dataType = dataType;
+      Property.columnName = columnName;
+      Property.description = description;
+      Property.propertyName = propertyName;
+      Property.isNullable = isNullable;
+      Property.isReadOnly = isReadOnly;
+      return Property;
+    }
+
+    public BusinessProperty copyBusinessProperty()
+    {
+      BusinessProperty Property = new BusinessProperty();
+      Property.dataType = dataType;
+      Property.columnName = columnName;
+      Property.description = description;
+      Property.propertyName = propertyName;
+      Property.isNullable = isNullable;
+      Property.isReadOnly = isReadOnly;
+      return Property;
+    }
+  }
+
+  [DataContract(Name = "relatedObject", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
+  public class RelatedObject : RootBusinessObject
+  {
+    public RelatedObject()
+    {
+      nodeType = NodeType.MiddleObject;
+    }    
+
+    public DataObject convertRelatedObjectToDataObject()
+    {
+      DataObject dataObject = new DataObject();
+      dataObject.objectNamespace = objectNamespace;
+      dataObject.objectName = objectName;
+      dataObject.tableName = tableName;
+
+      if (businessKeyProperties != null)
+        if (businessKeyProperties.Count > 0)
+          foreach (BusinessKeyProperty bKey in businessKeyProperties)
+            dataObject.addKeyProperty(bKey.convertKeyPropertyToDataProperty());
+
+      if (businessInterfaces != null)
+        if (businessInterfaces.Count > 0)
+          foreach (BusinessInterface bint in businessInterfaces)
+            if (bint.businessProperties != null)
+              if (bint.businessProperties.Count > 0)
+                foreach (BusinessProperty bprop in bint.businessProperties)
+                  dataObject.dataProperties.Add(bprop.convertPropertyToDataProperty());
+
+      return dataObject;
+    }
+
+    public BusinessRelation createBusinessRelation()
+    {
+      BusinessRelation relation = new BusinessRelation();
+      relation.relationName = relationName;
+      relation.objectNamespace = objectNamespace;
+      relation.leftClassNames = new List<string>();
+      relation.rightClassNames = new List<string>();
+      relation.rightClassNames.Add(objectName);
+      relation.relationTableName = relationTableName;
+      relation.nodeType = NodeType.Relation;
+      return relation;
+    }    
+  }
+
+  [DataContract(Name = "businessRelation", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
+  public class BusinessRelation : RelatedObject
+  {
+    public BusinessRelation()
+    {
+      nodeType = NodeType.Relation;
+    }
+    
+    public DataObject convertRelationToDataObject()
+    {
+      DataObject dataObject = new DataObject();
+      dataObject.objectNamespace = objectNamespace;
+      dataObject.objectName = relationName;
+      dataObject.tableName = tableName;
+
+      foreach (BusinessKeyProperty bKey in businessKeyProperties)
+        dataObject.addKeyProperty(bKey.convertKeyPropertyToDataProperty());
+
+      if (businessProperties != null)
+        foreach (BusinessProperty bprop in businessProperties)
+          dataObject.dataProperties.Add(bprop.convertPropertyToDataProperty());
+
+      return dataObject;
+    }
+
+    public void createRelationBusinessProperty(string name)
+    {
+      BusinessProperty property = new BusinessProperty();
+      property.datatype = "String";
+      property.dataType = DataType.String;
+      property.columnName = name;
+      property.description = "";
+      property.propertyName = name;
+      property.isNullable = true;
+      property.isReadOnly = false;
+      property.keyType = KeyType.assigned;
+
+      if (businessProperties == null)
+      {
+        businessProperties = new List<BusinessProperty>();
+        businessProperties.Add(property);
+      }
+      else if (!businessProperties.Contains(property))
+        this.businessProperties.Add(property);
+    }
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
+  public enum NodeType
+  {
+    [EnumMember]
+    StartObject = 0,
+    [EnumMember]
+    Relation = 1,
+    [EnumMember]
+    EndObject = 2,
+    [EnumMember]
+    MiddleObject = 3    
+  }
 }
