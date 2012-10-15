@@ -48,9 +48,12 @@
     <Reference Include="Ciloci.Flee">
       <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
-    <Reference Include="CommonMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\CommonMiddle.dll</HintPath>
+    <Reference Include="CommonMiddle">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\CommonMiddle.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="EquipmentMiddle">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\EquipmentMiddle.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
@@ -77,10 +80,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\MicrosoftSql\Microsoft.SqlServer.SqlWmiManagement.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate">
+    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.ByteCode.Castle">
+    <Reference Include="NHibernate.ByteCode.Castle, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
@@ -95,15 +100,24 @@
       <HintPath>..\lib\nunit\framework\nunit.framework.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ReferenceDataMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\ReferenceDataMiddle.dll</HintPath>
+    <Reference Include="ReferenceDataMiddle">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\ReferenceDataMiddle.dll</HintPath>
       <Private>False</Private>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SmartPlantStructureMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\SmartPlantStructureMiddle.dll</HintPath>
+    <Reference Include="SmartPlantStructureMiddle">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\SmartPlantStructureMiddle.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SP3DCoreDotNetUtils">
+      <HintPath>..\lib\sp3d\SP3DCoreDotNetUtils.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SP3DSMOUtils">
+      <HintPath>..\lib\sp3d\SP3DSMOUtils.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SP3DSMOUtils2K5">
+      <HintPath>..\lib\sp3d\SP3DSMOUtils2K5.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="StaticDust.Configuration">
@@ -117,11 +131,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="SystemMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\SystemMiddle.dll</HintPath>
+    <Reference Include="SystemMiddle">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\SystemMiddle.dll</HintPath>
       <Private>False</Private>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="UtilityLibrary">
       <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
@@ -132,6 +144,7 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BusinessObjectConfiguration.cs" />
+    <Compile Include="SP3DProvider.cs" />
     <Compile Include="EntityGenerator.cs" />
     <Compile Include="IExtensions.cs" />
     <Compile Include="NHibernateModule.cs" />
