@@ -164,7 +164,6 @@ namespace org.iringtools.adapter.projection
         
         if (value != null)
         {
-            value = Utility.ConvertSpecialCharOutbound(value.ToString(), arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
           if (dataProperty.dataType.ToString().ToLower().Contains("date"))
             value = Utility.ToXsdDateTime(value.ToString());
 
@@ -200,6 +199,7 @@ namespace org.iringtools.adapter.projection
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         if (value != null)
         {
+          value = Utility.ConvertSpecialCharOutbound(value.ToString(), arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
           XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName), value);
           parentElement.Add(propertyElement);
           keyCounter++;
