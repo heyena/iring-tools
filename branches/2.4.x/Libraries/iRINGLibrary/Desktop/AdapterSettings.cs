@@ -27,6 +27,8 @@ namespace org.iringtools.adapter
       this.Add("DisplayLinks", "False");
       this.Add("ShowJsonNullValues", "False");
       this.Add("MaxThreads", "50");
+      this.Add("SpCharList", System.Configuration.ConfigurationManager.AppSettings["SpCharList"]);
+      this.Add("SpCharValue", System.Configuration.ConfigurationManager.AppSettings["SpCharValue"]);
 
       if (OperationContext.Current != null)
       {
