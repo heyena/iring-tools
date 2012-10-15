@@ -38,11 +38,11 @@ namespace iringtools.sdk.sp3ddatalayer
   {
     public BusinessObjectConfiguration()
     {
-      businessCommodities = new List<BusinessCommodity>();
+      businessCommodities = new List<BusinessCommodity>();      
     }
 
     [DataMember(Order = 0)]
-    public List<BusinessCommodity> businessCommodities { get; set; }
+    public List<BusinessCommodity> businessCommodities { get; set; }    
 
     [DataMember(Name = "provider", IsRequired = true, Order = 1)]
     public string Provider { get; set; }
@@ -59,6 +59,17 @@ namespace iringtools.sdk.sp3ddatalayer
       businessCommoditiy = this.businessCommodities.FirstOrDefault<BusinessCommodity>(o => o.commodityName.ToLower() == name.ToLower());
       return businessCommoditiy;
     }
+  }
+
+  [DataContract(Name = "businessFilter", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
+  public class BusinessFilter
+  {
+    public BusinessFilter()
+    {      
+    }
+
+    [DataMember(Order = 0)]
+    public string filterName { get; set; }    
   }
 
   [DataContract(Name = "businessCommodity", Namespace = "http://www.iringtools.sdk/sp3ddatalayer")]
@@ -87,6 +98,9 @@ namespace iringtools.sdk.sp3ddatalayer
 
     [DataMember(IsRequired = false, Order = 5, EmitDefaultValue = false)]
     public bool soleBusinessObject { get; set; }
+
+    [DataMember(IsRequired = false, Order = 6, EmitDefaultValue = false)]
+    public BusinessFilter businessFilter { get; set; }
 
     public BusinessObject GetBusinessObject(string name)
     {

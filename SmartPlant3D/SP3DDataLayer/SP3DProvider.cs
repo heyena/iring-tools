@@ -71,8 +71,7 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         try
         {
-          getConfigure();
-          //Connect();
+          getConfigure();          
 
           if (_config != null)
             if (_config.businessCommodities != null)
@@ -271,7 +270,6 @@ namespace iringtools.sdk.sp3ddatalayer
       BusinessObject targetBusinessObject = null;
       bool addToAllBusinessObject = false;
       bool addClassName = false;
-
       config.ConnectionString = config.ConnectionString;      
 
       if (config.businessCommodities != null)
@@ -383,6 +381,58 @@ namespace iringtools.sdk.sp3ddatalayer
       return config;
     }
 
+    public FilterBase FindFilter(string filterName)
+    {
+      Plant plant = Connect();
+
+      if (filterName == null || plant == null)
+        return null;
+
+      var names = filterName.Split('\\', '/');
+      if (names.Count() < 2)  // need top level folder name plus filter name
+        return null;
+
+      FilterBase filter = null;
+      FilterFolder afld = null;
+
+      // "Plant Filters" or "Catalog Filters"
+      if (names[0] == "Plant Filters")            
+      {
+        if (plant.PlantModel == null)
+          return null;
+
+        afld = (FilterFolder)plant.PlantModel.Folders.FirstOrDefault(fld => fld.Name == names[0]);        
+      }
+      else if (names[0] == "Catalog Filters")
+      {
+        if (plant.PlantCatalog == null)
+          return null;
+
+        afld = (FilterFolder)plant.PlantCatalog.Folders.FirstOrDefault(fld => fld.Name == names[0]);
+      }
+
+      // Traversal logic
+      if (afld != null)
+      {
+        // Already matched first filter name with top-level folder name.
+        int n = 1;
+        for (; n < (names.Count() - 1); ++n)    // child folders name matches; last name is filter name
+        {
+          if (afld.ChildFolders.FirstOrDefault(fld => fld.Name == names[n]) != null)
+            afld = afld.ChildFolders.FirstOrDefault(fld => fld.Name == names[n]);
+          else
+            break;
+        }
+
+        if (afld != null && n < names.Count())    // child filter name match
+        {
+          filter = afld.ChildFilters.FirstOrDefault(flt => flt.Name == names[n]);               
+        }
+      }
+
+      return filter;
+    }
+
     private void initializeBO(BusinessObject bo, string objectNamespace)
     {
       if (bo.relations == null)
@@ -421,8 +471,10 @@ namespace iringtools.sdk.sp3ddatalayer
       robj.objectNamespace = rootObject.objectNamespace;
       robj.rowNumber = -1;
 
-      if (robj.nodeType != NodeType.MiddleObject)
+      if (robj.relatedObjects != null && robj.relatedObjects.Count > 0)
         robj.nodeType = NodeType.MiddleObject;
+      else
+        robj.nodeType = NodeType.EndObject;    
 
       if (robj.businessProperties == null)
         robj.businessProperties = new List<BusinessProperty>();
@@ -478,12 +530,10 @@ namespace iringtools.sdk.sp3ddatalayer
         initializeRelatedObject(newPareendObj, businessObject);
         AddRelatedObject(parentObject, newPareendObj, businessObject);
 
-        if (newPareendObj.relatedObjects != null)
-        {
-          traverseRelatedObjects(newPareendObj, newPareendObj.relatedObjects, businessObject);
-        }
+        if (newPareendObj.relatedObjects != null && newPareendObj.relatedObjects.Count > 0)
+            traverseRelatedObjects(newPareendObj, newPareendObj.relatedObjects, businessObject);
         else
-          newPareendObj.nodeType = NodeType.EndObject;
+          newPareendObj.nodeType = NodeType.EndObject;       
       }
     }
 
@@ -861,15 +911,19 @@ namespace iringtools.sdk.sp3ddatalayer
       return filter;
     }
 
-    public void Connect()
+    public Plant Connect()
     {
       Site SP3DSite = null;
       SP3DSite = MiddleServiceProvider.SiteMgr.ConnectSite();
+      Plant SP3DPlant = null;
 
       if (SP3DSite != null)
       {
         if (SP3DSite.Plants.Count > 0)
-          MiddleServiceProvider.SiteMgr.ActiveSite.OpenPlant((Plant)SP3DSite.Plants[0]);
+        {
+          SP3DPlant = (Plant)SP3DSite.Plants[0];
+          MiddleServiceProvider.SiteMgr.ActiveSite.OpenPlant(SP3DPlant);
+        }
       }
 
       # region sp3d API
@@ -1007,9 +1061,9 @@ namespace iringtools.sdk.sp3ddatalayer
       //File.WriteAllText(@"C:\temp\sp3d.txt", showupMsg);
 
       //System.Windows.Forms.MessageBox.Show(showupMsg);
-      //oSystemsByName
-
+      //oSystemsByName      
       # endregion sp3d API
+      return SP3DPlant;
     }
 
     # region LoadConfiguratoin and LoadDataObjects functions
@@ -1133,8 +1187,6 @@ namespace iringtools.sdk.sp3ddatalayer
       }
     }
 
-
-
     public void Generate(AdapterSettings _settings)
     {
       string projectName = "", applicationname = "";
@@ -1154,10 +1206,6 @@ namespace iringtools.sdk.sp3ddatalayer
         generator.Generate(compilerVersion, _databaseDictionary, projectName, applicationname);
       }
     }
-
-
-
-
 
     //public Response SaveDataObjects(string objectType, IList<IDataObject> dataObjects)
     //{
