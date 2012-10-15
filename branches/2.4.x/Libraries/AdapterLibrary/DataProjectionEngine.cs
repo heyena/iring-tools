@@ -16,12 +16,19 @@ namespace org.iringtools.adapter.projection
     private DataDictionary _dictionary = null;
     private XNamespace _graphNamespace = null;
     private string _graphName = String.Empty;
+    string[] arrSpecialcharlist;
+    string[] arrSpecialcharValue;
 
     [Inject]
     public DataProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, DataDictionary dictionary) : base(settings)
     {
       _dataLayer = dataLayer;
       _dictionary = dictionary;
+      if (settings["SpCharList"] != null && settings["SpCharValue"] != null)
+      {
+          arrSpecialcharlist = settings["SpCharList"].ToString().Split(',');
+          arrSpecialcharValue = settings["SpCharValue"].ToString().Split(',');
+      }
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
@@ -157,6 +164,7 @@ namespace org.iringtools.adapter.projection
         
         if (value != null)
         {
+            value = Utility.ConvertSpecialCharOutbound(value.ToString(), arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
           if (dataProperty.dataType.ToString().ToLower().Contains("date"))
             value = Utility.ToXsdDateTime(value.ToString());
 
