@@ -64,7 +64,7 @@ namespace iringtools.sdk.sp3ddatalayer
       }
     }
 
-    private void CreateCachingTables(string path, string context)
+    public ISession CreateCachingTables(string path, string context)
     {
       try
       {
@@ -124,7 +124,9 @@ namespace iringtools.sdk.sp3ddatalayer
 
             string factoryKey = context.ToLower();
             _sessionFactories[factoryKey] = sessionFactory;
+            return _sessionFactories[factoryKey].OpenSession();
           }
+          return null;
         }
       }
       catch (Exception e)
