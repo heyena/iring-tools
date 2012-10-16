@@ -186,78 +186,13 @@ namespace iringtools.sdk.sp3ddatalayer
 
     public override Response Post(IList<IDataObject> dataObjects)
     {
-      Response response = new Response();
-      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
-
-      try
+      if (sp3dProvider == null)
       {
-        if (dataObjects != null && dataObjects.Count > 0)
-        {
-          string objectType = dataObjects[0].GetType().Name; 
-          
-          foreach (IDataObject dataObject in dataObjects)
-          {
-            Status status = new Status();
-            status.Messages = new Messages();
-
-            if (dataObject != null)
-            {
-              string identifier = String.Empty;
-
-              try
-              {
-                // NOTE: Id property is not available if it's not mapped and will cause exception
-                identifier = dataObject.GetPropertyValue("Id").ToString();
-              }
-              catch (Exception ex)
-              {
-                _logger.Error(string.Format("Error in Post: {0}", ex));
-              }  // no need to handle exception because identifier is only used for statusing
-
-              status.Identifier = identifier;
-
-              try
-              {
-                session.SaveOrUpdate(dataObject);
-                session.Flush();
-                status.Messages.Add(string.Format("Record [{0}] saved successfully.", identifier));
-              }
-              catch (Exception ex)
-              {
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
-                status.Results.Add("ResultTag", identifier);
-                _logger.Error("Error posting data object to data layer: " + ex);
-              }
-            }
-            else
-            {
-              status.Level = StatusLevel.Error;
-              status.Identifier = String.Empty;
-              status.Messages.Add("Data object is null or duplicate. See log for details.");
-            }
-
-            response.Append(status);
-          }
-        }
-
-        return response;
+        setSP3DProviderSettings();
       }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in Post: " + ex);
 
-        object sample = dataObjects.FirstOrDefault();
-        string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
-        throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType, ex));
-      }
-      finally
-      {
-        sp3dProvider.CloseSession(session);
-      }
-    }
-
-    
+      return sp3dProvider.Post(dataObjects);
+    }    
 
     public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
