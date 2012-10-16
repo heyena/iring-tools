@@ -62,16 +62,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SPPIDDataLayer\SPPIDDataLayer.csproj">
-      <Project>{1E309220-803D-491B-BEB5-292798F8AF49}</Project>
-      <Name>SPPIDDataLayer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Scenarios.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SP3DDataLayer\SP3DDataLayer.csproj">
+      <Project>{FF781DFB-FA75-4A26-A936-AF2BF38189C8}</Project>
+      <Name>SP3DDataLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
