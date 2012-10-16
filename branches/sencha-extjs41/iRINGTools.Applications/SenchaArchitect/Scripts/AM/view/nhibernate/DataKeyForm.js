@@ -35,7 +35,7 @@ Ext.define('AM.view.nhibernate.DataKeyForm', {
           xtype: 'label',
           cls: 'x-form-item',
           style: 'font-weight:bold;',
-          text: 'Key Properties'
+          text: 'Key Property'
         },
         {
           xtype: 'textfield',

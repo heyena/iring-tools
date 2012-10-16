@@ -34,6 +34,32 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
           flex: 1,
           text: 'Data Relationship Name'
         }
+      ],
+      dockedItems: [
+        {
+          xtype: 'toolbar',
+          dock: 'top',
+          items: [
+            {
+              xtype: 'tbseparator',
+              width: 4
+            },
+            {
+              xtype: 'button',
+              iconCls: 'am-list-add',
+              text: 'Add'
+            },
+            {
+              xtype: 'tbseparator',
+              width: 4
+            },
+            {
+              xtype: 'button',
+              iconCls: 'am-list-remove',
+              text: 'Remove'
+            }
+          ]
+        }
       ]
     });
 

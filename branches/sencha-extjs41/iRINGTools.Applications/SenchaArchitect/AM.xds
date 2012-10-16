@@ -9,7 +9,7 @@
         "cacheBust": false
     },
     "xdsVersion": "2.1.0",
-    "xdsBuild": 637,
+    "xdsBuild": 640,
     "schemaVersion": 1,
     "upgradeVersion": 210000000498,
     "framework": "ext41",
@@ -821,11 +821,11 @@
         },
         "ef191768-2bd4-46be-864b-6386fbb488a5": {
             "paths": [
-                "metadata/view/nhibernate.SetRelationForm",
-                "Scripts/AM/view/override/nhibernate/SetRelationForm.js",
-                "Scripts/AM/view/nhibernate/SetRelationForm.js"
+                "metadata/view/nhibernate.ConfigRelationForm",
+                "Scripts/AM/view/override/nhibernate/ConfigRelationForm.js",
+                "Scripts/AM/view/nhibernate/ConfigRelationForm.js"
             ],
-            "className": "nhibernate.SetRelationForm"
+            "className": "nhibernate.ConfigRelationForm"
         },
         "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd": {
             "paths": [
@@ -850,6 +850,14 @@
                 "Scripts/AM/store/RelationsStore.js"
             ],
             "className": "RelationsStore"
+        },
+        "e83aec20-32f1-47b2-a232-483c93c01b53": {
+            "paths": [
+                "metadata/store/Property",
+                "Scripts/AM/store/override/Property.js",
+                "Scripts/AM/store/Property.js"
+            ],
+            "className": "Property"
         }
     },
     "viewOrderMap": {
@@ -938,7 +946,8 @@
             "88fb5df4-c2c7-4ed8-a325-8140a2eb98bf",
             "82edf86f-a5e2-4e95-8ce8-b5152d4a2cd6",
             "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd",
-            "b93d62e3-52fe-4c8d-af23-be3ef7516ff4"
+            "b93d62e3-52fe-4c8d-af23-be3ef7516ff4",
+            "e83aec20-32f1-47b2-a232-483c93c01b53"
         ],
         "controller": [
             "06f88f22-c6f5-473b-a55b-a40aae8ad3b2",
