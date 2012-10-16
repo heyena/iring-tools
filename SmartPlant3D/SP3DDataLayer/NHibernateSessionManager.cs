@@ -6,6 +6,7 @@ using System.Xml;
 using log4net;
 using NHibernate;
 using NHibernate.Cfg;
+using NHibernate.Tool.hbm2ddl;
 using org.iringtools.utility;
 using Microsoft.SqlServer.Management.Smo.Wmi;
 
@@ -59,6 +60,76 @@ namespace iringtools.sdk.sp3ddatalayer
       catch (Exception e)
       {
         _logger.Error("Unable to obtain session for [" + context + "]. " + e);
+        throw e;
+      }
+    }
+
+    private void CreateCachingTables(string path, string context)
+    {
+      try
+      {
+        lock (_lockObj)
+        {
+          string cfgPath = string.Format("{0}nh-configuration.{1}.{2}.xml", path, context);
+          string mappingPath = string.Format("{0}nh-mapping.{1}.{2}.xml", path, context);
+          string connStr = "";
+
+          if (File.Exists(cfgPath) && File.Exists(mappingPath))
+          {
+            Configuration cfg = new Configuration();
+            cfg.Configure(cfgPath);
+
+            string connStrProp = "connection.connection_string";
+            string dialectPro = "dialect";
+            ISessionFactory sessionFactory = null;
+            connStr = cfg.Properties[connStrProp];
+
+            if (connStr.ToUpper().Contains("DATA SOURCE"))
+            {
+              // connection string is not encrypted, encrypt and write it back
+              string encryptedConnStr = EncryptionUtility.Encrypt(connStr);
+              cfg.Properties[connStrProp] = encryptedConnStr;
+              SaveConfiguration(cfg, cfgPath);
+
+              // restore plain text connection string for creating session factory
+              cfg.Properties[connStrProp] = connStr;
+            }
+            else
+            {
+              cfg.Properties[connStrProp] = EncryptionUtility.Decrypt(connStr);
+            }
+
+            Configuration ctfConfiguration = cfg.AddFile(mappingPath);
+
+            SchemaExport se = new SchemaExport(ctfConfiguration);
+            //drop database 
+            se.Drop(true, true);
+            //re-create database
+            se.Create(true, true);
+
+            try
+            {
+              sessionFactory = ctfConfiguration.BuildSessionFactory();
+            }
+            catch (Exception e)
+            {
+              if (cfg.Properties[dialectPro].ToLower().Contains("mssql"))
+              {
+                cfg.Properties[connStrProp] = getProcessedConnectionString(connStr);
+                sessionFactory = ctfConfiguration.BuildSessionFactory();
+              }
+              else
+                throw e;
+            }
+
+            string factoryKey = context.ToLower();
+            _sessionFactories[factoryKey] = sessionFactory;
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error updating NHibernate session factory [" + context + "]. " + e);
         throw e;
       }
     }
