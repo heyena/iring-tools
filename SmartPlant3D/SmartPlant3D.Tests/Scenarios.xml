@@ -1,0 +1,18 @@
+﻿<senarios xmlns="http://www.iringtools.org/test" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <scenario>
+    <name>Equipment Test</name>
+    <objectType>Equipment</objectType>
+    <identifierPadding>_</identifierPadding>
+    <properties>
+      <property>
+        <name>ItemTag</name>
+        <value>99999</value>
+      </property>
+      <property>
+        <name>SupplyByID</name>
+        <value>99999</value>
+      </property>
+    </properties>
+    <dataFilter>&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter"&gt;&lt;expressions&gt;&lt;expression&gt;&lt;propertyName&gt;ItemTag&lt;/propertyName&gt;&lt;relationalOperator&gt;EqualTo&lt;/relationalOperator&gt;&lt;values&gt;&lt;value&gt;10-P-102&lt;/value&gt;&lt;/values&gt;&lt;/expression&gt;&lt;/expressions&gt;&lt;orderExpressions /&gt;&lt;/dataFilter&gt;</dataFilter>
+  </scenario>
+</senarios>
