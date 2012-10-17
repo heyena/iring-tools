@@ -161,7 +161,7 @@ namespace iringtools.sdk.sp3ddatalayer
         setSP3DProviderSettings();
       }
 
-      return sp3dProvider.Post(dataObjects);
+      return sp3dProvider.PostSP3DBusinessObjects(dataObjects);
     }       
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
@@ -373,50 +373,7 @@ namespace iringtools.sdk.sp3ddatalayer
         setSP3DProviderSettings();
       }
 
-      Response response = new Response();
-      response.StatusList = new List<Status>();
-      Status status = new Status();
-      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
-
-      try
-      {
-        if (sp3dProvider._databaseDictionary.IdentityConfiguration != null)
-        {
-          IdentityProperties identityProperties = sp3dProvider._databaseDictionary.IdentityConfiguration[objectType];
-          if (identityProperties.UseIdentityFilter)
-          {
-            filter = FilterByIdentity(objectType, filter, identityProperties);
-          }
-        }
-        status.Identifier = objectType;
-
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + objectType);
-
-        if (filter.Expressions.Count > 0)
-        {
-          DataObject dataObject = sp3dProvider._databaseDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
-          string whereClause = filter.ToSqlWhereClause(sp3dProvider._databaseDictionary, dataObject.tableName, String.Empty);
-          queryString.Append(whereClause);
-        }
-
-        session.Delete(queryString.ToString());
-        session.Flush();
-        status.Messages.Add(string.Format("Records of type [{0}] deleted succesfully.", objectType));
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in Delete: " + ex);
-        throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
-        //no need to status, thrown exception will be statused above.
-      }
-      finally
-      {
-        sp3dProvider.CloseSession(session);
-      }
-
-      response.Append(status);
-      return response;
+      return sp3dProvider.DeleteSP3DBusinessObjects(objectType, filter);
     }
 
     public override IList<IDataObject> GetRelatedObjects(IDataObject parentDataObject, string relatedObjectType)

@@ -67,6 +67,10 @@ namespace iringtools.sdk.sp3ddatalayer
 
       _dictionaryPath = string.Format("{0}DataDictionary.{1}.xml", _dataPath, _scope);
       _databaseDictionaryPath = string.Format("{0}DataBaseDictionary.{1}.xml", _dataPath, _scope);
+
+      readDictionary();
+      readDataBaseDictionary();
+      readBusinessObjects();
     }
 
     public DataDictionary GetDictionary()
@@ -92,8 +96,29 @@ namespace iringtools.sdk.sp3ddatalayer
 
     public void readDictionary()
     {
-      _dataDictionary = new DataDictionary();
-      _dataDictionary = Utility.Read<DataDictionary>(_dictionaryPath);
+      if (File.Exists(_dictionaryPath))
+      {
+        _dataDictionary = new DataDictionary();
+        _dataDictionary = Utility.Read<DataDictionary>(_dictionaryPath);
+      }
+    }
+
+    public void readDataBaseDictionary()
+    {
+      if (File.Exists(_databaseDictionaryPath))
+      {
+        _databaseDictionary = new DatabaseDictionary();
+        _databaseDictionary = Utility.Read<DatabaseDictionary>(_databaseDictionaryPath);
+      }
+    }
+
+    public void readBusinessObjects()
+    {
+      if (File.Exists(_verifiedConfigurationPath))
+      {
+        _sp3dDataBaseDictionary = new BusinessObjectConfiguration();
+        _sp3dDataBaseDictionary = Utility.Read<BusinessObjectConfiguration>(_verifiedConfigurationPath);
+      }
     }
 
     public void CreateCachingTable(string businessCommodityName, DataFilter dataFilter)  
@@ -120,7 +145,7 @@ namespace iringtools.sdk.sp3ddatalayer
       foreach (BusinessCommodity bc in _config.businessCommodities)
       {
         dataObjects = GetSP3D(bc.commodityName, null);
-        response.Append(Post(dataObjects));
+        response.Append(PostCachingDataObjects(dataObjects));
       }
 
       if (response.Level == StatusLevel.Error)
@@ -154,7 +179,90 @@ namespace iringtools.sdk.sp3ddatalayer
       return response;   
     }
 
-    public Response Post(IList<IDataObject> dataObjects)
+    public Response PostSP3DBusinessObjects(IList<IDataObject> dataObjects)
+    {
+      Response response = new Response();
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+      DataObject realDataObject = null;
+
+      DataProperty dataProperty = new DataProperty();
+      dataProperty.propertyName = "className";
+
+      try
+      {
+        if (dataObjects != null && dataObjects.Count > 0)
+        {
+          string objectType = dataObjects[0].GetType().Name;
+
+          foreach (IDataObject dataObject in dataObjects)
+          {
+            realDataObject = (DataObject)dataObject;
+
+            if (realDataObject.dataProperties.Contains(dataProperty))
+              realDataObject.objectNamespace = realDataObject.objectNamespace + "." + realDataObject.objectName;
+ 
+            Status status = new Status();
+            status.Messages = new Messages();
+
+            if (dataObject != null)
+            {
+              string identifier = String.Empty;
+
+              try
+              {
+                // NOTE: Id property is not available if it's not mapped and will cause exception
+                identifier = dataObject.GetPropertyValue("Id").ToString();
+              }
+              catch (Exception ex)
+              {
+                _logger.Error(string.Format("Error in Post: {0}", ex));
+              }  // no need to handle exception because identifier is only used for statusing
+
+              status.Identifier = identifier;
+
+              try
+              {
+                session.SaveOrUpdate(dataObject);
+                session.Flush();
+                status.Messages.Add(string.Format("Record [{0}] saved successfully.", identifier));
+              }
+              catch (Exception ex)
+              {
+                status.Level = StatusLevel.Error;
+                status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
+                status.Results.Add("ResultTag", identifier);
+                _logger.Error("Error posting data object to data layer: " + ex);
+              }
+            }
+            else
+            {
+              status.Level = StatusLevel.Error;
+              status.Identifier = String.Empty;
+              status.Messages.Add("Data object is null or duplicate. See log for details.");
+            }
+
+            response.Append(status);
+          }
+        }
+
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Post: " + ex);
+
+        object sample = dataObjects.FirstOrDefault();
+        string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
+        throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType, ex));
+      }
+      finally
+      {
+        CloseSession(session);
+      }
+
+    }
+
+    public Response PostCachingDataObjects(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
@@ -327,6 +435,7 @@ namespace iringtools.sdk.sp3ddatalayer
         dataObject.objectName = businessCommodity.commodityName;
         dataObject.tableName = dataObject.objectName;
         dataObject.objectNamespace = projectNameSpace;
+        dataObject.dataRelationships = businessCommodity.dataRelationships;
 
         if (businessCommodity.dataFilter != null)
           dataObject.dataFilter = businessCommodity.dataFilter;
@@ -437,6 +546,59 @@ namespace iringtools.sdk.sp3ddatalayer
         _databaseDictionary.dataObjects.Add(dataObject);
       }
       return _databaseDictionary;
+    }
+
+    public Response DeleteSP3DBusinessObjects(string objectType, DataFilter filter)
+    {     
+      Response response = new Response();
+      response.StatusList = new List<Status>();
+      Status status = new Status();
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+      BusinessCommodity bc = _sp3dDataBaseDictionary.GetBusinessCommoditiy(objectType);
+      DatabaseDictionary databaseDictionarySP3D = null;
+      try
+      {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
+        status.Identifier = objectType;
+
+        foreach (BusinessObject bo in bc.businessObjects)
+        {
+          StringBuilder queryString = new StringBuilder();
+          queryString.Append("from " + bo.objectName);
+
+          if (filter.Expressions.Count > 0)
+          {
+            //DataObject dataObject = _databaseDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+            databaseDictionarySP3D = Utility.Read<DatabaseDictionary>(this._databaseDictionaryPath.Substring(0, _databaseDictionaryPath.LastIndexOf('.')) + "." + bo.objectName + ".xml");
+            string whereClause = filter.ToSqlWhereClause(databaseDictionarySP3D, bo.tableName, String.Empty);
+            queryString.Append(whereClause);
+          }
+
+          session.Delete(queryString.ToString());
+          session.Flush();
+          status.Messages.Add(string.Format("Records of type [{0}] deleted succesfully.", objectType));
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Delete: " + ex);
+        throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+        //no need to status, thrown exception will be statused above.
+      }
+      finally
+      {
+        CloseSession(session);
+      }
+
+      response.Append(status);
+      return response;
     }
 
     //public DataObject GetDataObject(string objectName)
@@ -577,6 +739,7 @@ namespace iringtools.sdk.sp3ddatalayer
                     }
                 }
           }
+      Utility.Write<BusinessObjectConfiguration>(config, _verifiedConfigurationPath);
       return config;
     }
 
@@ -1550,60 +1713,24 @@ namespace iringtools.sdk.sp3ddatalayer
     {
       ISession session = null;
       string commodityName = string.Empty;
-      bool dictionaryInMemory = true, readConfig = true;
       int numberOfObjects = 0;
+      List<IDataObject> dataObjects = null;
 
       try
-      {  
-        if (_sp3dDataBaseDictionary != null)
-        {
-          if (_sp3dDataBaseDictionary.businessCommodities != null)
-            readConfig = false;
-        }
+      { 
+        BusinessCommodity businessCommodity = _sp3dDataBaseDictionary.GetBusinessCommoditiy(objectType);
+        numberOfObjects = businessCommodity.businessObjects.Count;
+        commodityName = objectType.ToLower();
+        GetSP3DFilteredKeys(businessCommodity);
+        dataObjects = new List<IDataObject>();
 
-        if (readConfig)
-        {
-          _sp3dDataBaseDictionary = Utility.Read<BusinessObjectConfiguration>(string.Format("{0}BusinessObjectConfiguration.{1}.xml", _settings["AppDataPath"], _settings["Scope"]));
-        }
+        if (businessCommodity.hasMinusOrZeroRowNumbers())
+          GetSP3DCount(objectType, filter);
 
-        if (_sp3dDataBaseDictionary != null)
-          if (_sp3dDataBaseDictionary.businessCommodities != null)
-          {
-            BusinessCommodity businessCommodity = _sp3dDataBaseDictionary.GetBusinessCommoditiy(objectType);
-            numberOfObjects = businessCommodity.businessObjects.Count;
-            commodityName = objectType.ToLower();
-            GetSP3DFilteredKeys(businessCommodity);
+        getSourceDataObjects(businessCommodity);
 
-            if (_dataDictionary != null)
-            {
-              if (_dataDictionary.dataObjects != null)
-              {
-                if (_dataDictionary.dataObjects.First().objectNamespace.Split('.').Last() != commodityName)
-                {
-                  dictionaryInMemory = false;
-                }
-              }
-              else
-                dictionaryInMemory = false;
-            }
-            else
-              dictionaryInMemory = false;
-
-            if (!dictionaryInMemory)
-              _dataDictionary = Utility.Read<DataDictionary>(string.Format("{0}DataDictionary.{1}.{2}.xml", _settings["AppDataPath"], _settings["Scope"], commodityName));
-
-            List<IDataObject> dataObjects = new List<IDataObject>();
-
-            if (businessCommodity.hasMinusOrZeroRowNumbers())
-              GetSP3DCount(objectType, filter);
-
-            getSourceDataObjects(businessCommodity);
-
-            foreach (BusinessObject bo in businessCommodity.businessObjects)
-              dataObjects.AddRange(getDataObjectRows(businessCommodity, bo.objectName, commodityName, filter));
-
-            return dataObjects;
-          }
+        foreach (BusinessObject bo in businessCommodity.businessObjects)
+          dataObjects.AddRange(getDataObjectRows(businessCommodity, bo.objectName, commodityName, filter));
       }
       catch (Exception ex)
       {
@@ -1614,7 +1741,7 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         CloseSession(session);
       }
-      return null;
+      return dataObjects;      
     }
 
     public long GetCountSP3D(string objectType, DataFilter filter, string commodityName, DataDictionary dataDictionary)
