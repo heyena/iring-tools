@@ -327,43 +327,9 @@ namespace iringtools.sdk.sp3ddatalayer
         setSP3DProviderSettings();
       }
 
-      Response response = new Response();
-      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+      IList<IDataObject> dataObjects = Create(objectType, identifiers);
 
-      try
-      {
-        IList<IDataObject> dataObjects = Create(objectType, identifiers);
-
-        foreach (IDataObject dataObject in dataObjects)
-        {
-          string identifier = dataObject.GetPropertyValue("Id").ToString();
-          session.Delete(dataObject);
-
-          Status status = new Status();
-          status.Messages = new Messages();
-          status.Identifier = identifier;
-          status.Messages.Add(string.Format("Record [{0}] deleted successfully.", identifier));
-
-          response.Append(status);
-        }
-
-        session.Flush();
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in Delete: " + ex);
-
-        Status status = new Status();
-        status.Level = StatusLevel.Error;
-        status.Messages.Add(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
-        response.Append(status);
-      }
-      finally
-      {
-        sp3dProvider.CloseSession(session);
-      }
-
-      return response;
+      return sp3dProvider.DeleteSP3DIdentifiers(objectType, dataObjects);
     }
 
     public override Response Delete(string objectType, DataFilter filter)

@@ -367,7 +367,6 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       return response;
-
     }
 
     public void GenerateSP3D(AdapterSettings _settings, BusinessObjectConfiguration sp3dDataBaseDictionary, DatabaseDictionary databaseDictionary)
@@ -548,6 +547,51 @@ namespace iringtools.sdk.sp3ddatalayer
       return _databaseDictionary;
     }
 
+    public Response DeleteSP3DIdentifiers(string objectType, IList<IDataObject> dataObjects)
+    {      
+      Response response = new Response();
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+      DataObject realDataObject = null;
+      DataProperty dataProp = new DataProperty();
+      dataProp.propertyName = "className";
+
+      try
+      {
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          realDataObject = (DataObject)dataObject;
+
+          if (realDataObject.dataProperties.Contains(dataProp))
+            realDataObject.objectNamespace = realDataObject.objectNamespace + "." + dataObject.GetPropertyValue("className");
+
+          string identifier = dataObject.GetPropertyValue("Id").ToString();
+          session.Delete(dataObject);
+          Status status = new Status();
+          status.Messages = new Messages();
+          status.Identifier = identifier;
+          status.Messages.Add(string.Format("Record [{0}] deleted successfully.", identifier));
+          response.Append(status);
+        }
+
+        session.Flush();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Delete: " + ex);
+
+        Status status = new Status();
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+        response.Append(status);
+      }
+      finally
+      {
+        CloseSession(session);
+      }
+
+      return response;
+    }
+
     public Response DeleteSP3DBusinessObjects(string objectType, DataFilter filter)
     {     
       Response response = new Response();
@@ -556,6 +600,7 @@ namespace iringtools.sdk.sp3ddatalayer
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
       BusinessCommodity bc = _sp3dDataBaseDictionary.GetBusinessCommoditiy(objectType);
       DatabaseDictionary databaseDictionarySP3D = null;
+
       try
       {
         if (_databaseDictionary.IdentityConfiguration != null)
