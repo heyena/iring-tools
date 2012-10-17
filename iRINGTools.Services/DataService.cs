@@ -241,7 +241,17 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
+        XDocument xDocument = null;
+
+        if (filter != null && filter.RollupExpressions != null)
+        {
+          xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
+        }
+        else
+        {
+          xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
+        } 
+        
         _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)

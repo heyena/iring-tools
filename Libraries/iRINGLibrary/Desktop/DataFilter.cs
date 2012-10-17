@@ -50,6 +50,7 @@ namespace org.iringtools.library
     {
       Expressions = new List<Expression>();
       OrderExpressions = new List<OrderExpression>();
+      RollupExpressions = new List<RollupExpression>();
     }
 
     [DataMember(Name = "expressions", Order = 0, EmitDefaultValue = false)]
@@ -58,14 +59,17 @@ namespace org.iringtools.library
     [DataMember(Name = "orderExpressions", Order = 1, EmitDefaultValue = false)]
     public List<OrderExpression> OrderExpressions { get; set; }
 
+    [DataMember(Name = "rollupExpressions", Order = 2, EmitDefaultValue = false)]
+    public List<RollupExpression> RollupExpressions { get; set; }
+
     [Obsolete("Use ToSqlWhereClause(DatabaseDictionary dbDictionary, string tableName, string objectAlias) instead")]
     public string ToSqlWhereClause(DataDictionary dataDictionary, string tableName, string objectAlias)
     {
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
       dbDictionary.Provider = String.Empty;
-#if !SILVERLIGHT
+
       dbDictionary.dataObjects = Utility.CloneDataContractObject<List<DataObject>>(dataDictionary.dataObjects);
-#endif
+
       return ToSqlWhereClause(dbDictionary, tableName, objectAlias);
     }
 
@@ -73,9 +77,9 @@ namespace org.iringtools.library
     {
       _provider = dbDictionary.Provider;
       DataObject dataObject = null;
-#if !SILVERLIGHT
+
       dataObject = dbDictionary.dataObjects.Find(x => x.tableName.ToUpper() == tableName.ToUpper());
-#endif
+
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;
 
@@ -112,9 +116,9 @@ namespace org.iringtools.library
           {
             string propertyName = orderExpression.PropertyName;
             DataProperty dataProperty = null;
-#if !SILVERLIGHT
+
             dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
-#endif
+
             string orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
             whereClause.Append(orderStatement);
           }
@@ -238,9 +242,9 @@ namespace org.iringtools.library
     {
       string propertyName = expression.PropertyName;
       DataProperty dataProperty = null;
-#if !SILVERLIGHT
+
       dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
-#endif
+
 
       if (dataProperty == null)
       {
@@ -797,22 +801,11 @@ namespace org.iringtools.library
       if (_dataObjectDefinition == null)
         throw new Exception("");
 
-#if !SILVERLIGHT
+
       DataProperty dataProperty =
         _dataObjectDefinition.dataProperties.Find(
           o => o.propertyName.ToUpper() == propertyName.ToUpper()
         );
-#else
-      DataProperty dataProperty = null;
-      foreach (DataProperty o in _dataObjectDefinition.dataProperties)
-      {
-        if (o.propertyName.ToUpper() == propertyName.ToUpper())
-        {
-          dataProperty = o;
-          break;
-        }
-      }
-#endif
 
 
       if (dataProperty == null)
@@ -1170,11 +1163,8 @@ namespace org.iringtools.library
 
         //Case Insensitive!
         case DataType.String:
-#if !SILVERLIGHT
+
           return String.Compare(str1, str2, true);
-#else
-          return String.Compare(str1, str2, StringComparison.InvariantCultureIgnoreCase);
-#endif
 
         default:
           throw new Exception("Invalid property datatype.");
@@ -1228,6 +1218,41 @@ namespace org.iringtools.library
 
     [DataMember(Name = "sortOrder", Order = 1, EmitDefaultValue = false)]
     public SortOrder SortOrder { get; set; }
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupExpressions")]
+  public class RollupExpression
+  {
+    [DataMember(Name = "groupBy", Order = 0, EmitDefaultValue = false)]
+    public String GroupBy { get; set; }
+
+    [DataMember(Name = "rollups", Order = 1, EmitDefaultValue = false)]
+    public List<Rollup> Rollups { get; set; }
+  }    
+
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupExpression")]
+  public class Rollup
+  {
+    [DataMember(Name = "propertyName", Order = 0, EmitDefaultValue = false)]
+    public String PropertyName { get; set; }
+
+    [DataMember(Name = "type", Order = 1, EmitDefaultValue = false)]
+    public RollupType Type { get; set; }
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupType")]
+  public enum RollupType
+  {
+    [EnumMember]
+    Min,
+    [EnumMember]
+    Max,
+    [EnumMember]
+    Average,
+    [EnumMember]
+    Sum,
+    [EnumMember]
+    Null,   
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "logicalOperator")]
