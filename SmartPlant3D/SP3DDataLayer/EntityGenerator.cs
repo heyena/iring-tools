@@ -157,11 +157,13 @@ namespace iringtools.sdk.sp3ddatalayer
 
             Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
             DataDictionary dataDictionarySP3D = CreateDataDictionarySP3D(businessCommodity);
+            DatabaseDictionary databaseDictionarySP3D = CreateDatabaseDictionarySP3D(dataDictionarySP3D, databaseDictionary);
             dataDictionarySP3D.dataVersion = databaseDictionary.dataVersion;
             dataDictionarySP3D.enableSearch = databaseDictionary.enableSearch;
             dataDictionarySP3D.enableSummary = databaseDictionary.enableSummary;
 
             Utility.Write<DataDictionary>(dataDictionarySP3D, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + "." + commodityName + ".xml");
+            Utility.Write<DatabaseDictionary>(databaseDictionarySP3D, _settings["AppDataPath"] + "DatabaseDictionary." + projectName + "." + applicationName + "." + commodityName + ".xml");
             #endregion
 
             status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");
@@ -757,6 +759,19 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       return new DataDictionary { dataObjects = _dataObjects };
+    }
+
+    private DatabaseDictionary CreateDatabaseDictionarySP3D(DataDictionary dataDictionarySP3D, DatabaseDictionary databaseDictionary)
+    {
+      DatabaseDictionary databaseDictionarySP3D = new DatabaseDictionary();
+      databaseDictionarySP3D.dataObjects = dataDictionarySP3D.dataObjects;
+      databaseDictionarySP3D.ConnectionString = databaseDictionary.ConnectionString;
+      databaseDictionarySP3D.Provider = databaseDictionary.Provider;
+      databaseDictionarySP3D.SchemaName = databaseDictionary.SchemaName;
+      databaseDictionarySP3D.picklists = databaseDictionary.picklists;
+      databaseDictionarySP3D.IdentityConfiguration = databaseDictionary.IdentityConfiguration;
+
+      return databaseDictionarySP3D;
     }
 
     private DataProperty getNewDataProperty(BusinessProperty businessProperty)

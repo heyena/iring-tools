@@ -102,6 +102,9 @@ namespace iringtools.sdk.sp3ddatalayer
     [DataMember(IsRequired = false, Order = 6, EmitDefaultValue = false)]
     public BusinessFilter businessFilter { get; set; }
 
+    [DataMember(IsRequired = false, Order = 7, EmitDefaultValue = false)]
+    public List<DataRelationship> dataRelationships { get; set; }
+
     public BusinessObject GetBusinessObject(string name)
     {
       BusinessObject BusinessObject = null;
