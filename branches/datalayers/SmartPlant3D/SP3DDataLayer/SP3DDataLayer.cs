@@ -53,15 +53,15 @@ namespace iringtools.sdk.sp3ddatalayer
       return dataDictionary;
     }
 
-    public override Response Refresh(string objectType, DataFilter filter)
-    {
-      if (sp3dProvider == null)
-      {
-        setSP3DProviderSettings();
-      }
+    //public override Response Refresh(string objectType, DataFilter filter)
+    //{
+    //  if (sp3dProvider == null)
+    //  {
+    //    setSP3DProviderSettings();
+    //  }
 
-      return sp3dProvider.RefreshCachingTable(objectType, filter);
-    }
+    //  return sp3dProvider.RefreshCachingTable(objectType, filter);
+    //}
 
     public override Response Refresh(string objectType)
     {
@@ -145,37 +145,7 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         sp3dProvider.CloseSession(session);
       }
-    }
-
-    
-
-    public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
-    {
-      throw new Exception("Error while getting a count of type ");
-      //try
-      //{
-      //    List<string> identifiers = new List<string>();
-
-      //    //NOTE: pageSize of 0 indicates that all rows should be returned.
-      //    IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
-
-      //    foreach (IDataObject dataObject in dataObjects)
-      //    {
-      //        identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
-      //    }
-
-      //    return identifiers;
-      //}
-      //catch (Exception ex)
-      //{
-      //    _logger.Error("Error in GetIdentifiers: " + ex);
-
-      //    throw new Exception(
-      //      "Error while getting a list of identifiers of type [" + objectType + "].",
-      //      ex
-      //    );
-      //}
-    }
+    }   
 
     public DataObject GetObjectDefinition(string objectType)
     {
@@ -192,60 +162,386 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       return sp3dProvider.Post(dataObjects);
-    }    
+    }       
 
-    public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
-      throw new NotImplementedException();
-    }
+      if (sp3dProvider == null)
+      {
+        setSP3DProviderSettings();
+      }
 
-    public override Response Delete(string objectType, IList<string> identifiers)
-    {
-      throw new Exception("Error while getting a count of type ");
-      //// Not gonna do it. Wouldn't be prudent.
-      //Response response = new Response();
-      //Status status = new Status();
-      //status.Level = StatusLevel.Error;
-      //status.Messages.Add("Delete not supported by the SP3D DataLayer.");
-      //response.Append(status);
-      //return response;
-    }
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
 
-    public override Response Delete(string objectType, DataFilter filter)
-    {
-      throw new Exception("Error while getting a count of type ");
-      //// Not gonna do it. Wouldn't be prudent with a filter either.
-      //Response response = new Response();
-      //Status status = new Status();
-      //status.Level = StatusLevel.Error;
-      //status.Messages.Add("Delete not supported by the SP3D DataLayer.");
-      //response.Append(status);
-      //return response;
+      try
+      {
+        if (sp3dProvider._databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = sp3dProvider._databaseDictionary.IdentityConfiguration[objectType];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
+        StringBuilder queryString = new StringBuilder();
+        queryString.Append("select Id from " + objectType);
+
+        if (filter != null && filter.Expressions.Count > 0)
+        {
+          DataObject dataObject = sp3dProvider._databaseDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+          string whereClause = filter.ToSqlWhereClause(sp3dProvider._databaseDictionary, dataObject.tableName, String.Empty);
+          queryString.Append(whereClause);
+        }
+
+        IQuery query = session.CreateQuery(queryString.ToString());
+        return query.List<string>();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetIdentifiers: " + ex);
+        throw new Exception(string.Format("Error while getting a list of identifiers of type [{0}]. {1}", objectType, ex));
+      }
+      finally
+      {
+        sp3dProvider.CloseSession(session);
+      }
     }
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
-      throw new Exception("Error while getting a count of type ");
-      //try
-      //{
-      //    LoadDataDictionary(objectType);
+      if (sp3dProvider == null)
+      {
+        setSP3DProviderSettings();
+      }
+      
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
 
-      //    IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
+      try
+      {
+        StringBuilder queryString = new StringBuilder();
+        queryString.Append("from " + objectType);
 
-      //    var expressions = FormMultipleKeysPredicate(identifiers);
+        if (identifiers != null && identifiers.Count > 0)
+        {
+          DataObject dataObjectDef = (from DataObject o in sp3dProvider._databaseDictionary.dataObjects
+                                      where o.objectName == objectType
+                                      select o).FirstOrDefault();
 
-      //    if (expressions != null)
-      //    {
-      //        _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList();
-      //    }
+          if (dataObjectDef == null)
+            return null;
 
-      //    return _dataObjects;
-      //}
-      //catch (Exception ex)
-      //{
-      //    _logger.Error("Error in GetList: " + ex);
-      //    throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
-      //}
+          if (dataObjectDef.keyProperties.Count == 1)
+          {
+            queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray()) + "')");
+          }
+          else if (dataObjectDef.keyProperties.Count > 1)
+          {
+            string[] keyList = null;
+            int identifierIndex = 1;
+            foreach (string identifier in identifiers)
+            {
+              string[] idParts = identifier.Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
+
+              keyList = new string[idParts.Count()];
+
+              int partIndex = 0;
+              foreach (string part in idParts)
+              {
+                if (identifierIndex == identifiers.Count())
+                {
+                  keyList[partIndex] += part;
+                }
+                else
+                {
+                  keyList[partIndex] += part + ", ";
+                }
+
+                partIndex++;
+              }
+
+              identifierIndex++;
+            }
+
+            int propertyIndex = 0;
+            foreach (KeyProperty keyProperty in dataObjectDef.keyProperties)
+            {
+              string propertyValues = keyList[propertyIndex];
+
+              if (propertyIndex == 0)
+              {
+                queryString.Append(" where " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+              }
+              else
+              {
+                queryString.Append(" and " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+              }
+
+              propertyIndex++;
+            }
+          }
+        }
+
+        IQuery query = session.CreateQuery(queryString.ToString());
+        IList<IDataObject> dataObjects = query.List<IDataObject>();
+
+        // order data objects as list of identifiers
+        if (identifiers != null)
+        {
+          IList<IDataObject> orderedDataObjects = new List<IDataObject>();
+
+          foreach (string identifier in identifiers)
+          {
+            if (identifier != null)
+            {
+              foreach (IDataObject dataObject in dataObjects)
+              {
+                if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
+                {
+                  orderedDataObjects.Add(dataObject);
+                  //break;  // include dups also
+                }
+              }
+            }
+          }
+
+          return orderedDataObjects;
+        }
+
+        return dataObjects;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Get: " + ex);
+        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
+      }
+      finally
+      {
+        sp3dProvider.CloseSession(session);
+      }
+    }
+
+    public override Response Delete(string objectType, IList<string> identifiers)
+    {
+      if (sp3dProvider == null)
+      {
+        setSP3DProviderSettings();
+      }
+
+      Response response = new Response();
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+
+      try
+      {
+        IList<IDataObject> dataObjects = Create(objectType, identifiers);
+
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          string identifier = dataObject.GetPropertyValue("Id").ToString();
+          session.Delete(dataObject);
+
+          Status status = new Status();
+          status.Messages = new Messages();
+          status.Identifier = identifier;
+          status.Messages.Add(string.Format("Record [{0}] deleted successfully.", identifier));
+
+          response.Append(status);
+        }
+
+        session.Flush();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Delete: " + ex);
+
+        Status status = new Status();
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+        response.Append(status);
+      }
+      finally
+      {
+        sp3dProvider.CloseSession(session);
+      }
+
+      return response;
+    }
+
+    public override Response Delete(string objectType, DataFilter filter)
+    {
+      if (sp3dProvider == null)
+      {
+        setSP3DProviderSettings();
+      }
+
+      Response response = new Response();
+      response.StatusList = new List<Status>();
+      Status status = new Status();
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+
+      try
+      {
+        if (sp3dProvider._databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = sp3dProvider._databaseDictionary.IdentityConfiguration[objectType];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
+        status.Identifier = objectType;
+
+        StringBuilder queryString = new StringBuilder();
+        queryString.Append("from " + objectType);
+
+        if (filter.Expressions.Count > 0)
+        {
+          DataObject dataObject = sp3dProvider._databaseDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+          string whereClause = filter.ToSqlWhereClause(sp3dProvider._databaseDictionary, dataObject.tableName, String.Empty);
+          queryString.Append(whereClause);
+        }
+
+        session.Delete(queryString.ToString());
+        session.Flush();
+        status.Messages.Add(string.Format("Records of type [{0}] deleted succesfully.", objectType));
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Delete: " + ex);
+        throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+        //no need to status, thrown exception will be statused above.
+      }
+      finally
+      {
+        sp3dProvider.CloseSession(session);
+      }
+
+      response.Append(status);
+      return response;
+    }
+
+    public override IList<IDataObject> GetRelatedObjects(IDataObject parentDataObject, string relatedObjectType)
+    {
+      if (sp3dProvider == null)
+      {
+        setSP3DProviderSettings();
+      }
+
+      IList<IDataObject> relatedObjects = null;
+      ISession session = null;
+
+      try
+      {
+        DataObject dataObject = sp3dProvider._dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == parentDataObject.GetType().Name.ToLower());
+        if (dataObject == null)
+        {
+          throw new Exception("Parent data object [" + parentDataObject.GetType().Name + "] not found.");
+        }
+
+        DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
+        if (dataRelationship == null)
+        {
+          throw new Exception("Relationship between data object [" + parentDataObject.GetType().Name +
+            "] and related data object [" + relatedObjectType + "] not found.");
+        }
+
+        session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+
+        StringBuilder sql = new StringBuilder();
+        sql.Append("from " + dataRelationship.relatedObjectName + " where ");
+
+        foreach (PropertyMap map in dataRelationship.propertyMaps)
+        {
+          DataProperty propertyMap = dataObject.dataProperties.First(c => c.propertyName == map.dataPropertyName);
+
+          if (propertyMap.dataType == DataType.String)
+          {
+            sql.Append(map.relatedPropertyName + " = '" + parentDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
+          }
+          else
+          {
+            sql.Append(map.relatedPropertyName + " = " + parentDataObject.GetPropertyValue(map.dataPropertyName) + " and ");
+          }
+        }
+
+        sql.Remove(sql.Length - 4, 4);  // remove the tail "and "
+        IQuery query = session.CreateQuery(sql.ToString());
+        relatedObjects = query.List<IDataObject>();
+
+        if (relatedObjects != null && relatedObjects.Count > 0 && dataRelationship.relationshipType == RelationshipType.OneToOne)
+        {
+          return new List<IDataObject> { relatedObjects.First() };
+        }
+
+        return relatedObjects;
+      }
+      catch (Exception e)
+      {
+        string error = "Error getting related objects [" + relatedObjectType + "] " + e;
+        _logger.Error(error);
+        throw new Exception(error);
+      }
+      finally
+      {
+        sp3dProvider.CloseSession(session);
+      }
+    }
+
+    public override long GetRelatedCount(IDataObject parentDataObject, string relatedObjectType)
+    {
+      try
+      {
+        DataFilter filter = CreateDataFilter(parentDataObject, relatedObjectType);
+        return GetCount(relatedObjectType, filter);
+      }
+      catch (Exception ex)
+      {
+        string error = String.Format("Error getting related object count for object {0}: {1}", relatedObjectType, ex);
+        _logger.Error(error);
+        throw new Exception(error);
+      }
+    }
+
+    public override IList<IDataObject> GetRelatedObjects(IDataObject parentDataObject, string relatedObjectType, int pageSize, int startIndex)
+    {
+      try
+      {
+        DataFilter filter = CreateDataFilter(parentDataObject, relatedObjectType);
+        return Get(relatedObjectType, filter, pageSize, startIndex);
+      }
+      catch (Exception ex)
+      {
+        string error = String.Format("Error getting related objects for object {0}: {1}", relatedObjectType, ex);
+        _logger.Error(error);
+        throw new Exception(error);
+      }
+    }
+
+    private DataFilter FilterByIdentity(string objectType, DataFilter filter, IdentityProperties identityProperties)
+    {
+      DataObject dataObject = sp3dProvider._databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
+      DataProperty dataProperty = dataObject.dataProperties.Find(p => p.columnName == identityProperties.IdentityProperty);
+
+      if (dataProperty != null)
+      {
+        if (filter == null)
+        {
+          filter = new DataFilter();
+        }
+        
+        if (filter.Expressions == null)
+        {
+          filter.Expressions = new List<org.iringtools.library.Expression>();
+        }
+        else if (filter.Expressions.Count > 0)
+        {
+          org.iringtools.library.Expression firstExpression = filter.Expressions.First();
+          org.iringtools.library.Expression lastExpression = filter.Expressions.Last();
+          firstExpression.OpenGroupCount++;
+          lastExpression.CloseGroupCount++;          
+        }
+      }
+
+      return filter;
     }
 
     private void setSP3DProviderSettings()
