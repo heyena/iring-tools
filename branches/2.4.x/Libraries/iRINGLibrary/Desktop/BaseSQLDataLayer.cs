@@ -65,6 +65,17 @@ namespace org.iringtools.library
 
     // refresh dictionary for a specific data table
     public abstract Response RefreshDataTable(string tableName);
+
+    public virtual Response RefreshDataTable(string objectType, DataFilter dataFilter) 
+    {
+      Response response = new Response()
+      {
+        Level = StatusLevel.Error,
+        Messages = new Messages { "Method not implemented." }
+      };
+
+      return response;
+    }
     #endregion
 
     #region IDataLayer implementation methods
@@ -363,6 +374,16 @@ namespace org.iringtools.library
         tableName = GetTableName(objectType);
 
       return RefreshDataTable(tableName);
+    }
+
+    public override Response Refresh(string objectType, DataFilter dataFilter)
+    {
+      string tableName = string.Empty;
+
+      if (!string.IsNullOrEmpty(objectType))
+        tableName = GetTableName(objectType);
+
+      return RefreshDataTable(tableName, dataFilter);
     }
     #endregion
 

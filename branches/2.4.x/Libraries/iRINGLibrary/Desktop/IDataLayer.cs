@@ -100,6 +100,8 @@ namespace org.iringtools.library
 
     Response Refresh(string objectType);
 
+    Response Refresh(string objectType, DataFilter dataFilter);
+
     IList<Object> GetSummary();
 
     Picklists GetPicklist(string name, int start, int limit);
