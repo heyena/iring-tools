@@ -2205,6 +2205,220 @@ namespace org.iringtools.adapter
             }
         }
 
+        private bool IsNumeric(DataProperty dataProperty)
+        {
+          return (dataProperty.dataType == DataType.Byte ||
+              dataProperty.dataType == DataType.Decimal ||
+              dataProperty.dataType == DataType.Double ||
+              dataProperty.dataType == DataType.Int16 ||
+              dataProperty.dataType == DataType.Int32 ||
+              dataProperty.dataType == DataType.Int64 ||
+              dataProperty.dataType == DataType.Single);
+        }
+
+        public XDocument GetDataProjectionWithRollups(
+              string projectName, string applicationName, string resourceName,
+                DataFilter filter, ref string format, int start, int limit, bool fullIndex)
+        {
+          try
+          {
+            DataDictionary dictionary = GetDictionary(projectName, applicationName);
+            DataObject objDef = dictionary.GetDataObject(resourceName);
+
+            if (objDef != null)
+              filter.AppendFilter(objDef.dataFilter);
+
+            InitializeScope(projectName, applicationName);
+            InitializeDataLayer();
+            InitializeProjection(resourceName, ref format, false);
+
+            // get all data objects to memory
+            _dataObjects = PageDataObjects(_dataObjDef.objectName, filter);
+
+            #region process rollups
+            List<IDataObject> rollupDataObjects = null;
+                            
+            foreach (RollupExpression rollupExpr in filter.RollupExpressions)
+            {
+              // apply group-by
+              DataProperty dataProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollupExpr.GroupBy.ToLower());
+              _dataObjects.ToList<IDataObject>().Sort(new DataObjectComparer(dataProp));
+
+              List<List<IDataObject>> dataObjectGroups = new List<List<IDataObject>>();
+              List<IDataObject> dataObjectGroup = null;
+              object prevPropValue = null;
+
+              foreach (IDataObject dataObject in _dataObjects)
+              {
+                object propValue = dataObject.GetPropertyValue(dataProp.propertyName);
+
+                if (propValue != prevPropValue)
+                {
+                  dataObjectGroup = new List<IDataObject>();
+                  dataObjectGroups.Add(dataObjectGroup);
+                  prevPropValue = propValue;
+                }
+
+                if (dataObjectGroup != null)
+                {
+                  dataObjectGroup.Add(dataObject);
+                }
+              }
+
+              // apply rollups
+              rollupDataObjects = new List<IDataObject>(dataObjectGroups.Count);
+
+              foreach (Rollup rollup in rollupExpr.Rollups)
+              {
+                DataProperty rollupProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollup.PropertyName.ToLower());
+
+                for (int i = 0; i < dataObjectGroups.Count; i++)
+                {
+                  switch (rollup.Type)
+                  {
+                    case RollupType.Null:
+                    {
+                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, null);
+                      break;
+                    }
+                    case RollupType.Max:
+                    {
+                      object maxValue = null;
+
+                      if (IsNumeric(rollupProp))
+                      {
+                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        {
+                          double value = (double)dataObject.GetPropertyValue(rollupProp.propertyName);
+
+                          if (maxValue == null || value > (double)maxValue)
+                          {
+                            maxValue = value;
+                          }
+                        }
+                      }
+                      else if (rollupProp.dataType == DataType.DateTime)
+                      {
+                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        {
+                          DateTime value = (DateTime)dataObject.GetPropertyValue(rollupProp.propertyName);
+
+                          if (maxValue == null || DateTime.Compare(value, (DateTime)maxValue) > 0)
+                          {
+                            maxValue = value;
+                          }
+                        }
+                      }
+                      else if (rollupProp.dataType == DataType.Boolean)
+                      {
+                        maxValue = true;
+                      }
+
+                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, maxValue);
+                      break;
+                    }
+                    case RollupType.Min:
+                    {
+                      object minValue = null;
+
+                      if (IsNumeric(rollupProp))
+                      {
+                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        {
+                          double value = (double)dataObject.GetPropertyValue(rollupProp.propertyName);
+
+                          if (minValue == null || value < (double)minValue)
+                          {
+                            minValue = value;
+                          }
+                        }
+                      }
+                      else if (rollupProp.dataType == DataType.DateTime)
+                      {
+                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        {
+                          DateTime value = (DateTime)dataObject.GetPropertyValue(rollupProp.propertyName);
+
+                          if (minValue == null || DateTime.Compare(value, (DateTime)minValue) < 0)
+                          {
+                            minValue = value;
+                          }
+                        }
+                      }
+                      else if (rollupProp.dataType == DataType.Boolean)
+                      {
+                        minValue = false;
+                      }
+
+                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, minValue);
+                      break;
+                    }
+                    case RollupType.Sum:
+                    {
+                      double sumValue = 0;
+
+                      if (IsNumeric(rollupProp))
+                      {
+                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        {
+                          double value = (double)dataObject.GetPropertyValue(rollupProp.propertyName);
+                          sumValue += value;
+                        }
+                      }
+
+                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, sumValue);
+                      break;
+                    }
+                    case RollupType.Average:
+                    {
+                      double sumValue = 0;
+
+                      if (IsNumeric(rollupProp))
+                      {
+                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        {
+                          double value = (double)dataObject.GetPropertyValue(rollupProp.propertyName);
+                          sumValue += value;
+                        }
+                      }
+
+                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, sumValue / dataObjectGroups[i].Count);
+                      break;
+                    }
+                    default:  // take the first value
+                    {
+                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, dataObjectGroups[i][0].GetPropertyValue(rollupProp.propertyName));
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+
+            // apply paging
+            _dataObjects = rollupDataObjects.GetRange(start, limit);
+
+            #endregion
+
+            _projectionEngine.Start = start;
+            _projectionEngine.Limit = limit;
+            _projectionEngine.FullIndex = fullIndex;
+
+            if (_isProjectionPart7)
+            {
+              return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+            }
+            else
+            {
+              return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
+            }
+          }
+          catch (Exception ex)
+          {
+            _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+            throw ex;
+          }
+        }
 
         //Search
         public XDocument GetDataProjection(
@@ -3994,6 +4208,23 @@ namespace org.iringtools.adapter
             }
 
             return filter;
+        }
+
+        private List<IDataObject> PageDataObjects(string objectType, DataFilter filter)
+        {
+          List<IDataObject> dataObjects = new List<IDataObject>();
+
+          int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"]))
+            ? 250 : int.Parse(_settings["DefaultPageSize"]);
+
+          long count = _dataLayer.GetCount(objectType, filter);
+
+          for (int offset = 0; offset < count; offset = offset + pageSize)
+          {
+            dataObjects.AddRange(_dataLayer.Get(objectType, filter, pageSize, offset));
+          }
+
+          return dataObjects;
         }
     }
 
