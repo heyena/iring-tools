@@ -30,6 +30,8 @@ using System.Collections.Generic;
 using org.iringtools.library;
 using System.Linq;
 using org.iringtools.utility;
+using Ingr.SP3D.Common.Middle.Services;
+using Ingr.SP3D.Common.Middle;
 
 namespace iringtools.sdk.sp3ddatalayer
 {
@@ -283,17 +285,15 @@ namespace iringtools.sdk.sp3ddatalayer
     public List<BusinessKeyProperty> businessKeyProperties { get; set; }
 
     [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
-    public List<BusinessProperty> businessProperties { get; set; }
+    public List<BusinessProperty> businessProperties { get; set; }    
 
-   
-
-    [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
+    [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
     public bool isReadOnly { get; set; }
 
-    [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
+    [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
     public string description { get; set; }
 
-    [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
+    [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
     public long rowNumber { get; set; }
 
     public bool isKeyProperty(string propertyName)
@@ -550,6 +550,7 @@ namespace iringtools.sdk.sp3ddatalayer
   {
     public BusinessProperty()
     {
+      codeList = null;
     }
 
     [DataMember(IsRequired = true, Order = 0)]
@@ -577,7 +578,10 @@ namespace iringtools.sdk.sp3ddatalayer
     public DataType dataType { get; set; }
 
     [DataMember(IsRequired = false, Order = 8, EmitDefaultValue = false)]
-    public bool returnNull { get; set; }    
+    public bool returnNull { get; set; }
+
+    [DataMember(IsRequired = false, Order = 9, EmitDefaultValue = false)]
+    public List<CodelistItem> codeList { get; set; }   
 
     public DataProperty convertPropertyToDataProperty()
     {

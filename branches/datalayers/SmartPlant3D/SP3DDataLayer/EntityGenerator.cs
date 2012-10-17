@@ -37,6 +37,8 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.adapter;
+using Ingr.SP3D.Common.Middle.Services;
+using Ingr.SP3D.Common.Middle;
 
 namespace iringtools.sdk.sp3ddatalayer
 {
@@ -539,8 +541,27 @@ namespace iringtools.sdk.sp3ddatalayer
       writeModelClassToRleationOrRelationToClass(objectNameSpace, rightClassNames);
     }
 
+    private void writeModelGetCodeList(BusinessProperty dataProperty)
+    {
+      _dataObjectWriter.WriteLine("switch {0}", dataProperty.propertyName);
+      _dataObjectWriter.WriteLine("{");
+      _dataObjectWriter.Indent++;
+
+      foreach (CodelistItem codeItem in dataProperty.codeList)
+      {
+        _dataObjectWriter.WriteLine("case {0}:", codeItem.Value.ToString());
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("return {0};", codeItem.DisplayName);
+      }
+
+      _dataObjectWriter.Indent--;
+      _dataObjectWriter.WriteLine("}");
+      _dataObjectWriter.WriteLine("break;");
+    }
+
     private void writeModelGetFunction(List<BusinessProperty> businessDataPropertyList, string objectName, List<string> relationNames, NodeType nodeType)
     {
+      bool hasCodeList = false;
       _dataObjectWriter.WriteLine();
       _dataObjectWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
       _dataObjectWriter.WriteLine("{");
@@ -551,15 +572,31 @@ namespace iringtools.sdk.sp3ddatalayer
 
       foreach (BusinessProperty dataProperty in businessDataPropertyList)
       {
+        hasCodeList = false;
+
+        if (dataProperty.codeList != null)
+          if (dataProperty.codeList.Count > 0)
+            hasCodeList = true;
+
         if (objectName != "")
         {
           if (dataProperty.propertyName.ToLower() == "classname")
-            _dataObjectWriter.WriteLine("case \"{0}\": return \"{1}\";", dataProperty.propertyName, objectName);          
+            _dataObjectWriter.WriteLine("case \"{0}\": return \"{1}\";", dataProperty.propertyName, objectName);
+          else
+          {
+            if (hasCodeList)
+              writeModelGetCodeList(dataProperty);
+            else
+              _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
+          }
+        }
+        else
+        {
+          if (hasCodeList)
+            writeModelGetCodeList(dataProperty);
           else
             _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
         }
-        else
-          _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
       }
 
       switch (nodeType)
@@ -584,8 +621,27 @@ namespace iringtools.sdk.sp3ddatalayer
       _dataObjectWriter.WriteLine("}"); //end funtion
     }
 
+    private void writeModelSetCodeList(BusinessProperty dataProperty, string header)
+    {
+      _dataObjectWriter.WriteLine("switch ({0})", header, dataProperty.dataType);
+      _dataObjectWriter.WriteLine("{");
+      _dataObjectWriter.Indent++;
+
+      foreach (CodelistItem codeItem in dataProperty.codeList)
+      {
+        _dataObjectWriter.WriteLine("case {0}:", codeItem.DisplayName);
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("{0} = {1};", dataProperty.propertyName, codeItem.Value.ToString());
+      }
+
+      _dataObjectWriter.Indent--;
+      _dataObjectWriter.WriteLine("}");
+      _dataObjectWriter.WriteLine("break;");
+    }
+
     private void writeModelSetFunction(List<BusinessProperty> businessDataPropertyList, DataType keyDataType)
     {
+      bool hasCodeList = false;
       _dataObjectWriter.WriteLine();
       _dataObjectWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
       _dataObjectWriter.WriteLine("{");
@@ -611,6 +667,12 @@ namespace iringtools.sdk.sp3ddatalayer
 
       foreach (BusinessProperty dataProperty in businessDataPropertyList)
       {
+        hasCodeList = true;
+
+        if (dataProperty.codeList != null)
+          if (dataProperty.codeList.Count > 0)
+            hasCodeList = true;
+
         _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.propertyName);
         _dataObjectWriter.Indent++;
 
@@ -619,16 +681,25 @@ namespace iringtools.sdk.sp3ddatalayer
         {
           if (IsNumeric(dataProperty.dataType))
           {
-            _dataObjectWriter.WriteLine("{0} = {1}.Parse((String)value, NumberStyles.Any);", dataProperty.propertyName, dataProperty.dataType);
+            if (hasCodeList)
+              writeModelSetCodeList(dataProperty, "{0}.Parse((String)value, NumberStyles.Any)");
+            else
+              _dataObjectWriter.WriteLine("{0} = {1}.Parse((String)value, NumberStyles.Any);", dataProperty.propertyName, dataProperty.dataType);
           }
           else
           {
-            _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
+            if (hasCodeList)
+              writeModelSetCodeList(dataProperty, "Convert.To{0}(value)");
+            else
+              _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
           }
         }
         else
         {
-          _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.propertyName, dataProperty.dataType);
+          if (hasCodeList)
+            writeModelSetCodeList(dataProperty, "(value != null) ? Convert.To{0}(value) : default({0})");
+          else
+            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.propertyName, dataProperty.dataType);
         }
 
         _dataObjectWriter.WriteLine("break;");
@@ -1029,6 +1100,78 @@ namespace iringtools.sdk.sp3ddatalayer
       return false;
     }
 
+    public void GenerateSingleDataObject(string compilerVersion, DatabaseDictionary dbSchema, string projectName, string applicationName, DataObject dataObject)
+    {
+      string objectName = dataObject.objectName;
+
+      if (dbSchema.dataObjects != null)
+      {
+        _dataObjects = dbSchema.dataObjects;
+
+        try
+        {
+          Directory.CreateDirectory(_settings["AppDataPath"]);
+          StringBuilder mappingBuilder = new StringBuilder();
+          XmlTextWriter mappingWriter = new XmlTextWriter(new StringWriter(mappingBuilder));
+          mappingWriter.Formatting = Formatting.Indented;
+          mappingWriter.WriteStartElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
+          mappingWriter.WriteAttributeString("default-lazy", "true");
+          StringBuilder dataObjectBuilder = new StringBuilder();
+          IndentedTextWriter dataObjectWriter = new IndentedTextWriter(new StringWriter(dataObjectBuilder), "  ");
+          dataObjectWriter.WriteLine(Utility.GeneratedCodeProlog);
+          dataObjectWriter.WriteLine("using System;");
+          dataObjectWriter.WriteLine("using System.Globalization;");
+          dataObjectWriter.WriteLine("using System.Collections.Generic;");
+          dataObjectWriter.WriteLine("using Iesi.Collections.Generic;");
+          dataObjectWriter.WriteLine("using org.iringtools.library;");
+          dataObjectWriter.WriteLine();
+          dataObjectWriter.WriteLine("namespace {0}", dataObject.objectNamespace);
+          dataObjectWriter.Write("{"); // begin namespace block
+          dataObjectWriter.Indent++;
+          dataObject.objectNamespace = dataObject.objectNamespace;
+          CreateNHibernateDataObjectMap(dataObject);
+          dataObjectWriter.Indent--;
+          dataObjectWriter.WriteLine("}"); // end namespace block
+          mappingWriter.WriteEndElement(); // end hibernate-mapping element
+          mappingWriter.Close();
+          string mappingXml = mappingBuilder.ToString();
+          string sourceCode = dataObjectBuilder.ToString();
+
+          #region Compile entities
+          Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
+          compilerOptions.Add("CompilerVersion", compilerVersion);
+          CompilerParameters parameters = new CompilerParameters();
+          parameters.GenerateExecutable = false;
+          parameters.ReferencedAssemblies.Add("System.dll");
+          parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "Iesi.Collections.dll");
+          parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "iRINGLibrary.dll");
+          NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + assembly));
+          Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
+          #endregion Compile entities
+
+          #region Writing memory data to disk
+          string hibernateConfig = CreateConfiguration(
+            (Provider)Enum.Parse(typeof(Provider), dbSchema.Provider, true),
+            dbSchema.ConnectionString, dbSchema.SchemaName);
+
+          Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + "._" + objectName + ".xml", Encoding.UTF8);
+          Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping." + projectName + "." + applicationName + "._" + objectName + ".xml", Encoding.UTF8);
+          Utility.WriteString(sourceCode, _settings["AppCodePath"] + "Model." + projectName + "." + applicationName + "._" + objectName + ".cs", Encoding.ASCII);
+          DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
+          dataDictionary.dataVersion = dbSchema.dataVersion;
+          dataDictionary.enableSearch = dbSchema.enableSearch;
+          dataDictionary.enableSummary = dbSchema.enableSummary;
+          Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + "._" + objectName + ".xml");
+          #endregion          
+        }
+        catch (Exception ex)
+        {
+          throw new Exception("Error generating application entities " + ex);
+          //no need to status, thrown exception will be statused above.
+        }
+      }      
+    }
+
     public Response Generate(string compilerVersion, DatabaseDictionary dbSchema, string projectName, string applicationName)
     {
       Response response = new Response();
@@ -1041,19 +1184,14 @@ namespace iringtools.sdk.sp3ddatalayer
         try
         {
           status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
           Directory.CreateDirectory(_settings["AppDataPath"]);
-
           _mappingBuilder = new StringBuilder();
           _mappingWriter = new XmlTextWriter(new StringWriter(_mappingBuilder));
           _mappingWriter.Formatting = Formatting.Indented;
-
           _mappingWriter.WriteStartElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
           _mappingWriter.WriteAttributeString("default-lazy", "true");
-
           _dataObjectBuilder = new StringBuilder();
           _dataObjectWriter = new IndentedTextWriter(new StringWriter(_dataObjectBuilder), "  ");
-
           _dataObjectWriter.WriteLine(Utility.GeneratedCodeProlog);
           _dataObjectWriter.WriteLine("using System;");
           _dataObjectWriter.WriteLine("using System.Globalization;");
@@ -1067,18 +1205,15 @@ namespace iringtools.sdk.sp3ddatalayer
             _dataObjectWriter.WriteLine("namespace {0}", dataObject.objectNamespace);
             _dataObjectWriter.Write("{"); // begin namespace block
             _dataObjectWriter.Indent++;
-
             dataObject.objectNamespace = dataObject.objectNamespace;
-
             CreateNHibernateDataObjectMap(dataObject);
-
             _dataObjectWriter.Indent--;
             _dataObjectWriter.WriteLine("}"); // end namespace block    
+
           }
 
           _mappingWriter.WriteEndElement(); // end hibernate-mapping element
           _mappingWriter.Close();
-
           string mappingXml = _mappingBuilder.ToString();
           string sourceCode = _dataObjectBuilder.ToString();
 
