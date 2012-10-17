@@ -40,8 +40,10 @@ namespace iringtools.sdk.sp3ddatalayer
     public string _verifiedConfigurationPath = string.Empty;
     public DatabaseDictionary _databaseDictionary = null;
     public DataDictionary _dataDictionary = null;
-    MetadataManager metadataManagerReport = null, metadataManagerModel = null, metadataManagerCatalog = null;
-
+    public Catalog SP3DCatalog = null;
+    public Model SP3DModel = null;
+    public Report SP3DReport = null;
+    public MetadataManager metadataManagerReport = null, metadataManagerModel = null, metadataManagerCatalog = null;
     public BusinessObjectConfiguration _config = null, _sp3dDataBaseDictionary = null;
     public string projectNameSpace = null;
     public AdapterSettings _settings = null;
@@ -80,9 +82,7 @@ namespace iringtools.sdk.sp3ddatalayer
         if (!File.Exists(_dictionaryPath))
         {
           if (_config == null)
-            getConfigure(string.Empty);
-
-          CreateCachingTables(string.Empty);
+            getConfigure(string.Empty);          
         }
         readDictionary();
         return _dataDictionary;
@@ -119,13 +119,9 @@ namespace iringtools.sdk.sp3ddatalayer
         _sp3dDataBaseDictionary = new BusinessObjectConfiguration();
         _sp3dDataBaseDictionary = Utility.Read<BusinessObjectConfiguration>(_verifiedConfigurationPath);
       }
-    }
+    }    
 
-    public void CreateCachingTable(string businessCommodityName, DataFilter dataFilter)  
-    {
-    }
-
-    public void CreateCachingTables(string businessCommodityName)
+    public void CreateCachingTables(string businessCommodityName, DataFilter filter)
     {
       Response response = null;
       IList<IDataObject> dataObjects = null;
@@ -139,12 +135,11 @@ namespace iringtools.sdk.sp3ddatalayer
 
       GenerateSP3D(_settings, _sp3dDataBaseDictionary, _databaseDictionary);
       Generate(_settings);
-
-      CreateCachingTables();
+      CreateCachingDBTables(businessCommodityName, filter);
 
       foreach (BusinessCommodity bc in _config.businessCommodities)
       {
-        dataObjects = GetSP3D(bc.commodityName, null);
+        dataObjects = GetSP3D(bc.commodityName, filter);
         response.Append(PostCachingDataObjects(dataObjects));
       }
 
@@ -152,28 +147,34 @@ namespace iringtools.sdk.sp3ddatalayer
         throw new Exception(response.Messages.ToString());
     }
 
-    public Response CreateCachingTables()
+    public Response CreateCachingDBTables(string businessCommodityName, DataFilter filter)
     {
       Response response = new Response();
       Status status = new Status();
       status.Messages = new Messages();
       ISession session = null;
 
-      try
+      if (filter == null)
       {
-        session = NHibernateSessionManager.Instance.CreateCachingTables(_settings["AppDataPath"], _settings["Scope"]);
-        session.Flush();
-      }
-      catch(Exception ex)
-      {
-        status.Level = StatusLevel.Error;
-        status.Messages.Add(string.Format("Error while creating caching tables", ex));
-        status.Results.Add("ResultTag", "create caching tables");
-        _logger.Error("Error posting data object to data layer: " + ex);
-      }
-      finally
-      {
-        CloseSession(session);
+        try
+        {
+          if (businessCommodityName == string.Empty)
+            session = NHibernateSessionManager.Instance.CreateCachingTables(_settings["AppDataPath"], _settings["Scope"]);
+          else
+            session = NHibernateSessionManager.Instance.CreateCachingTables(_settings["AppDataPath"], _settings["Scope"], businessCommodityName);
+          session.Flush();
+        }
+        catch (Exception ex)
+        {
+          status.Level = StatusLevel.Error;
+          status.Messages.Add(string.Format("Error while creating caching tables", ex));
+          status.Results.Add("ResultTag", "create caching tables");
+          _logger.Error("Error posting data object to data layer: " + ex);
+        }
+        finally
+        {
+          CloseSession(session);
+        }
       }
 
       return response;   
@@ -184,7 +185,6 @@ namespace iringtools.sdk.sp3ddatalayer
       Response response = new Response();
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
       DataObject realDataObject = null;
-
       DataProperty dataProperty = new DataProperty();
       dataProperty.propertyName = "className";
 
@@ -250,7 +250,6 @@ namespace iringtools.sdk.sp3ddatalayer
       catch (Exception ex)
       {
         _logger.Error("Error in Post: " + ex);
-
         object sample = dataObjects.FirstOrDefault();
         string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
         throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType, ex));
@@ -259,7 +258,6 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         CloseSession(session);
       }
-
     }
 
     public Response PostCachingDataObjects(IList<IDataObject> dataObjects)
@@ -324,7 +322,6 @@ namespace iringtools.sdk.sp3ddatalayer
       catch (Exception ex)
       {
         _logger.Error("Error in Post: " + ex);
-
         object sample = dataObjects.FirstOrDefault();
         string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
         throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType, ex));
@@ -340,8 +337,7 @@ namespace iringtools.sdk.sp3ddatalayer
       Response response = new Response();
       try
       {
-        getConfigure(businessCommodityName);       
-        CreateCachingTables(businessCommodityName);
+        getConfigure(businessCommodityName);
         response.Level = StatusLevel.Success;
       }
       catch (Exception e)
@@ -357,7 +353,7 @@ namespace iringtools.sdk.sp3ddatalayer
       Response response = new Response();
       try
       {
-        CreateCachingTable(businessCommodityName, dataFilter);       
+        CreateCachingTables(businessCommodityName, dataFilter);       
         response.Level = StatusLevel.Success;
       }
       catch (Exception e)
@@ -656,6 +652,7 @@ namespace iringtools.sdk.sp3ddatalayer
     // flatten out recursive related objects and put them into starting business objects
     public BusinessObjectConfiguration VerifyConfiguration(BusinessObjectConfiguration config, string businessCommodityName)
     {
+      Connect();
       string relationshipName = string.Empty, relatedObjectName = string.Empty, objectName = string.Empty;
       string relatedInterfaceName = string.Empty, startInterfaceName = string.Empty, relatedPropertyName = string.Empty;
       string objectNamespace = string.Empty;
@@ -663,6 +660,9 @@ namespace iringtools.sdk.sp3ddatalayer
       bool addToAllBusinessObject = false;
       bool addClassName = false;
       config.ConnectionString = config.ConnectionString;
+      ClassInformation classInfo = null;
+      PropertyInformation propertyInfo = null;
+      RelationshipInformation relationInfo = null;
 
       if (businessCommodityName != string.Empty)
       {
@@ -697,13 +697,18 @@ namespace iringtools.sdk.sp3ddatalayer
               objectNamespace = projectNameSpace + "." + businessCommodity.commodityName.ToLower();
               initializeBO(businessObject, objectNamespace);
               objectName = businessObject.objectName;
-              //classInfo = GetClassInformation(objectName);
-              //if (classInfo == null)
-              //  throw new Exception("class [" + objectName + "] is not found.");
+              classInfo = GetClassInformation(objectName);             
+
+              if (classInfo == null)
+                throw new Exception("class [" + objectName + "] does not exist in SP3D databases.");
+
               businessObject.rowNumber = -1;
 
               if (businessObject.businessProperties == null)
                 businessObject.businessProperties = new List<BusinessProperty>();
+
+              //if (string.IsNullOrEmpty(businessObject.tableName))
+              //  businessObject.tableName = classInfo.DBTableName;
 
               if (addClassName)
               {
@@ -719,27 +724,30 @@ namespace iringtools.sdk.sp3ddatalayer
                 if (businessObject.businessInterfaces.Count > 0)
                   foreach (BusinessInterface businessInterface in businessObject.businessInterfaces)
                   {
-                    //InterfaceInformation interfaceInfo = GetInterfaceInformation(objectName, businessInterface.interfaceName);
+                    InterfaceInformation interfaceInfo = GetInterfaceInformation(classInfo, businessInterface.interfaceName);
 
                     foreach (BusinessProperty businessProperty in businessInterface.businessProperties)
                     {
-                      //if (interfaceInfo != null)
-                      //{
-                      //if (!HasProperty(interfaceInfo, businessProperty.propertyName))
-                      //{
-                      //  throw new Exception("Property [" + businessProperty.propertyName + "] for class [" + businessObject.objectName + "] interface [" + businessInterface.interfaceName + "] is not found.");
-                      //}
-                      //else
-                      businessProperty.dataType = GetDatatype(businessProperty.datatype);
-                      businessProperty.datatype = businessProperty.dataType.ToString();
-
-                      if (businessProperty.propertyName.ToLower() == "name")
-                        businessProperty.columnName = "ItemName";
-                      else if (string.IsNullOrEmpty(businessProperty.columnName))
-                        businessProperty.columnName = businessProperty.propertyName;
-                      //}
-                      //else
-                      //  throw new Exception("Interface [" + businessInterface.interfaceName + "] for class [" + businessObject.objectName + "] is not found.");
+                      if (interfaceInfo != null)
+                      {
+                        propertyInfo = GetPropertyInfo(interfaceInfo, businessProperty.propertyName);
+                        if (propertyInfo == null)
+                        {
+                          throw new Exception("Property [" + businessProperty.propertyName + "] for class [" + businessObject.objectName + "] interface [" + businessInterface.interfaceName + "] does not exist.");
+                        }
+                        else
+                        {
+                          businessProperty.dataType = GetDatatype(businessProperty.datatype);
+                          businessProperty.datatype = businessProperty.dataType.ToString();
+                          businessProperty.codeList = propertyInfo.CodeListInfo.CodelistMembers;
+                          if (businessProperty.propertyName.ToLower() == "name")
+                            businessProperty.columnName = "ItemName";
+                          else if (string.IsNullOrEmpty(businessProperty.columnName))
+                            businessProperty.columnName = businessProperty.propertyName;
+                        }
+                      }
+                      else
+                        throw new Exception("Interface [" + businessInterface.interfaceName + "] for class [" + businessObject.objectName + "] does not exist in SP3D databases.");
                     }
                   }
             }
@@ -748,6 +756,8 @@ namespace iringtools.sdk.sp3ddatalayer
               if (businessCommodity.relatedObjects.Count > 0)
                 foreach (RelatedObject relatedObject in businessCommodity.relatedObjects)
                 {
+                  //relationInfo = GetRealtionInformation(relatedObject.relationName);
+
                   addToAllBusinessObject = false;
 
                   if (businessCommodity.soleBusinessObject)
@@ -790,9 +800,9 @@ namespace iringtools.sdk.sp3ddatalayer
 
     public FilterBase FindFilter(string filterName)
     {
-      Plant plant = Connect();
+      Connect();
 
-      if (filterName == null || plant == null)
+      if (filterName == null)
         return null;
 
       var names = filterName.Split('\\', '/');
@@ -805,17 +815,17 @@ namespace iringtools.sdk.sp3ddatalayer
       // "Plant Filters" or "Catalog Filters"
       if (names[0] == "Plant Filters")
       {
-        if (plant.PlantModel == null)
+        if (SP3DModel == null)
           return null;
 
-        afld = (FilterFolder)plant.PlantModel.Folders.FirstOrDefault(fld => fld.Name == names[0]);
+        afld = (FilterFolder)SP3DModel.Folders.FirstOrDefault(fld => fld.Name == names[0]);
       }
       else if (names[0] == "Catalog Filters")
       {
-        if (plant.PlantCatalog == null)
+        if (SP3DCatalog == null)
           return null;
 
-        afld = (FilterFolder)plant.PlantCatalog.Folders.FirstOrDefault(fld => fld.Name == names[0]);
+        afld = (FilterFolder)SP3DCatalog.Folders.FirstOrDefault(fld => fld.Name == names[0]);
       }
 
       // Traversal logic
@@ -866,6 +876,15 @@ namespace iringtools.sdk.sp3ddatalayer
 
     private void initializeRelatedObject(RelatedObject robj, BusinessObject rootObject)
     {
+      PropertyInformation propertyInfo = null;
+      InterfaceInformation interfaceInfo = null;
+      ClassInformation classInfo = null;
+
+      classInfo = GetClassInformation(robj.objectName);
+
+      if (classInfo == null)
+        throw new Exception("class [" + robj.objectName + "] does not exist in SP3D databases.");
+
       if (robj.businessKeyProperties == null)
         robj.businessKeyProperties = new List<BusinessKeyProperty>();
 
@@ -902,13 +921,19 @@ namespace iringtools.sdk.sp3ddatalayer
         if (robj.businessInterfaces.Count > 0)
           foreach (BusinessInterface businessInterface in robj.businessInterfaces)
           {
+            interfaceInfo = GetInterfaceInformation(classInfo, businessInterface.interfaceName);
+            if (interfaceInfo != null)
+              throw new Exception("Interface [" + businessInterface.interfaceName + "] for class [" + robj.objectName + "] does not exist in SP3D databases.");
+
             if (businessInterface.businessProperties != null)
               if (businessInterface.businessProperties.Count > 0)
                 foreach (BusinessProperty businessProperty in businessInterface.businessProperties)
                 {
+                  propertyInfo = GetPropertyInfo(interfaceInfo, businessProperty.propertyName);
                   businessProperty.dataType = GetDatatype(businessProperty.datatype);
                   businessProperty.datatype = businessProperty.dataType.ToString();
-
+                  businessProperty.codeList = propertyInfo.CodeListInfo.CodelistMembers;
+                          
                   if (businessProperty.propertyName.ToLower() == "name")
                     businessProperty.columnName = "ItemName";
                   else if (string.IsNullOrEmpty(businessProperty.columnName))
@@ -1192,43 +1217,44 @@ namespace iringtools.sdk.sp3ddatalayer
     public ClassInformation GetClassInformation(string className)
     {
       ClassInformation classInfo = null;
-      ReadOnlyDictionary<ClassInformation> classes = metadataManagerModel.Classes;
+      ReadOnlyDictionary<ClassInformation> classes = metadataManagerModel.Classes;      
       string key = LookIntoICollection(classes.Keys, className);
       classes.TryGetValue(key, out classInfo);
+
+      if (classes == null)
+      {
+        classes = metadataManagerCatalog.Classes;
+        key = LookIntoICollection(classes.Keys, className);
+        classes.TryGetValue(key, out classInfo);
+      }
+
+      if (classes == null)
+      {
+        classes = metadataManagerReport.Classes;
+        key = LookIntoICollection(classes.Keys, className);
+        classes.TryGetValue(key, out classInfo);
+      }
+
       return classInfo;
     }
 
-    //public InterfaceInformation GetInterfaceInformation(string propertyInterfaceName)
-    //{
-    //  InterfaceInformation interfaceInfo = null;
-    //  ReadOnlyDictionary<InterfaceInformation> interfaces = metadataManagerModel.Interfaces;
-    //  string key = LookIntoICollection(interfaces.Keys, propertyInterfaceName);
-
-    //  if (key != null)
-    //    interfaces.TryGetValue(key, out interfaceInfo);
-    //  return interfaceInfo;
-    //}
-
-    public InterfaceInformation GetInterfaceInformation(string className, string propertyInterfaceName)
+    public RelationshipInformation GetRelationInformation(string relationName, ClassInformation classInfo)
     {
-      ClassInformation classInfo = GetClassInformation(className);
-
-      InterfaceInformation interfaceInfo = null;
-      ReadOnlyDictionary<InterfaceInformation> interfaces = classInfo.Interfaces;
-      string key = LookIntoICollection(interfaces.Keys, propertyInterfaceName);
-
-      if (key != null)
-        interfaces.TryGetValue(key, out interfaceInfo);
+      RelationshipInformation relationInfo = null;
+      return relationInfo;
+    }
+    
+    public InterfaceInformation GetInterfaceInformation(ClassInformation classInfo, string propertyInterfaceName)
+    {
+      InterfaceInformation interfaceInfo = classInfo.GetInterfaceInfo(propertyInterfaceName);      
       return interfaceInfo;
     }
 
-    public bool HasProperty(InterfaceInformation interfaceInfo, string propertyName)
+    public PropertyInformation GetPropertyInfo(InterfaceInformation interfaceInfo, string propertyName)
     {
       ReadOnlyDictionary<PropertyInformation> propertyInformation = interfaceInfo.Properties;
-      if (LookIntoICollection(propertyInformation.Keys, propertyName) != null)
-        return true;
-      else
-        return false;
+      PropertyInformation aPropertyInfo = interfaceInfo.GetPropertyInfo(propertyName);
+      return aPropertyInfo;
     }
 
     public string LookIntoICollection(ICollection<string> collection, string target)
@@ -1257,6 +1283,8 @@ namespace iringtools.sdk.sp3ddatalayer
         _config = Utility.Read<BusinessObjectConfiguration>(_verifiedConfigurationPath);
       else
         _config = Utility.Read<BusinessObjectConfiguration>(_configurationPath);
+
+      CreateCachingTables(businessCommodityName, null);
     }
 
     public void CloseSession(ISession session)
@@ -1339,22 +1367,14 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       # region sp3d API
-      Catalog SP3DCatalog = null;
-      Model SP3DModel = null;
-      Report SP3DReport = null;
-      //SP3DCatalog = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantCatalog;
-
+      
+      SP3DCatalog = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantCatalog;
       SP3DModel = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantModel;
-
-      //SP3DReport = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantReport;
-
-      //metadataManagerCatalog = SP3DCatalog.MetadataMgr;
-      // metadataManagerReport = SP3DReport.MetadataMgr;
+      SP3DReport = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantReport;
+      metadataManagerCatalog = SP3DCatalog.MetadataMgr;
+      metadataManagerReport = SP3DReport.MetadataMgr;
       metadataManagerModel = SP3DModel.MetadataMgr;
-
       //MiddleServiceProvider.SiteMgr.ActiveSite.MetadataMgr
-
-
       //string displayName, name, showupMsg = "", category, iid, interfaceInfoNamespace, propertyName, propertyDescriber;
       //string propertyInterfaceInformationStr, unitTypeString;
       //Type type;

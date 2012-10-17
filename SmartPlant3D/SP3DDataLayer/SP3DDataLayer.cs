@@ -53,15 +53,15 @@ namespace iringtools.sdk.sp3ddatalayer
       return dataDictionary;
     }
 
-    //public override Response Refresh(string objectType, DataFilter filter)
-    //{
-    //  if (sp3dProvider == null)
-    //  {
-    //    setSP3DProviderSettings();
-    //  }
+    public override Response Refresh(string objectType, DataFilter filter)
+    {
+      if (sp3dProvider == null)
+      {
+        setSP3DProviderSettings();
+      }
 
-    //  return sp3dProvider.RefreshCachingTable(objectType, filter);
-    //}
+      return sp3dProvider.RefreshCachingTable(objectType, filter);
+    }
 
     public override Response Refresh(string objectType)
     {
