@@ -389,21 +389,42 @@ namespace org.iringtools.services
 
     #region RefreshDataObject
     [Description("Resets a data object state in data layer.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{dataObject}/refresh")]
-    public Response RefreshDataObject(string scope, string app, string dataObject)
+    [WebGet(UriTemplate = "/{scope}/{app}/{objectType}/refresh")]
+    public Response RefreshDataObject(string scope, string app, string objectType)
     {
       try
       {
         OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
         context.ContentType = "application/xml";
 
-        return _adapterProvider.RefreshDataObject(scope, app, dataObject);
+        return _adapterProvider.RefreshDataObject(scope, app, objectType);
       }
       catch (Exception ex)
       {
         return PrepareErrorResponse(ex);
       }
     }
+    #endregion
+
+    #region RefreshDataObject with filter
+    [Description("Resets a data object state in data layer.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/objectType/refresh")]
+    public Response RefreshDataObject(string scope, string app, string objectType, DataFilter dataFilter)
+    {
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.ContentType = "application/xml";
+
+        return _adapterProvider.RefreshDataObject(scope, app, objectType, dataFilter);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    //[WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/binding")]
     #endregion
 
     private Response PrepareErrorResponse(Exception ex)
