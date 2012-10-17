@@ -497,7 +497,18 @@ namespace org.iringtools.library
     {
       Response response = new Response()
       {
-        Level = StatusLevel.Warning,
+        Level = StatusLevel.Error,
+        Messages = new Messages { "Method not implemented." }
+      };
+
+      return response;
+    }
+
+    public virtual Response Refresh(string objectType, DataFilter dataFilter)
+    {
+      Response response = new Response()
+      {
+        Level = StatusLevel.Error,
         Messages = new Messages { "Method not implemented." }
       };
 
