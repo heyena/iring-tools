@@ -2205,6 +2205,7 @@ namespace org.iringtools.adapter
             }
         }
 
+
         //Search
         public XDocument GetDataProjection(
           string projectName, string applicationName, string resourceName,
@@ -3757,21 +3758,38 @@ namespace org.iringtools.adapter
             }
         }
 
-        public Response RefreshDataObject(string projectName, string applicationName, string dataObject)
+        public Response RefreshDataObject(string projectName, string applicationName, string objectType)
         {
             try
             {
                 InitializeScope(projectName, applicationName);
                 InitializeDataLayer();
 
-                return _dataLayer.Refresh(dataObject);
+                return _dataLayer.Refresh(objectType);
             }
             catch (Exception ex)
             {
-                string errMsg = String.Format("Error refreshing data object [{0}]: {1}", dataObject, ex);
+              string errMsg = String.Format("Error refreshing data object [{0}]: {1}", objectType, ex);
                 _logger.Error(errMsg);
                 throw new Exception(errMsg);
             }
+        }
+
+        public Response RefreshDataObject(string projectName, string applicationName, string objectType, DataFilter dataFilter)
+        {
+          try
+          {
+            InitializeScope(projectName, applicationName);
+            InitializeDataLayer();
+
+            return _dataLayer.Refresh(objectType, dataFilter);
+          }
+          catch (Exception ex)
+          {
+            string errMsg = String.Format("Error refreshing data object [{0}]: {1}", objectType, ex);
+            _logger.Error(errMsg);
+            throw new Exception(errMsg);
+          }
         }
 
         public IList<Object> GetSummary(String projectName, String applicationName)
@@ -3977,5 +3995,67 @@ namespace org.iringtools.adapter
 
             return filter;
         }
+    }
+
+    public class DataObjectComparer : IComparer<IDataObject>
+    {
+      private DataProperty _dataProp;
+
+      public DataObjectComparer(DataProperty dataProp)
+      {
+        _dataProp = dataProp;
+      }
+
+      public int Compare(IDataObject left, IDataObject right)
+      {
+        // compare booleans
+        if (_dataProp.dataType == DataType.Boolean)
+        {
+          int leftValue = (int)left.GetPropertyValue(_dataProp.propertyName);
+          int rightValue = (int)right.GetPropertyValue(_dataProp.propertyName);
+
+          if (leftValue > rightValue)
+            return 1;
+
+          if (rightValue > leftValue)
+            return -1;
+
+          return 0;
+        }
+
+        // compare numerics
+        if (_dataProp.dataType == DataType.Byte ||
+          _dataProp.dataType == DataType.Decimal ||
+          _dataProp.dataType == DataType.Double ||
+          _dataProp.dataType == DataType.Int16 ||
+          _dataProp.dataType == DataType.Int32 ||
+          _dataProp.dataType == DataType.Int64 ||
+          _dataProp.dataType == DataType.Single)
+        {
+          double leftValue = (double)left.GetPropertyValue(_dataProp.propertyName);
+          double rightValue = (double)right.GetPropertyValue(_dataProp.propertyName);
+
+          if (leftValue > rightValue)
+            return 1;
+
+          if (rightValue > leftValue)
+            return -1;
+
+          return 0;
+        }
+        
+        // compare date times
+        if (_dataProp.dataType == DataType.DateTime)
+        {
+          DateTime leftValue = (DateTime)left.GetPropertyValue(_dataProp.propertyName);
+          DateTime rightValue = (DateTime)right.GetPropertyValue(_dataProp.propertyName);
+
+          return DateTime.Compare(leftValue, rightValue);
+        }
+
+        // compare strings
+        return String.Compare(left.GetPropertyValue(_dataProp.propertyName).ToString(), 
+          right.GetPropertyValue(_dataProp.propertyName).ToString());
+      }
     }
 }
