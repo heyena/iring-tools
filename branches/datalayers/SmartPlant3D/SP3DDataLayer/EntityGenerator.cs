@@ -159,7 +159,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
             Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
             DataDictionary dataDictionarySP3D = CreateDataDictionarySP3D(businessCommodity);
-            DatabaseDictionary databaseDictionarySP3D = CreateDatabaseDictionarySP3D(dataDictionarySP3D, databaseDictionary);
+            DatabaseDictionary databaseDictionarySP3D = CreateDatabaseDictionarySP3D(dataDictionarySP3D, dbSchema, databaseDictionary);
             dataDictionarySP3D.dataVersion = databaseDictionary.dataVersion;
             dataDictionarySP3D.enableSearch = databaseDictionary.enableSearch;
             dataDictionarySP3D.enableSummary = databaseDictionary.enableSummary;
@@ -169,15 +169,7 @@ namespace iringtools.sdk.sp3ddatalayer
             #endregion
 
             status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");
-
-          }
-          DataDictionary dataDictionary = CreateDataDictionary(databaseDictionary.dataObjects);
-          dataDictionary.dataVersion = databaseDictionary.dataVersion;
-          dataDictionary.enableSearch = databaseDictionary.enableSearch;
-          dataDictionary.enableSummary = databaseDictionary.enableSummary;
-
-          Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
-          Utility.Write<BusinessObjectConfiguration>(dbSchema, _settings["AppDataPath"] + "BusinessObjectConfiguration." + projectName + "." + applicationName + ".xml");
+          }          
         }
         catch (Exception ex)
         {
@@ -832,11 +824,11 @@ namespace iringtools.sdk.sp3ddatalayer
       return new DataDictionary { dataObjects = _dataObjects };
     }
 
-    private DatabaseDictionary CreateDatabaseDictionarySP3D(DataDictionary dataDictionarySP3D, DatabaseDictionary databaseDictionary)
+    private DatabaseDictionary CreateDatabaseDictionarySP3D(DataDictionary dataDictionarySP3D, BusinessObjectConfiguration config, DatabaseDictionary databaseDictionary)
     {
       DatabaseDictionary databaseDictionarySP3D = new DatabaseDictionary();
       databaseDictionarySP3D.dataObjects = dataDictionarySP3D.dataObjects;
-      databaseDictionarySP3D.ConnectionString = databaseDictionary.ConnectionString;
+      databaseDictionarySP3D.ConnectionString = config.ConnectionString;
       databaseDictionarySP3D.Provider = databaseDictionary.Provider;
       databaseDictionarySP3D.SchemaName = databaseDictionary.SchemaName;
       databaseDictionarySP3D.picklists = databaseDictionary.picklists;
@@ -1246,6 +1238,7 @@ namespace iringtools.sdk.sp3ddatalayer
           dataDictionary.enableSummary = dbSchema.enableSummary;
 
           Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
+          Utility.Write<DatabaseDictionary>(dbSchema, _settings["AppDataPath"] + "DatabaseDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
           status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");

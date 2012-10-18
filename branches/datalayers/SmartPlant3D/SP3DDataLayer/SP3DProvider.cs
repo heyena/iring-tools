@@ -82,9 +82,10 @@ namespace iringtools.sdk.sp3ddatalayer
         if (!File.Exists(_dictionaryPath))
         {
           if (_config == null)
-            getConfigure(string.Empty);          
+            getConfigure(string.Empty);
+          readDictionary();
         }
-        readDictionary();
+        
         return _dataDictionary;
       }
       catch (Exception ex)
@@ -397,7 +398,7 @@ namespace iringtools.sdk.sp3ddatalayer
       if (!File.Exists(_databaseDictionaryPath))
       {
         _databaseDictionary = new DatabaseDictionary();
-        _databaseDictionary.ConnectionString = config.ConnectionString;
+        _databaseDictionary.ConnectionString = GetCachingConnectionString(config.ConnectionString, config.Provider, config.stagingDataBaseName);
         _databaseDictionary.Provider = config.Provider;
         _databaseDictionary.SchemaName = config.SchemaName;
         _databaseDictionary.dataObjects = new List<DataObject>();
@@ -1736,10 +1737,15 @@ namespace iringtools.sdk.sp3ddatalayer
       System.Collections.ObjectModel.ReadOnlyCollection<Ingr.SP3D.Common.Middle.BusinessObject> filteredObjects = filterBase.Apply();
       _filtertedKeys = new List<string>();
       string temp = string.Empty;
+      int i = 0;  // debugging purpose
 
       foreach (Ingr.SP3D.Common.Middle.BusinessObject businessObj in filteredObjects)
       {
+        if (i > 10)  // debugging purpose
+          break;     // debugging purpose
+
         _filtertedKeys.Add(businessObj.ObjectID.Substring(1, businessObj.ObjectID.Length - 2).ToLower());
+        i++;   // debugging purpose
       }
 
       //Utility.Write<List<string>>(_filtertedKeys, "C:\\temp\\filteredOids.txt");
@@ -2006,66 +2012,42 @@ namespace iringtools.sdk.sp3ddatalayer
       }
     }
 
-    //public Response SaveDataObjects(string objectType, IList<IDataObject> dataObjects)
-    //{
-    //    try
-    //    {
-    //        Response response = new Response();
+    private string GetCachingConnectionString(string connStr, string dbProvider, string cachingDataBaseName)
+    {
+      try
+      {
+        string parsedConnStr = String.Empty;
+        char[] ch = { ';' };
+        string[] connStrKeyValuePairs = connStr.Split(ch, StringSplitOptions.RemoveEmptyEntries);
 
-    //        // Create data object directory in case it does not exist
-    //        Directory.CreateDirectory(_settings["SP3DFolderPath"]);
+        foreach (string connStrKeyValuePair in connStrKeyValuePairs)
+        {
+          string[] connStrKeyValuePairTemp = connStrKeyValuePair.Split('=');
+          string connStrKey = connStrKeyValuePairTemp[0].Trim();
+          string connStrValue = connStrKeyValuePairTemp[1].Trim();
 
-    //        string path = String.Format(
-    //         "{0}{1}\\{2}.csv",
-    //           _settings["BaseDirectoryPath"],
-    //          _settings["SP3DFolderPath"],
-    //          objectType
-    //        );
+          switch (connStrKey.ToUpper())
+          {
+            case "DATA SOURCE":
+            case "USER ID":
+            case "PASSWORD":
+            case "INTEGRATED SECURITY":
+              parsedConnStr += connStrKey + "=" + connStrValue + ";";
+              break;
+            case "INITIAL CATALOG":
+              parsedConnStr += connStrKey + "=" + cachingDataBaseName + ";";
+              break;
+          }                
+        }
 
-    //        //TODO: Need to update file, not replace it!
-    //        TextWriter writer = new StreamWriter(path);
-
-    //        foreach (IDataObject dataObject in dataObjects)
-    //        {
-    //            Status status = new Status();
-
-    //            try
-    //            {
-    //                string identifier = GetIdentifier(dataObject);
-    //                status.Identifier = identifier;
-
-    //                List<string> csvRow = new List<string>();
-    //                  //FormCSVRow(objectType, dataObject);
-
-    //                writer.WriteLine(String.Join(", ", csvRow.ToArray()));
-    //                status.Messages.Add("Record [" + identifier + "] has been saved successfully.");
-    //            }
-    //            catch (Exception ex)
-    //            {
-    //                status.Level = StatusLevel.Error;
-
-    //                string message = String.Format(
-    //                  "Error while posting dataObject [{0}]. {1}",
-    //                  dataObject.GetPropertyValue("Tag"),
-    //                  ex.ToString()
-    //                );
-
-    //                status.Messages.Add(message);
-    //            }
-
-    //            response.Append(status);
-    //        }
-
-    //        writer.Close();
-
-    //        return response;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.Error("Error in LoadDataObjects: " + ex);
-    //        throw new Exception("Error while loading data objects of type [" + objectType + "].", ex);
-    //    }
-    //}       
+        return parsedConnStr;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in ParseConnectionString: {0}", ex));
+        throw ex;
+      }
+    }
   }
 }
 
