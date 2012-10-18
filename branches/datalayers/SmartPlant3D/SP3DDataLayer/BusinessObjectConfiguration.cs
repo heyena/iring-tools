@@ -178,12 +178,15 @@ namespace iringtools.sdk.sp3ddatalayer
       return relatedObject;
     }
 
-    public void setUniqueRelation(RelatedObject rObj)
+    public bool setUniqueRelation(RelatedObject rObj)
     {
       int suffix = 0;
+      bool unique = true;
+
       if (GetRelation(rObj.relationName) != null)
       {
         rObj.relationName += "_";
+        unique = false;
 
         do
         {
@@ -193,13 +196,19 @@ namespace iringtools.sdk.sp3ddatalayer
         }
         while (GetRelation(rObj.relationName) != null);
       }
+      return unique;
     }
 
     public BusinessRelation addUniqueRelation(RelatedObject rObj, RootBusinessObject parentNode)
     {
       BusinessRelation relation = null;
-      setUniqueRelation(rObj);      
-      relation = rObj.createBusinessRelation();
+      string originRelationName = rObj.relationName;
+      bool unique = setUniqueRelation(rObj);
+      relation = rObj.createBusinessRelation(originRelationName);
+
+      if (!unique)
+        relation.unique = unique;
+
       relations.Add(relation);
         
       if (parentNode.nodeType == NodeType.StartObject)
@@ -613,7 +622,7 @@ namespace iringtools.sdk.sp3ddatalayer
   {
     public RelatedObject()
     {
-      nodeType = NodeType.MiddleObject;
+      nodeType = NodeType.MiddleObject;      
     }    
 
     public DataObject convertRelatedObjectToDataObject()
@@ -639,7 +648,7 @@ namespace iringtools.sdk.sp3ddatalayer
       return dataObject;
     }
 
-    public BusinessRelation createBusinessRelation()
+    public BusinessRelation createBusinessRelation(string originRelationName)
     {
       BusinessRelation relation = new BusinessRelation();
       relation.relationName = relationName;
@@ -649,6 +658,7 @@ namespace iringtools.sdk.sp3ddatalayer
       relation.rightClassNames.Add(objectName);
       relation.relationTableName = relationTableName;
       relation.nodeType = NodeType.Relation;
+      relation.originRelationName = originRelationName;
       return relation;
     }    
   }
@@ -659,7 +669,14 @@ namespace iringtools.sdk.sp3ddatalayer
     public BusinessRelation()
     {
       nodeType = NodeType.Relation;
+      unique = true;
     }
+
+    [DataMember(IsRequired = false, Order = 0, EmitDefaultValue = false)]
+    public bool unique { get; set; }
+
+    [DataMember(IsRequired = false, Order = 1, EmitDefaultValue = false)]
+    public string originRelationName { get; set; }
     
     public DataObject convertRelationToDataObject()
     {
