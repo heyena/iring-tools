@@ -408,8 +408,8 @@ namespace org.iringtools.services
 
     #region RefreshDataObject with filter
     [Description("Resets a data object state in data layer.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/objectType/refresh")]
-    public Response RefreshDataObject(string scope, string app, string objectType, DataFilter dataFilter)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{objectType}/refresh")]
+    public Response RefreshDataObjectWithFilter(string scope, string app, string objectType, DataFilter dataFilter)
     {
       try
       {
