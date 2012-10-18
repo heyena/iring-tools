@@ -144,14 +144,10 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BusinessObjectConfiguration.cs" />
+    <Compile Include="NHibernateUtility.cs" />
     <Compile Include="SP3DProvider.cs" />
     <Compile Include="EntityGenerator.cs" />
-    <Compile Include="IExtensions.cs" />
-    <Compile Include="NHibernateModule.cs" />
-    <Compile Include="NHibernateProvider.cs" />
     <Compile Include="NHibernateSessionManager.cs" />
-    <Compile Include="NHibernateSettings.cs" />
-    <Compile Include="NHibernateUtility.cs" />
     <Compile Include="SP3DDataLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

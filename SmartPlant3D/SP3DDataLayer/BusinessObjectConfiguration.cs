@@ -52,8 +52,11 @@ namespace iringtools.sdk.sp3ddatalayer
     [DataMember(Name = "connectionString", IsRequired = true, Order = 2)]
     public string ConnectionString { get; set; }
 
-    [DataMember(Name = "schemaName", IsRequired = true, Order = 3)]
-    public string SchemaName { get; set; }
+    [DataMember(Name = "stagingDataBaseName", IsRequired = true, Order = 3)]
+    public string stagingDataBaseName { get; set; }
+
+    [DataMember(Name = "schemaName", IsRequired = true, Order = 4)]
+    public string SchemaName { get; set; }    
 
     public BusinessCommodity GetBusinessCommoditiy(string name)
     {
