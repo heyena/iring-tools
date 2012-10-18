@@ -1736,16 +1736,11 @@ namespace iringtools.sdk.sp3ddatalayer
       FilterBase filterBase = FindFilter(bco.businessFilter.filterName);
       System.Collections.ObjectModel.ReadOnlyCollection<Ingr.SP3D.Common.Middle.BusinessObject> filteredObjects = filterBase.Apply();
       _filtertedKeys = new List<string>();
-      string temp = string.Empty;
-      int i = 0;  // debugging purpose
+      string temp = string.Empty;      
 
       foreach (Ingr.SP3D.Common.Middle.BusinessObject businessObj in filteredObjects)
       {
-        if (i > 10)  // debugging purpose
-          break;     // debugging purpose
-
         _filtertedKeys.Add(businessObj.ObjectID.Substring(1, businessObj.ObjectID.Length - 2).ToLower());
-        i++;   // debugging purpose
       }
 
       //Utility.Write<List<string>>(_filtertedKeys, "C:\\temp\\filteredOids.txt");
