@@ -130,10 +130,10 @@ namespace iringtools.sdk.sp3ddatalayer
         if (_config.businessCommodities != null)
         {
           _sp3dDataBaseDictionary = VerifyConfiguration(_config, businessCommodityName);
-          _databaseDictionary = CreateDataBaseDictionary(_sp3dDataBaseDictionary, businessCommodityName);
+          CreateDataBaseDictionary(_sp3dDataBaseDictionary, businessCommodityName);
         }
 
-      GenerateSP3D(_settings, _sp3dDataBaseDictionary, _databaseDictionary);
+      GenerateSP3D(_settings, _sp3dDataBaseDictionary);
       Generate(_settings);
       CreateCachingDBTables(businessCommodityName, filter);
 
@@ -365,13 +365,13 @@ namespace iringtools.sdk.sp3ddatalayer
       return response;
     }
 
-    public void GenerateSP3D(AdapterSettings _settings, BusinessObjectConfiguration sp3dDataBaseDictionary, DatabaseDictionary databaseDictionary)
+    public void GenerateSP3D(AdapterSettings _settings, BusinessObjectConfiguration sp3dDataBaseDictionary)
     {
       string projectName = "", applicationname = "";
       projectName = _settings["ProjectName"];
       applicationname = _settings["ApplicationName"];
 
-      if (databaseDictionary != null && databaseDictionary.dataObjects != null && sp3dDataBaseDictionary != null && sp3dDataBaseDictionary.businessCommodities != null)
+      if (_databaseDictionary != null && _databaseDictionary.dataObjects != null && sp3dDataBaseDictionary != null && sp3dDataBaseDictionary.businessCommodities != null)
       {
         EntityGenerator generator = new EntityGenerator(_settings);
 
@@ -381,16 +381,12 @@ namespace iringtools.sdk.sp3ddatalayer
           compilerVersion = _settings["CompilerVersion"];
         }
 
-        generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, databaseDictionary, projectName, applicationname);
+        generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname);
       }
     }
 
-    public DatabaseDictionary CreateDataBaseDictionary(BusinessObjectConfiguration config, string businessCommodityName)
-    {
-      _databaseDictionary.ConnectionString = config.ConnectionString;
-      _databaseDictionary.Provider = config.Provider;
-      _databaseDictionary.SchemaName = config.SchemaName;
-      _databaseDictionary.dataObjects = new List<DataObject>();
+    public void CreateDataBaseDictionary(BusinessObjectConfiguration config, string businessCommodityName)
+    {      
       string propertyName = string.Empty, keyPropertyName = string.Empty, relatedPropertyName = string.Empty;
       string relatedTable = string.Empty, relationType = string.Empty, relatedObjectName = string.Empty;
       string relationName = string.Empty, relatedInterfaceName = string.Empty, startInterfaceName = string.Empty;
@@ -401,6 +397,10 @@ namespace iringtools.sdk.sp3ddatalayer
       if (!File.Exists(_databaseDictionaryPath))
       {
         _databaseDictionary = new DatabaseDictionary();
+        _databaseDictionary.ConnectionString = config.ConnectionString;
+        _databaseDictionary.Provider = config.Provider;
+        _databaseDictionary.SchemaName = config.SchemaName;
+        _databaseDictionary.dataObjects = new List<DataObject>();
         businessCommodityName = string.Empty;
       }
       else
@@ -539,8 +539,7 @@ namespace iringtools.sdk.sp3ddatalayer
           }
         }
         _databaseDictionary.dataObjects.Add(dataObject);
-      }
-      return _databaseDictionary;
+      }      
     }
 
     public Response DeleteSP3DIdentifiers(string objectType, IList<IDataObject> dataObjects)
@@ -884,7 +883,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
       if (classInfo == null)
         throw new Exception("class [" + robj.objectName + "] does not exist in SP3D databases.");
-
+      
       if (robj.businessKeyProperties == null)
         robj.businessKeyProperties = new List<BusinessKeyProperty>();
 
@@ -922,7 +921,7 @@ namespace iringtools.sdk.sp3ddatalayer
           foreach (BusinessInterface businessInterface in robj.businessInterfaces)
           {
             interfaceInfo = GetInterfaceInformation(classInfo, businessInterface.interfaceName);
-            if (interfaceInfo != null)
+            if (interfaceInfo == null)
               throw new Exception("Interface [" + businessInterface.interfaceName + "] for class [" + robj.objectName + "] does not exist in SP3D databases.");
 
             if (businessInterface.businessProperties != null)
@@ -930,6 +929,10 @@ namespace iringtools.sdk.sp3ddatalayer
                 foreach (BusinessProperty businessProperty in businessInterface.businessProperties)
                 {
                   propertyInfo = GetPropertyInfo(interfaceInfo, businessProperty.propertyName);
+
+                  if (propertyInfo == null)
+                    throw new Exception("Property [" + businessProperty.propertyName + "] for interface [" + businessInterface.interfaceName + "] does not exist in SP3D databases.");
+
                   businessProperty.dataType = GetDatatype(businessProperty.datatype);
                   businessProperty.datatype = businessProperty.dataType.ToString();
                   businessProperty.codeList = propertyInfo.CodeListInfo.CodelistMembers;
@@ -948,6 +951,8 @@ namespace iringtools.sdk.sp3ddatalayer
 
     private void initializeRlation(BusinessRelation relation)
     {
+      //if (!relation.unique)  --add finding relation info from originRelationName
+
       if (relation.businessKeyProperties == null)
         relation.businessKeyProperties = new List<BusinessKeyProperty>();
 
@@ -1252,8 +1257,8 @@ namespace iringtools.sdk.sp3ddatalayer
 
     public PropertyInformation GetPropertyInfo(InterfaceInformation interfaceInfo, string propertyName)
     {
-      ReadOnlyDictionary<PropertyInformation> propertyInformation = interfaceInfo.Properties;
-      PropertyInformation aPropertyInfo = interfaceInfo.GetPropertyInfo(propertyName);
+      string realPropName = propertyName.Substring(0, 1).ToUpper() + propertyName.Substring(1, propertyName.Length - 1);
+      PropertyInformation aPropertyInfo = interfaceInfo.GetPropertyInfo(realPropName);
       return aPropertyInfo;
     }
 

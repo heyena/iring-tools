@@ -667,7 +667,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
       foreach (BusinessProperty dataProperty in businessDataPropertyList)
       {
-        hasCodeList = true;
+        hasCodeList = false;
 
         if (dataProperty.codeList != null)
           if (dataProperty.codeList.Count > 0)

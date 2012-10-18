@@ -70,15 +70,14 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         lock (_lockObj)
         {
-          string cfgPath = string.Format("{0}nh-configuration.{1}.{2}._{3}.xml", path, context, businessCommodityName);
-          string mappingPath = string.Format("{0}nh-mapping.{1}.{2}._{3}.xml", path, context, businessCommodityName);
+          string cfgPath = string.Format("{0}nh-configuration.{1}._{2}.xml", path, context, businessCommodityName);
+          string mappingPath = string.Format("{0}nh-mapping.{1}._{2}.xml", path, context, businessCommodityName);
           string connStr = "";
 
           if (File.Exists(cfgPath) && File.Exists(mappingPath))
           {
             Configuration cfg = new Configuration();
             cfg.Configure(cfgPath);
-
             string connStrProp = "connection.connection_string";
             string dialectPro = "dialect";
             ISessionFactory sessionFactory = null;
@@ -141,8 +140,8 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         lock (_lockObj)
         {
-          string cfgPath = string.Format("{0}nh-configuration.{1}.{2}.xml", path, context);
-          string mappingPath = string.Format("{0}nh-mapping.{1}.{2}.xml", path, context);
+          string cfgPath = string.Format("{0}nh-configuration.{1}.xml", path, context);
+          string mappingPath = string.Format("{0}nh-mapping.{1}.xml", path, context);
           string connStr = "";
 
           if (File.Exists(cfgPath) && File.Exists(mappingPath))
