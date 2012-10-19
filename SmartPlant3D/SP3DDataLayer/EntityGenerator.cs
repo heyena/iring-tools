@@ -66,7 +66,7 @@ namespace iringtools.sdk.sp3ddatalayer
       _settings = settings;
     }
 
-    public Response GenerateSP3D(string compilerVersion, BusinessObjectConfiguration dbSchema, DatabaseDictionary databaseDictionary, string projectName, string applicationName)
+    public Response GenerateSP3D(string compilerVersion, BusinessObjectConfiguration dbSchema, DatabaseDictionary databaseDictionary, string projectName, string applicationName, string type)
     {
       Utility.Write<BusinessObjectConfiguration>(dbSchema, "C:\\temp\\verified-businessConfiguration.xml");
       Response response = new Response();
@@ -94,7 +94,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
             _mappingWriter.WriteStartElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
             _mappingWriter.WriteAttributeString("default-lazy", "true");
-
+            
             _dataObjectBuilder = new StringBuilder();
             _dataObjectWriter = new IndentedTextWriter(new StringWriter(_dataObjectBuilder), "  ");
 
@@ -103,26 +103,29 @@ namespace iringtools.sdk.sp3ddatalayer
             _dataObjectWriter.WriteLine("using System.Globalization;");
             _dataObjectWriter.WriteLine("using System.Collections.Generic;");
             _dataObjectWriter.WriteLine("using Iesi.Collections.Generic;");
-            _dataObjectWriter.WriteLine("using org.iringtools.library;");
+            _dataObjectWriter.WriteLine("using org.iringtools.library;");     
 
             foreach (BusinessObject businessObject in businessCommodity.businessObjects)
             {
-              prepareSP3DStartObjectNHibernateMap(businessObject);
+              prepareSP3DStartObjectNHibernateMap(businessObject, type);
 
               #region related objects
 
-              if (businessObject.relatedObjects != null)
+              if (type == "sp3d")
               {
-                foreach (RelatedObject relatedObject in businessObject.relatedObjects)
+                if (businessObject.relatedObjects != null)
                 {
-                  preparecreateSP3DRONHibernateMap(relatedObject);
+                  foreach (RelatedObject relatedObject in businessObject.relatedObjects)
+                  {
+                    preparecreateSP3DRONHibernateMap(relatedObject);
+                  }
                 }
-              }
 
-              if (businessObject.relations != null)
-              {
-                foreach (BusinessRelation relation in businessObject.relations)
-                  preparecreateSP3DRONHibernateMap(relation);
+                if (businessObject.relations != null)
+                {
+                  foreach (BusinessRelation relation in businessObject.relations)
+                    preparecreateSP3DRONHibernateMap(relation);
+                }
               }
 
               #endregion related objects
@@ -150,25 +153,34 @@ namespace iringtools.sdk.sp3ddatalayer
 
             #region Writing memory data to disk
 
-            Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping." + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
-            Utility.WriteString(sourceCode, _settings["AppCodePath"] + "Model." + projectName + "." + applicationName + "." + commodityName + ".cs", Encoding.ASCII);
-
             string hibernateConfig = CreateConfiguration(
               (Provider)Enum.Parse(typeof(Provider), dbSchema.Provider, true),
               dbSchema.ConnectionString, dbSchema.SchemaName);
-
-            Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
             DataDictionary dataDictionarySP3D = CreateDataDictionarySP3D(businessCommodity);
             DatabaseDictionary databaseDictionarySP3D = CreateDatabaseDictionarySP3D(dataDictionarySP3D, dbSchema, databaseDictionary);
             dataDictionarySP3D.dataVersion = databaseDictionary.dataVersion;
             dataDictionarySP3D.enableSearch = databaseDictionary.enableSearch;
             dataDictionarySP3D.enableSummary = databaseDictionary.enableSummary;
 
-            Utility.Write<DataDictionary>(dataDictionarySP3D, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + "." + commodityName + ".xml");
-            Utility.Write<DatabaseDictionary>(databaseDictionarySP3D, _settings["AppDataPath"] + "DatabaseDictionary." + projectName + "." + applicationName + "." + commodityName + ".xml");
+            if (type == "sp3d")
+            {
+              Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping." + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
+              Utility.WriteString(sourceCode, _settings["AppCodePath"] + "Model." + projectName + "." + applicationName + "." + commodityName + ".cs", Encoding.ASCII);
+              Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
+              Utility.Write<DataDictionary>(dataDictionarySP3D, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + "." + commodityName + ".xml");
+              Utility.Write<DatabaseDictionary>(databaseDictionarySP3D, _settings["AppDataPath"] + "DatabaseDictionary." + projectName + "." + applicationName + "." + commodityName + ".xml");
+              status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");
+            }
+            else
+            {
+              Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping._" + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
+              Utility.WriteString(sourceCode, _settings["AppCodePath"] + "Model._" + projectName + "." + applicationName + "." + commodityName + ".cs", Encoding.ASCII);
+              Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration._" + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
+              Utility.Write<DataDictionary>(dataDictionarySP3D, _settings["AppDataPath"] + "DataDictionary._" + projectName + "." + applicationName + "." + commodityName + ".xml");
+              Utility.Write<DatabaseDictionary>(databaseDictionarySP3D, _settings["AppDataPath"] + "DatabaseDictionary._" + projectName + "." + applicationName + "." + commodityName + ".xml");
+              status.Messages.Add("Entities of [_" + projectName + "." + applicationName + "] generated successfully.");
+            }
             #endregion
-
-            status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");
           }          
         }
         catch (Exception ex)
@@ -223,11 +235,15 @@ namespace iringtools.sdk.sp3ddatalayer
       _dataObjectWriter.WriteLine("public virtual {0} {1} {{get; set;}}", dataType, propertyName);      
     }
 
-    private void writeClass(string nsClassName, string tableName, string key)
+    private void writeClass(string nsClassName, string cachingTableName, string tableName, string key, string type)
     {
       _mappingWriter.WriteStartElement("class");
       _mappingWriter.WriteAttributeString("name", nsClassName);
-      _mappingWriter.WriteAttributeString("table", "\"" + tableName + "\"");
+
+      if (type == "sp3d")
+        _mappingWriter.WriteAttributeString("table", "\"" + tableName + "\"");
+      else
+        _mappingWriter.WriteAttributeString("table", "\"" + cachingTableName + "\"");
 
       _mappingWriter.WriteStartElement("id");
       _mappingWriter.WriteAttributeString("name", "Id");
@@ -269,7 +285,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
       foreach (string rightRelationClassName in rightRelationClassNames)
       {
-        rightRelationNSClassName = getNSClassName(objectNameSpace, rightRelationClassName);
+        rightRelationNSClassName = getNSClassName(objectNameSpace, rightRelationClassName, "sp3d");
         _mappingWriter.WriteStartElement("many-to-one");
         _mappingWriter.WriteAttributeString("name", rightRelationClassName);
         _mappingWriter.WriteAttributeString("class", rightRelationNSClassName);
@@ -293,7 +309,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
       foreach (string rightClassName in rightClassNames)
       {
-        rightNSClassName = getNSClassName(objectNameSpace, rightClassName);
+        rightNSClassName = getNSClassName(objectNameSpace, rightClassName, "sp3d");
         _mappingWriter.WriteStartElement("one-to-one");
         _mappingWriter.WriteAttributeString("name", rightClassName);
         _mappingWriter.WriteAttributeString("class", rightNSClassName);
@@ -311,7 +327,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
       foreach (string leftRelationClassName in leftRelationClassNames)
       {
-        leftRelationNSClassName = getNSClassName(objectNameSpace, leftRelationClassName);
+        leftRelationNSClassName = getNSClassName(objectNameSpace, leftRelationClassName, "sp3d");
         _mappingWriter.WriteStartElement("one-to-one");
         _mappingWriter.WriteAttributeString("name", leftRelationClassName);
         _mappingWriter.WriteAttributeString("class", leftRelationNSClassName);
@@ -333,7 +349,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
       foreach (string leftClassName in leftClassNames)
       {
-        leftNSClassName = getNSClassName(objectNameSpace, leftClassName);
+        leftNSClassName = getNSClassName(objectNameSpace, leftClassName, "sp3d");
         _mappingWriter.WriteStartElement("set");
         _mappingWriter.WriteAttributeString("name", leftClassName + "s");
         _mappingWriter.WriteAttributeString("generic", "false");
@@ -374,7 +390,7 @@ namespace iringtools.sdk.sp3ddatalayer
       foreach (string className in classNames)
       {
         objectName = "_" + className;
-        classNSName = getNSModelClassName(objectNameSpace, className);
+        classNSName = getNSModelClassName(objectNameSpace, className, "sp3d");
         _dataObjectWriter.WriteLine();
         _dataObjectWriter.WriteLine("{0} {1};", classNSName, objectName);
         _dataObjectWriter.WriteLine("public virtual {0} {1}", classNSName, className);
@@ -461,13 +477,23 @@ namespace iringtools.sdk.sp3ddatalayer
       _dataObjectWriter.WriteLine("}"); //end contructor
     }
 
-    private string getNSClassName(string objectNameSpace, string className)
+    private string getNSClassName(string objectNameSpace, string className, string type)
     {
+      if (type != "sp3d")
+      {
+        int startIndexOfCachingTableName = objectNameSpace.LastIndexOf('.');
+        objectNameSpace = objectNameSpace.Substring(0, startIndexOfCachingTableName);        
+      }
       return objectNameSpace + "." + className + ", " + _settings["ExecutingAssemblyName"];
     }
 
-    private string getNSModelClassName(string objectNameSpace, string className)
+    private string getNSModelClassName(string objectNameSpace, string className, string type)
     {
+      if (type != "sp3d")
+      {
+        int startIndexOfCachingTableName = objectNameSpace.LastIndexOf('.');
+        objectNameSpace = objectNameSpace.Substring(0, startIndexOfCachingTableName);
+      }
       return objectNameSpace + "." + className;
     }
 
@@ -551,7 +577,7 @@ namespace iringtools.sdk.sp3ddatalayer
       _dataObjectWriter.WriteLine("break;");
     }
 
-    private void writeModelGetFunction(List<BusinessProperty> businessDataPropertyList, string objectName, List<string> relationNames, NodeType nodeType)
+    private void writeModelGetFunction(List<BusinessProperty> businessDataPropertyList, string objectName, List<string> relationNames, NodeType nodeType, string type)
     {
       bool hasCodeList = false;
       _dataObjectWriter.WriteLine();
@@ -591,20 +617,21 @@ namespace iringtools.sdk.sp3ddatalayer
         }
       }
 
-      switch (nodeType)
-      {
-        case NodeType.StartObject:
-          foreach (string relationName in relationNames)
-            _dataObjectWriter.WriteLine("case \"{0}_oidOrigin\": return {1}.oidOrigin;", relationName, "_" + relationName);
-          break;
-        case NodeType.MiddleObject:
-          foreach (string relationName in relationNames)
-            _dataObjectWriter.WriteLine("case \"oidOrigin\": return {0}.oidOrigin;", "_" + relationName);
-          break;
-        case NodeType.EndObject:
-          _dataObjectWriter.WriteLine("case \"oidOrigin\": return null;");
-          break;
-      }     
+      if (type == "sp3d")
+        switch (nodeType)
+        {
+          case NodeType.StartObject:
+            foreach (string relationName in relationNames)
+              _dataObjectWriter.WriteLine("case \"{0}_oidOrigin\": return {1}.oidOrigin;", relationName, "_" + relationName);
+            break;
+          case NodeType.MiddleObject:          
+            foreach (string relationName in relationNames)
+              _dataObjectWriter.WriteLine("case \"oidOrigin\": return {0}.oidOrigin;", "_" + relationName);
+            break;
+          case NodeType.EndObject:            
+            _dataObjectWriter.WriteLine("case \"oidOrigin\": return null;");
+            break;
+        }     
 
       _dataObjectWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
       _dataObjectWriter.Indent--;
@@ -631,7 +658,7 @@ namespace iringtools.sdk.sp3ddatalayer
       _dataObjectWriter.WriteLine("break;");
     }
 
-    private void writeModelSetFunction(List<BusinessProperty> businessDataPropertyList, DataType keyDataType)
+    private void writeModelSetFunction(List<BusinessProperty> businessDataPropertyList, DataType keyDataType, List<string> relationNames, NodeType nodeType, string type)
     {
       bool hasCodeList = false;
       _dataObjectWriter.WriteLine();
@@ -696,7 +723,34 @@ namespace iringtools.sdk.sp3ddatalayer
 
         _dataObjectWriter.WriteLine("break;");
         _dataObjectWriter.Indent--;        
-      }
+      }      
+
+      if (type == "sp3d")
+        switch (nodeType)
+        {
+          case NodeType.StartObject:
+            foreach (string relationName in relationNames)
+            {
+              _dataObjectWriter.WriteLine("case \"{0}_oidOrigin\":", relationName);
+              _dataObjectWriter.Indent++;
+              _dataObjectWriter.WriteLine("{0}.oidOrigin = Convert.To{1}(value);", "_" + relationName, DataType.String);
+              _dataObjectWriter.WriteLine("break;");
+              _dataObjectWriter.Indent--;
+              //_dataObjectWriter.WriteLine("case \"{0}_oidOrigin\": return {1}.oidOrigin;", relationName, "_" + relationName);
+            }
+            break;
+          case NodeType.MiddleObject:
+            foreach (string relationName in relationNames)
+            {
+              _dataObjectWriter.WriteLine("case \"oidOrigin\":");
+              _dataObjectWriter.Indent++;
+              _dataObjectWriter.WriteLine("{0}.oidOrigin = Convert.To{1}(value);", "_" + relationName, DataType.String);
+              _dataObjectWriter.WriteLine("break;");
+              _dataObjectWriter.Indent--;
+              //_dataObjectWriter.WriteLine("case \"oidOrigin\": return {0}.oidOrigin;", "_" + relationName);
+            }
+            break;          
+        }    
 
       _dataObjectWriter.WriteLine("default:");
       _dataObjectWriter.Indent++;
@@ -728,7 +782,7 @@ namespace iringtools.sdk.sp3ddatalayer
       _dataObjectWriter.Indent--;
     }
 
-    #endregion function for writing mapping files and model  
+    #endregion function for writing mapping files and model      
 
     private void preparecreateSP3DRONHibernateMap(RelatedObject businessObject)
     {
@@ -743,14 +797,14 @@ namespace iringtools.sdk.sp3ddatalayer
       _dataObjectWriter.WriteLine("}"); // end namespace block    
     }
 
-    private void prepareSP3DStartObjectNHibernateMap(BusinessObject businessObject)
+    private void prepareSP3DStartObjectNHibernateMap(BusinessObject businessObject, string type)
     {
       _dataObjectWriter.WriteLine();
       _dataObjectWriter.WriteLine("namespace {0}", businessObject.objectNamespace);
       _dataObjectWriter.Write("{"); // begin namespace block
       _dataObjectWriter.Indent++;
 
-      CreateNHibernateStartObjectMapSP3D(businessObject);
+      CreateNHibernateStartObjectMapSP3D(businessObject, type);
 
       _dataObjectWriter.Indent--;
       _dataObjectWriter.WriteLine("}"); // end namespace block    
@@ -876,9 +930,9 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       string key = keyObj.keyPropertyName;
-      string nsClassName = getNSClassName(businessObject.objectNamespace, className);
+      string nsClassName = getNSClassName(businessObject.objectNamespace, className, "sp3d");
 
-      writeClass(nsClassName, tableName, key);
+      writeClass(nsClassName, null, tableName, key, "sp3d");
       writeModelClass(className, key, keyObj.dataType);
 
       List<BusinessProperty> businessDataPropertyList = new List<BusinessProperty>();
@@ -927,24 +981,26 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       if (businessObject.nodeType == NodeType.MiddleObject)
-        writeModelGetFunction(businessDataPropertyList, "", businessObject.rightClassNames, businessObject.nodeType);
+        writeModelGetFunction(businessDataPropertyList, "", businessObject.rightClassNames, businessObject.nodeType, "sp3d");
       else
-        writeModelGetFunction(businessDataPropertyList, "", null, businessObject.nodeType);      
+        writeModelGetFunction(businessDataPropertyList, "", null, businessObject.nodeType, "sp3d");
 
-      writeModelSetFunction(businessDataPropertyList, keyObj.dataType);
+      writeModelSetFunction(businessDataPropertyList, keyObj.dataType, businessObject.rightClassNames, businessObject.nodeType, "sp3d");
       string mappingXml = _mappingBuilder.ToString();
       string modelXml = _dataObjectBuilder.ToString();
       writeClassEnd();
     }
 
-    private void CreateNHibernateStartObjectMapSP3D(BusinessObject businessObject)
+    private void CreateNHibernateStartObjectMapSP3D(BusinessObject businessObject, string type)
     {
       BusinessKeyProperty keyObj = businessObject.businessKeyProperties.First();
       string className = businessObject.objectName;
       string key = keyObj.keyPropertyName;
-      string nsClassName = getNSClassName(businessObject.objectNamespace, className);
+      int startIndexOfCachingTableName = businessObject.objectNamespace.LastIndexOf('.') + 1;
+      string cachingTableName = businessObject.objectNamespace.Substring(startIndexOfCachingTableName, businessObject.objectNamespace.Length - startIndexOfCachingTableName);
+      string nsClassName = getNSClassName(businessObject.objectNamespace, className, type);
 
-      writeClass(nsClassName, businessObject.tableName, key);
+      writeClass(nsClassName, cachingTableName, businessObject.tableName, key, type);
       writeModelClass(className, key, keyObj.dataType);
 
       List<BusinessProperty> businessDataPropertyList = new List<BusinessProperty>();
@@ -959,12 +1015,13 @@ namespace iringtools.sdk.sp3ddatalayer
             writeModelProperty(bprop.dataType, bprop.propertyName);
           }        
 
-      if (businessObject.rightClassNames != null)
-        if (businessObject.rightClassNames.Count > 0)
-        {
-          writeStartObject(businessObject.rightClassNames, businessObject.objectNamespace);
-          writeModelStartclass(businessObject.rightClassNames, businessObject.objectNamespace);
-        }
+      if (type == "sp3d")
+        if (businessObject.rightClassNames != null)
+          if (businessObject.rightClassNames.Count > 0)
+          {
+            writeStartObject(businessObject.rightClassNames, businessObject.objectNamespace);
+            writeModelStartclass(businessObject.rightClassNames, businessObject.objectNamespace);
+          }
 
       if (businessObject.businessInterfaces != null)
         if (businessObject.businessInterfaces.Count > 0)
@@ -973,10 +1030,8 @@ namespace iringtools.sdk.sp3ddatalayer
             writeInterface(businessDataPropertyList, businessInterface);
           }
 
-      writeModelGetFunction(businessDataPropertyList, className, businessObject.rightClassNames, businessObject.nodeType);
-      writeModelSetFunction(businessDataPropertyList, keyObj.dataType);
-
-      string modelXml = _dataObjectBuilder.ToString();
+      writeModelGetFunction(businessDataPropertyList, className, businessObject.rightClassNames, businessObject.nodeType, type);
+      writeModelSetFunction(businessDataPropertyList, keyObj.dataType, businessObject.rightClassNames, businessObject.nodeType, type);
       writeClassEnd();
     }
 

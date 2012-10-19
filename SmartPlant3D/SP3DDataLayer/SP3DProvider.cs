@@ -264,7 +264,7 @@ namespace iringtools.sdk.sp3ddatalayer
     public Response PostCachingDataObjects(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
-      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], "_" + _settings["Scope"]);
 
       try
       {
@@ -291,7 +291,7 @@ namespace iringtools.sdk.sp3ddatalayer
                 _logger.Error(string.Format("Error in Post: {0}", ex));
               }  // no need to handle exception because identifier is only used for statusing
 
-              status.Identifier = identifier;
+              status.Identifier = identifier;             
 
               try
               {
@@ -382,7 +382,8 @@ namespace iringtools.sdk.sp3ddatalayer
           compilerVersion = _settings["CompilerVersion"];
         }
 
-        generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname);
+        generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname, "sp3d");
+        generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname, "caching");
       }
     }
 
@@ -1736,11 +1737,16 @@ namespace iringtools.sdk.sp3ddatalayer
       FilterBase filterBase = FindFilter(bco.businessFilter.filterName);
       System.Collections.ObjectModel.ReadOnlyCollection<Ingr.SP3D.Common.Middle.BusinessObject> filteredObjects = filterBase.Apply();
       _filtertedKeys = new List<string>();
-      string temp = string.Empty;      
+      string temp = string.Empty;
+      int i = 0;  // debugging purpose
 
       foreach (Ingr.SP3D.Common.Middle.BusinessObject businessObj in filteredObjects)
       {
+        if (i > 10)  // debugging purpose
+          break;     // debugging purpose
+
         _filtertedKeys.Add(businessObj.ObjectID.Substring(1, businessObj.ObjectID.Length - 2).ToLower());
+        i++;   // debugging purpose
       }
 
       //Utility.Write<List<string>>(_filtertedKeys, "C:\\temp\\filteredOids.txt");
