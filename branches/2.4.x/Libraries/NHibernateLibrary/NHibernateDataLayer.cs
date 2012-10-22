@@ -101,7 +101,7 @@ namespace org.iringtools.adapter.datalayer
         string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
           ? String.Empty : (objectDefinition.objectNamespace + ".");
 
-        Type type = Type.GetType(ns + objectType + ", " + _settings["ExecutingAssemblyName"]);
+        Type type = Type.GetType(ns + objectDefinition.objectName + ", " + _settings["ExecutingAssemblyName"]);
         IDataObject dataObject = null;
 
         if (identifiers != null)
