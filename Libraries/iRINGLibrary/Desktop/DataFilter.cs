@@ -1220,7 +1220,7 @@ namespace org.iringtools.library
     public SortOrder SortOrder { get; set; }
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupExpressions")]
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupExpression")]
   public class RollupExpression
   {
     [DataMember(Name = "groupBy", Order = 0, EmitDefaultValue = false)]
@@ -1230,11 +1230,11 @@ namespace org.iringtools.library
     public List<Rollup> Rollups { get; set; }
   }    
 
-  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupExpression")]
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollup")]
   public class Rollup
   {
     [DataMember(Name = "propertyName", Order = 0, EmitDefaultValue = false)]
-    public String PropertyName { get; set; }
+    public string PropertyName { get; set; }
 
     [DataMember(Name = "type", Order = 1, EmitDefaultValue = false)]
     public RollupType Type { get; set; }
@@ -1251,6 +1251,8 @@ namespace org.iringtools.library
     Average,
     [EnumMember]
     Sum,
+    [EnumMember]
+    First,
     [EnumMember]
     Null,   
   }

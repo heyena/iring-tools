@@ -2216,6 +2216,38 @@ namespace org.iringtools.adapter
               dataProperty.dataType == DataType.Single);
         }
 
+/*
+ * Sample filter with rollups:
+ * 
+<?xml version="1.0" encoding="utf-8"?>
+<dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter">
+  <rollupExpressions>
+    <rollupExpression>
+      <groupBy>ID</groupBy>
+      <rollups>
+        <rollup>
+          <propertyName>NOMDIAMETER</propertyName>
+          <type>Max</type>
+        </rollup>
+        <rollup>
+          <propertyName>AREA</propertyName>
+          <type>First</type>
+        </rollup>
+      </rollups>
+    </rollupExpression>
+    <rollupExpression>
+      <groupBy>AREA</groupBy>
+      <rollups>
+        <rollup>
+          <propertyName>NOMDIAMETER</propertyName>
+          <type>Sum</type>
+        </rollup>
+      </rollups>
+    </rollupExpression>
+  </rollupExpressions>
+</dataFilter>
+ */
+
         public XDocument GetDataProjectionWithRollups(
               string projectName, string applicationName, string resourceName,
                 DataFilter filter, ref string format, int start, int limit, bool fullIndex)
@@ -2236,21 +2268,23 @@ namespace org.iringtools.adapter
             _dataObjects = PageDataObjects(_dataObjDef.objectName, filter);
 
             #region process rollups
-            List<IDataObject> rollupDataObjects = null;
+            IDataObject[] rollupDataObjects = null;
                             
             foreach (RollupExpression rollupExpr in filter.RollupExpressions)
             {
               // apply group-by
               DataProperty dataProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollupExpr.GroupBy.ToLower());
-              _dataObjects.ToList<IDataObject>().Sort(new DataObjectComparer(dataProp));
+              List<IDataObject> sortedDataObjects = _dataObjects.ToList<IDataObject>();
+
+              sortedDataObjects.Sort(new DataObjectComparer(dataProp));
 
               List<List<IDataObject>> dataObjectGroups = new List<List<IDataObject>>();
               List<IDataObject> dataObjectGroup = null;
-              object prevPropValue = null;
+              string prevPropValue = null;
 
-              foreach (IDataObject dataObject in _dataObjects)
+              foreach (IDataObject dataObject in sortedDataObjects)
               {
-                object propValue = dataObject.GetPropertyValue(dataProp.propertyName);
+                string propValue = Convert.ToString(dataObject.GetPropertyValue(dataProp.propertyName));
 
                 if (propValue != prevPropValue)
                 {
@@ -2265,20 +2299,27 @@ namespace org.iringtools.adapter
                 }
               }
 
+              sortedDataObjects = null;
+
               // apply rollups
-              rollupDataObjects = new List<IDataObject>(dataObjectGroups.Count);
+              rollupDataObjects = new IDataObject[dataObjectGroups.Count];
 
               foreach (Rollup rollup in rollupExpr.Rollups)
               {
                 DataProperty rollupProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollup.PropertyName.ToLower());
 
-                for (int i = 0; i < dataObjectGroups.Count; i++)
+                for (int j = 0; j < dataObjectGroups.Count; j++)
                 {
+                  if (rollupDataObjects[j] == null)
+                  {
+                    rollupDataObjects[j] = _dataLayer.Create(resourceName, null)[0];
+                  }
+
                   switch (rollup.Type)
                   {
                     case RollupType.Null:
                     {
-                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, null);
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
                       break;
                     }
                     case RollupType.Max:
@@ -2287,19 +2328,19 @@ namespace org.iringtools.adapter
 
                       if (IsNumeric(rollupProp))
                       {
-                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        foreach (IDataObject dataObject in dataObjectGroups[j])
                         {
-                          double value = (double)dataObject.GetPropertyValue(rollupProp.propertyName);
+                          object value = dataObject.GetPropertyValue(rollupProp.propertyName);
 
-                          if (maxValue == null || value > (double)maxValue)
+                          if (maxValue == null || Convert.ToDecimal(Convert.ToString(value)) > (Decimal)maxValue)
                           {
-                            maxValue = value;
+                            maxValue = Convert.ToDecimal(Convert.ToString(value));
                           }
                         }
                       }
                       else if (rollupProp.dataType == DataType.DateTime)
                       {
-                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        foreach (IDataObject dataObject in dataObjectGroups[j])
                         {
                           DateTime value = (DateTime)dataObject.GetPropertyValue(rollupProp.propertyName);
 
@@ -2313,8 +2354,20 @@ namespace org.iringtools.adapter
                       {
                         maxValue = true;
                       }
+                      else
+                      {
+                        foreach (IDataObject dataObject in dataObjectGroups[j])
+                        {
+                          string value = (string)dataObject.GetPropertyValue(rollupProp.propertyName);
 
-                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, maxValue);
+                          if (maxValue == null || string.Compare(value, (string)maxValue) > 0)
+                          {
+                            maxValue = value;
+                          }
+                        }
+                      }
+
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, maxValue);
                       break;
                     }
                     case RollupType.Min:
@@ -2323,19 +2376,19 @@ namespace org.iringtools.adapter
 
                       if (IsNumeric(rollupProp))
                       {
-                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        foreach (IDataObject dataObject in dataObjectGroups[j])
                         {
-                          double value = (double)dataObject.GetPropertyValue(rollupProp.propertyName);
+                          object value = dataObject.GetPropertyValue(rollupProp.propertyName);
 
-                          if (minValue == null || value < (double)minValue)
+                          if (minValue == null || Convert.ToDecimal(Convert.ToString(value)) < (Decimal)minValue)
                           {
-                            minValue = value;
+                            minValue = Convert.ToDecimal(Convert.ToString(value));
                           }
                         }
                       }
                       else if (rollupProp.dataType == DataType.DateTime)
                       {
-                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        foreach (IDataObject dataObject in dataObjectGroups[j])
                         {
                           DateTime value = (DateTime)dataObject.GetPropertyValue(rollupProp.propertyName);
 
@@ -2349,54 +2402,83 @@ namespace org.iringtools.adapter
                       {
                         minValue = false;
                       }
+                      else
+                      {
+                        foreach (IDataObject dataObject in dataObjectGroups[j])
+                        {
+                          string value = (string)dataObject.GetPropertyValue(rollupProp.propertyName);
 
-                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, minValue);
+                          if (minValue == null || string.Compare(value, (string)minValue) < 0)
+                          {
+                            minValue = value;
+                          }
+                        }
+                      }
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, minValue);
                       break;
                     }
                     case RollupType.Sum:
                     {
-                      double sumValue = 0;
-
                       if (IsNumeric(rollupProp))
                       {
-                        foreach (IDataObject dataObject in dataObjectGroups[i])
-                        {
-                          double value = (double)dataObject.GetPropertyValue(rollupProp.propertyName);
-                          sumValue += value;
-                        }
-                      }
+                        Decimal sum = 0;
 
-                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, sumValue);
+                        foreach (IDataObject dataObject in dataObjectGroups[j])
+                        {
+                          object value = dataObject.GetPropertyValue(rollupProp.propertyName);
+                          sum += Convert.ToDecimal(Convert.ToString(value));
+                        }
+
+                        rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, sum);
+                      }
+                      else
+                      {
+                        rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                      }
+                    
                       break;
                     }
                     case RollupType.Average:
                     {
-                      double sumValue = 0;
-
                       if (IsNumeric(rollupProp))
                       {
-                        foreach (IDataObject dataObject in dataObjectGroups[i])
+                        Decimal sum = 0;
+
+                        foreach (IDataObject dataObject in dataObjectGroups[j])
                         {
-                          double value = (double)dataObject.GetPropertyValue(rollupProp.propertyName);
-                          sumValue += value;
+                          object value = dataObject.GetPropertyValue(rollupProp.propertyName);
+                          sum += Convert.ToDecimal(Convert.ToString(value));
                         }
+
+                        rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, sum / dataObjectGroups[j].Count);
+                      }
+                      else
+                      {
+                        rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
                       }
 
-                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, sumValue / dataObjectGroups[i].Count);
                       break;
                     }
                     default:  // take the first value
                     {
-                      rollupDataObjects[i].SetPropertyValue(rollupProp.propertyName, dataObjectGroups[i][0].GetPropertyValue(rollupProp.propertyName));
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, dataObjectGroups[j][0].GetPropertyValue(rollupProp.propertyName));
                       break;
                     }
                   }
                 }
               }
+
+              _dataObjects = rollupDataObjects;
             }
 
             // apply paging
-            _dataObjects = rollupDataObjects.GetRange(start, limit);
+            if (limit <= 0)
+              limit = 25;
+
+            if (limit > rollupDataObjects.Length)
+              limit = rollupDataObjects.Length;
+
+            _dataObjects = _dataObjects.ToList<IDataObject>().GetRange(start, limit);
 
             #endregion
 
@@ -4263,8 +4345,8 @@ namespace org.iringtools.adapter
           _dataProp.dataType == DataType.Int64 ||
           _dataProp.dataType == DataType.Single)
         {
-          double leftValue = (double)left.GetPropertyValue(_dataProp.propertyName);
-          double rightValue = (double)right.GetPropertyValue(_dataProp.propertyName);
+          decimal leftValue = (decimal)left.GetPropertyValue(_dataProp.propertyName);
+          decimal rightValue = (decimal)right.GetPropertyValue(_dataProp.propertyName);
 
           if (leftValue > rightValue)
             return 1;
@@ -4274,7 +4356,7 @@ namespace org.iringtools.adapter
 
           return 0;
         }
-        
+
         // compare date times
         if (_dataProp.dataType == DataType.DateTime)
         {
@@ -4285,8 +4367,11 @@ namespace org.iringtools.adapter
         }
 
         // compare strings
-        return String.Compare(left.GetPropertyValue(_dataProp.propertyName).ToString(), 
-          right.GetPropertyValue(_dataProp.propertyName).ToString());
+        {
+          string leftValue = left.GetPropertyValue(_dataProp.propertyName).ToString();
+          string rightValue = right.GetPropertyValue(_dataProp.propertyName).ToString();
+          return string.Compare(leftValue, rightValue);
+        }
       }
     }
 }

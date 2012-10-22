@@ -557,14 +557,7 @@ namespace org.iringtools.nhibernate
           bool dataPropertyIsNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
           if (dataPropertyIsNullable)
           {
-            if (IsNumeric(dataProperty.dataType))
-            {
-              _dataObjectWriter.WriteLine("{0} = {1}.Parse((String)value, NumberStyles.Any);", dataProperty.propertyName, dataProperty.dataType);
-            }
-            else
-            {
-              _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
-            }
+            _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
           }
           else
           {
