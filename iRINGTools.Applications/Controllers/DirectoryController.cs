@@ -508,12 +508,26 @@ namespace org.iringtools.web.controllers
     {
       string success = String.Empty;
       string scopeName = form["Scope"];
-      
+      library.Configuration configuration = new Configuration();
+
+      foreach (string key in form.AllKeys)
+      {
+        if (key.ToLower() != "name" || key.ToLower() != "description" || key.ToLower() != "assembly")
+        {
+          configuration.AppSettings.Settings.Add(new Setting()
+          {
+            Key = key,
+            Value = form[key]
+          });
+        }
+      }
+
       ScopeApplication application = new ScopeApplication()
       {
         Name = form["Name"],
         Description = form["Description"],
-        Assembly = form["assembly"]
+        Assembly = form["assembly"],
+        Configuration = configuration
       };
 
       if (String.IsNullOrEmpty(form["Application"]))

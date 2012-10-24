@@ -119,6 +119,20 @@ namespace org.iringtools.adapter
       if (File.Exists(scopesPath))
       {
         _scopes = Utility.Read<ScopeProjects>(scopesPath);
+
+        foreach (ScopeProject proj in _scopes)
+        {
+          foreach (ScopeApplication app in proj.Applications)
+          {
+            string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], proj.Name, app.Name);
+
+            if (File.Exists(configPath))
+            {
+              Configuration config = Utility.Read<Configuration>(configPath, false);
+              app.Configuration = config;
+            }
+          }
+        }
       }
       else
       {
@@ -413,6 +427,19 @@ namespace org.iringtools.adapter
             dataLayerBinding.Save(String.Format("{0}BindingConfiguration.{1}.{2}.xml",
                 _settings["AppDataPath"], scope.Name, application.Name));
           }
+
+          //
+          // save off configuration
+          //
+          Configuration config = application.Configuration;
+          string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], scope.Name, application.Name);
+
+          if (!File.Exists(configPath))
+          {
+            File.Create(configPath);
+          }
+
+          Utility.Write<Configuration>(config, false);
         }
         else
         {
@@ -4307,54 +4334,6 @@ namespace org.iringtools.adapter
       }
 
       return dataObjects;
-    }
-
-    public XElement GetAppSettings(string scope, string app)
-    {
-      try
-      {
-        string path = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], scope, app);
-
-        if (File.Exists(path))
-        {
-          Configuration config = Utility.Read<Configuration>(path, false);
-          string xml = Utility.Serialize<Configuration>(config, false);
-          XElement xElement = XElement.Parse(xml);
-          return xElement;
-        }
-
-        throw new Exception("App settings [" + path + "] not found.");
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(ex);
-        throw ex;
-      }
-    }
-
-    public Response PostAppSettings(string scope, string app, Configuration config)
-    {
-      try
-      {
-        string path = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], scope, app);
-
-        if (File.Exists(path))
-        {
-          Utility.Write<Configuration>(config, false);
-          
-          Response response = new Response();
-          response.Level = StatusLevel.Success;
-          response.Messages.Add("Settings updated successfully.");
-          return response;
-        }
-
-        throw new Exception("App settings [" + path + "] not found.");
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(ex);
-        throw ex;
-      }
     }
   }
 
