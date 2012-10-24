@@ -1442,7 +1442,7 @@ namespace org.iringtools.utility
         return dateTime;
 
       DateTime dt = DateTime.Parse(dateTime);
-      return dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
+      return dt.ToString("O");
     }
 
     public static string GetMimeType(string fileName)
