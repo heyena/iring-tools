@@ -116,7 +116,8 @@ namespace org.iringtools.web.controllers
                       Name = application.Name,
                       Description = application.Description,
                       DataLayer = dataLayer.Name,
-                      Assembly = dataLayer.Assembly
+                      Assembly = dataLayer.Assembly,
+                      Configuration = application.Configuration
                     }
                   };
 
@@ -128,7 +129,8 @@ namespace org.iringtools.web.controllers
                 }
               }
 
-              return Json(nodes, JsonRequestBehavior.AllowGet);
+              ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
+              return result;
             }
           case "ApplicationNode":
             {
@@ -512,7 +514,8 @@ namespace org.iringtools.web.controllers
 
       foreach (string key in form.AllKeys)
       {
-        if (key.ToLower() != "name" || key.ToLower() != "description" || key.ToLower() != "assembly")
+        if (key.ToLower() != "scope" || key.ToLower() != "name" || 
+          key.ToLower() != "description" || key.ToLower() != "assembly")
         {
           configuration.AppSettings.Settings.Add(new Setting()
           {
@@ -539,7 +542,8 @@ namespace org.iringtools.web.controllers
         success = _repository.UpdateApplication(scopeName, form["Application"], application);
       }
 
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      return result;
     }
 
     public JsonResult DeleteScope(FormCollection form)
