@@ -16,10 +16,10 @@ namespace org.iringtools.library
   public class AppSettings
   {
     [XmlElement(ElementName = "add")]
-    public List<AppSetting> Settings { get; set; }
+    public List<Setting> Settings { get; set; }
   }
 
-  public class AppSetting
+  public class Setting
   {
     [XmlAttribute(AttributeName = "key")]
     public String Key { get; set; }

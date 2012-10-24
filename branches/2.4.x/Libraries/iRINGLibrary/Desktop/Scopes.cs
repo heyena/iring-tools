@@ -69,6 +69,9 @@ namespace org.iringtools.library
     /// </summary>
     /// <returns>A string of the assembly of the application</returns>
     [DataMember(Name = "assembly", Order = 2, EmitDefaultValue = false)]
-    public string Assembly { get; set; }  
+    public string Assembly { get; set; }
+
+    [DataMember(Name = "configuration", Order = 3, EmitDefaultValue = false)]
+    public Configuration Configuration { get; set; }  
   }
 }

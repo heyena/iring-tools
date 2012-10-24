@@ -129,29 +129,6 @@ namespace org.iringtools.services
       return _adapterProvider.GetConfiguration(scope, app);
     }
     #endregion Config methods
-
-    #region App Setting methods
-    [Description("Get settings for a specific application.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/settings")]
-    public XElement GetAppSettings(String scope, String app)
-    {
-      return _adapterProvider.GetAppSettings(scope, app);
-    }
-
-    [Description("Save settings for a specific application.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/settings")]
-    public Response PostAppSettings(String scope, String app, library.Configuration config)
-    {
-      try
-      {
-        return _adapterProvider.PostAppSettings(scope, app, config);
-      }
-      catch (Exception ex)
-      {
-        return PrepareErrorResponse(ex);
-      }
-    }
-    #endregion Setting methods
     #endregion
 
     #region Private Resources
