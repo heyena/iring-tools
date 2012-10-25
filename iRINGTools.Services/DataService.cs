@@ -243,7 +243,7 @@ namespace org.iringtools.services
 
         XDocument xDocument = null;
 
-        if (filter != null && filter.RollupExpressions != null)
+        if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
         {
           xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
         }
