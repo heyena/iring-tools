@@ -514,8 +514,8 @@ namespace org.iringtools.web.controllers
 
       foreach (string key in form.AllKeys)
       {
-        if (key.ToLower() != "scope" || key.ToLower() != "name" || 
-          key.ToLower() != "description" || key.ToLower() != "assembly")
+        if (key.ToLower() != "scope" && key.ToLower() != "name" && 
+          key.ToLower() != "description" && key.ToLower() != "assembly")
         {
           configuration.AppSettings.Settings.Add(new Setting()
           {
