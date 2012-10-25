@@ -1723,7 +1723,7 @@ namespace iringtools.sdk.sp3ddatalayer
         BusinessCommodity businessCommodity = _sp3dDataBaseDictionary.GetBusinessCommoditiy(objectType);
         numberOfObjects = businessCommodity.businessObjects.Count;
         commodityName = objectType.ToLower();
-        //GetSP3DFilteredKeys(businessCommodity);
+        GetSP3DFilteredKeys(businessCommodity);
         dataObjects = new List<IDataObject>();
         DataDictionary dataDictionary = Utility.Read<DataDictionary>(string.Format("{0}DataDictionary.{1}.{2}.xml", _dataPath, _scope, commodityName));
         DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(string.Format("{0}DatabaseDictionary.{1}.{2}.xml", _dataPath, _scope, commodityName));
