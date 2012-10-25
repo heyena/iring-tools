@@ -73,6 +73,7 @@ namespace iringtools.sdk.sp3ddatalayer
       Status status = new Status();
       string commodityName = string.Empty, objectNamespace = string.Empty;
       DataObject commodityDataObject = null;
+      string sourceCode = string.Empty;
 
       if (dbSchema.businessCommodities != null)
       {
@@ -87,17 +88,13 @@ namespace iringtools.sdk.sp3ddatalayer
             commodityDataObject = databaseDictionary.GetDataObject(commodityName);
             status.Identifier = String.Format("{0}.{1}.{2}", projectName, applicationName, commodityName);
             Directory.CreateDirectory(_settings["AppDataPath"]);
-
             _mappingBuilder = new StringBuilder();
             _mappingWriter = new XmlTextWriter(new StringWriter(_mappingBuilder));
             _mappingWriter.Formatting = Formatting.Indented;
-
             _mappingWriter.WriteStartElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
-            _mappingWriter.WriteAttributeString("default-lazy", "true");
-            
+            _mappingWriter.WriteAttributeString("default-lazy", "true");            
             _dataObjectBuilder = new StringBuilder();
             _dataObjectWriter = new IndentedTextWriter(new StringWriter(_dataObjectBuilder), "  ");
-
             _dataObjectWriter.WriteLine(Utility.GeneratedCodeProlog);
             _dataObjectWriter.WriteLine("using System;");
             _dataObjectWriter.WriteLine("using System.Globalization;");
@@ -107,7 +104,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
             foreach (BusinessObject businessObject in businessCommodity.businessObjects)
             {
-              prepareSP3DStartObjectNHibernateMap(businessObject, type);
+              prepareSP3DStartObjectNHibernateMap(businessObject, type, commodityName);
 
               #region related objects
 
@@ -133,22 +130,25 @@ namespace iringtools.sdk.sp3ddatalayer
 
             _mappingWriter.WriteEndElement(); // end hibernate-mapping element
             _mappingWriter.Close();
-
-            string mappingXml = _mappingBuilder.ToString();
-            string sourceCode = _dataObjectBuilder.ToString();
+            string mappingXml = _mappingBuilder.ToString();            
 
             #region Compile entities
-            Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
-            compilerOptions.Add("CompilerVersion", compilerVersion);
 
-            CompilerParameters parameters = new CompilerParameters();
-            parameters.GenerateExecutable = false;
-            parameters.ReferencedAssemblies.Add("System.dll");
-            parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "Iesi.Collections.dll");
-            parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "iRINGLibrary.dll");
-            NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + assembly));
+            if (type == "sp3d")
+            {
+              sourceCode = _dataObjectBuilder.ToString();
+              Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
+              compilerOptions.Add("CompilerVersion", compilerVersion);
 
-            Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
+              CompilerParameters parameters = new CompilerParameters();
+              parameters.GenerateExecutable = false;
+              parameters.ReferencedAssemblies.Add("System.dll");
+              parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "Iesi.Collections.dll");
+              parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "iRINGLibrary.dll");
+              NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + assembly));
+
+              Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
+            }
             #endregion Compile entities
 
             #region Writing memory data to disk
@@ -156,6 +156,7 @@ namespace iringtools.sdk.sp3ddatalayer
             string hibernateConfig = CreateConfiguration(
               (Provider)Enum.Parse(typeof(Provider), dbSchema.Provider, true),
               dbSchema.ConnectionString, dbSchema.SchemaName);
+
             DataDictionary dataDictionarySP3D = CreateDataDictionarySP3D(businessCommodity);
             DatabaseDictionary databaseDictionarySP3D = CreateDatabaseDictionarySP3D(dataDictionarySP3D, dbSchema, databaseDictionary);
             dataDictionarySP3D.dataVersion = databaseDictionary.dataVersion;
@@ -173,11 +174,10 @@ namespace iringtools.sdk.sp3ddatalayer
             }
             else
             {
-              Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping._" + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
-              Utility.WriteString(sourceCode, _settings["AppCodePath"] + "Model._" + projectName + "." + applicationName + "." + commodityName + ".cs", Encoding.ASCII);
-              Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration._" + projectName + "." + applicationName + "." + commodityName + ".xml", Encoding.UTF8);
-              Utility.Write<DataDictionary>(dataDictionarySP3D, _settings["AppDataPath"] + "DataDictionary._" + projectName + "." + applicationName + "." + commodityName + ".xml");
-              Utility.Write<DatabaseDictionary>(databaseDictionarySP3D, _settings["AppDataPath"] + "DatabaseDictionary._" + projectName + "." + applicationName + "." + commodityName + ".xml");
+              Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping.sp3ddl_" + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+              Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration.sp3ddl_" + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+              Utility.Write<DataDictionary>(dataDictionarySP3D, _settings["AppDataPath"] + "DataDictionary.sp3ddl_" + projectName + "." + applicationName + ".xml");
+              Utility.Write<DatabaseDictionary>(databaseDictionarySP3D, _settings["AppDataPath"] + "DatabaseDictionary.sp3ddl_" + projectName + "." + applicationName + ".xml");
               status.Messages.Add("Entities of [_" + projectName + "." + applicationName + "] generated successfully.");
             }
             #endregion
@@ -206,7 +206,7 @@ namespace iringtools.sdk.sp3ddatalayer
       _mappingWriter.WriteEndElement(); // end property element    
     }
 
-    private void writeInterface(List<BusinessProperty> bpropList, BusinessInterface bintf)
+    private void writeInterface(List<BusinessProperty> bpropList, BusinessInterface bintf, string type)
     {
       /*
       * <join table="JCoatingInfo">
@@ -224,7 +224,9 @@ namespace iringtools.sdk.sp3ddatalayer
           bpropList.Add(bprop);
 
         writeProperty(bprop.propertyName, bprop.columnName);
-        writeModelProperty(bprop.dataType, bprop.propertyName);
+
+        if (type == "sp3d")
+          writeModelProperty(bprop.dataType, bprop.propertyName);
       }
 
       _mappingWriter.WriteEndElement(); // end join
@@ -478,22 +480,12 @@ namespace iringtools.sdk.sp3ddatalayer
     }
 
     private string getNSClassName(string objectNameSpace, string className, string type)
-    {
-      if (type != "sp3d")
-      {
-        int startIndexOfCachingTableName = objectNameSpace.LastIndexOf('.');
-        objectNameSpace = objectNameSpace.Substring(0, startIndexOfCachingTableName);        
-      }
+    {      
       return objectNameSpace + "." + className + ", " + _settings["ExecutingAssemblyName"];
     }
 
     private string getNSModelClassName(string objectNameSpace, string className, string type)
-    {
-      if (type != "sp3d")
-      {
-        int startIndexOfCachingTableName = objectNameSpace.LastIndexOf('.');
-        objectNameSpace = objectNameSpace.Substring(0, startIndexOfCachingTableName);
-      }
+    {      
       return objectNameSpace + "." + className;
     }
 
@@ -616,22 +608,21 @@ namespace iringtools.sdk.sp3ddatalayer
             _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
         }
       }
-
-      if (type == "sp3d")
-        switch (nodeType)
-        {
-          case NodeType.StartObject:
-            foreach (string relationName in relationNames)
-              _dataObjectWriter.WriteLine("case \"{0}_oidOrigin\": return {1}.oidOrigin;", relationName, "_" + relationName);
-            break;
-          case NodeType.MiddleObject:          
-            foreach (string relationName in relationNames)
-              _dataObjectWriter.WriteLine("case \"oidOrigin\": return {0}.oidOrigin;", "_" + relationName);
-            break;
-          case NodeType.EndObject:            
-            _dataObjectWriter.WriteLine("case \"oidOrigin\": return null;");
-            break;
-        }     
+      
+      switch (nodeType)
+      {
+        case NodeType.StartObject:
+          foreach (string relationName in relationNames)
+            _dataObjectWriter.WriteLine("case \"{0}_oidOrigin\": return {1}.oidOrigin;", relationName, "_" + relationName);
+          break;
+        case NodeType.MiddleObject:          
+          foreach (string relationName in relationNames)
+            _dataObjectWriter.WriteLine("case \"oidOrigin\": return {0}.oidOrigin;", "_" + relationName);
+          break;
+        case NodeType.EndObject:            
+          _dataObjectWriter.WriteLine("case \"oidOrigin\": return null;");
+          break;
+      }     
 
       _dataObjectWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
       _dataObjectWriter.Indent--;
@@ -723,34 +714,33 @@ namespace iringtools.sdk.sp3ddatalayer
 
         _dataObjectWriter.WriteLine("break;");
         _dataObjectWriter.Indent--;        
-      }      
+      } 
 
-      if (type == "sp3d")
-        switch (nodeType)
-        {
-          case NodeType.StartObject:
-            foreach (string relationName in relationNames)
-            {
-              _dataObjectWriter.WriteLine("case \"{0}_oidOrigin\":", relationName);
-              _dataObjectWriter.Indent++;
-              _dataObjectWriter.WriteLine("{0}.oidOrigin = Convert.To{1}(value);", "_" + relationName, DataType.String);
-              _dataObjectWriter.WriteLine("break;");
-              _dataObjectWriter.Indent--;
-              //_dataObjectWriter.WriteLine("case \"{0}_oidOrigin\": return {1}.oidOrigin;", relationName, "_" + relationName);
-            }
-            break;
-          case NodeType.MiddleObject:
-            foreach (string relationName in relationNames)
-            {
-              _dataObjectWriter.WriteLine("case \"oidOrigin\":");
-              _dataObjectWriter.Indent++;
-              _dataObjectWriter.WriteLine("{0}.oidOrigin = Convert.To{1}(value);", "_" + relationName, DataType.String);
-              _dataObjectWriter.WriteLine("break;");
-              _dataObjectWriter.Indent--;
-              //_dataObjectWriter.WriteLine("case \"oidOrigin\": return {0}.oidOrigin;", "_" + relationName);
-            }
-            break;          
-        }    
+      switch (nodeType)
+      {
+        case NodeType.StartObject:
+          foreach (string relationName in relationNames)
+          {
+            _dataObjectWriter.WriteLine("case \"{0}_oidOrigin\":", relationName);
+            _dataObjectWriter.Indent++;
+            _dataObjectWriter.WriteLine("{0}.oidOrigin = Convert.To{1}(value);", "_" + relationName, DataType.String);
+            _dataObjectWriter.WriteLine("break;");
+            _dataObjectWriter.Indent--;
+            //_dataObjectWriter.WriteLine("case \"{0}_oidOrigin\": return {1}.oidOrigin;", relationName, "_" + relationName);
+          }
+          break;
+        case NodeType.MiddleObject:
+          foreach (string relationName in relationNames)
+          {
+            _dataObjectWriter.WriteLine("case \"oidOrigin\":");
+            _dataObjectWriter.Indent++;
+            _dataObjectWriter.WriteLine("{0}.oidOrigin = Convert.To{1}(value);", "_" + relationName, DataType.String);
+            _dataObjectWriter.WriteLine("break;");
+            _dataObjectWriter.Indent--;
+            //_dataObjectWriter.WriteLine("case \"oidOrigin\": return {0}.oidOrigin;", "_" + relationName);
+          }
+          break;          
+      }    
 
       _dataObjectWriter.WriteLine("default:");
       _dataObjectWriter.Indent++;
@@ -797,14 +787,15 @@ namespace iringtools.sdk.sp3ddatalayer
       _dataObjectWriter.WriteLine("}"); // end namespace block    
     }
 
-    private void prepareSP3DStartObjectNHibernateMap(BusinessObject businessObject, string type)
+    private void prepareSP3DStartObjectNHibernateMap(BusinessObject businessObject, string type, string commodityName)
     {
       _dataObjectWriter.WriteLine();
-      _dataObjectWriter.WriteLine("namespace {0}", businessObject.objectNamespace);
+      string newNSName = businessObject.objectNamespace;      
+      _dataObjectWriter.WriteLine("namespace {0}", newNSName);
       _dataObjectWriter.Write("{"); // begin namespace block
       _dataObjectWriter.Indent++;
 
-      CreateNHibernateStartObjectMapSP3D(businessObject, type);
+      CreateNHibernateStartObjectMapSP3D(businessObject, type, commodityName);
 
       _dataObjectWriter.Indent--;
       _dataObjectWriter.WriteLine("}"); // end namespace block    
@@ -974,7 +965,7 @@ namespace iringtools.sdk.sp3ddatalayer
           if (businessObject.businessInterfaces.Count > 0)
             foreach (BusinessInterface businessInterface in businessObject.businessInterfaces)
             {
-              writeInterface(businessDataPropertyList, businessInterface);
+              writeInterface(businessDataPropertyList, businessInterface, "sp3d");
             }
 
         
@@ -991,17 +982,16 @@ namespace iringtools.sdk.sp3ddatalayer
       writeClassEnd();
     }
 
-    private void CreateNHibernateStartObjectMapSP3D(BusinessObject businessObject, string type)
+    private void CreateNHibernateStartObjectMapSP3D(BusinessObject businessObject, string type, string commodityName)
     {
       BusinessKeyProperty keyObj = businessObject.businessKeyProperties.First();
       string className = businessObject.objectName;
       string key = keyObj.keyPropertyName;
-      int startIndexOfCachingTableName = businessObject.objectNamespace.LastIndexOf('.') + 1;
-      string cachingTableName = businessObject.objectNamespace.Substring(startIndexOfCachingTableName, businessObject.objectNamespace.Length - startIndexOfCachingTableName);
       string nsClassName = getNSClassName(businessObject.objectNamespace, className, type);
+      writeClass(nsClassName, commodityName, businessObject.tableName, key, type);
 
-      writeClass(nsClassName, cachingTableName, businessObject.tableName, key, type);
-      writeModelClass(className, key, keyObj.dataType);
+      if (type == "sp3d")
+        writeModelClass(className, key, keyObj.dataType);
 
       List<BusinessProperty> businessDataPropertyList = new List<BusinessProperty>();
       BusinessProperty businessProperty = businessObject.convertKeyPropertyToProperyt(keyObj);
@@ -1027,11 +1017,15 @@ namespace iringtools.sdk.sp3ddatalayer
         if (businessObject.businessInterfaces.Count > 0)
           foreach (BusinessInterface businessInterface in businessObject.businessInterfaces)
           {
-            writeInterface(businessDataPropertyList, businessInterface);
+            writeInterface(businessDataPropertyList, businessInterface, type);
           }
 
-      writeModelGetFunction(businessDataPropertyList, className, businessObject.rightClassNames, businessObject.nodeType, type);
-      writeModelSetFunction(businessDataPropertyList, keyObj.dataType, businessObject.rightClassNames, businessObject.nodeType, type);
+      if (type == "sp3d")
+      {
+        writeModelGetFunction(businessDataPropertyList, className, businessObject.rightClassNames, businessObject.nodeType, type);
+        writeModelSetFunction(businessDataPropertyList, keyObj.dataType, businessObject.rightClassNames, businessObject.nodeType, type);
+      }
+
       writeClassEnd();
     }
 
@@ -1162,38 +1156,23 @@ namespace iringtools.sdk.sp3ddatalayer
           XmlTextWriter mappingWriter = new XmlTextWriter(new StringWriter(mappingBuilder));
           mappingWriter.Formatting = Formatting.Indented;
           mappingWriter.WriteStartElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
-          mappingWriter.WriteAttributeString("default-lazy", "true");
-          StringBuilder dataObjectBuilder = new StringBuilder();
-          IndentedTextWriter dataObjectWriter = new IndentedTextWriter(new StringWriter(dataObjectBuilder), "  ");
-          dataObjectWriter.WriteLine(Utility.GeneratedCodeProlog);
-          dataObjectWriter.WriteLine("using System;");
-          dataObjectWriter.WriteLine("using System.Globalization;");
-          dataObjectWriter.WriteLine("using System.Collections.Generic;");
-          dataObjectWriter.WriteLine("using Iesi.Collections.Generic;");
-          dataObjectWriter.WriteLine("using org.iringtools.library;");
-          dataObjectWriter.WriteLine();
-          dataObjectWriter.WriteLine("namespace {0}", dataObject.objectNamespace);
-          dataObjectWriter.Write("{"); // begin namespace block
-          dataObjectWriter.Indent++;
+          mappingWriter.WriteAttributeString("default-lazy", "true");          
           dataObject.objectNamespace = dataObject.objectNamespace;
-          CreateNHibernateDataObjectMap(dataObject);
-          dataObjectWriter.Indent--;
-          dataObjectWriter.WriteLine("}"); // end namespace block
+          CreateNHibernateDataObjectMap(dataObject, "single");         
           mappingWriter.WriteEndElement(); // end hibernate-mapping element
           mappingWriter.Close();
-          string mappingXml = mappingBuilder.ToString();
-          string sourceCode = dataObjectBuilder.ToString();
+          string mappingXml = mappingBuilder.ToString();          
 
           #region Compile entities
-          Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
-          compilerOptions.Add("CompilerVersion", compilerVersion);
-          CompilerParameters parameters = new CompilerParameters();
-          parameters.GenerateExecutable = false;
-          parameters.ReferencedAssemblies.Add("System.dll");
-          parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "Iesi.Collections.dll");
-          parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "iRINGLibrary.dll");
-          NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + assembly));
-          Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
+          //Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
+          //compilerOptions.Add("CompilerVersion", compilerVersion);
+          //CompilerParameters parameters = new CompilerParameters();
+          //parameters.GenerateExecutable = false;
+          //parameters.ReferencedAssemblies.Add("System.dll");
+          //parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "Iesi.Collections.dll");
+          //parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "iRINGLibrary.dll");
+          //NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + assembly));
+          //Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
           #endregion Compile entities
 
           #region Writing memory data to disk
@@ -1203,7 +1182,6 @@ namespace iringtools.sdk.sp3ddatalayer
 
           Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + "._" + objectName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping." + projectName + "." + applicationName + "._" + objectName + ".xml", Encoding.UTF8);
-          Utility.WriteString(sourceCode, _settings["AppCodePath"] + "Model." + projectName + "." + applicationName + "._" + objectName + ".cs", Encoding.ASCII);
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
           dataDictionary.dataVersion = dbSchema.dataVersion;
           dataDictionary.enableSearch = dbSchema.enableSearch;
@@ -1253,7 +1231,7 @@ namespace iringtools.sdk.sp3ddatalayer
             _dataObjectWriter.Write("{"); // begin namespace block
             _dataObjectWriter.Indent++;
             dataObject.objectNamespace = dataObject.objectNamespace;
-            CreateNHibernateDataObjectMap(dataObject);
+            CreateNHibernateDataObjectMap(dataObject, "multiple");
             _dataObjectWriter.Indent--;
             _dataObjectWriter.WriteLine("}"); // end namespace block    
 
@@ -1326,7 +1304,7 @@ namespace iringtools.sdk.sp3ddatalayer
       return new DataDictionary { dataObjects = dataObjects };
     }
 
-    private void CreateNHibernateDataObjectMap(DataObject dataObject)
+    private void CreateNHibernateDataObjectMap(DataObject dataObject, string type)
     {
       string keyClassName = dataObject.objectName + "Id";
 
@@ -1337,11 +1315,14 @@ namespace iringtools.sdk.sp3ddatalayer
       #region Create composite key
       if (dataObject.keyProperties.Count > 1)
       {
-        _dataObjectWriter.WriteLine();
-        _dataObjectWriter.WriteLine("[Serializable]");
-        _dataObjectWriter.WriteLine("public class {0}", keyClassName);
-        _dataObjectWriter.WriteLine("{"); // begin composite key class
-        _dataObjectWriter.Indent++;
+        if (type != "single")
+        {
+          _dataObjectWriter.WriteLine();
+          _dataObjectWriter.WriteLine("[Serializable]");
+          _dataObjectWriter.WriteLine("public class {0}", keyClassName);
+          _dataObjectWriter.WriteLine("{"); // begin composite key class
+          _dataObjectWriter.Indent++;
+        }
 
         _mappingWriter.WriteStartElement("composite-id");
         _mappingWriter.WriteAttributeString("name", "Id");
@@ -1353,7 +1334,8 @@ namespace iringtools.sdk.sp3ddatalayer
 
           if (keyProperty != null)
           {
-            _dataObjectWriter.WriteLine("public {0} {1} {{ get; set; }}", keyProperty.dataType, keyProperty.propertyName);
+            if (type != "single")
+              _dataObjectWriter.WriteLine("public {0} {1} {{ get; set; }}", keyProperty.dataType, keyProperty.propertyName);
 
             _mappingWriter.WriteStartElement("key-property");
             _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
@@ -1362,108 +1344,120 @@ namespace iringtools.sdk.sp3ddatalayer
           }
         }
 
-        _dataObjectWriter.WriteLine("public override bool Equals(object obj)"); // start Equals method
-        _dataObjectWriter.WriteLine("{");
-
-        _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("bool equals = false;");
-        _dataObjectWriter.WriteLine("if (obj != null)");
-        _dataObjectWriter.WriteLine("{");
-
-        for (int i = 0; i < dataObject.keyProperties.Count; i++)
+        if (type != "single")
         {
-          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
+          _dataObjectWriter.WriteLine("public override bool Equals(object obj)"); // start Equals method
+          _dataObjectWriter.WriteLine("{");
 
-          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
+          _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("bool equals = false;");
+          _dataObjectWriter.WriteLine("if (obj != null)");
+          _dataObjectWriter.WriteLine("{");
 
-          if (i == 0)
+          for (int i = 0; i < dataObject.keyProperties.Count; i++)
           {
-            _dataObjectWriter.Indent++;
-            _dataObjectWriter.Write("equals = (");
+            DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
+
+            string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
+
+            if (i == 0)
+            {
+              _dataObjectWriter.Indent++;
+              _dataObjectWriter.Write("equals = (");
+            }
+            else
+            {
+              _dataObjectWriter.Write(" && ");
+            }
+
+            _dataObjectWriter.Write("this.{0} == (({1})obj).{0}", keyName, keyClassName);
           }
-          else
+
+          _dataObjectWriter.WriteLine(");");
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}");
+          _dataObjectWriter.WriteLine("return equals;");
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}"); // end Equals method
+
+          _dataObjectWriter.WriteLine("public override int GetHashCode()"); // start GetHashCode method
+          _dataObjectWriter.WriteLine("{");
+          _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("int _hashCode = 0;");
+
+          for (int i = 0; i < dataObject.keyProperties.Count; i++)
           {
-            _dataObjectWriter.Write(" && ");
+            DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
+
+            string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
+
+            _dataObjectWriter.WriteLine("_hashCode += {0}.GetHashCode();", keyName);
           }
 
-          _dataObjectWriter.Write("this.{0} == (({1})obj).{0}", keyName, keyClassName);
+          _dataObjectWriter.WriteLine("return _hashCode;");
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}"); // end GetHashCode method
+
+          _dataObjectWriter.WriteLine("public override string ToString()"); // start ToString method
+          _dataObjectWriter.WriteLine("{");
+          _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("string _idString = String.Empty;");
+
+          for (int i = 0; i < dataObject.keyProperties.Count; i++)
+          {
+            DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
+            string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
+
+            _dataObjectWriter.WriteLine("_idString += {0}.ToString();", keyName);
+          }
+
+          _dataObjectWriter.WriteLine("return _idString;");
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}"); // end ToString method
+
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}"); // end composite key class
         }
-
-        _dataObjectWriter.WriteLine(");");
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}");
-        _dataObjectWriter.WriteLine("return equals;");
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}"); // end Equals method
-
-        _dataObjectWriter.WriteLine("public override int GetHashCode()"); // start GetHashCode method
-        _dataObjectWriter.WriteLine("{");
-        _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("int _hashCode = 0;");
-
-        for (int i = 0; i < dataObject.keyProperties.Count; i++)
-        {
-          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
-
-          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
-
-          _dataObjectWriter.WriteLine("_hashCode += {0}.GetHashCode();", keyName);
-        }
-
-        _dataObjectWriter.WriteLine("return _hashCode;");
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}"); // end GetHashCode method
-
-        _dataObjectWriter.WriteLine("public override string ToString()"); // start ToString method
-        _dataObjectWriter.WriteLine("{");
-        _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("string _idString = String.Empty;");
-
-        for (int i = 0; i < dataObject.keyProperties.Count; i++)
-        {
-          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
-          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
-
-          _dataObjectWriter.WriteLine("_idString += {0}.ToString();", keyName);
-        }
-
-        _dataObjectWriter.WriteLine("return _idString;");
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}"); // end ToString method
-
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}"); // end composite key class
 
         _mappingWriter.WriteEndElement(); // end composite-id class element
       }
       #endregion Create composite key
 
-      _dataObjectWriter.WriteLine();
-      _dataObjectWriter.WriteLine("public class {0} : IDataObject", dataObject.objectName);
-      _dataObjectWriter.WriteLine("{"); // begin class block
-      _dataObjectWriter.Indent++;
+      if (type != "single")
+      {
+        _dataObjectWriter.WriteLine();
+        _dataObjectWriter.WriteLine("public class {0} : IDataObject", dataObject.objectName);
+        _dataObjectWriter.WriteLine("{"); // begin class block
+        _dataObjectWriter.Indent++;
+      }
 
       if (dataObject.keyProperties.Count > 1)
       {
-        _dataObjectWriter.WriteLine("public {0}()", dataObject.objectName);
-        _dataObjectWriter.WriteLine("{");
-        _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("Id = new {0}Id();", dataObject.objectName);
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}");
-        _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyClassName);
+        if (type != "single")
+        {
+          _dataObjectWriter.WriteLine("public {0}()", dataObject.objectName);
+          _dataObjectWriter.WriteLine("{");
+          _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("Id = new {0}Id();", dataObject.objectName);
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}");
+          _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyClassName);
+        }
 
         foreach (KeyProperty keyName in dataObject.keyProperties)
         {
           DataProperty keyProperty = dataObject.getKeyProperty(keyName.keyPropertyName);
 
-          _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
-          _dataObjectWriter.WriteLine("{");
-          _dataObjectWriter.Indent++;
-          _dataObjectWriter.WriteLine("get {{ return Id.{0}; }}", keyProperty.propertyName);
-          _dataObjectWriter.WriteLine("set {{ Id.{0} = value; }}", keyProperty.propertyName);
-          _dataObjectWriter.Indent--;
-          _dataObjectWriter.WriteLine("}");
+          if (type != "single")
+          {
+            _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
+            _dataObjectWriter.WriteLine("{");
+            _dataObjectWriter.Indent++;
+            _dataObjectWriter.WriteLine("get {{ return Id.{0}; }}", keyProperty.propertyName);
+            _dataObjectWriter.WriteLine("set {{ Id.{0} = value; }}", keyProperty.propertyName);
+            _dataObjectWriter.Indent--;
+            _dataObjectWriter.WriteLine("}");
+          }
 
           _mappingWriter.WriteStartElement("property");
           _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
@@ -1477,7 +1471,8 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
 
-        _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
+        if (type != "single")
+          _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
 
         _mappingWriter.WriteStartElement("id");
         _mappingWriter.WriteAttributeString("name", "Id");
@@ -1489,13 +1484,16 @@ namespace iringtools.sdk.sp3ddatalayer
 
         if (keyProperty.keyType == KeyType.assigned)
         {
-          _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
-          _dataObjectWriter.WriteLine("{");
-          _dataObjectWriter.Indent++;
-          _dataObjectWriter.WriteLine("get { return Id; }");
-          _dataObjectWriter.WriteLine("set { Id = value; }");
-          _dataObjectWriter.Indent--;
-          _dataObjectWriter.WriteLine("}");
+          if (type != "single")
+          {
+            _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
+            _dataObjectWriter.WriteLine("{");
+            _dataObjectWriter.Indent++;
+            _dataObjectWriter.WriteLine("get { return Id; }");
+            _dataObjectWriter.WriteLine("set { Id = value; }");
+            _dataObjectWriter.Indent--;
+            _dataObjectWriter.WriteLine("}");
+          }
 
           _mappingWriter.WriteStartElement("property");
           _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
@@ -1603,14 +1601,17 @@ namespace iringtools.sdk.sp3ddatalayer
         {
           if (!dataObject.isKeyProperty(dataProperty.propertyName))
           {
-            bool isNullableType = (dataProperty.dataType != DataType.String && dataProperty.isNullable == true);
-            if (isNullableType)
+            if (type != "single")
             {
-              _dataObjectWriter.WriteLine("public virtual {0}? {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
-            }
-            else
-            {
-              _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
+              bool isNullableType = (dataProperty.dataType != DataType.String && dataProperty.isNullable == true);
+              if (isNullableType)
+              {
+                _dataObjectWriter.WriteLine("public virtual {0}? {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
+              }
+              else
+              {
+                _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
+              }
             }
 
             _mappingWriter.WriteStartElement("property");
@@ -1621,118 +1622,122 @@ namespace iringtools.sdk.sp3ddatalayer
         }
 
         // Implements GetPropertyValue of IDataObject
-        _dataObjectWriter.WriteLine();
-        _dataObjectWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
-        _dataObjectWriter.WriteLine("{");
-        _dataObjectWriter.Indent++; _dataObjectWriter.WriteLine("switch (propertyName)");
-        _dataObjectWriter.WriteLine("{");
-        _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("case \"Id\": return Id;");
-
-        foreach (DataProperty dataProperty in dataObject.dataProperties)
+        if (type != "single")
         {
-          _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
-        }
-
-        _dataObjectWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}");
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}");
-
-        // Implements SetPropertyValue of IDataObject
-        _dataObjectWriter.WriteLine();
-        _dataObjectWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
-        _dataObjectWriter.WriteLine("{");
-        _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("switch (propertyName)");
-        _dataObjectWriter.Write("{");
-        _dataObjectWriter.Indent++;
-
-        if (dataObject.keyProperties.Count == 1)
-        {
-          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
-          DataType keyDataType = keyProperty.dataType;
-
-          if (IsNumeric(keyDataType))
-          {
-            _dataObjectWriter.WriteLine(@"
-        case ""Id"":
-          Id = {0}.Parse((String)value, NumberStyles.Any);
-          break;", keyDataType);
-          }
-          else
-          {
-            _dataObjectWriter.WriteLine(@"
-        case ""Id"":
-          Id = Convert.To{0}(value);
-          break;", keyDataType);
-          }
-        }
-        else if (dataObject.keyProperties.Count > 1)
-        {
-          _dataObjectWriter.WriteLine(@"
-        case ""Id"":
-          Id = ({0}Id)value;
-          break;", dataObject.objectName);
-        }
-
-        /*
-        foreach (KeyProperty keyName in dataObject.keyProperties)
-        {
-          DataProperty keyProperty = dataObject.getKeyProperty(keyName.keyPropertyName);
-
-          _dataObjectWriter.WriteLine("case \"{0}\":", keyProperty.propertyName);
+          _dataObjectWriter.WriteLine();
+          _dataObjectWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
+          _dataObjectWriter.WriteLine("{");
+          _dataObjectWriter.Indent++; _dataObjectWriter.WriteLine("switch (propertyName)");
+          _dataObjectWriter.WriteLine("{");
           _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("case \"Id\": return Id;");
 
-          bool isDataPropertyNullable = (keyProperty.dataType == DataType.String || keyProperty.isNullable == true);
-          if (isDataPropertyNullable)
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
-            _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", keyProperty.propertyName, keyProperty.dataType);
-          }
-          else
-          {
-            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", keyProperty.propertyName, keyProperty.dataType);
+            _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
           }
 
-          _dataObjectWriter.WriteLine("break;");
+          _dataObjectWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
           _dataObjectWriter.Indent--;
-        }*/
+          _dataObjectWriter.WriteLine("}");
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}");
 
-        foreach (DataProperty dataProperty in dataObject.dataProperties)
-        {
-          _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.propertyName);
+          // Implements SetPropertyValue of IDataObject
+          _dataObjectWriter.WriteLine();
+          _dataObjectWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
+          _dataObjectWriter.WriteLine("{");
+          _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("switch (propertyName)");
+          _dataObjectWriter.Write("{");
           _dataObjectWriter.Indent++;
 
-          bool dataPropertyIsNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
-          if (dataPropertyIsNullable)
+
+          if (dataObject.keyProperties.Count == 1)
           {
-            if (IsNumeric(dataProperty.dataType))
+            DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
+            DataType keyDataType = keyProperty.dataType;
+
+            if (IsNumeric(keyDataType))
             {
-              _dataObjectWriter.WriteLine("{0} = {1}.Parse((String)value, NumberStyles.Any);", dataProperty.propertyName, dataProperty.dataType);
+              _dataObjectWriter.WriteLine(@"
+              case ""Id"":
+                Id = {0}.Parse((String)value, NumberStyles.Any);
+                break;", keyDataType);
             }
             else
             {
-              _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
+              _dataObjectWriter.WriteLine(@"
+              case ""Id"":
+                Id = Convert.To{0}(value);
+                break;", keyDataType);
             }
           }
-          else
+          else if (dataObject.keyProperties.Count > 1)
           {
-            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.propertyName, dataProperty.dataType);
+            _dataObjectWriter.WriteLine(@"
+            case ""Id"":
+              Id = ({0}Id)value;
+              break;", dataObject.objectName);
           }
 
-          _dataObjectWriter.WriteLine("break;");
-          _dataObjectWriter.Indent--;
-        }
+          /*
+          foreach (KeyProperty keyName in dataObject.keyProperties)
+          {
+            DataProperty keyProperty = dataObject.getKeyProperty(keyName.keyPropertyName);
 
-        _dataObjectWriter.WriteLine("default:");
-        _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}");
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}");
+            _dataObjectWriter.WriteLine("case \"{0}\":", keyProperty.propertyName);
+            _dataObjectWriter.Indent++;
+
+            bool isDataPropertyNullable = (keyProperty.dataType == DataType.String || keyProperty.isNullable == true);
+            if (isDataPropertyNullable)
+            {
+              _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", keyProperty.propertyName, keyProperty.dataType);
+            }
+            else
+            {
+              _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", keyProperty.propertyName, keyProperty.dataType);
+            }
+
+            _dataObjectWriter.WriteLine("break;");
+            _dataObjectWriter.Indent--;
+          }*/
+
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
+          {
+            _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.propertyName);
+            _dataObjectWriter.Indent++;
+
+            bool dataPropertyIsNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
+            if (dataPropertyIsNullable)
+            {
+              if (IsNumeric(dataProperty.dataType))
+              {
+                _dataObjectWriter.WriteLine("{0} = {1}.Parse((String)value, NumberStyles.Any);", dataProperty.propertyName, dataProperty.dataType);
+              }
+              else
+              {
+                _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
+              }
+            }
+            else
+            {
+              _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.propertyName, dataProperty.dataType);
+            }
+
+            _dataObjectWriter.WriteLine("break;");
+            _dataObjectWriter.Indent--;
+          }
+
+          _dataObjectWriter.WriteLine("default:");
+          _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}");
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}");
+        }
       #endregion Process columns
 
         #region generate GetRelatedObjects method
@@ -1773,8 +1778,12 @@ namespace iringtools.sdk.sp3ddatalayer
         //_dataObjectWriter.WriteLine("}");
         #endregion
 
-        _dataObjectWriter.Indent--;
-        _dataObjectWriter.WriteLine("}"); // end class block
+        if (type != "single")
+        {
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}"); // end class block
+        }
+
         _mappingWriter.WriteEndElement(); // end class element
       }
     }
