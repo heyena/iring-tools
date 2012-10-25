@@ -51,10 +51,10 @@ namespace iringtools.sdk.sp3ddatalayer
 
           if (!_sessionFactories.ContainsKey(factoryKey))
           {
-            InitSessionFactorySP3D(path, context, commodityName);
+            return InitSessionFactorySP3D(path, context, commodityName);
           }
-
-          return _sessionFactories[factoryKey].OpenSession();
+          else
+            return _sessionFactories[factoryKey].OpenSession();
         }
       }
       catch (Exception e)
@@ -216,9 +216,8 @@ namespace iringtools.sdk.sp3ddatalayer
 
           if (!_sessionFactories.ContainsKey(factoryKey))
           {
-            InitSessionFactory(path, context);
+            return InitSessionFactory(path, context);
           }
-
           return _sessionFactories[factoryKey].OpenSession();
         }
       }
@@ -245,7 +244,7 @@ namespace iringtools.sdk.sp3ddatalayer
       return parts[0] + ";" + parts[1] + ";" + parts[2] + ";" + parts[3];
     }
 
-    private void InitSessionFactorySP3D(string path, string context, string commodityName)
+    private ISession InitSessionFactorySP3D(string path, string context, string commodityName)
     {
       try
       {
@@ -299,8 +298,10 @@ namespace iringtools.sdk.sp3ddatalayer
 
             string factoryKey = context.ToLower() + "." + commodityName;
             _sessionFactories[factoryKey] = sessionFactory;
+            return _sessionFactories[factoryKey].OpenSession();
           }
         }
+        return null;
       }
       catch (Exception e)
       {
@@ -309,7 +310,7 @@ namespace iringtools.sdk.sp3ddatalayer
       }
     }
 
-    private void InitSessionFactory(string path, string context)
+    private ISession InitSessionFactory(string path, string context)
     {
       try
       {
@@ -317,7 +318,7 @@ namespace iringtools.sdk.sp3ddatalayer
         {
           string cfgPath = string.Format("{0}nh-configuration.{1}.xml", path, context);
           string mappingPath = string.Format("{0}nh-mapping.{1}.xml", path, context);
-          string connStr = "";
+          string connStr = "";          
 
           if (File.Exists(cfgPath) && File.Exists(mappingPath))
           {
@@ -363,8 +364,10 @@ namespace iringtools.sdk.sp3ddatalayer
 
             string factoryKey = context.ToLower();
             _sessionFactories[factoryKey] = sessionFactory;
+            return _sessionFactories[factoryKey].OpenSession();
           }
         }
+        return null;
       }
       catch (Exception e)
       {
