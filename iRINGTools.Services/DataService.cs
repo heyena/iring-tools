@@ -143,7 +143,7 @@ namespace org.iringtools.services
       try
       {
         NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-        
+
         bool fullIndex = false;
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
@@ -243,7 +243,7 @@ namespace org.iringtools.services
 
         XDocument xDocument = null;
 
-        if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count>0)
+        if (filter != null && filter.RollupExpressions != null)
         {
           xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
         }
