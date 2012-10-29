@@ -434,12 +434,12 @@ namespace org.iringtools.adapter
           Configuration config = application.Configuration;
           string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], scope.Name, application.Name);
 
-          if (!File.Exists(configPath))
-          {
-            File.Create(configPath);
-          }
-
-          Utility.Write<Configuration>(config, false);
+          //if (!File.Exists(configPath))
+          //{
+          //  File.Create(configPath);
+          //}
+          if (config.AppSettings.Settings.Count > 0)
+            Utility.Write<Configuration>(config,configPath,false);
         }
         else
         {

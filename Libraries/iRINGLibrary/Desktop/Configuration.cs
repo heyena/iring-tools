@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace org.iringtools.library
 {
-  [XmlRoot(Namespace = "", ElementName = "configuration")]
+  [XmlRoot(ElementName = "configuration")]
   public class Configuration
   {
     [XmlElement(ElementName = "appSettings")]
