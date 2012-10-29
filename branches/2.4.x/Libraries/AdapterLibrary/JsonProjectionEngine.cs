@@ -192,37 +192,40 @@ namespace org.iringtools.adapter.projection
 
     public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
     {
-      try
-      {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
-        DataObject objectDefinition = FindGraphDataObject(graphName);
-
-        if (objectDefinition != null)
+        try
         {
-          DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
+            IList<IDataObject> dataObjects = new List<IDataObject>();
+            DataObject objectDefinition = FindGraphDataObject(graphName);
 
-          foreach (DataItem dataItem in dataItems.items)
-          {
-            dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
-            IDataObject dataObject = _dataLayer.Create(graphName, new List<string>{ dataItem.id })[0];
-
-            foreach (var pair in dataItem.properties)
+            if (objectDefinition != null)
             {
-              dataObject.SetPropertyValue(pair.Key, pair.Value);
+                DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
+
+                foreach (DataItem dataItem in dataItems.items)
+                {
+                    if (dataItem.id != null)
+                    {
+                        dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
+                    }
+                    IDataObject dataObject = _dataLayer.Create(graphName, new List<string> { dataItem.id })[0];
+
+                    foreach (var pair in dataItem.properties)
+                    {
+                        dataObject.SetPropertyValue(pair.Key, pair.Value);
+                    }
+
+                    dataObjects.Add(dataObject);
+                }
             }
 
-            dataObjects.Add(dataObject);
-          }
+            return dataObjects;
         }
-
-        return dataObjects;
-      }
-      catch (Exception e)
-      {
-        string message = "Error marshalling data items to data objects." + e;
-        _logger.Error(message);
-        throw new Exception(message);
-      }
+        catch (Exception e)
+        {
+            string message = "Error marshalling data items to data objects." + e;
+            _logger.Error(message);
+            throw new Exception(message);
+        }
     }
 
     #region helper methods
