@@ -40,21 +40,21 @@ namespace NUnit.Tests
       _adapterProvider = new AdapterProvider(_settings);
     }
 
-    //[Test]
-    //public void GetDataLayers()
-    //{
-    //  DataLayers dataLayers = _adapterProvider.GetDataLayers();
-     
-    //  Assert.AreNotEqual(0, dataLayers.Count);
-    //}
+    [Test]
+    public void GetDataLayers()
+    {
+      DataLayers dataLayers = _adapterProvider.GetDataLayers();
 
-    //[Test]
-    //public void GetScopes()
-    //{
-    //  List<ScopeProject> scopes = _adapterProvider.GetScopes();
+      Assert.AreNotEqual(0, dataLayers.Count);
+    }
 
-    //  Assert.AreNotEqual(0, scopes.Count);
-    //}
+    [Test]
+    public void GetScopes()
+    {
+      List<ScopeProject> scopes = _adapterProvider.GetScopes();
+
+      Assert.AreNotEqual(0, scopes.Count);
+    }
 
     //[Test]
     //public void UpdateScopes()
@@ -90,72 +90,72 @@ namespace NUnit.Tests
     //  Assert.AreNotEqual(0, response.StatusList.Count);
     //}
 
-    //[Test]
-    //public void GetBinding()
-    //{
-    //  XElement binding = _adapterProvider.GetBinding(
-    //    _settings["ProjectName"], _settings["ApplicationName"]);
+    [Test]
+    public void GetBinding()
+    {
+      XElement binding = _adapterProvider.GetBinding(
+        _settings["ProjectName"], _settings["ApplicationName"]);
 
-    //  Assert.AreNotEqual(0, binding.Elements("bind").Count());
-    //}
+      Assert.AreNotEqual(0, binding.Elements("bind").Count());
+    }
 
-    //[Test]
-    //public void UpdateBinding()
-    //{
-    //  string bindingPath = String.Format(
-    //     "{0}BindingConfiguration.{1}.{2}.xml",
-    //     _settings["AppDataPath"],
-    //     _settings["ProjectName"], 
-    //     _settings["ApplicationName"]
-    //   );
+    [Test]
+    public void UpdateBinding()
+    {
+      string bindingPath = String.Format(
+         "{0}BindingConfiguration.{1}.{2}.xml",
+         _settings["AppDataPath"],
+         _settings["ProjectName"],
+         _settings["ApplicationName"]
+       );
 
-    //  XElement binding = XDocument.Load(bindingPath).Root;
-      
-    //  Response response = _adapterProvider.UpdateBinding(
-    //    _settings["ProjectName"], _settings["ApplicationName"],
-    //    binding);
+      XElement binding = XDocument.Load(bindingPath).Root;
 
-    //  Assert.AreEqual(StatusLevel.Success, response.Level);
-    //  Assert.AreNotEqual(0, response.StatusList.Count);
-    //}
+      Response response = _adapterProvider.UpdateBinding(
+        _settings["ProjectName"], _settings["ApplicationName"],
+        binding);
 
-    //[Test]
-    //public void GetDictionary()
-    //{
-    //    DataDictionary dictionary = _adapterProvider.GetDictionary(
-    //      _settings["ProjectName"], _settings["ApplicationName"]);
+      Assert.AreEqual(StatusLevel.Success, response.Level);
+      Assert.AreNotEqual(0, response.StatusList.Count);
+    }
 
-    //    Assert.AreNotEqual(0, dictionary.dataObjects.Count);
-    //}
+    [Test]
+    public void GetDictionary()
+    {
+      DataDictionary dictionary = _adapterProvider.GetDictionary(
+        _settings["ProjectName"], _settings["ApplicationName"]);
 
-    //[Test]
-    //public void GetMapping()
-    //{
-    //  Mapping mapping = _adapterProvider.GetMapping(
-    //  _settings["ProjectName"], _settings["ApplicationName"]);
+      Assert.AreNotEqual(0, dictionary.dataObjects.Count);
+    }
 
-    //  Assert.AreNotEqual(0, mapping.graphMaps.Count);
-    //}
+    [Test]
+    public void GetMapping()
+    {
+      Mapping mapping = _adapterProvider.GetMapping(
+      _settings["ProjectName"], _settings["ApplicationName"]);
 
-    //[Test]
-    //public void UpdateMapping()
-    //{
-    //  string mappingPath = String.Format(
-    //     "{0}Mapping.{1}.{2}.xml",
-    //     _settings["AppDataPath"],
-    //     _settings["ProjectName"],
-    //     _settings["ApplicationName"]
-    //   );
+      Assert.AreNotEqual(0, mapping.graphMaps.Count);
+    }
 
-    //    XElement mapping = XDocument.Load(mappingPath).Root;
+    [Test]
+    public void UpdateMapping()
+    {
+      string mappingPath = String.Format(
+         "{0}Mapping.{1}.{2}.xml",
+         _settings["AppDataPath"],
+         _settings["ProjectName"],
+         _settings["ApplicationName"]
+       );
 
-    //    Response response = _adapterProvider.UpdateMapping(
-    //      _settings["ProjectName"], _settings["ApplicationName"],
-    //      mapping);
+      XElement mapping = XDocument.Load(mappingPath).Root;
 
-    //    Assert.AreEqual(StatusLevel.Success, response.Level);
-    //    Assert.AreNotEqual(0, response.StatusList.Count);
-    //}
+      Response response = _adapterProvider.UpdateMapping(
+        _settings["ProjectName"], _settings["ApplicationName"],
+        mapping);
+
+      Assert.AreEqual(StatusLevel.Success, response.Level);
+      Assert.AreNotEqual(0, response.StatusList.Count);
+    }
   }
 }
 
