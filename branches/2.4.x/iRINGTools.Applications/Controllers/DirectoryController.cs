@@ -510,11 +510,17 @@ namespace org.iringtools.web.controllers
     {
       string success = String.Empty;
       string scopeName = form["Scope"];
-      library.Configuration configuration = new Configuration();
+      library.Configuration configuration = new Configuration
+      {
+        AppSettings = new AppSettings 
+        { 
+           Settings = new List<Setting>()
+        }
+      };
 
       foreach (string key in form.AllKeys)
       {
-        if (key.ToLower() != "scope" && key.ToLower() != "name" && 
+        if (key.ToLower() != "scope" && key.ToLower() != "name" && key.ToLower() != "application" &&
           key.ToLower() != "description" && key.ToLower() != "assembly")
         {
           configuration.AppSettings.Settings.Add(new Setting()
