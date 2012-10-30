@@ -84,7 +84,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if not exist $(ProjectDir)\app.config copy $(ProjectDir)\QMXFGenerator_default.config $(ProjectDir)\app.config</PreBuildEvent>
+    <PreBuildEvent>if not exist "$(ProjectDir)app.config" copy "$(ProjectDir)QMXFGenerator_default.config" "$(ProjectDir)app.config"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

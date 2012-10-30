@@ -4925,7 +4925,7 @@
     <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>if not exist $(ProjectDir)\Web.config copy $(ProjectDir)\Web_Default.config $(ProjectDir)\Web.config</PreBuildEvent>
+    <PreBuildEvent>if not exist "$(ProjectDir)\Web.config" copy "$(ProjectDir)\Web_Default.config" "$(ProjectDir)\Web.config"</PreBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
