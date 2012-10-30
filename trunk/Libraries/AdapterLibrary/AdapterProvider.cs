@@ -3632,7 +3632,6 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
       response.Messages = new Messages();
-      //XElement binding;
       XElement configuration = null;
       try
       {
