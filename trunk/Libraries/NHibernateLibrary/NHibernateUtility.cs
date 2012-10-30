@@ -155,68 +155,71 @@ namespace org.iringtools.nhibernate
 
                     // connect criterions with logical operators
                     //TODO: process grouping
-                    NHibernate.Criterion.ICriterion lhs = criterions.First();
-
-                    for (int i = 0; i < dataFilter.Expressions.Count; i++)
+                    if (criterions.Count == 1)
                     {
-                        Expression expression = dataFilter.Expressions[i];
-                        
-                        NHibernate.Criterion.ICriterion rhs = criterions[i];
-                        
-                      
+                        NHibernate.Criterion.ICriterion lhs = criterions.First();
 
-                        switch (expression.LogicalOperator)
+                        for (int i = 0; i < dataFilter.Expressions.Count; i++)
                         {
-                            case LogicalOperator.Not:
-                                expression.LogicalOperator = LogicalOperator.None;
-                                lhs = NHibernate.Criterion.Expression.Not(lhs);
-                                break;
+                            Expression expression = dataFilter.Expressions[i];
 
-                            case LogicalOperator.AndNot:
-                                if (i == 0)
-                                {
-                                    expression.LogicalOperator = LogicalOperator.None;
-                                    lhs = NHibernate.Criterion.Expression.Not(lhs);
-                                }
-                                else
-                                {
-                                    expression.LogicalOperator = LogicalOperator.And;
-                                    rhs = NHibernate.Criterion.Expression.Not(rhs);
-                                }  
-                                break;
+                            NHibernate.Criterion.ICriterion rhs = criterions[i];
 
-                            case LogicalOperator.OrNot:
-                                if (i == 0)
-                                {
-                                    expression.LogicalOperator = LogicalOperator.None;
-                                    lhs = NHibernate.Criterion.Expression.Not(lhs);
-                                }
-                                else
-                                {
-                                    expression.LogicalOperator = LogicalOperator.Or;
-                                    rhs = NHibernate.Criterion.Expression.Not(rhs);
-                                }
-                                break;
-                        }
 
-                        if (expression.LogicalOperator != LogicalOperator.None)
-                        {
+
                             switch (expression.LogicalOperator)
                             {
-                                case LogicalOperator.And:
-                                    if (i == 0) break;
-                                    lhs = NHibernate.Criterion.Expression.And(lhs, rhs);
+                                case LogicalOperator.Not:
+                                    expression.LogicalOperator = LogicalOperator.None;
+                                    lhs = NHibernate.Criterion.Expression.Not(lhs);
                                     break;
 
-                                case LogicalOperator.Or:
-                                    if (i == 0) break;
-                                    lhs = NHibernate.Criterion.Expression.Or(lhs, rhs);
+                                case LogicalOperator.AndNot:
+                                    if (i == 0)
+                                    {
+                                        expression.LogicalOperator = LogicalOperator.None;
+                                        lhs = NHibernate.Criterion.Expression.Not(lhs);
+                                    }
+                                    else
+                                    {
+                                        expression.LogicalOperator = LogicalOperator.And;
+                                        rhs = NHibernate.Criterion.Expression.Not(rhs);
+                                    }
+                                    break;
+
+                                case LogicalOperator.OrNot:
+                                    if (i == 0)
+                                    {
+                                        expression.LogicalOperator = LogicalOperator.None;
+                                        lhs = NHibernate.Criterion.Expression.Not(lhs);
+                                    }
+                                    else
+                                    {
+                                        expression.LogicalOperator = LogicalOperator.Or;
+                                        rhs = NHibernate.Criterion.Expression.Not(rhs);
+                                    }
                                     break;
                             }
-                        }
-                    }
 
-                    criteria.Add(lhs);
+                            if (expression.LogicalOperator != LogicalOperator.None)
+                            {
+                                switch (expression.LogicalOperator)
+                                {
+                                    case LogicalOperator.And:
+                                        if (i == 0) break;
+                                        lhs = NHibernate.Criterion.Expression.And(lhs, rhs);
+                                        break;
+
+                                    case LogicalOperator.Or:
+                                        if (i == 0) break;
+                                        lhs = NHibernate.Criterion.Expression.Or(lhs, rhs);
+                                        break;
+                                }
+                            }
+                        }
+
+                        criteria.Add(lhs);
+                    }
                 }
 
                 if (dataFilter.OrderExpressions != null)
