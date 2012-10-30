@@ -176,7 +176,6 @@
     <Copy SourceFiles="@(ServicesDeployment)"
           DestinationFiles="@(ServicesDeployment ->'$(ServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\Web_Default.config $(ServicesDeploymentDir)\Web.config" />
-    <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Repositories_Default.xml $(ServicesDeploymentDir)\App_Data\Repositories.xml" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
