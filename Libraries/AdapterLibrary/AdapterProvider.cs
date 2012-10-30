@@ -3959,12 +3959,21 @@ namespace org.iringtools.adapter
             }
             catch (Exception e)
             {
-              _logger.Error("Error loading data layer (while getting types): " + e);
+              _logger.Error("Error loading data layer (while getting types for " + asm.GetName() + "): " + e);
+            }
+          }
+          catch (ReflectionTypeLoadException rtle)
+          {
+            _logger.Error("Reflection Type Load Exception (while getting types for " + asm.GetName() + ")");
+            _logger.Error(rtle.Message);
+            foreach (Exception e in rtle.LoaderExceptions)
+            {
+              _logger.Error(" LoaderException: " + e.Message);
             }
           }
           catch (Exception e)
           {
-            _logger.Error("Error loading data layer (while getting assemblies): " + e);
+            _logger.Error("Error loading data layer (while getting assemblies for " + asm.GetName() + "): " + e);
           }
         }
       }
