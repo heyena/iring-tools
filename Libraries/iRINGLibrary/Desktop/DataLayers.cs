@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using System.IO;
 
 namespace org.iringtools.library
 {
-  [XmlRoot]  
+  [XmlRoot]
   [DataContract(Namespace = "http://www.iringtools.org/library", Name = "dataLayer")]
   public class DataLayer
   {
@@ -22,10 +23,25 @@ namespace org.iringtools.library
     [XmlElement]
     [DataMember(Name = "configurable", Order = 3, EmitDefaultValue = false)]
     public bool Configurable { get; set; }
+
+    [XmlElement]
+    [DataMember(Name = "mainDLL", Order = 4, EmitDefaultValue = false)]
+    public string MainDLL { get; set; }
+
+    [XmlElement]
+    [DataMember(Name = "path", Order = 5, EmitDefaultValue = false)]
+    public string Path { get; set; }
+
+    [XmlElement]
+    [DataMember(Name = "external", Order = 6, EmitDefaultValue = false)]
+    public bool External { get; set; }
+
+    [XmlElement]
+    [DataMember(Name = "package", Order = 7, EmitDefaultValue = false)]
+    public MemoryStream Package { get; set; }
   }
 
   [CollectionDataContract(Name = "dataLayers", Namespace = "http://www.iringtools.org/library", ItemName = "dataLayer")]
-  public class DataLayers : List<DataLayer>
-  {
-  }
+  public class DataLayers : List<DataLayer> { }
+
 }

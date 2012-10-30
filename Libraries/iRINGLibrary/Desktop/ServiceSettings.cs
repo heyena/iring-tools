@@ -19,6 +19,7 @@ namespace org.iringtools.library
       this.Add("AppCodePath", @".\App_Code\");
       this.Add("AppDataPath", @".\App_Data\");
       this.Add("XmlPath", this["AppDataPath"]);  // for backward compatibility
+      this.Add("DataLayersPath", @".\App_Data\DataLayers\");      
       this.Add("ProxyCredentialToken", String.Empty);
       this.Add("ProxyHost", String.Empty);
       this.Add("ProxyPort", String.Empty);
