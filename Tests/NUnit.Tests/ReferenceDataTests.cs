@@ -17,7 +17,7 @@ using org.iringtools.refdata.federation;
 
 namespace NUnit.Tests
 {
-    [TestFixture]
+    //[TestFixture]
     public class ReferenceDataTests
     {
         private ReferenceDataProvider _refdataProvider = null;
@@ -49,7 +49,7 @@ namespace NUnit.Tests
         //    _refdataProvider = new ReferenceDataProvider(_settings);
         //}
 
-        [Test]
+        //[Test]
         public void Search()
         {
             RefDataEntities _entities = _refdataProvider.Search("possible individual");
@@ -57,21 +57,21 @@ namespace NUnit.Tests
 
         }
 
-        [Test]
+        //[Test]
         public void GetClassLabel()
         {
             Entity entity = _refdataProvider.GetClassLabel("R99781532089");
             StringAssert.IsMatch("ISO 15926-4 POSSIBLE INDIVIDUAL", entity.Label);
         }
 
-        [Test]
+        //[Test]
         public void GetRepositories()
         {
             List<Repository> repositories = _refdataProvider.GetRepositories();
             Assert.AreNotEqual(0, repositories.Count);
         }
 
-        [Test]
+        //[Test]
         public void GetClass()
         {
           QMXF qmxf = _refdataProvider.GetClass("R99781532089");
@@ -122,7 +122,7 @@ namespace NUnit.Tests
         //    Assert.AreNotEqual(0, response.StatusList.Count);
         //}
 
-        [Test]
+        //[Test]
         public void GetTemplate()
         {
             QMXF qmxf = _refdataProvider.GetTemplate("R89987134385");

@@ -351,7 +351,8 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
-      AccessLevel accessLevel = Authorize(objectType, ref filter);
+      DataFilter newFilter = Utility.CloneDataContractObject<DataFilter>(filter);
+      AccessLevel accessLevel = Authorize(objectType, ref newFilter);
 
       if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
@@ -365,7 +366,7 @@ namespace org.iringtools.adapter.datalayer
           IdentityProperties identityProperties = _dbDictionary.IdentityConfiguration[objectType];
           if (identityProperties.UseIdentityFilter)
           {
-            filter = FilterByIdentity(objectType, filter, identityProperties);
+            newFilter = FilterByIdentity(objectType, newFilter, identityProperties);
           }
         }
 
@@ -387,7 +388,7 @@ namespace org.iringtools.adapter.datalayer
           type = Type.GetType(ns + objectType + ", NUnit.Tests");
         }
         
-        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter);            
+        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, newFilter);            
 
         if (pageSize == 0 && startIndex == 0)
         {
