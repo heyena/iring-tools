@@ -3823,28 +3823,32 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-              else
-              {
-                if (File.Exists(_settings["BindingConfigurationPath"]))
-                {
-                  _kernel.Load(_settings["BindingConfigurationPath"]);
-                }
-                else
-                {
-                  _logger.Error("Binding configuration not found.");
-                }
 
-                _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
-
-                if (_dataLayer == null)
-                {
-                  _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
-                }
-              }
-
-              _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
               break;
             }
+          }
+
+          // if data layer is internal or not registered (for backward compatibility),
+          // attempt to load using binding configuration
+          if (_dataLayer == null)
+          {
+            if (File.Exists(_settings["BindingConfigurationPath"]))
+            {
+              _kernel.Load(_settings["BindingConfigurationPath"]);
+            }
+            else
+            {
+              _logger.Error("Binding configuration not found.");
+            }
+
+            _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
+
+            if (_dataLayer == null)
+            {
+              _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+            }
+
+            _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
           }
 
           if (_dataLayer == null)
