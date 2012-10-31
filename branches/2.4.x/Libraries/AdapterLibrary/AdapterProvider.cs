@@ -155,7 +155,7 @@ namespace org.iringtools.adapter
 
       _kernel.Load(bindingConfigurationPath);
 
-      _dataLayersRegistryPath = string.Format("{0}DataLayersRegistry.xml", _settings["DataLayersPath"]);
+      _dataLayersRegistryPath = string.Format("{0}DataLayersRegistry.xml", _settings["AppDataPath"]);
       if (!Directory.Exists(_settings["DataLayersPath"]))
       {
         Directory.CreateDirectory(_settings["DataLayersPath"]);
@@ -3609,15 +3609,6 @@ namespace org.iringtools.adapter
 
           _settings["BindingConfigurationPath"] = bindingConfigurationPath;
 
-          if (File.Exists(bindingConfigurationPath))
-          {
-            _kernel.Load(bindingConfigurationPath);
-          }
-          else
-          {
-            _logger.Error("Binding configuration not found.");
-          }
-
           string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);
 
           _settings["DBDictionaryPath"] = dbDictionaryPath;
@@ -3766,14 +3757,100 @@ namespace org.iringtools.adapter
             Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
           }
 
-          _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
+          XElement bindingConfig = Utility.ReadXml(_settings["BindingConfigurationPath"]);
+          string assembly = bindingConfig.Element("bind").Attribute("to").Value;
+          DataLayers dataLayers = GetDataLayers();
+
+          foreach (DataLayer dataLayer in dataLayers)
+          {
+            if (dataLayer.Assembly.ToLower() == assembly.ToLower())
+            {
+              if (dataLayer.External)
+              {
+                Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
+
+                if (dataLayerAssembly == null)
+                {
+                  throw new Exception("Unable to load data layer assembly.");
+                }
+
+                _settings["DataLayerPath"] = dataLayer.Path;
+
+                Type type = dataLayerAssembly.GetType(assembly.Split(',')[0]);
+                ConstructorInfo[] ctors = type.GetConstructors();
+
+                foreach (ConstructorInfo ctor in ctors)
+                {
+                  ParameterInfo[] paramList = ctor.GetParameters();
+
+                  if (paramList.Length == 0)  // default constructor
+                  {
+                    _dataLayer = (IDataLayer2)Activator.CreateInstance(type);
+
+                    break;
+                  }
+                  else if (paramList.Length == 1)  // constructor with 1 parameter
+                  {
+                    if (ctor.GetParameters()[0].ParameterType.FullName == typeof(AdapterSettings).FullName)
+                    {
+                      _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings);
+                    }
+                    else if (ctor.GetParameters()[0].ParameterType.FullName == typeof(IDictionary).FullName)
+                    {
+                      _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings);
+                    }
+
+                    break;
+                  }
+                  else if (paramList.Length == 2)  // constructor with 2 parameters
+                  {
+                    if (ctor.GetParameters()[0].ParameterType.FullName == typeof(AdapterSettings).FullName &&
+                      ctor.GetParameters()[1].ParameterType.FullName == typeof(IDictionary).FullName)
+                    {
+                      _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings, _keyRing);
+                    }
+                    else if (ctor.GetParameters()[0].ParameterType.FullName == typeof(IDictionary).FullName &&
+                      ctor.GetParameters()[1].ParameterType.FullName == typeof(AdapterSettings).FullName)
+                    {
+                      _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _keyRing, _settings);
+                    }
+                    else
+                    {
+                      throw new Exception("Data layer does not contain supported constructor.");
+                    }
+
+                    break;
+                  }
+                }
+              }
+              else
+              {
+                if (File.Exists(_settings["BindingConfigurationPath"]))
+                {
+                  _kernel.Load(_settings["BindingConfigurationPath"]);
+                }
+                else
+                {
+                  _logger.Error("Binding configuration not found.");
+                }
+
+                _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
+
+                if (_dataLayer == null)
+                {
+                  _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+                }
+              }
+
+              _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
+              break;
+            }
+          }
 
           if (_dataLayer == null)
           {
-            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+            throw new Exception("Error initializing data layer.");
           }
-
-          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
 
           if (setDictionary)
             InitializeDictionary();
