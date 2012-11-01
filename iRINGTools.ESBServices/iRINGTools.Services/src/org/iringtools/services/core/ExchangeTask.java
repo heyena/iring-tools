@@ -116,15 +116,37 @@ public class ExchangeTask implements Runnable
     //
     // collect ADD/CHANGE/DELETE indices
     //
+    int iCountSync = 0;
+    int iCountAdd = 0;
+    int iCountChange = 0;
+    int iCountDelete = 0;
+
     List<DataTransferIndex> dxIndices = new ArrayList<DataTransferIndex>();
-    
+
     for (DataTransferIndex dxi : dtis.getDataTransferIndexList().getItems())
     {
       TransferType transferType = dxi.getTransferType();
       
       if (transferType != TransferType.SYNC)
       {
+        if (transferType == TransferType.ADD)
+        {
+          iCountAdd++;
+        }
+        else if (transferType != TransferType.CHANGE)
+        {
+          iCountChange++;
+        }
+        else // TransferType.DELETE)
+        {
+          iCountDelete++;
+        }
+
         dxIndices.add(dxi);        
+      }
+      else
+      {
+    	iCountSync++;
       }
     }    
 
@@ -194,6 +216,10 @@ public class ExchangeTask implements Runnable
     
     xRes.setPoolSize(poolSize);
     xRes.setItemCount(dxIndicesSize);
+    xRes.setItemCountSync(iCountSync);
+    xRes.setItemCountAdd(iCountAdd);
+    xRes.setItemCountChange(iCountChange);
+    xRes.setItemCountDelete(iCountDelete);
     
     for (int i = 0; i < dxIndicesSize; i += poolSize)
     {
@@ -210,6 +236,7 @@ public class ExchangeTask implements Runnable
       //
       // create deleted DTOs and collect add/change DTIs from source
       //
+      
       for (DataTransferIndex poolDtiItem : poolDtiItems)
       {
         if (poolDtiItem.getTransferType() == TransferType.DELETE)
@@ -230,7 +257,7 @@ public class ExchangeTask implements Runnable
           sourceDtiItems.add(poolDtiItem);
         }
       }
-      
+
       //
       // get add/change DTOs from source endpoint
       //

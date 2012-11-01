@@ -33,6 +33,10 @@ import org.iringtools.common.response.Level;
  *         &lt;element name="receiverApp" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="receiverGraph" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="itemCount" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="itemCountSync" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="itemCountAdd" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="itemCountChange" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="itemCountDelete" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="poolSize" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="summary" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
@@ -57,6 +61,10 @@ import org.iringtools.common.response.Level;
     "receiverApp",
     "receiverGraph",
     "itemCount",
+    "itemCountSync",
+    "itemCountAdd",
+    "itemCountChange",
+    "itemCountDelete",
     "poolSize",
     "summary"
 })
@@ -88,6 +96,10 @@ public class ExchangeResponse {
     @XmlElement(required = true)
     protected String receiverGraph;
     protected int itemCount;
+    protected int itemCountSync;
+    protected int itemCountAdd;
+    protected int itemCountChange;
+    protected int itemCountDelete;
     protected int poolSize;
     @XmlElement(required = true)
     protected String summary;
@@ -370,6 +382,70 @@ public class ExchangeResponse {
      */
     public void setItemCount(int value) {
         this.itemCount = value;
+    }
+
+    /**
+     * Gets the value of the itemCountSync property.
+     * 
+     */
+    public int getItemCountSync() {
+        return itemCountSync;
+    }
+
+    /**
+     * Sets the value of the itemCountSync property.
+     * 
+     */
+    public void setItemCountSync(int value) {
+        this.itemCountSync = value;
+    }
+
+    /**
+     * Gets the value of the itemCountAdd property.
+     * 
+     */
+    public int getItemCountAdd() {
+        return itemCountAdd;
+    }
+
+    /**
+     * Sets the value of the itemCountAdd property.
+     * 
+     */
+    public void setItemCountAdd(int value) {
+        this.itemCountAdd = value;
+    }
+
+    /**
+     * Gets the value of the itemCountChange property.
+     * 
+     */
+    public int getItemCountChange() {
+        return itemCountChange;
+    }
+
+    /**
+     * Sets the value of the itemCountChange property.
+     * 
+     */
+    public void setItemCountChange(int value) {
+        this.itemCountChange = value;
+    }
+
+    /**
+     * Gets the value of the itemCountDelete property.
+     * 
+     */
+    public int getItemCountDelete() {
+        return itemCountDelete;
+    }
+
+    /**
+     * Sets the value of the itemCountDelete property.
+     * 
+     */
+    public void setItemCountDelete(int value) {
+        this.itemCountDelete = value;
     }
 
     /**

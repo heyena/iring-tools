@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
+import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndex;
@@ -517,6 +518,64 @@ public class ExchangeProvider
     resultDtoList.setItems(orderedDtoListItems);
 
     return resultDtos;
+  }
+  
+  public Response getDifferencesSummary(String scope, String id, DataFilter filter)
+  {
+	  logger.debug("getDifferencesSummary(" + scope + ", " + id + ", filter)");
+
+	  Manifest manifest = null;
+	  DataTransferIndices dtis = null;
+	  DxiRequest dxiRequest = new DxiRequest();
+	    
+	  try
+	  {
+		  ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+	      manifest = exchangeProvider.getManifest(scope, id);
+	      
+	      dxiRequest.setManifest(manifest);
+	      dxiRequest.setDataFilter(filter);
+	      dtis = exchangeProvider.getDataTransferIndices(scope, id, dxiRequest, false);
+
+	      int iCountSync = 0;
+	      int iCountAdd = 0;
+	      int iCountChange = 0;
+	      int iCountDelete = 0;
+	      for (DataTransferIndex dxi : dtis.getDataTransferIndexList().getItems())
+	      {
+	    	  TransferType transferType = dxi.getTransferType();
+	    	  if (transferType == TransferType.ADD)
+	    	  {
+	    		  iCountAdd++;
+	          }
+	          else if (transferType == TransferType.CHANGE) 
+	          {
+	        	  iCountChange++;
+	          }
+	          else if (transferType == TransferType.DELETE) 
+	          {
+	        	  iCountDelete++;
+	          }
+	          else
+	          {
+	        	  iCountSync++;
+	          }
+	      }    
+
+	      ExchangeResponse xRes = new ExchangeResponse();
+	      xRes.setLevel(Level.WARNING);
+	      xRes.setItemCount(iCountSync + iCountAdd + iCountChange + iCountDelete);
+	      xRes.setItemCountSync(iCountSync);
+	      xRes.setItemCountAdd(iCountAdd);
+	      xRes.setItemCountChange(iCountChange);
+	      xRes.setItemCountDelete(iCountDelete);
+	 	  xRes.setSummary("Differece Summary only, this was not a data exchange request.");
+	      return Response.ok().entity(xRes).build();
+	  }
+	  catch (Exception e)
+	  {
+		  return Response.serverError().entity(e.getMessage()).build();
+	  }
   }
   
   public Response submitExchange(String scope, String id, ExchangeRequest xReq)
