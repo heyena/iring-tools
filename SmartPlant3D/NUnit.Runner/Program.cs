@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using NUnit.Gui;
 
-namespace org.iringtools.test
+namespace iringtools.sdk.test
 {
   class Program
   {
     [STAThread]
     static void Main()
     {
-      string commandLine = @"/run ../../../SPPIDDataLayer.Tests/SPPIDDataLayer.Tests.csproj";
+      string commandLine = @"/run ../../../SP3DDataLayer.Tests/SP3DDataLayer.Tests.csproj";
 
       string[] args = commandLine.Split(' ');
       AppEntry.Main(args);

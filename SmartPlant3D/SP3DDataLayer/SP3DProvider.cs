@@ -47,8 +47,8 @@ namespace iringtools.sdk.sp3ddatalayer
     public BusinessObjectConfiguration _config = null, _sp3dDataBaseDictionary = null;
     public string projectNameSpace = null;
     public AdapterSettings _settings = null;
-    Dictionary<string, IList<IDataObject>> _sourceDataObjects = null;
-    List<string> _filtertedKeys = null;
+    public Dictionary<string, IList<IDataObject>> _sourceDataObjects = null;
+    public List<string> _filtertedKeys = null;
 
     public SP3DProvider(AdapterSettings settings)
     {
@@ -79,10 +79,9 @@ namespace iringtools.sdk.sp3ddatalayer
     {
       try
       {
-        if (!File.Exists(_dictionaryPath))
+        if (ModifiedConfig())
         {
-          if (_config == null)
-            getConfigure(string.Empty);
+          createArtifacts(string.Empty);
           readDictionary();
         }
         
@@ -94,6 +93,8 @@ namespace iringtools.sdk.sp3ddatalayer
         throw ex;
       }
     }
+
+    
 
     public void readDictionary()
     {
@@ -125,17 +126,7 @@ namespace iringtools.sdk.sp3ddatalayer
     public void CreateCachingTables(string businessCommodityName, DataFilter filter)
     {
       Response response = new Response();
-      List<IDataObject> dataObjects = new List<IDataObject>();
-
-      if (_config != null)
-        if (_config.businessCommodities != null)
-        {
-          _sp3dDataBaseDictionary = VerifyConfiguration(_config, businessCommodityName);
-          _sp3dDataBaseDictionary = CreateDataBaseDictionary(_sp3dDataBaseDictionary, businessCommodityName);
-        }
-
-      GenerateSP3D(_settings, _sp3dDataBaseDictionary);
-      Generate(_settings);      
+      List<IDataObject> dataObjects = new List<IDataObject>();       
 
       foreach (BusinessCommodity bc in _config.businessCommodities)
       {
@@ -266,7 +257,8 @@ namespace iringtools.sdk.sp3ddatalayer
     {
       Response response = new Response();
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], "sp3ddl_" + _settings["Scope"]);
-      
+      int index = 0;
+
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
@@ -274,7 +266,8 @@ namespace iringtools.sdk.sp3ddatalayer
           string objectType = dataObjects[0].GetType().Name;          
 
           foreach (IDataObject dataObject in dataObjects)
-          { 
+          {
+            index++;
             Status status = new Status();
             status.Messages = new Messages();           
             
@@ -337,22 +330,45 @@ namespace iringtools.sdk.sp3ddatalayer
     public Response RefreshCachingTables(string businessCommodityName)
     {
       Response response = new Response();
+      response.Level = StatusLevel.Success;
+      getConfig();
+
       try
       {
-        getConfigure(businessCommodityName);
-        response.Level = StatusLevel.Success;
+        createArtifacts(businessCommodityName);
+        CreateCachingTables(businessCommodityName, null);
+        response.StatusList.Add(new Status()
+        {
+          Messages = new Messages()
+            {
+              "Success"
+            }
+        });
       }
       catch (Exception e)
       {
         response.Level = StatusLevel.Error;
-        response.Messages = new Messages() { e.Message };
+        response.StatusList.Add(new Status()
+        {
+          Messages = new Messages()
+            {
+              e.Message.ToString()
+            }
+        });        
       }
+
+      MiddleServiceProvider.TransactionMgr.Abort();
+      MiddleServiceProvider.Cleanup();
+
+      Utility.Write<Response>(response, string.Format("{0}Response.{1}.xml", _dataPath, _scope));
       return response;
     }
 
     public Response RefreshCachingTable(string businessCommodityName, DataFilter dataFilter)
     {
       Response response = new Response();
+      getConfig();
+
       try
       {
         CreateCachingTables(businessCommodityName, dataFilter);       
@@ -364,6 +380,8 @@ namespace iringtools.sdk.sp3ddatalayer
         response.Messages = new Messages() { e.Message };
       }
 
+      MiddleServiceProvider.TransactionMgr.Abort();
+      MiddleServiceProvider.Cleanup();
       return response;
     }
 
@@ -385,7 +403,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
         generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname, "sp3d");
 
-        sp3dDataBaseDictionary.ConnectionString = GetCachingConnectionString(sp3dDataBaseDictionary.ConnectionString, sp3dDataBaseDictionary.Provider, sp3dDataBaseDictionary.stagingDataBaseName);
+        sp3dDataBaseDictionary.ConnectionString = GetCachingConnectionString(sp3dDataBaseDictionary.ConnectionString, sp3dDataBaseDictionary.Provider, sp3dDataBaseDictionary.StagingDataBaseName);
         generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname, "caching");
       }
     }
@@ -396,13 +414,13 @@ namespace iringtools.sdk.sp3ddatalayer
       string relatedTable = string.Empty, relationType = string.Empty, relatedObjectName = string.Empty;
       string relationName = string.Empty, relatedInterfaceName = string.Empty, startInterfaceName = string.Empty;
       string objectName = string.Empty;
-      bool addClassName = false;
+      bool addClassName = false, ifReplace = false;
       DataObject dataObject = null, existingDataObject = null;
 
-      if (!File.Exists(_databaseDictionaryPath))
+      if (string.IsNullOrEmpty(businessCommodityName) || !File.Exists(_databaseDictionaryPath))
       {
         _databaseDictionary = new DatabaseDictionary();
-        _databaseDictionary.ConnectionString = GetCachingConnectionString(config.ConnectionString, config.Provider, config.stagingDataBaseName);
+        _databaseDictionary.ConnectionString = GetCachingConnectionString(config.ConnectionString, config.Provider, config.StagingDataBaseName);
         _databaseDictionary.Provider = config.Provider;
         _databaseDictionary.SchemaName = config.SchemaName;
         _databaseDictionary.dataObjects = new List<DataObject>();
@@ -410,14 +428,13 @@ namespace iringtools.sdk.sp3ddatalayer
       }
       else
       {
-        if (businessCommodityName != string.Empty)
-        {
-          if (_databaseDictionary == null)
-            _databaseDictionary = Utility.Read<DatabaseDictionary>(_databaseDictionaryPath);
+        ifReplace = true;
 
-          if (_databaseDictionary.GetDataObject(businessCommodityName) == null)
-            throw new Exception("DataObject [" + businessCommodityName + "] does exist in existing database dictionary");
-        }
+        if (_databaseDictionary == null)
+          _databaseDictionary = Utility.Read<DatabaseDictionary>(_databaseDictionaryPath);
+
+        if (_databaseDictionary.GetDataObject(businessCommodityName) == null)
+          throw new Exception("DataObject [" + businessCommodityName + "] does exist in existing database dictionary");
       }
 
       foreach (BusinessCommodity businessCommodity in config.businessCommodities)
@@ -432,7 +449,7 @@ namespace iringtools.sdk.sp3ddatalayer
         else
           dataObject = new DataObject();
 
-        dataObject.objectName = businessCommodity.commodityName + "SP3DDL";
+        dataObject.objectName = businessCommodity.commodityName;
         dataObject.tableName = businessCommodity.commodityName.ToLower();
         dataObject.objectNamespace = projectNameSpace;
         dataObject.dataRelationships = businessCommodity.dataRelationships;
@@ -495,6 +512,7 @@ namespace iringtools.sdk.sp3ddatalayer
                 dataProperty.dataType = businessProperty.dataType;
                 dataProperty.isNullable = businessProperty.isNullable;
                 dataProperty.isReadOnly = businessObject.isReadOnly;
+                businessProperty.isNative = false;
 
                 if (!String.IsNullOrEmpty(businessProperty.description))
                   dataProperty.description = businessObject.description;
@@ -524,6 +542,7 @@ namespace iringtools.sdk.sp3ddatalayer
                     DataProperty dataProperty = new DataProperty();
                     dataProperty.propertyName = relatedObjectName + "_" + relatedPropertyName;
                     businessRelationProperty.propertyName = dataProperty.propertyName;
+                    businessRelationProperty.isNative = false;
                     dataProperty.dataType = businessRelationProperty.dataType;
                     dataProperty.columnName = dataProperty.propertyName;
                     dataObject.dataProperties.Add(dataProperty);
@@ -535,23 +554,27 @@ namespace iringtools.sdk.sp3ddatalayer
           }
         }
 
-        if (_databaseDictionary.GetDataObject(dataObject.objectName) == null)
-        {
-          _databaseDictionary.dataObjects.Add(dataObject);
-        }
-        else
+        if (ifReplace)
         {
           existingDataObject = _databaseDictionary.GetDataObject(dataObject.objectName);
           _databaseDictionary.dataObjects[_databaseDictionary.dataObjects.IndexOf(existingDataObject)] = dataObject;
         }
+        else 
+        {
+          _databaseDictionary.dataObjects.Add(dataObject);
+        }       
       }
 
-      Utility.Write<BusinessObjectConfiguration>(config, _verifiedConfigurationPath);      
+      if (File.Exists(_verifiedConfigurationPath))
+        File.Delete(_verifiedConfigurationPath);
+      Utility.Write<BusinessObjectConfiguration>(config, _verifiedConfigurationPath);  
+    
       return config;
     }
 
-    public Response DeleteSP3DIdentifiers(string objectType, IList<IDataObject> dataObjects)
-    {      
+    public Response DeleteSP3DIdentifiers(string objectType, IList<string> identifiers)
+    {
+      IList<IDataObject> dataObjects = Create(objectType, identifiers);
       Response response = new Response();
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
       DataObject realDataObject = null;
@@ -656,10 +679,11 @@ namespace iringtools.sdk.sp3ddatalayer
     //  return dataObject;
     //}
 
+
     // flatten out recursive related objects and put them into starting business objects
     public BusinessObjectConfiguration VerifyConfiguration(BusinessObjectConfiguration config, string businessCommodityName)
     {
-      Connect();
+      Connect(config);
       string relationshipName = string.Empty, relatedObjectName = string.Empty, objectName = string.Empty;
       string relatedInterfaceName = string.Empty, startInterfaceName = string.Empty, relatedPropertyName = string.Empty;
       string objectNamespace = string.Empty;
@@ -712,10 +736,7 @@ namespace iringtools.sdk.sp3ddatalayer
               businessObject.rowNumber = -1;
 
               if (businessObject.businessProperties == null)
-                businessObject.businessProperties = new List<BusinessProperty>();
-
-              //if (string.IsNullOrEmpty(businessObject.tableName))
-              //  businessObject.tableName = classInfo.DBTableName;
+                businessObject.businessProperties = new List<BusinessProperty>();              
 
               if (addClassName)
               {
@@ -763,42 +784,49 @@ namespace iringtools.sdk.sp3ddatalayer
               if (businessCommodity.relatedObjects.Count > 0)
                 foreach (RelatedObject relatedObject in businessCommodity.relatedObjects)
                 {
-                  //relationInfo = GetRealtionInformation(relatedObject.relationName);
+                  relationInfo = GetRealtionInformation(relatedObject.relationName, classInfo);
 
-                  addToAllBusinessObject = false;
-
-                  if (businessCommodity.soleBusinessObject)
+                  if (relationInfo == null)
                   {
-                    targetBusinessObject = businessCommodity.businessObjects.First();
-                    addToAllBusinessObject = true;
+                    throw new Exception("Relationship [" + relatedObject.relationName + "] does not exist in SP3D databases.");
                   }
-                  else if (relatedObject.startObjectName != null)
+                  else
                   {
-                    if (businessCommodity.GetBusinessObject(relatedObject.startObjectName) != null)
-                      targetBusinessObject = businessCommodity.GetBusinessObject(relatedObject.startObjectName);
-                    addToAllBusinessObject = true;
-                  }
+                    addToAllBusinessObject = false;
 
-                  initializeBO(targetBusinessObject, objectNamespace);
-                  initializeRelatedObject(relatedObject, targetBusinessObject);
-                  AddRelatedObject(targetBusinessObject, relatedObject, targetBusinessObject);
-
-                  if (relatedObject.relatedObjects != null)
-                    if (relatedObject.relatedObjects.Count > 0)
+                    if (businessCommodity.soleBusinessObject)
                     {
-                      traverseRelatedObjects(relatedObject, relatedObject.relatedObjects, targetBusinessObject);
+                      targetBusinessObject = businessCommodity.businessObjects.First();
+                      addToAllBusinessObject = true;
+                    }
+                    else if (relatedObject.startObjectName != null)
+                    {
+                      if (businessCommodity.GetBusinessObject(relatedObject.startObjectName) != null)
+                        targetBusinessObject = businessCommodity.GetBusinessObject(relatedObject.startObjectName);
+                      addToAllBusinessObject = true;
+                    }
 
-                      if (!addToAllBusinessObject)
+                    initializeBO(targetBusinessObject, objectNamespace);
+                    initializeRelatedObject(relatedObject, targetBusinessObject);
+                    AddRelatedObject(targetBusinessObject, relatedObject, targetBusinessObject);
+
+                    if (relatedObject.relatedObjects != null)
+                      if (relatedObject.relatedObjects.Count > 0)
                       {
-                        foreach (BusinessObject targetBO in businessCommodity.businessObjects)
+                        traverseRelatedObjects(relatedObject, relatedObject.relatedObjects, targetBusinessObject);
+
+                        if (!addToAllBusinessObject)
                         {
-                          initializeBO(targetBO, objectNamespace);
-                          targetBO.relations = targetBusinessObject.relations;
-                          targetBO.relatedObjects = targetBusinessObject.relatedObjects;
-                          targetBO.rightClassNames = targetBusinessObject.rightClassNames;
+                          foreach (BusinessObject targetBO in businessCommodity.businessObjects)
+                          {
+                            initializeBO(targetBO, objectNamespace);
+                            targetBO.relations = targetBusinessObject.relations;
+                            targetBO.relatedObjects = targetBusinessObject.relatedObjects;
+                            targetBO.rightClassNames = targetBusinessObject.rightClassNames;
+                          }
                         }
                       }
-                    }
+                  }
                 }
           }
       return config;
@@ -806,8 +834,6 @@ namespace iringtools.sdk.sp3ddatalayer
 
     public FilterBase FindFilter(string filterName)
     {
-      Connect();
-
       if (filterName == null)
         return null;
 
@@ -856,131 +882,6 @@ namespace iringtools.sdk.sp3ddatalayer
       return filter;
     }
 
-    private void initializeBO(BusinessObject bo, string objectNamespace)
-    {
-      if (bo.relations == null)
-        bo.relations = new List<BusinessRelation>();
-
-      if (bo.relatedObjects == null)
-        bo.relatedObjects = new List<RelatedObject>();
-
-      if (bo.nodeType != NodeType.StartObject)
-        bo.nodeType = NodeType.StartObject;
-
-      if (bo.rightClassNames == null)
-        bo.rightClassNames = new List<string>();
-
-      if (bo.objectNamespace == null)
-        bo.objectNamespace = objectNamespace;
-
-      if (bo.businessKeyProperties != null)
-        bo.businessKeyProperties = new List<BusinessKeyProperty>();
-
-      if (bo.businessKeyProperties.Count == 0 || (bo.businessKeyProperties.First() != null && bo.businessKeyProperties.First().keyType != KeyType.assigned))
-        checkKeyProperties(bo.businessKeyProperties, "BusinessObject", null);
-    }
-
-    private void initializeRelatedObject(RelatedObject robj, BusinessObject rootObject)
-    {
-      PropertyInformation propertyInfo = null;
-      InterfaceInformation interfaceInfo = null;
-      ClassInformation classInfo = null;
-
-      classInfo = GetClassInformation(robj.objectName);
-
-      if (classInfo == null)
-        throw new Exception("class [" + robj.objectName + "] does not exist in SP3D databases.");
-      
-      if (robj.businessKeyProperties == null)
-        robj.businessKeyProperties = new List<BusinessKeyProperty>();
-
-      if (robj.rightClassNames == null)
-        robj.rightClassNames = new List<string>();
-
-      if (robj.leftClassNames == null)
-        robj.leftClassNames = new List<string>();
-
-      robj.objectNamespace = rootObject.objectNamespace;
-      robj.rowNumber = -1;
-
-      if (robj.relatedObjects != null && robj.relatedObjects.Count > 0)
-        robj.nodeType = NodeType.MiddleObject;
-      else
-        robj.nodeType = NodeType.EndObject;
-
-      if (robj.businessProperties == null)
-        robj.businessProperties = new List<BusinessProperty>();
-
-      if (robj.businessKeyProperties.Count == 0 || (robj.businessKeyProperties.First() != null && robj.businessKeyProperties.First().keyType != KeyType.assigned))
-        checkKeyProperties(robj.businessKeyProperties, "RelatedObject", null);
-
-      if (!string.IsNullOrEmpty(robj.relationName) && string.IsNullOrEmpty(robj.relationTableName))
-      {
-        robj.relationTableName = "X" + robj.relationName;
-      }
-      else if (string.IsNullOrEmpty(robj.relationName) && !string.IsNullOrEmpty(robj.relationTableName))
-      {
-        robj.relationName = robj.relationTableName.Substring(1, robj.relationTableName.Length - 1);
-      }
-
-      if (robj.businessInterfaces != null)
-        if (robj.businessInterfaces.Count > 0)
-          foreach (BusinessInterface businessInterface in robj.businessInterfaces)
-          {
-            interfaceInfo = GetInterfaceInformation(classInfo, businessInterface.interfaceName);
-            if (interfaceInfo == null)
-              throw new Exception("Interface [" + businessInterface.interfaceName + "] for class [" + robj.objectName + "] does not exist in SP3D databases.");
-
-            if (businessInterface.businessProperties != null)
-              if (businessInterface.businessProperties.Count > 0)
-                foreach (BusinessProperty businessProperty in businessInterface.businessProperties)
-                {
-                  propertyInfo = GetPropertyInfo(interfaceInfo, businessProperty.propertyName);
-
-                  //if (propertyInfo == null)
-                  //  throw new Exception("Property [" + businessProperty.propertyName + "] for interface [" + businessInterface.interfaceName + "] does not exist in SP3D databases.");
-
-                  businessProperty.dataType = GetDatatype(businessProperty.datatype);
-                  businessProperty.datatype = businessProperty.dataType.ToString();
-                  businessProperty.codeList = propertyInfo.CodeListInfo.CodelistMembers;
-                          
-                  if (businessProperty.propertyName.ToLower() == "name")
-                    businessProperty.columnName = "ItemName";
-                  else if (string.IsNullOrEmpty(businessProperty.columnName))
-                    businessProperty.columnName = businessProperty.propertyName;
-
-                  robj.businessProperties.Add(businessProperty);
-                }
-          }
-
-      rootObject.setUniqueRelation(robj);
-    }
-
-    private void initializeRlation(BusinessRelation relation)
-    {
-      //if (!relation.unique)  --add finding relation info from originRelationName
-
-      if (relation.businessKeyProperties == null)
-        relation.businessKeyProperties = new List<BusinessKeyProperty>();
-
-      if (relation.businessKeyProperties.Count == 0 || (relation.businessKeyProperties.First() != null && relation.businessKeyProperties.First().keyType != KeyType.assigned))
-        checkKeyProperties(relation.businessKeyProperties, "BusinessRelation", relation);
-    }
-
-    private void traverseRelatedObjects(RelatedObject parentObject, List<RelatedObject> relatedObjects, BusinessObject businessObject)
-    {
-      foreach (RelatedObject newPareendObj in relatedObjects)
-      {
-        initializeRelatedObject(newPareendObj, businessObject);
-        AddRelatedObject(parentObject, newPareendObj, businessObject);
-
-        if (newPareendObj.relatedObjects != null && newPareendObj.relatedObjects.Count > 0)
-          traverseRelatedObjects(newPareendObj, newPareendObj.relatedObjects, businessObject);
-        else
-          newPareendObj.nodeType = NodeType.EndObject;
-      }
-    }
-
     public void addUniqueClassName(string name, List<string> classNames)
     {
       int suffix = 0;
@@ -999,153 +900,12 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       classNames.Add(name);
-    }
-
-    private void AddRelatedObject(RootBusinessObject parentObject, RelatedObject relatedObject, BusinessObject businessObject)
-    {
-      businessObject.addUniqueRelatedObject(relatedObject);
-
-      if (relatedObject.nodeType != NodeType.StartObject)
-        addUniqueClassName(relatedObject.relationName, relatedObject.leftClassNames);
-
-      BusinessRelation relation = businessObject.addUniqueRelation(relatedObject, parentObject);
-      initializeRlation(relation);
-
-      if (relatedObject.relatedObjects != null)
-        if (relatedObject.relatedObjects.Count > 0)
-          foreach (RelatedObject relatedChild in relatedObject.relatedObjects)
-          {
-            initializeRelatedObject(relatedChild, businessObject);
-            addUniqueClassName(relatedChild.relationName, relatedObject.rightClassNames);
-          }
-
-      if (relation.leftClassNames != null)
-        addUniqueClassName(parentObject.objectName, relation.leftClassNames);
-      checkKeyProperties(relation.businessKeyProperties, "BusinessRelation", relation);
-
-
-    }
-
-    //create keyProperty 
-    private void createKeyProperties(List<BusinessKeyProperty> businessKeyProperties, string type, BusinessRelation relation)
-    {
-      BusinessKeyProperty keyProperty = new BusinessKeyProperty();
-
-      switch (type.ToLower())
-      {
-        case "businessobject":
-        case "relatedobject": keyProperty.keyPropertyName = "oid";
-          break;
-        case "businessrelation":
-          keyProperty.keyPropertyName = "oidOrigin";
-          relation.createRelationBusinessProperty("oidDestination");
-          break;
-      }
-
-      keyProperty.dataType = DataType.String;
-      keyProperty.datatype = keyProperty.dataType.ToString();
-      keyProperty.columnName = keyProperty.keyPropertyName;
-      keyProperty.isNullable = false;
-      keyProperty.keyType = KeyType.assigned;
-      businessKeyProperties.Add(keyProperty);
-    }
-
-    //check keypropertiese
-    private void checkKeyProperties(List<BusinessKeyProperty> keyProperties, string type, BusinessRelation relation)
-    {
-      if (keyProperties.Count == 0)
-      {
-        createKeyProperties(keyProperties, type, relation);
-      }
-      else
-      {
-        foreach (BusinessKeyProperty businessKeyProerpty in keyProperties)
-        {
-          if (businessKeyProerpty.keyType != KeyType.assigned)
-          {
-            businessKeyProerpty.dataType = DataType.String;
-            businessKeyProerpty.datatype = businessKeyProerpty.dataType.ToString();
-            businessKeyProerpty.columnName = businessKeyProerpty.keyPropertyName;
-            businessKeyProerpty.isNullable = false;
-            businessKeyProerpty.keyType = KeyType.assigned;
-          }
-        }
-      }
-    }   
-
-    private bool hasInterfaces(string relatedObjectName, string objectName, string relatedInterfaceName, string startedInterfaceName)
-    {
-      string key = "", relatedKey = "";
-      bool hasInterfaces = false;
-      ClassInformation classInfo = null, relatedClassInfo = null;
-
-      classInfo = GetClassInformation(objectName);
-      relatedClassInfo = GetClassInformation(relatedObjectName);
-
-      ReadOnlyDictionary<InterfaceInformation> interfaces = classInfo.Interfaces;
-      ReadOnlyDictionary<InterfaceInformation> relatedInterfaces = relatedClassInfo.Interfaces;
-      key = LookIntoICollection(interfaces.Keys, startedInterfaceName);
-      relatedKey = LookIntoICollection(interfaces.Keys, relatedInterfaceName);
-
-      if (key != null && relatedKey != null)
-        hasInterfaces = true;
-
-      return hasInterfaces;
     }    
-
-    private DataType GetDatatype(string datatype)
-    {
-      if (datatype == null)
-        return DataType.String;
-
-      switch (datatype.ToLower())
-      {
-        case "string":
-          return DataType.String;
-        case "bool":
-        case "boolean":
-          return DataType.Boolean;
-        case "float":
-        case "decimal":
-        case "double":
-          return DataType.Double;
-        case "integer":
-        case "int":
-        case "number":
-          return DataType.Int64;
-        default:
-          return DataType.String;
-      }
-    }
-
-    private Provider GetProvider(string provider)
-    {
-      if (provider == null)
-        return Provider.MsSql2008;
-
-      switch (provider.ToLower())
-      {
-        case "mssql2008":
-          return Provider.MsSql2008;
-        case "mssql2005":
-          return Provider.MsSql2005;
-        case "mssql2000":
-          return Provider.MsSql2000;
-        case "oracle8i":
-          return Provider.Oracle8i;
-        case "oracle9i":
-          return Provider.Oracle9i;
-        case "oracle10g":
-          return Provider.Oracle10g;
-        default:
-          return Provider.MsSql2008;
-      }
-    }
 
     public ClassInformation GetClassInformation(string className)
     {
       ClassInformation classInfo = null;
-      ReadOnlyDictionary<ClassInformation> classes = metadataManagerModel.Classes;      
+      ReadOnlyDictionary<ClassInformation> classes = metadataManagerModel.Classes;
       string key = LookIntoICollection(classes.Keys, className);
       classes.TryGetValue(key, out classInfo);
 
@@ -1200,19 +960,19 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       return null;
-    }
+    }    
 
-    public void getConfigure(string businessCommodityName)
+    public void createArtifacts(string businessCommodityName)
     {
-      if (!File.Exists(_configurationPath))
-        throw new Exception("Configuration file [" + _configurationPath + "] does not exist.");
+      if (_config != null)
+        if (_config.businessCommodities != null)
+        {
+          _sp3dDataBaseDictionary = VerifyConfiguration(_config, businessCommodityName);
+          _sp3dDataBaseDictionary = CreateDataBaseDictionary(_sp3dDataBaseDictionary, businessCommodityName);
+        }
 
-      if (businessCommodityName != string.Empty && File.Exists(_verifiedConfigurationPath))
-        _config = Utility.Read<BusinessObjectConfiguration>(_verifiedConfigurationPath);
-      else
-        _config = Utility.Read<BusinessObjectConfiguration>(_configurationPath);
-
-      CreateCachingTables(businessCommodityName, null);
+      GenerateSP3D(_settings, _sp3dDataBaseDictionary);
+      Generate(_settings);    
     }
 
     public void CloseSession(ISession session)
@@ -1279,17 +1039,35 @@ namespace iringtools.sdk.sp3ddatalayer
       return filter;
     }
 
-    public Plant Connect()
+    public Plant Connect(BusinessObjectConfiguration config)
     {
-      Site SP3DSite = null;
-      SP3DSite = MiddleServiceProvider.SiteMgr.ConnectSite();
+      Site SP3DSite = null;      
+
+      if (MiddleServiceProvider.SiteMgr.ActiveSite != null)
+        if (MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant != null)
+          return MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant;
+
+      /********************
+       * SP3D ProviderType="MSSQL" DBServer="HOUS01013\SP3D_GLNG" SiteDB="GLNG_SDB" SiteSchemaDB="GLNG_SDB_SCHEMA" PlantName="GLNG" DebugMessages="0" DebugFile="c:\sp3d_adapter.log" DebugMaxParamLen="100000" CodelistAttrLength="40" AsmHierarchyStop="CPConfigProjectRoot" DgnHierarchyStop="CPConfigProjectRoot"
+       * <provider>MsSql2008</provider>
+       * <connectionString>Data Source=HOUS01014\sp3d_2011_gbl;Initial Catalog=gbl_mdb;Integrated Security=true</connectionString>
+       * <stagingDataBaseName>SP3DStaging</stagingDataBaseName>
+       * <schemaName>dbo</schemaName>      
+       * m_site = MiddleServiceProvider.SiteMgr.ConnectSite(spDBServer, spSiteDB, (spDBProviderType.ToUpper() == "MSSQL" ? SiteManager.eDBProviderTypes.MSSQL : SiteManager.eDBProviderTypes.Oracle), spSiteSchemaDB);
+       *********************/
+
+      SP3DSite = MiddleServiceProvider.SiteMgr.ConnectSite(GetDataSource(config.ConnectionString), config.SiteDataBaseName, (config.Provider.ToUpper().Contains("MSSQL") ? SiteManager.eDBProviderTypes.MSSQL : SiteManager.eDBProviderTypes.Oracle), config.SiteDataBaseName + "_SCHEMA");
       Plant SP3DPlant = null;
 
       if (SP3DSite != null)
       {
         if (SP3DSite.Plants.Count > 0)
         {
-          SP3DPlant = (Plant)SP3DSite.Plants[0];
+          if (!string.IsNullOrEmpty(config.PlantName))
+            SP3DPlant = SP3DSite.Plants.FirstOrDefault<Plant>(o=>o.Name.ToLower() == config.PlantName.ToLower());
+          else
+            SP3DPlant = (Plant)SP3DSite.Plants[0];
+
           MiddleServiceProvider.SiteMgr.ActiveSite.OpenPlant(SP3DPlant);
         }
       }
@@ -1565,152 +1343,27 @@ namespace iringtools.sdk.sp3ddatalayer
 
         generator.Generate(compilerVersion, _databaseDictionary, projectName, applicationname);
       }
-    }
+    }    
 
-    private IList<IDataObject> getDataObjectRows(BusinessCommodity bo, string objectName, string commodityName, DataFilter filter, DataDictionary dataDictionary, DatabaseDictionary databaseDictionary)
+    public RelationshipInformation GetRealtionInformation(string relationName, ClassInformation classInfo)
     {
-      ISession session = null;     
-      long totalCount = 0;
-      string propertyName = string.Empty;
-      List<IDataObject> dataObjects = new List<IDataObject>();
-      List<IDataObject> filteredDataObjects = new List<IDataObject>();
-      string rowPropertyName = string.Empty;
-      string oidOrigin = string.Empty;
-      
-      BusinessObject bObj = bo.GetBusinessObject(objectName);
-      DataObject objectDefinition = dataDictionary.GetDataObject(objectName);
-      string key = bObj.businessKeyProperties.First().columnName;
+      RelationshipInformation relationInfo = null;
+      relationInfo = metadataManagerModel.GetRelationshipInfo(relationName, classInfo.Namespace);
 
-      try
+      if (relationInfo == null)
       {
-        session = NHibernateSessionManager.Instance.GetSessionSP3D(_settings["AppDataPath"], _settings["Scope"], commodityName);
-
-        if (databaseDictionary.IdentityConfiguration != null)
-        {
-          IdentityProperties identityProperties = databaseDictionary.IdentityConfiguration[commodityName];
-          if (identityProperties.UseIdentityFilter)
-          {
-            filter = FilterByIdentity(objectName, filter, identityProperties);
-          }
-        }        
-
-        if (objectDefinition == null)
-        {
-          throw new Exception("Object type [" + commodityName + "." + objectName + "] is not found.");
-        }
-
-        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
-          ? String.Empty : (objectDefinition.objectNamespace + ".");
-
-        Type type = Type.GetType(ns + objectName + ", " + _settings["ExecutingAssemblyName"]);
-
-        // make an exception for tests
-        if (type == null)
-        {
-          type = Type.GetType(ns + objectName + ", NUnit.Tests");
-        }
-
-        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter);
-
-        totalCount = GetSP3DCount(commodityName, filter, dataDictionary, databaseDictionary);
-        int internalPageSize = (_settings["InternalPageSize"] != null) ? int.Parse(_settings["InternalPageSize"]) : 99999999;
-        //int internalPageSize = 50;
-        int numOfRows = 0;
-
-        while (numOfRows < totalCount)
-        //while (numOfRows < 50)
-        {
-          criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
-          dataObjects.AddRange(criteria.List<IDataObject>());
-          numOfRows += internalPageSize;          
-        }
-
-        foreach (IDataObject row in dataObjects)
-        {
-          if (_filtertedKeys.Contains(row.GetPropertyValue(key).ToString().ToLower()))
-          {
-            filteredDataObjects.Add(row);
-            foreach (string connectedEntityName in bObj.rightClassNames)
-            {
-              BusinessRelation relation = bObj.GetRelation(connectedEntityName);
-              oidOrigin = row.GetPropertyValue(relation.relationName + "_" + relation.businessKeyProperties.First().columnName).ToString();
-
-              foreach (string con in relation.rightClassNames)
-              {
-                RelatedObject relatedObject = bObj.GetRelatedObject(con);
-                setRow(row, oidOrigin, relatedObject, bObj);
-              }
-            }
-          }
-        }
-
-        return filteredDataObjects;
-        //return dataObjects;
+        relationInfo = metadataManagerCatalog.GetRelationshipInfo(relationName, classInfo.Namespace);
       }
-      catch (Exception ex)
+
+      if (relationInfo == null)
       {
-        _logger.Error("Error in Get: " + ex);
-        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}.{1}]. {2}", commodityName, objectName, ex));
+        relationInfo = metadataManagerReport.GetRelationshipInfo(relationName, classInfo.Namespace);
       }
-      finally
-      {
-        CloseSession(session);
-      }
+
+      return relationInfo;
     }
 
-    private void GetSP3DFilteredKeys(BusinessCommodity bco)
-    {
-      FilterBase filterBase = FindFilter(bco.businessFilter.filterName);
-      System.Collections.ObjectModel.ReadOnlyCollection<Ingr.SP3D.Common.Middle.BusinessObject> filteredObjects = filterBase.Apply();
-      _filtertedKeys = new List<string>();
-      string temp = string.Empty;
-      int i = 0;  // debugging purpose
-
-      foreach (Ingr.SP3D.Common.Middle.BusinessObject businessObj in filteredObjects)
-      {
-        if (i > 10)  // debugging purpose
-          break;     // debugging purpose
-
-        _filtertedKeys.Add(businessObj.ObjectID.Substring(1, businessObj.ObjectID.Length - 2).ToLower());
-        i++;   // debugging purpose
-      }
-
-      //Utility.Write<List<string>>(_filtertedKeys, "C:\\temp\\filteredOids.txt"); // debugging purpose
-    }
-
-    private void setRow(IDataObject targetRow, string oidOrigin, RelatedObject relatedObject, BusinessObject bObj)
-    {
-      string newOidOrigin = string.Empty;
-      string relationKey = bObj.GetRelation(relatedObject.relationName).businessKeyProperties.First().columnName;
-
-      foreach (IDataObject row1 in _sourceDataObjects[relatedObject.objectName])
-      {
-        if (row1.GetPropertyValue(relatedObject.businessKeyProperties.First().columnName).ToString().ToLower() == oidOrigin.ToLower())
-        {
-          if (row1.GetPropertyValue(relationKey) != null)
-            newOidOrigin = row1.GetPropertyValue(relationKey).ToString();
-
-          foreach (BusinessProperty bp in relatedObject.businessProperties)
-          {
-            targetRow.SetPropertyValue(bp.propertyName, row1.GetPropertyValue(bp.propertyName));
-          }
-          break;
-        }
-      }
-
-      if (relatedObject.relatedObjects != null && !string.IsNullOrEmpty(newOidOrigin))
-      {
-        if (relatedObject.relatedObjects.Count > 0)
-        {
-          foreach (RelatedObject newRelatedObject in relatedObject.relatedObjects)
-          {
-            setRow(targetRow, newOidOrigin, newRelatedObject, bObj);
-          }
-        }
-      }
-      else
-        return;
-    }
+    
 
     public IList<IDataObject> GetSP3D(string objectType, DataFilter filter)
     {
@@ -1723,7 +1376,8 @@ namespace iringtools.sdk.sp3ddatalayer
         BusinessCommodity businessCommodity = _sp3dDataBaseDictionary.GetBusinessCommoditiy(objectType);
         numberOfObjects = businessCommodity.businessObjects.Count;
         commodityName = objectType.ToLower();
-        GetSP3DFilteredKeys(businessCommodity);
+        GetSP3DFilteredKeys(businessCommodity);       
+
         dataObjects = new List<IDataObject>();
         DataDictionary dataDictionary = Utility.Read<DataDictionary>(string.Format("{0}DataDictionary.{1}.{2}.xml", _dataPath, _scope, commodityName));
         DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(string.Format("{0}DatabaseDictionary.{1}.{2}.xml", _dataPath, _scope, commodityName));
@@ -1828,6 +1482,279 @@ namespace iringtools.sdk.sp3ddatalayer
       return -1;
     }
 
+    public IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    {
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+
+      try
+      {
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        DataObject objectDefinition = _dataDictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+
+        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
+          ? String.Empty : (objectDefinition.objectNamespace + ".");
+
+        Type type = Type.GetType(ns + objectDefinition.objectName + ", " + _settings["ExecutingAssemblyName"]);
+        IDataObject dataObject = null;
+
+        if (identifiers != null)
+        {
+          foreach (string identifier in identifiers)
+          {
+            if (!String.IsNullOrEmpty(identifier))
+            {
+              IQuery query = session.CreateQuery("from " + objectType + " where Id = ?");
+              query.SetString(0, identifier);
+              dataObject = query.List<IDataObject>().FirstOrDefault<IDataObject>();
+
+              if (dataObject == null)
+              {
+                dataObject = (IDataObject)Activator.CreateInstance(type);
+                dataObject.SetPropertyValue("Id", identifier);
+              }
+            }
+            else
+            {
+              dataObject = (IDataObject)Activator.CreateInstance(type);
+            }
+
+            dataObjects.Add(dataObject);
+          }
+        }
+        else
+        {
+          dataObject = (IDataObject)Activator.CreateInstance(type);
+          dataObjects.Add(dataObject);
+        }
+
+        return dataObjects;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in CreateList: " + ex);
+        throw new Exception(string.Format("Error while creating a list of data objects of type [{0}]. {1}", objectType, ex));
+      }
+      finally
+      {
+        CloseSession(session);
+      }
+    }
+
+    public IList<IDataObject> Get(string objectType, IList<string> identifiers)
+    {
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+
+      try
+      {
+        StringBuilder queryString = new StringBuilder();
+        queryString.Append("from " + objectType);
+
+        if (identifiers != null && identifiers.Count > 0)
+        {
+          DataObject dataObjectDef = (from DataObject o in _databaseDictionary.dataObjects
+                                      where o.objectName == objectType
+                                      select o).FirstOrDefault();
+
+          if (dataObjectDef == null)
+            return null;
+
+          if (dataObjectDef.keyProperties.Count == 1)
+          {
+            queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray()) + "')");
+          }
+          else if (dataObjectDef.keyProperties.Count > 1)
+          {
+            string[] keyList = null;
+            int identifierIndex = 1;
+            foreach (string identifier in identifiers)
+            {
+              string[] idParts = identifier.Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
+
+              keyList = new string[idParts.Count()];
+
+              int partIndex = 0;
+              foreach (string part in idParts)
+              {
+                if (identifierIndex == identifiers.Count())
+                {
+                  keyList[partIndex] += part;
+                }
+                else
+                {
+                  keyList[partIndex] += part + ", ";
+                }
+
+                partIndex++;
+              }
+
+              identifierIndex++;
+            }
+
+            int propertyIndex = 0;
+            foreach (KeyProperty keyProperty in dataObjectDef.keyProperties)
+            {
+              string propertyValues = keyList[propertyIndex];
+
+              if (propertyIndex == 0)
+              {
+                queryString.Append(" where " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+              }
+              else
+              {
+                queryString.Append(" and " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+              }
+
+              propertyIndex++;
+            }
+          }
+        }
+
+        IQuery query = session.CreateQuery(queryString.ToString());
+        IList<IDataObject> dataObjects = query.List<IDataObject>();
+
+        // order data objects as list of identifiers
+        if (identifiers != null)
+        {
+          IList<IDataObject> orderedDataObjects = new List<IDataObject>();
+
+          foreach (string identifier in identifiers)
+          {
+            if (identifier != null)
+            {
+              foreach (IDataObject dataObject in dataObjects)
+              {
+                if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
+                {
+                  orderedDataObjects.Add(dataObject);
+                  //break;  // include dups also
+                }
+              }
+            }
+          }
+
+          return orderedDataObjects;
+        }
+
+        return dataObjects;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Get: " + ex);
+        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
+      }
+      finally
+      {
+        CloseSession(session);
+      }
+    }
+
+    public IList<string> GetIdentifiers(string objectType, DataFilter filter)
+    {
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+
+      try
+      {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
+        StringBuilder queryString = new StringBuilder();
+        queryString.Append("select Id from " + objectType);
+
+        if (filter != null && filter.Expressions.Count > 0)
+        {
+          DataObject dataObject = _databaseDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+          string whereClause = filter.ToSqlWhereClause(_databaseDictionary, dataObject.tableName, String.Empty);
+          queryString.Append(whereClause);
+        }
+
+        IQuery query = session.CreateQuery(queryString.ToString());
+        return query.List<string>();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetIdentifiers: " + ex);
+        throw new Exception(string.Format("Error while getting a list of identifiers of type [{0}]. {1}", objectType, ex));
+      }
+      finally
+      {
+        CloseSession(session);
+      }
+    }
+
+    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
+    {
+      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+
+      try
+      {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
+
+        DataObject objectDefinition = _databaseDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+
+        if (objectDefinition == null)
+        {
+          throw new Exception("Object type [" + objectType + "] not found.");
+        }
+
+        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
+          ? String.Empty : (objectDefinition.objectNamespace + ".");
+
+        Type type = Type.GetType(ns + objectType + ", " + _settings["ExecutingAssemblyName"]);
+
+        // make an exception for tests
+        if (type == null)
+        {
+          type = Type.GetType(ns + objectType + ", NUnit.Tests");
+        }
+
+        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter);
+
+        if (pageSize == 0 && startIndex == 0)
+        {
+          List<IDataObject> dataObjects = new List<IDataObject>();
+          long totalCount = GetCountSP3D(objectType, filter);
+          int internalPageSize = (_settings["InternalPageSize"] != null) ? int.Parse(_settings["InternalPageSize"]) : 1000;
+          int numOfRows = 0;
+
+          while (numOfRows < totalCount)
+          {
+            criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
+            dataObjects.AddRange(criteria.List<IDataObject>());
+            numOfRows += internalPageSize;
+          }
+
+          return dataObjects;
+        }
+        else
+        {
+          criteria.SetFirstResult(startIndex).SetMaxResults(pageSize);
+          IList<IDataObject> dataObjects = criteria.List<IDataObject>();
+          return dataObjects;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Get: " + ex);
+        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
+      }
+      finally
+      {
+        CloseSession(session);
+      }
+    }   
+
     public long GetCountSP3D(string objectType, DataFilter filter)
     {
 
@@ -1870,6 +1797,418 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         CloseSession(session);
       }
+    }
+
+    #region private functions for sp3dprovider
+    private void initializeBO(BusinessObject bo, string objectNamespace)
+    {
+      if (bo.relations == null)
+        bo.relations = new List<BusinessRelation>();
+
+      if (bo.relatedObjects == null)
+        bo.relatedObjects = new List<RelatedObject>();
+
+      if (bo.nodeType != NodeType.StartObject)
+        bo.nodeType = NodeType.StartObject;
+
+      if (bo.rightClassNames == null)
+        bo.rightClassNames = new List<string>();
+
+      if (bo.objectNamespace == null)
+        bo.objectNamespace = objectNamespace;
+
+      if (bo.businessKeyProperties != null)
+        bo.businessKeyProperties = new List<BusinessKeyProperty>();
+
+      if (bo.businessKeyProperties.Count == 0 || (bo.businessKeyProperties.First() != null && bo.businessKeyProperties.First().keyType != KeyType.assigned))
+        checkKeyProperties(bo.businessKeyProperties, "BusinessObject", null);
+    }
+
+    private void initializeRelatedObject(RelatedObject robj, BusinessObject rootObject)
+    {
+      PropertyInformation propertyInfo = null;
+      InterfaceInformation interfaceInfo = null;
+      ClassInformation classInfo = null;
+
+      classInfo = GetClassInformation(robj.objectName);
+
+      if (classInfo == null)
+        throw new Exception("class [" + robj.objectName + "] does not exist in SP3D databases.");
+
+      if (robj.businessKeyProperties == null)
+        robj.businessKeyProperties = new List<BusinessKeyProperty>();
+
+      if (robj.rightClassNames == null)
+        robj.rightClassNames = new List<string>();
+
+      if (robj.leftClassNames == null)
+        robj.leftClassNames = new List<string>();
+
+      robj.objectNamespace = rootObject.objectNamespace;
+      robj.rowNumber = -1;
+
+      if (robj.relatedObjects != null && robj.relatedObjects.Count > 0)
+        robj.nodeType = NodeType.MiddleObject;
+      else
+        robj.nodeType = NodeType.EndObject;
+
+      if (robj.businessProperties == null)
+        robj.businessProperties = new List<BusinessProperty>();
+
+      if (robj.businessKeyProperties.Count == 0 || (robj.businessKeyProperties.First() != null && robj.businessKeyProperties.First().keyType != KeyType.assigned))
+        checkKeyProperties(robj.businessKeyProperties, "RelatedObject", null);
+
+      if (!string.IsNullOrEmpty(robj.relationName) && string.IsNullOrEmpty(robj.relationTableName))
+      {
+        robj.relationTableName = "X" + robj.relationName;
+      }
+      else if (string.IsNullOrEmpty(robj.relationName) && !string.IsNullOrEmpty(robj.relationTableName))
+      {
+        robj.relationName = robj.relationTableName.Substring(1, robj.relationTableName.Length - 1);
+      }
+
+      if (robj.businessInterfaces != null)
+        if (robj.businessInterfaces.Count > 0)
+          foreach (BusinessInterface businessInterface in robj.businessInterfaces)
+          {
+            interfaceInfo = GetInterfaceInformation(classInfo, businessInterface.interfaceName);
+            if (interfaceInfo == null)
+              throw new Exception("Interface [" + businessInterface.interfaceName + "] for class [" + robj.objectName + "] does not exist in SP3D databases.");
+
+            if (businessInterface.businessProperties != null)
+              if (businessInterface.businessProperties.Count > 0)
+                foreach (BusinessProperty businessProperty in businessInterface.businessProperties)
+                {
+                  propertyInfo = GetPropertyInfo(interfaceInfo, businessProperty.propertyName);
+
+                  //if (propertyInfo == null)
+                  //  throw new Exception("Property [" + businessProperty.propertyName + "] for interface [" + businessInterface.interfaceName + "] does not exist in SP3D databases.");
+
+                  businessProperty.dataType = GetDatatype(businessProperty.datatype);
+                  businessProperty.datatype = businessProperty.dataType.ToString();
+                  businessProperty.codeList = propertyInfo.CodeListInfo.CodelistMembers;
+
+                  if (businessProperty.propertyName.ToLower() == "name")
+                    businessProperty.columnName = "ItemName";
+                  else if (string.IsNullOrEmpty(businessProperty.columnName))
+                    businessProperty.columnName = businessProperty.propertyName;
+
+                  robj.businessProperties.Add(businessProperty);
+                }
+          }
+
+      rootObject.setUniqueRelation(robj);
+    }
+
+    private void initializeRlation(BusinessRelation relation)
+    {
+      //if (!relation.unique)  --add finding relation info from originRelationName
+
+      if (relation.businessKeyProperties == null)
+        relation.businessKeyProperties = new List<BusinessKeyProperty>();
+
+      if (relation.businessKeyProperties.Count == 0 || (relation.businessKeyProperties.First() != null && relation.businessKeyProperties.First().keyType != KeyType.assigned))
+        checkKeyProperties(relation.businessKeyProperties, "BusinessRelation", relation);
+    }
+
+    private void traverseRelatedObjects(RelatedObject parentObject, List<RelatedObject> relatedObjects, BusinessObject businessObject)
+    {
+      foreach (RelatedObject newPareendObj in relatedObjects)
+      {
+        initializeRelatedObject(newPareendObj, businessObject);
+        AddRelatedObject(parentObject, newPareendObj, businessObject);
+
+        if (newPareendObj.relatedObjects != null && newPareendObj.relatedObjects.Count > 0)
+          traverseRelatedObjects(newPareendObj, newPareendObj.relatedObjects, businessObject);
+        else
+          newPareendObj.nodeType = NodeType.EndObject;
+      }
+    }
+
+    private void AddRelatedObject(RootBusinessObject parentObject, RelatedObject relatedObject, BusinessObject businessObject)
+    {
+      businessObject.addUniqueRelatedObject(relatedObject);
+
+      if (relatedObject.nodeType != NodeType.StartObject)
+        addUniqueClassName(relatedObject.relationName, relatedObject.leftClassNames);
+
+      BusinessRelation relation = businessObject.addUniqueRelation(relatedObject, parentObject);
+      initializeRlation(relation);
+
+      if (relatedObject.relatedObjects != null)
+        if (relatedObject.relatedObjects.Count > 0)
+          foreach (RelatedObject relatedChild in relatedObject.relatedObjects)
+          {
+            initializeRelatedObject(relatedChild, businessObject);
+            addUniqueClassName(relatedChild.relationName, relatedObject.rightClassNames);
+          }
+
+      if (relation.leftClassNames != null)
+        addUniqueClassName(parentObject.objectName, relation.leftClassNames);
+      checkKeyProperties(relation.businessKeyProperties, "BusinessRelation", relation);
+
+
+    }
+
+    //create keyProperty 
+    private void createKeyProperties(List<BusinessKeyProperty> businessKeyProperties, string type, BusinessRelation relation)
+    {
+      BusinessKeyProperty keyProperty = new BusinessKeyProperty();
+
+      switch (type.ToLower())
+      {
+        case "businessobject":
+        case "relatedobject": keyProperty.keyPropertyName = "oid";
+          break;
+        case "businessrelation":
+          keyProperty.keyPropertyName = "oidOrigin";
+          relation.createRelationBusinessProperty("oidDestination");
+          break;
+      }
+
+      keyProperty.dataType = DataType.String;
+      keyProperty.datatype = keyProperty.dataType.ToString();
+      keyProperty.columnName = keyProperty.keyPropertyName;
+      keyProperty.isNullable = false;
+      keyProperty.keyType = KeyType.assigned;
+      businessKeyProperties.Add(keyProperty);
+    }
+
+    //check keypropertiese
+    private void checkKeyProperties(List<BusinessKeyProperty> keyProperties, string type, BusinessRelation relation)
+    {
+      if (keyProperties.Count == 0)
+      {
+        createKeyProperties(keyProperties, type, relation);
+      }
+      else
+      {
+        foreach (BusinessKeyProperty businessKeyProerpty in keyProperties)
+        {
+          if (businessKeyProerpty.keyType != KeyType.assigned)
+          {
+            businessKeyProerpty.dataType = DataType.String;
+            businessKeyProerpty.datatype = businessKeyProerpty.dataType.ToString();
+            businessKeyProerpty.columnName = businessKeyProerpty.keyPropertyName;
+            businessKeyProerpty.isNullable = false;
+            businessKeyProerpty.keyType = KeyType.assigned;
+          }
+        }
+      }
+    }
+
+    private bool hasInterfaces(string relatedObjectName, string objectName, string relatedInterfaceName, string startedInterfaceName)
+    {
+      string key = "", relatedKey = "";
+      bool hasInterfaces = false;
+      ClassInformation classInfo = null, relatedClassInfo = null;
+
+      classInfo = GetClassInformation(objectName);
+      relatedClassInfo = GetClassInformation(relatedObjectName);
+
+      ReadOnlyDictionary<InterfaceInformation> interfaces = classInfo.Interfaces;
+      ReadOnlyDictionary<InterfaceInformation> relatedInterfaces = relatedClassInfo.Interfaces;
+      key = LookIntoICollection(interfaces.Keys, startedInterfaceName);
+      relatedKey = LookIntoICollection(interfaces.Keys, relatedInterfaceName);
+
+      if (key != null && relatedKey != null)
+        hasInterfaces = true;
+
+      return hasInterfaces;
+    }
+
+    private DataType GetDatatype(string datatype)
+    {
+      if (datatype == null)
+        return DataType.String;
+
+      switch (datatype.ToLower())
+      {
+        case "string":
+          return DataType.String;
+        case "bool":
+        case "boolean":
+          return DataType.Boolean;
+        case "float":
+        case "decimal":
+        case "double":
+          return DataType.Double;
+        case "integer":
+        case "int":
+        case "number":
+          return DataType.Int64;
+        default:
+          return DataType.String;
+      }
+    }
+
+    private Provider GetProvider(string provider)
+    {
+      if (provider == null)
+        return Provider.MsSql2008;
+
+      switch (provider.ToLower())
+      {
+        case "mssql2008":
+          return Provider.MsSql2008;
+        case "mssql2005":
+          return Provider.MsSql2005;
+        case "mssql2000":
+          return Provider.MsSql2000;
+        case "oracle8i":
+          return Provider.Oracle8i;
+        case "oracle9i":
+          return Provider.Oracle9i;
+        case "oracle10g":
+          return Provider.Oracle10g;
+        default:
+          return Provider.MsSql2008;
+      }
+    }
+
+    private IList<IDataObject> getDataObjectRows(BusinessCommodity bo, string objectName, string commodityName, DataFilter filter, DataDictionary dataDictionary, DatabaseDictionary databaseDictionary)
+    {
+      ISession session = null;
+      long totalCount = 0;
+      string propertyName = string.Empty;
+      List<IDataObject> dataObjects = new List<IDataObject>();
+      List<IDataObject> filteredDataObjects = new List<IDataObject>();
+      string rowPropertyName = string.Empty;
+      string oidOrigin = string.Empty;
+
+      BusinessObject bObj = bo.GetBusinessObject(objectName);
+      DataObject objectDefinition = dataDictionary.GetDataObject(objectName);
+      string key = bObj.businessKeyProperties.First().columnName;
+
+      try
+      {
+        session = NHibernateSessionManager.Instance.GetSessionSP3D(_settings["AppDataPath"], _settings["Scope"], commodityName);
+
+        if (databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = databaseDictionary.IdentityConfiguration[commodityName];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectName, filter, identityProperties);
+          }
+        }
+
+        if (objectDefinition == null)
+        {
+          throw new Exception("Object type [" + commodityName + "." + objectName + "] is not found.");
+        }
+
+        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
+          ? String.Empty : (objectDefinition.objectNamespace + ".");
+
+        Type type = Type.GetType(ns + objectName + ", " + _settings["ExecutingAssemblyName"]);
+
+        // make an exception for tests
+        if (type == null)
+        {
+          type = Type.GetType(ns + objectName + ", NUnit.Tests");
+        }
+
+        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter);
+
+        totalCount = GetSP3DCount(commodityName, filter, dataDictionary, databaseDictionary);
+        int internalPageSize = (_settings["InternalPageSize"] != null) ? int.Parse(_settings["InternalPageSize"]) : 99999999;
+        //int internalPageSize = 50;
+        int numOfRows = 0;
+
+        while (numOfRows < totalCount)
+        //while (numOfRows < 50)
+        {
+          criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
+          dataObjects.AddRange(criteria.List<IDataObject>());
+          numOfRows += internalPageSize;
+        }
+
+        foreach (IDataObject row in dataObjects)
+        {
+          if (_filtertedKeys.Contains(row.GetPropertyValue(key).ToString().ToLower()))
+          {
+            filteredDataObjects.Add(row);
+            foreach (string connectedEntityName in bObj.rightClassNames)
+            {
+              BusinessRelation relation = bObj.GetRelation(connectedEntityName);
+              oidOrigin = row.GetPropertyValue(relation.relationName + "_" + relation.businessKeyProperties.First().columnName).ToString();
+
+              foreach (string con in relation.rightClassNames)
+              {
+                RelatedObject relatedObject = bObj.GetRelatedObject(con);
+                setRow(row, oidOrigin, relatedObject, bObj);
+              }
+            }
+          }
+        }
+
+        return filteredDataObjects;
+        //return dataObjects;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Get: " + ex);
+        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}.{1}]. {2}", commodityName, objectName, ex));
+      }
+      finally
+      {
+        CloseSession(session);
+      }
+    }
+
+    private void GetSP3DFilteredKeys(BusinessCommodity bco)
+    {
+      FilterBase filterBase = FindFilter(bco.businessFilter.filterName);
+      System.Collections.ObjectModel.ReadOnlyCollection<Ingr.SP3D.Common.Middle.BusinessObject> filteredObjects = filterBase.Apply();
+      _filtertedKeys = new List<string>();
+      string temp = string.Empty;
+      int i = 0;  // debugging purpose
+
+      foreach (Ingr.SP3D.Common.Middle.BusinessObject businessObj in filteredObjects)
+      {
+        if (i > 10)  // debugging purpose
+          break;     // debugging purpose
+
+        _filtertedKeys.Add(businessObj.ObjectID.Substring(1, businessObj.ObjectID.Length - 2).ToLower());
+        i++;   // debugging purpose
+      }
+
+      //Utility.Write<List<string>>(_filtertedKeys, "C:\\temp\\filteredOids.txt"); // debugging purpose
+    }
+
+    private void setRow(IDataObject targetRow, string oidOrigin, RelatedObject relatedObject, BusinessObject bObj)
+    {
+      string newOidOrigin = string.Empty;
+      string relationKey = bObj.GetRelation(relatedObject.relationName).businessKeyProperties.First().columnName;
+
+      foreach (IDataObject row1 in _sourceDataObjects[relatedObject.objectName])
+      {
+        if (row1.GetPropertyValue(relatedObject.businessKeyProperties.First().columnName).ToString().ToLower() == oidOrigin.ToLower())
+        {
+          if (row1.GetPropertyValue(relationKey) != null)
+            newOidOrigin = row1.GetPropertyValue(relationKey).ToString();
+
+          foreach (BusinessProperty bp in relatedObject.businessProperties)
+          {
+            targetRow.SetPropertyValue(bp.propertyName, row1.GetPropertyValue(bp.propertyName));
+          }
+          break;
+        }
+      }
+
+      if (relatedObject.relatedObjects != null && !string.IsNullOrEmpty(newOidOrigin))
+      {
+        if (relatedObject.relatedObjects.Count > 0)
+        {
+          foreach (RelatedObject newRelatedObject in relatedObject.relatedObjects)
+          {
+            setRow(targetRow, newOidOrigin, newRelatedObject, bObj);
+          }
+        }
+      }
+      else
+        return;
     }
 
     private void getSourceDataObjects(BusinessCommodity bco, DataDictionary dataDictionary, DatabaseDictionary databaseDictionary)
@@ -1941,6 +2280,26 @@ namespace iringtools.sdk.sp3ddatalayer
       }
     }
 
+    private string GetDataSource(string connectionString)
+    {
+      string parsedConnStr = string.Empty, dbServer = string.Empty, dataBase = string.Empty;
+      char[] ch = { ';' };
+      string[] connStrKeyValuePairs = connectionString.Split(ch, StringSplitOptions.RemoveEmptyEntries);
+
+      foreach (string connStrKeyValuePair in connStrKeyValuePairs)
+      {
+        string[] connStrKeyValuePairTemp = connStrKeyValuePair.Split('=');
+        string connStrKey = connStrKeyValuePairTemp[0].Trim();
+        string connStrValue = connStrKeyValuePairTemp[1].Trim();
+
+        if (connStrKey.ToUpper() == "DATA SOURCE")
+        {
+          return connStrValue;            
+        }        
+      }
+      return null;
+    }
+
     private string GetCachingConnectionString(string connStr, string dbProvider, string cachingDataBaseName)
     {
       try
@@ -1977,6 +2336,50 @@ namespace iringtools.sdk.sp3ddatalayer
         throw ex;
       }
     }
+
+    private bool ModifiedConfig()
+    {
+      BusinessCommodity currentBC = null;
+
+      getConfig();
+
+      if (_config.businessCommodities.Count != _sp3dDataBaseDictionary.businessCommodities.Count)
+      {
+        return true;
+      }
+
+      foreach (BusinessCommodity bc in _config.businessCommodities)
+      {
+        if (_sp3dDataBaseDictionary.GetBusinessCommoditiy(bc.commodityName) == null)
+        {
+          return true;
+        }
+
+        currentBC = _sp3dDataBaseDictionary.GetBusinessCommoditiy(bc.commodityName);
+
+        if (currentBC.businessObjects.Count != bc.businessObjects.Count)
+          return true;
+
+        foreach (BusinessObject bo in currentBC.businessObjects)
+        {
+          if (currentBC.GetBusinessObject(bo.objectName) == null)
+          {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    private void getConfig()
+    {
+      if (!File.Exists(_configurationPath))
+        throw new Exception("Configuration file [" + _configurationPath + "] does not exist.");
+
+      _config = Utility.Read<BusinessObjectConfiguration>(_configurationPath);
+    }
+    # endregion 
   }
 }
 

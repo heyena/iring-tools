@@ -143,9 +143,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BusinessObjectConfiguration.cs" />
     <Compile Include="NHibernateUtility.cs" />
     <Compile Include="SP3DProvider.cs" />
