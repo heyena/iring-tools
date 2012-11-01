@@ -234,6 +234,27 @@ namespace org.iringtools.web.controllers
       return Json(response, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult Refresh(FormCollection form)
+    {
+      string context = form["nodeid"];
+      string type = form["type"];
+      string[] names = context.Split('/');
+      string scope = names[0];
+      string application = names[1];
+      string dataObjectName = string.Empty;
+      Response response = null;
+
+      if (type == "one")
+      {
+        dataObjectName = names[2];
+        response = _repository.Refresh(scope, application, dataObjectName);
+      }
+      else
+        response = _repository.Refresh(scope, application);
+
+      return Json(response, JsonRequestBehavior.AllowGet);
+    }
+
     public class DBProvider
     {
       public string Provider { get; set; }

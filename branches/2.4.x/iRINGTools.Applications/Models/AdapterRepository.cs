@@ -339,6 +339,16 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
+    public Response Refresh(string scope, string application)
+    {      
+      return _adapterServiceClient.Get<Response>(String.Format("/{0}/{1}/refresh", scope, application));
+    }
+
+    public Response Refresh(string scope, string application, string dataObjectName)
+    {
+      return _adapterServiceClient.Get<Response>(String.Format("/{0}/{1}/{2}/refresh", scope, application, dataObjectName));
+    }
+
     #region NHibernate Configuration Wizard support methods
     public DataProviders GetDBProviders()
     {
