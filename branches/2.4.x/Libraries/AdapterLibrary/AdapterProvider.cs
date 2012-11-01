@@ -4115,11 +4115,64 @@ namespace org.iringtools.adapter
         }
         else
         {
+          //
+          // get internal data layers
+          //
           DataLayers internalDataLayers = GetInternalDataLayers();
 
           if (internalDataLayers != null && internalDataLayers.Count > 0)
           {
             dataLayers.AddRange(internalDataLayers);
+          }
+
+          // 
+          // register existing data layers from manual deployment
+          //
+          try
+          {
+            Type type = typeof(IDataLayer);
+            Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            foreach (Assembly asm in domainAssemblies)
+            {
+              Type[] asmTypes = null;
+
+              try
+              {
+                asmTypes = asm.GetTypes();
+              }
+              catch (Exception) { }
+
+              if (asmTypes != null)
+              {
+                foreach (System.Type asmType in asmTypes)
+                {
+                  if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                  {
+                    bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+                    string name = asm.FullName.Split(',')[0];
+
+                    if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
+                    {
+                      string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+
+                      DataLayer dataLayer = new DataLayer { 
+                        Assembly = assembly, 
+                        Name = name,
+                        MainDLL = asm.ManifestModule.Name,
+                        Configurable = configurable 
+                      };
+
+                      dataLayers.Add(dataLayer);
+                    }
+                  }
+                }
+              }
+            }
+          }
+          catch (Exception e)
+          {
+            _logger.Error("Error loading assembly: " + e);
           }
 
           Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
