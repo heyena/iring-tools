@@ -50,13 +50,19 @@ namespace iringtools.sdk.sp3ddatalayer
     public string Provider { get; set; }
 
     [DataMember(Name = "connectionString", IsRequired = true, Order = 2)]
-    public string ConnectionString { get; set; }
+    public string ConnectionString { get; set; }    
 
-    [DataMember(Name = "stagingDataBaseName", IsRequired = true, Order = 3)]
-    public string stagingDataBaseName { get; set; }
+    [DataMember(Name = "schemaName", IsRequired = true, Order = 3)]
+    public string SchemaName { get; set; }
 
-    [DataMember(Name = "schemaName", IsRequired = true, Order = 4)]
-    public string SchemaName { get; set; }    
+    [DataMember(Name = "stagingDataBaseName", IsRequired = true, Order = 4)]
+    public string StagingDataBaseName { get; set; }
+
+    [DataMember(Name = "siteDataBaseName", IsRequired = true, Order = 5)]
+    public string SiteDataBaseName { get; set; }
+
+    [DataMember(Name = "plantName", IsRequired = false, Order = 6, EmitDefaultValue = false)]
+    public string PlantName { get; set; }     
 
     public BusinessCommodity GetBusinessCommoditiy(string name)
     {
@@ -114,6 +120,13 @@ namespace iringtools.sdk.sp3ddatalayer
     {
       BusinessObject BusinessObject = null;
       BusinessObject = this.businessObjects.FirstOrDefault<BusinessObject>(o => o.objectName.ToLower() == name.ToLower());
+      return BusinessObject;
+    }
+
+    public BusinessObject GetBusinessObject(string objectName, string tableName)
+    {
+      BusinessObject BusinessObject = null;
+      BusinessObject = this.businessObjects.FirstOrDefault<BusinessObject>(o => o.objectName.ToLower() == objectName.ToLower() && o.tableName.ToLower() == tableName.ToLower());
       return BusinessObject;
     }
 
@@ -563,6 +576,7 @@ namespace iringtools.sdk.sp3ddatalayer
     public BusinessProperty()
     {
       codeList = null;
+      isNative = true;
     }
 
     [DataMember(IsRequired = true, Order = 0)]
@@ -593,7 +607,10 @@ namespace iringtools.sdk.sp3ddatalayer
     public bool returnNull { get; set; }
 
     [DataMember(IsRequired = false, Order = 9, EmitDefaultValue = false)]
-    public List<CodelistItem> codeList { get; set; }   
+    public List<CodelistItem> codeList { get; set; }
+
+    [DataMember(IsRequired = false, Order = 10, EmitDefaultValue = false)]
+    public bool isNative { get; set; }   
 
     public DataProperty convertPropertyToDataProperty()
     {

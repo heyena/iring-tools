@@ -53,15 +53,15 @@ namespace iringtools.sdk.sp3ddatalayer
       return dataDictionary;
     }
 
-    //public override Response Refresh(string objectType, DataFilter filter)
-    //{
-    //  if (sp3dProvider == null)
-    //  {
-    //    setSP3DProviderSettings();
-    //  }
+    public override Response Refresh(string objectType, DataFilter filter)
+    {
+      if (sp3dProvider == null)
+      {
+        setSP3DProviderSettings();
+      }
 
-    //  return sp3dProvider.RefreshCachingTable(objectType, filter);
-    //}
+      return sp3dProvider.RefreshCachingTable(objectType, filter);
+    }
 
     public override Response Refresh(string objectType)
     {
@@ -80,71 +80,12 @@ namespace iringtools.sdk.sp3ddatalayer
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
-      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
-
-      try
+      if (sp3dProvider == null)
       {
-        if (sp3dProvider._databaseDictionary.IdentityConfiguration != null)
-        {
-          IdentityProperties identityProperties = sp3dProvider._databaseDictionary.IdentityConfiguration[objectType];
-          if (identityProperties.UseIdentityFilter)
-          {
-            filter = sp3dProvider.FilterByIdentity(objectType, filter, identityProperties);
-          }
-        }
-
-        DataObject objectDefinition = sp3dProvider._databaseDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
-
-        if (objectDefinition == null)
-        {
-          throw new Exception("Object type [" + objectType + "] not found.");
-        }
-
-        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
-          ? String.Empty : (objectDefinition.objectNamespace + ".");
-
-        Type type = Type.GetType(ns + objectType + ", " + _settings["ExecutingAssemblyName"]);
-
-        // make an exception for tests
-        if (type == null)
-        {
-          type = Type.GetType(ns + objectType + ", NUnit.Tests");
-        }
-
-        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter);
-
-        if (pageSize == 0 && startIndex == 0)
-        {
-          List<IDataObject> dataObjects = new List<IDataObject>();
-          long totalCount = GetCount(objectType, filter);
-          int internalPageSize = (_settings["InternalPageSize"] != null) ? int.Parse(_settings["InternalPageSize"]) : 1000;
-          int numOfRows = 0;
-
-          while (numOfRows < totalCount)
-          {
-            criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
-            dataObjects.AddRange(criteria.List<IDataObject>());
-            numOfRows += internalPageSize;
-          }
-
-          return dataObjects;
-        }
-        else
-        {
-          criteria.SetFirstResult(startIndex).SetMaxResults(pageSize);
-          IList<IDataObject> dataObjects = criteria.List<IDataObject>();
-          return dataObjects;
-        }
+        setSP3DProviderSettings();
       }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in Get: " + ex);
-        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
-      }
-      finally
-      {
-        sp3dProvider.CloseSession(session);
-      }
+
+      return sp3dProvider.Get(objectType, filter, pageSize, startIndex);
     }   
 
     public DataObject GetObjectDefinition(string objectType)
@@ -171,40 +112,7 @@ namespace iringtools.sdk.sp3ddatalayer
         setSP3DProviderSettings();
       }
 
-      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
-
-      try
-      {
-        if (sp3dProvider._databaseDictionary.IdentityConfiguration != null)
-        {
-          IdentityProperties identityProperties = sp3dProvider._databaseDictionary.IdentityConfiguration[objectType];
-          if (identityProperties.UseIdentityFilter)
-          {
-            filter = FilterByIdentity(objectType, filter, identityProperties);
-          }
-        }
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("select Id from " + objectType);
-
-        if (filter != null && filter.Expressions.Count > 0)
-        {
-          DataObject dataObject = sp3dProvider._databaseDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
-          string whereClause = filter.ToSqlWhereClause(sp3dProvider._databaseDictionary, dataObject.tableName, String.Empty);
-          queryString.Append(whereClause);
-        }
-
-        IQuery query = session.CreateQuery(queryString.ToString());
-        return query.List<string>();
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in GetIdentifiers: " + ex);
-        throw new Exception(string.Format("Error while getting a list of identifiers of type [{0}]. {1}", objectType, ex));
-      }
-      finally
-      {
-        sp3dProvider.CloseSession(session);
-      }
+      return sp3dProvider.GetIdentifiers(objectType, filter);
     }
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
@@ -213,111 +121,16 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         setSP3DProviderSettings();
       }
-      
-      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+      return sp3dProvider.Get(objectType, identifiers);      
+    }
 
-      try
+    public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    {
+      if (sp3dProvider == null)
       {
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + objectType);
-
-        if (identifiers != null && identifiers.Count > 0)
-        {
-          DataObject dataObjectDef = (from DataObject o in sp3dProvider._databaseDictionary.dataObjects
-                                      where o.objectName == objectType
-                                      select o).FirstOrDefault();
-
-          if (dataObjectDef == null)
-            return null;
-
-          if (dataObjectDef.keyProperties.Count == 1)
-          {
-            queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray()) + "')");
-          }
-          else if (dataObjectDef.keyProperties.Count > 1)
-          {
-            string[] keyList = null;
-            int identifierIndex = 1;
-            foreach (string identifier in identifiers)
-            {
-              string[] idParts = identifier.Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
-
-              keyList = new string[idParts.Count()];
-
-              int partIndex = 0;
-              foreach (string part in idParts)
-              {
-                if (identifierIndex == identifiers.Count())
-                {
-                  keyList[partIndex] += part;
-                }
-                else
-                {
-                  keyList[partIndex] += part + ", ";
-                }
-
-                partIndex++;
-              }
-
-              identifierIndex++;
-            }
-
-            int propertyIndex = 0;
-            foreach (KeyProperty keyProperty in dataObjectDef.keyProperties)
-            {
-              string propertyValues = keyList[propertyIndex];
-
-              if (propertyIndex == 0)
-              {
-                queryString.Append(" where " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
-              }
-              else
-              {
-                queryString.Append(" and " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
-              }
-
-              propertyIndex++;
-            }
-          }
-        }
-
-        IQuery query = session.CreateQuery(queryString.ToString());
-        IList<IDataObject> dataObjects = query.List<IDataObject>();
-
-        // order data objects as list of identifiers
-        if (identifiers != null)
-        {
-          IList<IDataObject> orderedDataObjects = new List<IDataObject>();
-
-          foreach (string identifier in identifiers)
-          {
-            if (identifier != null)
-            {
-              foreach (IDataObject dataObject in dataObjects)
-              {
-                if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
-                {
-                  orderedDataObjects.Add(dataObject);
-                  //break;  // include dups also
-                }
-              }
-            }
-          }
-
-          return orderedDataObjects;
-        }
-
-        return dataObjects;
+        setSP3DProviderSettings();
       }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in Get: " + ex);
-        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
-      }
-      finally
-      {
-        sp3dProvider.CloseSession(session);
-      }
+      return sp3dProvider.Create(objectType, identifiers);
     }
 
     public override Response Delete(string objectType, IList<string> identifiers)
@@ -326,10 +139,7 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         setSP3DProviderSettings();
       }
-
-      IList<IDataObject> dataObjects = Create(objectType, identifiers);
-
-      return sp3dProvider.DeleteSP3DIdentifiers(objectType, dataObjects);
+      return sp3dProvider.DeleteSP3DIdentifiers(objectType, identifiers);
     }
 
     public override Response Delete(string objectType, DataFilter filter)
@@ -407,6 +217,15 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         sp3dProvider.CloseSession(session);
       }
+    }
+
+    public override long GetCount(string objectType, DataFilter filter)
+    {
+      if (sp3dProvider == null)
+      {
+        setSP3DProviderSettings();
+      }
+      return sp3dProvider.GetCountSP3D(objectType, filter);      
     }
 
     public override long GetRelatedCount(IDataObject parentDataObject, string relatedObjectType)
