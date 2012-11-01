@@ -192,6 +192,36 @@ public class ExchangeService extends AbstractService
   }
   
   @POST
+  @Path("/{scope}/exchanges/{id}/differences/summary")
+  @Consumes(MediaType.APPLICATION_XML)
+  public Response getDifferencesSummary(
+      @PathParam("scope") String scope, 
+      @PathParam("id") String id,
+      DataFilter filter
+)
+  {
+    try
+    {
+      initService(SERVICE_NAME);
+    }
+    catch (AuthorizationException e)
+    {
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+
+    try
+    {
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      Response response = exchangeProvider.getDifferencesSummary(scope, id, filter);
+      return response;
+    }
+    catch (Exception e)
+    {
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+    }
+  }
+
+  @POST
   @Path("/{scope}/exchanges/{id}/unattended")
   @Consumes(MediaType.APPLICATION_XML)
   public Response submitUnattended(
