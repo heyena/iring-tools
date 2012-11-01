@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\SP3DDataLayer.Tests\SP3DDataLayer.Tests.csproj" total="1" errors="0" failures="1" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2012-10-31" time="20:37:52">
+  <environment nunit-version="2.5.9.10348" clr-version="4.0.30319.269" os-version="Microsoft Windows NT 6.1.7600.0" platform="Win32NT" cwd="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Runner\bin\Debug" machine-name="FREL23260" user="fwei" user-domain="IAMERS" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Project" name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\SP3DDataLayer.Tests\SP3DDataLayer.Tests.csproj" executed="True" result="Failure" success="False" time="2.523" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\SP3DDataLayer.Tests\bin\Debug\SPPIDDataLayer.Tests.dll" executed="True" result="Failure" success="False" time="2.519" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="iringtools" executed="True" result="Failure" success="False" time="2.519" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="sdk" executed="True" result="Failure" success="False" time="2.518" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="sp3ddatalayer" executed="True" result="Failure" success="False" time="2.518" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="test" executed="True" result="Failure" success="False" time="2.352" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="Tests" executed="True" result="Error" success="False" time="2.335" asserts="0">
+                            <failure>
+                              <message><![CDATA[SetUp : System.IO.FileNotFoundException : Could not load file or assembly 'CommonMiddle, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' or one of its dependencies. The system cannot find the file specified.]]></message>
+                              <stack-trace><![CDATA[at iringtools.sdk.sp3ddatalayer.SP3DProvider..ctor(AdapterSettings settings)
+at iringtools.sdk.sp3ddatalayer.test.Tests..ctor() in C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\SP3DDataLayer.Tests\Tests.cs:line 36
+]]></stack-trace>
+                            </failure>
+                            <results>
+                              <test-case name="iringtools.sdk.sp3ddatalayer.test.Tests.TestDataObjects" executed="True" result="Failure" success="False" time="0.000" asserts="0">
+                                <failure>
+                                  <message><![CDATA[TestFixtureSetUp failed in Tests]]></message>
+                                  <stack-trace />
+                                </failure>
+                              </test-case>
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
