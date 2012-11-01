@@ -901,7 +901,7 @@ namespace org.iringtools.library
           }
           else
           {
-            if (!isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
+            if (isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
 
             GenericDataComparer comparer = new GenericDataComparer(propertyType);
             return o => comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == 1;
@@ -917,7 +917,7 @@ namespace org.iringtools.library
           }
           else
           {
-            if (!isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
+            if (isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
 
             GenericDataComparer comparer = new GenericDataComparer(propertyType);
             return o => comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == 1 ||
@@ -933,7 +933,7 @@ namespace org.iringtools.library
           }
           else
           {
-            if (!isBoolean) throw new Exception("LesserThan operator cannot be used with Boolean property");
+            if (isBoolean) throw new Exception("LesserThan operator cannot be used with Boolean property");
 
             GenericDataComparer comparer = new GenericDataComparer(propertyType);
             return o => comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == -1;
@@ -949,7 +949,7 @@ namespace org.iringtools.library
           }
           else
           {
-            if (!isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
+            if (isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
 
             GenericDataComparer comparer = new GenericDataComparer(propertyType);
             return o => comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == -1 ||
