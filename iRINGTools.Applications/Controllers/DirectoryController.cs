@@ -274,6 +274,7 @@ namespace org.iringtools.web.controllers
               string scopeName = context.Split('/')[0];
               string applicationName = context.Split('/')[1];
               DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+              string dataLayer = form["datalayer"];
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -291,7 +292,8 @@ namespace org.iringtools.web.controllers
                   children = null,
                   record = new
                   {
-                    Name = dataObject.objectName
+                    Name = dataObject.objectName,
+                    DataLayer = dataLayer
                   }
                 };
 
@@ -314,7 +316,7 @@ namespace org.iringtools.web.controllers
               string context = form["node"];
               string scopeName = context.Split('/')[0];
               string applicationName = context.Split('/')[1];
-              string dataObjectName = context.Split('/')[4];
+              string dataObjectName = context.Split('/')[4];              
 
               DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
               DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == dataObjectName);
@@ -340,7 +342,7 @@ namespace org.iringtools.web.controllers
                     Name = property.propertyName,
                     Keytype = keytype,
                     Datatype = datatype
-                  }
+                  }                 
                 };
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Name", property.propertyName);

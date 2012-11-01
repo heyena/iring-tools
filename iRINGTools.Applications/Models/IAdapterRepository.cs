@@ -38,5 +38,9 @@ namespace iRINGTools.Web.Models
     string UpdateApplication(string scopeName, string applicationName, ScopeApplication updatedApplication);
 
     string DeleteApplication(string scope, string application);
+
+    Response Refresh(string scope, string application);
+
+    Response Refresh(string scope, string application, string dataObjectName);
   }
 }
