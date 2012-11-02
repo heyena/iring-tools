@@ -4306,7 +4306,10 @@ namespace org.iringtools.adapter
           {
             asmTypes = asm.GetTypes();
           }
-          catch (Exception) { }
+          catch (Exception e) 
+          {
+            _logger.Error("Error getting types from assembly [" + file + "]: " + e);
+          }
 
           if (asmTypes != null)
           {
@@ -4317,8 +4320,6 @@ namespace org.iringtools.adapter
                 return asm;
               }
             }
-
-            if (!string.IsNullOrEmpty(mainDLL)) break;
           }
         }
       }
