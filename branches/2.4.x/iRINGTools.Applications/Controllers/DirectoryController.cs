@@ -9,6 +9,10 @@ using iRINGTools.Web.Models;
 using org.iringtools.library;
 using org.iringtools.mapping;
 using log4net;
+using System.Web;
+using System.IO;
+using org.iringtools.utility;
+using System.Runtime.Serialization;
 
 namespace org.iringtools.web.controllers
 {
@@ -490,6 +494,38 @@ namespace org.iringtools.web.controllers
       container.total = dataLayers.Count;
 
       return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    public string DataLayer(JsonTreeNode node, FormCollection form)
+    {
+      HttpFileCollectionBase files = Request.Files;
+      HttpPostedFileBase hpf = files[0] as HttpPostedFileBase;
+
+      string dataLayerName = string.Empty;
+
+      if (string.IsNullOrEmpty(form["Name"]))
+      {
+        int lastDot = hpf.FileName.LastIndexOf(".");
+        dataLayerName = hpf.FileName.Substring(0, lastDot);
+      }
+      else
+      {
+        dataLayerName = form["Name"];
+      }
+
+      DataLayer dataLayer = new DataLayer()
+      {
+        Name = dataLayerName,
+        Package = Utility.ToMemoryStream(hpf.InputStream)
+      };
+
+      MemoryStream dataLayerStream = new MemoryStream();
+      DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
+      serializer.WriteObject(dataLayerStream, dataLayer);
+      dataLayerStream.Position = 0;
+
+      Response response = _repository.UpdateDataLayer(dataLayerStream);
+      return Utility.ToJson<Response>(response);
     }
 
     public JsonResult Scope(FormCollection form)

@@ -39,6 +39,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.addEvents({
       NewScope: true,
       NewApplication: true,
+      DataLayer: true,
       EditScope: true,
       EditApplication: true,
       OpenMapping: true,
@@ -242,7 +243,14 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         handler: this.onNewScope,
         icon: 'Content/img/16x16/document-new.png',
         scope: this
-      }, {
+      }, 
+      {
+          text: 'Add/Edit DataLayer',
+          handler: this.onEditDataLayer,
+          icon: 'Content/img/16x16/document-new.png',
+          scope: this
+      },
+      {
         text: 'Regenerate HibernateDataLayer artifacts',
         handler: this.onRegenerateAll,
         icon: 'Content/img/16x16/document-new.png',
@@ -490,6 +498,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onNewScope: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('NewScope', this, node);
+  },
+  
+  onEditDataLayer: function (btn, ev) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    this.fireEvent('EditDataLayer', this, node);
   },
 
   onRegenerateAll: function (btn, ev) {

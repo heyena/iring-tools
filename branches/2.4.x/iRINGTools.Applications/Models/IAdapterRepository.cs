@@ -6,6 +6,7 @@ using System.Web;
 using org.iringtools.library;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
+using System.IO;
 
 namespace iRINGTools.Web.Models
 {
@@ -42,5 +43,7 @@ namespace iRINGTools.Web.Models
     Response Refresh(string scope, string application);
 
     Response Refresh(string scope, string application, string dataObjectName);
+    
+    Response UpdateDataLayer(MemoryStream dataLayerStream);
   }
 }

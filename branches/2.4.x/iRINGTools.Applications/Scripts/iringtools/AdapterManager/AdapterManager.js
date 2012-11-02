@@ -200,6 +200,15 @@ Ext.onReady(function () {
 
     }, this);
 
+    directoryPanel.on('editdatalayer', function (panel, node) {
+      var dlPanel = new AdapterManager.DataLayerPanel({
+        record: node.attributes.record,
+        url: 'directory/datalayer'
+      });
+      
+      dlPanel.show();
+    });
+
     directoryPanel.on('editgraphname', function (npanel, node) {
         contentPanel.removeAll(true);
     }, this);
