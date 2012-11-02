@@ -28,6 +28,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/MappingPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/SearchPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ScopePanel.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/DataLayerPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ValueListPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ValueListMapPanel.js") %>" type="text/javascript"></script> 
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/GraphPanel.js") %>" type="text/javascript"></script>                 

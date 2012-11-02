@@ -83,9 +83,14 @@ namespace org.iringtools.library
     {
       InitializeDatabaseDictionary();
 
-      DataDictionary dictionary = new DataDictionary();
-      dictionary.dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects);
-      dictionary.picklists = utility.Utility.CloneDataContractObject<List<PicklistObject>>(_dbDictionary.picklists);
+      DataDictionary dictionary = new DataDictionary()
+      {
+        dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects),
+        picklists = utility.Utility.CloneDataContractObject<List<PicklistObject>>(_dbDictionary.picklists),
+        dataVersion = _dbDictionary.dataVersion,
+        enableSearch = _dbDictionary.enableSearch,
+        enableSummary = _dbDictionary.enableSummary
+      };
 
       return dictionary;
     }

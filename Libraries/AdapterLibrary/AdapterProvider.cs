@@ -86,6 +86,7 @@ namespace org.iringtools.adapter
     private string[] arrSpecialcharValue;
 
     private string _dataLayersRegistryPath;
+    private string _dataLayerPath;
 
     [Inject]
     public AdapterProvider(NameValueCollection settings)
@@ -3774,7 +3775,7 @@ namespace org.iringtools.adapter
                   throw new Exception("Unable to load data layer assembly.");
                 }
 
-                _settings["DataLayerPath"] = dataLayer.Path;
+                _dataLayerPath = dataLayer.Path;
 
                 Type type = dataLayerAssembly.GetType(assembly.Split(',')[0]);
                 ConstructorInfo[] ctors = type.GetConstructors();
@@ -3824,12 +3825,19 @@ namespace org.iringtools.adapter
                 }
               }
 
+              if (_dataLayer != null)
+              {
+                _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
+              }
+
               break;
             }
           }
 
+          //
           // if data layer is internal or not registered (for backward compatibility),
-          // attempt to load using binding configuration
+          // attempt to load it using binding configuration
+          //
           if (_dataLayer == null)
           {
             if (File.Exists(_settings["BindingConfigurationPath"]))
@@ -3889,7 +3897,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error initializing identity: {0}", ex));
-        throw new Exception(string.Format("Error initializing identity: {0})", ex));
+        //throw new Exception(string.Format("Error initializing identity: {0})", ex));
       }
     }
 
@@ -3997,86 +4005,7 @@ namespace org.iringtools.adapter
       }
       return dataObjects;
     }
-
-
     #endregion
-
-    //public DataLayers GetDataLayers()
-    //{
-    //  DataLayers dataLayers = new DataLayers();
-
-    //  // Load NHibernate data layer
-    //  Type nhType = Type.GetType("org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", true);
-    //  string nhLibrary = nhType.Assembly.GetName().Name;
-    //  string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
-    //  DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
-    //  dataLayers.Add(nhDataLayer);
-
-    //  // Load Spreadsheet data layer
-    //  Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer", true);
-    //  string ssLibrary = ssType.Assembly.GetName().Name;
-    //  string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
-    //  DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
-    //  dataLayers.Add(ssDataLayer);
-
-    //  try
-    //  {
-    //    Type type = typeof(IDataLayer);
-    //    Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-    //    foreach (Assembly asm in domainAssemblies)
-    //    {
-    //      try
-    //      {
-    //        Type[] asmTypes = asm.GetTypes();
-    //        try
-    //        {
-    //          if (asmTypes != null)
-    //          {
-    //            foreach (System.Type asmType in asmTypes)
-    //            {
-    //              if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
-    //              {
-    //                bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-    //                string name = asm.FullName.Split(',')[0];
-
-    //                if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
-    //                {
-    //                  string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-    //                  DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-    //                  dataLayers.Add(dataLayer);
-    //                }
-    //              }
-    //            }
-    //          }
-    //        }
-    //        catch (Exception e)
-    //        {
-    //          _logger.Error("Error loading data layer (while getting types for " + asm.GetName() + "): " + e);
-    //        }
-    //      }
-    //      catch (ReflectionTypeLoadException rtle)
-    //      {
-    //        _logger.Error("Reflection Type Load Exception (while getting types for " + asm.GetName() + ")");
-    //        _logger.Error(rtle.Message);
-    //        foreach (Exception e in rtle.LoaderExceptions)
-    //        {
-    //          _logger.Error(" LoaderException: " + e.Message);
-    //        }
-    //      }
-    //      catch (Exception e)
-    //      {
-    //        _logger.Error("Error loading data layer (while getting assemblies for " + asm.GetName() + "): " + e);
-    //      }
-    //    }
-    //  }
-    //  catch (Exception e)
-    //  {
-    //    _logger.Error("Error loading data layer: " + e);
-    //  }
-
-    //  return dataLayers;
-    //}
 
     #region data layer management methods
     public DataLayers GetDataLayers()
@@ -4159,6 +4088,8 @@ namespace org.iringtools.adapter
                       DataLayer dataLayer = new DataLayer { 
                         Assembly = assembly, 
                         Name = name,
+                        External = true,
+                        Path = _settings["BaseDirectoryPath"] + @"bin\",
                         MainDLL = asm.ManifestModule.Name,
                         Configurable = configurable 
                       };
@@ -4208,34 +4139,54 @@ namespace org.iringtools.adapter
           }
           catch (UnauthorizedAccessException e)
           {
-            _logger.Warn("Error extracting data layer package: " + e);
+            _logger.Warn("Error extracting DataLayer package: " + e);
             response.Level = StatusLevel.Warning;
           }
         }
 
+        //
         // validate data layer
+        //
         Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
         if (dataLayerAssembly == null)
         {
-          throw new Exception("Unable to load data layer assembly.");
+          throw new Exception("Unable to load DataLayer assembly.");
         }
 
         dataLayer.Assembly = GetDataLayerAssemblyName(dataLayerAssembly);
+        dataLayer.MainDLL = dataLayerAssembly.ManifestModule.ScopeName;
         dataLayer.External = true;
 
         if (!string.IsNullOrEmpty(dataLayer.Assembly))
         {
-          if (dl == null)  // data layer does not exist, add it
+          //
+          // move configuration to app data folder
+          //
+          string[] files = Directory.GetFiles(dataLayer.Path);
+          foreach (string file in files)
           {
-            dataLayers.Add(dataLayer);
-          }
-          else  // data layer already exists, update it
-          {
-            dl = dataLayer;
+            string lcFile = file.ToLower();
+            if (!(lcFile.EndsWith(".exe") || lcFile.EndsWith(".dll") || lcFile.EndsWith(".resources")))
+            {
+              File.Copy(file, _settings["AppDataPath"] + Path.GetFileName(file), true);
+            }
           }
 
+          // remove data layer if exists
+          if (dl != null)
+          {
+            if (dl.Path == _settings["BaseDirectoryPath"] + "bin\\")
+            {
+              File.Delete(dl.Path + dl.MainDLL);
+            }
+
+            dataLayers.Remove(dl);
+          }
+
+          dataLayers.Add(dataLayer);
+
           Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
-          response.Messages.Add("Data layer [" + dataLayer.Name + "] saved successfully.");
+          response.Messages.Add("DataLayer [" + dataLayer.Name + "] saved successfully.");
         }
         else
         {
@@ -4245,12 +4196,12 @@ namespace org.iringtools.adapter
           }
 
           response.Level = StatusLevel.Error;
-          response.Messages.Add("Data layer [" + dataLayer.Name + "] is not compatible.");
+          response.Messages.Add("DataLayer [" + dataLayer.Name + "] is not compatible.");
         }
       }
       catch (Exception e)
       {
-        _logger.Error("Error saving data layer: " + e);
+        _logger.Error("Error saving DataLayer: " + e);
 
         if (Directory.Exists(dataLayer.Path))
         {
@@ -4258,7 +4209,7 @@ namespace org.iringtools.adapter
         }
 
         response.Level = StatusLevel.Error;
-        response.Messages.Add("Error adding data layer [" + dataLayer.Name + "]. " + e);
+        response.Messages.Add("Error adding DataLayer [" + dataLayer.Name + "]. " + e);
       }
 
       return response;
@@ -4276,7 +4227,7 @@ namespace org.iringtools.adapter
         if (dl == null)
         {
           response.Level = StatusLevel.Error;
-          response.Messages.Add("Data layer [" + dataLayerName + "] not found.");
+          response.Messages.Add("DataLayer [" + dataLayerName + "] not found.");
         }
         else
         {
@@ -4289,21 +4240,21 @@ namespace org.iringtools.adapter
             Directory.Delete(dlPath, true);
 
             response.Level = StatusLevel.Success;
-            response.Messages.Add("Data layer [" + dataLayerName + "] deleted successfully.");
+            response.Messages.Add("DataLayer [" + dataLayerName + "] deleted successfully.");
           }
           else
           {
             response.Level = StatusLevel.Error;
-            response.Messages.Add("Deleting internal data layer [" + dataLayerName + "] is not allowed.");
+            response.Messages.Add("Deleting internal DataLayer [" + dataLayerName + "] is not allowed.");
           }
         }
       }
       catch (Exception e)
       {
-        _logger.Error("Error getting data layers: " + e);
+        _logger.Error("Error getting DataLayer: " + e);
 
         response.Level = StatusLevel.Success;
-        response.Messages.Add("Error deleting data layer [" + dataLayerName + "]." + e);
+        response.Messages.Add("Error deleting DataLayer [" + dataLayerName + "]." + e);
       }
 
       return response;
@@ -4332,8 +4283,52 @@ namespace org.iringtools.adapter
 
     private Assembly GetDataLayerAssembly(DataLayer dataLayer)
     {
-      byte[] bytes = Utility.GetBytes(dataLayer.Path + dataLayer.MainDLL);
-      return Assembly.Load(bytes);
+      string mainDLL = dataLayer.MainDLL;
+
+      if (string.IsNullOrEmpty(mainDLL))
+      {
+        Type type = typeof(IDataLayer);
+        string path = Path.Combine(_settings["BaseDirectoryPath"], dataLayer.Path);        
+        string[] files = Directory.GetFiles(path);
+
+        foreach (string file in files)
+        {
+          string lcFile = file.ToLower();
+
+          if (!(lcFile.EndsWith(".dll") || lcFile.EndsWith(".exe")))
+            continue;
+
+          byte[] bytes = Utility.GetBytes(file);
+          Assembly asm = Assembly.Load(bytes);
+          Type[] asmTypes = null;
+
+          try
+          {
+            asmTypes = asm.GetTypes();
+          }
+          catch (Exception) { }
+
+          if (asmTypes != null)
+          {
+            foreach (System.Type asmType in asmTypes)
+            {
+              if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+              {
+                return asm;
+              }
+            }
+
+            if (!string.IsNullOrEmpty(mainDLL)) break;
+          }
+        }
+      }
+      else
+      {
+        byte[] bytes = Utility.GetBytes(dataLayer.Path + mainDLL);
+        return Assembly.Load(bytes);
+      }
+
+      return null;
     }
 
     private string GetDataLayerAssemblyName(Assembly assembly)
@@ -4365,21 +4360,19 @@ namespace org.iringtools.adapter
         return null;
       }
 
-      if (Directory.Exists(_settings["DataLayerPath"]))
+      if (Directory.Exists(_dataLayerPath))
       {
-        string[] files = Directory.GetFiles(_settings["DataLayerPath"]);
+        string[] files = Directory.GetFiles(_dataLayerPath);
 
         foreach (string file in files)
         {
           if (file.ToLower().EndsWith(".dll") || file.ToLower().EndsWith(".exe"))
           {
-            AssemblyName asmName = AssemblyName.GetAssemblyName(file);
+            byte[] bytes = Utility.GetBytes(file);
+            Assembly assembly = Assembly.Load(bytes);
 
-            if (args.Name.StartsWith(asmName.Name))
-            {
-              byte[] bytes = Utility.GetBytes(file);
-              return Assembly.Load(bytes);
-            }
+            if (args.Name == assembly.FullName)
+              return assembly;
           }
         }
 

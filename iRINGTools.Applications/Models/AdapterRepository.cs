@@ -14,6 +14,7 @@ using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using System.Text;
 using System.Net;
+using System.IO;
 
 
 namespace iRINGTools.Web.Models
@@ -347,6 +348,26 @@ namespace iRINGTools.Web.Models
     public Response Refresh(string scope, string application, string dataObjectName)
     {
       return _adapterServiceClient.Get<Response>(String.Format("/{0}/{1}/{2}/refresh", scope, application, dataObjectName));
+    }
+    
+    public Response UpdateDataLayer(MemoryStream dataLayerStream)
+    {
+      try
+      {
+        return Utility.Deserialize<Response>(_adapterServiceClient.PostStream("/datalayers", dataLayerStream), true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+
+        Response response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
+
+        return response;
+      }
     }
 
     #region NHibernate Configuration Wizard support methods
