@@ -19,7 +19,7 @@ AdapterManager.DataLayerPanel = Ext.extend(Ext.Window,
       save: true,
     });
 
-    this.title = 'Add/Edit DataLayer';
+    this.title = 'Add/Update DataLayer';
     this.bbar = this.buildToolbar();
 
     var name = '';
@@ -33,8 +33,7 @@ AdapterManager.DataLayerPanel = Ext.extend(Ext.Window,
       labelWidth: 70,
       defaultType: 'textfield',
       defaults: {
-        width: 280,
-        allowBlank: true
+        width: 280
       },
       items: [
         //{ fieldLabel: 'Display Name', name: 'name', xtype: 'textfield', value: name },
@@ -50,8 +49,8 @@ AdapterManager.DataLayerPanel = Ext.extend(Ext.Window,
       xtype: 'tbfill'
     }, {
       xtype: "button",
-      text: 'Upload',
-      handler: this.onUpload,
+      text: 'Send',
+      handler: this.onSend,
       scope: this
     }, {
       xtype: "button",
@@ -65,22 +64,22 @@ AdapterManager.DataLayerPanel = Ext.extend(Ext.Window,
     this.close();
   },
 
-  onUpload: function () {
+  onSend: function () {
     var me = this;
     this.items.first().getForm().submit({
       waitMsg: 'Processing ...',
       success: function (response, request) {
         me.close();
-        showDialog(400, 180, 'DataLayer Upload Result', request.result.messages[0], Ext.Msg.OK, null);
+        showDialog(400, 100, 'DataLayer Uploading Result', request.result.messages[0], Ext.Msg.OK, null);
       },
       failure: function (response, request) {
         me.close();
 
         if (request.result.level == 0) {
-          showDialog(400, 180, 'DataLayer Upload Result', request.result.messages[0], Ext.Msg.OK, null);
+          showDialog(400, 180, 'DataLayer Uploading Result', request.result.messages[0], Ext.Msg.OK, null);
         }
         else {
-          showDialog(400, 180, 'DataLayer Upload Result', request.result.messages[0], Ext.Msg.OK, null);
+          showDialog(400, 180, 'DataLayer Uploading Result', request.result.messages[0], Ext.Msg.OK, null);
         }
       }
     });
