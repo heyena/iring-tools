@@ -311,6 +311,8 @@ public class ExchangeTask implements Runnable
           String targetUrl = targetGraphUrl + "?format=stream";
           
           String poolRange = i + " - " + (i + actualPoolSize);
+          poolDtos.setSenderScopeName(xDef.getSourceScopeName());
+          poolDtos.setSenderAppName(xDef.getSourceAppName());
           
           logger.debug("Sending pool DTOs to [" + targetUrl + "]: ");
           logger.debug(JaxbUtils.toXml(poolDtos, false));

@@ -20,6 +20,8 @@
       <xs:element name="appName" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="dataTransferObjectList" type="DataTransferObjectList" minOccurs="0" maxOccurs="1"/>
       <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="senderScopeName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="senderAppName" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
   

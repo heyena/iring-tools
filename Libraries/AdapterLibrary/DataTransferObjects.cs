@@ -55,6 +55,12 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "version", Order = 3, EmitDefaultValue = false)]
     public string Version { get; set; }
+
+    [DataMember(Name = "senderScopeName", Order = 4, EmitDefaultValue = false)]
+    public string SenderScopeName { get; set; }
+
+    [DataMember(Name = "senderAppName", Order = 5, EmitDefaultValue = false)]
+    public string SenderAppName { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "dataTransferObject")]
