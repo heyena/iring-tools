@@ -4014,7 +4014,11 @@ namespace org.iringtools.adapter
 
       try
       {
-        if (File.Exists(_dataLayersRegistryPath))
+        //IMPORTANT: DO NOT DELETE THE LINE BELOW AS IT WILL BE USED WHEN UPGRADE IS READY
+        //if (File.Exists(_dataLayersRegistryPath))
+        if (dataLayers.Count > 0)  // force loading data layer from binding configuration
+                                   // for now to apply an urgent patch to include sender info
+                                   // in adapter settings.
         {
           dataLayers = Utility.Read<DataLayers>(_dataLayersRegistryPath);
           int dataLayersCount = dataLayers.Count;
@@ -4298,12 +4302,13 @@ namespace org.iringtools.adapter
           if (!(lcFile.EndsWith(".dll") || lcFile.EndsWith(".exe")))
             continue;
 
-          byte[] bytes = Utility.GetBytes(file);
-          Assembly asm = Assembly.Load(bytes);
+          Assembly asm = null;
           Type[] asmTypes = null;
 
           try
           {
+            byte[] bytes = Utility.GetBytes(file);
+            asm = Assembly.Load(bytes);
             asmTypes = asm.GetTypes();
           }
           catch (Exception e) 

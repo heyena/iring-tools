@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="appName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="dataTransferObjectList" type="{http://www.iringtools.org/dxfr/dto}DataTransferObjectList" minOccurs="0"/>
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="senderScopeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="senderAppName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +36,9 @@ import javax.xml.bind.annotation.XmlType;
     "scopeName",
     "appName",
     "dataTransferObjectList",
-    "version"
+    "version",
+    "senderScopeName",
+    "senderAppName"
 })
 @XmlRootElement(name = "dataTransferObjects")
 public class DataTransferObjects {
@@ -43,6 +47,8 @@ public class DataTransferObjects {
     protected String appName;
     protected DataTransferObjectList dataTransferObjectList;
     protected String version;
+    protected String senderScopeName;
+    protected String senderAppName;
 
     /**
      * Gets the value of the scopeName property.
@@ -138,6 +144,54 @@ public class DataTransferObjects {
      */
     public void setVersion(String value) {
         this.version = value;
+    }
+
+    /**
+     * Gets the value of the senderScopeName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSenderScopeName() {
+        return senderScopeName;
+    }
+
+    /**
+     * Sets the value of the senderScopeName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSenderScopeName(String value) {
+        this.senderScopeName = value;
+    }
+
+    /**
+     * Gets the value of the senderAppName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSenderAppName() {
+        return senderAppName;
+    }
+
+    /**
+     * Sets the value of the senderAppName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSenderAppName(String value) {
+        this.senderAppName = value;
     }
 
 }

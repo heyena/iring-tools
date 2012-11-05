@@ -501,6 +501,9 @@ namespace org.iringtools.adapter
 
       try
       {
+        _settings["SenderProjectName"] = dataTransferObjects.SenderScopeName;
+        _settings["SenderApplicationName"] = dataTransferObjects.SenderAppName;
+
         InitializeScope(scope, app);
 
         if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
