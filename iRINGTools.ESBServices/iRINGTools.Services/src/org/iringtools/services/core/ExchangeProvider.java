@@ -520,6 +520,61 @@ public class ExchangeProvider
     return resultDtos;
   }
   
+  public DataTransferObjects getDataTransferObjectsFiltered(String scope, String id, int start, int limit, boolean sync, boolean add, boolean change, boolean delete, DataFilter filter)
+		  throws ServiceProviderException
+  {
+	  logger.debug("getDataTransferObjectsFiltered(" + scope + ", " + id + ", " + start + ", " + limit + ", " + sync + ", " + add + ", " + change + ", " + delete + ", " + ", filter)");
+	  
+	  Manifest manifest = null;
+	  DataTransferIndices dtis = null;
+	  DxiRequest dxiRequest = new DxiRequest();
+	  try
+	  {
+		  ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+		    
+	      manifest = exchangeProvider.getManifest(scope, id);
+	      
+	      dxiRequest.setManifest(manifest);
+	      dxiRequest.setDataFilter(filter);
+	      dtis = exchangeProvider.getDataTransferIndices(scope, id, dxiRequest, false);
+	   
+	      int itemCount = 0;
+		  DataTransferIndices actionDtis = new DataTransferIndices();
+		  DataTransferIndexList actionDtiList = new DataTransferIndexList();
+		  actionDtis.setDataTransferIndexList(actionDtiList);
+		  List<DataTransferIndex> actionDtiListItems = actionDtiList.getItems();
+		    
+	      // Depending on the 'actions' we'll limit the dti's we send to the exchange request
+	      for (DataTransferIndex dxi : dtis.getDataTransferIndexList().getItems())
+	      {
+	        TransferType transferType = dxi.getTransferType();
+	        
+	        if ( (transferType == TransferType.SYNC && sync) ||
+	        	 (transferType == TransferType.ADD && add) ||
+	        	 (transferType == TransferType.CHANGE && change) ||
+	        	 (transferType == TransferType.DELETE && delete) ) 
+	        {
+          		itemCount++;
+	        	if (itemCount > start) // get just the requested page of changes
+	        	{
+		        	actionDtiListItems.add(dxi);        
+	        	}
+	        }
+        	if (itemCount >= start+limit) break; // short circuit the loop once we have a page of data to return
+	      }    
+
+		  DxoRequest dxoRequest = new DxoRequest();
+	      dxoRequest.setManifest(manifest);
+	      dxoRequest.setDataTransferIndices(actionDtis);
+
+		  return getDataTransferObjects(scope, id, dxoRequest);
+	  }
+	  catch (Exception e)
+	  {
+		  throw new ServiceProviderException(e.getMessage());
+	  }
+  }
+
   public Response getDifferencesSummary(String scope, String id, DataFilter filter)
   {
 	  logger.debug("getDifferencesSummary(" + scope + ", " + id + ", filter)");

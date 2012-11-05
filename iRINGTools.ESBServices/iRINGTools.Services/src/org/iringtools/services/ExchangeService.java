@@ -31,6 +31,7 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.ExchangeProvider;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_XML)
@@ -192,8 +193,49 @@ public class ExchangeService extends AbstractService
   }
   
   @POST
+  @Path("/{scope}/exchanges/{id}/differences")
+  @Consumes(MediaType.APPLICATION_XML)
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+  public Response getDifferences(
+      @PathParam("scope") String scope, 
+      @PathParam("id") String id,
+      @DefaultValue("0") @QueryParam("start") int start,
+      @DefaultValue("25") @QueryParam("limit") int limit,
+      @DefaultValue("false") @QueryParam("Sync") boolean sync,
+      @DefaultValue("true") @QueryParam("Add") boolean add,
+      @DefaultValue("true") @QueryParam("Change") boolean change,
+      @DefaultValue("true") @QueryParam("Delete") boolean delete,
+      DataFilter filter)
+  {
+	  DataTransferObjects dtos = new DataTransferObjects();
+    
+	  try
+	  {
+		  initService(SERVICE_NAME);
+	  }
+	  catch (AuthorizationException e)
+	  {
+		  return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+	  }
+    
+	  try
+	  {
+		  ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+		  dtos = exchangeProvider.getDataTransferObjectsFiltered(scope, id, start, limit, sync, add, change, delete, filter);
+	  }
+	  catch (Exception e)
+	  {
+		  return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+	  }
+    
+	  return Response.ok().entity(dtos).build();
+
+  }
+
+  @POST
   @Path("/{scope}/exchanges/{id}/differences/summary")
   @Consumes(MediaType.APPLICATION_XML)
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
   public Response getDifferencesSummary(
       @PathParam("scope") String scope, 
       @PathParam("id") String id,
