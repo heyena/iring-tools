@@ -245,7 +245,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         scope: this
       }, 
       {
-          text: 'Add/Edit DataLayer',
+          text: 'Add/Update DataLayer',
           handler: this.onEditDataLayer,
           icon: 'Content/img/16x16/document-new.png',
           scope: this
