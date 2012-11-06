@@ -309,7 +309,7 @@ Ext.onReady(function () {
         var win = new Ext.Window({
             closable: true,
             id: 'newwin-' + node.id,
-            modal: false,
+            modal: true,
 			autoHeight:true,
             layout: 'fit',
             title: 'Add New Application',
@@ -379,18 +379,21 @@ Ext.onReady(function () {
 
         var win = new Ext.Window({
             closable: true,
-            modal: false,
+            modal: true,
+			shadow : false,
 			//resizable:false,
 			//autoDestroy:true,
             id: 'editwin-' + node.id,
 			//collapsible:false,
-			//autoHeight:true,
+			autoHeight:true,
             //autoScroll: true,
-            layout: 'anchor',
+            layout: 'fit',
             title: 'Edit Application\"' + node.text + '\"',
             iconCls: 'tabsApplication',
-            height: '100%',//360, //291,
-            width: '25%',//460, //430,
+            height: 360,
+            width: 460,
+			//height: '100%',//360, //291,
+            //width: '25%',//460, //430,
             //plain: true,
             items: newTab
         });
@@ -398,6 +401,7 @@ Ext.onReady(function () {
 		  alert('this is before show..');
 		  me.findByType('fieldset')
 		}, this);*/
+		
 		win.show();
 		
 
