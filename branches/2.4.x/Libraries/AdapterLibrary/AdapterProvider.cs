@@ -91,8 +91,9 @@ namespace org.iringtools.adapter
     [Inject]
     public AdapterProvider(NameValueCollection settings)
     {
-      AppDomain currentDomain = AppDomain.CurrentDomain;
-      currentDomain.AssemblyResolve += new ResolveEventHandler(DataLayerAssemblyResolveEventHandler);
+      //TODO: Pending on testing, do not delete
+      //AppDomain currentDomain = AppDomain.CurrentDomain;
+      //currentDomain.AssemblyResolve += new ResolveEventHandler(DataLayerAssemblyResolveEventHandler);
       
       var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
       _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
@@ -3610,6 +3611,15 @@ namespace org.iringtools.adapter
 
           _settings["BindingConfigurationPath"] = bindingConfigurationPath;
 
+          if (File.Exists(bindingConfigurationPath))
+          {
+            _kernel.Load(bindingConfigurationPath);
+          }
+          else
+          {
+            _logger.Error("Binding configuration not found.");
+          }
+
           string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);
 
           _settings["DBDictionaryPath"] = dbDictionaryPath;
@@ -3758,111 +3768,14 @@ namespace org.iringtools.adapter
             Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
           }
 
-          XElement bindingConfig = Utility.ReadXml(_settings["BindingConfigurationPath"]);
-          string assembly = bindingConfig.Element("bind").Attribute("to").Value;
-          DataLayers dataLayers = GetDataLayers();
-
-          foreach (DataLayer dataLayer in dataLayers)
-          {
-            if (dataLayer.Assembly.ToLower() == assembly.ToLower())
-            {
-              if (dataLayer.External)
-              {
-                Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
-
-                if (dataLayerAssembly == null)
-                {
-                  throw new Exception("Unable to load data layer assembly.");
-                }
-
-                _dataLayerPath = dataLayer.Path;
-
-                Type type = dataLayerAssembly.GetType(assembly.Split(',')[0]);
-                ConstructorInfo[] ctors = type.GetConstructors();
-
-                foreach (ConstructorInfo ctor in ctors)
-                {
-                  ParameterInfo[] paramList = ctor.GetParameters();
-
-                  if (paramList.Length == 0)  // default constructor
-                  {
-                    _dataLayer = (IDataLayer2)Activator.CreateInstance(type);
-
-                    break;
-                  }
-                  else if (paramList.Length == 1)  // constructor with 1 parameter
-                  {
-                    if (ctor.GetParameters()[0].ParameterType.FullName == typeof(AdapterSettings).FullName)
-                    {
-                      _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings);
-                    }
-                    else if (ctor.GetParameters()[0].ParameterType.FullName == typeof(IDictionary).FullName)
-                    {
-                      _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings);
-                    }
-
-                    break;
-                  }
-                  else if (paramList.Length == 2)  // constructor with 2 parameters
-                  {
-                    if (ctor.GetParameters()[0].ParameterType.FullName == typeof(AdapterSettings).FullName &&
-                      ctor.GetParameters()[1].ParameterType.FullName == typeof(IDictionary).FullName)
-                    {
-                      _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings, _keyRing);
-                    }
-                    else if (ctor.GetParameters()[0].ParameterType.FullName == typeof(IDictionary).FullName &&
-                      ctor.GetParameters()[1].ParameterType.FullName == typeof(AdapterSettings).FullName)
-                    {
-                      _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _keyRing, _settings);
-                    }
-                    else
-                    {
-                      throw new Exception("Data layer does not contain supported constructor.");
-                    }
-
-                    break;
-                  }
-                }
-              }
-
-              if (_dataLayer != null)
-              {
-                _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
-              }
-
-              break;
-            }
-          }
-
-          //
-          // if data layer is internal or not registered (for backward compatibility),
-          // attempt to load it using binding configuration
-          //
-          if (_dataLayer == null)
-          {
-            if (File.Exists(_settings["BindingConfigurationPath"]))
-            {
-              _kernel.Load(_settings["BindingConfigurationPath"]);
-            }
-            else
-            {
-              _logger.Error("Binding configuration not found.");
-            }
-
-            _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
-
-            if (_dataLayer == null)
-            {
-              _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
-            }
-
-            _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
-          }
+          _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
 
           if (_dataLayer == null)
           {
-            throw new Exception("Error initializing data layer.");
+            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
           }
+
+          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
 
           if (setDictionary)
             InitializeDictionary();
@@ -3897,7 +3810,6 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error initializing identity: {0}", ex));
-        //throw new Exception(string.Format("Error initializing identity: {0})", ex));
       }
     }
 
@@ -4007,75 +3919,567 @@ namespace org.iringtools.adapter
     }
     #endregion
 
+    ///TODO: Pending on testing, do not delete
     #region data layer management methods
+    //private void InitializeDataLayer(bool setDictionary)
+    //{
+    //  try
+    //  {
+    //    if (!_isDataLayerInitialized)
+    //    {
+    //      _logger.Debug("Initializing data layer...");
+
+    //      if (_settings["DumpSettings"] == "True")
+    //      {
+    //        Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
+    //        foreach (string key in _settings.AllKeys)
+    //        {
+    //          settingsDictionary.Add(key, _settings[key]);
+    //        }
+    //        Utility.Write<Dictionary<string, string>>(settingsDictionary, @"AdapterSettings.xml");
+    //        Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
+    //      }
+
+    //      XElement bindingConfig = Utility.ReadXml(_settings["BindingConfigurationPath"]);
+    //      string assembly = bindingConfig.Element("bind").Attribute("to").Value;
+    //      DataLayers dataLayers = GetDataLayers();
+
+    //      foreach (DataLayer dataLayer in dataLayers)
+    //      {
+    //        if (dataLayer.Assembly.ToLower() == assembly.ToLower())
+    //        {
+    //          if (dataLayer.External)
+    //          {
+    //            Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
+
+    //            if (dataLayerAssembly == null)
+    //            {
+    //              throw new Exception("Unable to load data layer assembly.");
+    //            }
+
+    //            _dataLayerPath = dataLayer.Path;
+
+    //            Type type = dataLayerAssembly.GetType(assembly.Split(',')[0]);
+    //            ConstructorInfo[] ctors = type.GetConstructors();
+
+    //            foreach (ConstructorInfo ctor in ctors)
+    //            {
+    //              ParameterInfo[] paramList = ctor.GetParameters();
+
+    //              if (paramList.Length == 0)  // default constructor
+    //              {
+    //                _dataLayer = (IDataLayer2)Activator.CreateInstance(type);
+
+    //                break;
+    //              }
+    //              else if (paramList.Length == 1)  // constructor with 1 parameter
+    //              {
+    //                if (ctor.GetParameters()[0].ParameterType.FullName == typeof(AdapterSettings).FullName)
+    //                {
+    //                  _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings);
+    //                }
+    //                else if (ctor.GetParameters()[0].ParameterType.FullName == typeof(IDictionary).FullName)
+    //                {
+    //                  _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings);
+    //                }
+
+    //                break;
+    //              }
+    //              else if (paramList.Length == 2)  // constructor with 2 parameters
+    //              {
+    //                if (ctor.GetParameters()[0].ParameterType.FullName == typeof(AdapterSettings).FullName &&
+    //                  ctor.GetParameters()[1].ParameterType.FullName == typeof(IDictionary).FullName)
+    //                {
+    //                  _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _settings, _keyRing);
+    //                }
+    //                else if (ctor.GetParameters()[0].ParameterType.FullName == typeof(IDictionary).FullName &&
+    //                  ctor.GetParameters()[1].ParameterType.FullName == typeof(AdapterSettings).FullName)
+    //                {
+    //                  _dataLayer = (IDataLayer2)Activator.CreateInstance(type, _keyRing, _settings);
+    //                }
+    //                else
+    //                {
+    //                  throw new Exception("Data layer does not contain supported constructor.");
+    //                }
+
+    //                break;
+    //              }
+    //            }
+    //          }
+
+    //          if (_dataLayer != null)
+    //          {
+    //            _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
+    //          }
+
+    //          break;
+    //        }
+    //      }
+
+    //      //
+    //      // if data layer is internal or not registered (for backward compatibility),
+    //      // attempt to load it using binding configuration
+    //      //
+    //      if (_dataLayer == null)
+    //      {
+    //        if (File.Exists(_settings["BindingConfigurationPath"]))
+    //        {
+    //          _kernel.Load(_settings["BindingConfigurationPath"]);
+    //        }
+    //        else
+    //        {
+    //          _logger.Error("Binding configuration not found.");
+    //        }
+
+    //        _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
+
+    //        if (_dataLayer == null)
+    //        {
+    //          _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+    //        }
+
+    //        _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
+    //      }
+
+    //      if (_dataLayer == null)
+    //      {
+    //        throw new Exception("Error initializing data layer.");
+    //      }
+
+    //      if (setDictionary)
+    //        InitializeDictionary();
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error(string.Format("Error initializing application: {0}", ex));
+    //    throw new Exception(string.Format("Error initializing application: {0})", ex));
+    //  }
+    //}
+
+    //public DataLayers GetDataLayers()
+    //{
+    //  DataLayers dataLayers = new DataLayers();
+
+    //  try
+    //  {
+    //    if (File.Exists(_dataLayersRegistryPath))
+    //    {
+    //      dataLayers = Utility.Read<DataLayers>(_dataLayersRegistryPath);
+    //      int dataLayersCount = dataLayers.Count;
+
+    //      //
+    //      // validate external data layers, remove from list if no longer exists
+    //      //
+    //      for (int i = 0; i < dataLayers.Count; i++)
+    //      {
+    //        DataLayer dataLayer = dataLayers[i];
+
+    //        if (dataLayer.External)
+    //        {
+    //          string qualPath = dataLayer.Path + "\\" + dataLayer.MainDLL;
+
+    //          if (!File.Exists(qualPath))
+    //          {
+    //            dataLayers.RemoveAt(i--);
+    //          }
+    //        }
+    //      }
+
+    //      if (dataLayersCount > dataLayers.Count)
+    //      {
+    //        Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
+    //      }
+    //    }
+    //    else
+    //    {
+    //      //
+    //      // get internal data layers
+    //      //
+    //      DataLayers internalDataLayers = GetInternalDataLayers();
+
+    //      if (internalDataLayers != null && internalDataLayers.Count > 0)
+    //      {
+    //        dataLayers.AddRange(internalDataLayers);
+    //      }
+
+    //      // 
+    //      // register existing data layers from manual deployment
+    //      //
+    //      try
+    //      {
+    //        Type type = typeof(IDataLayer);
+    //        Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+    //        foreach (Assembly asm in domainAssemblies)
+    //        {
+    //          Type[] asmTypes = null;
+
+    //          try
+    //          {
+    //            asmTypes = asm.GetTypes();
+    //          }
+    //          catch (Exception) { }
+
+    //          if (asmTypes != null)
+    //          {
+    //            foreach (System.Type asmType in asmTypes)
+    //            {
+    //              if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+    //              {
+    //                bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+    //                string name = asm.FullName.Split(',')[0];
+
+    //                if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
+    //                {
+    //                  string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+
+    //                  DataLayer dataLayer = new DataLayer { 
+    //                    Assembly = assembly, 
+    //                    Name = name,
+    //                    External = true,
+    //                    Path = _settings["BaseDirectoryPath"] + @"bin\",
+    //                    MainDLL = asm.ManifestModule.Name,
+    //                    Configurable = configurable 
+    //                  };
+
+    //                  dataLayers.Add(dataLayer);
+    //                }
+    //              }
+    //            }
+    //          }
+    //        }
+    //      }
+    //      catch (Exception e)
+    //      {
+    //        _logger.Error("Error loading assembly: " + e);
+    //      }
+
+    //      Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
+    //    }
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error("Error getting data layers: " + e);
+    //    throw e;
+    //  }
+
+    //  return dataLayers;
+    //}
+
+    //public Response PostDataLayer(DataLayer dataLayer)
+    //{
+    //  Response response = new Response();
+    //  response.Level = StatusLevel.Success;
+
+    //  try
+    //  {
+    //    DataLayers dataLayers = GetDataLayers();
+    //    DataLayer dl = dataLayers.Find(x => x.Name.ToLower() == dataLayer.Name.ToLower());
+    //    dataLayer.Path = _settings["DataLayersPath"] + dataLayer.Name + "\\";
+
+    //    // extract package file
+    //    if (dataLayer.Package != null)
+    //    {
+    //      try
+    //      {
+    //        //
+    //        // remove DLLs and EXEs from previous upload
+    //        //
+    //        if (Directory.Exists(dataLayer.Path))
+    //        {
+    //          string[] files = Directory.GetFiles(dataLayer.Path);
+    //          foreach (string file in files)
+    //          {
+    //            string lcFile = file.ToLower();
+    //            if (lcFile.EndsWith(".exe") || lcFile.EndsWith(".dll"))
+    //            {
+    //              File.Delete(file);
+    //            }
+    //          }
+    //        }
+
+    //        Utility.Unzip(dataLayer.Package, dataLayer.Path);
+    //        dataLayer.Package = null;
+    //      }
+    //      catch (UnauthorizedAccessException e)
+    //      {
+    //        _logger.Warn("Error extracting DataLayer package: " + e);
+    //        response.Level = StatusLevel.Warning;
+    //      }
+    //    }
+
+    //    //
+    //    // validate data layer
+    //    //
+    //    Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
+    //    if (dataLayerAssembly == null)
+    //    {
+    //      throw new Exception("Unable to load DataLayer assembly.");
+    //    }
+
+    //    dataLayer.Assembly = GetDataLayerAssemblyName(dataLayerAssembly);
+    //    dataLayer.MainDLL = dataLayerAssembly.ManifestModule.ScopeName;
+    //    dataLayer.External = true;
+
+    //    if (!string.IsNullOrEmpty(dataLayer.Assembly))
+    //    {
+    //      //
+    //      // move configuration to app data folder
+    //      //
+    //      string[] files = Directory.GetFiles(dataLayer.Path);
+    //      foreach (string file in files)
+    //      {
+    //        string lcFile = file.ToLower();
+    //        if (!(lcFile.EndsWith(".exe") || lcFile.EndsWith(".dll") || lcFile.EndsWith(".resources")))
+    //        {
+    //          File.Copy(file, _settings["AppDataPath"] + Path.GetFileName(file), true);
+    //        }
+    //      }
+
+    //      // remove data layer if exists
+    //      if (dl != null)
+    //      {
+    //        if (dl.Path == _settings["BaseDirectoryPath"] + "bin\\")
+    //        {
+    //          File.Delete(dl.Path + dl.MainDLL);
+    //        }
+
+    //        dataLayers.Remove(dl);
+    //      }
+
+    //      dataLayers.Add(dataLayer);
+
+    //      Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
+    //      response.Messages.Add("DataLayer [" + dataLayer.Name + "] saved successfully.");
+    //    }
+    //    else
+    //    {
+    //      if (Directory.Exists(dataLayer.Path))
+    //      {
+    //        Directory.Delete(dataLayer.Path, true);
+    //      }
+
+    //      response.Level = StatusLevel.Error;
+    //      response.Messages.Add("DataLayer [" + dataLayer.Name + "] is not compatible.");
+    //    }
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error("Error saving DataLayer: " + e);
+
+    //    if (Directory.Exists(dataLayer.Path))
+    //    {
+    //      Directory.Delete(dataLayer.Path, true);
+    //    }
+
+    //    response.Level = StatusLevel.Error;
+    //    response.Messages.Add("Error adding DataLayer [" + dataLayer.Name + "]. " + e);
+    //  }
+
+    //  return response;
+    //}
+
+    //public Response DeleteDataLayer(string dataLayerName)
+    //{
+    //  Response response = new Response();
+
+    //  try
+    //  {
+    //    DataLayers dataLayers = GetDataLayers();
+    //    DataLayer dl = dataLayers.Find(x => x.Name.ToLower() == dataLayerName.ToLower());
+
+    //    if (dl == null)
+    //    {
+    //      response.Level = StatusLevel.Error;
+    //      response.Messages.Add("DataLayer [" + dataLayerName + "] not found.");
+    //    }
+    //    else
+    //    {
+    //      if (dl.External)
+    //      {
+    //        dataLayers.Remove(dl);
+    //        Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
+
+    //        string dlPath = dl.Path;
+    //        Directory.Delete(dlPath, true);
+
+    //        response.Level = StatusLevel.Success;
+    //        response.Messages.Add("DataLayer [" + dataLayerName + "] deleted successfully.");
+    //      }
+    //      else
+    //      {
+    //        response.Level = StatusLevel.Error;
+    //        response.Messages.Add("Deleting internal DataLayer [" + dataLayerName + "] is not allowed.");
+    //      }
+    //    }
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error("Error getting DataLayer: " + e);
+
+    //    response.Level = StatusLevel.Success;
+    //    response.Messages.Add("Error deleting DataLayer [" + dataLayerName + "]." + e);
+    //  }
+
+    //  return response;
+    //}
+
+    //private DataLayers GetInternalDataLayers()
+    //{
+    //  DataLayers dataLayers = new DataLayers();
+
+    //  // load NHibernate data layer
+    //  Type type = typeof(NHibernateDataLayer);
+    //  string library = type.Assembly.GetName().Name;
+    //  string assembly = string.Format("{0}, {1}", type.FullName, library);
+    //  DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = library, Configurable = true };
+    //  dataLayers.Add(dataLayer);
+
+    //  // load Spreadsheet data layer
+    //  type = typeof(SpreadsheetDatalayer);
+    //  library = type.Assembly.GetName().Name;
+    //  assembly = string.Format("{0}, {1}", type.FullName, library);
+    //  dataLayer = new DataLayer { Assembly = assembly, Name = library, Configurable = true };
+    //  dataLayers.Add(dataLayer);
+
+    //  return dataLayers;
+    //}
+
+    //private Assembly GetDataLayerAssembly(DataLayer dataLayer)
+    //{
+    //  string mainDLL = dataLayer.MainDLL;
+
+    //  if (string.IsNullOrEmpty(mainDLL))
+    //  {
+    //    Type type = typeof(IDataLayer);
+    //    string path = Path.Combine(_settings["BaseDirectoryPath"], dataLayer.Path);
+    //    string[] files = Directory.GetFiles(path);
+
+    //    foreach (string file in files)
+    //    {
+    //      string lcFile = file.ToLower();
+
+    //      if (!(lcFile.EndsWith(".dll") || lcFile.EndsWith(".exe")))
+    //        continue;
+
+    //      Assembly asm = null;
+    //      Type[] asmTypes = null;
+
+    //      try
+    //      {
+    //        byte[] bytes = Utility.GetBytes(file);
+    //        asm = Assembly.Load(bytes);
+    //        asmTypes = asm.GetTypes();
+    //      }
+    //      catch (Exception e) 
+    //      {
+    //        _logger.Error("Error getting types from assembly [" + file + "]: " + e);
+    //      }
+
+    //      if (asmTypes != null)
+    //      {
+    //        foreach (System.Type asmType in asmTypes)
+    //        {
+    //          if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+    //          {
+    //            return asm;
+    //          }
+    //        }
+    //      }
+    //    }
+    //  }
+    //  else
+    //  {
+    //    byte[] bytes = Utility.GetBytes(dataLayer.Path + mainDLL);
+    //    return Assembly.Load(bytes);
+    //  }
+
+    //  return null;
+    //}
+
+    //private string GetDataLayerAssemblyName(Assembly assembly)
+    //{
+    //  Type dlType = typeof(IDataLayer);
+    //  Type[] asmTypes = assembly.GetTypes();
+
+    //  if (asmTypes != null)
+    //  {
+    //    foreach (System.Type asmType in asmTypes)
+    //    {
+    //      if (dlType.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+    //      {
+    //        bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+    //        string name = assembly.FullName.Split(',')[0];
+
+    //        return string.Format("{0}, {1}", asmType.FullName, name);
+    //      }
+    //    }
+    //  }
+
+    //  return string.Empty;
+    //}
+
+    //private Assembly DataLayerAssemblyResolveEventHandler(object sender, ResolveEventArgs args)
+    //{
+    //  if (args.Name.Contains(".resources,"))
+    //  {
+    //    return null;
+    //  }
+
+    //  if (Directory.Exists(_dataLayerPath))
+    //  {
+    //    string[] files = Directory.GetFiles(_dataLayerPath);
+
+    //    foreach (string file in files)
+    //    {
+    //      if (file.ToLower().EndsWith(".dll") || file.ToLower().EndsWith(".exe"))
+    //      {
+    //        byte[] bytes = Utility.GetBytes(file);
+    //        Assembly assembly = Assembly.Load(bytes);
+
+    //        if (args.Name == assembly.FullName)
+    //          return assembly;
+    //      }
+    //    }
+
+    //    _logger.Error("Unable to resolve assembly [" + args.Name + "].");
+    //  }
+
+    //  return null;
+    //}
+    #endregion data layer management methods
+
     public DataLayers GetDataLayers()
     {
       DataLayers dataLayers = new DataLayers();
 
+      // Load NHibernate data layer
+      Type nhType = Type.GetType("org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", true);
+      string nhLibrary = nhType.Assembly.GetName().Name;
+      string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
+      DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
+      dataLayers.Add(nhDataLayer);
+
+      // Load Spreadsheet data layer
+      Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer", true);
+      string ssLibrary = ssType.Assembly.GetName().Name;
+      string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
+      DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
+      dataLayers.Add(ssDataLayer);
+
       try
       {
-        //IMPORTANT: DO NOT DELETE THE LINE BELOW AS IT WILL BE USED WHEN UPGRADE IS READY
-        //if (File.Exists(_dataLayersRegistryPath))
-        if (dataLayers.Count > 0)  // force loading data layer from binding configuration
-                                   // for now to apply an urgent patch to include sender info
-                                   // in adapter settings.
+        Type type = typeof(IDataLayer);
+        Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        foreach (Assembly asm in domainAssemblies)
         {
-          dataLayers = Utility.Read<DataLayers>(_dataLayersRegistryPath);
-          int dataLayersCount = dataLayers.Count;
-
-          //
-          // validate external data layers, remove from list if no longer exists
-          //
-          for (int i = 0; i < dataLayers.Count; i++)
-          {
-            DataLayer dataLayer = dataLayers[i];
-
-            if (dataLayer.External)
-            {
-              string qualPath = dataLayer.Path + "\\" + dataLayer.MainDLL;
-
-              if (!File.Exists(qualPath))
-              {
-                dataLayers.RemoveAt(i--);
-              }
-            }
-          }
-
-          if (dataLayersCount > dataLayers.Count)
-          {
-            Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
-          }
-        }
-        else
-        {
-          //
-          // get internal data layers
-          //
-          DataLayers internalDataLayers = GetInternalDataLayers();
-
-          if (internalDataLayers != null && internalDataLayers.Count > 0)
-          {
-            dataLayers.AddRange(internalDataLayers);
-          }
-
-          // 
-          // register existing data layers from manual deployment
-          //
           try
           {
-            Type type = typeof(IDataLayer);
-            Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            foreach (Assembly asm in domainAssemblies)
+            Type[] asmTypes = asm.GetTypes();
+            try
             {
-              Type[] asmTypes = null;
-
-              try
-              {
-                asmTypes = asm.GetTypes();
-              }
-              catch (Exception) { }
-
               if (asmTypes != null)
               {
                 foreach (System.Type asmType in asmTypes)
@@ -4088,307 +4492,32 @@ namespace org.iringtools.adapter
                     if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
                     {
                       string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-
-                      DataLayer dataLayer = new DataLayer { 
-                        Assembly = assembly, 
-                        Name = name,
-                        External = true,
-                        Path = _settings["BaseDirectoryPath"] + @"bin\",
-                        MainDLL = asm.ManifestModule.Name,
-                        Configurable = configurable 
-                      };
-
+                      DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
                       dataLayers.Add(dataLayer);
                     }
                   }
                 }
               }
             }
+            catch (Exception e)
+            {
+              _logger.Error("Error loading data layer (while getting types): " + e);
+            }
           }
           catch (Exception e)
           {
-            _logger.Error("Error loading assembly: " + e);
+            _logger.Error("Error loading data layer (while getting assemblies): " + e);
           }
-
-          Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
         }
       }
       catch (Exception e)
       {
-        _logger.Error("Error getting data layers: " + e);
-        throw e;
+        _logger.Error("Error loading data layer: " + e);
       }
 
       return dataLayers;
     }
 
-    public Response PostDataLayer(DataLayer dataLayer)
-    {
-      Response response = new Response();
-      response.Level = StatusLevel.Success;
-
-      try
-      {
-        DataLayers dataLayers = GetDataLayers();
-        DataLayer dl = dataLayers.Find(x => x.Name.ToLower() == dataLayer.Name.ToLower());
-        dataLayer.Path = _settings["DataLayersPath"] + dataLayer.Name + "\\";
-
-        // extract package file
-        if (dataLayer.Package != null)
-        {
-          try
-          {
-            Utility.Unzip(dataLayer.Package, dataLayer.Path);
-            dataLayer.Package = null;
-          }
-          catch (UnauthorizedAccessException e)
-          {
-            _logger.Warn("Error extracting DataLayer package: " + e);
-            response.Level = StatusLevel.Warning;
-          }
-        }
-
-        //
-        // validate data layer
-        //
-        Assembly dataLayerAssembly = GetDataLayerAssembly(dataLayer);
-        if (dataLayerAssembly == null)
-        {
-          throw new Exception("Unable to load DataLayer assembly.");
-        }
-
-        dataLayer.Assembly = GetDataLayerAssemblyName(dataLayerAssembly);
-        dataLayer.MainDLL = dataLayerAssembly.ManifestModule.ScopeName;
-        dataLayer.External = true;
-
-        if (!string.IsNullOrEmpty(dataLayer.Assembly))
-        {
-          //
-          // move configuration to app data folder
-          //
-          string[] files = Directory.GetFiles(dataLayer.Path);
-          foreach (string file in files)
-          {
-            string lcFile = file.ToLower();
-            if (!(lcFile.EndsWith(".exe") || lcFile.EndsWith(".dll") || lcFile.EndsWith(".resources")))
-            {
-              File.Copy(file, _settings["AppDataPath"] + Path.GetFileName(file), true);
-            }
-          }
-
-          // remove data layer if exists
-          if (dl != null)
-          {
-            if (dl.Path == _settings["BaseDirectoryPath"] + "bin\\")
-            {
-              File.Delete(dl.Path + dl.MainDLL);
-            }
-
-            dataLayers.Remove(dl);
-          }
-
-          dataLayers.Add(dataLayer);
-
-          Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
-          response.Messages.Add("DataLayer [" + dataLayer.Name + "] saved successfully.");
-        }
-        else
-        {
-          if (Directory.Exists(dataLayer.Path))
-          {
-            Directory.Delete(dataLayer.Path, true);
-          }
-
-          response.Level = StatusLevel.Error;
-          response.Messages.Add("DataLayer [" + dataLayer.Name + "] is not compatible.");
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error("Error saving DataLayer: " + e);
-
-        if (Directory.Exists(dataLayer.Path))
-        {
-          Directory.Delete(dataLayer.Path, true);
-        }
-
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("Error adding DataLayer [" + dataLayer.Name + "]. " + e);
-      }
-
-      return response;
-    }
-
-    public Response DeleteDataLayer(string dataLayerName)
-    {
-      Response response = new Response();
-
-      try
-      {
-        DataLayers dataLayers = GetDataLayers();
-        DataLayer dl = dataLayers.Find(x => x.Name.ToLower() == dataLayerName.ToLower());
-
-        if (dl == null)
-        {
-          response.Level = StatusLevel.Error;
-          response.Messages.Add("DataLayer [" + dataLayerName + "] not found.");
-        }
-        else
-        {
-          if (dl.External)
-          {
-            dataLayers.Remove(dl);
-            Utility.Write<DataLayers>(dataLayers, _dataLayersRegistryPath);
-
-            string dlPath = dl.Path;
-            Directory.Delete(dlPath, true);
-
-            response.Level = StatusLevel.Success;
-            response.Messages.Add("DataLayer [" + dataLayerName + "] deleted successfully.");
-          }
-          else
-          {
-            response.Level = StatusLevel.Error;
-            response.Messages.Add("Deleting internal DataLayer [" + dataLayerName + "] is not allowed.");
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error("Error getting DataLayer: " + e);
-
-        response.Level = StatusLevel.Success;
-        response.Messages.Add("Error deleting DataLayer [" + dataLayerName + "]." + e);
-      }
-
-      return response;
-    }
-
-    private DataLayers GetInternalDataLayers()
-    {
-      DataLayers dataLayers = new DataLayers();
-
-      // load NHibernate data layer
-      Type type = typeof(NHibernateDataLayer);
-      string library = type.Assembly.GetName().Name;
-      string assembly = string.Format("{0}, {1}", type.FullName, library);
-      DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = library, Configurable = true };
-      dataLayers.Add(dataLayer);
-
-      // load Spreadsheet data layer
-      type = typeof(SpreadsheetDatalayer);
-      library = type.Assembly.GetName().Name;
-      assembly = string.Format("{0}, {1}", type.FullName, library);
-      dataLayer = new DataLayer { Assembly = assembly, Name = library, Configurable = true };
-      dataLayers.Add(dataLayer);
-
-      return dataLayers;
-    }
-
-    private Assembly GetDataLayerAssembly(DataLayer dataLayer)
-    {
-      string mainDLL = dataLayer.MainDLL;
-
-      if (string.IsNullOrEmpty(mainDLL))
-      {
-        Type type = typeof(IDataLayer);
-        string path = Path.Combine(_settings["BaseDirectoryPath"], dataLayer.Path);        
-        string[] files = Directory.GetFiles(path);
-
-        foreach (string file in files)
-        {
-          string lcFile = file.ToLower();
-
-          if (!(lcFile.EndsWith(".dll") || lcFile.EndsWith(".exe")))
-            continue;
-
-          Assembly asm = null;
-          Type[] asmTypes = null;
-
-          try
-          {
-            byte[] bytes = Utility.GetBytes(file);
-            asm = Assembly.Load(bytes);
-            asmTypes = asm.GetTypes();
-          }
-          catch (Exception e) 
-          {
-            _logger.Error("Error getting types from assembly [" + file + "]: " + e);
-          }
-
-          if (asmTypes != null)
-          {
-            foreach (System.Type asmType in asmTypes)
-            {
-              if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
-              {
-                return asm;
-              }
-            }
-          }
-        }
-      }
-      else
-      {
-        byte[] bytes = Utility.GetBytes(dataLayer.Path + mainDLL);
-        return Assembly.Load(bytes);
-      }
-
-      return null;
-    }
-
-    private string GetDataLayerAssemblyName(Assembly assembly)
-    {
-      Type dlType = typeof(IDataLayer);
-      Type[] asmTypes = assembly.GetTypes();
-
-      if (asmTypes != null)
-      {
-        foreach (System.Type asmType in asmTypes)
-        {
-          if (dlType.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
-          {
-            bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-            string name = assembly.FullName.Split(',')[0];
-
-            return string.Format("{0}, {1}", asmType.FullName, name);
-          }
-        }
-      }
-
-      return string.Empty;
-    }
-
-    private Assembly DataLayerAssemblyResolveEventHandler(object sender, ResolveEventArgs args)
-    {
-      if (args.Name.Contains(".resources,"))
-      {
-        return null;
-      }
-
-      if (Directory.Exists(_dataLayerPath))
-      {
-        string[] files = Directory.GetFiles(_dataLayerPath);
-
-        foreach (string file in files)
-        {
-          if (file.ToLower().EndsWith(".dll") || file.ToLower().EndsWith(".exe"))
-          {
-            byte[] bytes = Utility.GetBytes(file);
-            Assembly assembly = Assembly.Load(bytes);
-
-            if (args.Name == assembly.FullName)
-              return assembly;
-          }
-        }
-
-        _logger.Error("Unable to resolve assembly [" + args.Name + "].");
-      }
-
-      return null;
-    }
-    #endregion data layer management methods
-    
     public Response Configure(string projectName, string applicationName, HttpRequest httpRequest)
     {
       Response response = new Response();

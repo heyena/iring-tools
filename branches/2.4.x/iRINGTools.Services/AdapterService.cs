@@ -378,53 +378,56 @@ namespace org.iringtools.services
         HttpContext.Current.Response.Write(e);
       }
     }
+    #endregion
 
-    [Description("Adds or updates a dataLayer to the service.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/datalayers")]
-    public void PostDataLayer(Stream dataLayerStream)
-    {
-      try
-      {
-        DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
-        DataLayer dataLayer = (DataLayer)serializer.ReadObject(dataLayerStream);
+    //TODO: pending on testing, do not delete
+    #region data layers managment
+    //[Description("Adds/updates a dataLayer to/in adapter.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/datalayers")]
+    //public void PostDataLayer(Stream dataLayerStream)
+    //{
+    //  try
+    //  {
+    //    DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
+    //    DataLayer dataLayer = (DataLayer)serializer.ReadObject(dataLayerStream);
 
-        Response response = _adapterProvider.PostDataLayer(dataLayer);
-        string xml = Utility.Serialize<Response>(response, true);
+    //    Response response = _adapterProvider.PostDataLayer(dataLayer);
+    //    string xml = Utility.Serialize<Response>(response, true);
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(xml);
-      }
-      catch (Exception e)
-      {
-        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        context.StatusCode = HttpStatusCode.InternalServerError;
+    //    HttpContext.Current.Response.ContentType = "application/xml";
+    //    HttpContext.Current.Response.Write(xml);
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+    //    context.StatusCode = HttpStatusCode.InternalServerError;
 
-        HttpContext.Current.Response.ContentType = "text/html";
-        HttpContext.Current.Response.Write(e);
-      }
-    }
+    //    HttpContext.Current.Response.ContentType = "text/html";
+    //    HttpContext.Current.Response.Write(e);
+    //  }
+    //}
 
-    [Description("Deletes a data layer from the service.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/datalayers/{name}")]
-    public void DeleteDatalayer(string name)
-    {
-      try
-      {
-        Response response = _adapterProvider.DeleteDataLayer(name);
-        string xml = Utility.Serialize<Response>(response, true);
+    //[Description("Deletes a data layer from adapter.")]
+    //[WebInvoke(Method = "DELETE", UriTemplate = "/datalayers/{name}")]
+    //public void DeleteDatalayer(string name)
+    //{
+    //  try
+    //  {
+    //    Response response = _adapterProvider.DeleteDataLayer(name);
+    //    string xml = Utility.Serialize<Response>(response, true);
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(xml);
-      }
-      catch (Exception e)
-      {
-        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        context.StatusCode = HttpStatusCode.InternalServerError;
+    //    HttpContext.Current.Response.ContentType = "application/xml";
+    //    HttpContext.Current.Response.Write(xml);
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+    //    context.StatusCode = HttpStatusCode.InternalServerError;
 
-        HttpContext.Current.Response.ContentType = "text/html";
-        HttpContext.Current.Response.Write(e);
-      }
-    }
+    //    HttpContext.Current.Response.ContentType = "text/html";
+    //    HttpContext.Current.Response.Write(e);
+    //  }
+    //}
     #endregion
 
     #region RefreshDataObjects
