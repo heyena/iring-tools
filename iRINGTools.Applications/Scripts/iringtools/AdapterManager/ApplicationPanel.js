@@ -46,7 +46,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								value:key,
 								//allowBlank: false,
 								//id:'name-1',
-								columnWidth: 0.33,//0.43,
+								columnWidth: 0.33//0.43,
 								//style: 'margin:0 0 0 20;',
 								
                            },
@@ -57,7 +57,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								//inputType: this.inpType,//'password',
 								//id:'value-1',
 								columnWidth: 0.33,//0.24,
-								style: 'margin:0 0 0 3;',
+								style: 'margin:0 0 0 3;'
 								//margin:'0 0 0 3'
                            },
 						   {
@@ -337,7 +337,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								name:'Key',
 								value:this.key,
 								//allowBlank: false,
-								columnWidth: 0.33,//0.43,
+								columnWidth: 0.33//0.43,
 								//style: 'margin:0 0 0 20;',
 								
                            },
@@ -348,7 +348,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								name:'Value',
 								value:this.value,
 								columnWidth: 0.33,//0.24,
-								style: 'margin:0 0 0 3;',
+								style: 'margin:0 0 0 3;'
 								//margin:'0 0 0 3'
                            },
 						   {
