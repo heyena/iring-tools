@@ -556,17 +556,29 @@ namespace org.iringtools.web.controllers
         }
       };
 
-      foreach (string key in form.AllKeys)
+      for (int i = 0; i < form.AllKeys.Length; i++)
       {
-        if (key.ToLower() != "scope" && key.ToLower() != "name" && key.ToLower() != "application" &&
-          key.ToLower() != "description" && key.ToLower() != "assembly")
-        {
-          configuration.AppSettings.Settings.Add(new Setting()
+          if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val")
           {
-            Key = key,
-            Value = form[key]
-          });
-        }
+              //if (configuration.AppSettings == null)
+              //{
+              //    configuration.AppSettings = new AppSettings();
+              //}
+              //if (configuration.AppSettings.Settings == null)
+              //{
+              //    configuration.AppSettings.Settings = new List<Setting>();
+              //}
+              String key = form[i];
+              if (i + 1 < form.AllKeys.Length)
+              {
+                  String value = form[i + 1];
+                  configuration.AppSettings.Settings.Add(new Setting()
+                  {
+                      Key = key,
+                      Value = value
+                  });
+              }
+          }
       }
 
       ScopeApplication application = new ScopeApplication()
