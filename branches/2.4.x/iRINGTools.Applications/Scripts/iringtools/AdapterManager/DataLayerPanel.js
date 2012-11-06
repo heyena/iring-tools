@@ -16,7 +16,7 @@ AdapterManager.DataLayerPanel = Ext.extend(Ext.Window,
   initComponent: function () {
     this.addEvents({
       cancel: true,
-      save: true,
+      save: true
     });
 
     this.title = 'Add/Update DataLayer';
