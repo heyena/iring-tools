@@ -1533,7 +1533,6 @@ namespace org.iringtools.utility
                 if (identifier.Contains(str))
                 {
                     identifier = identifier.Replace(str, arrSpecialcharlist[Array.IndexOf(arrSpecialcharValue, str)]);
-                    break;
                 }
             }
         }
@@ -1550,7 +1549,6 @@ namespace org.iringtools.utility
                 if (identifier.Contains(str))
                 {
                     identifier = identifier.Replace(str, arrSpecialcharValue[Array.IndexOf(arrSpecialcharlist, str)]);
-                    break;
                 }
             }
         }
