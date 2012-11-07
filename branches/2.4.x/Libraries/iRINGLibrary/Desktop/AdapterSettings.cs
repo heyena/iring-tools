@@ -5,12 +5,16 @@ using org.iringtools.library;
 using StaticDust.Configuration;
 using org.iringtools.utility;
 using System.Collections;
+using log4net;
 
 namespace org.iringtools.adapter
 {
   public class AdapterSettings : ServiceSettings
   {
-    public AdapterSettings() : base()
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterSettings));
+
+    public AdapterSettings()
+      : base()
     {
       this.Add("InterfaceService", @"http://localhost/services/facade/query");
       this.Add("ReferenceDataServiceUri", @"http://localhost/services/refdata");
@@ -49,48 +53,58 @@ namespace org.iringtools.adapter
     //Append Scope specific {projectName}.{appName}.config settings.
     public void AppendSettings(AppSettingsReader settings)
     {
-      foreach (string key in settings.Keys)
+      try
       {
-        if (key.Equals("GraphBaseUri"))
+        if (settings != null && settings.Keys != null)
         {
-          string baseAddress = settings[key].ToString();
-          
-          if (!baseAddress.EndsWith("/"))
-            baseAddress = baseAddress + "/";
-          
-          this[key] = baseAddress;
+          foreach (string key in settings.Keys)
+          {
+            if (key.Equals("GraphBaseUri"))
+            {
+              string baseAddress = settings[key].ToString();
 
-          continue;
+              if (!baseAddress.EndsWith("/"))
+                baseAddress = baseAddress + "/";
+
+              this[key] = baseAddress;
+
+              continue;
+            }
+
+            if (key.Equals("DefaultProjectionFormat") ||
+                key.Equals("ValidateLinks") ||
+                key.Equals("DisplayLinks") ||
+                key.Equals("ShowJsonNullValues") ||
+                key.Equals("MultiGetDTIs") ||
+                key.Equals("MultiGetDTOs") ||
+                key.Equals("MultiPostDTOs") ||
+                key.Equals("MaxThreads"))
+            {
+              string format = settings[key].ToString();
+              this[key] = format;
+
+              continue;
+            }
+
+            //Protect existing and identity settings, but add new ones.
+            string lowerCaseKey = key.ToLower();
+
+            if (!(this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase) ||
+                lowerCaseKey == "username" || lowerCaseKey == "domain" ||
+                lowerCaseKey == "emailaddress"))
+            {
+              this.Add(key, settings[key].ToString());
+            }
+            else if (this[key] == String.Empty)
+            {
+              this[key] = settings[key].ToString();
+            }
+          }
         }
-
-        if (key.Equals("DefaultProjectionFormat") ||
-            key.Equals("ValidateLinks") ||
-            key.Equals("DisplayLinks") ||
-            key.Equals("ShowJsonNullValues") ||
-            key.Equals("MultiGetDTIs") ||
-            key.Equals("MultiGetDTOs") ||
-            key.Equals("MultiPostDTOs") ||
-            key.Equals("MaxThreads"))
-        {
-          string format = settings[key].ToString();
-          this[key] = format;
-
-          continue;
-        }
-
-        //Protect existing and identity settings, but add new ones.
-        string lowerCaseKey = key.ToLower();
-
-        if (!(this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase) || 
-            lowerCaseKey == "username" || lowerCaseKey == "domain" ||
-            lowerCaseKey == "emailaddress"))
-        {
-          this.Add(key, settings[key].ToString());
-        }
-        else if (this[key] == String.Empty)
-        {
-          this[key] = settings[key].ToString();
-        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error appending settings: " + e);
       }
     }
 
