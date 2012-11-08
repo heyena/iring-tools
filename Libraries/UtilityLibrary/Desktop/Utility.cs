@@ -1436,6 +1436,18 @@ namespace org.iringtools.utility
 
       return returnValue;
     }
+    
+    public static string ToXsdDateTime(DateTime dateTime)
+    {
+      DateTimeOffset dtOffset =
+        new DateTimeOffset(dateTime, TimeZoneInfo.Local.GetUtcOffset(dateTime));
+      string dtOffsetStr = dtOffset.ToString("o");
+
+      if (dtOffsetStr[dtOffsetStr.Length - 3] == ':')
+        dtOffsetStr = dtOffsetStr.Remove(dtOffsetStr.Length - 3, 1);
+
+      return dtOffsetStr;
+    }
 
     public static string ToXsdDateTime(string dateTime)
     {
@@ -1443,7 +1455,12 @@ namespace org.iringtools.utility
         return dateTime;
 
       DateTime dt = DateTime.Parse(dateTime);
-      return dt.ToString("O");
+      return ToXsdDateTime(dt);
+    }
+
+    public static DateTime FromXsdDateTime(string dateTime)
+    {
+      return DateTime.Parse(dateTime);
     }
 
     public static string GetMimeType(string fileName)
