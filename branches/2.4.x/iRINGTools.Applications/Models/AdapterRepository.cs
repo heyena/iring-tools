@@ -23,6 +23,7 @@ namespace iRINGTools.Web.Models
   {
     //private NameValueCollection _settings = null;
     private WebHttpClient _adapterServiceClient = null;
+    private WebHttpClient _dataServiceClient = null;
     private WebHttpClient _hibernateServiceClient = null;
     private WebHttpClient _referenceDataServiceClient = null;
     //private string _referenceDataServiceURI = string.Empty;
@@ -40,6 +41,7 @@ namespace iRINGTools.Web.Models
       string proxyHost = _settings["ProxyHost"];
       string proxyPort = _settings["ProxyPort"];
       string adapterServiceUri = _settings["AdapterServiceUri"];
+      string dataServiceUri = _settings["DataServiceUri"];
       string hibernateServiceUri = _settings["NHibernateServiceUri"];
       string referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
 
@@ -49,12 +51,14 @@ namespace iRINGTools.Web.Models
         WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
 
         _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
+        _dataServiceClient = new WebHttpClient(dataServiceUri, null, webProxy);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
         _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri, null, webProxy);
       }
       else
       {
         _adapterServiceClient = new WebHttpClient(adapterServiceUri);
+        _dataServiceClient = new WebHttpClient(dataServiceUri);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
         _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri);
       }
@@ -143,7 +147,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _adapterServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", scopeName, applicationName), true);
+        obj = _dataServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName), true);
       }
       catch (Exception ex)
       {

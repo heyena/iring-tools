@@ -313,7 +313,8 @@ namespace org.iringtools.services
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.GetDictionary(scope, app);
+      DataDictionary dictionary = _adapterProvider.GetDictionary(scope, app);
+      return dictionary;
     }
     #endregion
 
