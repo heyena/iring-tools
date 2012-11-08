@@ -33,7 +33,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 				return[ {
 							  xtype: 'container',
 							  style: 'margin:3 0 0 0;',
-							  layout:'column',
+							  layout:'hbox',
 							  items: [
 							  /*{
 							    xtype: 'settingfield',
@@ -44,27 +44,43 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		 						xtype: 'textfield',
 								name:nameID,
 								value:key,
-								//allowBlank: false,
+								width:164,
+								allowBlank: true,
 								//id:'name-1',
-								columnWidth: 0.33//0.43,
+								//columnWidth: 0.28//0.43,
 								//style: 'margin:0 0 0 20;',
 								
                            },
-						   {
-								xtype: 'textfield',
+						 {
+								xtype: 'textarea',
+								//width: 500, 
+								//height: 70,
 								name:valueID,
 								value:value,
-								//inputType: this.inpType,//'password',
-								//id:'value-1',
-								columnWidth: 0.33,//0.24,
+								grow : false,
+								width:270,
+                                height: 50,
+								//columnWidth: 0.33,//0.24,
 								style: 'margin:0 0 0 3;'
 								//margin:'0 0 0 3'
                            },
-						   {
+						     /*{
+								xtype: 'textfield',
+								name:valueID,
+								value:value,
+								width:260,
+								//inputType: this.inpType,//'password',
+								//id:'value-1',
+								//columnWidth: 0.33,//0.24,
+								style: 'margin:0 0 0 3;'
+								//margin:'0 0 0 3'
+                           },*/
+						   
+						   /*{
 								xtype: 'checkbox',
-								columnWidth: 0.10,//0.12,
+								//columnWidth: 0.10,//0.12,
 								//margin:'0 0 0 15',//'0 0 0 15'
-								style: 'margin:0 0 0 8;',
+								style: 'margin:0 0 0 17;',
 								//action:'checkMe'
 								handler: function(checkbox, checked) {
 										   //alert('clicked...');
@@ -74,16 +90,18 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 											 checkbox.findParentByType('container').items.items[1].el.dom.type =  'text';
 											 
 				        	    }
-                           },
+                           },*/
 							 {
 								xtype: 'button',
 								//flex: 1,
 								text: 'Add',
+								width:35,
+								style: 'margin:0 0 0 17;',
 								//action:'AddMe',
 								//icon: '../ux/css/images/right2.gif',//'add-button',
 								//margin:'0 0 0 3',
-								columnWidth: 0.12,
-								style: 'margin:0 0 0 2;',
+								//columnWidth: 0.12,
+								//style: 'margin:0 0 0 2;',
 								//style: 'float: right;',
 								tooltip: 'Click to Add settings',
 								handler : function (){
@@ -103,18 +121,21 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 										 var abc =  newPanel.addSettings("","" , nameID, valueID);
 										 this.findParentByType('fieldset').add(abc);
 										 this.findParentByType('fieldset').doLayout();
+										 this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].allowBlank = false;
+										 //this.findParentByType('fieldset').items.items[1].items.items[0].allowBlank = false;
 								}
 							},
 							{
 								xtype: 'button',
 								//flex: 1,
 								text: 'Delete',
+								width:40,
 								//margin:'0 0 0 3',
 								//action:'DeleteMe',
 								//icon :'../../ux/css/images/right2.gif',//'remove-button',
-								columnWidth: 0.10,
-								style: 'margin:0 0 0 5;',
-								style: 'float: right;',
+								//columnWidth: 0.10,
+								style: 'margin:0 0 0 22;',
+								//style: 'float: right;',
 								tooltip: 'Click to Delete settings',
 								handler : function (){
 										 this.findParentByType('container').destroy();
@@ -138,10 +159,12 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	     if(this.record.Configuration!=null){
 	       if (this.record.Configuration.AppSettings != null) {
 		      if(this.record.Configuration.AppSettings.Settings!=null){
+			        this.findParentByType('container').items.items[0].items.items[0].items.items[6].items.items[0].items.items[0].allowBlank = false;
 			        for(var i=1;i<this.record.Configuration.AppSettings.Settings.length;i++){
 						  this.key = this.record.Configuration.AppSettings.Settings[i].Key;
 						  this.value = this.record.Configuration.AppSettings.Settings[i].Value;
 						  var newSetting = this.addSettings(this.key,this.value, ('key'+i), ('value'+i));
+						  newSetting[0].items[0].allowBlank = false;
 						  me.findById('settingfieldset').add(newSetting);
 						 //this.findParentByType('fieldset').add(newSetting);
 						 //this.findParentByType('fieldset').doLayout();
@@ -150,6 +173,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		 }
 	  }
 	    
+	  }else{
+	    me.findParentByType('container').items.items[0].items.items[0].items.items[6].items.items[0].items.items[0].allowBlank = false;
 	  }
 	  
 	  }
@@ -232,8 +257,9 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
         var cmbDataLayers = new Ext.form.ComboBox({
             fieldLabel: 'Data Layer',
-            boxMaxWidth: 240,//250,
-            width: 240,//250,
+            //bodyStyle: 'width:500px',
+		    boxMaxWidth: 530,//250,
+            width: 530,//250,
             forceSelection: true,
             typeAhead: true,
             triggerAction: 'all',
@@ -260,57 +286,59 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             url: this.url,
             method: 'POST',
             bodyStyle: 'padding:10px 5px 0',
-
             border: false, // removing the border of the form
-          
             frame: false,
             closable: true,
             defaults: {
-                width: 310,
-                msgTarget: 'side'
+                //width: 310,
+                //msgTarget: 'side'
             },
             defaultType: 'textfield',
 
             items: [
-          { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: scope, allowBlank: false },
-          { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 300, value: name, allowBlank: false },
-          { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
-          { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, height: 150, value: description },
+          { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 530, value: scope, allowBlank: false },
+          { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 530, value: name, allowBlank: false },
+          { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 530, value: name, allowBlank: false },
+          { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 530, height: 62, value: description },
           cmbDataLayers,
           {
           	    xtype: 'container',
           	    layout: {
-          	        type: 'column'
+          	        type: 'hbox'
           	    },
           	    items: [
 									 {
 									     xtype: 'label',
 									     text: 'Settings:',
+										 //style: 'margin:0 0 0 100;'
 									     //title: 'Column 1',
-									     columnWidth: 0.34
+									     //columnWidth: 0.21
 									 },
 									{
 									    xtype: 'label',
 									    text: 'Name',
 									    //title: 'Column 2',
-									    style: 'font-weight:bold;',
-									    columnWidth: 0.27
+									    style: 'font-weight:bold;margin:0 0 0 90;'
+										//style: 'margin:0 0 0 80;'
+									    //columnWidth: 0.23
 									},
 									{
 									    xtype: 'label',
 									    text: 'Value',
 									    //title: 'Column 3',
-									    style: 'font-weight:bold;',
-									    title: 'Column 1',
-									    columnWidth: 0.22//0.18
-									},
-									{
-									    xtype: 'label',
-									    text: 'Encrypt',
-									    //title: 'Column 4',
-									    style: 'font-weight:bold;',
-									    columnWidth: 0.17//0.15
+									    style: 'font-weight:bold;margin:0 0 0 250;'
+										//style: ''
+									    //title: 'Column 1',
+									    //columnWidth: 0.20//0.18
 									}
+									/*,{
+									    xtype: 'label',
+									    text: 'Mask',
+									    //title: 'Column 4',
+									    style: 'font-weight:bold;margin:0 0 0 390;'
+										//style: ''
+									    //columnWidth: 0.15//0.15
+									}*/
 
 						  ]
           	},
@@ -328,7 +356,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 						
 						{
 							  xtype: 'container',
-							  layout:'column',
+							  layout:'hbox',
 							  items: [
 							 
 						   {
@@ -336,46 +364,68 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								//id:'name-1',
 								name:'Key',
 								value:this.key,
-								//allowBlank: false,
-								columnWidth: 0.33//0.43,
+								width:164,
+								allowBlank: true,
+								//columnWidth: 0.28//0.43,
 								//style: 'margin:0 0 0 20;',
 								
                            },
 						   {
+								xtype: 'textarea',
+								//width: 500, 
+								//height: 70,
+								name:'Value',
+								grow : false,
+								width:270,
+                                height: 50,
+								value:this.value,
+								//columnWidth: 0.33,//0.24,
+								style: 'margin:0 0 0 3;'
+								//margin:'0 0 0 3'
+                           },
+						  /* {
 								xtype: 'textfield',
 								//inputType: this.inpType,//'password',
 								//id:'value-1',
 								name:'Value',
 								value:this.value,
-								columnWidth: 0.33,//0.24,
+								width:260,
+								//columnWidth: 0.33,//0.24,
 								style: 'margin:0 0 0 3;'
 								//margin:'0 0 0 3'
-                           },
-						   {
+                           },*/
+						   /*{
 								xtype: 'checkbox',
-								columnWidth: 0.10,//0.12,
+								//columnWidth: 0.13,//0.12,
 								//margin:'0 0 0 15',//'0 0 0 15'
-								style: 'margin:0 0 0 8;',
+								style: 'margin:0 0 0 17;',
 								//action:'checkMe',
 								handler: function(checkbox, checked) {
-										   //alert('clicked...');
-										   if(checked)
-											 checkbox.findParentByType('container').items.items[1].el.dom.type = 'password';
-										   else
-											 checkbox.findParentByType('container').items.items[1].el.dom.type =  'text';
+									   
+									   if(checked){
+									     //this.findParentByType('container').items.items[1].setRawValue('******');
+										 checkbox.findParentByType('container').items.items[1].el.dom.type = 'password';
+									   }
+									   else{
+									     //this.findParentByType('container').items.items[1].setValue(this.findParentByType('container').items.items[1].originalValue);
+										 checkbox.findParentByType('container').items.items[1].el.dom.type =  'text';
+									   }
+										   
 											 
 				        	    }
 				
-                          },
+                          },*/
 							 {
 								xtype: 'button',
 								//flex: 1,
 								text: 'Add',
+								width:35,
+								style: 'margin:0 0 0 17;',
 								//action:'AddMe',
 								//icon: '../ux/css/images/right2.gif',//'add-button',
 								//margin:'0 0 0 3',
-								columnWidth: 0.12,
-								style: 'margin:0 0 0 2;',
+								//columnWidth: 0.10,
+								//style: 'margin:0 0 0 4;',
 								//style: 'float: right;',
 								tooltip: 'Click to Add settings',
 								handler : function (){
@@ -388,8 +438,11 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 										     var valueID = 'value1';
 										 }
 								         var abc = myThis.addSettings("", "", nameID, valueID);
+										 //abc[0].items[0].allowBlank = false;
 										 this.findParentByType('fieldset').add(abc);
 										 this.findParentByType('fieldset').doLayout();
+										 this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].allowBlank = false;
+										 //this.findParentByType('fieldset').items.items[1].items.items[0].allowBlank = false;
 										 //Ext.getCmp('settingfieldset').add(abc);
 										 //Ext.getCmp('settingfieldset').doLayout();
 										 
@@ -399,12 +452,13 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								xtype: 'button',
 								//flex: 1,
 								text: 'Delete',
+								width:40,
 								//margin:'0 0 0 3',
 								//action:'DeleteMe',
 								//icon :'../../ux/css/images/right2.gif',//'remove-button',
-								columnWidth: 0.10,
-								style: 'margin:0 0 0 5;',
-								style: 'float: right;',
+								//columnWidth: 0.13,
+								style: 'margin:0 0 0 22;',
+								//style: 'float: right;',
 								tooltip: 'Click to Delete settings',
 								handler : function (){
 										 this.findParentByType('container').destroy();
@@ -479,7 +533,19 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     onSave: function () {
       var that = this;    // consists the main/prappNameclass object  
       var endpointName = that.items.first().getForm().findField('Name').getValue();
-
+	  var flag = false;
+      for(var i=0;i<that.items.items[0].items.items[6].items.items.length;i++){
+		  if(that.items.items[0].items.items[6].items.items[i].items.items[0].name.toLowerCase().substring(0,3)== 'key'){
+		    if(that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == ' ' || that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == ""){
+		       flag = true;
+		 }
+		} 
+		
+	  }
+	  if(flag){
+	        showDialog(400, 100, 'Warning', 'Please enter a valid name', Ext.Msg.OK, null);
+            return;
+	  }
       if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
         if (ifExistSibling(endpointName, that.node, that.state)) {
           showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);

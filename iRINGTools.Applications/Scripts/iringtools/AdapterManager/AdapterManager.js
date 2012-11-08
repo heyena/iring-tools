@@ -308,16 +308,18 @@ Ext.onReady(function () {
 
         var win = new Ext.Window({
             closable: true,
+			resizable : false,
             id: 'newwin-' + node.id,
             modal: true,
 			autoHeight:true,
             layout: 'fit',
+			shadow : false,
             title: 'Add New Application',
             iconCls: 'tabsApplication',
             //height: 291,
             //width: 430,
             height: 360,
-            width: 460,
+            width: 660,
             plain: true,
             items: newTab,
             listeners: {
@@ -379,6 +381,7 @@ Ext.onReady(function () {
 
         var win = new Ext.Window({
             closable: true,
+			resizable : false,
             modal: true,
 			shadow : false,
 			//resizable:false,
@@ -391,7 +394,7 @@ Ext.onReady(function () {
             title: 'Edit Application\"' + node.text + '\"',
             iconCls: 'tabsApplication',
             height: 360,
-            width: 460,
+            width: 660,//460,
 			//height: '100%',//360, //291,
             //width: '25%',//460, //430,
             //plain: true,
