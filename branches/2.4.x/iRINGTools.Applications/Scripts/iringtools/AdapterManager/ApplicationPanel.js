@@ -32,7 +32,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	 addSettings : function(key, value, nameID, valueID){
 				return[ {
 							  xtype: 'container',
-							  style: 'margin:3 0 0 0;',
+							  style: 'margin:10 0 0 63;',
 							  layout:'hbox',
 							  items: [
 							  /*{
@@ -45,7 +45,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								name:nameID,
 								value:key,
 								width:164,
-								allowBlank: true,
+								allowBlank: true
 								//id:'name-1',
 								//columnWidth: 0.28//0.43,
 								//style: 'margin:0 0 0 20;',
@@ -90,7 +90,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 											 checkbox.findParentByType('container').items.items[1].el.dom.type =  'text';
 											 
 				        	    }
-                           },*/
+                           },
 							 {
 								xtype: 'button',
 								//flex: 1,
@@ -124,17 +124,17 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 										 this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].allowBlank = false;
 										 //this.findParentByType('fieldset').items.items[1].items.items[0].allowBlank = false;
 								}
-							},
+							},*/
 							{
 								xtype: 'button',
 								//flex: 1,
 								text: 'Delete',
-								width:40,
+								width:48,
 								//margin:'0 0 0 3',
 								//action:'DeleteMe',
 								//icon :'../../ux/css/images/right2.gif',//'remove-button',
 								//columnWidth: 0.10,
-								style: 'margin:0 0 0 22;',
+								style: 'margin:0 0 0 50;',
 								//style: 'float: right;',
 								tooltip: 'Click to Delete settings',
 								handler : function (){
@@ -159,8 +159,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	     if(this.record.Configuration!=null){
 	       if (this.record.Configuration.AppSettings != null) {
 		      if(this.record.Configuration.AppSettings.Settings!=null){
-			        this.findParentByType('container').items.items[0].items.items[0].items.items[6].items.items[0].items.items[0].allowBlank = false;
-			        for(var i=1;i<this.record.Configuration.AppSettings.Settings.length;i++){
+			        //this.findParentByType('container').items.items[0].items.items[0].items.items[6].items.items[0].items.items[0].allowBlank = false;
+			        for(var i=0;i<this.record.Configuration.AppSettings.Settings.length;i++){
 						  this.key = this.record.Configuration.AppSettings.Settings[i].Key;
 						  this.value = this.record.Configuration.AppSettings.Settings[i].Value;
 						  var newSetting = this.addSettings(this.key,this.value, ('key'+i), ('value'+i));
@@ -173,9 +173,9 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		 }
 	  }
 	    
-	  }else{
+	  }/*else{
 	    me.findParentByType('container').items.items[0].items.items[0].items.items[6].items.items[0].items.items[0].allowBlank = false;
-	  }
+	  }*/
 	  
 	  }
 	},
@@ -215,7 +215,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             dataLayer = this.record.DataLayer;
             assembly = this.record.Assembly;
             showconfigure = false;
-			if (this.record != null){
+			/*if (this.record != null){
 			  if(this.record.Configuration!=null){
 			     if(this.record.Configuration.AppSettings!=null){
 				    if(this.record.Configuration.AppSettings.Settings!=null){
@@ -224,7 +224,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 				  } 
 			    }  
 			  }
-		    }
+		    }*/
 			
 			
         }
@@ -301,184 +301,99 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
           { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 530, value: name, allowBlank: false },
           { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 530, height: 62, value: description },
           cmbDataLayers,
-          {
-          	    xtype: 'container',
-          	    layout: {
-          	        type: 'hbox'
-          	    },
-          	    items: [
-									 {
-									     xtype: 'label',
-									     text: 'Settings:',
-										 //style: 'margin:0 0 0 100;'
-									     //title: 'Column 1',
-									     //columnWidth: 0.21
-									 },
-									{
-									    xtype: 'label',
-									    text: 'Name',
-									    //title: 'Column 2',
-									    style: 'font-weight:bold;margin:0 0 0 90;'
-										//style: 'margin:0 0 0 80;'
-									    //columnWidth: 0.23
-									},
-									{
-									    xtype: 'label',
-									    text: 'Value',
-									    //title: 'Column 3',
-									    style: 'font-weight:bold;margin:0 0 0 250;'
-										//style: ''
-									    //title: 'Column 1',
-									    //columnWidth: 0.20//0.18
-									}
-									/*,{
-									    xtype: 'label',
-									    text: 'Mask',
-									    //title: 'Column 4',
-									    style: 'font-weight:bold;margin:0 0 0 390;'
-										//style: ''
-									    //columnWidth: 0.15//0.15
-									}*/
-
-						  ]
-          	},
+         
 			{
 						xtype: 'fieldset',
 						border:false,
 						collapsible:false,
 						autoHeight:true,
 						id:'settingfieldset',
-						style: 'margin:0 0 0 64;',
+						//style: 'margin:0 0 0 64;',
 						//layout: {
 						//	type: 'vbox'
 						//},
 						items: [
-						
-						{
-							  xtype: 'container',
-							  layout:'hbox',
-							  items: [
-							 
-						   {
-		 						xtype: 'textfield',
-								//id:'name-1',
-								name:'Key',
-								value:this.key,
-								width:164,
-								allowBlank: true,
-								//columnWidth: 0.28//0.43,
-								//style: 'margin:0 0 0 20;',
-								
-                           },
-						   {
-								xtype: 'textarea',
-								//width: 500, 
-								//height: 70,
-								name:'Value',
-								grow : false,
-								width:270,
-                                height: 50,
-								value:this.value,
-								//columnWidth: 0.33,//0.24,
-								style: 'margin:0 0 0 3;'
-								//margin:'0 0 0 3'
-                           },
-						  /* {
-								xtype: 'textfield',
-								//inputType: this.inpType,//'password',
-								//id:'value-1',
-								name:'Value',
-								value:this.value,
-								width:260,
-								//columnWidth: 0.33,//0.24,
-								style: 'margin:0 0 0 3;'
-								//margin:'0 0 0 3'
-                           },*/
-						   /*{
-								xtype: 'checkbox',
-								//columnWidth: 0.13,//0.12,
-								//margin:'0 0 0 15',//'0 0 0 15'
-								style: 'margin:0 0 0 17;',
-								//action:'checkMe',
-								handler: function(checkbox, checked) {
-									   
-									   if(checked){
-									     //this.findParentByType('container').items.items[1].setRawValue('******');
-										 checkbox.findParentByType('container').items.items[1].el.dom.type = 'password';
-									   }
-									   else{
-									     //this.findParentByType('container').items.items[1].setValue(this.findParentByType('container').items.items[1].originalValue);
-										 checkbox.findParentByType('container').items.items[1].el.dom.type =  'text';
-									   }
-										   
-											 
-				        	    }
-				
-                          },*/
-							 {
-								xtype: 'button',
-								//flex: 1,
-								text: 'Add',
-								width:35,
-								style: 'margin:0 0 0 17;',
-								//action:'AddMe',
-								//icon: '../ux/css/images/right2.gif',//'add-button',
-								//margin:'0 0 0 3',
-								//columnWidth: 0.10,
-								//style: 'margin:0 0 0 4;',
-								//style: 'float: right;',
-								tooltip: 'Click to Add settings',
-								handler : function (){
-								         var counter = parseInt(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length));
-								         if(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length) != ""){
-										    var nameID = 'key'+(counter+1);
-										    var valueID = 'value'+(counter+1);
-										 }else{
-										     var nameID = 'key1';
-										     var valueID = 'value1';
-										 }
-								         var abc = myThis.addSettings("", "", nameID, valueID);
-										 //abc[0].items[0].allowBlank = false;
-										 this.findParentByType('fieldset').add(abc);
-										 this.findParentByType('fieldset').doLayout();
-										 this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].allowBlank = false;
-										 //this.findParentByType('fieldset').items.items[1].items.items[0].allowBlank = false;
-										 //Ext.getCmp('settingfieldset').add(abc);
-										 //Ext.getCmp('settingfieldset').doLayout();
-										 
-								}
-							},
-							{
-								xtype: 'button',
-								//flex: 1,
-								text: 'Delete',
-								width:40,
-								//margin:'0 0 0 3',
-								//action:'DeleteMe',
-								//icon :'../../ux/css/images/right2.gif',//'remove-button',
-								//columnWidth: 0.13,
-								style: 'margin:0 0 0 22;',
-								//style: 'float: right;',
-								tooltip: 'Click to Delete settings',
-								handler : function (){
-										 this.findParentByType('container').destroy();
-										 Ext.getCmp('settingfieldset').doLayout();
-										 var wind = myThis.findParentByType('window');
-										 /*wind.on('beforeResize', function ()
-										 {
-											alert('beforeResize...');
-											//win.destroy();
-											//win.close();
-										 }, this);*/
-								}
-						   }
-							     
-							  ]
-						}
-						
-						
-							
-				]
+						      {
+									xtype: 'container',
+									layout: {
+										type: 'hbox'
+									},
+									items: [
+														 {
+															 xtype: 'label',
+															 text: 'Settings:'
+															 //style: 'margin:0 0 0 100;'
+															 //title: 'Column 1',
+															 //columnWidth: 0.21
+														 },
+														{
+															xtype: 'label',
+															text: 'Name',
+															//title: 'Column 2',
+															style: 'font-weight:bold;margin:0 0 0 90;'
+															//style: 'margin:0 0 0 80;'
+															//columnWidth: 0.23
+														},
+														{
+															xtype: 'label',
+															text: 'Value',
+															//title: 'Column 3',
+															style: 'font-weight:bold;margin:0 0 0 250;'
+															//style: ''
+															//title: 'Column 1',
+															//columnWidth: 0.20//0.18
+														},
+														 {
+																xtype: 'button',
+																//flex: 1,
+																text: 'Add',
+																width:49,
+																style: 'margin:0 0 0 440;',
+																//action:'AddMe',
+																//icon: '../ux/css/images/right2.gif',//'add-button',
+																//margin:'0 0 0 3',
+																//columnWidth: 0.10,
+																//style: 'margin:0 0 0 4;',
+																//style: 'float: right;',
+																tooltip: 'Click to Add settings',
+																handler : function (){
+																		 //var counter = parseInt(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length));
+																		 //if(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length) != ""){
+																			//var nameID = 'key'+(counter+1);
+																			//var valueID = 'value'+(counter+1);
+																		// }else{
+																			 var nameID;
+																			 var valueID;
+																		// }
+																		 if(this.findParentByType('fieldset').items.items.length>1){
+																		     var nameID = 'key'+this.findParentByType('fieldset').items.items.length;
+																			 var valueID = 'value'+this.findParentByType('fieldset').items.items.length;
+																		 }else{
+																		     var nameID = 'key1';
+																			 var valueID = 'value1';
+																		 }
+  																		 var abc = myThis.addSettings("", "", nameID, valueID);
+																		 this.findParentByType('fieldset').add(abc);
+																		 this.findParentByType('fieldset').doLayout();
+																		 this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].allowBlank = false;
+																		 //this.findParentByType('fieldset').items.items[1].items.items[0].allowBlank = false;
+																		 //Ext.getCmp('settingfieldset').add(abc);
+																		 //Ext.getCmp('settingfieldset').doLayout();
+																		 
+																}
+													 }
+														/*,{
+															xtype: 'label',
+															text: 'Mask',
+															//title: 'Column 4',
+															style: 'font-weight:bold;margin:0 0 0 390;'
+															//style: ''
+															//columnWidth: 0.15//0.15
+														}*/
+
+											  ]
+          	}
+						]
 			}
       ],
             buttonAlign: 'left', // buttons aligned to the left            
@@ -534,16 +449,16 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
       var that = this;    // consists the main/prappNameclass object  
       var endpointName = that.items.first().getForm().findField('Name').getValue();
 	  var flag = false;
-      for(var i=0;i<that.items.items[0].items.items[6].items.items.length;i++){
-		  if(that.items.items[0].items.items[6].items.items[i].items.items[0].name.toLowerCase().substring(0,3)== 'key'){
-		    if(that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == ' ' || that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == ""){
+      for(var i=1;i<that.items.items[0].items.items[5].items.items.length;i++){
+		  if(that.items.items[0].items.items[5].items.items[i].items.items[0].name.toLowerCase().substring(0,3)== 'key'){
+		    if(that.items.items[0].items.items[5].items.items[i].items.items[0].getValue().trim() == ' ' || that.items.items[0].items.items[5].items.items[i].items.items[0].getValue().trim() == ""){
 		       flag = true;
 		 }
 		} 
 		
 	  }
 	  if(flag){
-	        showDialog(400, 100, 'Warning', 'Please enter a valid name', Ext.Msg.OK, null);
+	        showDialog(400, 100, 'Warning', 'Please enter a valid setting name', Ext.Msg.OK, null);
             return;
 	  }
       if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
