@@ -6,18 +6,12 @@
 */
 
 AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
-    //layout: 'anchor',
-	//height:'100%',
-	//autoScroll: true,
-	autoHeight:true,
-	//collapsible:false,
+  height: 360,
     border: false,
     frame: false,
     split: false,
     node: null,
     state: null,
-	//count:0,
-	//countForValue:0,
     scope: null,
     record: null,
     id: null,
@@ -35,32 +29,20 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 							  style: 'margin:10 0 0 63;',
 							  layout:'hbox',
 							  items: [
-							  /*{
-							    xtype: 'settingfield',
-								text:'Thiis is test label...'
-								//anchor:'100%'
-							  }*/
-						   {
-		 						xtype: 'textfield',
-								name:nameID,
-								value:key,
-								width:164,
-								allowBlank: true
-								//id:'name-1',
-								//columnWidth: 0.28//0.43,
-								//style: 'margin:0 0 0 20;',
-								
-                           },
+						    {
+		 						  xtype: 'textfield',
+								  name:nameID,
+								  value:key,
+								  width:164,
+								  allowBlank: true
+                },
 						 {
 								xtype: 'textarea',
-								//width: 500, 
-								//height: 70,
 								name:valueID,
 								value:value,
 								grow : false,
 								width:270,
-                                height: 50,
-								//columnWidth: 0.33,//0.24,
+                height: 50,
 								style: 'margin:0 0 0 3;'
 								//margin:'0 0 0 3'
                            },
@@ -280,8 +262,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         }, this);
 
         //that = this;
- 
-        this.form = new Ext.FormPanel({
+
+            this.form = new Ext.FormPanel({
             labelWidth: 70, // label settings here cascade unless
             url: this.url,
             method: 'POST',
@@ -304,14 +286,11 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
          
 			{
 						xtype: 'fieldset',
-						border:false,
-						collapsible:false,
-						autoHeight:true,
-						id:'settingfieldset',
-						//style: 'margin:0 0 0 64;',
-						//layout: {
-						//	type: 'vbox'
-						//},
+						border: false,
+						collapsible: false,
+						id: 'settingfieldset',
+						height: 200,
+            autoScroll: true,
 						items: [
 						      {
 									xtype: 'container',
@@ -322,39 +301,22 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 														 {
 															 xtype: 'label',
 															 text: 'Settings:'
-															 //style: 'margin:0 0 0 100;'
-															 //title: 'Column 1',
-															 //columnWidth: 0.21
 														 },
 														{
 															xtype: 'label',
 															text: 'Name',
-															//title: 'Column 2',
-															style: 'font-weight:bold;margin:0 0 0 90;'
-															//style: 'margin:0 0 0 80;'
-															//columnWidth: 0.23
+															style: 'margin:0 0 0 90;'
 														},
 														{
 															xtype: 'label',
 															text: 'Value',
-															//title: 'Column 3',
-															style: 'font-weight:bold;margin:0 0 0 250;'
-															//style: ''
-															//title: 'Column 1',
-															//columnWidth: 0.20//0.18
+															style: 'margin:0 0 0 250;'
 														},
 														 {
 																xtype: 'button',
-																//flex: 1,
 																text: 'Add',
 																width:49,
-																style: 'margin:0 0 0 440;',
-																//action:'AddMe',
-																//icon: '../ux/css/images/right2.gif',//'add-button',
-																//margin:'0 0 0 3',
-																//columnWidth: 0.10,
-																//style: 'margin:0 0 0 4;',
-																//style: 'float: right;',
+																style: 'margin:0 0 0 450;',
 																tooltip: 'Click to Add settings',
 																handler : function (){
 																		 //var counter = parseInt(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length));

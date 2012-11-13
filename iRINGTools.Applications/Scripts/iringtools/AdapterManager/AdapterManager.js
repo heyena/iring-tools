@@ -316,10 +316,6 @@ Ext.onReady(function () {
 			shadow : false,
             title: 'Add New Application',
             iconCls: 'tabsApplication',
-            //height: 291,
-            //width: 430,
-            height: 360,
-            width: 660,
             plain: true,
             items: newTab,
             listeners: {
