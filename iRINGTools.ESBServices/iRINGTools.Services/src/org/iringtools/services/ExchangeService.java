@@ -31,7 +31,6 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.ExchangeProvider;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_XML)

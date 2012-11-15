@@ -66,9 +66,9 @@ public class DifferencingProvider
      *    Source DTIs: 
      *    Target DTIs: x x x x
      */
-    if (sourceDtis == null || sourceDtis.getDataTransferIndexList().getItems().size() == 0)
+    if (sourceDtis == null || sourceDtis.getDataTransferIndexList() == null || sourceDtis.getDataTransferIndexList().getItems().size() == 0)
     {
-      if (targetDtis != null)
+      if (targetDtis != null && targetDtis.getDataTransferIndexList() != null)
       {
         for (DataTransferIndex dti : targetDtis.getDataTransferIndexList().getItems())
         {
@@ -85,9 +85,9 @@ public class DifferencingProvider
      *    Source DTIs: x x x x 
      *    Target DTIs:
      */
-    if (targetDtis == null || targetDtis.getDataTransferIndexList().getItems().size() == 0)
+    if (targetDtis == null || targetDtis.getDataTransferIndexList() == null || targetDtis.getDataTransferIndexList().getItems().size() == 0)
     {
-      if (sourceDtis != null)
+      if (sourceDtis != null && sourceDtis.getDataTransferIndexList() != null)
       {
         for (DataTransferIndex dti : sourceDtis.getDataTransferIndexList().getItems())
         {

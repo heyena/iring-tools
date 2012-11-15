@@ -196,71 +196,85 @@ namespace org.iringtools.adapter.projection
 
     public DataTransferIndices GetDataTransferIndices(GraphMap graphMap, IList<IDataObject> dataObjects, string sortIndex)
     {
-      _graphMap = graphMap;
-      _dataObjects = dataObjects;
-
       DataTransferIndices dtis = new DataTransferIndices();
 
-      if (_graphMap != null && _graphMap.classTemplateMaps != null && _graphMap.classTemplateMaps.Count > 0 &&
-        dataObjects != null && dataObjects.Count > 0)
+      try
       {
-        ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
-        string keyDelimiter = classTemplateMap.classMap.identifierDelimiter;
-        List<KeyProperty> keyProperties = GetKeyProperties(_graphMap.dataObjectName);
-        List<string> keyPropertyNames = new List<string>();
+        _graphMap = graphMap;
+        _dataObjects = dataObjects;
 
-        foreach (KeyProperty keyProperty in keyProperties)
+        if (_graphMap != null && _graphMap.classTemplateMaps != null && _graphMap.classTemplateMaps.Count > 0 &&
+          dataObjects != null && dataObjects.Count > 0)
         {
-          keyPropertyNames.Add(_graphMap.dataObjectName + '.' + keyProperty.keyPropertyName);
-        }
+          ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
+          string keyDelimiter = classTemplateMap.classMap.identifierDelimiter;
+          List<KeyProperty> keyProperties = GetKeyProperties(_graphMap.dataObjectName);
+          List<string> keyPropertyNames = new List<string>();
 
-        string sortType = null;
-
-        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
-        {
-          if (_dataObjects[dataObjectIndex] != null)
+          foreach (KeyProperty keyProperty in keyProperties)
           {
-            DataTransferIndex dti = new DataTransferIndex();
-            Dictionary<string, string> keyValues = new Dictionary<string, string>();
-            StringBuilder internalIdentifier = new StringBuilder();
-            StringBuilder propertyValues = new StringBuilder();
+            keyPropertyNames.Add(_graphMap.dataObjectName + '.' + keyProperty.keyPropertyName);
+          }
 
-            BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
-              propertyValues, sortIndex, ref sortType);
+          string sortType = null;
 
-            foreach (string identifierValue in keyValues.Values)
+          for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+          {
+            if (_dataObjects[dataObjectIndex] != null)
             {
-              if (internalIdentifier.Length > 0)
+              DataTransferIndex dti = new DataTransferIndex();
+              Dictionary<string, string> keyValues = new Dictionary<string, string>();
+              StringBuilder internalIdentifier = new StringBuilder();
+              StringBuilder propertyValues = new StringBuilder();
+
+              BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
+                propertyValues, sortIndex, ref sortType);
+
+              foreach (string identifierValue in keyValues.Values)
               {
-                internalIdentifier.Append(keyDelimiter);
+                if (internalIdentifier.Length > 0)
+                {
+                  internalIdentifier.Append(keyDelimiter);
+                }
+
+                internalIdentifier.Append(identifierValue);
               }
 
-              internalIdentifier.Append(identifierValue);
+              dti.InternalIdentifier = internalIdentifier.ToString();
+
+              string values = propertyValues.ToString();
+              dti.HashValue = Utility.MD5Hash(values);
+
+              //_logger.Debug("Hash: " + dti.HashValue);
+              //_logger.Debug("Values: " + values);
+
+              if (string.IsNullOrEmpty(dti.Identifier))
+              {
+                _logger.Error("DTI has no identifier: [" + values + "]");
+              }
+              else
+              {
+                dtis.DataTransferIndexList.Add(dti);
+              }
             }
+          }
 
-            dti.InternalIdentifier = internalIdentifier.ToString();
-
-            string values = propertyValues.ToString();
-            dti.HashValue = Utility.MD5Hash(values);
-
-            _logger.Debug("Hash: " + dti.HashValue);
-            _logger.Debug("Values: " + values);
-
-            if (string.IsNullOrEmpty(dti.Identifier))
-            {
-              _logger.Error("DTI has no identifier: [" + values + "]");
-            }
-            else
-            {
-              dtis.DataTransferIndexList.Add(dti);
-            }
+          if (sortType != null)
+          {
+            dtis.SortType = sortType;
           }
         }
 
-        if (sortType != null)
+        if (dtis != null)
         {
-          dtis.SortType = sortType;
+          _logger.Debug(string.Format("DTI count [{0}.{1}]: {2}",
+            _settings["ProjectName"], _settings["ApplicationName"], dtis.DataTransferIndexList.Count));
         }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error gettting data indices: " + e.Message + e.StackTrace);
+        throw e;
       }
 
       return dtis;
@@ -776,13 +790,16 @@ namespace org.iringtools.adapter.projection
       {
         if (propertyRole.dataType.ToLower().Contains("datetime"))
         {
-          value = Utility.ToXsdDateTime(propertyValue);
+          value = Utility.ToXsdDateTime(value);
         }
         else if (propertyRole.dataType == "xsd:string" &&
-          propertyRole.dataLength > 0 && propertyValue.Length > propertyRole.dataLength)
+          propertyRole.dataLength > 0 && value.Length > propertyRole.dataLength)
         {
           keyValue = value;
           value = value.Substring(0, propertyRole.dataLength);
+
+          //value might contain trailing whitespaces when taking substring, trim it again
+          value = value.TrimEnd();
         }
       }
       else  // resolve value list to uri

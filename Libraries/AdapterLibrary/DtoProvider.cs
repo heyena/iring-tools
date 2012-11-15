@@ -1001,7 +1001,7 @@ namespace org.iringtools.adapter
         ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
         DataTransferIndicesTask[] dtiTasks = new DataTransferIndicesTask[numOfThreads];
 
-        _logger.Debug("Getting Data ...");
+        _logger.Debug("Getting DTI ...");
 
         for (int i = 0; i < numOfThreads; i++)
         {
@@ -1020,7 +1020,7 @@ namespace org.iringtools.adapter
         // wait for all tasks to complete
         WaitHandle.WaitAll(doneEvents);
 
-        _logger.Debug("Got Data!");
+        _logger.Debug("DTI tasks completed!");
 
         // collect DTIs from the tasks
         for (int i = 0; i < numOfThreads; i++)
@@ -1033,7 +1033,7 @@ namespace org.iringtools.adapter
           }
         }
 
-        _logger.Debug("Assembled!");
+        _logger.Debug("DTIs assembled count: " + dataTransferIndices.DataTransferIndexList.Count);
       }
 
       return dataTransferIndices;
