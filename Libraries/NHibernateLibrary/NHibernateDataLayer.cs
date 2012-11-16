@@ -241,6 +241,17 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    private bool IsNumeric(DataType dataType)
+    {
+      return (dataType == DataType.Byte ||
+        dataType == DataType.Decimal ||
+        dataType == DataType.Double ||
+        dataType == DataType.Int16 ||
+        dataType == DataType.Int32 ||
+        dataType == DataType.Int64 ||
+        dataType == DataType.Single);
+    }
+
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
       AccessLevel accessLevel = Authorize(objectType);
@@ -270,47 +281,47 @@ namespace org.iringtools.adapter.datalayer
           }
           else if (dataObjectDef.keyProperties.Count > 1)
           {
-            string[] keyList = null;
-            int identifierIndex = 1;
-            foreach (string identifier in identifiers)
+            List<DataProperty> dataProps = new List<DataProperty>();
+
+            foreach (KeyProperty keyProp in dataObjectDef.keyProperties)
             {
-              string[] idParts = identifier.Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
+              DataProperty dataProp = dataObjectDef.dataProperties.Find(
+                x => x.propertyName.ToLower() == keyProp.keyPropertyName.ToLower());
 
-              keyList = new string[idParts.Count()];
-
-              int partIndex = 0;
-              foreach (string part in idParts)
-              {
-                if (identifierIndex == identifiers.Count())
-                {
-                  keyList[partIndex] += part;
-                }
-                else
-                {
-                  keyList[partIndex] += part + ", ";
-                }
-
-                partIndex++;
-              }
-
-              identifierIndex++;
+              dataProps.Add(dataProp);
             }
 
-            int propertyIndex = 0;
-            foreach (KeyProperty keyProperty in dataObjectDef.keyProperties)
+            for (int i = 0; i < identifiers.Count; i++)
             {
-              string propertyValues = keyList[propertyIndex];
+              string[] idParts = identifiers[i].Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
 
-              if (propertyIndex == 0)
+              if (i == 0)
               {
-                queryString.Append(" where " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+                queryString.Append(" WHERE ");
               }
               else
               {
-                queryString.Append(" and " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+                queryString.Append(" OR ");
               }
 
-              propertyIndex++;
+              queryString.Append("(");
+
+              for (int j = 0; j < dataObjectDef.keyProperties.Count; j++)
+              {
+                string propName = dataObjectDef.keyProperties[j].keyPropertyName;
+
+                if (j > 0)
+                {
+                  queryString.Append(" AND ");
+                }
+
+                if (!IsNumeric(dataProps[j].dataType))
+                  idParts[j] = "'" + idParts[j] + "'";
+
+                queryString.Append(propName + " = " + idParts[j]);
+              }
+
+              queryString.Append(")");
             }
           }
         }
