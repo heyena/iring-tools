@@ -36,10 +36,7 @@ namespace iringtools.sdk.sp3ddatalayer
     public SP3DDataLayer(AdapterSettings settings)
       : base(settings)
     {
-      ServiceSettings servcieSettings = new ServiceSettings();
-      _settings.AppendSettings(servcieSettings);
-      _settings.AppendSettings(settings);
-      sp3dProvider = new SP3DProvider(_settings);
+      sp3dProvider = new SP3DProvider(settings);
     }
 
     public override DataDictionary GetDictionary()
@@ -97,13 +94,18 @@ namespace iringtools.sdk.sp3ddatalayer
 
     public override Response Post(IList<IDataObject> dataObjects)
     {
+      Response response = new Response();
+
       if (sp3dProvider == null)
       {
         setSP3DProviderSettings();
       }
 
-      return sp3dProvider.PostSP3DBusinessObjects(dataObjects);
-    }       
+      response = sp3dProvider.PostSP3DBusinessObjects(dataObjects);
+      response.Append(sp3dProvider.Post(dataObjects));
+
+      return response;
+    }
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
@@ -139,7 +141,10 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         setSP3DProviderSettings();
       }
-      return sp3dProvider.DeleteSP3DIdentifiers(objectType, identifiers);
+
+      Response response = sp3dProvider.Delete(objectType, identifiers);
+      response.Append(sp3dProvider.DeleteSP3DIdentifiers(objectType, identifiers));
+      return response;
     }
 
     public override Response Delete(string objectType, DataFilter filter)
@@ -225,7 +230,7 @@ namespace iringtools.sdk.sp3ddatalayer
       {
         setSP3DProviderSettings();
       }
-      return sp3dProvider.GetCountSP3D(objectType, filter);      
+      return sp3dProvider.GetCount(objectType, filter);      
     }
 
     public override long GetRelatedCount(IDataObject parentDataObject, string relatedObjectType)

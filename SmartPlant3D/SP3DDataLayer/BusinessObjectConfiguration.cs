@@ -339,7 +339,7 @@ namespace iringtools.sdk.sp3ddatalayer
       return keyProperty;
     }
 
-    public BusinessProperty convertKeyPropertyToProperyt(BusinessKeyProperty businessKeyProperty)
+    public BusinessProperty convertKeyPropertyToProperty(BusinessKeyProperty businessKeyProperty)
     {
       BusinessProperty businessProperty = new BusinessProperty();
       businessProperty.datatype = businessKeyProperty.datatype;
@@ -350,6 +350,7 @@ namespace iringtools.sdk.sp3ddatalayer
       businessProperty.isNullable = businessKeyProperty.isNullable;
       businessProperty.isReadOnly = businessKeyProperty.isReadOnly;
       businessProperty.keyType = KeyType.assigned;
+      businessProperty.hidden = businessKeyProperty.hidden;
       return businessProperty;
     }
 
@@ -364,6 +365,7 @@ namespace iringtools.sdk.sp3ddatalayer
       businessProperty.isNullable = dataProperty.isNullable;
       businessProperty.isReadOnly = dataProperty.isReadOnly;
       businessProperty.keyType = dataProperty.keyType;
+      businessProperty.hidden = dataProperty.isHidden;
       return businessProperty;
     }
 
@@ -541,6 +543,9 @@ namespace iringtools.sdk.sp3ddatalayer
     [DataMember(IsRequired = false, Order = 8, EmitDefaultValue = false)]
     public bool returnNull { get; set; }
 
+    [DataMember(IsRequired = false, Order = 9, EmitDefaultValue = false)]
+    public bool hidden { get; set; }
+
     public BusinessProperty convertKeyPropertyToProperty()
     {
       BusinessProperty businessProperty = new BusinessProperty();
@@ -552,6 +557,8 @@ namespace iringtools.sdk.sp3ddatalayer
       businessProperty.isNullable = isNullable;
       businessProperty.isReadOnly = isReadOnly;
       businessProperty.keyType = KeyType.assigned;
+      businessProperty.hidden = hidden;
+      businessProperty.isKey = true;
       return businessProperty;
     }
 
@@ -566,6 +573,7 @@ namespace iringtools.sdk.sp3ddatalayer
       Property.isNullable = isNullable;
       Property.isReadOnly = isReadOnly;
       Property.keyType = KeyType.assigned;
+      Property.isHidden = hidden;
       return Property;
     }
   }
@@ -610,7 +618,13 @@ namespace iringtools.sdk.sp3ddatalayer
     public List<CodelistItem> codeList { get; set; }
 
     [DataMember(IsRequired = false, Order = 10, EmitDefaultValue = false)]
-    public bool isNative { get; set; }   
+    public bool isNative { get; set; }
+
+    [DataMember(IsRequired = false, Order = 11, EmitDefaultValue = false)]
+    public bool hidden { get; set; }
+
+    [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
+    public bool isKey { get; set; }
 
     public DataProperty convertPropertyToDataProperty()
     {
@@ -621,6 +635,7 @@ namespace iringtools.sdk.sp3ddatalayer
       Property.propertyName = propertyName;
       Property.isNullable = isNullable;
       Property.isReadOnly = isReadOnly;
+      Property.isHidden = hidden;
       return Property;
     }
 
@@ -633,6 +648,7 @@ namespace iringtools.sdk.sp3ddatalayer
       Property.propertyName = propertyName;
       Property.isNullable = isNullable;
       Property.isReadOnly = isReadOnly;
+      Property.hidden = hidden;
       return Property;
     }
   }
