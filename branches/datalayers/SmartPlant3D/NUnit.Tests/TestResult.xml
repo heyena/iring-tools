@@ -1,31 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--This file represents the results of running a test suite-->
-<test-results name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Tests\NUnit.Tests.csproj" total="1" errors="0" failures="1" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2012-11-19" time="16:22:35">
+<test-results name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Tests\NUnit.Tests.csproj" total="1" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2012-11-19" time="17:02:16">
   <environment nunit-version="2.5.9.10348" clr-version="4.0.30319.269" os-version="Microsoft Windows NT 6.1.7600.0" platform="Win32NT" cwd="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Runner\bin\Debug" machine-name="FREL23260" user="fwei" user-domain="IAMERS" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="Project" name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Tests\NUnit.Tests.csproj" executed="True" result="Failure" success="False" time="76.621" asserts="0">
+  <test-suite type="Project" name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Tests\NUnit.Tests.csproj" executed="True" result="Success" success="True" time="50.232" asserts="0">
     <results>
-      <test-suite type="Assembly" name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Tests\bin\Debug\NUnit.Tests.dll" executed="True" result="Failure" success="False" time="76.615" asserts="0">
+      <test-suite type="Assembly" name="C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Tests\bin\Debug\NUnit.Tests.dll" executed="True" result="Success" success="True" time="50.218" asserts="0">
         <results>
-          <test-suite type="Namespace" name="iringtools" executed="True" result="Failure" success="False" time="76.615" asserts="0">
+          <test-suite type="Namespace" name="iringtools" executed="True" result="Success" success="True" time="50.217" asserts="0">
             <results>
-              <test-suite type="Namespace" name="sdk" executed="True" result="Failure" success="False" time="76.615" asserts="0">
+              <test-suite type="Namespace" name="sdk" executed="True" result="Success" success="True" time="50.214" asserts="0">
                 <results>
-                  <test-suite type="Namespace" name="sp3ddatalayer" executed="True" result="Failure" success="False" time="76.615" asserts="0">
+                  <test-suite type="Namespace" name="sp3ddatalayer" executed="True" result="Success" success="True" time="50.213" asserts="0">
                     <results>
-                      <test-suite type="Namespace" name="test" executed="True" result="Failure" success="False" time="76.615" asserts="0">
+                      <test-suite type="Namespace" name="test" executed="True" result="Success" success="True" time="50.208" asserts="0">
                         <results>
-                          <test-suite type="TestFixture" name="Tests" executed="True" result="Failure" success="False" time="76.599" asserts="0">
+                          <test-suite type="TestFixture" name="Tests" executed="True" result="Success" success="True" time="50.184" asserts="0">
                             <results>
-                              <test-case name="iringtools.sdk.sp3ddatalayer.test.Tests.TestDataObjects" executed="True" result="Failure" success="False" time="75.394" asserts="11">
-                                <failure>
-                                  <message><![CDATA[  Expected: Error
-  But was:  Success
-]]></message>
-                                  <stack-trace><![CDATA[at iringtools.sdk.sp3ddatalayer.test.Tests.TestDataObjects() in C:\iring-tools\branches\datalayers\SP3D\SP3DUnitTest\SmartPlant3D\NUnit.Tests\Tests.cs:line 206
-]]></stack-trace>
-                                </failure>
-                              </test-case>
+                              <test-case name="iringtools.sdk.sp3ddatalayer.test.Tests.TestDataObjects" executed="True" result="Success" success="True" time="49.197" asserts="11" />
                             </results>
                           </test-suite>
                         </results>

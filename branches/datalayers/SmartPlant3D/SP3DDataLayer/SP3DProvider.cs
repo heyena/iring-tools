@@ -2107,14 +2107,13 @@ namespace iringtools.sdk.sp3ddatalayer
               keyStr = relatedObject.businessKeyProperties.First().keyPropertyName;
               identifier = sourceDO.GetPropertyValue(keyStr).ToString();
               relationDataObject.SetPropertyValue(relation.businessProperties.Last().propertyName, identifier);
-              dataObjects.Add(relationDataObject);
-
+              createdDO.SetPropertyValue(connectedEntityName, relationDataObject);
+              
               type = Type.GetType(ns + con + ", " + _settings["ExecutingAssemblyName"]);
               relatedDataObject = CreateIDataObject(session, con, type, identifier);
               setPostDOValue(relatedDataObject, relatedObject, sourceDO);
-              dataObjects.Add(relationDataObject);
+              dataObjects.Add(relatedDataObject);
 
-              createdDO.SetPropertyValue(connectedEntityName, relationDataObject);
               setPostDO(session, dataObjects, sourceDO, relatedObject, bObj, relatedDataObject);
             }          
         }
@@ -2163,12 +2162,12 @@ namespace iringtools.sdk.sp3ddatalayer
               keyStr = relatedObject.businessKeyProperties.First().keyPropertyName;
               identifier = sourceDO.GetPropertyValue(keyStr).ToString();
               relationDataObject.SetPropertyValue(relation.businessProperties.Last().propertyName, identifier);
-              dataObjects.Add(relationDataObject);
+              treatingDo.SetPropertyValue(connectedEntityName, relationDataObject);
 
               type = Type.GetType(ns + con + ", " + _settings["ExecutingAssemblyName"]);
               relatedDataObject = CreateIDataObject(session, connectedEntityName, type, identifier);
               setPostDOValue(relatedDataObject, relatedObject, sourceDO);
-              dataObjects.Add(relationDataObject);
+              dataObjects.Add(relatedDataObject);
 
               setPostDO(session, dataObjects, sourceDO, relatedObject, bObj, relatedDataObject);
             }
