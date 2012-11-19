@@ -1439,14 +1439,19 @@ namespace org.iringtools.utility
     
     public static string ToXsdDateTime(DateTime dateTime)
     {
-      DateTimeOffset dtOffset =
-        new DateTimeOffset(dateTime, TimeZoneInfo.Local.GetUtcOffset(dateTime));
-      string dtOffsetStr = dtOffset.ToString("o");
+      #region DO NOT DELETE - WILL RETROFIT IT LATER
+      //DateTimeOffset dtOffset =
+      //  new DateTimeOffset(dateTime, TimeZoneInfo.Local.GetUtcOffset(dateTime));
+      //string dtOffsetStr = dtOffset.ToString("o");
 
-      if (dtOffsetStr[dtOffsetStr.Length - 3] == ':')
-        dtOffsetStr = dtOffsetStr.Remove(dtOffsetStr.Length - 3, 1);
+      //if (dtOffsetStr[dtOffsetStr.Length - 3] == ':')
+      //  dtOffsetStr = dtOffsetStr.Remove(dtOffsetStr.Length - 3, 1);
 
-      return dtOffsetStr;
+      //return dtOffsetStr;
+      #endregion
+
+      string utc = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Utc).Replace("Z", "-0000");
+      return utc;
     }
 
     public static string ToXsdDateTime(string dateTime)
