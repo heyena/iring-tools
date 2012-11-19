@@ -32,8 +32,10 @@ namespace iringtools.sdk.sp3ddatalayer.test
       adapterSettings["ProjectName"] = project;
       adapterSettings["ApplicationName"] = app;
       adapterSettings["DataLayerPath"] = baseDir + "\\App_Data\\";
-
-      sp3dProvider = new SP3DProvider(adapterSettings);
+      adapterSettings["ExecutingAssemblyName"] = "NUnit.Tests";
+      FileInfo log4netConfig = new FileInfo("Log4net.config");
+      log4net.Config.XmlConfigurator.Configure(log4netConfig);
+      sp3dProvider = new SP3DProvider(adapterSettings, "test");
     }
 
     [Test]
@@ -69,7 +71,7 @@ namespace iringtools.sdk.sp3ddatalayer.test
           PropertyName = "oid",
           Values = new Values
             {
-              "00004e2e-0000-0000-0000-1c55c44d2e04"
+              "00004e2e-0000-0000-b701-050a47502405"
             },
           RelationalOperator = RelationalOperator.EqualTo
         }
@@ -85,7 +87,7 @@ namespace iringtools.sdk.sp3ddatalayer.test
 
       #region Test get count
       Console.WriteLine("Testing get count ...");
-      long count = sp3dProvider.GetCountSP3D(objectType, filter);
+      long count = sp3dProvider.GetCount(objectType, filter);
       Assert.Greater(count, 0);
       result = (count > 0) ? "passed." : "failed.";
       _logger.Info("Test get count " + result);
@@ -121,37 +123,31 @@ namespace iringtools.sdk.sp3ddatalayer.test
       #endregion
 
       //
-      // Create a data object to post
+      // Create a data object to post or delete
       //
       dataObjects = sp3dProvider.Get(objectType, new DataFilter(), 2, 1);
       IDataObject clonedDataObject = dataObjects[0];
+      IDataObject clonedDataObject1 = dataObjects[1];
       DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
       string keyPropName = objDef.keyProperties[0].keyPropertyName;
       string keyPropValue = Convert.ToString(clonedDataObject.GetPropertyValue(keyPropName));
 
       clonedDataObject.SetPropertyValue(keyPropName, keyPropValue);
-      string propertyName = objDef.dataProperties[2].propertyName;
-      clonedDataObject.SetPropertyValue(propertyName, "posting a value");      
+      clonedDataObject.SetPropertyValue(objDef.dataProperties[0].propertyName, "00004E2E-0000-0000-0833-00359C4E1305");
+      clonedDataObject.SetPropertyValue(objDef.dataProperties[1].propertyName, "0003345A-0000-0000-8F01-A2820D4B3004");
+      clonedDataObject.SetPropertyValue(objDef.dataProperties[2].propertyName, "posting first value");
 
-      #region Test post
-      Console.WriteLine("Testing post ...");
-      IList<IDataObject> postDataObjects = new List<IDataObject>() { clonedDataObject };
-
-      if (dataObjects.Count > 1)
-      {
-        postDataObjects.Add(dataObjects[1]);
-      }
-
-      response = sp3dProvider.PostSP3DBusinessObjects(postDataObjects);
-      Assert.AreEqual(response.Level, StatusLevel.Success);
-      result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
-      _logger.Info("Test post " + result);
-      #endregion
+      clonedDataObject1.SetPropertyValue(keyPropName, keyPropValue);
+      clonedDataObject1.SetPropertyValue(objDef.dataProperties[0].propertyName, "00004E2E-0000-0000-A15F-00FB924E8804");
+      clonedDataObject1.SetPropertyValue(objDef.dataProperties[1].propertyName, "0003345A-0000-0000-0600-5C0EF54C4104");
+      clonedDataObject1.SetPropertyValue(objDef.dataProperties[2].propertyName, "posting second value");
 
       #region Test delete by identifiers
       Console.WriteLine("Testing delete by identifiers ...");
 
-      response = sp3dProvider.DeleteSP3DIdentifiers(objectType, new List<string>() { keyPropValue });
+      identifiers = new List<string>() { keyPropValue };
+      response = sp3dProvider.Delete(objectType, identifiers);
+      response.Append(sp3dProvider.DeleteSP3DIdentifiers(objectType, identifiers));
       Assert.AreEqual(response.Level, StatusLevel.Success);
       result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
       _logger.Info("Test delete by identifiers " + result);
@@ -173,8 +169,8 @@ namespace iringtools.sdk.sp3ddatalayer.test
         newDataObject.SetPropertyValue(prop.propertyName, clonedDataObject.GetPropertyValue(prop.propertyName));
       }
 
-      // Post it
-      response = sp3dProvider.PostSP3DBusinessObjects(new List<IDataObject>() { newDataObject });
+      // Prepare deletion 
+      response = sp3dProvider.Post(new List<IDataObject>() { newDataObject });
       Assert.AreEqual(response.Level, StatusLevel.Success);
 
       // Prepare filter to delete
@@ -197,7 +193,20 @@ namespace iringtools.sdk.sp3ddatalayer.test
       result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
       _logger.Info("Test delete by filter " + result);
       #endregion
-      
+
+      #region Test post
+      Console.WriteLine("Testing post ...");
+      clonedDataObject.SetPropertyValue(keyPropName, keyPropValue);
+      clonedDataObject.SetPropertyValue(objDef.dataProperties[0].propertyName, "00004E2E-0000-0000-FF0A-EDDB4A4F8704");
+      clonedDataObject.SetPropertyValue(objDef.dataProperties[1].propertyName, "00033454-0000-0000-8600-EDDB4A4F8704");
+      clonedDataObject.SetPropertyValue(objDef.dataProperties[2].propertyName, "posting a value");
+      IList<IDataObject> postDataObjects = new List<IDataObject>() { clonedDataObject };
+      response = sp3dProvider.Post(postDataObjects);
+      response.Append(sp3dProvider.PostSP3DBusinessObjects(postDataObjects));
+      Assert.AreEqual(response.Level, StatusLevel.Success);
+      result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
+      _logger.Info("Test post " + result);
+      #endregion     
     }
   }
 }

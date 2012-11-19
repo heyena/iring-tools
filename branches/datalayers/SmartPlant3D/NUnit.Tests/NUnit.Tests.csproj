@@ -8,8 +8,8 @@
     <ProjectGuid>{18B2BC11-7176-47E3-8399-BDC96A04A57E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adapter.datalayer.sppid.test</RootNamespace>
-    <AssemblyName>SPPIDDataLayer.Tests</AssemblyName>
+    <RootNamespace>NUnit.Tests</RootNamespace>
+    <AssemblyName>NUnit.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,12 +34,33 @@
     <Reference Include="AdapterLibrary">
       <HintPath>..\lib\iring-tools\AdapterLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Antlr3.Runtime, Version=3.1.0.39271, Culture=neutral, PublicKeyToken=3a9cab8f8d22bfb7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.DynamicProxy2">
+      <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\Castle.DynamicProxy2.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
+    </Reference>
     <Reference Include="iRINGLibrary">
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\log4net\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.ByteCode.Castle">
+      <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\lib\nunit\framework\nunit.framework.dll</HintPath>
@@ -60,12 +81,39 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Code\Model.12345_000.sp3d.cs" />
+    <Compile Include="App_Code\Model.12345_000.sp3d.equipment.cs" />
     <Compile Include="Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Configuration.12345_000.sp3d.xml" />
+    <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d.equipment.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d.xml" />
+    <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d._Equipment.xml" />
+    <Content Include="App_Data\DatabaseDictionary.sp3ddl_12345_000.sp3d.equipment.xml" />
+    <Content Include="App_Data\DataDictionary.12345_000.sp3d.equipment.xml" />
     <Content Include="App_Data\DataDictionary.12345_000.sp3d.xml" />
+    <Content Include="App_Data\DataDictionary.12345_000.sp3d._Equipment.xml" />
+    <Content Include="App_Data\DataDictionary.sp3ddl_12345_000.sp3d.equipment.xml" />
+    <Content Include="App_Data\nh-configuration.12345_000.sp3d.equipment.xml" />
+    <Content Include="App_Data\nh-configuration.12345_000.sp3d.xml" />
+    <Content Include="App_Data\nh-configuration.12345_000.sp3d._Equipment.xml" />
+    <Content Include="App_Data\nh-configuration.sp3ddl_12345_000.sp3d.equipment.xml" />
+    <Content Include="App_Data\nh-mapping.12345_000.sp3d.equipment.xml" />
+    <Content Include="App_Data\nh-mapping.12345_000.sp3d.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_Data\nh-mapping.12345_000.sp3d._Equipment.xml" />
+    <Content Include="App_Data\nh-mapping.sp3ddl_12345_000.sp3d.equipment.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_Data\Response.12345_000.sp3d.xml" />
+    <Content Include="App_Data\VerifiedConfiguration.12345_000.sp3d.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SP3DDataLayer\SP3DDataLayer.csproj">
@@ -74,7 +122,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Code\" />
+    <None Include="app.config" />
+    <None Include="Log4net.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Logs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

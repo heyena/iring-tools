@@ -11,7 +11,7 @@ namespace iringtools.sdk.test
     [STAThread]
     static void Main()
     {
-      string commandLine = @"/run ../../../SP3DDataLayer.Tests/SP3DDataLayer.Tests.csproj";
+      string commandLine = @"/run ../../../NUnit.Tests/NUnit.Tests.csproj";
 
       string[] args = commandLine.Split(' ');
       AppEntry.Main(args);

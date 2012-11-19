@@ -145,12 +145,14 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BusinessObjectConfiguration.cs" />
+    <Compile Include="PostRelatedObjectHelp.cs" />
     <Compile Include="NHibernateUtility.cs" />
     <Compile Include="SP3DProvider.cs" />
     <Compile Include="EntityGenerator.cs" />
     <Compile Include="NHibernateSessionManager.cs" />
     <Compile Include="SP3DDataLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PostSP3DHelp.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="IMSICDPInterfacesLib">
