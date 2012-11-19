@@ -285,7 +285,6 @@ Ext.onReady(function () {
     }, this);
 
     directoryPanel.on('newapplication', function (npanel, node) {
-        Ext.getBody().mask("Loading...", "x-mask-loading");
         var newTab = new AdapterManager.ApplicationPanel({
             id: 'tab-' + node.id,
             scope: node.attributes.record,
@@ -308,14 +307,16 @@ Ext.onReady(function () {
 
         var win = new Ext.Window({
             closable: true,
-			resizable : false,
+			      resizable : false,
             id: 'newwin-' + node.id,
             modal: true,
-			autoHeight:true,
+			      autoHeight:true,
             layout: 'fit',
-			shadow : false,
+			      shadow : false,
             title: 'Add New Application',
             iconCls: 'tabsApplication',
+            height: 360,
+            width: 660,
             plain: true,
             items: newTab,
             listeners: {

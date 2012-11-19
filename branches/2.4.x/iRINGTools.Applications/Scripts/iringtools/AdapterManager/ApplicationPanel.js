@@ -6,7 +6,7 @@
 */
 
 AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
-  height: 360,
+    height: 360,
     border: false,
     frame: false,
     split: false,
@@ -17,8 +17,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     id: null,
     form: null,
     url: null,
-    key:"",
-	value:"",
+    key: "",
+	  value: "",
     /**
     * initComponent
     * @protected
@@ -240,7 +240,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         var cmbDataLayers = new Ext.form.ComboBox({
             fieldLabel: 'Data Layer',
             //bodyStyle: 'width:500px',
-		    boxMaxWidth: 530,//250,
+		        boxMaxWidth: 530,//250,
             width: 530,//250,
             forceSelection: true,
             typeAhead: true,
