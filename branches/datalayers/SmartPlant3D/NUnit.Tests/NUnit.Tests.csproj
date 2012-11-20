@@ -82,45 +82,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Code\Model.12345_000.sp3d.cs" />
-    <Compile Include="App_Code\Model.12345_000.sp3d.equipment.cs" />
     <Compile Include="Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_Data\Configuration.12345_000.sp3d.xml" />
-    <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d.equipment.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d.xml" />
-    <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d._Equipment.xml" />
-    <Content Include="App_Data\DatabaseDictionary.sp3ddl_12345_000.sp3d.equipment.xml" />
-    <Content Include="App_Data\DataDictionary.12345_000.sp3d.equipment.xml" />
-    <Content Include="App_Data\DataDictionary.12345_000.sp3d.xml" />
-    <Content Include="App_Data\DataDictionary.12345_000.sp3d._Equipment.xml" />
-    <Content Include="App_Data\DataDictionary.sp3ddl_12345_000.sp3d.equipment.xml" />
-    <Content Include="App_Data\nh-configuration.12345_000.sp3d.equipment.xml" />
-    <Content Include="App_Data\nh-configuration.12345_000.sp3d.xml" />
-    <Content Include="App_Data\nh-configuration.12345_000.sp3d._Equipment.xml" />
-    <Content Include="App_Data\nh-configuration.sp3ddl_12345_000.sp3d.equipment.xml" />
-    <Content Include="App_Data\nh-mapping.12345_000.sp3d.equipment.xml" />
-    <Content Include="App_Data\nh-mapping.12345_000.sp3d.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\nh-mapping.12345_000.sp3d._Equipment.xml" />
-    <Content Include="App_Data\nh-mapping.sp3ddl_12345_000.sp3d.equipment.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\Response.12345_000.sp3d.xml" />
-    <Content Include="App_Data\VerifiedConfiguration.12345_000.sp3d.xml">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Log4net.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Code\" />
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
