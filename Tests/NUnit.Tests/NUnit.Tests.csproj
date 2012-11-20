@@ -74,6 +74,7 @@
     <Compile Include="AdapterTest.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
     <Compile Include="BaseTest.cs" />
+    <Compile Include="UtilityTest.cs" />
     <Compile Include="DataTest.cs">
       <SubType>Code</SubType>
     </Compile>
