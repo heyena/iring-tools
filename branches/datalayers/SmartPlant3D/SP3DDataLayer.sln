@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SP3DDataLayer", "SP3DDataLayer\SP3DDataLayer.csproj", "{FF781DFB-FA75-4A26-A936-AF2BF38189C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateConfig", "CreateConfig\CreateConfig.csproj", "{DB329BB8-BA13-4982-A190-CEA1E1E62B27}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnit.Runner", "NUnit.Runner\NUnit.Runner.csproj", "{47E9D680-C10C-46B6-BDC8-68CEFC037AFE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnit.Tests", "NUnit.Tests\NUnit.Tests.csproj", "{18B2BC11-7176-47E3-8399-BDC96A04A57E}"
@@ -29,16 +27,6 @@ Global
 		{FF781DFB-FA75-4A26-A936-AF2BF38189C8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FF781DFB-FA75-4A26-A936-AF2BF38189C8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FF781DFB-FA75-4A26-A936-AF2BF38189C8}.Release|x86.ActiveCfg = Release|Any CPU
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Debug|x86.ActiveCfg = Debug|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Debug|x86.Build.0 = Debug|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Release|Any CPU.ActiveCfg = Release|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Release|Mixed Platforms.Build.0 = Release|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Release|x86.ActiveCfg = Release|x86
-		{DB329BB8-BA13-4982-A190-CEA1E1E62B27}.Release|x86.Build.0 = Release|x86
 		{47E9D680-C10C-46B6-BDC8-68CEFC037AFE}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{47E9D680-C10C-46B6-BDC8-68CEFC037AFE}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{47E9D680-C10C-46B6-BDC8-68CEFC037AFE}.Debug|Mixed Platforms.Build.0 = Debug|x86
