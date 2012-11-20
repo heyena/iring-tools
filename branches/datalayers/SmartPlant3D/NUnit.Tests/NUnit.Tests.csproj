@@ -31,46 +31,47 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdapterLibrary">
+    <Reference Include="AdapterLibrary, Version=2.4.0.5309, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\AdapterLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Antlr3.Runtime, Version=3.1.0.39271, Culture=neutral, PublicKeyToken=3a9cab8f8d22bfb7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Core">
+    <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.DynamicProxy2">
+    <Reference Include="Castle.DynamicProxy2, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\Castle.DynamicProxy2.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="iRINGLibrary">
+    <Reference Include="iRINGLibrary, Version=2.4.0.5309, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\log4net\log4net.dll</HintPath>
+      <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate.ByteCode.Castle">
+    <Reference Include="NHibernate.ByteCode.Castle, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\lib\nunit\framework\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="StaticDust.Configuration">
-      <HintPath>..\lib\configuration\StaticDust.Configuration.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -114,12 +115,6 @@
     <Content Include="App_Data\VerifiedConfiguration.12345_000.sp3d.xml">
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SP3DDataLayer\SP3DDataLayer.csproj">
-      <Project>{FF781DFB-FA75-4A26-A936-AF2BF38189C8}</Project>
-      <Name>SP3DDataLayer</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
