@@ -1,0 +1,10 @@
+﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.sp3d.equipment.CPSmartEquipment, NUnit.Tests" table="&quot;equipment&quot;">
+    <id name="Id" column="&quot;oid&quot;">
+      <generator class="assigned" />
+    </id>
+    <property name="oid" column="&quot;oid&quot;" update="false" insert="false" />
+    <property name="CPMachinerySystem_oid" column="&quot;CPMachinerySystem_oid&quot;" />
+    <property name="CPMachinerySystem_name" column="&quot;CPMachinerySystem_name&quot;" />
+  </class>
+</hibernate-mapping>
