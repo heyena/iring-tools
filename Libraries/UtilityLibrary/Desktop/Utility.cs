@@ -1450,8 +1450,27 @@ namespace org.iringtools.utility
       //return dtOffsetStr;
       #endregion
 
-      string utc = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Utc).Replace("Z", "-0000");
-      return utc;
+        bool hasTime = true;
+        if (dateTime.Hour + dateTime.Minute + dateTime.Second == 0)
+        {
+            hasTime = false;
+        }
+
+        return ToXsdDateTime(dateTime, hasTime);
+    }
+
+    public static string ToXsdDateTime(DateTime dateTime, bool hasTime)
+    {
+        string utc = String.Empty;
+        if (!hasTime)
+        {
+            utc = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Utc).Replace("Z", ".000-00:00");
+        }
+        else
+        {
+            utc = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Utc).Replace("Z", "-00:00");
+        }
+        return utc;
     }
 
     public static string ToXsdDateTime(string dateTime)
@@ -1460,7 +1479,14 @@ namespace org.iringtools.utility
         return dateTime;
 
       DateTime dt = DateTime.Parse(dateTime);
-      return ToXsdDateTime(dt);
+
+      bool hasTime = true;
+      if (dt.Hour + dt.Minute + dt.Second == 0)
+      {
+          hasTime = false;
+      }
+
+      return ToXsdDateTime(dt, hasTime);
     }
 
     public static DateTime FromXsdDateTime(string dateTime)
