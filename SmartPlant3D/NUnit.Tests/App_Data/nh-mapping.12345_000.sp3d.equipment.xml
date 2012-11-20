@@ -1,0 +1,36 @@
+﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.sp3d.equipment.CPSmartEquipment, NUnit.Tests" table="&quot;EQUIPSmartEquipment&quot;">
+    <id name="Id" column="&quot;oid&quot;">
+      <generator class="assigned" />
+    </id>
+    <property name="oid" column="&quot;oid&quot;" update="false" insert="false" />
+    <many-to-one name="HasEqpAsChild" class="org.iringtools.adapter.datalayer.proj_12345_000.sp3d.equipment.HasEqpAsChild, NUnit.Tests" property-ref="oidDestination">
+      <column name="oid" not-null="true" sql-type="uniqueidentifier" />
+    </many-to-one>
+  </class>
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.sp3d.equipment.CPMachinerySystem, NUnit.Tests" table="&quot;SHPCONMachinerySystemView&quot;">
+    <id name="Id" column="&quot;oid&quot;">
+      <generator class="assigned" />
+    </id>
+    <property name="CPMachinerySystem_oid" column="&quot;oid&quot;" update="false" insert="false" />
+    <one-to-one name="HasEqpAsChild" class="org.iringtools.adapter.datalayer.proj_12345_000.sp3d.equipment.HasEqpAsChild, NUnit.Tests" />
+    <join table="JNamedItem">
+      <key column="&quot;oid&quot;" />
+      <property name="CPMachinerySystem_name" column="&quot;ItemName&quot;" />
+    </join>
+  </class>
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.sp3d.equipment.HasEqpAsChild, NUnit.Tests" table="&quot;XHasEqpAsChild&quot;">
+    <id name="Id" column="&quot;oidOrigin&quot;">
+      <generator class="assigned" />
+    </id>
+    <property name="oidOrigin" column="&quot;oidOrigin&quot;" update="false" insert="false" />
+    <property name="oidDestination" column="&quot;oidDestination&quot;" />
+    <set name="CPSmartEquipments" generic="false">
+      <key>
+        <column name="oid" />
+      </key>
+      <one-to-many class="org.iringtools.adapter.datalayer.proj_12345_000.sp3d.equipment.CPSmartEquipment, NUnit.Tests" />
+    </set>
+    <one-to-one name="CPMachinerySystem" class="org.iringtools.adapter.datalayer.proj_12345_000.sp3d.equipment.CPMachinerySystem, NUnit.Tests" constrained="true" />
+  </class>
+</hibernate-mapping>
