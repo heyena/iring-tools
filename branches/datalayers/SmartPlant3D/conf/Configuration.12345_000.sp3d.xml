@@ -56,8 +56,8 @@
       </businessFilter>
     </businessCommodity>    
   </businessCommodities>  
-  <provider>MsSql2008</provider>
-  <connectionString>Data Source=HOUS01014\sp3d_2011_gbl;Initial Catalog=gbl_mdb;Integrated Security=true</connectionString>
-  <stagingDataBaseName>SP3DStaging</stagingDataBaseName>
-  <schemaName>dbo</schemaName>
+  <provider></provider>
+  <connectionString></connectionString>
+  <stagingDataBaseName></stagingDataBaseName>
+  <schemaName></schemaName>
 </businessObjectConfiguration>
