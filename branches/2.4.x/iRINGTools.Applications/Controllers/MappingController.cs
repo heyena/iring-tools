@@ -705,7 +705,7 @@ namespace org.iringtools.web.controllers
       JsonTreeNode graphNode = new JsonTreeNode
       {
         nodeType = "async",
-        identifier = classMap.id,
+        identifier = string.Join(",", classMap.identifiers),
         type = "GraphMapNode",
         icon = "Content/img/graph-map.png",
         id = context + "/" + graph.name + "/" + classMap.name,
@@ -786,75 +786,91 @@ namespace org.iringtools.web.controllers
 
       try
       {
-        string qName = string.Empty;
-        string format = String.Empty;
-        string oldGraphName = "";
-
-        string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        if (mappingCtx.Length > 3)
-          oldGraphName = mappingCtx[4];
-        string propertyCtx = form["objectName"];
-        if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
-        string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = dataObjectVars[0];
-        string application = dataObjectVars[1];
-        Mapping mapping = GetMapping(scope, application);
-        string context = string.Format("{0}/{1}", scope, application);
-        string newGraphName = form["graphName"];
-        string classLabel = form["classLabel"];
-        string keyProperty = dataObjectVars[5];
-        string dataObject = dataObjectVars[4];
-        string classId = form["classUrl"];
-        string oldClassId = form["oldClassUrl"];
-        string oldClassLabel = form["oldClassLabel"];
+        string scope = form["scope"];
+        string app = form["app"];
+        string oldGraphName = form["oldGraphName"];
+        string graphName = form["graphName"];
+        string objectName = form["objectName"];
+        string identifier = form["identifier"];
+        string delimiter = form["delimiter"];
+        string className = form["className"];
+        string classId = form["classId"];
+        
+        string context = string.Format("{0}/{1}", scope, app);        
+        Mapping mapping = GetMapping(scope, app);
 
         bool qn = false;
-
         qn = _nsMap.ReduceToQName(classId, out qName);
 
-        if (string.IsNullOrEmpty(oldClassLabel))
-          oldClassLabel = classLabel;
-
-        if (string.IsNullOrEmpty(oldClassId))
-          oldClassId = classId;
-
-        if (oldGraphName == "")
+        if (string.IsNullOrEmpty(oldGraphName))
         {
           if (mapping.graphMaps == null)
             mapping.graphMaps = new GraphMaps();
 
           GraphMap graphMap = new GraphMap
           {
-            name = newGraphName,
-            dataObjectName = dataObject
+            name = graphName,
+            dataObjectName = objectName
           };
 
           ClassMap classMap = new ClassMap
           {
-            name = classLabel,
-            id = qn ? qName : classId
+            name = className,
+            id = qn ? qName : classId,
+            identifierDelimiter = delimiter,
+            identifiers = new Identifiers()
           };
 
-          classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+          if (identifier.Contains(','))
+          {
+            string[] identifierParts = identifier.Split(',');
+
+            foreach (string part in identifierParts)
+            {
+              classMap.identifiers.Add(part);
+            }
+          }
+          else
+          {
+            classMap.identifiers.Add(identifier);
+          }
+
           graphMap.AddClassMap(null, classMap);
           mapping.graphMaps.Add(graphMap);
           nodes.Add(CreateGraphNode(context, graphMap, classMap));
         }
         else
         {
-          GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
+          GraphMap graphMap = mapping.FindGraphMap(graphName);
+
           if (graphMap == null)
             graphMap = new GraphMap();
-          graphMap.name = newGraphName;
-          graphMap.dataObjectName = dataObject;
-          ClassTemplateMap ctm = graphMap.classTemplateMaps.Find(c => c.classMap.name.Equals(oldClassLabel));
 
-          ctm.classMap.name = classLabel;
-          ctm.classMap.id = qn ? qName : classId;
-          ctm.classMap.identifiers.Clear();
-          ctm.classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-          _repository.UpdateMapping(scope, application, mapping);
+          graphMap.name = graphName;
+          graphMap.dataObjectName = objectName;
+          
+          ClassMap classMap = graphMap.classTemplateMaps[0].classMap;
+          classMap.name = className;
+          classMap.id = qn ? qName : classId;
+          classMap.identifierDelimiter = delimiter;
+          classMap.identifiers = new Identifiers();
+
+          if (identifier.Contains(','))
+          {
+            string[] identifierParts = identifier.Split(',');
+
+            foreach (string part in identifierParts)
+            {
+              classMap.identifiers.Add(part);
+            }
+          }
+          else
+          {
+            classMap.identifiers.Add(identifier);
+          }
         }
+
+        _repository.UpdateMapping(scope, app, mapping);
       }
       catch (Exception ex)
       {
