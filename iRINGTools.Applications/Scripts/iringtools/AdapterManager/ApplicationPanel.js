@@ -26,7 +26,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	 addSettings : function(key, value, nameID, valueID){
 				return[ {
 							  xtype: 'container',
-							  style: 'margin:10 0 0 63;',
+							  style: 'margin:10 0 0 64;',
 							  layout:'hbox',
 							  items: [
 						    {
@@ -42,71 +42,10 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								value:value,
 								grow : false,
 								width:270,
-                height: 50,
+                                height: 50,
 								style: 'margin:0 0 0 3;'
 								//margin:'0 0 0 3'
                            },
-						     /*{
-								xtype: 'textfield',
-								name:valueID,
-								value:value,
-								width:260,
-								//inputType: this.inpType,//'password',
-								//id:'value-1',
-								//columnWidth: 0.33,//0.24,
-								style: 'margin:0 0 0 3;'
-								//margin:'0 0 0 3'
-                           },*/
-						   
-						   /*{
-								xtype: 'checkbox',
-								//columnWidth: 0.10,//0.12,
-								//margin:'0 0 0 15',//'0 0 0 15'
-								style: 'margin:0 0 0 17;',
-								//action:'checkMe'
-								handler: function(checkbox, checked) {
-										   //alert('clicked...');
-										   if(checked)
-											 checkbox.findParentByType('container').items.items[1].el.dom.type = 'password';
-										   else
-											 checkbox.findParentByType('container').items.items[1].el.dom.type =  'text';
-											 
-				        	    }
-                           },
-							 {
-								xtype: 'button',
-								//flex: 1,
-								text: 'Add',
-								width:35,
-								style: 'margin:0 0 0 17;',
-								//action:'AddMe',
-								//icon: '../ux/css/images/right2.gif',//'add-button',
-								//margin:'0 0 0 3',
-								//columnWidth: 0.12,
-								//style: 'margin:0 0 0 2;',
-								//style: 'float: right;',
-								tooltip: 'Click to Add settings',
-								handler : function (){
-								         
-										 var counter = parseInt(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length));
-								         if(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length) != ""){
-										    var nameID = 'key'+(counter+1);
-										    var valueID = 'value'+(counter+1);
-										 }else{
-										     var nameID = 'key1';
-										     var valueID = 'value1';
-										 }
-										 
-										 //var nameID ='key'+myThis.count;
-										 //var valueID = 'value'+myThis.countForValue;
-										 var newPanel = new AdapterManager.ApplicationPanel();
-										 var abc =  newPanel.addSettings("","" , nameID, valueID);
-										 this.findParentByType('fieldset').add(abc);
-										 this.findParentByType('fieldset').doLayout();
-										 this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].allowBlank = false;
-										 //this.findParentByType('fieldset').items.items[1].items.items[0].allowBlank = false;
-								}
-							},*/
 							{
 								xtype: 'button',
 								//flex: 1,
@@ -121,12 +60,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								tooltip: 'Click to Delete settings',
 								handler : function (){
 										 this.findParentByType('container').destroy();
-										 //myThis.findParentByType('window').doLayout();
-										 //this.findParentByType('fieldset').doLayout();
-								         //var abc = addSettings();
-										 //Ext.getCmp('settingsContainer').add(abc);
-										 //console.log(abc);
-										 
+										
 								}
 						   }
 							     
@@ -141,23 +75,18 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	     if(this.record.Configuration!=null){
 	       if (this.record.Configuration.AppSettings != null) {
 		      if(this.record.Configuration.AppSettings.Settings!=null){
-			        //this.findParentByType('container').items.items[0].items.items[0].items.items[6].items.items[0].items.items[0].allowBlank = false;
 			        for(var i=0;i<this.record.Configuration.AppSettings.Settings.length;i++){
 						  this.key = this.record.Configuration.AppSettings.Settings[i].Key;
 						  this.value = this.record.Configuration.AppSettings.Settings[i].Value;
 						  var newSetting = this.addSettings(this.key,this.value, ('key'+i), ('value'+i));
 						  newSetting[0].items[0].allowBlank = false;
 						  me.findById('settingfieldset').add(newSetting);
-						 //this.findParentByType('fieldset').add(newSetting);
-						 //this.findParentByType('fieldset').doLayout();
 			  }
 			}
 		 }
 	  }
 	    
-	  }/*else{
-	    me.findParentByType('container').items.items[0].items.items[0].items.items[6].items.items[0].items.items[0].allowBlank = false;
-	  }*/
+	  }
 	  
 	  }
 	},
@@ -197,18 +126,6 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             dataLayer = this.record.DataLayer;
             assembly = this.record.Assembly;
             showconfigure = false;
-			/*if (this.record != null){
-			  if(this.record.Configuration!=null){
-			     if(this.record.Configuration.AppSettings!=null){
-				    if(this.record.Configuration.AppSettings.Settings!=null){
-				        this.key = this.record.Configuration.AppSettings.Settings[0].Key;
-			            this.value = this.record.Configuration.AppSettings.Settings[0].Value;
-				  } 
-			    }  
-			  }
-		    }*/
-			
-			
         }
         else {
             showconfigure = true;
@@ -217,6 +134,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         var dataLayersStore = new Ext.data.JsonStore({
             // store configs            
             autoDestroy: true,
+			autoLoad:true,
             url: 'directory/dataLayers',
             // reader configs
             root: 'items',
@@ -234,14 +152,15 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         }, this);
 
         dataLayersStore.on('load', function (store, records, options) {
+		    //alert('hi...');
             panel.body.unmask();
         }, this);
 
         var cmbDataLayers = new Ext.form.ComboBox({
             fieldLabel: 'Data Layer',
             //bodyStyle: 'width:500px',
-		        boxMaxWidth: 530,//250,
-            width: 530,//250,
+		    boxMaxWidth: 531,//250,
+            width: 531,//250,
             forceSelection: true,
             typeAhead: true,
             triggerAction: 'all',
@@ -283,16 +202,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
           { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 530, value: name, allowBlank: false },
           { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 530, height: 62, value: description },
           cmbDataLayers,
-         
-			{
-						xtype: 'fieldset',
-						border: false,
-						collapsible: false,
-						id: 'settingfieldset',
-						height: 200,
-            autoScroll: true,
-						items: [
-						      {
+		  {
 									xtype: 'container',
 									layout: {
 										type: 'hbox'
@@ -300,17 +210,18 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 									items: [
 														 {
 															 xtype: 'label',
-															 text: 'Settings:'
+															 text: 'Settings:',
+															 style:'font:normal 12px tahoma, arial, helvetica, sans-serif;'
 														 },
 														{
 															xtype: 'label',
 															text: 'Name',
-															style: 'margin:0 0 0 90;'
+															style: 'margin:0 0 0 90;font:normal 12px tahoma, arial, helvetica, sans-serif;'
 														},
 														{
 															xtype: 'label',
 															text: 'Value',
-															style: 'margin:0 0 0 250;'
+															style: 'margin:0 0 0 250;font:normal 12px tahoma, arial, helvetica, sans-serif;'
 														},
 														 {
 																xtype: 'button',
@@ -319,28 +230,22 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 																style: 'margin:0 0 0 450;',
 																tooltip: 'Click to Add settings',
 																handler : function (){
-																		 //var counter = parseInt(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length));
-																		 //if(this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.substring(3,this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].name.length) != ""){
-																			//var nameID = 'key'+(counter+1);
-																			//var valueID = 'value'+(counter+1);
-																		// }else{
-																			 var nameID;
-																			 var valueID;
-																		// }
-																		 if(this.findParentByType('fieldset').items.items.length>1){
-																		     var nameID = 'key'+this.findParentByType('fieldset').items.items.length;
-																			 var valueID = 'value'+this.findParentByType('fieldset').items.items.length;
+																		
+																	     var nameID;
+																		 var valueID;
+																		 var myFieldSet = Ext.getCmp('settingfieldset');
+																		 if(myFieldSet.items.items.length>=1){
+																		     var nameID = 'key'+(myFieldSet.items.items.length+1);
+																			 var valueID = 'value'+(myFieldSet.items.items.length+1);
 																		 }else{
 																		     var nameID = 'key1';
 																			 var valueID = 'value1';
 																		 }
   																		 var abc = myThis.addSettings("", "", nameID, valueID);
-																		 this.findParentByType('fieldset').add(abc);
-																		 this.findParentByType('fieldset').doLayout();
-																		 this.findParentByType('fieldset').items.items[this.findParentByType('fieldset').items.length-1].items.items[0].allowBlank = false;
-																		 //this.findParentByType('fieldset').items.items[1].items.items[0].allowBlank = false;
-																		 //Ext.getCmp('settingfieldset').add(abc);
-																		 //Ext.getCmp('settingfieldset').doLayout();
+																		 myFieldSet.add(abc);
+																		 myFieldSet.doLayout();
+																		 myFieldSet.items.items[myFieldSet.items.length-1].items.items[0].allowBlank = false;
+																		
 																		 
 																}
 													 }
@@ -354,7 +259,16 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 														}*/
 
 											  ]
-          	}
+          	},
+         
+			{
+						xtype: 'fieldset',
+						border: false,
+						collapsible: false,
+						id: 'settingfieldset',
+						height: 200,
+                        autoScroll: true,
+						items: [
 						]
 			}
       ],
@@ -411,9 +325,10 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
       var that = this;    // consists the main/prappNameclass object  
       var endpointName = that.items.first().getForm().findField('Name').getValue();
 	  var flag = false;
-      for(var i=1;i<that.items.items[0].items.items[5].items.items.length;i++){
-		  if(that.items.items[0].items.items[5].items.items[i].items.items[0].name.toLowerCase().substring(0,3)== 'key'){
-		    if(that.items.items[0].items.items[5].items.items[i].items.items[0].getValue().trim() == ' ' || that.items.items[0].items.items[5].items.items[i].items.items[0].getValue().trim() == ""){
+	  //var fieldSet = Ext.getCmp('settingfieldset');
+      for(var i=0;i<that.items.items[0].items.items[6].items.items.length;i++){
+		  if(that.items.items[0].items.items[6].items.items[i].items.items[0].name.toLowerCase().substring(0,3)== 'key'){
+		    if(that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == ' ' || that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == ""){
 		       flag = true;
 		 }
 		} 
