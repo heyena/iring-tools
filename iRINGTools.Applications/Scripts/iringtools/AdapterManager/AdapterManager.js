@@ -122,7 +122,7 @@ Ext.onReady(function () {
             id: 'newwin-' + node.id,
             modal: false,
             layout: 'fit',
-            title: 'Add New Scope',
+            title: 'Add Scope',
             iconCls: 'tabsScope',
             height: 180,
             width: 430,
@@ -313,7 +313,7 @@ Ext.onReady(function () {
 			      autoHeight:true,
             layout: 'fit',
 			      shadow : false,
-            title: 'Add New Application',
+            title: 'Add Application',
             iconCls: 'tabsApplication',
             height: 360,
             width: 660,
@@ -523,7 +523,7 @@ Ext.onReady(function () {
             closable: true,
             modal: false,
             layout: 'fit',
-            title: 'Edit Value List \"' + node.text + '\"',
+            title: 'Edit ValueList \"' + node.text + '\"',
             iconCls: 'tabsValueList',
             height: 105,
             width: 430,
@@ -557,76 +557,76 @@ Ext.onReady(function () {
 
         var win = new Ext.Window({
             closable: true,
+            resizable: false,
+            width: 440,
+            height: 330,
             modal: false,
             layout: 'fit',
-            title: 'Add new GraphMap to Mapping',
+            title: 'Add GraphMap',
             iconCls: 'tabsGraph',
-            height: 190,
-            width: 430,
             plain: true,
             items: newTab
         });
 
         win.show();
+    }, this);
+
+    directoryPanel.on('editgraphmap', function (npanel, node) {
+      var newTab = new AdapterManager.GraphPanel({
+          id: 'tab-' + node.id,
+          record: node.attributes.record,
+          node: node,
+          url: 'mapping/graphMap'
+      });
+
+      var parentNode = node.parentNode;
+
+      newTab.on('save', function (panel) {
+          win.close();
+          directoryPanel.onReload(node);
+          if (parentNode.expanded == false)
+              parentNode.expand();
+      }, this);
+
+      newTab.on('Cancel', function (panel) {
+          win.close();
+      }, this);
+
+      var win = new Ext.Window({
+          closable: true,
+          modal: false,
+          resizable: false,
+          width: 440,
+          height: 330,
+          layout: 'fit',
+          title: 'Edit GraphMap \"' + node.text + '\"',
+          iconCls: 'tabsGraph',
+          plain: true,
+          items: newTab
+      });
+
+      win.show();
     }, this);
 
     directoryPanel.on('RefreshFacade', function (npanel, node) {
-        directoryPanel.body.mask('Loading', 'x-mask-loading');
-        Ext.Ajax.request({
-            url: 'facade/refreshFacade',
-            method: 'POST',
-            params: {
-                scope: node.attributes.id
-            },
-            success: function (o) {
-                directoryPanel.onReload(node);
-                directoryPanel.body.unmask();
-            },
-            failure: function (f, a) {
-                //Ext.Msg.alert('Warning', 'Error!!!');
-                var message = 'Error refreshing facade!';
-                showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-            }
-        });
+      directoryPanel.body.mask('Loading', 'x-mask-loading');
+      Ext.Ajax.request({
+        url: 'facade/refreshFacade',
+        method: 'POST',
+        params: {
+          scope: node.attributes.id
+        },
+        success: function (o) {
+          directoryPanel.onReload(node);
+          directoryPanel.body.unmask();
+        },
+        failure: function (f, a) {
+          //Ext.Msg.alert('Warning', 'Error!!!');
+          var message = 'Error refreshing facade!';
+          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+        }
+      });
     });
-
-    directoryPanel.on('editgraphmap', function (npanel, node) {
-        var newTab = new AdapterManager.GraphPanel({
-            id: 'tab-' + node.id,
-            record: node.attributes.record,
-            node: node,
-            url: 'mapping/graphMap'
-        });
-
-        var parentNode = node.parentNode;
-
-        newTab.on('save', function (panel) {
-            win.close();
-            directoryPanel.onReload(node);
-            if (parentNode.expanded == false)
-                parentNode.expand();
-        }, this);
-
-        newTab.on('Cancel', function (panel) {
-            win.close();
-        }, this);
-
-        var win = new Ext.Window({
-            closable: true,
-            modal: false,
-            layout: 'fit',
-            title: 'Edit Graph Map \"' + node.text + '\"',
-            iconCls: 'tabsGraph',
-            height: 190,
-            width: 430,
-            plain: true,
-            items: newTab
-        });
-
-        win.show();
-
-    }, this);
-
 
     directoryPanel.on('NewValueListMap', function (npanel, node) {
         var newTab = new AdapterManager.ValueListMapPanel({
@@ -653,7 +653,7 @@ Ext.onReady(function () {
             closable: true,
             modal: false,
             layout: 'fit',
-            title: 'Add new ValueListMap to valueList',
+            title: 'Add ValueListMap',
             iconCls: 'tabsValueListMap',
             height: 150,
             width: 430,
@@ -689,7 +689,7 @@ Ext.onReady(function () {
             closable: true,
             modal: false,
             layout: 'fit',
-            title: 'Edit Value List \"' + node.text + '\"',
+            title: 'Edit ValueList \"' + node.text + '\"',
             iconCls: 'tabsValueList',
             height: 150,
             width: 430,

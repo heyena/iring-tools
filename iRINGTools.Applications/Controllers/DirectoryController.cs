@@ -460,11 +460,15 @@ namespace org.iringtools.web.controllers
                   record = graph
 
                 };
+
+                ClassMap classMap = graph.classTemplateMaps[0].classMap;
+
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Data Object Name", graph.dataObjectName);
                 node.property.Add("Name", graph.name);
-                node.property.Add("Identifier", graph.classTemplateMaps[0].classMap.identifiers[0].Split('.')[1]);
-                node.property.Add("Class Label", graph.classTemplateMaps[0].classMap.name);
+                node.property.Add("Identifier", string.Join(",", classMap.identifiers));
+                node.property.Add("Delimiter", classMap.identifierDelimiter);
+                node.property.Add("Class Label", classMap.name);
                 nodes.Add(node);
               }
 

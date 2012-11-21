@@ -6,6 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache"/>
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>
+
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/ext-all.css"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/ux-all.css"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/Multiselect.css"/>
@@ -13,13 +14,15 @@
     <link rel="stylesheet" type="text/css" href="../../Content/css/AdapterManager-gray.css"/> 
     <link rel="stylesheet" type="text/css" href="../../Content/css/RangeMenu.css"/> 
     <link rel="stylesheet" type="text/css" href="../../Content/css/GridFilters.css"/> 
+
     <!-- ExtJS library: base/adapter -->
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/adapter/ext/ext-base.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/json2.js") %>" type="text/javascript"></script>
     <!-- ExtJS library: all widgets -->
-    <!--<script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>-->
-    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all-debug-w-comments.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>
+    <!--<script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all-debug-w-comments.js") %>" type="text/javascript"></script>-->
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ux-all.js") %>" type="text/javascript"></script>    
+    
     <!-- extensions -->      
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/App.js") %>" type="text/javascript"></script>    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ActionPanel.js") %>" type="text/javascript"></script>
@@ -53,8 +56,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/RangeMenu.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ItemSelector.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/MultiSelect.js") %>" type="text/javascript"></script>
-    
-    
+        
     <!-- page specific -->    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AdapterManager.js") %>" type="text/javascript"></script>    
 </head>
