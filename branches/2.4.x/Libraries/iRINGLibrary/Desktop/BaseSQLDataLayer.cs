@@ -81,18 +81,39 @@ namespace org.iringtools.library
     #region IDataLayer implementation methods
     public override DataDictionary GetDictionary()
     {
-      InitializeDatabaseDictionary();
+        InitializeDatabaseDictionary();
 
-      DataDictionary dictionary = new DataDictionary()
-      {
-        dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects),
-        picklists = utility.Utility.CloneDataContractObject<List<PicklistObject>>(_dbDictionary.picklists),
-        dataVersion = _dbDictionary.dataVersion,
-        enableSearch = _dbDictionary.enableSearch,
-        enableSummary = _dbDictionary.enableSummary
-      };
+        DataDictionary dictionary = null;
 
-      return dictionary;
+        if (_dbDictionary == null)
+        {
+            dictionary = new DataDictionary()
+            {
+                dataObjects = new List<DataObject>(),
+                picklists = new List<PicklistObject>(),
+            };
+        }
+        else
+        {
+            dictionary = new DataDictionary()
+            {
+                dataVersion = _dbDictionary.dataVersion,
+                enableSearch = _dbDictionary.enableSearch,
+                enableSummary = _dbDictionary.enableSummary
+            };
+
+            if (_dbDictionary.dataObjects == null)
+                dictionary.dataObjects = new List<DataObject>();
+            else
+                dictionary.dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects);
+
+            if (_dbDictionary.picklists == null)
+                dictionary.picklists = new List<PicklistObject>();
+            else
+                dictionary.picklists = utility.Utility.CloneDataContractObject<List<PicklistObject>>(_dbDictionary.picklists);
+        }
+
+        return dictionary;
     }
 
     public override long GetCount(string objectType, DataFilter filter)
