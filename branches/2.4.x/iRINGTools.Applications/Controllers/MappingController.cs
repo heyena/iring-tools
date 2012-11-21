@@ -705,7 +705,7 @@ namespace org.iringtools.web.controllers
       JsonTreeNode graphNode = new JsonTreeNode
       {
         nodeType = "async",
-        identifier = string.Join(",", classMap.identifiers),
+        identifier = classMap.id,
         type = "GraphMapNode",
         icon = "Content/img/graph-map.png",
         id = context + "/" + graph.name + "/" + classMap.name,
