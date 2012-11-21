@@ -23,7 +23,7 @@ namespace iringtools.sdk.sp3ddatalayer.test
     private SP3DProvider sp3dProvider = null;
 
     public Tests()
-    {     
+    {
       string baseDir = Directory.GetCurrentDirectory();
       baseDir = baseDir.Substring(0, baseDir.LastIndexOf("\\bin"));
       Directory.SetCurrentDirectory(baseDir);
@@ -60,7 +60,7 @@ namespace iringtools.sdk.sp3ddatalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
       result = (dictionary.dataObjects.Count > 0) ? "passed." : "failed.";
       _logger.Info("Test refresh dictionary " + result);
-      #endregion     
+      #endregion
 
       string objectType = "Equipment";
 
@@ -83,7 +83,7 @@ namespace iringtools.sdk.sp3ddatalayer.test
           PropertyName = "oid",
           SortOrder = SortOrder.Asc
         }
-      );      
+      );
 
       #region Test get count
       Console.WriteLine("Testing get count ...");
@@ -133,14 +133,30 @@ namespace iringtools.sdk.sp3ddatalayer.test
       string keyPropValue = Convert.ToString(clonedDataObject.GetPropertyValue(keyPropName));
 
       clonedDataObject.SetPropertyValue(keyPropName, keyPropValue);
-      clonedDataObject.SetPropertyValue(objDef.dataProperties[0].propertyName, "00004E2E-0000-0000-0833-00359C4E1305");
-      clonedDataObject.SetPropertyValue(objDef.dataProperties[1].propertyName, "0003345A-0000-0000-8F01-A2820D4B3004");
-      clonedDataObject.SetPropertyValue(objDef.dataProperties[2].propertyName, "posting first value");
+      clonedDataObject.SetPropertyValue("oid", "00004E2E-0000-0000-0833-00359C4E1305");
+      clonedDataObject.SetPropertyValue("DryWCGProperties", "256");
+      clonedDataObject.SetPropertyValue("CPMachinerySystem_oid", "0003345A-0000-0000-8F01-A2820D4B3004");
+      clonedDataObject.SetPropertyValue("CPMachinerySystem_name", "posting first value");
+      clonedDataObject.SetPropertyValue("WetWCGProperties", "256");
+      clonedDataObject.SetPropertyValue("UserSetWeightCG", "0");
+      clonedDataObject.SetPropertyValue("Requirement", "-1");
+      clonedDataObject.SetPropertyValue("Type", "-1");
+      clonedDataObject.SetPropertyValue("Purpose", "-1");
+      clonedDataObject.SetPropertyValue("Material", "-1");
+      clonedDataObject.SetPropertyValue("IsInsulated", "0");
 
       clonedDataObject1.SetPropertyValue(keyPropName, keyPropValue);
-      clonedDataObject1.SetPropertyValue(objDef.dataProperties[0].propertyName, "00004E2E-0000-0000-A15F-00FB924E8804");
-      clonedDataObject1.SetPropertyValue(objDef.dataProperties[1].propertyName, "0003345A-0000-0000-0600-5C0EF54C4104");
-      clonedDataObject1.SetPropertyValue(objDef.dataProperties[2].propertyName, "posting second value");
+      clonedDataObject1.SetPropertyValue("oid", "00004E2E-0000-0000-A15F-00FB924E8804");
+      clonedDataObject.SetPropertyValue("DryWCGProperties", "256");
+      clonedDataObject1.SetPropertyValue("CPMachinerySystem_oid", "0003345A-0000-0000-0600-5C0EF54C4104");
+      clonedDataObject1.SetPropertyValue("CPMachinerySystem_name", "posting second value");
+      clonedDataObject1.SetPropertyValue("WetWCGProperties", "256");
+      clonedDataObject1.SetPropertyValue("UserSetWeightCG", "0");
+      clonedDataObject1.SetPropertyValue("Requirement", "-1");
+      clonedDataObject1.SetPropertyValue("Type", "-1");
+      clonedDataObject1.SetPropertyValue("Purpose", "-1");
+      clonedDataObject1.SetPropertyValue("Material", "-1");
+      clonedDataObject1.SetPropertyValue("IsInsulated", "0");
 
       #region Test delete by identifiers
       Console.WriteLine("Testing delete by identifiers ...");
@@ -197,16 +213,24 @@ namespace iringtools.sdk.sp3ddatalayer.test
       #region Test post
       Console.WriteLine("Testing post ...");
       clonedDataObject.SetPropertyValue(keyPropName, keyPropValue);
-      clonedDataObject.SetPropertyValue(objDef.dataProperties[0].propertyName, "00004E2E-0000-0000-FF0A-EDDB4A4F8704");
-      clonedDataObject.SetPropertyValue(objDef.dataProperties[1].propertyName, "00033454-0000-0000-8600-EDDB4A4F8704");
-      clonedDataObject.SetPropertyValue(objDef.dataProperties[2].propertyName, "posting a value");
+      clonedDataObject.SetPropertyValue("DryWCGProperties", "256");
+      clonedDataObject.SetPropertyValue("UserSetWeightCG", "0");
+      clonedDataObject.SetPropertyValue("Requirement", "-1");
+      clonedDataObject.SetPropertyValue("Type", "-1");
+      clonedDataObject.SetPropertyValue("Purpose", "-1");
+      clonedDataObject.SetPropertyValue("Material", "-1");
+      clonedDataObject.SetPropertyValue("WetWCGProperties", "256");
+      clonedDataObject.SetPropertyValue("oid", "00004E2E-0000-0000-FF0A-EDDB4A4F8704");
+      clonedDataObject.SetPropertyValue("CPMachinerySystem_oid", "00033454-0000-0000-8600-EDDB4A4F8704");
+      clonedDataObject.SetPropertyValue("CPMachinerySystem_name", "posting a value");
+      clonedDataObject.SetPropertyValue("IsInsulated", "0");
       IList<IDataObject> postDataObjects = new List<IDataObject>() { clonedDataObject };
       response = sp3dProvider.Post(postDataObjects);
       response.Append(sp3dProvider.PostSP3DBusinessObjects(postDataObjects));
       Assert.AreEqual(response.Level, StatusLevel.Success);
       result = (response.Level == StatusLevel.Success) ? "passed." : "failed.";
       _logger.Info("Test post " + result);
-      #endregion     
+      #endregion
     }
   }
 }

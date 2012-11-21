@@ -4,6 +4,14 @@
       <generator class="assigned" />
     </id>
     <property name="oid" column="&quot;oid&quot;" update="false" insert="false" />
+    <property name="DryWCGProperties" column="&quot;DryWCGProperties&quot;" />
+    <property name="WetWCGProperties" column="&quot;WetWCGProperties&quot;" />
+    <property name="UserSetWeightCG" column="&quot;UserSetWeightCG&quot;" />
+    <property name="Requirement" column="&quot;Requirement&quot;" />
+    <property name="Type" column="&quot;Type&quot;" />
+    <property name="Purpose" column="&quot;Purpose&quot;" />
+    <property name="Material" column="&quot;Material&quot;" />
+    <property name="IsInsulated" column="&quot;IsInsulated&quot;" />
     <property name="CPMachinerySystem_oid" column="&quot;CPMachinerySystem_oid&quot;" />
     <property name="CPMachinerySystem_name" column="&quot;CPMachinerySystem_name&quot;" />
   </class>

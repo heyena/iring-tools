@@ -388,7 +388,7 @@ namespace iringtools.sdk.sp3ddatalayer
           string commodityNameToLower = commodityName.ToLower();          
           postHelpList = getPostHelpList(dataObjects, commodityNameToLower, commodityName);
 
-          session = NHibernateSessionManager.Instance.GetSessionSP3D(_settings["AppDataPath"], _settings["Scope"], commodityNameToLower);
+          session = NHibernateSessionManager.Instance.GetSessionSP3D(_settings["AppDataPath"], "posting_" + _settings["Scope"], commodityNameToLower);
 
           foreach (PostSP3DHelp pHelp in postHelpList)
           {
@@ -415,9 +415,17 @@ namespace iringtools.sdk.sp3ddatalayer
 
                 try
                 {
-                  session.SaveOrUpdate(pDataObject);
-                  session.Flush();
-                  status.Messages.Add(string.Format("Record [{0}] saved successfully.", identifier));
+                  try
+                  {
+                    session.SaveOrUpdate(pDataObject);
+                    session.Flush();
+                    status.Messages.Add(string.Format("Record [{0}] inserted successfully.", identifier));
+                  }
+                  catch(Exception)
+                  {
+                    session.SaveOrUpdateCopy(pDataObject);
+                    session.Flush();
+                  }
                 }
                 catch (Exception ex)
                 {
@@ -562,7 +570,7 @@ namespace iringtools.sdk.sp3ddatalayer
       MiddleServiceProvider.TransactionMgr.Abort();
       MiddleServiceProvider.Cleanup();
 
-      Utility.Write<Response>(response, string.Format("{0}Response.{1}.xml", _dataPath, _scope));
+      //Utility.Write<Response>(response, string.Format("{0}Response.{1}.xml", _dataPath, _scope));
       return response;
     }
 
@@ -593,7 +601,7 @@ namespace iringtools.sdk.sp3ddatalayer
         }
 
         generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname, "sp3d");
-
+        generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname, "posting");
         sp3dDataBaseDictionary.ConnectionString = GetCachingConnectionString(sp3dDataBaseDictionary.ConnectionString, sp3dDataBaseDictionary.Provider, sp3dDataBaseDictionary.StagingDataBaseName);
         generator.GenerateSP3D(compilerVersion, sp3dDataBaseDictionary, _databaseDictionary, projectName, applicationname, "caching");
       }
@@ -669,6 +677,23 @@ namespace iringtools.sdk.sp3ddatalayer
             dataObject.dataProperties.Add(dataProperty);
           }
 
+          if (businessObject.businessProperties != null)
+            foreach (BusinessProperty businessProperty in businessObject.businessProperties)
+            {
+              DataProperty dataProperty = new DataProperty();
+              propertyName = businessProperty.propertyName;
+              dataProperty.propertyName = propertyName;
+              dataProperty.dataType = DataType.String;
+              dataProperty.columnName = propertyName;
+              dataProperty.isNullable = true;
+              dataProperty.isHidden = businessProperty.hidden;
+              businessProperty.isNative = true;
+              businessProperty.inClass = true;
+
+              if (!dataObject.dataProperties.Contains(dataProperty))
+                dataObject.dataProperties.Add(dataProperty);
+            }
+
           if (businessObject.businessKeyProperties != null)
             foreach (BusinessKeyProperty businessKeyProerpty in businessObject.businessKeyProperties)
             {
@@ -684,7 +709,7 @@ namespace iringtools.sdk.sp3ddatalayer
               dataProperty.isHidden = businessKeyProerpty.hidden;
 
               if (!dataObject.keyProperties.Contains(keyProperty))
-                dataObject.keyProperties.Add(keyProperty);              
+                dataObject.keyProperties.Add(keyProperty);
 
               if (!dataObject.dataProperties.Contains(dataProperty))
                 dataObject.dataProperties.Add(dataProperty);
@@ -705,6 +730,7 @@ namespace iringtools.sdk.sp3ddatalayer
                 dataProperty.isReadOnly = businessProperty.isReadOnly;
                 dataProperty.isHidden = businessProperty.hidden;
                 businessProperty.isNative = false;
+                businessProperty.inClass = true;
 
                 if (!String.IsNullOrEmpty(businessProperty.description))
                   dataProperty.description = businessObject.description;
@@ -724,31 +750,52 @@ namespace iringtools.sdk.sp3ddatalayer
             {
               relatedObjectName = relatedObject.objectName;
 
-              foreach (BusinessKeyProperty businessKeyProerpty in relatedObject.businessKeyProperties)
-              {
-                DataProperty dataProperty = new DataProperty();
-                BusinessProperty businessp = businessKeyProerpty.convertKeyPropertyToProperty();
-                BusinessProperty bbusinessp = businessp.copyBusinessProperty();
-                dataProperty.propertyName = relatedObjectName + "_" + businessKeyProerpty.keyPropertyName;
-                businessKeyProerpty.keyPropertyName = dataProperty.propertyName;
-                dataProperty.columnName = dataProperty.propertyName;
-                businessp.propertyName = dataProperty.propertyName;
-                bbusinessp.propertyName = dataProperty.propertyName;
-                bbusinessp.columnName = dataProperty.propertyName;
-                dataProperty.dataType = DataType.String;
-                dataProperty.isNullable = false;
-                dataProperty.isHidden = businessKeyProerpty.hidden;
-                bbusinessp.isNative = false;
+              if (relatedObject.businessProperties != null)
+                if (relatedObject.businessProperties.Count > 0)
+                  foreach (BusinessProperty businessProperty in relatedObject.businessProperties)
+                  {
+                    DataProperty dataProperty = new DataProperty();
+                    propertyName = businessProperty.propertyName;
+                    dataProperty.propertyName = propertyName;
+                    dataProperty.dataType = DataType.String;
+                    dataProperty.columnName = propertyName;
+                    dataProperty.isNullable = true;
+                    dataProperty.isHidden = businessProperty.hidden;
+                    businessProperty.isNative = false;
+                    businessProperty.inClass = false;
 
-                if (!businessObject.businessProperties.Contains(businessp))
-                  businessObject.businessProperties.Add(bbusinessp);
+                    if (!dataObject.dataProperties.Contains(dataProperty))
+                      dataObject.dataProperties.Add(dataProperty);
+                  }
 
-                if (!relatedObject.businessProperties.Contains(businessp))
-                  relatedObject.businessProperties.Add(businessp);
+              if (relatedObject.businessKeyProperties != null)
+                if (relatedObject.businessKeyProperties.Count > 0)
+                  foreach (BusinessKeyProperty businessKeyProerpty in relatedObject.businessKeyProperties)
+                  {
+                    DataProperty dataProperty = new DataProperty();
+                    BusinessProperty businessp = businessKeyProerpty.convertKeyPropertyToProperty();
+                    BusinessProperty bbusinessp = businessp.copyBusinessProperty();
+                    dataProperty.propertyName = relatedObjectName + "_" + businessKeyProerpty.keyPropertyName;
+                    businessKeyProerpty.keyPropertyName = dataProperty.propertyName;
+                    dataProperty.columnName = dataProperty.propertyName;
+                    businessp.propertyName = dataProperty.propertyName;
+                    bbusinessp.propertyName = dataProperty.propertyName;
+                    bbusinessp.columnName = dataProperty.propertyName;
+                    dataProperty.dataType = DataType.String;
+                    dataProperty.isNullable = false;
+                    dataProperty.isHidden = businessKeyProerpty.hidden;
+                    bbusinessp.isNative = false;
+                    bbusinessp.inClass = false;
 
-                if (!dataObject.dataProperties.Contains(dataProperty))
-                  dataObject.dataProperties.Add(dataProperty);
-              }
+                    if (!businessObject.businessProperties.Contains(businessp))
+                      businessObject.businessProperties.Add(bbusinessp);
+
+                    if (!relatedObject.businessProperties.Contains(businessp))
+                      relatedObject.businessProperties.Add(businessp);
+
+                    if (!dataObject.dataProperties.Contains(dataProperty))
+                      dataObject.dataProperties.Add(dataProperty);
+                  }
 
               if (relatedObject.businessInterfaces != null)
               {
@@ -761,6 +808,7 @@ namespace iringtools.sdk.sp3ddatalayer
                     dataProperty.propertyName = relatedObjectName + "_" + relatedPropertyName;
                     businessRelationProperty.propertyName = dataProperty.propertyName;
                     businessRelationProperty.isNative = false;
+                    businessRelationProperty.inClass = false;
                     dataProperty.dataType = businessRelationProperty.dataType;
                     dataProperty.columnName = dataProperty.propertyName;
                     dataProperty.isNullable = businessRelationProperty.isNullable;
@@ -929,15 +977,7 @@ namespace iringtools.sdk.sp3ddatalayer
       response.Append(status);
       return response;
     }
-
-    //public DataObject GetDataObject(string objectName)
-    //{
-    //  DataDictionary dictionary = GetDictionary();
-    //  DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectName.ToLower());
-    //  return dataObject;
-    //}
-
-
+    
     // flatten out recursive related objects and put them into starting business objects
     public BusinessObjectConfiguration VerifyConfiguration(BusinessObjectConfiguration config, string businessCommodityName)
     {
@@ -1005,6 +1045,19 @@ namespace iringtools.sdk.sp3ddatalayer
                 bProperty.isNullable = false;
                 businessObject.businessProperties.Add(bProperty);
               }
+
+              if (businessObject.businessProperties != null)
+                if (businessObject.businessProperties.Count > 0)
+                  foreach (BusinessProperty businessProperty in businessObject.businessProperties)
+                  {
+                    businessProperty.dataType = GetDatatype(businessProperty.datatype);
+                    businessProperty.datatype = businessProperty.dataType.ToString();
+                    businessProperty.isNullable = true;
+                    if (businessProperty.propertyName.ToLower() == "name")
+                      businessProperty.columnName = "ItemName";
+                    else if (string.IsNullOrEmpty(businessProperty.columnName))
+                      businessProperty.columnName = businessProperty.propertyName;
+                  }
 
               if (businessObject.businessInterfaces != null)
                 if (businessObject.businessInterfaces.Count > 0)
@@ -1183,13 +1236,7 @@ namespace iringtools.sdk.sp3ddatalayer
       }
 
       return classInfo;
-    }
-
-    public RelationshipInformation GetRelationInformation(string relationName, ClassInformation classInfo)
-    {
-      RelationshipInformation relationInfo = null;
-      return relationInfo;
-    }
+    }    
 
     public InterfaceInformation GetInterfaceInformation(ClassInformation classInfo, string propertyInterfaceName)
     {
@@ -1262,8 +1309,6 @@ namespace iringtools.sdk.sp3ddatalayer
           filter = new DataFilter();
         }
 
-        //bool hasExistingExpression = false;
-
         if (filter.Expressions == null)
         {
           filter.Expressions = new List<org.iringtools.library.Expression>();
@@ -1273,26 +1318,8 @@ namespace iringtools.sdk.sp3ddatalayer
           org.iringtools.library.Expression firstExpression = filter.Expressions.First();
           org.iringtools.library.Expression lastExpression = filter.Expressions.Last();
           firstExpression.OpenGroupCount++;
-          lastExpression.CloseGroupCount++;
-          //hasExistingExpression = true;
+          lastExpression.CloseGroupCount++;          
         }
-
-        //string identityValue = _keyRing[identityProperties.KeyRingProperty].ToString();
-
-        //org.iringtools.library.Expression expression = new org.iringtools.library.Expression
-        //{
-        //  PropertyName = dataProperty.propertyName,
-        //  RelationalOperator = RelationalOperator.EqualTo,
-        //  Values = new Values
-        //  {
-        //    identityValue,
-        //  },
-        //  IsCaseSensitive = identityProperties.IsCaseSensitive
-        //};
-
-        //if (hasExistingExpression)
-        //  expression.LogicalOperator = LogicalOperator.And;
-        //filter.Expressions.Add(expression);
       }
 
       return filter;
@@ -1304,16 +1331,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
       if (MiddleServiceProvider.SiteMgr.ActiveSite != null)
         if (MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant != null)
-          return MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant;
-
-      /********************
-       * SP3D ProviderType="MSSQL" DBServer="HOUS01013\SP3D_GLNG" SiteDB="GLNG_SDB" SiteSchemaDB="GLNG_SDB_SCHEMA" PlantName="GLNG" DebugMessages="0" DebugFile="c:\sp3d_adapter.log" DebugMaxParamLen="100000" CodelistAttrLength="40" AsmHierarchyStop="CPConfigProjectRoot" DgnHierarchyStop="CPConfigProjectRoot"
-       * <provider>MsSql2008</provider>
-       * <connectionString>Data Source=HOUS01014\sp3d_2011_gbl;Initial Catalog=gbl_mdb;Integrated Security=true</connectionString>
-       * <stagingDataBaseName>SP3DStaging</stagingDataBaseName>
-       * <schemaName>dbo</schemaName>      
-       * m_site = MiddleServiceProvider.SiteMgr.ConnectSite(spDBServer, spSiteDB, (spDBProviderType.ToUpper() == "MSSQL" ? SiteManager.eDBProviderTypes.MSSQL : SiteManager.eDBProviderTypes.Oracle), spSiteSchemaDB);
-       *********************/
+          return MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant;      
 
       SP3DSite = MiddleServiceProvider.SiteMgr.ConnectSite(GetDataSource(config.ConnectionString), config.SiteDataBaseName, (config.Provider.ToUpper().Contains("MSSQL") ? SiteManager.eDBProviderTypes.MSSQL : SiteManager.eDBProviderTypes.Oracle), config.SiteDataBaseName + "_SCHEMA");
       Plant SP3DPlant = null;
@@ -1331,191 +1349,14 @@ namespace iringtools.sdk.sp3ddatalayer
         }
       }
 
-      # region sp3d API
-
       SP3DCatalog = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantCatalog;
       SP3DModel = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantModel;
       SP3DReport = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantReport;
       metadataManagerCatalog = SP3DCatalog.MetadataMgr;
       metadataManagerReport = SP3DReport.MetadataMgr;
-      metadataManagerModel = SP3DModel.MetadataMgr;
-      //MiddleServiceProvider.SiteMgr.ActiveSite.MetadataMgr
-      //string displayName, name, showupMsg = "", category, iid, interfaceInfoNamespace, propertyName, propertyDescriber;
-      //string propertyInterfaceInformationStr, unitTypeString;
-      //Type type;
-      //ReadOnlyDictionary<InterfaceInformation> interfactInfo, commonInterfaceInfo;
-      //ReadOnlyDictionary<PropertyInformation> properties;
-      //ReadOnlyDictionary<BOCInformation> oSystemsByName = metadataManager.BOCs;
-      //bool complex, comAccess, displayedOnPage, isvalueRequired, metaDataAccess, metadataReadOnly, SqlAccess;
-      //string propertyDisplayName, proPropertyName, uomType;
-      //CodelistInformation codeListInfo;
-      //InterfaceInformation propertyInterfaceInformation;
-      //SP3DPropType sp3dProType;
-      //UnitType unitType;
-      //string showupPropertyMessage = "";
-      //string showupProMsg = "";
-      //foreach (string key in oSystemsByName.Keys)
-      //{
-      //  BOCInformation bocInfo = null;
-      //  oSystemsByName.TryGetValue(key, out bocInfo);
-      //  displayName = bocInfo.DisplayName;
-      //  name = bocInfo.Name;
-      //  type = bocInfo.GetType();
-      //  interfactInfo = bocInfo.DefiningInterfaces;
-      //  foreach (string infoKey in interfactInfo.Keys)
-      //  {
-      //    InterfaceInformation itemInterfaceInfo;
-      //    interfactInfo.TryGetValue(infoKey, out itemInterfaceInfo);
-      //    interfaceInfoNamespace = itemInterfaceInfo.Namespace;
-      //    category = itemInterfaceInfo.Category;
-      //    iid = itemInterfaceInfo.IID;
-      //    properties = itemInterfaceInfo.Properties;
-
-      //    foreach (string propertyKey in properties.Keys)
-      //    {
-      //      PropertyInformation propertyInfo;
-      //      properties.TryGetValue(propertyKey, out propertyInfo);
-      //      complex = propertyInfo.Complex;
-
-      //      codeListInfo = propertyInfo.CodeListInfo;
-      //      comAccess = propertyInfo.COMAccess;
-      //      displayedOnPage = propertyInfo.DisplayedOnPropertyPage;
-      //      propertyDisplayName = propertyInfo.DisplayName;
-      //      propertyInterfaceInformation = propertyInfo.InterfaceInfo;
-      //      propertyInterfaceInformationStr = propertyInterfaceInformation.ToString();
-      //      isvalueRequired = propertyInfo.IsValueRequired;
-      //      metaDataAccess = propertyInfo.MetadataAccess;
-      //      metadataReadOnly = propertyInfo.MetadataReadOnly;
-      //      proPropertyName = propertyInfo.Name;
-      //      sp3dProType = propertyInfo.PropertyType;
-      //      SqlAccess = propertyInfo.SQLAccess;
-      //      unitType = propertyInfo.UOMType;
-      //      unitTypeString = unitType.ToString();
-
-      //      showupPropertyMessage = showupPropertyMessage + "\n propertyInfo.key: " + propertyKey + "\n"
-      //                            + "CodeListInfo.DisplayName: " + codeListInfo.DisplayName + "\n"
-      //                            + "comAccess: " + comAccess + "\n"
-      //                            + "propertyDisplayName: " + propertyDisplayName + "\n"
-      //                            + "propertyInterfaceInformation: " + propertyInterfaceInformation.Name + "\n"
-      //                            + "proPropertyName: " + proPropertyName;
-
-
-      //    }
-      //  }
-
-      //  commonInterfaceInfo = bocInfo.CommonInterfaces;
-      //  foreach (string comInfoKey in commonInterfaceInfo.Keys)
-      //  {
-      //    InterfaceInformation comItemInterfaceInfo;
-      //    commonInterfaceInfo.TryGetValue(comInfoKey, out comItemInterfaceInfo);
-      //    interfaceInfoNamespace = comItemInterfaceInfo.Namespace;
-      //    category = comItemInterfaceInfo.Category;
-      //    iid = comItemInterfaceInfo.IID;
-      //    properties = comItemInterfaceInfo.Properties;
-
-      //    foreach (string propertyKey in properties.Keys)
-      //    {
-      //      PropertyInformation propertyInfo;
-      //      properties.TryGetValue(propertyKey, out propertyInfo);
-      //      complex = propertyInfo.Complex;
-
-      //      codeListInfo = propertyInfo.CodeListInfo;
-      //      comAccess = propertyInfo.COMAccess;
-      //      displayedOnPage = propertyInfo.DisplayedOnPropertyPage;
-      //      propertyDisplayName = propertyInfo.DisplayName;
-      //      propertyInterfaceInformation = propertyInfo.InterfaceInfo;
-      //      propertyInterfaceInformationStr = propertyInterfaceInformation.ToString();
-      //      isvalueRequired = propertyInfo.IsValueRequired;
-      //      metaDataAccess = propertyInfo.MetadataAccess;
-      //      metadataReadOnly = propertyInfo.MetadataReadOnly;
-      //      proPropertyName = propertyInfo.Name;
-      //      sp3dProType = propertyInfo.PropertyType;
-      //      SqlAccess = propertyInfo.SQLAccess;
-      //      unitType = propertyInfo.UOMType;
-      //      unitTypeString = unitType.ToString();
-
-      //      showupProMsg = showupProMsg + "\n propertyInfo.key: " + propertyKey + "\n"
-      //                            + "CodeListInfo.DisplayName: " + codeListInfo.DisplayName + "\n"
-      //                            + "comAccess: " + comAccess + "\n"
-      //                            + "propertyDisplayName: " + propertyDisplayName + "\n"
-      //                            + "propertyInterfaceInformation: " + propertyInterfaceInformation.Name + "\n"
-      //                            + "proPropertyName: " + proPropertyName;          
-
-
-      //    }
-
-
-      //  }
-
-      //  showupMsg = showupMsg + "\n bocInfo.key: " + key + "\n"
-      //            + "bocInfo.DisplayName: " + displayName + "\n"
-      //            + "bocInfo.Name: " + name + "\n"
-      //            + "bocInfo.type: " + type.FullName + "\n"
-      //           // + "bocInfo.DefiningInterfaces: " + showupPropertyMessage + "\n"
-      //            + "bocInfo.commonInterfaceInfo: " + showupProMsg + "\n";                 
-
-      //}
-      //File.WriteAllText(@"C:\temp\sp3d.txt", showupMsg);
-
-      //System.Windows.Forms.MessageBox.Show(showupMsg);
-      //oSystemsByName      
-      # endregion sp3d API
+      metadataManagerModel = SP3DModel.MetadataMgr;      
       return SP3DPlant;
     }
-
-    # region LoadConfiguratoin and LoadDataObjects functions
-    //public void LoadConfiguration()
-    //{
-    //    if (_config == null)
-    //    {
-    //        string uri = String.Format(
-    //            "{0}Configuration.{1}.xml",
-    //            _settings["XmlPath"],
-    //            _settings["ApplicationName"]
-    //        );
-
-    //        XElement configDocument = Utility.ReadXml(uri);
-    //        _config = Utility.DeserializeDataContract<BusinessObjectConfiguration>(configDocument.ToString());
-    //    }
-    //}
-
-    //public IList<IDataObject> LoadDataObjects(string objectType)
-    //{
-    //    try
-    //    {
-    //        IList<IDataObject> dataObjects = new List<IDataObject>();
-
-    //        //Get Path from Scope.config ({project}.{app}.config)
-    //        string path = String.Format(
-    //            "{0}{1}\\{2}.csv",
-    //             _settings["BaseDirectoryPath"],
-    //            _settings["SP3DFolderPath"],
-    //            objectType
-    //        );
-
-    //        IDataObject dataObject = null;
-    //        TextReader reader = new StreamReader(path);
-    //        while (reader.Peek() >= 0)
-    //        {
-    //            string csvRow = reader.ReadLine();
-
-    //            dataObject = FormDataObject(objectType, csvRow);
-
-    //            if (dataObject != null)
-    //                dataObjects.Add(dataObject);
-    //        }
-    //        reader.Close();
-
-    //        return dataObjects;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.Error("Error in LoadDataObjects: " + ex);
-    //        throw new Exception("Error while loading data objects of type [" + objectType + "].", ex);
-    //    }
-    //}
-
-    # endregion LoadConfiguratoin and LoadDataObjects functions
 
     public IDataObject FormDataObject(string objectType, string csvRow)
     {
@@ -1902,8 +1743,6 @@ namespace iringtools.sdk.sp3ddatalayer
       }
     }
 
-    
-
     public IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
@@ -2058,14 +1897,17 @@ namespace iringtools.sdk.sp3ddatalayer
     #region private functions for sp3dprovider
 
     
-
+    //session: sp3dSession, objectName: equipment, type: HasEqpAsChild, identifier: oid
     private IDataObject CreateIDataObject(ISession session, string objectName, Type type, string identifier)
     {         
       if (!String.IsNullOrEmpty(identifier))
       {
         IQuery query = session.CreateQuery("from " + objectName + " where Id = ?");
         query.SetString(0, identifier);
-        IDataObject dataObject = query.List<IDataObject>().FirstOrDefault<IDataObject>();
+        IDataObject dataObject = null;
+        int count = query.List<IDataObject>().Count;
+        if (count >= 1)
+          dataObject = query.List<IDataObject>().First();
 
         if (dataObject == null)
         {
@@ -2085,8 +1927,8 @@ namespace iringtools.sdk.sp3ddatalayer
       Type type = null;
       RelatedObject relatedObject = null;
       IDataObject relationDataObject = null, relatedDataObject = null;
-      parentKeyStr = bObj.businessKeyProperties.First().keyPropertyName;
-      string parentOid = sourceDO.GetPropertyValue(parentKeyStr).ToString();
+      string childId = string.Empty;
+      setPostDOValue(createdDO, bObj, sourceDO);
 
       if (bObj.rightClassNames != null)
         foreach (string connectedEntityName in bObj.rightClassNames)
@@ -2103,12 +1945,12 @@ namespace iringtools.sdk.sp3ddatalayer
             foreach (string con in relation.rightClassNames)
             {
               relatedObject = bObj.GetRelatedObject(con);    
-              relationDataObject = CreateIDataObject(session, connectedEntityName, type, parentOid);
               keyStr = relatedObject.businessKeyProperties.First().keyPropertyName;
               identifier = sourceDO.GetPropertyValue(keyStr).ToString();
-              relationDataObject.SetPropertyValue(relation.businessProperties.Last().propertyName, identifier);
-              createdDO.SetPropertyValue(connectedEntityName, relationDataObject);
-              
+              //relationDataObject = CreateIDataObject(session, connectedEntityName, type, identifier);              
+              //relationDataObject.SetPropertyValue(relation.businessProperties.Last().propertyName, identifier);
+              //createdDO.SetPropertyValue(connectedEntityName, relationDataObject);
+
               type = Type.GetType(ns + con + ", " + _settings["ExecutingAssemblyName"]);
               relatedDataObject = CreateIDataObject(session, con, type, identifier);
               setPostDOValue(relatedDataObject, relatedObject, sourceDO);
@@ -2119,6 +1961,16 @@ namespace iringtools.sdk.sp3ddatalayer
         }
 
       dataObjects.Add(createdDO);
+    }
+
+    private void setPostDOValue(IDataObject cdo, BusinessObject ro, IDataObject sdo)
+    {
+      string value = string.Empty;
+      foreach (BusinessProperty bp in ro.businessProperties)
+      {
+        value = sdo.GetPropertyValue(bp.propertyName).ToString();
+        cdo.SetPropertyValue(bp.propertyName, value);
+      }
     }
 
     private void setPostDOValue(IDataObject cdo, RelatedObject ro, IDataObject sdo)
@@ -2133,16 +1985,14 @@ namespace iringtools.sdk.sp3ddatalayer
 
     private void setPostDO(ISession session, IList<IDataObject> dataObjects, IDataObject sourceDO, RelatedObject relatedObject, BusinessObject bObj, IDataObject treatingDo)
     {
-      string ns = string.Empty, identifier = string.Empty, keyStr = string.Empty, parentKeyStr = string.Empty;
+      string ns = string.Empty, identifier = string.Empty, keyStr = string.Empty;
       DataObject objectDefinition = null;
       BusinessRelation relation = null;
       Type type = null;
-      IDataObject relationDataObject = null, relatedDataObject = null;
+      IDataObject relatedDataObject = null;
       string relationName = relatedObject.relationName;
       relation = bObj.GetRelation(relationName);
-      parentKeyStr = relatedObject.businessKeyProperties.First().keyPropertyName;
-      string parentOid = sourceDO.GetPropertyValue(parentKeyStr).ToString();
-
+      
       if (relatedObject.rightClassNames != null)
         foreach (string connectedEntityName in relatedObject.rightClassNames)
         {
@@ -2158,11 +2008,11 @@ namespace iringtools.sdk.sp3ddatalayer
             foreach (string con in relation.rightClassNames)
             {
               relatedObject = bObj.GetRelatedObject(con);
-              relationDataObject = CreateIDataObject(session, connectedEntityName, type, parentOid);
+              //relationDataObject = CreateIDataObject(session, connectedEntityName, type, parentOid);
               keyStr = relatedObject.businessKeyProperties.First().keyPropertyName;
               identifier = sourceDO.GetPropertyValue(keyStr).ToString();
-              relationDataObject.SetPropertyValue(relation.businessProperties.Last().propertyName, identifier);
-              treatingDo.SetPropertyValue(connectedEntityName, relationDataObject);
+              //relationDataObject.SetPropertyValue(relation.businessProperties.Last().propertyName, identifier);
+              //treatingDo.SetPropertyValue(connectedEntityName, relationDataObject);
 
               type = Type.GetType(ns + con + ", " + _settings["ExecutingAssemblyName"]);
               relatedDataObject = CreateIDataObject(session, connectedEntityName, type, identifier);
@@ -2235,7 +2085,7 @@ namespace iringtools.sdk.sp3ddatalayer
     private IList<IDataObject> CreateSP3D(string objectType, PostSP3DHelp pHelp)
     {
       string commodityName = objectType.ToLower();      
-      ISession session = NHibernateSessionManager.Instance.GetSessionSP3D(_settings["AppDataPath"], _settings["Scope"], commodityName);
+      ISession session = NHibernateSessionManager.Instance.GetSessionSP3D(_settings["AppDataPath"], "posting_" + _settings["Scope"], commodityName);
 
       try
       {
