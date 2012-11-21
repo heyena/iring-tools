@@ -26,7 +26,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	 addSettings : function(key, value, nameID, valueID){
 				return[ {
 							  xtype: 'container',
-							  style: 'margin:10 0 0 64;',
+							  style: 'margin:10 0 0 65;',
 							  layout:'hbox',
 							  items: [
 						    {
@@ -159,8 +159,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         var cmbDataLayers = new Ext.form.ComboBox({
             fieldLabel: 'Data Layer',
             //bodyStyle: 'width:500px',
-		    boxMaxWidth: 531,//250,
-            width: 531,//250,
+		    boxMaxWidth: 532,//250,
+            width: 532,//250,
             forceSelection: true,
             typeAhead: true,
             triggerAction: 'all',
@@ -227,7 +227,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 																xtype: 'button',
 																text: 'Add',
 																width:49,
-																style: 'margin:0 0 0 450;',
+																style: 'margin:0 0 0 451;',
 																tooltip: 'Click to Add settings',
 																handler : function (){
 																		
