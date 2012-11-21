@@ -11,7 +11,7 @@ namespace NUnit.Tests
     [TestFixture]
     public class UtilityTest
   {
-      [Test]
+      //[Test]
       public void ConvertLocalDateTime()
       {
           DateTime dateTime = new DateTime(2012, 10, 11, 9, 8, 7, 6, DateTimeKind.Local);
