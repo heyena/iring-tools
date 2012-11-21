@@ -585,6 +585,7 @@ namespace iringtools.sdk.sp3ddatalayer
     {
       codeList = null;
       isNative = true;
+      inClass = false;
     }
 
     [DataMember(IsRequired = true, Order = 0)]
@@ -625,6 +626,9 @@ namespace iringtools.sdk.sp3ddatalayer
 
     [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
     public bool isKey { get; set; }
+
+    [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
+    public bool inClass { get; set; }
 
     public DataProperty convertPropertyToDataProperty()
     {

@@ -11,6 +11,32 @@
               <keyPropertyName>oid</keyPropertyName>
             </businessKeyProperty>
           </businessKeyProperties>
+          <businessProperties>
+            <businessProperty>
+              <propertyName>DryWCGProperties</propertyName>
+            </businessProperty>
+            <businessProperty>
+              <propertyName>WetWCGProperties</propertyName>
+            </businessProperty>
+            <businessProperty>
+              <propertyName>UserSetWeightCG</propertyName>
+            </businessProperty>
+            <businessProperty>
+              <propertyName>Requirement</propertyName>
+            </businessProperty>
+            <businessProperty>
+              <propertyName>Type</propertyName>
+            </businessProperty>
+            <businessProperty>
+              <propertyName>Purpose</propertyName>
+            </businessProperty>
+            <businessProperty>
+              <propertyName>Material</propertyName>
+            </businessProperty>
+            <businessProperty>
+              <propertyName>IsInsulated</propertyName>
+            </businessProperty>
+          </businessProperties>
           <businessInterfaces>
             <businessInterface>
               <interfaceName>IJCoatingInfo</interfaceName>
@@ -56,9 +82,9 @@
       </businessFilter>
     </businessCommodity>    
   </businessCommodities>  
-  <provider></provider>
-  <connectionString></connectionString>
-  <schemaName></schemaName>
-  <stagingDataBaseName></stagingDataBaseName>
-  <siteDataBaseName></siteDataBaseName>  
+  <provider>MsSql2008</provider>
+  <connectionString>Data Source=HOUS01014\sp3d_2011_gbl;Initial Catalog=gbl_mdb;Integrated Security=true</connectionString>
+  <schemaName>dbo</schemaName>
+  <stagingDataBaseName>SP3DStagingTest</stagingDataBaseName>
+  <siteDataBaseName>gbl_sdb</siteDataBaseName>  
 </businessObjectConfiguration>
