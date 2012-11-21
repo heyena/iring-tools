@@ -296,9 +296,12 @@ Ext.onReady(function () {
 
         newTab.on('save', function (panel) {
             win.close();
+			var ownerTree = node.getOwnerTree();
             directoryPanel.onReload(node);
-            if (node.expanded == false)
-                node.expand();
+            if (node.expanded == false){
+                node.setOwnerTree(ownerTree);
+				node.expand();
+			}	
         }, this);
 
         newTab.on('Cancel', function (panel) {
@@ -307,20 +310,21 @@ Ext.onReady(function () {
 
         var win = new Ext.Window({
             closable: true,
-			      resizable : false,
+			resizable : false,
             id: 'newwin-' + node.id,
             modal: true,
-			      autoHeight:true,
+			//autoHeight:true,
             layout: 'fit',
-			      shadow : false,
+			shadow : false,
             title: 'Add Application',
             iconCls: 'tabsApplication',
-            height: 360,
-            width: 660,
+            //height: 360,
+            width: 663,
             plain: true,
             items: newTab,
             listeners: {
-                afterlayout: function (pane) {
+                beforelayout: function (pane) {
+				//alert('before layout..');
                     Ext.getBody().unmask();
                 }
             }
@@ -390,8 +394,8 @@ Ext.onReady(function () {
             layout: 'fit',
             title: 'Edit Application\"' + node.text + '\"',
             iconCls: 'tabsApplication',
-            height: 360,
-            width: 660,//460,
+            //height: 360,
+            width: 663,//460,
 			//height: '100%',//360, //291,
             //width: '25%',//460, //430,
             //plain: true,
