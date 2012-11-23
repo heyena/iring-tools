@@ -26,23 +26,26 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	 addSettings : function(key, value, nameID, valueID){
 				return[ {
 							  xtype: 'container',
-							  style: 'margin:10 0 0 65;',
-							  layout:'hbox',
+							  style: 'margin:10 20 0 65;',
+							  //bodyStyle: 'padding:10px 20px 0 70px',
+							  layout:'column',
 							  items: [
 						    {
 		 						  xtype: 'textfield',
 								  name:nameID,
 								  value:key,
-								  width:164,
+								  columnWidth:'0.30',
+								  //width:164,
 								  allowBlank: true
-                },
+                          },
 						 {
 								xtype: 'textarea',
 								name:valueID,
 								value:value,
+								columnWidth:'0.60',
 								grow : false,
-								width:270,
-                                height: 50,
+								//width:270,
+                               // height: 50,
 								style: 'margin:0 0 0 3;'
 								//margin:'0 0 0 3'
                            },
@@ -50,12 +53,14 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 								xtype: 'button',
 								//flex: 1,
 								text: 'Delete',
-								width:48,
+								columnWidth:'0.10',
+								style: 'margin:0 0 0 3;',
+								//width:48,
 								//margin:'0 0 0 3',
 								//action:'DeleteMe',
 								//icon :'../../ux/css/images/right2.gif',//'remove-button',
 								//columnWidth: 0.10,
-								style: 'margin:0 0 0 50;',
+								//style: 'margin:0 0 0 49;',
 								//style: 'float: right;',
 								tooltip: 'Click to Delete settings',
 								handler : function (){
@@ -159,8 +164,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         var cmbDataLayers = new Ext.form.ComboBox({
             fieldLabel: 'Data Layer',
             //bodyStyle: 'width:500px',
-		    boxMaxWidth: 532,//250,
-            width: 532,//250,
+		    boxMaxWidth: 531,//250,
+            width: 531,//250,
             forceSelection: true,
             typeAhead: true,
             triggerAction: 'all',
@@ -180,8 +185,6 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             }
         }, this);
 
-        //that = this;
-
             this.form = new Ext.FormPanel({
             labelWidth: 70, // label settings here cascade unless
             url: this.url,
@@ -195,82 +198,82 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
                 //msgTarget: 'side'
             },
             defaultType: 'textfield',
-
+            layout:'form',
             items: [
-          { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 530, value: scope, allowBlank: false },
-          { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 530, value: name, allowBlank: false },
-          { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 530, value: name, allowBlank: false },
-          { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 530, height: 62, value: description },
-          cmbDataLayers,
-		  {
-									xtype: 'container',
-									layout: {
-										type: 'hbox'
-									},
-									items: [
-														 {
-															 xtype: 'label',
-															 text: 'Settings:',
-															 style:'font:normal 12px tahoma, arial, helvetica, sans-serif;'
-														 },
-														{
-															xtype: 'label',
-															text: 'Name',
-															style: 'margin:0 0 0 90;font:normal 12px tahoma, arial, helvetica, sans-serif;'
-														},
-														{
-															xtype: 'label',
-															text: 'Value',
-															style: 'margin:0 0 0 250;font:normal 12px tahoma, arial, helvetica, sans-serif;'
-														},
-														 {
-																xtype: 'button',
-																text: 'Add',
-																width:49,
-																style: 'margin:0 0 0 451;',
-																tooltip: 'Click to Add settings',
-																handler : function (){
-																		
-																	     var nameID;
-																		 var valueID;
-																		 var myFieldSet = Ext.getCmp('settingfieldset');
-																		 if(myFieldSet.items.items.length>=1){
-																		     var nameID = 'key'+(myFieldSet.items.items.length+1);
-																			 var valueID = 'value'+(myFieldSet.items.items.length+1);
-																		 }else{
-																		     var nameID = 'key1';
-																			 var valueID = 'value1';
-																		 }
-  																		 var abc = myThis.addSettings("", "", nameID, valueID);
-																		 myFieldSet.add(abc);
-																		 myFieldSet.doLayout();
-																		 myFieldSet.items.items[myFieldSet.items.length-1].items.items[0].allowBlank = false;
-																		
-																		 
-																}
-													 }
-														/*,{
-															xtype: 'label',
-															text: 'Mask',
-															//title: 'Column 4',
-															style: 'font-weight:bold;margin:0 0 0 390;'
-															//style: ''
-															//columnWidth: 0.15//0.15
-														}*/
+					  { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 530, value: scope, allowBlank: false },
+					  { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 530, value: name, allowBlank: false },
+					  { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 530, value: name, allowBlank: false },
+					  { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 530, height: 62, value: description },
+					  cmbDataLayers,
+					  {
+												xtype: 'container',
+												layout: {
+													type: 'hbox'
+												},
+												items: [
+																	 {
+																		 xtype: 'label',
+																		 text: 'Settings:',
+																		 style:'font:normal 12px tahoma, arial, helvetica, sans-serif;'
+																	 },
+																	{
+																		xtype: 'label',
+																		text: 'Name',
+																		style: 'margin:0 0 0 90;font:normal 12px tahoma, arial, helvetica, sans-serif;'
+																	},
+																	{
+																		xtype: 'label',
+																		text: 'Value',
+																		style: 'margin:0 0 0 250;font:normal 12px tahoma, arial, helvetica, sans-serif;'
+																	},
+																	 {
+																			xtype: 'button',
+																			text: 'Add',
+																			width:50,
+																			style: 'margin:0 0 0 446;',
+																			tooltip: 'Click to Add settings',
+																			handler : function (){
+																					
+																					 var nameID;
+																					 var valueID;
+																					 var myFieldSet = Ext.getCmp('settingfieldset');
+																					 if(myFieldSet.items.items.length>=1){
+																						 var nameID = 'key'+(myFieldSet.items.items.length+1);
+																						 var valueID = 'value'+(myFieldSet.items.items.length+1);
+																					 }else{
+																						 var nameID = 'key1';
+																						 var valueID = 'value1';
+																					 }
+																					 var abc = myThis.addSettings("", "", nameID, valueID);
+																					 myFieldSet.add(abc);
+																					 myFieldSet.doLayout();
+																					 myFieldSet.items.items[myFieldSet.items.length-1].items.items[0].allowBlank = false;
+																					
+																					 
+																			}
+																 }
+																	/*,{
+																		xtype: 'label',
+																		text: 'Mask',
+																		//title: 'Column 4',
+																		style: 'font-weight:bold;margin:0 0 0 390;'
+																		//style: ''
+																		//columnWidth: 0.15//0.15
+																	}*/
 
-											  ]
-          	},
-         
-			{
-						xtype: 'fieldset',
-						border: false,
-						collapsible: false,
-						id: 'settingfieldset',
-						height: 200,
-                        autoScroll: true,
-						items: [
-						]
-			}
+														  ]
+						},
+					 
+						{
+									xtype: 'fieldset',
+									border: false,
+									collapsible: false,
+									id: 'settingfieldset',
+									height: 200,
+									autoScroll: true,
+									items: [
+									]
+						}
       ],
             buttonAlign: 'left', // buttons aligned to the left            
             autoDestroy: false
@@ -284,9 +287,6 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
         // super
         AdapterManager.ApplicationPanel.superclass.initComponent.call(this);
-
-        //var data = dataLayersStore.getById(dataLayer);
-        //cmbDataLayers.Value = data;
 
     },
 
