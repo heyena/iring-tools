@@ -1002,6 +1002,7 @@ namespace org.iringtools.web.controllers
         if (rMap != null)
         {
           rMap.type = RoleType.Reference;
+          rMap.value = GetClassLabel(rMap.dataType);
           rMap.propertyName = null;
           rMap.valueListName = null;
         }
