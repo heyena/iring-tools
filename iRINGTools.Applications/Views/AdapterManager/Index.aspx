@@ -35,6 +35,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ValueListPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ValueListMapPanel.js") %>" type="text/javascript"></script> 
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/GraphPanel.js") %>" type="text/javascript"></script>                 
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ClassMapPanel.js") %>" type="text/javascript"></script>                 
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ApplicationPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AjaxRowExpander.js") %>" type="text/javascript"></script>    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/SpreadsheetLibrary.js") %>" type="text/javascript"></script>
