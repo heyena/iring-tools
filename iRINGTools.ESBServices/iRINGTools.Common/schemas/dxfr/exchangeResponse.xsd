@@ -9,6 +9,7 @@
   <xs:element name="exchangeResponse">
     <xs:complexType>
       <xs:sequence>
+      	<xs:element name="exchangeId" type="xs:string" />
       	<xs:element name="level" type="res:Level" />
       	<xs:element name="startTime" type="xs:dateTime" />
       	<xs:element name="endTime" type="xs:dateTime" />
