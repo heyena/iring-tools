@@ -140,12 +140,9 @@ namespace org.iringtools.mapping
 
     public static void AddClassMap(this GraphMap graphMap, RoleMap roleMap, ClassMap classMap)
     {
-      ClassTemplateMap classTemplateListMap = graphMap.GetClassTemplateMap(classMap.id);
+      ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classMap.id);
 
-      if (classTemplateListMap == null)
-        classTemplateListMap = new ClassTemplateMap();
-
-      if (classTemplateListMap.classMap == null)
+      if (ctm == null)
       {
         graphMap.classTemplateMaps.Add(
           new ClassTemplateMap
@@ -154,10 +151,15 @@ namespace org.iringtools.mapping
             templateMaps = new TemplateMaps()
           }
         );
-
-        if (roleMap != null)
-          roleMap.classMap = classMap;
       }
+      else
+      {
+        ctm.classMap = classMap;
+        ctm.templateMaps = new TemplateMaps();
+      }
+
+      if (roleMap != null)
+        roleMap.classMap = classMap;
     }
 
     public static void AddTemplateMap(this GraphMap graphMap, ClassMap classMap, TemplateMap templateMap)

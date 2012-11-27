@@ -1,51 +1,58 @@
 ﻿Ext.ns('AdapterManager');
 
-AdapterManager.GraphPanel = Ext.extend(Ext.Window, {
+AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
   layout: 'fit',
   width: 440,
-  height: 330,
+  height: 280,
   closable: true,
   resizable: false,
   modal: false,
   form: null,
-  record: null,
-  url: null,
+  root: null,
   node: null,
+  url: null,
   identifierPrompt: 'Drop property node(s) here.',
   classPrompt: 'Drop a class node here.',
 
   initComponent: function () {
-    var nodeId = '';
-    var formId = '';
+    var rootClassRecord = this.root.firstChild.attributes.record;
     var scope = '';
     var app = '';
-    var oldGraphName = '';
-    var graphName = '';
+    var graph = '';
     var objectName = '';
-    var identifier = this.identifierPrompt;
-    var delimiter = '_';
+    var identifier = '';
+    var delimiter = '';
     var className = this.classPrompt;
     var classId = '';
 
     this.bbar = this.buildToolbar();
 
-    if (this.node != null) {
-      nodeId = this.node.id;
-      scope = nodeId.split('/')[0];
-      app = nodeId.split('/')[1];
-      formId = '-graph-' + scope + '-' + app;
+    if (rootClassRecord != null) {
+      var rootClass = rootClassRecord.classTemplateMaps[0].classMap;
+      var parentClassNode = this.node.parentNode.parentNode;
+
+      identifier = rootClass.identifiers.join();
+      delimiter = rootClass.identifierDelimiter;
+      objectName = rootClassRecord.dataObjectName;
+      parentClassId = parentClassNode.attributes.identifier;
+      templateIndex = parentClassNode.indexOf(this.node.parentNode);
+      roleName = this.node.attributes.record.name;
     }
 
-    if (this.record != null) {
-      var classMap = this.record.classTemplateMaps[0].classMap;
+    if (this.node != null) {
+      var nodeIdParts = this.node.id.split('/');
+      scope = nodeIdParts[0];
+      app = nodeIdParts[1];
+      graph = nodeIdParts[2];
+      formId = '-class-' + scope + '-' + app;
 
-      oldGraphName = this.record.name;
-      graphName = this.record.name;
-      objectName = this.record.dataObjectName;
-      className = classMap.name;
-      classId = classMap.id;
-      identifier = classMap.identifiers.join();
-      delimiter = classMap.identifierDelimiter
+      var classMap = this.node.attributes.record.classMap;
+      if (classMap != null) {
+        className = classMap.name;
+        classId = classMap.id;
+        identifier = classMap.identifiers.join();
+        delimiter = classMap.identifierDelimiter;
+      }
     }
 
     var thisform = new Ext.FormPanel({
@@ -62,19 +69,20 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Window, {
       },
 
       items: [
-        { text: 'Graph Name: ', xtype: 'label' },
-        { name: 'graphName', xtype: 'textfield', style: 'width:376px; margin:5px 0px 10px 0px', value: graphName },
         { text: 'Identifier Delimiter (required for composite identifier): ', xtype: 'label' },
         { name: 'delimiter', xtype: 'textfield', style: 'width:100px; margin:5px 0px 10px 0px', value: delimiter },
-        { name: 'scope', xtype: 'hidden', value: scope },
         { text: 'Identifier: ', xtype: 'label' },
         { name: 'identifier', xtype: 'textfield', readOnly: true, style: 'height:40px; width:376px; margin:5px 0px 10px 0px;padding-top:10px', value: identifier },
-        { text: 'Root Class: ', xtype: 'label' },
+        { text: 'Class: ', xtype: 'label' },
         { name: 'className', xtype: 'textfield', readOnly: true, style: 'height:40px; width:376px; margin:5px 0px 10px 0px;padding-top:10px', value: className },
+        { name: 'classId', xtype: 'hidden', value: classId },
+        { name: 'scope', xtype: 'hidden', value: scope },
         { name: 'app', xtype: 'hidden', value: app },
-        { name: 'oldGraphName', xtype: 'hidden', value: oldGraphName },
+        { name: 'graph', xtype: 'hidden', value: graph },
         { name: 'objectName', xtype: 'hidden', value: objectName },
-        { name: 'classId', xtype: 'hidden', value: classId }
+        { name: 'parentClassId', xtype: 'hidden', value: parentClassId },
+        { name: 'templateIndex', xtype: 'hidden', value: templateIndex },
+        { name: 'roleName', xtype: 'hidden', value: roleName }
       ]
     });
 
@@ -171,7 +179,7 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Window, {
       });
     },
 
-    AdapterManager.GraphPanel.superclass.initComponent.call(this);
+    AdapterManager.ClassMapPanel.superclass.initComponent.call(this);
   },
 
   buildToolbar: function () {
@@ -211,11 +219,10 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Window, {
   },
 
   onSave: function () {
-    var that = this;
+    var panel = this;
     var thisForm = this.form.getForm();
 
-    if (thisForm.findField('graphName').getValue() == '' ||
-        thisForm.findField('identifier').getValue() == '' ||
+    if (thisForm.findField('identifier').getValue() == '' ||
         thisForm.findField('objectName').getValue() == '' ||
         thisForm.findField('className').getValue() == this.classPrompt ||
         thisForm.findField('className').getValue() == '') {
@@ -233,17 +240,20 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Window, {
 
     thisForm.submit({
       success: function (f, a) {
-        that.fireEvent('save', that);
+        panel.node.removeAll(true);
+        panel.node.appendChild(a.result.node);
+        panel.node.expand();
+        panel.fireEvent('addClassMapComplete');
       },
       failure: function (f, a) {
-        var message = 'Error saving changes!';
-        showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
+        var message = 'Error saving changes: ' + a.response.responseText;
+        showDialog(500, 250, 'Error', message, Ext.Msg.OK, null);
       }
     });
   },
 
   show: function () {
-    AdapterManager.GraphPanel.superclass.show.call(this);
+    AdapterManager.ClassMapPanel.superclass.show.call(this);
     this.initDragDrop();
   }
 });
