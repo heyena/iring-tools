@@ -83,6 +83,7 @@ namespace org.iringtools.mapping
         if (roleMap.classMap != null)
         {
           graphMap.DeleteClassMap(roleMap.classMap.id);
+          roleMap.value = null;
           roleMap.classMap = null;
         }
       }
