@@ -21,6 +21,7 @@ import org.iringtools.common.response.Level;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="exchangeId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="level" type="{http://www.iringtools.org/common/response}Level"/>
  *         &lt;element name="startTime" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="endTime" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
@@ -49,6 +50,7 @@ import org.iringtools.common.response.Level;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
+    "exchangeId",
     "level",
     "startTime",
     "endTime",
@@ -71,6 +73,8 @@ import org.iringtools.common.response.Level;
 @XmlRootElement(name = "exchangeResponse")
 public class ExchangeResponse {
 
+    @XmlElement(required = true)
+    protected String exchangeId;
     @XmlElement(required = true)
     protected Level level;
     @XmlElement(required = true)
@@ -103,6 +107,30 @@ public class ExchangeResponse {
     protected int poolSize;
     @XmlElement(required = true)
     protected String summary;
+
+    /**
+     * Gets the value of the exchangeId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getExchangeId() {
+        return exchangeId;
+    }
+
+    /**
+     * Sets the value of the exchangeId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setExchangeId(String value) {
+        this.exchangeId = value;
+    }
 
     /**
      * Gets the value of the level property.
