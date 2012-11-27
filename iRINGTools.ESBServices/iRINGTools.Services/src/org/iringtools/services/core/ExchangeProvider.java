@@ -530,13 +530,11 @@ public class ExchangeProvider
 	  DxiRequest dxiRequest = new DxiRequest();
 	  try
 	  {
-		  ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-		    
-	      manifest = exchangeProvider.getManifest(scope, id);
+	      manifest = getManifest(scope, id);
 	      
 	      dxiRequest.setManifest(manifest);
 	      dxiRequest.setDataFilter(filter);
-	      dtis = exchangeProvider.getDataTransferIndices(scope, id, dxiRequest, false);
+	      dtis = getDataTransferIndices(scope, id, dxiRequest, false);
 	   
 	      int itemCount = 0;
 		  DataTransferIndices actionDtis = new DataTransferIndices();
@@ -567,7 +565,13 @@ public class ExchangeProvider
 	      dxoRequest.setManifest(manifest);
 	      dxoRequest.setDataTransferIndices(actionDtis);
 
-		  return getDataTransferObjects(scope, id, dxoRequest);
+	      DataTransferObjects dtos = getDataTransferObjects(scope, id, dxoRequest);
+	      dtos.setVersion(id);
+	      dtos.setSenderAppName(sourceAppName);
+	      dtos.setSenderScopeName(sourceScopeName);
+	      dtos.setAppName(targetAppName);
+	      dtos.setScopeName(targetScopeName);
+		  return dtos;
 	  }
 	  catch (Exception e)
 	  {
@@ -585,12 +589,11 @@ public class ExchangeProvider
 	    
 	  try
 	  {
-		  ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-	      manifest = exchangeProvider.getManifest(scope, id);
+	      manifest = getManifest(scope, id);
 	      
 	      dxiRequest.setManifest(manifest);
 	      dxiRequest.setDataFilter(filter);
-	      dtis = exchangeProvider.getDataTransferIndices(scope, id, dxiRequest, false);
+	      dtis = getDataTransferIndices(scope, id, dxiRequest, false);
 
 	      int iCountSync = 0;
 	      int iCountAdd = 0;
@@ -618,6 +621,19 @@ public class ExchangeProvider
 	      }    
 
 	      ExchangeResponse xRes = new ExchangeResponse();
+	      xRes.setExchangeId(id);
+	      xRes.setSenderUri(sourceUri);
+	      xRes.setSenderScope(sourceScopeName);
+	      xRes.setSenderApp(sourceAppName);
+	      xRes.setSenderGraph(sourceGraphName);
+	      xRes.setReceiverUri(targetUri);
+	      xRes.setReceiverScope(targetScopeName);
+	      xRes.setReceiverApp(targetAppName);
+	      xRes.setReceiverGraph(targetGraphName);
+	      
+	      //<xs:element name="startTime" type="xs:dateTime" />
+	      //<xs:element name="endTime" type="xs:dateTime" />
+	      
 	      xRes.setLevel(Level.WARNING);
 	      xRes.setItemCount(iCountSync + iCountAdd + iCountChange + iCountDelete);
 	      xRes.setItemCountSync(iCountSync);
