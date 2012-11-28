@@ -988,12 +988,7 @@ namespace org.iringtools.adapter
       if (total > 0)
       {
         long numOfThreads = Math.Min(total, maxThreads);
-        int itemsPerThread = Math.Max((int)(total / maxThreads), maxThreads);
-
-        if (itemsPerThread * numOfThreads > total)
-        {
-          numOfThreads = (int)Math.Ceiling((double)total / itemsPerThread);
-        }
+        int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
         _logger.Debug("Number of threads [" + numOfThreads + "].");
         _logger.Debug("Items per thread [" + itemsPerThread + "].");
@@ -1047,12 +1042,7 @@ namespace org.iringtools.adapter
       int maxThreads = int.Parse(_settings["MaxThreads"]);
 
       int numOfThreads = Math.Min(total, maxThreads);
-      int itemsPerThread = Math.Max((int)(total / maxThreads), maxThreads);
-
-      if (itemsPerThread * numOfThreads > total)
-      {
-        numOfThreads = (int)Math.Ceiling((double)total / itemsPerThread);
-      }
+      int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
       _logger.Debug("Number of threads [" + numOfThreads + "].");
       _logger.Debug("Items per thread [" + itemsPerThread + "].");
@@ -1100,12 +1090,7 @@ namespace org.iringtools.adapter
         int maxThreads = int.Parse(_settings["MaxThreads"]);
 
         int numOfThreads = Math.Min(total, maxThreads);
-        int itemsPerThread = Math.Max((int)(total / maxThreads), maxThreads);  
-
-        if (itemsPerThread * numOfThreads > total)
-        {
-          numOfThreads = (int)Math.Ceiling((double)total / itemsPerThread);
-        }
+        int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
         _logger.Debug("Number of threads [" + numOfThreads + "].");
         _logger.Debug("Items per thread [" + itemsPerThread + "].");
