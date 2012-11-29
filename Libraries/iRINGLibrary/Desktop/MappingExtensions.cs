@@ -156,7 +156,6 @@ namespace org.iringtools.mapping
       else
       {
         ctm.classMap = classMap;
-        ctm.templateMaps = new TemplateMaps();
       }
 
       if (roleMap != null)
