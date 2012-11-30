@@ -227,7 +227,7 @@ namespace org.iringtools.adapter.projection
               StringBuilder internalIdentifier = new StringBuilder();
               StringBuilder propertyValues = new StringBuilder();
 
-              BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
+              BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyPropertyNames, keyValues,
                 propertyValues, sortIndex, ref sortType);
 
               foreach (string identifierValue in keyValues.Values)
@@ -281,7 +281,7 @@ namespace org.iringtools.adapter.projection
     }
 
     #region data transfer indices helper methods
-    private void BuildDataTransferIndex(DataTransferIndex dti, int dataObjectIndex, ClassTemplateMap classTemplateMap, string keyDelimiter,
+    private void BuildDataTransferIndex(DataTransferIndex dti, int dataObjectIndex, ClassTemplateMap classTemplateMap,
       List<string> keyPropertyNames, Dictionary<string, string> keyValues, StringBuilder propertyValues, string sortIndex, ref string sortType)
     {
       if (classTemplateMap != null && classTemplateMap.classMap != null)
@@ -289,6 +289,7 @@ namespace org.iringtools.adapter.projection
         IDataObject dataObject = _dataObjects[dataObjectIndex];
         bool hasRelatedProperty;
         List<string> classIdentifiers = GetClassIdentifiers(classTemplateMap.classMap, dataObjectIndex, out hasRelatedProperty);
+        string identifierDelimiter = classTemplateMap.classMap.identifierDelimiter;
 
         for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
         {
@@ -306,7 +307,7 @@ namespace org.iringtools.adapter.projection
 
             // if key property(properties) is(are) mapped in classMap identifier(s), append it(them) to keyValues
             List<string> identifierParts = classTemplateMap.classMap.identifiers;
-            string[] identifierValueParts = classIdentifier.Split(new string[] { keyDelimiter }, StringSplitOptions.None);
+            string[] identifierValueParts = classIdentifier.Split(new string[] { identifierDelimiter }, StringSplitOptions.None);
 
             for (int identifierIndex = 0; identifierIndex < identifierParts.Count; identifierIndex++)
             {
@@ -436,7 +437,7 @@ namespace org.iringtools.adapter.projection
 
               if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
               {
-                BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
+                BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyPropertyNames, keyValues,
                   propertyValues, sortIndex, ref sortType);
               }
             }
