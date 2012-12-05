@@ -178,6 +178,8 @@ namespace org.iringtools.dxfr.manifest
 
     private string nameField;
 
+    private org.iringtools.mapping.KeyTemplates keyTemplatesField;
+
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
     public string id
     {
@@ -202,6 +204,19 @@ namespace org.iringtools.dxfr.manifest
       {
         this.nameField = value;
       }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+    public org.iringtools.mapping.KeyTemplates keyTemplates
+    {
+        get
+        {
+            return this.keyTemplatesField;
+        }
+        set
+        {
+            this.keyTemplatesField = value;
+        }
     }
   }
 
@@ -663,6 +678,55 @@ namespace org.iringtools.mapping
     }
   }
 
+  [System.Runtime.Serialization.DataContractAttribute(Name = "keyTemplate", Namespace = "http://www.iringtools.org/mapping")]
+  public class KeyTemplate
+  {
+      private string classIdField;
+
+      private string templateIdField;
+
+      private string roleIdField;
+
+      [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
+      public string classId
+      {
+          get
+          {
+              return this.classIdField;
+          }
+          set
+          {
+              this.classIdField = value;
+          }
+      }
+
+      [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 1)]
+      public string templateId
+      {
+          get
+          {
+              return this.templateIdField;
+          }
+          set
+          {
+              this.templateIdField = value;
+          }
+      }
+
+      [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+      public string roleId
+      {
+          get
+          {
+              return this.roleIdField;
+          }
+          set
+          {
+              this.roleIdField = value;
+          }
+      }
+  }
+
   [System.Runtime.Serialization.DataContractAttribute(Name = "classMap", Namespace = "http://www.iringtools.org/mapping")]
   public partial class ClassMap
   {
@@ -673,6 +737,8 @@ namespace org.iringtools.mapping
     private string identifierDelimiterField;
 
     private org.iringtools.mapping.Identifiers identifiersField;
+
+    private org.iringtools.mapping.KeyTemplates keyTemplatesField;
 
     private string identifierValueField;
 
@@ -733,6 +799,19 @@ namespace org.iringtools.mapping
       }
     }
 
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 5)]
+    public org.iringtools.mapping.KeyTemplates keyTemplates
+    {
+        get
+        {
+            return this.keyTemplatesField;
+        }
+        set
+        {
+            this.keyTemplatesField = value;
+        }
+    }
+
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
     public string identifierValue
     {
@@ -754,6 +833,11 @@ namespace org.iringtools.mapping
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "identifiers", Namespace = "http://www.iringtools.org/mapping", ItemName = "identifier")]
   public class Identifiers : System.Collections.Generic.List<string>
+  {
+  }
+
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "keyTemplates", Namespace = "http://www.iringtools.org/mapping", ItemName = "keyTemplate")]
+  public class KeyTemplates : System.Collections.Generic.List<org.iringtools.mapping.KeyTemplate>
   {
   }
 

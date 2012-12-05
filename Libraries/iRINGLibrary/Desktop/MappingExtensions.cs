@@ -292,6 +292,7 @@ namespace org.iringtools.mapping
       {
         id = classMap.id,
         name = classMap.name,
+        keyTemplates = classMap.keyTemplates,
         identifierDelimiter = classMap.identifierDelimiter,
         identifiers = new Identifiers(),
       };
@@ -302,6 +303,25 @@ namespace org.iringtools.mapping
       }
 
       return newClassMap;
+    }
+
+    public static ClassMap CrossClassMap(this ClassMap classMap, Class manifestClass)
+    {
+        ClassMap newClassMap = new ClassMap
+        {
+            id = classMap.id,
+            name = classMap.name,
+            keyTemplates = manifestClass.keyTemplates,
+            identifierDelimiter = classMap.identifierDelimiter,
+            identifiers = new Identifiers(),
+        };
+
+        foreach (string identifier in classMap.identifiers)
+        {
+            newClassMap.identifiers.Add(identifier);
+        }
+
+        return newClassMap;
     }
 
     public static TemplateMap Clone(this TemplateMap templateMap)
