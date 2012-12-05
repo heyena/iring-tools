@@ -835,7 +835,7 @@ namespace org.iringtools.adapter
 
           if (localMappingClass.id == manifestClass.id)
           {
-            ClassMap crossedClass = localMappingClass.Clone();
+            ClassMap crossedClass = localMappingClass.CrossClassMap(manifestClass);
             TemplateMaps crossedTemplates = new TemplateMaps();
 
             _graphMap.classTemplateMaps.Add(new ClassTemplateMap { classMap = crossedClass, templateMaps = crossedTemplates });
