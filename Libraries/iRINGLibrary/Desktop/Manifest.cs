@@ -171,6 +171,60 @@ namespace org.iringtools.dxfr.manifest
     }
   }
 
+  [System.Runtime.Serialization.DataContractAttribute(Name = "identifier", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public class Identifier
+  {
+      private string classIdField;
+
+      private string templateIdField;
+
+      private string roleIdField;
+
+      [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
+      public string classId
+      {
+          get
+          {
+              return this.classIdField;
+          }
+          set
+          {
+              this.classIdField = value;
+          }
+      }
+
+      [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 1)]
+      public string templateId
+      {
+          get
+          {
+              return this.templateIdField;
+          }
+          set
+          {
+              this.templateIdField = value;
+          }
+      }
+
+      [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+      public string roleId
+      {
+          get
+          {
+              return this.roleIdField;
+          }
+          set
+          {
+              this.roleIdField = value;
+          }
+      }
+  }
+
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "identifiers", Namespace = "http://www.iringtools.org/dxfr/manifest", ItemName = "identifier")]
+  public class Identifiers : System.Collections.Generic.List<Identifier>
+  {
+  }
+
   [System.Runtime.Serialization.DataContractAttribute(Name = "class", Namespace = "http://www.iringtools.org/dxfr/manifest")]
   public partial class Class
   {
@@ -178,7 +232,7 @@ namespace org.iringtools.dxfr.manifest
 
     private string nameField;
 
-    private org.iringtools.mapping.KeyTemplates keyTemplatesField;
+    private Identifiers identifiersField;
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
     public string id
@@ -207,15 +261,15 @@ namespace org.iringtools.dxfr.manifest
     }
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
-    public org.iringtools.mapping.KeyTemplates keyTemplates
+    public Identifiers identifiers
     {
         get
         {
-            return this.keyTemplatesField;
+            return this.identifiersField;
         }
         set
         {
-            this.keyTemplatesField = value;
+            this.identifiersField = value;
         }
     }
   }
@@ -678,8 +732,8 @@ namespace org.iringtools.mapping
     }
   }
 
-  [System.Runtime.Serialization.DataContractAttribute(Name = "keyTemplate", Namespace = "http://www.iringtools.org/mapping")]
-  public class KeyTemplate
+  [System.Runtime.Serialization.DataContractAttribute(Name = "identifierMap", Namespace = "http://www.iringtools.org/mapping")]
+  public class IdentifierMap
   {
       private string classIdField;
 
@@ -738,7 +792,7 @@ namespace org.iringtools.mapping
 
     private org.iringtools.mapping.Identifiers identifiersField;
 
-    private org.iringtools.mapping.KeyTemplates keyTemplatesField;
+    private org.iringtools.mapping.IdentifierMaps identifierMapsField;
 
     private string identifierValueField;
 
@@ -800,15 +854,15 @@ namespace org.iringtools.mapping
     }
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 5)]
-    public org.iringtools.mapping.KeyTemplates keyTemplates
+    public org.iringtools.mapping.IdentifierMaps identifierMaps
     {
         get
         {
-            return this.keyTemplatesField;
+            return this.identifierMapsField;
         }
         set
         {
-            this.keyTemplatesField = value;
+            this.identifierMapsField = value;
         }
     }
 
@@ -836,8 +890,8 @@ namespace org.iringtools.mapping
   {
   }
 
-  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "keyTemplates", Namespace = "http://www.iringtools.org/mapping", ItemName = "keyTemplate")]
-  public class KeyTemplates : System.Collections.Generic.List<org.iringtools.mapping.KeyTemplate>
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "identifierMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "identifierMap")]
+  public class IdentifierMaps : System.Collections.Generic.List<org.iringtools.mapping.IdentifierMap>
   {
   }
 
