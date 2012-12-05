@@ -194,14 +194,54 @@ namespace org.iringtools.adapter
 
               ClassMap classMap = classTemplateListMap.classMap;
               List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
+                  String temName, rolName,rolid,  temid, clasid;
+                 // Class manifestClass1 = new Class();
+                  org.iringtools.dxfr.manifest.Identifiers identifiers = new org.iringtools.dxfr.manifest.Identifiers();
+                 foreach (TemplateMap templateMap in templateMaps)
+                  {
+                      temName = templateMap.name;
+                       temid = templateMap.id;
 
+                      foreach (RoleMap roleMap in templateMap.roleMaps)
+                      {
+                          rolName = roleMap.name;
+                          rolid = roleMap.id;
+
+                          if (!String.IsNullOrEmpty(roleMap.propertyName))
+                          {
+                              string[] property = roleMap.propertyName.Split('.');
+                              string objectName = property[0].Trim();
+                              string propertyName = property[1].Trim();
+
+                            //  if (dataObject.isKeyProperty(propertyName))
+                              foreach (String identifier in classMap.identifiers)
+                              {
+                                  if (identifier.ToLower() == roleMap.propertyName.ToLower())
+                                  {
+                                      Identifier key = new Identifier();
+                                      key.templateId = temid;
+                                      key.roleId = rolid;
+                                      key.classId = classMap.id;
+                                      identifiers.Add(key);
+                                   //   keytemplates = classMap.keyTemplates;
+                                      //    manifestClass1.identifier = IdentifierTemplateRole;
+                                      //   classMap.identifiers = IdentifierTemplateRole;
+                                  }
+                                 
+                              }
+                          }
+                      }
+                  }
               Class manifestClass = new Class
-              {
+              {  
                 id = classMap.id,
                 name = classMap.name,
-              };
-              manifestClassTemplatesMap.@class = manifestClass;
+               identifiers = identifiers,
+           
 
+              };
+             manifestClassTemplatesMap.@class = manifestClass; 
+          
               foreach (TemplateMap templateMap in templateMaps)
               {
                 Template manifestTemplate = new Template
