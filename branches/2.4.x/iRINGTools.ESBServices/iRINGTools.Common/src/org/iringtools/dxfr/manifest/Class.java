@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="keys" type="{http://www.iringtools.org/dxfr/manifest}Keys"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -28,9 +29,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Class", propOrder = {
+@XmlType(name = "Class", namespace = "http://www.iringtools.org/dxfr/manifest", propOrder = {
     "id",
-    "name"
+    "name",
+    "keys"
 })
 public class Class {
 
@@ -38,6 +40,8 @@ public class Class {
     protected String id;
     @XmlElement(required = true)
     protected String name;
+    @XmlElement(required = true)
+    protected Keys keys;
 
     /**
      * Gets the value of the id property.
@@ -85,6 +89,30 @@ public class Class {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the keys property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Keys }
+     *     
+     */
+    public Keys getKeys() {
+        return keys;
+    }
+
+    /**
+     * Sets the value of the keys property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Keys }
+     *     
+     */
+    public void setKeys(Keys value) {
+        this.keys = value;
     }
 
 }
