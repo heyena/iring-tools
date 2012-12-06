@@ -171,8 +171,8 @@ namespace org.iringtools.dxfr.manifest
     }
   }
 
-  [System.Runtime.Serialization.DataContractAttribute(Name = "identifier", Namespace = "http://www.iringtools.org/dxfr/manifest")]
-  public class Identifier
+  [System.Runtime.Serialization.DataContractAttribute(Name = "key", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public class Key
   {
       private string classIdField;
 
@@ -220,8 +220,8 @@ namespace org.iringtools.dxfr.manifest
       }
   }
 
-  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "identifiers", Namespace = "http://www.iringtools.org/dxfr/manifest", ItemName = "identifier")]
-  public class Identifiers : System.Collections.Generic.List<Identifier>
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "keys", Namespace = "http://www.iringtools.org/dxfr/manifest", ItemName = "key")]
+  public class Keys : System.Collections.Generic.List<Key>
   {
   }
 
@@ -232,7 +232,7 @@ namespace org.iringtools.dxfr.manifest
 
     private string nameField;
 
-    private Identifiers identifiersField;
+    private Keys identifiersField;
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
     public string id
@@ -261,7 +261,7 @@ namespace org.iringtools.dxfr.manifest
     }
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
-    public Identifiers identifiers
+    public Keys keys
     {
         get
         {
@@ -732,8 +732,8 @@ namespace org.iringtools.mapping
     }
   }
 
-  [System.Runtime.Serialization.DataContractAttribute(Name = "identifierMap", Namespace = "http://www.iringtools.org/mapping")]
-  public class IdentifierMap
+  [System.Runtime.Serialization.DataContractAttribute(Name = "keyMap", Namespace = "http://www.iringtools.org/mapping")]
+  public class KeyMap
   {
       private string classIdField;
 
@@ -792,7 +792,7 @@ namespace org.iringtools.mapping
 
     private org.iringtools.mapping.Identifiers identifiersField;
 
-    private org.iringtools.mapping.IdentifierMaps identifierMapsField;
+    private org.iringtools.mapping.KeyMaps identifierMapsField;
 
     private string identifierValueField;
 
@@ -854,7 +854,7 @@ namespace org.iringtools.mapping
     }
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 5)]
-    public org.iringtools.mapping.IdentifierMaps identifierMaps
+    public org.iringtools.mapping.KeyMaps identifierKeyMaps
     {
         get
         {
@@ -890,8 +890,8 @@ namespace org.iringtools.mapping
   {
   }
 
-  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "identifierMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "identifierMap")]
-  public class IdentifierMaps : System.Collections.Generic.List<org.iringtools.mapping.IdentifierMap>
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "keyMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "keyMap")]
+  public class KeyMaps : System.Collections.Generic.List<org.iringtools.mapping.KeyMap>
   {
   }
 

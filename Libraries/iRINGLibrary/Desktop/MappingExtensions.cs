@@ -292,7 +292,7 @@ namespace org.iringtools.mapping
       {
         id = classMap.id,
         name = classMap.name,
-        identifierMaps = classMap.identifierMaps,
+        identifierKeyMaps = classMap.identifierKeyMaps,
         identifierDelimiter = classMap.identifierDelimiter,
         identifiers = new Identifiers(),
       };
@@ -305,13 +305,13 @@ namespace org.iringtools.mapping
       return newClassMap;
     }
 
-    public static IdentifierMaps CloneIdentifiers(this org.iringtools.dxfr.manifest.Identifiers identifiers)
+    public static KeyMaps CloneIdentifiers(this org.iringtools.dxfr.manifest.Keys identifiers)
     {
-        IdentifierMaps newIdentifierMaps = new IdentifierMaps();
+        KeyMaps newIdentifierMaps = new KeyMaps();
 
-        foreach (Identifier identifier in identifiers)
+        foreach (Key identifier in identifiers)
         {
-            IdentifierMap newIdentifierMap = new IdentifierMap
+            KeyMap newIdentifierMap = new KeyMap
             {
                 classId = identifier.classId,
                 templateId = identifier.templateId,
@@ -324,13 +324,13 @@ namespace org.iringtools.mapping
         return newIdentifierMaps;
     }
 
-    public static ClassMap CrossClassMap(this ClassMap classMap, GraphMap graphMap, Class manifestClass)
+    public static ClassMap CrossClassMap(this ClassMap classMap, GraphMap graphMap, GraphMap manifestGraph)
     {
         ClassMap newClassMap = new ClassMap
         {
             id = classMap.id,
             name = classMap.name,
-            identifierMaps = manifestClass.identifiers.CloneIdentifiers(),
+            identifierKeyMaps = manifestClass.keys.CloneIdentifiers(),
             identifierDelimiter = classMap.identifierDelimiter,
             identifiers = new Identifiers(),
         };
