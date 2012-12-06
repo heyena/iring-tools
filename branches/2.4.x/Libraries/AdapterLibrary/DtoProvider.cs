@@ -196,6 +196,42 @@ namespace org.iringtools.adapter
               List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
                   String temName, rolName,rolid,  temid, clasid;
 
+<<<<<<< .mine
+                  org.iringtools.dxfr.manifest.Identifiers0 identifiers = new org.iringtools.dxfr.manifest.Identifiers0();
+                 foreach (TemplateMap templateMap in templateMaps)
+                  {
+                      temName = templateMap.name;
+                       temid = templateMap.id;
+
+                      foreach (RoleMap roleMap in templateMap.roleMaps)
+                      {
+                          rolName = roleMap.name;
+                          rolid = roleMap.id;
+
+                          if (!String.IsNullOrEmpty(roleMap.propertyName))
+                          {
+                              string[] property = roleMap.propertyName.Split('.');
+                              string objectName = property[0].Trim();
+                              string propertyName = property[1].Trim();
+
+
+                              foreach (String identifier in classMap.identifiers)
+                              {
+                                  if (identifier.ToLower() == roleMap.propertyName.ToLower())
+                                  {
+                                      Identifier0 key = new Identifier0();
+                                      key.templateId = temid;
+                                      key.roleId = rolid;
+                                      key.classId = classMap.id;
+                                      identifiers.Add(key);
+
+                                  }
+                                 
+                              }
+                          }
+                      }
+                  }
+=======
                   org.iringtools.dxfr.manifest.Identifiers identifiers = new org.iringtools.dxfr.manifest.Identifiers();
                  foreach (TemplateMap templateMap in templateMaps)
                   {
@@ -230,6 +266,7 @@ namespace org.iringtools.adapter
                           }
                       }
                   }
+>>>>>>> .r5515
               Class manifestClass = new Class
               {  
                 id = classMap.id,
