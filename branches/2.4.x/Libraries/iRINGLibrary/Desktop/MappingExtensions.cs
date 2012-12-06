@@ -305,7 +305,7 @@ namespace org.iringtools.mapping
       return newClassMap;
     }
 
-    public static IdentifierMaps CrossIdentifiers(this org.iringtools.dxfr.manifest.Identifiers identifiers)
+    public static IdentifierMaps CloneIdentifiers(this org.iringtools.dxfr.manifest.Identifiers identifiers)
     {
         IdentifierMaps newIdentifierMaps = new IdentifierMaps();
 
@@ -324,17 +324,18 @@ namespace org.iringtools.mapping
         return newIdentifierMaps;
     }
 
-    public static ClassMap CrossClassMap(this ClassMap classMap, Class manifestClass)
+    public static ClassMap CrossClassMap(this ClassMap classMap, GraphMap graphMap, Class manifestClass)
     {
         ClassMap newClassMap = new ClassMap
         {
             id = classMap.id,
             name = classMap.name,
-            identifierMaps = manifestClass.identifiers.CrossIdentifiers(),
+            identifierMaps = manifestClass.identifiers.CloneIdentifiers(),
             identifierDelimiter = classMap.identifierDelimiter,
             identifiers = new Identifiers(),
         };
 
+        //TODO: Resolve identifiers based on the manifestIdentifiers.
         foreach (string identifier in classMap.identifiers)
         {
             newClassMap.identifiers.Add(identifier);
