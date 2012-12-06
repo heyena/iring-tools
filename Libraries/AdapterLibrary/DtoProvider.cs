@@ -194,89 +194,50 @@ namespace org.iringtools.adapter
 
               ClassMap classMap = classTemplateListMap.classMap;
               List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
-                  String temName, rolName,rolid,  temid, clasid;
+              String temName, rolName, rolid, temid, clasid;
 
-<<<<<<< .mine
-                  org.iringtools.dxfr.manifest.Identifiers0 identifiers = new org.iringtools.dxfr.manifest.Identifiers0();
-                 foreach (TemplateMap templateMap in templateMaps)
+              org.iringtools.dxfr.manifest.Keys identifiers = new org.iringtools.dxfr.manifest.Keys();
+              foreach (TemplateMap templateMap in templateMaps)
+              {
+                temName = templateMap.name;
+                temid = templateMap.id;
+
+                foreach (RoleMap roleMap in templateMap.roleMaps)
+                {
+                  rolName = roleMap.name;
+                  rolid = roleMap.id;
+
+                  if (!String.IsNullOrEmpty(roleMap.propertyName))
                   {
-                      temName = templateMap.name;
-                       temid = templateMap.id;
+                    string[] property = roleMap.propertyName.Split('.');
+                    string objectName = property[0].Trim();
+                    string propertyName = property[1].Trim();
 
-                      foreach (RoleMap roleMap in templateMap.roleMaps)
+
+                    foreach (String identifier in classMap.identifiers)
+                    {
+                      if (identifier.ToLower() == roleMap.propertyName.ToLower())
                       {
-                          rolName = roleMap.name;
-                          rolid = roleMap.id;
+                        Key key = new Key();
+                        key.templateId = temid;
+                        key.roleId = rolid;
+                        key.classId = classMap.id;
+                        identifiers.Add(key);
 
-                          if (!String.IsNullOrEmpty(roleMap.propertyName))
-                          {
-                              string[] property = roleMap.propertyName.Split('.');
-                              string objectName = property[0].Trim();
-                              string propertyName = property[1].Trim();
-
-
-                              foreach (String identifier in classMap.identifiers)
-                              {
-                                  if (identifier.ToLower() == roleMap.propertyName.ToLower())
-                                  {
-                                      Identifier0 key = new Identifier0();
-                                      key.templateId = temid;
-                                      key.roleId = rolid;
-                                      key.classId = classMap.id;
-                                      identifiers.Add(key);
-
-                                  }
-                                 
-                              }
-                          }
                       }
+
+                    }
                   }
-=======
-                  org.iringtools.dxfr.manifest.Identifiers identifiers = new org.iringtools.dxfr.manifest.Identifiers();
-                 foreach (TemplateMap templateMap in templateMaps)
-                  {
-                      temName = templateMap.name;
-                       temid = templateMap.id;
-
-                      foreach (RoleMap roleMap in templateMap.roleMaps)
-                      {
-                          rolName = roleMap.name;
-                          rolid = roleMap.id;
-
-                          if (!String.IsNullOrEmpty(roleMap.propertyName))
-                          {
-                              string[] property = roleMap.propertyName.Split('.');
-                              string objectName = property[0].Trim();
-                              string propertyName = property[1].Trim();
-
-
-                              foreach (String identifier in classMap.identifiers)
-                              {
-                                  if (identifier.ToLower() == roleMap.propertyName.ToLower())
-                                  {
-                                      Identifier key = new Identifier();
-                                      key.templateId = temid;
-                                      key.roleId = rolid;
-                                      key.classId = classMap.id;
-                                      identifiers.Add(key);
-
-                                  }
-                                 
-                              }
-                          }
-                      }
-                  }
->>>>>>> .r5515
+                }
+              }
               Class manifestClass = new Class
-              {  
+              {
                 id = classMap.id,
                 name = classMap.name,
-               identifiers = identifiers,
-           
-
+                keys = identifiers,
               };
-             manifestClassTemplatesMap.@class = manifestClass; 
-          
+              manifestClassTemplatesMap.@class = manifestClass;
+
               foreach (TemplateMap templateMap in templateMaps)
               {
                 Template manifestTemplate = new Template
@@ -1112,7 +1073,7 @@ namespace org.iringtools.adapter
     private DataTransferObjects MultiGetDataTransferObjects(List<string> identifiers)
     {
       DataTransferObjects dataTransferObjects = new DataTransferObjects();
-      
+
       int total = identifiers.Count;
       int maxThreads = int.Parse(_settings["MaxThreads"]);
 
@@ -1169,7 +1130,7 @@ namespace org.iringtools.adapter
 
         _logger.Debug("Number of threads [" + numOfThreads + "].");
         _logger.Debug("Items per thread [" + itemsPerThread + "].");
-        
+
         ManualResetEvent[] doneEvents = new ManualResetEvent[numOfThreads];
         DataTransferObjectsTask[] dtoTasks = new DataTransferObjectsTask[numOfThreads];
 

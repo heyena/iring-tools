@@ -324,7 +324,7 @@ namespace org.iringtools.mapping
         return newIdentifierMaps;
     }
 
-    public static ClassMap CrossClassMap(this ClassMap classMap, GraphMap graphMap, GraphMap manifestGraph)
+    public static ClassMap CrossClassMap(this ClassMap classMap, GraphMap graphMap, Class manifestClass)
     {
         ClassMap newClassMap = new ClassMap
         {
