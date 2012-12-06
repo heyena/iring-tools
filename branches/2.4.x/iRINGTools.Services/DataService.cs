@@ -256,7 +256,7 @@ namespace org.iringtools.services
       }
       catch (Exception ex)
       {
-        ExceptionHandler(ex);
+        ExceptionHandler(ex,format);
       }
     }
 
@@ -704,7 +704,7 @@ namespace org.iringtools.services
       return format;
     }
 
-    private void ExceptionHandler(Exception ex)
+    private void ExceptionHandler(Exception ex, string format ="json")
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
 
@@ -716,15 +716,28 @@ namespace org.iringtools.services
       {
         context.StatusCode = HttpStatusCode.Unauthorized;
       }
-      else if (ex is WebFaultException)
+      else if (ex is WebFaultException)        // To handle the status code and message coming out from the API exception.
       {
         context.StatusCode = ((WebFaultException)ex).StatusCode;
+        Response response = new Response();
+        response.StatusCode = context.StatusCode;
+        response.Messages = new Messages() { ((WebFaultException)ex).Message };
+        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        return;
+      }
+      else if (ex is WebFaultException<string>) // To handle the status code coming out from the API exception and Custom messages.
+      {
+          context.StatusCode = ((WebFaultException<string>)ex).StatusCode;
+          Response response = new Response();
+          response.StatusCode = context.StatusCode;
+          response.Messages = new Messages() { ((WebFaultException<string>)ex).Detail };
+          _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+          return;
       }
       else
       {
         context.StatusCode = HttpStatusCode.InternalServerError;
       }
-
       HttpContext.Current.Response.ContentType = "text/html";
       HttpContext.Current.Response.Write(ex.ToString());
     }
