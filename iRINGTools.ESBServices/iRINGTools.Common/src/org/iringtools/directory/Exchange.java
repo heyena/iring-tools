@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="cacheable" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Exchange", propOrder = {
     "id",
     "name",
-    "description"
+    "description",
+    "cacheable"
 })
 public class Exchange {
 
@@ -42,6 +44,7 @@ public class Exchange {
     protected String name;
     @XmlElement(required = true)
     protected String description;
+    protected boolean cacheable;
 
     /**
      * Gets the value of the id property.
@@ -113,6 +116,22 @@ public class Exchange {
      */
     public void setDescription(String value) {
         this.description = value;
+    }
+
+    /**
+     * Gets the value of the cacheable property.
+     * 
+     */
+    public boolean isCacheable() {
+        return cacheable;
+    }
+
+    /**
+     * Sets the value of the cacheable property.
+     * 
+     */
+    public void setCacheable(boolean value) {
+        this.cacheable = value;
     }
 
 }

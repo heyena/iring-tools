@@ -114,6 +114,7 @@
       <xs:element name="id" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="description" type="xs:string" />
+      <xs:element name="cacheable" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
 
