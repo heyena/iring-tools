@@ -195,7 +195,7 @@ namespace org.iringtools.adapter
               ClassMap classMap = classTemplateListMap.classMap;
               List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
                   String temName, rolName,rolid,  temid, clasid;
-                 // Class manifestClass1 = new Class();
+
                   org.iringtools.dxfr.manifest.Identifiers identifiers = new org.iringtools.dxfr.manifest.Identifiers();
                  foreach (TemplateMap templateMap in templateMaps)
                   {
@@ -213,7 +213,7 @@ namespace org.iringtools.adapter
                               string objectName = property[0].Trim();
                               string propertyName = property[1].Trim();
 
-                            //  if (dataObject.isKeyProperty(propertyName))
+
                               foreach (String identifier in classMap.identifiers)
                               {
                                   if (identifier.ToLower() == roleMap.propertyName.ToLower())
@@ -223,9 +223,7 @@ namespace org.iringtools.adapter
                                       key.roleId = rolid;
                                       key.classId = classMap.id;
                                       identifiers.Add(key);
-                                   //   keytemplates = classMap.keyTemplates;
-                                      //    manifestClass1.identifier = IdentifierTemplateRole;
-                                      //   classMap.identifiers = IdentifierTemplateRole;
+
                                   }
                                  
                               }
@@ -875,7 +873,7 @@ namespace org.iringtools.adapter
 
           if (localMappingClass.id == manifestClass.id)
           {
-            ClassMap crossedClass = localMappingClass.CrossClassMap(manifestClass);
+            ClassMap crossedClass = localMappingClass.CrossClassMap(mappingGraph, manifestClass);
             TemplateMaps crossedTemplates = new TemplateMaps();
 
             _graphMap.classTemplateMaps.Add(new ClassTemplateMap { classMap = crossedClass, templateMaps = crossedTemplates });
