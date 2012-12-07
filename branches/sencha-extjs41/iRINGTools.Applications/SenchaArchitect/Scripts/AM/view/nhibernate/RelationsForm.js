@@ -17,6 +17,14 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.relationsform',
 
+  requires: [
+    'AM.view.nhibernate.RelationsGrid'
+  ],
+
+  context: '',
+  endpoint: '',
+  rootNode: '',
+
   initComponent: function() {
     var me = this;
 
@@ -34,7 +42,6 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
         },
         {
           xtype: 'textfield',
-          anchor: '100%',
           name: 'relationName',
           fieldLabel: 'Relationship Name',
           listeners: {
@@ -43,6 +50,11 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
               scope: me
             }
           }
+        },
+        {
+          xtype: 'relationsgrid',
+          autoShow: true,
+          minHeight: 50
         }
       ],
       dockedItems: [

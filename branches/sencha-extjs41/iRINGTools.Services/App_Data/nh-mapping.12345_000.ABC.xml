@@ -1,9 +1,11 @@
 ﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
   <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.EQUIPMENT, App_Code" table="&quot;EQUIPMENT&quot;">
-    <id name="Id" column="&quot;TAG&quot;">
-      <generator class="assigned" />
-    </id>
+    <composite-id name="Id" class="org.iringtools.adapter.datalayer.proj_12345_000.ABC.EQUIPMENTId, App_Code">
+      <key-property name="TAG" column="&quot;TAG&quot;" />
+      <key-property name="INTERNAL_TAG" column="&quot;INTERNAL_TAG&quot;" />
+    </composite-id>
     <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
+    <property name="INTERNAL_TAG" column="&quot;INTERNAL_TAG&quot;" update="false" insert="false" />
     <property name="ID" column="&quot;ID&quot;" />
     <property name="AREA" column="&quot;AREA&quot;" />
     <property name="TRAINNUMBER" column="&quot;TRAINNUMBER&quot;" />

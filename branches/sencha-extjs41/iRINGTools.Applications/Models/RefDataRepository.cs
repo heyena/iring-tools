@@ -12,6 +12,7 @@ using org.iringtools.mapping;
 using org.ids_adi.qmxf;
 using Ninject;
 using org.iringtools.refdata.federation;
+using org.iringtools.web.Models;
 
 namespace iRINGTools.Web.Models
 {

@@ -25,6 +25,7 @@ Ext.define('AM.store.DataGridStore', {
     cfg = cfg || {};
     me.callParent([Ext.apply({
       autoLoad: true,
+      remoteFilter: true,
       remoteSort: true,
       storeId: 'DataGridStore',
       model: 'AM.model.DynamicModel',
@@ -46,6 +47,7 @@ Ext.define('AM.store.DataGridStore', {
         url: 'datagrid/getdata',
         reader: {
           type: 'json',
+          root: 'data',
           totalProperty: 'totalCount'
         }
       }

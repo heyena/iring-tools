@@ -19,6 +19,7 @@ using org.ids_adi.qmxf;
 using org.iringtools.mapping;
 using VDS.RDF;
 using org.iringtools.refdata.federation;
+using org.iringtools.web.Models;
 
 namespace org.iringtools.web.controllers
 {

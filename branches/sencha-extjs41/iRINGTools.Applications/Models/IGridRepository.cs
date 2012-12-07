@@ -1,7 +1,7 @@
 ﻿
 using org.iringtools.library;
 
-namespace iRINGTools.Web.Models
+namespace org.iringtools.web.Models
 {
   public interface IGridRepository
   {

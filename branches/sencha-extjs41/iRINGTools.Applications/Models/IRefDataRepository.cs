@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using org.iringtools.library;
+﻿using org.iringtools.library;
 using org.ids_adi.qmxf;
 using org.iringtools.refdata.federation;
 
-namespace iRINGTools.Web.Models
+namespace org.iringtools.web.Models
 {
   public interface IRefDataRepository
   {

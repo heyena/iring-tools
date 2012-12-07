@@ -2,25 +2,22 @@
 using System.Collections.Specialized;
 using System.Configuration;
 using Ninject;
+using iRINGTools.Web.Models;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Web.Script.Serialization;
 using org.iringtools.adapter;
 using System.Net;
 
-namespace iRINGTools.Web.Models
+namespace org.iringtools.web.Models
 {
   public class GridRepository : IGridRepository
   {
     private WebHttpClient _dataServiceClient = null;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));   
     ServiceSettings _settings = null;
-    string proxyHost = "";
-    string proxyPort = "";
+    string _proxyHost = "";
+    string _proxyPort = "";
     string dataServiceUri = null;
 
     [Inject]
@@ -29,37 +26,32 @@ namespace iRINGTools.Web.Models
       NameValueCollection settings = ConfigurationManager.AppSettings;
       _settings = new ServiceSettings();
       _settings.AppendSettings(settings);
-      proxyHost = _settings["ProxyHost"];
-      proxyPort = _settings["ProxyPort"];
+      _proxyHost = _settings["ProxyHost"];
+      _proxyPort = _settings["ProxyPort"];
 
       #region initialize webHttpClient for converting old mapping      
-      
-      WebProxy webProxy = null;
 
-      if (_settings["DataServiceURI"] != null)
-      {
+        if (_settings["DataServiceURI"] == null) return;
         dataServiceUri = _settings["DataServiceURI"];      
      
-        if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+        if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
         {
-          webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-          _dataServiceClient = new WebHttpClient(dataServiceUri, null, webProxy);
+            var webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+            _dataServiceClient = new WebHttpClient(dataServiceUri, null, webProxy);
         }
         else
         {
-          _dataServiceClient = new WebHttpClient(dataServiceUri);
+            _dataServiceClient = new WebHttpClient(dataServiceUri);
 
         }
-      }
-      #endregion
-
+        #endregion
     }   
 
     public string DataServiceUri()
     {
-      getSetting();
-      string dataServiceUri = _settings["DataServiceURI"];
-      string response = "";     
+      GetSetting();
+      var dataServiceUri = _settings["DataServiceURI"];
+      var response = "";     
 
       if (string.IsNullOrEmpty(dataServiceUri))        
       {
@@ -70,21 +62,14 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    //public DataDictionary GetDictionary(string relUri, string baseUrl)
-    //{
-    //  WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-    //  string relativeUrl = string.Format("/{0}/dictionary?format=xml", relUri);
-    //  return _newServiceClient.Get<DataDictionary>(relativeUrl, true);
-    //}
-
     public DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl)
     {
       DataDictionary obj = null;
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "data");
-        obj = _newServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", endpoint, contextName), true);
+        var newServiceClient = PrepareServiceClient(baseUrl, "data");
+        obj = newServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", endpoint, contextName), true);
       }
       catch (Exception ex)
       {
@@ -96,78 +81,74 @@ namespace iRINGTools.Web.Models
 
     public DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit, string baseUrl)
     {
-      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "data");      
-      string fmt = "json";
-      string relUrl = string.Format("/{0}/{1}/{2}/filter?format={3}&start={4}&limit={5}", endpoint, context, graph, fmt, start, limit);
-      string json = _newServiceClient.Post<DataFilter, string>(relUrl, dataFilter, fmt, true);
+      var newServiceClient = PrepareServiceClient(baseUrl, "data");      
+      var fmt = "json";
+      var relUrl = string.Format("/{0}/{1}/{2}/filter?format={3}&start={4}&limit={5}", endpoint, context, graph, fmt, start, limit);
+      var json = newServiceClient.Post<DataFilter, string>(relUrl, dataFilter, fmt, true);
       
-      DataItemSerializer serializer = new DataItemSerializer();
-      DataItems dataItems = serializer.Deserialize<DataItems>(json, false); 
+      var serializer = new DataItemSerializer();
+      var dataItems = serializer.Deserialize<DataItems>(json, false); 
       return dataItems;
     }
 
-    private void getSetting()
+    private void GetSetting()
     {
       if (_settings == null)
         _settings = new ServiceSettings();     
     }
 
-    private void getAllSetting()
+    private void GetAllSetting()
     {
       if (_settings == null)
         _settings = new ServiceSettings();
-      getProxy();
+      GetProxy();
     }
 
-    private void getProxy()
+    private void GetProxy()
     {     
-      proxyHost = _settings["ProxyHost"];
-      proxyPort = _settings["ProxyPort"];
+      _proxyHost = _settings["ProxyHost"];
+      _proxyPort = _settings["ProxyPort"];
     }
 
     private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
     {
-      getSetting();
-      if (baseUrl == "" || baseUrl == null)
+      GetSetting();
+      if (string.IsNullOrEmpty(baseUrl))
         return _dataServiceClient;
 
-      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
-      string adapterBaseUri = CleanBaseUrl(dataServiceUri.ToLower(), '/');
+      var baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
+      var adapterBaseUri = CleanBaseUrl(dataServiceUri.ToLower(), '/');
 
-      if (!baseUri.Equals(adapterBaseUri))
-        return getServiceClient(baseUrl, serviceName);
-      else
-        return _dataServiceClient;
+      return !baseUri.Equals(adapterBaseUri) ? GetServiceClient(baseUrl, serviceName) : _dataServiceClient;
     }
 
-    private string CleanBaseUrl(string url, char con)
+    private static string CleanBaseUrl(string url, char con)
     {
       try
       {
-        System.Uri uri = new System.Uri(url);
+        var uri = new System.Uri(url);
         return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
       }
       catch (Exception) { }
       return null;
     }
 
-    private WebHttpClient getServiceClient(string uri, string serviceName)
+    private WebHttpClient GetServiceClient(string uri, string serviceName)
     {
-      getProxy();
-      WebHttpClient _newServiceClient = null;
-      WebProxy webProxy = null;
-      string serviceUri = uri + "/" + serviceName;
+      GetProxy();
+      WebHttpClient newServiceClient = null;
+        var serviceUri = uri + "/" + serviceName;
 
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-        _newServiceClient = new WebHttpClient(serviceUri, null, webProxy);
+          var webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+          newServiceClient = new WebHttpClient(serviceUri, null, webProxy);
       }
       else
       {
-        _newServiceClient = new WebHttpClient(serviceUri);
+        newServiceClient = new WebHttpClient(serviceUri);
       }
-      return _newServiceClient;
+      return newServiceClient;
     }
   }
 }

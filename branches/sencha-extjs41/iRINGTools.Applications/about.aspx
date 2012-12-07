@@ -1,11 +1,12 @@
 ﻿<%@ Page Language="C#" %>
+<%@ Import Namespace="System.Globalization" %>
 
 <% 
-    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly(typeof(org.iringtools.library.VersionInfo));
-    string major = assembly.GetName().Version.Major.ToString();
-    string minor = assembly.GetName().Version.Minor.ToString();
-    string build = assembly.GetName().Version.Build.ToString();
-    string revision = assembly.GetName().Version.Revision.ToString();
+    var assembly = System.Reflection.Assembly.GetAssembly(typeof(org.iringtools.library.VersionInfo));
+    var major = assembly.GetName().Version.Major.ToString(CultureInfo.InvariantCulture);
+    var minor = assembly.GetName().Version.Minor.ToString(CultureInfo.InvariantCulture);
+    var build = assembly.GetName().Version.Build.ToString(CultureInfo.InvariantCulture);
+    var revision = assembly.GetName().Version.Revision.ToString(CultureInfo.InvariantCulture);
 %>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -19,7 +20,7 @@
   <div>
 	<div>
             <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank">
-            <img src="Content/img/iringtools-logo.png"/>
+            <img src="Content/img/iringtools-logo.png" alt=""/>
             </a><div style="font-family:Arial;font-size:10pt;padding-left:165px;position:relative; top:-17px;">Version <%=major%>.<%=minor%>.<%=build%>.<%=revision%></div>
             </div>
 	</div>

@@ -6,6 +6,9 @@
     },
     "codeClass": null,
     "userConfig": {
+        "context": "",
+        "endpoint": "",
+        "rootNode": "",
         "designer|userClassName": "nhibernate.RelationsForm",
         "designer|userAlias": "relationsform",
         "height": null,
@@ -13,11 +16,29 @@
         "defaults": [
             "{labelWidth: 130, allowBlank: false}"
         ],
+        "layout": null,
         "bodyPadding": null,
         "title": null
     },
     "id": "ExtBox1-ext-gen14728",
     "designerId": "ee4b18be-7210-4e88-9a5c-50e9ca131349",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "context",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "endpoint",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "rootNode",
+            "type": "string"
+        }
+    ],
     "cn": [
         {
             "type": "label",
@@ -44,7 +65,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField16",
                 "name": "relationName",
                 "fieldLabel": "Relationship Name",
@@ -64,7 +84,7 @@
                         "fn": "onRelationKeydown",
                         "implHandler": [
                             "if (e.getKey() == e.ENTER) {\r",
-                            "//TODO addRelationship(me, node, contextName, endpoint);\r",
+                            "  //TODO addRelationship(me, node, contextName, endpoint);\r",
                             "}"
                         ],
                         "name": "keydown",
@@ -141,6 +161,22 @@
                     "designerId": "35ae2f4b-206e-4a0b-a331-a2c68619a155"
                 }
             ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": null,
+                "designer|displayName": "relationsGrid",
+                "autoShow": true,
+                "minHeight": 50
+            },
+            "designerId": "938378b7-386f-4cf1-8c7f-bdfc1186c090",
+            "masterInstanceId": "ExtBox1-ext-gen3617"
         }
     ]
 }

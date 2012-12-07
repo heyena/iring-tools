@@ -1,15 +1,16 @@
 {
     "name": "AM",
     "settings": {
-        "urlPrefix": "http://localhost:23456/",
+        "urlPrefix": "http://localhost:12345/",
         "spacesToIndent": 2,
-        "exportPath": "E:/iring-tools/branches/sencha-extjs41/iRINGTools.Applications",
+        "exportPath": "C:/iring-tools/branches/sencha-extjs41/iRINGTools.Applications",
+        "sdkPath": "",
         "lineEnding": "CRLF",
         "genTimestamps": false,
         "cacheBust": false
     },
     "xdsVersion": "2.1.0",
-    "xdsBuild": 640,
+    "xdsBuild": 676,
     "schemaVersion": 1,
     "upgradeVersion": 210000000498,
     "framework": "ext41",
@@ -821,11 +822,11 @@
         },
         "ef191768-2bd4-46be-864b-6386fbb488a5": {
             "paths": [
-                "metadata/view/nhibernate.ConfigRelationForm",
-                "Scripts/AM/view/override/nhibernate/ConfigRelationForm.js",
-                "Scripts/AM/view/nhibernate/ConfigRelationForm.js"
+                "metadata/view/nhibernate.SetRelationForm",
+                "Scripts/AM/view/override/nhibernate/SetRelationForm.js",
+                "Scripts/AM/view/nhibernate/SetRelationForm.js"
             ],
-            "className": "nhibernate.ConfigRelationForm"
+            "className": "nhibernate.SetRelationForm"
         },
         "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd": {
             "paths": [
@@ -858,10 +859,19 @@
                 "Scripts/AM/store/Property.js"
             ],
             "className": "Property"
+        },
+        "260ff6ba-bf2c-4869-bb24-1f2cd987c47e": {
+            "paths": [
+                "metadata/view/nhibernate.CreateRelationForm",
+                "Scripts/AM/view/override/nhibernate/CreateRelationForm.js",
+                "Scripts/AM/view/nhibernate/CreateRelationForm.js"
+            ],
+            "className": "nhibernate.CreateRelationForm"
         }
     },
     "viewOrderMap": {
         "view": [
+            "260ff6ba-bf2c-4869-bb24-1f2cd987c47e",
             "8b388d0f-baa1-4e91-b5ea-366c58f6e09c",
             "7898ced7-5511-4e58-a6a1-0ef46bf44e3d",
             "066aa598-61b3-402a-8029-13803d2c2c42",
@@ -912,7 +922,6 @@
             "c72f1844-42ae-497d-ac17-9b294bfd2e8c",
             "b7622ca2-41f1-493c-9625-bda146463a7d",
             "ce6504c7-08bb-4a89-a41b-4128aec9f385",
-            "ee4b18be-7210-4e88-9a5c-50e9ca131349",
             "9ee7d1e0-1914-4b89-bc09-139012f29114",
             "65df1f92-f476-4bca-b264-de0fd62a3eca",
             "cc1939a2-a481-40e0-98f8-931125e7aa86",
@@ -929,6 +938,7 @@
             "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
             "d1c34e2a-9007-4641-b713-a25c592fadbd",
             "ef191768-2bd4-46be-864b-6386fbb488a5",
+            "ee4b18be-7210-4e88-9a5c-50e9ca131349",
             "17fb1af5-2569-49f4-927f-dd778c03c1a1"
         ],
         "store": [

@@ -14,5 +14,6 @@
  */
 
 Ext.define('AM.model.DynamicModel', {
-  extend: 'Ext.data.Model'
+  extend: 'Ext.data.Model',
+  fields: []
 });

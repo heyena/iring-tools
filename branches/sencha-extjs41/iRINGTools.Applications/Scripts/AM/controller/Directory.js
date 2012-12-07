@@ -76,6 +76,15 @@ Ext.define('AM.controller.Directory', {
     }
   ],
 
+  handleMetachange: function() {
+    var me = this,
+    store = grid.getStore(),
+    columns = meta.columns;
+
+    grid.metachange = true;
+    grid.reconfigure(store, columns);
+  },
+
   onBeforeLoad: function(store, operation, options) {
     var me = this;
     if (operation.node !== undefined) {
@@ -519,6 +528,9 @@ Ext.define('AM.controller.Directory', {
 
   init: function(application) {
     this.control({
+      "gridpanel": {
+        metachange: this.handleMetachange
+      },
       "directorypanel directorytree": {
         beforeload: this.onBeforeLoad
       },

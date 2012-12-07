@@ -17,6 +17,10 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.relationsgrid',
 
+  context: '',
+  endpoint: '',
+  node: '',
+  rootNode: '',
   frame: false,
   store: 'RelationsStore',
 
@@ -34,10 +38,53 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
           flex: 1,
           text: 'Data Relationship Name'
         }
+      ],
+      dockedItems: [
+        {
+          xtype: 'toolbar',
+          dock: 'top',
+          weight: 50,
+          items: [
+            {
+              xtype: 'button',
+              iconCls: 'am-list-add',
+              text: 'Add',
+              listeners: {
+                click: {
+                  fn: me.onAddClick,
+                  scope: me
+                }
+              }
+            },
+            {
+              xtype: 'tbseparator',
+              width: 4
+            },
+            {
+              xtype: 'button',
+              iconCls: 'am-list-remove',
+              text: 'Remove',
+              listeners: {
+                click: {
+                  fn: me.onRemoveClick,
+                  scope: me
+                }
+              }
+            }
+          ]
+        }
       ]
     });
 
     me.callParent(arguments);
+  },
+
+  onAddClick: function(button, e, options) {
+
+  },
+
+  onRemoveClick: function(button, e, options) {
+
   }
 
 });

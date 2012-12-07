@@ -7,18 +7,16 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Web;
 using Ninject;
+using iRINGTools.Web.Models;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
-using System.Text;
-using System.Collections;
 using System.Net;
 using System.IO;
 
-
-namespace iRINGTools.Web.Models
+namespace org.iringtools.web.Models
 {
   public class AdapterRepository : IAdapterRepository
   {
@@ -27,64 +25,64 @@ namespace iRINGTools.Web.Models
     private WebHttpClient _hibernateServiceClient = null;
     private WebHttpClient _referenceDataServiceClient = null;
     private WebHttpClient _javaServiceClient = null;
-    private string proxyHost = "";
-    private string proxyPort = "";
-    private WebProxy webProxy = null;
+    private string _proxyHost = "";
+    private string _proxyPort = "";
+    private WebProxy _webProxy = null;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
-    private static Dictionary<string, NodeIconCls> nodeIconClsMap;
-    private string combinationMsg = null;
-    private string adapterServiceUri = "";
-    private string hibernateServiceUri = "";
-    private string referenceDataServiceUri = "";
+    private static Dictionary<string, NodeIconCls> _nodeIconClsMap;
+    private string _combinationMsg = null;
+    private string _adapterServiceUri = "";
+    private string _hibernateServiceUri = "";
+    private string _referenceDataServiceUri = "";
 
     [Inject]
     public AdapterRepository()
     {
-      NameValueCollection settings = ConfigurationManager.AppSettings;
+      var settings = ConfigurationManager.AppSettings;
       _settings = new ServiceSettings();
       _settings.AppendSettings(settings);
       #region initialize webHttpClient for converting old mapping
-      proxyHost = _settings["ProxyHost"];
-      proxyPort = _settings["ProxyPort"];
-      adapterServiceUri = _settings["AdapterServiceUri"];
-      string javaCoreUri = _settings["JavaCoreUri"];
-      hibernateServiceUri = _settings["NHibernateServiceUri"];
-      referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+      _proxyHost = _settings["ProxyHost"];
+      _proxyPort = _settings["ProxyPort"];
+      _adapterServiceUri = _settings["AdapterServiceUri"];
+      var javaCoreUri = _settings["JavaCoreUri"];
+      _hibernateServiceUri = _settings["NHibernateServiceUri"];
+      _referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
       SetNodeIconClsMap();
 
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-        _javaServiceClient = new WebHttpClient(javaCoreUri, null, webProxy);
-        _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
-        _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
-        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri, null, webProxy);
+        _webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+        _javaServiceClient = new WebHttpClient(javaCoreUri, null, _webProxy);
+        _adapterServiceClient = new WebHttpClient(_adapterServiceUri, null, _webProxy);
+        _hibernateServiceClient = new WebHttpClient(_hibernateServiceUri, null, _webProxy);
+        _referenceDataServiceClient = new WebHttpClient(_referenceDataServiceUri, null, _webProxy);
       }
       else
       {
         _javaServiceClient = new WebHttpClient(javaCoreUri);
-        _adapterServiceClient = new WebHttpClient(adapterServiceUri);
-        _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
-        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri);
+        _adapterServiceClient = new WebHttpClient(_adapterServiceUri);
+        _hibernateServiceClient = new WebHttpClient(_hibernateServiceUri);
+        _referenceDataServiceClient = new WebHttpClient(_referenceDataServiceUri);
       }
       #endregion
     }
 
-    public WebHttpClient getServiceClient(string uri, string serviceName)
+    public WebHttpClient GetServiceClient(string uri, string serviceName)
     {
-      getSetting();
-      WebHttpClient _newServiceClient = null;
-      string serviceUri = uri + "/" + serviceName;
+      GetSetting();
+      WebHttpClient newServiceClient = null;
+      var serviceUri = uri + "/" + serviceName;
 
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        _newServiceClient = new WebHttpClient(serviceUri, null, webProxy);
+        newServiceClient = new WebHttpClient(serviceUri, null, _webProxy);
       }
       else
       {
-        _newServiceClient = new WebHttpClient(serviceUri);       
+        newServiceClient = new WebHttpClient(serviceUri);       
       }
-      return _newServiceClient;
+      return newServiceClient;
     }
 
     public Resources GetResource(String user)
@@ -126,7 +124,7 @@ namespace iRINGTools.Web.Models
     {
       try
       {
-        switch (nodeIconClsMap[type.ToLower()])
+        switch (_nodeIconClsMap[type.ToLower()])
         {
           case NodeIconCls.folder: return "folder";
           case NodeIconCls.project: return "treeProject";
@@ -148,29 +146,26 @@ namespace iRINGTools.Web.Models
     {
       _logger.Debug("In ScopesNode case block");
       Directories directory = null;
-      Resources resources = null;
 
-      string _key = user + "." + "directory";
-      string _resource = user + "." + "resource";
+        var key = user + "." + "directory";
+      var resource = user + "." + "resource";
       directory = GetScopes();
-      HttpContext.Current.Session[_key] = directory; 
-      resources = GetResource(user);
+      HttpContext.Current.Session[key] = directory; 
+      GetResource(user);
 
       Tree tree = null;
-      string context = "";
-      string treePath = "";
+      var context = "";
+      var treePath = "";
 
       if (directory != null)
       {
         tree = new Tree();
-        List<JsonTreeNode> folderNodes = tree.getNodes();
+        var folderNodes = tree.getNodes();
 
-        foreach (Folder folder in directory)
+        foreach (var folder in directory)
         {
-          TreeNode folderNode = new TreeNode();
-          folderNode.text = folder.Name;
-          folderNode.id = folder.Name;
-          folderNode.identifier = folderNode.id;
+          var folderNode = new TreeNode {text = folder.Name, id = folder.Name};
+            folderNode.identifier = folderNode.id;
           folderNode.hidden = false;
           folderNode.leaf = false;
           folderNode.iconCls = GetNodeIconCls(folder.Type);
@@ -189,12 +184,14 @@ namespace iRINGTools.Web.Models
           };
 
           folderNode.record = record;
-          folderNode.property = new Dictionary<string, string>();
-          folderNode.property.Add("Name", folder.Name);
-          folderNode.property.Add("Description", folder.Description);
-          folderNode.property.Add("Context", folder.Context);
-          folderNode.property.Add("User", folder.User);
-          folderNodes.Add(folderNode);
+          folderNode.property = new Dictionary<string, string>
+              {
+                  {"Name", folder.Name},
+                  {"Description", folder.Description},
+                  {"Context", folder.Context},
+                  {"User", folder.User}
+              };
+            folderNodes.Add(folderNode);
           TraverseDirectory(folderNode, folder, treePath);
         }
       }
@@ -208,8 +205,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<XElement>(String.Format("/{0}/{1}/binding", context, endpoint), true);
+        var newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+        obj = newServiceClient.Get<XElement>(String.Format("/{0}/{1}/binding", context, endpoint), true);
       }
       catch (Exception ex)
       {
@@ -225,8 +222,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<string>("/test");
+        var newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+        obj = newServiceClient.Get<string>("/test");
       }
       catch (Exception ex)
       {
@@ -261,8 +258,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<DataLayers>("/datalayers");
+        var newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+        obj = newServiceClient.Get<DataLayers>("/datalayers");
       }
       catch (Exception ex)
       {
@@ -274,11 +271,11 @@ namespace iRINGTools.Web.Models
 
     public Entity GetClassLabel(string classId)
     {
-      Entity entity = new Entity();
+      var entity = new Entity();
       try
       {
-        WebHttpClient _tempClient = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
-        entity = _tempClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
+        var tempClient = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
+        entity = tempClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
       }
       catch (Exception ex)
       {
@@ -293,8 +290,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", contextName, endpoint), true);
+        var newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+        obj = newServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", contextName, endpoint), true);
       }
       catch (Exception ex)
       {
@@ -310,8 +307,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", contextName, endpoint), true);
+        var newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+        obj = newServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", contextName, endpoint), true);
       }
       catch (Exception ex)
       {
@@ -327,7 +324,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        XElement binding = new XElement("module",
+        var binding = new XElement("module",
             new XAttribute("name", string.Format("{0}.{1}", scope, application)),
             new XElement("bind",
             new XAttribute("name", "DataLayer"),
@@ -336,8 +333,8 @@ namespace iRINGTools.Web.Models
           )
         );
 
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
+        var newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+        obj = newServiceClient.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
 
       }
       catch (Exception ex)
@@ -350,7 +347,7 @@ namespace iRINGTools.Web.Models
 
     public string GetRootSecurityRole()
     {
-      string rootSecurityRole = "";
+      var rootSecurityRole = "";
 
       try
       {
@@ -372,7 +369,7 @@ namespace iRINGTools.Web.Models
 
     public Urls GetEndpointBaseUrl(string user)
     {
-      bool ifExit = false;
+      var ifExit = false;
       Urls baseUrls = null;
 
       if (HttpContext.Current.Session[user + ".baseUrlList"] != null)
@@ -391,22 +388,21 @@ namespace iRINGTools.Web.Models
         }
       }        
 
-      string baseUri = _adapterServiceClient.GetBaseUri();
+      var baseUri = _adapterServiceClient.GetBaseUri();
 
 
-      foreach (Url baseUrl in baseUrls)
+      foreach (var baseUrl in baseUrls.Where(baseUrl => baseUrl.Urlocator.ToLower().Equals(baseUri.ToLower())))
       {
-        if (baseUrl.Urlocator.ToLower().Equals(baseUri.ToLower()))
           ifExit = true;
       }
 
       if (!ifExit)
       {
-        Url newBaseUrl = new Url { Urlocator = baseUri };
-        baseUrls.Add(newBaseUrl);
+          var newBaseUrl = new Url { Urlocator = baseUri };
+          if (baseUrls != null) baseUrls.Add(newBaseUrl);
       }
 
-      return baseUrls;
+        return baseUrls;
     }
 
     public ContextNames GetFolderContexts(string user)
@@ -453,12 +449,12 @@ namespace iRINGTools.Web.Models
         if (!state.Equals("new"))        
           CheckCombination(path, context, oldContext, user);
 
-        Resources resources = (Resources)HttpContext.Current.Session[user + ".resources"];
+        var resources = (Resources)HttpContext.Current.Session[user + ".resources"];
         obj = _javaServiceClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
 
         if (state != "new" && !context.Equals(oldContext))
         {
-          Folder folder = PrepareFolder(user, path);
+          var folder = PrepareFolder(user, path);
 
           if (folder != null)
             obj = UpdateFolders(folder, context, resources, oldContext);          
@@ -478,13 +474,10 @@ namespace iRINGTools.Web.Models
 
     public string Endpoint(string newEndpointName, string path, string description, string state, string context, string oldAssembly, string newAssembly, string baseUrl, string oldBaseUrl, string key)
     {
-      string obj = "";
-      Locator scope = null;
-      EndpointApplication application = null;
+      var obj = "";
+        EndpointApplication application = null;
       string endpointName = null;
-      Resource resourceOld = null;
-      Resource resourceNew = null;
-      bool createApp = false;
+        var createApp = false;
 
       string baseUri = CleanBaseUrl(baseUrl, '.');
       if (state.Equals("new"))
@@ -503,19 +496,20 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+        var newServiceClient = PrepareServiceClient(baseUrl, "adapter");
         CheckeCombination(baseUrl, oldBaseUrl, context, context, newEndpointName, endpointName, path, key);
-        Resources resourcesOld = (Resources)HttpContext.Current.Session[key + ".resources"];
+        var resourcesOld = (Resources)HttpContext.Current.Session[key + ".resources"];
         obj = _javaServiceClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}/{4}", path, newEndpointName, "endpoint", baseUri.Replace('/', '.'), newAssembly), description, true);
-        Resources resourcesNew = GetResource(key); 
+        var resourcesNew = GetResource(key);
 
-        
-        if (!state.Equals("new"))
+
+          Locator scope = null;
+          if (!state.Equals("new"))
         {
           if (newAssembly.ToLower() == oldAssembly.ToLower() && newEndpointName.ToLower() == endpointName.ToLower())
             return "";
           
-          resourceOld = FindResource(CleanBaseUrl(baseUrl, '/'), resourcesOld); 
+          var resourceOld = FindResource(CleanBaseUrl(baseUrl, '/'), resourcesOld); 
             
           if (resourceOld != null)
           {
@@ -537,11 +531,11 @@ namespace iRINGTools.Web.Models
             };
           }
           
-          obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps/{1}", context, newEndpointName), application, true);
+          obj = newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps/{1}", context, newEndpointName), application, true);
         }
         else if (state.Equals("new"))
         {
-          resourceNew = FindResource(CleanBaseUrl(baseUrl, '.'), resourcesNew);           
+          var resourceNew = FindResource(CleanBaseUrl(baseUrl, '.'), resourcesNew);           
 
           if (resourceNew != null)
           {
@@ -558,7 +552,7 @@ namespace iRINGTools.Web.Models
             };
           }
 
-          obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps", context), application, true);          
+          obj = newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps", context), application, true);          
         }
 
         _logger.Debug("Successfully called Adapter and Java Directory Service.");
@@ -575,30 +569,27 @@ namespace iRINGTools.Web.Models
 
     public string DeleteEntry(string path, string type, string context, string baseUrl, string user)
     {
-      string obj = null;     
+      string obj = null;
 
-      string name = null;
-      path = path.Replace('/', '.');
-      Locator scope = null;
-      EndpointApplication application = null;
+        path = path.Replace('/', '.');
 
-      try
+        try
       {
-        Resources resources = (Resources)HttpContext.Current.Session[user + ".resources"];
-        name = path.Substring(path.LastIndexOf('.') + 1);                  
+        var resources = (Resources)HttpContext.Current.Session[user + ".resources"];
+        var name = path.Substring(path.LastIndexOf('.') + 1);                  
 
         if (type.Equals("endpoint"))
         {
-          Resource resource = FindResource(CleanBaseUrl(baseUrl, '/'), resources);
-          scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
-          application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == name.ToLower());
+          var resource = FindResource(CleanBaseUrl(baseUrl, '/'), resources);
+          var scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
+          var application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == name.ToLower());
 
-          WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-          obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
+          var newServiceClient = PrepareServiceClient(baseUrl, "adapter");
+          obj = newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
         }
         else if (type.Equals("folder"))
         {
-          Folder folder = PrepareFolder(user, path);
+          var folder = PrepareFolder(user, path);
 
           if (folder != null)
             DeleteFolders(folder, context, resources);          
@@ -618,13 +609,13 @@ namespace iRINGTools.Web.Models
 
     public Response RegenAll(string user)
     {
-      Response totalObj = new Response();
-      string _key = user + "." + "directory";
+      var totalObj = new Response();
+      var key = user + "." + "directory";
       Directories directory = null;
-      if (HttpContext.Current.Session[_key] != null)      
-        directory = (Directories)HttpContext.Current.Session[_key];
+      if (HttpContext.Current.Session[key] != null)      
+        directory = (Directories)HttpContext.Current.Session[key];
 
-      foreach (Folder folder in directory)
+      foreach (var folder in directory)
       {
         GenerateFolders(folder, totalObj);
       }
@@ -633,7 +624,7 @@ namespace iRINGTools.Web.Models
     
     public string GetCombinationMsg()
     {
-      return combinationMsg;
+      return _combinationMsg;
     }
 
     public Response SaveDataLayer(MemoryStream dataLayerStream)
@@ -646,7 +637,7 @@ namespace iRINGTools.Web.Models
       {
         _logger.Error(ex.Message);
 
-        Response response = new Response()
+        var response = new Response()
         {
           Level = StatusLevel.Error,
           Messages = new Messages { ex.Message }
@@ -660,15 +651,15 @@ namespace iRINGTools.Web.Models
 
     static MemoryStream CreateDataLayerStream(string name, string mainDLL, string path)
     {
-      DataLayer dataLayer = new DataLayer()
+      var dataLayer = new DataLayer()
       {
         Name = name,
         MainDLL = mainDLL,
         Package = Utility.Zip(path),
       };
 
-      MemoryStream dataLayerStream = new MemoryStream();
-      DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
+      var dataLayerStream = new MemoryStream();
+      var serializer = new DataContractSerializer(typeof(DataLayer));
       
       serializer.WriteObject(dataLayerStream, dataLayer);
       dataLayerStream.Position = 0;
@@ -678,40 +669,37 @@ namespace iRINGTools.Web.Models
 
     private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
     {
-      if (baseUrl == "" || baseUrl == null)
+      if (string.IsNullOrEmpty(baseUrl))
         return _adapterServiceClient;
 
-      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
-      string adapterBaseUri = CleanBaseUrl(adapterServiceUri.ToLower(), '/');
+      var baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
+      var adapterBaseUri = CleanBaseUrl(_adapterServiceUri.ToLower(), '/');
 
-      if (!baseUri.Equals(adapterBaseUri))
-        return getServiceClient(baseUrl, serviceName);
-      else
-        return _adapterServiceClient;
+      return !baseUri.Equals(adapterBaseUri) ? GetServiceClient(baseUrl, serviceName) : _adapterServiceClient;
     }
 
     private Response GenerateFolders(Folder folder, Response totalObj)
     {
       Response obj = null;
-      Endpoints endpoints = folder.Endpoints;      
+      var endpoints = folder.Endpoints;      
 
       if (endpoints != null)
       {
         foreach (Endpoint endpoint in endpoints)
         {
-          WebHttpClient _newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
-          obj = _newServiceClient.Get<Response>(String.Format("/{0}/{1}/generate", endpoint.Context, endpoint.Name));
+          var newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
+          obj = newServiceClient.Get<Response>(String.Format("/{0}/{1}/generate", endpoint.Context, endpoint.Name));
           totalObj.Append(obj);          
         }
       }
 
-      Folders subFolders = folder.Folders;
+      var subFolders = folder.Folders;
 
       if (subFolders == null)
         return totalObj;
       else
       {
-        foreach (Folder subFolder in subFolders)
+        foreach (var subFolder in subFolders)
         {
           obj = GenerateFolders(subFolder, totalObj);
         }
@@ -722,49 +710,48 @@ namespace iRINGTools.Web.Models
 
     private Folder PrepareFolder(string user, string path)
     {
-      string _key = user + "." + "directory";
-      if (HttpContext.Current.Session[_key] != null)
+      var key = user + "." + "directory";
+      if (HttpContext.Current.Session[key] != null)
       {
-        Directories directory = (Directories)HttpContext.Current.Session[_key];
+        var directory = (Directories)HttpContext.Current.Session[key];
         return FindFolder(directory, path);        
       }
       return null;
     }
 
-    private void getSetting()
+    private void GetSetting()
     {
       if (_settings == null)
         _settings = new ServiceSettings();
       
-      proxyHost = _settings["ProxyHost"];
-      proxyPort = _settings["ProxyPort"];
+      _proxyHost = _settings["ProxyHost"];
+      _proxyPort = _settings["ProxyPort"];
     }
 
     private string UpdateFolders(Folder folder, string context, Resources resources, String oldContext)
     {
       string obj = null;
-      Endpoints endpoints = folder.Endpoints;
-      Resource resource = null;
+      var endpoints = folder.Endpoints;
 
-      if (endpoints != null)
+        if (endpoints != null)
       {
-        foreach (Endpoint endpoint in folder.Endpoints)
+        foreach (var endpoint in folder.Endpoints)
         {
-          resource = FindResource(endpoint.BaseUrl, resources);
-          Locator scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == oldContext.ToLower());
+          var resource = FindResource(endpoint.BaseUrl, resources);
+          var scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == oldContext.ToLower());
 
-          WebHttpClient _newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
-          obj = _newServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
+          var newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
+          obj = newServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
         }
       }
 
-      Folders subFolders = folder.Folders;
+      var subFolders = folder.Folders;
 
       if (subFolders == null)
         return null;
       else
       {
-        foreach (Folder subFolder in subFolders)
+        foreach (var subFolder in subFolders)
         {
           obj = UpdateFolders(subFolder, context, resources, oldContext);
         }
@@ -776,9 +763,8 @@ namespace iRINGTools.Web.Models
     private string DeleteFolders(Folder folder, string context, Resources resources)
     {
       string obj = null;
-      Endpoints endpoints = folder.Endpoints;    
-      Resource resource = null;
-      EndpointApplication application = null;
+      var endpoints = folder.Endpoints;
+        EndpointApplication application = null;
 
       Locator scope = null;
 
@@ -786,22 +772,22 @@ namespace iRINGTools.Web.Models
       {
         foreach (Endpoint endpoint in endpoints)
         {
-          resource = FindResource(endpoint.BaseUrl, resources);
+          var resource = FindResource(endpoint.BaseUrl, resources);
           scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
           application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpoint.Name.ToLower());
 
-          WebHttpClient _newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
-          obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
+          var newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
+          obj = newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
         }
       }
 
-      Folders subFolders = folder.Folders;
+      var subFolders = folder.Folders;
 
       if (subFolders == null)
         return null;
       else
       {
-        foreach (Folder subFolder in subFolders)
+        foreach (var subFolder in subFolders)
         {
           obj = DeleteFolders(subFolder, context, resources);
         }
@@ -812,7 +798,7 @@ namespace iRINGTools.Web.Models
 
     private static void SetNodeIconClsMap()
     {
-      nodeIconClsMap = new Dictionary<string, NodeIconCls>()
+      _nodeIconClsMap = new Dictionary<string, NodeIconCls>()
       {
   	    {"folder", NodeIconCls.folder},
   	    {"project", NodeIconCls.project},
@@ -837,23 +823,16 @@ namespace iRINGTools.Web.Models
         HttpContext.Current.Session[user + "." + "resource"] = null;
     }
 
-    private Resource FindResource(string baseUrl, Resources resources)
+    private static Resource FindResource(string baseUrl, IEnumerable<Resource> resources)
     {
-      foreach (Resource rc in resources)
-      {
-        if (rc.BaseUrl.ToLower().Equals(baseUrl.ToLower()))
-        {
-          return rc;
-        }
-      }
-      return null;
+        return resources.FirstOrDefault(rc => rc.BaseUrl.ToLower().Equals(baseUrl.ToLower()));
     }
 
-    private string CleanBaseUrl(string url, char con)
+      private static string CleanBaseUrl(string url, char con)
     {
       try
       {
-        System.Uri uri = new System.Uri(url);
+        var uri = new System.Uri(url);
         return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
       }
       catch(Exception){}
@@ -862,55 +841,49 @@ namespace iRINGTools.Web.Models
 
     private void CheckeCombination(string baseUrl, string oldBaseUrl, string context, string oldContext, string endpointName, string oldEndpointName, string path, string user)
     {
-      string _resource = user + ".resources";
-      string lpath = "";
+      var _resource = user + ".resources";
+        var lpath = "";
       Locator scope = null;
 
-      if (HttpContext.Current.Session[_resource] != null)
-      {
-        Resources resources = (Resources)HttpContext.Current.Session[_resource];
-        Resource resource = FindResource(CleanBaseUrl(oldBaseUrl, '/'), resources);
+        if (HttpContext.Current.Session[_resource] == null) return;
+        var resources = (Resources)HttpContext.Current.Session[_resource];
+        var resource = FindResource(CleanBaseUrl(oldBaseUrl, '/'), resources);
 
         if (resource != null)
-          scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
-        
-        if (scope != null)
-        {
-          EndpointApplication application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpointName.ToLower());
-          
-          if (application != null && !application.Path.Replace("/", ".").Equals(path))
-          {
-            lpath = application.Path;
-            combinationMsg = "The combination of (" + baseUrl.Replace(".", "/") + ", " + context + ", " + endpointName + ") at " + path.Replace(".", "/") + " is allready existed at " + lpath + ".";
-            _logger.Error("Duplicated combination of baseUrl, context, and endpoint name");
-            throw new Exception("Duplicated combination of baseUrl, context, and endpoint name");
-          }
-        }        
-      }      
+            scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
+
+        if (scope == null) return;
+        var application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpointName.ToLower());
+
+        if (application == null || application.Path.Replace("/", ".").Equals(path)) return;
+        lpath = application.Path;
+        _combinationMsg = "The combination of (" + baseUrl.Replace(".", "/") + ", " + context + ", " + endpointName + ") at " + path.Replace(".", "/") + " is allready existed at " + lpath + ".";
+        _logger.Error("Duplicated combination of baseUrl, context, and endpoint name");
+        throw new Exception("Duplicated combination of baseUrl, context, and endpoint name");
     }
 
     private void CheckCombination(Folder folder, string path, string context, string oldContext, string user)
     {
-      Endpoints endpoints = folder.Endpoints;
-      string endpointPath = "";
-      string folderPath = "";
+      var endpoints = folder.Endpoints;
+      var endpointPath = "";
+      var folderPath = "";
 
       if (endpoints != null)
       {
-        foreach (Endpoint endpoint in endpoints)
+        foreach (var endpoint in endpoints)
         {
           endpointPath = path + "." + endpoint.Name;
           CheckeCombination(endpoint.BaseUrl, endpoint.BaseUrl, context, oldContext, endpoint.Name, endpoint.Name, endpointPath, user);
         }
       }
 
-      Folders subFolders = folder.Folders;
+      var subFolders = folder.Folders;
 
       if (subFolders == null)
         return;
       else
       {
-        foreach (Folder subFolder in subFolders)
+        foreach (var subFolder in subFolders)
         {
           folderPath = path + "." + subFolder.Name;
           CheckCombination(subFolder, folderPath, context, oldContext, user);
@@ -920,18 +893,16 @@ namespace iRINGTools.Web.Models
 
     private void CheckCombination(string path, string context, string oldContext, string user)
     {
-      string _key = user + "." + "directory";
-      if (HttpContext.Current.Session[_key] != null)
-      {
-        Directories directory = (Directories)HttpContext.Current.Session[_key];
-        Folder folder = FindFolder(directory, path);
+      var _key = user + "." + "directory";
+        if (HttpContext.Current.Session[_key] == null) return;
+        var directory = (Directories)HttpContext.Current.Session[_key];
+        var folder = FindFolder(directory, path);
         CheckCombination(folder, path, context, oldContext, user);
-      }
     }
 
-    private void GetLastName(string path, out string newpath, out string name)
+    private static void GetLastName(string path, out string newpath, out string name)
     {
-      int dotPos = path.LastIndexOf('.');
+      var dotPos = path.LastIndexOf('.');
 
       if (dotPos < 0)
       {
@@ -952,41 +923,27 @@ namespace iRINGTools.Web.Models
 
       if (newpath == "")
       {
-        foreach (Folder folder in scopes)
-        {
-          if (folder.Name == folderName)
-            return folder;
-        }
+          return scopes.FirstOrDefault(folder => folder.Name == folderName);
       }
       else
       {
-        Folders folders = GetFolders(scopes, newpath);
+        var folders = GetFolders(scopes, newpath);
         return folders.FirstOrDefault<Folder>(o => o.Name == folderName);
       }
       return null;
     }
 
-    private Folders GetFolders(List<Folder> scopes, string path)
+    private IEnumerable<Folder> GetFolders(List<Folder> scopes, string path)
     {
       if (path == "")
         return (Folders)scopes;
 
-      string[] level = path.Split('.');
+      var level = path.Split('.');
 
-      foreach (Folder folder in scopes)
-      {
-        if (folder.Name.Equals(level[0]))
-        {
-          if (level.Length == 1)
-            return folder.Folders;
-          else
-            return TraverseGetFolders(folder, level, 0);
-        }
-      }
-      return null;
+      return scopes.Where(folder => folder.Name.Equals(level[0])).Select(folder => level.Length == 1 ? folder.Folders : TraverseGetFolders(folder, level, 0)).FirstOrDefault();
     }
 
-    private Folders TraverseGetFolders(Folder folder, string[] level, int depth)
+    private static Folders TraverseGetFolders(Folder folder, string[] level, int depth)
     {
       if (folder.Folders == null)
       {
@@ -997,11 +954,7 @@ namespace iRINGTools.Web.Models
       {
         if (level.Length > depth + 1)
         {
-          foreach (Folder subFolder in folder.Folders)
-          {
-            if (subFolder.Name == level[depth + 1])
-              return TraverseGetFolders(subFolder, level, depth + 1);
-          }
+            return (from subFolder in folder.Folders where subFolder.Name == level[depth + 1] select TraverseGetFolders(subFolder, level, depth + 1)).FirstOrDefault();
         }
         else
         {
@@ -1013,22 +966,20 @@ namespace iRINGTools.Web.Models
 
     private void TraverseDirectory(TreeNode folderNode, Folder folder, string treePath)
     {
-      List<JsonTreeNode> folderNodeList = folderNode.getChildren();
-      Endpoints endpoints = folder.Endpoints;
-      string context = "";
-      string endpointName;
-      string folderName;
-      string baseUrl = "";
-      string assembly = "";
-      string dataLayerName = "";
-      string folderPath = treePath;
+      var folderNodeList = folderNode.getChildren();
+      var endpoints = folder.Endpoints;
+      var context = "";
+        var baseUrl = "";
+      var assembly = "";
+      var dataLayerName = "";
+      var folderPath = treePath;
 
       if (endpoints != null)
       {
-        foreach (Endpoint endpoint in endpoints)
+        foreach (var endpoint in endpoints)
         {
-          LeafNode endPointNode = new LeafNode();
-          endpointName = endpoint.Name;
+          var endPointNode = new LeafNode();
+          var endpointName = endpoint.Name;
           endPointNode.text = endpoint.Name;
           endPointNode.iconCls = "application";
           endPointNode.type = "ApplicationNode";
@@ -1047,7 +998,7 @@ namespace iRINGTools.Web.Models
             baseUrl = endpoint.BaseUrl + "/adapter";
 
           #region Get Assambly information
-          XElement bindings = GetBinding(context, endpointName, baseUrl);
+          var bindings = GetBinding(context, endpointName, baseUrl);
           DataLayer dataLayer = null;
           if (bindings != null)
           {
@@ -1091,10 +1042,10 @@ namespace iRINGTools.Web.Models
         return;
       else
       {
-        foreach (Folder subFolder in folder.Folders)
+        foreach (var subFolder in folder.Folders)
         {
-          folderName = subFolder.Name;
-          TreeNode subFolderNode = new TreeNode();
+          var folderName = subFolder.Name;
+          var subFolderNode = new TreeNode();
           subFolderNode.text = folderName;
           subFolderNode.iconCls = GetNodeIconCls(subFolder.Type);
           subFolderNode.type = "folder";
@@ -1114,12 +1065,14 @@ namespace iRINGTools.Web.Models
             securityRole = subFolder.SecurityRole
           };
           subFolderNode.record = record;
-          subFolderNode.property = new Dictionary<string, string>();
-          subFolderNode.property.Add("Name", folderName);
-          subFolderNode.property.Add("Description", subFolder.Description);
-          subFolderNode.property.Add("Context", subFolder.Context);
-          subFolderNode.property.Add("User", subFolder.User);
-          folderNodeList.Add(subFolderNode);
+          subFolderNode.property = new Dictionary<string, string>
+              {
+                  {"Name", folderName},
+                  {"Description", subFolder.Description},
+                  {"Context", subFolder.Context},
+                  {"User", subFolder.User}
+              };
+            folderNodeList.Add(subFolderNode);
           treePath = folderPath + "." + folderName;
           TraverseDirectory(subFolderNode, subFolder, treePath);
         }

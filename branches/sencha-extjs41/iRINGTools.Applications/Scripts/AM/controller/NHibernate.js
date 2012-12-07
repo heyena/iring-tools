@@ -44,7 +44,9 @@ Ext.define('AM.controller.NHibernate', {
     'nhibernate.NhibernateTree',
     'nhibernate.SelectPropertiesForm',
     'nhibernate.SelectDataKeysForm',
-    'nhibernate.SetPropertyForm'
+    'nhibernate.SetPropertyForm',
+    'nhibernate.SetRelationForm',
+    'nhibernate.RelationsGrid'
   ],
 
   refs: [
@@ -96,6 +98,13 @@ Ext.define('AM.controller.NHibernate', {
       ref: 'dataPropertyForm',
       selector: 'setpropertyform',
       xtype: 'setpropertyform'
+    },
+    {
+      autoCreate: true,
+      forceCreate: true,
+      ref: 'relationsForm',
+      selector: 'relationsform',
+      xtype: 'relationsform'
     },
     {
       ref: 'dirTree',
@@ -603,7 +612,7 @@ Ext.define('AM.controller.NHibernate', {
         me.showDataPropertyForm(panel);
         break;
         case 'RELATIONSHIPS':
-        //setRelations(editor, tree, dataNode, contextName, endpoint);
+        me.showRelationsForm(panel);
         break;
         case 'RELATIONSHIP':
         //setRelationFields(editor, rootNode, dataNode, contextName, endpoint);
@@ -1217,6 +1226,39 @@ Ext.define('AM.controller.NHibernate', {
 
     panel.add(form);
     panel.doLayout();
+  },
+
+  showRelationsForm: function(nhibernatePanel) {
+    var me = this, 
+    form = me.getRelationsForm();
+
+    var grid = form.down('relationsgrid');
+
+    var gridStore = grid.getStore();
+    var dataTree = nhibernatePanel.down('nhibernatetree');
+    var dirNode = me.getDirNode(dataTree.dirNode);
+    var treeNode = nhibernatePanel.treeNode;
+
+    var context = dirNode.data.property.Context;
+    var endpoint = dirNode.data.property.Name;
+
+    grid.endpoint = form.endpoint = endpoint;
+    grid.context = form.context = context;
+    grid.node = form.node = treeNode;
+    grid.rootNode = form.rootNode = dataTree.getRootNode();
+
+    treeNode.eachChild(function(n) {
+      gridStore.add({'relationName': n});
+    });
+
+    panel = nhibernatePanel.down('#nhibernateContent');
+
+    panel.removeAll();
+
+    panel.add(form);
+    panel.doLayout();
+
+    Ext.getBody().unmask();
   },
 
   getConnStringParts: function(connString, dirNode) {

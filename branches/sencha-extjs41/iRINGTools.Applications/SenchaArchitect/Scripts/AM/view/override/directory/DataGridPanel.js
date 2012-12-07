@@ -3,7 +3,7 @@ Ext.define('AM.view.override.directory.DataGridPanel', {
   initComponent: function () {
     var me = this;
      var storeId = Ext.data.IdGenerator.get("uuid").generate();
-      
+
     me.store = Ext.create('AM.store.DataGridStore', {
       storeId: "DataGrid" + storeId
     });
@@ -50,11 +50,7 @@ Ext.define('AM.view.override.directory.DataGridPanel', {
     Ext.apply(me, {
       bbar: ptb,
       iconCls: 'tabsData',
-      columns: {
-        defaults: {
-          field: { xtype: 'textfield' }
-        }
-      },
+
       features: [filters]
     });
     
