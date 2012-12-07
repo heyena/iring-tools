@@ -184,48 +184,53 @@ namespace org.iringtools.adapter
 
           if (dataObject != null)
           {
-            foreach (var classTemplateListMap in graphMap.classTemplateMaps)
+            foreach (var classTemplateMap in graphMap.classTemplateMaps)
             {
-              ClassTemplates manifestClassTemplatesMap = new ClassTemplates()
+              ClassTemplates manifestClassTemplates = new ClassTemplates()
               {
                 templates = new Templates()
               };
-              manifestGraph.classTemplatesList.Add(manifestClassTemplatesMap);
+              manifestGraph.classTemplatesList.Add(manifestClassTemplates);
 
-              ClassMap classMap = classTemplateListMap.classMap;
-              List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
-              String temName, rolName, rolid, temid, clasid;
+              ClassMap classMap = classTemplateMap.classMap;
+              TemplateMaps templateMaps = classTemplateMap.templateMaps;
+              String templateName, roleName, roleId, templateId;
 
-              org.iringtools.dxfr.manifest.Keys identifiers = new org.iringtools.dxfr.manifest.Keys();
-              foreach (TemplateMap templateMap in templateMaps)
+              Keys keys = new Keys();
+              foreach (ClassTemplateMap anyClassTemplateMap in graphMap.classTemplateMaps)
               {
-                temName = templateMap.name;
-                temid = templateMap.id;
+                ClassMap anyClassMap = anyClassTemplateMap.classMap;
 
-                foreach (RoleMap roleMap in templateMap.roleMaps)
+                foreach (TemplateMap templateMap in anyClassTemplateMap.templateMaps)
                 {
-                  rolName = roleMap.name;
-                  rolid = roleMap.id;
+                  templateName = templateMap.name;
+                  templateId = templateMap.id;
 
-                  if (!String.IsNullOrEmpty(roleMap.propertyName))
+                  foreach (RoleMap roleMap in templateMap.roleMaps)
                   {
-                    string[] property = roleMap.propertyName.Split('.');
-                    string objectName = property[0].Trim();
-                    string propertyName = property[1].Trim();
+                    roleName = roleMap.name;
+                    roleId = roleMap.id;
 
-
-                    foreach (String identifier in classMap.identifiers)
+                    if (!String.IsNullOrEmpty(roleMap.propertyName))
                     {
-                      if (identifier.ToLower() == roleMap.propertyName.ToLower())
+                      string[] property = roleMap.propertyName.Split('.');
+                      string objectName = property[0].Trim();
+                      string propertyName = property[1].Trim();
+
+
+                      foreach (String identifier in classMap.identifiers)
                       {
-                        Key key = new Key();
-                        key.templateId = temid;
-                        key.roleId = rolid;
-                        key.classId = classMap.id;
-                        identifiers.Add(key);
+                        if (identifier.ToLower() == roleMap.propertyName.ToLower())
+                        {
+                          Key key = new Key();
+                          key.templateId = templateId;
+                          key.roleId = roleId;
+                          key.classId = anyClassMap.id;
+                          keys.Add(key);
+
+                        }
 
                       }
-
                     }
                   }
                 }
@@ -234,9 +239,9 @@ namespace org.iringtools.adapter
               {
                 id = classMap.id,
                 name = classMap.name,
-                keys = identifiers,
+                keys = keys,
               };
-              manifestClassTemplatesMap.@class = manifestClass;
+              manifestClassTemplates.@class = manifestClass;
 
               foreach (TemplateMap templateMap in templateMaps)
               {
@@ -247,7 +252,7 @@ namespace org.iringtools.adapter
                   name = templateMap.name,
                   transferOption = TransferOption.Desired,
                 };
-                manifestClassTemplatesMap.templates.Add(manifestTemplate);
+                manifestClassTemplates.templates.Add(manifestTemplate);
 
                 foreach (RoleMap roleMap in templateMap.roleMaps)
                 {
@@ -964,7 +969,16 @@ namespace org.iringtools.adapter
                           }
                         }
 
-                        RecurBuildCrossGraphMap(ref manifestGraph, manifestRole.@class, mappingGraph, mappingRole.classMap);
+                        Class childManifestClass = manifestRole.@class;
+                        foreach (ClassTemplates anyClassTemplates in manifestGraph.classTemplatesList)
+                        {
+                          if (manifestRole.@class.id == anyClassTemplates.@class.id)
+                          {
+                            childManifestClass = anyClassTemplates.@class;
+                          }
+                        }
+
+                        RecurBuildCrossGraphMap(ref manifestGraph, childManifestClass, mappingGraph, mappingRole.classMap);
                       }
                     }
                   }
