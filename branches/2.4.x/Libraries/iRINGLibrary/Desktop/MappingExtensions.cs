@@ -336,9 +336,28 @@ namespace org.iringtools.mapping
         };
 
         //TODO: Resolve identifiers based on the manifestIdentifiers.
-        foreach (string identifier in classMap.identifiers)
+
+        foreach (Key key in  manifestClass.keys)
         {
-            newClassMap.identifiers.Add(identifier);
+          foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
+          {
+            if (classTemplateMap.classMap.id == key.classId)
+            {
+              foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
+              {
+                if (templateMap.id == key.templateId)
+                {
+                  foreach (RoleMap roleMap in templateMap.roleMaps)
+                  {
+                    if (roleMap.id == key.roleId)
+                    {
+                      newClassMap.identifiers.Add(roleMap.propertyName);
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
 
         return newClassMap;
