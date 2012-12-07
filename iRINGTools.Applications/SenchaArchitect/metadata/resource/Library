@@ -6,7 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
-        "basePath": "http://localhost/extjs-4.1.1/",
+        "basePath": "http://localhost/extjs412/",
         "debug": true
     },
     "id": "ExtBox1-ext-gen1534",

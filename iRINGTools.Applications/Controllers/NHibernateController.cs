@@ -49,7 +49,7 @@ namespace org.iringtools.web.Controllers
      
       if (getDbDict)
       {
-        databaseDictionary = _repository.GetDBDictionary(contextName, endpoint, baseUrl);
+        databaseDictionary = _repository.GetDbDictionary(contextName, endpoint, baseUrl);
       }
 
       Session[key] = databaseDictionary;
@@ -70,7 +70,7 @@ namespace org.iringtools.web.Controllers
 
           if (form["tableNames"] != null)
           {
-            dbObjects = _repository.GetDBObjects(
+            dbObjects = _repository.GetDbObjects(
               form["contextName"], form["endpoint"], form["dbProvider"], form["dbServer"], form["dbInstance"],
               form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"],
               form["serName"], form["baseUrl"], databaseDictionary);
@@ -93,7 +93,7 @@ namespace org.iringtools.web.Controllers
       {
         string response = string.Empty;
 
-        response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"], form["baseUrl"]);
+        response = _repository.SaveDbDictionary(form["scope"], form["app"], form["tree"], form["baseUrl"]);
 
         if (response != null)
         {
@@ -142,7 +142,7 @@ namespace org.iringtools.web.Controllers
       try
       {
         string baseUrl = form["baseUrl"];
-        DataProviders dataProviders = _repository.GetDBProviders(baseUrl);                
+        DataProviders dataProviders = _repository.GetDbProviders(baseUrl);                
 
         List<DBProvider> providers = new List<DBProvider>();
         foreach (Provider dataProvider in dataProviders.Distinct().ToList())

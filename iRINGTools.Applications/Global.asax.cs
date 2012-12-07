@@ -10,6 +10,7 @@ using Ninject.Modules;
 using Ninject.Web.Mvc;
 
 using iRINGTools.Web.Models;
+using org.iringtools.web.Models;
 
 namespace iRINGTools.Web
 {

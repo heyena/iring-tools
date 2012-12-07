@@ -26,8 +26,7 @@ Ext.application({
     'Property'
   ],
   views: [
-    'AMViewport',
-    'nhibernate.RelationsGrid'
+    'AMViewport'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,
@@ -38,10 +37,5 @@ Ext.application({
     'Search',
     'Spreadsheet',
     'NHibernate'
-  ],
-
-  launch: function() {
-
-  }
-
+  ]
 });

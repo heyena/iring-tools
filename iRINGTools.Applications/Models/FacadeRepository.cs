@@ -17,33 +17,32 @@ namespace org.iringtools.web.Models
     private static readonly ILog _logger = LogManager.GetLogger(typeof(FacadeRepository));
     private WebHttpClient _facadeServiceClient = null;        
     private string _facadeServiceURI = string.Empty;
-    private string relativeUri = string.Empty;
-    private string proxyHost = "";
-    private string proxyPort = "";
-    private WebProxy webProxy = null;
-    private string facadeServiceUri = "";
+    private string _relativeUri = string.Empty;
+    private string _proxyHost = "";
+    private string _proxyPort = "";
+    private WebProxy _webProxy = null;
+    private string _facadeServiceUri = "";
 
     [Inject]
     public FacadeRepository()
     {
-      NameValueCollection settings = ConfigurationManager.AppSettings;
-
-      ServiceSettings _settings = new ServiceSettings();
+      var settings = ConfigurationManager.AppSettings;
+      var _settings = new ServiceSettings();
       _settings.AppendSettings(settings);
 
       #region initialize webHttpClient for converting old mapping
-      proxyHost = _settings["ProxyHost"];
-      proxyPort = _settings["ProxyPort"];
-      facadeServiceUri = _settings["FacadeServiceUri"];
+      _proxyHost = _settings["ProxyHost"];
+      _proxyPort = _settings["ProxyPort"];
+      _facadeServiceUri = _settings["FacadeServiceUri"];
 
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy; 
-        _facadeServiceClient = new WebHttpClient(facadeServiceUri, null, webProxy);
+        _webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy; 
+        _facadeServiceClient = new WebHttpClient(_facadeServiceUri, null, _webProxy);
       }
       else
       {
-        _facadeServiceClient = new WebHttpClient(facadeServiceUri);
+        _facadeServiceClient = new WebHttpClient(_facadeServiceUri);
       }
       #endregion
     }
@@ -53,9 +52,9 @@ namespace org.iringtools.web.Models
       Response resp = null;
       try
       {
-        WebHttpClient _newServiceClient = GetFacadeServiceClient(baseUrl);
-        relativeUri = string.Format("/{0}/{1}/{2}/refresh", scope, app, graph);
-        resp = _newServiceClient.Get<Response>(relativeUri);
+        var newServiceClient = GetFacadeServiceClient(baseUrl);
+        _relativeUri = string.Format("/{0}/{1}/{2}/refresh", scope, app, graph);
+        resp = newServiceClient.Get<Response>(_relativeUri);
       }
       catch (Exception ex)
       {
@@ -66,34 +65,31 @@ namespace org.iringtools.web.Models
 
     private WebHttpClient GetFacadeServiceClient(string baseUrl)
     {
-      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
-      string facadeBaseUri = CleanBaseUrl(facadeServiceUri.ToLower(), '/');
+      var baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
+      var facadeBaseUri = CleanBaseUrl(_facadeServiceUri.ToLower(), '/');
 
-      if (!baseUri.Equals(facadeBaseUri))
-        return GetServiceClinet(baseUrl, "facade/svc");
-      else
-        return _facadeServiceClient;
+      return !baseUri.Equals(facadeBaseUri) ? GetServiceClinet(baseUrl, "facade/svc") : _facadeServiceClient;
     }
 
     public WebHttpClient GetServiceClinet(string uri, string serviceName)
     {
-      WebHttpClient _newServiceClient = null;
-      string serviceUri = uri + "/" + serviceName;
+      WebHttpClient newServiceClient = null;
+      var serviceUri = uri + "/" + serviceName;
 
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        _newServiceClient = new WebHttpClient(serviceUri, null, webProxy);
+        newServiceClient = new WebHttpClient(serviceUri, null, _webProxy);
       }
       else
       {
-        _newServiceClient = new WebHttpClient(serviceUri);
+        newServiceClient = new WebHttpClient(serviceUri);
       }
-      return _newServiceClient;
+      return newServiceClient;
     }
 
-    private string CleanBaseUrl(string url, char con)
+    private static string CleanBaseUrl(string url, char con)
     {
-      System.Uri uri = new System.Uri(url);
+      var uri = new System.Uri(url);
       return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
     }
   }

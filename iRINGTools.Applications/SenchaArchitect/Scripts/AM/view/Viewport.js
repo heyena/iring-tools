@@ -17,6 +17,7 @@ Ext.define('AM.view.Viewport', {
   extend: 'AM.view.AMViewport',
   renderTo: Ext.getBody(),
   requires: [
+    'AM.view.nhibernate.CreateRelationForm',
     'AM.view.menus.RootAdminScopesMenu',
     'AM.view.menus.GroupAdminScopesMenu',
     'AM.view.menus.NoLdapScopesMenu',
@@ -44,7 +45,6 @@ Ext.define('AM.view.Viewport', {
     'AM.view.search.SearchTree',
     'AM.view.nhibernate.SelectPropertiesForm',
     'AM.view.spreadsheet.SpreadsheetWindow',
-    'AM.view.nhibernate.RelationsForm',
     'AM.view.nhibernate.ConnectionStringForm',
     'AM.view.mapping.MappingPanel',
     'AM.view.spreadsheet.SpreadsheetPanel',
@@ -58,7 +58,7 @@ Ext.define('AM.view.Viewport', {
     'AM.view.nhibernate.DataKeyForm',
     'AM.view.nhibernate.SelectDataKeysForm',
     'AM.view.nhibernate.SetPropertyForm',
-    'AM.view.nhibernate.ConfigRelationForm',
-    'AM.view.nhibernate.RelationsGrid'
+    'AM.view.nhibernate.SetRelationForm',
+    'AM.view.nhibernate.RelationsForm'
   ]
 });

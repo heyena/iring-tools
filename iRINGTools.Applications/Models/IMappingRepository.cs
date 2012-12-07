@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using org.iringtools.mapping;
+﻿using org.iringtools.mapping;
 
-namespace iRINGTools.Web.Models
+namespace org.iringtools.web.Models
 {
   public interface IMappingRepository
   {

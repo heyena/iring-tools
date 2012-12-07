@@ -14,7 +14,7 @@ using System.Configuration;
 
 namespace org.iringtools.web.Models
 {
-  public class NHibernateRepository : INHibernateRe3pository
+  public class NHibernateRepository : INHibernateRepository
   {
     private WebHttpClient _adapterServiceClient = null;
     private WebHttpClient _hibernateServiceClient = null;
@@ -129,18 +129,18 @@ namespace org.iringtools.web.Models
     }
 
     #region NHibernate Configuration Wizard support methods
-    public DataProviders GetDBProviders(string baseUrl)
+    public DataProviders GetDbProviders(string baseUrl)
     {
-      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
-      return _newServiceClient.Get<DataProviders>("/providers");
+      var newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
+      return newServiceClient.Get<DataProviders>("/providers");
     }
 
-    public string SaveDBDictionary(string scope, string application, string tree, string baseUrl)
+    public string SaveDbDictionary(string scope, string application, string tree, string baseUrl)
     {
-      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
-      DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
+      var newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
+      var dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
 
-      string connStr = dbDictionary.ConnectionString;
+      var connStr = dbDictionary.ConnectionString;
       if (!String.IsNullOrEmpty(connStr))
       {
         string urlEncodedConnStr = Utility.DecodeFrom64(connStr);
@@ -150,7 +150,7 @@ namespace org.iringtools.web.Models
       string postResult = null;
       try
       {
-        postResult = _newServiceClient.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
+        postResult = newServiceClient.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
       }
       catch (Exception ex)
       {
@@ -159,10 +159,10 @@ namespace org.iringtools.web.Models
       return postResult;
     }
 
-    public DatabaseDictionary GetDBDictionary(string context, string application, string baseUrl)
+    public DatabaseDictionary GetDbDictionary(string context, string application, string baseUrl)
     {
-      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
-      DatabaseDictionary dbDictionary = _newServiceClient.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", context, application));
+      var newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
+      var dbDictionary = newServiceClient.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", context, application));
 
       string connStr = dbDictionary.ConnectionString;
       if (!String.IsNullOrEmpty(connStr))
@@ -194,28 +194,30 @@ namespace org.iringtools.web.Models
     }
 
     // use appropriate icons especially node with children
-    public Tree GetDBObjects(string contextName, string endpoint, string dbProvider, string dbServer,
+    public Tree GetDbObjects(string contextName, string endpoint, string dbProvider, string dbServer,
       string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName, string baseUrl, DatabaseDictionary databaseDictionary)
     {
-      bool hasDataObjectinDBDictionary = false;
-      bool hasDBDictionary = false;
-      WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
-      string uri = String.Format("/{0}/{1}/objects", contextName, endpoint);
+      var hasDataObjectinDBDictionary = false;
+      var hasDBDictionary = false;
+      var _newServiceClient = PrepareServiceClient(baseUrl, "hibernate");
+      var uri = String.Format("/{0}/{1}/objects", contextName, endpoint);
       Tree tree = null;
 
-      Request request = new Request();
-      request.Add("dbProvider", dbProvider);
-      request.Add("dbServer", dbServer);
-      request.Add("portNumber", portNumber);
-      request.Add("dbInstance", dbInstance);
-      request.Add("dbName", dbName);
-      request.Add("dbSchema", dbSchema);
-      request.Add("dbUserName", dbUserName);
-      request.Add("dbPassword", dbPassword);
-      request.Add("tableNames", tableNames);
-      request.Add("serName", serName);
+      var request = new Request
+          {
+              {"dbProvider", dbProvider},
+              {"dbServer", dbServer},
+              {"portNumber", portNumber},
+              {"dbInstance", dbInstance},
+              {"dbName", dbName},
+              {"dbSchema", dbSchema},
+              {"dbUserName", dbUserName},
+              {"dbPassword", dbPassword},
+              {"tableNames", tableNames},
+              {"serName", serName}
+          };
 
-      List<DataObject> dataObjects = _newServiceClient.Post<Request, List<DataObject>>(uri, request, true);
+        var dataObjects = _newServiceClient.Post<Request, List<DataObject>>(uri, request, true);
 
       if (databaseDictionary != null)
         if (databaseDictionary.dataObjects.Count > 0)
@@ -224,7 +226,7 @@ namespace org.iringtools.web.Models
       if (dataObjects != null)
       {
         tree = new Tree();
-        List<JsonTreeNode> dbObjectNodes = tree.getNodes();
+        var dbObjectNodes = tree.getNodes();
 
         foreach (DataObject dataObject in dataObjects)
         {
@@ -431,7 +433,7 @@ namespace org.iringtools.web.Models
                   
                   if (!tempDataProperty.isHidden)
                   {
-                    if (!hasShown(shownProperty, tempPropertyNode.text.ToLower()))
+                    if (!HasShown(shownProperty, tempPropertyNode.text.ToLower()))
                     {
                       shownProperty.Add(tempPropertyNode.text.ToLower());
                       tempPropertyNode.hidden = false;
@@ -482,7 +484,7 @@ namespace org.iringtools.web.Models
                   if (hiddenRootNode.children[j].text.ToLower() == tempDataProperty.columnName.ToLower())
                   {
                     hasProperty = true;
-                    if (!hasShown(shownProperty, hiddenRootNode.children[j].text.ToLower()))
+                    if (!HasShown(shownProperty, hiddenRootNode.children[j].text.ToLower()))
                     {
                       shownProperty.Add(hiddenRootNode.children[j].text.ToLower());
                       hiddenNode = hiddenRootNode.children[j];
@@ -677,7 +679,7 @@ namespace org.iringtools.web.Models
 						      {"dataPropertyName", relation.propertyMaps[kjj].dataPropertyName},
                   {"dataColumnName", getColumnName(dataObject, relation.propertyMaps[kjj].dataPropertyName)},
 						      {"relatedPropertyName", relation.propertyMaps[kjj].relatedPropertyName},
-                  {"relatedColumnName", getColumnName(getRelatedDataObject(relationNode.relatedTableName, dbDict), relation.propertyMaps[kjj].relatedPropertyName)}
+                  {"relatedColumnName", getColumnName(GetRelatedDataObject(relationNode.relatedTableName, dbDict), relation.propertyMaps[kjj].relatedPropertyName)}
                 };
                 mapArray.Add(mapItem);
               }
@@ -693,7 +695,7 @@ namespace org.iringtools.web.Models
       return tree;
     }
 
-    private DataObject getRelatedDataObject(String relatedTableName, DatabaseDictionary dbDict)
+    private static DataObject GetRelatedDataObject(String relatedTableName, DatabaseDictionary dbDict)
     {
       if (dbDict == null)
         return null;
@@ -732,15 +734,12 @@ namespace org.iringtools.web.Models
       return "";
     }
 
-    private Boolean hasShown(List<string> shownArray, string text)
+    private static Boolean HasShown(IList<string> shownArray, string text)
     {
-      for (int shownIndex = 0; shownIndex < shownArray.Count; shownIndex++)
-        if (shownArray[shownIndex] == text)
-          return true;
-      return false;
+        return shownArray.Any(t => t == text);
     }
 
-    private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
+      private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
     {
       if (baseUrl == "" || baseUrl == null)
         return _hibernateServiceClient;
@@ -809,7 +808,7 @@ namespace org.iringtools.web.Models
     #endregion
   }
 
-  public interface INHibernateRe3pository
+  public interface INHibernateRepository
   {
     DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl);
   }

@@ -26,21 +26,21 @@ namespace org.iringtools.adapter
 
     public MemoryStream SerializeToMemoryStream<T>(T graph, bool useDataContractSerializer)
     {
-      MemoryStream stream = new MemoryStream();
+      var stream = new MemoryStream();
 
       try
       {
         if (useDataContractSerializer)
         {
-          DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+          var serializer = new DataContractJsonSerializer(typeof(T));
           serializer.WriteObject(stream, graph);
         }
         else
         {
-          JavaScriptSerializer serializer = new JavaScriptSerializer();
+          var serializer = new JavaScriptSerializer();
           serializer.RegisterConverters(new JavaScriptConverter[] { _converter });
-          string json = serializer.Serialize(graph);
-          byte[] byteArray = Encoding.UTF8.GetBytes(json);
+          var json = serializer.Serialize(graph);
+          var byteArray = Encoding.UTF8.GetBytes(json);
           stream = new MemoryStream(byteArray);
         }
       }
@@ -54,13 +54,13 @@ namespace org.iringtools.adapter
 
     public string Serialize<T>(T graph, bool useDataContractSerializer)
     {
-      string json = string.Empty;
+      var json = string.Empty;
 
       try
       {
-        MemoryStream stream = SerializeToMemoryStream<T>(graph, useDataContractSerializer);
+        var stream = SerializeToMemoryStream<T>(graph, useDataContractSerializer);
         stream.Position = 0;
-        StreamReader reader = new StreamReader(stream);
+        var reader = new StreamReader(stream);
         json = reader.ReadToEnd();
         reader.Close();
       }
@@ -80,14 +80,14 @@ namespace org.iringtools.adapter
       {
         if (useDataContractSerializer)
         {
-          DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
-          byte[] byteArray = Encoding.Default.GetBytes(json);
-          MemoryStream stream = new MemoryStream(byteArray);
+          var serializer = new DataContractJsonSerializer(typeof(T));
+          var byteArray = Encoding.Default.GetBytes(json);
+          var stream = new MemoryStream(byteArray);
           graph = (T)serializer.ReadObject(stream);
         }
         else
         {
-          JavaScriptSerializer serializer = new JavaScriptSerializer();
+          var serializer = new JavaScriptSerializer();
           serializer.RegisterConverters(new JavaScriptConverter[] { _converter });
           graph = (T)serializer.Deserialize<T>(json);
         }
@@ -125,8 +125,8 @@ namespace org.iringtools.adapter
 
     public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
     {
-      DataItem dataItem = (DataItem)obj;
-      Dictionary<string, object> result = new Dictionary<string, object>();
+      var dataItem = (DataItem)obj;
+      var result = new Dictionary<string, object>();
 
       if (dataItem != null)
       {
@@ -151,7 +151,7 @@ namespace org.iringtools.adapter
       if (dictionary == null)
         return null;
 
-      DataItem dataItem = new DataItem()
+      var dataItem = new DataItem()
       {
         properties = new Dictionary<string, string>()
       };

@@ -35,7 +35,9 @@
             "nhibernate.NhibernateTree",
             "nhibernate.SelectPropertiesForm",
             "nhibernate.SelectDataKeysForm",
-            "nhibernate.SetPropertyForm"
+            "nhibernate.SetPropertyForm",
+            "nhibernate.SetRelationForm",
+            "nhibernate.RelationsGrid"
         ]
     },
     "id": "ExtBox1-ext-gen3053",
@@ -817,6 +819,23 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "relationsForm",
+                "autoCreate": true,
+                "forceCreate": true,
+                "ref": "relationsForm",
+                "selector": "relationsform",
+                "xtype": "relationsform"
+            },
+            "designerId": "b8285d88-2ab0-4eaa-8ac3-0ab1e80d1412"
+        },
+        {
+            "type": "controllerref",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
                 "designer|userClassName": "dirTree",
                 "ref": "dirTree",
                 "selector": "viewport > directorypanel > directorytree",
@@ -988,7 +1007,7 @@
                     "    me.showDataPropertyForm(panel);\r",
                     "    break;\r",
                     "    case 'RELATIONSHIPS':\r",
-                    "    //setRelations(editor, tree, dataNode, contextName, endpoint);\r",
+                    "    me.showRelationsForm(panel);\r",
                     "    break;\r",
                     "    case 'RELATIONSHIP':\r",
                     "    //setRelationFields(editor, rootNode, dataNode, contextName, endpoint);\r",
@@ -1021,8 +1040,8 @@
                 ],
                 "implHandler": [
                     "for (var shownIndex = 0; shownIndex < shownArray.length; shownIndex++)\r",
-                    "    if (shownArray[shownIndex] == text)\r",
-                    "        return true;\r",
+                    "if (shownArray[shownIndex] == text)\r",
+                    "  return true;\r",
                     "return false;"
                 ]
             },
@@ -1458,6 +1477,54 @@
                 ]
             },
             "designerId": "36145a37-131d-4a5b-a762-ee0abc8f8ead"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "showRelationsForm",
+                "fn": "showRelationsForm",
+                "designer|params": [
+                    "nhibernatePanel"
+                ],
+                "implHandler": [
+                    "var me = this, \r",
+                    "form = me.getRelationsForm();\r",
+                    "\r",
+                    "var grid = form.down('relationsgrid');\r",
+                    "\r",
+                    "var gridStore = grid.getStore();\r",
+                    "var dataTree = nhibernatePanel.down('nhibernatetree');\r",
+                    "var dirNode = me.getDirNode(dataTree.dirNode);\r",
+                    "var treeNode = nhibernatePanel.treeNode;\r",
+                    "\r",
+                    "var context = dirNode.data.property.Context;\r",
+                    "var endpoint = dirNode.data.property.Name;\r",
+                    "\r",
+                    "grid.endpoint = form.endpoint = endpoint;\r",
+                    "grid.context = form.context = context;\r",
+                    "grid.node = form.node = treeNode;\r",
+                    "grid.rootNode = form.rootNode = dataTree.getRootNode();\r",
+                    "\r",
+                    "treeNode.eachChild(function(n) {\r",
+                    "  gridStore.add({'relationName': n});\r",
+                    "});\r",
+                    "\r",
+                    "panel = nhibernatePanel.down('#nhibernateContent');\r",
+                    "\r",
+                    "panel.removeAll();\r",
+                    "\r",
+                    "panel.add(form);\r",
+                    "panel.doLayout();\r",
+                    "\r",
+                    "Ext.getBody().unmask();"
+                ]
+            },
+            "designerId": "1663ffc9-1ed4-4b58-b835-44cf663e8664"
         },
         {
             "type": "basicfunction",

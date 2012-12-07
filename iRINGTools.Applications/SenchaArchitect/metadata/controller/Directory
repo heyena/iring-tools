@@ -44,6 +44,31 @@
     "designerId": "06f88f22-c6f5-473b-a55b-a40aae8ad3b2",
     "cn": [
         {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "handleMetachange",
+                "fn": "handleMetachange",
+                "implHandler": [
+                    "var me = this,\r",
+                    "store = grid.getStore(),\r",
+                    "columns = meta.columns;\r",
+                    "\r",
+                    "grid.metachange = true;\r",
+                    "grid.reconfigure(store, columns);"
+                ],
+                "name": "metachange",
+                "scope": "me",
+                "designer|targetType": "directory.DataGridPanel",
+                "designer|controlQuery": "gridpanel"
+            },
+            "designerId": "419a2796-2b02-43f2-80e2-1f459a715add"
+        },
+        {
             "type": "controllerref",
             "reference": {
                 "name": "items",
