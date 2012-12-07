@@ -506,6 +506,15 @@ namespace org.iringtools.adapter
 
         if (application != null)  // application exists, delete and re-create it
         {
+            bool Ischanged = IsApplicationDataChanged(updatedApp, application); // Check whether actual change has been made or not.
+
+            if (!Ischanged)  // If nothing changed, don't perform any other operation.
+            {
+                status.Messages.Add("Application [{0}.{1}] unchanged."); 
+                return response;
+            }
+          
+          //else ===================
           //
           // copy database dictionary
           //
@@ -539,6 +548,38 @@ namespace org.iringtools.adapter
       }
 
       return response;
+    }
+
+    private static bool IsApplicationDataChanged(ScopeApplication updatedApp, ScopeApplication oldApp)
+    {
+        bool Ischanged = false;
+        try
+        {
+            if (oldApp.Name != updatedApp.Name || oldApp.Description != updatedApp.Description || oldApp.Assembly != updatedApp.Assembly)
+            {
+                Ischanged = true;
+            }
+            else if (oldApp.Configuration.AppSettings.Settings.Count != updatedApp.Configuration.AppSettings.Settings.Count)
+            {
+                Ischanged = true;
+            }
+            else
+            {
+                for (int i = 0; i < updatedApp.Configuration.AppSettings.Settings.Count; i++)
+                {
+                    if (updatedApp.Configuration.AppSettings.Settings[i].Value != oldApp.Configuration.AppSettings.Settings[i].Value)
+                    {
+                        Ischanged = true;
+                        break;
+                    }
+                }
+            }
+        }
+        catch 
+        {
+            Ischanged = true;
+        }
+        return Ischanged;
     }
 
     public Response DeleteApplication(string scopeName, string appName)
