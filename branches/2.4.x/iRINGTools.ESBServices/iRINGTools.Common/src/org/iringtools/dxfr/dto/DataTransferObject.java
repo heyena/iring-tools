@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="classObjects" type="{http://www.iringtools.org/dxfr/dto}ClassObjects" minOccurs="0"/>
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType" minOccurs="0"/>
+ *         &lt;element name="duplicateCount" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DataTransferObject", propOrder = {
     "identifier",
     "classObjects",
-    "transferType"
+    "transferType",
+    "duplicateCount"
 })
 public class DataTransferObject {
 
@@ -40,6 +42,7 @@ public class DataTransferObject {
     protected String identifier;
     protected ClassObjects classObjects;
     protected TransferType transferType;
+    protected Integer duplicateCount;
 
     /**
      * Gets the value of the identifier property.
@@ -111,6 +114,30 @@ public class DataTransferObject {
      */
     public void setTransferType(TransferType value) {
         this.transferType = value;
+    }
+
+    /**
+     * Gets the value of the duplicateCount property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getDuplicateCount() {
+        return duplicateCount;
+    }
+
+    /**
+     * Sets the value of the duplicateCount property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setDuplicateCount(Integer value) {
+        this.duplicateCount = value;
     }
 
 }

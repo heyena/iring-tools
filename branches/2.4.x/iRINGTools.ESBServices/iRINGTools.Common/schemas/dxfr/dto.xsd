@@ -42,6 +42,7 @@
       <xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1"/>
       <xs:element name="classObjects" type="ClassObjects" minOccurs="0" maxOccurs="1"/>
       <xs:element name="transferType" type="TransferType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="duplicateCount" type="xs:int" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 
