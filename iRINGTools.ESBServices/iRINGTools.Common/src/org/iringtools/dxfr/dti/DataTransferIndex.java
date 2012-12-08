@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dti}TransferType"/>
  *         &lt;element name="sortIndex" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="internalIdentifier" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="duplicateCount" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,7 +37,8 @@ import javax.xml.bind.annotation.XmlType;
     "hashValue",
     "transferType",
     "sortIndex",
-    "internalIdentifier"
+    "internalIdentifier",
+    "duplicateCount"
 })
 public class DataTransferIndex {
 
@@ -49,6 +51,7 @@ public class DataTransferIndex {
     @XmlElement(required = true)
     protected String sortIndex;
     protected String internalIdentifier;
+    protected Integer duplicateCount;
 
     /**
      * Gets the value of the identifier property.
@@ -168,6 +171,30 @@ public class DataTransferIndex {
      */
     public void setInternalIdentifier(String value) {
         this.internalIdentifier = value;
+    }
+
+    /**
+     * Gets the value of the duplicateCount property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getDuplicateCount() {
+        return duplicateCount;
+    }
+
+    /**
+     * Sets the value of the duplicateCount property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setDuplicateCount(Integer value) {
+        this.duplicateCount = value;
     }
 
 }
