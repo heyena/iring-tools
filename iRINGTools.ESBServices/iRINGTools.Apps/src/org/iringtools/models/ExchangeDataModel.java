@@ -39,6 +39,7 @@ public class ExchangeDataModel extends DataModel
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
     String manifestRelativePath = dtiRelativePath + "/manifest";
+    String dataFilterRelativePath = dtiRelativePath + "/datafilter";
     
     Grid pageDtoGrid = null;
     Manifest manifest = getManifest(serviceUri, manifestRelativePath);
@@ -50,7 +51,7 @@ public class ExchangeDataModel extends DataModel
       if (graph != null)
       {
         DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
-            dtoRelativePath, filter, sortBy, sortOrder, start, limit);
+            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath);
         
         pageDtoGrid = getDtoGrid(dtiRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);

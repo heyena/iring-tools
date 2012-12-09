@@ -1,0 +1,31 @@
+<dataFilter xmlns="http://www.iringtools.org/data/filter">
+<expressions>
+<expression>
+<openGroupCount>0</openGroupCount>
+<propertyName>Transfer Type</propertyName>
+<relationalOperator>NotEqualTo</relationalOperator>
+<values>
+<value>ADD</value>
+</values>
+<closeGroupCount>0</closeGroupCount>
+<isCaseSensitive>false</isCaseSensitive>
+</expression>
+<expression>
+<openGroupCount>0</openGroupCount>
+<propertyName>PlantArea.IdentificationByTag.valIdentifier</propertyName>
+<relationalOperator>EqualTo</relationalOperator>
+<values>
+<value>90</value>
+</values>
+<logicalOperator>And</logicalOperator>
+<closeGroupCount>0</closeGroupCount>
+<isCaseSensitive>false</isCaseSensitive>
+</expression>
+</expressions>
+<orderExpressions>
+<orderExpression>
+<propertyName>PipingNetworkSystem.IdentificationByTag.valIdentifier</propertyName>
+<sortOrder>Desc</sortOrder>
+</orderExpression>
+</orderExpressions>
+</dataFilter>

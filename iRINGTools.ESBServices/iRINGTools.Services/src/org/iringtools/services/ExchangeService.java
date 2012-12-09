@@ -97,6 +97,37 @@ public class ExchangeService extends AbstractService
     return Response.ok().entity(manifest).build();
   }
 
+  @GET
+  @Path("/{scope}/exchanges/{id}/datafilter")
+  @Consumes(MediaType.APPLICATION_XML)
+  public Response getDataFilter(
+      @PathParam("scope") String scope, 
+      @PathParam("id") String id)
+  {
+    DataFilter dataFilter = null;
+    
+    try
+    {
+      initService(SERVICE_NAME);
+    }
+    catch (AuthorizationException e)
+    {
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+    
+    try
+    {
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      dataFilter = exchangeProvider.getDataFilter(scope, id);
+    }
+    catch (Exception e)
+    {
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);      
+    }
+    
+    return Response.ok().entity(dataFilter).build();
+  }
+  
   @POST
   @Path("/{scope}/exchanges/{id}")
   @Consumes(MediaType.APPLICATION_XML)
