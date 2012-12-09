@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-  xmlns="http://www.iringtools.org/dxfr/dto" targetNamespace="http://www.iringtools.org/dxfr/dto" 
-  elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/dxfr/dto" 
+  targetNamespace="http://www.iringtools.org/dxfr/dto" xmlns:exchres="http://www.iringtools.org/dxfr/response"
+  elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0" 
+  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+  <xs:import namespace="http://www.iringtools.org/dxfr/response" schemaLocation="../dxfr/exchangeResponse.xsd" />
 
   <xs:annotation>
     <xs:appinfo>
@@ -22,6 +24,7 @@
       <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="senderScopeName" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="senderAppName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="exchangeResp" type="exchres:ExchangeResponse" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
   

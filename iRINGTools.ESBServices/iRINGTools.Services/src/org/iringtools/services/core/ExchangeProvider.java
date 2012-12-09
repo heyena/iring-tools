@@ -528,6 +528,7 @@ public class ExchangeProvider
 	  Manifest manifest = null;
 	  DataTransferIndices dtis = null;
 	  DxiRequest dxiRequest = new DxiRequest();
+      ExchangeResponse xr = new ExchangeResponse();
 	  try
 	  {
 	      manifest = getManifest(scope, id);
@@ -537,6 +538,10 @@ public class ExchangeProvider
 	      dtis = getDataTransferIndices(scope, id, dxiRequest, false);
 	   
 	      int itemCount = 0;
+	      int itemCountSync = 0;
+	      int itemCountAdd = 0;
+	      int itemCountChange = 0;
+	      int itemCountDelete = 0;
 		  DataTransferIndices actionDtis = new DataTransferIndices();
 		  DataTransferIndexList actionDtiList = new DataTransferIndexList();
 		  actionDtis.setDataTransferIndexList(actionDtiList);
@@ -546,6 +551,12 @@ public class ExchangeProvider
 	      for (DataTransferIndex dxi : dtis.getDataTransferIndexList().getItems())
 	      {
 	        TransferType transferType = dxi.getTransferType();
+
+	        // gather counts for the exchange response
+	        if (transferType == TransferType.SYNC) itemCountSync++;
+	        if (transferType == TransferType.ADD) itemCountAdd++;
+	        if (transferType == TransferType.CHANGE) itemCountChange++;
+	        if (transferType == TransferType.DELETE) itemCountDelete++;
 	        
 	        if ( (transferType == TransferType.SYNC && sync) ||
 	        	 (transferType == TransferType.ADD && add) ||
@@ -553,24 +564,45 @@ public class ExchangeProvider
 	        	 (transferType == TransferType.DELETE && delete) ) 
 	        {
           		itemCount++;
-	        	if (itemCount > start) // get just the requested page of changes
+	        	if ((itemCount > start) && (itemCount <= start+limit) )// get just the requested page of changes
 	        	{
 		        	actionDtiListItems.add(dxi);        
 	        	}
 	        }
-        	if (itemCount >= start+limit) break; // short circuit the loop once we have a page of data to return
-	      }    
+	      }
 
 		  DxoRequest dxoRequest = new DxoRequest();
 	      dxoRequest.setManifest(manifest);
 	      dxoRequest.setDataTransferIndices(actionDtis);
 
 	      DataTransferObjects dtos = getDataTransferObjects(scope, id, dxoRequest);
+	      
+	      xr.setExchangeId(id);
+	      xr.setSenderUri(sourceUri);
+	      xr.setSenderScope(sourceScopeName);
+	      xr.setSenderApp(sourceAppName);
+	      xr.setSenderGraph(sourceGraphName);
+	      xr.setReceiverUri(targetUri);
+	      xr.setReceiverScope(targetScopeName);
+	      xr.setReceiverApp(targetAppName);
+	      xr.setReceiverGraph(targetGraphName);
+	      //<xs:element name="startTime" type="xs:dateTime" />
+	      //<xs:element name="endTime" type="xs:dateTime" />
+	      // NB the local itemCount is only the items on the page that are different, where as the xr's itemCount should reflect everything
+	      xr.setItemCount(itemCountSync + itemCountDelete + itemCountChange + itemCountDelete);
+	      xr.setItemCountSync(itemCountSync);
+	      xr.setItemCountAdd(itemCountAdd);
+	      xr.setItemCountChange(itemCountChange);
+	      xr.setItemCountDelete(itemCountDelete);
+	 	  xr.setSummary("Page of differences.");
+
+	 	  dtos.setExchangeResp(xr);
 	      dtos.setVersion(id);
 	      dtos.setSenderAppName(sourceAppName);
 	      dtos.setSenderScopeName(sourceScopeName);
 	      dtos.setAppName(targetAppName);
 	      dtos.setScopeName(targetScopeName);
+	      
 		  return dtos;
 	  }
 	  catch (Exception e)
@@ -630,17 +662,15 @@ public class ExchangeProvider
 	      xRes.setReceiverScope(targetScopeName);
 	      xRes.setReceiverApp(targetAppName);
 	      xRes.setReceiverGraph(targetGraphName);
-	      
 	      //<xs:element name="startTime" type="xs:dateTime" />
 	      //<xs:element name="endTime" type="xs:dateTime" />
-	      
 	      xRes.setLevel(Level.WARNING);
 	      xRes.setItemCount(iCountSync + iCountAdd + iCountChange + iCountDelete);
 	      xRes.setItemCountSync(iCountSync);
 	      xRes.setItemCountAdd(iCountAdd);
 	      xRes.setItemCountChange(iCountChange);
 	      xRes.setItemCountDelete(iCountDelete);
-	 	  xRes.setSummary("Differece Summary only, this was not a data exchange request.");
+	 	  xRes.setSummary("Difference Summary only, this was not a data exchange request.");
 	      return Response.ok().entity(xRes).build();
 	  }
 	  catch (Exception e)
