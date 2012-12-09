@@ -12,12 +12,12 @@ import org.iringtools.common.response.Level;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for ExchangeResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType>
+ * &lt;complexType name="ExchangeResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -49,7 +49,7 @@ import org.iringtools.common.response.Level;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = "ExchangeResponse", propOrder = {
     "exchangeId",
     "level",
     "startTime",
