@@ -399,13 +399,13 @@ namespace org.iringtools.adapter.projection
 
     protected void ProcessInboundClassIdentifiers(int dataObjectIndex, ClassMap classMap, int classObjectIndex, string identifierValue)
     {
-      string[] identifierValueParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
-          ? identifierValue.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+      string[] identifierValueParts = !String.IsNullOrEmpty(classMap.IdentifierDelimiter)
+          ? identifierValue.Split(new string[] { classMap.IdentifierDelimiter }, StringSplitOptions.None)
           : new string[] { identifierValue };
 
       for (int identifierPartIndex = 0; identifierPartIndex < identifierValueParts.Length; identifierPartIndex++)
       {
-        string identifierPartName = classMap.identifiers[identifierPartIndex];
+        string identifierPartName = classMap.Identifiers[identifierPartIndex];
         string identifierPartValue = identifierValueParts[identifierPartIndex];
 
         if (identifierPartName.StartsWith(_fixedIdentifierBoundary) && identifierPartName.EndsWith(_fixedIdentifierBoundary))
@@ -653,7 +653,7 @@ namespace org.iringtools.adapter.projection
       hasRelatedProperty = false;
       bool initialized = false;
 
-      foreach (string identifier in classMap.identifiers)
+      foreach (string identifier in classMap.Identifiers)
       {
         // identifier is a property map
         if (!IsFixedIdentifier(identifier))
@@ -695,7 +695,7 @@ namespace org.iringtools.adapter.projection
               }
               else
               {
-                classIdentifiers[i] += classMap.identifierDelimiter + value;
+                classIdentifiers[i] += classMap.IdentifierDelimiter + value;
               }
             }
 
@@ -712,7 +712,7 @@ namespace org.iringtools.adapter.projection
             }
             else
             {
-              classIdentifiers[0] += classMap.identifierDelimiter + value;
+              classIdentifiers[0] += classMap.IdentifierDelimiter + value;
             }
           }
         }
@@ -729,7 +729,7 @@ namespace org.iringtools.adapter.projection
           {
             for (int i = 0; i < classIdentifiers.Length; i++)
             {
-              classIdentifiers[i] += classMap.identifierDelimiter + value;
+              classIdentifiers[i] += classMap.IdentifierDelimiter + value;
             }
           }
         }
@@ -747,7 +747,7 @@ namespace org.iringtools.adapter.projection
         {
           _graphMap = _mapping.FindGraphMap(graph);
 
-          DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+          DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.DataObjectName);
 
           if (filter.Expressions != null)
           {
@@ -787,18 +787,18 @@ namespace org.iringtools.adapter.projection
       string templateName = propertyNameParts[1];
       string roleName = propertyNameParts[2];
 
-      ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
-        cm => Utility.TitleCase(cm.classMap.name).ToUpper() == className.ToUpper());
+      ClassTemplateMap classTemplateMap = _graphMap.ClassTemplateMaps.Find(
+        cm => Utility.TitleCase(cm.ClassMap.Name).ToUpper() == className.ToUpper());
 
-      List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-      TemplateMap templateMap = templateMaps.Find(tm => tm.name == templateName);
+      List<TemplateMap> templateMaps = classTemplateMap.TemplateMaps;
+      TemplateMap templateMap = templateMaps.Find(tm => tm.Name == templateName);
 
-      RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name == roleName);
+      RoleMap roleMap = templateMap.RoleMaps.Find(rm => rm.Name == roleName);
 
-      switch (roleMap.type)
+      switch (roleMap.Type)
       {
         case RoleType.DataProperty:
-          dataPropertyName = roleMap.propertyName;
+          dataPropertyName = roleMap.PropertyName;
           _valueListName = null;
           break;
 
@@ -809,8 +809,8 @@ namespace org.iringtools.adapter.projection
            );
 
         case RoleType.ObjectProperty:
-          dataPropertyName = roleMap.propertyName;
-          _valueListName = roleMap.valueListName;
+          dataPropertyName = roleMap.PropertyName;
+          _valueListName = roleMap.ValueListName;
           break;
 
         case RoleType.Possessor:
@@ -821,32 +821,32 @@ namespace org.iringtools.adapter.projection
 
         case RoleType.Property:
           //if last part...
-          dataPropertyName = roleMap.propertyName;
+          dataPropertyName = roleMap.PropertyName;
 
-          if (String.IsNullOrEmpty(roleMap.valueListName))
+          if (String.IsNullOrEmpty(roleMap.ValueListName))
           {
             _valueListName = null;
           }
           else
           {
-            _valueListName = roleMap.valueListName;
+            _valueListName = roleMap.ValueListName;
 
             for (int i = 0; i < values.Count; i++)
             {
               string value = values[i];       
-              ValueListMap valueListMap = _mapping.valueListMaps.Find(x => x.name.ToLower() == roleMap.valueListName.ToLower());
+              ValueListMap valueListMap = _mapping.ValueListMaps.Find(x => x.Name.ToLower() == roleMap.ValueListName.ToLower());
 
-              if (valueListMap != null && valueListMap.valueMaps != null)
+              if (valueListMap != null && valueListMap.ValueMaps != null)
               {
-                ValueMap valueMap = valueListMap.valueMaps.Find(x => x.uri == value);
+                ValueMap valueMap = valueListMap.ValueMaps.Find(x => x.Uri == value);
 
                 if (valueMap != null)
                 {
-                  value = valueMap.internalValue;
+                  value = valueMap.InternalValue;
                 }
                 else
                 {
-                  value = valueListMap.valueMaps[0].internalValue;
+                  value = valueListMap.ValueMaps[0].InternalValue;
                 }
               }
 

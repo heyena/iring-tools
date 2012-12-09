@@ -6,10 +6,6 @@
     },
     "codeClass": null,
     "userConfig": {
-        "context": "",
-        "endpoint": "",
-        "node": "",
-        "rootNode": "",
         "designer|userClassName": "nhibernate.RelationsGrid",
         "designer|userAlias": "relationsgrid",
         "frame": false,
@@ -20,28 +16,6 @@
     },
     "id": "ExtBox1-ext-gen3617",
     "designerId": "17fb1af5-2569-49f4-927f-dd778c03c1a1",
-    "customConfigs": [
-        {
-            "group": "(Custom Properties)",
-            "name": "context",
-            "type": "string"
-        },
-        {
-            "group": "(Custom Properties)",
-            "name": "endpoint",
-            "type": "string"
-        },
-        {
-            "group": "(Custom Properties)",
-            "name": "node",
-            "type": "string"
-        },
-        {
-            "group": "(Custom Properties)",
-            "name": "rootNode",
-            "type": "string"
-        }
-    ],
     "cn": [
         {
             "type": "gridview",
@@ -110,7 +84,9 @@
                                 "designer|userClassName": "onAddClick",
                                 "fn": "onAddClick",
                                 "implHandler": [
-                                    ""
+                                    "var me = this;\r",
+                                    "var form = button.up('relationsform');\r",
+                                    "form.addRelationship(form);"
                                 ],
                                 "name": "click",
                                 "scope": "me"
@@ -156,10 +132,21 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "onRemoveClick",
-                                "fn": "onRemoveClick",
+                                "designer|userClassName": "removeRelationship",
+                                "fn": "removeRelationship",
                                 "implHandler": [
-                                    ""
+                                    "var grid = button.up('relationsgrid');\r",
+                                    "var gridStore = grid.getStore();\r",
+                                    "var selected = grid.getSelectionModel().getSelection()[0];\r",
+                                    "if(!selected){\r",
+                                    "  var message = 'Please select a relationship to remove.';\r",
+                                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                                    "  return;\r",
+                                    "}\r",
+                                    "var relation = selected.data.relationName;\r",
+                                    "var exist = gridStore.find('relationName', relation);\r",
+                                    "if (exist != -1)\r",
+                                    "    gridStore.removeAt(exist);"
                                 ],
                                 "name": "click",
                                 "scope": "me"

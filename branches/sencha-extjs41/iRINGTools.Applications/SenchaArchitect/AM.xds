@@ -867,6 +867,14 @@
                 "Scripts/AM/view/nhibernate/CreateRelationForm.js"
             ],
             "className": "nhibernate.CreateRelationForm"
+        },
+        "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c": {
+            "paths": [
+                "metadata/view/nhibernate.RelationPropertyGrid",
+                "Scripts/AM/view/override/nhibernate/RelationPropertyGrid.js",
+                "Scripts/AM/view/nhibernate/RelationPropertyGrid.js"
+            ],
+            "className": "nhibernate.RelationPropertyGrid"
         }
     },
     "viewOrderMap": {
@@ -939,7 +947,8 @@
             "d1c34e2a-9007-4641-b713-a25c592fadbd",
             "ef191768-2bd4-46be-864b-6386fbb488a5",
             "ee4b18be-7210-4e88-9a5c-50e9ca131349",
-            "17fb1af5-2569-49f4-927f-dd778c03c1a1"
+            "17fb1af5-2569-49f4-927f-dd778c03c1a1",
+            "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

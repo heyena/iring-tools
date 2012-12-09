@@ -17,6 +17,10 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.setrelationform',
 
+  requires: [
+    'AM.view.nhibernate.RelationPropertyGrid'
+  ],
+
   bodyStyle: 'background:#eee;padding:10 0 0 10',
 
   initComponent: function() {
@@ -64,6 +68,9 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
               scope: me
             }
           }
+        },
+        {
+          xtype: 'relationPropertyGrid'
         }
       ]
     });

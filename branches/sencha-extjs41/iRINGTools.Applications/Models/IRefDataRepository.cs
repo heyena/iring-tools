@@ -1,6 +1,10 @@
-﻿using org.iringtools.library;
-using org.ids_adi.qmxf;
+﻿using org.ids_adi.qmxf;
+using org.iringtools.refdata;
 using org.iringtools.refdata.federation;
+using org.iringtools.refdata.response;
+using Entities = org.iringtools.refdata.response.Entities;
+using Entity = org.iringtools.refdata.response.Entity;
+using Response = org.iringtools.refdata.response.Response;
 
 namespace org.iringtools.web.Models
 {
@@ -8,11 +12,11 @@ namespace org.iringtools.web.Models
   {
     Federation GetFederation();
 
-    RefDataEntities Search(string query);
+    Response Search(string query);
 
-    RefDataEntities Search(string query, int start, int limit);
+    Response Search(string query, int start, int limit);
 
-    RefDataEntities SearchReset(string query);
+    Response SearchReset(string query);
 
     Entity GetClassLabel(string classId);
 

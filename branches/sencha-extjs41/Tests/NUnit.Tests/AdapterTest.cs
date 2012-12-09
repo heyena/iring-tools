@@ -123,7 +123,7 @@ namespace NUnit.Tests
       Mapping mapping = _adapterProvider.GetMapping(
       _settings["ProjectName"], _settings["ApplicationName"]);
 
-      Assert.AreNotEqual(0, mapping.graphMaps.Count);
+      Assert.AreNotEqual(0, mapping.GraphMaps.Count);
     }
 
     //[Test] Move to JUnit

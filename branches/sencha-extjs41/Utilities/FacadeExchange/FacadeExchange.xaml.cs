@@ -126,7 +126,7 @@ namespace org.iringtools.utils.exchange
                     localFacadeUrl + "/" +
                     _project.Context + "/" +
                     _application.Endpoint + "/" +
-                    _graph.name + "/pull");
+                    _graph.Name + "/pull");
 
                 Request request = new Request();
                 WebCredentials targetCredentials = new WebCredentials();
@@ -575,10 +575,10 @@ namespace org.iringtools.utils.exchange
         {
             Mapping mapping = e.Result.DeserializeDataContract<Mapping>();
 
-            if (mapping != null && mapping.graphMaps.Count > 0)
+            if (mapping != null && mapping.GraphMaps.Count > 0)
             {
                 comboBoxGraphName.DisplayMemberPath = "name";
-                comboBoxGraphName.ItemsSource = mapping.graphMaps;
+                comboBoxGraphName.ItemsSource = mapping.GraphMaps;
                 comboBoxGraphName.SelectionChanged += new SelectionChangedEventHandler(comboBoxGraphName_SelectionChanged);
                 comboBoxGraphName.SelectedIndex = 0;
                 comboBoxGraphName.IsEnabled = true;

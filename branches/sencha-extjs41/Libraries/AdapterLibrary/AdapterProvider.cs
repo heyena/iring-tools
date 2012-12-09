@@ -2162,7 +2162,7 @@ namespace org.iringtools.adapter
 
         if (_isProjectionPart7)
         {
-          return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+          return _projectionEngine.ToXml(_graphMap.Name, ref _dataObjects);
         }
         else
         {
@@ -2274,7 +2274,7 @@ namespace org.iringtools.adapter
 
         if (_isProjectionPart7)
         {
-          return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+          return _projectionEngine.ToXml(_graphMap.Name, ref _dataObjects);
         }
         else
         {
@@ -2404,7 +2404,7 @@ namespace org.iringtools.adapter
 
         if (_isProjectionPart7)
         {
-          return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+          return _projectionEngine.ToXml(_graphMap.Name, ref _dataObjects);
         }
         else
         {
@@ -2452,7 +2452,7 @@ namespace org.iringtools.adapter
           {
             if (_isProjectionPart7)
             {
-              return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects, className, classIdentifier);
+              return _projectionEngine.ToXml(_graphMap.Name, ref _dataObjects, className, classIdentifier);
             }
             else
             {
@@ -2613,19 +2613,19 @@ namespace org.iringtools.adapter
       #region parse identifier to build data filter
       ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMapByName(className);
 
-      if (classTemplateMap != null && classTemplateMap.classMap != null)
+      if (classTemplateMap != null && classTemplateMap.ClassMap != null)
       {
-        mapping.ClassMap classMap = classTemplateMap.classMap;
+        mapping.ClassMap classMap = classTemplateMap.ClassMap;
 
-        string[] identifierValues = !String.IsNullOrEmpty(classMap.identifierDelimiter)
-          ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+        string[] identifierValues = !String.IsNullOrEmpty(classMap.IdentifierDelimiter)
+          ? classIdentifier.Split(new string[] { classMap.IdentifierDelimiter }, StringSplitOptions.None)
           : new string[] { classIdentifier };
 
-        for (int i = 0; i < classMap.identifiers.Count; i++)
+        for (int i = 0; i < classMap.Identifiers.Count; i++)
         {
-          if (!(classMap.identifiers[i].StartsWith(fixedIdentifierBoundary) && classMap.identifiers[i].EndsWith(fixedIdentifierBoundary)))
+          if (!(classMap.Identifiers[i].StartsWith(fixedIdentifierBoundary) && classMap.Identifiers[i].EndsWith(fixedIdentifierBoundary)))
           {
-            string clsIdentifier = classMap.identifiers[i];
+            string clsIdentifier = classMap.Identifiers[i];
             string identifierValue = identifierValues[i];
 
             if (clsIdentifier.Split('.').Length > 2)  // related property
@@ -2753,7 +2753,7 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = null;
         if (_isProjectionPart7)
         {
-          dataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
+          dataObjects = _projectionEngine.ToDataObjects(_graphMap.Name, ref xml);
         }
         else
         {
@@ -2865,7 +2865,7 @@ namespace org.iringtools.adapter
 
         mapping.GraphMap graphMap = _mapping.FindGraphMap(graphName);
 
-        string objectType = graphMap.dataObjectName;
+        string objectType = graphMap.DataObjectName;
         response = _dataLayer.Delete(objectType, new List<String> { identifier });
 
         response.DateTimeStamp = DateTime.Now;
@@ -3033,11 +3033,11 @@ namespace org.iringtools.adapter
         if (_graphMap != null)
         {
           _isResourceGraph = true;
-          _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
+          _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == _graphMap.DataObjectName.ToUpper());
 
           if (_dataObjDef == null || _dataObjDef.isRelatedOnly)
           {
-            _logger.Warn("Data object [" + _graphMap.dataObjectName + "] not found.");
+            _logger.Warn("Data object [" + _graphMap.DataObjectName + "] not found.");
             throw new WebFaultException(HttpStatusCode.NotFound);
           }
         }
@@ -3283,9 +3283,9 @@ namespace org.iringtools.adapter
       _dataObjects.Clear();
 
       if (identifiers != null)
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
       else
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
+        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, null);
 
       return _dataObjects.Count;
     }
@@ -3297,11 +3297,11 @@ namespace org.iringtools.adapter
       _dataObjects.Clear();
 
       if (dataFilter != null)
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
+        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, dataFilter, limit, start);
       else
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
+        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, null);
 
-      long count = _dataLayer.GetCount(_graphMap.dataObjectName, dataFilter);
+      long count = _dataLayer.GetCount(_graphMap.DataObjectName, dataFilter);
 
       return count;
     }

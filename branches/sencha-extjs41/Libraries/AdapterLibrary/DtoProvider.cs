@@ -153,9 +153,9 @@ namespace org.iringtools.adapter
     {
       Manifest manifest = new Manifest()
       {
-        graphs = new Graphs(),
-        version = "2.1.1",
-        valueListMaps = new ValueListMaps()
+        Graphs = new Graphs(),
+        Version = "2.1.1",
+        ValueListMaps = new ValueListMaps()
       };      
 
       try
@@ -165,15 +165,15 @@ namespace org.iringtools.adapter
 
         DataDictionary dataDictionary = _dataLayer.GetDictionary();
 
-        foreach (GraphMap graphMap in _mapping.graphMaps)
+        foreach (GraphMap graphMap in _mapping.GraphMaps)
         {
           Graph manifestGraph = new Graph { 
-            classTemplatesList = new ClassTemplatesList(),
-            name = graphMap.name             
+            ClassTemplatesList = new ClassTemplatesList(),
+            Name = graphMap.Name             
           };
-          manifest.graphs.Add(manifestGraph);
+          manifest.Graphs.Add(manifestGraph);
 
-          string dataObjectName = graphMap.dataObjectName;
+          string dataObjectName = graphMap.DataObjectName;
           DataObject dataObject = null;
 
           foreach (DataObject dataObj in dataDictionary.dataObjects)
@@ -187,73 +187,73 @@ namespace org.iringtools.adapter
 
           if (dataObject != null)
           {
-            foreach (var classTemplateListMap in graphMap.classTemplateMaps)
+            foreach (var classTemplateListMap in graphMap.ClassTemplateMaps)
             {
               ClassTemplates manifestClassTemplatesMap = new ClassTemplates()
               {
-                templates = new Templates()
+                Templates = new Templates()
               };
-              manifestGraph.classTemplatesList.Add(manifestClassTemplatesMap);
+              manifestGraph.ClassTemplatesList.Add(manifestClassTemplatesMap);
 
-              ClassMap classMap = classTemplateListMap.classMap;
-              List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
+              ClassMap classMap = classTemplateListMap.ClassMap;
+              List<TemplateMap> templateMaps = classTemplateListMap.TemplateMaps;
 
               Class manifestClass = new Class
               {
-                id = classMap.id,
-                name = classMap.name,
+                Id = classMap.Id,
+                Name = classMap.Name,
               };
-              manifestClassTemplatesMap.@class = manifestClass;
+              manifestClassTemplatesMap.Class = manifestClass;
 
               foreach (TemplateMap templateMap in templateMaps)
               {
                 Template manifestTemplate = new Template
                 {
-                  roles = new Roles(),
-                  id = templateMap.id,
-                  name = templateMap.name,
-                  transferOption = TransferOption.Desired,
+                  Roles = new Roles(),
+                  Id = templateMap.Id,
+                  Name = templateMap.Name,
+                  TransferOption = TransferOption.Desired,
                 };
-                manifestClassTemplatesMap.templates.Add(manifestTemplate);
+                manifestClassTemplatesMap.Templates.Add(manifestTemplate);
 
-                foreach (RoleMap roleMap in templateMap.roleMaps)
+                foreach (RoleMap roleMap in templateMap.RoleMaps)
                 {
                   Role manifestRole = new Role
                   { 
-                    type = roleMap.type,
-                    id = roleMap.id,
-                    name = roleMap.name,
-                    dataType = roleMap.dataType,
-                    value = roleMap.value,
+                    Type = roleMap.Type,
+                    Id = roleMap.Id,
+                    Name = roleMap.Name,
+                    DataType = roleMap.DataType,
+                    Value = roleMap.Value,
                   };
-                  manifestTemplate.roles.Add(manifestRole);
+                  manifestTemplate.Roles.Add(manifestRole);
 
-                  if (roleMap.type == RoleType.Property ||
-                      roleMap.type == RoleType.DataProperty ||
-                      roleMap.type == RoleType.ObjectProperty)
+                  if (roleMap.Type == RoleType.Property ||
+                      roleMap.Type == RoleType.DataProperty ||
+                      roleMap.Type == RoleType.ObjectProperty)
                   {
-                    if (!String.IsNullOrEmpty(roleMap.propertyName))
+                    if (!String.IsNullOrEmpty(roleMap.PropertyName))
                     {
-                      string[] property = roleMap.propertyName.Split('.');
+                      string[] property = roleMap.PropertyName.Split('.');
                       string objectName = property[0].Trim();
                       string propertyName = property[1].Trim();
 
                       if (dataObject.isKeyProperty(propertyName))
                       {
-                        manifestTemplate.transferOption = TransferOption.Required;
+                        manifestTemplate.TransferOption = TransferOption.Required;
                       }
                     }
                   }
 
-                  if (roleMap.classMap != null)
+                  if (roleMap.ClassMap != null)
                   {                    
                     Cardinality cardinality = graphMap.GetCardinality(roleMap, _dataDictionary, _fixedIdentifierBoundary);
-                    manifestRole.cardinality = cardinality;
+                    manifestRole.Cardinality = cardinality;
 
-                    manifestRole.@class = new Class
+                    manifestRole.Class = new Class
                     {
-                      id = roleMap.classMap.id,
-                      name = roleMap.classMap.name,
+                      Id = roleMap.ClassMap.Id,
+                      Name = roleMap.ClassMap.Name,
                     };
                   }
                 }
@@ -262,7 +262,7 @@ namespace org.iringtools.adapter
           }
         }
 
-        manifest.valueListMaps = Utility.CloneDataContractObject<ValueListMaps>(_mapping.valueListMaps);
+        manifest.ValueListMaps = Utility.CloneDataContractObject<ValueListMaps>(_mapping.ValueListMaps);
       }
       catch (Exception ex)
       {
@@ -286,7 +286,7 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(manifest, graph);
         DataFilter filter = GetPredeterminedFilter();
 
-        List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+        List<IDataObject> dataObjects = PageDataObjects(_graphMap.DataObjectName, filter);
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
       }
@@ -317,7 +317,7 @@ namespace org.iringtools.adapter
 
         filter.AppendFilter(GetPredeterminedFilter());
 
-        List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+        List<IDataObject> dataObjects = PageDataObjects(_graphMap.DataObjectName, filter);
         
         // get sort index
         string sortIndex = String.Empty;        
@@ -348,10 +348,10 @@ namespace org.iringtools.adapter
       if (_dataDictionary == null)
         _dataDictionary = _dataLayer.GetDictionary();
 
-      DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.dataObjectName);
+      DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.DataObjectName);
       DataFilter dataFilter = new DataFilter();
       dataFilter.AppendFilter(dataObject.dataFilter);
-      dataFilter.AppendFilter(_graphMap.dataFilter);
+      dataFilter.AppendFilter(_graphMap.DataFilter);
 
       return dataFilter;
     }
@@ -376,9 +376,9 @@ namespace org.iringtools.adapter
           identifiers.Add(dti.InternalIdentifier);
         }
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
+        XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.Name, ref dataObjects);
 
         dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
       }
@@ -437,7 +437,7 @@ namespace org.iringtools.adapter
         XDocument dtoDoc = new XDocument(xElement);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap.name, ref dtoDoc);
+        IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap.Name, ref dtoDoc);
 
         if (dataObjects.Count < dataTransferObjectList.Count)
         {
@@ -459,7 +459,7 @@ namespace org.iringtools.adapter
 
         if (deleteIdentifiers.Count > 0)
         {
-          response.Append(_dataLayer.Delete(_graphMap.dataObjectName, deleteIdentifiers));
+          response.Append(_dataLayer.Delete(_graphMap.DataObjectName, deleteIdentifiers));
         }
       }
       catch (Exception ex)
@@ -494,10 +494,10 @@ namespace org.iringtools.adapter
         _graphMap = _mapping.FindGraphMap(graph);
 
         IList<string> identifiers = new List<string> { id };
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
+        XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.Name, ref dataObjects);
 
         dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
       }
@@ -522,7 +522,7 @@ namespace org.iringtools.adapter
         _graphMap = _mapping.FindGraphMap(graph);
 
         IList<string> identifiers = new List<string> { id };
-        response.Append(_dataLayer.Delete(_graphMap.dataObjectName, identifiers));
+        response.Append(_dataLayer.Delete(_graphMap.DataObjectName, identifiers));
       }
       catch (Exception ex)
       {
@@ -562,7 +562,7 @@ namespace org.iringtools.adapter
           identifiers.Add(dti.InternalIdentifier);
         }
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");        
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap, ref dataObjects);
 
@@ -737,30 +737,30 @@ namespace org.iringtools.adapter
     // build cross _graphmap from manifest graph and mapping graph
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {
-      if (manifest == null || manifest.graphs == null || manifest.graphs.Count == 0)
+      if (manifest == null || manifest.Graphs == null || manifest.Graphs.Count == 0)
         throw new Exception("Manifest of graph [" + graph + "] is empty.");
 
       Graph manifestGraph = manifest.FindGraph(graph);
 
-      if (manifestGraph.classTemplatesList == null || manifestGraph.classTemplatesList.Count == 0)
+      if (manifestGraph.ClassTemplatesList == null || manifestGraph.ClassTemplatesList.Count == 0)
         throw new Exception("Manifest of graph [" + graph + "] does not contain any class-template-maps.");
 
       GraphMap mappingGraph = _mapping.FindGraphMap(graph);
-      ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
-      Class manifestClass = manifestClassTemplatesMap.@class;
+      ClassTemplates manifestClassTemplatesMap = manifestGraph.ClassTemplatesList.First();
+      Class manifestClass = manifestClassTemplatesMap.Class;
 
       _graphMap = new GraphMap();
-      _graphMap.name = mappingGraph.name;
-      _graphMap.dataObjectName = mappingGraph.dataObjectName;
-      _graphMap.dataFilter = mappingGraph.dataFilter;
+      _graphMap.Name = mappingGraph.Name;
+      _graphMap.DataObjectName = mappingGraph.DataObjectName;
+      _graphMap.DataFilter = mappingGraph.DataFilter;
 
       if (manifestClassTemplatesMap != null)
       {
-        foreach (var mappingClassTemplatesMap in mappingGraph.classTemplateMaps)
+        foreach (var mappingClassTemplatesMap in mappingGraph.ClassTemplateMaps)
         {
-          ClassMap mappingClass = mappingClassTemplatesMap.classMap;
+          ClassMap mappingClass = mappingClassTemplatesMap.ClassMap;
 
-          if (mappingClass.id == manifestClass.id)
+          if (mappingClass.Id == manifestClass.Id)
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
             break;
@@ -774,11 +774,11 @@ namespace org.iringtools.adapter
       List<Template> manifestTemplates = null;
 
       // get manifest templates from the manifest class
-      foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
+      foreach (ClassTemplates manifestClassTemplates in manifestGraph.ClassTemplatesList)
       {
-        if (manifestClassTemplates.@class.id == manifestClass.id)
+        if (manifestClassTemplates.Class.Id == manifestClass.Id)
         {
-          manifestTemplates = manifestClassTemplates.templates;
+          manifestTemplates = manifestClassTemplates.Templates;
           break;
         }
       }
@@ -786,17 +786,17 @@ namespace org.iringtools.adapter
       if (manifestTemplates != null)
       {
         // find mapping templates for the mapping class
-        foreach (var pair in mappingGraph.classTemplateMaps)
+        foreach (var pair in mappingGraph.ClassTemplateMaps)
         {
-          ClassMap localMappingClass = pair.classMap;
-          List<TemplateMap> mappingTemplates = pair.templateMaps;
+          ClassMap localMappingClass = pair.ClassMap;
+          List<TemplateMap> mappingTemplates = pair.TemplateMaps;
 
-          if (localMappingClass.id == manifestClass.id)
+          if (localMappingClass.Id == manifestClass.Id)
           {
             ClassMap crossedClass = localMappingClass.Clone();
             TemplateMaps crossedTemplates = new TemplateMaps();
 
-            _graphMap.classTemplateMaps.Add(new ClassTemplateMap { classMap = crossedClass, templateMaps = crossedTemplates });
+            _graphMap.ClassTemplateMaps.Add(new ClassTemplateMap { ClassMap = crossedClass, TemplateMaps = crossedTemplates });
 
             foreach (Template manifestTemplate in manifestTemplates)
             {
@@ -804,22 +804,22 @@ namespace org.iringtools.adapter
               
               foreach (TemplateMap mappingTemplate in mappingTemplates)
               {
-                if (mappingTemplate.id == manifestTemplate.id)
+                if (mappingTemplate.Id == manifestTemplate.Id)
                 {
                   List<string> unmatchedRoleIds = new List<string>();
                   int rolesMatchedCount = 0;
                   
-                  foreach (RoleMap roleMap in mappingTemplate.roleMaps)
+                  foreach (RoleMap roleMap in mappingTemplate.RoleMaps)
                   {
                     bool found = false;
 
-                    foreach (Role manifestRole in manifestTemplate.roles)
+                    foreach (Role manifestRole in manifestTemplate.Roles)
                     {
-                      if (manifestRole.id == roleMap.id)
+                      if (manifestRole.Id == roleMap.Id)
                       {
                         found = true;
 
-                        if (roleMap.type != RoleType.Reference || roleMap.value == manifestRole.value)
+                        if (roleMap.Type != RoleType.Reference || roleMap.Value == manifestRole.Value)
                         {
                           rolesMatchedCount++;
                         }
@@ -830,22 +830,22 @@ namespace org.iringtools.adapter
 
                     if (!found)
                     {
-                      unmatchedRoleIds.Add(roleMap.id);
+                      unmatchedRoleIds.Add(roleMap.Id);
                     }
                   }
 
-                  if (rolesMatchedCount == manifestTemplate.roles.Count)
+                  if (rolesMatchedCount == manifestTemplate.Roles.Count)
                   {
                     crossedTemplate = Utility.CloneDataContractObject<TemplateMap>(mappingTemplate);
                     
                     if (unmatchedRoleIds.Count > 0)
                     {                      
                       // remove unmatched roles                      
-                      for (int i = 0; i < crossedTemplate.roleMaps.Count; i++)
+                      for (int i = 0; i < crossedTemplate.RoleMaps.Count; i++)
                       {
-                        if (unmatchedRoleIds.Contains(crossedTemplate.roleMaps[i].id))
+                        if (unmatchedRoleIds.Contains(crossedTemplate.RoleMaps[i].Id))
                         {
-                          crossedTemplate.roleMaps.RemoveAt(i--);
+                          crossedTemplate.RoleMaps.RemoveAt(i--);
                         }
                       }                      
                     }
@@ -858,27 +858,27 @@ namespace org.iringtools.adapter
                 crossedTemplates.Add(crossedTemplate);
 
                 // set cardinality for crossed role map that references to class map
-                foreach (Role manifestRole in manifestTemplate.roles)
+                foreach (Role manifestRole in manifestTemplate.Roles)
                 {
-                  if (manifestRole.@class != null)
+                  if (manifestRole.Class != null)
                   {
-                    foreach (RoleMap mappingRole in crossedTemplate.roleMaps)
+                    foreach (RoleMap mappingRole in crossedTemplate.RoleMaps)
                     {
-                      if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id)
+                      if (mappingRole.ClassMap != null && mappingRole.ClassMap.Id == manifestRole.Class.Id)
                       {
                         Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dataDictionary, _fixedIdentifierBoundary);
 
                         // get crossed role map and set its cardinality
-                        foreach (RoleMap crossedRoleMap in crossedTemplate.roleMaps)
+                        foreach (RoleMap crossedRoleMap in crossedTemplate.RoleMaps)
                         {
-                          if (crossedRoleMap.id == mappingRole.id)
+                          if (crossedRoleMap.Id == mappingRole.Id)
                           {
-                            manifestRole.cardinality = cardinality;
+                            manifestRole.Cardinality = cardinality;
                             break;
                           }
                         }
 
-                        RecurBuildCrossGraphMap(ref manifestGraph, manifestRole.@class, mappingGraph, mappingRole.classMap);
+                        RecurBuildCrossGraphMap(ref manifestGraph, manifestRole.Class, mappingGraph, mappingRole.ClassMap);
                       }
                     }
                   }
@@ -899,11 +899,11 @@ namespace org.iringtools.adapter
       int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) ? 250 :
          int.Parse(_settings["DefaultPageSize"]);
 
-      long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+      long count = _dataLayer.GetCount(_graphMap.DataObjectName, filter);
 
       for (int i = 0; i < count; i = i + pageSize)
       {
-        dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, i));
+        dataObjects.AddRange(_dataLayer.Get(_graphMap.DataObjectName, filter, pageSize, i));
       }
 
       return dataObjects;

@@ -1237,7 +1237,7 @@ Ext.define('AM.controller.NHibernate', {
     var gridStore = grid.getStore();
     var dataTree = nhibernatePanel.down('nhibernatetree');
     var dirNode = me.getDirNode(dataTree.dirNode);
-    var treeNode = nhibernatePanel.treeNode;
+    var treeNode = dataTree.getSelectionModel().getSelection()[0];
 
     var context = dirNode.data.property.Context;
     var endpoint = dirNode.data.property.Name;

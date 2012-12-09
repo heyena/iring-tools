@@ -9,7 +9,7 @@ using org.iringtools.library;
 using org.iringtools.adapter.projection;
 using System.Xml.Linq;
 using Microsoft.ServiceModel.Web;
-using org.iringtools.refdata.federation;
+using org.iringtools.refdata;
 
 namespace org.iringtools.adapter
 {
@@ -38,11 +38,11 @@ namespace org.iringtools.adapter
 
       if (_identifiers != null && _identifiers.Count > 0)
       {
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, _identifiers);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, _identifiers);
 
         if (dataObjects != null)
         {
-          XDocument dtoDoc = _projectionLayer.ToXml(_graphMap.name, ref dataObjects);
+          XDocument dtoDoc = _projectionLayer.ToXml(_graphMap.Name, ref dataObjects);
 
           if (dtoDoc != null && dtoDoc.Root != null)
           {

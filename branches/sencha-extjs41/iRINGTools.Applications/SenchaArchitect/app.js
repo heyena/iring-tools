@@ -26,7 +26,8 @@ Ext.application({
     'Property'
   ],
   views: [
-    'AMViewport'
+    'AMViewport',
+    'nhibernate.RelationPropertyGrid'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

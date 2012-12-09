@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace org.iringtools.adapter
 {
-  public class AdapterSettings : ServiceSettings
+  public sealed class AdapterSettings : ServiceSettings
   {
     public AdapterSettings() : base()
     {
@@ -31,7 +31,7 @@ namespace org.iringtools.adapter
 
       if (OperationContext.Current != null)
       {
-        string baseAddress = OperationContext.Current.Host.BaseAddresses[0].ToString();
+        var baseAddress = OperationContext.Current.Host.BaseAddresses[0].ToString();
 
         if (!baseAddress.EndsWith("/"))
             baseAddress = baseAddress + "/";
@@ -52,7 +52,7 @@ namespace org.iringtools.adapter
       {
         if (key.Equals("GraphBaseUri"))
         {
-          string baseAddress = settings[key].ToString();
+          var baseAddress = settings[key].ToString();
           
           if (!baseAddress.EndsWith("/"))
             baseAddress = baseAddress + "/";
@@ -64,7 +64,7 @@ namespace org.iringtools.adapter
             key.Equals("ValidateLinks") ||
             key.Equals("DisplayLinks"))
         {
-          string format = settings[key].ToString();
+          var format = settings[key].ToString();
           this[key] = format;
         }
 
@@ -81,23 +81,21 @@ namespace org.iringtools.adapter
     //Append KeyRing from IdentityProvider.
     public void AppendKeyRing(IDictionary keyRing)
     {
-      if (keyRing != null)
-      {
+        if (keyRing == null) return;
         foreach (string key in keyRing.Keys)
         {
-          object valueObj = keyRing[key];
+            var valueObj = keyRing[key];
 
-          string value = String.Empty;
-          if (valueObj != null)
-            value = valueObj.ToString();
+            var value = String.Empty;
+            if (valueObj != null)
+                value = valueObj.ToString();
 
-          //Protect existing settings, but add new ones.
-          if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))
-          {
-            this.Add(key, value);
-          }
+            //Protect existing settings, but add new ones.
+            if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))
+            {
+                this.Add(key, value);
+            }
         }
-      }
     }
   }  
 }

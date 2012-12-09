@@ -17,10 +17,6 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.relationsgrid',
 
-  context: '',
-  endpoint: '',
-  node: '',
-  rootNode: '',
   frame: false,
   store: 'RelationsStore',
 
@@ -66,7 +62,7 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
               text: 'Remove',
               listeners: {
                 click: {
-                  fn: me.onRemoveClick,
+                  fn: me.removeRelationship,
                   scope: me
                 }
               }
@@ -80,11 +76,24 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
   },
 
   onAddClick: function(button, e, options) {
-
+    var me = this;
+    var form = button.up('relationsform');
+    form.addRelationship(form);
   },
 
-  onRemoveClick: function(button, e, options) {
-
+  removeRelationship: function(button, e, options) {
+    var grid = button.up('relationsgrid');
+    var gridStore = grid.getStore();
+    var selected = grid.getSelectionModel().getSelection()[0];
+    if(!selected){
+      var message = 'Please select a relationship to remove.';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      return;
+    }
+    var relation = selected.data.relationName;
+    var exist = gridStore.find('relationName', relation);
+    if (exist != -1)
+    gridStore.removeAt(exist);
   }
 
 });

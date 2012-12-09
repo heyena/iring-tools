@@ -106,8 +106,8 @@ namespace org.iringtools.refdata
         if (File.Exists(federationPath))
         {
           this._federation = Utility.Read<Federation>(federationPath);
-          this._repositories = this._federation.Repositories;
-          this._namespaces = this._federation.Namespaces;
+          this._repositories = this._federation.RepositoryList;
+          this._namespaces = this._federation.NamespaceList;
           foreach (var ns in this._namespaces)
           {
             nsMap.AddNamespace(ns.Prefix, new Uri(ns.Uri));
@@ -135,10 +135,10 @@ namespace org.iringtools.refdata
         List<Repository> repositories;
         repositories = this._repositories;
         //Don't Expose Tokens
-        foreach (Repository repository in repositories)
-        {
-          repository.EncryptedCredentials = null;
-        }
+        //foreach (Repository repository in repositories)
+        //{
+        //  repository.EncryptedCredentials = null;
+        //}
         return repositories;
       }
       catch (Exception ex)
@@ -429,27 +429,27 @@ namespace org.iringtools.refdata
           string pref = nsMap.GetPrefix(new Uri(result["uri"].ToString().Substring(0, result["uri"].ToString().IndexOf("#") + 1)));
           if (pref.Equals("owl") || pref.Contains("dm")) continue;
           uri = result["uri"].ToString();
-          classification.reference = uri;
+          classification.Reference = uri;
         }
         foreach (var v in result.Variables)
         {
           INode node = result[v];
           if (node is LiteralNode && v.Equals("label"))
           {
-            classification.label = ((LiteralNode)node).Value;
-            classification.lang = ((LiteralNode)node).Language;
+            classification.Label = ((LiteralNode)node).Value;
+            classification.Lang = ((LiteralNode)node).Language;
           }
         }
-        if (string.IsNullOrEmpty(classification.label))
+        if (string.IsNullOrEmpty(classification.Label))
         {
           Entity entity = GetLabel(uri);
-          classification.label = entity.Label;
-          classification.lang = entity.Lang;
+          classification.Label = entity.Label;
+          classification.Lang = entity.Lang;
         }
-        if (string.IsNullOrEmpty(classification.lang))
-          classification.lang = defaultLanguage;
+        if (string.IsNullOrEmpty(classification.Lang))
+          classification.Lang = defaultLanguage;
 
-        Utility.SearchAndInsert(classifications, classification, Classification.sortAscending());
+        Utility.SearchAndInsert(classifications, classification, Classification.SortAscending());
       }
 
       return classifications;
@@ -492,25 +492,25 @@ namespace org.iringtools.refdata
 
                   if (node is LiteralNode && v.Equals("label"))
                   {
-                    specialization.label = ((LiteralNode)node).Value;
-                    specialization.lang = ((LiteralNode)node).Language;
+                    specialization.Label = ((LiteralNode)node).Value;
+                    specialization.Lang = ((LiteralNode)node).Language;
                   }
                   else if (node is UriNode && v.Equals("uri"))
                   {
-                    specialization.reference = ((UriNode)node).Uri.ToString();
-                    uri = specialization.reference;
+                    specialization.Reference = ((UriNode)node).Uri.ToString();
+                    uri = specialization.Reference;
                   }
                 }
-                if (string.IsNullOrEmpty(specialization.label))
+                if (string.IsNullOrEmpty(specialization.Label))
                 {
                   Entity entity = GetLabel(uri);
-                  specialization.label = entity.Label;
-                  specialization.lang = entity.Lang;
+                  specialization.Label = entity.Label;
+                  specialization.Lang = entity.Lang;
                 }
-                if (string.IsNullOrEmpty(specialization.lang))
-                  specialization.lang = defaultLanguage;
+                if (string.IsNullOrEmpty(specialization.Lang))
+                  specialization.Lang = defaultLanguage;
 
-                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+                Utility.SearchAndInsert(specializations, specialization, Specialization.SortAscending());
               }
               break;
 
@@ -527,25 +527,25 @@ namespace org.iringtools.refdata
                   INode node = result[v];
                   if (node is LiteralNode && v.Equals("label"))
                   {
-                    specialization.label = ((LiteralNode)node).Value;
-                    specialization.lang = ((LiteralNode)node).Language;
+                    specialization.Label = ((LiteralNode)node).Value;
+                    specialization.Lang = ((LiteralNode)node).Language;
                   }
                   else if (node is UriNode && v.Equals("uri"))
                   {
-                    specialization.reference = ((UriNode)node).Uri.ToString();
-                    uri = specialization.reference;
+                    specialization.Reference = ((UriNode)node).Uri.ToString();
+                    uri = specialization.Reference;
                   }
                 }
-                if (string.IsNullOrEmpty(specialization.label))
+                if (string.IsNullOrEmpty(specialization.Label))
                 {
                   Entity entity = GetLabel(uri);
-                  specialization.label = entity.Label;
-                  specialization.lang = entity.Lang;
+                  specialization.Label = entity.Label;
+                  specialization.Lang = entity.Lang;
                 }
-                if (string.IsNullOrEmpty(specialization.lang))
-                  specialization.lang = defaultLanguage;
+                if (string.IsNullOrEmpty(specialization.Lang))
+                  specialization.Lang = defaultLanguage;
 
-                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+                Utility.SearchAndInsert(specializations, specialization, Specialization.SortAscending());
               }
               break;
             case RepositoryType.JORD:
@@ -561,30 +561,30 @@ namespace org.iringtools.refdata
                   INode node = result[v];
                   if (node is LiteralNode && v.Equals("label"))
                   {
-                    specialization.label = ((LiteralNode)node).Value;
-                    specialization.lang = ((LiteralNode)node).Language;
+                    specialization.Label = ((LiteralNode)node).Value;
+                    specialization.Lang = ((LiteralNode)node).Language;
                   }
                   else if (node is UriNode && v.Equals("uri"))
                   {
-                    specialization.reference = ((UriNode)node).Uri.ToString();
-                    uri = specialization.reference;
+                    specialization.Reference = ((UriNode)node).Uri.ToString();
+                    uri = specialization.Reference;
                   }
                   else if (node is UriNode && v.Equals("rdsuri"))
                   {
-                    specialization.rdsuri = ((UriNode)node).Uri.ToString();
-                    uri = specialization.reference;
+                    specialization.Rdsuri = ((UriNode)node).Uri.ToString();
+                    uri = specialization.Reference;
                   }
                 }
-                if (string.IsNullOrEmpty(specialization.label))
+                if (string.IsNullOrEmpty(specialization.Label))
                 {
                   Entity entity = GetLabel(uri);
-                  specialization.label = entity.Label;
-                  specialization.lang = entity.Lang;
+                  specialization.Label = entity.Label;
+                  specialization.Lang = entity.Lang;
                 }
-                if (string.IsNullOrEmpty(specialization.lang))
-                  specialization.lang = defaultLanguage;
+                if (string.IsNullOrEmpty(specialization.Lang))
+                  specialization.Lang = defaultLanguage;
 
-                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+                Utility.SearchAndInsert(specializations, specialization, Specialization.SortAscending());
               }
               break;
           }
@@ -673,8 +673,8 @@ namespace org.iringtools.refdata
           {
             classDefinition = new ClassDefinition();
 
-            classDefinition.identifier = uri;
-            classDefinition.repositoryName = repository.Name;
+            classDefinition.Identifier = uri;
+            classDefinition.RepositoryName = repository.Name;
             name = new QMXFName();
             description = new Description();
             status = new QMXFStatus();
@@ -683,25 +683,25 @@ namespace org.iringtools.refdata
               INode node = result[v];
               if (node is LiteralNode && v.Equals("label"))
               {
-                name.value = ((ILiteralNode)node).Value;
-                name.lang = ((ILiteralNode)node).Language;
-                if (string.IsNullOrEmpty(name.lang))
-                  name.lang = defaultLanguage;
+                name.Value = ((ILiteralNode)node).Value;
+                name.Lang = ((ILiteralNode)node).Language;
+                if (string.IsNullOrEmpty(name.Lang))
+                  name.Lang = defaultLanguage;
               }
               else if (node is LiteralNode && v.Equals("definition"))
               {
-                description.value = ((ILiteralNode)node).Value;
-                description.lang = ((ILiteralNode)node).Language;
-                if (string.IsNullOrEmpty(description.lang))
-                  description.lang = defaultLanguage;
+                description.Value = ((ILiteralNode)node).Value;
+                description.Lang = ((ILiteralNode)node).Language;
+                if (string.IsNullOrEmpty(description.Lang))
+                  description.Lang = defaultLanguage;
               }
               else if (node is LiteralNode && v.Equals("creator"))
               {
-                status.authority = ((ILiteralNode)node).Value;
+                status.Authority = ((ILiteralNode)node).Value;
               }
               else if (node is LiteralNode && v.Equals("creationDate"))
               {
-                status.from = ((ILiteralNode)node).Value;
+                status.From = ((ILiteralNode)node).Value;
               }
               else if (node is LiteralNode && v.Equals("class"))
               {
@@ -709,21 +709,21 @@ namespace org.iringtools.refdata
               }
               else if (node is LiteralNode && v.Equals("comment"))
               {
-                description.value = ((ILiteralNode)node).Value;
-                description.lang = ((ILiteralNode)node).Language;
-                if (string.IsNullOrEmpty(description.lang))
-                  description.lang = defaultLanguage;
+                description.Value = ((ILiteralNode)node).Value;
+                description.Lang = ((ILiteralNode)node).Language;
+                if (string.IsNullOrEmpty(description.Lang))
+                  description.Lang = defaultLanguage;
               }
               else if (node is UriNode && v.Equals("type"))
               {
                 string typeName = ((UriNode)node).Uri.ToString();
                 string pref = nsMap.GetPrefix(new Uri(typeName.Substring(0, typeName.IndexOf("#") + 1)));
                 if (pref.Contains("dm"))
-                  classDefinition.entityType = new EntityType { reference = typeName };
+                  classDefinition.EntityType = new EntityType { Reference = typeName };
               }
               else if (node is UriNode && v.Equals("authority"))
               {
-                status.authority = ((UriNode)node).Uri.ToString();
+                status.Authority = ((UriNode)node).Uri.ToString();
               }
               else if (node is UriNode && v.Equals("recorded"))
               {
@@ -731,24 +731,24 @@ namespace org.iringtools.refdata
               }
               else if (node is LiteralNode && v.Equals("from"))
               {
-                status.from = ((LiteralNode)node).Value;
+                status.From = ((LiteralNode)node).Value;
               }
             }
-            classDefinition.name.Add(name);
+            classDefinition.Name.Add(name);
 
-            classDefinition.description.Add(description);
-            classDefinition.status.Add(status);
+            classDefinition.Description.Add(description);
+            classDefinition.Status.Add(status);
 
             classifications = GetClassifications(id, repository);
 
             specializations = GetSpecializations(id, repository);
             if (classifications.Count > 0)
-              classDefinition.classification = classifications;
+              classDefinition.Classification = classifications;
             if (specializations.Count > 0)
-              classDefinition.specialization = specializations;
+              classDefinition.Specialization = specializations;
           }
           if (classDefinition != null)
-            qmxf.classDefinitions.Add(classDefinition);
+            qmxf.ClassDefinitions.Add(classDefinition);
         }
         return qmxf;
       }
@@ -770,9 +770,9 @@ namespace org.iringtools.refdata
 
         foreach (Specialization specialization in specializations)
         {
-          string uri = specialization.reference;
+          string uri = specialization.Reference;
 
-          string label = specialization.label;
+          string label = specialization.Label;
 
           if (label == null)
             label = GetLabel(uri).Label;
@@ -824,8 +824,8 @@ namespace org.iringtools.refdata
 
         foreach (Specialization specialization in specializations)
         {
-          string uri = specialization.reference;
-          string label = specialization.label;
+          string uri = specialization.Reference;
+          string label = specialization.Label;
           string language = string.Empty;
 
           if (label == null)
@@ -1380,40 +1380,40 @@ namespace org.iringtools.refdata
           {
             if ((INode)result[v] is LiteralNode && v.Equals("label"))
             {
-              name.value = ((LiteralNode)result[v]).Value;
-              name.lang = ((LiteralNode)result[v]).Language;
-              if (string.IsNullOrEmpty(name.lang))
-                name.lang = defaultLanguage;
+              name.Value = ((LiteralNode)result[v]).Value;
+              name.Lang = ((LiteralNode)result[v]).Language;
+              if (string.IsNullOrEmpty(name.Lang))
+                name.Lang = defaultLanguage;
             }
             else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
             {
-              roleDefinition.description.value = ((LiteralNode)result[v]).Value;
-              roleDefinition.description.lang = ((LiteralNode)result[v]).Language;
-              if (string.IsNullOrEmpty(roleDefinition.description.lang))
-                roleDefinition.description.lang = defaultLanguage;
+              roleDefinition.Description.Value = ((LiteralNode)result[v]).Value;
+              roleDefinition.Description.Lang = ((LiteralNode)result[v]).Language;
+              if (string.IsNullOrEmpty(roleDefinition.Description.Lang))
+                roleDefinition.Description.Lang = defaultLanguage;
             }
             else if ((INode)result[v] is LiteralNode && v.Equals("index"))
             {
-              if (string.IsNullOrEmpty(roleDefinition.description.value))
+              if (string.IsNullOrEmpty(roleDefinition.Description.Value))
               {
-                roleDefinition.description.value = ((LiteralNode)result[v]).Value;
-                roleDefinition.description.lang = ((LiteralNode)result[v]).Language;
-                if (string.IsNullOrEmpty(roleDefinition.description.lang))
-                  roleDefinition.description.lang = defaultLanguage;
+                roleDefinition.Description.Value = ((LiteralNode)result[v]).Value;
+                roleDefinition.Description.Lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(roleDefinition.Description.Lang))
+                  roleDefinition.Description.Lang = defaultLanguage;
               }
             }
             else if ((INode)result[v] is UriNode && v.Equals("type"))
             {
-              roleDefinition.range = ((UriNode)result[v]).Uri.ToString();
+              roleDefinition.Range = ((UriNode)result[v]).Uri.ToString();
             }
             else if ((INode)result[v] is UriNode && v.Equals("role"))
             {
-              roleDefinition.identifier = ((UriNode)result[v]).Uri.ToString();
+              roleDefinition.Identifier = ((UriNode)result[v]).Uri.ToString();
             }
           }
-          roleDefinition.name.Add(name);
+          roleDefinition.Name.Add(name);
 
-          Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
+          Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.SortAscending());
         }
         return roleDefinitions;
       }
@@ -1464,40 +1464,40 @@ namespace org.iringtools.refdata
 
             if (result["label"] != null)
             {
-              name.value = ((LiteralNode)result["label"]).Value;
-              name.lang = ((LiteralNode)result["label"]).Language;
-              if (string.IsNullOrEmpty(name.lang))
-                name.lang = defaultLanguage;
+              name.Value = ((LiteralNode)result["label"]).Value;
+              name.Lang = ((LiteralNode)result["label"]).Language;
+              if (string.IsNullOrEmpty(name.Lang))
+                name.Lang = defaultLanguage;
             }
             if (result["comment"] != null)
             {
-              description.value = ((LiteralNode)result["comment"]).Value;
-              description.lang = ((LiteralNode)result["comment"]).Language;
-              if (string.IsNullOrEmpty(description.lang))
-                description.lang = defaultLanguage;
+              description.Value = ((LiteralNode)result["comment"]).Value;
+              description.Lang = ((LiteralNode)result["comment"]).Language;
+              if (string.IsNullOrEmpty(description.Lang))
+                description.Lang = defaultLanguage;
             }
             if (result["index"] != null)
             {
-              if (string.IsNullOrEmpty(description.value))
+              if (string.IsNullOrEmpty(description.Value))
               {
-                description.value = ((LiteralNode)result["index"]).Value;
-                description.lang = ((LiteralNode)result["index"]).Language;
-                if (string.IsNullOrEmpty(description.lang))
-                  description.lang = defaultLanguage;
+                description.Value = ((LiteralNode)result["index"]).Value;
+                description.Lang = ((LiteralNode)result["index"]).Language;
+                if (string.IsNullOrEmpty(description.Lang))
+                  description.Lang = defaultLanguage;
               }
             }
             if (result["role"] != null)
             {
-              roleDefinition.identifier = ((UriNode)result["role"]).Uri.ToString();
+              roleDefinition.Identifier = ((UriNode)result["role"]).Uri.ToString();
             }
             if (result["type"] != null)
             {
-              roleDefinition.range = ((UriNode)result["type"]).Uri.ToString();
+              roleDefinition.Range = ((UriNode)result["type"]).Uri.ToString();
             }
 
-            roleDefinition.description = description;
-            roleDefinition.name.Add(name);
-            Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
+            roleDefinition.Description = description;
+            roleDefinition.Name.Add(name);
+            Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.SortAscending());
             //roleDefinitions.Add(roleDefinition);
           }
         }
@@ -1577,46 +1577,46 @@ namespace org.iringtools.refdata
                   if (v.Equals("qualifies") && result.HasValue(v))
                   {
                     uri = ((UriNode)result[v]).Uri.ToString();
-                    roleQualification.qualifies = uri;
-                    roleQualification.identifier = Utility.GetIdFromURI(uri);
+                    roleQualification.Qualifies = uri;
+                    roleQualification.Identifier = Utility.GetIdFromURI(uri);
                   }
                   else if (v.Equals("name"))
                   {
                     if (result[v] == null)
                     {
                       Entity entity = GetLabel(uri);
-                      name.value = entity.Label;
-                      name.lang = entity.Lang;
+                      name.Value = entity.Label;
+                      name.Lang = entity.Lang;
                     }
                     else
                     {
-                      name.value = ((LiteralNode)result[v]).Value;
-                      name.lang = ((LiteralNode)result[v]).Language;
+                      name.Value = ((LiteralNode)result[v]).Value;
+                      name.Lang = ((LiteralNode)result[v]).Language;
                     }
-                    if (string.IsNullOrEmpty(name.lang))
+                    if (string.IsNullOrEmpty(name.Lang))
                     {
-                      name.lang = defaultLanguage;
+                      name.Lang = defaultLanguage;
                     }
 
                   }
                   else if (v.Equals("range") && result.HasValue(v))
                   {
-                    roleQualification.range = ((UriNode)result[v]).Uri.ToString();
+                    roleQualification.Range = ((UriNode)result[v]).Uri.ToString();
                   }
                   else if (v.Equals("reference") && result.HasValue(v))
                   {
-                    refvalue.reference = ((UriNode)result[v]).Uri.ToString();
-                    roleQualification.value = refvalue;
+                    refvalue.Reference = ((UriNode)result[v]).Uri.ToString();
+                    roleQualification.Value = refvalue;
                   }
                   else if (v.Equals("value") && result.HasValue(v))
                   {
-                    valvalue.text = ((LiteralNode)result[v]).Value;
+                    valvalue.Text = ((LiteralNode)result[v]).Value;
                     valvalue.As = ((UriNode)result["value_dataType"]).Uri.ToString();
-                    roleQualification.value = valvalue;
+                    roleQualification.Value = valvalue;
                   }
                 }
-                roleQualification.name.Add(name);
-                Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
+                roleQualification.Name.Add(name);
+                Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.SortAscending());
               }
               break;
             case RepositoryType.Part8:
@@ -1638,46 +1638,46 @@ namespace org.iringtools.refdata
                 if (result["role"] != null)
                 {
                   uri = ((UriNode)result["role"]).Uri.ToString();
-                  roleQualification.qualifies = uri;
-                  roleQualification.identifier = Utility.GetIdFromURI(uri);
+                  roleQualification.Qualifies = uri;
+                  roleQualification.Identifier = Utility.GetIdFromURI(uri);
                 }
                 if (result["comment"] != null)
                 {
-                  descr.value = ((LiteralNode)result["comment"]).Value;
+                  descr.Value = ((LiteralNode)result["comment"]).Value;
                   if (string.IsNullOrEmpty(((LiteralNode)result["comment"]).Language))
                   {
-                    descr.lang = defaultLanguage;
+                    descr.Lang = defaultLanguage;
                   }
                   else
                   {
-                    descr.lang = ((LiteralNode)result["comment"]).Language;
+                    descr.Lang = ((LiteralNode)result["comment"]).Language;
                   }
                 }
                 if (result["type"] != null)
                 {
-                  roleQualification.range = ((UriNode)result["type"]).Uri.ToString();
+                  roleQualification.Range = ((UriNode)result["type"]).Uri.ToString();
                 }
                 if (result["label"] == null)
                 {
                   Entity entity = GetLabel(uri);
-                  name.value = entity.Label;
-                  name.lang = entity.Lang;
+                  name.Value = entity.Label;
+                  name.Lang = entity.Lang;
                 }
                 else
                 {
-                  name.value = ((LiteralNode)result["label"]).Value;
-                  name.lang = ((LiteralNode)result["label"]).Language;
+                  name.Value = ((LiteralNode)result["label"]).Value;
+                  name.Lang = ((LiteralNode)result["label"]).Language;
                 }
-                if (string.IsNullOrEmpty(name.lang))
-                  name.lang = defaultLanguage;
+                if (string.IsNullOrEmpty(name.Lang))
+                  name.Lang = defaultLanguage;
 
                 if (result["index"] != null)
                 {
                   ///TODO
                 }
 
-                roleQualification.name.Add(name);
-                Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
+                roleQualification.Name.Add(name);
+                Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.SortAscending());
 
               }
               break;
@@ -1735,36 +1735,36 @@ namespace org.iringtools.refdata
             if (result.Count == 0) continue;
             templateDefinition = new TemplateDefinition();
             QMXFName name = new QMXFName();
-            templateDefinition.repositoryName = repository.Name;
+            templateDefinition.RepositoryName = repository.Name;
 
             foreach (var v in result.Variables)
             {
               if ((INode)result[v] is LiteralNode && v.Equals("label"))
               {
-                name.value = ((LiteralNode)result[v]).Value;
-                name.lang = ((LiteralNode)result[v]).Language;
-                if (string.IsNullOrEmpty(name.lang))
-                  name.lang = defaultLanguage;
+                name.Value = ((LiteralNode)result[v]).Value;
+                name.Lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(name.Lang))
+                  name.Lang = defaultLanguage;
               }
               else if ((INode)result[v] is LiteralNode && v.Equals("definition"))
               {
-                description.value = ((LiteralNode)result[v]).Value;
-                description.lang = ((LiteralNode)result[v]).Language;
-                if (string.IsNullOrEmpty(description.lang))
-                  description.lang = defaultLanguage;
+                description.Value = ((LiteralNode)result[v]).Value;
+                description.Lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(description.Lang))
+                  description.Lang = defaultLanguage;
               }
               else if ((INode)result[v] is LiteralNode && v.Equals("creationDate"))
               {
-                status.from = ((LiteralNode)result[v]).Value;
+                status.From = ((LiteralNode)result[v]).Value;
               }
             }
 
-            templateDefinition.identifier = qId;
-            templateDefinition.name.Add(name);
-            templateDefinition.description.Add(description);
-            templateDefinition.status.Add(status);
+            templateDefinition.Identifier = qId;
+            templateDefinition.Name.Add(name);
+            templateDefinition.Description.Add(description);
+            templateDefinition.Status.Add(status);
 
-            templateDefinition.roleDefinition = GetRoleDefinition(id, repository);
+            templateDefinition.RoleDefinition = GetRoleDefinition(id, repository);
             templateDefinitionList.Add(templateDefinition);
           }
         }
@@ -1796,11 +1796,11 @@ namespace org.iringtools.refdata
 
         if (templateQualification != null)
         {
-          qmxf.templateQualifications = templateQualification;
+          qmxf.TemplateQualifications = templateQualification;
         }
         else
         {
-          qmxf.templateDefinitions = templateDefinition;
+          qmxf.TemplateDefinitions = templateDefinition;
         }
       }
       catch (Exception ex)
@@ -1821,12 +1821,12 @@ namespace org.iringtools.refdata
 
         if (templateQualification.Count > 0)
         {
-          qmxf.templateQualifications = templateQualification;
+          qmxf.TemplateQualifications = templateQualification;
         }
         else
         {
           List<TemplateDefinition> templateDefinition = GetTemplateDefinition(id, null);
-          qmxf.templateDefinitions = templateDefinition;
+          qmxf.TemplateDefinitions = templateDefinition;
         }
       }
       catch (Exception ex)
@@ -1893,23 +1893,23 @@ namespace org.iringtools.refdata
               QMXFStatus status = new QMXFStatus();
               QMXFName name = new QMXFName();
 
-              templateQualification.repositoryName = repository.Name;
+              templateQualification.RepositoryName = repository.Name;
 
               foreach (var v in result.Variables)
               {
                 if ((INode)result[v] is LiteralNode && v.Equals("name"))
                 {
-                  name.value = ((LiteralNode)result[v]).Value;
-                  name.lang = ((LiteralNode)result[v]).Language;
-                  if (string.IsNullOrEmpty(name.lang))
-                    name.lang = defaultLanguage;
+                  name.Value = ((LiteralNode)result[v]).Value;
+                  name.Lang = ((LiteralNode)result[v]).Language;
+                  if (string.IsNullOrEmpty(name.Lang))
+                    name.Lang = defaultLanguage;
                 }
                 else if ((INode)result[v] is LiteralNode && v.Equals("description"))
                 {
-                  description.value = ((LiteralNode)result[v]).Value;
-                  description.lang = ((LiteralNode)result[v]).Language;
-                  if (string.IsNullOrEmpty(description.lang))
-                    description.lang = defaultLanguage;
+                  description.Value = ((LiteralNode)result[v]).Value;
+                  description.Lang = ((LiteralNode)result[v]).Language;
+                  if (string.IsNullOrEmpty(description.Lang))
+                    description.Lang = defaultLanguage;
                 }
                 else if ((INode)result[v] is UriNode && v.Equals("statusClass"))
                 {
@@ -1917,7 +1917,7 @@ namespace org.iringtools.refdata
                 }
                 else if ((INode)result[v] is UriNode && v.Equals("statusAuthority"))
                 {
-                  status.authority = ((UriNode)result[v]).Uri.ToString();
+                  status.Authority = ((UriNode)result[v]).Uri.ToString();
                 }
                 else if ((INode)result[v] is UriNode && v.Equals("qualifies"))
                 {
@@ -1925,12 +1925,12 @@ namespace org.iringtools.refdata
                 }
               }
 
-              templateQualification.identifier = qId;
-              templateQualification.name.Add(name);
-              templateQualification.description.Add(description);
-              templateQualification.status.Add(status);
+              templateQualification.Identifier = qId;
+              templateQualification.Name.Add(name);
+              templateQualification.Description.Add(description);
+              templateQualification.Status.Add(status);
 
-              templateQualification.roleQualification = GetRoleQualification(id, repository);
+              templateQualification.RoleQualification = GetRoleQualification(id, repository);
               templateQualificationList.Add(templateQualification);
             }
           }
@@ -1959,7 +1959,7 @@ namespace org.iringtools.refdata
         }
         foreach (Repository repository in _repositories)
         {
-          if (!repository.IsReadOnly)
+          if (!repository.IsReadonly)
           {
             index = _repositories.IndexOf(repository);
             return index;
@@ -2172,7 +2172,7 @@ namespace org.iringtools.refdata
       //bool qn = false;
       try
       {
-        repository = GetRepository(qmxf.targetRepository);
+        repository = GetRepository(qmxf.TargetRepository);
         if (repository == null || repository.IsReadOnly)
         {
           Status status = new Status();
@@ -2180,7 +2180,7 @@ namespace org.iringtools.refdata
           if (repository == null)
             status.Messages.Add("Repository not found!");
           else
-            status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
+            status.Messages.Add("Repository [" + qmxf.TargetRepository + "] is read-only!");
 
           _response.Append(status);
         }
@@ -2197,9 +2197,9 @@ namespace org.iringtools.refdata
           /// 5) p8:valNumberOfRoles
           /// 6) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self 
           ///////////////////////////////////////////////////////////////////////////////
-          if (qmxf.templateDefinitions.Count > 0)
+          if (qmxf.TemplateDefinitions.Count > 0)
           {
-            foreach (TemplateDefinition newTDef in qmxf.templateDefinitions)
+            foreach (TemplateDefinition newTDef in qmxf.TemplateDefinitions)
             {
               string language = string.Empty;
               int roleCount = 0;
@@ -2208,10 +2208,10 @@ namespace org.iringtools.refdata
               string generatedId = string.Empty;
               string roleDefinition = string.Empty;
               int index = 1;
-              if (!string.IsNullOrEmpty(newTDef.identifier))
-                templateId = Utility.GetIdFromURI(newTDef.identifier);
+              if (!string.IsNullOrEmpty(newTDef.Identifier))
+                templateId = Utility.GetIdFromURI(newTDef.Identifier);
 
-              templateName = newTDef.name[0].value;
+              templateName = newTDef.Name[0].Value;
               //check for exisitng template
               QMXF oldQmxf = new QMXF();
               if (!String.IsNullOrEmpty(templateId))
@@ -2228,28 +2228,28 @@ namespace org.iringtools.refdata
               }
 
               #region Form Delete/Insert
-              if (oldQmxf.templateDefinitions.Count > 0)
+              if (oldQmxf.TemplateDefinitions.Count > 0)
               {
-                foreach (TemplateDefinition oldTDef in oldQmxf.templateDefinitions)
+                foreach (TemplateDefinition oldTDef in oldQmxf.TemplateDefinitions)
                 {
                   ///process template label(s)
-                  foreach (QMXFName newName in newTDef.name)
+                  foreach (QMXFName newName in newTDef.Name)
                   {
-                    templateName = newName.value;
-                    QMXFName oldName = oldTDef.name.Find(n => n.lang == newName.lang);
-                    if (String.Compare(oldName.value, newName.value, true) != 0)
+                    templateName = newName.Value;
+                    QMXFName oldName = oldTDef.Name.Find(n => n.Lang == newName.Lang);
+                    if (String.Compare(oldName.Value, newName.Value, true) != 0)
                     {
                       GenerateName(ref delete, oldName, templateId, oldTDef);
                       GenerateName(ref insert, newName, templateId, newTDef);
                     }
                   }
                   //append changing descriptions to each block
-                  foreach (Description newDescr in newTDef.description)
+                  foreach (Description newDescr in newTDef.Description)
                   {
-                    Description oldDescr = oldTDef.description.Find(d => d.lang == newDescr.lang);
+                    Description oldDescr = oldTDef.Description.Find(d => d.Lang == newDescr.Lang);
                     if (oldDescr != null && newDescr != null)
                     {
-                      if (String.Compare(oldDescr.value, newDescr.value, true) != 0)
+                      if (String.Compare(oldDescr.Value, newDescr.Value, true) != 0)
                       {
                         GenerateDescription(ref delete, oldDescr, templateId);
                         GenerateDescription(ref insert, newDescr, templateId);
@@ -2270,12 +2270,12 @@ namespace org.iringtools.refdata
                   /// 5) p8:hasRoleFillerType = qualifified class or dm:entityType
                   /// 6) p8:hasTemplate = template ID
                   /// 7) p8:hasRole = role ID --- again probably should not use this --- pointer to self
-                  if (oldTDef.roleDefinition.Count < newTDef.roleDefinition.Count) ///Role(s) added
+                  if (oldTDef.RoleDefinition.Count < newTDef.RoleDefinition.Count) ///Role(s) added
                   {
-                    foreach (RoleDefinition nrd in newTDef.roleDefinition)
+                    foreach (RoleDefinition nrd in newTDef.RoleDefinition)
                     {
-                      string roleName = nrd.name[0].value;
-                      string newRoleID = nrd.identifier;
+                      string roleName = nrd.Name[0].Value;
+                      string newRoleID = nrd.Identifier;
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
@@ -2284,16 +2284,16 @@ namespace org.iringtools.refdata
                           generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
                         newRoleID = generatedId;
                       }
-                      RoleDefinition ord = oldTDef.roleDefinition.Find(r => r.identifier == newRoleID);
+                      RoleDefinition ord = oldTDef.RoleDefinition.Find(r => r.Identifier == newRoleID);
                       if (ord == null) /// need to add it
                       {
-                        foreach (QMXFName name in nrd.name)
+                        foreach (QMXFName name in nrd.Name)
                         {
                           GenerateName(ref insert, name, Utility.GetIdFromURI(newRoleID), nrd);
                         }
-                        if (nrd.description != null)
+                        if (nrd.Description != null)
                         {
-                          GenerateDescription(ref insert, nrd.description, Utility.GetIdFromURI(newRoleID));
+                          GenerateDescription(ref insert, nrd.Description, Utility.GetIdFromURI(newRoleID));
                         }
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
@@ -2306,12 +2306,12 @@ namespace org.iringtools.refdata
                           GenerateRoleIndex(ref insert, Utility.GetIdFromURI(newRoleID), index);
                         }
                       }
-                      if (nrd.range != null)
+                      if (nrd.Range != null)
                       {
                         //qn = nsMap.ReduceToQName(nrd.range, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateRoleFillerType(ref insert, newRoleID, nrd.range);
+                          GenerateRoleFillerType(ref insert, newRoleID, nrd.Range);
                         }
                         else
                         {
@@ -2320,42 +2320,42 @@ namespace org.iringtools.refdata
                       }
                     }
                   }
-                  else if (oldTDef.roleDefinition.Count > newTDef.roleDefinition.Count) ///Role(s) removed
+                  else if (oldTDef.RoleDefinition.Count > newTDef.RoleDefinition.Count) ///Role(s) removed
                   {
-                    foreach (RoleDefinition ord in oldTDef.roleDefinition)
+                    foreach (RoleDefinition ord in oldTDef.RoleDefinition)
                     {
-                      RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
+                      RoleDefinition nrd = newTDef.RoleDefinition.Find(r => r.Identifier == ord.Identifier);
                       if (nrd == null) /// need to add it
                       {
-                        foreach (QMXFName name in ord.name)
+                        foreach (QMXFName name in ord.Name)
                         {
-                          GenerateName(ref delete, name, Utility.GetIdFromURI(ord.identifier), ord);
+                          GenerateName(ref delete, name, Utility.GetIdFromURI(ord.Identifier), ord);
                         }
-                        if (ord.description != null)
+                        if (ord.Description != null)
                         {
-                          GenerateDescription(ref delete, ord.description, Utility.GetIdFromURI(ord.identifier));
+                          GenerateDescription(ref delete, ord.Description, Utility.GetIdFromURI(ord.Identifier));
                         }
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateTypesPart8(ref delete, Utility.GetIdFromURI(ord.identifier), templateId, ord);
-                          GenerateRoleIndexPart8(ref delete, Utility.GetIdFromURI(ord.identifier), index, ord);
+                          GenerateTypesPart8(ref delete, Utility.GetIdFromURI(ord.Identifier), templateId, ord);
+                          GenerateRoleIndexPart8(ref delete, Utility.GetIdFromURI(ord.Identifier), index, ord);
                         }
                         else
                         {
-                          GenerateTypes(ref delete, Utility.GetIdFromURI(ord.identifier), templateId, ord);
-                          GenerateRoleIndex(ref delete, Utility.GetIdFromURI(ord.identifier), index);
+                          GenerateTypes(ref delete, Utility.GetIdFromURI(ord.Identifier), templateId, ord);
+                          GenerateRoleIndex(ref delete, Utility.GetIdFromURI(ord.Identifier), index);
                         }
                       }
-                      if (ord.range != null)
+                      if (ord.Range != null)
                       {
                         //qn = nsMap.ReduceToQName(ord.range, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateRoleFillerType(ref delete, ord.identifier, ord.range);
+                          GenerateRoleFillerType(ref delete, ord.Identifier, ord.Range);
                         }
                         else
                         {
-                          GenerateRoleDomain(ref delete, Utility.GetIdFromURI(ord.identifier), templateId);
+                          GenerateRoleDomain(ref delete, Utility.GetIdFromURI(ord.Identifier), templateId);
                         }
                       }
                     }
@@ -2379,34 +2379,34 @@ namespace org.iringtools.refdata
                 if (repository.RepositoryType == RepositoryType.Part8)
                 {
                   GenerateTypesPart8(ref insert, templateId, null, newTDef);
-                  GenerateRoleCountPart8(ref insert, newTDef.roleDefinition.Count, templateId, newTDef);
+                  GenerateRoleCountPart8(ref insert, newTDef.RoleDefinition.Count, templateId, newTDef);
                 }
                 else
                 {
                   GenerateTypes(ref insert, templateId, null, newTDef);
-                  GenerateRoleCount(ref insert, newTDef.roleDefinition.Count, templateId, newTDef);
+                  GenerateRoleCount(ref insert, newTDef.RoleDefinition.Count, templateId, newTDef);
                 }
-                foreach (QMXFName name in newTDef.name)
+                foreach (QMXFName name in newTDef.Name)
                 {
                   GenerateName(ref insert, name, templateId, newTDef);
                 }
 
-                foreach (Description descr in newTDef.description)
+                foreach (Description descr in newTDef.Description)
                 {
                   GenerateDescription(ref insert, descr, templateId);
                 }
                 //form labels
-                foreach (RoleDefinition newRole in newTDef.roleDefinition)
+                foreach (RoleDefinition newRole in newTDef.RoleDefinition)
                 {
 
-                  string roleLabel = newRole.name.FirstOrDefault().value;
+                  string roleLabel = newRole.Name.FirstOrDefault().Value;
                   string newRoleID = string.Empty;
                   generatedId = string.Empty;
                   string genName = string.Empty;
-                  string range = newRole.range;
+                  string range = newRole.Range;
 
                   genName = "Role definition " + roleLabel;
-                  if (string.IsNullOrEmpty(newRole.identifier))
+                  if (string.IsNullOrEmpty(newRole.Identifier))
                   {
                     if (_useExampleRegistryBase)
                       generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, genName);
@@ -2416,16 +2416,16 @@ namespace org.iringtools.refdata
                   }
                   else
                   {
-                    newRoleID = Utility.GetIdFromURI(newRole.identifier);
+                    newRoleID = Utility.GetIdFromURI(newRole.Identifier);
                   }
-                  foreach (QMXFName newName in newRole.name)
+                  foreach (QMXFName newName in newRole.Name)
                   {
                     GenerateName(ref insert, newName, newRoleID, newRole);
                   }
 
-                  if (newRole.description != null && newRole.description.value != null)
+                  if (newRole.Description != null && newRole.Description.Value != null)
                   {
-                    GenerateDescription(ref insert, newRole.description, newRoleID);
+                    GenerateDescription(ref insert, newRole.Description, newRoleID);
                   }
 
                   if (repository.RepositoryType == RepositoryType.Part8)
@@ -2438,12 +2438,12 @@ namespace org.iringtools.refdata
                   {
                     GenerateRoleIndex(ref insert, newRoleID, ++roleCount);
                   }
-                  if (!string.IsNullOrEmpty(newRole.range))
+                  if (!string.IsNullOrEmpty(newRole.Range))
                   {
                     //qn = nsMap.ReduceToQName(newRole.range, out qName);
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
-                      GenerateRoleFillerType(ref insert, newRoleID, newRole.range);
+                      GenerateRoleFillerType(ref insert, newRoleID, newRole.Range);
                     }
                     else
                     {
@@ -2489,9 +2489,9 @@ namespace org.iringtools.refdata
           /// 2) rdf:type = p8:SpecializedTemplateStatement
           /// 3) rdfs:label = template name
           /// 
-          if (qmxf.templateQualifications.Count > 0)
+          if (qmxf.TemplateQualifications.Count > 0)
           {
-            foreach (TemplateQualification newTQ in qmxf.templateQualifications)
+            foreach (TemplateQualification newTQ in qmxf.TemplateQualifications)
             {
               int roleCount = 0;
               string templateName = string.Empty;
@@ -2499,10 +2499,10 @@ namespace org.iringtools.refdata
               string generatedId = string.Empty;
               string roleQualification = string.Empty;
               //int index = 1;
-              if (!string.IsNullOrEmpty(newTQ.identifier))
-                templateID = newTQ.identifier;
+              if (!string.IsNullOrEmpty(newTQ.Identifier))
+                templateID = newTQ.Identifier;
 
-              templateName = newTQ.name[0].value;
+              templateName = newTQ.Name[0].Value;
               QMXF oldQmxf = new QMXF();
               if (!String.IsNullOrEmpty(templateID))
               {
@@ -2518,63 +2518,63 @@ namespace org.iringtools.refdata
                 templateID = Utility.GetIdFromURI(generatedId);
               }
               #region Form Delete/Insert SPARQL
-              if (oldQmxf.templateQualifications.Count > 0)
+              if (oldQmxf.TemplateQualifications.Count > 0)
               {
-                foreach (TemplateQualification oldTQ in oldQmxf.templateQualifications)
+                foreach (TemplateQualification oldTQ in oldQmxf.TemplateQualifications)
                 {
                   //qn = nsMap.ReduceToQName(oldTQ.qualifies, out qName);
-                  foreach (QMXFName nn in newTQ.name)
+                  foreach (QMXFName nn in newTQ.Name)
                   {
-                    templateName = nn.value;
-                    QMXFName on = oldTQ.name.Find(n => n.lang == nn.lang);
+                    templateName = nn.Value;
+                    QMXFName on = oldTQ.Name.Find(n => n.Lang == nn.Lang);
                     if (on != null)
                     {
-                      if (String.Compare(on.value, nn.value, true) != 0)
+                      if (String.Compare(on.Value, nn.Value, true) != 0)
                       {
                         GenerateName(ref delete, on, templateID, oldTQ);
                         GenerateName(ref insert, nn, templateID, newTQ);
                       }
                     }
                   }
-                  foreach (Description nd in newTQ.description)
+                  foreach (Description nd in newTQ.Description)
                   {
-                    if (nd.lang == null) nd.lang = defaultLanguage;
+                    if (nd.Lang == null) nd.Lang = defaultLanguage;
                     Description od = null;
-                    od = oldTQ.description.Find(d => d.lang == nd.lang);
+                    od = oldTQ.Description.Find(d => d.Lang == nd.Lang);
 
-                    if (od != null && od.value != null)
+                    if (od != null && od.Value != null)
                     {
-                      if (string.Compare(od.value, nd.value, true) != 0)
+                      if (string.Compare(od.Value, nd.Value, true) != 0)
                       {
                         GenerateDescription(ref delete, od, templateID);
                         GenerateDescription(ref insert, nd, templateID);
                       }
                     }
-                    else if (od == null && nd.value != null)
+                    else if (od == null && nd.Value != null)
                     {
                       GenerateDescription(ref insert, nd, templateID);
                     }
                   }
                   //role count
-                  if (oldTQ.roleQualification.Count != newTQ.roleQualification.Count)
+                  if (oldTQ.RoleQualification.Count != newTQ.RoleQualification.Count)
                   {
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
-                      GenerateRoleCountPart8(ref delete, oldTQ.roleQualification.Count, templateID, oldTQ);
-                      GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                      GenerateRoleCountPart8(ref delete, oldTQ.RoleQualification.Count, templateID, oldTQ);
+                      GenerateRoleCountPart8(ref insert, newTQ.RoleQualification.Count, templateID, newTQ);
                     }
                     else
                     {
-                      GenerateRoleCount(ref delete, oldTQ.roleQualification.Count, templateID, oldTQ);
-                      GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                      GenerateRoleCount(ref delete, oldTQ.RoleQualification.Count, templateID, oldTQ);
+                      GenerateRoleCount(ref insert, newTQ.RoleQualification.Count, templateID, newTQ);
                     }
                   }
 
-                  foreach (Specialization ns in newTQ.specialization)
+                  foreach (Specialization ns in newTQ.Specialization)
                   {
-                    Specialization os = oldTQ.specialization.FirstOrDefault();
+                    Specialization os = oldTQ.Specialization.FirstOrDefault();
 
-                    if (os != null && os.reference != ns.reference)
+                    if (os != null && os.Reference != ns.Reference)
                     {
                       if (repository.RepositoryType == RepositoryType.Part8)
                       {
@@ -2596,13 +2596,13 @@ namespace org.iringtools.refdata
                   /// 5) p8:hasRoleFillerType = qualifified class
                   /// 6) p8:hasTemplate = template ID
                   /// 6) p8:hasRole = tpl:{roleName} probably don't need to use this -- pointer to self
-                  if (oldTQ.roleQualification.Count < newTQ.roleQualification.Count)
+                  if (oldTQ.RoleQualification.Count < newTQ.RoleQualification.Count)
                   {
                     int count = 0;
-                    foreach (RoleQualification nrq in newTQ.roleQualification)
+                    foreach (RoleQualification nrq in newTQ.RoleQualification)
                     {
-                      string roleName = nrq.name[0].value;
-                      string newRoleID = nrq.identifier;
+                      string roleName = nrq.Name[0].Value;
+                      string newRoleID = nrq.Identifier;
 
                       if (string.IsNullOrEmpty(newRoleID))
                       {
@@ -2612,32 +2612,32 @@ namespace org.iringtools.refdata
                           generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
                         newRoleID = generatedId;
                       }
-                      RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                      RoleQualification orq = oldTQ.RoleQualification.Find(r => r.Identifier == newRoleID);
                       if (orq == null)
                       {
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
                           GenerateTypesPart8(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
-                          foreach (QMXFName nn in nrq.name)
+                          foreach (QMXFName nn in nrq.Name)
                           {
                             GenerateName(ref insert, nn, Utility.GetIdFromURI(newRoleID), nrq);
                           }
                           GenerateRoleIndexPart8(ref insert, Utility.GetIdFromURI(newRoleID), ++count, nrq);
                           GenerateHasTemplate(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
                           GenerateHasRole(ref insert, templateID, Utility.GetIdFromURI(newRoleID), newTQ);
-                          if (!string.IsNullOrEmpty(nrq.range))
+                          if (!string.IsNullOrEmpty(nrq.Range))
                           {
                             //qn = nsMap.ReduceToQName(nrq.range, out qName);
-                            GenerateRoleFillerType(ref insert, newRoleID, nrq.range);
+                            GenerateRoleFillerType(ref insert, newRoleID, nrq.Range);
                           }
-                          else if (nrq.value != null)
+                          else if (nrq.Value != null)
                           {
-                            if (nrq.value.reference != null)
+                            if (nrq.Value.Reference != null)
                             {
                               //qn = nsMap.ReduceToQName(nrq.value.reference, out qName);
-                              GenerateRoleFillerType(ref insert, newRoleID, nrq.value.reference);
+                              GenerateRoleFillerType(ref insert, newRoleID, nrq.Value.Reference);
                             }
-                            else if (nrq.value.text != null)
+                            else if (nrq.Value.Text != null)
                             {
                               ///TODO
                             }
@@ -2645,23 +2645,23 @@ namespace org.iringtools.refdata
                         }
                         else //Not Part8 repository
                         {
-                          if (!string.IsNullOrEmpty(nrq.range)) //range restriction
+                          if (!string.IsNullOrEmpty(nrq.Range)) //range restriction
                           {
                             //qn = nsMap.ReduceToQName(nrq.range, out qName);
-                            GenerateRange(ref insert, newRoleID, nrq.range, nrq);
+                            GenerateRange(ref insert, newRoleID, nrq.Range, nrq);
                             GenerateTypes(ref insert, newRoleID, templateID, nrq);
-                            GenerateQualifies(ref insert, newRoleID, nrq.qualifies, nrq);
+                            GenerateQualifies(ref insert, newRoleID, nrq.Qualifies, nrq);
                           }
-                          else if (nrq.value != null)
+                          else if (nrq.Value != null)
                           {
-                            if (nrq.value.reference != null) //reference restriction
+                            if (nrq.Value.Reference != null) //reference restriction
                             {
                               GenerateReferenceType(ref insert, newRoleID, templateID, nrq);
-                              GenerateReferenceQual(ref insert, newRoleID, nrq.qualifies, nrq);
+                              GenerateReferenceQual(ref insert, newRoleID, nrq.Qualifies, nrq);
                               //qn = nsMap.ReduceToQName(nrq.value.reference, out qName);
-                              GenerateReferenceTpl(ref insert, newRoleID, nrq.value.reference, nrq);
+                              GenerateReferenceTpl(ref insert, newRoleID, nrq.Value.Reference, nrq);
                             }
-                            else if (nrq.value.text != null)// value restriction
+                            else if (nrq.Value.Text != null)// value restriction
                             {
                               GenerateValue(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
                             }
@@ -2673,13 +2673,13 @@ namespace org.iringtools.refdata
                       }
                     }
                   }
-                  else if (oldTQ.roleQualification.Count > newTQ.roleQualification.Count)
+                  else if (oldTQ.RoleQualification.Count > newTQ.RoleQualification.Count)
                   {
                     int count = 0;
-                    foreach (RoleQualification orq in oldTQ.roleQualification)
+                    foreach (RoleQualification orq in oldTQ.RoleQualification)
                     {
-                      string roleName = orq.name[0].value;
-                      string newRoleID = orq.identifier;
+                      string roleName = orq.Name[0].Value;
+                      string newRoleID = orq.Identifier;
 
                       if (string.IsNullOrEmpty(newRoleID))
                       {
@@ -2689,32 +2689,32 @@ namespace org.iringtools.refdata
                           generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
                         newRoleID = generatedId;
                       }
-                      RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                      RoleQualification nrq = newTQ.RoleQualification.Find(r => r.Identifier == newRoleID);
                       if (nrq == null)
                       {
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
                           GenerateTypesPart8(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
-                          foreach (QMXFName nn in orq.name)
+                          foreach (QMXFName nn in orq.Name)
                           {
                             GenerateName(ref delete, nn, Utility.GetIdFromURI(newRoleID), orq);
                           }
                           GenerateRoleIndexPart8(ref delete, Utility.GetIdFromURI(newRoleID), ++count, orq);
                           GenerateHasTemplate(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
                           GenerateHasRole(ref delete, templateID, Utility.GetIdFromURI(newRoleID), oldTQ);
-                          if (!string.IsNullOrEmpty(orq.range))
+                          if (!string.IsNullOrEmpty(orq.Range))
                           {
                             //qn = nsMap.ReduceToQName(orq.range, out qName);
-                            GenerateRoleFillerType(ref delete, newRoleID, orq.range);
+                            GenerateRoleFillerType(ref delete, newRoleID, orq.Range);
                           }
-                          else if (orq.value != null)
+                          else if (orq.Value != null)
                           {
-                            if (orq.value.reference != null)
+                            if (orq.Value.Reference != null)
                             {
                               //qn = nsMap.ReduceToQName(orq.value.reference, out qName);
-                              GenerateRoleFillerType(ref delete, newRoleID, orq.value.reference);
+                              GenerateRoleFillerType(ref delete, newRoleID, orq.Value.Reference);
                             }
-                            else if (nrq.value.text != null)
+                            else if (nrq.Value.Text != null)
                             {
                               ///TODO
                             }
@@ -2722,23 +2722,23 @@ namespace org.iringtools.refdata
                         }
                         else //Not Part8 repository
                         {
-                          if (!string.IsNullOrEmpty(orq.range)) //range restriction
+                          if (!string.IsNullOrEmpty(orq.Range)) //range restriction
                           {
                             //qn = nsMap.ReduceToQName(orq.range, out qName);
-                            GenerateRange(ref delete, newRoleID, orq.range, orq);
+                            GenerateRange(ref delete, newRoleID, orq.Range, orq);
                             GenerateTypes(ref delete, newRoleID, templateID, nrq);
-                            GenerateQualifies(ref delete, newRoleID, orq.qualifies, orq);
+                            GenerateQualifies(ref delete, newRoleID, orq.Qualifies, orq);
                           }
-                          else if (orq.value != null)
+                          else if (orq.Value != null)
                           {
-                            if (orq.value.reference != null) //reference restriction
+                            if (orq.Value.Reference != null) //reference restriction
                             {
                               GenerateReferenceType(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
-                              GenerateReferenceQual(ref delete, Utility.GetIdFromURI(newRoleID), orq.qualifies.Split('#')[1], orq);
+                              GenerateReferenceQual(ref delete, Utility.GetIdFromURI(newRoleID), orq.Qualifies.Split('#')[1], orq);
                               //qn = nsMap.ReduceToQName(orq.value.reference, out qName);
-                              GenerateReferenceTpl(ref insert, newRoleID, orq.value.reference, orq);
+                              GenerateReferenceTpl(ref insert, newRoleID, orq.Value.Reference, orq);
                             }
-                            else if (orq.value.text != null)// value restriction
+                            else if (orq.Value.Text != null)// value restriction
                             {
                               GenerateValue(ref delete, newRoleID, templateID, orq);
                             }
@@ -2768,32 +2768,32 @@ namespace org.iringtools.refdata
                 string templateLabel = String.Empty;
                 string labelSparql = String.Empty;
 
-                foreach (QMXFName newName in newTQ.name)
+                foreach (QMXFName newName in newTQ.Name)
                 {
                   GenerateName(ref insert, newName, templateID, newTQ);
                 }
-                foreach (Description newDescr in newTQ.description)
+                foreach (Description newDescr in newTQ.Description)
                 {
-                  if (string.IsNullOrEmpty(newDescr.value)) continue;
+                  if (string.IsNullOrEmpty(newDescr.Value)) continue;
                   GenerateDescription(ref insert, newDescr, templateID);
                 }
 
                 if (repository.RepositoryType == RepositoryType.Part8)
                 {
-                  GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                  GenerateRoleCountPart8(ref insert, newTQ.RoleQualification.Count, templateID, newTQ);
                   //qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
                   GenerateTypesPart8(ref insert, templateID, newTQ.qualifies, newTQ);
                 }
                 else
                 {
-                  GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                  GenerateRoleCount(ref insert, newTQ.RoleQualification.Count, templateID, newTQ);
                   //qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
                   GenerateTypes(ref insert, templateID, newTQ.qualifies, newTQ);
 
                 }
-                foreach (Specialization spec in newTQ.specialization)
+                foreach (Specialization spec in newTQ.Specialization)
                 {
-                  string specialization = spec.reference;
+                  string specialization = spec.Reference;
                   if (repository.RepositoryType == RepositoryType.Part8)
                   {
                     ///TODO
@@ -2804,16 +2804,16 @@ namespace org.iringtools.refdata
                   }
                 }
 
-                foreach (RoleQualification newRole in newTQ.roleQualification)
+                foreach (RoleQualification newRole in newTQ.RoleQualification)
                 {
-                  string roleLabel = newRole.name.FirstOrDefault().value;
+                  string roleLabel = newRole.Name.FirstOrDefault().Value;
                   string roleID = string.Empty;
                   generatedId = string.Empty;
                   string genName = string.Empty;
-                  string range = newRole.range;
+                  string range = newRole.Range;
 
                   genName = "Role Qualification " + roleLabel;
-                  if (string.IsNullOrEmpty(newRole.identifier))
+                  if (string.IsNullOrEmpty(newRole.Identifier))
                   {
                     if (_useExampleRegistryBase)
                       generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, genName);
@@ -2824,31 +2824,31 @@ namespace org.iringtools.refdata
                   }
                   else
                   {
-                    roleID = newRole.identifier;
+                    roleID = newRole.Identifier;
                   }
                   if (repository.RepositoryType == RepositoryType.Part8)
                   {
                     GenerateTypesPart8(ref insert, roleID, templateID, newRole);
-                    foreach (QMXFName newName in newRole.name)
+                    foreach (QMXFName newName in newRole.Name)
                     {
                       GenerateName(ref insert, newName, roleID, newRole);
                     }
                     GenerateRoleIndexPart8(ref insert, roleID, ++roleCount, newRole);
                     GenerateHasTemplate(ref insert, roleID, templateID, newRole);
                     GenerateHasRole(ref insert, templateID, roleID, newTQ);
-                    if (!string.IsNullOrEmpty(newRole.range))
+                    if (!string.IsNullOrEmpty(newRole.Range))
                     {
                       //qn = nsMap.ReduceToQName(newRole.range, out qName);
-                      GenerateRoleFillerType(ref insert, roleID, newRole.range);
+                      GenerateRoleFillerType(ref insert, roleID, newRole.Range);
                     }
-                    else if (newRole.value != null)
+                    else if (newRole.Value != null)
                     {
-                      if (newRole.value.reference != null)
+                      if (newRole.Value.Reference != null)
                       {
                         //qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
-                        GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
+                        GenerateRoleFillerType(ref insert, roleID, newRole.Value.Reference);
                       }
-                      else if (newRole.value.text != null)
+                      else if (newRole.Value.Text != null)
                       {
                         ///TODO
                       }
@@ -2856,24 +2856,24 @@ namespace org.iringtools.refdata
                   }
                   else //Not Part8 repository
                   {
-                    if (!string.IsNullOrEmpty(newRole.range)) //range restriction
+                    if (!string.IsNullOrEmpty(newRole.Range)) //range restriction
                     {
 
                       //qn = nsMap.ReduceToQName(newRole.range, out qName);
-                      GenerateRange(ref insert, roleID, newRole.range, newRole);
+                      GenerateRange(ref insert, roleID, newRole.Range, newRole);
                       GenerateTypes(ref insert, roleID, templateID, newRole);
-                      GenerateQualifies(ref insert, roleID, newRole.qualifies, newRole);
+                      GenerateQualifies(ref insert, roleID, newRole.Qualifies, newRole);
                     }
-                    else if (newRole.value != null)
+                    else if (newRole.Value != null)
                     {
-                      if (newRole.value.reference != null) //reference restriction
+                      if (newRole.Value.Reference != null) //reference restriction
                       {
                         GenerateReferenceType(ref insert, roleID, templateID, newRole);
-                        GenerateReferenceQual(ref insert, roleID, newRole.qualifies, newRole);
+                        GenerateReferenceQual(ref insert, roleID, newRole.Qualifies, newRole);
                         //qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
-                        GenerateReferenceTpl(ref insert, roleID, newRole.value.reference, newRole);
+                        GenerateReferenceTpl(ref insert, roleID, newRole.Value.Reference, newRole);
                       }
-                      else if (newRole.value.text != null)// value restriction
+                      else if (newRole.Value.Text != null)// value restriction
                       {
                         GenerateValue(ref insert, roleID, templateID, newRole);
                       }
@@ -2951,7 +2951,7 @@ namespace org.iringtools.refdata
       response.Level = StatusLevel.Success;
       try
       {
-        Repository repository = GetRepository(qmxf.targetRepository);
+        Repository repository = GetRepository(qmxf.TargetRepository);
 
         if (repository == null || repository.IsReadOnly)
         {
@@ -2961,17 +2961,17 @@ namespace org.iringtools.refdata
           if (repository == null)
             status.Messages.Add("Repository not found!");
           else
-            status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
+            status.Messages.Add("Repository [" + qmxf.TargetRepository + "] is read-only!");
 
           _response.Append(status);
         }
         else
         {
           string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
-          foreach (ClassDefinition newClsDef in qmxf.classDefinitions)
+          foreach (ClassDefinition newClsDef in qmxf.ClassDefinitions)
           {
             string language = string.Empty;
-            string clsId = newClsDef.identifier;
+            string clsId = newClsDef.Identifier;
             QMXF oldQmxf = new QMXF();
 
             if (!String.IsNullOrEmpty(clsId))
@@ -2979,27 +2979,27 @@ namespace org.iringtools.refdata
               oldQmxf = GetClass(clsId, repository);
             }
             // delete class
-            if (oldQmxf.classDefinitions.Count > 0)
+            if (oldQmxf.ClassDefinitions.Count > 0)
             {
-              foreach (ClassDefinition oldClsDef in oldQmxf.classDefinitions)
+              foreach (ClassDefinition oldClsDef in oldQmxf.ClassDefinitions)
               {
-                foreach (QMXFName nn in newClsDef.name)
+                foreach (QMXFName nn in newClsDef.Name)
                 {
-                  QMXFName on = oldClsDef.name.Find(n => n.lang == nn.lang);
+                  QMXFName on = oldClsDef.Name.Find(n => n.Lang == nn.Lang);
                   if (on != null)
                   {
-                    if (String.Compare(on.value, nn.value, true) != 0)
+                    if (String.Compare(on.Value, nn.Value, true) != 0)
                     {
                       GenerateClassName(ref delete, on, clsId, oldClsDef);
                       GenerateClassName(ref insert, nn, clsId, newClsDef);
                     }
                   }
-                  foreach (Description nd in newClsDef.description)
+                  foreach (Description nd in newClsDef.Description)
                   {
-                    Description od = oldClsDef.description.Find(d => d.lang == nd.lang);
+                    Description od = oldClsDef.Description.Find(d => d.Lang == nd.Lang);
                     if (od != null)
                     {
-                      if (String.Compare(od.value, nd.value, true) != 0)
+                      if (String.Compare(od.Value, nd.Value, true) != 0)
                       {
                         GenerateClassDescription(ref delete, od, clsId);
                         GenerateClassDescription(ref insert, nd, clsId);
@@ -3007,72 +3007,72 @@ namespace org.iringtools.refdata
                     }
                   }
                   //specialization
-                  if (newClsDef.specialization.Count == oldClsDef.specialization.Count)
+                  if (newClsDef.Specialization.Count == oldClsDef.Specialization.Count)
                   {
                     continue; /// no change ... so continue
                   }
-                  else if (newClsDef.specialization.Count < oldClsDef.specialization.Count) //some is deleted ...focus on old to find deleted
+                  else if (newClsDef.Specialization.Count < oldClsDef.Specialization.Count) //some is deleted ...focus on old to find deleted
                   {
-                    foreach (Specialization os in oldClsDef.specialization)
+                    foreach (Specialization os in oldClsDef.Specialization)
                     {
-                      Specialization ns = newClsDef.specialization.Find(s => s.reference == os.reference);
+                      Specialization ns = newClsDef.Specialization.Find(s => s.Reference == os.Reference);
                       if (ns == null)
                       {
                         //qn = nsMap.ReduceToQName(os.reference, out qName);
-                        GenerateRdfSubClass(ref delete, clsId, os.reference);
+                        GenerateRdfSubClass(ref delete, clsId, os.Reference);
                       }
                     }
                   }
-                  else if (newClsDef.specialization.Count > oldClsDef.specialization.Count)//some is added ... find added 
+                  else if (newClsDef.Specialization.Count > oldClsDef.Specialization.Count)//some is added ... find added 
                   {
-                    foreach (Specialization ns in newClsDef.specialization)
+                    foreach (Specialization ns in newClsDef.Specialization)
                     {
-                      Specialization os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
+                      Specialization os = oldClsDef.Specialization.Find(s => s.Reference == ns.Reference);
                       if (os == null)
                       {
                         //qn = nsMap.ReduceToQName(ns.reference, out qName);
-                        GenerateRdfSubClass(ref insert, clsId, ns.reference);
+                        GenerateRdfSubClass(ref insert, clsId, ns.Reference);
                       }
                     }
                   }
                   // classification
-                  if (newClsDef.classification.Count == oldClsDef.classification.Count)
+                  if (newClsDef.Classification.Count == oldClsDef.Classification.Count)
                   {
                     continue; //no change...so continue
                   }
-                  else if (newClsDef.classification.Count < oldClsDef.classification.Count) //some is deleted ...focus on old to find deleted
+                  else if (newClsDef.Classification.Count < oldClsDef.Classification.Count) //some is deleted ...focus on old to find deleted
                   {
-                    foreach (Classification oc in oldClsDef.classification)
+                    foreach (Classification oc in oldClsDef.Classification)
                     {
-                      Classification nc = newClsDef.classification.Find(c => c.reference == oc.reference);
+                      Classification nc = newClsDef.Classification.Find(c => c.Reference == oc.Reference);
                       if (nc == null)
                       {
                         //qn = nsMap.ReduceToQName(oc.reference, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateSuperClass(ref delete, oc.reference, clsId); ///delete from old
+                          GenerateSuperClass(ref delete, oc.Reference, clsId); ///delete from old
                         }
                         else
                         {
-                          GenerateDmClassification(ref delete, clsId, oc.reference);
+                          GenerateDmClassification(ref delete, clsId, oc.Reference);
                         }
                       }
                     }
                   }
-                  else if (newClsDef.classification.Count > oldClsDef.classification.Count)//some is added ... find added classifications
+                  else if (newClsDef.Classification.Count > oldClsDef.Classification.Count)//some is added ... find added classifications
                   {
-                    foreach (Classification nc in newClsDef.classification)
+                    foreach (Classification nc in newClsDef.Classification)
                     {
-                      Classification oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
+                      Classification oc = oldClsDef.Classification.Find(c => c.Reference == nc.Reference);
                       if (oc == null)
                       {
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          GenerateSuperClass(ref insert, nc.reference, clsId); ///insert from new
+                          GenerateSuperClass(ref insert, nc.Reference, clsId); ///insert from new
                         }
                         else
                         {
-                          GenerateDmClassification(ref insert, clsId, nc.reference);
+                          GenerateDmClassification(ref insert, clsId, nc.Reference);
                         }
                       }
                     }
@@ -3081,7 +3081,7 @@ namespace org.iringtools.refdata
               }
               if (delete.IsEmpty && insert.IsEmpty)
               {
-                string errMsg = "No changes made to class [" + qmxf.classDefinitions[0].name[0].value + "]";
+                string errMsg = "No changes made to class [" + qmxf.ClassDefinitions[0].Name[0].Value + "]";
                 Status status = new Status();
                 response.Level = StatusLevel.Warning;
                 status.Messages.Add(errMsg);
@@ -3092,7 +3092,7 @@ namespace org.iringtools.refdata
             /// add class
             if (delete.IsEmpty && insert.IsEmpty)
             {
-              string clsLabel = newClsDef.name[0].value;
+              string clsLabel = newClsDef.Name[0].Value;
               if (string.IsNullOrEmpty(clsId))
               {
                 string newClsName = "Class definition " + clsLabel;
@@ -3100,53 +3100,53 @@ namespace org.iringtools.refdata
 
               }
               /// append entity type
-              if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
+              if (newClsDef.EntityType != null && !String.IsNullOrEmpty(newClsDef.EntityType.Reference))
               {
               ///qn = nsMap.ReduceToQName(newClsDef.entityType.reference, out qName);
-                GenerateTypesPart8(ref insert, clsId, newClsDef.entityType.reference, newClsDef);
+                GenerateTypesPart8(ref insert, clsId, newClsDef.EntityType.Reference, newClsDef);
               }
               /// append specialization
-              foreach (Specialization ns in newClsDef.specialization)
+              foreach (Specialization ns in newClsDef.Specialization)
               {
-                if (!String.IsNullOrEmpty(ns.reference))
+                if (!String.IsNullOrEmpty(ns.Reference))
                 {
                   //qn = nsMap.ReduceToQName(ns.reference, out qName);
                   if (repository.RepositoryType == RepositoryType.Part8)
                   {
-                    GenerateRdfSubClass(ref insert, clsId, ns.reference);
+                    GenerateRdfSubClass(ref insert, clsId, ns.Reference);
                   }
                   else
                   {
-                    GenerateDmSubClass(ref insert, clsId, ns.reference);
+                    GenerateDmSubClass(ref insert, clsId, ns.Reference);
                   }
                 }
               }
               // append description
-              foreach (Description nd in newClsDef.description)
+              foreach (Description nd in newClsDef.Description)
               {
-                if (!String.IsNullOrEmpty(nd.value))
+                if (!String.IsNullOrEmpty(nd.Value))
                 {
                   GenerateClassDescription(ref insert, nd, clsId);
                 }
               }
-              foreach (QMXFName nn in newClsDef.name)
+              foreach (QMXFName nn in newClsDef.Name)
               {
                 // append label
                 GenerateClassName(ref insert, nn, clsId, newClsDef);
               }
               // append classification
-              foreach (Classification nc in newClsDef.classification)
+              foreach (Classification nc in newClsDef.Classification)
               {
-                if (!string.IsNullOrEmpty(nc.reference))
+                if (!string.IsNullOrEmpty(nc.Reference))
                 {
                   //qn = nsMap.ReduceToQName(nc.reference, out qName);
                   if (repository.RepositoryType == RepositoryType.Part8)
                   {
-                    GenerateSuperClass(ref insert, nc.reference, clsId);
+                    GenerateSuperClass(ref insert, nc.Reference, clsId);
                   }
                   else
                   {
-                    GenerateDmClassification(ref insert, clsId, nc.reference);
+                    GenerateDmClassification(ref insert, clsId, nc.Reference);
                   }
                 }
               }
@@ -3268,7 +3268,7 @@ namespace org.iringtools.refdata
       obj = work.CreateUriNode(string.Format("<{0}>", objId));
       work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("tpl:R29577887690");
-      obj = work.CreateLiteralNode(role.value.text, string.IsNullOrEmpty(role.value.lang) ? defaultLanguage : role.value.lang);
+      obj = work.CreateLiteralNode(role.Value.Text, string.IsNullOrEmpty(role.Value.Lang) ? defaultLanguage : role.Value.Lang);
       work.Assert(new Triple(subj, pred, obj));
     }
 
@@ -3420,7 +3420,7 @@ namespace org.iringtools.refdata
         obj = work.CreateUriNode(string.Format("tpl:{0}", objectId));
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("p8:hasRoleFillerType");
-        obj = work.CreateUriNode(string.Format("<{0}>", ((RoleQualification)gobj).range));
+        obj = work.CreateUriNode(string.Format("<{0}>", ((RoleQualification)gobj).Range));
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleDefinition)
@@ -3435,7 +3435,7 @@ namespace org.iringtools.refdata
         obj = work.CreateUriNode(string.Format("<{0}>", objectId));
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("p8:hasRoleFillerType");
-        obj = work.CreateUriNode(string.Format("<{0}>", ((RoleDefinition)gobj).range));
+        obj = work.CreateUriNode(string.Format("<{0}>", ((RoleDefinition)gobj).Range));
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is TemplateQualification)
@@ -3511,7 +3511,7 @@ namespace org.iringtools.refdata
     {
       subj = work.CreateUriNode(string.Format("<{0}>", subjId));
       pred = work.CreateUriNode("rdfs:label");
-      obj = work.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
+      obj = work.CreateLiteralNode(name.Value, string.IsNullOrEmpty(name.Lang) ? defaultLanguage : name.Lang);
       work.Assert(new Triple(subj, pred, obj));
     }
 
@@ -3519,14 +3519,14 @@ namespace org.iringtools.refdata
     {
       subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
       pred = work.CreateUriNode("rdfs:label");
-      obj = work.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
+      obj = work.CreateLiteralNode(name.Value, string.IsNullOrEmpty(name.Lang) ? defaultLanguage : name.Lang);
       work.Assert(new Triple(subj, pred, obj));
     }
     private void GenerateDescription(ref Graph work, Description descr, string subjectId)
     {
       subj = work.CreateUriNode(string.Format("tpl:{0}", subjectId));
       pred = work.CreateUriNode("rdfs:comment");
-      obj = work.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
+      obj = work.CreateLiteralNode(descr.Value, string.IsNullOrEmpty(descr.Lang) ? defaultLanguage : descr.Lang);
       work.Assert(new Triple(subj, pred, obj));
     }
 
@@ -3534,7 +3534,7 @@ namespace org.iringtools.refdata
     {
       subj = work.CreateUriNode(string.Format("rdl:{0}", subjectId));
       pred = work.CreateUriNode("rdfs:comment");
-      obj = work.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
+      obj = work.CreateLiteralNode(descr.Value, string.IsNullOrEmpty(descr.Lang) ? defaultLanguage : descr.Lang);
       work.Assert(new Triple(subj, pred, obj));
     }
 

@@ -62,22 +62,22 @@ namespace QMXFGenerator
               _classWorksheet = GetWorksheet(document, "Class");
               _classSpecializationWorksheet = GetWorksheet(document, "Class Specialization");
               Console.WriteLine("Processing Classes...");
-              qmxf.classDefinitions = ProcessClass(_classWorksheet, _classSpecializationWorksheet);
+              qmxf.ClassDefinitions = ProcessClass(_classWorksheet, _classSpecializationWorksheet);
               
               _classificationWorksheet = GetWorksheet(document, "Classification");
 
               Console.WriteLine("Processing Classifications...");
-              ProcessClassDefinitions(_classificationWorksheet, qmxf.classDefinitions);
+              ProcessClassDefinitions(_classificationWorksheet, qmxf.ClassDefinitions);
 
               _baseTemplateWorksheet = GetWorksheet(document, "Base Template");
 
               Console.WriteLine("Processing Base Templates...");
-              qmxf.templateDefinitions = ProcessBaseTemplate(_baseTemplateWorksheet);
+              qmxf.TemplateDefinitions = ProcessBaseTemplate(_baseTemplateWorksheet);
              
               WorksheetPartWrapper specializedIndividualTemplateWorksheet = GetWorksheet(document, "Specialized Individual Template");
 
               Console.WriteLine("Processing Specialized Individual Templates...");
-              qmxf.templateQualifications = ProcessSpecializedIndividualTemplates(specializedIndividualTemplateWorksheet);
+              qmxf.TemplateQualifications = ProcessSpecializedIndividualTemplates(specializedIndividualTemplateWorksheet);
 
               specializedIndividualTemplateWorksheet = null;
               _baseTemplateWorksheet = null;
@@ -88,53 +88,53 @@ namespace QMXFGenerator
             var error = false;
             if (!string.IsNullOrEmpty(_updateRun))
             {
-              foreach (var cls in qmxf.classDefinitions)
+              foreach (var cls in qmxf.ClassDefinitions)
               {
                 try
                 {
-                  if (!CheckUri(cls.identifier))
+                  if (!CheckUri(cls.Identifier))
                   {
-                    Utility.WriteString("Cannot Post Example namespace " + cls.identifier + "\n", "error.log", true);
+                    Utility.WriteString("Cannot Post Example namespace " + cls.Identifier + "\n", "error.log", true);
                     continue;
                   }
-                  var q = new QMXF { targetRepository = _targetRepository };
-                  q.classDefinitions.Add(cls);
+                  var q = new QMXF { TargetRepository = _targetRepository };
+                  q.ClassDefinitions.Add(cls);
                   Response resp = _refdataClient.Post<QMXF, Response>("/classes", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
-                    Console.WriteLine("Error posting class: " + cls.name[0].value);
-                    Utility.WriteString("Error posting class: " + cls.name[0].value + "\n", "error.log", true);
+                    Console.WriteLine("Error posting class: " + cls.Name[0].Value);
+                    Utility.WriteString("Error posting class: " + cls.Name[0].Value + "\n", "error.log", true);
                   }
                   else
-                    Console.WriteLine("Success: posted class: " + cls.name[0].value);
+                    Console.WriteLine("Success: posted class: " + cls.Name[0].Value);
                 }
                 catch (Exception)
                 {
-                  Utility.WriteString("Error posting class: " + cls.name[0].value + "\n", "error.log", true);
+                  Utility.WriteString("Error posting class: " + cls.Name[0].Value + "\n", "error.log", true);
                 }
               }
               ///Post baseTemplates
-              foreach (var t in qmxf.templateDefinitions)
+              foreach (var t in qmxf.TemplateDefinitions)
               {
                 try
                 {
-                  if (!CheckUri(t.identifier))
+                  if (!CheckUri(t.Identifier))
                   {
                     error = true;
-                    Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\n", "error.log", true);
+                    Utility.WriteString("Cannot Post Example namespace " + t.Identifier + "\n", "error.log", true);
                   }
 
-                  foreach (var r in t.roleDefinition)
+                  foreach (var r in t.RoleDefinition)
                   {
-                    if (string.IsNullOrEmpty(r.range))
+                    if (string.IsNullOrEmpty(r.Range))
                     {
-                      Utility.WriteString("\n" + r.identifier + " do not have range defined \n", "error.log", true);
-                      Console.WriteLine("error in template " + t.identifier + " see : error.log");
+                      Utility.WriteString("\n" + r.Identifier + " do not have range defined \n", "error.log", true);
+                      Console.WriteLine("error in template " + t.Identifier + " see : error.log");
                       error = true;
                     }
-                    else if (!CheckUri(r.identifier))
+                    else if (!CheckUri(r.Identifier))
                     {
-                      Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\n", "error.log", true);
+                      Utility.WriteString("Cannot Post Example namespace " + r.Identifier + "\n", "error.log", true);
                       error = true;
                     }
 
@@ -144,39 +144,39 @@ namespace QMXFGenerator
                     error = false;
                     break;
                   }
-                  var q = new QMXF { targetRepository = _targetRepository };
-                  q.templateDefinitions.Add(t);
+                  var q = new QMXF { TargetRepository = _targetRepository };
+                  q.TemplateDefinitions.Add(t);
                   Response resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
-                    Console.WriteLine("Error posting baseTemplate: " + t.name[0].value);
-                    Utility.WriteString("Error posting baseTemplate: " + t.name[0].value + "\n", "error.log", true);
+                    Console.WriteLine("Error posting baseTemplate: " + t.Name[0].Value);
+                    Utility.WriteString("Error posting baseTemplate: " + t.Name[0].Value + "\n", "error.log", true);
                   }
                   else
-                    Console.WriteLine("Success: posted baseTemplate: " + t.name[0].value);
+                    Console.WriteLine("Success: posted baseTemplate: " + t.Name[0].Value);
                 }
                 catch (Exception)
                 {
-                  Utility.WriteString("Error posting baseTemplate: " + t.name[0].value + "\n", "error.log", true);
+                  Utility.WriteString("Error posting baseTemplate: " + t.Name[0].Value + "\n", "error.log", true);
                 }
               }
               ///Post Specialised templates
-              foreach (var t in qmxf.templateQualifications)
+              foreach (var t in qmxf.TemplateQualifications)
               {
                 try
                 {
-                  if (!CheckUri(t.identifier))
+                  if (!CheckUri(t.Identifier))
                   {
-                    Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\n", "error.log", true);
+                    Utility.WriteString("Cannot Post Example namespace " + t.Identifier + "\n", "error.log", true);
                     error = true;
                     continue;
                   }
-                  foreach (var r in t.roleQualification)
+                  foreach (var r in t.RoleQualification)
                   {
-                    if (string.IsNullOrEmpty(r.range))
+                    if (string.IsNullOrEmpty(r.Range))
                     {
-                      Utility.WriteString("\n" + r.identifier + " do not have range defined \n", "error.log", true);
-                      Console.WriteLine("error in template " + t.identifier + " see : error.log");
+                      Utility.WriteString("\n" + r.Identifier + " do not have range defined \n", "error.log", true);
+                      Console.WriteLine("error in template " + t.Identifier + " see : error.log");
                       error = true;
                     }
                   }
@@ -185,20 +185,20 @@ namespace QMXFGenerator
                     error = false;
                     break;
                   }
-                  var q = new QMXF { targetRepository = _targetRepository };
-                  q.templateQualifications.Add(t);
+                  var q = new QMXF { TargetRepository = _targetRepository };
+                  q.TemplateQualifications.Add(t);
                   Response resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
-                    Console.WriteLine("Error posting specializedTemplate: " + t.name[0].value);
-                    Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\n", "error.log", true);
+                    Console.WriteLine("Error posting specializedTemplate: " + t.Name[0].Value);
+                    Utility.WriteString("Error posting specializedTemplate: " + t.Name[0].Value + "\n", "error.log", true);
                   }
                   else
-                    Console.WriteLine("Success: posted specializedTemplate: " + t.name[0].value);
+                    Console.WriteLine("Success: posted specializedTemplate: " + t.Name[0].Value);
                 }
                 catch (Exception)
                 {
-                  Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\n", "error.log", true);
+                  Utility.WriteString("Error posting specializedTemplate: " + t.Name[0].Value + "\n", "error.log", true);
                 }
               }
             }
@@ -244,14 +244,14 @@ namespace QMXFGenerator
           var query = from cls in _classes
                       where cls[(int)ClassColumns.Label].ToString().Trim().Equals(c[(int)ClassificationColumns.Classified].ToString())
                       select cls[(int)ClassColumns.ID];
-          var cl = list.SingleOrDefault(l => l.name[0].value.Equals(c[(int)ClassificationColumns.Class].ToString()));
+          var cl = list.SingleOrDefault(l => l.Name[0].Value.Equals(c[(int)ClassificationColumns.Class].ToString()));
           if (cl != null && query != null && query.Count() > 0)
           {
-            cl.classification.Add(new Classification
+            cl.Classification.Add(new Classification
             {
-              label = c[(int)ClassificationColumns.Classified].ToString(),
-              lang = "en",
-              reference = query.FirstOrDefault().ToString()
+              Label = c[(int)ClassificationColumns.Classified].ToString(),
+              Lang = "en",
+              Reference = query.FirstOrDefault().ToString()
             });
           }
         }
@@ -344,11 +344,11 @@ namespace QMXFGenerator
               {
                 QMXFName englishUSName = new QMXFName
                 {
-                  lang = "en",
-                  value = name,
+                  Lang = "en",
+                  Value = name,
                 };
 
-                classDefinition.name = new List<QMXFName>
+                classDefinition.Name = new List<QMXFName>
                 { 
                   englishUSName 
                 };
@@ -364,15 +364,15 @@ namespace QMXFGenerator
               classPart.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)ClassColumns.ID), identifier);
             }
 
-            classDefinition.identifier = identifier.ToString();
+            classDefinition.Identifier = identifier.ToString();
             if (description != null && description.ToString() != String.Empty)
             {
               Description englishUSDescription = new Description
               {
-                lang = "en",
-                value = description.ToString(),
+                Lang = "en",
+                Value = description.ToString(),
               };
-              classDefinition.description = new List<Description> 
+              classDefinition.Description = new List<Description> 
               {
                 englishUSDescription,
               };
@@ -380,16 +380,16 @@ namespace QMXFGenerator
             string ent = entityType.ToString();
             if (!string.IsNullOrEmpty(ent))
             {
-              classDefinition.entityType = new EntityType
+              classDefinition.EntityType = new EntityType
               {
-                reference = ent
+                Reference = ent
               };
             }
 
             List<Specialization> classSpecialization = ProcessClassSpecialization(name);
 
             if (classSpecialization.Count > 0)
-              classDefinition.specialization = classSpecialization;
+              classDefinition.Specialization = classSpecialization;
 
             load = String.Empty;
             idx++;
@@ -475,8 +475,8 @@ namespace QMXFGenerator
           {
             Specialization specialization = new Specialization
             {
-              label = superclassName.ToString(),
-              reference = superclassIdentifier.ToString().Trim(),
+              Label = superclassName.ToString(),
+              Reference = superclassIdentifier.ToString().Trim(),
             };
 
             classSpecializations.Add(specialization);
@@ -518,10 +518,10 @@ namespace QMXFGenerator
               {
                 QMXFName englishUSName = new QMXFName
                 {
-                  lang = "en",
-                  value = name,
+                  Lang = "en",
+                  Value = name,
                 };
-                templateDefinition.name = new List<QMXFName>
+                templateDefinition.Name = new List<QMXFName>
                                 { 
                                   englishUSName 
                                 };
@@ -541,20 +541,20 @@ namespace QMXFGenerator
               //write to the sheet, but offset counters for 1-based array
               part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)TemplateColumns.ID), templateIdentifier);
             }
-            templateDefinition.identifier = templateIdentifier.ToString().Trim();
+            templateDefinition.Identifier = templateIdentifier.ToString().Trim();
             if (description != null && description.ToString() != String.Empty)
             {
               Description englishUSDescription = new Description
               {
-                lang = "en",
-                value = description.ToString(),
+                Lang = "en",
+                Value = description.ToString(),
               };
-              templateDefinition.description = new List<Description> 
+              templateDefinition.Description = new List<Description> 
                             {
                                 englishUSDescription,
                             };
             }
-            templateDefinition.roleDefinition = ProcessRoleDefinition(templateDefinition.name.FirstOrDefault().value, row, Convert.ToInt32(row[row.Count - 1]), part);
+            templateDefinition.RoleDefinition = ProcessRoleDefinition(templateDefinition.Name.FirstOrDefault().Value, row, Convert.ToInt32(row[row.Count - 1]), part);
             load = String.Empty;
             templateDefinitions.Add(templateDefinition);
             idx++;
@@ -593,11 +593,11 @@ namespace QMXFGenerator
 
             QMXFName englishUSName = new QMXFName
             {
-              lang = "en",
-              value = name,
+              Lang = "en",
+              Value = name,
             };
 
-            roleDefinition.name = new List<QMXFName>
+            roleDefinition.Name = new List<QMXFName>
             { 
               englishUSName 
             };
@@ -612,16 +612,16 @@ namespace QMXFGenerator
               //write to the sheet, but offset counters for 1-based array
               part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)RoleColumns.ID + roleOffset), identifier);
             }
-            roleDefinition.identifier = identifier.ToString();
+            roleDefinition.Identifier = identifier.ToString();
 
             if (description != null && description.ToString() != String.Empty)
             {
               Description englishUSDescription = new Description
               {
-                lang = "en",
-                value = description.ToString(),
+                Lang = "en",
+                Value = description.ToString(),
               };
-              roleDefinition.description = englishUSDescription;
+              roleDefinition.Description = englishUSDescription;
             }
             
             if (type != null && type.ToString() != String.Empty)
@@ -631,7 +631,7 @@ namespace QMXFGenerator
                           select clss;
               if (query.FirstOrDefault() != null & query.FirstOrDefault()[(int)ClassColumns.Label].ToString().Trim().Equals(type.ToString()))
               {
-                roleDefinition.range = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim();
+                roleDefinition.Range = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim();
               }
               else
               {
@@ -640,7 +640,7 @@ namespace QMXFGenerator
             }
             else
             {
-              Utility.WriteString("\nType Was Not Set for Role Definition \"" + englishUSName.value + "\" on template \"" + templateName + "\".", "error.log", true);
+              Utility.WriteString("\nType Was Not Set for Role Definition \"" + englishUSName.Value + "\" on template \"" + templateName + "\".", "error.log", true);
             }
             roleDefinitions.Add(roleDefinition);
           }
@@ -682,10 +682,10 @@ namespace QMXFGenerator
               {
                 QMXFName englishUSName = new QMXFName
                 {
-                  lang = "en",
-                  value = name,
+                  Lang = "en",
+                  Value = name,
                 };
-                templateQualification.name = new List<QMXFName>
+                templateQualification.Name = new List<QMXFName>
                     { 
                       englishUSName 
                     };
@@ -699,15 +699,15 @@ namespace QMXFGenerator
               //write to the sheet, but offset counters for 1-based array
               part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)TemplateColumns.ID), templateIdentifier);
             }
-            templateQualification.identifier = templateIdentifier.ToString().Trim();
+            templateQualification.Identifier = templateIdentifier.ToString().Trim();
             if (description != null && description.ToString() != String.Empty)
             {
               Description englishUSDescription = new Description
               {
-                lang = "en",
-                value = description.ToString(),
+                Lang = "en",
+                Value = description.ToString(),
               };
-              templateQualification.description = new List<Description> 
+              templateQualification.Description = new List<Description> 
                   {
                     englishUSDescription,
                   };
@@ -724,10 +724,10 @@ namespace QMXFGenerator
                 object templateQualifiesId = parentRow[(int)TemplateColumns.ID];
                 if (templateQualifiesId == null)
                 {
-                  Utility.WriteString("Template Qualification \"" + templateQualification.identifier + "\" qualifies ID not found.\n", "error.log", true);
+                  Utility.WriteString("Template Qualification \"" + templateQualification.Identifier + "\" qualifies ID not found.\n", "error.log", true);
                 }
                 templateQualification.qualifies = (templateQualifiesId ?? "").ToString().Trim();
-                templateQualification.roleQualification = ProcessRoleQualification(templateQualification.name.FirstOrDefault().value, row, parentRow, rowIndex, part);
+                templateQualification.RoleQualification = ProcessRoleQualification(templateQualification.Name.FirstOrDefault().Value, row, parentRow, rowIndex, part);
               }
               else
               {
@@ -736,12 +736,12 @@ namespace QMXFGenerator
             }
             load = String.Empty;
             idx++;
-            if (templateQualification.roleQualification.Count > 0)
+            if (templateQualification.RoleQualification.Count > 0)
             {
               templateQualifications.Add(templateQualification);
             }
             else
-              Utility.WriteString("Template Qualification \"" + templateQualification.identifier + "\" RoleQualifications failed.\n", "error.log", true);
+              Utility.WriteString("Template Qualification \"" + templateQualification.Identifier + "\" RoleQualifications failed.\n", "error.log", true);
           }
           
         }
@@ -786,15 +786,15 @@ namespace QMXFGenerator
             }
 
             RoleQualification roleQualification = new RoleQualification();
-            roleQualification.identifier = identifier.ToString();
+            roleQualification.Identifier = identifier.ToString();
 
             QMXFName englishUSName = new QMXFName
             {
-              lang = "en",
-              value = name,
+              Lang = "en",
+              Value = name,
             };
 
-            roleQualification.name = new List<QMXFName>
+            roleQualification.Name = new List<QMXFName>
             { 
               englishUSName 
             };
@@ -803,17 +803,17 @@ namespace QMXFGenerator
             {
               Description englishUSDescription = new Description
               {
-                lang = "en",
-                value = description.ToString(),
+                Lang = "en",
+                Value = description.ToString(),
               };
 
-              roleQualification.description = new List<Description>
+              roleQualification.Description = new List<Description>
               {
                 englishUSDescription
               };
             }
 
-            roleQualification.qualifies = (parentRole ?? "").ToString().Trim();
+            roleQualification.Qualifies = (parentRole ?? "").ToString().Trim();
 
             if (type != null && type.ToString() != String.Empty)
             {
@@ -826,7 +826,7 @@ namespace QMXFGenerator
                 object classId = query.FirstOrDefault()[(int)ClassColumns.ID];
                 if (classId != null)
                 {
-                  roleQualification.range = classId.ToString().Trim();
+                  roleQualification.Range = classId.ToString().Trim();
                 }
                 else
                 {
@@ -846,15 +846,15 @@ namespace QMXFGenerator
 
               if (query.FirstOrDefault() != null)
               {
-                roleQualification.value = new QMXFValue
+                roleQualification.Value = new QMXFValue
                 {
-                  reference = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim(),
+                  Reference = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim(),
                 };
               }
             }
             else
             {
-              Utility.WriteString("\nType/Value Was Not Set for Role Qualification \"" + englishUSName.value + "\" on template \"" + templateName + "\".", "error.log", true);
+              Utility.WriteString("\nType/Value Was Not Set for Role Qualification \"" + englishUSName.Value + "\" on template \"" + templateName + "\".", "error.log", true);
             }
             roleQualifications.Add(roleQualification);
           }

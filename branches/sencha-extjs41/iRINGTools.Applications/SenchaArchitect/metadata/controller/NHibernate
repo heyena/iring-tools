@@ -1500,7 +1500,7 @@
                     "var gridStore = grid.getStore();\r",
                     "var dataTree = nhibernatePanel.down('nhibernatetree');\r",
                     "var dirNode = me.getDirNode(dataTree.dirNode);\r",
-                    "var treeNode = nhibernatePanel.treeNode;\r",
+                    "var treeNode = dataTree.getSelectionModel().getSelection()[0];\r",
                     "\r",
                     "var context = dirNode.data.property.Context;\r",
                     "var endpoint = dirNode.data.property.Name;\r",
