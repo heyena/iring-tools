@@ -44,6 +44,7 @@ import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.mapping.ValueListMaps;
+import org.iringtools.utility.DataFilterInitial;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
@@ -117,6 +118,21 @@ public class ExchangeProvider
     }
   }
 
+  public DataFilter getDataFilter(String scope, String id) throws ServiceProviderException
+  {
+    String path = settings.get("baseDirectory") + "/WEB-INF/data/Filter-" + scope + "-" + id + ".xml";
+    try
+    {
+      return JaxbUtils.read(DataFilter.class, path);
+    }
+    catch (Exception e)
+    {
+      String message = "Error getting Data Filter of [" + scope + "." + id + "]: " + e;
+      logger.error(message);
+      throw new ServiceProviderException(message);
+    }
+  }
+  
   public Manifest getManifest(String scope, String id) throws ServiceProviderException
   {
     logger.debug("getManifest(" + scope + "," + id + ")");
@@ -130,6 +146,7 @@ public class ExchangeProvider
     logger.debug("getDataTransferIndices(" + scope + "," + id + ",dxiRequest)");
     
     initExchangeDefinition(scope, id);
+ //   DataFilter initialFilter = getDataFilter(scope, id);
 
     String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName
         + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
@@ -141,7 +158,8 @@ public class ExchangeProvider
     DxiRequest targetDxiRequest = new DxiRequest();
     
     try
-    {
+    {   /*DataFilterInitial dFI = new DataFilterInitial();
+       DataFilter df = dFI.AppendFilter(dxiRequest.getDataFilter(), initialFilter);*/
       Manifest sourceManifest = JaxbUtils.clone(Manifest.class, dxiRequest.getManifest());
       sourceManifest.getGraphs().getItems().get(0).setName(sourceGraphName);
       sourceDxiRequest.setManifest(sourceManifest);
@@ -150,7 +168,10 @@ public class ExchangeProvider
       Manifest targetManifest = JaxbUtils.clone(Manifest.class, dxiRequest.getManifest());
       targetManifest.getGraphs().getItems().get(0).setName(targetGraphName);
       targetDxiRequest.setManifest(targetManifest);
-      targetDxiRequest.setDataFilter(dxiRequest.getDataFilter());      
+      targetDxiRequest.setDataFilter(dxiRequest.getDataFilter());
+   /*   String path = "C:/Bug-iring-2.4/iRINGTools.ESBServices/iRINGTools.Services/WebContent/WEB-INF/data/Filter-25509-3.xml";
+
+		JaxbUtils.write(dxiRequest.getDataFilter(),path, false);*/
     }
     catch (Exception e)
     {
