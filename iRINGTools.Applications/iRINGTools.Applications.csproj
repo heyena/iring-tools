@@ -219,7 +219,10 @@
     <Content Include="Scripts\AM\store\MappingStore.js" />
     <Content Include="Scripts\AM\store\MultiStore.js" />
     <Content Include="Scripts\AM\store\NHibernateTreeStore.js" />
+    <Content Include="Scripts\AM\store\Property.js" />
     <Content Include="Scripts\AM\store\ProviderStore.js" />
+    <Content Include="Scripts\AM\store\RelatedObjectStore.js" />
+    <Content Include="Scripts\AM\store\RelationsStore.js" />
     <Content Include="Scripts\AM\store\SearchCmbStore.js" />
     <Content Include="Scripts\AM\store\SearchStore.js" />
     <Content Include="Scripts\AM\store\SpreadsheetStore.js" />
@@ -310,7 +313,9 @@
     <Content Include="Scripts\AM\view\menus\ValueListMapMenu.js" />
     <Content Include="Scripts\AM\view\menus\ValueListMenu.js" />
     <Content Include="Scripts\AM\view\menus\ValueListsMenu.js" />
+    <Content Include="Scripts\AM\view\nhibernate\ConfigRelationForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\ConnectionStringForm.js" />
+    <Content Include="Scripts\AM\view\nhibernate\CreateRelationForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataKeyForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataObjectForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\MultiSelectionGrid.js" />

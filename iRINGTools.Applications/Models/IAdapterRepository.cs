@@ -2,6 +2,8 @@
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using System.IO;
+using org.iringtools.refdata.response;
+using Response = org.iringtools.library.Response;
 
 namespace org.iringtools.web.Models
 {

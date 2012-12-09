@@ -154,6 +154,16 @@
                     "designerId": "98d69f33-c1c9-48fb-9cc7-7c8467854579"
                 }
             ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "05200275-ebdd-45b1-909c-aed07f201d49",
+            "masterInstanceId": "ExtBox1-ext-gen3160"
         }
     ]
 }

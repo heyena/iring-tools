@@ -484,9 +484,9 @@ namespace org.iringtools.facade
 
         DateTime start = DateTime.Now;
 
-        foreach (GraphMap graphMap in _mapping.graphMaps)
+        foreach (GraphMap graphMap in _mapping.GraphMaps)
         {
-          response.Append(Refresh(graphMap.name));
+          response.Append(Refresh(graphMap.Name));
         }
 
         DateTime end = DateTime.Now;
@@ -514,9 +514,9 @@ namespace org.iringtools.facade
       _dataObjects.Clear();
 
       if (identifiers != null)
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
       else
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
+        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, null);
     }
 
     public Response DeleteAll(string projectName, string applicationName)
@@ -535,9 +535,9 @@ namespace org.iringtools.facade
 
         _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
-        foreach (GraphMap graphMap in _mapping.graphMaps)
+        foreach (GraphMap graphMap in _mapping.GraphMaps)
         {
-          response.Append(_semanticEngine.Delete(graphMap.name));
+          response.Append(_semanticEngine.Delete(graphMap.Name));
         }
       }
       catch (Exception ex)

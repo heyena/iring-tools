@@ -283,11 +283,11 @@ namespace org.iringtools.exchange
         {
           IList<string> identifiers = new List<string>();
           identifiers.Add(filter);
-          dataObjectList = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+          dataObjectList = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
         }
         else
         {
-          dataObjectList = _dataLayer.Get(_graphMap.dataObjectName, null);
+          dataObjectList = _dataLayer.Get(_graphMap.DataObjectName, null);
         }
 
         XDocument xDocument = _projectionEngine.ToXml(graphName, ref dataObjectList);
@@ -461,13 +461,13 @@ namespace org.iringtools.exchange
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
       {
-        ClassMap classMap = classTemplateMap.classMap;
+        ClassMap classMap = classTemplateMap.ClassMap;
 
         List<string> classIdentifiers = new List<string>();
 
-        foreach (string identifier in classMap.identifiers)
+        foreach (string identifier in classMap.Identifiers)
         {
           // identifier is a fixed value
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
@@ -482,7 +482,7 @@ namespace org.iringtools.exchange
               }
               else
               {
-                classIdentifiers[i] += classMap.identifierDelimiter + value;
+                classIdentifiers[i] += classMap.IdentifierDelimiter + value;
               }
             }
           }
@@ -504,14 +504,14 @@ namespace org.iringtools.exchange
                 }
                 else
                 {
-                  classIdentifiers[i] += classMap.identifierDelimiter + value;
+                  classIdentifiers[i] += classMap.IdentifierDelimiter + value;
                 }
               }
             }
           }
         }
 
-        _classIdentifiers[classMap.id] = classIdentifiers;
+        _classIdentifiers[classMap.Id] = classIdentifiers;
       }
     }
 

@@ -18,8 +18,8 @@ namespace org.iringtools.library
     protected XElement _configuration = null;
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseDataLayer));
-    
-    public BaseDataLayer(AdapterSettings settings)
+
+      protected BaseDataLayer(AdapterSettings settings)
     {
       _settings = settings;
     }
@@ -57,17 +57,15 @@ namespace org.iringtools.library
               dataObject = dataObjects.AsQueryable().Where(predicate).FirstOrDefault();
             }
 
-            if (dataObject == null)
-            {
+              if (dataObject != null) continue;
               dataObject = new GenericDataObject
-              {
-                ObjectType = objectType,
-              };
+                  {
+                      ObjectType = objectType,
+                  };
 
               SetKeys(dataObject, identifier);
 
               dataObjects.Add(dataObject);
-            }
           }
         }
 
@@ -90,7 +88,7 @@ namespace org.iringtools.library
       {
         if (_dataObjects == null)
         {
-          IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+          var dataObjects = Get(objectType, filter, 0, 0);
         }
 
         return _dataObjects.Count();
@@ -168,9 +166,9 @@ namespace org.iringtools.library
 
     protected DataFilter FormMultipleKeysFilter(IDataObject dataObject)
     {
-      List<Expression> expressions = BuildKeyFilter(dataObject);
+      var expressions = BuildKeyFilter(dataObject);
       
-      DataFilter dataFilter = new DataFilter
+      var dataFilter = new DataFilter
       {
         Expressions = expressions,
       };
@@ -180,30 +178,28 @@ namespace org.iringtools.library
 
     protected DataFilter FormMultipleKeysFilter(IList<string> identifiers)
     {
-      List<Expression> expressions = new List<Expression>();
-      foreach (string identifier in identifiers)
+      var expressions = new List<Expression>();
+      foreach (var identifierExpressions in identifiers.Select(BuildKeyFilter))
       {
-        List<Expression> identifierExpressions = BuildKeyFilter(identifier);
+          if (identifierExpressions.Count > 1)
+          {
+              var expression = identifierExpressions.First();
+              expression.OpenGroupCount++;
 
-        if (identifierExpressions.Count > 1)
-        {
-          Expression expression = identifierExpressions.First();
-          expression.OpenGroupCount++;
+              expression = identifierExpressions.Last();
+              expression.CloseGroupCount++;
+              expression.LogicalOperator = LogicalOperator.Or;
+          }
+          else
+          {
+              var expression = identifierExpressions.Last();
+              expression.LogicalOperator = LogicalOperator.Or;
+          }
 
-          expression = identifierExpressions.Last();
-          expression.CloseGroupCount++;
-          expression.LogicalOperator = LogicalOperator.Or;
-        }
-        else
-        {
-          Expression expression = identifierExpressions.Last();
-          expression.LogicalOperator = LogicalOperator.Or;
-        }
-
-        expressions.AddRange(identifierExpressions);
+          expressions.AddRange(identifierExpressions);
       }
 
-      DataFilter dataFilter = new DataFilter
+      var dataFilter = new DataFilter
       {
         Expressions = expressions,
       };
@@ -215,7 +211,7 @@ namespace org.iringtools.library
     {
       Expression<Func<IDataObject, bool>> predicate = null;
 
-      DataFilter dataFilter = FormMultipleKeysFilter(identifiers);
+      var dataFilter = FormMultipleKeysFilter(identifiers);
       
       predicate = dataFilter.ToPredicate(_dataObjectDefinition);
 
@@ -225,9 +221,9 @@ namespace org.iringtools.library
     protected Expression<Func<IDataObject, bool>> FormKeyPredicate(string identifier)
     {
       Expression<Func<IDataObject, bool>> predicate = null;
-      List<Expression> expressions = BuildKeyFilter(identifier);
+      var expressions = BuildKeyFilter(identifier);
 
-      DataFilter dataFilter = new DataFilter
+      var dataFilter = new DataFilter
       {
         Expressions = expressions,
       };
@@ -237,49 +233,48 @@ namespace org.iringtools.library
       return predicate; 
     }
 
-    protected List<Expression> BuildKeyFilter(IDataObject dataObject)
-    {
-      List<Expression> expressions = new List<Expression>();
-
-      foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
+      protected List<Expression> BuildKeyFilter(IDataObject dataObject)
       {
-        string identifier = dataObject.GetPropertyValue(keyProperty.keyPropertyName).ToString();
+          var expressions = new List<Expression>();
 
-        Expression expression = new Expression
-        {
-          PropertyName = keyProperty.keyPropertyName,
-          RelationalOperator = RelationalOperator.EqualTo,
-          Values = new Values
+          foreach (var expression in from keyProperty in _dataObjectDefinition.keyProperties
+                                     let identifier =
+                                         dataObject.GetPropertyValue(keyProperty.keyPropertyName).ToString()
+                                     select new Expression
+                                         {
+                                             PropertyName = keyProperty.keyPropertyName,
+                                             RelationalOperator = RelationalOperator.EqualTo,
+                                             Values = new Values
+                                                 {
+                                                     identifier,
+                                                 }
+                                         })
           {
-            identifier,
+              if (expressions.Count > 0)
+              {
+                  expression.LogicalOperator = LogicalOperator.And;
+              }
+
+              expressions.Add(expression);
           }
-        };
 
-        if (expressions.Count > 0)
-        {
-          expression.LogicalOperator = LogicalOperator.And;
-        }
-
-        expressions.Add(expression);
+          return expressions;
       }
 
-      return expressions;
-    }
-
-    protected List<Expression> BuildKeyFilter(string identifier)
+      protected List<Expression> BuildKeyFilter(string identifier)
     {
-      List<Expression> expressions = new List<Expression>();
+      var expressions = new List<Expression>();
 
-      string[] delimiter = new string[] { _dataObjectDefinition.keyDelimeter };
-      string[] identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
+      var delimiter = new string[] { _dataObjectDefinition.keyDelimeter };
+      var identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
 
       if (identifierParts.Count() == _dataObjectDefinition.keyProperties.Count)
       {
-          for (int i = 0; i < _dataObjectDefinition.keyProperties.Count; i++)
+          for (var i = 0; i < _dataObjectDefinition.keyProperties.Count; i++)
           {
-              string identifierPart = identifierParts[i];
+              var identifierPart = identifierParts[i];
 
-              Expression expression = new Expression
+              var expression = new Expression
               {
                   PropertyName = _dataObjectDefinition.keyProperties[i].keyPropertyName,
                   RelationalOperator = RelationalOperator.EqualTo,
@@ -299,7 +294,7 @@ namespace org.iringtools.library
       }
       else
       {
-          Expression expression = new Expression
+          var expression = new Expression
           {
               PropertyName = _dataObjectDefinition.keyProperties[0].keyPropertyName,
               RelationalOperator = RelationalOperator.EqualTo,
@@ -315,70 +310,70 @@ namespace org.iringtools.library
       return expressions;
     }
 
-    protected List<Expression> CreateRelatedFilterExpressions(IDataObject parentDataObject, DataRelationship dataRelationship)
-    {
-      List<Expression> expressions = new List<Expression>();
-
-      foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+      protected List<Expression> CreateRelatedFilterExpressions(IDataObject parentDataObject,
+                                                                DataRelationship dataRelationship)
       {
-        Expression expression = new Expression()
-        {
-          PropertyName = propertyMap.relatedPropertyName,
-          RelationalOperator = RelationalOperator.EqualTo,
-          Values = new Values
+          var expressions = new List<Expression>();
+
+          foreach (var expression in dataRelationship.propertyMaps.Select(propertyMap => new Expression()
+              {
+                  PropertyName = propertyMap.relatedPropertyName,
+                  RelationalOperator = RelationalOperator.EqualTo,
+                  Values = new Values
+                      {
+                          parentDataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString()
+                      }
+              }))
           {
-            parentDataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString()
+              if (expressions.Count > 0)
+              {
+                  expression.LogicalOperator = LogicalOperator.And;
+              }
+
+              expressions.Add(expression);
           }
-        };
 
-        if (expressions.Count > 0)
-        {
-          expression.LogicalOperator = LogicalOperator.And;
-        }
-
-        expressions.Add(expression);
+          return expressions;
       }
 
-      return expressions;
-    }
+      protected DataFilter CreateDataFilter(IDataObject parentDataObject, string relatedObjectType)
+      {
+          var objectType = parentDataObject.GetType().Name;
 
-    protected DataFilter CreateDataFilter(IDataObject parentDataObject, string relatedObjectType)
+          if (objectType == typeof (GenericDataObject).Name)
+          {
+              objectType = ((GenericDataObject) parentDataObject).ObjectType;
+          }
+
+          var dataDictionary = GetDictionary();
+
+          var dataObject = dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == objectType.ToLower());
+          if (dataObject == null)
+          {
+              throw new Exception("Parent data object [" + objectType + "] not found.");
+          }
+
+          var dataRelationship =
+              dataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
+          if (dataRelationship == null)
+          {
+              throw new Exception("Relationship between data object [" + objectType +
+                                  "] and related data object [" + relatedObjectType + "] not found.");
+          }
+
+          var expressions = CreateRelatedFilterExpressions(parentDataObject, dataRelationship);
+
+          var filter = new DataFilter()
+              {
+                  Expressions = expressions
+              };
+
+          return filter;
+      }
+
+      protected void SetKeys(IDataObject dataObject, string identifier)
     {
-        string objectType = parentDataObject.GetType().Name;
-
-        if (objectType == typeof(GenericDataObject).Name)
-        {
-            objectType = ((GenericDataObject)parentDataObject).ObjectType;
-        }
-
-      DataDictionary dataDictionary = GetDictionary();
-
-      DataObject dataObject = dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == objectType.ToLower());
-      if (dataObject == null)
-      {
-          throw new Exception("Parent data object [" + objectType + "] not found.");
-      }
-
-      DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
-      if (dataRelationship == null)
-      {
-          throw new Exception("Relationship between data object [" + objectType +
-          "] and related data object [" + relatedObjectType + "] not found.");
-      }
-
-      List<Expression> expressions = CreateRelatedFilterExpressions(parentDataObject, dataRelationship);
-
-      DataFilter filter = new DataFilter()
-      {
-        Expressions = expressions
-      };
-
-      return filter;
-    }
-
-    protected void SetKeys(IDataObject dataObject, string identifier)
-    {
-      string[] delimiter = new string[] { _dataObjectDefinition.keyDelimeter ?? string.Empty };
+      var delimiter = new string[] { _dataObjectDefinition.keyDelimeter ?? string.Empty };
 
       if (identifier == null)
       {
@@ -389,14 +384,14 @@ namespace org.iringtools.library
       }
       else
       {
-        string[] identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
+        var identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
 
         if (identifierParts.Count() == _dataObjectDefinition.keyProperties.Count)
         {
-          int i = 0;
-          foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
+          var i = 0;
+          foreach (var keyProperty in _dataObjectDefinition.keyProperties)
           {
-            string identifierPart = identifierParts[i];
+            var identifierPart = identifierParts[i];
             if (!String.IsNullOrEmpty(identifierPart))
             {
               dataObject.SetPropertyValue(keyProperty.keyPropertyName, identifierPart);
@@ -409,25 +404,25 @@ namespace org.iringtools.library
 
     protected void SetKeyProperties(DataObject dataObjectDefinition, IDataObject dataObject, string identifier)
     {
-      string[] delimiter = new string[] { dataObjectDefinition.keyDelimeter ?? string.Empty };
+      var delimiter = new string[] { dataObjectDefinition.keyDelimeter ?? string.Empty };
 
       if (identifier == null)
       {
-        foreach (KeyProperty keyProperty in dataObjectDefinition.keyProperties)
+        foreach (var keyProperty in dataObjectDefinition.keyProperties)
         {
           dataObject.SetPropertyValue(keyProperty.keyPropertyName, null);
         }
       }
       else
       {
-        string[] identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
+        var identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
 
         if (identifierParts.Count() == dataObjectDefinition.keyProperties.Count)
         {
-          int i = 0;
+          var i = 0;
           foreach (KeyProperty keyProperty in dataObjectDefinition.keyProperties)
           {
-            string identifierPart = identifierParts[i];
+            var identifierPart = identifierParts[i];
             if (!String.IsNullOrEmpty(identifierPart))
             {
               dataObject.SetPropertyValue(keyProperty.keyPropertyName, identifierPart);
@@ -443,32 +438,34 @@ namespace org.iringtools.library
       return GetIdentifier(_dataObjectDefinition, dataObject);
     }
 
-    protected string GetIdentifier(DataObject dataObjectDefinition, IDataObject dataObject)
-    {
-      _dataObjectDefinition = dataObjectDefinition;
-
-      string[] identifierParts = new string[_dataObjectDefinition.keyProperties.Count];
-
-      int i = 0;
-      foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
+      protected string GetIdentifier(DataObject dataObjectDefinition, IDataObject dataObject)
       {
-          object value = dataObject.GetPropertyValue(keyProperty.keyPropertyName);
-          if (value != null)
+          _dataObjectDefinition = dataObjectDefinition;
+
+          var identifierParts = new string[_dataObjectDefinition.keyProperties.Count];
+
+          var i = 0;
+          foreach (
+              var value in
+                  _dataObjectDefinition.keyProperties.Select(
+                      keyProperty => dataObject.GetPropertyValue(keyProperty.keyPropertyName)))
           {
-              identifierParts[i] = value.ToString();
-          }
-          else
-          {
-              identifierParts[i] = String.Empty;
+              if (value != null)
+              {
+                  identifierParts[i] = value.ToString();
+              }
+              else
+              {
+                  identifierParts[i] = String.Empty;
+              }
+
+              i++;
           }
 
-          i++;
+          return String.Join(_dataObjectDefinition.keyDelimeter, identifierParts);
       }
 
-      return String.Join(_dataObjectDefinition.keyDelimeter, identifierParts);
-    }
-
-    public virtual IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex)
+      public virtual IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex)
     {
       throw new NotImplementedException();
     }

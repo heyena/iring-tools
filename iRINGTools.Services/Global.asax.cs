@@ -17,7 +17,7 @@ namespace org.iringtools.adapter
     {
       // Edit the base address of AdapterService by replacing the "AdapterService" string below
       RouteTable.Routes.Add(new ServiceRoute("sandbox/svc", new WebServiceHostFactory(), typeof(org.iringtools.services.SandboxService)));
-      RouteTable.Routes.Add(new ServiceRoute("refdata", new WebServiceHostFactory(), typeof(org.iringtools.services.ReferenceDataService)));
+     // RouteTable.Routes.Add(new ServiceRoute("refdata", new WebServiceHostFactory(), typeof(org.iringtools.services.ReferenceDataService)));
       RouteTable.Routes.Add(new ServiceRoute("hibernate", new WebServiceHostFactory(), typeof(org.iringtools.services.HibernateService)));
       RouteTable.Routes.Add(new ServiceRoute("adapter", new WebServiceHostFactory(), typeof(org.iringtools.services.AdapterService)));
       RouteTable.Routes.Add(new ServiceRoute("data", new RawServiceHostFactory(), typeof(org.iringtools.services.DataService)));

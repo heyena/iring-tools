@@ -10,11 +10,13 @@ using Ninject;
 using iRINGTools.Web.Models;
 using log4net;
 using org.iringtools.library;
+using org.iringtools.refdata.response;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using System.Net;
 using System.IO;
+using Response = org.iringtools.library.Response;
 
 namespace org.iringtools.web.Models
 {

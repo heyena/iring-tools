@@ -7,7 +7,7 @@ using log4net;
 using org.iringtools.mapping;
 using org.iringtools.library;
 using org.iringtools.adapter.projection;
-using org.iringtools.refdata.federation;
+using org.iringtools.refdata;
 
 namespace org.iringtools.adapter
 {

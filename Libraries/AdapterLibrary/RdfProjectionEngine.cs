@@ -50,7 +50,7 @@ namespace org.iringtools.adapter.projection
       {
         _graphMap = _mapping.FindGraphMap(graphName);
 
-        if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 &&
+        if (_graphMap != null && _graphMap.ClassTemplateMaps.Count > 0 &&
           dataObjects != null && dataObjects.Count > 0)
         {
           string baseUri = _settings["GraphBaseUri"];
@@ -58,7 +58,7 @@ namespace org.iringtools.adapter.projection
           string app = _settings["ApplicationName"];
           string appBaseUri = Utility.FormEndpointBaseURI(_uriMaps, baseUri, project, app);
         
-          _graphBaseUri = appBaseUri + _graphMap.name + "/";
+          _graphBaseUri = appBaseUri + _graphMap.Name + "/";
           _dataObjects = dataObjects;
           rdfDoc = new XDocument(BuildRdfXml());
         }
@@ -90,14 +90,14 @@ namespace org.iringtools.adapter.projection
       {
         _graphMap = _mapping.FindGraphMap(graphName);
 
-        if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && dataObjects != null)
+        if (_graphMap != null && _graphMap.ClassTemplateMaps.Count > 0 && dataObjects != null)
         {
           string baseUri = _settings["GraphBaseUri"];
           string project = _settings["ProjectName"];
           string app = _settings["ApplicationName"];
           string appBaseUri = Utility.FormEndpointBaseURI(_uriMaps, baseUri, project, app);
         
-          _graphBaseUri = appBaseUri + _graphMap.name + "/";
+          _graphBaseUri = appBaseUri + _graphMap.Name + "/";
           _dataObjects = dataObjects;          
           rdfDoc = new XDocument(BuildRdfXml(className, classIdentifier));
         }
@@ -125,7 +125,7 @@ namespace org.iringtools.adapter.projection
         {
           _graphMap = _mapping.FindGraphMap(graphName);
 
-          if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0)
+          if (_graphMap != null && _graphMap.ClassTemplateMaps.Count > 0)
           {
             XmlDocument xmlDocument = new XmlDocument();
             using (XmlReader xmlReader = xDocument.CreateReader())
@@ -146,8 +146,8 @@ namespace org.iringtools.adapter.projection
 
             if (_memoryStore != null)
             {
-              ClassMap rootClassMap = _graphMap.classTemplateMaps.First().classMap;
-              string rootClassId = rootClassMap.id;
+              ClassMap rootClassMap = _graphMap.ClassTemplateMaps.First().ClassMap;
+              string rootClassId = rootClassMap.Id;
               List<string> rootClassInstances = GetClassInstances(rootClassId);
 
               if (rootClassInstances.Count > 0)
@@ -174,7 +174,7 @@ namespace org.iringtools.adapter.projection
 
                   try
                   {
-                    IDataObject dataObject = CreateDataObject(_graphMap.dataObjectName, i);
+                    IDataObject dataObject = CreateDataObject(_graphMap.DataObjectName, i);
                     _dataObjects.Add(dataObject);
                   }
                   catch (Exception e)
@@ -217,12 +217,12 @@ namespace org.iringtools.adapter.projection
     #region outbound helper methods
     private XElement BuildRdfXml()
     {
-      ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
+      ClassTemplateMap classTemplateMap = _graphMap.ClassTemplateMaps.First();
 
       if (classTemplateMap != null)
       {        
-        ClassMap classMap = classTemplateMap.classMap;
-        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+        ClassMap classMap = classTemplateMap.ClassMap;
+        List<TemplateMap> templateMaps = classTemplateMap.TemplateMaps;
 
         if (classMap != null)
         {
@@ -232,7 +232,7 @@ namespace org.iringtools.adapter.projection
             List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
 
             ProcessOutboundClass(dataObjectIndex, String.Empty, String.Empty, true, classIdentifiers, hasRelatedProperty,
-              classTemplateMap.classMap, classTemplateMap.templateMaps);
+              classTemplateMap.ClassMap, classTemplateMap.TemplateMaps);
           }
         }
       }
@@ -247,8 +247,8 @@ namespace org.iringtools.adapter.projection
 
       if (classTemplateMap != null)
       {
-        ClassMap classMap = classTemplateMap.classMap;
-        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+        ClassMap classMap = classTemplateMap.ClassMap;
+        List<TemplateMap> templateMaps = classTemplateMap.TemplateMaps;
 
         if (classMap != null)
         {
@@ -256,7 +256,7 @@ namespace org.iringtools.adapter.projection
           List<string> classIdentifiers = GetClassIdentifiers(classMap, 0, out hasRelatedProperty);
 
           ProcessOutboundClass(0, startClassName, startClassIdentifier, true, classIdentifiers, 
-            hasRelatedProperty, classTemplateMap.classMap, classTemplateMap.templateMaps);
+            hasRelatedProperty, classTemplateMap.ClassMap, classTemplateMap.TemplateMaps);
         }
       }
 
@@ -266,9 +266,9 @@ namespace org.iringtools.adapter.projection
     private void ProcessOutboundClass(int dataObjectIndex, string startClassName, string startClassIdentifier, bool isRootClass,
       List<string> classIdentifiers, bool hasRelatedProperty, ClassMap classMap, List<TemplateMap> templateMaps)
     {
-      string className = Utility.TitleCase(classMap.name);
+      string className = Utility.TitleCase(classMap.Name);
       string baseUri = _graphBaseUri + className + "/";
-      string classId = classMap.id.Substring(classMap.id.IndexOf(":") + 1);
+      string classId = classMap.Id.Substring(classMap.Id.IndexOf(":") + 1);
 
       for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
       {
@@ -306,11 +306,11 @@ namespace org.iringtools.adapter.projection
         {
           if ((_secondaryClassificationStyle == ClassificationStyle.Type ||
                 _secondaryClassificationStyle == ClassificationStyle.Both) &&
-              _classificationConfig.TemplateIds.Contains(templateMap.id))
+              _classificationConfig.TemplateIds.Contains(templateMap.Id))
           {
-            foreach (RoleMap roleMap in templateMap.roleMaps)
+            foreach (RoleMap roleMap in templateMap.RoleMaps)
             {
-              if (roleMap.type == RoleType.Reference)
+              if (roleMap.Type == RoleType.Reference)
               {
                 string value = GetReferenceRoleValue(roleMap);
                 individualElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, value)));
@@ -361,20 +361,20 @@ namespace org.iringtools.adapter.projection
     {
       string classInstance = baseUri + classIdentifier;
       IDataObject dataObject = _dataObjects[dataObjectIndex];
-      string templateId = templateMap.id.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
+      string templateId = templateMap.Id.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
       List<RoleMap> propertyRoles = new List<RoleMap>();
       XElement baseTemplateElement = new XElement(OWL_THING);
-      StringBuilder baseValues = new StringBuilder(templateMap.id);
+      StringBuilder baseValues = new StringBuilder(templateMap.Id);
       List<RoleMap> classRoles = new List<RoleMap>();
 
       baseTemplateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
 
-      foreach (RoleMap roleMap in templateMap.roleMaps)
+      foreach (RoleMap roleMap in templateMap.RoleMaps)
       {
-        string roleId = roleMap.id.Substring(roleMap.id.IndexOf(":") + 1);
+        string roleId = roleMap.Id.Substring(roleMap.Id.IndexOf(":") + 1);
         XElement roleElement = new XElement(TPL_NS + roleId);
 
-        switch (roleMap.type)
+        switch (roleMap.Type)
         {
           case RoleType.Possessor:
             roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
@@ -383,15 +383,15 @@ namespace org.iringtools.adapter.projection
             break;
 
           case RoleType.FixedValue:
-            string dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
+            string dataType = roleMap.DataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
             roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
-            roleElement.Add(new XText(roleMap.value));
+            roleElement.Add(new XText(roleMap.Value));
             baseTemplateElement.Add(roleElement);
-            baseValues.Append(roleMap.value);
+            baseValues.Append(roleMap.Value);
             break;
 
           case RoleType.Reference:
-            if (roleMap.classMap != null)
+            if (roleMap.ClassMap != null)
             {
               classRoles.Add(roleMap);
             }
@@ -400,16 +400,16 @@ namespace org.iringtools.adapter.projection
               string value = GetReferenceRoleValue(roleMap);
               roleElement.Add(new XAttribute(RDF_RESOURCE, value));
               baseTemplateElement.Add(roleElement);
-              baseValues.Append(roleMap.value);
+              baseValues.Append(roleMap.Value);
             }
             break;
 
           case RoleType.Property:
           case RoleType.DataProperty:
           case RoleType.ObjectProperty:
-            if (String.IsNullOrEmpty(roleMap.propertyName))
+            if (String.IsNullOrEmpty(roleMap.PropertyName))
             {
-              throw new Exception("No data property mapped to role [" + startClassName + "." + templateMap.name + "." + roleMap.name + "]");
+              throw new Exception("No data property mapped to role [" + startClassName + "." + templateMap.Name + "." + roleMap.Name + "]");
             }
             propertyRoles.Add(roleMap);
             break;
@@ -427,11 +427,11 @@ namespace org.iringtools.adapter.projection
           List<XElement> propertyElements = new List<XElement>();
           multiPropertyElements.Add(propertyElements);
 
-          string[] propertyParts = propertyRole.propertyName.Split('.');
+          string[] propertyParts = propertyRole.PropertyName.Split('.');
           string propertyName = propertyParts[propertyParts.Length - 1];
 
-          int lastDotPos = propertyRole.propertyName.LastIndexOf('.');
-          string objectPath = propertyRole.propertyName.Substring(0, lastDotPos);
+          int lastDotPos = propertyRole.PropertyName.LastIndexOf('.');
+          string objectPath = propertyRole.PropertyName.Substring(0, lastDotPos);
 
           if (propertyParts.Length == 2)  // direct property
           {
@@ -453,7 +453,7 @@ namespace org.iringtools.adapter.projection
 
             if (!_relatedObjectsCache.TryGetValue(key, out relatedObjects))
             {
-              relatedObjects = GetRelatedObjects(propertyRole.propertyName, dataObject);
+              relatedObjects = GetRelatedObjects(propertyRole.PropertyName, dataObject);
               _relatedObjectsCache.Add(key, relatedObjects);
             }
 
@@ -532,7 +532,7 @@ namespace org.iringtools.adapter.projection
         foreach (RoleMap classRole in classRoles)
         {
           bool refClassHasRelatedProperty;
-          List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
+          List<string> refClassIdentifiers = GetClassIdentifiers(classRole.ClassMap, dataObjectIndex, out refClassHasRelatedProperty);
 
           if (refClassHasRelatedProperty)
           {
@@ -547,19 +547,19 @@ namespace org.iringtools.adapter.projection
               isTemplateValid = true;
               baseValues.Append(refClassIdentifier);
 
-              string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
+              string roleId = classRole.Id.Substring(classRole.Id.IndexOf(":") + 1);
               XElement roleElement = new XElement(TPL_NS + roleId);
               roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri +
-                Utility.TitleCase(classRole.classMap.name) + "/" + refClassIdentifier));
+                Utility.TitleCase(classRole.ClassMap.Name) + "/" + refClassIdentifier));
               baseTemplateElement.Add(roleElement);              
             }
 
-            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.ClassMap.Id);
 
-            if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+            if (relatedClassTemplateMap != null && relatedClassTemplateMap.ClassMap != null)
             {
               ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers, 
-                refClassHasRelatedProperty, relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
+                refClassHasRelatedProperty, relatedClassTemplateMap.ClassMap, relatedClassTemplateMap.TemplateMaps);
             }
           }
         }
@@ -576,8 +576,8 @@ namespace org.iringtools.adapter.projection
             RoleMap classRole = pair.Key;
             List<string> refClassIdentifiers = pair.Value;
 
-            string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
-            string baseRelatedClassUri = _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/";
+            string roleId = classRole.Id.Substring(classRole.Id.IndexOf(":") + 1);
+            string baseRelatedClassUri = _graphBaseUri + Utility.TitleCase(classRole.ClassMap.Name) + "/";
 
             for (int i = 0; i < refClassIdentifiers.Count; i++)
             {
@@ -598,12 +598,12 @@ namespace org.iringtools.adapter.projection
               }
             }
 
-            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.ClassMap.Id);
 
-            if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+            if (relatedClassTemplateMap != null && relatedClassTemplateMap.ClassMap != null)
             {
               ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers,
-                true, relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
+                true, relatedClassTemplateMap.ClassMap, relatedClassTemplateMap.TemplateMaps);
             }
           }
         }
@@ -624,9 +624,9 @@ namespace org.iringtools.adapter.projection
 
     private XElement CreatePropertyElement(RoleMap propertyRole, string propertyValue)
     {
-      XElement propertyElement = new XElement(TPL_NS + propertyRole.id.Replace(TPL_PREFIX, String.Empty));
+      XElement propertyElement = new XElement(TPL_NS + propertyRole.Id.Replace(TPL_PREFIX, String.Empty));
 
-      if (String.IsNullOrEmpty(propertyRole.valueListName))
+      if (String.IsNullOrEmpty(propertyRole.ValueListName))
       {
         if (String.IsNullOrEmpty(propertyValue))
         {
@@ -635,9 +635,9 @@ namespace org.iringtools.adapter.projection
         else
         {
           propertyElement.Add(new XAttribute(RDF_DATATYPE,
-            propertyRole.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName)));
+            propertyRole.DataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName)));
 
-          if (propertyRole.dataType.Contains("dateTime"))
+          if (propertyRole.DataType.Contains("dateTime"))
             propertyValue = Utility.ToXsdDateTime(propertyValue);
 
           propertyElement.Add(new XText(propertyValue));
@@ -645,7 +645,7 @@ namespace org.iringtools.adapter.projection
       }
       else  // resolve value list to uri
       {
-        propertyValue = _mapping.ResolveValueList(propertyRole.valueListName, propertyValue);
+        propertyValue = _mapping.ResolveValueList(propertyRole.ValueListName, propertyValue);
 
         if (String.IsNullOrEmpty(propertyValue))
         {
@@ -661,10 +661,10 @@ namespace org.iringtools.adapter.projection
 
     private string GetReferenceRoleValue(RoleMap referenceRole)
     {
-      string value = referenceRole.value;
+      string value = referenceRole.Value;
 
-      if (!String.IsNullOrEmpty(referenceRole.valueListName))
-        value = _mapping.ResolveValueList(referenceRole.valueListName, value);
+      if (!String.IsNullOrEmpty(referenceRole.ValueListName))
+        value = _mapping.ResolveValueList(referenceRole.ValueListName, value);
 
       return value.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
     }
@@ -709,11 +709,11 @@ namespace org.iringtools.adapter.projection
         ProcessInboundClassIdentifiers(dataObjectIndex, classMap, classInstanceIndex, identifierValue);
       }
 
-      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.id);
+      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.Id);
 
       if (classTemplateMap != null)
       {
-        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+        List<TemplateMap> templateMaps = classTemplateMap.TemplateMaps;
 
         if (templateMaps != null && templateMaps.Count > 0)
         {
@@ -732,16 +732,16 @@ namespace org.iringtools.adapter.projection
         List<RoleMap> classRoles = new List<RoleMap>();
 
         // find property roles
-        foreach (RoleMap roleMap in templateMap.roleMaps)
+        foreach (RoleMap roleMap in templateMap.RoleMaps)
         {
-          switch (roleMap.type)
+          switch (roleMap.Type)
           {
             case RoleType.Possessor:
-              possessorRoleId = roleMap.id;
+              possessorRoleId = roleMap.Id;
               break;
 
             case RoleType.Reference:
-              if (roleMap.classMap != null)
+              if (roleMap.ClassMap != null)
                 classRoles.Add(roleMap);
               else
                 referenceRole = roleMap;
@@ -763,8 +763,8 @@ namespace org.iringtools.adapter.projection
         if (referenceRole != null)
         {
           referenceVariable = BLANK_NODE;
-          referenceRoleId = referenceRole.id;
-          referenceRoleValue = referenceRole.value;
+          referenceRoleId = referenceRole.Id;
+          referenceRoleValue = referenceRole.Value;
           referenceEndStmt = END_STATEMENT;
         }
 
@@ -775,8 +775,8 @@ namespace org.iringtools.adapter.projection
             foreach (RoleMap classRole in classRoles)
             {
               string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId,
-                classInstances[classInstanceIndex], templateMap.id, referenceVariable, referenceRoleId,
-                referenceRoleValue, referenceEndStmt, classRole.id);
+                classInstances[classInstanceIndex], templateMap.Id, referenceVariable, referenceRoleId,
+                referenceRoleValue, referenceEndStmt, classRole.Id);
 
               object results = _memoryStore.ExecuteQuery(query);
 
@@ -791,7 +791,7 @@ namespace org.iringtools.adapter.projection
                   subclassInstances.Add(subclassInstance);
                 }
 
-                ProcessInboundClass(dataObjectIndex, classRole.classMap, subclassInstances);
+                ProcessInboundClass(dataObjectIndex, classRole.ClassMap, subclassInstances);
               }
             }
           }
@@ -800,12 +800,12 @@ namespace org.iringtools.adapter.projection
             foreach (RoleMap propertyRole in propertyRoles)
             {
               List<string> values = new List<string>();
-              string[] propertyPath = propertyRole.propertyName.Split('.');
+              string[] propertyPath = propertyRole.PropertyName.Split('.');
               string property = propertyPath[propertyPath.Length - 1];
 
               string query = String.Format(LITERAL_QUERY_TEMPLATE, possessorRoleId, classInstances[classInstanceIndex],
-                templateMap.id, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt,
-                propertyRole.id);
+                templateMap.Id, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt,
+                propertyRole.Id);
 
               object results = _memoryStore.ExecuteQuery(query);
 
@@ -825,21 +825,21 @@ namespace org.iringtools.adapter.projection
                   {
                     value = value.Substring(0, value.IndexOf("^^"));
                   }
-                  else if (!String.IsNullOrEmpty(propertyRole.valueListName))
+                  else if (!String.IsNullOrEmpty(propertyRole.ValueListName))
                   {
-                    ValueListMap valueListMap = _mapping.valueListMaps.Find(x => x.name.ToLower() == propertyRole.valueListName.ToLower());
+                    ValueListMap valueListMap = _mapping.ValueListMaps.Find(x => x.Name.ToLower() == propertyRole.ValueListName.ToLower());
 
-                    if (valueListMap != null && valueListMap.valueMaps != null)
+                    if (valueListMap != null && valueListMap.ValueMaps != null)
                     {
-                      ValueMap valueMap = valueListMap.valueMaps.Find(x => x.uri == value);
+                      ValueMap valueMap = valueListMap.ValueMaps.Find(x => x.Uri == value);
 
                       if (valueMap != null)
                       {
-                        value = valueMap.internalValue;
+                        value = valueMap.InternalValue;
                       }
                       else
                       {
-                        value = valueListMap.valueMaps[0].internalValue;
+                        value = valueListMap.ValueMaps[0].InternalValue;
                       }
                     }
                   }
@@ -856,7 +856,7 @@ namespace org.iringtools.adapter.projection
 
                 if (propertyPath.Length > 2 && values.Count > 0)
                 {
-                  SetRelatedRecords(dataObjectIndex, classInstanceIndex, propertyRole.propertyName, values);
+                  SetRelatedRecords(dataObjectIndex, classInstanceIndex, propertyRole.PropertyName, values);
                 }
               }
             }

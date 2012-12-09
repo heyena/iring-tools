@@ -36,7 +36,7 @@ namespace org.iringtools.adapter
     public void ThreadPoolCallback(object threadContext)
     {
       int threadIndex = (int)threadContext;
-      IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, _filter, _pageSize, _startIndex);
+      IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, _filter, _pageSize, _startIndex);
 
       if (dataObjects != null)
       {

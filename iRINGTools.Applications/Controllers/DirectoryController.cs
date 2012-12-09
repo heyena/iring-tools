@@ -13,8 +13,10 @@ using log4net;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.mapping;
+using org.iringtools.refdata.response;
 using org.iringtools.utility;
 using org.iringtools.web.Models;
+using Response = org.iringtools.library.Response;
 
 
 namespace org.iringtools.web.controllers
@@ -150,15 +152,15 @@ namespace org.iringtools.web.controllers
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-              foreach (ValueListMap valueList in mapping.valueListMaps)
+              foreach (ValueListMap valueList in mapping.ValueListMaps)
               {
                 TreeNode node = new TreeNode
                 {
                   nodeType = "async",
                   type = "ValueListNode",
                   iconCls = "valuelistmap",
-                  id = context + "/ValueList/" + valueList.name,
-                  text = valueList.name,
+                  id = context + "/ValueList/" + valueList.Name,
+                  text = valueList.Name,
                   //expanded = false,
                   leaf = false,
                   record = new
@@ -169,7 +171,7 @@ namespace org.iringtools.web.controllers
                 };
 
                 node.property = new Dictionary<string, string>();
-                node.property.Add("Name", valueList.name);
+                node.property.Add("Name", valueList.Name);
                 AddPropertiestoNode(node, form);
                 nodes.Add(node);
               }
@@ -186,16 +188,16 @@ namespace org.iringtools.web.controllers
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
               Mapping mapping = GetMapping(contextName, endpoint, baseUrl);
-              ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
+              ValueListMap valueListMap = mapping.ValueListMaps.Find(c => c.Name == valueList);
 
-              foreach (var valueMap in valueListMap.valueMaps)
+              foreach (var valueMap in valueListMap.ValueMaps)
               {
-                string valueMapUri = valueMap.uri.Split(':')[1];
+                string valueMapUri = valueMap.Uri.Split(':')[1];
                 string classLabel = String.Empty;
 
-                if (!String.IsNullOrEmpty(valueMap.label))
+                if (!String.IsNullOrEmpty(valueMap.Label))
                 {
-                  classLabel = valueMap.label;
+                  classLabel = valueMap.Label;
                 }
                 else if (Session[valueMapUri] != null)
                 {
@@ -212,8 +214,8 @@ namespace org.iringtools.web.controllers
                   //nodeType = "async",
                   type = "ListMapNode",
                   iconCls = "valuemap",
-                  id = context + "/ValueMap/" + valueMap.internalValue,
-                  text = classLabel + " [" + valueMap.internalValue + "]",
+                  id = context + "/ValueMap/" + valueMap.InternalValue,
+                  text = classLabel + " [" + valueMap.InternalValue + "]",
                   //expanded = false,
                   leaf = true,
                   record = new
@@ -225,7 +227,7 @@ namespace org.iringtools.web.controllers
                 };
 
                 node.property = new Dictionary<string, string>();
-                node.property.Add("Name", valueMap.internalValue);
+                node.property.Add("Name", valueMap.InternalValue);
                 node.property.Add("Class Label", classLabel);
                 AddPropertiestoNode(node, form);
                 nodes.Add(node);
@@ -398,15 +400,15 @@ namespace org.iringtools.web.controllers
               Mapping mapping = GetMapping(contextName, endpoint, baseUrl);
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-              foreach (GraphMap graph in mapping.graphMaps)
+              foreach (GraphMap graph in mapping.GraphMaps)
               {
                 TreeNode node = new TreeNode
                 {
                   //nodeType = "async",
                   type = "GraphNode",
                   iconCls = "graphmap",
-                  id = context + "/Graph/" + graph.name,
-                  text = graph.name,
+                  id = context + "/Graph/" + graph.Name,
+                  text = graph.Name,
                   expanded = true,
                   leaf = false,
                   children = new List<JsonTreeNode>(),
@@ -417,10 +419,10 @@ namespace org.iringtools.web.controllers
                   }
                 };
                 node.property = new Dictionary<string, string>();
-                node.property.Add("Data Object Name", graph.dataObjectName);
-                node.property.Add("Name", graph.name);
-                node.property.Add("Identifier", graph.classTemplateMaps[0].classMap.identifiers[0].Split('.')[1]);
-                node.property.Add("Class Label", graph.classTemplateMaps[0].classMap.name);
+                node.property.Add("Data Object Name", graph.DataObjectName);
+                node.property.Add("Name", graph.Name);
+                node.property.Add("Identifier", graph.ClassTemplateMaps[0].ClassMap.Identifiers[0].Split('.')[1]);
+                node.property.Add("Class Label", graph.ClassTemplateMaps[0].ClassMap.Name);
                 AddPropertiestoNode(node, form);
                 nodes.Add(node);
               }
