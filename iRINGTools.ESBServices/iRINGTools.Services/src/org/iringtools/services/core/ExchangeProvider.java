@@ -617,7 +617,7 @@ public class ExchangeProvider
 	      xr.setItemCountDelete(itemCountDelete);
 	 	  xr.setSummary("Page of differences.");
 
-	 	  dtos.setExchangeResp(xr);
+	 	  dtos.setSummary(xr);
 	      dtos.setVersion(id);
 	      dtos.setSenderAppName(sourceAppName);
 	      dtos.setSenderScopeName(sourceScopeName);
