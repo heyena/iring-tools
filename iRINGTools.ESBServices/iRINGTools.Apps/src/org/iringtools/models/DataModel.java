@@ -131,8 +131,9 @@ public class DataModel {
 
 		try {
 			DataFilter dataFilterFile = null;
-			
-			DataFilter dataFilterUI = createDataFilter(filter, sortBy, sortOrder);
+
+			DataFilter dataFilterUI = createDataFilter(filter, sortBy,
+					sortOrder);
 			HttpClient httpClient = new HttpClient(serviceUri);
 			HttpUtils.addHttpHeaders(session, httpClient);
 			// Getting Filter from file Filter.xxx.xx.xml
@@ -340,16 +341,14 @@ public class DataModel {
 						.get(0);
 
 				for (int i = 0; i < cloneFullDtiList.size(); i++) {
-					if(transferTypeExpression.getRelationalOperator() == RelationalOperator.EQUAL_TO)
-					{
-					if (!cloneFullDtiList.get(i).getTransferType().toString()
-							.equalsIgnoreCase(value)) {
-						cloneFullDtiList.remove(i--);
-					}
-					}
-					else{
-						if (cloneFullDtiList.get(i).getTransferType().toString()
-								.equalsIgnoreCase(value)) {
+					if (transferTypeExpression.getRelationalOperator() == RelationalOperator.EQUAL_TO) {
+						if (!cloneFullDtiList.get(i).getTransferType()
+								.toString().equalsIgnoreCase(value)) {
+							cloneFullDtiList.remove(i--);
+						}
+					} else {
+						if (cloneFullDtiList.get(i).getTransferType()
+								.toString().equalsIgnoreCase(value)) {
 							cloneFullDtiList.remove(i--);
 						}
 					}
@@ -421,7 +420,13 @@ public class DataModel {
 				} else if (dataFilter.getOrderExpressions() != null
 						&& dataFilter.getOrderExpressions().getItems().size() > 0) {
 				/*	final String sortType = resultDtis.getSortType()
-							.toLowerCase();  */
+							.toLowerCase();*/
+					if (!(resultDtis.getSortType() == null)) {
+						final String sortType = resultDtis.getSortType()
+								.toLowerCase();
+					} else {
+						final String sortType = null;
+					}
 					final String sortDir = resultDtis.getSortOrder()
 							.toLowerCase();
 
@@ -429,12 +434,12 @@ public class DataModel {
 						public int compare(DataTransferIndex dti1,
 								DataTransferIndex dti2) {
 							int compareValue = 0;
-						/*	String dti1SortIndex = dti1.getSortIndex();
+							String dti1SortIndex = dti1.getSortIndex();
 							String dti2SortIndex = dti2.getSortIndex();
 
-							if (sortType.equals("string")
+							/*if (sortType.equals("string")
 									|| sortType.contains("date")
-									|| sortType.contains("time")) {
+									|| sortType.contains("time")) {*/
 								if (dti1SortIndex == null) {
 									dti1SortIndex = "";
 								}
@@ -450,7 +455,7 @@ public class DataModel {
 									compareValue = dti2SortIndex
 											.compareTo(dti1SortIndex);
 								}
-							} else // sort type is numeric
+							/*} else // sort type is numeric
 							{
 								if (dti1SortIndex == null) {
 									dti1SortIndex = String
@@ -850,8 +855,7 @@ public class DataModel {
 
 	protected DataFilter createDataFilter(String filter, String sortBy,
 			String sortOrder) throws DataModelException {
-		DataFilter dataFilter = new DataFilter() ;
-		
+		DataFilter dataFilter = new DataFilter();
 
 		@SuppressWarnings("unchecked")
 		HashMap<String, String> valueMaps = (HashMap<String, String>) session
@@ -921,9 +925,7 @@ public class DataModel {
 				logger.error(message);
 				throw new DataModelException(message);
 			}
-		}
-		else
-		{
+		} else {
 			dataFilter.setExpressions(null);
 		}
 
@@ -944,9 +946,7 @@ public class DataModel {
 
 			if (sortOrder != null)
 				orderExpression.setSortOrder(SortOrder.valueOf(sortOrder));
-		}
-		else
-		{
+		} else {
 			dataFilter.setOrderExpressions(null);
 		}
 
