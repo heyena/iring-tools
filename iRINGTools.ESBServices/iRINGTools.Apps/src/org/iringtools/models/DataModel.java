@@ -340,7 +340,7 @@ public class DataModel {
 						.get(0);
 
 				for (int i = 0; i < cloneFullDtiList.size(); i++) {
-					if(transferTypeExpression.equals("Equal"))
+					if(transferTypeExpression.getRelationalOperator() == RelationalOperator.EQUAL_TO)
 					{
 					if (!cloneFullDtiList.get(i).getTransferType().toString()
 							.equalsIgnoreCase(value)) {

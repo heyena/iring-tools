@@ -1,11 +1,7 @@
 package org.iringtools.utility;
 
 import org.iringtools.data.filter.*;
-import org.iringtools.dxfr.dti.DataTransferIndex;
-import org.iringtools.dxfr.dti.DataTransferIndices;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DataFilterInitial {
@@ -32,9 +28,9 @@ public class DataFilterInitial {
 
 		if ((oe != null) && (inoe == null))
 			resultOe.setItems(oe.getItems());
-		
+
 		// if both the filter are null
-		if ((inoe == null) && (exs == null) && (inex== null) && (oe == null)) {
+		if ((inoe == null) && (exs == null) && (inex == null) && (oe == null)) {
 			resultExpressions = null;
 			resultOe = null;
 		}
@@ -42,21 +38,42 @@ public class DataFilterInitial {
 		// If both filters have values
 
 		List<Expression> expressionList = new ArrayList<Expression>();
-
+		int inExcount = 0, uiExcount=0;
+		int i = 0, j= 0;
 		if ((inex != null) && (exs != null)) {
 			for (Expression ex : inex.getItems()) {
+				i++;
+				if(!(ex.getPropertyName().equalsIgnoreCase("Transfer Type")))
+				{
+				if (inExcount == 0) {
+					ex.setOpenGroupCount(ex.getOpenGroupCount() + 1);
+					inExcount++;
+				}				
+				if (inex.getItems().size() == i) {
+					ex.setCloseGroupCount(ex.getCloseGroupCount() + 1);
+				}
+				}
 				expressionList.add(ex);
 
-			}  
+			}
 			int count = 0;
 			for (Expression ex : exs.getItems()) {
-				if(count == 0)
+				if (count == 0) {
+					if (ex.getLogicalOperator() == null) {
+						ex.setLogicalOperator(LogicalOperator.AND);
+						count++;
+					}
+				}
+				j++;
+				if(!(ex.getPropertyName().equalsIgnoreCase("Transfer Type")))
 				{
-				  if( ex.getLogicalOperator() == null)
-				  {
-					  ex.setLogicalOperator(LogicalOperator.AND);
-					  count++;
-				  }
+				if (uiExcount == 0) {
+					ex.setOpenGroupCount(ex.getOpenGroupCount() + 1);
+					uiExcount++;
+				}				
+				if (exs.getItems().size() == j) {
+					ex.setCloseGroupCount(ex.getCloseGroupCount() + 1);
+				}
 				}
 				expressionList.add(ex);
 			}
@@ -81,53 +98,5 @@ public class DataFilterInitial {
 		resultFilter.setOrderExpressions(resultOe);
 
 		return resultFilter;
-		/*
-		 * if (oe == null) oe = new OrderExpressions();
-		 * 
-		 * if (filter != null) { DataFilter clonedFilter =
-		 * Utility.CloneDataContractObject<DataFilter>(filter);
-		 * 
-		 * if (clonedFilter.Expressions != null &&
-		 * clonedFilter.Expressions.Count > 0) { int maxIndex =
-		 * clonedFilter.Expressions.Count - 1;
-		 * clonedFilter.Expressions[0].LogicalOperator = LogicalOperator.And;
-		 * clonedFilter.Expressions[0].OpenGroupCount++;
-		 * clonedFilter.Expressions[maxIndex].CloseGroupCount++;
-		 * Expressions.AddRange(clonedFilter.Expressions); }
-		 * 
-		 * 
-		 * 
-		 * if (clonedFilter.OrderExpressions != null &&
-		 * clonedFilter.OrderExpressions.Count > 0) { foreach (OrderExpression
-		 * orderExpression in clonedFilter.OrderExpressions) { if
-		 * (!DuplicateOrderExpression(orderExpression))
-		 * OrderExpressions.Add(orderExpression); } } } }
-		 * 
-		 * private bool DuplicateOrderExpression(OrderExpression
-		 * orderExpression)
-		 * 
-		 * {
-		 * 
-		 * foreach (OrderExpression item in OrderExpressions) { if
-		 * (item.PropertyName.ToLower() ==
-		 * orderExpression.PropertyName.ToLower()) { if(item.SortOrder ==
-		 * orderExpression.SortOrder) return true;
-		 * 
-		 * //else
-		 * 
-		 * //{
-		 * 
-		 * // item.SortOrder = orderExpression.SortOrder;
-		 * 
-		 * // return true;
-		 * 
-		 * //}
-		 * 
-		 * }
-		 * 
-		 * }
-		 * 
-		 * return false;
-		 */
 	}
 }
