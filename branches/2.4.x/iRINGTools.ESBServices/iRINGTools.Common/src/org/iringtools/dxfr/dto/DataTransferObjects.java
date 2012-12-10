@@ -24,7 +24,7 @@ import org.iringtools.dxfr.response.ExchangeResponse;
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="senderScopeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="senderAppName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="exchangeResp" type="{http://www.iringtools.org/dxfr/response}ExchangeResponse" minOccurs="0"/>
+ *         &lt;element name="summary" type="{http://www.iringtools.org/dxfr/response}ExchangeResponse" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,7 +41,7 @@ import org.iringtools.dxfr.response.ExchangeResponse;
     "version",
     "senderScopeName",
     "senderAppName",
-    "exchangeResp"
+    "summary"
 })
 @XmlRootElement(name = "dataTransferObjects")
 public class DataTransferObjects {
@@ -52,7 +52,7 @@ public class DataTransferObjects {
     protected String version;
     protected String senderScopeName;
     protected String senderAppName;
-    protected ExchangeResponse exchangeResp;
+    protected ExchangeResponse summary;
 
     /**
      * Gets the value of the scopeName property.
@@ -199,27 +199,27 @@ public class DataTransferObjects {
     }
 
     /**
-     * Gets the value of the exchangeResp property.
+     * Gets the value of the summary property.
      * 
      * @return
      *     possible object is
      *     {@link ExchangeResponse }
      *     
      */
-    public ExchangeResponse getExchangeResp() {
-        return exchangeResp;
+    public ExchangeResponse getSummary() {
+        return summary;
     }
 
     /**
-     * Sets the value of the exchangeResp property.
+     * Sets the value of the summary property.
      * 
      * @param value
      *     allowed object is
      *     {@link ExchangeResponse }
      *     
      */
-    public void setExchangeResp(ExchangeResponse value) {
-        this.exchangeResp = value;
+    public void setSummary(ExchangeResponse value) {
+        this.summary = value;
     }
 
 }
