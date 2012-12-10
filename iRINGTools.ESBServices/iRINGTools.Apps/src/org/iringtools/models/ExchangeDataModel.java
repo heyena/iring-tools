@@ -116,10 +116,10 @@ public class ExchangeDataModel extends DataModel
       ExchangeDefinition xdef = httpClient.get(ExchangeDefinition.class);
       
       Long exchangeTimeout = xdef.getExchangeTimeout();
-      if (exchangeTimeout == null) exchangeTimeout = (long)864000;
+      if (exchangeTimeout == null) exchangeTimeout = (long)1800;  // in seconds
       
       Integer poolingInterval = xdef.getPollingInterval();
-      if (poolingInterval == null) poolingInterval = 1;
+      if (poolingInterval == null) poolingInterval = 2;  // in seconds
       
       // 
       // wait for exchange result

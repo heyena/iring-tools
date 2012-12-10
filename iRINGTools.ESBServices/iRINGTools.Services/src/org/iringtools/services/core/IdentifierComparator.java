@@ -23,14 +23,14 @@ public class IdentifierComparator implements Comparator<DataTransferIndex>
       logger.debug("Left DTI identifier is null.");
       logger.debug("Right DTI [" + rightDti.getIdentifier() + "(" + rightDti.getInternalIdentifier() + ")");
       
-      return 1;
+      return -1;
     }
         
     if (rightDti.getIdentifier() == null)
     {
       logger.debug("Left DTI [" + leftDti.getIdentifier() + "(" + leftDti.getInternalIdentifier() + ")");   
       logger.debug("Right DTI identifier is null.");     
-      return -1;
+      return 1;
     }
     
     return leftDti.getIdentifier().toLowerCase().compareTo(rightDti.getIdentifier().toLowerCase());

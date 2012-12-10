@@ -47,11 +47,11 @@ namespace org.iringtools.services
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   public class DataTransferService
   {
-    private DtoProvider _dxfrProvider = null;
+    private DtoProvider _dtoProvider = null;
 
     public DataTransferService()
     {
-      _dxfrProvider = new DtoProvider(ConfigurationManager.AppSettings);
+      _dtoProvider = new DtoProvider(ConfigurationManager.AppSettings);
     }
 
     [Description("Gets service version.")]
@@ -60,7 +60,7 @@ namespace org.iringtools.services
     {
       try
       {
-        VersionInfo versionInfo = _dxfrProvider.GetVersion();
+        VersionInfo versionInfo = _dtoProvider.GetVersion();
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<VersionInfo>(versionInfo));
@@ -79,7 +79,7 @@ namespace org.iringtools.services
     {
       try
       {
-        Manifest manifest = _dxfrProvider.GetManifest(scope, app);
+        Manifest manifest = _dtoProvider.GetManifest(scope, app);
         
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Manifest>(manifest));
@@ -98,7 +98,7 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+        DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
@@ -113,12 +113,13 @@ namespace org.iringtools.services
 
     [Description("Gets data transfer indices of requested manifest with filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
-    public void GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    public void GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
       try
       {
-        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
+        DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, request);
 
+        
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
       }
@@ -136,7 +137,7 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
+        DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
@@ -155,7 +156,7 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
+        DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
@@ -174,7 +175,7 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObject(scope, app, graph, id);
+        DataTransferObjects dtos = _dtoProvider.GetDataTransferObject(scope, app, graph, id);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
@@ -193,7 +194,7 @@ namespace org.iringtools.services
     {
       try
       {
-        Response response = _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
+        Response response = _dtoProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
@@ -213,7 +214,7 @@ namespace org.iringtools.services
       try
       {
         DataTransferObjects dataTransferObjects = Utility.DeserializeFromStream<DataTransferObjects>(stream.ToMemoryStream(), true);
-        Response response = _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
+        Response response = _dtoProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
       }
@@ -231,7 +232,7 @@ namespace org.iringtools.services
     {
       try
       {
-        Response response = _dxfrProvider.DeleteDataTransferObject(scope, app, graph, id);
+        Response response = _dtoProvider.DeleteDataTransferObject(scope, app, graph, id);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));

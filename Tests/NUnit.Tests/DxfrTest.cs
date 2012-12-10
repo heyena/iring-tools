@@ -82,7 +82,7 @@ namespace NUnit.Tests
         DataTransferIndices dtiList = null;
 
         dtiList =
-          _dxfrProvider.GetDataTransferIndicesByRequest(
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
             _settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], null, dxiRequest);
 
@@ -134,7 +134,7 @@ namespace NUnit.Tests
         DataTransferIndices dtiList = null;
 
         dtiList =
-          _dxfrProvider.GetDataTransferIndicesByRequest(
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
             _settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], null, dxiRequest);
 
@@ -244,7 +244,7 @@ namespace NUnit.Tests
 				dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
-          _dxfrProvider.GetDataTransferIndicesByRequest(
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
             _settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], "MD5", dxiRequest);
 				
@@ -335,7 +335,7 @@ namespace NUnit.Tests
         dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
-          _dxfrProvider.GetDataTransferIndicesByRequest(
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
             _settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], "MD5", dxiRequest);
 
@@ -401,7 +401,7 @@ namespace NUnit.Tests
         dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
-          _dxfrProvider.GetDataTransferIndicesByRequest(
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
             _settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], "MD5", dxiRequest);
 				
