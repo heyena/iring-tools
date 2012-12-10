@@ -352,7 +352,7 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
       DataTransferIndices dataTransferIndices = null;
 

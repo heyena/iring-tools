@@ -35,12 +35,12 @@ import org.iringtools.utility.JaxbUtils;
 
 public class ExchangeTask implements Runnable
 {
-  private final Logger logger = Logger.getLogger(ExchangeTask.class); 
+  private final Logger logger = Logger.getLogger(ExchangeTask.class);
 
   private final String POOL_PREFIX = "_pool_";
-  private final String SPLIT_TOKEN = "->";  
-  private DatatypeFactory datatypeFactory = null;  
-  
+  private final String SPLIT_TOKEN = "->";
+  private DatatypeFactory datatypeFactory = null;
+
   private Map<String, Object> settings;
   private ExchangeRequest xReq;
   private ExchangeResponse xRes;
@@ -49,9 +49,9 @@ public class ExchangeTask implements Runnable
   private ExchangeDefinition xDef;
   private String resultPath;
   private HttpClient httpClient;
-  
-  public ExchangeTask(final Map<String, Object> settings, String scope, String id, 
-      ExchangeRequest xReq, ExchangeDefinition xDef, String resultPath)
+
+  public ExchangeTask(final Map<String, Object> settings, String scope, String id, ExchangeRequest xReq,
+      ExchangeDefinition xDef, String resultPath)
   {
     this.settings = settings;
     this.scope = scope;
@@ -59,10 +59,10 @@ public class ExchangeTask implements Runnable
     this.xReq = xReq;
     this.xDef = xDef;
     this.resultPath = resultPath;
-    
+
     httpClient = new HttpClient();
     HttpUtils.addHttpHeaders(settings, httpClient);
-    
+
     try
     {
       datatypeFactory = DatatypeFactory.newInstance();
@@ -72,21 +72,22 @@ public class ExchangeTask implements Runnable
       logger.error(dce.getMessage());
     }
   }
-  
+
   public ExchangeResponse getExchangeResponse()
   {
     return xRes;
   }
-  
+
   @Override
   public void run()
   {
-    // 
+    //
     // create exchange response
     //
-    xRes = new ExchangeResponse();    
+    xRes = new ExchangeResponse();
     xRes.setLevel(Level.SUCCESS);
-    
+    xRes.setSummary("");
+
     XMLGregorianCalendar startTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
     xRes.setStartTime(startTime);
 
@@ -96,23 +97,27 @@ public class ExchangeTask implements Runnable
     if (xReq == null)
     {
       xRes.setLevel(Level.WARNING);
-      xRes.setSummary("Exchange request is empty.");
+      String message = "Exchange request is empty.";
+      StringBuilder summary = new StringBuilder(xRes.getSummary());
+      xRes.setSummary(summary.append(message).toString());
       return;
     }
-        
+
     Manifest manifest = xReq.getManifest();
     DataTransferIndices dtis = xReq.getDataTransferIndices();
 
-    // 
+    //
     // check data transfer indices
     //
     if (dtis == null)
     {
       xRes.setLevel(Level.ERROR);
-      xRes.setSummary("No data transfer indices found.");
+      String message = "No data transfer indices found.";
+      StringBuilder summary = new StringBuilder(xRes.getSummary());
+      xRes.setSummary(summary.append(message).toString());
       return;
     }
-    
+
     //
     // collect ADD/CHANGE/DELETE indices
     //
@@ -125,8 +130,19 @@ public class ExchangeTask implements Runnable
 
     for (DataTransferIndex dxi : dtis.getDataTransferIndexList().getItems())
     {
-      TransferType transferType = dxi.getTransferType();
+      // exclude ones with duplicates
+      if (dxi.getDuplicateCount() != null && dxi.getDuplicateCount() > 0)
+      {
+        String message = "Excluding DTO [" + dxi.getIdentifier() + "] due to [" + dxi.getDuplicateCount() + "] duplicates. ";
+        logger.warn(message);
+        
+        StringBuilder summary = new StringBuilder(xRes.getSummary());
+        xRes.setSummary(summary.append(message).toString());
+        continue;
+      }
       
+      TransferType transferType = dxi.getTransferType();
+
       if (transferType != TransferType.SYNC)
       {
         if (transferType == TransferType.ADD)
@@ -142,13 +158,13 @@ public class ExchangeTask implements Runnable
           iCountDelete++;
         }
 
-        dxIndices.add(dxi);        
+        dxIndices.add(dxi);
       }
       else
       {
-    	iCountSync++;
+        iCountSync++;
       }
-    }    
+    }
 
     //
     // make sure there are items to exchange
@@ -156,7 +172,10 @@ public class ExchangeTask implements Runnable
     if (dxIndices.size() == 0)
     {
       xRes.setLevel(Level.ERROR);
-      xRes.setSummary("No updated/deleted items found.");
+
+      String message = "No updated/deleted items found.";
+      StringBuilder summary = new StringBuilder(xRes.getSummary());
+      xRes.setSummary(summary.append(message).toString());
       return;
     }
 
@@ -170,9 +189,9 @@ public class ExchangeTask implements Runnable
     {
       dirPath.mkdirs();
     }
-    
-    String exchangeFile = path + "/" + startTime.toString().replace(":", ".");    
-    
+
+    String exchangeFile = path + "/" + startTime.toString().replace(":", ".");
+
     //
     // add exchange definition info to exchange response
     //
@@ -190,17 +209,18 @@ public class ExchangeTask implements Runnable
     //
     String targetAppUrl = xDef.getTargetUri() + "/" + xDef.getTargetScopeName() + "/" + xDef.getTargetAppName();
     String targetGraphUrl = targetAppUrl + "/" + xDef.getTargetGraphName();
-    String sourceGraphUrl = xDef.getSourceUri() + "/" + xDef.getSourceScopeName() + "/" + xDef.getSourceAppName() + "/" + xDef.getSourceGraphName();
+    String sourceGraphUrl = xDef.getSourceUri() + "/" + xDef.getSourceScopeName() + "/" + xDef.getSourceAppName() + "/"
+        + xDef.getSourceGraphName();
     String sourceDtoUrl = sourceGraphUrl + "/dxo";
-    
+
     //
     // create pool DTOs
     //
     int dxIndicesSize = dxIndices.size();
-    
+
     // if pool size is not set for specific data exchange, then use the default one
     int poolSize = 0;
-    
+
     if (xDef.getPoolSize() == null || xDef.getPoolSize() == 0)
     {
       poolSize = Integer.parseInt((String) settings.get("poolSize"));
@@ -209,34 +229,35 @@ public class ExchangeTask implements Runnable
     {
       poolSize = xDef.getPoolSize();
     }
-    
+
     poolSize = Math.min(poolSize, dxIndicesSize);
-          
-    if (poolSize == 0) poolSize = 100;
-    
+
+    if (poolSize == 0)
+      poolSize = 100;
+
     xRes.setPoolSize(poolSize);
     xRes.setItemCount(dxIndicesSize);
     xRes.setItemCountSync(iCountSync);
     xRes.setItemCountAdd(iCountAdd);
     xRes.setItemCountChange(iCountChange);
     xRes.setItemCountDelete(iCountDelete);
-    
+
     for (int i = 0; i < dxIndicesSize; i += poolSize)
     {
       int actualPoolSize = (dxIndicesSize > (i + poolSize)) ? poolSize : dxIndicesSize - i;
       List<DataTransferIndex> poolDtiItems = dxIndices.subList(i, i + actualPoolSize);
       List<DataTransferIndex> sourceDtiItems = new ArrayList<DataTransferIndex>();
-      
+
       DataTransferObjects poolDtos = new DataTransferObjects();
       DataTransferObjectList poolDtosList = new DataTransferObjectList();
       poolDtos.setDataTransferObjectList(poolDtosList);
       List<DataTransferObject> poolDtoListItems = new ArrayList<DataTransferObject>();
-      poolDtosList.setItems(poolDtoListItems);     
-            
+      poolDtosList.setItems(poolDtoListItems);
+
       //
       // create deleted DTOs and collect add/change DTIs from source
       //
-      
+
       for (DataTransferIndex poolDtiItem : poolDtiItems)
       {
         if (poolDtiItem.getTransferType() == TransferType.DELETE)
@@ -253,7 +274,7 @@ public class ExchangeTask implements Runnable
             int splitIndex = poolDtiItem.getInternalIdentifier().indexOf(SPLIT_TOKEN);
             poolDtiItem.setInternalIdentifier(poolDtiItem.getInternalIdentifier().substring(0, splitIndex));
           }
-          
+
           sourceDtiItems.add(poolDtiItem);
         }
       }
@@ -261,9 +282,9 @@ public class ExchangeTask implements Runnable
       //
       // get add/change DTOs from source endpoint
       //
-      DataTransferObjects sourceDtos = null;  
+      DataTransferObjects sourceDtos = null;
       DxoRequest sourceDtosRequest = new DxoRequest();
-      sourceDtosRequest.setManifest(manifest);            
+      sourceDtosRequest.setManifest(manifest);
       DataTransferIndices sourceDtis = new DataTransferIndices();
       sourceDtosRequest.setDataTransferIndices(sourceDtis);
       DataTransferIndexList sourceDtiList = new DataTransferIndexList();
@@ -273,22 +294,23 @@ public class ExchangeTask implements Runnable
       try
       {
         manifest.getGraphs().getItems().get(0).setName(xDef.getSourceGraphName());
-        
+
         logger.debug("Requesting source DTOs from [" + sourceDtoUrl + "]: ");
         logger.debug(JaxbUtils.toXml(sourceDtosRequest, false));
-        
+
         sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtosRequest);
-        
+
         logger.debug("Source DTOs: ");
         logger.debug(JaxbUtils.toXml(sourceDtos, false));
-        
+
         sourceDtosRequest = null;
       }
       catch (Exception e)
       {
         logger.error(e.getMessage());
         xRes.setLevel(Level.ERROR);
-        xRes.setSummary(e.getMessage());
+        StringBuilder summary = new StringBuilder(xRes.getSummary());
+        xRes.setSummary(summary.append(e.getMessage()).toString());
       }
 
       //
@@ -305,27 +327,27 @@ public class ExchangeTask implements Runnable
       if (poolDtoListItems.size() > 0)
       {
         Response poolResponse = null;
-        
+
         try
         {
           String targetUrl = targetGraphUrl + "?format=stream";
-          
+
           String poolRange = i + " - " + (i + actualPoolSize);
           poolDtos.setSenderScopeName(xDef.getSourceScopeName());
           poolDtos.setSenderAppName(xDef.getSourceAppName());
-          
+
           logger.debug("Sending pool DTOs to [" + targetUrl + "]: ");
           logger.debug(JaxbUtils.toXml(poolDtos, false));
-          
+
           poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
-          
+
           logger.debug("Pool DTOs exchange result:");
           logger.debug(JaxbUtils.toXml(poolResponse, false));
-          
-          logger.info("Pool [" + poolRange + "] completed.");          
-          
+
+          logger.info("Pool [" + poolRange + "] completed.");
+
           // free up resources
-          poolDtos = null;  
+          poolDtos = null;
           sourceDtos = null;
           poolDtiItems = null;
         }
@@ -333,89 +355,94 @@ public class ExchangeTask implements Runnable
         {
           logger.error(e.getMessage());
           xRes.setLevel(Level.SUCCESS);
-          xRes.setSummary(e.getMessage());
-        }
           
+          StringBuilder summary = new StringBuilder(xRes.getSummary());
+          xRes.setSummary(summary.append(e.getMessage()).toString());
+        }
+
         if (poolResponse != null)
         {
-          try 
+          try
           {
             // write pool response to disk
-            String poolResponseFile = exchangeFile + POOL_PREFIX + (i+1) + "-" + (i+actualPoolSize) + ".xml";
+            String poolResponseFile = exchangeFile + POOL_PREFIX + (i + 1) + "-" + (i + actualPoolSize) + ".xml";
             JaxbUtils.write(poolResponse, poolResponseFile, true);
           }
-          catch (Exception e) 
+          catch (Exception e)
           {
             logger.error("Error writing pool response to disk: " + e);
           }
-  
+
           // update level as necessary
           if (xRes.getLevel().ordinal() < poolResponse.getLevel().ordinal())
           {
             xRes.setLevel(poolResponse.getLevel());
           }
-          
+
           poolResponse = null;
         }
       }
     }
 
     if (xRes.getLevel() == Level.ERROR)
-    {          
+    {
       String message = "Exchange completed with error.";
-      xRes.setSummary(message);
+      StringBuilder summary = new StringBuilder(xRes.getSummary());
+      xRes.setSummary(summary.append(message).toString());
     }
     else if (xRes.getLevel() == Level.WARNING)
     {
       String message = "Exchange completed with warning.";
-      xRes.setSummary(message);
+      StringBuilder summary = new StringBuilder(xRes.getSummary());
+      xRes.setSummary(summary.append(message).toString());
     }
     else if (xRes.getLevel() == Level.SUCCESS)
     {
       String message = "Exchange completed succesfully.";
-      xRes.setSummary(message);
+      StringBuilder summary = new StringBuilder(xRes.getSummary());
+      xRes.setSummary(summary.append(message).toString());
     }
 
     XMLGregorianCalendar endTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
     xRes.setEndTime(endTime);
 
-    // write exchange response to file system    
+    // write exchange response to file system
     try
     {
       JaxbUtils.write(xRes, exchangeFile + ".xml", false);
       List<String> exchangeLogs = IOUtils.getFiles(path);
-      
-      /* if number of log files exceed the limit, 
-       * remove the oldest one and its pools
+
+      /*
+       * if number of log files exceed the limit, remove the oldest one and its pools
        */
-      
-      for (int i=0; i < exchangeLogs.size(); i++)
+
+      for (int i = 0; i < exchangeLogs.size(); i++)
       {
         if (exchangeLogs.get(i).contains(POOL_PREFIX))
         {
           exchangeLogs.remove(i--);
         }
       }
-      
+
       Collections.sort(exchangeLogs);
 
       while (exchangeLogs.size() > Integer.valueOf((String) settings.get("numOfExchangeLogFiles")))
       {
         final String filePrefix = (exchangeLogs.get(0).replace(".xml", ""));
-        
-        FileFilter fileFilter = new FileFilter() 
+
+        FileFilter fileFilter = new FileFilter()
         {
-          public boolean accept(File file) 
+          public boolean accept(File file)
           {
             return file.getName().startsWith(filePrefix);
           }
         };
-          
+
         for (File file : new File(path).listFiles(fileFilter))
         {
           file.delete();
         }
-        
+
         exchangeLogs.remove(0);
       }
     }
@@ -424,9 +451,10 @@ public class ExchangeTask implements Runnable
       String message = "Error writing exchange response to disk: " + e;
       logger.error(message);
       xRes.setLevel(Level.ERROR);
-      xRes.setSummary(message);
+      StringBuilder summary = new StringBuilder(xRes.getSummary());
+      xRes.setSummary(summary.append(message).toString());
     }
-    
+
     if (resultPath != null)
     {
       try

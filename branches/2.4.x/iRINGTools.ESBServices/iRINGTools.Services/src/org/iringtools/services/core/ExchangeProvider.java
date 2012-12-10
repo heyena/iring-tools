@@ -44,7 +44,6 @@ import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.mapping.ValueListMaps;
-import org.iringtools.utility.DataFilterInitial;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
@@ -121,15 +120,24 @@ public class ExchangeProvider
   public DataFilter getDataFilter(String scope, String id) throws ServiceProviderException
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/Filter-" + scope + "-" + id + ".xml";
-    try
+    File file = new File(path);
+    
+    if (file.exists())
     {
-      return JaxbUtils.read(DataFilter.class, path);
+      try
+      {
+        return JaxbUtils.read(DataFilter.class, path);
+      }
+      catch (Exception e)
+      {
+        String message = "Error getting Data Filter of [" + scope + "." + id + "]: " + e;
+        logger.error(message);
+        throw new ServiceProviderException(message);
+      }
     }
-    catch (Exception e)
+    else
     {
-      String message = "Error getting Data Filter of [" + scope + "." + id + "]: " + e;
-      logger.error(message);
-      throw new ServiceProviderException(message);
+      return new DataFilter();
     }
   }
   
@@ -311,6 +319,12 @@ public class ExchangeProvider
 
       for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
       {
+        if (dti.getDuplicateCount() != null && dti.getDuplicateCount() > 0)
+        {
+          logger.warn("DTI [" + dti.getIdentifier() + "] contains [" + dti.getDuplicateCount() + "] duplicates.");
+          continue;
+        }
+        
         DataTransferIndex sourceDti, targetDti;
         int splitIndex;
         
