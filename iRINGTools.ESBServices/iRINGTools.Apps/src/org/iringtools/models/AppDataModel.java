@@ -23,6 +23,7 @@ public class AppDataModel extends DataModel
     String dtiRelativePath = appRelativePath + "/" + graphName + "/dxi/filter";
     String dtoRelativePath = appRelativePath + "/" + graphName + "/dxo";  
     String manifestRelativePath = appRelativePath + "/manifest";
+    String dataFilterRelativePath = appRelativePath + "/datafilter";
     
     Grid pageDtoGrid = null;
     Manifest manifest = getManifest(serviceUri, manifestRelativePath);
@@ -34,7 +35,7 @@ public class AppDataModel extends DataModel
       if (graph != null)
       {
         DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
-            dtoRelativePath, filter, sortBy, sortOrder, start, limit);
+            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath);
         
         pageDtoGrid = getDtoGrid(appRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
