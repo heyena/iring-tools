@@ -230,23 +230,21 @@ namespace org.iringtools.adapter.projection
               BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyPropertyNames, keyValues,
                 propertyValues, sortIndex, ref sortType);
 
-              foreach (string identifierValue in keyValues.Values)
+              foreach (KeyProperty keyProp in dataObject.keyProperties)
               {
-                if (internalIdentifier.Length > 0)
-                {
-                  internalIdentifier.Append(keyDelimiter);
-                }
+                internalIdentifier.Append(keyDelimiter);
 
-                internalIdentifier.Append(identifierValue);
+                if (keyValues.ContainsKey(keyProp.keyPropertyName))
+                {
+                  internalIdentifier.Append(keyValues[keyProp.keyPropertyName]);
+                }
               }
 
+              internalIdentifier.Remove(0, keyDelimiter.Length);
               dti.InternalIdentifier = internalIdentifier.ToString();
 
               string values = propertyValues.ToString();
               dti.HashValue = Utility.MD5Hash(values);
-
-              //_logger.Debug("Hash: " + dti.HashValue);
-              //_logger.Debug("Values: " + values);
 
               if (string.IsNullOrEmpty(dti.Identifier))
               {
@@ -316,7 +314,8 @@ namespace org.iringtools.adapter.projection
               if (!IsFixedIdentifier(identifierPart) && identifierValueParts.Length >= identifierIndex &&
                 keyPropertyNames.Contains(identifierPart))
               {
-                keyValues[identifierPart] = identifierValueParts[identifierIndex];
+                string propertyName = identifierPart.Substring(identifierPart.LastIndexOf(".") + 1);
+                keyValues[propertyName] = identifierValueParts[identifierIndex];
               }
             }
 
