@@ -3215,12 +3215,13 @@ namespace org.iringtools.adapter
           response = new Response();
         }
 
-        Status status = new Status
-        {
-          Level = StatusLevel.Error,
-          Messages = new Messages { ex.Message },
-        };
+        Status status = new Status{Level = StatusLevel.Error};
 
+        if (ex is WebFaultException<string>)
+            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        else
+            status.Messages = new Messages { ex.Message };
+          
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Error;
         response.StatusList.Add(status);
@@ -3296,11 +3297,11 @@ namespace org.iringtools.adapter
           response = new Response();
         }
 
-        Status status = new Status
-        {
-          Level = StatusLevel.Error,
-          Messages = new Messages { ex.Message },
-        };
+        Status status = new Status { Level = StatusLevel.Error };
+        if (ex is WebFaultException<string>)
+            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        else
+            status.Messages = new Messages { ex.Message };
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Error;
@@ -3387,11 +3388,12 @@ namespace org.iringtools.adapter
           response = new Response();
         }
 
-        Status status = new Status
-        {
-          Level = StatusLevel.Error,
-          Messages = new Messages { ex.Message },
-        };
+        Status status = new Status { Level = StatusLevel.Error };
+
+        if (ex is WebFaultException<string>)
+            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        else
+            status.Messages = new Messages { ex.Message };
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Error;
@@ -3452,11 +3454,12 @@ namespace org.iringtools.adapter
           response = new Response();
         }
 
-        Status status = new Status
-        {
-          Level = StatusLevel.Error,
-          Messages = new Messages { ex.Message },
-        };
+        Status status = new Status { Level = StatusLevel.Error };
+
+        if (ex is WebFaultException<string>)
+            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        else
+            status.Messages = new Messages { ex.Message };
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Error;
@@ -3511,11 +3514,12 @@ namespace org.iringtools.adapter
           response = new Response();
         }
 
-        Status status = new Status
-        {
-          Level = StatusLevel.Error,
-          Messages = new Messages { ex.Message },
-        };
+        Status status = new Status { Level = StatusLevel.Error };
+
+        if (ex is WebFaultException<string>)
+            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        else
+            status.Messages = new Messages { ex.Message };
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Error;
@@ -3570,11 +3574,12 @@ namespace org.iringtools.adapter
           response = new Response();
         }
 
-        Status status = new Status
-        {
-          Level = StatusLevel.Error,
-          Messages = new Messages { ex.Message },
-        };
+        Status status = new Status { Level = StatusLevel.Error };
+
+        if (ex is WebFaultException<string>)
+            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        else
+            status.Messages = new Messages { ex.Message };
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Error;
