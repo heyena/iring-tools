@@ -1,14 +1,11 @@
 package org.iringtools.models;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.json.JSONException;
@@ -49,7 +46,6 @@ import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
 import org.iringtools.utility.IOUtils;
-import org.iringtools.utility.JaxbUtils;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.grid.RelatedClass;
@@ -419,14 +415,14 @@ public class DataModel {
 							.getItems(), comparator);
 				} else if (dataFilter.getOrderExpressions() != null
 						&& dataFilter.getOrderExpressions().getItems().size() > 0) {
-				/*	final String sortType = resultDtis.getSortType()
+				  /*final String sortType = resultDtis.getSortType()
 							.toLowerCase();*/
-					if (!(resultDtis.getSortType() == null)) {
+					/*if (!(resultDtis.getSortType() == null)) {
 						final String sortType = resultDtis.getSortType()
 								.toLowerCase();
 					} else {
 						final String sortType = null;
-					}
+					}*/
 					final String sortDir = resultDtis.getSortOrder()
 							.toLowerCase();
 
@@ -869,7 +865,7 @@ public class DataModel {
 						.deserialize(filter);
 
 				if (filterExpressions != null && filterExpressions.size() > 0) {
-					dataFilter = new DataFilter();
+					//dataFilter = new DataFilter();
 
 					Expressions expressions = new Expressions();
 					dataFilter.setExpressions(expressions);
@@ -932,8 +928,8 @@ public class DataModel {
 		// process sorting
 		if (sortBy != null && sortBy.length() > 0 && sortOrder != null
 				&& sortOrder.length() > 0) {
-			if (dataFilter == null)
-				dataFilter = new DataFilter();
+			//if (dataFilter == null)
+				//dataFilter = new DataFilter();
 
 			OrderExpressions orderExpressions = new OrderExpressions();
 			dataFilter.setOrderExpressions(orderExpressions);

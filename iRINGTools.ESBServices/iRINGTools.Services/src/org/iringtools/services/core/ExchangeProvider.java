@@ -319,9 +319,9 @@ public class ExchangeProvider
 
       for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
       {
-        if (dti.getDuplicateCount() != null && dti.getDuplicateCount() > 0)
+        if (dti.getDuplicateCount() != null && dti.getDuplicateCount() > 1)
         {
-          logger.warn("DTI [" + dti.getIdentifier() + "] contains [" + dti.getDuplicateCount() + "] duplicates.");
+          logger.warn("DTI [" + dti.getIdentifier() + "] has [" + dti.getDuplicateCount() + "] duplicates.");
           continue;
         }
         
