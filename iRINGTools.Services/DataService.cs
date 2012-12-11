@@ -721,6 +721,7 @@ namespace org.iringtools.services
         context.StatusCode = ((WebFaultException)ex).StatusCode;
         Response response = new Response();
         response.StatusCode = context.StatusCode;
+        response.StatusText = ((WebFaultException)ex).Message;
         response.Messages = new Messages() { ((WebFaultException)ex).Message };
         _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
         return;
@@ -730,7 +731,8 @@ namespace org.iringtools.services
           context.StatusCode = ((WebFaultException<string>)ex).StatusCode;
           Response response = new Response();
           response.StatusCode = context.StatusCode;
-          response.Messages = new Messages() { ((WebFaultException<string>)ex).Detail };
+          response.StatusText = ((WebFaultException<string>)ex).Detail;
+          response.Messages = new Messages() { ((WebFaultException<string>)ex).Detail};
           _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
           return;
       }
