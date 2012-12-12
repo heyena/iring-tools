@@ -208,7 +208,7 @@ namespace org.iringtools.adapter.projection
         {
           ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
           DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
-          string keyDelimiter = dataObject.keyDelimeter;
+          string keyDelimiter = dataObject.keyDelimeter ?? "";
 
           List<string> keyPropertyNames = new List<string>();
           foreach (KeyProperty keyProperty in dataObject.keyProperties)
