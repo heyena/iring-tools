@@ -8,6 +8,13 @@
           <class>
             <id>rdl:R19192462550</id>
             <name>PIPING NETWORK SYSTEM</name>
+            <keys>
+              <key>
+                <classId>rdl:R19192462550</classId>
+                <templateId>tpl:R66921101783</templateId>
+                <roleId>tpl:R22674749688</roleId>
+              </key>
+            </keys>
           </class>
           <templates>
             <template>
@@ -131,6 +138,13 @@
           <class>
             <id>rdl:R49658319833</id>
             <name>PLANT AREA</name>
+            <keys>
+              <key>
+                <classId>rdl:R49658319833</classId>
+                <templateId>tpl:R66921101783</templateId>
+                <roleId>tpl:R22674749688</roleId>
+              </key>
+            </keys>
           </class>
           <templates>
             <template>
@@ -164,6 +178,13 @@
           <class>
             <id>rdl:R99486931975</id>
             <name>P AND I DIAGRAM</name>
+            <keys>
+              <key>
+                <classId>rdl:R99486931975</classId>
+                <templateId>tpl:R30193386273</templateId>
+                <roleId>tpl:R22674749688</roleId>
+              </key>
+            </keys>
           </class>
           <templates>
             <template>
