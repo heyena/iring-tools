@@ -5,8 +5,8 @@ using System.Xml.Serialization;
 
 namespace org.iringtools.refdata.response
 {
-    [DataContract(Name = "response", Namespace = "http://www.iringtools.org/refdata/response")]
-    public class Response 
+    [DataContract(Name = "refdataResponse", Namespace = "http://www.iringtools.org/refdata/refdataresponse")]
+    public class RefdataResponse 
     {
         [DataMember(Name = "entities", Order = 0)]
         public Entities Entities { get; set; }
@@ -14,7 +14,7 @@ namespace org.iringtools.refdata.response
         public int Total { get; set; }
     }
 
-    [DataContract(Name = "entity", Namespace = "http://www.iringtools.org/refdata/response")]
+    [DataContract(Name = "entity", Namespace = "http://www.iringtools.org/refdata/refdataresponse")]
     public class Entity
     {
         [DataMember(Name = "uri", Order = 0)]
@@ -33,7 +33,7 @@ namespace org.iringtools.refdata.response
         public string Repository { get; set; }
     }
 
-    [CollectionDataContract(Name = "entities", Namespace = "http://www.iringtools.org/refdata/response")]
+    [CollectionDataContract(Name = "entities", Namespace = "http://www.iringtools.org/refdata/refdataresponse")]
     public  class Entities : List<Entity>
     {
 

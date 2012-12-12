@@ -162,6 +162,7 @@
     <Compile Include="AdapterService.cs" />
     <Compile Include="RawContentTypeMapper.cs" />
     <Compile Include="RawServiceHostFactory.cs" />
+    <Compile Include="ReferenceDataService.cs" />
     <Compile Include="SandboxService.cs" />
   </ItemGroup>
   <ItemGroup>

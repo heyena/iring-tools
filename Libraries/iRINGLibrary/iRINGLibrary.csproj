@@ -92,7 +92,7 @@
     <Compile Include="QMXF.cs" />
     <Compile Include="Queries.cs" />
     <Compile Include="QXF.cs" />
-    <Compile Include="refdata\Response.cs" />
+    <Compile Include="RefdataResponse.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="ServiceClient.cs" />

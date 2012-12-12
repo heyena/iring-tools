@@ -248,7 +248,7 @@ namespace org.iringtools.web.controllers
           {
             template = defs;
             templateMap.Id = defs.Identifier;
-            templateMap.Name = defs.Name[0].Value;
+            templateMap.Name = defs.Names[0].Value;
             templateMap.Type = TemplateType.Definition;
             GetRoleMaps(selectedClassMap.Id, template, templateMap);
           }
@@ -259,7 +259,7 @@ namespace org.iringtools.web.controllers
           {
             template = quals;
             templateMap.Id = quals.Identifier;
-            templateMap.Name = quals.Name[0].Value;
+            templateMap.Name = quals.Names[0].Value;
             templateMap.Type = TemplateType.Qualification;
             GetRoleMaps(selectedClassMap.Id, template, templateMap);
           }
@@ -1269,7 +1269,7 @@ namespace org.iringtools.web.controllers
       if (template is TemplateDefinition)
       {
         TemplateDefinition templateDefinition = (TemplateDefinition)template;
-        List<RoleDefinition> roleDefinitions = templateDefinition.RoleDefinition;
+        List<RoleDefinition> roleDefinitions = templateDefinition.RoleDefinitions;
 
         foreach (RoleDefinition roleDefinition in roleDefinitions)
         {
@@ -1281,7 +1281,7 @@ namespace org.iringtools.web.controllers
 
           RoleMap roleMap = new RoleMap()
           {
-            Name = roleDefinition.Name.FirstOrDefault().Value,
+            Name = roleDefinition.Names.FirstOrDefault().Value,
             Id = qId
           };
 
@@ -1315,7 +1315,7 @@ namespace org.iringtools.web.controllers
       if (template is TemplateQualification)
       {
         TemplateQualification templateQualification = (TemplateQualification)template;
-        List<RoleQualification> roleQualifications = templateQualification.RoleQualification;
+        List<RoleQualification> roleQualifications = templateQualification.RoleQualifications;
 
         foreach (RoleQualification roleQualification in roleQualifications)
         {
@@ -1329,7 +1329,7 @@ namespace org.iringtools.web.controllers
           {
             RoleMap roleMap = new RoleMap()
             {
-              Name = roleQualification.Name.FirstOrDefault().Value,
+              Name = roleQualification.Names.FirstOrDefault().Value,
               Id = qId
             };
 

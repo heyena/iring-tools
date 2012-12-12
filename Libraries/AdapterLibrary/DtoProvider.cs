@@ -48,6 +48,7 @@ using org.iringtools.mapping;
 using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter.identity;
 using Microsoft.ServiceModel.Web;
+using Status = org.iringtools.library.Status;
 
 namespace org.iringtools.adapter
 {
@@ -442,8 +443,8 @@ namespace org.iringtools.adapter
         if (dataObjects.Count < dataTransferObjectList.Count)
         {
           response.Level = StatusLevel.Error;
-          response.StatusList.Add(new Status()
-          {
+          response.StatusList.Add(new Status
+              {
             Identifier = "N/A",            
             Messages = new Messages() {
                  "Error creating data objects - expected [" + dataTransferObjectList.Count +

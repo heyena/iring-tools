@@ -15,9 +15,7 @@ using org.ids_adi.qmxf;
 using Ninject;
 using org.iringtools.refdata;
 using org.iringtools.web.Models;
-using Entities = org.iringtools.refdata.response.Entities;
-using Entity = org.iringtools.refdata.response.Entity;
-using Response = org.iringtools.refdata.response.Response;
+using org.iringtools.refdata.response;
 
 namespace iRINGTools.Web.Models
 {
@@ -34,16 +32,16 @@ namespace iRINGTools.Web.Models
       _referenceDataServiceClient = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
     }
 
-    public Response Search(string query, int start, int limit)
+    public RefdataResponse Search(string query, int start, int limit)
     {
       relativeUri = string.Format("/search/{0}/{1}/{2}", query, start, limit);
-      return _referenceDataServiceClient.Get<Response>(relativeUri);
+      return _referenceDataServiceClient.Get<RefdataResponse>(relativeUri);
     }
 
-    public Response Search(string query)
+    public RefdataResponse Search(string query)
     {
       relativeUri = string.Format("/search/{0}/0/0", query);
-      return _referenceDataServiceClient.Get<Response>(relativeUri);
+      return _referenceDataServiceClient.Get<RefdataResponse>(relativeUri);
     }
 
     public List<Namespace> GetNamespaces()
@@ -51,10 +49,10 @@ namespace iRINGTools.Web.Models
       return null;
     }
 
-    public Response SearchReset(string query)
+    public RefdataResponse SearchReset(string query)
     {
       relativeUri = string.Format("/search/{0}/reset", query);
-      return  _referenceDataServiceClient.Get<Response>(relativeUri);
+      return  _referenceDataServiceClient.Get<RefdataResponse>(relativeUri);
        
     }
 
@@ -120,11 +118,17 @@ namespace iRINGTools.Web.Models
 
     public QMXF GetClasses(string classId, Repository repository)
     {
-      relativeUri = string.Format("/classes/{0}", classId);
-      if (repository != null)
-        return _referenceDataServiceClient.Post<Repository, QMXF>(relativeUri, repository);
-      else
-        return _referenceDataServiceClient.Get<QMXF>(relativeUri);
+
+        if (repository != null)
+        {
+            relativeUri = string.Format("/classes/{0}/{1}", classId, repository.Name);
+            return _referenceDataServiceClient.Get<QMXF>(relativeUri);
+        }
+        else
+        {
+            relativeUri = string.Format("/classes/{0}", classId);
+            return _referenceDataServiceClient.Get<QMXF>(relativeUri);
+        }
     }
 
     public QMXF GetTemplate(string id)
@@ -139,19 +143,25 @@ namespace iRINGTools.Web.Models
       return _referenceDataServiceClient.Get<Federation>(relativeUri);
     }
 
-    public org.iringtools.refdata.response.Entities GetClassMembers(string classId)
+    public RefdataResponse GetClassMembers(string classId)
     {
       relativeUri = string.Format("/classes/{0}/members", classId);
-      return _referenceDataServiceClient.Get<Entities>(relativeUri);
+      return _referenceDataServiceClient.Get<RefdataResponse>(relativeUri);
     }
 
-    public org.iringtools.refdata.response.Entities GetClassMembers(string classId, Repository repository)
+    public RefdataResponse GetClassMembers(string classId, Repository repository)
     {
-      relativeUri = string.Format("/classes/{0}/members", classId);
-      if (repository != null)
-        return _referenceDataServiceClient.Post<Repository, Entities>(relativeUri, repository);
-      else
-        return _referenceDataServiceClient.Get<Entities>(relativeUri);
+
+        if (repository != null)
+        {
+            relativeUri = string.Format("/classes/{0}/members/{1}", classId, repository.Name);
+            return _referenceDataServiceClient.Get<RefdataResponse>(relativeUri);
+        }
+        else
+        {
+            relativeUri = string.Format("/classes/{0}/members", classId);
+            return _referenceDataServiceClient.Get<RefdataResponse>(relativeUri);
+        }
     }
 
   }
