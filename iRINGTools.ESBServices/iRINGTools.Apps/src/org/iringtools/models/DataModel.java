@@ -287,29 +287,29 @@ public class DataModel
       String dtiRelativePath, String serviceUri, String fullDtiKey) throws DataModelException
   {
     DataTransferIndices resultDtis = new DataTransferIndices();
-    Expression transferTypeExpression = null;
+    List<Expression> transferTypeExpression = new ArrayList<Expression>();
     OrderExpression transferTypeOrderExpression = null;
     
-    // extract transfer type from expressions
+    
+ // extract transfer type from expressions
     if (dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
     {
       List<Expression> expressions = dataFilter.getExpressions().getItems();
-
-      for (int i = 0; i < expressions.size(); i++)
+      int i = 0;
+      for (; i < expressions.size(); i++)
       {
         Expression expression = expressions.get(i);
 
         if (expression.getPropertyName().equalsIgnoreCase("transfer type"))
         {
-          transferTypeExpression = expressions.remove(i);
-
+          transferTypeExpression.add(expressions.remove(i));
+        
           if (expressions.size() > 0)
           {
             // remove logical operator of the next expression
             expressions.get(i).setLogicalOperator(null);
-          }
+          }   i--;
 
-          break;
         }
       }
     }
@@ -358,27 +358,31 @@ public class DataModel
       }
 
       // apply transfer type filter
+      for (int j = 0; j < transferTypeExpression.size(); j++)
+      {
       if (transferTypeExpression != null && tmpFullDtiList != null)
       {
-        String value = transferTypeExpression.getValues().getItems().get(0);
+     //   String value = transferTypeExpression.getValues().getItems().get(0);
+        String value = transferTypeExpression.get(j).getValues().getItems().get(0);
 
         for (int i = 0; i < tmpFullDtiList.size(); i++)
-        {
-          if (transferTypeExpression.getRelationalOperator() == RelationalOperator.EQUAL_TO)
+        { 
+          if (transferTypeExpression.get(j).getRelationalOperator() == RelationalOperator.EQUAL_TO)
           {
             if (!tmpFullDtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
             {
-              tmpFullDtiList.remove(i--);
+            	tmpFullDtiList.remove(i--);
             }
           }
           else
           {
             if (tmpFullDtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
             {
-              tmpFullDtiList.remove(i--);
+            	tmpFullDtiList.remove(i--);
             }
           }
         }
+      }
       }
 
       if ((dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
@@ -590,7 +594,18 @@ public class DataModel
           String transferType = dto.getTransferType().toString();
           rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
         }
-
+        
+        // Adding dup's count to dup's column
+        /*     
+             String dups; 
+     		if (dto.getDuplicateCount() == null)	
+     		{
+     			dups = "1";
+     			rowData.add(dups);
+     		}					
+     		else
+     		rowData.add((dto.getDuplicateCount().toString()));
+     */
         if (dto.getClassObjects().getItems().size() > 0)
         {
           ClassObject classObject = dto.getClassObjects().getItems().get(0);
@@ -1135,6 +1150,17 @@ public class DataModel
   {
     List<Field> fields = new ArrayList<Field>();
 
+    /*   // Dups count field
+		Field dupField = new Field();
+		dupField.setName("Dup's");
+		dupField.setDataIndex("Dups Count");
+		dupField.setType("string");
+		dupField.setWidth(MIN_FIELD_WIDTH);
+		dupField.setFixed(true);
+		dupField.setFilterable(false);
+		fields.add(0, dupField);
+		
+*/
     // transfer-type field
     if (dataMode == DataMode.EXCHANGE)
     {
