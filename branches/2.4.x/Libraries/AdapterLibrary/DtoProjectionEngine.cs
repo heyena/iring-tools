@@ -223,21 +223,16 @@ namespace org.iringtools.adapter.projection
             if (_dataObjects[dataObjectIndex] != null)
             {
               DataTransferIndex dti = new DataTransferIndex();
-              Dictionary<string, string> keyValues = new Dictionary<string, string>();
               StringBuilder internalIdentifier = new StringBuilder();
               StringBuilder propertyValues = new StringBuilder();
 
-              BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyPropertyNames, keyValues,
+              BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyPropertyNames,
                 propertyValues, sortIndex, ref sortType);
 
               foreach (KeyProperty keyProp in dataObject.keyProperties)
               {
                 internalIdentifier.Append(keyDelimiter);
-
-                if (keyValues.ContainsKey(keyProp.keyPropertyName))
-                {
-                  internalIdentifier.Append(keyValues[keyProp.keyPropertyName]);
-                }
+                internalIdentifier.Append(_dataObjects[dataObjectIndex].GetPropertyValue(keyProp.keyPropertyName));
               }
 
               internalIdentifier.Remove(0, keyDelimiter.Length);
@@ -280,7 +275,7 @@ namespace org.iringtools.adapter.projection
 
     #region data transfer indices helper methods
     private void BuildDataTransferIndex(DataTransferIndex dti, int dataObjectIndex, ClassTemplateMap classTemplateMap,
-      List<string> keyPropertyNames, Dictionary<string, string> keyValues, StringBuilder propertyValues, string sortIndex, ref string sortType)
+      List<string> keyPropertyNames, StringBuilder propertyValues, string sortIndex, ref string sortType)
     {
       if (classTemplateMap != null && classTemplateMap.classMap != null)
       {
@@ -301,22 +296,6 @@ namespace org.iringtools.adapter.projection
             if (String.IsNullOrEmpty(dti.Identifier))
             {
               dti.Identifier = classIdentifier;
-            }
-
-            // if key property(properties) is(are) mapped in classMap identifier(s), append it(them) to keyValues
-            List<string> identifierParts = classTemplateMap.classMap.identifiers;
-            string[] identifierValueParts = classIdentifier.Split(new string[] { identifierDelimiter }, StringSplitOptions.None);
-
-            for (int identifierIndex = 0; identifierIndex < identifierParts.Count; identifierIndex++)
-            {
-              string identifierPart = identifierParts[identifierIndex];
-
-              if (!IsFixedIdentifier(identifierPart) && identifierValueParts.Length >= identifierIndex &&
-                keyPropertyNames.Contains(identifierPart))
-              {
-                string propertyName = identifierPart.Substring(identifierPart.LastIndexOf(".") + 1);
-                keyValues[propertyName] = identifierValueParts[identifierIndex];
-              }
             }
 
             foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
@@ -362,11 +341,6 @@ namespace org.iringtools.adapter.projection
                       {
                         sortType = Utility.XsdTypeToCSharpType(roleMap.dataType);
                       }
-                    }
-
-                    if (keyPropertyNames.Contains(roleMap.propertyName))
-                    {
-                      keyValues[roleMap.propertyName] = keyValue;
                     }
 
                     tempPropertyValues.Append(propertyValue);              
@@ -436,7 +410,7 @@ namespace org.iringtools.adapter.projection
 
               if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
               {
-                BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyPropertyNames, keyValues,
+                BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyPropertyNames,
                   propertyValues, sortIndex, ref sortType);
               }
             }
