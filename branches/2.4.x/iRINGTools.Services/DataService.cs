@@ -716,25 +716,16 @@ namespace org.iringtools.services
       {
         context.StatusCode = HttpStatusCode.Unauthorized;
       }
-      else if (ex is WebFaultException)        // To handle the status code and message coming out from the API exception.
+      else if (ex is WebFaultException)        
       {
-        context.StatusCode = ((WebFaultException)ex).StatusCode;
+        context.StatusCode = HttpStatusCode.OK;
         Response response = new Response();
-        response.StatusCode = context.StatusCode;
-        response.StatusText = ((WebFaultException)ex).Message;
-        response.Messages = new Messages() { ((WebFaultException)ex).Message };
+        response.StatusCode = ((WebFaultException)ex).StatusCode;
+        response.DateTimeStamp = DateTime.Now;
+        response.StatusText =Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        response.Messages = new Messages() { ((WebFaultException)ex).Message, response.StatusText };
         _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
         return;
-      }
-      else if (ex is WebFaultException<string>) // To handle the status code coming out from the API exception and Custom messages.
-      {
-          context.StatusCode = ((WebFaultException<string>)ex).StatusCode;
-          Response response = new Response();
-          response.StatusCode = context.StatusCode;
-          response.StatusText = ((WebFaultException<string>)ex).Detail;
-          response.Messages = new Messages() { ((WebFaultException<string>)ex).Detail};
-          _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-          return;
       }
       else
       {

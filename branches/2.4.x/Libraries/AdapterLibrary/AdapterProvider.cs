@@ -3217,8 +3217,11 @@ namespace org.iringtools.adapter
 
         Status status = new Status{Level = StatusLevel.Error};
 
-        if (ex is WebFaultException<string>)
-            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        if (ex is WebFaultException)
+        {
+            status.Messages = new Messages() {  Convert.ToString(((WebFaultException)ex).Data["StatusText"])};
+            response.Messages = new Messages() { ((WebFaultException)ex).Message, Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+        }
         else
             status.Messages = new Messages { ex.Message };
           
@@ -3298,8 +3301,11 @@ namespace org.iringtools.adapter
         }
 
         Status status = new Status { Level = StatusLevel.Error };
-        if (ex is WebFaultException<string>)
-            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        if (ex is WebFaultException)
+        {
+            status.Messages = new Messages() { Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+            response.Messages = new Messages() { ((WebFaultException)ex).Message, Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+        }
         else
             status.Messages = new Messages { ex.Message };
 
@@ -3390,8 +3396,11 @@ namespace org.iringtools.adapter
 
         Status status = new Status { Level = StatusLevel.Error };
 
-        if (ex is WebFaultException<string>)
-            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        if (ex is WebFaultException)
+        {
+            status.Messages = new Messages() { Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+            response.Messages = new Messages() { ((WebFaultException)ex).Message, Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+        }
         else
             status.Messages = new Messages { ex.Message };
 
@@ -3456,8 +3465,11 @@ namespace org.iringtools.adapter
 
         Status status = new Status { Level = StatusLevel.Error };
 
-        if (ex is WebFaultException<string>)
-            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        if (ex is WebFaultException)
+        {
+            status.Messages = new Messages() { Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+            response.Messages = new Messages() { ((WebFaultException)ex).Message, Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+        }
         else
             status.Messages = new Messages { ex.Message };
 
@@ -3516,8 +3528,11 @@ namespace org.iringtools.adapter
 
         Status status = new Status { Level = StatusLevel.Error };
 
-        if (ex is WebFaultException<string>)
-            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        if (ex is WebFaultException)
+        {
+            status.Messages = new Messages() { Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+            response.Messages = new Messages() { ((WebFaultException)ex).Message, Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+        }
         else
             status.Messages = new Messages { ex.Message };
 
@@ -3576,8 +3591,11 @@ namespace org.iringtools.adapter
 
         Status status = new Status { Level = StatusLevel.Error };
 
-        if (ex is WebFaultException<string>)
-            status.Messages = new Messages { ((WebFaultException<string>)ex).Detail };
+        if (ex is WebFaultException)
+        {
+            status.Messages = new Messages() { Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+            response.Messages = new Messages() { ((WebFaultException)ex).Message, Convert.ToString(((WebFaultException)ex).Data["StatusText"]) };
+        }
         else
             status.Messages = new Messages { ex.Message };
 
