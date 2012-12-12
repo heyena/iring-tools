@@ -348,7 +348,13 @@ public class DataModel
       for (DataTransferIndex dti : fullDtiList)
       {
         if (dti.getDuplicateCount() == null || dti.getDuplicateCount() == 1)
+        {
           tmpFullDtiList.add(dti);
+        }
+        else
+        {
+          logger.warn("DTI [" + dti.getIdentifier() + "] has [" + dti.getDuplicateCount() + "] duplicates.");
+        }
       }
 
       // apply transfer type filter
