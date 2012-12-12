@@ -1,0 +1,25 @@
+<dataFilter xmlns="http://www.iringtools.org/data/filter">
+<expressions>
+<expression>
+<openGroupCount>0</openGroupCount>
+<propertyName>Transfer Type</propertyName>
+<relationalOperator>NotEqualTo</relationalOperator>
+<values>
+<value>SYNC</value>
+</values>
+<closeGroupCount>0</closeGroupCount>
+<isCaseSensitive>false</isCaseSensitive>
+</expression>
+<expression>
+<openGroupCount>0</openGroupCount>
+<propertyName>PipingNetworkSystem.NominalDiameter.valValue</propertyName>
+<relationalOperator>GreaterThan</relationalOperator>
+<values>
+<value>80</value>
+</values>
+<logicalOperator>And</logicalOperator>
+<closeGroupCount>0</closeGroupCount>
+<isCaseSensitive>false</isCaseSensitive>
+</expression>
+</expressions>
+</dataFilter>
