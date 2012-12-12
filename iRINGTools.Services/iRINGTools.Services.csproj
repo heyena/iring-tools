@@ -49,7 +49,7 @@
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -65,9 +65,6 @@
     </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="ISDataLayer240">
-      <HintPath>..\..\..\..\svncorp-dmz\iringtools_datalayers\is_datalayer\branches\2.4.x\ISDataLayer\bin\x86\Debug\ISDataLayer240.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,10 +86,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="SPPIDDataLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Users\rpdecarl\Documents\GitHub\sp_pid\SPPIDDataLayer\bin\Debug\SPPIDDataLayer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -113,15 +106,8 @@
     <Content Include="App_Data\BindingConfiguration.Adapter.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Data\DatabaseDictionary.H300061_0160.iPasCDM_ADOMockup.xml" />
     <Content Include="App_Data\default.css" />
     <Content Include="App_Data\Federation.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\ipassql-configuration.H300061_0160.iPasCDM_ADOMockup.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\Scopes.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="css\sparql-query.css" />
