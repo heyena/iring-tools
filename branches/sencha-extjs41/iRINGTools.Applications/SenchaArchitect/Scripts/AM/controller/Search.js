@@ -74,11 +74,9 @@ Ext.define('AM.controller.Search', {
       var repo = null;
       var params = store.proxy.extraParams;
       if (action.node.data.type != "SearchNode" && action.node.data.type != "TemplateNode") {
-        repo = action.node.data.text;
-        if (repo !== undefined && repo.indexOf("[") != -1) {
-          repo = action.node.parentNode.data.text;
-        }
+        repo = action.node.data.record.Repository;
       }
+
       params.type = (action.node.data.type === '' ? 'SearchNode' : action.node.data.type);
       if (searchText !== undefined && searchText !== '') {
         params.query = searchText;
@@ -86,7 +84,7 @@ Ext.define('AM.controller.Search', {
         params.limit = value;        
       }
       if (repo) {
-        params.repositoryName = repo.substring(repo.indexOf("[") + 1, repo.indexOf("]"));
+        params.repositoryName = repo;
       }
       if (action.node.parentNode && 
       (action.node.data.identifier === null || 

@@ -261,7 +261,7 @@ namespace org.iringtools.adapter
     private string GetClassName(string classId)
     {
       QMXF qmxf = _webHttpClient.Get<QMXF>("/classes/" + classId.Substring(classId.IndexOf(":") + 1), false);
-      return qmxf.ClassDefinitions.First().Name.First().Value;
+      return qmxf.ClassDefinitions.First().Names.First().Value;
     }
 
     private KeyValuePair<string, Dictionary<string, string>> GetQmxfTemplateRolesPair(string templateId)
@@ -274,21 +274,21 @@ namespace org.iringtools.adapter
       if (qmxf.TemplateDefinitions.Count > 0)
       {
         TemplateDefinition tplDef = qmxf.TemplateDefinitions.First();
-        templateName = tplDef.Name.First().Value;
+        templateName = tplDef.Names.First().Value;
 
-        foreach (RoleDefinition roleDef in tplDef.RoleDefinition)
+        foreach (RoleDefinition roleDef in tplDef.RoleDefinitions)
         {
-          roleIdNames.Add(roleDef.Identifier.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleDef.Name.First().Value);
+          roleIdNames.Add(roleDef.Identifier.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleDef.Names.First().Value);
         }
       }
       else if (qmxf.TemplateQualifications.Count > 0)
       {
         TemplateQualification tplQual = qmxf.TemplateQualifications.First();
-        templateName = tplQual.Name.First().Value;
+        templateName = tplQual.Names.First().Value;
 
-        foreach (RoleQualification roleQual in tplQual.RoleQualification)
+        foreach (RoleQualification roleQual in tplQual.RoleQualifications)
         {
-          roleIdNames.Add(roleQual.Qualifies.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleQual.Name.First().Value);
+          roleIdNames.Add(roleQual.Qualifies.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleQual.Names.First().Value);
         }
       }
 

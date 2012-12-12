@@ -132,7 +132,7 @@ namespace org.iringtools.web.controllers
             {
                 var dataEntities = _refdataRepository.GetClassMembers(id, repository);
 
-                foreach (var node in dataEntities.Select(entity => new TreeNode
+                foreach (var node in dataEntities.Entities.Select(entity => new TreeNode
                     {
                         type = "MemberNode",
                         iconCls = "treeClass",
@@ -281,7 +281,7 @@ namespace org.iringtools.web.controllers
                         ns = _namespaces.Find(n => n.Uri == entity.Identifier.Substring(0, entity.Identifier.LastIndexOf("/") + 1)).Uri;
                     }
 
-                    var label = entity.Name[0].Value.ToString() + '[' + entity.RepositoryName + ']';
+                    var label = entity.Names[0].Value.ToString() + '[' + entity.RepositoryName + ']';
 
                     var node = new JsonRefDataNode
                     {
@@ -319,7 +319,7 @@ namespace org.iringtools.web.controllers
                 foreach (var entity in dataEntities.ClassDefinitions)
                 {
                     #region Default Nodes------------------
-                    var label = entity.Name[0].Value;
+                    var label = entity.Names[0].Value;
 
                     var memberNode = new TreeNode
                     {
@@ -387,21 +387,21 @@ namespace org.iringtools.web.controllers
                     }
                     var properties = new Dictionary<string, string>()
                           {
-                            {"Description", Convert.ToString(entity.Description[0].Value)},
+                            {"Description", Convert.ToString(entity.Descriptions[0].Value)},
                             {"Entity Type", reference},
                             {"Identifiers", Convert.ToString(entity.Identifier)},
-                            {"Name", Convert.ToString(entity.Name[0].Value)},
+                            {"Name", Convert.ToString(entity.Names[0].Value)},
                             {"Repository", Convert.ToString(entity.RepositoryName)},
-                            {"Status Authority", Convert.ToString(entity.Status[0].Authority)},
-                            {"Status Class", Convert.ToString(entity.Status[0].Class)},
-                            {"Status From", Convert.ToString(entity.Status[0].From)},
+                            {"Status Authority", Convert.ToString(entity.Statuses[0].Authority)},
+                            {"Status Class", Convert.ToString(entity.Statuses[0].Class)},
+                            {"Status From", Convert.ToString(entity.Statuses[0].From)},
                           };
                     #endregion
                     // nodes.Add(memberNode);
 
 
                     #region Fill Data in Classification node--------
-                    foreach (var leafNode in entity.Classification.Select(classification => new JsonTreeNode
+                    foreach (var leafNode in entity.Classifications.Select(classification => new JsonTreeNode
                         {
                             type = "ClassNode",
                             iconCls = "treeClass",
@@ -430,7 +430,7 @@ namespace org.iringtools.web.controllers
                     nodes.Add(clasifNode); // Add Classification node.
                     nodes.Add(supersNode); // Add SuperClassNode.
                     #region Fill Data in SuperClass node--------
-                    foreach (var leafNode in entity.Specialization.Select(specialization => new JsonTreeNode
+                    foreach (var leafNode in entity.Specializations.Select(specialization => new JsonTreeNode
                         {
                             type = "ClassNode",
                             iconCls = "treeClass",
@@ -558,7 +558,7 @@ namespace org.iringtools.web.controllers
                     repository = _refdataRepository.GetFederation().RepositoryList.Find(r => r.Name == repositoryName);
 
                 var dataEntities = _refdataRepository.GetClassMembers(classId, repository);
-                foreach (var node in dataEntities.Select(entity => new JsonTreeNode
+                foreach (var node in dataEntities.Entities.Select(entity => new JsonTreeNode
                     {
                         type = "ClassNode",
                         iconCls = "treeClass",
@@ -654,7 +654,7 @@ namespace org.iringtools.web.controllers
                         identifier = entity.ClassDefinitions[0].Identifier.Split('#')[1],
                         leaf = false,
 
-                        text = entity.ClassDefinitions[0].Name[0].Value,
+                        text = entity.ClassDefinitions[0].Names[0].Value,
                         id = Guid.NewGuid().ToString(),
                         record = entity.ClassDefinitions[0],
                         type = "ClassNode",
@@ -677,14 +677,14 @@ namespace org.iringtools.web.controllers
                 if (dataEntities.TemplateDefinitions.Count > 0)
                 {
                     nodes.AddRange(from entity in dataEntities.TemplateDefinitions
-                                   from role in entity.RoleDefinition
+                                   from role in entity.RoleDefinitions
                                    select new JsonTreeNode
                                        {
                                            id = Guid.NewGuid().ToString(),
                                            type = "RoleNode",
                                            iconCls = "treeRole",
                                            leaf = false,
-                                           text = role.Name[0].Value,
+                                           text = role.Names[0].Value,
                                            identifier = role.Identifier,
                                            record = role
                                        });
@@ -693,7 +693,7 @@ namespace org.iringtools.web.controllers
                 {
                     foreach (var entity in dataEntities.TemplateQualifications)
                     {
-                        foreach (var role in entity.RoleQualification)
+                        foreach (var role in entity.RoleQualifications)
                         {
                             var roleId = string.Empty;
                             if (role.Range != null)
@@ -704,7 +704,7 @@ namespace org.iringtools.web.controllers
                             {
                                 id = Guid.NewGuid().ToString(),
                                 type = "RoleNode",
-                                text = role.Name[0].Value,
+                                text = role.Names[0].Value,
                                 iconCls = "treeRole",
                                 children = GetTemplateRoleClasses(roleId),
                                 leaf = false,

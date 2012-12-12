@@ -2,9 +2,7 @@
 using org.iringtools.refdata;
 using org.iringtools.refdata.federation;
 using org.iringtools.refdata.response;
-using Entities = org.iringtools.refdata.response.Entities;
-using Entity = org.iringtools.refdata.response.Entity;
-using Response = org.iringtools.refdata.response.Response;
+
 
 namespace org.iringtools.web.Models
 {
@@ -12,11 +10,11 @@ namespace org.iringtools.web.Models
   {
     Federation GetFederation();
 
-    Response Search(string query);
+    RefdataResponse Search(string query);
 
-    Response Search(string query, int start, int limit);
+    RefdataResponse Search(string query, int start, int limit);
 
-    Response SearchReset(string query);
+    RefdataResponse SearchReset(string query);
 
     Entity GetClassLabel(string classId);
 
@@ -30,7 +28,7 @@ namespace org.iringtools.web.Models
 
     Entities GetClassTemplates(string classId);
 
-    Entities GetClassMembers(string classId, Repository repository);
+    RefdataResponse GetClassMembers(string classId, Repository repository);
 
     QMXF GetClasses(string classId, Repository repository);
 
