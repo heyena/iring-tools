@@ -249,12 +249,11 @@ public class DataModel
   {
     DataTransferIndices dtis = null;
 
-    if (dataMode == DataMode.EXCHANGE) // exchange data
+    if (dataMode == DataMode.EXCHANGE)  // exchange data
     {
       dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey);
     }
-    else
-    // app data
+    else  // app data
     {
       DxiRequest dxiRequest = new DxiRequest();
       dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
@@ -290,13 +289,7 @@ public class DataModel
     DataTransferIndices resultDtis = new DataTransferIndices();
     Expression transferTypeExpression = null;
     OrderExpression transferTypeOrderExpression = null;
-    /*
-     * try { String path =
-     * "C:/Bug-iring-2.4/iRINGTools.ESBServices/iRINGTools.Services/WebContent/WEB-INF/data/Filter-25509-3.xml" ;
-     * 
-     * JaxbUtils.write(dataFilter,path, false); } catch (JAXBException e1) { // TODO Auto-generated catch block
-     * e1.printStackTrace(); } catch (IOException e1) { // TODO Auto-generated catch block e1.printStackTrace(); }
-     */
+    
     // extract transfer type from expressions
     if (dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
     {
@@ -351,28 +344,32 @@ public class DataModel
       DataTransferIndices fullDtis = (DataTransferIndices) session.get(fullDtiKey);
       List<DataTransferIndex> fullDtiList = fullDtis.getDataTransferIndexList().getItems();
 
-      List<DataTransferIndex> cloneFullDtiList = new ArrayList<DataTransferIndex>();
-      cloneFullDtiList.addAll(fullDtiList);
+      List<DataTransferIndex> tmpFullDtiList = new ArrayList<DataTransferIndex>();      
+      for (DataTransferIndex dti : fullDtiList)
+      {
+        if (dti.getDuplicateCount() == null || dti.getDuplicateCount() == 1)
+          tmpFullDtiList.add(dti);
+      }
 
       // apply transfer type filter
-      if (transferTypeExpression != null && cloneFullDtiList != null)
+      if (transferTypeExpression != null && tmpFullDtiList != null)
       {
         String value = transferTypeExpression.getValues().getItems().get(0);
 
-        for (int i = 0; i < cloneFullDtiList.size(); i++)
+        for (int i = 0; i < tmpFullDtiList.size(); i++)
         {
           if (transferTypeExpression.getRelationalOperator() == RelationalOperator.EQUAL_TO)
           {
-            if (!cloneFullDtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
+            if (!tmpFullDtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
             {
-              cloneFullDtiList.remove(i--);
+              tmpFullDtiList.remove(i--);
             }
           }
           else
           {
-            if (cloneFullDtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
+            if (tmpFullDtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
             {
-              cloneFullDtiList.remove(i--);
+              tmpFullDtiList.remove(i--);
             }
           }
         }
@@ -394,14 +391,14 @@ public class DataModel
         resultDtis = httpClient.post(DataTransferIndices.class, requestUrl, dxiRequest);
 
         List<DataTransferIndex> partialDtiList = resultDtis.getDataTransferIndexList().getItems();
-        parsePartialDtis(partialDtiList, cloneFullDtiList);
+        parsePartialDtis(partialDtiList, tmpFullDtiList);
       }
       else
       {
         // no property filter, return full DTI list
         DataTransferIndexList resultDtiList = new DataTransferIndexList();
         resultDtis.setDataTransferIndexList(resultDtiList);
-        resultDtiList.setItems(cloneFullDtiList);
+        resultDtiList.setItems(tmpFullDtiList);
       }
 
       // apply sorting
@@ -434,9 +431,6 @@ public class DataModel
         }
         else if (dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
         {
-          /*
-           * final String sortType = resultDtis.getSortType() .toLowerCase();
-           */
           /*
            * if (!(resultDtis.getSortType() == null)) { final String sortType = resultDtis.getSortType() .toLowerCase();
            * } else { final String sortType = null; }
