@@ -42,6 +42,7 @@ import org.iringtools.mapping.ValueListMap;
 import org.iringtools.mapping.ValueMap;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.DataFilterInitial;
+import org.iringtools.utility.DtiComparator;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
@@ -164,27 +165,22 @@ public class DataModel
 
       if (dataFilter != null)
       {
-        if (session.containsKey(lastFilterKey)) // check if filter has
-        // changed
+        if (session.containsKey(lastFilterKey)) // check if filter has changed
         {
           String lastFilter = (String) session.get(lastFilterKey);
 
-          // filter has changed or cache data not available, fetch
-          // filtered data
+          // filter has changed or cache data not available, fetch filtered data
           if (!lastFilter.equals(currFilter) || !session.containsKey(partDtiKey))
           {
             dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey,
                 partDtiKey, lastFilterKey, currFilter);
           }
-          else
-          // filter has not changed, get data from cache
+          else  // filter has not changed, get data from cache
           {
             dtis = (DataTransferIndices) session.get(partDtiKey);
           }
         }
-        else
-        // new filter or same filter after exchange, fetch
-        // filtered data
+        else  // new filter or same filter after exchange, fetch filtered data
         {
           dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey, partDtiKey,
               lastFilterKey, currFilter);
@@ -198,6 +194,57 @@ public class DataModel
     }
 
     return dtis;
+  }
+  
+  private void collapseDuplicates(DataTransferIndices dtis) 
+  {
+    try
+    {      
+      DtiComparator DtiComparator = new DtiComparator();
+      Collections.sort(dtis.getDataTransferIndexList().getItems(), DtiComparator);
+      
+      List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
+      DataTransferIndex prevDti = null;
+      
+      for (int i = 0; i < dtiList.size(); i++)
+      {
+        DataTransferIndex dti = dtiList.get(i);
+        dti.setDuplicateCount(1);
+        
+        if (prevDti != null && dti.getIdentifier().equalsIgnoreCase(prevDti.getIdentifier()))
+        {            
+          // indices with same identifiers but different hash values are considered different
+          int j = i;
+          
+          while (dti.getIdentifier().equalsIgnoreCase(prevDti.getIdentifier()))
+          {
+            if (dti.getHashValue().compareTo(prevDti.getHashValue()) == 0)
+            {
+              prevDti.setDuplicateCount(prevDti.getDuplicateCount() + 1);
+              dtiList.remove(j);
+            }
+            else 
+            {
+              j++;
+            }
+            
+            if (j < dtiList.size())
+              dti = dtiList.get(j);
+            else
+              break;
+          } 
+        }
+        else
+        {
+          prevDti = dti;
+        }              
+      }
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      logger.error(e.getMessage());
+    }
   }
 
   private DataTransferIndices getFullDtis(String serviceUri, String manifestRelativePath, String dtiRelativePath,
@@ -221,7 +268,24 @@ public class DataModel
       try
       {
         dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
-        session.put(fullDtiKey, dtis);
+        
+        if (dtis != null && dtis.getDataTransferIndexList() != null && dtis.getDataTransferIndexList().getItems().size() > 0)
+        {
+          // collapse duplications for app data (exchange data already done so in differencing engine)
+          if (dataMode == DataMode.APP)
+          {
+            collapseDuplicates(dtis);
+          }
+      
+          // log duplicates
+          for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
+          {
+            if (dti.getDuplicateCount() != null && dti.getDuplicateCount() > 1)
+              logger.warn("DTI [" + dti.getIdentifier() + "] has [" + dti.getDuplicateCount() + "] duplicates.");
+          }          
+          
+          session.put(fullDtiKey, dtis);
+        }
       }
       catch (HttpClientException e)
       {
@@ -265,6 +329,7 @@ public class DataModel
       try
       {
         dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+        collapseDuplicates(dtis);
       }
       catch (HttpClientException e)
       {
@@ -350,10 +415,6 @@ public class DataModel
         if (dti.getDuplicateCount() == null || dti.getDuplicateCount() == 1)
         {
           tmpFullDtiList.add(dti);
-        }
-        else
-        {
-          logger.warn("DTI [" + dti.getIdentifier() + "] has [" + dti.getDuplicateCount() + "] duplicates.");
         }
       }
 

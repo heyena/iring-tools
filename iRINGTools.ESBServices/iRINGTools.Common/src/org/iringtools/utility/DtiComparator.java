@@ -1,13 +1,13 @@
-package org.iringtools.services.core;
+package org.iringtools.utility;
 
 import java.util.Comparator;
 
 import org.apache.log4j.Logger;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 
-public class IdentifierComparator implements Comparator<DataTransferIndex>
+public class DtiComparator implements Comparator<DataTransferIndex>
 {
-  private static final Logger logger = Logger.getLogger(IdentifierComparator.class);
+  private static final Logger logger = Logger.getLogger(DtiComparator.class);
   
   @Override
   public int compare(DataTransferIndex leftDti, DataTransferIndex rightDti)
