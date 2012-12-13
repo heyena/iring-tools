@@ -624,7 +624,7 @@ public class ExchangeProvider
 	      //<xs:element name="startTime" type="xs:dateTime" />
 	      //<xs:element name="endTime" type="xs:dateTime" />
 	      // NB the local itemCount is only the items on the page that are different, where as the xr's itemCount should reflect everything
-	      xr.setItemCount(itemCountSync + itemCountDelete + itemCountChange + itemCountDelete);
+	      xr.setItemCount(itemCountSync + itemCountAdd + itemCountChange + itemCountDelete);
 	      xr.setItemCountSync(itemCountSync);
 	      xr.setItemCountAdd(itemCountAdd);
 	      xr.setItemCountChange(itemCountChange);
