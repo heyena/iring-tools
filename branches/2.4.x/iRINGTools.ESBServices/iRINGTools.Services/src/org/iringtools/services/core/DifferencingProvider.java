@@ -21,6 +21,7 @@ import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.request.DfiRequest;
 import org.iringtools.dxfr.request.DfoRequest;
+import org.iringtools.utility.DtiComparator;
 
 public class DifferencingProvider
 {
@@ -129,10 +130,10 @@ public class DifferencingProvider
   	
     List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getItems();
     List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();
-    IdentifierComparator identifierComparator = new IdentifierComparator();
+    DtiComparator DtiComparator = new DtiComparator();
 
-    Collections.sort(sourceDtiList, identifierComparator);
-    Collections.sort(targetDtiList, identifierComparator);
+    Collections.sort(sourceDtiList, DtiComparator);
+    Collections.sort(targetDtiList, DtiComparator);
 
     /*
      * Case 3:
