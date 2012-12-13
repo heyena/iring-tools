@@ -216,7 +216,7 @@ public class DataModel
           // indices with same identifiers but different hash values are considered different
           int j = i;
           
-          while (dti.getIdentifier().equalsIgnoreCase(prevDti.getIdentifier()))
+          do
           {
             if (dti.getHashValue().compareTo(prevDti.getHashValue()) == 0)
             {
@@ -232,7 +232,8 @@ public class DataModel
               dti = dtiList.get(j);
             else
               break;
-          } 
+            
+          } while (dti.getIdentifier().equalsIgnoreCase(prevDti.getIdentifier()));
         }
         else
         {
@@ -275,14 +276,7 @@ public class DataModel
           if (dataMode == DataMode.APP)
           {
             collapseDuplicates(dtis);
-          }
-      
-          // log duplicates
-          for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
-          {
-            if (dti.getDuplicateCount() != null && dti.getDuplicateCount() > 1)
-              logger.warn("DTI [" + dti.getIdentifier() + "] has [" + dti.getDuplicateCount() + "] duplicates.");
-          }          
+          }         
           
           session.put(fullDtiKey, dtis);
         }
@@ -292,6 +286,16 @@ public class DataModel
         logger.error(e.getMessage());
         throw new DataModelException(e.getMessage());
       }
+    }
+    
+    // log duplicates
+    if (dtis != null && dtis.getDataTransferIndexList() != null && dtis.getDataTransferIndexList().getItems().size() > 0)
+    {      
+      for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
+      {
+        if (dti.getDuplicateCount() != null && dti.getDuplicateCount() > 1)
+          logger.warn("DTI [" + dti.getIdentifier() + "] has [" + dti.getDuplicateCount() + "] duplicates.");
+      } 
     }
 
     if (session.containsKey(partDtiKey))
