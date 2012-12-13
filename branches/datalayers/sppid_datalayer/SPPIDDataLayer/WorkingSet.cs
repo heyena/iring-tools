@@ -77,7 +77,7 @@ namespace org.iringtools.adapter.datalayer.sppid
         {
           if (connStr != _connStrs[Constants.SPPID_PLANT_SCHEMA])
           {
-            GrantPrivileges(connStr, privileges, _plantSchema);
+            RevokePrivileges(connStr, privileges, _plantSchema);
           }
         }
         catch (Exception ex)
