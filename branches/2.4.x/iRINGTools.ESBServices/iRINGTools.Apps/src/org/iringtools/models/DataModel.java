@@ -350,8 +350,7 @@ public class DataModel
 
   protected DataTransferIndices getFilteredDtis(DataFilter dataFilter, String manifestRelativePath,
       String dtiRelativePath, String serviceUri, String fullDtiKey) throws DataModelException
-  {
-    DataTransferIndices resultDtis = new DataTransferIndices();
+  {    DataTransferIndices resultDtis = new DataTransferIndices();
     Expression transferTypeExpression = null;
     OrderExpression transferTypeOrderExpression = null;
     
@@ -359,8 +358,8 @@ public class DataModel
     if (dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
     {
       List<Expression> expressions = dataFilter.getExpressions().getItems();
-
-      for (int i = 0; i < expressions.size(); i++)
+      int i = 0;
+      for (; i < expressions.size(); i++)
       {
         Expression expression = expressions.get(i);
 
@@ -372,9 +371,7 @@ public class DataModel
           {
             // remove logical operator of the next expression
             expressions.get(i).setLogicalOperator(null);
-          }
-
-          break;
+          }     i--;     
         }
       }
     }
