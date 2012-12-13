@@ -243,7 +243,7 @@ namespace org.iringtools.adapter.projection
 
               if (string.IsNullOrEmpty(dti.Identifier))
               {
-                _logger.Error("DTI has no identifier: [" + values + "]");
+                _logger.Warn("DTI has no identifier: [" + values + "]");
               }
               else
               {
