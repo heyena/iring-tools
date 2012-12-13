@@ -1041,7 +1041,7 @@ namespace org.iringtools.adapter
         int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
         List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
-        DataTransferIndicesTask[] dtiTasks = new DataTransferIndicesTask[numOfThreads];
+        List<DataTransferIndicesTask> dtiTasks = new List<DataTransferIndicesTask>();
         int threadCount;
 
         for (threadCount = 0; threadCount < numOfThreads; threadCount++)
@@ -1051,13 +1051,14 @@ namespace org.iringtools.adapter
             break;
           
           int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
-          ManualResetEvent doneEvent = new ManualResetEvent(false);
-          doneEvents.Add(doneEvent);
-        
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          ManualResetEvent doneEvent = new ManualResetEvent(false);
           DataTransferIndicesTask dtiTask = new DataTransferIndicesTask(doneEvent, projectionLayer, _dataLayer, _graphMap,
             filter, pageSize, offset);
-          dtiTasks[threadCount] = dtiTask;
+
+          doneEvents.Add(doneEvent);
+          dtiTasks.Add(dtiTask);
+
           ThreadPool.QueueUserWorkItem(dtiTask.ThreadPoolCallback, threadCount);
         }
 
@@ -1098,7 +1099,7 @@ namespace org.iringtools.adapter
       int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
       List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
-      OutboundDtoTask[] dtoTasks = new OutboundDtoTask[numOfThreads];
+      List<OutboundDtoTask> dtoTasks = new List<OutboundDtoTask>();
       int threadCount;
 
       for (threadCount = 0; threadCount < numOfThreads; threadCount++)
@@ -1108,14 +1109,14 @@ namespace org.iringtools.adapter
           break;
 
         int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
-        ManualResetEvent doneEvent = new ManualResetEvent(false);
-        doneEvents.Add(doneEvent);
-        
         List<string> pageIdentifiers = identifiers.GetRange(offset, pageSize);
         DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        ManualResetEvent doneEvent = new ManualResetEvent(false);
         OutboundDtoTask dtoTask = new OutboundDtoTask(doneEvent, projectionLayer, _dataLayer, _graphMap, pageIdentifiers);
-        dtoTasks[threadCount] = dtoTask;
         ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);
+
+        doneEvents.Add(doneEvent);
+        dtoTasks.Add(dtoTask);
       }
 
       _logger.Debug("Number of threads [" + threadCount + "].");
@@ -1150,7 +1151,7 @@ namespace org.iringtools.adapter
         int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
         List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
-        DataTransferObjectsTask[] dtoTasks = new DataTransferObjectsTask[numOfThreads];
+        List<DataTransferObjectsTask> dtoTasks = new List<DataTransferObjectsTask>();      
         int threadCount;
 
         for (threadCount = 0; threadCount < numOfThreads; threadCount++)
@@ -1160,17 +1161,17 @@ namespace org.iringtools.adapter
             break;
           
           int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
-          ManualResetEvent doneEvent = new ManualResetEvent(false);
-          doneEvents.Add(doneEvent);
-        
           DataTransferObjects dtos = new DataTransferObjects();
           dtos.DataTransferObjectList = dataTransferObjects.DataTransferObjectList.GetRange(offset, pageSize);
 
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           IDataLayer dataLayer = _kernel.Get<IDataLayer>();
+          ManualResetEvent doneEvent = new ManualResetEvent(false);
           DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvent, projectionLayer, dataLayer, _graphMap, dtos);
-          dtoTasks[threadCount] = dtoTask;
           ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);
+          
+          doneEvents.Add(doneEvent);
+          dtoTasks.Add(dtoTask);        
         }
 
         _logger.Debug("Number of threads [" + threadCount + "].");
