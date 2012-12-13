@@ -314,8 +314,8 @@ namespace org.iringtools.web.controllers
                 if (!string.IsNullOrEmpty(repositoryName))
                     repository = _refdataRepository.GetFederation().RepositoryList.Find(r => r.Name == repositoryName);
 
-                dataEntities = _refdataRepository.GetClasses(classId, repository);
-
+                dataEntities = _refdataRepository.GetClasses(classId, null);
+                if (dataEntities.ClassDefinitions == null) return nodes;
                 foreach (var entity in dataEntities.ClassDefinitions)
                 {
                     #region Default Nodes------------------
@@ -401,26 +401,29 @@ namespace org.iringtools.web.controllers
 
 
                     #region Fill Data in Classification node--------
-                    foreach (var leafNode in entity.Classifications.Select(classification => new JsonTreeNode
-                        {
-                            type = "ClassNode",
-                            iconCls = "treeClass",
-                            leaf = false,
-                            identifier = classification.Reference.Split('#')[1],
-                            id = Guid.NewGuid().ToString(),
-                            text = classification.Label,
-                            //       expanded = false,
+                    if (entity.Classifications != null)
+                    {
+                        foreach (var leafNode in entity.Classifications.Select(classification => new JsonTreeNode
+                            {
+                                type = "ClassNode",
+                                iconCls = "treeClass",
+                                leaf = false,
+                                identifier = classification.Reference.Split('#')[1],
+                                id = Guid.NewGuid().ToString(),
+                                text = classification.Label,
+                                //       expanded = false,
 
-                            record = classification
-                        }))
-                    {
-                        clasifNode.children.Add(leafNode);
-                    }
-                    clasifNode.text = clasifNode.text + " (" + clasifNode.children.Count() + ")";
-                    if (!clasifNode.children.Any())
-                    {
-                        clasifNode.leaf = true;
-                        clasifNode.icon = "Content/img/folder.png";
+                                record = classification
+                            }))
+                        {
+                            clasifNode.children.Add(leafNode);
+                        }
+                        clasifNode.text = clasifNode.text + " (" + clasifNode.children.Count() + ")";
+                        if (!clasifNode.children.Any())
+                        {
+                            clasifNode.leaf = true;
+                            clasifNode.icon = "Content/img/folder.png";
+                        }
                     }
                     #endregion
 

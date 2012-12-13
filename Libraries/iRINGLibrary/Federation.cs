@@ -10,30 +10,30 @@ namespace org.iringtools.refdata.federation
     public class Federation
     {
 
-        [DataMember(Name = "idgeneratorlist", Order = 0)]
+        [DataMember(Name = "idGeneratorList", Order = 0)]
         public IdGeneratorList IdGeneratorList { get; set;}
 
 
-        [DataMember(Name = "namespacelist", Order = 1)]
+        [DataMember(Name = "namespaceList", Order = 1)]
         public NamespaceList NamespaceList { get; set; }
 
-        [DataMember(Name = "repositorylist", Order = 2)]
+        [DataMember(Name = "repositoryList", Order = 2)]
         public RepositoryList RepositoryList { get; set; }
 
     }
 
-    [CollectionDataContract(Name = "idgeneratorlist", Namespace = "http://www.iringtools.org/refdata/federation")]
+    [CollectionDataContract(Name = "idGeneratorList", Namespace = "http://www.iringtools.org/refdata/federation")]
     public class IdGeneratorList : List<IdGenerator>
     {
 
-        [DataMember(Name = "sequenceid")]
+        [DataMember(Name = "sequenceId")]
         public int SequenceId { get; set; }
 
         public bool SequenceIdSpecified { get; set; }
 
     }
 
-    [DataContract(Name = "idgenerator", Namespace = "http://www.iringtools.org/refdata/federation")]
+    [DataContract(Name = "idGenerator", Namespace = "http://www.iringtools.org/refdata/federation")]
     public class IdGenerator
     {
 
@@ -55,32 +55,35 @@ namespace org.iringtools.refdata.federation
     [DataContract(Name = "repository", Namespace = "http://www.iringtools.org/refdata/federation")]
     public class Repository
     {
-        [DataMember(Name = "id", Order = 0)]
+        [DataMember(Name = "encryptedCredentials", Order = 0)]
+        public string EncryptedCredentials { get; set; }
+
+        [DataMember(Name = "id", Order = 1)]
         public string Id { get; set; }
 
-        [DataMember(Name = "description", Order = 1)]
+        [DataMember(Name = "description", Order = 2)]
         public string Description { get; set; }
 
-        [DataMember(Name = "isreadonly", Order = 2)]
+        [DataMember(Name = "isReadOnly", Order = 3)]
         public bool IsReadonly { get; set; }
 
-        [DataMember(Name = "name", Order = 3)]
+        [DataMember(Name = "name", Order = 4)]
         public string Name { get; set; }
 
-        [DataMember(Name = "repositorytype", Order = 4)]
+        [DataMember(Name = "repositoryType", Order = 5)]
         public RepositoryType RepositoryType { get; set; }
 
-        [DataMember(Name = "uri", Order = 5)]
+        [DataMember(Name = "uri", Order = 6)]
         public string Uri { get; set; }
 
-        [DataMember(Name = "updateUri", Order = 6)]
+        [DataMember(Name = "updateUri", Order = 7)]
         public string UpdateUri { get; set; }
 
-        [DataMember(Name = "namespaces", Order = 7)]
+        [DataMember(Name = "namespaces", Order = 8)]
         public NamespaceList Namespaces { get; set; }
     }
 
-    [DataContract(Name = "repositorytype", Namespace = "http://www.iringtools.org/refdata/federation")]
+    [DataContract(Name = "repositoryType", Namespace = "http://www.iringtools.org/refdata/federation")]
     public enum RepositoryType
     {
 
@@ -92,10 +95,10 @@ namespace org.iringtools.refdata.federation
         [EnumMember] JORD,
     }
 
-    [CollectionDataContract(Name = "namespacelist", Namespace = "http://www.iringtools.org/refdata/federation")]
+    [CollectionDataContract(Name = "namespaceList", Namespace = "http://www.iringtools.org/refdata/federation")]
     public class NamespaceList : List<Namespace>
     {
-        [DataMember(Name = "sequenceid")]
+        [DataMember(Name = "sequenceId")]
         public int SequenceId { get; set; }
 
         public bool SequenceIdSpecified { get; set; }
@@ -116,7 +119,7 @@ namespace org.iringtools.refdata.federation
         public string Prefix { get; set; }
 
 
-        [DataMember(Name = "iswriteable", Order = 2)]
+        [DataMember(Name = "isWriteable", Order = 2)]
         public bool IsWriteable { get; set; }
 
 
@@ -124,7 +127,7 @@ namespace org.iringtools.refdata.federation
         public string Description { get; set; }
 
 
-        [DataMember(Name = "idgenerator", Order = 4)]
+        [DataMember(Name = "idQenerator", Order = 4)]
         public int IdGenerator { get; set; }
 
     }
@@ -133,7 +136,7 @@ namespace org.iringtools.refdata.federation
     public class RepositoryList : List<Repository>
     {
 
-        [DataMember(Name = "sequenceid")]
+        [DataMember(Name = "sequenceId")]
         public int SequenceId { get; set; }
 
         public bool SequenceIdSpecified { get; set; }

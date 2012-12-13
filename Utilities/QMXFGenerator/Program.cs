@@ -621,7 +621,7 @@ namespace QMXFGenerator
                 Lang = "en",
                 Value = description.ToString(),
               };
-              roleDefinition.Description = englishUSDescription;
+              roleDefinition.Descriptions = new List<Description> { englishUSDescription};
             }
             
             if (type != null && type.ToString() != String.Empty)
