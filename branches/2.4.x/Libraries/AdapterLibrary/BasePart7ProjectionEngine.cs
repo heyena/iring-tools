@@ -507,6 +507,15 @@ namespace org.iringtools.adapter.projection
       }
     }
 
+    protected void SetAppCode(IDataObject dataObject)
+    {
+      if (_settings["AppCodeProperty"] != null && _settings["SenderProjectName"] != null && _settings["SenderApplicationName"] != null)
+      {
+        dataObject.SetPropertyValue(_settings["AppCodeProperty"],
+          _settings["SenderProjectName"] + "." + _settings["SenderApplicationName"]);
+      }
+    }
+
     // turn data record into data object
     protected IDataObject CreateDataObject(string objectType, int objectIndex)
     {
@@ -567,6 +576,7 @@ namespace org.iringtools.adapter.projection
           if (!ContainsAssignedKey(objDef))
           {
             IDataObject dataObject = _dataLayer.Create(objectType, null).First();
+            SetAppCode(dataObject);
 
             if (dataObject.GetType() == typeof(GenericDataObject))
             {
@@ -611,6 +621,8 @@ namespace org.iringtools.adapter.projection
         {
           ((GenericDataObject)dataObject).ObjectType = objectType;
         }
+
+        SetAppCode(dataObject);
 
         foreach (var pair in dataRecord)
         {
