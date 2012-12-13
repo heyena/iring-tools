@@ -212,13 +212,14 @@ public class DataModel
         dti.setDuplicateCount(1);
         
         if (prevDti != null && dti.getIdentifier().equalsIgnoreCase(prevDti.getIdentifier()))
-        {            
+        {      
+          
           // indices with same identifiers but different hash values are considered different
           int j = i;
           
           do
           {
-            if (dti.getHashValue().compareTo(prevDti.getHashValue()) == 0)
+            if (dti.getInternalIdentifier().toLowerCase().compareTo(prevDti.getInternalIdentifier().toLowerCase()) == 0)
             {
               prevDti.setDuplicateCount(prevDti.getDuplicateCount() + 1);
               dtiList.remove(j);
