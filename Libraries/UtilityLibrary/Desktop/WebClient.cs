@@ -144,6 +144,8 @@ namespace org.iringtools.utility
       _credentials = credentials;
     }
 
+    public bool Async { get; set; }
+
     public string AccessToken
     {
       get
@@ -261,6 +263,7 @@ namespace org.iringtools.utility
     {
       var ac = AccessToken;
       var ak = AppKey;
+
       if (!string.IsNullOrEmpty(ac))
       {
         _logger.Debug("Authorization: " + AccessToken);
@@ -271,6 +274,8 @@ namespace org.iringtools.utility
         _logger.Debug("X-myPSN-AppKey: " + AppKey);
         request.Headers.Add("X-myPSN-AppKey", AppKey);
       }
+
+      request.Headers.Add("async", Async ? "True" : "False");
     }
 
     private void PrepareCredentials(WebRequest request)
@@ -383,12 +388,22 @@ namespace org.iringtools.utility
         );
 
         _logger.Debug("Past SSL Check!");
-
+        
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         _logger.Debug("Get Response!");
-        Stream responseStream = response.GetResponseStream();
-        _logger.Debug("Get Stream!");
-        return responseStream.ToMemoryStream();
+
+        if (response.StatusCode == HttpStatusCode.Accepted)
+        {
+          string statusUrl = response.Headers["location"];
+          byte[] byteArray = Encoding.ASCII.GetBytes(statusUrl);
+          return new MemoryStream(byteArray);
+        }
+        else
+        {
+          Stream responseStream = response.GetResponseStream();
+          _logger.Debug("Get Stream!");
+          return responseStream.ToMemoryStream();
+        }
       }
       catch (Exception e)
       {

@@ -51,6 +51,8 @@ using System.Globalization;
 using org.iringtools.nhibernate;
 using org.iringtools.adapter.datalayer;
 using System.Text;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace org.iringtools.adapter
 {
@@ -84,9 +86,9 @@ namespace org.iringtools.adapter
     private bool _isDataLayerInitialized = false;
     private string[] arrSpecialcharlist;
     private string[] arrSpecialcharValue;
-
     private string _dataLayersRegistryPath;
-    private string _dataLayerPath;
+
+    private static ConcurrentDictionary<string, RequestStatus> _requestDictionary = new ConcurrentDictionary<string, RequestStatus>();
 
     [Inject]
     public AdapterProvider(NameValueCollection settings)
@@ -929,6 +931,82 @@ namespace org.iringtools.adapter
     #endregion
 
     #region adapter methods
+    private void DoGetDictionary(string projectName, string applicationName, string id)
+    {
+      RequestStatus requestStatus = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+
+      _requestDictionary[id] = requestStatus;
+
+      try
+      {
+        DataDictionary dictionary = _dataLayer.GetDictionary();
+
+        requestStatus.State = State.Completed;
+        requestStatus.ResponseText = Utility.Serialize<DataDictionary>(dictionary, true);
+      }
+      catch (Exception ex)
+      {
+        requestStatus.State = State.Error;
+        requestStatus.Message = ex.Message;
+      }
+    }
+
+    public string AsyncGetDictionary(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer(false);
+
+        string id = Guid.NewGuid().ToString("N");
+        Task task = Task.Factory.StartNew(() => DoGetDictionary(projectName, applicationName, id));
+        return "/requests/" + id;
+      }
+      catch (Exception ex)
+      {
+        string errMsg = String.Format("Error refreshing data objects: {0}", ex);
+        _logger.Error(errMsg);
+        throw new Exception(errMsg);
+      }
+    }
+
+    public RequestStatus GetRequestStatus(string id)
+    {
+      try
+      {
+        RequestStatus status = null;
+
+        if (_requestDictionary.ContainsKey(id))
+        {
+          status = _requestDictionary[id];
+        }
+        else
+        {
+          status = new RequestStatus()
+          {
+            State = State.NotFound,
+            Message = "Request [" + id + "] not found."
+          };
+        }
+
+        if (status.State == State.Completed)
+        {
+          _requestDictionary.TryRemove(id, out status);
+        }
+
+        return status;
+      }
+      catch (Exception ex)
+      {
+        string errMsg = String.Format("Error getting request status: {0}", ex);
+        _logger.Error(errMsg);
+        throw new Exception(errMsg);
+      }
+    }
+
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
       try
