@@ -7,14 +7,15 @@
     "codeClass": null,
     "userConfig": {
         "designer|userClassName": "NHibernateTreeStore",
-        "autoLoad": false,
+        "autoLoad": null,
         "storeId": "NHibernateTreeStore",
         "model": "NHibernateTreeModel",
         "root": [
             "{\r",
-            "        expanded: true,\r",
-            "        text: 'Data Objects',\r",
-            "        iconCls: 'folder'\r",
+            "  expanded: true,\r",
+            "  text: 'Data Objects',\r",
+            "  iconCls: 'folder',\r",
+            "  loaded:true\r",
             "    }"
         ]
     },

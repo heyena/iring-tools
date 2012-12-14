@@ -7,11 +7,11 @@
     "codeClass": null,
     "userConfig": {
         "designer|userClassName": "MappingStore",
-        "autoLoad": true,
+        "autoLoad": null,
         "storeId": "MappingStore",
         "model": "MappingModel",
         "root": [
-            "{type: 'MappingNode', expanded: true}"
+            "{type: 'MappingNode', expanded: true, loaded: true}"
         ]
     },
     "id": "ExtBox1-ext-gen34040",

@@ -107,6 +107,13 @@ Ext.define('AM.controller.NHibernate', {
       xtype: 'relationsform'
     },
     {
+      autoCreate: true,
+      forceCreate: true,
+      ref: 'setRelationForm',
+      selector: 'setRelationForm',
+      xtype: 'setrelationform'
+    },
+    {
       ref: 'dirTree',
       selector: 'viewport > directorypanel > directorytree',
       xtype: 'directorytree'
@@ -615,7 +622,7 @@ Ext.define('AM.controller.NHibernate', {
         me.showRelationsForm(panel);
         break;
         case 'RELATIONSHIP':
-        //setRelationFields(editor, rootNode, dataNode, contextName, endpoint);
+        me.showSetRelationForm(panel);
         break;
       }
     }
@@ -794,6 +801,12 @@ Ext.define('AM.controller.NHibernate', {
     grid.selectItems(selectTableNamesSingle);
   },
 
+  onFormCreaterelation: function(form, grid, relationName, eventOptions) {
+    var me = this;
+    var panel = form.up('nhibernatepanel');
+    me.showSetRelationForm(panel);
+  },
+
   onConfignhibernate: function() {
     var me = this;
     var dirTree = me.getDirTree(),
@@ -920,6 +933,9 @@ Ext.define('AM.controller.NHibernate', {
       },
       "selecttablesform button[action=resetobjects]": {
         click: this.onResetDataObjects
+      },
+      "form": {
+        createrelation: this.onFormCreaterelation
       }
     });
 
@@ -1235,6 +1251,7 @@ Ext.define('AM.controller.NHibernate', {
     var grid = form.down('relationsgrid');
 
     var gridStore = grid.getStore();
+    gridStore.removeAll();
     var dataTree = nhibernatePanel.down('nhibernatetree');
     var dirNode = me.getDirNode(dataTree.dirNode);
     var treeNode = dataTree.getSelectionModel().getSelection()[0];
@@ -1248,7 +1265,7 @@ Ext.define('AM.controller.NHibernate', {
     grid.rootNode = form.rootNode = dataTree.getRootNode();
 
     treeNode.eachChild(function(n) {
-      gridStore.add({'relationName': n});
+      gridStore.add({'relationName': n.data.text});
     });
 
     panel = nhibernatePanel.down('#nhibernateContent');
@@ -1259,6 +1276,66 @@ Ext.define('AM.controller.NHibernate', {
     panel.doLayout();
 
     Ext.getBody().unmask();
+  },
+
+  showSetRelationForm: function(nhibernatepanel) {
+    var me = this;
+    var  panel = nhibernatepanel.down('#nhibernateContent');
+    var dataTree = nhibernatepanel.down('nhibernatetree');
+    var dataNode = dataTree.getSelectedNode();
+    var dirNode = me.getDirNode(dataTree.dirNode);
+    var relationFolderNode, contextName, endpoint, rootNode, relationName;
+
+    rootNode = dataTree.getRootNode();
+    endpoint = dirNode.data.record.endpoint;
+    contextName = dirNode.data.record.context;
+
+    if(dataNode.data.type =='relationships') {
+      relationFolderNode = dataNode;
+      if(dataNode.firstChild)
+      relationName = dataNode.firstChild.data.text;
+
+    } else {
+      relationFolderNode = dataNode.parentNode;
+      relationName = dataNode.data.text;
+    }
+
+    var dataObjectNode = relationFolderNode.parentNode;
+    var relatedObjects = [];
+    var thisObj = dataObjectNode.data.text;
+    var i = 0;
+    rootNode.eachChild(function(child) {
+      if(child.data.text != thisObj) {
+        relatedObjects.push([i.toString(), child.data.text, child.data.property.tableName]);
+        i++;
+      }
+    });
+    var ifExist;
+    var relAttribute = null;
+    var relateObjStr;
+    var nodeRelateObj;
+    var rindex = 0;
+
+
+    var form = me.getSetRelationForm();
+    var relatedObjectCombo = form.down('#relatedObjectCmb');
+    relatedObjectCombo.store = Ext.create('Ext.data.SimpleStore', {
+      fields: ['value', 'text'],
+      autoLoad: true,
+      data: relatedObjects
+    });
+    form.endpoint = endpoint;
+    form.contextName = contextName;
+    form.rootNode = rootNode;
+    form.getForm().findField('relationshipName').setValue(relationName);
+    form.getForm().findField('objectName').setValue(thisObj);
+
+
+
+    panel.removeAll();
+    panel.add(form);
+    panel.doLayout();
+
   },
 
   getConnStringParts: function(connString, dirNode) {
@@ -1590,6 +1667,10 @@ Ext.define('AM.controller.NHibernate', {
     folder.keyProperties = [];
     folder.dataProperties = [];
     folder.dataRelationships = [];
+
+    folderNode.eachChild(function(child) {
+
+    });
 
     for (var j = 0; j < folderNode.childNodes.length; j++) {
       if (folderNode.childNodes[1])

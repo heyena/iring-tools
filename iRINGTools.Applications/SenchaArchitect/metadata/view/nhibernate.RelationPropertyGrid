@@ -1,0 +1,145 @@
+{
+    "type": "gridpanel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "nhibernate.RelationPropertyGrid",
+        "designer|userAlias": "relationPropertyGrid",
+        "height": null,
+        "width": null,
+        "title": null
+    },
+    "id": "ExtBox1-ext-gen3160",
+    "designerId": "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c",
+    "cn": [
+        {
+            "type": "gridcolumn",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyColumn7",
+                "dataIndex": "string",
+                "text": "String"
+            },
+            "designerId": "b8bdde35-ae5c-4d32-be89-04394192da9d"
+        },
+        {
+            "type": "numbercolumn",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyNumberColumn",
+                "dataIndex": "number",
+                "text": "Number"
+            },
+            "designerId": "1394067f-b48f-4490-81b0-771196a67a23"
+        },
+        {
+            "type": "datecolumn",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyDateColumn",
+                "dataIndex": "date",
+                "text": "Date"
+            },
+            "designerId": "8b13bcb3-e742-4c90-8aca-d68e0cca9b98"
+        },
+        {
+            "type": "booleancolumn",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyBooleanColumn",
+                "dataIndex": "bool",
+                "text": "Boolean"
+            },
+            "designerId": "a779cd49-a2ce-4933-9c72-6fcb159de5aa"
+        },
+        {
+            "type": "gridview",
+            "reference": {
+                "name": "viewConfig",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyGridView4"
+            },
+            "designerId": "a90adf2a-10ae-4abd-8cc1-3ce2759974e7"
+        },
+        {
+            "type": "toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "designer|userClassName": "MyToolbar27"
+            },
+            "designerId": "db90dd4e-1ed5-41a6-9f3b-08be99826964",
+            "cn": [
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton54",
+                        "iconCls": "am-list-add",
+                        "text": "Add"
+                    },
+                    "designerId": "15fb6f2a-8d97-419a-845f-4d0f3f38d233"
+                },
+                {
+                    "type": "tbseparator",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySeparator13"
+                    },
+                    "designerId": "fd4cba33-c9cf-442c-a429-45577034d186"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton55",
+                        "iconCls": "am-list-remove",
+                        "text": "Remove"
+                    },
+                    "designerId": "8033a7dd-8637-4e1e-81a1-60588e4e9cf2"
+                }
+            ]
+        }
+    ]
+}

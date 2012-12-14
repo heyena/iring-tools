@@ -17,10 +17,6 @@ Ext.define('AM.view.nhibernate.CreateRelationForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.createrelationform',
 
-  requires: [
-    'AM.view.nhibernate.RelationsGrid'
-  ],
-
   contextName: '',
   endpoint: '',
   rootNode: '',
@@ -53,9 +49,6 @@ Ext.define('AM.view.nhibernate.CreateRelationForm', {
               scope: me
             }
           }
-        },
-        {
-          xtype: 'relationsgrid'
         }
       ],
       dockedItems: [
@@ -94,10 +87,6 @@ Ext.define('AM.view.nhibernate.CreateRelationForm', {
     if(e.getKey() == e.ENTER) {
 
     }
-  },
-
-  addRelationship: function(relationForm, node, contextName, endpoint) {
-    //TODO
   }
 
 });

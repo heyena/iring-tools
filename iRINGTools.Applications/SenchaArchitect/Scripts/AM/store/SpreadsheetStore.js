@@ -29,6 +29,7 @@ Ext.define('AM.store.SpreadsheetStore', {
       model: 'AM.model.SpreadsheetModel',
       root: {
         expanded: true,
+        loaded: true,
         text: 'WorkBook',
         icon: 'Content/img/excel.png',
         type: 'ExcelWorkbookNode'

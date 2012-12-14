@@ -28,6 +28,10 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
   initComponent: function() {
     var me = this;
 
+    me.addEvents(
+      'createrelation'
+    );
+
     Ext.applyIf(me, {
       defaults: {
         labelWidth: 130,
@@ -213,7 +217,7 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
       node.expand();
 
       var relationNode = node.findChild('text', relationName);
-      // setRelationFields(me.editor, me.rootNode, relationNode, me.contextName, me.endpoint)           
+      me.fireEvent('createrelation', form, grid, relationName);        
     }
   }
 

@@ -91,7 +91,7 @@
                         "implHandler": [
                             "var me = this;\r",
                             "if(e.getKey() == e.ENTER) {\r",
-                            "  \r",
+                            "\r",
                             "}"
                         ],
                         "name": "keydown",
@@ -100,38 +100,6 @@
                     "designerId": "6b2b5a31-ce79-4dcd-b85b-a3f88d7f4229"
                 }
             ]
-        },
-        {
-            "type": "basicfunction",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "addRelationship",
-                "fn": "addRelationship",
-                "designer|params": [
-                    "relationForm",
-                    "node",
-                    "contextName",
-                    "endpoint"
-                ],
-                "implHandler": [
-                    "//TODO"
-                ]
-            },
-            "designerId": "66ecf20b-6725-444c-876f-a77e0f42fd39"
-        },
-        {
-            "type": "linkedinstance",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "designerId": "077a74e9-6610-456b-af49-ba715ff5fdc1",
-            "masterInstanceId": "ExtBox1-ext-gen3617"
         },
         {
             "type": "toolbar",

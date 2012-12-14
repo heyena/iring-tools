@@ -86,6 +86,7 @@
                                 "implHandler": [
                                     "var me = this;\r",
                                     "var form = button.up('relationsform');\r",
+                                    "var grid = form.down('relationsgrid');\r",
                                     "form.addRelationship(form);"
                                 ],
                                 "name": "click",
@@ -146,7 +147,7 @@
                                     "var relation = selected.data.relationName;\r",
                                     "var exist = gridStore.find('relationName', relation);\r",
                                     "if (exist != -1)\r",
-                                    "    gridStore.removeAt(exist);"
+                                    "gridStore.removeAt(exist);"
                                 ],
                                 "name": "click",
                                 "scope": "me"
@@ -156,6 +157,23 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "CustomEvent",
+                "name": "createrelation",
+                "params": [
+                    "form",
+                    "grid"
+                ]
+            },
+            "designerId": "77717003-2ed5-4570-88ce-7220d49f44f7"
         }
     ]
 }

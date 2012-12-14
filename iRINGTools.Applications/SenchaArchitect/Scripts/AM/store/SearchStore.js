@@ -28,7 +28,8 @@ Ext.define('AM.store.SearchStore', {
       storeId: 'SearchStore',
       model: 'AM.model.SearchModel',
       root: {
-        expanded: true
+        expanded: true,
+        loaded: true
       },
       proxy: {
         type: 'ajax',

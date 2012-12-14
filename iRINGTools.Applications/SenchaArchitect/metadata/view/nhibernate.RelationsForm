@@ -155,13 +155,13 @@
                                     "      if(n.data.text.toLowerCase() == record.data.relationName.toLowerCase()) {\r",
                                     "        exitNode = true;\r",
                                     "      }\r",
-                                    "     });\r",
+                                    "    });\r",
                                     "    if(exitNode === false) {\r",
                                     "      node.removeChild(n, true);\r",
                                     "    }\r",
                                     "  });\r",
                                     "} else {\r",
-                                    "  \r",
+                                    "\r",
                                     "}\r",
                                     ""
                                 ],
@@ -268,7 +268,7 @@
                     "}\r",
                     "\r",
                     "gridStore.each(function(relation) {\r",
-                    " if (relation.data.relationName.toLowerCase() == relationName.toLowerCase()) {\r",
+                    "  if (relation.data.relationName.toLowerCase() == relationName.toLowerCase()) {\r",
                     "    message = relationName + ' already exits.';\r",
                     "    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
                     "    return;\r",
@@ -314,14 +314,32 @@
                     "  });\r",
                     "\r",
                     "  if (node.isExpanded() === false)\r",
-                    "    node.expand();\r",
+                    "  node.expand();\r",
                     "\r",
                     "  var relationNode = node.findChild('text', relationName);\r",
-                    " // setRelationFields(me.editor, me.rootNode, relationNode, me.contextName, me.endpoint)           \r",
+                    "  me.fireEvent('createrelation', form, grid, relationName);        \r",
                     "}"
                 ]
             },
             "designerId": "aa5e05cc-2368-494b-8ff1-a68c2b5957e4"
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "CustomEvent1",
+                "name": "createrelation",
+                "params": [
+                    "form",
+                    "grid",
+                    "relationName"
+                ]
+            },
+            "designerId": "a1fa6b29-b8f6-4600-8613-37c81b2d7d86"
         }
     ]
 }

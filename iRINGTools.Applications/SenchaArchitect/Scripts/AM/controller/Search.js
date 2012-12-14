@@ -73,7 +73,9 @@ Ext.define('AM.controller.Search', {
       pan.getEl().mask('Loading...');
       var repo = null;
       var params = store.proxy.extraParams;
-      if (action.node.data.type != "SearchNode" && action.node.data.type != "TemplateNode") {
+      if (action.node.data.type != "SearchNode" && 
+      action.node.data.type != "TemplateNode" &&
+      action.node.data.type != "SubclassesNode") {
         repo = action.node.data.record.Repository;
       }
 

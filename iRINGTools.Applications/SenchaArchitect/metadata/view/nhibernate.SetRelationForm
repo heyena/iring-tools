@@ -6,6 +6,9 @@
     },
     "codeClass": null,
     "userConfig": {
+        "rootNode": "",
+        "endpoint": "",
+        "contextName": "",
         "designer|userClassName": "nhibernate.SetRelationForm",
         "designer|userAlias": "setrelationform",
         "height": null,
@@ -18,6 +21,23 @@
     },
     "id": "ExtBox1-ext-gen21986",
     "designerId": "ef191768-2bd4-46be-864b-6386fbb488a5",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "rootNode",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "endpoint",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "contextName",
+            "type": "string"
+        }
+    ],
     "cn": [
         {
             "type": "label",
@@ -46,7 +66,9 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField39",
+                "disabled": null,
                 "name": "relationshipName",
+                "readOnly": true,
                 "fieldLabel": "Relationship Name",
                 "labelWidth": 160,
                 "allowBlank": false
@@ -63,6 +85,7 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField39",
+                "disabled": null,
                 "name": "objectName",
                 "readOnly": true,
                 "fieldLabel": "Object Name",
@@ -81,14 +104,17 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyComboBox5",
+                "itemId": "relatedObjectCmb",
                 "name": "relatedObjectName",
                 "fieldLabel": "Related Object Name",
                 "labelWidth": 160,
                 "selectOnFocus": true,
-                "editable": false,
                 "queryMode": "local",
-                "store": "RelatedObjectStore",
+                "store": null,
                 "valueField": "value"
+            },
+            "configAlternates": {
+                "store": "array"
             },
             "designerId": "7653805a-1914-4c72-b309-f4128eee9c5a",
             "cn": [
@@ -100,52 +126,41 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "onComboboxSelect",
-                        "fn": "onComboboxSelect",
+                        "designer|userClassName": "onRelatedObjectSelect",
+                        "fn": "onRelatedObjectSelect",
                         "implHandler": [
-                            "var relatedObjectName = record[0].data.text;\r",
+                            "var me = this;\r",
+                            "var form = combo.up('setrelationform');\r",
+                            "var rootNode = form.rootNode;\r",
+                            "var relatedObjectName = records[0].data.text;\r",
                             "\r",
                             "if (relatedObjectName !== '') {\r",
                             "  var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);\r",
-                            "  var relationConfigPanel = me.getForm();\r",
+                            "  var relationConfigPanel = form.getForm();\r",
                             "  var mappingProperties = [];\r",
                             "\r",
                             "  if (relatedDataObjectNode.childNodes[1]) {\r",
                             "    keysNode = relatedDataObjectNode.childNodes[0];\r",
                             "    propertiesNode = relatedDataObjectNode.childNodes[1];\r",
                             "    var ii = 0;\r",
-                            "\r",
-                            "    for (var i = 0; i < keysNode.childNodes.length; i++) {\r",
-                            "      mappingProperties.push([ii, keysNode.childNodes[i].data.text, keysNode.childNodes[i].data.property.columnName]);\r",
+                            "    \r",
+                            "    keysNode.eachChild(function(child) {\r",
+                            "      mappingProperties.push([ii, child.data.text, child.data.property.columnName]);\r",
                             "      ii++;\r",
-                            "    }\r",
+                            "    });\r",
                             "\r",
-                            "    for (var i = 0; i < propertiesNode.childNodes.length; i++) {\r",
-                            "      mappingProperties.push([ii, propertiesNode.childNodes[i].data.text, propertiesNode.childNodes[i].data.property.columnName]);\r",
+                            "    propertiesNode.eachChild(function(child) {\r",
+                            "      mappingProperties.push([ii, child.data.text, child.data.property.columnName]);\r",
                             "      ii++;\r",
-                            "    }\r",
+                            "    });\r",
                             "  }\r",
                             "\r",
-                            "  var mapCombo = relationConfigPanel.findField('mapPropertyName');\r",
-                            "\r",
-                            "  if (mapCombo.store.data) {\r",
-                            "    mapCombo.store.removeAll();\r",
-                            "  }\r",
-                            "  mapCombo.setValue(null);\r",
-                            "  mapCombo.setRawValue(null);\r",
-                            "  mapCombo.store.loadData(mappingProperties);\r",
-                            "  var proxyData = findNodeRelatedObjMap(node, relatedObjectName);\r",
-                            "  var dataGridPanel = me.items.items[7];\r",
-                            "  var gridPane = dataGridPanel.items.items[0];\r",
-                            "  var store = gridPane.store;\r",
-                            "\r",
-                            "  if (store.data) {\r",
-                            "    gridPane.store.removeAll();\r",
-                            "  }\r",
-                            "\r",
-                            "  gridPane.store.loadData(proxyData);\r",
-                            "  dataGridPanel.doLayout();\r",
-                            "  relationConfigPanel.findField('relatedTable').setValue(relatedDataObjectNode.data.property.tableName);\r",
+                            "  var mapCombo = form.down('#mapPropertyNameCmb');\r",
+                            "  mapCombo.store = Ext.create('Ext.data.SimpleStore', {\r",
+                            "    fields: ['value', 'text', 'name'],\r",
+                            "    autoLoad: true,\r",
+                            "    data: mappingProperties\r",
+                            "  });\r",
                             "}"
                         ],
                         "name": "select",
@@ -154,6 +169,84 @@
                     "designerId": "98d69f33-c1c9-48fb-9cc7-7c8467854579"
                 }
             ]
+        },
+        {
+            "type": "combobox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyComboBox6",
+                "name": "relationType",
+                "fieldLabel": "Relation Type",
+                "labelWidth": 160,
+                "allowBlank": false,
+                "queryMode": "local",
+                "store": "[[0, 'OneToOne'], [1, 'OneToMany']]"
+            },
+            "configAlternates": {
+                "store": "array"
+            },
+            "designerId": "7db78196-5fb8-4563-a7cb-27a9b32fb020"
+        },
+        {
+            "type": "combobox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyComboBox7",
+                "itemId": "propertyNameCmb",
+                "name": "propertyName",
+                "fieldLabel": "Property Name",
+                "labelWidth": 160,
+                "queryMode": "local"
+            },
+            "designerId": "5c0a786e-bf5d-4120-a623-dbe00cd14fa3",
+            "cn": [
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "onPropertySelect",
+                        "fn": "onPropertySelect",
+                        "implHandler": [
+                            ""
+                        ],
+                        "name": "select",
+                        "scope": "me"
+                    },
+                    "designerId": "8e5ccde5-be98-46c4-8362-8348949db8a8"
+                }
+            ]
+        },
+        {
+            "type": "combobox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyComboBox8",
+                "itemId": "mapPropertyNameCmb",
+                "name": "mapPropertyName",
+                "fieldLabel": "Mapping Property",
+                "labelWidth": 160,
+                "queryMode": "local"
+            },
+            "designerId": "7134a791-3d07-445c-aec3-a5c0cb5b0fcd"
         },
         {
             "type": "linkedinstance",
