@@ -24,12 +24,12 @@ Ext.define('AM.store.MappingStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
-      autoLoad: true,
       storeId: 'MappingStore',
       model: 'AM.model.MappingModel',
       root: {
         type: 'MappingNode',
-        expanded: true
+        expanded: true,
+        loaded: true
       },
       proxy: {
         type: 'ajax',

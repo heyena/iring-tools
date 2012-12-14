@@ -836,6 +836,23 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "setRelationForm",
+                "autoCreate": true,
+                "forceCreate": true,
+                "ref": "setRelationForm",
+                "selector": "setRelationForm",
+                "xtype": "setrelationform"
+            },
+            "designerId": "c43c8869-aac5-46c0-8fa1-dc17b2c940fb"
+        },
+        {
+            "type": "controllerref",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
                 "designer|userClassName": "dirTree",
                 "ref": "dirTree",
                 "selector": "viewport > directorypanel > directorytree",
@@ -891,7 +908,7 @@
                     "  content.add(panel);\r",
                     "\r",
                     "  tree = panel.down('nhibernatetree');\r",
-                    "  \r",
+                    "\r",
                     "  tree.dirNode = dirNode.internalId;\r",
                     "  var treeStore = tree.getStore();\r",
                     "  var treeProxy = treeStore.getProxy();\r",
@@ -930,10 +947,10 @@
                     "      }\r",
                     "    } else {\r",
                     "      if (dbInfo !== null && dbInfo !== undefined)\r",
-                    "        dirNode.data.record.dbInfo = dbInfo;\r",
+                    "      dirNode.data.record.dbInfo = dbInfo;\r",
                     "\r",
                     "      if (dbDict !== null && dbDict !== undefined)\r",
-                    "        dirNode.data.record.dbDict = dbDict;\r",
+                    "      dirNode.data.record.dbDict = dbDict;\r",
                     "      me.showConnectionStringForm(panel);\r",
                     "      tree.disable();\r",
                     "\r",
@@ -1010,7 +1027,7 @@
                     "    me.showRelationsForm(panel);\r",
                     "    break;\r",
                     "    case 'RELATIONSHIP':\r",
-                    "    //setRelationFields(editor, rootNode, dataNode, contextName, endpoint);\r",
+                    "    me.showSetRelationForm(panel);\r",
                     "    break;\r",
                     "  }\r",
                     "}\r",
@@ -1498,6 +1515,7 @@
                     "var grid = form.down('relationsgrid');\r",
                     "\r",
                     "var gridStore = grid.getStore();\r",
+                    "gridStore.removeAll();\r",
                     "var dataTree = nhibernatePanel.down('nhibernatetree');\r",
                     "var dirNode = me.getDirNode(dataTree.dirNode);\r",
                     "var treeNode = dataTree.getSelectionModel().getSelection()[0];\r",
@@ -1511,7 +1529,7 @@
                     "grid.rootNode = form.rootNode = dataTree.getRootNode();\r",
                     "\r",
                     "treeNode.eachChild(function(n) {\r",
-                    "  gridStore.add({'relationName': n});\r",
+                    "  gridStore.add({'relationName': n.data.text});\r",
                     "});\r",
                     "\r",
                     "panel = nhibernatePanel.down('#nhibernateContent');\r",
@@ -1525,6 +1543,81 @@
                 ]
             },
             "designerId": "1663ffc9-1ed4-4b58-b835-44cf663e8664"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "showSetRelationForm",
+                "fn": "showSetRelationForm",
+                "designer|params": [
+                    "nhibernatepanel"
+                ],
+                "implHandler": [
+                    "var me = this;\r",
+                    "var  panel = nhibernatepanel.down('#nhibernateContent');\r",
+                    "var dataTree = nhibernatepanel.down('nhibernatetree');\r",
+                    "var dataNode = dataTree.getSelectedNode();\r",
+                    "var dirNode = me.getDirNode(dataTree.dirNode);\r",
+                    "var relationFolderNode, contextName, endpoint, rootNode, relationName;\r",
+                    "\r",
+                    "rootNode = dataTree.getRootNode();\r",
+                    "endpoint = dirNode.data.record.endpoint;\r",
+                    "contextName = dirNode.data.record.context;\r",
+                    "\r",
+                    "if(dataNode.data.type =='relationships') {\r",
+                    "   relationFolderNode = dataNode;\r",
+                    "   if(dataNode.firstChild)\r",
+                    "    relationName = dataNode.firstChild.data.text;\r",
+                    "  \r",
+                    "} else {\r",
+                    "   relationFolderNode = dataNode.parentNode;\r",
+                    "   relationName = dataNode.data.text;\r",
+                    "}\r",
+                    "\r",
+                    "var dataObjectNode = relationFolderNode.parentNode;\r",
+                    "var relatedObjects = [];\r",
+                    "var thisObj = dataObjectNode.data.text;\r",
+                    "var i = 0;\r",
+                    "rootNode.eachChild(function(child) {\r",
+                    "  if(child.data.text != thisObj) {\r",
+                    "    relatedObjects.push([i.toString(), child.data.text, child.data.property.tableName]);\r",
+                    "    i++;\r",
+                    "  }\r",
+                    "});\r",
+                    "var ifExist;\r",
+                    "var relAttribute = null;\r",
+                    "var relateObjStr;\r",
+                    "var nodeRelateObj;\r",
+                    "var rindex = 0;\r",
+                    "\r",
+                    "\r",
+                    "var form = me.getSetRelationForm();\r",
+                    "var relatedObjectCombo = form.down('#relatedObjectCmb');\r",
+                    "relatedObjectCombo.store = Ext.create('Ext.data.SimpleStore', {\r",
+                    "  fields: ['value', 'text'],\r",
+                    "  autoLoad: true,\r",
+                    "  data: relatedObjects\r",
+                    "});\r",
+                    "form.endpoint = endpoint;\r",
+                    "form.contextName = contextName;\r",
+                    "form.rootNode = rootNode;\r",
+                    "form.getForm().findField('relationshipName').setValue(relationName);\r",
+                    "form.getForm().findField('objectName').setValue(thisObj);\r",
+                    "\r",
+                    "\r",
+                    "\r",
+                    "panel.removeAll();\r",
+                    "panel.add(form);\r",
+                    "panel.doLayout();\r",
+                    ""
+                ]
+            },
+            "designerId": "dbdfd728-a2ce-4681-bd9a-e37007361f1c"
         },
         {
             "type": "basicfunction",
@@ -1994,6 +2087,10 @@
                     "folder.dataProperties = [];\r",
                     "folder.dataRelationships = [];\r",
                     "\r",
+                    "folderNode.eachChild(function(child) {\r",
+                    "  \r",
+                    "});\r",
+                    "                     \r",
                     "for (var j = 0; j < folderNode.childNodes.length; j++) {\r",
                     "  if (folderNode.childNodes[1])\r",
                     "  var propertyFolderNode = folderNode.childNodes[1];    \r",
@@ -2562,6 +2659,28 @@
                 "designer|controlQuery": "selecttablesform button[action=resetobjects]"
             },
             "designerId": "a71a2f2f-bc04-43cd-bf27-8743c34357bf"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "onFormCreaterelation",
+                "fn": "onFormCreaterelation",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var panel = form.up('nhibernatepanel');\r",
+                    "me.showSetRelationForm(panel);"
+                ],
+                "name": "createrelation",
+                "scope": "me",
+                "designer|targetType": "nhibernate.RelationsForm",
+                "designer|controlQuery": "form"
+            },
+            "designerId": "eef83448-eb62-4dcc-bdc1-93c50fb42388"
         }
     ]
 }

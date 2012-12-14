@@ -24,13 +24,13 @@ Ext.define('AM.store.NHibernateTreeStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
-      autoLoad: false,
       storeId: 'NHibernateTreeStore',
       model: 'AM.model.NHibernateTreeModel',
       root: {
         expanded: true,
         text: 'Data Objects',
-        iconCls: 'folder'
+        iconCls: 'folder',
+        loaded: true
       },
       proxy: {
         type: 'ajax',

@@ -21,6 +21,9 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
     'AM.view.nhibernate.RelationPropertyGrid'
   ],
 
+  rootNode: '',
+  endpoint: '',
+  contextName: '',
   bodyStyle: 'background:#eee;padding:10 0 0 10',
 
   initComponent: function() {
@@ -38,6 +41,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           xtype: 'textfield',
           anchor: '100%',
           name: 'relationshipName',
+          readOnly: true,
           fieldLabel: 'Relationship Name',
           labelWidth: 160,
           allowBlank: false
@@ -54,20 +58,62 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         {
           xtype: 'combobox',
           anchor: '100%',
+          itemId: 'relatedObjectCmb',
           name: 'relatedObjectName',
           fieldLabel: 'Related Object Name',
           labelWidth: 160,
           selectOnFocus: true,
-          editable: false,
           queryMode: 'local',
-          store: 'RelatedObjectStore',
           valueField: 'value',
           listeners: {
             select: {
-              fn: me.onComboboxSelect,
+              fn: me.onRelatedObjectSelect,
               scope: me
             }
           }
+        },
+        {
+          xtype: 'combobox',
+          anchor: '100%',
+          name: 'relationType',
+          fieldLabel: 'Relation Type',
+          labelWidth: 160,
+          allowBlank: false,
+          queryMode: 'local',
+          store: [
+            [
+              0,
+              'OneToOne'
+            ],
+            [
+              1,
+              'OneToMany'
+            ]
+          ]
+        },
+        {
+          xtype: 'combobox',
+          anchor: '100%',
+          itemId: 'propertyNameCmb',
+          name: 'propertyName',
+          fieldLabel: 'Property Name',
+          labelWidth: 160,
+          queryMode: 'local',
+          listeners: {
+            select: {
+              fn: me.onPropertySelect,
+              scope: me
+            }
+          }
+        },
+        {
+          xtype: 'combobox',
+          anchor: '100%',
+          itemId: 'mapPropertyNameCmb',
+          name: 'mapPropertyName',
+          fieldLabel: 'Mapping Property',
+          labelWidth: 160,
+          queryMode: 'local'
         },
         {
           xtype: 'relationPropertyGrid'
@@ -78,12 +124,15 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
     me.callParent(arguments);
   },
 
-  onComboboxSelect: function(combo, records, options) {
-    var relatedObjectName = record[0].data.text;
+  onRelatedObjectSelect: function(combo, records, options) {
+    var me = this;
+    var form = combo.up('setrelationform');
+    var rootNode = form.rootNode;
+    var relatedObjectName = records[0].data.text;
 
     if (relatedObjectName !== '') {
       var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
-      var relationConfigPanel = me.getForm();
+      var relationConfigPanel = form.getForm();
       var mappingProperties = [];
 
       if (relatedDataObjectNode.childNodes[1]) {
@@ -91,38 +140,28 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         propertiesNode = relatedDataObjectNode.childNodes[1];
         var ii = 0;
 
-        for (var i = 0; i < keysNode.childNodes.length; i++) {
-          mappingProperties.push([ii, keysNode.childNodes[i].data.text, keysNode.childNodes[i].data.property.columnName]);
+        keysNode.eachChild(function(child) {
+          mappingProperties.push([ii, child.data.text, child.data.property.columnName]);
           ii++;
-        }
+        });
 
-        for (var i = 0; i < propertiesNode.childNodes.length; i++) {
-          mappingProperties.push([ii, propertiesNode.childNodes[i].data.text, propertiesNode.childNodes[i].data.property.columnName]);
+        propertiesNode.eachChild(function(child) {
+          mappingProperties.push([ii, child.data.text, child.data.property.columnName]);
           ii++;
-        }
+        });
       }
 
-      var mapCombo = relationConfigPanel.findField('mapPropertyName');
-
-      if (mapCombo.store.data) {
-        mapCombo.store.removeAll();
-      }
-      mapCombo.setValue(null);
-      mapCombo.setRawValue(null);
-      mapCombo.store.loadData(mappingProperties);
-      var proxyData = findNodeRelatedObjMap(node, relatedObjectName);
-      var dataGridPanel = me.items.items[7];
-      var gridPane = dataGridPanel.items.items[0];
-      var store = gridPane.store;
-
-      if (store.data) {
-        gridPane.store.removeAll();
-      }
-
-      gridPane.store.loadData(proxyData);
-      dataGridPanel.doLayout();
-      relationConfigPanel.findField('relatedTable').setValue(relatedDataObjectNode.data.property.tableName);
+      var mapCombo = form.down('#mapPropertyNameCmb');
+      mapCombo.store = Ext.create('Ext.data.SimpleStore', {
+        fields: ['value', 'text', 'name'],
+        autoLoad: true,
+        data: mappingProperties
+      });
     }
+  },
+
+  onPropertySelect: function(combo, records, options) {
+
   }
 
 });

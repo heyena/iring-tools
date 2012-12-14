@@ -23,6 +23,10 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
   initComponent: function() {
     var me = this;
 
+    me.addEvents(
+      'createrelation'
+    );
+
     Ext.applyIf(me, {
       viewConfig: {
 
@@ -78,6 +82,7 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
   onAddClick: function(button, e, options) {
     var me = this;
     var form = button.up('relationsform');
+    var grid = form.down('relationsgrid');
     form.addRelationship(form);
   },
 

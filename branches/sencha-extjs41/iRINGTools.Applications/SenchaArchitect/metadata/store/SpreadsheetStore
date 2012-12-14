@@ -11,7 +11,7 @@
         "storeId": "SpreadsheetTreeStore",
         "model": "SpreadsheetModel",
         "root": [
-            "{ expanded: true, text: 'WorkBook', icon: 'Content/img/excel.png', type: 'ExcelWorkbookNode'}"
+            "{ expanded: true, loaded: true, text: 'WorkBook', icon: 'Content/img/excel.png', type: 'ExcelWorkbookNode'}"
         ]
     },
     "id": "ExtBox1-ext-gen42785",
