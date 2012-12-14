@@ -466,7 +466,7 @@ namespace org.iringtools.adapter.projection
 
       if (objProp == null)
       {
-        throw new Exception("Object property [" + pair.Key + "] not found.");
+        _logger.Error("Object property [" + pair.Key + "] not found.");
       }
 
       try
@@ -509,10 +509,21 @@ namespace org.iringtools.adapter.projection
 
     protected void SetAppCode(IDataObject dataObject)
     {
-      if (_settings["AppCodeProperty"] != null && _settings["SenderProjectName"] != null && _settings["SenderApplicationName"] != null)
+      string senderContext = _settings["SenderProjectName"];
+      string senderApp = _settings["SenderApplicationName"];
+      string appCodeProperty = _settings["AppCodeProperty"];
+      string includeAppCodeContext = _settings["IncludeAppCodeContext"];
+
+      if (appCodeProperty != null && senderApp != null)
       {
-        dataObject.SetPropertyValue(_settings["AppCodeProperty"],
-          _settings["SenderProjectName"] + "." + _settings["SenderApplicationName"]);
+        if (includeAppCodeContext != null && includeAppCodeContext.ToLower() == "true" && senderContext != null)
+        {
+          dataObject.SetPropertyValue(appCodeProperty, senderContext + "." + senderApp);
+        }
+        else
+        {
+          dataObject.SetPropertyValue(appCodeProperty, senderApp);
+        }
       }
     }
 

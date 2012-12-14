@@ -113,11 +113,36 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
     public void GetDictionary(string project, string app, string format)
     {
-      format = MapContentType(format);
+      try
+      {
+        format = MapContentType(format);
+      
+        bool isAsync = false;
+        string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
 
-      DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+        if (asyncHeader != null && asyncHeader.ToLower() == "true")
+        {
+          isAsync = true;
+        }
 
-      _adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
+        if (isAsync)
+        {
+          string statusUrl = _adapterProvider.AsyncGetDictionary(project, app);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+        }
+        else
+        {
+          DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+          _adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
+        }
+      }
+      catch (Exception ex)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(ex.Message);
+      }
     }
 
     [Description("Gets specified object definition of an application.")]
@@ -595,6 +620,37 @@ namespace org.iringtools.services
         ExceptionHandler(ex);
       }
     }
+
+
+    #region Async request queue
+    [Description("Gets status of a asynchronous request.")]
+    [WebGet(UriTemplate = "/requests/{id}")]
+    public void GetRequestStatus(string id)
+    {
+      RequestStatus status = null;
+
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        status = _adapterProvider.GetRequestStatus(id);
+
+        if (status.State == State.NotFound)
+        {
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+        }
+      }
+      catch (Exception ex)
+      {
+        status = new RequestStatus()
+        {
+          State = State.Error,
+          Message = ex.Message
+        };
+      }
+
+      _adapterProvider.FormatOutgoingMessage<RequestStatus>(status, "application/xml", true);
+    }
+    #endregion
 
     #region "All" Methods
     [Description("Gets object definitions of an application.")]

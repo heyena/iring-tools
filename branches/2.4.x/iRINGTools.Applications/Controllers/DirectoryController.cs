@@ -282,37 +282,40 @@ namespace org.iringtools.web.controllers
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-              foreach (DataObject dataObject in dictionary.dataObjects)
+              if (dictionary != null && dictionary.dataObjects != null)
               {
-                JsonTreeNode node = new JsonTreeNode
+                foreach (DataObject dataObject in dictionary.dataObjects)
                 {
-                  nodeType = "async",
-                  type = "DataObjectNode",
-                  iconCls = "treeObject",
-                  id = context + "/DataObject/" + dataObject.objectName,
-                  text = dataObject.objectName,
-                  expanded = false,
-                  leaf = false,
-                  children = null,
-                  record = new
+                  JsonTreeNode node = new JsonTreeNode
                   {
-                    Name = dataObject.objectName,
-                    DataLayer = dataLayer
+                    nodeType = "async",
+                    type = "DataObjectNode",
+                    iconCls = "treeObject",
+                    id = context + "/DataObject/" + dataObject.objectName,
+                    text = dataObject.objectName,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = new
+                    {
+                      Name = dataObject.objectName,
+                      DataLayer = dataLayer
+                    }
+                  };
+
+                  if (dataObject.isRelatedOnly)
+                  {
+                    node.hidden = true;
                   }
-                };
 
-                if (dataObject.isRelatedOnly)
-                {
-                  node.hidden = true;
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", dataObject.objectName);
+                  nodes.Add(node);
+
                 }
-
-                node.property = new Dictionary<string, string>();
-                node.property.Add("Name", dataObject.objectName);
-                nodes.Add(node);
-
               }
-              return Json(nodes, JsonRequestBehavior.AllowGet);
 
+              return Json(nodes, JsonRequestBehavior.AllowGet);
             }
           case "DataObjectNode":
             {

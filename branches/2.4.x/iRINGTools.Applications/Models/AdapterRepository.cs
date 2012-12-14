@@ -15,54 +15,56 @@ using iRINGTools.Web.Helpers;
 using System.Text;
 using System.Net;
 using System.IO;
+using System.Threading.Tasks;
+using System.Threading;
 
 
 namespace iRINGTools.Web.Models
 {
   public class AdapterRepository : IAdapterRepository
   {
-    //private NameValueCollection _settings = null;
-    private WebHttpClient _adapterServiceClient = null;
-    private WebHttpClient _dataServiceClient = null;
-    private WebHttpClient _hibernateServiceClient = null;
-    private WebHttpClient _referenceDataServiceClient = null;
-    //private string _referenceDataServiceURI = string.Empty;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
 
+    private ServiceSettings _settings;
+    private string _proxyHost;
+    private string _proxyPort;
+    private string _adapterServiceUri = null;
+    private string _dataServiceUri = null;
+    private string _hibernateServiceUri = null;
+    private string _referenceDataServiceUri = null;
+    
     [Inject]
     public AdapterRepository()
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
 
-      ServiceSettings _settings = new ServiceSettings();
+      _settings = new ServiceSettings();
       _settings.AppendSettings(settings);
 
-      #region initialize webHttpClient for converting old mapping
-      string proxyHost = _settings["ProxyHost"];
-      string proxyPort = _settings["ProxyPort"];
-      string adapterServiceUri = _settings["AdapterServiceUri"];
-      string dataServiceUri = _settings["DataServiceUri"];
-      string hibernateServiceUri = _settings["NHibernateServiceUri"];
-      string referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+      _proxyHost = _settings["ProxyHost"];
+      _proxyPort = _settings["ProxyPort"];
 
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      _adapterServiceUri = _settings["AdapterServiceUri"];
+      _dataServiceUri = _settings["DataServiceUri"];
+      _hibernateServiceUri = _settings["NHibernateServiceUri"];
+      _referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+    }
+
+    private WebHttpClient CreateWebClient(string baseUri)
+    {
+      WebHttpClient client = null;
+
+      if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        //WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
         WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-
-        _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
-        _dataServiceClient = new WebHttpClient(dataServiceUri, null, webProxy);
-        _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
-        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri, null, webProxy);
+        client = new WebHttpClient(baseUri, null, webProxy);
       }
       else
       {
-        _adapterServiceClient = new WebHttpClient(adapterServiceUri);
-        _dataServiceClient = new WebHttpClient(dataServiceUri);
-        _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
-        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri);
+        client = new WebHttpClient(baseUri);
       }
-      #endregion
+
+      return client;
     }
 
     public ScopeProjects GetScopes()
@@ -73,7 +75,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _adapterServiceClient.Get<ScopeProjects>("/scopes");
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        obj = client.Get<ScopeProjects>("/scopes");
 
         _logger.Debug("Successfully called Adapter.");
       }
@@ -92,7 +95,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _adapterServiceClient.Get<DataLayers>("/datalayers");
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        obj = client.Get<DataLayers>("/datalayers");
       }
       catch (Exception ex)
       {
@@ -107,7 +111,8 @@ namespace iRINGTools.Web.Models
       Entity entity = new Entity();
       try
       {
-        entity = _referenceDataServiceClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
+        WebHttpClient client = new WebHttpClient(_referenceDataServiceUri);
+        entity = client.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
       }
       catch (Exception ex)
       {
@@ -141,20 +146,85 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public DataDictionary GetDictionary(string scopeName, string applicationName)
+    private DataDictionary WaitForDictionaryResponse(string statusUrl)
     {
-      DataDictionary obj = null;
+      DataDictionary dictionary = null;
 
       try
       {
-        obj = _dataServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName), true);
+        long timeoutCount = 0;
+
+        long asyncTimeout = 1800;  // seconds
+        if (_settings["AsyncTimeout"] != null)
+        {
+          long.TryParse(_settings["AsyncTimeout"], out asyncTimeout);
+        }
+        asyncTimeout *= 1000;  // convert to milliseconds
+
+        int asyncPollingInterval = 2;  // seconds
+        if (_settings["AsyncPollingInterval"] != null)
+        {
+          int.TryParse(_settings["AsyncPollingInterval"], out asyncPollingInterval);
+        }
+        asyncPollingInterval *= 1000;  // convert to milliseconds
+
+        RequestStatus requestStatus = null;
+
+        while (timeoutCount < asyncTimeout)
+        {
+          WebHttpClient client = new WebHttpClient(_dataServiceUri);
+          requestStatus = client.Get<RequestStatus>(statusUrl);
+
+          if (requestStatus.State != State.InProgress)
+            break;
+
+          Thread.Sleep(asyncPollingInterval);
+          timeoutCount += asyncPollingInterval;
+        }
+
+        dictionary = Utility.Deserialize<DataDictionary>(requestStatus.ResponseText, true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+        throw ex;
+      }
+
+      return dictionary;
+    }
+
+    public DataDictionary GetDictionary(string scopeName, string applicationName)
+    {
+      DataDictionary dictionary = null;
+
+      try
+      {
+        WebHttpClient client = new WebHttpClient(_dataServiceUri);        
+        string asyncGetDictionary = _settings["AsyncGetDictionary"];
+
+        if (asyncGetDictionary != null && asyncGetDictionary.ToLower() == "false")
+        {
+          dictionary = client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName), true);
+        }
+        else
+        {
+          client.Async = true;
+          string statusUrl = client.GetMessage(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName));
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          dictionary = WaitForDictionaryResponse(statusUrl);
+        }
       }
       catch (Exception ex)
       {
         _logger.Error(ex.ToString());
       }
 
-      return obj;
+      return dictionary;
     }
 
     public Mapping GetMapping(string scopeName, string applicationName)
@@ -163,7 +233,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _adapterServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);        
+        obj = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
       }
       catch (Exception ex)
       {
@@ -179,7 +250,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _adapterServiceClient.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);        
+        obj = client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
       }
       catch (Exception ex)
       {
@@ -204,8 +276,8 @@ namespace iRINGTools.Web.Models
           )
         );
 
-        obj = _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
-
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);        
+        obj = client.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
       }
       catch (Exception ex)
       {
@@ -243,7 +315,8 @@ namespace iRINGTools.Web.Models
           Description = description
         };
 
-        obj = _adapterServiceClient.Post<ScopeProject>("/scopes", scope, true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        obj = client.Post<ScopeProject>("/scopes", scope, true);
       }
       catch (Exception ex)
       {
@@ -266,7 +339,8 @@ namespace iRINGTools.Web.Models
         };
 
         string uri = string.Format("/scopes/{0}", name);
-        obj = _adapterServiceClient.Post<ScopeProject>(uri, scope, true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        obj = client.Post<ScopeProject>(uri, scope, true);
       }
       catch (Exception ex)
       {
@@ -283,7 +357,8 @@ namespace iRINGTools.Web.Models
       try
       {
         string uri = String.Format("/scopes/{0}/delete", name);
-        obj = _adapterServiceClient.Get<string>(uri, true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        obj = client.Get<string>(uri, true);
       }
       catch (Exception ex)
       {
@@ -300,7 +375,8 @@ namespace iRINGTools.Web.Models
       try
       {
         string uri = String.Format("/scopes/{0}/apps", scopeName);
-        obj = _adapterServiceClient.Post<ScopeApplication>(uri, application, true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        obj = client.Post<ScopeApplication>(uri, application, true);
       }
       catch (Exception ex)
       {
@@ -317,7 +393,8 @@ namespace iRINGTools.Web.Models
       try
       {
         string uri = String.Format("/scopes/{0}/apps/{1}", scopeName, applicationName);
-        obj = _adapterServiceClient.Post<ScopeApplication>(uri, application, true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        obj = client.Post<ScopeApplication>(uri, application, true);
       }
       catch (Exception ex)
       {
@@ -334,7 +411,8 @@ namespace iRINGTools.Web.Models
       try
       {
         string uri = String.Format("/scopes/{0}/apps/{1}/delete", scopeName, applicationName);
-        obj = _adapterServiceClient.Get<string>(uri, true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        obj = client.Get<string>(uri, true);
       }
       catch (Exception ex)
       {
@@ -345,20 +423,42 @@ namespace iRINGTools.Web.Models
     }
 
     public Response Refresh(string scope, string application)
-    {      
-      return _adapterServiceClient.Get<Response>(String.Format("/{0}/{1}/refresh", scope, application));
+    {
+      Response response;
+
+      try
+      {
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        response = client.Get<Response>(String.Format("/{0}/{1}/refresh", scope, application));
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+
+        response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
+      }
+
+      return response;
     }
 
     public Response Refresh(string scope, string application, string dataObjectName)
     {
-      return _adapterServiceClient.Get<Response>(String.Format("/{0}/{1}/{2}/refresh", scope, application, dataObjectName));
+      WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+      Response response = client.Get<Response>(String.Format("/{0}/{1}/{2}/refresh", scope, application, dataObjectName));
+      return response;
     }
     
     public Response UpdateDataLayer(MemoryStream dataLayerStream)
     {
       try
       {
-        return Utility.Deserialize<Response>(_adapterServiceClient.PostStream("/datalayers", dataLayerStream), true);
+        WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+        Response response = Utility.Deserialize<Response>(client.PostStream("/datalayers", dataLayerStream), true);
+        return response;
       }
       catch (Exception ex)
       {
@@ -377,7 +477,8 @@ namespace iRINGTools.Web.Models
     #region NHibernate Configuration Wizard support methods
     public DataProviders GetDBProviders()
     {
-      return _hibernateServiceClient.Get<DataProviders>("/providers");
+      WebHttpClient client = new WebHttpClient(_hibernateServiceUri);
+      return client.Get<DataProviders>("/providers");
     }
 
     public string SaveDBDictionary(string scope, string application, string tree)
@@ -394,7 +495,8 @@ namespace iRINGTools.Web.Models
       string postResult = null;
       try
       {
-        postResult = _hibernateServiceClient.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
+        WebHttpClient client = new WebHttpClient(_hibernateServiceUri);
+        postResult = client.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
       }
       catch (Exception ex)
       {
@@ -405,7 +507,8 @@ namespace iRINGTools.Web.Models
 
     public DatabaseDictionary GetDBDictionary(string scope, string application)
     {
-      DatabaseDictionary dbDictionary = _hibernateServiceClient.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+      WebHttpClient client = new WebHttpClient(_hibernateServiceUri);
+      DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
 
       string connStr = dbDictionary.ConnectionString;
       if (!String.IsNullOrEmpty(connStr))
@@ -432,7 +535,8 @@ namespace iRINGTools.Web.Models
       request.Add("dbPassword", dbPassword);
       request.Add("serName", serName);
 
-      return _hibernateServiceClient.Post<Request, List<string>>(uri, request, true);
+      WebHttpClient client = new WebHttpClient(_hibernateServiceUri);
+      return client.Post<Request, List<string>>(uri, request, true);
     }
 
     // use appropriate icons especially node with children
@@ -457,7 +561,8 @@ namespace iRINGTools.Web.Models
       request.Add("tableNames", tableNames);
       request.Add("serName", serName);
 
-      List<DataObject> dataObjects = _hibernateServiceClient.Post<Request, List<DataObject>>(uri, request, true);
+      WebHttpClient client = new WebHttpClient(_hibernateServiceUri);
+      List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
 
       try
       {
@@ -583,7 +688,9 @@ namespace iRINGTools.Web.Models
 
     public Response RegenAll()
     {
-      return _adapterServiceClient.Get<Response>("/generate");
+      WebHttpClient client = new WebHttpClient(_adapterServiceUri);
+      Response response = client.Get<Response>("/generate");
+      return response;
     }
     #endregion
   }
