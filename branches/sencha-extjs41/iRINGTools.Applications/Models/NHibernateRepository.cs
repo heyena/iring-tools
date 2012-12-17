@@ -368,14 +368,14 @@ namespace org.iringtools.web.Models
       }
 
       if (hasDBDictionary)
-        return dBOjbectsAndDBDictionary(tree, contextName, endpoint, baseUrl, databaseDictionary);
+        return DbOjbectsAndDBDictionary(tree, contextName, endpoint, baseUrl, databaseDictionary);
 
       return tree;
     }
 
     //rootNode(dataObjectNode) is from database tables
     //dbDict(dataObject) is from database dictionary
-    private Tree dBOjbectsAndDBDictionary(Tree tree, string contextName, string endpoint, string baseUrl, DatabaseDictionary dbDict)
+    private Tree DbOjbectsAndDBDictionary(Tree tree, string contextName, string endpoint, string baseUrl, DatabaseDictionary dbDict)
     {
       string[] relationTypeStr = { "OneToOne", "OneToMany" };
       JsonTreeNode hiddenNode = null;
@@ -664,7 +664,7 @@ namespace org.iringtools.web.Models
               relationNode.relatedObjMap = relatedObjMap;
               relationNode.objectName = dataObjectNode.text;
               relationNode.relatedObjectName = relation.relatedObjectName;
-              relationNode.relatedTableName = getRelatedTableName(relation.relatedObjectName, dbDict);
+              relationNode.relatedTableName = GetRelatedTableName(relation.relatedObjectName, dbDict);
               relationNode.relationshipType = relation.relationshipType.ToString();
               relationNode.relationshipTypeIndex = ((int)relation.relationshipType).ToString();
               relationNode.record = new
@@ -677,9 +677,9 @@ namespace org.iringtools.web.Models
                 Dictionary<string, string> mapItem = new Dictionary<string, string>()
                 {
 						      {"dataPropertyName", relation.propertyMaps[kjj].dataPropertyName},
-                  {"dataColumnName", getColumnName(dataObject, relation.propertyMaps[kjj].dataPropertyName)},
+                  {"dataColumnName", GetColumnName(dataObject, relation.propertyMaps[kjj].dataPropertyName)},
 						      {"relatedPropertyName", relation.propertyMaps[kjj].relatedPropertyName},
-                  {"relatedColumnName", getColumnName(GetRelatedDataObject(relationNode.relatedTableName, dbDict), relation.propertyMaps[kjj].relatedPropertyName)}
+                  {"relatedColumnName", GetColumnName(GetRelatedDataObject(relationNode.relatedTableName, dbDict), relation.propertyMaps[kjj].relatedPropertyName)}
                 };
                 mapArray.Add(mapItem);
               }
@@ -699,39 +699,21 @@ namespace org.iringtools.web.Models
     {
       if (dbDict == null)
         return null;
-
-      for (int i = 0; i < dbDict.dataObjects.Count; i++)
-      {
-        if (relatedTableName.ToUpper() == dbDict.dataObjects[i].tableName.ToUpper())
-          return dbDict.dataObjects[i];
-      }
-      return null;
+      return dbDict.dataObjects.FirstOrDefault(d => d.tableName.Equals(relatedTableName, StringComparison.InvariantCultureIgnoreCase)); 
     }
 
-    private string getRelatedTableName(string relatedObjectName, DatabaseDictionary dbDict)
+    private string GetRelatedTableName(string relatedObjectName, DatabaseDictionary dbDict)
     {
       if (dbDict == null)
         return "";
-
-      for (int i = 0; i < dbDict.dataObjects.Count; i++)
-      {
-        if (relatedObjectName.ToUpper() == dbDict.dataObjects[i].objectName.ToUpper())
-          return dbDict.dataObjects[i].tableName;
-      }
-      return "";
+      return dbDict.dataObjects.FirstOrDefault(r => r.objectName.Equals(relatedObjectName, StringComparison.InvariantCultureIgnoreCase)).tableName;
     }    
 
-    private string getColumnName(DataObject dataObject, string propertyName)
+    private string GetColumnName(DataObject dataObject, string propertyName)
     {
       if (dataObject == null)
         return "";
-
-      for (int i = 0; i < dataObject.dataProperties.Count; i++)
-      {
-        if (propertyName.ToUpper() == dataObject.dataProperties[i].propertyName.ToUpper())
-          return dataObject.dataProperties[i].columnName;
-      }
-      return "";
+      return dataObject.dataProperties.FirstOrDefault(p => p.columnName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase)).columnName;
     }
 
     private static Boolean HasShown(IList<string> shownArray, string text)

@@ -21,13 +21,7 @@ Ext.define('AM.model.PropertyMapModel', {
       name: 'property'
     },
     {
-      name: 'columnName'
-    },
-    {
       name: 'relatedProperty'
-    },
-    {
-      name: 'relatedCulumnName'
     }
   ]
 });

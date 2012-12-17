@@ -9,6 +9,7 @@
         "rootNode": "",
         "endpoint": "",
         "contextName": "",
+        "node": "",
         "designer|userClassName": "nhibernate.SetRelationForm",
         "designer|userAlias": "setrelationform",
         "height": null,
@@ -35,6 +36,11 @@
         {
             "group": "(Custom Properties)",
             "name": "contextName",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "node",
             "type": "string"
         }
     ],
@@ -110,7 +116,6 @@
                 "labelWidth": 160,
                 "selectOnFocus": true,
                 "queryMode": "local",
-                "store": null,
                 "valueField": "value"
             },
             "configAlternates": {
@@ -143,7 +148,7 @@
                             "    keysNode = relatedDataObjectNode.childNodes[0];\r",
                             "    propertiesNode = relatedDataObjectNode.childNodes[1];\r",
                             "    var ii = 0;\r",
-                            "    \r",
+                            "\r",
                             "    keysNode.eachChild(function(child) {\r",
                             "      mappingProperties.push([ii, child.data.text, child.data.property.columnName]);\r",
                             "      ii++;\r",
@@ -180,12 +185,13 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyComboBox6",
+                "itemId": "relationType",
                 "name": "relationType",
                 "fieldLabel": "Relation Type",
                 "labelWidth": 160,
                 "allowBlank": false,
                 "queryMode": "local",
-                "store": "[[0, 'OneToOne'], [1, 'OneToMany']]"
+                "store": "[['OneToOne', 'OneToOne'], ['OneToMany', 'OneToMany']]"
             },
             "configAlternates": {
                 "store": "array"
@@ -255,8 +261,120 @@
                 "type": "array"
             },
             "codeClass": null,
+            "userConfig": {
+                "designer|displayName": "relationPropertyGrid",
+                "minHeight": 100
+            },
             "designerId": "05200275-ebdd-45b1-909c-aed07f201d49",
             "masterInstanceId": "ExtBox1-ext-gen3160"
+        },
+        {
+            "type": "toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "designer|userClassName": "MyToolbar20"
+            },
+            "designerId": "b6c750d2-40b6-4c87-864f-6ad503b8ace5",
+            "cn": [
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton40",
+                        "iconCls": "am-apply",
+                        "text": "Apply"
+                    },
+                    "designerId": "c14a3714-4511-4ba7-9408-4986f2942c7a",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "designer|userClassName": "onPropertyMapClick",
+                                "fn": "onPropertyMapClick",
+                                "implHandler": [
+                                    "var me = this;\r",
+                                    "var form = button.up('setrelationform');\r",
+                                    "var grid = form.down('relationPropertyGrid');\r",
+                                    "\r",
+                                    "var newNodeName = form.getForm().findField('relationshipName').getValue();\r",
+                                    "var objectName = form.getForm().findField('objectName').getValue();\r",
+                                    "\r",
+                                    "var relationTypeCmb = form.down('#relationType');\r",
+                                    "var ptropertyCmb = form.down('#propertyNameCmb');\r",
+                                    "var mapPropertyCmb = form.down('#mapPropertyNameCmb');\r",
+                                    "\r",
+                                    "var node = form.node.findChild('text', newNodeName);\r",
+                                    "node.set('title', newNodeName);\r",
+                                    "\r",
+                                    "node.data.relationshipType = relationTypeCmb.getValue();\r",
+                                    "node.data.relationshipTypeIndex = relationTypeCmb.store.find('field1',node.data.relationshipType);\r",
+                                    "\r",
+                                    "var relatedName = form.getForm().findField('relatedObjectName').getValue();\r",
+                                    "node.data.relatedObjectName = relatedName;\r",
+                                    "\r",
+                                    "var propertyMap = [];\r",
+                                    "\r",
+                                    "if(node.data.propertyMap) {\r",
+                                    "  for (i = 0; i < node.data.propertyMap.length; i++)\r",
+                                    "  propertyMap.push([node.data.propertyMap[i].dataPropertyName, node.data.propertyMap[i].relatedPropertyName]);\r",
+                                    "} else {\r",
+                                    "  node.data.propertyMap = [];\r",
+                                    "  grid.getStore().each(function(record) {\r",
+                                    "    node.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});\r",
+                                    "  });\r",
+                                    "}"
+                                ],
+                                "name": "click",
+                                "scope": "me"
+                            },
+                            "designerId": "0bbf2328-737a-470e-903e-7d1e3cbe2367"
+                        }
+                    ]
+                },
+                {
+                    "type": "tbspacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySpacer20"
+                    },
+                    "designerId": "d10df495-eea8-4536-a520-d5e1c6c9ece1"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton41",
+                        "iconCls": "am-edit-clear",
+                        "text": "Reset"
+                    },
+                    "designerId": "208c904a-4ad4-4850-8ca7-d7f437add06b"
+                }
+            ]
         }
     ]
 }

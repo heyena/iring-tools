@@ -852,14 +852,6 @@
             ],
             "className": "RelationsStore"
         },
-        "e83aec20-32f1-47b2-a232-483c93c01b53": {
-            "paths": [
-                "metadata/store/Property",
-                "Scripts/AM/store/override/Property.js",
-                "Scripts/AM/store/Property.js"
-            ],
-            "className": "Property"
-        },
         "260ff6ba-bf2c-4869-bb24-1f2cd987c47e": {
             "paths": [
                 "metadata/view/nhibernate.CreateRelationForm",
@@ -875,6 +867,14 @@
                 "Scripts/AM/view/nhibernate/RelationPropertyGrid.js"
             ],
             "className": "nhibernate.RelationPropertyGrid"
+        },
+        "19274de1-0fa9-4687-ba97-fd4f4a1cea68": {
+            "paths": [
+                "metadata/store/PropertyMap",
+                "Scripts/AM/store/override/PropertyMap.js",
+                "Scripts/AM/store/PropertyMap.js"
+            ],
+            "className": "PropertyMap"
         }
     },
     "viewOrderMap": {
@@ -946,9 +946,9 @@
             "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
             "d1c34e2a-9007-4641-b713-a25c592fadbd",
             "ef191768-2bd4-46be-864b-6386fbb488a5",
+            "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c",
             "ee4b18be-7210-4e88-9a5c-50e9ca131349",
-            "17fb1af5-2569-49f4-927f-dd778c03c1a1",
-            "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c"
+            "17fb1af5-2569-49f4-927f-dd778c03c1a1"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",
@@ -966,7 +966,7 @@
             "82edf86f-a5e2-4e95-8ce8-b5152d4a2cd6",
             "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd",
             "b93d62e3-52fe-4c8d-af23-be3ef7516ff4",
-            "e83aec20-32f1-47b2-a232-483c93c01b53"
+            "19274de1-0fa9-4687-ba97-fd4f4a1cea68"
         ],
         "controller": [
             "06f88f22-c6f5-473b-a55b-a40aae8ad3b2",

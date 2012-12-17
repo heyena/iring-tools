@@ -24,6 +24,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
   rootNode: '',
   endpoint: '',
   contextName: '',
+  node: '',
   bodyStyle: 'background:#eee;padding:10 0 0 10',
 
   initComponent: function() {
@@ -75,6 +76,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         {
           xtype: 'combobox',
           anchor: '100%',
+          itemId: 'relationType',
           name: 'relationType',
           fieldLabel: 'Relation Type',
           labelWidth: 160,
@@ -82,11 +84,11 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           queryMode: 'local',
           store: [
             [
-              0,
+              'OneToOne',
               'OneToOne'
             ],
             [
-              1,
+              'OneToMany',
               'OneToMany'
             ]
           ]
@@ -116,7 +118,35 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           queryMode: 'local'
         },
         {
-          xtype: 'relationPropertyGrid'
+          xtype: 'relationPropertyGrid',
+          minHeight: 100
+        }
+      ],
+      dockedItems: [
+        {
+          xtype: 'toolbar',
+          dock: 'top',
+          items: [
+            {
+              xtype: 'button',
+              iconCls: 'am-apply',
+              text: 'Apply',
+              listeners: {
+                click: {
+                  fn: me.onPropertyMapClick,
+                  scope: me
+                }
+              }
+            },
+            {
+              xtype: 'tbspacer'
+            },
+            {
+              xtype: 'button',
+              iconCls: 'am-edit-clear',
+              text: 'Reset'
+            }
+          ]
         }
       ]
     });
@@ -162,6 +192,40 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
 
   onPropertySelect: function(combo, records, options) {
 
+  },
+
+  onPropertyMapClick: function(button, e, options) {
+    var me = this;
+    var form = button.up('setrelationform');
+    var grid = form.down('relationPropertyGrid');
+
+    var newNodeName = form.getForm().findField('relationshipName').getValue();
+    var objectName = form.getForm().findField('objectName').getValue();
+
+    var relationTypeCmb = form.down('#relationType');
+    var ptropertyCmb = form.down('#propertyNameCmb');
+    var mapPropertyCmb = form.down('#mapPropertyNameCmb');
+
+    var node = form.node.findChild('text', newNodeName);
+    node.set('title', newNodeName);
+
+    node.data.relationshipType = relationTypeCmb.getValue();
+    node.data.relationshipTypeIndex = relationTypeCmb.store.find('field1',node.data.relationshipType);
+
+    var relatedName = form.getForm().findField('relatedObjectName').getValue();
+    node.data.relatedObjectName = relatedName;
+
+    var propertyMap = [];
+
+    if(node.data.propertyMap) {
+      for (i = 0; i < node.data.propertyMap.length; i++)
+      propertyMap.push([node.data.propertyMap[i].dataPropertyName, node.data.propertyMap[i].relatedPropertyName]);
+    } else {
+      node.data.propertyMap = [];
+      grid.getStore().each(function(record) {
+        node.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+      });
+    }
   }
 
 });

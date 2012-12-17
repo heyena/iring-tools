@@ -17,32 +17,13 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.relationPropertyGrid',
 
+  itemId: 'relationPropertyGrid',
+  store: 'PropertyMap',
+
   initComponent: function() {
     var me = this;
 
     Ext.applyIf(me, {
-      columns: [
-        {
-          xtype: 'gridcolumn',
-          dataIndex: 'string',
-          text: 'String'
-        },
-        {
-          xtype: 'numbercolumn',
-          dataIndex: 'number',
-          text: 'Number'
-        },
-        {
-          xtype: 'datecolumn',
-          dataIndex: 'date',
-          text: 'Date'
-        },
-        {
-          xtype: 'booleancolumn',
-          dataIndex: 'bool',
-          text: 'Boolean'
-        }
-      ],
       viewConfig: {
 
       },
@@ -54,22 +35,98 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
             {
               xtype: 'button',
               iconCls: 'am-list-add',
-              text: 'Add'
+              text: 'Add',
+              listeners: {
+                click: {
+                  fn: me.onAddClick,
+                  scope: me
+                }
+              }
             },
             {
-              xtype: 'tbseparator'
+              xtype: 'tbspacer',
+              width: 4
             },
             {
               xtype: 'button',
               iconCls: 'am-list-remove',
-              text: 'Remove'
+              text: 'Remove',
+              listeners: {
+                click: {
+                  fn: me.onRemoveClick,
+                  scope: me
+                }
+              }
             }
           ]
+        }
+      ],
+      columns: [
+        {
+          xtype: 'gridcolumn',
+          dataIndex: 'property',
+          text: 'Property'
+        },
+        {
+          xtype: 'gridcolumn',
+          dataIndex: 'relatedProperty',
+          text: 'Related Property'
         }
       ]
     });
 
     me.callParent(arguments);
+  },
+
+  onAddClick: function(button, e, options) {
+    var me = this;
+
+    var form = button.up('setrelationform');
+
+    var treeNode = form.node;
+    var propertyCmb = form.down('#propertyNameCmb');
+    var mapPropertyCmb = form.down('#mapPropertyNameCmb');
+
+    var message;
+
+    if (!propertyCmb.getValue() || !mapPropertyCmb.getValue()) {
+      message = 'Please select a property name and a mapping property.';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      message = undefined;
+      return;
+    }
+
+    var grid = form.down('relationPropertyGrid');
+    var store = grid.getStore();
+
+    var propertyName = propertyCmb.getValue().replace(/^\s*/, "").replace(/\s*$/, "");
+    var mapProperty = mapPropertyCmb.getValue().replace(/^\s*/, "").replace(/\s*$/, "");
+
+    var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};
+
+    var propertErr = store.find('property', propertyName);
+    var mapErr = store.find('relatedProperty', mapProperty);
+
+    if (propertErr != -1) {
+      message = 'Property [' + propertyName + '] already in a mapping!';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      message = undefined;
+      return; 
+    }
+
+    if (mapErr != -1) {
+      message = 'Related Property [' + mapProperty + '] already in a mapping!';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      message = undefined;
+      return;
+    }
+
+
+    store.add(mapRecord);
+  },
+
+  onRemoveClick: function(button, e, options) {
+
   }
 
 });
