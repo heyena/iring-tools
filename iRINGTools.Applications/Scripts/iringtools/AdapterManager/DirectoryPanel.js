@@ -27,6 +27,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   graphsMenu: null,
   graphMenu: null,
   applicationMenu: null,
+  dataObjectsMenu: null,
   rootNode: null,
   treeLoader: null,
   propertyPanel: null,
@@ -42,6 +43,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       DataLayer: true,
       EditScope: true,
       EditApplication: true,
+      RefreshDataObjects: true,
       OpenMapping: true,
       DeleteScope: true,
       DeleteApplication: true,
@@ -61,6 +63,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     this.applicationMenu = new Ext.menu.Menu();
     this.applicationMenu.add(this.buildApplicationMenu());
+
+    this.dataObjectsMenu = new Ext.menu.Menu();
+    this.dataObjectsMenu.add(this.buildDataObjectsMenu());
 
     this.spAppMenu = new Ext.menu.Menu();
     this.spAppMenu.add(this.buildRefreshCacingMenu());
@@ -244,19 +249,19 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         icon: 'Content/img/16x16/document-new.png',
         scope: this
       },
-      ///TODO: Pending on testing, do not delete
-//      {
-//          text: 'Add/Update DataLayer',
-//          handler: this.onEditDataLayer,
-//          icon: 'Content/img/16x16/document-new.png',
-//          scope: this
-//      },
+    ///TODO: Pending on testing, do not delete
+    //      {
+    //          text: 'Add/Update DataLayer',
+    //          handler: this.onEditDataLayer,
+    //          icon: 'Content/img/16x16/document-new.png',
+    //          scope: this
+    //      },
       {
-        text: 'Regenerate HibernateDataLayer artifacts',
-        handler: this.onRegenerateAll,
-        icon: 'Content/img/16x16/document-new.png',
-        scope: this
-      }
+      text: 'Regenerate HibernateDataLayer artifacts',
+      handler: this.onRegenerateAll,
+      icon: 'Content/img/16x16/document-new.png',
+      scope: this
+    }
     ]
   },
 
@@ -337,6 +342,17 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             {
               text: 'Open Grid',
               handler: this.onLoadPageDto,
+              icon: 'Content/img/16x16/document-properties.png',
+              scope: this
+            }
+        ]
+  },
+
+  buildDataObjectsMenu: function () {
+    return [
+            {
+              text: 'Refresh',
+              handler: this.onRefreshDataObjects,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
             }
@@ -473,6 +489,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       this.scopeMenu.showAt([x, y]);
     } else if (obj.type == "ApplicationNode") {
       this.applicationMenu.showAt([x, y]);
+    } else if (obj.type == "DataObjectsNode") {
+      this.dataObjectsMenu.showAt([x, y]);
     } else if (obj.type == "DataObjectNode") {
       if (obj.record.DataLayer.indexOf('SP3D') > -1)
         this.spAppMenu.showAt([x, y]);
@@ -500,7 +518,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('NewScope', this, node);
   },
-  
+
   onEditDataLayer: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('EditDataLayer', this, node);
@@ -661,6 +679,32 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.fireEvent('LoadPageDto', this, node);
   },
 
+  onRefreshDataObjects: function (btn, ev) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/Refresh',
+      method: 'POST',
+      params: {
+        'nodeid': node.attributes.id,
+        'type': 'all'
+      },
+      success: function (result, request) {
+        var responseObj = Ext.decode(result.responseText);
+
+        if (responseObj.Level != 0) {
+          showDialog(400, 100, 'Refresh Error', responseObj.Messages[0], Ext.Msg.OK, null);
+        }
+
+        node.expand();
+      },
+      failure: function (result, request) {
+        var msg = result.responseText;
+        showDialog(500, 240, 'Refresh Error', msg, Ext.Msg.OK, null);
+      }
+    })
+  },
+
   onDeleteScope: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('DeleteScope', this, node);
@@ -704,7 +748,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         showDialog(450, 100, 'Refreshing/creating caching tables Result', 'Caching tables are refreshed/created successfully.', Ext.Msg.OK, null);
         panel.body.unmask();
       },
-      failure: function (result, request) {        
+      failure: function (result, request) {
         var msg = result.responseText;
         showDialog(500, 240, 'Error in refreshing/creating caching tables', msg, Ext.Msg.OK, null);
         panel.body.unmask();
@@ -729,7 +773,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         showDialog(450, 100, 'Refreshing/creating caching tables Result', 'Caching tables are refreshed/created successfully.', Ext.Msg.OK, null);
         panel.body.unmask();
       },
-      failure: function (result, request) {        
+      failure: function (result, request) {
         var msg = result.responseText;
         showDialog(500, 240, 'Error in refreshing/creating caching tables', msg, Ext.Msg.OK, null);
         panel.body.unmask();
@@ -788,6 +832,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       }
       else if (obj.type == "ApplicationNode") {
         this.contextButton.menu.add(this.buildApplicationMenu());
+      }
+      else if (obj.type == "DataObjectsNode") {
+        this.contextButton.menu.add(this.buildDataObjectsMenu());
       }
       else if (obj.type == "DataObjectNode") {
         this.contextButton.menu.add(this.buildAppDataMenu());

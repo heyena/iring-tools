@@ -434,19 +434,35 @@ namespace org.iringtools.services
     #region RefreshDataObjects
     [Description("Resets all data objects state in data layer.")]
     [WebGet(UriTemplate = "/{scope}/{app}/refresh")]
-    public Response RefreshDataObjects(string scope, string app)
+    public void RefreshDataObjects(string scope, string app)
     {
       try
       {
-        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        context.ContentType = "application/xml";
+        bool isAsync = false;
+        string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
 
-        Response response = _adapterProvider.RefreshDataObjects(scope, app);
-        return response;
+        if (asyncHeader != null && asyncHeader.ToLower() == "true")
+        {
+          isAsync = true;
+        }
+
+        if (isAsync)
+        {
+          string statusUrl = _adapterProvider.AsyncRefreshDictionary(scope, app);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+        }
+        else
+        {
+          Response response = _adapterProvider.RefreshDataObjects(scope, app);
+          _adapterProvider.FormatOutgoingMessage<Response>(response, "xml", true);
+        }
       }
       catch (Exception ex)
       {
-        return PrepareErrorResponse(ex);
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(ex.Message);
       }
     }
     #endregion
@@ -489,6 +505,36 @@ namespace org.iringtools.services
     }
 
     //[WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/binding")]
+    #endregion
+
+    #region Async request queue
+    [Description("Gets status of a asynchronous request.")]
+    [WebGet(UriTemplate = "/requests/{id}")]
+    public void GetRequestStatus(string id)
+    {
+      RequestStatus status = null;
+
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        status = _adapterProvider.GetRequestStatus(id);
+
+        if (status.State == State.NotFound)
+        {
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+        }
+      }
+      catch (Exception ex)
+      {
+        status = new RequestStatus()
+        {
+          State = State.Error,
+          Message = ex.Message
+        };
+      }
+
+      _adapterProvider.FormatOutgoingMessage<RequestStatus>(status, "xml", true);
+    }
     #endregion
 
     private Response PrepareErrorResponse(Exception ex)
