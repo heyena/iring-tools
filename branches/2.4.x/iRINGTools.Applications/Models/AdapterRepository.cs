@@ -146,9 +146,9 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    private DataDictionary WaitForDictionaryResponse(string statusUrl)
+    private T WaitForRequestCompletion<T>(string baseUri, string statusUrl)
     {
-      DataDictionary dictionary = null;
+      T obj;
 
       try
       {
@@ -172,7 +172,7 @@ namespace iRINGTools.Web.Models
 
         while (timeoutCount < asyncTimeout)
         {
-          WebHttpClient client = new WebHttpClient(_dataServiceUri);
+          WebHttpClient client = new WebHttpClient(baseUri);
           requestStatus = client.Get<RequestStatus>(statusUrl);
 
           if (requestStatus.State != State.InProgress)
@@ -182,7 +182,7 @@ namespace iRINGTools.Web.Models
           timeoutCount += asyncPollingInterval;
         }
 
-        dictionary = Utility.Deserialize<DataDictionary>(requestStatus.ResponseText, true);
+        obj = Utility.Deserialize<T>(requestStatus.ResponseText, true);
       }
       catch (Exception ex)
       {
@@ -190,7 +190,7 @@ namespace iRINGTools.Web.Models
         throw ex;
       }
 
-      return dictionary;
+      return obj;
     }
 
     public DataDictionary GetDictionary(string scopeName, string applicationName)
@@ -216,12 +216,13 @@ namespace iRINGTools.Web.Models
             throw new Exception("Asynchronous status URL not found.");
           }
 
-          dictionary = WaitForDictionaryResponse(statusUrl);
+          dictionary = WaitForRequestCompletion<DataDictionary>(_dataServiceUri, statusUrl);
         }
       }
       catch (Exception ex)
       {
         _logger.Error(ex.ToString());
+        throw ex;
       }
 
       return dictionary;
@@ -424,12 +425,29 @@ namespace iRINGTools.Web.Models
 
     public Response Refresh(string scope, string application)
     {
-      Response response;
+      Response response = null;
 
       try
       {
         WebHttpClient client = new WebHttpClient(_adapterServiceUri);
-        response = client.Get<Response>(String.Format("/{0}/{1}/refresh", scope, application));
+        string asyncGetDictionary = _settings["AsyncGetDictionary"];
+
+        if (asyncGetDictionary != null && asyncGetDictionary.ToLower() == "false")
+        {
+          response = client.Get<Response>(String.Format("/{0}/{1}/refresh?format=xml", scope, application), true);
+        }
+        else
+        {
+          client.Async = true;
+          string statusUrl = client.GetMessage(String.Format("/{0}/{1}/refresh?format=xml", scope, application));
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);          
+        }
       }
       catch (Exception ex)
       {

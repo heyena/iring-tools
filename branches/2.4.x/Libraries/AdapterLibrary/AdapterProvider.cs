@@ -973,6 +973,48 @@ namespace org.iringtools.adapter
       }
     }
 
+    private void DoRefreshDictionary(string id)
+    {
+      RequestStatus requestStatus = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+
+      _requestDictionary[id] = requestStatus;
+
+      try
+      {
+        Response response = _dataLayer.RefreshAll();
+
+        requestStatus.State = State.Completed;
+        requestStatus.ResponseText = Utility.Serialize<Response>(response, true);
+      }
+      catch (Exception ex)
+      {
+        requestStatus.State = State.Error;
+        requestStatus.Message = ex.Message;
+      }
+    }
+
+    public string AsyncRefreshDictionary(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer(false);
+
+        string id = Guid.NewGuid().ToString("N");
+        Task task = Task.Factory.StartNew(() => DoRefreshDictionary(id));
+        return "/requests/" + id;
+      }
+      catch (Exception ex)
+      {
+        string errMsg = String.Format("Error refreshing data objects: {0}", ex);
+        _logger.Error(errMsg);
+        throw new Exception(errMsg);
+      }
+    }
+
     public RequestStatus GetRequestStatus(string id)
     {
       try

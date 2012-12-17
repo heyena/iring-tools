@@ -648,7 +648,7 @@ namespace org.iringtools.services
         };
       }
 
-      _adapterProvider.FormatOutgoingMessage<RequestStatus>(status, "application/xml", true);
+      _adapterProvider.FormatOutgoingMessage<RequestStatus>(status, "xml", true);
     }
     #endregion
 
