@@ -82,12 +82,13 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
   onAddClick: function(button, e, options) {
     var me = this;
     var form = button.up('relationsform');
-    var grid = form.down('relationsgrid');
     form.addRelationship(form);
   },
 
   removeRelationship: function(button, e, options) {
     var grid = button.up('relationsgrid');
+    var form = grid.up('relationsform');
+    var node = form.node;
     var gridStore = grid.getStore();
     var selected = grid.getSelectionModel().getSelection()[0];
     if(!selected){
@@ -97,8 +98,12 @@ Ext.define('AM.view.nhibernate.RelationsGrid', {
     }
     var relation = selected.data.relationName;
     var exist = gridStore.find('relationName', relation);
-    if (exist != -1)
-    gridStore.removeAt(exist);
+    if (exist != -1) {
+      var nodeExist = node.findChild('text', relation);
+      if(nodeExist) 
+      node.removeChild(nodeExist);
+      gridStore.removeAt(exist);
+    }
   }
 
 });

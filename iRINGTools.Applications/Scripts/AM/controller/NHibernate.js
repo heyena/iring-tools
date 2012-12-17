@@ -153,7 +153,7 @@ Ext.define('AM.controller.NHibernate', {
         scope: contextName,
         app: endpoint,
         baseUrl: baseUrl,
-        tree: JSON.stringify(treeProperty)
+        tree: Ext.JSON.encode(treeProperty)
       },
       success: function (response, request) {
         var rtext = response.responseText;
@@ -1284,7 +1284,11 @@ Ext.define('AM.controller.NHibernate', {
     var dataTree = nhibernatepanel.down('nhibernatetree');
     var dataNode = dataTree.getSelectedNode();
     var dirNode = me.getDirNode(dataTree.dirNode);
-    var relationFolderNode, contextName, endpoint, rootNode, relationName;
+    var relationFolderNode, 
+    contextName, 
+    endpoint, 
+    rootNode, 
+    relationName;
 
     rootNode = dataTree.getRootNode();
     endpoint = dirNode.data.record.endpoint;
@@ -1294,7 +1298,6 @@ Ext.define('AM.controller.NHibernate', {
       relationFolderNode = dataNode;
       if(dataNode.firstChild)
       relationName = dataNode.firstChild.data.text;
-
     } else {
       relationFolderNode = dataNode.parentNode;
       relationName = dataNode.data.text;
@@ -1303,39 +1306,84 @@ Ext.define('AM.controller.NHibernate', {
     var dataObjectNode = relationFolderNode.parentNode;
     var relatedObjects = [];
     var thisObj = dataObjectNode.data.text;
-    var i = 0;
+
     rootNode.eachChild(function(child) {
       if(child.data.text != thisObj) {
-        relatedObjects.push([i.toString(), child.data.text, child.data.property.tableName]);
-        i++;
+        relatedObjects.push([child.data.text, child.data.text, child.data.property.tableName]);
       }
     });
-    var ifExist;
-    var relAttribute = null;
-    var relateObjStr;
-    var nodeRelateObj;
-    var rindex = 0;
+
+    var keysNode = dataObjectNode.childNodes[0];
+    var propertiesNode = dataObjectNode.childNodes[1];
+
+    var propertyNodes = [];
+    keysNode.eachChild(function(child) {
+      propertyNodes.push([child.data.text, child.data.text, child.data.property.columnName]);
+    });
+
+    propertiesNode.eachChild(function(child) {
+      propertyNodes.push([child.data.text, child.data.text, child.data.property.columnName]);
+    });
 
 
     var form = me.getSetRelationForm();
+
+    var grid = form.down('relationPropertyGrid');
+    var gridStore = grid.getStore();
+
+    var propertyNameCmb = form.down('#propertyNameCmb');
+    propertyNameCmb.store =  Ext.create('Ext.data.SimpleStore', {
+      fields: ['value', 'text', 'name'],
+      autoLoad: true,
+      data: propertyNodes
+    });
+
+    propertyNameCmb.valueField = 'text';
+
     var relatedObjectCombo = form.down('#relatedObjectCmb');
     relatedObjectCombo.store = Ext.create('Ext.data.SimpleStore', {
       fields: ['value', 'text'],
       autoLoad: true,
       data: relatedObjects
     });
+
+    relatedObjectCombo.valueField = 'value';
+
     form.endpoint = endpoint;
     form.contextName = contextName;
     form.rootNode = rootNode;
+    form.node = relationFolderNode;
+
+    relationFolderNode.eachChild(function(relation) {
+      if(relation.data.text == relationName) {
+        var data;
+        if(relation.data.relationshipType)
+        data = relation.data;
+        else
+        data = relation.raw;
+
+        if(data.propertyMap) {
+          var pMap = data.propertyMap[0];
+          var record = [{
+            'property':  pMap.dataPropertyName,
+            'relatedProperty': pMap.relatedPropertyName
+          }];
+          var exist = gridStore.find('property', pMap.dataPropertyName);
+          if(exist == -1)
+          gridStore.add(record);
+
+        }
+        form.getForm().findField('relationType').setValue(data.relationshipType);
+        form.getForm().findField('relatedObjectName').setValue(data.relatedObjectName);
+      }
+    });
+
     form.getForm().findField('relationshipName').setValue(relationName);
     form.getForm().findField('objectName').setValue(thisObj);
-
-
 
     panel.removeAll();
     panel.add(form);
     panel.doLayout();
-
   },
 
   getConnStringParts: function(connString, dirNode) {

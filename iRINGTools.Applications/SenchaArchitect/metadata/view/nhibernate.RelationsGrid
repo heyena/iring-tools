@@ -86,7 +86,6 @@
                                 "implHandler": [
                                     "var me = this;\r",
                                     "var form = button.up('relationsform');\r",
-                                    "var grid = form.down('relationsgrid');\r",
                                     "form.addRelationship(form);"
                                 ],
                                 "name": "click",
@@ -137,6 +136,8 @@
                                 "fn": "removeRelationship",
                                 "implHandler": [
                                     "var grid = button.up('relationsgrid');\r",
+                                    "var form = grid.up('relationsform');\r",
+                                    "var node = form.node;\r",
                                     "var gridStore = grid.getStore();\r",
                                     "var selected = grid.getSelectionModel().getSelection()[0];\r",
                                     "if(!selected){\r",
@@ -146,8 +147,12 @@
                                     "}\r",
                                     "var relation = selected.data.relationName;\r",
                                     "var exist = gridStore.find('relationName', relation);\r",
-                                    "if (exist != -1)\r",
-                                    "gridStore.removeAt(exist);"
+                                    "if (exist != -1) {\r",
+                                    "  var nodeExist = node.findChild('text', relation);\r",
+                                    "  if(nodeExist) \r",
+                                    "  node.removeChild(nodeExist);\r",
+                                    "  gridStore.removeAt(exist);\r",
+                                    "}"
                                 ],
                                 "name": "click",
                                 "scope": "me"
@@ -169,8 +174,7 @@
                 "designer|userClassName": "CustomEvent",
                 "name": "createrelation",
                 "params": [
-                    "form",
-                    "grid"
+                    "form"
                 ]
             },
             "designerId": "77717003-2ed5-4570-88ce-7220d49f44f7"

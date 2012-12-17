@@ -323,6 +323,7 @@
     <Content Include="Scripts\AM\view\nhibernate\NHibernateTree.js" />
     <Content Include="Scripts\AM\view\nhibernate\PropertyGrid.js" />
     <Content Include="Scripts\AM\view\nhibernate\RelationPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\RelationPropertyGrid.js" />
     <Content Include="Scripts\AM\view\nhibernate\RelationsForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\RelationsGrid.js" />
     <Content Include="Scripts\AM\view\nhibernate\SelectDataKeysForm.js" />

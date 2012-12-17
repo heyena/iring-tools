@@ -24,6 +24,7 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
   context: '',
   endpoint: '',
   rootNode: '',
+  node: '',
 
   initComponent: function() {
     var me = this;
@@ -62,41 +63,6 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
           autoShow: true,
           minHeight: 50
         }
-      ],
-      dockedItems: [
-        {
-          xtype: 'toolbar',
-          dock: 'top',
-          layout: {
-            padding: 4,
-            type: 'hbox'
-          },
-          items: [
-            {
-              xtype: 'button',
-              iconCls: 'am-apply',
-              text: 'Apply',
-              tooltip: 'Apply the current changes to the data objects tree',
-              listeners: {
-                click: {
-                  fn: me.onApplyClick,
-                  scope: me
-                }
-              }
-            },
-            {
-              xtype: 'tbseparator',
-              width: 4
-            },
-            {
-              xtype: 'button',
-              icon: 'Content/img/16x16/edit-clear.png',
-              iconCls: 'am-edit-clear',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes'
-            }
-          ]
-        }
       ]
     });
 
@@ -108,32 +74,6 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
     if (e.getKey() == e.ENTER) {
       me.addRelationship(me);
     }
-  },
-
-  onApplyClick: function(button, e, options) {
-    var me = this;
-    var form = button.up('relationsform');
-    var grid = form.down('relationsgrid');
-    var node = form.node;
-    var gridStore = grid.getStore();
-    var records = gridStore.data.items;
-    var exitNode = false;
-    if(node.FirstChild) {
-      node.eachChild(function(n) {
-        exitNode = false;
-        gridStore.each(function(record) {
-          if(n.data.text.toLowerCase() == record.data.relationName.toLowerCase()) {
-            exitNode = true;
-          }
-        });
-        if(exitNode === false) {
-          node.removeChild(n, true);
-        }
-      });
-    } else {
-
-    }
-
   },
 
   addRelationship: function(form) {
@@ -206,7 +146,7 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
         type: 'relationship',
         leaf: true,
         iconCls: 'treeRelation',
-        relatedObjMap: [],
+        relatedObjectMap: [],
         objectName: node.parentNode.text,
         relatedObjectName: '',
         relationshipType: 'OneToOne',

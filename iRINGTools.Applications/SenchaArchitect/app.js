@@ -23,7 +23,8 @@ Ext.Loader.setConfig({
 
 Ext.application({
   stores: [
-    'Property'
+    'Property',
+    'PropertyMap'
   ],
   views: [
     'AMViewport',

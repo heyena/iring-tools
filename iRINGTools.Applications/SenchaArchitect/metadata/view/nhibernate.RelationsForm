@@ -9,6 +9,7 @@
         "context": "",
         "endpoint": "",
         "rootNode": "",
+        "node": "",
         "designer|userClassName": "nhibernate.RelationsForm",
         "designer|userAlias": "relationsform",
         "height": null,
@@ -36,6 +37,11 @@
         {
             "group": "(Custom Properties)",
             "name": "rootNode",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "node",
             "type": "string"
         }
     ],
@@ -94,116 +100,6 @@
                         "scope": "me"
                     },
                     "designerId": "625436bb-23cf-400e-85dc-198ef807c0e6"
-                }
-            ]
-        },
-        {
-            "type": "toolbar",
-            "reference": {
-                "name": "dockedItems",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar16"
-            },
-            "designerId": "28eb23e4-2399-4877-9715-461f19554fbb",
-            "cn": [
-                {
-                    "type": "button",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyButton29",
-                        "icon": null,
-                        "iconCls": "am-apply",
-                        "text": "Apply",
-                        "tooltip": [
-                            "Apply the current changes to the data objects tree"
-                        ]
-                    },
-                    "designerId": "24fceb65-e574-4d1b-9cba-0ae3da8a9e12",
-                    "cn": [
-                        {
-                            "type": "basiceventbinding",
-                            "reference": {
-                                "name": "listeners",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "designer|userClassName": "onApplyClick",
-                                "fn": "onApplyClick",
-                                "implHandler": [
-                                    "var me = this;\r",
-                                    "var form = button.up('relationsform');\r",
-                                    "var grid = form.down('relationsgrid');\r",
-                                    "var node = form.node;\r",
-                                    "var gridStore = grid.getStore();\r",
-                                    "var records = gridStore.data.items;\r",
-                                    "var exitNode = false;\r",
-                                    "if(node.FirstChild) {\r",
-                                    "  node.eachChild(function(n) {\r",
-                                    "    exitNode = false;\r",
-                                    "    gridStore.each(function(record) {\r",
-                                    "      if(n.data.text.toLowerCase() == record.data.relationName.toLowerCase()) {\r",
-                                    "        exitNode = true;\r",
-                                    "      }\r",
-                                    "    });\r",
-                                    "    if(exitNode === false) {\r",
-                                    "      node.removeChild(n, true);\r",
-                                    "    }\r",
-                                    "  });\r",
-                                    "} else {\r",
-                                    "\r",
-                                    "}\r",
-                                    ""
-                                ],
-                                "name": "click",
-                                "scope": "me"
-                            },
-                            "designerId": "478a363e-59b2-4bb0-9a7c-db55b08dafde"
-                        }
-                    ]
-                },
-                {
-                    "type": "tbseparator",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MySeparator9",
-                        "width": 4
-                    },
-                    "designerId": "9ca2aa0e-c12b-422c-a2a9-6bf832e2c2d7"
-                },
-                {
-                    "type": "button",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyButton30",
-                        "icon": "Content/img/16x16/edit-clear.png",
-                        "iconCls": "am-edit-clear",
-                        "text": "Reset",
-                        "tooltip": [
-                            "Reset to the latest applied changes"
-                        ]
-                    },
-                    "designerId": "35ae2f4b-206e-4a0b-a331-a2c68619a155"
                 }
             ]
         },
@@ -306,7 +202,7 @@
                     "    type: 'relationship',\r",
                     "    leaf: true,\r",
                     "    iconCls: 'treeRelation',\r",
-                    "    relatedObjMap: [],\r",
+                    "    relatedObjectMap: [],\r",
                     "    objectName: node.parentNode.text,\r",
                     "    relatedObjectName: '',\r",
                     "    relationshipType: 'OneToOne',\r",

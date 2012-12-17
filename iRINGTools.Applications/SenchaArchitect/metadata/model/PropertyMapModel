@@ -32,36 +32,10 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyField27",
-                "name": "columnName"
-            },
-            "designerId": "fe667d8f-3c04-494d-8c0a-8d56a78ab6be"
-        },
-        {
-            "type": "datafield",
-            "reference": {
-                "name": "fields",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
                 "designer|userClassName": "MyField28",
                 "name": "relatedProperty"
             },
             "designerId": "72b01ddc-e514-41c3-a887-d5669a7fbdbe"
-        },
-        {
-            "type": "datafield",
-            "reference": {
-                "name": "fields",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyField29",
-                "name": "relatedCulumnName"
-            },
-            "designerId": "027c53b5-15f1-4ebd-bf6b-03d2d699b3f9"
         }
     ]
 }
