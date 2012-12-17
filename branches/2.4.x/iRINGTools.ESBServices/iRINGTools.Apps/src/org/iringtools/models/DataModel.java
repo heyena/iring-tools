@@ -406,7 +406,7 @@ public class DataModel {
 				}
 			}
 		}
-	
+
 		// extract transfer type from order expressions
 		if (dataFilter.getOrderExpressions() != null
 				&& dataFilter.getOrderExpressions().getItems().size() > 0) {
@@ -415,7 +415,6 @@ public class DataModel {
 
 			for (int i = 0; i < orderExpressions.size(); i++) {
 				OrderExpression orderExpression = orderExpressions.get(i);
-
 				if (orderExpression.getPropertyName().equalsIgnoreCase(
 						"transfer type")) {
 					transferTypeOrderExpression = orderExpressions.remove(i);
@@ -424,7 +423,12 @@ public class DataModel {
 						// remove logical operator of the next expression
 						orderExpressions.get(i).setPropertyName(null);
 						orderExpressions.get(i).setSortOrder(null);
-					}					
+					}
+				}
+				
+				if( orderExpressions.size() > 1)
+				{ dataFilter.getOrderExpressions().getItems().remove(orderExpression);
+				i--;
 				}
 			}
 		}
@@ -458,10 +462,6 @@ public class DataModel {
 							.getItems().get(0);
 					int t = 0;
 					for (; t < tmpFullDtiList.size(); t++) {
-					/*	if (tmpFullDtiList.size() < TranfertmpDtiList.size()) {
-							tmpFullDtiList.removeAll(tmpFullDtiList);
-							tmpFullDtiList.addAll(TranfertmpDtiList);
-						}*/
 						if (transferTypeExpression.get(j)
 								.getRelationalOperator() == RelationalOperator.EQUAL_TO) {
 							if (tmpFullDtiList.get(t).getTransferType()
@@ -479,7 +479,8 @@ public class DataModel {
 					for (; i < TranferNotEqualDtiList.size(); i++) {
 						if (tmpFullDtiList.size() != TranferNotEqualDtiList
 								.size()) {
-							TranferNotEqualDtiList.removeAll(TranferNotEqualDtiList);
+							TranferNotEqualDtiList
+									.removeAll(TranferNotEqualDtiList);
 							TranferNotEqualDtiList.addAll(tmpFullDtiList);
 						}
 						if (transferTypeExpression.get(j)
