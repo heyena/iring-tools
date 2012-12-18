@@ -71,10 +71,12 @@ namespace org.iringtools.adapter
               continue;
             }
 
+            // list of overrideable settings
             if (key.Equals("DefaultProjectionFormat") ||
                 key.Equals("ValidateLinks") ||
                 key.Equals("DisplayLinks") ||
                 key.Equals("ShowJsonNullValues") ||
+                key.Equals("DefaultPageSize") ||
                 key.Equals("MultiGetDTIs") ||
                 key.Equals("MultiGetDTOs") ||
                 key.Equals("MultiPostDTOs") ||
