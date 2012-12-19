@@ -684,9 +684,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     try {
       this.treeLoader.baseParams.refresh = true;
-      this.treeLoader.load(node);
-
-      this.treeLoader.baseParams.refresh = false;  
+      node.reload();
+      this.treeLoader.baseParams.refresh = false;
     }
     catch (err) {
       showDialog(400, 100, 'Refresh Error', err.Message, Ext.Msg.OK, null);
