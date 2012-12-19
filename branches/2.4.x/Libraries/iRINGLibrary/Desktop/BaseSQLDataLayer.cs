@@ -489,21 +489,24 @@ namespace org.iringtools.library
           {
             try
             {
-              if (dataRow.Table.Columns.Contains(objectProperty.columnName))
+              if (objectProperty.columnName != null)
               {
-                object value = dataRow[objectProperty.columnName];
-
-                if (value.GetType() == typeof(System.DBNull))
+                if (dataRow.Table.Columns.Contains(objectProperty.columnName))
                 {
-                  value = null;
-                }
+                  object value = dataRow[objectProperty.columnName];
 
-                dataObject.SetPropertyValue(objectProperty.propertyName, value);
-              }
-              else
-              {
-                _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]",
-                  objectProperty.columnName, objectDefinition.tableName));
+                  if (value.GetType() == typeof(System.DBNull))
+                  {
+                    value = null;
+                  }
+
+                  dataObject.SetPropertyValue(objectProperty.propertyName, value);
+                }
+                else
+                {
+                  _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]",
+                    objectProperty.columnName, objectDefinition.tableName));
+                }
               }
             }
             catch (Exception ex)
@@ -584,11 +587,10 @@ namespace org.iringtools.library
             DataType = Type.GetType("System." + objectProperty.dataType.ToString())
           };
 
-
-          if (objectProperty.dataType == DataType.String)
-          {
-            dataColumn.MaxLength = objectProperty.dataLength;
-          }
+          //if (objectProperty.dataType == DataType.String)
+          //{
+          //  dataColumn.MaxLength = objectProperty.dataLength;
+          //}
 
           dataTable.Columns.Add(dataColumn);
         }
