@@ -88,7 +88,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     this.treeLoader = new Ext.tree.TreeLoader({
       timeout: 1800000,  // 30 minutes
-      baseParams: { type: null, related: null, datalayer: null },
+      baseParams: { type: null, related: null, datalayer: null, refresh: false },
       url: this.navigationUrl
     });
 
@@ -682,27 +682,15 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onRefreshDataObjects: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
 
-    Ext.Ajax.request({
-      url: 'AdapterManager/Refresh',
-      method: 'POST',
-      params: {
-        'nodeid': node.attributes.id,
-        'type': 'all'
-      },
-      success: function (result, request) {
-        var responseObj = Ext.decode(result.responseText);
+    try {
+      this.treeLoader.baseParams.refresh = true;
+      this.treeLoader.load(node);
 
-        if (responseObj.Level != 0) {
-          showDialog(400, 100, 'Refresh Error', responseObj.Messages[0], Ext.Msg.OK, null);
-        }
-
-        node.expand();
-      },
-      failure: function (result, request) {
-        var msg = result.responseText;
-        showDialog(500, 240, 'Refresh Error', msg, Ext.Msg.OK, null);
-      }
-    })
+      this.treeLoader.baseParams.refresh = false;  
+    }
+    catch (err) {
+      showDialog(400, 100, 'Refresh Error', err.Message, Ext.Msg.OK, null);
+    }
   },
 
   onDeleteScope: function (btn, ev) {

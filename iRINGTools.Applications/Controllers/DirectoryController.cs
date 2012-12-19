@@ -277,11 +277,17 @@ namespace org.iringtools.web.controllers
               string context = form["node"];
               string scopeName = context.Split('/')[0];
               string applicationName = context.Split('/')[1];
-              DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
               string dataLayer = form["datalayer"];
+              string refresh = form["refresh"];
+              
+              if (refresh == "true")
+              {
+                Response response =_repository.Refresh(scopeName, applicationName);
+              }
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
+              DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+              
               if (dictionary != null && dictionary.dataObjects != null)
               {
                 foreach (DataObject dataObject in dictionary.dataObjects)
