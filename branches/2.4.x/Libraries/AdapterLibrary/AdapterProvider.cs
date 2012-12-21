@@ -2365,6 +2365,8 @@ namespace org.iringtools.adapter
         DataDictionary dictionary = GetDictionary(projectName, applicationName);
         DataObject dataObject = dictionary.GetDataObject(resourceName);
 
+        AddURIsInSettingCollection(projectName, applicationName, resourceName);
+
         if (dataObject != null)
           filter.AppendFilter(dataObject.dataFilter);
 
@@ -2458,6 +2460,8 @@ namespace org.iringtools.adapter
       {
         DataDictionary dictionary = GetDictionary(projectName, applicationName);
         DataObject objDef = dictionary.GetDataObject(resourceName);
+
+        AddURIsInSettingCollection(projectName, applicationName, resourceName);
 
         if (objDef != null)
           filter.AppendFilter(objDef.dataFilter);
@@ -2715,6 +2719,8 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
+        AddURIsInSettingCollection(projectName, applicationName, resourceName);
+
         if (!_dataDictionary.enableSearch)
           throw new WebFaultException(HttpStatusCode.NotFound);
 
@@ -2830,6 +2836,10 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         _logger.DebugFormat("Initializing Projection: {0} as {1}", resourceName, format);
         InitializeProjection(resourceName, ref format, false);
+        
+         
+        AddURIsInSettingCollection(projectName, applicationName, resourceName);
+
 
         IList<string> index = new List<string>();
 
@@ -2948,6 +2958,49 @@ namespace org.iringtools.adapter
       }
     }
 
+    private void AddURIsInSettingCollection(string ProjectName, string applicationName, string resourceName, string resourceIdentifier = null, string relatedResourceName = null, string relatedId = null)
+    {
+        try
+        {
+            _logger.Debug("Adding URI in setting Collection.");
+
+            DataDictionary dataDictionary = GetDictionary(ProjectName, applicationName);
+
+            DataObject dataObject = dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == resourceName.ToUpper());
+            string keyPropertyName = dataObject.keyProperties[0].keyPropertyName;
+
+            string genericURI = "/" + resourceName;
+            string specificURI = "/" + resourceName;
+
+            if (resourceIdentifier != null)
+            {
+                genericURI = resourceName + "/[" + keyPropertyName + "]";
+                specificURI = resourceName + "/" + resourceIdentifier;
+            }
+
+            if (relatedResourceName != null)
+            {
+                genericURI = resourceName + "/[" + keyPropertyName + "]/" + relatedResourceName;
+                specificURI = resourceName + "/" + resourceIdentifier + "/" + relatedResourceName;
+            }
+            if (relatedId != null)
+            {
+                DataObject releteddataObject = dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == relatedResourceName.ToUpper());
+                string reletedKeyPropertyName = releteddataObject.keyProperties[0].keyPropertyName;
+
+                genericURI = resourceName + "/[" + keyPropertyName + "]/" + reletedKeyPropertyName + "/[" + reletedKeyPropertyName + "]";
+                specificURI = resourceName + "/" + resourceIdentifier + "/" + reletedKeyPropertyName + "/" + relatedId;
+            }
+
+            _settings["GenericURI"] = genericURI;
+            _settings["SpecificURI"] = specificURI;
+        }
+        catch
+        {
+            _logger.Debug("Exception in Adding URI in setting Collection.");
+        }
+    }
+
     //Individual
     public object GetDataProjection(
       string projectName, string applicationName, string resourceName, string className,
@@ -2960,6 +3013,8 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
         InitializeProjection(resourceName, ref format, true);
+        
+        AddURIsInSettingCollection(projectName, applicationName, resourceName, classIdentifier);
 
         if (_isFormatExpected)
         {
@@ -3071,6 +3126,8 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resourceName, ref format, false);
 
+        AddURIsInSettingCollection(projectName, applicationName, resourceName, id, relatedResourceName);
+
         id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
         IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
         if (parentDataObject == null) return new XDocument();
@@ -3133,6 +3190,8 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resourceName, ref format, false);
 
+        AddURIsInSettingCollection(projectName, applicationName, resourceName, id, relatedResourceName, relatedId);
+        
         id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
         IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
         if (parentDataObject == null) return new XDocument();
