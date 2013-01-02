@@ -468,21 +468,25 @@ Ext.onReady(function () {
 
 
   directoryPanel.on('newvaluelist', function (npanel, node) {
-    var newTab = new AdapterManager.ValueListPanel({
+    var newTab1 = new AdapterManager.ValueListPanel({
       id: 'tab-' + node.id,
       record: node.attributes.record,
       nodeId: node.id,
       url: 'mapping/valueList'
     });
 
-    newTab.on('save', function (panel) {
+    newTab1.on('save', function (panel) {
       win.close();
+	  var ownerTree = node.getOwnerTree();
       directoryPanel.onReload(node);
-      if (node.expanded == false)
-        node.expand();
+      if (node.expanded == false){
+		   node.setOwnerTree(ownerTree);
+           node.expand();
+		}
     }, this);
 
-    newTab.on('Cancel', function (panel) {
+	
+    newTab1.on('Cancel', function (panel) {
       win.close();
     }, this);
 
@@ -495,7 +499,7 @@ Ext.onReady(function () {
       height: 105,
       width: 430,
       plain: true,
-      items: newTab
+      items: newTab1
     });
 
     win.show();
