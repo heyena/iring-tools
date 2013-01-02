@@ -85,27 +85,29 @@ function storeSort(field, dir) {
 function createGridStore(scope, app, graph) {
 	var url = "GridManager/Pages"
 	var store = new Ext.data.Store({
-		proxy: new Ext.data.HttpProxy({
-			url: url,
-			timeout: 120000
-		}),
-		baseParams: {
-			scope: scope,
-			app: app,
-			graph: graph
-    },
-		reader: new Ext.data.DynamicGridReader({}),
-		remoteSort: true,
-		listeners: {
-			exception: function (ex, a, b, c, response) {
-				Ext.getBody().unmask();
-				var rtext = response.responseText;
-				var ind = rtext.indexOf('}');
-				var len = rtext.length - ind - 1;
-				var msg = rtext.substring(ind + 1, rtext.length - 1);
-				showDialog(560, 320, 'Error', msg, Ext.Msg.OK, null);
-			}
-		}		
+	  proxy: new Ext.data.HttpProxy({
+	    url: url,
+	    timeout: 300000
+	  }),
+	  baseParams: {
+	    scope: scope,
+	    app: app,
+	    graph: graph
+	  },
+	  reader: new Ext.data.DynamicGridReader({}),
+	  remoteSort: true,
+	  listeners: {
+	    exception: function (ex, a, b, c, response) {
+	      Ext.getBody().unmask();
+	      var rtext = response.responseText;
+	      if (rtext != null) {
+	        var ind = rtext.indexOf('}');
+	        var len = rtext.length - ind - 1;
+	        var msg = rtext.substring(ind + 1, rtext.length - 1);
+	        showDialog(560, 320, 'Error', msg, Ext.Msg.OK, null);
+	      }
+	    }
+	  }
 	});
 
 	store.sort = store.sort.createInterceptor(storeSort);
