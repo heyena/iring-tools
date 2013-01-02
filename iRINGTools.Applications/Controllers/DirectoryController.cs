@@ -283,6 +283,7 @@ namespace org.iringtools.web.controllers
               if (refresh == "true")
               {
                 Response response =_repository.Refresh(scopeName, applicationName);
+                _logger.Info(Utility.Serialize<Response>(response, true));
               }
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
