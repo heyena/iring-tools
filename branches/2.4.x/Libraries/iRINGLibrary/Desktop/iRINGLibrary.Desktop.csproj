@@ -124,6 +124,7 @@
     <Compile Include="BaseSQLDataLayer.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Contexts.cs" />
+    <Compile Include="GenericContentObject.cs" />
     <Compile Include="DocumentBytes.cs" />
     <Compile Include="DataItems.cs" />
     <Compile Include="DataLayerConfig.cs" />
