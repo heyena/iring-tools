@@ -259,25 +259,44 @@ namespace org.iringtools.services
       try
       {
         format = MapContentType(format);
-        DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
-
+        
         bool fullIndex = false;
 
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = null;
+        bool isAsync = false;
+        string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
 
-        if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
+        if (asyncHeader != null && asyncHeader.ToLower() == "true")
         {
-          xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
+          isAsync = true;
+        }
+
+        DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
+
+        if (isAsync)
+        {
+          string statusUrl = _adapterProvider.AsyncGetWithFilter(project, app, resource, format,
+            start, limit, fullIndex, filter);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
         }
         else
         {
-          xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
-        } 
-        
-        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+          XDocument xDocument = null;
+
+          if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
+          {
+            xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
+          }
+          else
+          {
+            xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
+          }
+
+          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+        }
       }
       catch (Exception ex)
       {
@@ -787,6 +806,7 @@ namespace org.iringtools.services
       {
         context.StatusCode = HttpStatusCode.InternalServerError;
       }
+
       HttpContext.Current.Response.ContentType = "text/html";
       HttpContext.Current.Response.Write(ex.ToString());
     }

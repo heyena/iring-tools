@@ -13,50 +13,20 @@ using org.iringtools.adapter;
 
 namespace iRINGTools.Web.Models
 {
-    public class GridRepository : IGridRepository
+    public class GridRepository : AdapterRepository, IGridRepository
     {
-      //private NameValueCollection _settings = null;
-      private WebHttpClient _dataServiceClient = null;
+      private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
+      
       private DataDictionary dataDict;
       private DataItems dataItems;
       private Grid dataGrid;
       private string graph;
-      private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
       private string response = "";
 
       [Inject]
       public GridRepository()
       {
         dataGrid = new Grid();
-
-        NameValueCollection settings = ConfigurationManager.AppSettings;
-        ServiceSettings _settings = new ServiceSettings();
-        _settings.AppendSettings(settings);      
-
-        #region initialize webHttpClient for converting old mapping
-        string proxyHost = _settings["ProxyHost"];
-        string proxyPort = _settings["ProxyPort"];
-        string dataServiceUri = _settings["DataServiceURI"];
-
-        response = "";
-
-        if (dataServiceUri == null)
-        {
-          response = response + "DataServiceURI is not configured.";
-          _logger.Error(response);         
-        }
-
-        if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
-        {
-          WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-          _dataServiceClient = new WebHttpClient(dataServiceUri, null, webProxy);
-        }
-        else
-        {
-          _dataServiceClient = new WebHttpClient(dataServiceUri);
-
-        }
-        #endregion
       }
 
       public string GetResponse()
@@ -92,7 +62,8 @@ namespace iRINGTools.Web.Models
       {
         try
         {
-          dataDict = _dataServiceClient.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
+          WebHttpClient client = CreateWebClient(_dataServiceUri);
+          dataDict = client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
 
           if (dataDict == null || dataDict.dataObjects.Count == 0)
             response = response + "Data dictionary of [" + app + "] is empty.";
@@ -111,8 +82,29 @@ namespace iRINGTools.Web.Models
           string format = "json";
           DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
-          string dataItemsJson = _dataServiceClient.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
+          string dataItemsJson = string.Empty;
+
+          string serviceUri = _settings["DataServiceURI"];
+          WebHttpClient client = new WebHttpClient(serviceUri);
+          string isAsync = _settings["Async"];
+
+          if (isAsync != null && isAsync.ToLower() == "false")
+          {
+            dataItemsJson = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
+          }
+          else
+          {
+            client.Async = true;
+            string statusUrl = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
           
+            if (string.IsNullOrEmpty(statusUrl))
+            {
+              throw new Exception("Asynchronous status URL not found.");
+            }
+
+            dataItemsJson = WaitForRequestCompletion<string>(_adapterServiceUri, statusUrl);
+          }
+
           DataItemSerializer serializer = new DataItemSerializer();
           dataItems = serializer.Deserialize<DataItems>(dataItemsJson, false); 
         }

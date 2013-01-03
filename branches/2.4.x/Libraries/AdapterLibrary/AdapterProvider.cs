@@ -1015,6 +1015,97 @@ namespace org.iringtools.adapter
       }
     }
 
+    public string AsyncGetWithFilter(string project, string app, string resource,
+      string format, int start, int limit, bool fullIndex, DataFilter filter)
+    {
+      try
+      {
+        string id = Guid.NewGuid().ToString("N");
+        Task task = Task.Factory.StartNew(() =>
+          DoGetWithFilter(project, app, resource, format, start, limit, fullIndex, filter, id));
+        return "/requests/" + id;
+      }
+      catch (Exception ex)
+      {
+        string errMsg = String.Format("Error refreshing data objects: {0}", ex);
+        _logger.Error(errMsg);
+        throw new Exception(errMsg);
+      }
+    }
+
+    private string ToJson(XElement xElement)
+    {
+      try
+      {
+        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
+        DataItemSerializer serializer = new DataItemSerializer(
+          _settings["JsonIdField"], _settings["JsonLinksField"], bool.Parse(_settings["DisplayLinks"]));
+        MemoryStream ms = serializer.SerializeToMemoryStream<DataItems>(dataItems, false);
+        byte[] json = ms.ToArray();
+        ms.Close();
+
+        return Encoding.UTF8.GetString(json, 0, json.Length);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error converting XElement to JSON.");
+        throw e;
+      }
+    }
+
+    private void DoGetWithFilter(string project, string app, string resource, string format,
+      int start, int limit, bool fullIndex, DataFilter filter, string id)
+    {
+      RequestStatus requestStatus = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+
+      _requestDictionary[id] = requestStatus;
+
+      try
+      {
+        XDocument xDocument = null;
+
+        if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
+        {
+          xDocument = GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
+        }
+        else
+        {
+          xDocument = GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
+        }
+
+        string responseText = string.Empty;
+
+        if (xDocument != null && xDocument.Root != null)
+        {
+          requestStatus.State = State.Completed;
+
+          if (format.ToUpper() == "JSON")
+          {
+            responseText = ToJson(xDocument.Root);
+          }
+          else
+          {
+            responseText = xDocument.Root.ToString();
+          }
+        }
+        else
+        {
+          requestStatus.State = State.Error;
+          responseText = "No data objects found.";
+        }
+
+        requestStatus.ResponseText = responseText;
+      }
+      catch (Exception ex)
+      {
+        requestStatus.State = State.Error;
+        requestStatus.Message = ex.Message;
+      }
+    }
+
     public RequestStatus GetRequestStatus(string id)
     {
       try
@@ -4945,20 +5036,9 @@ namespace org.iringtools.adapter
       }
       else if (format.ToUpper() == "JSON")
       {
-        byte[] json = new byte[0];
-
-        if (xElement != null)
-        {
-          DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
-          DataItemSerializer serializer = new DataItemSerializer(
-            _settings["JsonIdField"], _settings["JsonLinksField"], bool.Parse(_settings["DisplayLinks"]));
-          MemoryStream ms = serializer.SerializeToMemoryStream<DataItems>(dataItems, false);
-          json = ms.ToArray();
-          ms.Close();
-        }
-
+        string json = ToJson(xElement);
         HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-        HttpContext.Current.Response.Write(Encoding.UTF8.GetString(json, 0, json.Length));
+        HttpContext.Current.Response.Write(json);
       }
       else
       {
