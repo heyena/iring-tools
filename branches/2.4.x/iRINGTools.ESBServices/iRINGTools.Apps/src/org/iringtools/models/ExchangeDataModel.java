@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.iringtools.common.request.RequestStatus;
+import org.iringtools.common.request.State;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
@@ -20,6 +22,7 @@ import org.iringtools.history.History;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
+import org.iringtools.utility.JaxbUtils;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 
@@ -106,7 +109,7 @@ public class ExchangeDataModel extends DataModel
       //
       HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath, true);
       HttpUtils.addHttpHeaders(session, httpClient);
-      String token = httpClient.post(String.class, "/submit", request);
+      String statusURL = httpClient.post(String.class, "/submit", request);
       
       // 
       // get request timeout and pooling interval from exchange definition
@@ -124,9 +127,10 @@ public class ExchangeDataModel extends DataModel
       // 
       // wait for exchange result
       //
-      httpClient = new HttpClient(serviceUri + "/results/" + token);
+      httpClient = new HttpClient(serviceUri + statusURL);
       HttpUtils.addHttpHeaders(session, httpClient);
       
+      RequestStatus requestStatus = null;
       long timeoutCount = 0;
       
       do 
@@ -141,18 +145,19 @@ public class ExchangeDataModel extends DataModel
         try
         {
           Thread.sleep(poolingInterval * 1000);  // convert to milliseconds
-          xRes = httpClient.get(ExchangeResponse.class);
+          requestStatus = httpClient.get(RequestStatus.class);
         }
         catch (HttpClientException e)
         {
-          int errorCode = e.getErrorCode();
-          
-          if (errorCode != 404)
-          {
-            break;
-          }
+          logger.error(e.getMessage());
+          break;
         }
-      } while (xRes == null);
+      } while (requestStatus.getState() == State.IN_PROGRESS);
+      
+      if (requestStatus != null)
+      {
+        xRes = JaxbUtils.toObject(ExchangeResponse.class, requestStatus.getResponseText());
+      }
     }
     catch (Exception ex)
     {

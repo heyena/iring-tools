@@ -14,6 +14,8 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
+import org.iringtools.common.request.RequestStatus;
+import org.iringtools.common.request.State;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.directory.ExchangeDefinition;
@@ -35,8 +37,8 @@ import org.iringtools.utility.JaxbUtils;
 
 public class ExchangeTask implements Runnable
 {
-  private final Logger logger = Logger.getLogger(ExchangeTask.class);
-
+  private static final Logger logger = Logger.getLogger(ExchangeTask.class);
+  
   private final String POOL_PREFIX = "_pool_";
   private final String SPLIT_TOKEN = "->";
   private DatatypeFactory datatypeFactory = null;
@@ -47,18 +49,18 @@ public class ExchangeTask implements Runnable
   private String scope;
   private String id;
   private ExchangeDefinition xDef;
-  private String resultPath;
   private HttpClient httpClient;
+  private RequestStatus requestStatus;
 
   public ExchangeTask(final Map<String, Object> settings, String scope, String id, ExchangeRequest xReq,
-      ExchangeDefinition xDef, String resultPath)
+      ExchangeDefinition xDef, RequestStatus requestStatus)
   {
     this.settings = settings;
     this.scope = scope;
     this.id = id;
     this.xReq = xReq;
     this.xDef = xDef;
-    this.resultPath = resultPath;
+    this.requestStatus = requestStatus;
 
     httpClient = new HttpClient();
     HttpUtils.addHttpHeaders(settings, httpClient);
@@ -81,6 +83,11 @@ public class ExchangeTask implements Runnable
   @Override
   public void run()
   {
+    if (requestStatus != null)
+    {
+      requestStatus.setState(State.IN_PROGRESS);
+    }
+    
     //
     // create exchange response
     //
@@ -445,25 +452,24 @@ public class ExchangeTask implements Runnable
 
         exchangeLogs.remove(0);
       }
+      
+      if (requestStatus != null)
+      {
+        requestStatus.setState(State.COMPLETED);
+        requestStatus.setResponseText(JaxbUtils.toXml(xRes, false));
+      }
     }
     catch (Exception e)
     {
-      String message = "Error writing exchange response to disk: " + e;
-      logger.error(message);
+      logger.error(e.getMessage());
       xRes.setLevel(Level.ERROR);
       StringBuilder summary = new StringBuilder(xRes.getSummary());
-      xRes.setSummary(summary.append(message).toString());
-    }
-
-    if (resultPath != null)
-    {
-      try
+      xRes.setSummary(summary.append(e.getMessage()).toString());
+      
+      if (requestStatus != null)
       {
-        JaxbUtils.write(xRes, resultPath, false);
-      }
-      catch (Exception e)
-      {
-        logger.error(e.getMessage());
+        requestStatus.setState(State.ERROR);
+        requestStatus.setMessage(e.getMessage());
       }
     }
   }
