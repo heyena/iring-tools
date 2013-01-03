@@ -13,8 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.iringtools.common.request.RequestStatus;
 import org.iringtools.common.response.Level;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;
@@ -398,8 +398,8 @@ public class ExchangeService extends AbstractService
   }
   
   @GET
-  @Path("/results/{xtoken}")
-  public Response getExchangeResult(@PathParam("xtoken") String xtoken) 
+  @Path("/requests/{id}")
+  public Response getRequestStatus(@PathParam("id") String id) 
   {
     try
     {
@@ -413,12 +413,9 @@ public class ExchangeService extends AbstractService
     try
     {      
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-      ExchangeResponse result = exchangeProvider.getExchangeResult(xtoken);
+      RequestStatus requestStatus = exchangeProvider.getRequestStatus(id);
       
-      if (result == null)
-        return Response.status(Status.NOT_FOUND).build();
-      
-      return Response.ok().entity(result).build();
+      return Response.ok().entity(requestStatus).build();
     }
     catch (Exception e)
     {

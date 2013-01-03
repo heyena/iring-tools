@@ -5,16 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
+import org.iringtools.common.request.RequestStatus;
+import org.iringtools.common.request.State;
 import org.iringtools.common.response.Level;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;
@@ -53,8 +56,6 @@ import org.iringtools.utility.JaxbUtils;
 public class ExchangeProvider
 {
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
-  public static final String POOL_PREFIX = "_pool_";  
-  private static final String splitToken = "->";
   
   private Map<String, Object> settings;
   private HttpClient httpClient = null;
@@ -68,13 +69,18 @@ public class ExchangeProvider
   private String targetAppName = null;
   private String targetGraphName = null;
   private String hashAlgorithm = null;
-  //private Integer exchangePoolSize;
+  
+  public static final String splitToken = "->";
+  public static final String POOL_PREFIX = "_pool_";
+  public static ConcurrentMap<String, RequestStatus> requests =
+      new ConcurrentHashMap<String, RequestStatus>();
 
   public ExchangeProvider(Map<String, Object> settings) throws ServiceProviderException
   {
     this.settings = settings;
     this.httpClient = new HttpClient();
-    HttpUtils.addHttpHeaders(settings, httpClient);
+    
+    HttpUtils.addHttpHeaders(settings, httpClient);    
   }
 
   public Directory getDirectory() throws ServiceProviderException
@@ -739,15 +745,17 @@ public class ExchangeProvider
        
     if (isAsync)
     {
-      String xtoken = UUID.randomUUID().toString();
-      String resultPath = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + xtoken + ".xml";
-      
+      String requestId = UUID.randomUUID().toString().replace("-", "");
+      RequestStatus requestStatus = new RequestStatus();
+      ExchangeProvider.requests.put(requestId, requestStatus);
+       
       ExecutorService executor = Executors.newSingleThreadExecutor();   
-      ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, xReq, xDef, resultPath);    
+      ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, xReq, xDef, requestStatus);    
       executor.execute(exchangeTask);
       executor.shutdown();
       
-      return Response.status(Status.ACCEPTED).entity(xtoken).type(MediaType.TEXT_PLAIN).build();
+      String statusURL = "/requests/" + requestId;
+      return Response.status(Status.ACCEPTED).header("location", statusURL).build();
     }
     else
     {
@@ -769,27 +777,36 @@ public class ExchangeProvider
     }
   }
 
-  public ExchangeResponse getExchangeResult(String xtoken) throws HttpClientException
-  {
-    
-    String transPath = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + xtoken + ".xml";
-    File file = new File(transPath);
-    
-    if (file.exists())
+  public RequestStatus getRequestStatus(String id) 
+  {    
+    RequestStatus requestStatus = null;
+
+    try
     {
-      try
+      if (requests.containsKey(id))
       {
-        ExchangeResponse res = JaxbUtils.read(ExchangeResponse.class, transPath);        
-        file.delete();
-        return res;
+        requestStatus = requests.get(id);
       }
-      catch (Exception e)
+      else
       {
-        throw new HttpClientException(e.getMessage());
+        requestStatus = new RequestStatus();
+        requestStatus.setState(State.NOT_FOUND);
+        requestStatus.setMessage("Request [" + id + "] not found.");
+      }
+  
+      if (requestStatus.getState() == State.COMPLETED)
+      {
+        requests.remove(id);
       }
     }
+    catch (Exception e)
+    {
+      requestStatus.setState(State.ERROR);
+      requestStatus.setMessage(e.getMessage());
+      requests.remove(id);
+    }
     
-    return null;
+    return requestStatus;
   }
   
   private void initExchangeDefinition(String scope, String id) throws ServiceProviderException
@@ -807,7 +824,6 @@ public class ExchangeProvider
     targetGraphName = xdef.getTargetGraphName();
     
     hashAlgorithm = xdef.getHashAlgorithm();
-    //exchangePoolSize = xdef.getPoolSize();
   }
 
   public String md5Hash(DataTransferObject dataTransferObject)

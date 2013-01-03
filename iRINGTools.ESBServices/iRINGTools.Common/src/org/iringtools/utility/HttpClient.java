@@ -68,6 +68,7 @@ public class HttpClient
     }
   }
 
+  @SuppressWarnings("unchecked")
   public <T> T get(Class<T> responseClass, String relativeUri) throws HttpClientException
   {
     HttpURLConnection conn = null;
@@ -83,7 +84,13 @@ public class HttpClient
       if (responseCode == HttpURLConnection.HTTP_NO_CONTENT)
         return null;
       
-      if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_ACCEPTED)
+      if (responseCode == HttpURLConnection.HTTP_ACCEPTED)
+      {
+        String statusURL = conn.getHeaderField("location");
+        return (T)statusURL;
+      }
+      
+      if (responseCode == HttpURLConnection.HTTP_OK)
       {
         InputStream responseStream = conn.getInputStream();
         logger.debug("Content Length: " + conn.getContentLength());
@@ -139,6 +146,7 @@ public class HttpClient
     return post(responseClass, relativeUri, requestEntity, "application/xml");    
   }
 
+  @SuppressWarnings("unchecked")
   public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity, String contentType) throws HttpClientException
   {
     HttpURLConnection conn = null;
@@ -163,7 +171,13 @@ public class HttpClient
       if (responseCode == HttpURLConnection.HTTP_NO_CONTENT)
         return null;
       
-      if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_ACCEPTED)
+      if (responseCode == HttpURLConnection.HTTP_ACCEPTED)
+      {
+        String statusURL = conn.getHeaderField("location");
+        return (R)statusURL;
+      }
+      
+      if (responseCode == HttpURLConnection.HTTP_OK)
       {
         InputStream responseStream = conn.getInputStream();        
         logger.debug("Content Length: " + conn.getContentLength());
