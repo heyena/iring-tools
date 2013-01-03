@@ -2992,8 +2992,8 @@ namespace org.iringtools.adapter
                 specificURI = resourceName + "/" + resourceIdentifier + "/" + reletedKeyPropertyName + "/" + relatedId;
             }
 
-            _settings["GenericURI"] = genericURI;
-            _settings["SpecificURI"] = specificURI;
+            _settings["GenericURI"] =  genericURI;
+            _settings["SpecificURI"] =  specificURI;
         }
         catch
         {
