@@ -2974,13 +2974,13 @@ namespace org.iringtools.adapter
 
             if (resourceIdentifier != null)
             {
-                genericURI = resourceName + "/[" + keyPropertyName + "]";
+                genericURI = resourceName + "/{" + keyPropertyName + "}";
                 specificURI = resourceName + "/" + resourceIdentifier;
             }
 
             if (relatedResourceName != null)
             {
-                genericURI = resourceName + "/[" + keyPropertyName + "]/" + relatedResourceName;
+                genericURI = resourceName + "/{" + keyPropertyName + "}/" + relatedResourceName;
                 specificURI = resourceName + "/" + resourceIdentifier + "/" + relatedResourceName;
             }
             if (relatedId != null)
@@ -2988,7 +2988,7 @@ namespace org.iringtools.adapter
                 DataObject releteddataObject = dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == relatedResourceName.ToUpper());
                 string reletedKeyPropertyName = releteddataObject.keyProperties[0].keyPropertyName;
 
-                genericURI = resourceName + "/[" + keyPropertyName + "]/" + reletedKeyPropertyName + "/[" + reletedKeyPropertyName + "]";
+                genericURI = resourceName + "/{" + keyPropertyName + "}/" + reletedKeyPropertyName + "/{" + reletedKeyPropertyName + "}";
                 specificURI = resourceName + "/" + resourceIdentifier + "/" + reletedKeyPropertyName + "/" + relatedId;
             }
 
