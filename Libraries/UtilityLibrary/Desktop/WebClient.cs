@@ -343,19 +343,28 @@ namespace org.iringtools.utility
         );
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        Stream responseStream = response.GetResponseStream();
 
-        if (typeof(T) == typeof(String))
+        if (response.StatusCode == HttpStatusCode.Accepted)
         {
-          StreamReader reader = new StreamReader(responseStream);
-          string responseStr = reader.ReadToEnd();
-          reader.Close();
-
-          return (T)Convert.ChangeType(responseStr, typeof(T));
+          string statusUrl = response.Headers["location"];
+          return (T)Convert.ChangeType(statusUrl, typeof(T));
         }
         else
         {
-          return Utility.DeserializeFromStream<T>(responseStream.ToMemoryStream(), useDataContractSerializer);
+          Stream responseStream = response.GetResponseStream();
+
+          if (typeof(T) == typeof(String))
+          {
+            StreamReader reader = new StreamReader(responseStream);
+            string responseStr = reader.ReadToEnd();
+            reader.Close();
+
+            return (T)Convert.ChangeType(responseStr, typeof(T));
+          }
+          else
+          {
+            return Utility.DeserializeFromStream<T>(responseStream.ToMemoryStream(), useDataContractSerializer);
+          }
         }
       }
       catch (Exception exception)
@@ -549,19 +558,28 @@ namespace org.iringtools.utility
         request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        Stream responseStream = response.GetResponseStream();
 
-        if (typeof(R) == typeof(String))
+        if (response.StatusCode == HttpStatusCode.Accepted)
         {
-          StreamReader reader = new StreamReader(responseStream);
-          string responseStr = reader.ReadToEnd();
-          reader.Close();
-
-          return (R)Convert.ChangeType(responseStr, typeof(R));
+          string statusUrl = response.Headers["location"];
+          return (R)Convert.ChangeType(statusUrl, typeof(R));
         }
         else
         {
-          return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+          Stream responseStream = response.GetResponseStream();
+
+          if (typeof(R) == typeof(String))
+          {
+            StreamReader reader = new StreamReader(responseStream);
+            string responseStr = reader.ReadToEnd();
+            reader.Close();
+
+            return (R)Convert.ChangeType(responseStr, typeof(R));
+          }
+          else
+          {
+            return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+          }
         }
       }
       catch (Exception e)
@@ -710,8 +728,17 @@ namespace org.iringtools.utility
         requestStream.Flush();
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        string responseMessage;
 
-        string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+        if (response.StatusCode == HttpStatusCode.Accepted)
+        {
+          responseMessage = response.Headers["location"];
+        }
+        else
+        {
+          Stream responseStream = response.GetResponseStream();
+          responseMessage = Utility.SerializeFromStream(responseStream);
+        }
 
         return responseMessage;
       }
