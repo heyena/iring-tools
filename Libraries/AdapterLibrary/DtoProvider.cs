@@ -49,6 +49,7 @@ using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter.identity;
 using Microsoft.ServiceModel.Web;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace org.iringtools.adapter
 {
@@ -68,6 +69,8 @@ namespace org.iringtools.adapter
     private bool _isScopeInitialized = false;
     private bool _isDataLayerInitialized = false;
     protected string _fixedIdentifierBoundary = "#";
+    private static ConcurrentDictionary<string, RequestStatus> _requestDictionary = 
+      new ConcurrentDictionary<string, RequestStatus>();
 
     [Inject]
     public DtoProvider(NameValueCollection settings)
@@ -657,6 +660,40 @@ namespace org.iringtools.adapter
       }
 
       return response;
+    }
+
+    public RequestStatus GetRequestStatus(string id)
+    {
+      try
+      {
+        RequestStatus status = null;
+
+        if (_requestDictionary.ContainsKey(id))
+        {
+          status = _requestDictionary[id];
+        }
+        else
+        {
+          status = new RequestStatus()
+          {
+            State = State.NotFound,
+            Message = "Request [" + id + "] not found."
+          };
+        }
+
+        if (status.State == State.Completed)
+        {
+          _requestDictionary.TryRemove(id, out status);
+        }
+
+        return status;
+      }
+      catch (Exception ex)
+      {
+        string errMsg = String.Format("Error getting request status: {0}", ex);
+        _logger.Error(errMsg);
+        throw new Exception(errMsg);
+      }
     }
 
     private void InitializeScope(string projectName, string applicationName)

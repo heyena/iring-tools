@@ -98,10 +98,17 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+        if (IsAsync())
+        {
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+        }
+        else
+        {
+          DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+        }
       }
       catch (Exception e)
       {
@@ -117,11 +124,17 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, request);
+        if (IsAsync())
+        {
 
-        
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+        }
+        else
+        {
+          DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, request);
+
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+        }
       }
       catch (Exception e)
       {
@@ -243,6 +256,49 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "text/plain";
         HttpContext.Current.Response.Write(e.ToString());
       }
+    }
+
+    [Description("Gets status of a asynchronous request.")]
+    [WebGet(UriTemplate = "/requests/{id}")]
+    public void GetRequestStatus(string id)
+    {
+      RequestStatus status = null;
+
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        status = _dtoProvider.GetRequestStatus(id);
+
+        if (status.State == State.NotFound)
+        {
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+        }
+      }
+      catch (Exception ex)
+      {
+        status = new RequestStatus()
+        {
+          State = State.Error,
+          Message = ex.Message
+        };
+      }
+
+      string xml = Utility.SerializeDataContract<RequestStatus>(status);
+      HttpContext.Current.Response.ContentType = "application/xml";
+      HttpContext.Current.Response.Write(xml);
+    }
+
+    private bool IsAsync()
+    {
+      bool async = false;
+      string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
+
+      if (asyncHeader != null && asyncHeader.ToLower() == "true")
+      {
+        async = true;
+      }
+
+      return async;
     }
   }
 }

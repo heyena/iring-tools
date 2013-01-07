@@ -55,6 +55,8 @@ import org.iringtools.utility.JaxbUtils;
 
 public class ExchangeProvider
 {
+  public static final String POOL_PREFIX = "_pool_";
+  
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
   
   private Map<String, Object> settings;
@@ -70,9 +72,8 @@ public class ExchangeProvider
   private String targetGraphName = null;
   private String hashAlgorithm = null;
   
-  public static final String splitToken = "->";
-  public static final String POOL_PREFIX = "_pool_";
-  public static ConcurrentMap<String, RequestStatus> requests =
+  private static final String splitToken = "->";
+  private static ConcurrentMap<String, RequestStatus> requests =
       new ConcurrentHashMap<String, RequestStatus>();
 
   public ExchangeProvider(Map<String, Object> settings) throws ServiceProviderException

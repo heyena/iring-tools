@@ -28,7 +28,7 @@ public class DtiTask implements Runnable
   {
     try 
     {
-      HttpClient httpClient = new HttpClient(url);
+      HttpClient httpClient = new HttpClient(url, true);
       HttpUtils.addHttpHeaders(settings, httpClient); 
       indices = httpClient.post(DataTransferIndices.class, dxiRequest);
     }

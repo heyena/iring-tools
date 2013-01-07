@@ -438,15 +438,7 @@ namespace org.iringtools.services
     {
       try
       {
-        bool isAsync = false;
-        string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
-
-        if (asyncHeader != null && asyncHeader.ToLower() == "true")
-        {
-          isAsync = true;
-        }
-
-        if (isAsync)
+        if (IsAsync())
         {
           string statusUrl = _adapterProvider.AsyncRefreshDictionary(scope, app);
           WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
@@ -549,6 +541,19 @@ namespace org.iringtools.services
       };
 
       return response;
+    }
+
+    private bool IsAsync()
+    {
+      bool async = false;
+      string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
+
+      if (asyncHeader != null && asyncHeader.ToLower() == "true")
+      {
+        async = true;
+      }
+
+      return async;
     }
     #endregion
   }

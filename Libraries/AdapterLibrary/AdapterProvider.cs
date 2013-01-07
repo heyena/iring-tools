@@ -79,8 +79,9 @@ namespace org.iringtools.adapter
     private bool _isFormatExpected = true;
 
     //Projection specific stuff
-    private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects
-    private Dictionary<string, List<string>> _classIdentifiers = new Dictionary<string, List<string>>(); // dictionary of class ids and list of identifiers
+    private IList<IDataObject> _dataObjects = new List<IDataObject>();  // dictionary of object names and list of data objects
+    private Dictionary<string, List<string>> _classIdentifiers = 
+      new Dictionary<string, List<string>>();  // dictionary of class ids and list of identifiers
 
     private bool _isScopeInitialized = false;
     private bool _isDataLayerInitialized = false;
@@ -88,7 +89,8 @@ namespace org.iringtools.adapter
     private string[] arrSpecialcharValue;
     private string _dataLayersRegistryPath;
 
-    private static ConcurrentDictionary<string, RequestStatus> _requestDictionary = new ConcurrentDictionary<string, RequestStatus>();
+    private static ConcurrentDictionary<string, RequestStatus> _requestDictionary = 
+      new ConcurrentDictionary<string, RequestStatus>();
 
     [Inject]
     public AdapterProvider(NameValueCollection settings)
