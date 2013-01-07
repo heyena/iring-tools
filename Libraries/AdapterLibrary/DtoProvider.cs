@@ -50,6 +50,7 @@ using org.iringtools.adapter.identity;
 using Microsoft.ServiceModel.Web;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace org.iringtools.adapter
 {
@@ -69,7 +70,7 @@ namespace org.iringtools.adapter
     private bool _isScopeInitialized = false;
     private bool _isDataLayerInitialized = false;
     protected string _fixedIdentifierBoundary = "#";
-    private static ConcurrentDictionary<string, RequestStatus> _requestDictionary = 
+    private static ConcurrentDictionary<string, RequestStatus> _requests = 
       new ConcurrentDictionary<string, RequestStatus>();
 
     [Inject]
@@ -354,8 +355,46 @@ namespace org.iringtools.adapter
 
       return dataTransferIndices;
     }
+    
+    public string AsyncGetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest)
+    {
+      try
+      {
+        string id = Guid.NewGuid().ToString("N");
+        Task task = Task.Factory.StartNew(() => DoGetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, dxiRequest, id));
+        return "/requests/" + id;
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting indices: " + e.Message);
+        throw e;
+      }
+    }
 
-    public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    private void DoGetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest, string id)
+    {
+      RequestStatus requestStatus = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+
+      _requests[id] = requestStatus;
+
+      try
+      {
+        DataTransferIndices dataTransferIndices = GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, dxiRequest);
+
+        requestStatus.State = State.Completed;
+        requestStatus.ResponseText = Utility.Serialize<DataTransferIndices>(dataTransferIndices, true);
+      }
+      catch (Exception ex)
+      {
+        requestStatus.State = State.Error;
+        requestStatus.Message = ex.Message;
+      }
+    }
+
+    public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest)
     {
       DataTransferIndices dataTransferIndices = null;
 
@@ -364,9 +403,9 @@ namespace org.iringtools.adapter
         InitializeScope(scope, app);
         InitializeDataLayer();
 
-        BuildCrossGraphMap(request.Manifest, graph);
+        BuildCrossGraphMap(dxiRequest.Manifest, graph);
 
-        DataFilter filter = request.DataFilter;
+        DataFilter filter = dxiRequest.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
         filter.AppendFilter(GetPredeterminedFilter());
@@ -668,9 +707,9 @@ namespace org.iringtools.adapter
       {
         RequestStatus status = null;
 
-        if (_requestDictionary.ContainsKey(id))
+        if (_requests.ContainsKey(id))
         {
-          status = _requestDictionary[id];
+          status = _requests[id];
         }
         else
         {
@@ -683,7 +722,7 @@ namespace org.iringtools.adapter
 
         if (status.State == State.Completed)
         {
-          _requestDictionary.TryRemove(id, out status);
+          _requests.TryRemove(id, out status);
         }
 
         return status;

@@ -30,9 +30,10 @@ public class ExchangeDataModel extends DataModel
 {
   private static final Logger logger = Logger.getLogger(ExchangeDataModel.class);
  
-  public ExchangeDataModel(Map<String, Object> session, String refServiceUri, FieldFit fieldFit)
+  public ExchangeDataModel(Map<String, Object> session, String refServiceUri, FieldFit fieldFit, 
+      boolean isAsync, long timeout, long interval)
   {
-    super(DataMode.EXCHANGE, refServiceUri, fieldFit); 
+    super(DataMode.EXCHANGE, refServiceUri, fieldFit, isAsync, timeout, interval); 
     this.session = session;
   }
   

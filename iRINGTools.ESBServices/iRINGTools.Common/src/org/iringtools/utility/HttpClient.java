@@ -67,6 +67,18 @@ public class HttpClient
       addHeader("async", "true");
     }
   }
+  
+  public void setAsync(boolean value)
+  {
+    if (value)
+    {
+      addHeader("async", "true");
+    }
+    else
+    {
+      addHeader("async", "false");
+    }
+  }
 
   @SuppressWarnings("unchecked")
   public <T> T get(Class<T> responseClass, String relativeUri) throws HttpClientException
