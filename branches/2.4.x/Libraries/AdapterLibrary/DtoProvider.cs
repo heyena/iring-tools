@@ -525,11 +525,49 @@ namespace org.iringtools.adapter
 
       return dataTransferObjects;
     }
+    
+    public string AsyncGetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest)
+    {
+      try
+      {
+        string id = Guid.NewGuid().ToString("N");
+        Task task = Task.Factory.StartNew(() => DoGetDataTransferObjects(scope, app, graph, dxoRequest, id));
+        return "/requests/" + id;
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting data transfer objects: " + e.Message);
+        throw e;
+      }
+    }
+
+    private void DoGetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest, string id)
+    {
+      RequestStatus requestStatus = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+
+      _requests[id] = requestStatus;
+
+      try
+      {
+        DataTransferObjects dtos = GetDataTransferObjects(scope, app, graph, dxoRequest);
+
+        requestStatus.State = State.Completed;
+        requestStatus.ResponseText = Utility.Serialize<DataTransferObjects>(dtos, true);
+      }
+      catch (Exception ex)
+      {
+        requestStatus.State = State.Error;
+        requestStatus.Message = ex.Message;
+      }
+    }
 
     // get list (page) of data transfer objects per dto page request
     public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest)
     {
-      DataTransferObjects dataTransferObjects = new DataTransferObjects();
+      DataTransferObjects dtos = new DataTransferObjects();
 
       if (dxoRequest != null && dxoRequest.DataTransferIndices != null &&
           dxoRequest.DataTransferIndices.DataTransferIndexList.Count > 0)
@@ -553,7 +591,7 @@ namespace org.iringtools.adapter
           {
             if (_settings["MultiGetDTOs"] != null && bool.Parse(_settings["MultiGetDTOs"]))
             {
-              dataTransferObjects = MultiGetDataTransferObjects(identifiers);
+              dtos = MultiGetDataTransferObjects(identifiers);
             }
             else
             {
@@ -564,7 +602,7 @@ namespace org.iringtools.adapter
 
               if (dtoDoc != null && dtoDoc.Root != null)
               {
-                dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+                dtos = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
               }
             }
           }
@@ -576,7 +614,7 @@ namespace org.iringtools.adapter
         }
       }
 
-      return dataTransferObjects;
+      return dtos;
     }
 
     public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)

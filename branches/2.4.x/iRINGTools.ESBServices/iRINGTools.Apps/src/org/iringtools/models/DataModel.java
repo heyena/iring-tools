@@ -790,10 +790,19 @@ public class DataModel
       dxoRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
       dxoRequest.setDataTransferIndices(dtis);
 
-      HttpClient httpClient = new HttpClient(serviceUri, isAsync);
+      HttpClient httpClient = new HttpClient(serviceUri);
       HttpUtils.addHttpHeaders(session, httpClient);
-
-      dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
+      
+      if (isAsync)
+      {
+        httpClient.setAsync(true);
+        String statusUrl = httpClient.post(String.class, dtoRelativePath, dxoRequest);
+        dtos = waitForRequestCompletion(DataTransferObjects.class, serviceUri + statusUrl);
+      }
+      else
+      {
+        dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
+      }
     }
     catch (HttpClientException e)
     {

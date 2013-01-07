@@ -105,7 +105,7 @@ public class ExchangeDataModel extends DataModel
 
     try
     {
-     // 
+      // 
       // submit asynchronous exchange
       //
       HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath, true);
