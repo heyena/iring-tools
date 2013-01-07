@@ -14,8 +14,8 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
-import org.iringtools.common.request.RequestStatus;
-import org.iringtools.common.request.State;
+import org.iringtools.library.RequestStatus;
+import org.iringtools.library.State;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.directory.ExchangeDefinition;

@@ -30,19 +30,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Applications }
-     * 
-     */
-    public Applications createApplications() {
-        return new Applications();
-    }
-
-    /**
      * Create an instance of {@link Scopes }
      * 
      */
     public Scopes createScopes() {
         return new Scopes();
+    }
+
+    /**
+     * Create an instance of {@link RequestStatus }
+     * 
+     */
+    public RequestStatus createRequestStatus() {
+        return new RequestStatus();
+    }
+
+    /**
+     * Create an instance of {@link Applications }
+     * 
+     */
+    public Applications createApplications() {
+        return new Applications();
     }
 
     /**

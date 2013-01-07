@@ -16,8 +16,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
-import org.iringtools.common.request.RequestStatus;
-import org.iringtools.common.request.State;
+import org.iringtools.library.RequestStatus;
+import org.iringtools.library.State;
 import org.iringtools.common.response.Level;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;

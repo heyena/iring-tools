@@ -1,5 +1,5 @@
 
-package org.iringtools.common.request;
+package org.iringtools.library;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,16 +9,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for RequestStatus complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RequestStatus">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="state" type="{http://www.iringtools.org/common/request}State"/>
+ *         &lt;element name="state" type="{http://www.iringtools.org/library}State"/>
  *         &lt;element name="percentComplete" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="message" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="responseText" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "RequestStatus", propOrder = {
+@XmlType(name = "", propOrder = {
     "state",
     "percentComplete",
     "message",
