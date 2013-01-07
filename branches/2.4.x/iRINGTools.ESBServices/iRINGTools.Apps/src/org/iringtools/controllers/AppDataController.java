@@ -1,15 +1,12 @@
 package org.iringtools.controllers;
 
 import org.iringtools.models.AppDataModel;
-import org.iringtools.models.DataModel.FieldFit;
-import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.grid.Grid;
 
 public class AppDataController extends AbstractController
 {
   private static final long serialVersionUID = 1L;
   private String refDataServiceUri;
-  private FieldFit fieldFit;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
 
@@ -31,11 +28,6 @@ public class AppDataController extends AbstractController
     super();
     
 	  refDataServiceUri = context.getInitParameter("RefDataServiceUri");
-	  
-	  String fieldFitSetting = context.getInitParameter("FieldFit");	  
-	  fieldFit = IOUtils.isNullOrEmpty(fieldFitSetting) 
-	    ? FieldFit.VALUE : FieldFit.valueOf(fieldFitSetting.toUpperCase());
-	  
 	  authorize("exchangeManager", "exchangeAdmins");
   }
   
@@ -46,7 +38,8 @@ public class AppDataController extends AbstractController
   {
     try
     {
-      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit);
+      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit, 
+          isAsync, asyncTimeout, pollingInterval);
       pageDtoGrid = appDataModel.getDtoGrid(baseUri, scope, app, graph, filter, sort, dir, start, limit);    
     }
     catch (Exception e)
@@ -70,7 +63,8 @@ public class AppDataController extends AbstractController
   {
     try
     {
-      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit);
+      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit, 
+          isAsync, asyncTimeout, pollingInterval);
       pageRelatedItemGrid = appDataModel.getRelatedDtoGrid(baseUri, scope, app, graph, individual, 
           classId, classIdentifier, filter, sort, dir, start, limit);
     }

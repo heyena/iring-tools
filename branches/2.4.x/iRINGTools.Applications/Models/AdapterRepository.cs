@@ -89,11 +89,11 @@ namespace iRINGTools.Web.Models
         }
         asyncPollingInterval *= 1000;  // convert to milliseconds
 
+        WebHttpClient client = CreateWebClient(baseUri);
         RequestStatus requestStatus = null;
 
         while (timeoutCount < asyncTimeout)
         {
-          WebHttpClient client = CreateWebClient(baseUri);
           requestStatus = client.Get<RequestStatus>(statusUrl);
 
           if (requestStatus.State != State.InProgress)

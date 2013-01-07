@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.SessionAware;
+import org.iringtools.models.DataModel.FieldFit;
 import org.iringtools.security.LdapAuthorizationProvider;
 import org.iringtools.security.OAuthFilter;
 import org.iringtools.utility.HttpUtils;
@@ -31,6 +32,12 @@ public abstract class AbstractController extends ActionSupport implements Sessio
   protected ServletContext context;
   protected HttpServletRequest request;
   protected HttpServletResponse response;
+  
+  protected FieldFit fieldFit;
+  
+  protected boolean isAsync;
+  protected long asyncTimeout;
+  protected long pollingInterval;
 
   public AbstractController()
   {
@@ -39,6 +46,19 @@ public abstract class AbstractController extends ActionSupport implements Sessio
     response = ServletActionContext.getResponse();
     
     HttpUtils.prepareHttpProxy(context);
+    
+    String fieldFitSetting = context.getInitParameter("FieldFit");    
+    fieldFit = IOUtils.isNullOrEmpty(fieldFitSetting) 
+      ? FieldFit.VALUE : FieldFit.valueOf(fieldFitSetting.toUpperCase());
+    
+    String async = context.getInitParameter("Async");    
+    isAsync = IOUtils.isNullOrEmpty(async) ? true : Boolean.valueOf(async);
+    
+    String asyncTimeoutStr = context.getInitParameter("AsyncTimeout");    
+    asyncTimeout = IOUtils.isNullOrEmpty(asyncTimeoutStr) ? 1800 : Long.valueOf(asyncTimeoutStr);
+   
+    String pollingIntervalStr = context.getInitParameter("PollingInterval");    
+    pollingInterval = IOUtils.isNullOrEmpty(pollingIntervalStr) ? 2 : Long.valueOf(pollingIntervalStr);
   }
 
   @Override

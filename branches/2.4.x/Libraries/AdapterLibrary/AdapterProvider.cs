@@ -89,7 +89,7 @@ namespace org.iringtools.adapter
     private string[] arrSpecialcharValue;
     private string _dataLayersRegistryPath;
 
-    private static ConcurrentDictionary<string, RequestStatus> _requestDictionary = 
+    private static ConcurrentDictionary<string, RequestStatus> _requests = 
       new ConcurrentDictionary<string, RequestStatus>();
 
     [Inject]
@@ -940,7 +940,7 @@ namespace org.iringtools.adapter
         State = State.InProgress
       };
 
-      _requestDictionary[id] = requestStatus;
+      _requests[id] = requestStatus;
 
       try
       {
@@ -982,7 +982,7 @@ namespace org.iringtools.adapter
         State = State.InProgress
       };
 
-      _requestDictionary[id] = requestStatus;
+      _requests[id] = requestStatus;
 
       try
       {
@@ -1063,7 +1063,7 @@ namespace org.iringtools.adapter
         State = State.InProgress
       };
 
-      _requestDictionary[id] = requestStatus;
+      _requests[id] = requestStatus;
 
       try
       {
@@ -1114,9 +1114,9 @@ namespace org.iringtools.adapter
       {
         RequestStatus status = null;
 
-        if (_requestDictionary.ContainsKey(id))
+        if (_requests.ContainsKey(id))
         {
-          status = _requestDictionary[id];
+          status = _requests[id];
         }
         else
         {
@@ -1129,7 +1129,7 @@ namespace org.iringtools.adapter
 
         if (status.State == State.Completed)
         {
-          _requestDictionary.TryRemove(id, out status);
+          _requests.TryRemove(id, out status);
         }
 
         return status;

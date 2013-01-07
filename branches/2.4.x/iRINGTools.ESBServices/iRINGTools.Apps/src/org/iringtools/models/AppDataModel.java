@@ -10,9 +10,10 @@ import org.iringtools.widgets.grid.Grid;
 
 public class AppDataModel extends DataModel
 {  
-  public AppDataModel(Map<String, Object> session, String refDataServiceUri, FieldFit fieldFit)
+  public AppDataModel(Map<String, Object> session, String refDataServiceUri, FieldFit fieldFit, 
+      boolean isAsync, long timeout, long interval)
   {
-    super(DataMode.APP, refDataServiceUri, fieldFit);
+    super(DataMode.APP, refDataServiceUri, fieldFit, isAsync, timeout, interval);
     this.session = session;
   }
   

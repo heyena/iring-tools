@@ -98,17 +98,10 @@ namespace org.iringtools.services
     {
       try
       {
-        if (IsAsync())
-        {
+        DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
 
-        }
-        else
-        {
-          DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
-
-          HttpContext.Current.Response.ContentType = "application/xml";
-          HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
-        }
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));        
       }
       catch (Exception e)
       {
@@ -126,7 +119,9 @@ namespace org.iringtools.services
       {
         if (IsAsync())
         {
-
+          string dtisURL = _dtoProvider.AsyncGetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, request);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = dtisURL;
         }
         else
         {

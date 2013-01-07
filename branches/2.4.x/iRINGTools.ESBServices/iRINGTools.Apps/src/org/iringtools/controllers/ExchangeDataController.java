@@ -1,9 +1,7 @@
 package org.iringtools.controllers;
 
 import org.iringtools.dxfr.response.ExchangeResponse;
-import org.iringtools.models.DataModel.FieldFit;
 import org.iringtools.models.ExchangeDataModel;
-import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.grid.Grid;
 
 public class ExchangeDataController extends AbstractController
@@ -13,7 +11,6 @@ public class ExchangeDataController extends AbstractController
   private String refDataServiceUri;
   private String exchangeServiceUri;
   private String historyServiceUri;
-  private FieldFit fieldFit;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
   
@@ -34,16 +31,13 @@ public class ExchangeDataController extends AbstractController
   private String xid;
   private String xlabel;
   private String xtime;
-  private int itemCount;
+  private int itemCount;  
   
   public ExchangeDataController() 
-  {    
-    refDataServiceUri = context.getInitParameter("RefDataServiceUri");   
+  {   
+    super();
     
-    String fieldFitSetting = context.getInitParameter("FieldFit");    
-    fieldFit = IOUtils.isNullOrEmpty(fieldFitSetting) 
-      ? FieldFit.VALUE : FieldFit.valueOf(fieldFitSetting.toUpperCase());
-    
+    refDataServiceUri = context.getInitParameter("RefDataServiceUri");
     exchangeServiceUri = context.getInitParameter("ExchangeServiceUri");
     historyServiceUri = context.getInitParameter("HistoryServiceUri"); 
     
@@ -57,7 +51,8 @@ public class ExchangeDataController extends AbstractController
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit, 
+          isAsync, asyncTimeout, pollingInterval);    
       pageDtoGrid = exchangeDataModel.getDtoGrid(exchangeServiceUri, scope, xid, filter, sort, dir, start, limit);  
     }
     catch (Exception e)
@@ -81,7 +76,8 @@ public class ExchangeDataController extends AbstractController
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
+          isAsync, asyncTimeout, pollingInterval);
       pageRelatedItemGrid = exchangeDataModel.getRelatedDtoGrid(exchangeServiceUri, scope, xid, individual, 
           classId, classIdentifier, filter, sort, dir, start, limit);  
     }
@@ -106,7 +102,8 @@ public class ExchangeDataController extends AbstractController
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
+          isAsync, asyncTimeout, pollingInterval);    
       ExchangeResponse response = exchangeDataModel.submitExchange(exchangeServiceUri, scope, xid, reviewed);  
       xResultsGrid = response.getSummary();
     }
@@ -131,7 +128,8 @@ public class ExchangeDataController extends AbstractController
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
+          isAsync, asyncTimeout, pollingInterval);    
       xLogsGrid = exchangeDataModel.getXlogsGrid(historyServiceUri, scope, xid, xlabel);    
     }
     catch (Exception e)
@@ -155,7 +153,8 @@ public class ExchangeDataController extends AbstractController
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
+          isAsync, asyncTimeout, pollingInterval);
       pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(historyServiceUri, scope, xid, xlabel, xtime, start, limit, itemCount); 
     }
     catch (Exception e)
