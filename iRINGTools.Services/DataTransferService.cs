@@ -164,10 +164,19 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
+        if (IsAsync())
+        {
+          string dtosURL = _dtoProvider.AsyncGetDataTransferObjects(scope, app, graph, dxoRequest);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = dtosURL;
+        }
+        else
+        {
+          DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
+        }
       }
       catch (Exception e)
       {
