@@ -84,10 +84,11 @@ public class DataFilterInitial {
 
 		List<OrderExpression> OrderexpressList = new ArrayList<OrderExpression>();
 		if ((oe != null) && (inoe != null)) {
-			for (OrderExpression ox : oe.getItems()) {
+			
+			for (OrderExpression ox : inoe.getItems()) {
 				OrderexpressList.add(ox);
 			}
-			for (OrderExpression ox : inoe.getItems()) {
+			for (OrderExpression ox : oe.getItems()) {
 				OrderexpressList.add(ox);
 			}
 			// Collections.sort(OrderexpressList, valueComparator);
