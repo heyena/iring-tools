@@ -117,15 +117,7 @@ namespace org.iringtools.services
       {
         format = MapContentType(format);
       
-        bool isAsync = false;
-        string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
-
-        if (asyncHeader != null && asyncHeader.ToLower() == "true")
-        {
-          isAsync = true;
-        }
-
-        if (isAsync)
+        if (IsAsync())
         {
           string statusUrl = _adapterProvider.AsyncGetDictionary(project, app);
           WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
@@ -265,18 +257,9 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        bool isAsync = false;
-        string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
-
-        if (asyncHeader != null && asyncHeader.ToLower() == "true")
+        if (IsAsync())
         {
-          isAsync = true;
-        }
-
-        DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
-
-        if (isAsync)
-        {
+          DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
           string statusUrl = _adapterProvider.AsyncGetWithFilter(project, app, resource, format,
             start, limit, fullIndex, filter);
           WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
@@ -284,8 +267,9 @@ namespace org.iringtools.services
         }
         else
         {
+          DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
           XDocument xDocument = null;
-
+          
           if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
           {
             xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
@@ -809,6 +793,19 @@ namespace org.iringtools.services
 
       HttpContext.Current.Response.ContentType = "text/html";
       HttpContext.Current.Response.Write(ex.ToString());
+    }
+
+    private bool IsAsync()
+    {
+      bool async = false;
+      string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
+
+      if (asyncHeader != null && asyncHeader.ToLower() == "true")
+      {
+        async = true;
+      }
+
+      return async;
     }
     #endregion
   }

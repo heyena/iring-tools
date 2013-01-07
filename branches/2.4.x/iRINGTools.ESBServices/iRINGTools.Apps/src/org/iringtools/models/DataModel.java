@@ -157,7 +157,8 @@ public class DataModel {
 			dtis = getFullDtis(serviceUri, manifestRelativePath,
 					dtiRelativePath, fullDtiKey, partDtiKey, lastFilterKey);
 
-			if (dataFilter != null) {
+			if (dataFilter != null && dataFilter.getExpressions() != null &&
+			    dataFilter.getOrderExpressions() != null) {
 				if (session.containsKey(lastFilterKey)) // check if filter has
 														// changed
 				{
