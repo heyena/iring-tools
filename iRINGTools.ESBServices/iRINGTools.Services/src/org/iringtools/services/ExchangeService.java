@@ -14,7 +14,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.iringtools.common.request.RequestStatus;
+import org.iringtools.library.RequestStatus;
 import org.iringtools.common.response.Level;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;

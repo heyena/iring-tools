@@ -9,16 +9,16 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://www.iringtools.org/library", Name = "requestStatus")]
   public class RequestStatus
   {
-    [DataMember(Name = "state")]
+    [DataMember(Name = "state", Order = 0)]
     public State State { get; set; }
 
-    [DataMember(Name = "percentComplete", EmitDefaultValue = false)]
+    [DataMember(Name = "percentComplete", Order = 1, EmitDefaultValue = false)]
     public int PercentComplete { get; set; }
 
-    [DataMember(Name = "message", EmitDefaultValue = false)]
+    [DataMember(Name = "message", Order = 2, EmitDefaultValue = false)]
     public string Message { get; set; }
 
-    [DataMember(Name = "responseText", EmitDefaultValue = false)]
+    [DataMember(Name = "responseText", Order = 3, EmitDefaultValue = false)]
     public string ResponseText { get; set; }
   }
 

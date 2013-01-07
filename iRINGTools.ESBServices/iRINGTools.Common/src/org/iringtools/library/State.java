@@ -1,5 +1,5 @@
 
-package org.iringtools.common.request;
+package org.iringtools.library;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
