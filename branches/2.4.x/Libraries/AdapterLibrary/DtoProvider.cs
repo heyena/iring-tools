@@ -366,7 +366,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception e)
       {
-        _logger.Error("Error getting indices: " + e.Message);
+        _logger.Error("Error getting data transfer indices: " + e.Message);
         throw e;
       }
     }
@@ -615,6 +615,44 @@ namespace org.iringtools.adapter
       }
 
       return dtos;
+    }
+
+    public string AsyncPostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dtos)
+    {
+      try
+      {
+        string id = Guid.NewGuid().ToString("N");
+        Task task = Task.Factory.StartNew(() => DoPostDataTransferObjects(scope, app, graph, dtos, id));
+        return "/requests/" + id;
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error posting data transfer objects: " + e.Message);
+        throw e;
+      }
+    }
+
+    private void DoPostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dtos, string id)
+    {
+      RequestStatus requestStatus = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+
+      _requests[id] = requestStatus;
+
+      try
+      {
+        Response response = PostDataTransferObjects(scope, app, graph, dtos);
+
+        requestStatus.State = State.Completed;
+        requestStatus.ResponseText = Utility.Serialize<Response>(response, true);
+      }
+      catch (Exception ex)
+      {
+        requestStatus.State = State.Error;
+        requestStatus.Message = ex.Message;
+      }
     }
 
     public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)

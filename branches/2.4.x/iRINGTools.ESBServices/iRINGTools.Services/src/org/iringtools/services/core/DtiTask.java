@@ -178,6 +178,8 @@ public class DtiTask implements Runnable
     catch (Exception e)
     {
       logger.error(e.getMessage());
+      e.printStackTrace();      
+      
       requestStatus.setState(State.ERROR);
       requestStatus.setMessage(e.getMessage());
     }
@@ -264,9 +266,10 @@ class DtiSubTask implements Runnable
 
       obj = (T) JaxbUtils.toObject(clazz, requestStatus.getResponseText());
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error(ex.getMessage());
+      logger.error(e.getMessage());
+      e.printStackTrace();      
     }
 
     return obj;
