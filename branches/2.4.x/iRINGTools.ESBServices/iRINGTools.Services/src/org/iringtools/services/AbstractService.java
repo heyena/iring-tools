@@ -113,6 +113,15 @@ public abstract class AbstractService
       dtoTaskTimeout = "600";  // in seconds
     settings.put("dtoTaskTimeout", dtoTaskTimeout);
     
+    String async = servletContext.getInitParameter("Async");    
+    settings.put("async", IOUtils.isNullOrEmpty(async) ? false : Boolean.valueOf(async));
+    
+    String asyncTimeout = servletContext.getInitParameter("AsyncTimeout");    
+    settings.put("asyncTimeout", IOUtils.isNullOrEmpty(asyncTimeout) ? 1800 : Long.valueOf(asyncTimeout));
+   
+    String pollingInterval = servletContext.getInitParameter("PollingInterval");    
+    settings.put("pollingInterval", IOUtils.isNullOrEmpty(pollingInterval) ? 2 : Long.valueOf(pollingInterval));
+    
     /*
      * CARRY ON REQUEST HEADERS
      */    
