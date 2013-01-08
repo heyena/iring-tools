@@ -119,9 +119,9 @@ namespace org.iringtools.services
       {
         if (IsAsync())
         {
-          string dtisURL = _dtoProvider.AsyncGetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, request);
+          string statusURL = _dtoProvider.AsyncGetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, request);
           WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
-          WebOperationContext.Current.OutgoingResponse.Headers["location"] = dtisURL;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
         }
         else
         {
@@ -166,9 +166,9 @@ namespace org.iringtools.services
       {
         if (IsAsync())
         {
-          string dtosURL = _dtoProvider.AsyncGetDataTransferObjects(scope, app, graph, dxoRequest);
+          string statusURL = _dtoProvider.AsyncGetDataTransferObjects(scope, app, graph, dxoRequest);
           WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
-          WebOperationContext.Current.OutgoingResponse.Headers["location"] = dtosURL;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
         }
         else
         {
@@ -230,10 +230,22 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferObjects dataTransferObjects = Utility.DeserializeFromStream<DataTransferObjects>(stream.ToMemoryStream(), true);
-        Response response = _dtoProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+        DataTransferObjects dtos = Utility.DeserializeFromStream<DataTransferObjects>(stream.ToMemoryStream(), true);
+         
+        if (IsAsync())
+        {
+          string statusURL = _dtoProvider.AsyncPostDataTransferObjects(scope, app, graph, dtos);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
+        }
+        else
+        {
+          Response response = _dtoProvider.PostDataTransferObjects(scope, app, graph, dtos);
+          string responseXml = Utility.SerializeDataContract<Response>(response);
+
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(responseXml);
+        }
       }
       catch (Exception e)
       {

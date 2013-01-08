@@ -30,35 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graphs }
-     * 
-     */
-    public Graphs createGraphs() {
-        return new Graphs();
-    }
-
-    /**
-     * Create an instance of {@link Exchanges }
-     * 
-     */
-    public Exchanges createExchanges() {
-        return new Exchanges();
-    }
-
-    /**
      * Create an instance of {@link ApplicationData }
      * 
      */
     public ApplicationData createApplicationData() {
         return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link Application }
-     * 
-     */
-    public Application createApplication() {
-        return new Application();
     }
 
     /**
@@ -70,27 +46,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Exchanges }
+     * 
+     */
+    public Exchanges createExchanges() {
+        return new Exchanges();
+    }
+
+    /**
+     * Create an instance of {@link Graphs }
+     * 
+     */
+    public Graphs createGraphs() {
+        return new Graphs();
+    }
+
+    /**
      * Create an instance of {@link Exchange }
      * 
      */
     public Exchange createExchange() {
         return new Exchange();
-    }
-
-    /**
-     * Create an instance of {@link Scope }
-     * 
-     */
-    public Scope createScope() {
-        return new Scope();
-    }
-
-    /**
-     * Create an instance of {@link Graph }
-     * 
-     */
-    public Graph createGraph() {
-        return new Graph();
     }
 
     /**
@@ -102,11 +78,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Directory }
+     * Create an instance of {@link Scope }
      * 
      */
-    public Directory createDirectory() {
-        return new Directory();
+    public Scope createScope() {
+        return new Scope();
     }
 
     /**
@@ -115,6 +91,30 @@ public class ObjectFactory {
      */
     public Commodity createCommodity() {
         return new Commodity();
+    }
+
+    /**
+     * Create an instance of {@link Application }
+     * 
+     */
+    public Application createApplication() {
+        return new Application();
+    }
+
+    /**
+     * Create an instance of {@link Graph }
+     * 
+     */
+    public Graph createGraph() {
+        return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link Directory }
+     * 
+     */
+    public Directory createDirectory() {
+        return new Directory();
     }
 
 }

@@ -6,12 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.iringtools.library.RequestStatus;
-import org.iringtools.library.State;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
-import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.manifest.Graph;
@@ -22,7 +19,6 @@ import org.iringtools.history.History;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
-import org.iringtools.utility.JaxbUtils;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 
@@ -79,8 +75,8 @@ public class ExchangeDataModel extends DataModel
     
     if (graph != null)
     {
-      DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
-            dtoIdentifier, filter, sortBy, sortOrder, start, limit);
+      DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, 
+          dtoRelativePath, dtoIdentifier, filter, sortBy, sortOrder, start, limit);
         
       pageDtoGrid = getRelatedItemGrid(dtiRelativePath, manifest, graph, dtos, classId, classIdentifier);
     }
@@ -105,59 +101,18 @@ public class ExchangeDataModel extends DataModel
 
     try
     {
-      // 
-      // submit asynchronous exchange
-      //
-      HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath, true);
+      HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath);
       HttpUtils.addHttpHeaders(session, httpClient);
-      String statusURL = httpClient.post(String.class, "/submit", request);
-      
-      // 
-      // get request timeout and pooling interval from exchange definition
-      //
-      httpClient = new HttpClient(serviceUri + exchangeRelativePath);
-      HttpUtils.addHttpHeaders(session, httpClient); 
-      ExchangeDefinition xdef = httpClient.get(ExchangeDefinition.class);
-      
-      Long exchangeTimeout = xdef.getExchangeTimeout();
-      if (exchangeTimeout == null) exchangeTimeout = (long)1800;  // in seconds
-      
-      Integer poolingInterval = xdef.getPollingInterval();
-      if (poolingInterval == null) poolingInterval = 2;  // in seconds
-      
-      // 
-      // wait for exchange result
-      //
-      httpClient = new HttpClient(serviceUri + statusURL);
-      HttpUtils.addHttpHeaders(session, httpClient);
-      
-      RequestStatus requestStatus = null;
-      long timeoutCount = 0;
-      
-      do 
+     
+      if (isAsync)
       {
-        timeoutCount += poolingInterval;
-        
-        if (timeoutCount > exchangeTimeout)
-        {
-          throw new Exception("Exchange timed out.");
-        }
-        
-        try
-        {
-          Thread.sleep(poolingInterval * 1000);  // convert to milliseconds
-          requestStatus = httpClient.get(RequestStatus.class);
-        }
-        catch (HttpClientException e)
-        {
-          logger.error(e.getMessage());
-          break;
-        }
-      } while (requestStatus.getState() == State.IN_PROGRESS);
-      
-      if (requestStatus != null)
+        httpClient.setAsync(true);      
+        String statusURL = httpClient.post(String.class, "/submit", request);
+        xRes = waitForRequestCompletion(ExchangeResponse.class, serviceUri + statusURL);
+      }
+      else
       {
-        xRes = JaxbUtils.toObject(ExchangeResponse.class, requestStatus.getResponseText());
+        xRes = httpClient.post(ExchangeResponse.class, "/submit", request);
       }
     }
     catch (Exception ex)

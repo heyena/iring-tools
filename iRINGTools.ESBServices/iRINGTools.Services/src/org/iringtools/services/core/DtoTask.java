@@ -299,6 +299,8 @@ public class DtoTask implements Runnable
     catch (Exception e)
     {
       logger.error(e.getMessage());
+      e.printStackTrace();
+      
       requestStatus.setState(State.ERROR);
       requestStatus.setMessage(e.getMessage());
     }    
@@ -361,6 +363,7 @@ class DtoSubTask implements Runnable
     catch (Exception e) 
     {
       logger.error("Error getting dxo: " + e.getMessage());
+      e.printStackTrace();      
     }
   }
   
@@ -396,9 +399,10 @@ class DtoSubTask implements Runnable
 
       obj = (T) JaxbUtils.toObject(clazz, requestStatus.getResponseText());
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error(ex.getMessage());
+      logger.error(e.getMessage());
+      e.printStackTrace();      
     }
 
     return obj;

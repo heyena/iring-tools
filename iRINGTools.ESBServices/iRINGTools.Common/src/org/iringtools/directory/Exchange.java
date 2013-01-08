@@ -120,9 +120,10 @@ public class Exchange {
 
     /**
      * Gets the value of the cacheable property.
+     * This getter has been renamed from isCacheable() to getCacheable() by cxf-xjc-boolean plugin.
      * 
      */
-    public boolean isCacheable() {
+    public boolean getCacheable() {
         return cacheable;
     }
 

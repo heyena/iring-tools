@@ -49,7 +49,6 @@ public class ExchangeTask implements Runnable
   private String scope;
   private String id;
   private ExchangeDefinition xDef;
-  private HttpClient httpClient;
   private RequestStatus requestStatus;
 
   public ExchangeTask(final Map<String, Object> settings, String scope, String id, ExchangeRequest xReq,
@@ -62,16 +61,14 @@ public class ExchangeTask implements Runnable
     this.xDef = xDef;
     this.requestStatus = requestStatus;
 
-    httpClient = new HttpClient();
-    HttpUtils.addHttpHeaders(settings, httpClient);
-
     try
     {
       datatypeFactory = DatatypeFactory.newInstance();
     }
-    catch (DatatypeConfigurationException dce)
+    catch (DatatypeConfigurationException e)
     {
-      logger.error(dce.getMessage());
+      logger.error(e.getMessage());
+      e.printStackTrace();
     }
   }
 
@@ -305,8 +302,20 @@ public class ExchangeTask implements Runnable
         logger.debug("Requesting source DTOs from [" + sourceDtoUrl + "]: ");
         logger.debug(JaxbUtils.toXml(sourceDtosRequest, false));
 
-        sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtosRequest);
+        HttpClient httpClient = new HttpClient();
+        HttpUtils.addHttpHeaders(settings, httpClient);
 
+        if (isAsync())
+        {
+          httpClient.setAsync(true);
+          String statusURL = httpClient.post(String.class, sourceDtoUrl, sourceDtosRequest);
+          sourceDtos = waitForRequestCompletion(DataTransferObjects.class, xDef.getSourceUri() + statusURL);
+        }
+        else
+        {
+          sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtosRequest);
+        }
+        
         logger.debug("Source DTOs: ");
         logger.debug(JaxbUtils.toXml(sourceDtos, false));
 
@@ -315,6 +324,8 @@ public class ExchangeTask implements Runnable
       catch (Exception e)
       {
         logger.error(e.getMessage());
+        e.printStackTrace();
+        
         xRes.setLevel(Level.ERROR);
         StringBuilder summary = new StringBuilder(xRes.getSummary());
         xRes.setSummary(summary.append(e.getMessage()).toString());
@@ -346,12 +357,24 @@ public class ExchangeTask implements Runnable
           logger.debug("Sending pool DTOs to [" + targetUrl + "]: ");
           logger.debug(JaxbUtils.toXml(poolDtos, false));
 
-          poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
+          HttpClient httpClient = new HttpClient();
+          HttpUtils.addHttpHeaders(settings, httpClient);
 
+          if (isAsync())
+          {
+            httpClient.setAsync(true);
+            String statusURL = httpClient.post(String.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
+            poolResponse = waitForRequestCompletion(Response.class, xDef.getTargetUri() + statusURL);
+          }
+          else
+          {
+            poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
+          }         
+
+          logger.info("Pool [" + poolRange + "] completed."); 
+          
           logger.debug("Pool DTOs exchange result:");
           logger.debug(JaxbUtils.toXml(poolResponse, false));
-
-          logger.info("Pool [" + poolRange + "] completed.");
 
           // free up resources
           poolDtos = null;
@@ -361,8 +384,9 @@ public class ExchangeTask implements Runnable
         catch (Exception e)
         {
           logger.error(e.getMessage());
-          xRes.setLevel(Level.SUCCESS);
+          e.printStackTrace();
           
+          xRes.setLevel(Level.ERROR);          
           StringBuilder summary = new StringBuilder(xRes.getSummary());
           xRes.setSummary(summary.append(e.getMessage()).toString());
         }
@@ -378,6 +402,7 @@ public class ExchangeTask implements Runnable
           catch (Exception e)
           {
             logger.error("Error writing pool response to disk: " + e);
+            e.printStackTrace();            
           }
 
           // update level as necessary
@@ -462,6 +487,8 @@ public class ExchangeTask implements Runnable
     catch (Exception e)
     {
       logger.error(e.getMessage());
+      e.printStackTrace();
+      
       xRes.setLevel(Level.ERROR);
       StringBuilder summary = new StringBuilder(xRes.getSummary());
       xRes.setSummary(summary.append(e.getMessage()).toString());
@@ -472,5 +499,49 @@ public class ExchangeTask implements Runnable
         requestStatus.setMessage(e.getMessage());
       }
     }
+  }
+  
+  protected <T> T waitForRequestCompletion(Class<T> clazz, String url)
+  {
+    T obj = null;
+
+    try
+    {
+      RequestStatus requestStatus = null;
+      long timeout = (Long)settings.get("asyncTimeout") * 1000;  // convert to milliseconds
+      long interval = (Long)settings.get("pollingInterval") * 1000;  // convert to milliseconds
+      long timeoutCount = 0;
+      
+      HttpClient httpClient = new HttpClient(url);
+      HttpUtils.addHttpHeaders(settings, httpClient);
+      
+      while (timeoutCount < timeout)
+      {
+        requestStatus = httpClient.get(RequestStatus.class);
+
+        if (requestStatus.getState() != State.IN_PROGRESS)
+          break;
+
+        Thread.sleep(interval);
+        timeoutCount += interval;
+      }
+
+      obj = (T) JaxbUtils.toObject(clazz, requestStatus.getResponseText());
+    }
+    catch (Exception e)
+    {
+      logger.error(e.getMessage());
+      e.printStackTrace();      
+    }
+
+    return obj;
+  }
+  
+  private boolean isAsync()
+  {
+    String asyncHeader = "http-header-async";
+    boolean async = settings.containsKey(asyncHeader) && Boolean.parseBoolean(settings.get(asyncHeader).toString());
+    
+    return async;
   }
 }
