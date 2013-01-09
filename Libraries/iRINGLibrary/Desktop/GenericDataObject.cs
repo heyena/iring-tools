@@ -37,6 +37,8 @@ namespace org.iringtools.library
       _dictionary[propertyName] = value;
     }
 
+    public string ObjectNamespace { get; set; }
+
     public string ObjectType { get; set; }
   }
 }
