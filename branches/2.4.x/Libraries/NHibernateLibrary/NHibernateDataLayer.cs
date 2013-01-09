@@ -110,8 +110,30 @@ namespace org.iringtools.adapter.datalayer
           {
             if (!String.IsNullOrEmpty(identifier))
             {
-              IQuery query = session.CreateQuery("from " + objectType + " where Id = ?");
-              query.SetString(0, identifier);
+              IQuery query = null;
+
+              if (objectDefinition.keyProperties.Count == 1)
+              {
+                query = session.CreateQuery("from " + objectType + " where Id = ?");
+                query.SetString(0, identifier);
+              }
+              else
+              {
+                string conjunction = " and ";
+                string[] idParts = identifier.Split(objectDefinition.keyDelimeter.ToCharArray());
+                StringBuilder builder = new StringBuilder();
+
+                for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+                {
+                  string propName = objectDefinition.keyProperties[i].keyPropertyName;
+                  builder.Append(conjunction + propName + "='" + idParts[i] + "'");
+                }
+
+                builder.Remove(0, conjunction.Length);
+
+                query = session.CreateQuery("from " + objectType + " where " + builder.ToString());
+              }
+              
               dataObject = query.List<IDataObject>().FirstOrDefault<IDataObject>();
 
               if (dataObject == null)
