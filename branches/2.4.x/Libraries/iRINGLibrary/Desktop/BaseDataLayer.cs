@@ -524,5 +524,10 @@ namespace org.iringtools.library
     {
       throw new NotImplementedException();
     }
+
+    public virtual Response PostRelated(string parentObjectType, IList<IDataObject> dataObjects)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

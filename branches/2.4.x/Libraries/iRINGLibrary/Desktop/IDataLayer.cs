@@ -105,6 +105,8 @@ namespace org.iringtools.library
     IList<Object> GetSummary();
 
     Picklists GetPicklist(string name, int start, int limit);
+
+    Response PostRelated(string parentObjectType, IList<IDataObject> dataObjects);
   }
 
   [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
