@@ -203,23 +203,76 @@ public class DataModel
         else
         // new filter or same filter after exchange, fetch
         // filtered data
-        {
-          /*
-           * // checking whether the applied UI filter is eligible or not List<Expression> transferTypeExpression =
-           * removeTransfertypeExpression(dataFilterFile); if (transferTypeExpression != null) { for (int j = 0; j <
-           * transferTypeExpression.size(); j++) {
-           * 
-           * String value = transferTypeExpression.get(j) .getValues().getItems().get(0);
-           * 
-           * } }
-           */
-
-          dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey, partDtiKey,
-              lastFilterKey, currFilter);
+       {
+         	dtis = getFilteredDtis(dataFilter, manifestRelativePath,
+					dtiRelativePath, serviceUri, fullDtiKey,
+					partDtiKey, lastFilterKey, currFilter);
         }
-      }
-    }
-    catch (Exception e)
+        	/* {
+        	 * 	// validating the UI filter for managing the process time
+			
+			boolean uiTransferType =  false;
+			boolean compareEqual = false;
+			int count = 0;
+			int k = 0;
+			List<Expression> fileFilter = dataFilterFile.getExpressions().getItems();
+			
+				Expressions exs = dataFilter.getExpressions();
+				if (exs != null)
+				{ for (int j = 0; j < exs.getItems().size(); j++) {
+					Expression ex = exs.getItems().get(j);
+					if(ex.getPropertyName().equalsIgnoreCase("Transfer Type"))
+					{  uiTransferType = true;
+					Expressions fileexs = dataFilterFile.getExpressions();
+					 for (int i = 0; i < fileexs.getItems().size(); i++) {
+						 Expression fileex = fileexs.getItems().get(i);
+							if(fileex.getPropertyName().equalsIgnoreCase("Transfer Type"))
+							{
+								compareEqual  = true; 
+								//fileFilter.getItems().set(k++, fileex);
+								if(fileex.getRelationalOperator().equals(RelationalOperator.EQUAL_TO))
+								{
+									if(!ex.getValues().getItems().get(0).equalsIgnoreCase(fileex.getValues().getItems().get(0)))
+									{
+										count++;
+									}
+								}
+								else
+								{
+									dtis = getFilteredDtis(dataFilter, manifestRelativePath,
+											dtiRelativePath, serviceUri, fullDtiKey,
+											partDtiKey, lastFilterKey, currFilter);
+								break;
+								}
+							}
+							else fileFilter.remove(i);
+					 }
+					}
+				}
+				}
+				if(fileFilter.size() == count )
+				{
+					DataTransferIndexList resultDtiList = new DataTransferIndexList();						
+					resultDtiList.setItems(null);
+					dtis.setDataTransferIndexList(resultDtiList);
+				}
+				if(dataFilterFile.getExpressions().getItems().size() > count )
+				{
+					dtis = getFilteredDtis(dataFilter, manifestRelativePath,
+							dtiRelativePath, serviceUri, fullDtiKey,
+							partDtiKey, lastFilterKey, currFilter);
+				}
+			
+				if((! uiTransferType) || (! compareEqual))
+				dtis = getFilteredDtis(dataFilter, manifestRelativePath,
+						dtiRelativePath, serviceUri, fullDtiKey,
+						partDtiKey, lastFilterKey, currFilter);
+			}*/
+			
+		}
+	} 
+        
+       catch (Exception e)
     {
       logger.error(e.getMessage());
       throw new DataModelException(e.getMessage());
@@ -711,9 +764,14 @@ public class DataModel
           logger.warn("DTI [" + dti.getIdentifier() + "] has [" + dti.getDuplicateCount() + "] duplicates.");
         }
       }
-
+      if(transferTypeExpression != null)
+      {
+    if(transferTypeExpression.size() > 0)
+     {
       // apply transfer type filter on result DtiList
       tmpFullDtiList = getTransferTypeDtis(tmpFullDtiList, transferTypeExpression);
+     }
+      }
 
       if ((dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
           || dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
