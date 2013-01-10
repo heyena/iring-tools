@@ -36,24 +36,28 @@ namespace iRINGTools.Web.Models
 
       public Grid GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
       {
-        if (response != "")
-          return null;
+        try
+        {
+          this.graph = graph;
+          GetDatadictionary(scope, app);
 
-        this.graph = graph;
-        GetDatadictionary(scope, app);
+          if (response != "")
+            return null;
 
-        if (response != "")
-          return null;
+          GetDataItems(scope, app, graph, filter, sort, dir, start, limit);
 
-        GetDataItems(scope, app, graph, filter, sort, dir, start, limit);
+          if (response != "")
+            return null;
 
-        if (response != "")
-          return null;
+          GetDataGrid();
 
-        GetDataGrid();
-
-        if (response != "")
-          return null;
+          if (response != "")
+            return null;
+        }
+        catch (Exception ex)
+        {
+          response = response + " " + ex.Message.ToString();
+        }
 
         return dataGrid;
       }			
