@@ -84,8 +84,7 @@ namespace iRINGTools.Web.Models
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
           string dataItemsJson = string.Empty;
 
-          string serviceUri = _settings["DataServiceURI"];
-          WebHttpClient client = new WebHttpClient(serviceUri);
+          WebHttpClient client = CreateWebClient(_dataServiceUri);
           string isAsync = _settings["Async"];
 
           if (isAsync != null && isAsync.ToLower() == "false")
@@ -102,7 +101,7 @@ namespace iRINGTools.Web.Models
               throw new Exception("Asynchronous status URL not found.");
             }
 
-            dataItemsJson = WaitForRequestCompletion<string>(_adapterServiceUri, statusUrl);
+            dataItemsJson = WaitForRequestCompletion<string>(_dataServiceUri, statusUrl);
           }
 
           DataItemSerializer serializer = new DataItemSerializer();
