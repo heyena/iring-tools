@@ -6,14 +6,14 @@ function loadAppPageDto(scope, app, graph) {
   if (tab != null) {
     tab.show();
   }
-	else {
+  else {
     Ext.getBody().mask("Loading...", "x-mask-loading");
 
     var store = createGridStore(scope, app, graph);
-		var pageSize = 25; 
-    
-		store.on('load', function(){
-			if (Ext.getCmp('content-panel').getItem('tab-' + scope + '.' + app + '.' + graph) == null) {
+		var pageSize = 25;
+
+		store.on('load', function () {
+		  if (Ext.getCmp('content-panel').getItem('tab-' + scope + '.' + app + '.' + graph) == null) {
 				var dtoBcPane = new Ext.Container({
 					id: 'bc-' + scope + '.' + app + '.' + graph,
 					cls: 'bc-container',
@@ -29,7 +29,7 @@ function loadAppPageDto(scope, app, graph) {
 				items: [createGridPane(store, pageSize, {forceFit: false})],
 				listeners: {
 					afterlayout: function(pane){
-						Ext.getBody().unmask();
+					  Ext.getBody().unmask();
 					}
 				}
 			});
@@ -87,7 +87,7 @@ function createGridStore(scope, app, graph) {
 	var store = new Ext.data.Store({
 	  proxy: new Ext.data.HttpProxy({
 	    url: url,
-	    timeout: 300000
+	    timeout: 1800000  // 30 minutes
 	  }),
 	  baseParams: {
 	    scope: scope,

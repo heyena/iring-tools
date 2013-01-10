@@ -39,7 +39,6 @@ namespace org.iringtools.web.controllers
 
 		public ActionResult Pages(FormCollection form)
 		{
-			_logger.Error("GridManagerController -- Pages");
 			JsonContainer<Grid> container = new JsonContainer<Grid>();
 			pageDtoGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
 
