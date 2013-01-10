@@ -11,6 +11,7 @@ import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.dxfr.dti.TransferType;
 import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.request.DfiRequest;
 import org.iringtools.dxfr.request.DxiRequest;
@@ -104,18 +105,20 @@ public class DtiTask implements Runnable
         List<DataTransferIndex> resultDtiList = dtis.getDataTransferIndexList().getItems();
 
         if (resultDtiList.isEmpty())
-        {
+        {    // if source is empty then check for dup count only in target
+        	 targetDups(targetDtis);
           dtis = targetDtis;
         }
         else
-        {
+        {    targetDups(targetDtis);
+             sourceDups(dtis);
           for (DataTransferIndex targetDti : targetDtis.getDataTransferIndexList().getItems())
           {
             boolean found = false;
 
             // check for duplicates
             for (DataTransferIndex resultDti : resultDtiList)
-            {
+            { 
               if (resultDti.getIdentifier().equalsIgnoreCase(targetDti.getIdentifier()))
               {
                 found = true;
@@ -155,6 +158,47 @@ public class DtiTask implements Runnable
       
       dtis = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
     }
+  }
+  public void sourceDups(DataTransferIndices sourceDtis)
+  {
+	  DataTransferIndex previousDti = null;        
+      List<DataTransferIndex> sourceDtiItems = sourceDtis.getDataTransferIndexList().getItems();
+      
+      for (int i = 0; i < sourceDtiItems.size(); i++)
+      {
+        DataTransferIndex dti = sourceDtiItems.get(i);          
+        dti.setDuplicateCount(1);            
+        
+        if (previousDti != null && dti.getIdentifier().equalsIgnoreCase(previousDti.getIdentifier()))
+        {
+          previousDti.setDuplicateCount(previousDti.getDuplicateCount() + 1);          
+          sourceDtiItems.remove(i--);
+        }
+        else
+        {
+          previousDti = dti;
+        }
+      }
+  }
+  public void targetDups(DataTransferIndices targetDtis) 
+  {     
+      List<DataTransferIndex> targetDtiItems = targetDtis.getDataTransferIndexList().getItems();
+      DataTransferIndex previousTarDti = null;
+      for (int i = 0; i < targetDtiItems.size(); i++)
+      {
+        DataTransferIndex dti = targetDtiItems.get(i);          
+        dti.setDuplicateCount(1);
+        
+        if (previousTarDti != null && dti.getIdentifier().equalsIgnoreCase(previousTarDti.getIdentifier()))
+        {
+      	  previousTarDti.setDuplicateCount(previousTarDti.getDuplicateCount() + 1);
+          targetDtiItems.remove(i--);
+        }
+        else
+        {
+        	previousTarDti = dti;
+        }
+      }
   }
   
   @Override
