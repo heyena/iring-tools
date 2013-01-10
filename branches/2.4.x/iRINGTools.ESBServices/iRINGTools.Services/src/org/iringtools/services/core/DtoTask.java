@@ -66,7 +66,7 @@ public class DtoTask implements Runnable
       if (dti.getDuplicateCount() != null && dti.getDuplicateCount() > 1)
       {
         logger.warn("DTI [" + dti.getIdentifier() + "] has [" + dti.getDuplicateCount() + "] duplicates.");
-        continue;
+       // continue;
       }
 
       DataTransferIndex sourceDti, targetDti;
@@ -86,6 +86,7 @@ public class DtoTask implements Runnable
         sourceDti.setSortIndex(dti.getSortIndex());
         sourceDti.setInternalIdentifier(dti.getInternalIdentifier().substring(0, splitIndex));
         sourceDti.setTransferType(dti.getTransferType());
+        sourceDti.setDuplicateCount(dti.getDuplicateCount());
         sourceDtiItems.add(sourceDti);
 
         targetDti = new DataTransferIndex();
@@ -94,6 +95,7 @@ public class DtoTask implements Runnable
         targetDti.setSortIndex(dti.getSortIndex());
         targetDti.setInternalIdentifier(dti.getInternalIdentifier().substring(splitIndex + 2));
         targetDti.setTransferType(dti.getTransferType());
+        targetDti.setDuplicateCount(dti.getDuplicateCount());
         targetDtiItems.add(targetDti);
         break;
       case SYNC:
@@ -105,6 +107,7 @@ public class DtoTask implements Runnable
         sourceDti.setSortIndex(dti.getSortIndex());
         sourceDti.setInternalIdentifier(dti.getInternalIdentifier().substring(0, splitIndex));
         sourceDti.setTransferType(dti.getTransferType());
+        sourceDti.setDuplicateCount(dti.getDuplicateCount());
         sourceDtiItems.add(sourceDti);
         break;
       case DELETE:
@@ -268,7 +271,7 @@ public class DtoTask implements Runnable
       for (DataTransferObject dto : resultDtoListItems)
       {
         if (dti.getIdentifier().equalsIgnoreCase(dto.getIdentifier()))
-        {
+        {         dto.setDuplicateCount(dti.getDuplicateCount());
           orderedDtoListItems.add(dto);
           break;
         }
