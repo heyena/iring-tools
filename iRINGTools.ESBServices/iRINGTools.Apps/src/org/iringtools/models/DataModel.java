@@ -1503,9 +1503,10 @@ public class DataModel {
 			dupField.setName("Duplicate Count");
 			dupField.setDataIndex("Duplicate Count");
 			dupField.setType("string");
-			dupField.setWidth(MIN_FIELD_WIDTH);
+			dupField.setWidth(100);
 			dupField.setFixed(true);
 			dupField.setFilterable(false);
+			dupField.setSortable(false);
 			fields.add(0, dupField);
 
 			// transfer-type field
