@@ -3243,26 +3243,28 @@ namespace org.iringtools.adapter
 
         _projectionEngine.Count = _dataLayer.GetRelatedCount(parentDataObject, relatedObjectType);
 
-        //if (parameters == null)
-        //{
-        //    _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
-        //}
-        //else
-        //{
-        DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
-
-        foreach (PropertyMap propMap in dataRelationship.propertyMaps)
+        try
         {
-          filter.Expressions.Add(new Expression()
-          {
-            PropertyName = propMap.relatedPropertyName,
-            RelationalOperator = RelationalOperator.EqualTo,
-            Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
-          });
+            //if (parameters == null)
+            //{
+                _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
+            //}
         }
+        catch (NotImplementedException ex)
+        {
+            DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
 
-        _dataObjects = _dataLayer.Get(relatedObjectType, filter, limit, start);
-        //}
+            foreach (PropertyMap propMap in dataRelationship.propertyMaps)
+            {
+                filter.Expressions.Add(new Expression()
+                {
+                    PropertyName = propMap.relatedPropertyName,
+                    RelationalOperator = RelationalOperator.EqualTo,
+                    Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
+                });
+            }
+            _dataObjects = _dataLayer.Get(relatedObjectType, filter, limit, start);
+        }
 
         XDocument xdoc = _projectionEngine.ToXml(relatedObjectType, ref _dataObjects);
         return xdoc;
@@ -3549,14 +3551,19 @@ namespace org.iringtools.adapter
         MeregedDataObjects = parentDataObject;
         foreach (IDataObject obj in childdataObjects)
         {
-          MeregedDataObjects.Add(obj);
+            MeregedDataObjects.Add(obj);
         }
-        //MeregedDataObjects.Concat(parentDataObject);
-        // MeregedDataObjects.Concat(childdataObjects);
 
-        response = _dataLayer.Post(MeregedDataObjects);
+        try
+        {
+            response = _dataLayer.PostRelatedObjects(graphName, id, relatedResource, childdataObjects);
+        }
+        catch (NotImplementedException ex)
+        {
+            response = _dataLayer.Post(MeregedDataObjects);
+        }
 
-        response.DateTimeStamp = DateTime.Now;
+          response.DateTimeStamp = DateTime.Now;
         //response.Level = StatusLevel.Success;
 
         string baseUri = _settings["GraphBaseUri"] +
