@@ -3545,26 +3545,24 @@ namespace org.iringtools.adapter
           childdataObjects = _projectionEngine.ToDataObjects(relatedResource, ref xml);
         }
 
-        //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-        //IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
-        IList<IDataObject> MeregedDataObjects = new List<IDataObject>();
-        MeregedDataObjects = parentDataObject;
-        foreach (IDataObject obj in childdataObjects)
-        {
-            MeregedDataObjects.Add(obj);
-        }
-
         try
         {
             response = _dataLayer.PostRelatedObjects(graphName, id, relatedResource, childdataObjects);
         }
-        catch (NotImplementedException ex)
+        catch (NotImplementedException)
         {
+            IList<IDataObject> MeregedDataObjects = new List<IDataObject>();
+            MeregedDataObjects = parentDataObject;
+
+            foreach (IDataObject obj in childdataObjects)
+            {
+              MeregedDataObjects.Add(obj);
+            }
+
             response = _dataLayer.Post(MeregedDataObjects);
         }
 
-          response.DateTimeStamp = DateTime.Now;
-        //response.Level = StatusLevel.Success;
+        response.DateTimeStamp = DateTime.Now;
 
         string baseUri = _settings["GraphBaseUri"] +
                          _settings["ApplicationName"] + "/" +
