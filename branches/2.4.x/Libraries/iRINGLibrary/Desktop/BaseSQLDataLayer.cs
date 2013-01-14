@@ -76,6 +76,13 @@ namespace org.iringtools.library
 
       return response;
     }
+
+    // post related data rows
+    public virtual Response PostRelatedDataTable(string parentObjectType, string parentObjectId, string relatedObjectType, IList<DataTable> childDataTables)
+    {
+        throw new NotImplementedException();
+    }
+
     #endregion
 
     #region IDataLayer implementation methods
@@ -352,6 +359,34 @@ namespace org.iringtools.library
         _logger.Error("Error posting data tables: " + ex);
         throw ex;
       }
+    }
+
+    public override Response PostRelatedObjects(string parentObjectType, string parentObjectId, string relatedObjectType, IList<IDataObject> childDataObjects)
+    {
+        try
+        {
+            IList<DataTable> childDataTables = ToDataTables(childDataObjects);
+
+            if (childDataTables.Count > 0)
+            {
+                return PostRelatedDataTable(parentObjectType, parentObjectId, relatedObjectType,childDataTables);
+            }
+            else
+            {
+                Response response = new Response()
+                {
+                    Level = StatusLevel.Warning,
+                    Messages = new Messages() { "No records to post." }
+                };
+
+                return response;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error posting related data tables: " + ex);
+            throw ex;
+        }
     }
 
     public override Response Delete(string objectType, DataFilter filter)
