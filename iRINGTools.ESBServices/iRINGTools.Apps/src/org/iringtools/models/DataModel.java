@@ -1,16 +1,12 @@
 package org.iringtools.models;
 
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.ImageIcon;
-import javax.swing.JColorChooser;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.json.JSONException;
@@ -335,9 +331,7 @@ public class DataModel {
 				if (dataMode == DataMode.EXCHANGE) {
 					// remove transfer type Expression from dataFilter
 					List<Expression> transferTypeExpression = removeTransfertypeExpression(dataFilterFile);
-					// remove transfer type OrderExpressions from dataFilter
-					// OrderExpression transferTypeOrderExpression =
-					// removeTransfertypeOrderExpression(dataFilterFile);
+					
 					// pass filter to dxiRequest to get filtered dti data.
 					dxiRequest.setDataFilter(dataFilterFile);
 					if (isAsync) {
@@ -352,13 +346,13 @@ public class DataModel {
 								dtiRelativePath, dxiRequest);
 					}
 					// apply filterfile on fullDtis list
-					List<DataTransferIndex> tmpFullDtiList = fullDtis
+					List<DataTransferIndex> FileFilterFullDti = fullDtis
 							.getDataTransferIndexList().getItems();
-					tmpFullDtiList = getTransferTypeDtis(tmpFullDtiList,
+					FileFilterFullDti = getTransferTypeDtis(FileFilterFullDti,
 							transferTypeExpression);
 					// assinging result to dtis.
 					DataTransferIndexList resultDtiList = new DataTransferIndexList();
-					resultDtiList.setItems(tmpFullDtiList);
+					resultDtiList.setItems(FileFilterFullDti);
 					dtis.setDataTransferIndexList(resultDtiList);
 				} else {
 					if (isAsync) {
@@ -697,20 +691,19 @@ public class DataModel {
 					.get(fullDtiKey);
 			List<DataTransferIndex> fullDtiList = fullDtis
 					.getDataTransferIndexList().getItems();
-
-			List<DataTransferIndex> tmpFullDtiList = fullDtis
-					.getDataTransferIndexList().getItems();
-			/*// code for removing dup's from the fullDTi's
+		
 			List<DataTransferIndex> tmpFullDtiList = new ArrayList<DataTransferIndex>();
 			for (DataTransferIndex dti : fullDtiList) {
-				if (dti.getDuplicateCount() == null
+				tmpFullDtiList.add(dti);
+				// code for removing dup's from the fullDTi's
+				/*if (dti.getDuplicateCount() == null
 						|| dti.getDuplicateCount() == 1) {
 					tmpFullDtiList.add(dti);
 				} else {
 					logger.warn("DTI [" + dti.getIdentifier() + "] has ["
 							+ dti.getDuplicateCount() + "] duplicates.");
-				}
-			}*/
+				}*/
+			}
 			if (transferTypeExpression != null) {
 				if (transferTypeExpression.size() > 0) {
 					// apply transfer type filter on result DtiList
@@ -949,6 +942,7 @@ public class DataModel {
 					String transferType = dto.getTransferType().toString();
 					rowData.add("<span class=\"" + transferType.toLowerCase()
 							+ "\">" + transferType + "</span>");
+					//rowData.add("<input type=\"image\" src=\"resources/images/"+ transferType.toLowerCase()+".png\" width=15 heigt=15 ");
 				}
 
 				// Adding dup's count to dup's column
