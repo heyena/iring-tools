@@ -2067,7 +2067,7 @@ namespace org.iringtools.refdata
       try
       {
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(repository.Uri));
-        
+        endpoint.Timeout = 600000;
         string encryptedCredentials = repository.EncryptedCredentials;
         WebCredentials cred = new WebCredentials(encryptedCredentials);
         if (cred.isEncrypted) cred.Decrypt();
