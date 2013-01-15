@@ -6,7 +6,7 @@ PREFIX p2: <http://rds.posccaesar.org/2008/02/OWL/ISO-15926-2_2003#>
 PREFIX rds: <http://rdl.rdlfacade.org/data#>
 SELECT (Count(?uri) as ?label)
 {
-  rds:R19535665699 RDL:rdsWipEquivalent ?superclass .
+  rds:param1 RDL:rdsWipEquivalent ?superclass .
   ?cls p2:hasSuperclass ?superclass   .
   ?cls p2:hasSubclass ?rdsuri . 
   ?uri RDL:rdsWipEquivalent ?rdsuri . 
