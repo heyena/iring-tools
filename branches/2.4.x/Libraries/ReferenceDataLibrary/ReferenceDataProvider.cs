@@ -1739,7 +1739,7 @@ namespace org.iringtools.refdata
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
 
-        if (!id.Contains(":"))
+        if (!id.Contains("http:"))
           qId = string.Format("tpl:{0}", id);
         else
           qId = id;
@@ -2857,20 +2857,20 @@ namespace org.iringtools.refdata
                     GenerateRoleIndexPart8(ref insert, roleID, ++roleCount, newRole);
                     GenerateHasTemplate(ref insert, roleID, templateID, newRole);
                     GenerateHasRole(ref insert, templateID, roleID, newTQ);
-                    if (!string.IsNullOrEmpty(newRole.range))
-                    {
-                      GenerateRoleFillerType(ref insert, roleID, newRole.range);
-                    }
-                    else if (newRole.value != null)
+                    if (newRole.value != null)
                     {
                       if (newRole.value.reference != null)
                       {
-                        GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
+                      GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
                       }
                       else if (newRole.value.text != null)
                       {
                         ///TODO
                       }
+                    }
+                    else if (newRole.range != null)
+                    {                    
+                        GenerateRoleFillerType(ref insert, roleID, newRole.range);
                     }
                   }
                   else //Not Part8 repository
@@ -3524,7 +3524,7 @@ namespace org.iringtools.refdata
 
     private void GenerateClassName(ref Graph work, QMXFName name, string subjId, object gobj)
     {
-      subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
+      subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("rdfs:label");
       obj = work.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
       work.Assert(new Triple(subj, pred, obj));
@@ -3539,7 +3539,7 @@ namespace org.iringtools.refdata
 
     private void GenerateClassDescription(ref Graph work, Description descr, string subjectId)
     {
-      subj = work.CreateUriNode(string.Format("rdl:{0}", subjectId));
+      subj = work.CreateUriNode(new Uri(subjectId));
       pred = work.CreateUriNode("rdfs:comment");
       obj = work.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
       work.Assert(new Triple(subj, pred, obj));
