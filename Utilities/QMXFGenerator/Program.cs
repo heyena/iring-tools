@@ -210,7 +210,7 @@ namespace QMXFGenerator
 
     private static bool CheckUri(string uri)
     {
-      return uri.Contains("example");
+      return !uri.Contains("example");
     }
 
     private static WorksheetPartWrapper GetWorksheet(SpreadsheetDocumentWrapper document, string sheetName)
@@ -591,7 +591,7 @@ namespace QMXFGenerator
 
             if (description != null && description.ToString() != String.Empty)
             {
-              Description englishUSDescription = new Description { lang = "en", value = description.ToString()};
+              Description englishUSDescription = new Description { lang = "en", value = description.ToString() };
               roleDefinition.description = englishUSDescription;
             }
             object clist;
@@ -740,9 +740,9 @@ namespace QMXFGenerator
           int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
           object identifier = parentRow[(int)RoleColumns.ID + roleOffset];
           object label = parentRow[(int)RoleColumns.Name + roleOffset];
-          object description = parentRow[(int)RoleColumns.Description + roleOffset];
+          object description = row[(int)RoleColumns.Description + roleOffset];
           object type = parentRow[(int)RoleColumns.Type + roleOffset];
-          object value = parentRow[(int)RoleColumns.Value + roleOffset];
+          object value = row[(int)RoleColumns.Value + roleOffset];
           object parentRole = parentRow[(int)RoleColumns.ID + roleOffset];
 
           if (label != null && label.ToString().Trim() != String.Empty)
@@ -797,7 +797,7 @@ namespace QMXFGenerator
                 Utility.WriteString("\n " + type.ToString() + " Was Not Found in Class List While Processing Role Qualification", "error.log", true);
               }
             }
-            else if (value != null && value.ToString() != String.Empty)
+            if (value != null && value.ToString() != String.Empty)
             {
               var query = from @class in _classes
                           where Convert.ToString(@class[(int)ClassColumns.Label]) == value.ToString()
