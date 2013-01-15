@@ -210,10 +210,7 @@ namespace QMXFGenerator
 
     private static bool CheckUri(string uri)
     {
-      if (uri.Contains("example"))
-        return false;
-      else
-        return true;
+      return uri.Contains("example");
     }
 
     private static WorksheetPartWrapper GetWorksheet(SpreadsheetDocumentWrapper document, string sheetName)
@@ -509,10 +506,7 @@ namespace QMXFGenerator
                   lang = "en",
                   value = name,
                 };
-                templateDefinition.name = new List<QMXFName>
-                                {
-                                  englishUSName
-                                };
+                templateDefinition.name = new List<QMXFName> { englishUSName };
               }
             }
             if (templateIdentifier == null || templateIdentifier.ToString() == String.Empty)
@@ -537,10 +531,7 @@ namespace QMXFGenerator
                 lang = "en",
                 value = description.ToString(),
               };
-              templateDefinition.description = new List<Description>
-                            {
-                                englishUSDescription,
-                            };
+              templateDefinition.description = new List<Description> { englishUSDescription };
             }
             templateDefinition.roleDefinition = ProcessRoleDefinition(templateDefinition.name.FirstOrDefault().value, row, Convert.ToInt32(row[row.Count - 1]), part);
             load = String.Empty;
@@ -584,10 +575,7 @@ namespace QMXFGenerator
               value = name,
             };
 
-            roleDefinition.name = new List<QMXFName>
-            {
-              englishUSName
-            };
+            roleDefinition.name = new List<QMXFName> { englishUSName };
 
             if (identifier == null || identifier.ToString() == String.Empty)
             {
@@ -603,11 +591,7 @@ namespace QMXFGenerator
 
             if (description != null && description.ToString() != String.Empty)
             {
-              Description englishUSDescription = new Description
-              {
-                lang = "en",
-                value = description.ToString(),
-              };
+              Description englishUSDescription = new Description { lang = "en", value = description.ToString()};
               roleDefinition.description = englishUSDescription;
             }
             object clist;
@@ -774,24 +758,13 @@ namespace QMXFGenerator
             RoleQualification roleQualification = new RoleQualification();
             roleQualification.identifier = identifier.ToString();
 
-            QMXFName englishUSName = new QMXFName
-            {
-              lang = "en",
-              value = name,
-            };
+            QMXFName englishUSName = new QMXFName { lang = "en", value = name };
 
-            roleQualification.name = new List<QMXFName>
-            {
-              englishUSName
-            };
+            roleQualification.name = new List<QMXFName> { englishUSName };
 
             if (description != null && description.ToString() != String.Empty)
             {
-              Description englishUSDescription = new Description
-              {
-                lang = "en",
-                value = description.ToString(),
-              };
+              Description englishUSDescription = new Description { lang = "en", value = description.ToString() };
 
               roleQualification.description = new List<Description>
               {
@@ -832,10 +805,7 @@ namespace QMXFGenerator
 
               if (query.FirstOrDefault() != null)
               {
-                roleQualification.value = new QMXFValue
-                {
-                  reference = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim(),
-                };
+                roleQualification.value = new QMXFValue { reference = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim() };
               }
             }
             else
