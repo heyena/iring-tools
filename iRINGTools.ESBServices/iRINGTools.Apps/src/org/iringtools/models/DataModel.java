@@ -1,6 +1,5 @@
 package org.iringtools.models;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -331,7 +330,7 @@ public class DataModel {
 				if (dataMode == DataMode.EXCHANGE) {
 					// remove transfer type Expression from dataFilter
 					List<Expression> transferTypeExpression = removeTransfertypeExpression(dataFilterFile);
-					
+
 					// pass filter to dxiRequest to get filtered dti data.
 					dxiRequest.setDataFilter(dataFilterFile);
 					if (isAsync) {
@@ -691,18 +690,17 @@ public class DataModel {
 					.get(fullDtiKey);
 			List<DataTransferIndex> fullDtiList = fullDtis
 					.getDataTransferIndexList().getItems();
-		
+
 			List<DataTransferIndex> tmpFullDtiList = new ArrayList<DataTransferIndex>();
 			for (DataTransferIndex dti : fullDtiList) {
 				tmpFullDtiList.add(dti);
 				// code for removing dup's from the fullDTi's
-				/*if (dti.getDuplicateCount() == null
-						|| dti.getDuplicateCount() == 1) {
-					tmpFullDtiList.add(dti);
-				} else {
-					logger.warn("DTI [" + dti.getIdentifier() + "] has ["
-							+ dti.getDuplicateCount() + "] duplicates.");
-				}*/
+				/*
+				 * if (dti.getDuplicateCount() == null ||
+				 * dti.getDuplicateCount() == 1) { tmpFullDtiList.add(dti); }
+				 * else { logger.warn("DTI [" + dti.getIdentifier() + "] has ["
+				 * + dti.getDuplicateCount() + "] duplicates."); }
+				 */
 			}
 			if (transferTypeExpression != null) {
 				if (transferTypeExpression.size() > 0) {
@@ -937,12 +935,23 @@ public class DataModel {
 
 				// create a place holder for info field
 				rowData.add("");
+				String relatedClassesJson;
+
+				try {
+					relatedClassesJson = JSONUtil.serialize(relatedClasses);
+				} catch (JSONException e) {
+					relatedClassesJson = "[]";
+				}
 
 				if (dataMode == DataMode.EXCHANGE) {
 					String transferType = dto.getTransferType().toString();
-					rowData.add("<span class=\"" + transferType.toLowerCase()
-							+ "\">" + transferType + "</span>");
-					//rowData.add("<input type=\"image\" src=\"resources/images/"+ transferType.toLowerCase()+".png\" width=15 heigt=15 ");
+					/*
+					 * rowData.add("<span class=\"" + transferType.toLowerCase()
+					 * + "\">" + transferType + "</span>");
+					 */
+					rowData.add("<input type=\"image\" src=\"resources/images/"
+							+ transferType.toLowerCase()
+							+ ".png\" width=15 heigt=15 "+ "onClick='javascript:showChangedItemsInfo()'>");
 				}
 
 				// Adding dup's count to dup's column
@@ -951,9 +960,18 @@ public class DataModel {
 					String dups;
 					if (dto.getDuplicateCount() == null) {
 						dups = "0";
-						rowData.add(dups);
-					} else
-						rowData.add((dto.getDuplicateCount().toString()));
+					//	rowData.add(dups);
+					} else{
+					//	rowData.add((dto.getDuplicateCount().toString()));
+						if(dto.getDuplicateCount() == 1)
+						{
+						rowData.add("<input type=\"image\" src=\"resources/images/success.png\" width=15 heigt=15 >");
+					}else
+					{
+						rowData.add("<input type=\"image\" src=\"resources/images/error.png\" width=15 heigt=15  "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
+					}
+					}
+					
 				}
 
 				if (dto.getClassObjects().getItems().size() > 0) {
@@ -964,25 +982,19 @@ public class DataModel {
 					processClassObject(manifest, graph, dto, dtoIndex, fields,
 							classObject, dtoGrid, rowData, relatedClasses);
 				}
-
-				String relatedClassesJson;
-
-				try {
-					relatedClassesJson = JSONUtil.serialize(relatedClasses);
-				} catch (JSONException e) {
-					relatedClassesJson = "[]";
-				}
+				
 				// setting color icon if the row contain Dup's
 
-			/*	if(dto.getDuplicateCount() > 1)
-				{
-					String transferType = dto.getTransferType().toString();
-					rowData.add("<span class=\"icon\">" + transferType + "</span>");
-			
-				}else
-				{*/
+				/*
+				 * if(dto.getDuplicateCount() > 1) { String transferType =
+				 * dto.getTransferType().toString();
+				 * rowData.add("<span class=\"icon\">" + transferType +
+				 * "</span>");
+				 * 
+				 * }else {
+				 */
 				// update info field
-				
+
 				rowData.set(
 						0,
 						"<input type=\"image\" src=\"resources/images/info-small.png\" "
@@ -990,10 +1002,10 @@ public class DataModel {
 								+ dto.getIdentifier() + "\",\""
 								+ dto.getIdentifier() + "\","
 								+ relatedClassesJson + ")'>");
-		//		}
+				// }
 
 				gridData.add(rowData);
-				
+
 			}
 		}
 
@@ -1494,10 +1506,10 @@ public class DataModel {
 
 			// Dups count field
 			Field dupField = new Field();
-			dupField.setName("Duplicate Count");
-			dupField.setDataIndex("Duplicate Count");
+			dupField.setName("Status");
+			dupField.setDataIndex("Statua");
 			dupField.setType("string");
-			dupField.setWidth(100);
+			dupField.setWidth(STATUS_FIELD_WIDTH);
 			dupField.setFixed(true);
 			dupField.setFilterable(false);
 			dupField.setSortable(false);
@@ -1505,12 +1517,21 @@ public class DataModel {
 
 			// transfer-type field
 			Field field = new Field();
-			field.setName("Status");
+			field.setName("Transfer Type");
 			field.setDataIndex("Transfer Type");
+			field.setType("string");
+			field.setWidth(100);
+			field.setFilterable(true);
+			fields.add(0, field);
+
+		/*	// Status field
+			Field statusField = new Field();
+			field.setName("Status");
+			field.setDataIndex("Status");
 			field.setType("string");
 			field.setWidth(STATUS_FIELD_WIDTH);
 			field.setFilterable(true);
-			fields.add(0, field);
+			fields.add(0, statusField);*/
 		}
 
 		// info field
