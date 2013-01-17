@@ -1400,8 +1400,7 @@ namespace org.iringtools.refdata
 
         Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == sparqlQuery).Query;
 
-        sparql = ReadSPARQL(queryContainsSearch.FileName);
-        sparql = sparql.Replace("param1", id);
+        sparql = ReadSPARQL(queryContainsSearch.FileName).Replace("param1", id);
 
         SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
@@ -1461,6 +1460,12 @@ namespace org.iringtools.refdata
     {
       try
       {
+        var qId = string.Empty;
+
+        if (!id.Contains("http:"))
+          qId = nsMap.GetNamespaceUri("tpl") + id;
+        else
+          qId = id;
         string sparql = String.Empty;
         string relativeUri = String.Empty;
         string sparqlQuery = string.Empty;
@@ -1487,7 +1492,7 @@ namespace org.iringtools.refdata
           Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == sparqlQuery).Query;
 
           sparql = ReadSPARQL(queryContainsSearch.FileName);
-          sparql = sparql.Replace("param1", id);
+          sparql = sparql.Replace("param1", qId);
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
           foreach (SparqlResult result in sparqlResults)
@@ -1548,7 +1553,11 @@ namespace org.iringtools.refdata
     {
       try
       {
-
+        var qId = string.Empty;
+        if (!id.Contains("http:"))
+          qId = nsMap.GetNamespaceUri("tpl") + id;
+        else
+          qId = id;
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
         string uri = String.Empty;
@@ -1583,13 +1592,13 @@ namespace org.iringtools.refdata
               Query getValueRestriction = (Query)_queries.FirstOrDefault(c => c.Key == "GetValueRestriction").Query;
 
               rangeSparql = ReadSPARQL(getRangeRestriction.FileName);
-              rangeSparql = rangeSparql.Replace("param1", id);
+              rangeSparql = rangeSparql.Replace("param1", qId);
 
               referenceSparql = ReadSPARQL(getReferenceRestriction.FileName);
-              referenceSparql = referenceSparql.Replace("param1", id);
+              referenceSparql = referenceSparql.Replace("param1", qId);
 
               valueSparql = ReadSPARQL(getValueRestriction.FileName);
-              valueSparql = valueSparql.Replace("param1", id);
+              valueSparql = valueSparql.Replace("param1", qId);
 
               SparqlResultSet rangeSparqlResults = QueryFromRepository(repository, rangeSparql);
               SparqlResultSet referenceSparqlResults = QueryFromRepository(repository, referenceSparql);
@@ -1658,7 +1667,7 @@ namespace org.iringtools.refdata
               QueryBindings getPart8RolesBindings = getPart8Roles.Bindings;
 
               string part8RolesSparql = ReadSPARQL(getPart8Roles.FileName);
-              part8RolesSparql = part8RolesSparql.Replace("param1", id);
+              part8RolesSparql = part8RolesSparql.Replace("param1", qId);
               SparqlResultSet part8RolesResults = QueryFromRepository(repository, part8RolesSparql);
               foreach (SparqlResult result in part8RolesResults)
               {
@@ -1740,7 +1749,7 @@ namespace org.iringtools.refdata
         QMXFStatus status = new QMXFStatus();
 
         if (!id.Contains("http:"))
-          qId = string.Format("tpl:{0}", id);
+          qId = nsMap.GetNamespaceUri("tpl") + id;
         else
           qId = id;
 
@@ -1759,7 +1768,7 @@ namespace org.iringtools.refdata
           }
 
           sparql = ReadSPARQL(queryContainsSearch.FileName);
-          sparql = sparql.Replace("param1", id);
+          sparql = sparql.Replace("param1", qId);
 
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
@@ -1885,8 +1894,8 @@ namespace org.iringtools.refdata
         string qId = string.Empty;
         Query getTemplateQualification = null;
 
-        if (!id.Contains(":"))
-          qId = string.Format("tpl:{0}", id);
+        if (!id.Contains("http:"))
+          qId = nsMap.GetNamespaceUri("tpl") + id;
         else
           qId = id;
 
@@ -1915,7 +1924,7 @@ namespace org.iringtools.refdata
             getTemplateQualification = (Query)_queries.FirstOrDefault(c => c.Key == sparqlQuery).Query;
 
             sparql = ReadSPARQL(getTemplateQualification.FileName);
-            sparql = sparql.Replace("param1", id);
+            sparql = sparql.Replace("param1", qId);
 
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
@@ -2192,12 +2201,8 @@ namespace org.iringtools.refdata
       Graph delete = new Graph();
       Graph insert = new Graph();
       //add namespaces to graphs 
-      delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
-      delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
-      delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
-      delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
-      delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
-      insert.NamespaceMap.Import(delete.NamespaceMap);
+      delete.NamespaceMap.Import(nsMap);
+      insert.NamespaceMap.Import(nsMap);
 
       Response response = new Response();
       response.Level = StatusLevel.Success;
@@ -2357,7 +2362,7 @@ namespace org.iringtools.refdata
                     foreach (RoleDefinition ord in oldTDef.roleDefinition)
                     {
                       RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
-                      if (nrd == null) /// need to add it
+                      if (nrd == null) /// need to delete it
                       {
                         foreach (QMXFName name in ord.name)
                         {
@@ -2378,6 +2383,7 @@ namespace org.iringtools.refdata
                           GenerateRoleIndex(ref delete, ord.identifier, index);
                         }
                       }
+                     
                       if (ord.range != null)
                       {
                         if (repository.RepositoryType == RepositoryType.Part8)
@@ -2461,6 +2467,7 @@ namespace org.iringtools.refdata
 
                   if (repository.RepositoryType == RepositoryType.Part8)
                   {
+                    GenerateTypesPart8(ref insert, newRoleID, null, newRole);
                     GenerateRoleIndexPart8(ref insert, newRoleID, ++roleCount, newRole);
                     GenerateHasTemplate(ref insert, newRoleID, templateId, newRole);
                     GenerateHasRole(ref insert, templateId, newRoleID, newRole);
@@ -2480,7 +2487,7 @@ namespace org.iringtools.refdata
                       GenerateRoleDomain(ref insert, newRoleID, templateId);
                       GenerateTypes(ref insert, newRoleID, null, newRole);
                     }
-                  }
+                  } 
                 }
               }
               #endregion
@@ -2515,8 +2522,8 @@ namespace org.iringtools.refdata
           #endregion Template Definitions
           #region Template Qualification
           /// Qualification templates do have the following properties
-          /// 1) Base class = owl:Thing
-          /// 2) rdf:type = p8:SpecializedTemplateStatement
+          /// 1) Base class = owl:Thing, owl:NamedIndividual
+          /// 2) subClassOf = p8:SpecializedTemplateStatement
           /// 3) rdfs:label = template name
           /// 
           if (qmxf.templateQualifications.Count > 0)
@@ -2618,7 +2625,7 @@ namespace org.iringtools.refdata
 
                   //index = 1;
                   ///  Qualification roles do have the following properties
-                  /// 1) baseclass of owl:Thing
+                  /// 1) type of owl:Thing, owl:NamedIndividual
                   /// 2) rdf:type = p8:TemplateRoleDescription
                   /// 3) rdfs:label = rolename
                   /// 4) p8:valRoleIndex
@@ -2654,21 +2661,15 @@ namespace org.iringtools.refdata
                           GenerateRoleIndexPart8(ref insert, newRoleID, ++count, nrq);
                           GenerateHasTemplate(ref insert, newRoleID, templateID, nrq);
                           GenerateHasRole(ref insert, templateID, newRoleID, newTQ);
-                          if (!string.IsNullOrEmpty(nrq.range))
+                          if (nrq.value != null && !string.IsNullOrEmpty(nrq.value.reference))
+                          {
+                            GenerateRoleFillerType(ref insert, newRoleID, nrq.value.reference);
+                          }
+                          else if (nrq.range != null)
                           {
                             GenerateRoleFillerType(ref insert, newRoleID, nrq.range);
                           }
-                          else if (nrq.value != null)
-                          {
-                            if (nrq.value.reference != null)
-                            {
-                              GenerateRoleFillerType(ref insert, newRoleID, nrq.value.reference);
-                            }
-                            else if (nrq.value.text != null)
-                            {
-                              ///TODO
-                            }
-                          }
+                          
                         }
                         else //Not Part8 repository
                         {
@@ -2727,20 +2728,13 @@ namespace org.iringtools.refdata
                           GenerateRoleIndexPart8(ref delete, newRoleID, ++count, orq);
                           GenerateHasTemplate(ref delete, newRoleID, templateID, orq);
                           GenerateHasRole(ref delete, templateID, newRoleID, oldTQ);
-                          if (!string.IsNullOrEmpty(orq.range))
+                          if (orq.value != null && !string.IsNullOrEmpty(orq.value.reference))
                           {
-                            GenerateRoleFillerType(ref delete, newRoleID, orq.range);
+                            GenerateRoleFillerType(ref delete, newRoleID, orq.value.reference);
                           }
-                          else if (orq.value != null)
+                          else if (orq.range != null)
                           {
-                            if (orq.value.reference != null)
-                            {
-                              GenerateRoleFillerType(ref delete, newRoleID, orq.value.reference);
-                            }
-                            else if (nrq.value.text != null)
-                            {
-                              ///TODO
-                            }
+                            GenerateRoleFillerType(ref delete, newRoleID, nrq.range);
                           }
                         }
                         else //Not Part8 repository
@@ -2802,13 +2796,11 @@ namespace org.iringtools.refdata
                 if (repository.RepositoryType == RepositoryType.Part8)
                 {
                   GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
-
                   GenerateTypesPart8(ref insert, templateID, newTQ.qualifies, newTQ);
                 }
                 else
                 {
                   GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
-
                   GenerateTypes(ref insert, templateID, newTQ.qualifies, newTQ);
 
                 }
@@ -2857,16 +2849,10 @@ namespace org.iringtools.refdata
                     GenerateRoleIndexPart8(ref insert, roleID, ++roleCount, newRole);
                     GenerateHasTemplate(ref insert, roleID, templateID, newRole);
                     GenerateHasRole(ref insert, templateID, roleID, newTQ);
-                    if (newRole.value != null)
+                    if (newRole.value != null && !string.IsNullOrEmpty(newRole.value.reference))
                     {
-                      if (newRole.value.reference != null)
-                      {
                       GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
-                      }
-                      else if (newRole.value.text != null)
-                      {
-                        ///TODO
-                      }
+
                     }
                     else if (newRole.range != null)
                     {                    
@@ -2952,16 +2938,9 @@ namespace org.iringtools.refdata
       Graph delete = new Graph();
       Graph insert = new Graph();
       //add namespaces to graphs 
-      foreach (var pref in nsMap.Prefixes)
-      {
-        delete.NamespaceMap.AddNamespace(pref, nsMap.GetNamespaceUri(pref));
-      }
-      //delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
-      //delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
-      //delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
-      //delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
-      //delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
-      insert.NamespaceMap.Import(delete.NamespaceMap);
+    
+      delete.NamespaceMap.Import(nsMap);
+      insert.NamespaceMap.Import(nsMap);
 
       Response response = new Response();
       response.Level = StatusLevel.Success;
@@ -3415,6 +3394,8 @@ namespace org.iringtools.refdata
         subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
+        work.Assert(new Triple(subj, pred, obj));
+        obj = work.CreateUriNode("owl:NamedIndividual");
         //obj = work.CreateUriNode("p8:TemplateDescription");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
@@ -3427,6 +3408,8 @@ namespace org.iringtools.refdata
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
         work.Assert(new Triple(subj, pred, obj));
+        obj = work.CreateUriNode("owl:NamedIndividual");
+        work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("p8:TemplateRoleDescription");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("p8:hasRoleFillerType");
@@ -3438,6 +3421,8 @@ namespace org.iringtools.refdata
         subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
+        work.Assert(new Triple(subj, pred, obj));
+        obj = work.CreateUriNode("owl:NamedIndividual");
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("p8:TemplateRoleDescription");
         work.Assert(new Triple(subj, pred, obj));
@@ -3452,6 +3437,8 @@ namespace org.iringtools.refdata
         //obj = work.CreateUriNode("p8:TemplateDescription");
         //work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("owl:Thing");
+        work.Assert(new Triple(subj, pred, obj));
+        obj = work.CreateUriNode("owl:NamedIndividual");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
         obj = work.CreateUriNode("p8:SpecializedTemplateStatement");
