@@ -183,6 +183,7 @@ public class ExchangeProvider
     {
       String requestId = UUID.randomUUID().toString().replace("-", "");
       RequestStatus requestStatus = new RequestStatus();
+      requestStatus.setState(State.IN_PROGRESS);
       requests.put(requestId, requestStatus);
 
       DtiTask dtiTask = new DtiTask(settings, xdef, dxiRequest, dtiOnly, requestStatus);
@@ -231,6 +232,7 @@ public class ExchangeProvider
     {
       String requestId = UUID.randomUUID().toString().replace("-", "");
       RequestStatus requestStatus = new RequestStatus();
+      requestStatus.setState(State.IN_PROGRESS);
       requests.put(requestId, requestStatus);
 
       DtoTask dtoTask = new DtoTask(settings, xdef, dxoRequest, requestStatus);
@@ -436,6 +438,7 @@ public class ExchangeProvider
     {
       String requestId = UUID.randomUUID().toString().replace("-", "");
       RequestStatus requestStatus = new RequestStatus();
+      requestStatus.setState(State.IN_PROGRESS);
       requests.put(requestId, requestStatus);
 
       ExecutorService executor = Executors.newSingleThreadExecutor();
