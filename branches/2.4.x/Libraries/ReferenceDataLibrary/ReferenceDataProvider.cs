@@ -3051,7 +3051,7 @@ namespace org.iringtools.refdata
         subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode("p8:hasTemplate");
         obj = work.CreateUriNode(new Uri(objId));
-        work.Assert(new Triple(subj, pred, obj);
+        work.Assert(new Triple(subj, pred, obj));
       }
     }
 
