@@ -2235,12 +2235,12 @@ namespace org.iringtools.refdata
     {
       ///////////////////////////////////////////////////////////////////////////////
       /// Base templates do have the following properties
-      /// 1) Base class of owl:Thing
+      /// 1) Base class of owl:Thing, p7tm:TemplateDescription
       /// 2) rdfs:subClassOf = p8:BaseTemplate
       /// 3) rdfs:label name of template
       /// 4) optional rdfs:comment
       /// 5) p8:valNumberOfRoles
-      /// 6) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self 
+      /// 6) p7tm:TemplateDescription
       ///////////////////////////////////////////////////////////////////////////////
       var response = new Response();
       var delete = new Graph();
@@ -3097,7 +3097,7 @@ namespace org.iringtools.refdata
         obj = work.CreateUriNode("owl:NamedIndividual");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
-        obj = work.CreateUriNode("p8:BaseTemplate");
+        obj = work.CreateUriNode("p8:BaseTemplateStatement");
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleQualification)
@@ -3108,8 +3108,8 @@ namespace org.iringtools.refdata
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("owl:NamedIndividual");
         work.Assert(new Triple(subj, pred, obj));
-        //obj = work.CreateUriNode("p8:TemplateRoleDescription");
-        //work.Assert(new Triple(subj, pred, obj));
+        obj = work.CreateUriNode("p8:TemplateRoleDescription");
+        work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("p8:hasRoleFillerType");
         obj = work.CreateUriNode(new Uri(((RoleQualification)gobj).range));
         work.Assert(new Triple(subj, pred, obj));
@@ -3122,8 +3122,8 @@ namespace org.iringtools.refdata
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("owl:NamedIndividual");
         work.Assert(new Triple(subj, pred, obj));
-        //obj = work.CreateUriNode("p8:TemplateRoleDescription");
-        //work.Assert(new Triple(subj, pred, obj));
+        obj = work.CreateUriNode("p8:TemplateRoleDescription");
+        work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("p8:hasRoleFillerType");
         obj = work.CreateUriNode(new Uri(((RoleDefinition)gobj).range));
         work.Assert(new Triple(subj, pred, obj));
@@ -3137,7 +3137,7 @@ namespace org.iringtools.refdata
         obj = work.CreateUriNode("owl:NamedIndividual");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
-        obj = work.CreateUriNode("p8:SpecializedTemplate");
+        obj = work.CreateUriNode("p8:SpecializedTemplateStatement");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
         obj = work.CreateUriNode(new Uri(objectId));
