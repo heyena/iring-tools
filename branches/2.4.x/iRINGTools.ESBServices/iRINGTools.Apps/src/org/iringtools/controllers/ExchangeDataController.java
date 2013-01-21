@@ -13,7 +13,8 @@ public class ExchangeDataController extends AbstractController
   private String historyServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
-  
+  private Grid summaryGrid;
+
   private Grid xLogsGrid;
   private String xResultsGrid;
   private Grid pageXLogsGrid;
@@ -115,7 +116,7 @@ public class ExchangeDataController extends AbstractController
       
     return SUCCESS;
   }
-  
+ 
   public String getXResultsGrid()
   {
     return xResultsGrid;
@@ -140,6 +141,32 @@ public class ExchangeDataController extends AbstractController
     
     return SUCCESS;
   }
+//----------------------------
+  // get exchange summary responses 
+  // ---------------------------
+  public String getSummary()
+  {
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
+          isAsync, asyncTimeout, pollingInterval);    
+      summaryGrid = exchangeDataModel.getSummaryGrid(exchangeServiceUri, scope, xid, xlabel);    
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.getMessage());
+      return ERROR;
+    }
+    
+    return SUCCESS;
+  }
+  public Grid getSummaryGrid() {
+		return summaryGrid;
+	}
+
+	public void setSummaryGrid(Grid summaryGrid) {
+		this.summaryGrid = summaryGrid;
+	}
   
   public Grid getXLogsGrid()
   {
