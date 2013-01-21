@@ -28,7 +28,7 @@
   <script type="text/javascript" src="resources/ext-3.4.0/ux/gridfilters/filter/NumericFilter.js"></script>
   <script type="text/javascript" src="resources/ext-3.4.0/ux/gridfilters/filter/BooleanFilter.js"></script>
   <script type="text/javascript" src="resources/ext-3.4.0/ux/paging-toolbar-resizer.js"></script>
-  
+  <script type="text/javascript" src="resources/ext-3.4.0/ux/Ext.ux.form.ReadonlyField.txt"></script>
   <script type="text/javascript" src="resources/scripts/iringtools-commons.js"></script>
   <script type="text/javascript" src="resources/scripts/exchange-manager.js"></script>
 </head>
