@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
+import org.iringtools.data.filter.DataFilter;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.manifest.Graph;
@@ -322,5 +323,234 @@ public class ExchangeDataModel extends DataModel
     pageXlogsGrid.setTotal(itemCount);
 
     return pageXlogsGrid;
+  }
+ //Getting summary Grid
+  
+  public Grid getSummaryGrid(String serviceUri, String scope, String xid, String xlabel) throws DataModelException
+  {
+    //String relativePath = "/" + scope + "/exchanges/" + xid+"?dtiOnly=false";
+    String relativePath = "/" + scope + "/exchanges/" + xid+"/differences/summary";
+    ExchangeResponse xlogs = null;
+
+    HttpClient httpClient = new HttpClient(serviceUri);
+    HttpUtils.addHttpHeaders(session, httpClient);
+    
+    try
+    {
+      xlogs = httpClient.post(ExchangeResponse.class, relativePath,new DataFilter());
+      System.out.println(xlogs);
+    }
+    catch (HttpClientException ex)
+    {
+      logger.error("Error getting exchange logs: " + ex);
+      throw new DataModelException(ex.getMessage());
+    }
+
+    Grid summaryGrid = new Grid();
+
+   if (xlogs != null && xlogs.getItemCount() > 0)
+    {
+      //List<ExchangeResponse> xrs = xlogs.getExchangeResponses();
+      List<Field> fields = new ArrayList<Field>();
+      List<List<String>> data = new ArrayList<List<String>>();
+
+      Field field = new Field();
+      field.setName("&nbsp;");
+      field.setDataIndex("&nbsp;");
+      field.setType("string");
+      field.setWidth(28);
+      field.setFixed(true);
+      field.setFilterable(false);
+      fields.add(field);
+
+      field = new Field();
+      field.setName("Start Time");
+      field.setDataIndex("StartTime");
+      field.setType("string");
+      field.setWidth(150);
+      fields.add(field);
+
+      field = new Field();
+      field.setName("End Time");
+      field.setDataIndex("EndTime");
+      field.setType("string");
+      field.setWidth(150);
+      fields.add(field);
+
+      field = new Field();
+      field.setName("Sender");
+      field.setDataIndex("Sender");
+      field.setType("string");
+      field.setWidth(180);
+      fields.add(field);
+
+      field = new Field();
+      field.setName("Receiver");
+      field.setDataIndex("Receiver");
+      field.setType("string");
+      field.setWidth(180);
+      fields.add(field);
+
+      field = new Field();
+      field.setName("Result");
+      field.setDataIndex("Result");
+      field.setType("string");
+      field.setWidth(260);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Item Count");
+      field.setDataIndex("ItemCount");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Add Count");
+      field.setDataIndex("AddCount");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Delete Count");
+      field.setDataIndex("DeleteCount");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Change Count");
+      field.setDataIndex("ChangeCount");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Synchronized Count");
+      field.setDataIndex("SynchronizedCount");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Pool Size");
+      field.setDataIndex("PoolSize");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Sender App");
+      field.setDataIndex("SenderApp");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Sender Graph");
+      field.setDataIndex("SenderGraph");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Sender Scope");
+      field.setDataIndex("SenderScope");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Sender Uri");
+      field.setDataIndex("SenderUri");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      
+      field = new Field();
+      field.setName("Receiver App");
+      field.setDataIndex("ReceiverApp");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Receiver Graph");
+      field.setDataIndex("ReceiverGraph");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Receiver Scope");
+      field.setDataIndex("ReceiverScope");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Receiver Uri");
+      field.setDataIndex("ReceiverUri");
+      field.setType("string");
+      field.setWidth(MIN_FIELD_WIDTH);
+      fields.add(field);
+      
+      List<String> row = new ArrayList<String>();
+      //String startTime = format(xlogs.getStartTime().toGregorianCalendar());
+      //String endTime = format(xlogs.getEndTime().toGregorianCalendar());
+      //String exchangeFile = xr.getStartTime().toString().replace(":", ".");
+      row.add("");
+      row.add("");
+      row.add("");
+      row.add(xlogs.getSenderScope() + "." + xlogs.getSenderApp() + "." + xlogs.getSenderGraph());
+      row.add(xlogs.getReceiverScope() + "." + xlogs.getReceiverApp() + "." + xlogs.getReceiverGraph());
+      row.add(xlogs.getSummary());
+      row.add(String.valueOf(xlogs.getItemCount()));
+      row.add(String.valueOf(xlogs.getItemCountAdd()));
+      row.add(String.valueOf(xlogs.getItemCountDelete()));
+      row.add(String.valueOf(xlogs.getItemCountChange()));
+      row.add(String.valueOf(xlogs.getItemCountSync()));
+      row.add(String.valueOf(xlogs.getPoolSize()));
+      row.add(xlogs.getSenderApp());
+      row.add(xlogs.getSenderGraph());
+      row.add(xlogs.getSenderScope());
+      row.add(xlogs.getSenderUri());
+      row.add(xlogs.getReceiverApp());
+      row.add(xlogs.getReceiverGraph());
+      row.add(xlogs.getReceiverScope());
+      row.add(xlogs.getReceiverUri());
+      
+      data.add(row);
+
+    /*  for (ExchangeResponse xr : xrs)
+      {
+        List<String> row = new ArrayList<String>();        
+        String startTime = format(xr.getStartTime().toGregorianCalendar());
+        String endTime = format(xr.getEndTime().toGregorianCalendar());
+        String exchangeFile = xr.getStartTime().toString().replace(":", ".");
+        
+        row.add("<input type=\"image\" src=\"resources/images/info-small.png\" "
+            + "onClick='javascript:createPageXlogs(\"" + scope + "\",\"" + xid + "\",\"" + xlabel 
+            + "\",\"" + startTime + "\",\"" + exchangeFile + "\"," + xr.getPoolSize() 
+            + "," + xr.getItemCount() + ")'>");
+
+        row.add(startTime);
+        row.add(endTime);
+        row.add(xr.getSenderScope() + "." + xr.getSenderApp() + "." + xr.getSenderGraph());
+        row.add(xr.getReceiverScope() + "." + xr.getReceiverApp() + "." + xr.getReceiverGraph());
+        row.add(xr.getSummary());
+        
+        data.add(row);
+      }*/
+
+      //xlogsGrid.setTotal(xrs.size());
+      summaryGrid.setTotal(xlogs.getItemCount());
+      summaryGrid.setFields(fields);
+      summaryGrid.setData(data);
+    }
+
+    return summaryGrid;
   }
 }
