@@ -29,6 +29,12 @@
     
     <action name="reset" class="org.iringtools.controllers.DirectoryController" method="resetDtoContext"/>
 
+    <!-- summary data -->
+    <action name="sdata" class="org.iringtools.controllers.ExchangeDataController" method="getSummary">
+      <result type="json">
+        <param name="root">summaryGrid</param>
+      </result>
+    </action>
     <!-- app data -->
     <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
       <result type="json">
