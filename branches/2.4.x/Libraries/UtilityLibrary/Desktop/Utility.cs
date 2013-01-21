@@ -1450,7 +1450,16 @@ namespace org.iringtools.utility
       //return dtOffsetStr;
       #endregion
 
-      string utcStr = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Utc);
+      // We should not use XmlDateTimeSerializationMode.Utc as this implies we know that the source was a local time to begin with
+      // For example if my source data has two columns, EventTime and EventTimeUTC that store an event time with local offset and UCT respectively 
+      // then converting the UTC column will apply the server's TZone offset to that data thus corrupting it.
+      //
+      // Only the original application (Datalayer for that application) could know if a datetime column stores local or UTC information and would be able to make the determination
+      // that the timezone should (or should not) be preserved when data is moved to servers in different time zones.
+      //
+      // so replace: string utcStr = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Utc); 
+      // with:
+      string utcStr = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Unspecified);
 
       if (!utcStr.Contains("."))
         utcStr = utcStr.Replace("Z", ".000-00:00");
