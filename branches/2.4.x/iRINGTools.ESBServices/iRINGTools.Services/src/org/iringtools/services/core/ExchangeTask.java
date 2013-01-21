@@ -1,7 +1,9 @@
 package org.iringtools.services.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -526,7 +528,10 @@ public class ExchangeTask implements Runnable
         timeoutCount += interval;
       }
 
-      obj = (T) JaxbUtils.toObject(clazz, requestStatus.getResponseText());
+      // Note that the C# iRing services (unlike the Java iRing services) only UTF8 encode once in the httpcontext response stream
+      // so the object embedded within the response text has already been decoded out of UTF-8 encoded when we get to this point. 
+		InputStream streamUTF8 = new ByteArrayInputStream(requestStatus.getResponseText().getBytes("UTF-8"));
+		obj = (T) JaxbUtils.toObject(clazz, streamUTF8);
     }
     catch (Exception e)
     {
