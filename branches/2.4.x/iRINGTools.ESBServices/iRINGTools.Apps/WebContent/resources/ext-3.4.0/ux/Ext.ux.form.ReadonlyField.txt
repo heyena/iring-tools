@@ -1,0 +1,211 @@
+﻿Ext.namespace('Ext.ux.form');
+
+Ext.ux.form.ReadonlyField = Ext.extend(Ext.BoxComponent, {
+
+    hideLabel: false,
+    inputType : 'text',
+    value : '',
+    name : '',
+    invalidClass : "x-form-fckedtrfield-invalid",
+    validationEvent : 'change',
+    validationDelay : 250,
+    defaultAutoCreate : {tag: "div", style:'margin:0px 0 0px 0px;'},
+    msgTarget : 'qtip',
+    msgFx : 'normal',
+    disabled : false,
+    optional : false,
+    windowConfig: {},	    
+	isFormField : true,
+	    
+	initComponent : function(){
+        Ext.ux.form.ReadonlyField.superclass.initComponent.call(this);
+        this.addEvents(
+            'change',
+            'invalid',
+            'valid',
+			'expand',
+            'collapse'
+        );		
+    },
+
+    getName: function(){
+         return this.rendered && this.hiddenField.dom.name ? this.hiddenField.dom.name : '';
+    },
+    
+    // private
+    onRender : function(ct, position){
+        Ext.ux.form.ReadonlyField.superclass.onRender.call(this, ct, position);
+        if(!this.el){
+            var cfg = this.getAutoCreate();
+            this.el = ct.createChild(cfg, position);
+        }
+        //this.centerImgEl = this.el.insertFirst({tag: 'center'});
+		this.labelEl = this.el.insertFirst({tag: 'label', html:this.value, autoWidth:true});
+		this.hiddenField = this.labelEl.insertSibling({tag:'input', type:'hidden', name: this.name, id: this.id + '-hidden'}, 'before');		
+		//this.el.addClass([this.fieldClass, this.cls]);
+        this.labelEl.addClass([this.fieldClass, this.cls]);
+        this.labelEl.setWidth(this.width);
+        this.labelEl.applyStyles(this.style);
+        this.initValue();
+    },
+	
+    // private
+    initValue : function(){
+        if(this.value !== undefined){
+            this.hiddenField.dom.value = (this.value === null || this.value === undefined ? '' : this.value);
+            this.labelEl.dom.html = (this.value === null || this.value === undefined ? '' : this.value);
+            
+        } else {
+			this.hiddenField.dom.value = '';
+		}
+    },
+
+    /**
+     * Returns true if this field has been changed since it was originally loaded and is not disabled.
+     */
+    isDirty : function() {
+        if(this.disabled) {
+            return false;
+        }
+        return String(this.getValue()) !== String(this.originalValue);
+    },
+
+    // private
+    afterRender : function(){
+        Ext.ux.form.ReadonlyField.superclass.afterRender.call(this);
+        //this.initEvents();
+    },
+
+    /**
+     * Resets the current field value to the originally loaded value and clears any validation messages
+     */
+    reset : function(){
+        this.setValue(this.originalValue);
+        this.clearInvalid();
+    },
+
+    // private
+    initEvents : function(){
+        // reference to original value for reset
+        this.originalValue = this.getValue();
+    },
+
+    /**
+     * Validates the field value
+     * @return {Boolean} True if the value is valid, else false
+     */
+    validate : function(){
+    	return true;
+    },
+
+    // protected - should be overridden by subclasses if necessary to prepare raw values for validation
+    processValue : function(value){
+        return value;
+    },
+        
+    // private
+    getErrorCt : function(){
+        return this.el.findParent('.x-form-element', 5, true) || // use form element wrap if available
+            this.el.findParent('.x-form-field-wrap', 5, true);   // else direct field wrap
+    },
+
+    // private
+    alignErrorIcon : function(){
+        this.errorIcon.alignTo(this.el, 'tl-tr', [2, 0]);
+    },
+
+    /**
+     * Clear any invalid styles/messages for this field
+     */
+    clearInvalid : function(){
+        if(!this.rendered || this.preventMark){ // not rendered
+            return;
+        }
+        this.el.removeClass(this.invalidClass);
+        switch(this.msgTarget){
+            case 'qtip':
+                this.el.dom.qtip = '';
+                break;
+            case 'title':
+                this.el.dom.title = '';
+                break;
+            case 'under':
+                if(this.errorEl){
+                    Ext.ux.form.ReadonlyField.msgFx[this.msgFx].hide(this.errorEl, this);
+                }
+                break;
+            case 'side':
+                if(this.errorIcon){
+                    this.errorIcon.dom.qtip = '';
+                    this.errorIcon.hide();
+                    this.un('resize', this.alignErrorIcon, this);
+                }
+                break;
+            default:
+                var t = Ext.getDom(this.msgTarget);
+                t.innerHTML = '';
+                t.style.display = 'none';
+                break;
+        }
+        this.fireEvent('valid', this);
+    },
+
+    /**
+     * Returns the raw data value which may or may not be a valid, defined value.  To return a normalized value see {@link #getValue}.
+     * @return {Mixed} value The field value
+     */
+    getRawValue : function(){
+        var v = this.rendered ? this.hiddenField.getValue() : Ext.value(this.value, '');
+        return v;
+    },
+
+    /**
+     * Returns the normalized data value (undefined will be returned as '').  To return the raw value see {@link #getRawValue}.
+     * @return {Mixed} value The field value
+     */
+    getValue : function(){
+        if(!this.rendered) {
+            return this.value;
+        }
+        var v = this.hiddenField.getValue();
+        if(v === undefined){
+            v = '';
+        }
+        return v;
+    },
+
+    /**
+     * Sets the underlying DOM field's value directly, bypassing validation.  To set the value with validation see {@link #setValue}.
+     * @param {Mixed} value The value to set
+     */
+    setRawValue : function(v){
+        return this.hiddenField.dom.value = (v === null || v === undefined ? '' : v);
+    },
+
+    /**
+     * Sets a data value into the field and validates it.  To set the value directly without validation see {@link #setRawValue}.
+     * @param {Mixed} value The value to set
+     */
+    setValue : function(v){
+		var original = this.value;
+        this.value = v;
+        if(this.rendered){
+            this.hiddenField.dom.value = (v === null || v === undefined ? '' : v);
+			this.labelEl.dom.innerHTML = (v === null || v === undefined ? '' : v);
+        }
+    }
+    ,
+
+    /**
+     * Sets a data value into the field and validates it.  To set the value directly without validation see {@link #setRawValue}.
+     * @param {Mixed} value The value to set
+     */
+    setHtml : function(v){
+        if(this.rendered){
+			this.labelEl.dom.innerHTML = (v === null || v === undefined ? '' : v);
+        }
+    }
+
+});
+
+Ext.reg('readonlyfield', Ext.ux.form.ReadonlyField);
