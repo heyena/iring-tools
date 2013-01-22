@@ -240,25 +240,25 @@ namespace org.iringtools.web.controllers
 
           if (templateQmxf.templateDefinitions.Count > 0)
           {
-            foreach (var templateDef in templateQmxf.templateDefinitions)
-            {
+            var templateDef = templateQmxf.templateDefinitions[0];
+            
               template = templateDef;
               newTemplateMap.id = templateDef.identifier;
               newTemplateMap.name = templateDef.name[0].value;
               newTemplateMap.type = TemplateType.Definition;
               GetRoleMaps(selectedClassMap.id, template, newTemplateMap);
-            }
+            
           }
           else
           {
-            foreach (var templateQual in templateQmxf.templateQualifications)
-            {
+            var templateQual = templateQmxf.templateQualifications[0];
+            
               template = templateQual;
               newTemplateMap.id = templateQual.identifier;
               newTemplateMap.name = templateQual.name[0].value;
               newTemplateMap.type = TemplateType.Qualification;
               GetRoleMaps(selectedClassMap.id, template, newTemplateMap);
-            }
+            
           }
 
           #region DO NOT DELETE THIS CODE BLOCK, PENDING FOR MODELER'S CONFIRMATION
