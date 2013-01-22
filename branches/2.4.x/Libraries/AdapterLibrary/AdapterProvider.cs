@@ -3247,7 +3247,7 @@ namespace org.iringtools.adapter
         {
             //if (parameters == null)
             //{
-                _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
+            _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
             //}
         }
         catch (NotImplementedException ex)
@@ -3260,6 +3260,7 @@ namespace org.iringtools.adapter
                 {
                     PropertyName = propMap.relatedPropertyName,
                     RelationalOperator = RelationalOperator.EqualTo,
+                    LogicalOperator = LogicalOperator.And,
                     Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
                 });
             }
