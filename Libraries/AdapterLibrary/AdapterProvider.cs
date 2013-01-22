@@ -944,7 +944,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        DataDictionary dictionary = _dataLayer.GetDictionary();
+        DataDictionary dictionary = GetDictionary(projectName, applicationName);
 
         requestStatus.State = State.Completed;
         requestStatus.ResponseText = Utility.Serialize<DataDictionary>(dictionary, true);
@@ -960,9 +960,6 @@ namespace org.iringtools.adapter
     {
       try
       {
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer(false);
-
         string id = Guid.NewGuid().ToString("N");
         Task task = Task.Factory.StartNew(() => DoGetDictionary(projectName, applicationName, id));
         return "/requests/" + id;
@@ -1146,15 +1143,23 @@ namespace org.iringtools.adapter
     {
       try
       {
+        string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
+             _settings["AppDataPath"], projectName, applicationName);
+
+        if (File.Exists(path))
+        {
+          DataDictionary dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
+          return dataDictionary;
+        }
+
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
         return _kernel.TryGet<DataDictionary>();
-
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error in GetDictionary: {0}", ex));
+        _logger.Error(string.Format("Error getting data dictionary: {0}", ex));
         throw new Exception(string.Format("Error getting data dictionary: {0}", ex));
       }
     }
@@ -4123,6 +4128,8 @@ namespace org.iringtools.adapter
 
           if (setDictionary)
             InitializeDictionary();
+
+          _isDataLayerInitialized = true;
         }
       }
       catch (Exception ex)
@@ -4136,9 +4143,28 @@ namespace org.iringtools.adapter
     {
       if (!_isDataLayerInitialized)
       {
-        _dataDictionary = _dataLayer.GetDictionary();
-        _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
-        _isDataLayerInitialized = true;
+        try
+        {
+          string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
+             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+          if (File.Exists(path))
+          {
+            _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
+          }
+          else
+          {
+            _dataDictionary = _dataLayer.GetDictionary();
+            utility.Utility.Write<DataDictionary>(_dataDictionary, path, true);
+          }
+
+          _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
+        }
+        catch (Exception e)
+        {
+          _logger.Error("Error initializing data dictionary: " + e.Message);
+          throw e;
+        }
       }
     }
 
@@ -4955,7 +4981,15 @@ namespace org.iringtools.adapter
       try
       {
         InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
+        InitializeDataLayer(false);
+
+        string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
+             _settings["AppDataPath"], projectName, applicationName);
+
+        if (File.Exists(path))
+        {
+          File.Delete(path);
+        }
 
         return _dataLayer.RefreshAll();
       }
@@ -4972,7 +5006,7 @@ namespace org.iringtools.adapter
       try
       {
         InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
+        InitializeDataLayer(false);
 
         return _dataLayer.Refresh(objectType);
       }
@@ -4989,7 +5023,7 @@ namespace org.iringtools.adapter
       try
       {
         InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
+        InitializeDataLayer(false);
 
         return _dataLayer.Refresh(objectType, dataFilter);
       }
