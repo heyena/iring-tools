@@ -8,6 +8,7 @@ using log4net;
 using System.Xml.Linq;
 using org.iringtools.adapter;
 using org.iringtools.utility;
+using System.IO;
 
 namespace org.iringtools.library
 {
@@ -434,6 +435,8 @@ namespace org.iringtools.library
       if (!string.IsNullOrEmpty(objectType))
         tableName = GetTableName(objectType);
 
+      DeleteCachedDictionary();      
+
       return RefreshDataTable(tableName);
     }
 
@@ -443,6 +446,8 @@ namespace org.iringtools.library
 
       if (!string.IsNullOrEmpty(objectType))
         tableName = GetTableName(objectType);
+
+      DeleteCachedDictionary();      
 
       return RefreshDataTable(tableName, dataFilter);
     }
@@ -455,12 +460,61 @@ namespace org.iringtools.library
       {
         try
         {
-          _dbDictionary = GetDatabaseDictionary();
+          string dbPath = string.Format("{0}DatabaseDictionary.{1}.{2}.xml",
+            _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+          if (File.Exists(dbPath))
+          {
+            _dbDictionary = Utility.Read<DatabaseDictionary>(dbPath, true);
+          }
+          else
+          {
+            string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
+             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+            if (File.Exists(path))
+            {
+              DataDictionary dataDictionary = Utility.Read<DataDictionary>(path, true);
+
+              _dbDictionary = new DatabaseDictionary()
+              {
+                dataObjects = dataDictionary.dataObjects,
+                picklists = dataDictionary.picklists,
+                dataVersion = dataDictionary.dataVersion
+              };
+            }
+            else
+            {
+              _dbDictionary = GetDatabaseDictionary();
+              Utility.Write<DatabaseDictionary>(_dbDictionary, dbPath, true);
+            }
+          }
         }
         catch (Exception ex)
         {
           _logger.Error("Error initializing dictionary: " + ex);
           throw ex;
+        }
+      }
+    }
+
+    private void DeleteCachedDictionary()
+    {
+      string dbpath = string.Format("{0}DatabaseDictionary.{1}.{2}.xml",
+               _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+      if (File.Exists(dbpath))
+      {
+        File.Delete(dbpath);
+      }
+      else
+      {
+        string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
+               _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+        if (File.Exists(path))
+        {
+          File.Delete(path);
         }
       }
     }
