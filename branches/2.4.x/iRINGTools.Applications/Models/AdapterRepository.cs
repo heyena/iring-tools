@@ -33,7 +33,6 @@ namespace iRINGTools.Web.Models
     protected string _hibernateServiceUri = null;
     protected string _referenceDataServiceUri = null;
     
-    [Inject]
     public AdapterRepository()
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
@@ -49,6 +48,8 @@ namespace iRINGTools.Web.Models
       _hibernateServiceUri = _settings["NHibernateServiceUri"];
       _referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
     }
+
+    public HttpSessionStateBase Session { get; set; }
 
     protected WebHttpClient CreateWebClient(string baseUri)
     {
@@ -455,6 +456,9 @@ namespace iRINGTools.Web.Models
 
           response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);          
         }
+
+        string dictKey = string.Format("Dictionary.{0}.{1}", scope, application);
+        Session.Remove(dictKey);
       }
       catch (Exception ex)
       {

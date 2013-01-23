@@ -23,7 +23,6 @@ namespace iRINGTools.Web.Models
       private string graph;
       private string response = "";
 
-      [Inject]
       public GridRepository()
       {
         dataGrid = new Grid();
@@ -39,7 +38,7 @@ namespace iRINGTools.Web.Models
         try
         {
           this.graph = graph;
-          GetDatadictionary(scope, app);
+          GetDataDictionary(scope, app);
 
           if (response != "")
             return null;
@@ -62,12 +61,20 @@ namespace iRINGTools.Web.Models
         return dataGrid;
       }			
 
-      private void GetDatadictionary(String scope, String app)
+      private void GetDataDictionary(String scope, String app)
       {
         try
         {
-          WebHttpClient client = CreateWebClient(_dataServiceUri);
-          dataDict = client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
+          string dictKey = string.Format("Dictionary.{0}.{1}", scope, app);
+          dataDict = (DataDictionary) Session[dictKey];
+
+          if (dataDict == null)
+          {
+            WebHttpClient client = CreateWebClient(_dataServiceUri);
+            dataDict = client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
+
+            Session[dictKey] = dataDict;
+          }
 
           if (dataDict == null || dataDict.dataObjects.Count == 0)
             response = response + "Data dictionary of [" + app + "] is empty.";

@@ -27,18 +27,20 @@ namespace org.iringtools.web.controllers
 	public class GridManagerController : BaseController
 	{
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(GridManagerController));
-		private IGridRepository _repository { get; set; }
+		private GridRepository _repository { get; set; }
 		private Grid pageDtoGrid;		
 
 		public GridManagerController() : this(new GridRepository()) { }
 
-		public GridManagerController(IGridRepository repository)
+		public GridManagerController(GridRepository repository)
 		{
-			_repository = repository;			
+			_repository = repository;
 		}
 
 		public ActionResult Pages(FormCollection form)
-		{
+    {
+      _repository.Session = Session;
+
 			JsonContainer<Grid> container = new JsonContainer<Grid>();
 			pageDtoGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
 
