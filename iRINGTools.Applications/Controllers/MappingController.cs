@@ -66,9 +66,9 @@ namespace org.iringtools.web.controllers
       string key = string.Format(_keyFormat, scope, application);
 
       if (Session[key] == null)
-      {
+     {
         Session[key] = _repository.GetMapping(scope, application);
-      }
+     }
 
       return (Mapping)Session[key];
     }
@@ -1205,13 +1205,48 @@ namespace org.iringtools.web.controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
+    public ActionResult CopyValueLists(string targetScope, string targetApplication, string sourceScope, string sourceApplication, string valueList)
+    {
+        try
+        {
+            Mapping sourceMapping = GetMapping(sourceScope, sourceApplication);
+            Mapping targetMapping = GetMapping(targetScope, targetApplication);
+            ValueListMap valuelistMap = null;
+            // copy complete valueList having multiples valueList items.
+            if (sourceMapping.valueListMaps != null)
+            {
+                if (valueList != "" && valueList == "ValueListToValueList")
+                {
+                    //foreach(ValueListMap valueListmap in sourceMapping.valueListMaps){
+                    //targetMapping.valueListMaps.Add(Utility.CloneSerializableObject(valueListmap));
+                    //}
+                    targetMapping.valueListMaps = Utility.CloneSerializableObject(sourceMapping.valueListMaps);
+
+                }
+                else
+                { // copy single valueList.
+                    if (valueList != "")
+                        valuelistMap = sourceMapping.valueListMaps.Find(c => c.name == valueList);
+                    targetMapping.valueListMaps.Add(Utility.CloneSerializableObject(valuelistMap));
+                }
+            }
+            _repository.UpdateMapping(targetScope, targetApplication, targetMapping);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex.ToString());
+            return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+        }
+
+        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+		
     public ActionResult valueList(FormCollection form)
     {
       try
       {
         string oldValueList = "";
         ValueListMap valueListMap = null;
-
         string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = context[0];
 
