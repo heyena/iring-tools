@@ -18,8 +18,7 @@ namespace org.iringtools.web.controllers
 {
   public class DirectoryController : BaseController
   {
-
-    IAdapterRepository _repository;
+    private AdapterRepository _repository;
     private string _keyFormat = "Mapping.{0}.{1}";
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
 
@@ -28,7 +27,7 @@ namespace org.iringtools.web.controllers
     {
     }
 
-    public DirectoryController(IAdapterRepository repository)
+    public DirectoryController(AdapterRepository repository)
     {
       _repository = repository;
     }
@@ -44,6 +43,8 @@ namespace org.iringtools.web.controllers
       {
         _logger.Debug("Starting Switch block");
         _logger.Debug(form["type"]);
+
+        _repository.Session = Session;
 
         switch (form["type"])
         {
@@ -153,7 +154,6 @@ namespace org.iringtools.web.controllers
                 leaf = false,
                 children = null
               };
-
 
               JsonTreeNode graphsNode = new JsonTreeNode
               {
@@ -281,8 +281,8 @@ namespace org.iringtools.web.controllers
               string refresh = form["refresh"];
               
               if (refresh == "true")
-              {
-                Response response =_repository.Refresh(scopeName, applicationName);
+              {   
+                Response response = _repository.Refresh(scopeName, applicationName);
                 _logger.Info(Utility.Serialize<Response>(response, true));
               }
 

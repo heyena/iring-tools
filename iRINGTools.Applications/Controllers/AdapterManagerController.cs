@@ -109,7 +109,7 @@ namespace org.iringtools.web.controllers
         {
           providers.Add(new DBProvider() { Provider = dataProvider.ToString() });
         }
-
+        
         container.items = providers;
         container.success = true;
         container.total = dataProviders.Count;
@@ -243,6 +243,8 @@ namespace org.iringtools.web.controllers
       string application = names[1];
       string dataObjectName = string.Empty;
       Response response = null;
+      
+      _repository.Session = Session;
 
       if (type == "one")
       {
