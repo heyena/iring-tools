@@ -1173,6 +1173,11 @@ namespace org.iringtools.refdata
     {
       try
       {
+        var qId = string.Empty;
+        if (!id.Contains("http:"))
+          qId = nsMap.GetNamespaceUri("tpl") + id;
+        else
+          qId = id;
         string sparql = String.Empty;
         string relativeUri = String.Empty;
         string sparqlQuery = string.Empty;
@@ -1197,7 +1202,7 @@ namespace org.iringtools.refdata
 
         Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == sparqlQuery).Query;
 
-        sparql = ReadSPARQL(queryContainsSearch.FileName).Replace("param1", id);
+        sparql = ReadSPARQL(queryContainsSearch.FileName).Replace("param1", qId);
 
         SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
