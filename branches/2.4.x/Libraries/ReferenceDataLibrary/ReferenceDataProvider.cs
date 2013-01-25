@@ -430,9 +430,9 @@ namespace org.iringtools.refdata
         QueryBindings qBindings = null;
         var specializations = new List<Specialization>();
 
-        var queryRdsWip = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclass").Query;
-        var queryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclassJORD").Query;
-        var queryPart8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
+        var queryRdsWip = _queries.FirstOrDefault(c => c.Key == "GetSuperclass").Query;
+        var queryJord = _queries.FirstOrDefault(c => c.Key == "GetSuperclassJORD").Query;
+        var queryPart8 = _queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
 
         foreach (var repository in _repositories)
         {
