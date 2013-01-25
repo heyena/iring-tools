@@ -156,6 +156,9 @@ namespace org.iringtools.library
     [DataMember(IsRequired = false, Order = 17, EmitDefaultValue = false)]
     public DataFilter dataFilter { get; set; }
 
+    [DataMember(IsRequired = false, Order = 18, EmitDefaultValue = false)]
+    public bool isHidden { get; set; }
+
     public bool isKeyProperty(string propertyName)
     {
       foreach (KeyProperty keyProperty in keyProperties)
