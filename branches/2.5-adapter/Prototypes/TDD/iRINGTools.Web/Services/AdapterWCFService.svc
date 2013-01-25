@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="iRINGTools.Web.Services.AdapterWCFService" CodeBehind="AdapterWCFService.svc.cs" %>

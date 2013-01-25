@@ -1,0 +1,158 @@
+html, body {
+  font: normal 12px verdana;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  overflow: hidden;
+  height: 100%;
+}
+
+a:link {color: black}
+a:visited {color: black}
+a:hover {color: black}
+a:active {color: black}
+
+.x-tree { 
+	background-color: #fff; 
+}
+.upload-icon {
+     background: url('../img/image_add.png') no-repeat 0 0 !important;
+}
+.x-tree-node .scope {
+  background-image: url(../img/cabinet.png);
+}
+
+.x-tree-node .treeObject {
+  background-image: url(../img/object.png);
+}
+.x-tree-node .folder {
+  background-image: url(../img/folder.png);
+}
+
+.x-tree-node .treeProperty {
+  background-image: url(../img/property.png);
+}
+
+.x-tree-node .treeValue {
+  background-image: url(../img/valuelist.png);
+}
+
+.x-tree-node .treeValuelist {
+  background-image: url(../img/value.png);
+}
+
+.x-tree-node .treeKey {
+  background-image: url(../img/key.png);
+}
+
+.x-tree-node .treeRelation {
+  background-image: url(../img/relation.png);
+}
+
+.x-tree-node-collapsed .folder {
+  background-image: url(../img/folder-close.png);
+}
+
+.x-tree-node-expanded .folder {
+  background-image: url(../img/folder-open.png);
+}
+
+.x-tree-node .exchange {
+  background-image: url(../img/exchange-grid.png);
+}
+
+.x-tree-node .applications {
+  background-image: url(../img/application.png);
+}
+
+.x-tree-node .treeGraph {
+  background-image: url(../img/graph-map.png);
+}
+
+.x-tree-node .commodity {
+  background-image: url(../img/class-badge-small.png);
+}
+
+.blue-fade {
+  background-image: url(../img/blue-fade.png);
+  background-repeat: repeat-x;
+  -webkit-user-select: none;
+	-moz-user-select: none;
+	cursor: default;
+}
+
+/* change default property grid */
+.x-grid3-row td {
+  font-family: tahoma;
+}
+
+/* change default tree node */
+.x-tree-node {
+  font-family: tahoma;
+}
+
+.sync {
+	color: #000000;
+}
+
+.add {
+	color: #df0000;
+}
+
+.change {
+	color: #0000df;
+}
+
+.delete {
+	color: #00df00;
+}
+
+
+
+.headerLnkBlack {
+  font-family: Calibri, Arial;
+  font-size: 18px;
+  text-decoration: none;
+  color: #000000;
+}
+
+.exchangeBanner{
+  background-image:url('../img/blue-fade.png');
+  background-repeat:repeat-x;
+  background-position:left bottom;
+  height: 65px;
+}
+
+.tabsScope {
+  background-image:url('../img/system-file-manager.png') !important;
+}
+.tabsApplication {
+  background-image:url('../img/applications-internet.png') !important;
+}
+.tabsClass {
+  background-image:url('../img/class.png') !important;
+}
+.tabsMapping {
+  background-image:url('../img/16x16/mapping.png') !important;
+}
+.tabsNhibernate {
+  background-image:url('../img/16x16/preferences-system.png') !important;
+}
+
+.tabsValueList{
+  background-image:url('../img/valuelist.png') !important;
+}
+
+.tabsValueListMap{
+  background-image:url('../img/value.png') !important;
+}
+  
+.tabsGraph{
+  background-image:url('../img/graph-map.png') !important;
+}
+
+.form-title 
+{
+  font-weight:bold;  
+}
+
