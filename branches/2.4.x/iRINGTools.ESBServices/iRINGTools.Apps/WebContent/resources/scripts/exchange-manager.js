@@ -512,68 +512,18 @@ function showStatus(duplicates) {
 	 */
 	if (duplicates > 1) {
 
-		var relatedItemPane = new Ext.Panel({
-			title : 'Related Items',
-			region : 'east',
-			layout : 'vbox',
-			boxMinWidth : 100,
-			width : 300,
-			padding : '4',
-			split : true,
-			autoScroll : true
-		});
-		var error = new Ext.Panel({
-			// region: 'west',
-			region : 'east',
-			layout : 'vbox',
-			boxMinWidth : 100,
-			width : 300,
-			padding : '4',
-			split : true,
-			autoScroll : true,
-			// layout:'column',
-			items : [ {
-
-				xtype : 'panel',
-				height : 500, // width: 663, padding:'15',
-				// bodyStyle:'margin:10 0 0 10;', columnWidth: .3,
-				id : 'label-container',
-				layout : 'vbox',
-
-				items : [ {
-					// xtype : 'label',
-					// style : 'font-weight:bold;',
-					text : 'Duplicate Count'
-				}, {
-					xtype : 'spacer',
-					height : 10
-				} ]
-			}, {
-
-				xtype : 'panel',
-				columnWidth : .7,
-				padding : '15',
-				height : 500,
-				// width: 663,
-				id:'value-container', layout:'vbox',
-
-				items : [ {
-					// xtype : 'readonlyfield',
-					value : duplicates
-				}, {
-					xtype : 'spacer',
-					height : 10
-				} ]
-			} ]
-		});
-
+	
 		var propertyGrid = new Ext.grid.PropertyGrid({
 			region : 'center',
 			title : 'List of Errors ::--',
 			split : true,
 			stripeRows : true,
 			autoScroll : true,
-			source : error
+			source: {
+		        "Duplicates": duplicates,
+		      //  "Wrong Data":duplicates
+		    }
+
 		/*
 		 * listeners : { beforeedit : function(e) { e.cancel = true; } }
 		 */
@@ -589,7 +539,7 @@ function showStatus(duplicates) {
 			shadow : false,
 			title : 'ERROR',
 			// iconCls: 'tabsApplication',
-			height : 300,
+			height : 200,
 			width : 300,
 			plain : true,
 			items : [ propertyGrid ]
@@ -600,6 +550,41 @@ function showStatus(duplicates) {
 		});
 		win.show();
 		// dtoContentPane.add(win);
+	}else{
+	if(duplicates == 1)
+		{
+			alert("This Row is Good to Exchange");
+		}
+	else{
+		if(duplicates == 0)
+			{
+			var propertyGrid = new Ext.grid.PropertyGrid({
+				region : 'center',
+				title : 'List of Warnings ::--',
+				split : true,
+				stripeRows : true,
+				autoScroll : true,
+				source: {
+			        "Warnings": "Value",
+			      //  "Wrong Data":duplicates
+			    }
+			});
+
+			var win = new Ext.Window({
+				closable : true,
+				resizable : true,
+				modal : true,
+				layout : 'fit',
+				shadow : false,
+				title : 'WARNING',
+				height : 200,
+				width : 300,
+				plain : true,
+				items : [ propertyGrid ]
+			});
+			win.show();
+			}
+	}
 	}
 
 }
