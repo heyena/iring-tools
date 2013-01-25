@@ -402,14 +402,10 @@ namespace org.iringtools.refdata
         {
           classification.reference = result["rdsuri"].ToString();
         }
-        foreach (var v in result.Variables)
+        foreach (var node in from v in result.Variables let node = result[v] where node is LiteralNode && v.Equals("label") select node)
         {
-          var node = result[v];
-          if (node is LiteralNode && v.Equals("label"))
-          {
-            classification.label = ((LiteralNode)node).Value;
-            classification.lang = ((LiteralNode)node).Language;
-          }
+          classification.label = ((LiteralNode)node).Value;
+          classification.lang = ((LiteralNode)node).Language;
         }
         if (string.IsNullOrEmpty(classification.label))
         {
