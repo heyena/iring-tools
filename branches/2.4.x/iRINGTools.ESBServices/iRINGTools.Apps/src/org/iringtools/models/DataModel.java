@@ -1,7 +1,5 @@
 package org.iringtools.models;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -959,9 +957,9 @@ public class DataModel {
 				// Adding dup's count to dup's column
 				if (dataMode == DataMode.EXCHANGE) {
 
-					String dups;
+					//String dups = "";
 					if (dto.getDuplicateCount() == null) {
-						dups = "0";
+						//dups = "0";
 						rowData.add("<input type=\"image\" src=\"resources/images/warning.png\" width=15 heigt=15  "+ "onClick='javascript:showStatus(\"" + 0 + "\")'>");
 					} else{
 					//	rowData.add((dto.getDuplicateCount().toString()));

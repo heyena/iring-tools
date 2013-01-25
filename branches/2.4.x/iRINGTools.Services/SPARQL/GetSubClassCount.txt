@@ -5,5 +5,5 @@ SELECT (COUNT(?uri) AS ?label)
 {
   ?s dm:hasSuperclass rdl:param1 . 
   ?s dm:hasSubclass ?uri . 
-  #?uri rdfs:label ?label 
+  ?uri rdfs:label ?label 
 } 
