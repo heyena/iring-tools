@@ -730,7 +730,7 @@
           <type>Literal</type>
         </queryBinding>
         <queryBinding>
-          <name>rdsUri</name>
+          <name>rdsuri</name>
           <type>Uri</type>
         </queryBinding>
       </bindings>
