@@ -61,8 +61,12 @@ namespace org.iringtools.refdata
     private NamespaceMapper nsMap = new NamespaceMapper();
 
     NTriplesFormatter formatter = new NTriplesFormatter();
-    INode subj, pred, obj;
+    INode subj;
+    INode pred;
+    INode obj;
 
+    //private bool qn = false;
+    //private string qName = string.Empty;
     private const string insertData = "INSERT DATA {";
     private const string deleteData = "DELETE DATA {";
     private const string deleteWhere = "DELETE WHERE {";
@@ -90,27 +94,27 @@ namespace org.iringtools.refdata
     {
       try
       {
-        _kernel = new StandardKernel(new ReferenceDataModule());
-        _settings = this._kernel.Get<ReferenceDataSettings>();
-        _settings.AppendSettings(settings);
+        this._kernel = new StandardKernel(new ReferenceDataModule());
+        this._settings = this._kernel.Get<ReferenceDataSettings>();
+        this._settings.AppendSettings(settings);
         Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-        _pageSize = Convert.ToInt32(_settings["PageSize"]);
+        this._pageSize = Convert.ToInt32(_settings["PageSize"]);
         _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
-        var queriesPath = _settings["AppDataPath"] + QUERIES_FILE_NAME;
+        string queriesPath = _settings["AppDataPath"] + QUERIES_FILE_NAME;
         _queries = Utility.Read<Queries>(queriesPath);
-        var federationPath = _settings["AppDataPath"] + FEDERATION_FILE_NAME;
+        string federationPath = _settings["AppDataPath"] + FEDERATION_FILE_NAME;
         if (File.Exists(federationPath))
         {
-          _federation = Utility.Read<Federation>(federationPath);
-          _repositories = this._federation.Repositories;
-          _namespaces = this._federation.Namespaces;
+          this._federation = Utility.Read<Federation>(federationPath);
+          this._repositories = this._federation.Repositories;
+          this._namespaces = this._federation.Namespaces;
           foreach (var ns in this._namespaces)
           {
             nsMap.AddNamespace(ns.Prefix, new Uri(ns.Uri));
           }
         }
         _response = new Response();
-        _kernel.Bind<Response>().ToConstant(_response);
+        this._kernel.Bind<Response>().ToConstant(_response);
 
       }
       catch (Exception ex)
@@ -164,67 +168,85 @@ namespace org.iringtools.refdata
 
     public RefDataEntities SearchPage(string query, int start, int limit)
     {
-      _logger.Debug("SearchPage");
+        _logger.Debug("SearchPage");
 
       RefDataEntities entities = null;
-      var counter = 0;
+      int counter = 0;
       Entity resultEntity = null;
       try
       {
-        var sparql = String.Empty;
-        var relativeUri = String.Empty;
+        string sparql = String.Empty;
+        string relativeUri = String.Empty;
 
         if (_searchHistory.ContainsKey(query))
         {
-          _logger.Debug("SearchPage: Using History");
+            _logger.Debug("SearchPage: Using History");
 
           entities = _searchHistory[query];
         }
         else
         {
-          var resultEntities = new RefDataEntities();
+          RefDataEntities resultEntities = new RefDataEntities();
 
           _logger.Debug("SearchPage: Preparing Queries");
 
-          var queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearch").Query;
+          Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearch").Query;
+
           _logger.Debug("SearchPage: Got Contains Search");
-          var queryBindings = queryContainsSearch.Bindings;
+
+          QueryBindings queryBindings = queryContainsSearch.Bindings;
+
           _logger.Debug("SearchPage: Got Bindings");
-         foreach (QueryItem q in _queries)
+
+          foreach (QueryItem q in _queries)
           {
-            _logger.DebugFormat("SearchPage: Looging for ContainsSearchJORD: {0}", q.Key);
+              _logger.DebugFormat("SearchPage: Looging for ContainsSearchJORD: {0}", q.Key);
           }
-          var queryItem = _queries.FirstOrDefault(c => c.Key == "ContainsSearchJORD");
+
+          QueryItem queryItem = _queries.FirstOrDefault(c => c.Key == "ContainsSearchJORD");
+
           if (queryItem != null)
           {
-            _logger.Debug("SearchPage: Got QueryItem");
+              _logger.Debug("SearchPage: Got QueryItem");
           }
-          var queryContainsSearchJORD = queryItem.Query;
+
+            Query queryContainsSearchJORD = queryItem.Query;
+
+          //Query queryContainsSearchJORD = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearchJORD").Query;
+
           _logger.Debug("SearchPage: Got Contains Search JORD");
-          var queryBindingsJORD = queryContainsSearchJORD.Bindings;
+
+          QueryBindings queryBindingsJORD = queryContainsSearchJORD.Bindings;
+
           _logger.Debug("SearchPage: Got JORD Bindings");
-          foreach (var repository in _repositories)
+            
+          foreach (Repository repository in _repositories)
           {
             if (repository.RepositoryType == RepositoryType.JORD)
             {
-              _logger.Debug("SearchPage: JORD!");
+                _logger.Debug("SearchPage: JORD!");
+
               sparql = ReadSPARQL(queryContainsSearchJORD.FileName);
               sparql = sparql.Replace("param1", query);
             }
             else
             {
-              _logger.Debug("SearchPage: Other!");
+                _logger.Debug("SearchPage: Other!");
+
               sparql = ReadSPARQL(queryContainsSearch.FileName);
               sparql = sparql.Replace("param1", query);
             }
+
             _logger.Debug("SearchPage: Query Repo");
-            var sparqlResults = QueryFromRepository(repository, sparql);
-            foreach (var result in sparqlResults)
+
+            SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+
+            foreach (SparqlResult result in sparqlResults)
             {
               resultEntity = new Entity();
               foreach (var v in result.Variables)
               {
-                var node = result[v];
+                INode node = result[v];
                 if (node is LiteralNode && v.Equals("label"))
                 {
                   resultEntity.Label = ((LiteralNode)node).Value;
@@ -242,7 +264,7 @@ namespace org.iringtools.refdata
                 }
               }
               resultEntity.Repository = repository.Name;
-              var key = resultEntity.Label;
+              string key = resultEntity.Label;
               if (resultEntity.Label.StartsWith("has") || resultEntity.Label.StartsWith("val"))
               {
                 resultEntity = null;
@@ -254,6 +276,7 @@ namespace org.iringtools.refdata
               }
               resultEntities.Entities.Add(key, resultEntity);
             }
+            //results.Clear();
           }
           _searchHistory.Add(query, resultEntities);
           entities = resultEntities;
@@ -278,47 +301,49 @@ namespace org.iringtools.refdata
     public RefDataEntities SearchReset(string query)
     {
       Reset(query);
+
       return Search(query);
     }
 
     public RefDataEntities SearchPageReset(string query, int start, int limit)
     {
       Reset(query);
+
       return SearchPage(query, start, limit);
     }
 
     private Entity GetLabel(string uri)
     {
-      var labelEntity = new Entity();
+      Entity labelEntity = new Entity();
       try
       {
-        var label = String.Empty;
-        var sparql = String.Empty;
-        var relativeUri = String.Empty;
-        QueryBindings qBindings;
-        var query = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabel").Query;
-        var queryEquivalent = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabelRdlEquivalent").Query;
-        foreach (var repository in _repositories)
+        string label = String.Empty;
+        string sparql = String.Empty;
+        string relativeUri = String.Empty;
+
+        Query query = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabel").Query;
+        Query queryEquivalent = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabelRdlEquivalent").Query;
+
+        foreach (Repository repository in _repositories)
         {
           if (repository.RepositoryType == RepositoryType.JORD && uri.Contains("#"))
           {
             sparql = ReadSPARQL(queryEquivalent.FileName).Replace("param1", uri);
-            qBindings = queryEquivalent.Bindings;
           }
           else
           {
             sparql = ReadSPARQL(query.FileName).Replace("param1", uri);
-            qBindings = query.Bindings;
           }
-          var sparqlResults = QueryFromRepository(repository, sparql);
-          foreach (var result in sparqlResults)
+          SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+
+          foreach (SparqlResult result in sparqlResults)
           {
-            foreach (var v in qBindings)
+            foreach (var v in result.Variables)
             {
-              if ((INode)result[v.Name] is LiteralNode && v.Name.Equals("label"))
+              if ((INode)result[v] is LiteralNode && v.Equals("label"))
               {
-                labelEntity.Label = ((LiteralNode)result[v.Name]).Value;
-                labelEntity.Lang = ((LiteralNode)result[v.Name]).Language;
+                labelEntity.Label = ((LiteralNode)result[v]).Value;
+                labelEntity.Lang = ((LiteralNode)result[v]).Language;
                 if (string.IsNullOrEmpty(labelEntity.Lang))
                   labelEntity.Lang = defaultLanguage;
               }
@@ -328,6 +353,7 @@ namespace org.iringtools.refdata
             break;
           }
         }
+
         return labelEntity;
       }
       catch (Exception e)
@@ -339,17 +365,21 @@ namespace org.iringtools.refdata
 
     private List<Classification> GetClassifications(string id, Repository rep)
     {
-      var qmxf = new QMXF();
+      QMXF qmxf = new QMXF();
+
       try
       {
-        var sparql = String.Empty;
-        var relativeUri = String.Empty;
-        var classifications = new List<Classification>();
+        string sparql = String.Empty;
+        string relativeUri = String.Empty;
+
+        List<Classification> classifications = new List<Classification>();
         Query getClassification;
-        foreach (var repository in _repositories)
+
+        foreach (Repository repository in _repositories)
         {
           if (rep != null)
             if (rep.Name != repository.Name) continue;
+
           switch (rep.RepositoryType)
           {
             case RepositoryType.Camelot:
@@ -382,19 +412,25 @@ namespace org.iringtools.refdata
 
     private List<Classification> ProcessClassifications(Repository repository, string sparql)
     {
-      var sparqlResults = QueryFromRepository(repository, sparql);
-      var classifications = new List<Classification>();
-      var names = new List<string>();
-      var resultValue = string.Empty;
-      foreach (var result in sparqlResults)
+
+      SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+
+      List<Classification> classifications = new List<Classification>();
+      List<string> names = new List<string>();
+      string resultValue = string.Empty;
+
+      foreach (SparqlResult result in sparqlResults)
       {
-        var classification = new Classification();
+        Classification classification = new Classification();
         classification.repository = repository.Name;
-        var uri = String.Empty;
+        string uri = String.Empty;
+
         if (result.HasValue("uri") && result["uri"] != null)
         {
-          string pref = nsMap.GetPrefix(new Uri(result["uri"].ToString().Substring(0, result["uri"].ToString().IndexOf("#") + 1)));
+          string pref = nsMap.GetPrefix(new Uri(result["uri"].ToString().Substring(0, result["uri"].ToString().IndexOf("#") + 1))); 
+          
           if (pref.Equals("owl") || pref.Contains("dm")) continue;
+
           uri = result["uri"].ToString();
           classification.reference = uri;
         }
@@ -402,21 +438,28 @@ namespace org.iringtools.refdata
         {
           classification.reference = result["rdsuri"].ToString();
         }
-        foreach (var node in from v in result.Variables let node = result[v] where node is LiteralNode && v.Equals("label") select node)
+
+        foreach (var v in result.Variables)
         {
-          classification.label = ((LiteralNode)node).Value;
-          classification.lang = ((LiteralNode)node).Language;
+          INode node = result[v];
+          if (node is LiteralNode && v.Equals("label"))
+          {
+            classification.label = ((LiteralNode)node).Value;
+            classification.lang = ((LiteralNode)node).Language;
+          }
         }
         if (string.IsNullOrEmpty(classification.label))
         {
-          var entity = GetLabel(uri);
+          Entity entity = GetLabel(uri);
           classification.label = entity.Label;
           classification.lang = entity.Lang;
         }
         if (string.IsNullOrEmpty(classification.lang))
           classification.lang = defaultLanguage;
+
         Utility.SearchAndInsert(classifications, classification, Classification.sortAscending());
       }
+
       return classifications;
     }
 
@@ -424,72 +467,145 @@ namespace org.iringtools.refdata
     {
       try
       {
-        var sparql = String.Empty;
-        var relativeUri = String.Empty;
+        string sparql = String.Empty;
+        string relativeUri = String.Empty;
         SparqlResultSet sparqlResults = null;
-        QueryBindings qBindings = null;
-        var specializations = new List<Specialization>();
 
-        var queryRdsWip = _queries.FirstOrDefault(c => c.Key == "GetSuperclass").Query;
-        var queryJord = _queries.FirstOrDefault(c => c.Key == "GetSuperclassJORD").Query;
-        var queryPart8 = _queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
+        List<Specialization> specializations = new List<Specialization>();
 
-        foreach (var repository in _repositories)
+        Query queryRdsWip = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclass").Query;
+        Query queryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperclassJORD").Query;
+        Query queryPart8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
+
+        foreach (Repository repository in _repositories)
         {
+          ///
+          ///  Need to check all repos for specializations
+          ///
+      //    if (rep != null)
+      //      if (rep.Name != repository.Name) continue;
+
           switch (repository.RepositoryType)
           {
             case RepositoryType.Camelot:
             case RepositoryType.RDSWIP:
+
               sparql = ReadSPARQL(queryRdsWip.FileName).Replace("param1", id);
-              qBindings = queryRdsWip.Bindings; 
+              sparqlResults = QueryFromRepository(repository, sparql);
+              foreach (SparqlResult result in sparqlResults)
+              {
+                Specialization specialization = new Specialization();
+                specialization.repository = repository.Name;
+                string uri = string.Empty;
+
+                foreach (var v in result.Variables)
+                {
+                  INode node = result[v];
+
+                  if (node is LiteralNode && v.Equals("label"))
+                  {
+                    specialization.label = ((LiteralNode)node).Value;
+                    specialization.lang = ((LiteralNode)node).Language;
+                  }
+                  else if (node is UriNode && v.Equals("uri"))
+                  {
+                    specialization.reference = ((UriNode)node).Uri.ToString();
+                    uri = specialization.reference;
+                  }
+                }
+                if (string.IsNullOrEmpty(specialization.label))
+                {
+                  Entity entity = GetLabel(uri);
+                  specialization.label = entity.Label;
+                  specialization.lang = entity.Lang;
+                }
+                if (string.IsNullOrEmpty(specialization.lang))
+                  specialization.lang = defaultLanguage;
+
+                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+              }
               break;
 
             case RepositoryType.Part8:
               sparql = ReadSPARQL(queryPart8.FileName).Replace("param1", id);
-              qBindings = queryPart8.Bindings;
-             
+              sparqlResults = QueryFromRepository(repository, sparql);
+              foreach (SparqlResult result in sparqlResults)
+              {
+                Specialization specialization = new Specialization();
+                specialization.repository = repository.Name;
+                string uri = string.Empty;
+
+                foreach (var v in result.Variables)
+                {
+                  INode node = result[v];
+                  if (node is LiteralNode && v.Equals("label"))
+                  {
+                    specialization.label = ((LiteralNode)node).Value;
+                    specialization.lang = ((LiteralNode)node).Language;
+                  }
+                  else if (node is UriNode && v.Equals("uri"))
+                  {
+                    specialization.reference = ((UriNode)node).Uri.ToString();
+                    uri = specialization.reference;
+                  }
+                }
+                if (string.IsNullOrEmpty(specialization.label))
+                {
+                  Entity entity = GetLabel(uri);
+                  specialization.label = entity.Label;
+                  specialization.lang = entity.Lang;
+                }
+                if (string.IsNullOrEmpty(specialization.lang))
+                  specialization.lang = defaultLanguage;
+
+                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+              }
               break;
             case RepositoryType.JORD:
               sparql = ReadSPARQL(queryJord.FileName).Replace("param1", id);
-              qBindings = queryJord.Bindings;
+              sparqlResults = QueryFromRepository(repository, sparql);
+              foreach (SparqlResult result in sparqlResults)
+              {
+                Specialization specialization = new Specialization();
+                specialization.repository = repository.Name;
+                string uri = string.Empty;
+
+                foreach (var v in result.Variables)
+                {
+                  INode node = result[v];
+                  if (node is LiteralNode && v.Equals("label"))
+                  {
+                    specialization.label = ((LiteralNode)node).Value;
+                    specialization.lang = ((LiteralNode)node).Language;
+                  }
+                  else if (node is UriNode && v.Equals("uri"))
+                  {
+                    specialization.reference = ((UriNode)node).Uri.ToString();
+                    uri = specialization.reference;
+                  }
+                  else if (node is UriNode && v.Equals("rdsuri"))
+                  {
+                    specialization.rdsuri = ((UriNode)node).Uri.ToString();
+                    uri = specialization.reference;
+                  }
+                }
+                if (string.IsNullOrEmpty(specialization.label))
+                {
+                  Entity entity = GetLabel(uri);
+                  specialization.label = entity.Label;
+                  specialization.lang = entity.Lang;
+                }
+                if (string.IsNullOrEmpty(specialization.lang))
+                  specialization.lang = defaultLanguage;
+
+                Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+              }
               break;
           }
-          sparqlResults = QueryFromRepository(repository, sparql);
-          foreach (var result in sparqlResults)
-          {
-            var specialization = new Specialization();
-            specialization.repository = repository.Name;
-            string uri = string.Empty;
-            foreach (var v in qBindings)
-            {
-              var node = result[v.Name];
-              if (node is LiteralNode && v.Name.Equals("label"))
-              {
-                specialization.label = ((LiteralNode)node).Value;
-                specialization.lang = ((LiteralNode)node).Language;
-              }
-              else if (node is UriNode && v.Name.Equals("uri"))
-              {
-                specialization.reference = ((UriNode)node).Uri.ToString();
-                uri = specialization.reference;
-              }
-              else if (node is UriNode && v.Name.Equals("rdsuri"))
-              {
-                specialization.rdsuri = ((UriNode)node).Uri.ToString();
-                uri = specialization.reference;
-              }
-            }
-            if (string.IsNullOrEmpty(specialization.label))
-            {
-              var entity = GetLabel(uri);
-              specialization.label = entity.Label;
-              specialization.lang = entity.Lang;
-            }
-            if (string.IsNullOrEmpty(specialization.lang))
-              specialization.lang = defaultLanguage;
-            Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
-          }
+
+
         }
+
         return specializations;
       }
       catch (Exception e)
@@ -502,7 +618,7 @@ namespace org.iringtools.refdata
     public Entity GetClassLabel(string id)
     {
       int number;
-      var isNumber = int.TryParse(id.Substring(1, 1), out number);
+      bool isNumber = int.TryParse(id.Substring(1, 1), out number);
       if (isNumber)
         return GetLabel(this._namespaces.Find(ns => ns.Prefix == "rdl").Uri + id);
       else
@@ -521,114 +637,124 @@ namespace org.iringtools.refdata
 
     public QMXF GetClass(string id, string namespaceUrl, Repository rep)
     {
-      var qmxf = new QMXF();
+      QMXF qmxf = new QMXF();
+
       try
       {
         QMXFName name;
         Description description;
         QMXFStatus status;
-        var classifications = new List<Classification>();
-        var specializations = new List<Specialization>();
-        var resultEntities = new RefDataEntities();
-        var resultEnt = new List<Entity>();
-        var sparql = String.Empty;
-        var relativeUri = String.Empty;
-        var resultValue = string.Empty;
-        var dataType = string.Empty;
-        var uri = string.Empty;
-        var classQuery = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
-        QueryBindings qBindings;  
-        var classQueryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassJORD").Query;
 
+        List<Classification> classifications = new List<Classification>();
+        List<Specialization> specializations = new List<Specialization>();
+
+        RefDataEntities resultEntities = new RefDataEntities();
+        List<Entity> resultEnt = new List<Entity>();
+        string sparql = String.Empty;
+        string relativeUri = String.Empty;
+        string resultValue = string.Empty;
+        string dataType = string.Empty;
+        string uri = string.Empty;
+
+        Query classQuery = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
+        Query classQueryJord = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassJORD").Query;
+
+        /// Always use rdl namespace
         namespaceUrl = this._namespaces.Find(n => n.Prefix == "rdl").Uri;
         uri = namespaceUrl + id;
 
-        foreach (var repository in this._repositories)
+        foreach (Repository repository in this._repositories)
         {
+
           if (rep != null)
             if (rep.Name != repository.Name) continue;
+
           if (repository.RepositoryType == RepositoryType.JORD)
           {
             sparql = ReadSPARQL(classQueryJord.FileName).Replace("param1", uri);
-            qBindings = classQueryJord.Bindings;
           }
           else
           {
             sparql = ReadSPARQL(classQuery.FileName).Replace("param1", uri);
-            qBindings = classQuery.Bindings;
           }
           ClassDefinition classDefinition = null;
-          var sparqlResults = QueryFromRepository(repository, sparql);
+
+          SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
           classifications = new List<Classification>();
           specializations = new List<Specialization>();
-          foreach (var result in sparqlResults)
+
+          foreach (SparqlResult result in sparqlResults)
           {
             classDefinition = new ClassDefinition();
+
             classDefinition.identifier = uri;
             classDefinition.repositoryName = repository.Name;
             name = new QMXFName();
             description = new Description();
             status = new QMXFStatus();
-            foreach (var v in qBindings)
+            foreach (var v in result.Variables)
             {
-              var node = result[v.Name];
-              if (node is LiteralNode && v.Name.Equals("label"))
+              INode node = result[v];
+              if (node is LiteralNode && v.Equals("label"))
               {
                 name.value = ((ILiteralNode)node).Value;
                 name.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(name.lang))
                   name.lang = defaultLanguage;
               }
-              else if (node is LiteralNode && v.Name.Equals("definition"))
+              else if (node is LiteralNode && v.Equals("definition"))
               {
                 description.value = ((ILiteralNode)node).Value;
                 description.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(description.lang))
                   description.lang = defaultLanguage;
               }
-              else if (node is LiteralNode && v.Name.Equals("creator"))
+              else if (node is LiteralNode && v.Equals("creator"))
               {
                 status.authority = ((ILiteralNode)node).Value;
               }
-              else if (node is LiteralNode && v.Name.Equals("creationDate"))
+              else if (node is LiteralNode && v.Equals("creationDate"))
               {
                 status.from = ((ILiteralNode)node).Value;
               }
-              else if (node is LiteralNode && v.Name.Equals("class"))
+              else if (node is LiteralNode && v.Equals("class"))
               {
                 status.Class = ((ILiteralNode)node).Value;
               }
-              else if (node is LiteralNode && v.Name.Equals("comment"))
+              else if (node is LiteralNode && v.Equals("comment"))
               {
                 description.value = ((ILiteralNode)node).Value;
                 description.lang = ((ILiteralNode)node).Language;
                 if (string.IsNullOrEmpty(description.lang))
                   description.lang = defaultLanguage;
               }
-              else if (node is UriNode && v.Name.Equals("type"))
+              else if (node is UriNode && v.Equals("type"))
               {
                 string typeName = ((UriNode)node).Uri.ToString();
                 string pref = nsMap.GetPrefix(new Uri(typeName.Substring(0, typeName.IndexOf("#") + 1)));
                 if (pref.Contains("dm"))
                   classDefinition.entityType = new EntityType { reference = typeName };
               }
-              else if (node is UriNode && v.Name.Equals("authority"))
+              else if (node is UriNode && v.Equals("authority"))
               {
                 status.authority = ((UriNode)node).Uri.ToString();
               }
-              else if (node is UriNode && v.Name.Equals("recorded"))
+              else if (node is UriNode && v.Equals("recorded"))
               {
                 status.Class = ((UriNode)node).Uri.ToString();
               }
-              else if (node is LiteralNode && v.Name.Equals("from"))
+              else if (node is LiteralNode && v.Equals("from"))
               {
                 status.from = ((LiteralNode)node).Value;
               }
             }
             classDefinition.name.Add(name);
+
             classDefinition.description.Add(description);
             classDefinition.status.Add(status);
+
             classifications = GetClassifications(id, repository);
+
             specializations = GetSpecializations(id, repository);
             if (classifications.Count > 0)
               classDefinition.classification = classifications;
@@ -649,30 +775,37 @@ namespace org.iringtools.refdata
 
     public Entities GetSuperClasses(string id, Repository repo)
     {
-      var queryResult = new Entities();
-      var language = string.Empty;
-      var names = new List<string>();
+      Entities queryResult = new Entities();
+      string language = string.Empty;
+      List<string> names = new List<string>();
       try
       {
-        var specializations = GetSpecializations(id, repo);
-        foreach (var specialization in specializations)
+        List<Specialization> specializations = GetSpecializations(id, repo);
+
+        foreach (Specialization specialization in specializations)
         {
-          var uri = specialization.reference;
-          var label = specialization.label;
+          string uri = specialization.reference;
+
+          string label = specialization.label;
+
           if (label == null)
             label = GetLabel(uri).Label;
           names = label.Split('@').ToList();
+
           if (names.Count == 1)
             language = defaultLanguage;
           else
             language = names[names.Count - 1];
-          var resultEntity = new Entity
+
+
+          Entity resultEntity = new Entity
           {
             Uri = uri,
             Label = names[0],
             Lang = language
           };
-          Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending()); ;
+          Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+          //queryResult.Add(resultEntity);
         }
       }
       catch (Exception e)
@@ -685,25 +818,30 @@ namespace org.iringtools.refdata
 
     public Entities GetAllSuperClasses(string id)
     {
-      var list = new Entities();
+      Entities list = new Entities();
       return GetAllSuperClasses(id, list);
     }
 
     public Entities GetAllSuperClasses(string id, Entities list)
     {
-      var names = new List<string>();
+      //List<Entity> queryResult = new List<Entity>();
+      List<string> names = new List<string>();
       try
       {
-        var specializations = GetSpecializations(id, null);
+
+        List<Specialization> specializations = GetSpecializations(id, null);
+        //base case
         if (specializations.Count == 0)
         {
           return list;
         }
-        foreach (var specialization in specializations)
+
+        foreach (Specialization specialization in specializations)
         {
-          var uri = specialization.reference;
-          var label = specialization.label;
-          var language = string.Empty;
+          string uri = specialization.reference;
+          string label = specialization.label;
+          string language = string.Empty;
+
           if (label == null)
           {
             names = GetLabel(uri).Label.Split('@').ToList();
@@ -713,16 +851,16 @@ namespace org.iringtools.refdata
             else
               language = names[names.Count - 1];
           }
-          var resultEntity = new Entity
+          Entity resultEntity = new Entity
           {
             Uri = uri,
             Label = label,
             Lang = language
           };
 
-          var trimmedUri = string.Empty;
-          var found = false;
-          foreach (var entt in list)
+          string trimmedUri = string.Empty;
+          bool found = false;
+          foreach (Entity entt in list)
           {
             if (resultEntity.Uri.Equals(entt.Uri))
             {
@@ -732,7 +870,7 @@ namespace org.iringtools.refdata
 
           if (!found)
           {
-            trimmedUri = new Uri(uri).Fragment.Substring(1);
+            trimmedUri = uri.Remove(0, uri.LastIndexOf('#') + 1);
             Utility.SearchAndInsert(list, resultEntity, Entity.sortAscending());
             GetAllSuperClasses(trimmedUri, list);
           }
@@ -749,19 +887,24 @@ namespace org.iringtools.refdata
 
     public Entities GetClassMembers(string Id, Repository repo)
     {
-      var membersResult = new Entities();
+      Entities membersResult = new Entities();
       try
       {
-        var sparql = string.Empty;
+        string sparql = string.Empty;
         Entity resultEntity = null;
         SparqlResultSet sparqlResults;
-        var getMembers = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembers").Query;
+        Query getMembers = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembers").Query;
         sparql = ReadSPARQL(getMembers.FileName);
-        var getMembersP8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembersPart8").Query;
-        var getMembersJORD = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembersJORD").Query;
+        Query getMembersP8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembersPart8").Query;
+        Query getMembersJORD = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembersJORD").Query;
 
-        foreach (var repository in _repositories)
+
+        foreach (Repository repository in _repositories)
         {
+
+          //if (repo != null)
+          //  if (repository.Name != repo.Name) continue;
+
           if (repository.RepositoryType == RepositoryType.Part8)
           {
             sparql = ReadSPARQL(getMembersP8.FileName).Replace("param1", Id);
@@ -775,13 +918,13 @@ namespace org.iringtools.refdata
             sparql = ReadSPARQL(getMembers.FileName).Replace("param1", Id);
           }
           sparqlResults = QueryFromRepository(repository, sparql);
-          foreach (var result in sparqlResults)
+          foreach (SparqlResult result in sparqlResults)
           {
             resultEntity = new Entity();
             resultEntity.Repository = repository.Name;
             foreach (var v in result.Variables)
             {
-              var node = result[v];
+              INode node = result[v];
 
               if (node is LiteralNode)
               {
@@ -805,6 +948,7 @@ namespace org.iringtools.refdata
               }
             }
             Utility.SearchAndInsert(membersResult, resultEntity, Entity.sortAscending());
+            //queryResult.Add(resultEntity);
           }
         }
 
@@ -819,66 +963,129 @@ namespace org.iringtools.refdata
 
     public Entities GetSubClasses(string id, Repository repo)
     {
-      var queryResult = new Entities();
+      Entities queryResult = new Entities();
+
       try
       {
-        var sparql = String.Empty;
-        var relativeUri = String.Empty;
+        string sparql = String.Empty;
+        string relativeUri = String.Empty;
         Entity resultEntity = null;
-        QueryBindings subClassesBindings;
-        var queryGetSubClasses = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClasses").Query;
 
-        var queryGetSubClassesJORD = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassesJORD").Query;
+        Query queryGetSubClasses = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClasses").Query;
+        Query queryGetSubClassesJORD = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassesJORD").Query;
+        Query queryGetSubClassesP8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOf").Query;
 
-        var queryGetSubClassesP8 = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOf").Query;
-
-        foreach (var repository in _repositories)
+        foreach (Repository repository in _repositories)
         {
+          ///
+          /// Need to check all repos for subclasses
+          ///
+ //         if (repo != null)      
+ //           if (repository.Name != repo.Name) continue;
+
           if (repository.RepositoryType == RepositoryType.Part8)
           {
-            sparql = ReadSPARQL(queryGetSubClassesP8.FileName).Replace("param1", id);
-            subClassesBindings = queryGetSubClassesP8.Bindings;
+             sparql = ReadSPARQL(queryGetSubClassesP8.FileName).Replace("param1", id); 
+             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+            foreach (SparqlResult result in sparqlResults)
+            {
+              resultEntity = new Entity();
+              foreach (var v in result.Variables)
+              {
+                INode node = result[v];
+                if (node is LiteralNode)
+                {
+                  resultEntity.Label = ((LiteralNode)node).Value;
+                  if (string.IsNullOrEmpty(((LiteralNode)node).Language))
+                  {
+                    resultEntity.Lang = defaultLanguage;
+                  }
+                  else
+                  {
+                    resultEntity.Lang = ((LiteralNode)node).Language;
+                  }
+                }
+                else if (node is UriNode)
+                {
+                  resultEntity.Uri = ((UriNode)node).Uri.ToString();
+                }
+              }
+              resultEntity.Repository = repository.Name;
+              Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+              //queryResult.Add(resultEntity);
+            }
           }
           else if (repository.RepositoryType == RepositoryType.JORD)
           {
             sparql = ReadSPARQL(queryGetSubClassesJORD.FileName).Replace("param1", id);
-            subClassesBindings = queryGetSubClassesJORD.Bindings;
+            SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+
+            foreach (SparqlResult result in sparqlResults)
+            {
+              resultEntity = new Entity();
+              foreach (var v in result.Variables)
+              {
+                INode node = result[v];
+                if (node is LiteralNode)
+                {
+                  resultEntity.Label = ((LiteralNode)result[v]).Value;
+                  if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
+                  {
+                    resultEntity.Lang = defaultLanguage;
+                  }
+                  else
+                  {
+                    resultEntity.Lang = ((LiteralNode)result[v]).Language;
+                  }
+                }
+                else if (node is UriNode && v.Equals("rdsuri"))
+                {
+                  resultEntity.RDSUri = ((UriNode)result[v]).Uri.ToString();
+                }
+                else if (node is UriNode && v.Equals("uri"))
+                {
+                  resultEntity.Uri = ((UriNode)result[v]).Uri.ToString();
+                }
+              }
+              resultEntity.Repository = repository.Name;
+
+              Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+              //queryResult.Add(resultEntity);
+            }
           }
           else
           {
             sparql = ReadSPARQL(queryGetSubClasses.FileName).Replace("param1", id);
-            subClassesBindings = queryGetSubClasses.Bindings;
-          }
-          var sparqlResults = QueryFromRepository(repository, sparql);
-          foreach (var result in sparqlResults)
-          {
-            resultEntity = new Entity();
-            foreach (var v in subClassesBindings)
+            SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+
+            foreach (SparqlResult result in sparqlResults)
             {
-              var node = result[v.Name];
-              if (node is LiteralNode)
+              resultEntity = new Entity();
+              foreach (var v in result.Variables)
               {
-                resultEntity.Label = ((LiteralNode)node).Value;
-                if (string.IsNullOrEmpty(((LiteralNode)node).Language))
+                INode node = result[v];
+                if (node is LiteralNode)
                 {
-                  resultEntity.Lang = defaultLanguage;
+                  resultEntity.Label = ((LiteralNode)node).Value;
+                  if (string.IsNullOrEmpty(((LiteralNode)node).Language))
+                  {
+                    resultEntity.Lang = defaultLanguage;
+                  }
+                  else
+                  {
+                    resultEntity.Lang = ((LiteralNode)node).Language;
+                  }
                 }
-                else
+                else if (node is UriNode)
                 {
-                  resultEntity.Lang = ((LiteralNode)node).Language;
+                  resultEntity.Uri = ((UriNode)node).Uri.ToString();
                 }
               }
-              else if (node is UriNode && v.Name.Equals("uri"))
-              {
-                resultEntity.Uri = ((UriNode)node).Uri.ToString();
-              }
-              else if (node is UriNode && v.Name.Equals("rdsuri"))
-              {
-                resultEntity.RDSUri = ((UriNode)result[v.Name]).Uri.ToString();
-              }
+              resultEntity.Repository = repository.Name;
+
+              Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+              //queryResult.Add(resultEntity);
             }
-            resultEntity.Repository = repository.Name;
-            Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
           }
         }
       }
@@ -927,7 +1134,7 @@ namespace org.iringtools.refdata
               }
             }
           }
-          else if (repository.RepositoryType == RepositoryType.JORD)
+          else if (repository.RepositoryType == RepositoryType.JORD) 
           {
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlJord);
 
@@ -1169,11 +1376,6 @@ namespace org.iringtools.refdata
     {
       try
       {
-        var qId = string.Empty;
-        if (!id.Contains("http:"))
-          qId = nsMap.GetNamespaceUri("tpl") + id;
-        else
-          qId = id;
         string sparql = String.Empty;
         string relativeUri = String.Empty;
         string sparqlQuery = string.Empty;
@@ -1198,7 +1400,8 @@ namespace org.iringtools.refdata
 
         Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == sparqlQuery).Query;
 
-        sparql = ReadSPARQL(queryContainsSearch.FileName).Replace("param1", qId);
+        sparql = ReadSPARQL(queryContainsSearch.FileName);
+        sparql = sparql.Replace("param1", id);
 
         SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
@@ -1258,12 +1461,6 @@ namespace org.iringtools.refdata
     {
       try
       {
-        var qId = string.Empty;
-
-        if (!id.Contains("http:"))
-          qId = nsMap.GetNamespaceUri("tpl") + id;
-        else
-          qId = id;
         string sparql = String.Empty;
         string relativeUri = String.Empty;
         string sparqlQuery = string.Empty;
@@ -1290,7 +1487,7 @@ namespace org.iringtools.refdata
           Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == sparqlQuery).Query;
 
           sparql = ReadSPARQL(queryContainsSearch.FileName);
-          sparql = sparql.Replace("param1", qId);
+          sparql = sparql.Replace("param1", id);
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
           foreach (SparqlResult result in sparqlResults)
@@ -1351,11 +1548,7 @@ namespace org.iringtools.refdata
     {
       try
       {
-        var qId = string.Empty;
-        if (!id.Contains("http:"))
-          qId = nsMap.GetNamespaceUri("tpl") + id;
-        else
-          qId = id;
+
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
         string uri = String.Empty;
@@ -1390,13 +1583,13 @@ namespace org.iringtools.refdata
               Query getValueRestriction = (Query)_queries.FirstOrDefault(c => c.Key == "GetValueRestriction").Query;
 
               rangeSparql = ReadSPARQL(getRangeRestriction.FileName);
-              rangeSparql = rangeSparql.Replace("param1", qId);
+              rangeSparql = rangeSparql.Replace("param1", id);
 
               referenceSparql = ReadSPARQL(getReferenceRestriction.FileName);
-              referenceSparql = referenceSparql.Replace("param1", qId);
+              referenceSparql = referenceSparql.Replace("param1", id);
 
               valueSparql = ReadSPARQL(getValueRestriction.FileName);
-              valueSparql = valueSparql.Replace("param1", qId);
+              valueSparql = valueSparql.Replace("param1", id);
 
               SparqlResultSet rangeSparqlResults = QueryFromRepository(repository, rangeSparql);
               SparqlResultSet referenceSparqlResults = QueryFromRepository(repository, referenceSparql);
@@ -1465,7 +1658,7 @@ namespace org.iringtools.refdata
               QueryBindings getPart8RolesBindings = getPart8Roles.Bindings;
 
               string part8RolesSparql = ReadSPARQL(getPart8Roles.FileName);
-              part8RolesSparql = part8RolesSparql.Replace("param1", qId);
+              part8RolesSparql = part8RolesSparql.Replace("param1", id);
               SparqlResultSet part8RolesResults = QueryFromRepository(repository, part8RolesSparql);
               foreach (SparqlResult result in part8RolesResults)
               {
@@ -1546,8 +1739,8 @@ namespace org.iringtools.refdata
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
 
-        if (!id.Contains("http:"))
-          qId = nsMap.GetNamespaceUri("tpl") + id;
+        if (!id.Contains(":"))
+          qId = string.Format("tpl:{0}", id);
         else
           qId = id;
 
@@ -1566,7 +1759,7 @@ namespace org.iringtools.refdata
           }
 
           sparql = ReadSPARQL(queryContainsSearch.FileName);
-          sparql = sparql.Replace("param1", qId);
+          sparql = sparql.Replace("param1", id);
 
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
@@ -1692,8 +1885,8 @@ namespace org.iringtools.refdata
         string qId = string.Empty;
         Query getTemplateQualification = null;
 
-        if (!id.Contains("http:"))
-          qId = nsMap.GetNamespaceUri("tpl") + id;
+        if (!id.Contains(":"))
+          qId = string.Format("tpl:{0}", id);
         else
           qId = id;
 
@@ -1722,7 +1915,7 @@ namespace org.iringtools.refdata
             getTemplateQualification = (Query)_queries.FirstOrDefault(c => c.Key == sparqlQuery).Query;
 
             sparql = ReadSPARQL(getTemplateQualification.FileName);
-            sparql = sparql.Replace("param1", qId);
+            sparql = sparql.Replace("param1", id);
 
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
@@ -1823,8 +2016,8 @@ namespace org.iringtools.refdata
     /// <returns></returns>
     private string CreateNewGuidId(string RegistryBase)//, string name)
     {
-      if (!string.IsNullOrEmpty(RegistryBase))
-        return string.Format("{0}R{1}", RegistryBase, Guid.NewGuid().ToString().Replace("_", "").Replace("-", "").ToUpper());
+      if(!string.IsNullOrEmpty(RegistryBase))
+      return string.Format("{0}R{1}",RegistryBase, Guid.NewGuid().ToString().Replace("_","").Replace("-","").ToUpper());
       else
       {
         _logger.Error("Failed to create id:");
@@ -1874,7 +2067,7 @@ namespace org.iringtools.refdata
       try
       {
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(repository.Uri));
-        endpoint.Timeout = 600000;
+        
         string encryptedCredentials = repository.EncryptedCredentials;
         WebCredentials cred = new WebCredentials(encryptedCredentials);
         if (cred.isEncrypted) cred.Decrypt();
@@ -1891,7 +2084,7 @@ namespace org.iringtools.refdata
 
         SparqlResultSet resultSet = endpoint.QueryWithResultSet(sparql);
         //endpoint.QueryWithResultSet(resultHandler, sparql);
-        return resultSet;
+         return resultSet;
       }
       catch (Exception ex)
       {
@@ -1996,11 +2189,23 @@ namespace org.iringtools.refdata
 
     public Response PostTemplate(QMXF qmxf)
     {
-      var response = new Response();
+      Graph delete = new Graph();
+      Graph insert = new Graph();
+      //add namespaces to graphs 
+      delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+      delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+      delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+      delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+      delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+      insert.NamespaceMap.Import(delete.NamespaceMap);
+
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+      Repository repository = null;
+      //bool qn = false;
       try
       {
-
-        var repository = GetRepository(qmxf.targetRepository);
+        repository = GetRepository(qmxf.targetRepository);
         if (repository == null || repository.IsReadOnly)
         {
           Status status = new Status();
@@ -2012,21 +2217,717 @@ namespace org.iringtools.refdata
 
           _response.Append(status);
         }
-        else if (repository.RepositoryType != RepositoryType.Part8)
-        {
-          throw new Exception("Cannnot write to [" + repository.Name + " repository type " + repository.RepositoryType + "]");
-        }
         else
         {
           string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
-
+          #region Template Definitions
+          ///////////////////////////////////////////////////////////////////////////////
+          /// Base templates do have the following properties
+          /// 1) Base class of owl:Thing
+          /// 2) rdfs:subClassOf = p8:BaseTemplateStateMent
+          /// 3) rdfs:label name of template
+          /// 4) optional rdfs:comment
+          /// 5) p8:valNumberOfRoles
+          /// 6) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self 
+          ///////////////////////////////////////////////////////////////////////////////
           if (qmxf.templateDefinitions.Count > 0)
           {
-            response = ProcessTemplateDefinitions(qmxf.templateDefinitions, repository);
+            foreach (TemplateDefinition newTDef in qmxf.templateDefinitions)
+            {
+              string language = string.Empty;
+              int roleCount = 0;
+              string templateName = string.Empty;
+              string templateId = string.Empty;
+              string generatedId = string.Empty;
+              string roleDefinition = string.Empty;
+              int index = 1;
+              if (!string.IsNullOrEmpty(newTDef.identifier))
+                templateId = newTDef.identifier;
+
+              templateName = newTDef.name[0].value;
+              //check for exisitng template
+              QMXF oldQmxf = new QMXF();
+              if (!String.IsNullOrEmpty(templateId))
+              {
+                oldQmxf = GetTemplate(templateId, QMXFType.Definition, repository);
+              }
+              else
+              {
+                if (_useExampleRegistryBase)
+                  generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, templateName);
+                else
+                  generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, templateName);
+                templateId = generatedId;
+              }
+
+              #region Form Delete/Insert
+              if (oldQmxf.templateDefinitions.Count > 0)
+              {
+                foreach (TemplateDefinition oldTDef in oldQmxf.templateDefinitions)
+                {
+                  ///process template label(s)
+                  foreach (QMXFName newName in newTDef.name)
+                  {
+                    templateName = newName.value;
+                    QMXFName oldName = oldTDef.name.Find(n => n.lang == newName.lang);
+                    if (String.Compare(oldName.value, newName.value, true) != 0)
+                    {
+                      GenerateName(ref delete, oldName, templateId, oldTDef);
+                      GenerateName(ref insert, newName, templateId, newTDef);
+                    }
+                  }
+                  //append changing descriptions to each block
+                  foreach (Description newDescr in newTDef.description)
+                  {
+                    Description oldDescr = oldTDef.description.Find(d => d.lang == newDescr.lang);
+                    if (oldDescr != null && newDescr != null)
+                    {
+                      if (String.Compare(oldDescr.value, newDescr.value, true) != 0)
+                      {
+                        GenerateDescription(ref delete, oldDescr, templateId);
+                        GenerateDescription(ref insert, newDescr, templateId);
+                      }
+                    }
+                    else if (newDescr != null && oldDescr == null)
+                    {
+                      GenerateDescription(ref insert, newDescr, templateId);
+                    }
+                  }
+
+                  index = 1;
+                  ///  BaseTemplate roles do have the following properties
+                  /// 1) baseclass of owl:Class
+                  /// 2) rdfs:subClassOf = p8:TemplateRoleDescription
+                  /// 3) rdfs:label = rolename
+                  /// 4) p8:valRoleIndex
+                  /// 5) p8:hasRoleFillerType = qualifified class or dm:entityType
+                  /// 6) p8:hasTemplate = template ID
+                  /// 7) p8:hasRole = role ID --- again probably should not use this --- pointer to self
+                  if (oldTDef.roleDefinition.Count < newTDef.roleDefinition.Count) ///Role(s) added
+                  {
+                    foreach (RoleDefinition nrd in newTDef.roleDefinition)
+                    {
+                      string roleName = nrd.name[0].value;
+                      string newRoleID = nrd.identifier;
+                      if (string.IsNullOrEmpty(newRoleID))
+                      {
+                        if (_useExampleRegistryBase)
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, roleName);
+                        else
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
+                        newRoleID = generatedId;
+                      }
+                      RoleDefinition ord = oldTDef.roleDefinition.Find(r => r.identifier == newRoleID);
+                      if (ord == null) /// need to add it
+                      {
+                        foreach (QMXFName name in nrd.name)
+                        {
+                          GenerateName(ref insert, name, newRoleID, nrd);
+                        }
+                        if (nrd.description != null)
+                        {
+                          GenerateDescription(ref insert, nrd.description, newRoleID);
+                        }
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateTypesPart8(ref insert, newRoleID, templateId, nrd);
+                          GenerateRoleIndexPart8(ref insert, newRoleID, index, nrd);
+                        }
+                        else
+                        {
+                          GenerateTypes(ref insert, newRoleID, templateId, nrd);
+                          GenerateRoleIndex(ref insert, newRoleID, index);
+                        }
+                      }
+                      if (nrd.range != null)
+                      {
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateRoleFillerType(ref insert, newRoleID, nrd.range);
+                        }
+                        else
+                        {
+                          GenerateRoleDomain(ref insert, newRoleID, templateId);
+                        }
+                      }
+                    }
+                  }
+                  else if (oldTDef.roleDefinition.Count > newTDef.roleDefinition.Count) ///Role(s) removed
+                  {
+                    foreach (RoleDefinition ord in oldTDef.roleDefinition)
+                    {
+                      RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
+                      if (nrd == null) /// need to add it
+                      {
+                        foreach (QMXFName name in ord.name)
+                        {
+                          GenerateName(ref delete, name, ord.identifier, ord);
+                        }
+                        if (ord.description != null)
+                        {
+                          GenerateDescription(ref delete, ord.description, ord.identifier);
+                        }
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateTypesPart8(ref delete, ord.identifier, templateId, ord);
+                          GenerateRoleIndexPart8(ref delete, ord.identifier, index, ord);
+                        }
+                        else
+                        {
+                          GenerateTypes(ref delete, ord.identifier, templateId, ord);
+                          GenerateRoleIndex(ref delete, ord.identifier, index);
+                        }
+                      }
+                      if (ord.range != null)
+                      {
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateRoleFillerType(ref delete, ord.identifier, ord.range);
+                        }
+                        else
+                        {
+                          GenerateRoleDomain(ref delete, ord.identifier, templateId);
+                        }
+                      }
+                    }
+                  }
+                }
+                if (delete.IsEmpty && insert.IsEmpty)
+                {
+                  string errMsg = "No changes made to template [" + templateName + "]";
+                  Status status = new Status();
+                  response.Level = StatusLevel.Warning;
+                  status.Messages.Add(errMsg);
+                  response.Append(status);
+                  continue;//Nothing to be done
+                }
+              }
+
+              #endregion Form Delete/Insert
+              #region Form Insert SPARQL
+              if (insert.IsEmpty && delete.IsEmpty)
+              {
+                if (repository.RepositoryType == RepositoryType.Part8)
+                {
+                  GenerateTypesPart8(ref insert, templateId, null, newTDef);
+                  GenerateRoleCountPart8(ref insert, newTDef.roleDefinition.Count, templateId, newTDef);
+                }
+                else
+                {
+                  GenerateTypes(ref insert, templateId, null, newTDef);
+                  GenerateRoleCount(ref insert, newTDef.roleDefinition.Count, templateId, newTDef);
+                }
+                foreach (QMXFName name in newTDef.name)
+                {
+                  GenerateName(ref insert, name, templateId, newTDef);
+                }
+
+                foreach (Description descr in newTDef.description)
+                {
+                  GenerateDescription(ref insert, descr, templateId);
+                }
+                //form labels
+                foreach (RoleDefinition newRole in newTDef.roleDefinition)
+                {
+
+                  string roleLabel = newRole.name.FirstOrDefault().value;
+                  string newRoleID = string.Empty;
+                  generatedId = string.Empty;
+                  string genName = string.Empty;
+                  string range = newRole.range;
+
+                  genName = "Role definition " + roleLabel;
+                  if (string.IsNullOrEmpty(newRole.identifier))
+                  {
+                    if (_useExampleRegistryBase)
+                      generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, genName);
+                    else
+                      generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, genName);
+                    newRoleID = generatedId;
+                  }
+                  else
+                  {
+                    newRoleID = newRole.identifier;
+                  }
+                  foreach (QMXFName newName in newRole.name)
+                  {
+                    GenerateName(ref insert, newName, newRoleID, newRole);
+                  }
+
+                  if (newRole.description != null && newRole.description.value != null)
+                  {
+                    GenerateDescription(ref insert, newRole.description, newRoleID);
+                  }
+
+                  if (repository.RepositoryType == RepositoryType.Part8)
+                  {
+                    GenerateRoleIndexPart8(ref insert, newRoleID, ++roleCount, newRole);
+                    GenerateHasTemplate(ref insert, newRoleID, templateId, newRole);
+                    GenerateHasRole(ref insert, templateId, newRoleID, newRole);
+                  }
+                  else
+                  {
+                    GenerateRoleIndex(ref insert, newRoleID, ++roleCount);
+                  }
+                  if (!string.IsNullOrEmpty(newRole.range))
+                  {
+                    if (repository.RepositoryType == RepositoryType.Part8)
+                    {
+                      GenerateRoleFillerType(ref insert, newRoleID, newRole.range);
+                    }
+                    else
+                    {
+                      GenerateRoleDomain(ref insert, newRoleID, templateId);
+                      GenerateTypes(ref insert, newRoleID, null, newRole);
+                    }
+                  }
+                }
+              }
+              #endregion
+              #region Generate Query and post Template Definition
+              if (!delete.IsEmpty)
+              {
+                sparqlBuilder.AppendLine(deleteData);
+                foreach (Triple t in delete.Triples)
+                {
+                  sparqlBuilder.AppendLine(t.ToString(formatter));
+                }
+                if (insert.IsEmpty)
+                  sparqlBuilder.AppendLine("}");
+                else
+                  sparqlBuilder.AppendLine("};");
+              }
+              if (!insert.IsEmpty)
+              {
+                sparqlBuilder.AppendLine(insertData);
+                foreach (Triple t in insert.Triples)
+                {
+                  sparqlBuilder.AppendLine(t.ToString(formatter));
+                }
+                sparqlBuilder.AppendLine("}");
+              }
+              string sparql = sparqlBuilder.ToString();
+              Response postResponse = PostToRepository(repository, sparql);
+              response.Append(postResponse);
+            }
           }
+              #endregion Generate Query and post Template Definition
+          #endregion Template Definitions
+          #region Template Qualification
+          /// Qualification templates do have the following properties
+          /// 1) Base class = owl:Thing
+          /// 2) rdf:type = p8:SpecializedTemplateStatement
+          /// 3) rdfs:label = template name
+          /// 
           if (qmxf.templateQualifications.Count > 0)
           {
-            response = ProcessTemplateQualifications(qmxf.templateQualifications, repository);
+            foreach (TemplateQualification newTQ in qmxf.templateQualifications)
+            {
+              int roleCount = 0;
+              string templateName = string.Empty;
+              string templateID = string.Empty;
+              string generatedId = string.Empty;
+              string roleQualification = string.Empty;
+              //int index = 1;
+              if (!string.IsNullOrEmpty(newTQ.identifier))
+                templateID = newTQ.identifier;
+
+              templateName = newTQ.name[0].value;
+              QMXF oldQmxf = new QMXF();
+              if (!String.IsNullOrEmpty(templateID))
+              {
+                oldQmxf = GetTemplate(templateID, QMXFType.Qualification, repository);
+              }
+              else
+              {
+                if (_useExampleRegistryBase)
+                  generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, templateName);
+                else
+                  generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, templateName);
+
+                templateID = generatedId;
+              }
+              #region Form Delete/Insert SPARQL
+              if (oldQmxf.templateQualifications.Count > 0)
+              {
+                foreach (TemplateQualification oldTQ in oldQmxf.templateQualifications)
+                {
+                  foreach (QMXFName nn in newTQ.name)
+                  {
+                    templateName = nn.value;
+                    QMXFName on = oldTQ.name.Find(n => n.lang == nn.lang);
+                    if (on != null)
+                    {
+                      if (String.Compare(on.value, nn.value, true) != 0)
+                      {
+                        GenerateName(ref delete, on, templateID, oldTQ);
+                        GenerateName(ref insert, nn, templateID, newTQ);
+                      }
+                    }
+                  }
+                  foreach (Description nd in newTQ.description)
+                  {
+                    if (nd.lang == null) nd.lang = defaultLanguage;
+                    Description od = null;
+                    od = oldTQ.description.Find(d => d.lang == nd.lang);
+
+                    if (od != null && od.value != null)
+                    {
+                      if (string.Compare(od.value, nd.value, true) != 0)
+                      {
+                        GenerateDescription(ref delete, od, templateID);
+                        GenerateDescription(ref insert, nd, templateID);
+                      }
+                    }
+                    else if (od == null && nd.value != null)
+                    {
+                      GenerateDescription(ref insert, nd, templateID);
+                    }
+                  }
+                  //role count
+                  if (oldTQ.roleQualification.Count != newTQ.roleQualification.Count)
+                  {
+                    if (repository.RepositoryType == RepositoryType.Part8)
+                    {
+                      GenerateRoleCountPart8(ref delete, oldTQ.roleQualification.Count, templateID, oldTQ);
+                      GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                    }
+                    else
+                    {
+                      GenerateRoleCount(ref delete, oldTQ.roleQualification.Count, templateID, oldTQ);
+                      GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                    }
+                  }
+
+                  foreach (Specialization ns in newTQ.specialization)
+                  {
+                    Specialization os = oldTQ.specialization.FirstOrDefault();
+
+                    if (os != null && os.reference != ns.reference)
+                    {
+                      if (repository.RepositoryType == RepositoryType.Part8)
+                      {
+
+                      }
+                      else
+                      {
+
+                      }
+                    }
+                  }
+
+                  //index = 1;
+                  ///  Qualification roles do have the following properties
+                  /// 1) baseclass of owl:Thing
+                  /// 2) rdf:type = p8:TemplateRoleDescription
+                  /// 3) rdfs:label = rolename
+                  /// 4) p8:valRoleIndex
+                  /// 5) p8:hasRoleFillerType = qualifified class
+                  /// 6) p8:hasTemplate = template ID
+                  /// 6) p8:hasRole = tpl:{roleName} probably don't need to use this -- pointer to self
+                  if (oldTQ.roleQualification.Count < newTQ.roleQualification.Count)
+                  {
+                    int count = 0;
+                    foreach (RoleQualification nrq in newTQ.roleQualification)
+                    {
+                      string roleName = nrq.name[0].value;
+                      string newRoleID = nrq.identifier;
+
+                      if (string.IsNullOrEmpty(newRoleID))
+                      {
+                        if (_useExampleRegistryBase)
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, roleName);
+                        else
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
+                        newRoleID = generatedId;
+                      }
+                      RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                      if (orq == null)
+                      {
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateTypesPart8(ref insert, newRoleID, templateID, nrq);
+                          foreach (QMXFName nn in nrq.name)
+                          {
+                            GenerateName(ref insert, nn, newRoleID, nrq);
+                          }
+                          GenerateRoleIndexPart8(ref insert, newRoleID, ++count, nrq);
+                          GenerateHasTemplate(ref insert, newRoleID, templateID, nrq);
+                          GenerateHasRole(ref insert, templateID, newRoleID, newTQ);
+                          if (!string.IsNullOrEmpty(nrq.range))
+                          {
+                            GenerateRoleFillerType(ref insert, newRoleID, nrq.range);
+                          }
+                          else if (nrq.value != null)
+                          {
+                            if (nrq.value.reference != null)
+                            {
+                              GenerateRoleFillerType(ref insert, newRoleID, nrq.value.reference);
+                            }
+                            else if (nrq.value.text != null)
+                            {
+                              ///TODO
+                            }
+                          }
+                        }
+                        else //Not Part8 repository
+                        {
+                          if (!string.IsNullOrEmpty(nrq.range)) //range restriction
+                          {
+                            GenerateRange(ref insert, newRoleID, nrq.range, nrq);
+                            GenerateTypes(ref insert, newRoleID, templateID, nrq);
+                            GenerateQualifies(ref insert, newRoleID, nrq.qualifies, nrq);
+                          }
+                          else if (nrq.value != null)
+                          {
+                            if (nrq.value.reference != null) //reference restriction
+                            {
+                              GenerateReferenceType(ref insert, newRoleID, templateID, nrq);
+                              GenerateReferenceQual(ref insert, newRoleID, nrq.qualifies, nrq);
+                              GenerateReferenceTpl(ref insert, newRoleID, nrq.value.reference, nrq);
+                            }
+                            else if (nrq.value.text != null)// value restriction
+                            {
+                              GenerateValue(ref insert, newRoleID, templateID, nrq);
+                            }
+                          }
+                          GenerateTypes(ref insert, newRoleID, templateID, nrq);
+                          GenerateRoleDomain(ref insert, newRoleID, templateID);
+                          GenerateRoleIndex(ref insert, newRoleID, ++count);
+                        }
+                      }
+                    }
+                  }
+                  else if (oldTQ.roleQualification.Count > newTQ.roleQualification.Count)
+                  {
+                    int count = 0;
+                    foreach (RoleQualification orq in oldTQ.roleQualification)
+                    {
+                      string roleName = orq.name[0].value;
+                      string newRoleID = orq.identifier;
+
+                      if (string.IsNullOrEmpty(newRoleID))
+                      {
+                        if (_useExampleRegistryBase)
+                          generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, roleName);
+                        else
+                          generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
+                        newRoleID = generatedId;
+                      }
+                      RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                      if (nrq == null)
+                      {
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateTypesPart8(ref delete, newRoleID, templateID, orq);
+                          foreach (QMXFName nn in orq.name)
+                          {
+                            GenerateName(ref delete, nn, newRoleID, orq);
+                          }
+                          GenerateRoleIndexPart8(ref delete, newRoleID, ++count, orq);
+                          GenerateHasTemplate(ref delete, newRoleID, templateID, orq);
+                          GenerateHasRole(ref delete, templateID, newRoleID, oldTQ);
+                          if (!string.IsNullOrEmpty(orq.range))
+                          {
+                            GenerateRoleFillerType(ref delete, newRoleID, orq.range);
+                          }
+                          else if (orq.value != null)
+                          {
+                            if (orq.value.reference != null)
+                            {
+                              GenerateRoleFillerType(ref delete, newRoleID, orq.value.reference);
+                            }
+                            else if (nrq.value.text != null)
+                            {
+                              ///TODO
+                            }
+                          }
+                        }
+                        else //Not Part8 repository
+                        {
+                          if (!string.IsNullOrEmpty(orq.range)) //range restriction
+                          {
+                            GenerateRange(ref delete, newRoleID, orq.range, orq);
+                            GenerateTypes(ref delete, newRoleID, templateID, nrq);
+                            GenerateQualifies(ref delete, newRoleID, orq.qualifies, orq);
+                          }
+                          else if (orq.value != null)
+                          {
+                            if (orq.value.reference != null) //reference restriction
+                            {
+                              GenerateReferenceType(ref delete, newRoleID, templateID, orq);
+                              GenerateReferenceQual(ref delete, newRoleID, orq.qualifies.Split('#')[1], orq);
+                              GenerateReferenceTpl(ref insert, newRoleID, orq.value.reference, orq);
+                            }
+                            else if (orq.value.text != null)// value restriction
+                            {
+                              GenerateValue(ref delete, newRoleID, templateID, orq);
+                            }
+                          }
+                          GenerateTypes(ref delete, newRoleID, templateID, orq);
+                          GenerateRoleDomain(ref delete, newRoleID, templateID);
+                          GenerateRoleIndex(ref delete, newRoleID, ++count);
+                        }
+                      }
+                    }
+                  }
+                }
+                if (delete.IsEmpty && insert.IsEmpty)
+                {
+                  string errMsg = "No changes made to template [" + templateName + "]";
+                  Status status = new Status();
+                  response.Level = StatusLevel.Warning;
+                  status.Messages.Add(errMsg);
+                  response.Append(status);
+                  continue;//Nothing to be done
+                }
+              }
+              #endregion
+              #region Form Insert SPARQL
+              if (delete.IsEmpty)
+              {
+                string templateLabel = String.Empty;
+                string labelSparql = String.Empty;
+
+                foreach (QMXFName newName in newTQ.name)
+                {
+                  GenerateName(ref insert, newName, templateID, newTQ);
+                }
+                foreach (Description newDescr in newTQ.description)
+                {
+                  if (string.IsNullOrEmpty(newDescr.value)) continue;
+                  GenerateDescription(ref insert, newDescr, templateID);
+                }
+
+                if (repository.RepositoryType == RepositoryType.Part8)
+                {
+                  GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+
+                  GenerateTypesPart8(ref insert, templateID, newTQ.qualifies, newTQ);
+                }
+                else
+                {
+                  GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+
+                  GenerateTypes(ref insert, templateID, newTQ.qualifies, newTQ);
+
+                }
+                foreach (Specialization spec in newTQ.specialization)
+                {
+                  string specialization = spec.reference;
+                  if (repository.RepositoryType == RepositoryType.Part8)
+                  {
+                    ///TODO
+                  }
+                  else
+                  {
+                    ///TODO
+                  }
+                }
+
+                foreach (RoleQualification newRole in newTQ.roleQualification)
+                {
+                  string roleLabel = newRole.name.FirstOrDefault().value;
+                  string roleID = string.Empty;
+                  generatedId = string.Empty;
+                  string genName = string.Empty;
+                  string range = newRole.range;
+
+                  genName = "Role Qualification " + roleLabel;
+                  if (string.IsNullOrEmpty(newRole.identifier))
+                  {
+                    if (_useExampleRegistryBase)
+                      generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, genName);
+                    else
+                      generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, genName);
+
+                    roleID = generatedId;
+                  }
+                  else
+                  {
+                    roleID = newRole.identifier;
+                  }
+                  if (repository.RepositoryType == RepositoryType.Part8)
+                  {
+                    GenerateTypesPart8(ref insert, roleID, templateID, newRole);
+                    foreach (QMXFName newName in newRole.name)
+                    {
+                      GenerateName(ref insert, newName, roleID, newRole);
+                    }
+                    GenerateRoleIndexPart8(ref insert, roleID, ++roleCount, newRole);
+                    GenerateHasTemplate(ref insert, roleID, templateID, newRole);
+                    GenerateHasRole(ref insert, templateID, roleID, newTQ);
+                    if (!string.IsNullOrEmpty(newRole.range))
+                    {
+                      GenerateRoleFillerType(ref insert, roleID, newRole.range);
+                    }
+                    else if (newRole.value != null)
+                    {
+                      if (newRole.value.reference != null)
+                      {
+                        GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
+                      }
+                      else if (newRole.value.text != null)
+                      {
+                        ///TODO
+                      }
+                    }
+                  }
+                  else //Not Part8 repository
+                  {
+                    if (!string.IsNullOrEmpty(newRole.range)) //range restriction
+                    {
+                      GenerateRange(ref insert, roleID, newRole.range, newRole);
+                      GenerateTypes(ref insert, roleID, templateID, newRole);
+                      GenerateQualifies(ref insert, roleID, newRole.qualifies, newRole);
+                    }
+                    else if (newRole.value != null)
+                    {
+                      if (newRole.value.reference != null) //reference restriction
+                      {
+                        GenerateReferenceType(ref insert, roleID, templateID, newRole);
+                        GenerateReferenceQual(ref insert, roleID, newRole.qualifies, newRole);
+                        GenerateReferenceTpl(ref insert, roleID, newRole.value.reference, newRole);
+                      }
+                      else if (newRole.value.text != null)// value restriction
+                      {
+                        GenerateValue(ref insert, roleID, templateID, newRole);
+                      }
+                    }
+                    GenerateTypes(ref insert, roleID, templateID, newRole);
+                    GenerateRoleDomain(ref insert, roleID, templateID);
+                    GenerateRoleIndex(ref insert, roleID, ++roleCount);
+                  }
+                }
+              }
+              #endregion
+              #region Generate Query and Post Qualification Template
+              if (!delete.IsEmpty)
+              {
+                sparqlBuilder.Append(deleteData);
+                foreach (Triple t in delete.Triples)
+                {
+                  sparqlBuilder.AppendLine(t.ToString(formatter));
+                }
+                if (insert.IsEmpty)
+                  sparqlBuilder.AppendLine("}");
+                else
+                  sparqlBuilder.AppendLine("};");
+              }
+              if (!insert.IsEmpty)
+              {
+                sparqlBuilder.AppendLine(insertData);
+                foreach (Triple t in insert.Triples)
+                {
+                  sparqlBuilder.AppendLine(t.ToString(formatter));
+                }
+                sparqlBuilder.AppendLine("}");
+              }
+
+              string sparql = sparqlBuilder.ToString();
+              Response postResponse = PostToRepository(repository, sparql);
+              response.Append(postResponse);
+            }
           }
 
         }
@@ -2046,583 +2947,61 @@ namespace org.iringtools.refdata
 
       return response;
     }
-
-    private Response ProcessTemplateDefinitions(List<TemplateDefinition> list, Repository repository)
-    {
-      ///////////////////////////////////////////////////////////////////////////////
-      /// Base templates do have the following properties
-      /// 1) Base class of owl:Thing, p7tm:TemplateDescription
-      /// 2) rdfs:subClassOf = p8:BaseTemplateStatement
-      /// 3) rdfs:label name of template
-      /// 4) optional rdfs:comment
-      /// 5) p8:valNumberOfRoles
-      /// 6) p7tm:TemplateDescription
-      /// 7) p8:hasRole foreach role related to the template
-      ///////////////////////////////////////////////////////////////////////////////
-      var response = new Response();
-      var delete = new Graph();
-      var insert = new Graph();
-      delete.NamespaceMap.Import(nsMap);
-      insert.NamespaceMap.Import(nsMap);
-
-      foreach (var newTDef in list)
-      {
-        var language = string.Empty;
-        var roleCount = 0;
-        var templateName = string.Empty;
-        var templateId = string.Empty;
-        var generatedId = string.Empty;
-        var roleDefinition = string.Empty;
-        var index = 1;
-        if (!string.IsNullOrEmpty(newTDef.identifier))
-          templateId = newTDef.identifier;
-
-        templateName = newTDef.name[0].value;
-        //check for exisitng template
-        var oldQmxf = new QMXF();
-        if (!String.IsNullOrEmpty(templateId))
-        {
-          oldQmxf = GetTemplate(templateId, QMXFType.Definition, repository);
-        }
-        else
-        {
-          if (_useExampleRegistryBase)
-            generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
-          else
-            generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
-          templateId = generatedId;
-        }
-
-
-        if (oldQmxf.templateDefinitions.Count > 0)
-        {
-          foreach (var oldTDef in oldQmxf.templateDefinitions)
-          {
-            ///process template label(s)
-            foreach (var newName in newTDef.name)
-            {
-              templateName = newName.value;
-              var oldName = oldTDef.name.Find(n => n.lang == newName.lang);
-              if (String.Compare(oldName.value, newName.value, true) != 0)
-              {
-                GenerateName(ref delete, oldName, templateId, oldTDef);
-                GenerateName(ref insert, newName, templateId, newTDef);
-              }
-            }
-            //append changing descriptions to each block
-            foreach (var newDescr in newTDef.description)
-            {
-              var oldDescr = oldTDef.description.Find(d => d.lang == newDescr.lang);
-              if (oldDescr != null && newDescr != null)
-              {
-                if (String.Compare(oldDescr.value, newDescr.value, true) != 0)
-                {
-                  GenerateDescription(ref delete, oldDescr, templateId);
-                  GenerateDescription(ref insert, newDescr, templateId);
-                }
-              }
-              else if (newDescr != null && oldDescr == null)
-              {
-                GenerateDescription(ref insert, newDescr, templateId);
-              }
-            }
-
-            index = 1;
-            ///  BaseTemplate roles do have the following properties
-            /// 1) baseclass of owl:Thing
-            /// 2) rdfs:subClassOf = p8:TemplateRoleDescription
-            /// 3) rdfs:label = rolename
-            /// 4) p8:valRoleIndex
-            /// 5) p8:hasRoleFillerType = qualifified class or dm:entityType
-            /// 6) p8:hasTemplate = template ID
-            /// 7) p8:hasRole = role ID --- again probably should not use this --- pointer to self
-            if (oldTDef.roleDefinition.Count < newTDef.roleDefinition.Count) ///Role(s) added
-            {
-              foreach (var nrd in newTDef.roleDefinition)
-              {
-                var roleName = nrd.name[0].value;
-                var newRoleID = nrd.identifier;
-                if (string.IsNullOrEmpty(newRoleID))
-                {
-                  if (_useExampleRegistryBase)
-                    generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, roleName);
-                  else
-                    generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
-                  newRoleID = generatedId;
-                }
-                var ord = oldTDef.roleDefinition.Find(r => r.identifier == newRoleID);
-                if (ord == null) /// need to add it
-                {
-                  foreach (var name in nrd.name)
-                  {
-                    GenerateName(ref insert, name, newRoleID, nrd);
-                  }
-                  if (nrd.description != null)
-                  {
-                    GenerateDescription(ref insert, nrd.description, newRoleID);
-                  }
-                  GenerateTypesPart8(ref insert, newRoleID, templateId, nrd);
-                  GenerateRoleIndexPart8(ref insert, newRoleID, index, nrd);
-                }
-                if (nrd.range != null)
-                {
-                  GenerateRoleFillerType(ref insert, newRoleID, nrd.range);
-                }
-              }
-            }
-            else if (oldTDef.roleDefinition.Count > newTDef.roleDefinition.Count) ///Role(s) removed
-            {
-              foreach (RoleDefinition ord in oldTDef.roleDefinition)
-              {
-                RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
-                if (nrd == null) /// need to delete it
-                {
-                  foreach (QMXFName name in ord.name)
-                  {
-                    GenerateName(ref delete, name, ord.identifier, ord);
-                  }
-                  if (ord.description != null)
-                  {
-                    GenerateDescription(ref delete, ord.description, ord.identifier);
-                  }
-                  GenerateTypesPart8(ref delete, ord.identifier, templateId, ord);
-                  GenerateRoleIndexPart8(ref delete, ord.identifier, index, ord);
-                }
-
-                if (ord.range != null)
-                {
-                  GenerateRoleFillerType(ref delete, ord.identifier, ord.range);
-                }
-              }
-            }
-          }
-          if (delete.IsEmpty && insert.IsEmpty)
-          {
-            string errMsg = "No changes made to template [" + templateName + "]";
-            Status status = new Status();
-            response.Level = StatusLevel.Warning;
-            status.Messages.Add(errMsg);
-            response.Append(status);
-            continue;//Nothing to be done
-          }
-        }
-
-        if (insert.IsEmpty && delete.IsEmpty)
-        {
-
-          GenerateTypesPart8(ref insert, templateId, null, newTDef);
-          GenerateRoleCountPart8(ref insert, newTDef.roleDefinition.Count, templateId, newTDef);
-
-          foreach (QMXFName name in newTDef.name)
-          {
-            GenerateName(ref insert, name, templateId, newTDef);
-          }
-
-          foreach (Description descr in newTDef.description)
-          {
-            GenerateDescription(ref insert, descr, templateId);
-          }
-          //form labels
-          foreach (RoleDefinition newRole in newTDef.roleDefinition)
-          {
-
-            string roleLabel = newRole.name.FirstOrDefault().value;
-            string newRoleID = string.Empty;
-            generatedId = string.Empty;
-            string genName = string.Empty;
-            string range = newRole.range;
-
-            genName = "Role definition " + roleLabel;
-            if (string.IsNullOrEmpty(newRole.identifier))
-            {
-              if (_useExampleRegistryBase)
-                generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, genName);
-              else
-                generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, genName);
-              newRoleID = generatedId;
-            }
-            else
-            {
-              newRoleID = newRole.identifier;
-            }
-            foreach (QMXFName newName in newRole.name)
-            {
-              GenerateName(ref insert, newName, newRoleID, newRole);
-            }
-
-            if (newRole.description != null && newRole.description.value != null)
-            {
-              GenerateDescription(ref insert, newRole.description, newRoleID);
-            }
-            GenerateTypesPart8(ref insert, newRoleID, null, newRole);
-            GenerateRoleIndexPart8(ref insert, newRoleID, ++roleCount, newRole);
-            GenerateHasTemplate(ref insert, newRoleID, templateId, newRole);
-            GenerateHasRole(ref insert, templateId, newRoleID, newRole);
-
-            if (!string.IsNullOrEmpty(newRole.range))
-            {
-              GenerateRoleFillerType(ref insert, newRoleID, newRole.range);
-            }
-          }
-        }
-
-        if (!delete.IsEmpty)
-        {
-          sparqlBuilder.AppendLine(deleteData);
-          foreach (Triple t in delete.Triples)
-          {
-            sparqlBuilder.AppendLine(t.ToString(formatter));
-          }
-          if (insert.IsEmpty)
-            sparqlBuilder.AppendLine("}");
-          else
-            sparqlBuilder.AppendLine("};");
-        }
-        if (!insert.IsEmpty)
-        {
-          sparqlBuilder.AppendLine(insertData);
-          foreach (var t in insert.Triples)
-          {
-            sparqlBuilder.AppendLine(t.ToString(formatter));
-          }
-          sparqlBuilder.AppendLine("}");
-        }
-        string sparql = sparqlBuilder.ToString();
-        Response postResponse = PostToRepository(repository, sparql);
-        response.Append(postResponse);
-      }
-      return response;
-    }
-
-    private Response ProcessTemplateQualifications(List<TemplateQualification> list, Repository repository)
-    {
-      /// Qualification templates do have the following properties
-      /// 1) Base class = owl:Thing, owl:NamedIndividual
-      /// 2) subClassOf = p8:SpecializedTemplateStatement
-      /// 3) rdfs:label = template name
-      /// 4) p8:valNumberOfRoles
-      /// 5)  p8:hasRole foreach related role 
-      /// 6) subClassOf baseTemplate which are specialized
-      var response = new Response();
-      var delete = new Graph();
-      var insert = new Graph();
-      delete.NamespaceMap.Import(nsMap);
-      insert.NamespaceMap.Import(nsMap);
-
-      foreach (var newTQ in list)
-      {
-        var roleCount = 0;
-        var templateName = string.Empty;
-        var templateID = string.Empty;
-        var generatedId = string.Empty;
-        var roleQualification = string.Empty;
-        //int index = 1;
-        if (!string.IsNullOrEmpty(newTQ.identifier))
-          templateID = newTQ.identifier;
-
-        templateName = newTQ.name[0].value;
-        var oldQmxf = new QMXF();
-        if (!String.IsNullOrEmpty(templateID))
-        {
-          oldQmxf = GetTemplate(templateID, QMXFType.Qualification, repository);
-        }
-        else
-        {
-          if (_useExampleRegistryBase)
-            generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
-          else
-            generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
-          templateID = generatedId;
-        }
-
-        if (oldQmxf.templateQualifications.Count > 0)
-        {
-          foreach (var oldTQ in oldQmxf.templateQualifications)
-          {
-            foreach (var nn in newTQ.name)
-            {
-              templateName = nn.value;
-              var on = oldTQ.name.Find(n => n.lang == nn.lang);
-              if (on != null)
-              {
-                if (String.Compare(on.value, nn.value, true) != 0)
-                {
-                  GenerateName(ref delete, on, templateID, oldTQ);
-                  GenerateName(ref insert, nn, templateID, newTQ);
-                }
-              }
-            }
-            foreach (var nd in newTQ.description)
-            {
-              if (nd.lang == null) nd.lang = defaultLanguage;
-              Description od = null;
-              od = oldTQ.description.Find(d => d.lang == nd.lang);
-
-              if (od != null && od.value != null)
-              {
-                if (string.Compare(od.value, nd.value, true) != 0)
-                {
-                  GenerateDescription(ref delete, od, templateID);
-                  GenerateDescription(ref insert, nd, templateID);
-                }
-              }
-              else if (od == null && nd.value != null)
-              {
-                GenerateDescription(ref insert, nd, templateID);
-              }
-            }
-            if (oldTQ.roleQualification.Count != newTQ.roleQualification.Count)
-            {
-              GenerateRoleCountPart8(ref delete, oldTQ.roleQualification.Count, templateID, oldTQ);
-              GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
-            }
-
-            foreach (var ns in newTQ.specialization)
-            {
-              var os = oldTQ.specialization.FirstOrDefault();
-
-              if (os != null && os.reference != ns.reference)
-              {
-               //TODO
-              }
-            }
-
-            //index = 1;
-            ///  Qualification roles do have the following properties
-            /// 1) type of owl:Thing, owl:NamedIndividual
-            /// 2) rdf:type = p8:TemplateRoleDescription
-            /// 3) rdfs:label = rolename
-            /// 4) p8:valRoleIndex
-            /// 5) p8:hasRoleFillerType = qualifified class
-            /// 6) p8:hasTemplate = template ID
-            ///
-            if (oldTQ.roleQualification.Count < newTQ.roleQualification.Count)
-            {
-              int count = 0;
-              foreach (var nrq in newTQ.roleQualification)
-              {
-                var roleName = nrq.name[0].value;
-                var newRoleID = nrq.identifier;
-
-                if (string.IsNullOrEmpty(newRoleID))
-                {
-                  if (_useExampleRegistryBase)
-                    generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);//, roleName);
-                  else
-                    generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);//, roleName);
-                  newRoleID = generatedId;
-                }
-                var orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
-                if (orq == null)
-                {
-
-                  GenerateTypesPart8(ref insert, newRoleID, templateID, nrq);
-                  foreach (var nn in nrq.name)
-                  {
-                    GenerateName(ref insert, nn, newRoleID, nrq);
-                  }
-                  GenerateRoleIndexPart8(ref insert, newRoleID, ++count, nrq);
-                  GenerateHasTemplate(ref insert, newRoleID, templateID, nrq);
-                  GenerateHasRole(ref insert, templateID, newRoleID, newTQ);
-                  if (nrq.value != null && !string.IsNullOrEmpty(nrq.value.reference))
-                  {
-                    GenerateRoleFillerType(ref insert, newRoleID, nrq.value.reference);
-                  }
-                  else if (nrq.range != null)
-                  {
-                    GenerateRoleFillerType(ref insert, newRoleID, nrq.range);
-                  }
-                }
-              }
-            }
-            else if (oldTQ.roleQualification.Count > newTQ.roleQualification.Count)
-            {
-              var count = 0;
-              foreach (var orq in oldTQ.roleQualification)
-              {
-                var roleName = orq.name[0].value;
-                var newRoleID = orq.identifier;
-
-                if (string.IsNullOrEmpty(newRoleID))
-                {
-                  if (_useExampleRegistryBase)
-                    generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
-                  else
-                    generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
-                  newRoleID = generatedId;
-                }
-                var nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
-                if (nrq == null)
-                {
-
-                  GenerateTypesPart8(ref delete, newRoleID, templateID, orq);
-                  foreach (var nn in orq.name)
-                  {
-                    GenerateName(ref delete, nn, newRoleID, orq);
-                  }
-                  GenerateRoleIndexPart8(ref delete, newRoleID, ++count, orq);
-                  GenerateHasTemplate(ref delete, newRoleID, templateID, orq);
-                  GenerateHasRole(ref delete, templateID, newRoleID, oldTQ);
-                  if (orq.value != null && !string.IsNullOrEmpty(orq.value.reference))
-                  {
-                    GenerateRoleFillerType(ref delete, newRoleID, orq.value.reference);
-                  }
-                  else if (orq.range != null)
-                  {
-                    GenerateRoleFillerType(ref delete, newRoleID, nrq.range);
-                  }
-                }
-
-              }
-            }
-          }
-          if (delete.IsEmpty && insert.IsEmpty)
-          {
-            string errMsg = "No changes made to template [" + templateName + "]";
-            Status status = new Status();
-            response.Level = StatusLevel.Warning;
-            status.Messages.Add(errMsg);
-            response.Append(status);
-            continue;
-          }
-        }
-
-        if (delete.IsEmpty)
-        {
-          var templateLabel = String.Empty;
-          var labelSparql = String.Empty;
-
-          foreach (var newName in newTQ.name)
-          {
-            GenerateName(ref insert, newName, templateID, newTQ);
-          }
-          foreach (var newDescr in newTQ.description)
-          {
-            if (string.IsNullOrEmpty(newDescr.value)) continue;
-            GenerateDescription(ref insert, newDescr, templateID);
-          }
-          GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
-          GenerateTypesPart8(ref insert, templateID, newTQ.qualifies, newTQ);
-
-          foreach (var spec in newTQ.specialization)
-          {
-            string specialization = spec.reference;  
-              ///TODO
-          }
-
-          foreach (var newRole in newTQ.roleQualification)
-          {
-            var roleLabel = newRole.name.FirstOrDefault().value;
-            var roleID = string.Empty;
-            generatedId = string.Empty;
-            var genName = string.Empty;
-            var range = newRole.range;
-
-            genName = "Role Qualification " + roleLabel;
-            if (string.IsNullOrEmpty(newRole.identifier))
-            {
-              if (_useExampleRegistryBase)
-                generatedId = CreateNewGuidId(_settings["ExampleRegistryBase"]);
-              else
-                generatedId = CreateNewGuidId(_settings["TemplateRegistryBase"]);
-
-              roleID = generatedId;
-            }
-            else
-            {
-              roleID = newRole.identifier;
-            }
-
-            GenerateTypesPart8(ref insert, roleID, templateID, newRole);
-            foreach (var newName in newRole.name)
-            {
-              GenerateName(ref insert, newName, roleID, newRole);
-            }
-            GenerateRoleIndexPart8(ref insert, roleID, ++roleCount, newRole);
-            GenerateHasTemplate(ref insert, roleID, templateID, newRole);
-            GenerateHasRole(ref insert, templateID, roleID, newTQ);
-            if (newRole.value != null && !string.IsNullOrEmpty(newRole.value.reference))
-            {
-              GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
-
-            }
-            else if (newRole.range != null)
-            {
-              GenerateRoleFillerType(ref insert, roleID, newRole.range);
-            }
-          }
-        }
-
-        if (!delete.IsEmpty)
-        {
-          sparqlBuilder.Append(deleteData);
-          foreach (var t in delete.Triples)
-          {
-            sparqlBuilder.AppendLine(t.ToString(formatter));
-          }
-          if (insert.IsEmpty)
-            sparqlBuilder.AppendLine("}");
-          else
-            sparqlBuilder.AppendLine("};");
-        }
-        if (!insert.IsEmpty)
-        {
-          sparqlBuilder.AppendLine(insertData);
-          foreach (var t in insert.Triples)
-          {
-            sparqlBuilder.AppendLine(t.ToString(formatter));
-          }
-          sparqlBuilder.AppendLine("}");
-        }
-
-        var sparql = sparqlBuilder.ToString();
-        var postResponse = PostToRepository(repository, sparql);
-        response.Append(postResponse);
-      }
-      return response;
-    }
-
     public Response PostClass(QMXF qmxf)
     {
-      var delete = new Graph();
-      var insert = new Graph();
-      delete.NamespaceMap.Import(nsMap);
-      insert.NamespaceMap.Import(nsMap);
-      var response = new Response();
+      Graph delete = new Graph();
+      Graph insert = new Graph();
+      //add namespaces to graphs 
+      foreach (var pref in nsMap.Prefixes)
+      {
+        delete.NamespaceMap.AddNamespace(pref, nsMap.GetNamespaceUri(pref));
+      }
+      //delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+      //delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+      //delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+      //delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+      //delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+      insert.NamespaceMap.Import(delete.NamespaceMap);
+
+      Response response = new Response();
       response.Level = StatusLevel.Success;
       try
       {
-        var repository = GetRepository(qmxf.targetRepository);
+        Repository repository = GetRepository(qmxf.targetRepository);
+
         if (repository == null || repository.IsReadOnly)
         {
-          var status = new Status();
+          Status status = new Status();
           status.Level = StatusLevel.Error;
+
           if (repository == null)
             status.Messages.Add("Repository not found!");
           else
             status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
+
           _response.Append(status);
         }
         else
         {
-          var registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
-          foreach (var newClsDef in qmxf.classDefinitions)
+          string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
+          foreach (ClassDefinition newClsDef in qmxf.classDefinitions)
           {
-            var language = string.Empty;
-            var clsId = newClsDef.identifier;
-            var oldQmxf = new QMXF();
+            string language = string.Empty;
+            string clsId = newClsDef.identifier;
+            QMXF oldQmxf = new QMXF();
 
             if (!String.IsNullOrEmpty(clsId))
             {
               oldQmxf = GetClass(clsId, repository);
             }
+            // delete class
             if (oldQmxf.classDefinitions.Count > 0)
             {
-              foreach (var oldClsDef in oldQmxf.classDefinitions)
+              foreach (ClassDefinition oldClsDef in oldQmxf.classDefinitions)
               {
-                foreach (var nn in newClsDef.name)
+                foreach (QMXFName nn in newClsDef.name)
                 {
-                  var on = oldClsDef.name.Find(n => n.lang == nn.lang);
+                  QMXFName on = oldClsDef.name.Find(n => n.lang == nn.lang);
                   if (on != null)
                   {
                     if (String.Compare(on.value, nn.value, true) != 0)
@@ -2631,9 +3010,9 @@ namespace org.iringtools.refdata
                       GenerateClassName(ref insert, nn, clsId, newClsDef);
                     }
                   }
-                  foreach (var nd in newClsDef.description)
+                  foreach (Description nd in newClsDef.description)
                   {
-                    var od = oldClsDef.description.Find(d => d.lang == nd.lang);
+                    Description od = oldClsDef.description.Find(d => d.lang == nd.lang);
                     if (od != null)
                     {
                       if (String.Compare(od.value, nd.value, true) != 0)
@@ -2643,55 +3022,71 @@ namespace org.iringtools.refdata
                       }
                     }
                   }
+                  //specialization
                   if (newClsDef.specialization.Count == oldClsDef.specialization.Count)
                   {
-                    continue;
+                    continue; /// no change ... so continue
                   }
-                  else if (newClsDef.specialization.Count < oldClsDef.specialization.Count) 
+                  else if (newClsDef.specialization.Count < oldClsDef.specialization.Count) //some is deleted ...focus on old to find deleted
                   {
-                    foreach (var os in oldClsDef.specialization)
+                    foreach (Specialization os in oldClsDef.specialization)
                     {
-                      var ns = newClsDef.specialization.Find(s => s.reference == os.reference);
+                      Specialization ns = newClsDef.specialization.Find(s => s.reference == os.reference);
                       if (ns == null)
                       {
                         GenerateRdfSubClass(ref delete, clsId, os.reference);
                       }
                     }
                   }
-                  else if (newClsDef.specialization.Count > oldClsDef.specialization.Count)
+                  else if (newClsDef.specialization.Count > oldClsDef.specialization.Count)//some is added ... find added 
                   {
-                    foreach (var ns in newClsDef.specialization)
+                    foreach (Specialization ns in newClsDef.specialization)
                     {
-                      var os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
+                      Specialization os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
                       if (os == null)
                       {
                         GenerateRdfSubClass(ref insert, clsId, ns.reference);
                       }
                     }
                   }
+                  // classification
                   if (newClsDef.classification.Count == oldClsDef.classification.Count)
                   {
-                    continue;
+                    continue; //no change...so continue
                   }
-                  else if (newClsDef.classification.Count < oldClsDef.classification.Count) 
+                  else if (newClsDef.classification.Count < oldClsDef.classification.Count) //some is deleted ...focus on old to find deleted
                   {
-                    foreach (var oc in oldClsDef.classification)
+                    foreach (Classification oc in oldClsDef.classification)
                     {
-                      var nc = newClsDef.classification.Find(c => c.reference == oc.reference);
+                      Classification nc = newClsDef.classification.Find(c => c.reference == oc.reference);
                       if (nc == null)
                       {
-                        GenerateSuperClass(ref delete, oc.reference, clsId); ///delete from old
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateSuperClass(ref delete, oc.reference, clsId); ///delete from old
+                        }
+                        else
+                        {
+                          GenerateDmClassification(ref delete, clsId, oc.reference);
+                        }
                       }
                     }
                   }
                   else if (newClsDef.classification.Count > oldClsDef.classification.Count)//some is added ... find added classifications
                   {
-                    foreach (var nc in newClsDef.classification)
+                    foreach (Classification nc in newClsDef.classification)
                     {
-                      var oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
+                      Classification oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
                       if (oc == null)
                       {
-                        GenerateSuperClass(ref insert, nc.reference, clsId); ///insert from new
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateSuperClass(ref insert, nc.reference, clsId); ///insert from new
+                        }
+                        else
+                        {
+                          GenerateDmClassification(ref insert, clsId, nc.reference);
+                        }
                       }
                     }
                   }
@@ -2699,27 +3094,31 @@ namespace org.iringtools.refdata
               }
               if (delete.IsEmpty && insert.IsEmpty)
               {
-                var errMsg = "No changes made to class [" + qmxf.classDefinitions[0].name[0].value + "]";
-                var status = new Status();
+                string errMsg = "No changes made to class [" + qmxf.classDefinitions[0].name[0].value + "]";
+                Status status = new Status();
                 response.Level = StatusLevel.Warning;
                 status.Messages.Add(errMsg);
                 response.Append(status);
                 continue;
               }
             }
+            /// add class
             if (delete.IsEmpty && insert.IsEmpty)
             {
-              var clsLabel = newClsDef.name[0].value;
+              string clsLabel = newClsDef.name[0].value;
               if (string.IsNullOrEmpty(clsId))
               {
-                var newClsName = "Class definition " + clsLabel;
+                string newClsName = "Class definition " + clsLabel;
                 clsId = CreateNewGuidId(registry);
+
               }
+              /// append entity type
               if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
               {
                 GenerateTypesPart8(ref insert, clsId, newClsDef.entityType.reference, newClsDef);
               }
-              foreach (var ns in newClsDef.specialization)
+              /// append specialization
+              foreach (Specialization ns in newClsDef.specialization)
               {
                 if (!String.IsNullOrEmpty(ns.reference))
                 {
@@ -2729,22 +3128,25 @@ namespace org.iringtools.refdata
                   }
                   else
                   {
-                    throw new Exception("Repository updates not supported for repository type[" + repository.RepositoryType + "]");
+                    GenerateDmSubClass(ref insert, clsId, ns.reference);
                   }
                 }
               }
-              foreach (var nd in newClsDef.description)
+              // append description
+              foreach (Description nd in newClsDef.description)
               {
                 if (!String.IsNullOrEmpty(nd.value))
                 {
                   GenerateClassDescription(ref insert, nd, clsId);
                 }
               }
-              foreach (var nn in newClsDef.name)
+              foreach (QMXFName nn in newClsDef.name)
               {
+                // append label
                 GenerateClassName(ref insert, nn, clsId, newClsDef);
               }
-              foreach (var nc in newClsDef.classification)
+              // append classification
+              foreach (Classification nc in newClsDef.classification)
               {
                 if (!string.IsNullOrEmpty(nc.reference))
                 {
@@ -2754,7 +3156,7 @@ namespace org.iringtools.refdata
                   }
                   else
                   {
-                    throw new Exception("Repository updates not supported for repository type[" + repository.RepositoryType + "]");
+                    GenerateDmClassification(ref insert, clsId, nc.reference);
                   }
                 }
               }
@@ -2762,7 +3164,7 @@ namespace org.iringtools.refdata
             if (!delete.IsEmpty)
             {
               sparqlBuilder.AppendLine(deleteData);
-              foreach (var t in delete.Triples)
+              foreach (Triple t in delete.Triples)
               {
                 sparqlBuilder.AppendLine(t.ToString(formatter));
               }
@@ -2774,61 +3176,73 @@ namespace org.iringtools.refdata
             if (!insert.IsEmpty)
             {
               sparqlBuilder.AppendLine(insertData);
-              foreach (var t in insert.Triples)
+              foreach (Triple t in insert.Triples)
               {
                 sparqlBuilder.AppendLine(t.ToString(formatter));
               }
               sparqlBuilder.AppendLine("}");
             }
-            var sparql = sparqlBuilder.ToString();
-            var postResponse = PostToRepository(repository, sparql);
+
+            string sparql = sparqlBuilder.ToString();
+            Response postResponse = PostToRepository(repository, sparql);
             response.Append(postResponse);
           }
         }
       }
       catch (Exception ex)
       {
-        var errMsg = "Error in PostClass: " + ex;
-        var status = new Status();
+        string errMsg = "Error in PostClass: " + ex;
+        Status status = new Status();
+
         response.Level = StatusLevel.Error;
         status.Messages.Add(errMsg);
         response.Append(status);
+
         _logger.Error(errMsg);
       }
+
       return response;
     }
 
+              #endregion
+
     public List<Entity> Find(string queryString)
     {
-      var queryResult = new List<Entity>();
+      List<Entity> queryResult = new List<Entity>();
       try
       {
-        var sparql = String.Empty;
-        var relativeUri = String.Empty;
-        var queryExactSearch = (Query)_queries.FirstOrDefault(c => c.Key == "ExactSearch").Query;
-        var qBindings = queryExactSearch.Bindings;
-        sparql = ReadSPARQL(queryExactSearch.FileName);
-        sparql = sparql.Replace("param1", queryString);
-        foreach (var repository in _repositories)
-        {
-          var sparqlResults = QueryFromRepository(repository, sparql);
+        string sparql = String.Empty;
+        string relativeUri = String.Empty;
 
-          foreach (var result in sparqlResults)
+        Query queryExactSearch = (Query)_queries.FirstOrDefault(c => c.Key == "ExactSearch").Query;
+
+        sparql = ReadSPARQL(queryExactSearch.FileName);
+
+        sparql = sparql.Replace("param1", queryString);
+
+        foreach (Repository repository in _repositories)
+        {
+          SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+
+          foreach (SparqlResult result in sparqlResults)
           {
-            var resultEntity = new Entity();
-            foreach (var v in qBindings)
+            Entity resultEntity = new Entity();
+            foreach (var v in result.Variables)
             {
-              if (v.Name.Equals("uri"))
+              if (v.Equals("uri"))
               {
-                resultEntity.Uri = result[v.Name].ToString();
+                resultEntity.Uri = result[v].ToString();
               }
-              else if (v.Name.Equals("label") && result.HasValue(v.Name))
+              else if (v.Equals("label") && result.HasValue("label"))
               {
-                resultEntity.Label = ((ILiteralNode)result[v.Name]).Value;
-                resultEntity.Lang = ((ILiteralNode)result[v.Name]).Language;
+                resultEntity.Label = ((ILiteralNode)result[v]).Value;
+                resultEntity.Lang = ((ILiteralNode)result[v]).Language;
               }
             }
+
             resultEntity.Repository = repository.Name;
+
+
             queryResult.Add(resultEntity);
           }
         }
@@ -2843,7 +3257,7 @@ namespace org.iringtools.refdata
 
     public VersionInfo GetVersion()
     {
-      var version = this.GetType().Assembly.GetName().Version;
+      Version version = this.GetType().Assembly.GetName().Version;
 
       return new VersionInfo()
       {
@@ -2852,6 +3266,66 @@ namespace org.iringtools.refdata
         Build = version.Build,
         Revision = version.Revision
       };
+    }
+
+    private void GenerateValue(ref Graph work, string subjId, string objId, object gobj)
+    {
+      RoleQualification role = (RoleQualification)gobj;
+      pred = work.CreateUriNode("tpl:R56456315674");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+      pred = work.CreateUriNode("tpl:R89867215482");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+      pred = work.CreateUriNode("tpl:R29577887690");
+      obj = work.CreateLiteralNode(role.value.text, string.IsNullOrEmpty(role.value.lang) ? defaultLanguage : role.value.lang);
+      work.Assert(new Triple(subj, pred, obj));
+    }
+
+    private void GenerateReferenceQual(ref Graph work, string subjId, string objId, object gobj)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode("tpl:R30741601855");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+    }
+
+    private void GenerateReferenceType(ref Graph work, string subjId, string objId, object gobj)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode(rdfType);
+      obj = work.CreateUriNode("tpl:R40103148466");
+      work.Assert(new Triple(subj, pred, obj));
+      pred = work.CreateUriNode("tpl:R49267603385");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+    }
+
+    private void GenerateReferenceTpl(ref Graph work, string subjId, string objId, object gobj)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode("tpl:R21129944603");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+    }
+
+    private void GenerateQualifies(ref Graph work, string subjId, string objId, object gobj)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode("tpl:R91125890543");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+    }
+
+    private void GenerateRange(ref Graph work, string subjId, string objId, object gobj)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode("rdfs:range");
+      obj = work.CreateUriNode(objId);
+      work.Assert(new Triple(subj, pred, obj));
+      pred = work.CreateUriNode("tpl:R98983340497");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateHasRole(ref Graph work, string subjId, string objId, object gobj)
@@ -2868,9 +3342,20 @@ namespace org.iringtools.refdata
       {
         subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode("p8:hasTemplate");
-        obj = work.CreateUriNode(new Uri(objId));
-        work.Assert(new Triple(subj, pred, obj));
+        var uri = new Uri(objId);        
+        obj = work.CreateUriNode(uri);
+        var triple = new Triple(subj, pred, obj);
+        Console.WriteLine(triple.ToString());
+        work.Assert(triple);
       }
+    }
+
+    private void GenerateRoleIndex(ref Graph work, string subjId, int index)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode("tpl:R97483568938");
+      obj = work.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
+      work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateRoleIndexPart8(ref Graph work, string subjId, int index, object gobj)
@@ -2884,12 +3369,31 @@ namespace org.iringtools.refdata
       }
     }
 
+    private void GenerateRoleDomain(ref Graph work, string subjId, string objId)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode("rdfs:domain");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+    }
+
     private void GenerateRoleFillerType(ref Graph work, string subjId, string range)
     {
       subj = work.CreateUriNode(new Uri(subjId));
       pred = work.CreateUriNode("p8:hasRoleFillerType");
       obj = work.CreateUriNode(new Uri(range));
       work.Assert(new Triple(subj, pred, obj));
+    }
+
+    private void GenerateRoleCount(ref Graph work, int rolecount, string subjId, object gobj)
+    {
+      if (gobj is TemplateDefinition || gobj is TemplateQualification)
+      {
+        subj = work.CreateUriNode(new Uri(subjId));
+        pred = work.CreateUriNode("tpl:R35529169909");
+        obj = work.CreateLiteralNode(Convert.ToString(rolecount), new Uri("xsd:integer"));
+        work.Assert(new Triple(subj, pred, obj));
+      }
     }
 
     private void GenerateRoleCountPart8(ref Graph work, int rolecount, string subjId, object gobj)
@@ -2911,8 +3415,7 @@ namespace org.iringtools.refdata
         subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
-        work.Assert(new Triple(subj, pred, obj));
-        obj = work.CreateUriNode("owl:NamedIndividual");
+        //obj = work.CreateUriNode("p8:TemplateDescription");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
         obj = work.CreateUriNode("p8:BaseTemplateStatement");
@@ -2923,8 +3426,6 @@ namespace org.iringtools.refdata
         subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
-        work.Assert(new Triple(subj, pred, obj));
-        obj = work.CreateUriNode("owl:NamedIndividual");
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("p8:TemplateRoleDescription");
         work.Assert(new Triple(subj, pred, obj));
@@ -2938,8 +3439,6 @@ namespace org.iringtools.refdata
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
         work.Assert(new Triple(subj, pred, obj));
-        obj = work.CreateUriNode("owl:NamedIndividual");
-        work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("p8:TemplateRoleDescription");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("p8:hasRoleFillerType");
@@ -2950,9 +3449,9 @@ namespace org.iringtools.refdata
       {
         subj = work.CreateUriNode(new Uri(subjId));
         pred = work.CreateUriNode(rdfType);
+        //obj = work.CreateUriNode("p8:TemplateDescription");
+        //work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("owl:Thing");
-        work.Assert(new Triple(subj, pred, obj));
-        obj = work.CreateUriNode("owl:NamedIndividual");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
         obj = work.CreateUriNode("p8:SpecializedTemplateStatement");
@@ -2973,6 +3472,48 @@ namespace org.iringtools.refdata
       }
     }
 
+    private void GenerateTypes(ref Graph work, string subjId, string objId, object gobj)
+    {
+      if (gobj is TemplateDefinition)
+      {
+        subj = work.CreateUriNode(new Uri(subjId));
+        pred = work.CreateUriNode(rdfType);
+        obj = work.CreateUriNode("tpl:R16376066707");
+        work.Assert(new Triple(subj, pred, obj));
+      }
+      else if (gobj is RoleDefinition)
+      {
+        subj = work.CreateUriNode(new Uri(subjId));
+        pred = work.CreateUriNode(rdfType);
+        obj = work.CreateUriNode("tpl:R74478971040");
+        work.Assert(new Triple(subj, pred, obj));
+      }
+      else if (gobj is TemplateQualification)
+      {
+        subj = work.CreateUriNode(new Uri(objId));
+        pred = work.CreateUriNode("dm:hasSubclass");
+        obj = work.CreateUriNode(new Uri(subjId));
+        work.Assert(new Triple(subj, pred, obj));
+        subj = work.CreateUriNode(new Uri(subjId));
+        pred = work.CreateUriNode("dm:hasSuperclass");
+        obj = work.CreateUriNode(new Uri(objId));
+        work.Assert(new Triple(subj, pred, obj));
+      }
+      else if (gobj is RoleQualification)
+      {
+        subj = work.CreateUriNode(new Uri(subjId));
+        pred = work.CreateUriNode(rdfType);
+        obj = work.CreateUriNode("tpl:R76288246068");
+        work.Assert(new Triple(subj, pred, obj));
+        pred = work.CreateUriNode("tpl:R99672026745");
+        obj = work.CreateUriNode(new Uri(objId));
+        work.Assert(new Triple(subj, pred, obj));
+        pred = work.CreateUriNode(rdfType);
+        obj = work.CreateUriNode("tpl:R67036823327");
+        work.Assert(new Triple(subj, pred, obj));
+      }
+    }
+
     private void GenerateName(ref Graph work, QMXFName name, string subjId, object gobj)
     {
       subj = work.CreateUriNode(new Uri(subjId));
@@ -2983,7 +3524,7 @@ namespace org.iringtools.refdata
 
     private void GenerateClassName(ref Graph work, QMXFName name, string subjId, object gobj)
     {
-      subj = work.CreateUriNode(new Uri(subjId));
+      subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
       pred = work.CreateUriNode("rdfs:label");
       obj = work.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
       work.Assert(new Triple(subj, pred, obj));
@@ -2998,7 +3539,7 @@ namespace org.iringtools.refdata
 
     private void GenerateClassDescription(ref Graph work, Description descr, string subjectId)
     {
-      subj = work.CreateUriNode(new Uri(subjectId));
+      subj = work.CreateUriNode(string.Format("rdl:{0}", subjectId));
       pred = work.CreateUriNode("rdfs:comment");
       obj = work.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
       work.Assert(new Triple(subj, pred, obj));
@@ -3019,5 +3560,24 @@ namespace org.iringtools.refdata
       obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(subj, pred, obj));
     }
+
+    private void GenerateDmClassification(ref Graph work, string subjId, string objId)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode("dm:hasClassified");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+      pred = work.CreateUriNode("dm:hasClassifier");
+      work.Assert(new Triple(subj, pred, obj));
+    }
+
+    private void GenerateDmSubClass(ref Graph work, string subjId, string objId)
+    {
+      subj = work.CreateUriNode(new Uri(subjId));
+      pred = work.CreateUriNode("dm:hasSubclass");
+      obj = work.CreateUriNode(new Uri(objId));
+      work.Assert(new Triple(subj, pred, obj));
+    }
+          #endregion
   }
 }
