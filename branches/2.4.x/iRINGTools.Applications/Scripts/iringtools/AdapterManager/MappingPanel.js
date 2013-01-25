@@ -511,22 +511,19 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
           notifyEnter: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
-              return this.dropNotAllowed;
-            else
+            if (data.node.attributes.type == 'DataPropertyNode' || data.node.attributes.type == 'KeyDataPropertyNode')
               return this.dropAllowed;
+            else
+              return this.dropNotAllowed;
           },
           notifyOver: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
-              return this.dropNotAllowed;
-            else
+            if (data.node.attributes.type == 'DataPropertyNode' || data.node.attributes.type == 'KeyDataPropertyNode')
               return this.dropAllowed;
+            else
+              return this.dropNotAllowed;
           },
           notifyDrop: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode') {
-              return false;
-            }
-            else {
+            if (data.node.attributes.type == 'DataPropertyNode' || data.node.attributes.type == 'KeyDataPropertyNode') {
               Ext.get('propertyName').dom.value = data.node.attributes.record.Name;
 
               if (data.node.parentNode != undefined
@@ -542,6 +539,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
               return true;
             }
+
+            return fase;
           } //eo notifyDrop
         }); //eo propertydd
       }
@@ -551,7 +550,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       closable: true,
       modal: false,
       layout: 'form',
-      title: 'Map Data Property to RoleMAp',
+      title: 'Map Data Property to RoleMap',
       items: form,
       // height: 120,
       width: 430,
