@@ -303,6 +303,7 @@ namespace org.iringtools.web.controllers
                     expanded = false,
                     leaf = false,
                     children = null,
+                    hidden = dataObject.isHidden,
                     record = new
                     {
                       Name = dataObject.objectName,
