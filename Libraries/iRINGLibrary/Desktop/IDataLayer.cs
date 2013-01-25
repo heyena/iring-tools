@@ -77,7 +77,9 @@ namespace org.iringtools.library
 
     long GetRelatedCount(IDataObject dataObject, string relatedObjectType);
 
-    IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
+    //IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
+
+    IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex);
   }
 
   public interface IDataLayer2 : IDataLayer

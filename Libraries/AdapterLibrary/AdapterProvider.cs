@@ -3246,31 +3246,30 @@ namespace org.iringtools.adapter
             ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
             : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
 
-        _projectionEngine.Count = _dataLayer.GetRelatedCount(parentDataObject, relatedObjectType);
+        //_projectionEngine.Count = _dataLayer.GetRelatedCount(parentDataObject, relatedObjectType);
+
+        DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
+
+        foreach (PropertyMap propMap in dataRelationship.propertyMaps)
+        {
+            filter.Expressions.Add(new Expression()
+            {
+                PropertyName = propMap.relatedPropertyName,
+                RelationalOperator = RelationalOperator.EqualTo,
+                LogicalOperator = LogicalOperator.And,
+                Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
+            });
+        }
 
         try
         {
-            //if (parameters == null)
-            //{
-            _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
-            //}
+            _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, filter, limit, start);
         }
         catch (NotImplementedException ex)
         {
-            DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
-
-            foreach (PropertyMap propMap in dataRelationship.propertyMaps)
-            {
-                filter.Expressions.Add(new Expression()
-                {
-                    PropertyName = propMap.relatedPropertyName,
-                    RelationalOperator = RelationalOperator.EqualTo,
-                    LogicalOperator = LogicalOperator.And,
-                    Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
-                });
-            }
             _dataObjects = _dataLayer.Get(relatedObjectType, filter, limit, start);
         }
+        _projectionEngine.Count = _dataObjects.Count;
 
         XDocument xdoc = _projectionEngine.ToXml(relatedObjectType, ref _dataObjects);
         return xdoc;
