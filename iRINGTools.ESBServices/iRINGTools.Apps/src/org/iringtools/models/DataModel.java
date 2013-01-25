@@ -962,12 +962,12 @@ public class DataModel {
 					String dups;
 					if (dto.getDuplicateCount() == null) {
 						dups = "0";
-					//	rowData.add(dups);
+						rowData.add("<input type=\"image\" src=\"resources/images/warning.png\" width=15 heigt=15  "+ "onClick='javascript:showStatus(\"" + 0 + "\")'>");
 					} else{
 					//	rowData.add((dto.getDuplicateCount().toString()));
 						if(dto.getDuplicateCount() == 1)
 						{
-						rowData.add("<input type=\"image\" src=\"resources/images/success.png\" width=15 heigt=15 >");
+						rowData.add("<input type=\"image\" src=\"resources/images/success.png\" width=15 heigt=15  "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
 					}else
 					{
 						rowData.add("<input type=\"image\" src=\"resources/images/error.png\" width=15 heigt=15  "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
