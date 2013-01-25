@@ -116,9 +116,15 @@ namespace org.iringtools.library
       return 0;
     }
 
+    [System.Obsolete("Instead Use GetRelatedObjects with filter")]
     public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex)
     {
       return null;
+    }
+
+    public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex)
+    {
+        return null;
     }
 
     #region Abstract Public Interface Methods

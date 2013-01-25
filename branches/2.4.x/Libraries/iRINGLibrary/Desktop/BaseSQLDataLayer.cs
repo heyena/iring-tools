@@ -52,8 +52,8 @@ namespace org.iringtools.library
     // get related data rows of a given data row
     public abstract long GetRelatedCount(DataRow dataRow, string relatedTableName);
 
-    // get related data rows of a given data row
-    public abstract DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit);
+    //// get related data rows of a given data row
+    //public abstract DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit);
 
     // post data rows and its related items (data rows)
     public abstract Response PostDataTables(IList<DataTable> dataTables);
@@ -80,6 +80,19 @@ namespace org.iringtools.library
 
     // post related data rows
     public virtual Response PostRelatedDataTable(string parentObjectType, string parentObjectId, string relatedObjectType, IList<DataTable> childDataTables)
+    {
+        throw new NotImplementedException();
+    }
+
+    // get related data rows of a given data row
+    [System.Obsolete("Instead Use GetRelatedDataTable with filter")]
+    public virtual DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit)
+    {
+        throw new NotImplementedException();
+    }
+
+    // get related data rows of a given data row with filter
+    public virtual DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, DataFilter filter, long start, long limit)
     {
         throw new NotImplementedException();
     }
@@ -332,6 +345,42 @@ namespace org.iringtools.library
         _logger.Error("Error getting related objects: " + ex);
         throw ex;
       }
+    }
+
+
+    public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex)
+    {
+        string objectType = dataObject.GetType().Name;
+
+        if (objectType == typeof(GenericDataObject).Name)
+        {
+            objectType = ((GenericDataObject)dataObject).ObjectType;
+        }
+
+        try
+        {
+            DataObject objectDefinition = GetObjectDefinition(objectType);
+            DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
+
+            DataTable dataTable = NewDataTable(objectDefinition);
+            DataRow dataRow = dataTable.NewRow();
+            PopulateColumnValues(dataRow, objectDefinition, dataObject);
+
+            if (dataRow != null)
+            {
+                DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName, filter, startIndex, pageSize);
+                return ToDataObjects(relatedDataTable, relatedObjectDefinition.objectName);
+            }
+            else
+            {
+                throw new Exception("Error creating/getting data row for object [" + objectDefinition.objectName + "]");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error getting related objects: " + ex);
+            throw ex;
+        }
     }
 
     public override Response Post(IList<IDataObject> dataObjects)
