@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<qmxf xmlns="http://ns.ids-adi.org/qxf/model#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <class-definition>
-    <specialization reference="http://rdl.rdlfacade.org/data#R50920869909" label="ARTEFACT"/>
-    <designation/>
-    <name>Canine</name>
-    <description>A dog that has four legs a head and a tail</description>
-  </class-definition>
-</qmxf>

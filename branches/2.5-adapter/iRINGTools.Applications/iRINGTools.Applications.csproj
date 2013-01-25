@@ -4771,10 +4771,6 @@
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj">
-      <Project>{1A611244-54BE-4F12-AA34-12F54A2B07E6}</Project>
-      <Name>PrismContrib.Desktop</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
       <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
       <Name>SpreadsheetDatalayer</Name>
