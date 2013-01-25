@@ -878,40 +878,4 @@
       <fileName>GetEntityTypes.txt</fileName>
     </query>
   </queryItem>
-  <queryItem>
-    <key>PostPart8Template_1</key>
-    <query>
-      <fileName>PostPart8Template_1.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_2</key>
-    <query>
-      <fileName>PostPart8Template_2.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_3</key>
-    <query>
-      <fileName>PostPart8Template_3.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_4</key>
-    <query>
-      <fileName>PostPart8Template_4.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_5_1</key>
-    <query>
-      <fileName>PostPart8Template_5_1.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_5_2</key>
-    <query>
-      <fileName>PostPart8Template_5_2.txt</fileName>
-    </query>
-  </queryItem>
 </queries>
