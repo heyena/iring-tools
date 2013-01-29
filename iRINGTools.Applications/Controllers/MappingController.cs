@@ -137,56 +137,7 @@ namespace org.iringtools.web.controllers
 
       return Json(new { success = true, node = classMapNode }, JsonRequestBehavior.AllowGet);
     }
-
-    [Obsolete("Use MakeReference instead", true)]
-    public JsonResult MapReference(FormCollection form)
-    {
-      try
-      {
-        string qName = string.Empty;
-        string templateName = string.Empty;
-        string format = String.Empty;
-        string propertyCtx = form["ctx"];
-        string reference = string.Empty;
-        bool qn = _nsMap.ReduceToQName(form["reference"], out reference);
-        string classId = form["classId"];
-        string label = form["label"];
-        string roleName = form["roleName"];
-        string roleId = form["roleId"];
-        string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = dataObjectVars[0];
-        string application = dataObjectVars[1];
-        string graph = dataObjectVars[2];
-        int index = Convert.ToInt32(form["index"]);
-
-        Mapping mapping = GetMapping(scope, application);
-        GraphMap graphMap = mapping.FindGraphMap(graph);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-        TemplateMap tMap = ctm.templateMaps[index];
-        RoleMap rMap = tMap.roleMaps.Find(c => c.name == roleName);
-
-        if (rMap != null)
-        {
-          rMap.type = RoleType.Reference;
-          rMap.dataType = reference;
-          rMap.propertyName = null;
-          rMap.valueListName = null;
-        }
-        else
-        {
-          throw new Exception("Error Creating Reference Map...");
-        }
-      }
-      catch (Exception e)
-      {
-        String msg = e.ToString();
-        _logger.Error(msg);
-        return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
-      }
-
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-    }
-
+    
     public JsonResult AddTemplateMap(FormCollection form)
     {
       JsonTreeNode nodes = new JsonTreeNode();
@@ -969,24 +920,34 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        string mappingNode = form["mappingNode"];
         string scope = form["scope"];
         string app = form["app"];
         string graph = form["graph"];
         string classId = form["classId"];
+        int templateIndex = Convert.ToInt16(form["templateIndex"]);
         string roleName = form["roleName"];
-        int index = Convert.ToInt16(form["index"]);
+        string refClassId = form["refClassId"];
+        string refClassLabel = form["refClassLabel"];   
 
         Mapping mapping = GetMapping(scope, app);
         GraphMap graphMap = mapping.FindGraphMap(graph);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-        TemplateMap tMap = ctm.templateMaps[index];
+        TemplateMap tMap = ctm.templateMaps[templateIndex];
         RoleMap rMap = tMap.roleMaps.Find(c => c.name == roleName);
 
         if (rMap != null)
         {
           rMap.type = RoleType.Reference;
-          rMap.value = GetClassLabel(rMap.dataType);
+
+          if (string.IsNullOrEmpty(refClassLabel))
+          {
+            rMap.value = GetClassLabel(rMap.dataType);
+          }
+          else
+          {
+            rMap.value = refClassLabel;
+          }
+
           rMap.propertyName = null;
           rMap.valueListName = null;
         }
