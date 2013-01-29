@@ -221,7 +221,6 @@ namespace org.iringtools.adapter
                       string objectName = property[0].Trim();
                       string propertyName = property[1].Trim();
 
-
                       foreach (String identifier in classMap.identifiers)
                       {
                         if (identifier.ToLower() == roleMap.propertyName.ToLower())
@@ -231,14 +230,18 @@ namespace org.iringtools.adapter
                           key.roleId = roleId;
                           key.classId = anyClassMap.id;
                           keys.Add(key);
-
                         }
-
                       }
                     }
                   }
                 }
               }
+
+              if (keys.Count == 0)
+              {
+                throw new Exception("Key property is not mapped.");
+              }
+
               Class manifestClass = new Class
               {
                 id = classMap.id,

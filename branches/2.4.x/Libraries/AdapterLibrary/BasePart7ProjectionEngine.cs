@@ -758,6 +758,9 @@ namespace org.iringtools.adapter.projection
         }
       }
 
+      if (classIdentifiers == null)
+        return new List<string>();
+
       return classIdentifiers.ToList<string>();
     }
 

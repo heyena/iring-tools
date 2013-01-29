@@ -39,7 +39,11 @@ public class AppDataModel extends DataModel
         
         pageDtoGrid = getDtoGrid(appRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
-        pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
+        
+        if (dtis == null || dtis.getDataTransferIndexList() == null || dtis.getDataTransferIndexList().getItems().size() == 0)
+          pageDtoGrid.setTotal(0);
+        else
+          pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
       }
       else
       {
