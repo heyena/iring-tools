@@ -336,44 +336,43 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     e.target.expand();
 
     this.getParentClass(e.target);
-    // var dir = this.getParentClass(e.target);
     var nodetype, thistype, icn, txt, templateId, rec, parentId, context;
+
     if (e.target.attributes.type == 'RoleMapNode') {
-      reference = e.data.node.attributes.record.Uri;
-      label = e.data.node.attributes.record.Label;
-      roleId = e.target.attributes.record.id;
-      roleName = e.target.attributes.record.name;
-      rec = e.data.node.attributes.record;
-      txt = e.data.node.attributes.record.Label;
-      context = e.target.id + '/' + txt;
-      parentId = this.parentClass;
-      var index = e.target.parentNode.parentNode.indexOf(e.target.parentNode);
-      f = false;
       var that = this;
+      var targetNode = e.target.attributes;
+      var contextParts = targetNode.id.split('/');
+      var classId = e.target.parentNode.parentNode.attributes.identifier;
+      var templateIndex = e.target.parentNode.parentNode.indexOf(e.target.parentNode);
+
       e.tree.getEl().mask('Loading...');
+
       Ext.Ajax.request({
-        url: 'mapping/mapreference',
+        url: 'mapping/makereference',
         method: 'POST',
         params: {
-          reference: reference,
-          classId: parentId,
-          label: label,
-          roleId: roleId,
-          roleName: roleName,
-          ctx: context,
-          index: index
+          scope: contextParts[0],
+          app: contextParts[1],
+          graph: contextParts[2],
+          classId: classId,
+          templateIndex: templateIndex,
+          roleId: e.target.attributes.record.id,
+          roleName: e.target.attributes.record.name,
+          refClassId: e.dropNode.attributes.record.Uri,
+          refClassLabel: e.dropNode.attributes.record.Label
         },
         success: function (result, request) {
           e.tree.getEl().unmask();
           that.onReload();
         },
         failure: function (result, request) {
+          e.tree.getEl().unmask();
           //don't drop it
           return false;
         }
       })
     }
-    if (e.data.node.attributes.type == 'TemplateNode') {
+    else if (e.data.node.attributes.type == 'TemplateNode') {
       ntype = e.target.attributes.type;
       parentid = e.target.attributes.identifier;
       thistype = e.data.node.attributes.type;
@@ -393,8 +392,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           parentType: ntype,
           parentId: parentid,
           id: templateId,
-          ctx: context,
-          index: index
+          ctx: context
         },
         success: function (result, request) {
           e.tree.getEl().unmask();
@@ -421,7 +419,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     e.cancel = true; //don't want to remove it from the source
     return true;
-
   },
 
   onClose: function (btn, e) {
@@ -782,7 +779,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   onMakeReference: function () {
     var that = this;
     var node = this.mappingPanel.getSelectionModel().getSelectedNode();
-    var index = node.parentNode.parentNode.indexOf(node.parentNode);
+    var templateIndex = node.parentNode.parentNode.indexOf(node.parentNode);
     var contextParts = node.id.split('/');
 
     Ext.Ajax.request({
@@ -792,7 +789,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         scope: contextParts[0],
         app: contextParts[1],
         graph: contextParts[2],
-        index: index,
+        templateIndex: templateIndex,
         classId: node.parentNode.parentNode.attributes.identifier,
         roleId: node.attributes.record.id,
         roleName: node.attributes.record.name

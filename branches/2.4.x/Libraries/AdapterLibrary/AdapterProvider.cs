@@ -95,84 +95,91 @@ namespace org.iringtools.adapter
     [Inject]
     public AdapterProvider(NameValueCollection settings)
     {
-      //TODO: Pending on testing, do not delete
-      //AppDomain currentDomain = AppDomain.CurrentDomain;
-      //currentDomain.AssemblyResolve += new ResolveEventHandler(DataLayerAssemblyResolveEventHandler);
-      
-      var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
-      _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
-
-      _kernel.Load(new XmlExtensionModule());
-      _settings = _kernel.Get<AdapterSettings>();
-      _settings.AppendSettings(settings);
-
-      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
-      #region initialize webHttpClient for converting old mapping
-      string proxyHost = _settings["ProxyHost"];
-      string proxyPort = _settings["ProxyPort"];
-      string rdsUri = _settings["ReferenceDataServiceUri"];
-
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      try
       {
-        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-        _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
-      }
-      else
-      {
-        _webHttpClient = new WebHttpClient(rdsUri);
-      }
-      #endregion
+        //TODO: Pending on testing, do not delete
+        //AppDomain currentDomain = AppDomain.CurrentDomain;
+        //currentDomain.AssemblyResolve += new ResolveEventHandler(DataLayerAssemblyResolveEventHandler);
 
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-      _settings["ScopesPath"] = scopesPath;
+        var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
+        _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
 
-      if (File.Exists(scopesPath))
-      {
-        _scopes = Utility.Read<ScopeProjects>(scopesPath);
+        _kernel.Load(new XmlExtensionModule());
+        _settings = _kernel.Get<AdapterSettings>();
+        _settings.AppendSettings(settings);
 
-        foreach (ScopeProject proj in _scopes)
+        Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+        #region initialize webHttpClient for converting old mapping
+        string proxyHost = _settings["ProxyHost"];
+        string proxyPort = _settings["ProxyPort"];
+        string rdsUri = _settings["ReferenceDataServiceUri"];
+
+        if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
-          foreach (ScopeApplication app in proj.Applications)
-          {
-            string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], proj.Name, app.Name);
+          WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+          _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
+        }
+        else
+        {
+          _webHttpClient = new WebHttpClient(rdsUri);
+        }
+        #endregion
 
-            if (File.Exists(configPath))
+        string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+        _settings["ScopesPath"] = scopesPath;
+
+        if (File.Exists(scopesPath))
+        {
+          _scopes = Utility.Read<ScopeProjects>(scopesPath);
+
+          foreach (ScopeProject proj in _scopes)
+          {
+            foreach (ScopeApplication app in proj.Applications)
             {
-              Configuration config = Utility.Read<Configuration>(configPath, false);
-              app.Configuration = config;
+              string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], proj.Name, app.Name);
+
+              if (File.Exists(configPath))
+              {
+                Configuration config = Utility.Read<Configuration>(configPath, false);
+                app.Configuration = config;
+              }
             }
           }
         }
+        else
+        {
+          _scopes = new ScopeProjects();
+          Utility.Write<ScopeProjects>(_scopes, scopesPath);
+        }
+
+        string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
+
+        //Ninject Extension requires fully qualified path.
+        string bindingConfigurationPath = Path.Combine(
+          _settings["BaseDirectoryPath"],
+          relativePath
+        );
+
+        _kernel.Load(bindingConfigurationPath);
+
+        _dataLayersRegistryPath = string.Format("{0}DataLayersRegistry.xml", _settings["AppDataPath"]);
+        if (!Directory.Exists(_settings["DataLayersPath"]))
+        {
+          Directory.CreateDirectory(_settings["DataLayersPath"]);
+        }
+
+        InitializeIdentity();
+
+        if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
+        {
+          arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
+          arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
+        }
       }
-      else
+      catch (Exception e)
       {
-        _scopes = new ScopeProjects();
-        Utility.Write<ScopeProjects>(_scopes, scopesPath);
-      }
-
-      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
-
-      //Ninject Extension requires fully qualified path.
-      string bindingConfigurationPath = Path.Combine(
-        _settings["BaseDirectoryPath"],
-        relativePath
-      );
-
-      _kernel.Load(bindingConfigurationPath);
-
-      _dataLayersRegistryPath = string.Format("{0}DataLayersRegistry.xml", _settings["AppDataPath"]);
-      if (!Directory.Exists(_settings["DataLayersPath"]))
-      {
-        Directory.CreateDirectory(_settings["DataLayersPath"]);
-      }
-
-      InitializeIdentity();
-
-      if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
-      {
-        arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
-        arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
+        _logger.Error("Error initializing adapter provider: " + e.Message);
       }
     }
 
