@@ -1507,7 +1507,7 @@ public class DataModel {
 			// Dups count field
 			Field dupField = new Field();
 			dupField.setName("Status");
-			dupField.setDataIndex("Statua");
+			dupField.setDataIndex("Status");
 			dupField.setType("string");
 			dupField.setWidth(STATUS_FIELD_WIDTH);
 			dupField.setFixed(true);

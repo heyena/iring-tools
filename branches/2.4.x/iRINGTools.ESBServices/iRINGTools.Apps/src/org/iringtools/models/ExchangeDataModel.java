@@ -56,7 +56,11 @@ public class ExchangeDataModel extends DataModel
         
         pageDtoGrid = getDtoGrid(dtiRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
-        pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());
+        
+        if (dtis == null || dtis.getDataTransferIndexList() == null || dtis.getDataTransferIndexList().getItems().size() == 0)
+          pageDtoGrid.setTotal(0);
+        else
+          pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
       }      
     }
     
