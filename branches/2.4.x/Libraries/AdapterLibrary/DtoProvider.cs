@@ -284,6 +284,12 @@ namespace org.iringtools.adapter
                       string propertyName = property[1].Trim();
 
                       DataProperty dataProp = dataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+
+                      if (dataProp == null)
+                      {
+                        throw new Exception("Property " + roleMap.propertyName + " does not exist in data dictionary.");
+                      }
+
                       manifestRole.dataLength = dataProp.dataLength;
 
                       if (dataObject.isKeyProperty(propertyName))
