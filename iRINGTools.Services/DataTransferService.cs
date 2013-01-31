@@ -92,6 +92,25 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets manifest for a specific graph of an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/manifest")]
+    public void GetManifestByGraph(string scope, string app, string graph)
+    {
+      try
+      {
+        Manifest manifest = _dtoProvider.GetManifest(scope, app, graph);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Manifest>(manifest));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
     [Description("Gets data transfer indices of requested manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
     public void GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)

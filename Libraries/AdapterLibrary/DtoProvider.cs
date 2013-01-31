@@ -148,8 +148,8 @@ namespace org.iringtools.adapter
         Revision = version.Revision
       };
     }
-
-    public Manifest GetManifest(string scope, string app)
+    
+    public Manifest GetManifest(string scope, string app, string graph)
     {
       Manifest manifest = new Manifest()
       {
@@ -167,12 +167,22 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          Graph manifestGraph = new Graph
+          Graph manifestGraph = null;
+
+          if (string.IsNullOrEmpty(graph) || graph.ToLower() == graphMap.name.ToLower())
           {
-            classTemplatesList = new ClassTemplatesList(),
-            name = graphMap.name
-          };
-          manifest.graphs.Add(manifestGraph);
+            manifestGraph = new Graph
+            {
+              classTemplatesList = new ClassTemplatesList(),
+              name = graphMap.name
+            };
+
+            manifest.graphs.Add(manifestGraph);
+          }
+          else 
+          {
+            continue;
+          }
 
           string dataObjectName = graphMap.dataObjectName;
           DataObject dataObject = null;
@@ -325,6 +335,11 @@ namespace org.iringtools.adapter
       }
 
       return manifest;
+    }
+
+    public Manifest GetManifest(string scope, string app)
+    {
+      return GetManifest(scope, app, null);
     }
 
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)

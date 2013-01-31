@@ -13,7 +13,6 @@ import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.dti.TransferType;
 import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.request.DfiRequest;
 import org.iringtools.dxfr.request.DxiRequest;
