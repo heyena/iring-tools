@@ -1,12 +1,13 @@
 Ext.ns('org.iringtools.apps.xmgr');
 
-function copyToClipboard(celldata){
-	/*if (window.clipboardData)  // Internet Explorer 
-		 window.clipboardData.setData ("Text", celldata);
-	*/
-	window.prompt ("Copy to clipboard: Ctrl+C, Enter", celldata);
-	    
-	}
+function copyToClipboard(celldata) {
+	/*
+	 * if (window.clipboardData) // Internet Explorer
+	 * window.clipboardData.setData ("Text", celldata);
+	 */
+	window.prompt("Copy to clipboard: Ctrl+C, Enter", celldata);
+
+}
 function storeSort(field, dir) {
 	if (field == '&nbsp;')
 		return;
@@ -78,8 +79,10 @@ function createGridPane(store, pageSize, viewConfig, withResizer) {
 	}
 
 	var colModel = new Ext.grid.DynamicColumnModel(store);
- 	//var cellModel = new Ext.grid.CellSelectionModel({ singleSelect: true });
-	var selModel = new Ext.grid.RowSelectionModel({ singleSelect: true });
+	// var cellModel = new Ext.grid.CellSelectionModel({ singleSelect: true });
+	var selModel = new Ext.grid.RowSelectionModel({
+		singleSelect : true
+	});
 	var pagingToolbar = new Ext.PagingToolbar({
 		store : store,
 		pageSize : pageSize,
@@ -93,45 +96,47 @@ function createGridPane(store, pageSize, viewConfig, withResizer) {
 		description : store.reader.description,
 		layout : 'fit',
 		minColumnWidth : 80,
-		val:null,
+		val : null,
 		loadMask : true,
 		store : store,
 		stripeRows : true,
 		viewConfig : viewConfig,
 		cm : colModel,
-		selModel: selModel,
+		selModel : selModel,
 		enableColLock : false,
 		plugins : [ filters ],
-    bbar: pagingToolbar,
-    
-    listeners: {
-    	cellclick: function(ts, td, cellIndex, record, tr, rowIndex, e, eOpts ){
-    		val = record.target.innerText;
-    	},
-    	/*celldblclick: function(ts, td, cellIndex, record, tr, rowIndex, e, eOpts ){
-    		val = record.target.innerText;
-    		copyToClipboard(val);
-    	},*/
-        beforeedit: function(e){
-          e.cancel = true;
-        },
-      keydown :function(evnt){
-      	 var keyPressed = evnt.getKey();
-  	     if (evnt.ctrlKey)
-  	     {
-  	       /*
-  	        * After trial and error, the ctrl+c combination seems to be code 67 
-  	        */
-  	    	 if (67 == 67)//if (keyPressed == 67)
-  	       {
-  	         //var celldata = gridPane.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-  	         copyToClipboard(val);
-  	        
-  	       }
-  	     }
-         }
-      }
-  });
+		bbar : pagingToolbar,
+
+		listeners : {
+			cellclick : function(ts, td, cellIndex, record, tr, rowIndex, e,
+					eOpts) {
+				val = record.target.innerText;
+			},
+			/*
+			 * celldblclick: function(ts, td, cellIndex, record, tr, rowIndex,
+			 * e, eOpts ){ val = record.target.innerText; copyToClipboard(val); },
+			 */
+			beforeedit : function(e) {
+				e.cancel = true;
+			},
+			keydown : function(evnt) {
+				var keyPressed = evnt.getKey();
+				if (evnt.ctrlKey) {
+					/*
+					 * After trial and error, the ctrl+c combination seems to be
+					 * code 67
+					 */
+					if (67 == 67)// if (keyPressed == 67)
+					{
+						// var celldata =
+						// gridPane.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
+						copyToClipboard(val);
+
+					}
+				}
+			}
+		}
+	});
 
 	return gridPane;
 }
@@ -148,11 +153,15 @@ function createXlogsPane(context, xlogsContainer, xlabel) {
 								{
 									id : 'xlogs-' + xlabel,
 									store : xlogsStore,
- 									cellValue:'',
+									cellValue : '',
 									stripeRows : true,
 									loadMask : true,
-									cm : new Ext.grid.DynamicColumnModel(xlogsStore),
-								selModel: new Ext.grid.CellSelectionModel({ singleSelect: true }),
+									cm : new Ext.grid.DynamicColumnModel(
+											xlogsStore),
+									selModel : new Ext.grid.CellSelectionModel(
+											{
+												singleSelect : true
+											}),
 									enableColLock : true,
 									tbar : new Ext.Toolbar(
 											{
@@ -178,31 +187,36 @@ function createXlogsPane(context, xlogsContainer, xlabel) {
 																		.load();
 															}
 														} ]
-      }),
-      listeners: {
-          beforeedit: function(e){
-            e.cancel = true;
-          },
-          cellclick: function(ts, td, cellIndex, record, tr, rowIndex, e, eOpts ){
-        	  cellValue = record.target.innerText;
-      	},
-        keydown :function(evnt){
-        	 var keyPressed = evnt.getKey();
-    	     if (evnt.ctrlKey)
-    	     {
-    	       /*
-    	        * After trial and error, the ctrl+c combination seems to be code 67 
-    	        */
-    	    	 if (67 == 67)//if (keyPressed == 67)
-    	       {
-    	         //var celldata = Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-    	         copyToClipboard(cellValue);
-    	        
-    	       }
-    	     }
-           }
-        }
-    });
+											}),
+									listeners : {
+										beforeedit : function(e) {
+											e.cancel = true;
+										},
+										cellclick : function(ts, td, cellIndex,
+												record, tr, rowIndex, e, eOpts) {
+											cellValue = record.target.innerText;
+										},
+										keydown : function(evnt) {
+											var keyPressed = evnt.getKey();
+											if (evnt.ctrlKey) {
+												/*
+												 * After trial and error, the
+												 * ctrl+c combination seems to
+												 * be code 67
+												 */
+												if (67 == 67)// if
+												// (keyPressed
+												// == 67)
+												{
+													// var celldata =
+													// Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
+													copyToClipboard(cellValue);
+
+												}
+											}
+										}
+									}
+								});
 
 						if (xlogsContainer.items.length == 0) {
 							xlogsContainer.add(xlogsPane);
@@ -306,7 +320,7 @@ function loadPageDto(type, action, context, label) {
 									var dtoToolbar = new Ext.Toolbar(
 											{
 												cls : 'nav-toolbar',
-												width:80,
+												width : 80,
 												items : [
 														{
 															id : 'tb-exchange',
@@ -372,471 +386,577 @@ function loadPageDto(type, action, context, label) {
 																	}
 																}
 															}
-            },{
-                xtype: 'tbspacer', 
-                width: 4
-              },{
-                id: 'tb-dup',
-                xtype: 'button',
-                tooltip: 'Show Exchange Summary',
-                icon: 'resources/images/16x16/file-table.png',
-                handler: function(){
-                	  var dtoTab = Ext.getCmp('content-pane').getActiveTab();
-                	  var label = dtoTab.id.substring(4);   
-                	  var xlogsUrl = 'sdata' + context + '&xlabel=' + label;//'xlogs' + context + '&xlabel=' + xlabel;
-                	  var xlogsStore = createGridStore(xlogsContainer, xlogsUrl);
-                	  xlogsStore.on('load', function(){
-                          console.log(xlogsStore);
-                          var startTime;
-                          var endTime;
-                          if(xlogsStore.data.items[0].data.StartTime!="")
-                             startTime = xlogsStore.data.items[0].data.StartTime;
-                          else
-                        	 startTime = "00:00:00";
-                        	  
-                          if(xlogsStore.data.items[0].data.EndTime!="")
-                        	  endTime = xlogsStore.data.items[0].data.EndTime;
-                           else
-                        	   endTime = "00:00:00";
-                          
-                    	  var summaryPane = new Ext.Panel({
-                    	    //region: 'west',
-                    	    id: 'summary-panel',
-                    	    //bodyPadding: 5,
-                    	    //title: 'Exchange Summary',
-                    	    frame: true,
-                    	    border: false,
-                    	    //sytle:'margin:10 0 0 20;',
-                    	    //split: true,
-                    	    //width: 260,
-                    	    height:400,
-                    	    //minSize: 175,
-                    	    //maxSize: 400,
-                    	    //collapsible: true,
-                    	    //layout: 'column',
-                    	    layout:'column',
-                   	       items: [ 
-                    	             {
-                    	            	 xtype:'panel',
-                    	            	 height: 500,
-                                  	     //width: 663,
-                    	            	 padding:'15',
-                    	            	 //bodyStyle:'margin:10 0 0 10;',
-                    	            	 columnWidth: .3,
-                    	            	 id:'label-container',
-                    	            	 layout:'vbox',
-                	            	     items: [ 
-                	            	             {
-                	            	    	        xtype:'label',
-                	            	    	        style: 'font-weight:bold;',
-                                	            	text:'Start Time:'
-                                	              },
-                                	              {
-                                	            	  xtype: 'spacer',
-                                	            	  height: 10
-                                	            	},
-                                	              {
-                  	            	    	        xtype:'label',
-                  	            	    	        style: 'font-weight:bold;',
-                                  	            	text:'End Time:'
-                                  	              },
-                                  	              {
-                                	            	  xtype: 'spacer',
-                                	            	  height: 10
-                                	            	},
-                                  	           
-                                  	              {
-                  	            	    	        xtype:'label',
-                  	            	    	        style: 'font-weight:bold;',
-                                  	            	text:'Receiver Application:'
-                                  	              },
-                                  	              {
-                                	            	  xtype: 'spacer',
-                                	            	  height: 10
-                                	            	},
-                                  	              {
-                  	            	    	        xtype:'label',
-                  	            	    	        style: 'font-weight:bold;',
-                                  	            	text:'Receiver Graph:'
-                                  	              },
-                                  	              {
-                                	            	  xtype: 'spacer',
-                                	            	  height: 10
-                                	            	},
-                                  	              {
-	                	            	    	        xtype:'label',
-	                	            	    	        style: 'font-weight:bold;',
-	                                	            	text:'Receiver Scope:'
-                                    	           },
-                                    	           {
-                                 	            	  xtype: 'spacer',
-                                 	            	  height: 10
-                                 	            	},
-                                    	           {
-                    	            	    	        xtype:'label',
-                    	            	    	        style: 'font-weight:bold;',
-                                    	            	text:'Receiver Uri:'
-                                    	            },
-                                    	            {
-                                  	            	  xtype: 'spacer',
-                                  	            	  height: 10
-                                  	            	},
-                                    	            {
-                      	            	    	        xtype:'label',
-                      	            	    	        style: 'font-weight:bold;',
-                                      	            	text:'Sender Application:'
-                                      	              },
-                                      	              {
-                                    	            	  xtype: 'spacer',
-                                    	            	  height: 10
-                                    	            	},
-                                      	              {
-                      	            	    	        xtype:'label',
-                      	            	    	        style: 'font-weight:bold;',
-                                      	            	text:'Sender Graph:'
-                                      	              },
-                                      	              {
-                                    	            	  xtype: 'spacer',
-                                    	            	  height: 10
-                                    	            	},
-                                      	              {
-    	                	            	    	        xtype:'label',
-    	                	            	    	        style: 'font-weight:bold;',
-    	                                	            	text:'Sender Scope:'
-                                        	           },
-                                        	           {
-                                     	            	  xtype: 'spacer',
-                                     	            	  height: 10
-                                     	            	},
-                                        	           {
-                        	            	    	        xtype:'label',
-                        	            	    	        style: 'font-weight:bold;',
-                                        	            	text:'Sender Uri:'
-                                        	            },
-                                        	            {
-                                       	            	  xtype: 'spacer',
-                                       	            	  height: 10
-                                       	            	},
-                                          	           {
-                          	            	    	        xtype:'label',
-                          	            	    	        style: 'font-weight:bold;',
-                                          	            	text:'Pool Size:'
-                                          	            },
-                                          	           {
-                                         	            	  xtype: 'spacer',
-                                         	            	  height: 10
-                                         	            	},
-                                         	            	
-                                                	           {
-                                	            	    	        xtype:'label',
-                                	            	    	        style: 'font-weight:bold;',
-                                                	            	text:'Total Count:'
-                                                	            },
-                                                	            {
-                                              	            	  xtype: 'spacer',
-                                              	            	  height: 10
-                                              	            	},
-                                            	           {
-                            	            	    	        xtype:'label',
-                            	            	    	        style: 'font-weight:bold;',
-                                            	            	text:'Adding Count:'
-                                            	            },
-                                            	            {
-                                           	            	  xtype: 'spacer',
-                                           	            	  height: 10
-                                           	            	},
-                                              	           {
-                              	            	    	        xtype:'label',
-                              	            	    	        style: 'font-weight:bold;',
-                                              	            	text:'Deleting Count:'
-                                              	            },
-                                              	          {
-                                           	            	  xtype: 'spacer',
-                                           	            	  height: 10
-                                           	            	},
-                                              	           {
-                              	            	    	        xtype:'label',
-                              	            	    	        style: 'font-weight:bold;',
-                                              	            	text:'Changing Count:'
-                                              	            },
-                                              	          {
-                                           	            	  xtype: 'spacer',
-                                           	            	  height: 10
-                                           	            	},
-                                              	           {
-                              	            	    	        xtype:'label',
-                              	            	    	        style: 'font-weight:bold;',
-                                              	            	text:'Synchronized Count:'
-                                              	            },
-                                              	            {
-                                             	            	  xtype: 'spacer',
-                                             	            	  height: 10
-                                             	            	},
-                                                	           {
-                                	            	    	        xtype:'label',
-                                	            	    	        style: 'font-weight:bold;',
-                                                	            	text:'Summary:'
-                                                	            }
-                	            	         ]
-                    	              },
-                    	              {
-                     	            	 xtype:'panel',
-                     	            	 columnWidth: .7,
-                     	            	 padding:'15',
-                     	            	 height: 500,
-                                 	      //width: 663,
-                     	            	 id:'value-container',
-                     	            	 layout:'vbox',
-                 	            	     items: [ 
-                 	            	              {
-			                    	            	 xtype:'readonlyfield',
-			                    	            	 //fieldLabel:'My field',
-			                    	            	 //sytle:'margin:0 0 0 20;',
-			                    	            	 value:startTime//xlogsStore.data.items[0].data.StartTime
-			                    	            	 //readOnly:true
-                    	            	 
-                 	            	              },
-                 	            	              {
-                                 	            	  xtype: 'spacer',
-                                 	            	  height: 10
-                                 	            	},
-                 	            	              {
-                                	            	 xtype:'readonlyfield',
-                                	            	 //fieldLabel:'My field',
-                                	            	 //sytle:'margin:0 0 0 20;',
-                                	            	 value:endTime//xlogsStore.data.items[0].data.EndTime
-                                	            	 //readOnly:true
-                                	             },
-                                	             {
-                                 	            	  xtype: 'spacer',
-                                 	            	  height: 10
-                                 	            	},
-                 	            	             {
-	                               	            	 xtype:'readonlyfield',
-	                               	            	 //fieldLabel:'My field',
-	                               	            	 //sytle:'margin:0 0 0 20;',
-	                               	            	 value:xlogsStore.data.items[0].data.ReceiverApp
-	                               	            	 //readOnly:true
-                               	                },
-                               	                {
-                               	            	  xtype: 'spacer',
-                               	            	  height: 10
-                               	            	},
-                 	            	            {
-	                              	            	 xtype:'readonlyfield',
-	                              	            	 //fieldLabel:'My field',
-	                              	            	 //sytle:'margin:0 0 0 20;',
-	                              	            	 value:xlogsStore.data.items[0].data.ReceiverGraph
-	                              	            	 //readOnly:true
-                              	            	 
-                              	             },
-                              	              {
-                            	            	  xtype: 'spacer',
-                            	            	  height: 10
-                            	            	},
-                              	            {
-                            	            	 xtype:'readonlyfield',
-                            	            	 //fieldLabel:'My field',
-                            	            	 //sytle:'margin:0 0 0 10;',
-                            	            	 value:xlogsStore.data.items[0].data.ReceiverScope
-                            	            	 //readOnly:true
-                            	            	 
-                            	             },
-                            	              {
-                            	            	  xtype: 'spacer',
-                            	            	  height: 10
-                            	            	},
-                            	             {
-                            	            	 xtype:'readonlyfield',
-                            	            	 //fieldLabel:'My field',
-                            	            	 //sytle:'margin:0 0 0 10;',
-                            	            	 value:xlogsStore.data.items[0].data.ReceiverUri
-                            	            	 //readOnly:true
-                            	            	 
-                            	             },
-                            	             {
-                            	            	  xtype: 'spacer',
-                            	            	  height: 10
-                            	            	},
-            	            	             {
-                              	            	 xtype:'readonlyfield',
-                              	            	 //fieldLabel:'My field',
-                              	            	 //sytle:'margin:0 0 0 20;',
-                              	            	 value:xlogsStore.data.items[0].data.SenderApp
-                              	            	 //readOnly:true
-                          	                },
-                          	                {
-                          	            	  xtype: 'spacer',
-                          	            	  height: 10
-                          	            	},
-            	            	            {
-                             	            	 xtype:'readonlyfield',
-                             	            	 //fieldLabel:'My field',
-                             	            	 //sytle:'margin:0 0 0 20;',
-                             	            	 value:xlogsStore.data.items[0].data.SenderGraph
-                             	            	 //readOnly:true
-                         	            	 
-                         	             },
-                         	              {
-                       	            	  xtype: 'spacer',
-                       	            	  height: 10
-                       	            	},
-                         	            {
-                       	            	 xtype:'readonlyfield',
-                       	            	//fieldLabel:'My field',
-                       	            	 //sytle:'margin:0 0 0 10;',
-                       	            	 value:xlogsStore.data.items[0].data.SenderScope
-                       	            	 //readOnly:true
-                       	            	 
-                       	             },
-                       	              {
-                       	            	  xtype: 'spacer',
-                       	            	  height: 10
-                       	            	},
-                       	             {
-                       	            	 xtype:'readonlyfield',
-                       	            	 //fieldLabel:'My field',
-                       	            	 //sytle:'margin:0 0 0 10;',
-                       	            	 value:xlogsStore.data.items[0].data.SenderUri
-                       	            	 //readOnly:true
-                       	            	 
-                       	             },
-                       	          {
-                      	            	  xtype: 'spacer',
-                      	            	  height: 10
-                      	            	},
-                        	            {
-                      	            	 xtype:'readonlyfield',
-                      	            	 //fieldLabel:'My field',
-                      	            	 //sytle:'margin:0 0 0 10;',
-                      	            	 value:xlogsStore.data.items[0].data.PoolSize
-                      	            	 //readOnly:true
-                      	            	 
-                      	             },
-                      	              {
-                      	            	  xtype: 'spacer',
-                      	            	  height: 10
-                      	            	},
-                      	             {
-                      	            	 xtype:'readonlyfield',
-                      	            	 //fieldLabel:'My field',
-                      	            	 //sytle:'margin:0 0 0 10;',
-                      	            	 value:xlogsStore.data.items[0].data.ItemCount
-                      	            	 //readOnly:true
-                      	            	 
-                      	             },
-                      	           {
-                     	            	  xtype: 'spacer',
-                     	            	  height: 10
-                     	            	},
-                     	             {
-                     	            	 xtype:'readonlyfield',
-                     	            	 //fieldLabel:'My field',
-                     	            	 //sytle:'margin:0 0 0 10;',
-                     	            	 value:xlogsStore.data.items[0].data.AddCount
-                     	            	 //readOnly:true
-                     	            	 
-                     	             },
-                     	            {
-                     	            	  xtype: 'spacer',
-                     	            	  height: 10
-                     	            	},
-                     	             {
-                     	            	 xtype:'readonlyfield',
-                     	            	//fieldLabel:'My field',
-                     	            	 //sytle:'margin:0 0 0 10;',
-                     	            	 value:xlogsStore.data.items[0].data.DeleteCount
-                     	            	 //readOnly:true
-                     	            	 
-                     	             },
-                     	            {
-                     	            	  xtype: 'spacer',
-                     	            	  height: 10
-                     	            	},
-                     	             {
-                     	            	 xtype:'readonlyfield',
-                     	            	 //fieldLabel:'My field',
-                     	            	 //sytle:'margin:0 0 0 10;',
-                     	            	 value:xlogsStore.data.items[0].data.ChangeCount
-                     	            	 //readOnly:true
-                     	            	 
-                     	             },
-                     	           {
-                    	            	  xtype: 'spacer',
-                    	            	  height: 10
-                    	            	},
-                    	             {
-                    	            	 xtype:'readonlyfield',
-                    	            	// fieldLabel:'My field',
-                    	            	 //sytle:'margin:0 0 0 10;',
-                    	            	 value:xlogsStore.data.items[0].data.SynchronizedCount
-                    	            	 //readOnly:true
-                    	            	 
-                    	             },
-                    	            {
-                    	            	  xtype: 'spacer',
-                    	            	  height: 10
-                    	            	},
-                    	             {
-                    	            	 xtype:'readonlyfield',
-                    	            	// fieldLabel:'My field',
-                    	            	 //sytle:'margin:0 0 0 10;',
-                    	            	 value:xlogsStore.data.items[0].data.Result
-                    	            	 //readOnly:true
-                    	            	 
-                    	             }
-                 	            	         ]
-                     	              }
-                    	            
-                    	            ]
-                    	  });
-                    	
-                    	 var win = new Ext.Window({
-                   	      closable: true,
-                   	      resizable: true,
-                   	      //id: 'newwin-' + node.id,
-                   	      modal: true,
-                   	      //autoHeight:true,
-                   	      layout: 'fit',
-                   	      shadow: false,
-                   	      title: 'Exchange Summary',
-                   	      //iconCls: 'tabsApplication',
-                   	      height: 500,
-                   	      width: 750,
-                   	      plain: true,
-                   	      items: summaryPane,
-                   	     /* listeners: {
-                   	        beforelayout: function (pane) {
-                   	          //alert('before layout..');
-                   	          Ext.getBody().unmask();
-                   	        }
-                   	      }*/
-                   	    });
-                   	    win.show();
-                	  });
-                	  xlogsStore.load();
-                	
-                	/* var dtoTab = Ext.getCmp('content-pane').getActiveTab();
-                     var xlogsContainer = dtoTab.items.map['xlogs-container-' + label]; 
-                     var viewType = 'summary';
-                     if (xlogsContainer.items.length == 0){
-                       createXlogsPane(context, xlogsContainer, label,viewType);                
-                     }
-                     else {
-                       if (xlogsContainer.collapsed)
-                         xlogsContainer.expand(true);
-                       else {         
-                         xlogsContainer.collapse(true);
-                       }
-                     }*/
-                }
-              }
-            
-            ,{
-              xtype: 'tbspacer', 
-              width: 4
-            }]
-          });
+														},
+														{
+															xtype : 'tbspacer',
+															width : 4
+														},
+														{
+															id : 'tb-dup',
+															xtype : 'button',
+															tooltip : 'Show Exchange Summary',
+															icon : 'resources/images/16x16/file-table.png',
+															handler : function() {
+																var dtoTab = Ext
+																		.getCmp(
+																				'content-pane')
+																		.getActiveTab();
+																var label = dtoTab.id
+																		.substring(4);
+																var xlogsUrl = 'sdata'
+																		+ context
+																		+ '&xlabel='
+																		+ label;// 'xlogs'
+																// +
+																// context
+																// +
+																// '&xlabel='
+																// +
+																// xlabel;
+																var xlogsStore = createGridStore(
+																		xlogsContainer,
+																		xlogsUrl);
+																xlogsStore
+																		.on(
+																				'load',
+																				function() {
+																					console
+																							.log(xlogsStore);
+																					var startTime;
+																					var endTime;
+																					if (xlogsStore.data.items[0].data.StartTime != "")
+																						startTime = xlogsStore.data.items[0].data.StartTime;
+																					else
+																						startTime = "00:00:00";
+
+																					if (xlogsStore.data.items[0].data.EndTime != "")
+																						endTime = xlogsStore.data.items[0].data.EndTime;
+																					else
+																						endTime = "00:00:00";
+
+																					var summaryPane = new Ext.Panel(
+																							{
+																								// region:
+																								// 'west',
+																								id : 'summary-panel',
+																								// bodyPadding:
+																								// 5,
+																								// title:
+																								// 'Exchange
+																								// Summary',
+																								frame : true,
+																								border : false,
+																								// sytle:'margin:10
+																								// 0 0
+																								// 20;',
+																								// split:
+																								// true,
+																								// width:
+																								// 260,
+																								height : 400,
+																								// minSize:
+																								// 175,
+																								// maxSize:
+																								// 400,
+																								// collapsible:
+																								// true,
+																								// layout:
+																								// 'column',
+																								layout : 'column',
+																								items : [
+																										{
+																											xtype : 'panel',
+																											height : 500,
+																											// width:
+																											// 663,
+																											padding : '15',
+																											// bodyStyle:'margin:10
+																											// 0 0
+																											// 10;',
+																											columnWidth : .3,
+																											id : 'label-container',
+																											layout : 'vbox',
+																											items : [
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Start Time:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'End Time:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Receiver Application:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Receiver Graph:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Receiver Scope:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Receiver Uri:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Sender Application:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Sender Graph:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Sender Scope:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Sender Uri:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Pool Size:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Total Count:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Adding Count:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Deleting Count:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Changing Count:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Synchronized Count:'
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'label',
+																														style : 'font-weight:bold;',
+																														text : 'Summary:'
+																													} ]
+																										},
+																										{
+																											xtype : 'panel',
+																											columnWidth : .7,
+																											padding : '15',
+																											height : 500,
+																											// width:
+																											// 663,
+																											id : 'value-container',
+																											layout : 'vbox',
+																											items : [
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 20;',
+																														value : startTime
+																													// xlogsStore.data.items[0].data.StartTime
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 20;',
+																														value : endTime
+																													// xlogsStore.data.items[0].data.EndTime
+																													// readOnly:true
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 20;',
+																														value : xlogsStore.data.items[0].data.ReceiverApp
+																													// readOnly:true
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 20;',
+																														value : xlogsStore.data.items[0].data.ReceiverGraph
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.ReceiverScope
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.ReceiverUri
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 20;',
+																														value : xlogsStore.data.items[0].data.SenderApp
+																													// readOnly:true
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 20;',
+																														value : xlogsStore.data.items[0].data.SenderGraph
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.SenderScope
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.SenderUri
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.PoolSize
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.ItemCount
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.AddCount
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.DeleteCount
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.ChangeCount
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.SynchronizedCount
+																													// readOnly:true
+
+																													},
+																													{
+																														xtype : 'spacer',
+																														height : 10
+																													},
+																													{
+																														xtype : 'readonlyfield',
+																														// fieldLabel:'My
+																														// field',
+																														// sytle:'margin:0
+																														// 0 0
+																														// 10;',
+																														value : xlogsStore.data.items[0].data.Result
+																													// readOnly:true
+
+																													} ]
+																										}
+
+																								]
+																							});
+
+																					var win = new Ext.Window(
+																							{
+																								closable : true,
+																								resizable : true,
+																								// id:
+																								// 'newwin-'
+																								// +
+																								// node.id,
+																								modal : true,
+																								// autoHeight:true,
+																								layout : 'fit',
+																								shadow : false,
+																								title : 'Exchange Summary',
+																								// iconCls:
+																								// 'tabsApplication',
+																								height : 500,
+																								width : 750,
+																								plain : true,
+																								items : summaryPane,
+																							/*
+																							 * listeners: {
+																							 * beforelayout:
+																							 * function
+																							 * (pane) {
+																							 * //alert('before
+																							 * layout..');
+																							 * Ext.getBody().unmask(); } }
+																							 */
+																							});
+																					win
+																							.show();
+																				});
+																xlogsStore
+																		.load();
+
+																/*
+																 * var dtoTab =
+																 * Ext.getCmp('content-pane').getActiveTab();
+																 * var
+																 * xlogsContainer =
+																 * dtoTab.items.map['xlogs-container-' +
+																 * label]; var
+																 * viewType =
+																 * 'summary'; if
+																 * (xlogsContainer.items.length ==
+																 * 0){
+																 * createXlogsPane(context,
+																 * xlogsContainer,
+																 * label,viewType); }
+																 * else { if
+																 * (xlogsContainer.collapsed)
+																 * xlogsContainer.expand(true);
+																 * else {
+																 * xlogsContainer.collapse(true); } }
+																 */
+															}
+														}
+
+														, {
+															xtype : 'tbspacer',
+															width : 4
+														} ]
+											});
 
 									dtoNavPane.insert(0, dtoToolbar);
 								}
@@ -1021,87 +1141,214 @@ function navigate(bcItemIndex) {
 	dtoContentPane.getLayout().setActiveItem(contentItemIndex);
 }
 
-function showStatus(duplicates) {
+function showMessage(Message) {
+	var displayMessage = "";
+	if (Message == "Success") {
+		displayMessage = "Success : This Row is Good to Exchange";
+	}
+	if (Message == "Error") {
+		displayMessage = "Error : Click to see Detials";
+	}
+	if (Message == "Warning") {
+		displayMessage = "Warning";
+	}
+	if (Message == "add") {
+		displayMessage = "Add";
+	}
+	if (Message == "delete") {
+		displayMessage = "Delete";
+	}
+	if (Message == "change") {
+		displayMessage = "Change : Click to see all changes";
+	}
+	if (Message == "sync") {
+		displayMessage = "Sync";
+	}
+	window.event.srcElement.title = displayMessage;
+	window.status = displayMessage;
+
 	/*
-	 * var dtoTab = Ext.getCmp('content-pane').getActiveTab(); var label =
-	 * dtoTab.id.substring(4); var dtoContentPane = dtoTab.items.map['dto-' +
-	 * label]; var dtoGrid = dtoContentPane.getLayout().activeItem;
+	 * var obj=document.getElementById(Message); obj.innerHTML='some standard
+	 * text';
+	 */
+
+}
+
+function showStatus(duplicates) {
+
+	var value = "Selected Row Contains " + duplicates + " Duplicate Rows";
+	
+	/*
+	 * var result = "<ul> <font size='4',color='blue'> List Of Errors:- </font>
+	 * <li> <font size='2'>" + value + "</font></li> " + "<li>" + value+ "</li></ul>";
 	 */
 	if (duplicates > 1) {
 
-	
-		var propertyGrid = new Ext.grid.PropertyGrid({
-			region : 'center',
-			title : 'List of Errors ::--',
-			split : true,
-			stripeRows : true,
-			autoScroll : true,
-			source: {
-		        "Duplicates": duplicates,
-		      //  "Wrong Data":duplicates
-		    }
-
 		/*
+		 * var propertyGrid = new Ext.grid.PropertyGrid({ region : 'center',
+		 * title : 'List of Errors ::--', split : true, stripeRows : true,
+		 * autoScroll : true, source: { "Duplicates": duplicates, // "Wrong
+		 * Data":duplicates }
+		 * 
+		 * 
 		 * listeners : { beforeedit : function(e) { e.cancel = true; } }
+		 * 
+		 * });
 		 */
-		});
-
-		var win = new Ext.Window({
-			closable : true,
-			resizable : true,
-			// id: 'newwin-' + node.id,
-			modal : true,
-			// autoHeight:true,
+		var relatedItemPane = new Ext.Panel({
+		//itle : 'Related Items',
+			region : 'east',
 			layout : 'fit',
-			shadow : false,
-			title : 'ERROR',
-			// iconCls: 'tabsApplication',
-			height : 200,
-			width : 300,
-			plain : true,
-			items : [ propertyGrid ]
-		/*
-		 * listeners: { beforelayout: function (pane) { //alert('before
-		 * layout..'); Ext.getBody().unmask(); } }
-		 */
-		});
+	//boxMinWidth : 100,
+//	width : 300,
+			padding : '4',
+			split : true,
+			autoScroll : true,
+			items:[
+
+					{
+						xtype : 'label',
+						style : 'color: blue; font-weight:bold;text-decoration: underline;padding:5px;font-size:12pt',
+					//	text : "List Of Errors:-",
+						height:33,
+						html : '<div style="width:50px;float:left"><img style="margin:2px 5px 2px 5px" src="resources/images/error.png"/> </div>'
+							+ '<div style="width:100%;height:100%"><table style="height:20%"><tr><td>'
+							+ 'List Of Errors:- </td></tr></table></div>',
+					
+					}]});
+		
+		var classItemPane = new Ext.Container(
+				{
+					region : 'north',
+					layout : 'fit',
+					width : 400,
+					height : 44,
+					cls : 'class-badge',
+					html : '<div style="width:50px;float:left"><img style="margin:2px 5px 2px 5px" src="resources/images/error.png"/> </div>'
+						+ '<div style="width:100%;height:100%"><table style="height:100%"><tr><td>'
+						+ 'List Of Errors:- </td></tr></table></div>',
+				});
+
+		var win = new Ext.Window(
+				{
+					closable : true,
+					resizable : true,
+					// id: 'newwin-' + node.id,
+					modal : true,
+					// autoHeight:true,
+					layout : 'vbox',
+					shadow : false,
+					title : 'ERROR',
+					icon: 'resources/images/error.png',
+				//	html : '<div style="width:50px;float:left"><img style="margin:2px 5px 2px 5px" src="resources/images/error.png"/></div> Error',
+					// iconCls: 'tabsApplication',
+					height : 300,
+					width : 400,
+					plain : true,
+					items : [
+							/*{
+								xtype : 'panel',
+								// height: 500,
+								// width: 663,
+								// bodyStyle:'margin:10 0 0 10;',
+								padding : 10,
+								// bodyStyle:'padding:5px 5px 0 0',
+								// columnWidth: .3,
+								// id:'label-container',
+							layout:'fit',
+								// html:value
+								items : [
+*/
+										{
+											xtype : 'label',
+											style : 'color: black; font-weight:bold;text-decoration: underline;padding:5px;font-size:12pt',
+										//	text : "List Of Errors:-",
+											height:33,
+											html : '<div style="width:50px;float:left"><img style="margin:2px 5px 2px 5px" src="resources/images/error.png"/> </div>'
+											// '<div style="width:100%;height:100%"><table style="height:80%;widht: 100%;""><tr><td>'
+												+ 'List Of Errors:-'//'</td></tr></table></div>',
+										
+										},
+										{
+										
+										},
+										{
+											xtype : 'spacer',
+											height : 10,
+
+										},
+										
+										{
+											xtype : 'label',
+											style : 'color: black;padding:15px; font-size:10pt',
+											// region : 'center',
+											text : value,
+										// html:result
+										}, {
+											xtype : 'spacer',
+											height : 10
+										}, /*
+											 * {
+											 * 
+											 * xtype:'label', style: 'color:
+											 * black;padding:15px;
+											 * font-size:10pt', text:value,
+											 *  },
+											 */
+
+						//]
+					//},
+					/*
+					 * { xtype : 'panel', // height: 500, // width: 663, //
+					 * padding:'30', // bodyStyle:'margin:10 0 0 10;', //
+					 * columnWidth: .3, // id:'label-container', //
+					 * layout:'vbox', region : 'south', // html:value items : [ {
+					 * xtype : 'label', style : 'color: black;padding:15px;
+					 * font-size:10pt', text : value, // html:result }, { xtype :
+					 * 'button', text : 'OK', // width: 50, align : 'right', } ] }
+					 */
+
+					/*
+					 * listeners: { beforelayout: function (pane) {
+					 * //alert('before layout..'); Ext.getBody().unmask(); } }
+					 */
+					]
+				});
+
 		win.show();
 		// dtoContentPane.add(win);
-	}else{
-	if(duplicates == 1)
-		{
+	} else {
+		if (duplicates == 1) {
 			alert("This Row is Good to Exchange");
-		}
-	else{
-		if(duplicates == 0)
-			{
-			var propertyGrid = new Ext.grid.PropertyGrid({
-				region : 'center',
-				title : 'List of Warnings ::--',
-				split : true,
-				stripeRows : true,
-				autoScroll : true,
-				source: {
-			        "Warnings": "Value",
-			      //  "Wrong Data":duplicates
-			    }
-			});
+		} else {
+			if (duplicates == 0) {
+				var propertyGrid = new Ext.grid.PropertyGrid({
+					region : 'center',
+					title : 'List of Warnings ::--',
+					split : true,
+					stripeRows : true,
+					autoScroll : true,
+					source : {
+						"Warnings" : "Value",
+					// "Wrong Data":duplicates
+					}
+				});
 
-			var win = new Ext.Window({
-				closable : true,
-				resizable : true,
-				modal : true,
-				layout : 'fit',
-				shadow : false,
-				title : 'WARNING',
-				height : 200,
-				width : 300,
-				plain : true,
-				items : [ propertyGrid ]
-			});
-			win.show();
+				var win = new Ext.Window({
+					closable : true,
+					resizable : true,
+					modal : true,
+					layout : 'fit',
+					shadow : false,
+					title : 'WARNING',
+					height : 200,
+					width : 300,
+					plain : true,
+					items : [ propertyGrid ]
+				});
+				win.show();
 			}
-	}
+		}
 	}
 
 }
@@ -1109,7 +1356,8 @@ function showStatus(duplicates) {
 function showChangedItemsInfo() {
 	var dtoTab = Ext.getCmp('content-pane').getActiveTab();
 	var label = dtoTab.id.substring(4);
-	var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
+	// var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' +
+	// label];
 	var dtoContentPane = dtoTab.items.map['dto-' + label];
 	var dtoGrid = dtoContentPane.getLayout().activeItem;
 
@@ -1199,39 +1447,41 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses) {
 	for ( var colData in rowData)
 		parsedRowData[colData] = removeHTMLTag(rowData[colData]);
 
-	var propertyGrid = new Ext.grid.PropertyGrid({
-		region : 'center',
-		title : 'Properties',
-		split : true,
-		stripeRows : true,
-		autoScroll : true,
-		source : parsedRowData,
-    listeners: {
-      beforeedit: function(e){
-        e.cancel = true;
-      },
-      click: function(){
-      	//alert('clicked...');
-      },
-      keydown :function(evnt){
-    	  //alert('keydown...');
-      	 var keyPressed = evnt.getKey();
-  	     if (evnt.ctrlKey)
-  	     {
-  	       /*
-  	        * After trial and error, the ctrl+c combination seems to be code 67 
-  	        */
-  	    	 if (67 == 67)//if (keyPressed == 67)
-  	       {
-  	         var celldata = Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-  	         copyToClipboard(celldata);
-  	        
-  	       }
-  	     }
-         }
-    }
+	var propertyGrid = new Ext.grid.PropertyGrid(
+			{
+				region : 'center',
+				title : 'Properties',
+				split : true,
+				stripeRows : true,
+				autoScroll : true,
+				source : parsedRowData,
+				listeners : {
+					beforeedit : function(e) {
+						e.cancel = true;
+					},
+					click : function() {
+						// alert('clicked...');
+					},
+					keydown : function(evnt) {
+						// alert('keydown...');
+						var keyPressed = evnt.getKey();
+						if (evnt.ctrlKey) {
+							/*
+							 * After trial and error, the ctrl+c combination
+							 * seems to be code 67
+							 */
+							if (67 == 67)// if (keyPressed == 67)
+							{
+								var celldata = Ext.getCmp('property-pane')
+										.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
+								copyToClipboard(celldata);
 
-  });
+							}
+						}
+					}
+				}
+
+			});
 
 	var relatedItemPane = new Ext.Panel({
 		title : 'Related Items',
@@ -1583,62 +1833,68 @@ Ext
 													context, node.text);
 										}
 									}
-								} catch (err) {}
-      },
-      keydown :function(evnt){
-      	 // alert('keydown...');
-        	 var keyPressed = evnt.getKey();
-    	     if (evnt.ctrlKey)
-    	     {
-    	       /*
-    	        * After trial and error, the ctrl+c combination seems to be code 67 
-    	        */
-    	    	 if (67 == 67)//if (keyPressed == 67)
-    	       {
-    	         var celldata = Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-    	         copyToClipboard(celldata);
+								} catch (err) {
+								}
+							},
+							keydown : function(evnt) {
+								// alert('keydown...');
+								var keyPressed = evnt.getKey();
+								if (evnt.ctrlKey) {
+									/*
+									 * After trial and error, the ctrl+c
+									 * combination seems to be code 67
+									 */
+									if (67 == 67)// if (keyPressed == 67)
+									{
+										var celldata = Ext.getCmp(
+												'property-pane')
+												.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
+										copyToClipboard(celldata);
+									}
 								}
 							}
 						}
-    }
-  });
+					});
 
-			var propertyPane = new Ext.grid.PropertyGrid({
-				id : 'property-pane',
-				title : 'Details',
-				region : 'south',
-				height : 250,
-				layout : 'fit',
-				collapsible : true,
-				stripeRows : true,
-				autoScroll : true,
-				border : false,
-				split : true,
-				source : {},
-    listeners: {
-      beforeedit: function(e){
-        e.cancel = true;
-      },
-    click: function(){
-    	//alert('clicked...');
-    },
-    keydown :function(evnt){
-    	 var keyPressed = evnt.getKey();
-	     if (evnt.ctrlKey)
-	     {
-	       /*
-	        * After trial and error, the ctrl+c combination seems to be code 67 
-	        */
-	    	 if (67 == 67)//if (keyPressed == 67)
-	       {
-	         var celldata = Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-	         copyToClipboard(celldata);
-	        
-	       }
-	     }
-       }
-    }
-  });
+			var propertyPane = new Ext.grid.PropertyGrid(
+					{
+						id : 'property-pane',
+						title : 'Details',
+						region : 'south',
+						height : 250,
+						layout : 'fit',
+						collapsible : true,
+						stripeRows : true,
+						autoScroll : true,
+						border : false,
+						split : true,
+						source : {},
+						listeners : {
+							beforeedit : function(e) {
+								e.cancel = true;
+							},
+							click : function() {
+								// alert('clicked...');
+							},
+							keydown : function(evnt) {
+								var keyPressed = evnt.getKey();
+								if (evnt.ctrlKey) {
+									/*
+									 * After trial and error, the ctrl+c
+									 * combination seems to be code 67
+									 */
+									if (67 == 67)// if (keyPressed == 67)
+									{
+										var celldata = Ext.getCmp(
+												'property-pane')
+												.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
+										copyToClipboard(celldata);
+
+									}
+								}
+							}
+						}
+					});
 
 			var directoryPane = new Ext.Panel({
 				region : 'west',
