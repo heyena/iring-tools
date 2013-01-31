@@ -556,8 +556,11 @@ public class ExchangeProvider
   {
     Manifest crossedManifest = new Manifest();
 
-    String sourceManifestUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/manifest";
-    String targetManifestUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/manifest";
+    String sourceManifestUrl = 
+        sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/manifest";
+    
+    String targetManifestUrl = 
+        targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/manifest";
 
     ExecutorService executor = Executors.newFixedThreadPool(2);
 

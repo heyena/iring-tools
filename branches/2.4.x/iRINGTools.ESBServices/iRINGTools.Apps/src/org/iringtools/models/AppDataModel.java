@@ -20,9 +20,9 @@ public class AppDataModel extends DataModel
   public Grid getDtoGrid(String serviceUri, String scopeName, String appName, String graphName, String filter, 
       String sortBy, String sortOrder, int start, int limit) throws DataModelException
   {
-    String appRelativePath = "/" + scopeName + "/" + appName;
-    String dtiRelativePath = appRelativePath + "/" + graphName + "/dxi/filter";
-    String dtoRelativePath = appRelativePath + "/" + graphName + "/dxo";  
+    String appRelativePath = "/" + scopeName + "/" + appName + "/" + graphName;
+    String dtiRelativePath = appRelativePath + "/dxi/filter";
+    String dtoRelativePath = appRelativePath + "/dxo";  
     String manifestRelativePath = appRelativePath + "/manifest";
     
     Grid pageDtoGrid = null;
@@ -58,9 +58,9 @@ public class AppDataModel extends DataModel
       String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit) 
       throws DataModelException
   {
-    String appRelativePath = "/" + scopeName + "/" + appName;
-    String dtiRelativePath = appRelativePath + "/" + graphName + "/dxi/filter";
-    String dtoRelativePath = appRelativePath + "/" + graphName + "/dxo";
+    String appRelativePath = "/" + scopeName + "/" + appName + "/" + graphName;
+    String dtiRelativePath = appRelativePath + "/" + "/dxi/filter";
+    String dtoRelativePath = appRelativePath + "/" + "/dxo";
     String manifestRelativePath = appRelativePath + "/manifest";
     
     Grid pageDtoGrid = null;
