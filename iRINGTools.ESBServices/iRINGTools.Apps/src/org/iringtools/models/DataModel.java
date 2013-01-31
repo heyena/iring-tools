@@ -951,7 +951,7 @@ public class DataModel {
 					 */
 					rowData.add("<input type=\"image\" src=\"resources/images/"
 							+ transferType.toLowerCase()
-							+ ".png\" width=15 heigt=15 "+ "onClick='javascript:showChangedItemsInfo()'>");
+							+ ".png\" width=15 heigt=15 "+"  onMouseOver= 'javascript:showMessage(\"" + transferType.toLowerCase()+ "\")' "+ "onClick='javascript:showChangedItemsInfo()'>");
 				}
 
 				// Adding dup's count to dup's column
@@ -960,15 +960,15 @@ public class DataModel {
 					//String dups = "";
 					if (dto.getDuplicateCount() == null) {
 						//dups = "0";
-						rowData.add("<input type=\"image\" src=\"resources/images/warning.png\" width=15 heigt=15  "+ "onClick='javascript:showStatus(\"" + 0 + "\")'>");
+						rowData.add("<input type=\"image\" src=\"resources/images/warning.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Warning"+ "\")' "+ "onClick='javascript:showStatus(\"" + 0 + "\")'>");
 					} else{
 					//	rowData.add((dto.getDuplicateCount().toString()));
 						if(dto.getDuplicateCount() == 1)
 						{
-						rowData.add("<input type=\"image\" src=\"resources/images/success.png\" width=15 heigt=15  "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
+						rowData.add("<input type=\"image\" src=\"resources/images/success.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Success"+ "\")' "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
 					}else
 					{
-						rowData.add("<input type=\"image\" src=\"resources/images/error.png\" width=15 heigt=15  "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
+						rowData.add("<input type=\"image\" src=\"resources/images/error.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Error"+ "\")' "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
 					}
 					}
 					
