@@ -44,13 +44,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       EditScope: true,
       EditApplication: true,
       RefreshDataObjects: true,
-      OpenMapping: true,
+      OpenGraphMap: true,
       DeleteScope: true,
       DeleteApplication: true,
       ReloadScopes: true,
       ReloadNode: true
     });
-    var myThis = this;
+
     this.tbar = new Ext.Toolbar();
     this.tbar.add(this.buildToolbar());
     // this.tbar.add(this.contextButton);
@@ -140,93 +140,18 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     });
 
     this.directoryPanel = new Ext.tree.TreePanel({
-	  enableDD:true,
-	  //selModel: new Ext.tree.MultiSelectionModel(),
-      //enableDrag: true,
-	  //enableDrop: true,
-	  //enableDD: false,
-	  //draggable: true,
-      //ddScroll: true,
-	  ddGroup: 'propertyGroup',
-	  ddAppendOnly: false,
+      enableDrag: true,
       id: 'Directory-Panel',
       //forceLayout: true,
-	  containerScroll: true,
+      ddGroup: 'propertyGroup',
       region: 'center',
       border: false,
       expandAll: true,
+      // draggable: true,
+      // ddScroll: true,
       rootVisible: true,
-	  listeners: {
-		beforenodedrop: function(obj){
-						var target = obj.target.id.split('/');
-						var source = obj.dropNode.id.split('/');
-						var flagForDuplicate = false;
-						var valueListName = obj.data.node.text;
-						var childNode = obj.target.childNodes;
-						   if(childNode!=undefined && childNode.length!=0){
-						     for( var i =0;i<obj.target.childNodes.length;i++){
-							    if(childNode[i].text == obj.data.node.text){
-								   flagForDuplicate = true;
-								   break;
-								 }
-							 }
-						   }
-						   
-						if(flagForDuplicate){
-						  Ext.Msg.alert('Warning', 'Duplicate valueList not allowed', function(){
-							   myThis.onReload();
-						   });
-						}
-						else{
-						    var flag = true;
-						    if(obj.target.text == 'ValueLists' && obj.dropNode.text == 'ValueLists'){
-							    //alert('going to copy complete valueLists...');
-								valueListName = 'ValueListToValueList';
-								if(obj.target.childNodes.length != 0){
-								    flag = false;
-									Ext.Msg.alert('Warning', 'Can not replace target valueList(s) ', function(){
-									    myThis.onReload();
-								    });
-								}
-								 
-							   
-							}else{
-							    //alert('going to copy single valueList...');
-								flag = true;
-							}
-							if(flag){
-								 Ext.Msg.confirm('Confirm', 'Are you sure to copy valueList(s)?', function(id){
-									if (id == 'yes'){
-										Ext.Ajax.request({
-											  url: 'mapping/CopyValueLists',
-											  method: 'POST',
-											  params: {
-											   targetScope: target[0],
-											   targetApplication: target[1],
-											   sourceScope:source[0],
-											   sourceApplication:source[1],
-											   valueList: valueListName
-											  },
-											  success: function (result, request) {
-														myThis.onReload();
-											  },
-											  failure: function (result, request) {
-												alert('we are in failuer...');
-												return false;
-											  }
-										})
-									}else
-										myThis.onReload();
-								});
-							}
-					
-						}
-					
-						
-	       
-	}
-},
       animate: true,
+      enableDD: false,
       containerScroll: true,
       pathSeparator: '>',
       lines: true,
@@ -243,43 +168,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         this.getRootNode().eachChild(function (child) {
           //function to store state of tree recursively
           var storeTreeState = function (node, expandedNodes) {
-		    node.draggable = false;
             if (node.isExpanded() && node.childNodes.length > 0) {
               expandedNodes.push(node.getPath());
-			   if(node.text!='ValueLists'){
-			        node.draggable = false;
-				    node.isTarget = false;
-				}
-			   else{
-			           node.draggable = true;
-					   if(node.childNodes.length > 0){
-					     node.eachChild(function (child){
-								 child.draggable = true;
-							   });
-					   }
-							   
-				  }
-                  node.eachChild(function (child) {
-                  storeTreeState(child, expandedNodes);
+              node.eachChild(function (child) {
+                storeTreeState(child, expandedNodes);
               });
-            }else{
-			  if(node.text!='ValueLists'){
-					node.draggable = false;
-					node.isTarget = false;
-				 } 
-			   else
-			      node.draggable = true;
-			}
-			if(node.parentNode!=undefined && node.parentNode!=null)
-			{
-			   if(node.parentNode.text=='ValueLists')
-				node.draggable = true;
-				
-			 //if(node.parentNode.parentNode!=null && node.parentNode.parentNode.text=='ValueLists')
-				  //node.draggable = true;
-			}
-				  
-		    
+            }
           };
           storeTreeState(child, nodes);
         });
@@ -328,7 +222,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   getSelectedNode: function () {
     var selectedNode = this.directoryPanel.getSelectionModel().getSelectedNode();
-	//var selectedNode = this.directoryPanel.getSelectionModel().getSelectedNodes()[0];
     return selectedNode;
   },
 
@@ -760,10 +653,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     }
   },
 
-
   onOpenGraphMap: function (btn, e) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    this.fireEvent('opengraphmap', this, node);
+    this.fireEvent('OpenGraphMap', this, node);
   },
 
   onNewApplication: function (btn, ev) {
@@ -904,7 +796,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       this.AddGraphMap(this);
     }
     else if (node.attributes.type == 'GraphNode') {
-      this.fireEvent('opengraphmap', this, node);
+      this.fireEvent('OpenGraphMap', this, node);
     }
     else if (node.attributes.type == 'DataObjectNode') {
       this.fireEvent('LoadPageDto', this, node);

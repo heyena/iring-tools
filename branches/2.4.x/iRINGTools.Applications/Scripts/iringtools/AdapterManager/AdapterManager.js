@@ -445,7 +445,7 @@ Ext.onReady(function () {
     loadAppPageDto(scope, app, graph);
   }, this);
 
-  directoryPanel.on('opengraphmap', function (npanel, node) {
+  directoryPanel.on('OpenGraphMap', function (npanel, node) {
 
     var scope = node.parentNode.parentNode.parentNode;
     var application = node.parentNode.parentNode;

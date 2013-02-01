@@ -91,25 +91,23 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Window, {
       var propertydd = new Ext.dd.DropTarget(propertyTarget, {
         ddGroup: 'propertyGroup',
         notifyEnter: function (propertydd, e, data) {
-          if (data.node.attributes.type != 'DataPropertyNode' &&
-              data.node.attributes.type != 'KeyDataPropertyNode')
-            return this.dropNotAllowed;
-          else
+          if (data.node.attributes.type == 'DataPropertyNode' ||
+              data.node.attributes.type == 'KeyDataPropertyNode')
             return this.dropAllowed;
+          else
+            return this.dropNotAllowed;
         },
         notifyOver: function (propertydd, e, data) {
-          if (data.node.attributes.type != 'DataPropertyNode' &&
-              data.node.attributes.type != 'KeyDataPropertyNode')
-            return this.dropNotAllowed;
-          else
+          if (data.node.attributes.type == 'DataPropertyNode' ||
+              data.node.attributes.type == 'KeyDataPropertyNode')
             return this.dropAllowed;
+          else
+            return this.dropNotAllowed;
         },
         notifyDrop: function (propertydd, e, data) {
-          if (data.node.attributes.type != 'DataPropertyNode' &&
-              data.node.attributes.type != 'KeyDataPropertyNode') {
-            return false;
-          }
-          else {
+          if (data.node.attributes.type == 'DataPropertyNode' ||
+              data.node.attributes.type == 'KeyDataPropertyNode')
+          {
             var currIdentifier = thisform.getForm().findField('identifier').getValue();
 
             if (currIdentifier == '' || currIdentifier == thisform.ownerCt.identifierPrompt) {
@@ -119,7 +117,7 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Window, {
             }
             else {
               if (objectName != data.node.parentNode.text) {
-                var message = 'Identifiers must come from the same Data Object!';
+                var message = 'Property must root from the same Data Object!';
                 showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
                 return false;
               }
