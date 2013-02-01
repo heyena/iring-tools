@@ -3,14 +3,14 @@
     "settings": {
         "urlPrefix": "http://localhost:12345/",
         "spacesToIndent": 2,
-        "exportPath": "C:/iring-tools/branches/sencha-extjs41/iRINGTools.Applications",
+        "exportPath": "C:/iring-tools/branches/2.5-adapter/iRINGTools.Applications",
         "sdkPath": "",
         "lineEnding": "CRLF",
         "genTimestamps": false,
         "cacheBust": false
     },
     "xdsVersion": "2.1.0",
-    "xdsBuild": 676,
+    "xdsBuild": 678,
     "schemaVersion": 1,
     "upgradeVersion": 210000000498,
     "framework": "ext41",

@@ -6,10 +6,6 @@
     },
     "codeClass": null,
     "userConfig": {
-        "stores": [
-            "Property",
-            "PropertyMap"
-        ],
         "views": [
             "AMViewport",
             "nhibernate.RelationPropertyGrid"
