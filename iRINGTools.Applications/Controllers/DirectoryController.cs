@@ -53,7 +53,7 @@ namespace org.iringtools.web.controllers
               System.Collections.IEnumerator ie = Session.GetEnumerator();
               while (ie.MoveNext())
               {
-                if (ie.Current.ToString().StartsWith(adapter_PREFIX))
+                if (ie.Current.ToString().StartsWith(ADAPTER_PREFIX))
                 {
                   Session.Remove(ie.Current.ToString());
                   ie = Session.GetEnumerator();
