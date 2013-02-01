@@ -1,0 +1,241 @@
+{
+    "type": "form",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "context": "",
+        "endpoint": "",
+        "rootNode": "",
+        "node": "",
+        "designer|userClassName": "nhibernate.RelationsForm",
+        "designer|userAlias": "relationsform",
+        "height": null,
+        "width": null,
+        "defaults": [
+            "{labelWidth: 130, allowBlank: false}"
+        ],
+        "layout": null,
+        "bodyPadding": null,
+        "title": null
+    },
+    "id": "ExtBox1-ext-gen14728",
+    "designerId": "ee4b18be-7210-4e88-9a5c-50e9ca131349",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "context",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "endpoint",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "rootNode",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "node",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyLabel2",
+                "cls": "x-form-item",
+                "style": [
+                    "font-weight:bold;"
+                ],
+                "text": "Add/Remove relationship"
+            },
+            "designerId": "7da1185d-6ca6-45cd-99ee-ac1cc6d5e47a"
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyTextField16",
+                "name": "relationName",
+                "fieldLabel": "Relationship Name",
+                "labelWidth": null,
+                "enableKeyEvents": true,
+                "size": 40
+            },
+            "designerId": "88744c0c-9cc7-48f0-9ffb-c02d990f1148",
+            "cn": [
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "onRelationKeydown",
+                        "fn": "onRelationKeydown",
+                        "implHandler": [
+                            "var me = this;\r",
+                            "if (e.getKey() == e.ENTER) {\r",
+                            "  me.addRelationship(me);\r",
+                            "}"
+                        ],
+                        "name": "keydown",
+                        "scope": "me"
+                    },
+                    "designerId": "625436bb-23cf-400e-85dc-198ef807c0e6"
+                }
+            ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|displayName": "relationsGrid",
+                "autoShow": true,
+                "minHeight": 50,
+                "dock": null
+            },
+            "designerId": "938378b7-386f-4cf1-8c7f-bdfc1186c090",
+            "masterInstanceId": "ExtBox1-ext-gen3617"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "addRelationship",
+                "fn": "addRelationship",
+                "designer|params": [
+                    "form"
+                ],
+                "implHandler": [
+                    "var me = this;\r",
+                    "var message, newNodeText;\r",
+                    "var relationName = form.getForm().findField(\"relationName\").getValue().replace(/^\\s*/, \"\").replace(/\\s*$/, \"\");\r",
+                    "\r",
+                    "var grid = form.down('relationsgrid');\r",
+                    "var gridStore = grid.getStore();\r",
+                    "\r",
+                    "var mydata = gridStore.data.items;\r",
+                    "var rootNode = form.rootNode;\r",
+                    "var node = form.node;\r",
+                    "var numberOfRelation = rootNode.childNodes.length - 1;\r",
+                    "\r",
+                    "if (mydata.length >= numberOfRelation) {\r",
+                    "  if (numberOfRelation === 0) {\r",
+                    "    message = 'Data object \"' + node.parentNode.text + '\" cannot have any relationship since it is the only data object selected';\r",
+                    "    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "  }\r",
+                    "  else {\r",
+                    "    message = 'Data object \"' + node.parentNode.text + '\" cannot have more than ' + numberOfRelation + ' relationship';\r",
+                    "    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "  }\r",
+                    "  return;\r",
+                    "}\r",
+                    "\r",
+                    "if (relationName === \"\") {\r",
+                    "  message = 'Relationship name cannot be blank.';\r",
+                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "  return;\r",
+                    "}\r",
+                    "\r",
+                    "gridStore.each(function(relation) {\r",
+                    "  if (relation.data.relationName.toLowerCase() == relationName.toLowerCase()) {\r",
+                    "    message = relationName + ' already exits.';\r",
+                    "    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "    return;\r",
+                    "  } \r",
+                    "});\r",
+                    "\r",
+                    "gridStore.add({'relationName': relationName});\r",
+                    "\r",
+                    "var exitNode = false;\r",
+                    "\r",
+                    "node.eachChild(function(n) {\r",
+                    "  exitNode = false;\r",
+                    "  gridStore.each(function(record) {\r",
+                    "    newNodeText = record.data.relationName;\r",
+                    "    if (n.data.text.toLowerCase() == newNodeText.toLowerCase()) {\r",
+                    "      exitNode = true;\r",
+                    "    }\r",
+                    "  });\r",
+                    "  if (exitNode === false) {\r",
+                    "    node.childNodes.splice(node.indexOf(n), 1);\r",
+                    "    node.removeChild(n);\r",
+                    "  }\r",
+                    "});\r",
+                    "\r",
+                    "var nodeChildren = [];\r",
+                    "node.eachChild(function(n) {\r",
+                    "  nodeChildren.push(n.data.text);\r",
+                    "});\r",
+                    "\r",
+                    "newNodeText = relationName;\r",
+                    "\r",
+                    "if (exitNode === false) {\r",
+                    "  node.appendChild({\r",
+                    "    text: relationName,\r",
+                    "    type: 'relationship',\r",
+                    "    leaf: true,\r",
+                    "    iconCls: 'treeRelation',\r",
+                    "    relatedObjectMap: [],\r",
+                    "    objectName: node.parentNode.text,\r",
+                    "    relatedObjectName: '',\r",
+                    "    relationshipType: 'OneToOne',\r",
+                    "    relationshipTypeIndex: '1'\r",
+                    "  });\r",
+                    "\r",
+                    "  if (node.isExpanded() === false)\r",
+                    "  node.expand();\r",
+                    "\r",
+                    "  var relationNode = node.findChild('text', relationName);\r",
+                    "  me.fireEvent('createrelation', form, grid, relationName);        \r",
+                    "}"
+                ]
+            },
+            "designerId": "aa5e05cc-2368-494b-8ff1-a68c2b5957e4"
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "CustomEvent1",
+                "name": "createrelation",
+                "params": [
+                    "form",
+                    "grid",
+                    "relationName"
+                ]
+            },
+            "designerId": "a1fa6b29-b8f6-4600-8613-37c81b2d7d86"
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+{
+    "type": "application",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "stores": [
+            "Property",
+            "PropertyMap"
+        ],
+        "views": [
+            "AMViewport",
+            "nhibernate.RelationPropertyGrid"
+        ],
+        "appFolder": "Scripts/AM",
+        "autoCreateViewport": true,
+        "name": "AM",
+        "controllers": [
+            "Mapping",
+            "Directory",
+            "Search",
+            "Spreadsheet",
+            "NHibernate"
+        ]
+    },
+    "id": "ExtBox1-ext-gen1526",
+    "designerId": "application",
+    "cn": [
+        {
+            "type": "loader",
+            "reference": {
+                "name": "loader",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "Loader",
+                "designer|displayName": "AM",
+                "enabled": true,
+                "paths": [
+                    "{'Ext.ux': 'Scripts/AM/ux'}"
+                ],
+                "garbageCollect": true
+            },
+            "designerId": "a43a39a0-44e3-4fc8-a6d4-14184ad6249c"
+        }
+    ]
+}

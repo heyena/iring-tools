@@ -1,0 +1,183 @@
+{
+    "type": "gridpanel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "nhibernate.RelationsGrid",
+        "designer|userAlias": "relationsgrid",
+        "frame": false,
+        "height": null,
+        "width": null,
+        "title": null,
+        "store": "RelationsStore"
+    },
+    "id": "ExtBox1-ext-gen3617",
+    "designerId": "17fb1af5-2569-49f4-927f-dd778c03c1a1",
+    "cn": [
+        {
+            "type": "gridview",
+            "reference": {
+                "name": "viewConfig",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyGridView3"
+            },
+            "designerId": "35dff96c-8b35-4b48-b88f-49375f2929f1"
+        },
+        {
+            "type": "gridcolumn",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyColumn7",
+                "dataIndex": "relationName",
+                "flex": 1,
+                "text": "Data Relationship Name"
+            },
+            "designerId": "f6cd348b-ea01-4063-8a26-ac7a14217b68"
+        },
+        {
+            "type": "toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "weight": 50,
+                "designer|userClassName": "MyToolbar25"
+            },
+            "designerId": "7c95afc6-03ba-41ff-ad6a-45aa1703d2b0",
+            "cn": [
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton50",
+                        "iconCls": "am-list-add",
+                        "text": "Add"
+                    },
+                    "designerId": "488367e7-889f-4a22-9464-236f4a34609d",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "designer|userClassName": "onAddClick",
+                                "fn": "onAddClick",
+                                "implHandler": [
+                                    "var me = this;\r",
+                                    "var form = button.up('relationsform');\r",
+                                    "form.addRelationship(form);"
+                                ],
+                                "name": "click",
+                                "scope": "me"
+                            },
+                            "designerId": "6561db73-d620-4c11-86f9-25adcde6fb18"
+                        }
+                    ]
+                },
+                {
+                    "type": "tbseparator",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySeparator10",
+                        "width": 4
+                    },
+                    "designerId": "f014aa2c-0f67-4e62-8feb-2a9c4321dde9"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton50",
+                        "iconCls": "am-list-remove",
+                        "text": "Remove"
+                    },
+                    "designerId": "c211764f-bd6c-408e-ae74-c248a751f887",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "designer|userClassName": "removeRelationship",
+                                "fn": "removeRelationship",
+                                "implHandler": [
+                                    "var grid = button.up('relationsgrid');\r",
+                                    "var form = grid.up('relationsform');\r",
+                                    "var node = form.node;\r",
+                                    "var gridStore = grid.getStore();\r",
+                                    "var selected = grid.getSelectionModel().getSelection()[0];\r",
+                                    "if(!selected){\r",
+                                    "  var message = 'Please select a relationship to remove.';\r",
+                                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                                    "  return;\r",
+                                    "}\r",
+                                    "var relation = selected.data.relationName;\r",
+                                    "var exist = gridStore.find('relationName', relation);\r",
+                                    "if (exist != -1) {\r",
+                                    "  var nodeExist = node.findChild('text', relation);\r",
+                                    "  if(nodeExist) \r",
+                                    "  node.removeChild(nodeExist);\r",
+                                    "  gridStore.removeAt(exist);\r",
+                                    "}"
+                                ],
+                                "name": "click",
+                                "scope": "me"
+                            },
+                            "designerId": "89ceb146-4610-447f-a016-0d938e22fea3"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "CustomEvent",
+                "name": "createrelation",
+                "params": [
+                    "form"
+                ]
+            },
+            "designerId": "77717003-2ed5-4570-88ce-7220d49f44f7"
+        }
+    ]
+}

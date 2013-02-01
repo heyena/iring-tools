@@ -1,0 +1,178 @@
+{
+    "type": "form",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "contextName": "",
+        "endpoint": "",
+        "rootNode": "",
+        "designer|userClassName": "nhibernate.CreateRelationForm",
+        "designer|userAlias": "createrelationform",
+        "height": null,
+        "width": null,
+        "defaults": [
+            "{\r",
+            "    labelWidth: 130,\r",
+            "    allowBlank: false\r",
+            "  }"
+        ],
+        "bodyPadding": null,
+        "bodyStyle": [
+            "background:#eee;padding:10 0 0 10"
+        ],
+        "title": null
+    },
+    "id": "ExtBox1-ext-gen6565",
+    "designerId": "260ff6ba-bf2c-4869-bb24-1f2cd987c47e",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "contextName",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "endpoint",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "rootNode",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "MyLabel7",
+                "cls": "x-form-item",
+                "style": [
+                    "font-weight:bold;"
+                ],
+                "text": "Add/Remove Data Relationship"
+            },
+            "designerId": "12ccc4f4-880e-4bc3-8c31-eadbfdd7a932"
+        },
+        {
+            "type": "textfield",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "designer|userClassName": "MyTextField41",
+                "name": "relationName",
+                "fieldLabel": "Relationship Name",
+                "allowBlank": false
+            },
+            "designerId": "b3ede74c-3700-45a9-b083-c54d6f30f56d",
+            "cn": [
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "onTextfieldKeydown",
+                        "fn": "onTextfieldKeydown",
+                        "implHandler": [
+                            "var me = this;\r",
+                            "if(e.getKey() == e.ENTER) {\r",
+                            "\r",
+                            "}"
+                        ],
+                        "name": "keydown",
+                        "scope": "me"
+                    },
+                    "designerId": "6b2b5a31-ce79-4dcd-b85b-a3f88d7f4229"
+                }
+            ]
+        },
+        {
+            "type": "toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "designer|userClassName": "MyToolbar26"
+            },
+            "designerId": "d6c650fa-ebd3-4c57-9238-c664c09e85b7",
+            "cn": [
+                {
+                    "type": "tbseparator",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySeparator12",
+                        "width": 4
+                    },
+                    "designerId": "89102f8e-1b4a-471e-b73a-e9995ddb0078"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton52",
+                        "iconCls": "am-apply",
+                        "text": "Apply"
+                    },
+                    "designerId": "ea3bc20d-a48a-42d3-8e8a-bc0025e50ac4"
+                },
+                {
+                    "type": "tbseparator",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MySeparator12",
+                        "width": 4
+                    },
+                    "designerId": "a20d8a8e-4fa0-4a49-9834-b1f5ef501930"
+                },
+                {
+                    "type": "button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "designer|userClassName": "MyButton52",
+                        "iconCls": "am-edit-clear",
+                        "text": "Reset"
+                    },
+                    "designerId": "7e34382c-bdbb-4ec8-919d-5cf943b4fb19"
+                }
+            ]
+        }
+    ]
+}
