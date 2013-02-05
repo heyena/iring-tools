@@ -5250,7 +5250,44 @@ namespace org.iringtools.adapter
 
       return dataObjects;
     }
+
+    public DocumentBytes GetResourceData(string scope, string app)
+    {
+        DocumentBytes documentBytes = new DocumentBytes();
+        string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
+        string[] filePaths = Directory.GetFiles(searchPath, "SpreadsheetData."+scope + "." + app + ".xlsx");
+        string _FileName = filePaths[0];
+
+        byte[] _Buffer = null;
+
+        if (_FileName.Length > 0)
+        {
+            System.IO.FileStream _FileStream = new System.IO.FileStream(_FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            System.IO.BinaryReader _BinaryReader = new System.IO.BinaryReader(_FileStream);
+            long _TotalBytes = new System.IO.FileInfo(_FileName).Length;
+            _Buffer = _BinaryReader.ReadBytes((Int32)_TotalBytes);
+        }
+        documentBytes.Content = _Buffer;
+        documentBytes.DocumentPath = searchPath;
+        return documentBytes;
+    }
+
+    public byte[] GetResourceDataBytes(string scope, string app)
+    { 
+        string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
+        string[] filePaths = Directory.GetFiles(searchPath, scope + "." + app + ".*.mdb");
+
+        if (filePaths.Length > 0)
+        {
+            string _FileName = filePaths[0];
+            return System.IO.File.ReadAllBytes(_FileName);
+        }
+        else
+            return null;
+    }
+
   }
+
 
   public class DataObjectComparer : IComparer<IDataObject>
   {
@@ -5263,57 +5300,57 @@ namespace org.iringtools.adapter
 
     public int Compare(IDataObject left, IDataObject right)
     {
-      // compare booleans
-      if (_dataProp.dataType == DataType.Boolean)
-      {
-        int leftValue = (int)left.GetPropertyValue(_dataProp.propertyName);
-        int rightValue = (int)right.GetPropertyValue(_dataProp.propertyName);
+        // compare booleans
+        if (_dataProp.dataType == DataType.Boolean)
+        {
+            int leftValue = (int)left.GetPropertyValue(_dataProp.propertyName);
+            int rightValue = (int)right.GetPropertyValue(_dataProp.propertyName);
 
-        if (leftValue > rightValue)
-          return 1;
+            if (leftValue > rightValue)
+                return 1;
 
-        if (rightValue > leftValue)
-          return -1;
+            if (rightValue > leftValue)
+                return -1;
 
-        return 0;
-      }
+            return 0;
+        }
 
-      // compare numerics
-      if (_dataProp.dataType == DataType.Byte ||
-        _dataProp.dataType == DataType.Decimal ||
-        _dataProp.dataType == DataType.Double ||
-        _dataProp.dataType == DataType.Int16 ||
-        _dataProp.dataType == DataType.Int32 ||
-        _dataProp.dataType == DataType.Int64 ||
-        _dataProp.dataType == DataType.Single)
-      {
-        decimal leftValue = (decimal)left.GetPropertyValue(_dataProp.propertyName);
-        decimal rightValue = (decimal)right.GetPropertyValue(_dataProp.propertyName);
+        // compare numerics
+        if (_dataProp.dataType == DataType.Byte ||
+          _dataProp.dataType == DataType.Decimal ||
+          _dataProp.dataType == DataType.Double ||
+          _dataProp.dataType == DataType.Int16 ||
+          _dataProp.dataType == DataType.Int32 ||
+          _dataProp.dataType == DataType.Int64 ||
+          _dataProp.dataType == DataType.Single)
+        {
+            decimal leftValue = (decimal)left.GetPropertyValue(_dataProp.propertyName);
+            decimal rightValue = (decimal)right.GetPropertyValue(_dataProp.propertyName);
 
-        if (leftValue > rightValue)
-          return 1;
+            if (leftValue > rightValue)
+                return 1;
 
-        if (rightValue > leftValue)
-          return -1;
+            if (rightValue > leftValue)
+                return -1;
 
-        return 0;
-      }
+            return 0;
+        }
 
-      // compare date times
-      if (_dataProp.dataType == DataType.DateTime)
-      {
-        DateTime leftValue = (DateTime)left.GetPropertyValue(_dataProp.propertyName);
-        DateTime rightValue = (DateTime)right.GetPropertyValue(_dataProp.propertyName);
+        // compare date times
+        if (_dataProp.dataType == DataType.DateTime)
+        {
+            DateTime leftValue = (DateTime)left.GetPropertyValue(_dataProp.propertyName);
+            DateTime rightValue = (DateTime)right.GetPropertyValue(_dataProp.propertyName);
 
-        return DateTime.Compare(leftValue, rightValue);
-      }
+            return DateTime.Compare(leftValue, rightValue);
+        }
 
-      // compare strings
-      {
-        string leftValue = left.GetPropertyValue(_dataProp.propertyName).ToString();
-        string rightValue = right.GetPropertyValue(_dataProp.propertyName).ToString();
-        return string.Compare(leftValue, rightValue);
-      }
+        // compare strings
+        {
+            string leftValue = left.GetPropertyValue(_dataProp.propertyName).ToString();
+            string rightValue = right.GetPropertyValue(_dataProp.propertyName).ToString();
+            return string.Compare(leftValue, rightValue);
+        }
     }
   }
 }

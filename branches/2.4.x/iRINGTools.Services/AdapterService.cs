@@ -100,12 +100,35 @@ namespace org.iringtools.services
     ///// Gets the resource data for a datalayer.
     ///// </summary>
     ///// <returns>Returns a list of service settings.</returns>
-    //[Description("Gets datalayer resource data.")]
-    //[WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/resourcedata")]
-    //public DocumentBytes GetResourceData(string scope, string app)
-    //{
-    //  return _adapterProvider.GetResourceData(scope, app);
-    //}
+    [Description("Gets datalayer resource data.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/resourcedata")]
+    public DocumentBytes GetResourceData(string scope, string app)
+    {
+        return _adapterProvider.GetResourceData(scope, app);
+    }
+
+
+    ///// <summary>
+    ///// Currently Supporting the .mdb file only.
+    ///// </summary>
+    [Description("Gets datalayer resource data.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/resourcebytes")]
+    public Stream GetResourceDataBytes(string scope, string app)
+    {
+        byte[] data = _adapterProvider.GetResourceDataBytes(scope, app);
+        if (data != null)
+        {
+            MemoryStream stream = new MemoryStream(data);
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-msaccess"; //or whatever your mime type is
+            stream.Position = 0;
+            return stream;
+        }
+        else
+        {
+            return new MemoryStream();
+        }
+    }
+
     #endregion
 
     #region Config methods
