@@ -446,7 +446,8 @@ namespace org.iringtools.adapter.datalayer
         }
         else
         {
-          criteria.SetFirstResult(startIndex).SetMaxResults(pageSize);
+          NHibernate.Criterion.Order order = new NHibernate.Criterion.Order(objectDefinition.keyProperties.First().keyPropertyName, true);
+          criteria.AddOrder(order).SetFirstResult(startIndex).SetMaxResults(pageSize);
           IList<IDataObject> dataObjects = criteria.List<IDataObject>();
           return dataObjects;
         }
