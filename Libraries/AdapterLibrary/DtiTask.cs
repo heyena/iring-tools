@@ -12,6 +12,8 @@ namespace org.iringtools.adapter
 {
   public class DataTransferIndicesTask
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataTransferIndicesTask));
+
     private ManualResetEvent _doneEvent;
     private DtoProjectionEngine _projectionLayer;
     private IDataLayer _dataLayer;
@@ -35,6 +37,8 @@ namespace org.iringtools.adapter
 
     public void ThreadPoolCallback(object threadContext)
     {
+      _logger.Debug(string.Format("Starting worker process for getting paged data {0}-{1}.", _startIndex, _startIndex + _pageSize));
+        
       int threadIndex = (int)threadContext;
       IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, _filter, _pageSize, _startIndex);
 
@@ -42,6 +46,8 @@ namespace org.iringtools.adapter
       {
         _dataTransferIndices = _projectionLayer.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
       }
+
+      _logger.Debug(string.Format("Worker process for getting paged data {0}-{1} completed.", _startIndex, _startIndex + _pageSize));
 
       _doneEvent.Set();
     }
