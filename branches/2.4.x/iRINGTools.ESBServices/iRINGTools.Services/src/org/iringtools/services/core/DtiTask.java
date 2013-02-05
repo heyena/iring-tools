@@ -83,14 +83,27 @@ public class DtiTask implements Runnable
     DataTransferIndices sourceDtis = sourceDtiTask.getDataTransferIndices();
     if (sourceDtis == null)
     {
-      sourceDtis = new DataTransferIndices();
+      String error = sourceDtiTask.getError();
+      
+      if (error != null)
+        throw new Exception(error);
+      else
+        sourceDtis = new DataTransferIndices();
     }
 
     DataTransferIndices targetDtis = targetDtiTask.getDataTransferIndices();
     if (targetDtis == null)
     {
-      targetDtis = new DataTransferIndices();
+      String error = targetDtiTask.getError();
+      
+      if (error != null)
+        throw new Exception(error);
+      else
+        targetDtis = new DataTransferIndices();
     }
+    
+    logger.info("Sender [" + xdef.getSourceAppName() + "] DTI count: " + sourceDtis.getDataTransferIndexList().getItems().size());
+    logger.info("Receiver [" + xdef.getTargetAppName() + "] DTI count: " + targetDtis.getDataTransferIndexList().getItems().size());
 
     if (dtiOnly)
     {
@@ -160,6 +173,7 @@ public class DtiTask implements Runnable
       dtis = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
     }
   }
+  
   public void sourceDups(DataTransferIndices sourceDtis)
   {
 	  DataTransferIndex previousDti = null;        
@@ -244,6 +258,7 @@ class DtiSubTask implements Runnable
   private String relativePath;
   private DxiRequest dxiRequest;
   private DataTransferIndices dtis;
+  private String error;
   
   public DtiSubTask(Map<String, Object> settings, String serviceUri, String relativePath, DxiRequest dxiRequest)
   {
@@ -274,14 +289,19 @@ class DtiSubTask implements Runnable
     }
     catch (Exception e) 
     {
-      logger.error("Error getting dxi: " + e.getMessage());
-      e.printStackTrace();
+      logger.error("Error getting dti: " + e.getMessage());
+      error = "Error getting dti: " + e.getMessage();
     }
   }
   
   public DataTransferIndices getDataTransferIndices()
   {
     return dtis;
+  } 
+
+  public String getError()
+  {
+    return error;
   }  
   
   protected <T> T waitForRequestCompletion(Class<T> clazz, String url)

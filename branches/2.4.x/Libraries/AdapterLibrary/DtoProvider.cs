@@ -446,11 +446,12 @@ namespace org.iringtools.adapter
 
         if (_settings["MultiGetDTIs"] == null || bool.Parse(_settings["MultiGetDTIs"]))
         {
+          _logger.Debug("Running muti-threaded DTIs.");
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
         else
         {
-          _logger.Debug("Single threaded get DTIs.");            
+          _logger.Debug("Running single-threaded DTIs.");            
           List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
           dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
         }
@@ -1199,7 +1200,11 @@ namespace org.iringtools.adapter
 
       for (int offset = 0; offset < count; offset = offset + pageSize)
       {
+        _logger.Debug(string.Format("Getting paged data {0}-{1}.", offset, offset + pageSize));
+
         dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, offset));
+
+        _logger.Debug(string.Format("Paged data {0}-{1} completed.", offset, offset + pageSize));
       }
 
       return dataObjects;
