@@ -28,42 +28,55 @@ USAGE  PostAsMultiPart baseUrl relativeUrl filePath mimeType
       string relativeUrl = String.Empty;
       string filePath = String.Empty;
       string mimeType = String.Empty;
+      string Scope = string.Empty;
+      string App = string.Empty;
 
-      if (args.Length >= 4)
+      try
       {
-        baseUrl = args[0];
-        relativeUrl = args[1];
-        filePath = args[2];
-        mimeType = args[3];
+          string fileName = string.Empty;
+          if (args.Length >= 6)
+          {
+              baseUrl = args[0];
+              relativeUrl = args[1];
+              filePath = args[2];
+              mimeType = args[3];
+              Scope = args[4];
+              App = args[5];
 
-        FileInfo info = new FileInfo(filePath);
+              FileInfo info = new FileInfo(filePath);
 
-        Stream stream = Utility.ReadStream(filePath);
+              Stream stream = Utility.ReadStream(filePath);
 
-        WebHttpClient webClient = new WebHttpClient(baseUrl);
+              WebHttpClient webClient = new WebHttpClient(baseUrl);
 
-        MultiPartMessage message = new MultiPartMessage
-        {
-          fileName = info.Name,
-          message = stream,
-          mimeType = mimeType,
-          type = MultipartMessageType.File
-        };
+              fileName = Scope + "." + App + "." + info.Name;            // Saving file as {Scope}.{App}.fileName
+              MultiPartMessage message = new MultiPartMessage            // so that It can be easily identified during download.
+              {
+                  fileName = fileName,            //info.Name,
+                  message = stream,
+                  mimeType = mimeType,
+                  type = MultipartMessageType.File
+              };
 
-        List<MultiPartMessage> requestMessages = new List<MultiPartMessage>
+              List<MultiPartMessage> requestMessages = new List<MultiPartMessage>
         {
           message,
         };
 
-        string responseTxt = webClient.PostMultipartMessage(relativeUrl, requestMessages, true);
+              string responseTxt = webClient.PostMultipartMessage(relativeUrl, requestMessages, true);
 
-        Console.WriteLine(responseTxt);
+              Console.WriteLine(responseTxt);
 
-        Console.ReadKey();
+              Console.ReadKey();
+          }
+          else
+          {
+              Console.WriteLine(HELP_MESSAGE);
+          }
       }
-      else
-      {
-        Console.WriteLine(HELP_MESSAGE);
+      catch (Exception ex)
+      { 
+       
       }
     }
   }
