@@ -437,7 +437,16 @@ namespace org.iringtools.adapter.datalayer
 
           while (numOfRows < totalCount)
           {
-            criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
+            if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
+            {
+              criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
+            }
+            else
+            {
+              NHibernate.Criterion.Order order = new NHibernate.Criterion.Order(objectDefinition.keyProperties.First().keyPropertyName, true);
+              criteria.AddOrder(order).SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
+            }
+
             dataObjects.AddRange(criteria.List<IDataObject>());
             numOfRows += internalPageSize;
           }
@@ -446,8 +455,16 @@ namespace org.iringtools.adapter.datalayer
         }
         else
         {
-          NHibernate.Criterion.Order order = new NHibernate.Criterion.Order(objectDefinition.keyProperties.First().keyPropertyName, true);
-          criteria.AddOrder(order).SetFirstResult(startIndex).SetMaxResults(pageSize);
+          if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
+          {
+            criteria.SetFirstResult(startIndex).SetMaxResults(pageSize);
+          }
+          else
+          {
+            NHibernate.Criterion.Order order = new NHibernate.Criterion.Order(objectDefinition.keyProperties.First().keyPropertyName, true);
+            criteria.AddOrder(order).SetFirstResult(startIndex).SetMaxResults(pageSize);
+          }
+          
           IList<IDataObject> dataObjects = criteria.List<IDataObject>();
           return dataObjects;
         }
