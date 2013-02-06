@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using log4net;
-using System.Security.Cryptography;
-using System.IO;
 
 namespace org.iringtools.utility
 {
   public static class EncryptionUtility
   {
     private static readonly ILog logger = LogManager.GetLogger(typeof(EncryptionUtility));
-    private static String SECRET_KEY = "secret";  
-    private static RijndaelManaged cipher;
+    private static String SECRET_KEY = "secret";
 
-    #region Using internal secret key
-    static EncryptionUtility()
+    private static RijndaelManaged GetEncryptionAlgorithm()
     {
       try
       {
@@ -24,7 +20,7 @@ namespace org.iringtools.utility
         int len = (buf.Length > keyBytes.Length) ? keyBytes.Length : buf.Length;
         Array.Copy(buf, keyBytes, len);
 
-        cipher = new RijndaelManaged()
+        RijndaelManaged algo = new RijndaelManaged()
         {
           Mode = CipherMode.CBC,
           Padding = PaddingMode.PKCS7,
@@ -33,10 +29,51 @@ namespace org.iringtools.utility
           Key = keyBytes,
           IV = keyBytes
         };
+
+        return algo;
       }
       catch (Exception e)
       {
         logger.Error("Error initializing cryptor: " + e);
+        throw e;
+      }
+    }
+
+    private static RijndaelManaged GetEncryptionAlgorithm(string keyFile)
+    {
+      try
+      {
+        RijndaelManaged algo = null;
+
+        if (!string.IsNullOrEmpty(keyFile) && File.Exists(keyFile))
+        {
+          FileStream fs = File.OpenRead(keyFile);
+          byte[] keyBytes = new byte[fs.Length];
+          fs.Read(keyBytes, 0, keyBytes.Length);
+          fs.Close();
+
+          MD5 md5 = MD5.Create();
+          keyBytes = md5.ComputeHash(keyBytes);
+
+          algo = new RijndaelManaged()
+          {
+            Mode = CipherMode.CBC,
+            Padding = PaddingMode.PKCS7,
+            Key = keyBytes,
+            IV = keyBytes
+          };
+        }
+        else
+        {
+          algo = GetEncryptionAlgorithm();
+        }
+
+        return algo;
+      }
+      catch (Exception e)
+      {
+        String message = "Error initializing key from key file [" + keyFile + "]. " + e;
+        throw new Exception(message);
       }
     }
 
@@ -44,7 +81,8 @@ namespace org.iringtools.utility
     {
       try
       {
-        ICryptoTransform encryptor = cipher.CreateEncryptor();
+        RijndaelManaged algo = GetEncryptionAlgorithm();
+        ICryptoTransform encryptor = algo.CreateEncryptor();
         byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
         return Convert.ToBase64String(encryptor.TransformFinalBlock(plainTextBytes, 0, plainTextBytes.Length));
       }
@@ -60,7 +98,8 @@ namespace org.iringtools.utility
     {
       try
       {
-        ICryptoTransform decryptor = cipher.CreateDecryptor();
+        RijndaelManaged algo = GetEncryptionAlgorithm();
+        ICryptoTransform decryptor = algo.CreateDecryptor();
         byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
         byte[] plainText = decryptor.TransformFinalBlock(cipherTextBytes, 0, cipherTextBytes.Length);
         return Encoding.UTF8.GetString(plainText);
@@ -72,42 +111,13 @@ namespace org.iringtools.utility
         throw new Exception(message);
       }
     }
-    #endregion
-
-    #region Using external secret key
-    private static void InitKey(string keyFile)
-    {
-      try
-      {
-        FileStream fs = File.OpenRead(keyFile);
-        byte[] keyBytes = new byte[fs.Length];
-        fs.Read(keyBytes, 0, keyBytes.Length);
-        fs.Close();
-
-        MD5 md5 = MD5.Create();
-        keyBytes = md5.ComputeHash(keyBytes);
-
-        cipher = new RijndaelManaged()
-        {
-          Mode = CipherMode.CBC,
-          Padding = PaddingMode.PKCS7,
-          Key = keyBytes,
-          IV = keyBytes
-        };
-      }
-      catch (Exception e)
-      {
-        String message = "Error initializing key from key file [" + keyFile + "]. " + e;
-        throw new Exception(message);
-      }
-    }
 
     public static string Encrypt(string plainText, string keyFile)
     {
       try
       {
-        InitKey(keyFile);
-        ICryptoTransform encryptor = cipher.CreateEncryptor();
+        RijndaelManaged algo = GetEncryptionAlgorithm(keyFile);
+        ICryptoTransform encryptor = algo.CreateEncryptor();
         byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
         return Convert.ToBase64String(encryptor.TransformFinalBlock(plainTextBytes, 0, plainTextBytes.Length));
       }
@@ -122,8 +132,8 @@ namespace org.iringtools.utility
     {
       try
       {
-        InitKey(keyFile);
-        ICryptoTransform decryptor = cipher.CreateDecryptor();
+        RijndaelManaged algo = GetEncryptionAlgorithm(keyFile);        
+        ICryptoTransform decryptor = algo.CreateDecryptor();
         byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
         byte[] plainText = decryptor.TransformFinalBlock(cipherTextBytes, 0, cipherTextBytes.Length);
         return Encoding.UTF8.GetString(plainText);
@@ -134,6 +144,5 @@ namespace org.iringtools.utility
         throw new Exception(message);
       }
     }
-    #endregion
   }
 }

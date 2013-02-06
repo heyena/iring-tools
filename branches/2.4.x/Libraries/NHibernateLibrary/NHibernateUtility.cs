@@ -10,6 +10,11 @@ namespace org.iringtools.nhibernate
   public static class NHibernateUtility
   {
     public static DatabaseDictionary LoadDatabaseDictionary(string path)
+    {
+      return LoadDatabaseDictionary(path, string.Empty);
+    }
+
+    public static DatabaseDictionary LoadDatabaseDictionary(string path, string keyFile)
     {      
       DatabaseDictionary dbDictionary = Utility.Read<DatabaseDictionary>(path);
       string connStr = dbDictionary.ConnectionString;
@@ -19,14 +24,14 @@ namespace org.iringtools.nhibernate
         if (connStr.ToUpper().Contains("DATA SOURCE"))
         {
           // connection string is not encrypted, encrypt and write it back
-          dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr);
+          dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr, keyFile);
           Utility.Write<DatabaseDictionary>(dbDictionary, path);
 
           dbDictionary.ConnectionString = connStr;
         }
         else
         {
-          dbDictionary.ConnectionString = EncryptionUtility.Decrypt(connStr);
+          dbDictionary.ConnectionString = EncryptionUtility.Decrypt(connStr, keyFile);
         }
       }
 
@@ -35,14 +40,19 @@ namespace org.iringtools.nhibernate
 
     public static void SaveDatabaseDictionary(DatabaseDictionary dbDictionary, string path)
     {
+      SaveDatabaseDictionary(dbDictionary, path, string.Empty);
+    }
+
+    public static void SaveDatabaseDictionary(DatabaseDictionary dbDictionary, string path, string keyFile)
+    {
       string connStr = dbDictionary.ConnectionString;
 
       if (connStr != null)
       {
         if (connStr.ToUpper().Contains("DATA SOURCE"))
         {
-          // connection string is not encrypted, encrypt and write it back
-          dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr);
+          // connection string is not encrypted, encrypt it
+          dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr, keyFile);
         }
       }
       
