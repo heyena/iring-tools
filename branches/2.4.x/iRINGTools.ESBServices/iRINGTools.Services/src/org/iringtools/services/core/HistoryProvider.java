@@ -25,6 +25,20 @@ public class HistoryProvider
 
   public History getExchangeHistory(String scope, String id) throws ServiceProviderException
   {
+	  try
+	  {
+		  return getExchangeHistory(scope, id, 0);
+	  }
+	  catch (Exception e)
+	  {
+		  String message = "Error getting exchange history: " + e;
+		  logger.error(message);
+		  throw new ServiceProviderException(message);
+	  }
+  }
+
+  public History getExchangeHistory(String scope, String id, int limit) throws ServiceProviderException
+  {
     History history = new History();
     List<ExchangeResponse> responses = new ArrayList<ExchangeResponse>();
     history.setExchangeResponses(responses);
@@ -50,8 +64,17 @@ public class HistoryProvider
         
         // show most recent first
         Collections.sort(exchangeLogs);
+
+        // may just want the x most recent history, where x=limit
+        int actualLimit = limit;
+        if (actualLimit > 0)
+        {
+        	// note we loop from biggest to smallest so actualLimit is an "inverted" value, also the array is zero based
+        	// so if there were 10 logs and we only wanted the most recent one we'd want to loop while i >= 9
+        	actualLimit = (limit > exchangeLogs.size() ? 0 : exchangeLogs.size() - limit);
+        }
   
-        for (int i = exchangeLogs.size() - 1; i >= 0; i--)
+        for (int i = exchangeLogs.size() - 1; i >= actualLimit; i--)
         {
           ExchangeResponse response = JaxbUtils.read(ExchangeResponse.class, path + "/" + exchangeLogs.get(i));          
           responses.add(response);
