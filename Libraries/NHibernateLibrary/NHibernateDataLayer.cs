@@ -57,7 +57,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (File.Exists(dbDictionaryPath))
       {
-        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath, _settings["KeyFile"]);
       }
 
       string relativePath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml",

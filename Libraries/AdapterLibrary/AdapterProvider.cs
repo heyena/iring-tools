@@ -855,7 +855,7 @@ namespace org.iringtools.adapter
 
           if (File.Exists(dbDictionaryPath))
           {
-            dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath);
+            dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath, _settings["KeyFile"]);
           }
 
           if (dbDictionary != null && dbDictionary.dataObjects != null)
