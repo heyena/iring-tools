@@ -41,9 +41,7 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        _logger.Debug("Starting Switch block");
-        _logger.Debug(form["type"]);
-
+        _logger.Debug("GetNode type: " + form["type"]);
         _repository.Session = Session;
 
         switch (form["type"])
@@ -53,25 +51,17 @@ namespace org.iringtools.web.controllers
               System.Collections.IEnumerator ie = Session.GetEnumerator();
               while (ie.MoveNext())
               {
-                if (ie.Current.ToString().StartsWith(ADAPTER_PREFIX))
-                {
-                  Session.Remove(ie.Current.ToString());
-                  ie = Session.GetEnumerator();
-                }
+                Session.Remove(ie.Current.ToString());
+                ie = Session.GetEnumerator();
               }
 
-              _logger.Debug("In ScopesNode case block");
-
-              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-              
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();              
               var contexts = _repository.GetScopes();
 
               if (contexts != null)
               {
                 foreach (ScopeProject scope in contexts)
                 {
-                  _logger.Debug("Scope: " + scope.Name);
-
                   JsonTreeNode node = new JsonTreeNode
                   {
                     nodeType = "async",
