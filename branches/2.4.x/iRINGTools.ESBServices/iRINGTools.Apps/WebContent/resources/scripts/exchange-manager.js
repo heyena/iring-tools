@@ -912,8 +912,8 @@ function loadPageDto(type, action, context, label) {
 																								height : 500,
 																								width : 750,
 																								plain : true,
-																								items : summaryPane,
-																							/*
+																								items : summaryPane/*,
+																							
 																							 * listeners: {
 																							 * beforelayout:
 																							 * function
@@ -1213,7 +1213,7 @@ function showStatus(duplicates) {
 						height:33,
 						html : '<div style="width:50px;float:left"><img style="margin:2px 5px 2px 5px" src="resources/images/error.png"/> </div>'
 							+ '<div style="width:100%;height:100%"><table style="height:20%"><tr><td>'
-							+ 'List Of Errors:- </td></tr></table></div>',
+							+ 'List Of Errors:- </td></tr></table></div>'
 					
 					}]});
 		
@@ -1226,7 +1226,7 @@ function showStatus(duplicates) {
 					cls : 'class-badge',
 					html : '<div style="width:50px;float:left"><img style="margin:2px 5px 2px 5px" src="resources/images/error.png"/> </div>'
 						+ '<div style="width:100%;height:100%"><table style="height:100%"><tr><td>'
-						+ 'List Of Errors:- </td></tr></table></div>',
+						+ 'List Of Errors:- </td></tr></table></div>'
 				});
 
 		var win = new Ext.Window(
@@ -1266,28 +1266,24 @@ function showStatus(duplicates) {
 											height:33,
 											html : '<div style="width:50px;float:left"><img style="margin:2px 5px 2px 5px" src="resources/images/error.png"/> </div>'
 											// '<div style="width:100%;height:100%"><table style="height:80%;widht: 100%;""><tr><td>'
-												+ 'List Of Errors:-'//'</td></tr></table></div>',
-										
-										},
-										{
+												+ 'List Of Errors:-'//'</td></tr></table></div>',=
 										
 										},
 										{
 											xtype : 'spacer',
-											height : 10,
+											height : 10
 
-										},
-										
+										},										
 										{
 											xtype : 'label',
 											style : 'color: black;padding:15px; font-size:10pt',
 											// region : 'center',
-											text : value,
+											text : value
 										// html:result
 										}, {
 											xtype : 'spacer',
 											height : 10
-										}, /*
+										} /*, 
 											 * {
 											 * 
 											 * xtype:'label', style: 'color:
@@ -1329,7 +1325,7 @@ function showStatus(duplicates) {
 					stripeRows : true,
 					autoScroll : true,
 					source : {
-						"Warnings" : "Value",
+						"Warnings" : "Value"
 					// "Wrong Data":duplicates
 					}
 				});
