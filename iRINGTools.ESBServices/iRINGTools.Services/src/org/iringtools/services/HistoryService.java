@@ -1,10 +1,12 @@
 package org.iringtools.services;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.iringtools.history.History;
 import org.iringtools.security.AuthorizationException;
@@ -20,7 +22,8 @@ public class HistoryService extends AbstractService
   @Path("/{scope}/exchanges/{exchangeId}")
   public Response getExchange(
       @PathParam("scope") String scope, 
-      @PathParam("exchangeId") String exchangeId) 
+      @PathParam("exchangeId") String exchangeId,
+      @DefaultValue("0") @QueryParam("limit") int limit) 
   {   
     History history = null;
     
@@ -36,7 +39,7 @@ public class HistoryService extends AbstractService
     try
     {
       HistoryProvider historyProvider = new HistoryProvider(settings);
-      history = historyProvider.getExchangeHistory(scope, exchangeId);
+      history = historyProvider.getExchangeHistory(scope, exchangeId, limit);
     }
     catch (Exception e)
     {
