@@ -1198,7 +1198,7 @@ namespace org.iringtools.adapter
                             if (prop != null)
                                 DataProperties.Insert(0, prop);
                         }
-                    } 
+                    } utility.Utility.Write<DataDictionary>(dataDictionary, path, true);
                     return dataDictionary;
                 }
          
