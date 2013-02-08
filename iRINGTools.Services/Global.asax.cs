@@ -11,6 +11,7 @@ namespace org.iringtools.adapter
     void Application_Start(object sender, EventArgs e)
     {
       RegisterRoutes();
+      log4net.Config.XmlConfigurator.Configure();
     }
 
     private void RegisterRoutes()
