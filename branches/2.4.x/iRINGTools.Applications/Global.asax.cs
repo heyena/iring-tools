@@ -43,6 +43,7 @@ namespace iRINGTools.Web
     {
       AreaRegistration.RegisterAllAreas();
       RegisterRoutes(RouteTable.Routes);
+      log4net.Config.XmlConfigurator.Configure();
     }
 
     protected void Application_BeginRequest(object sender, EventArgs e)

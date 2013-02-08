@@ -42,6 +42,8 @@ namespace org.iringtools.adapter
       int threadIndex = (int)threadContext;
       IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, _filter, _pageSize, _startIndex);
 
+      _logger.Debug(string.Format("Worker process for getting paged data {0}-{1} received {2} data objects", _startIndex, _startIndex + _pageSize, dataObjects.Count));
+
       if (dataObjects != null)
       {
         _dataTransferIndices = _projectionLayer.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
