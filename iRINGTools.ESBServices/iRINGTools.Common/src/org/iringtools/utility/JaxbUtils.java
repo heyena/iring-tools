@@ -36,7 +36,7 @@ public final class JaxbUtils
 	  try
 	  {
 	    stream = toStream(object, indent);
-	    return stream.toString(); 
+	    return ((ByteArrayOutputStream)stream).toString("UTF-8"); 
 	  }
 	  finally
 	  {
@@ -66,7 +66,8 @@ public final class JaxbUtils
   		String pkgName = c.getPackage().getName();
   		JAXBContext jc = JAXBContext.newInstance(pkgName);
   	  Marshaller m = jc.createMarshaller();
-  	  m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, indent);
+      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, indent);
+      m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
   	  m.marshal(object, stream);
     }
   }
