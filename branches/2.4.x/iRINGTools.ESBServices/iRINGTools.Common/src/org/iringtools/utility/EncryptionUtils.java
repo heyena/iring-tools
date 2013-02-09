@@ -18,69 +18,10 @@ import org.apache.commons.codec.binary.Base64;
 
 public class EncryptionUtils
 {
-  private static final String ALGORITHM = "AES";
-  private static final String ENCODING = "UTF-8";
+  private static final String AES = "AES";
+  private static final String UTF8 = "UTF-8";
   private static final String SECRET_KEY = "secret";
 
-  private static Cipher cipher;
-  private static SecretKeySpec keySpec;
-  private static IvParameterSpec ivSpec;
-
-  /*
-   * Using internal secret key
-   */
-  static
-  {
-    try
-    {
-      byte[] keyBytes = new byte[16];
-      byte[] buf = SECRET_KEY.getBytes(ENCODING);
-      int len = (buf.length > keyBytes.length) ? keyBytes.length : buf.length;
-      System.arraycopy(buf, 0, keyBytes, 0, len);
-
-      cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      keySpec = new SecretKeySpec(keyBytes, ALGORITHM);
-      ivSpec = new IvParameterSpec(keyBytes);
-    }
-    catch (Exception e)
-    {
-      System.out.println("Error initializing cryptor: " + e);
-    }
-  }
-
-  public static synchronized String encrypt(String plainText) throws EncryptionException
-  {
-    try
-    {
-      cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-      byte[] cipherTextBytes = cipher.doFinal(plainText.getBytes(ENCODING));
-      return Base64.encodeBase64String(cipherTextBytes);
-    }
-    catch (Exception e)
-    {
-      String message = "Error encrypting [" + plainText + "]" + e;
-      throw new EncryptionException(message);
-    }
-  }
-
-  public static synchronized String decrypt(String cipherText) throws EncryptionException
-  {
-    try
-    {
-      cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-      byte[] plainTextBytes = cipher.doFinal(Base64.decodeBase64(cipherText));
-      return new String(plainTextBytes, ENCODING);
-    }
-    catch (Exception e)
-    {
-      String message = "Error decrypting [" + cipherText + "]. " + e;
-      throw new EncryptionException(message);
-    }
-  }
-
-  /*
-   * Using external secret key
-   */
   // available key size: 128, 192, 256
   public static void generateKey(int keySize, String filePath) throws Exception
   {
@@ -102,31 +43,66 @@ public class EncryptionUtils
     }
   }
 
-  private static void initKey(String keyFile) throws Exception
+  private static byte[] getKey(String keyFile)
   {
-    InputStream is = new FileInputStream(keyFile);
-    byte[] keyBytes = new byte[is.available()];
-    is.read(keyBytes);
-    is.close();
+    byte[] keyBytes = null;
+    
+    try
+    {
+      if (keyFile == null || keyFile.length() == 0)
+      {
+        keyBytes = new byte[16];
+        byte[] buf = SECRET_KEY.getBytes(UTF8);
+        int len = (buf.length > keyBytes.length) ? keyBytes.length : buf.length;
+        System.arraycopy(buf, 0, keyBytes, 0, len);
+      }
+      else
+      {
+        InputStream is = new FileInputStream(keyFile);
+        keyBytes = new byte[is.available()];
+        is.read(keyBytes);
+        is.close();
 
-    // use message digest to get 16-byte secret key
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    md.update(keyBytes);
-    keyBytes = md.digest();
+        // use message digest to get 16-bit secret key
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(keyBytes);
+        keyBytes = md.digest();
+      }
+    }
+    catch (Exception e)
+    {
+      System.out.println("Error initializing cryptor: " + e);
+    }
+    
+    return keyBytes;
+  }
 
-    keySpec = new SecretKeySpec(keyBytes, ALGORITHM);
-    ivSpec = new IvParameterSpec(keyBytes);
+  public static synchronized String encrypt(String plainText) throws EncryptionException
+  {
+    try
+    {
+      return encrypt(plainText, null);
+    }
+    catch (Exception e)
+    {
+      String message = "Error encrypting [" + plainText + "]" + e;
+      throw new EncryptionException(message);
+    }
   }
 
   public static String encrypt(String plainText, String keyFile) throws EncryptionException
   {
     try
     {
-      initKey(keyFile);
+      byte[] keyBytes = getKey(keyFile);
+      SecretKeySpec keySpec = new SecretKeySpec(keyBytes, AES);
+      IvParameterSpec ivSpec = new IvParameterSpec(keyBytes);
+      
       Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
       cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-      byte[] cipherTextBytes = cipher.doFinal(plainText.getBytes(ENCODING));
-      return Base64.encodeBase64String(cipherTextBytes);
+      byte[] cipherTextBytes = cipher.doFinal(plainText.getBytes(UTF8));
+      String cipherText = Base64.encodeBase64String(cipherTextBytes);
+      return cipherText.replaceAll("[\r\n]", "");
     }
     catch (Exception e)
     {
@@ -135,15 +111,32 @@ public class EncryptionUtils
     }
   }
 
+  public static synchronized String decrypt(String cipherText) throws EncryptionException
+  {
+    try
+    {
+      return decrypt(cipherText, null);
+    }
+    catch (Exception e)
+    {
+      String message = "Error decrypting [" + cipherText + "]. " + e;
+      throw new EncryptionException(message);
+    }
+  }
+
   public static String decrypt(String cipherText, String keyFile) throws EncryptionException
   {
     try
     {
-      initKey(keyFile);
+      byte[] keyBytes = getKey(keyFile);
+      SecretKeySpec keySpec = new SecretKeySpec(keyBytes, AES);
+      IvParameterSpec ivSpec = new IvParameterSpec(keyBytes);
+    
       Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
       cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
       byte[] plainTextBytes = cipher.doFinal(Base64.decodeBase64(cipherText));
-      return new String(plainTextBytes, ENCODING);
+      String plainText = new String(plainTextBytes, UTF8);
+      return plainText;
     }
     catch (Exception e)
     {
@@ -155,9 +148,9 @@ public class EncryptionUtils
   private static int getOption(BufferedReader in) throws IOException
   {
     System.out.println("Select one of the following options: \n");
-    System.out.println("  1. Generate Secret Key file & Encrypt");
-    System.out.println("  2. Encrypt with existing Secret Key file");
-    System.out.println("  3. Encrypt with default Secret Key");
+    System.out.println("  1. Generate key file & Encrypt");
+    System.out.println("  2. Encrypt with existing key file");
+    System.out.println("  3. Encrypt with default key");
     System.out.println("  4. Exit\n");
 
     String option = in.readLine();
