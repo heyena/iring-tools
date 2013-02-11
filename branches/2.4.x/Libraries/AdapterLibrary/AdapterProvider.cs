@@ -92,7 +92,17 @@ namespace org.iringtools.adapter
         private static ConcurrentDictionary<string, RequestStatus> _requests =
           new ConcurrentDictionary<string, RequestStatus>();
 
-        [Inject]
+        private static string QueueNewRequest()
+        {
+          var id = Guid.NewGuid().ToString("N");
+          _requests[id] = new RequestStatus()
+          {
+            State = State.InProgress
+          };
+          return id;
+        }
+
+      [Inject]
         public AdapterProvider(NameValueCollection settings)
         {
             try
@@ -950,24 +960,17 @@ namespace org.iringtools.adapter
         #region adapter methods
         private void DoGetDictionary(string projectName, string applicationName, string id)
         {
-            RequestStatus requestStatus = new RequestStatus()
-            {
-                State = State.InProgress
-            };
-
-            _requests[id] = requestStatus;
-
             try
             {
                 DataDictionary dictionary = GetDictionary(projectName, applicationName);
 
-                requestStatus.State = State.Completed;
-                requestStatus.ResponseText = Utility.Serialize<DataDictionary>(dictionary, true);
+                _requests[id].ResponseText = Utility.Serialize<DataDictionary>(dictionary, true);
+                _requests[id].State = State.Completed;
             }
             catch (Exception ex)
             {
-                requestStatus.State = State.Error;
-                requestStatus.Message = ex.Message;
+              _requests[id].Message = ex.Message;
+              _requests[id].State = State.Error;
             }
         }
 
@@ -975,7 +978,7 @@ namespace org.iringtools.adapter
         {
             try
             {
-                string id = Guid.NewGuid().ToString("N");
+                var id = QueueNewRequest();
                 Task task = Task.Factory.StartNew(() => DoGetDictionary(projectName, applicationName, id));
                 return "/requests/" + id;
             }
@@ -989,24 +992,17 @@ namespace org.iringtools.adapter
 
         private void DoRefreshDictionary(string id)
         {
-            RequestStatus requestStatus = new RequestStatus()
-            {
-                State = State.InProgress
-            };
-
-            _requests[id] = requestStatus;
-
             try
             {
                 Response response = _dataLayer.RefreshAll();
 
-                requestStatus.State = State.Completed;
-                requestStatus.ResponseText = Utility.Serialize<Response>(response, true);
+                _requests[id].ResponseText = Utility.Serialize<Response>(response, true);
+                _requests[id].State = State.Completed;
             }
             catch (Exception ex)
             {
-                requestStatus.State = State.Error;
-                requestStatus.Message = ex.Message;
+              _requests[id].Message = ex.Message;
+              _requests[id].State = State.Error;
             }
         }
 
@@ -1017,7 +1013,7 @@ namespace org.iringtools.adapter
                 InitializeScope(projectName, applicationName);
                 InitializeDataLayer(false);
 
-                string id = Guid.NewGuid().ToString("N");
+                var id = QueueNewRequest();
                 Task task = Task.Factory.StartNew(() => DoRefreshDictionary(id));
                 return "/requests/" + id;
             }
@@ -1034,7 +1030,7 @@ namespace org.iringtools.adapter
         {
             try
             {
-                string id = Guid.NewGuid().ToString("N");
+                var id = QueueNewRequest();
                 Task task = Task.Factory.StartNew(() =>
                   DoGetWithFilter(project, app, resource, format, start, limit, fullIndex, filter, id));
                 return "/requests/" + id;
@@ -1070,13 +1066,6 @@ namespace org.iringtools.adapter
         private void DoGetWithFilter(string project, string app, string resource, string format,
           int start, int limit, bool fullIndex, DataFilter filter, string id)
         {
-            RequestStatus requestStatus = new RequestStatus()
-            {
-                State = State.InProgress
-            };
-
-            _requests[id] = requestStatus;
-
             try
             {
                 XDocument xDocument = null;
@@ -1091,11 +1080,10 @@ namespace org.iringtools.adapter
                 }
 
                 string responseText = string.Empty;
+                State responseState = State.Completed;
 
                 if (xDocument != null && xDocument.Root != null)
                 {
-                    requestStatus.State = State.Completed;
-
                     if (format.ToUpper() == "JSON")
                     {
                         responseText = ToJson(xDocument.Root);
@@ -1107,16 +1095,17 @@ namespace org.iringtools.adapter
                 }
                 else
                 {
-                    requestStatus.State = State.Error;
+                    responseState = State.Error;
                     responseText = "No data objects found.";
                 }
 
-                requestStatus.ResponseText = responseText;
+                _requests[id].ResponseText = responseText;
+                _requests[id].State = responseState;
             }
             catch (Exception ex)
             {
-                requestStatus.State = State.Error;
-                requestStatus.Message = ex.Message;
+              _requests[id].Message = ex.Message;
+              _requests[id].State = State.Error;
             }
         }
 

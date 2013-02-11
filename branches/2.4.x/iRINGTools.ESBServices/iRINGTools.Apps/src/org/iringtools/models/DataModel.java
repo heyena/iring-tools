@@ -1,5 +1,7 @@
 package org.iringtools.models;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1860,11 +1862,10 @@ public class DataModel {
 				timeoutCount += interval;
 			}
 
-// Note that the Java iRing services (unlike the C# iRingr services) appear to UTF8 encode twice, once with build and secondly when sending the response
-// so the object embedded within the response text is still UTF-8 encoded when we get to this point. 
-//			InputStream streamUTF8 = new ByteArrayInputStream(requestStatus.getResponseText().getBytes("UTF-8"));
-//			obj = (T) JaxbUtils.toObject(clazz, streamUTF8);
-			obj = (T) JaxbUtils.toObject(clazz, requestStatus.getResponseText());
+// Note that the requestStatus object will have been decoded (out of UTF-8) during the httpClient.get(), so if the object embedded within the
+// requestStatus.ResponseText has non UTF-8 characters then we must encode that back into UTF-8 before passing to JaxbUtils.toObject
+			InputStream streamUTF8 = new ByteArrayInputStream(requestStatus.getResponseText().getBytes("UTF-8"));
+			obj = (T) JaxbUtils.toObject(clazz, streamUTF8);
 			
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());

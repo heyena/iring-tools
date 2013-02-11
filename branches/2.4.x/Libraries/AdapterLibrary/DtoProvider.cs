@@ -73,6 +73,16 @@ namespace org.iringtools.adapter
     private static ConcurrentDictionary<string, RequestStatus> _requests = 
       new ConcurrentDictionary<string, RequestStatus>();
 
+    private static string QueueNewRequest()
+    {
+      var id = Guid.NewGuid().ToString("N");
+      _requests[id] = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+      return id;
+    }
+
     [Inject]
     public DtoProvider(NameValueCollection settings)
     {
@@ -384,7 +394,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string id = Guid.NewGuid().ToString("N");
+        var id = QueueNewRequest();
         Task task = Task.Factory.StartNew(() => DoGetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, dxiRequest, id));
         return "/requests/" + id;
       }
@@ -397,24 +407,17 @@ namespace org.iringtools.adapter
 
     private void DoGetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest, string id)
     {
-      RequestStatus requestStatus = new RequestStatus()
-      {
-        State = State.InProgress
-      };
-
-      _requests[id] = requestStatus;
-
       try
       {
         DataTransferIndices dataTransferIndices = GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, dxiRequest);
 
-        requestStatus.State = State.Completed;
-        requestStatus.ResponseText = Utility.Serialize<DataTransferIndices>(dataTransferIndices, true);
+        _requests[id].ResponseText = Utility.Serialize<DataTransferIndices>(dataTransferIndices, true);
+        _requests[id].State = State.Completed;
       }
       catch (Exception ex)
       {
-        requestStatus.State = State.Error;
-        requestStatus.Message = ex.Message;
+        _requests[id].Message = ex.Message;
+        _requests[id].State = State.Error;
       }
     }
 
@@ -555,7 +558,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string id = Guid.NewGuid().ToString("N");
+        var id = QueueNewRequest();
         Task task = Task.Factory.StartNew(() => DoGetDataTransferObjects(scope, app, graph, dxoRequest, id));
         return "/requests/" + id;
       }
@@ -568,24 +571,17 @@ namespace org.iringtools.adapter
 
     private void DoGetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest, string id)
     {
-      RequestStatus requestStatus = new RequestStatus()
-      {
-        State = State.InProgress
-      };
-
-      _requests[id] = requestStatus;
-
       try
       {
         DataTransferObjects dtos = GetDataTransferObjects(scope, app, graph, dxoRequest);
 
-        requestStatus.State = State.Completed;
-        requestStatus.ResponseText = Utility.Serialize<DataTransferObjects>(dtos, true);
+        _requests[id].ResponseText = Utility.Serialize<DataTransferObjects>(dtos, true);
+        _requests[id].State = State.Completed;
       }
       catch (Exception ex)
       {
-        requestStatus.State = State.Error;
-        requestStatus.Message = ex.Message;
+        _requests[id].Message = ex.Message;
+        _requests[id].State = State.Error;
       }
     }
 
@@ -646,7 +642,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string id = Guid.NewGuid().ToString("N");
+        var id = QueueNewRequest();
         Task task = Task.Factory.StartNew(() => DoPostDataTransferObjects(scope, app, graph, dtos, id));
         return "/requests/" + id;
       }
@@ -659,24 +655,17 @@ namespace org.iringtools.adapter
 
     private void DoPostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dtos, string id)
     {
-      RequestStatus requestStatus = new RequestStatus()
-      {
-        State = State.InProgress
-      };
-
-      _requests[id] = requestStatus;
-
       try
       {
         Response response = PostDataTransferObjects(scope, app, graph, dtos);
 
-        requestStatus.State = State.Completed;
-        requestStatus.ResponseText = Utility.Serialize<Response>(response, true);
+        _requests[id].ResponseText = Utility.Serialize<Response>(response, true);
+        _requests[id].State = State.Completed;
       }
       catch (Exception ex)
       {
-        requestStatus.State = State.Error;
-        requestStatus.Message = ex.Message;
+        _requests[id].Message = ex.Message;
+        _requests[id].State = State.Error;
       }
     }
 
