@@ -118,14 +118,15 @@ namespace org.iringtools.adapter
                 _settings = _kernel.Get<AdapterSettings>();
                 _settings.AppendSettings(settings);
 
-                if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest != null && WebOperationContext.Current.IncomingRequest.Headers != null)
+                // capture request headers
+                if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest != null && 
+                  WebOperationContext.Current.IncomingRequest.Headers != null)
                 {
-                    foreach (string headerName in WebOperationContext.Current.IncomingRequest.Headers.AllKeys)
-                    {
-                        _settings["http-header-" + headerName] = WebOperationContext.Current.IncomingRequest.Headers[headerName];
-                    }
-                } 
-
+                  foreach (string headerName in WebOperationContext.Current.IncomingRequest.Headers.AllKeys)
+                  {
+                    _settings["http-header-" + headerName] = WebOperationContext.Current.IncomingRequest.Headers[headerName];
+                  }
+                }
 
                 Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 

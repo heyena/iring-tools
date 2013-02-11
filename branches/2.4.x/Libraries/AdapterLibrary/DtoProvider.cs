@@ -51,6 +51,7 @@ using Microsoft.ServiceModel.Web;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using System.ServiceModel.Web;
 
 namespace org.iringtools.adapter
 {
@@ -92,6 +93,16 @@ namespace org.iringtools.adapter
       _kernel.Load(new XmlExtensionModule());
       _settings = _kernel.Get<AdapterSettings>();
       _settings.AppendSettings(settings);
+
+      // capture request headers
+      if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest != null &&
+        WebOperationContext.Current.IncomingRequest.Headers != null)
+      {
+        foreach (string headerName in WebOperationContext.Current.IncomingRequest.Headers.AllKeys)
+        {
+          _settings["http-header-" + headerName] = WebOperationContext.Current.IncomingRequest.Headers[headerName];
+        }
+      }
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
