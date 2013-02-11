@@ -297,8 +297,8 @@ public class DtoTask implements Runnable
       
       if (requestStatus != null)
       {
-        requestStatus.setState(State.COMPLETED);
         requestStatus.setResponseText(JaxbUtils.toXml(dtos, false));
+        requestStatus.setState(State.COMPLETED);
       }
     }
     catch (Exception e)
@@ -306,8 +306,8 @@ public class DtoTask implements Runnable
       logger.error(e.getMessage());
       e.printStackTrace();
       
-      requestStatus.setState(State.ERROR);
       requestStatus.setMessage(e.getMessage());
+      requestStatus.setState(State.ERROR);
     }    
   }
   
@@ -402,8 +402,8 @@ class DtoSubTask implements Runnable
         timeoutCount += interval;
       }
 
-      // Note that the C# iRing services (unlike the Java iRing services) only UTF8 encode once in the httpcontext response stream
-      // so the object embedded within the response text has already been decoded out of UTF-8 encoded when we get to this point. 
+// Note that the requestStatus object will have been decoded (out of UTF-8) during the httpClient.get(), so if the object embedded within the
+// requestStatus.ResponseText has non UTF-8 characters then we must encode that back into UTF-8 before passing to JaxbUtils.toObject
 		InputStream streamUTF8 = new ByteArrayInputStream(requestStatus.getResponseText().getBytes("UTF-8"));
 		obj = (T) JaxbUtils.toObject(clazz, streamUTF8);
     }
