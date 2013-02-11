@@ -224,12 +224,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             scope: this
           },
           {
-            text: 'Make Reference',
-            handler: this.onMakeReference,
-            // icon: '',
-            scope: this
-          },
-          {
             text: 'Map Property',
             handler: this.onMapProperty,
             // icon: '',
@@ -345,32 +339,37 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       var classId = e.target.parentNode.parentNode.attributes.identifier;
       var templateIndex = e.target.parentNode.parentNode.indexOf(e.target.parentNode);
 
-      e.tree.getEl().mask('Loading...');
+      if (targetNode.record.dataType.indexOf('xsd') != 0) {
+        e.tree.getEl().mask('Loading...');
 
-      Ext.Ajax.request({
-        url: 'mapping/makereference',
-        method: 'POST',
-        params: {
-          scope: contextParts[0],
-          app: contextParts[1],
-          graph: contextParts[2],
-          classId: classId,
-          templateIndex: templateIndex,
-          roleId: e.target.attributes.record.id,
-          roleName: e.target.attributes.record.name,
-          refClassId: e.dropNode.attributes.record.Uri,
-          refClassLabel: e.dropNode.attributes.record.Label
-        },
-        success: function (result, request) {
-          e.tree.getEl().unmask();
-          that.onReload();
-        },
-        failure: function (result, request) {
-          e.tree.getEl().unmask();
-          //don't drop it
-          return false;
-        }
-      })
+        Ext.Ajax.request({
+          url: 'mapping/makereference',
+          method: 'POST',
+          params: {
+            scope: contextParts[0],
+            app: contextParts[1],
+            graph: contextParts[2],
+            classId: classId,
+            templateIndex: templateIndex,
+            roleId: e.target.attributes.record.id,
+            roleName: e.target.attributes.record.name,
+            refClassId: e.dropNode.attributes.record.Uri,
+            refClassLabel: e.dropNode.attributes.record.Label
+          },
+          success: function (result, request) {
+            e.tree.getEl().unmask();
+            that.onReload();
+          },
+          failure: function (result, request) {
+            e.tree.getEl().unmask();
+            //don't drop it
+            return false;
+          }
+        })
+      }
+      else {
+        return false;
+      }
     }
     else if (e.data.node.attributes.type == 'TemplateNode') {
       ntype = e.target.attributes.type;
@@ -523,8 +522,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           },
           notifyDrop: function (dd, e, data) {
             if (data.node.attributes.type == 'DataPropertyNode' ||
-              data.node.attributes.type == 'KeyDataPropertyNode') 
-            {
+              data.node.attributes.type == 'KeyDataPropertyNode') {
               Ext.get('propertyName').dom.value = data.node.attributes.record.Name;
 
               if (data.node.parentNode != undefined
@@ -773,32 +771,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         classId: node.parentNode.parentNode.attributes.identifier,
         node: node,
         index: index
-      },
-      success: function (result, request) {
-        that.onReload();
-        //Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.attributes.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
-      },
-      failure: function (result, request) { }
-    })
-  },
-
-  onMakeReference: function () {
-    var that = this;
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
-    var templateIndex = node.parentNode.parentNode.indexOf(node.parentNode);
-    var contextParts = node.id.split('/');
-
-    Ext.Ajax.request({
-      url: 'mapping/makereference',
-      method: 'POST',
-      params: {
-        scope: contextParts[0],
-        app: contextParts[1],
-        graph: contextParts[2],
-        templateIndex: templateIndex,
-        classId: node.parentNode.parentNode.attributes.identifier,
-        roleId: node.attributes.record.id,
-        roleName: node.attributes.record.name
       },
       success: function (result, request) {
         that.onReload();
