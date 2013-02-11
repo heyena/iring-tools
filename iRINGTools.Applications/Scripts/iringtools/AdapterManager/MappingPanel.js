@@ -781,7 +781,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onAddClassMap: function () {
-    var panel = this;
+    var that = this;
 
     var classMapPanel = new AdapterManager.ClassMapPanel({
       title: 'Add/Edit ClassMap',
@@ -792,6 +792,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     classMapPanel.on('addClassMapComplete', function () {
       classMapPanel.close();
+      that.onReload();
     }, this);
 
     classMapPanel.show();
