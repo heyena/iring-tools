@@ -584,7 +584,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override DatabaseDictionary GetDatabaseDictionary()
     {
-      DatabaseDictionary dictionary = new DatabaseDictionary();
+      DataDictionary dictionary = new DataDictionary();
 
       try
       {
@@ -592,8 +592,18 @@ namespace org.iringtools.adapter.datalayer
 
         if (File.Exists(path))
         {
-          dictionary = utility.Utility.Read<DatabaseDictionary>(path, true);
-          return dictionary;
+          dictionary = utility.Utility.Read<DataDictionary>(path, true);
+
+          DatabaseDictionary dbDictionary = new DatabaseDictionary()
+          {
+            dataObjects = dictionary.dataObjects,
+            dataVersion = dictionary.dataVersion,
+            enableSearch = dictionary.enableSearch,
+            enableSummary = dictionary.enableSearch,
+            picklists = dictionary.picklists
+          };
+
+          return dbDictionary;
         }
 
         Login();
