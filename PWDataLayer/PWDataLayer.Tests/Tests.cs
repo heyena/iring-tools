@@ -53,6 +53,7 @@ namespace org.iringtools.adapter.datalayer.test
     }
 
     //[Test]
+    //REST URL: http://localhost:54321/data/pw/pilot/dtp_eng2/8bdd1237-7e3f-415b-9e21-ad18b5d64f2b?format=doc
     public void TestGetContent()
     {
       long count = _dataLayer.GetCount("DTP_ENG2", null);
@@ -117,21 +118,5 @@ namespace org.iringtools.adapter.datalayer.test
         }
       }
     }
-  }
-
-  public class GenericContentObject : GenericDataObject, IContentObject
-  {
-    [IgnoreDataMember]
-    public Stream content { get; set; }
-
-    public string contentType { get; set; }
-
-    public string hash { get; set; }
-
-    public string hashType { get; set; }
-
-    public string url { get; set; }
-
-    public string identifier { get; set; }
   }
 }
