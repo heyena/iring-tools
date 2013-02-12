@@ -8,8 +8,8 @@
     <ProjectGuid>{D71635C0-974C-415F-8154-855DC2924EF7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adapter.datalayer.eb.test</RootNamespace>
-    <AssemblyName>ebDataLayer.Tests</AssemblyName>
+    <RootNamespace>org.iringtools.adapter.datalayer.pw</RootNamespace>
+    <AssemblyName>PWDataLayer.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
