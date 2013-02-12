@@ -1406,11 +1406,15 @@ namespace org.iringtools.adapter.datalayer
           if (stream != null)
           {
             string docName = stream.Name.ToLower();
-            string contentType = string.Empty;
+            string contentType = "text/plain";
 
             //TODO: handle more content types
-            if (docName.EndsWith(".rtf") || docName.EndsWith(".doc") || docName.EndsWith(".docx"))
+            if (docName.EndsWith(".rtf") || docName.EndsWith(".doc"))
               contentType = "application/msword";
+            else if (docName.EndsWith(".docx"))
+              contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            else if (docName.EndsWith(".ppt"))
+              contentType = "application/vnd.ms-powerpoint";
             else if (docName.EndsWith(".pdf"))
               contentType = "application/pdf";
 
