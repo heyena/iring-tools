@@ -38,7 +38,15 @@ namespace iRINGTools.Web.Models
         try
         {
           this.graph = graph;
-          GetDataDictionary(scope, app);
+
+          if (start == "0" || start == "1")
+          {
+            GetDataDictionary(scope, app, false);
+          }
+          else
+          {
+            GetDataDictionary(scope, app);
+          }
 
           if (response != "")
             return null;
@@ -59,14 +67,23 @@ namespace iRINGTools.Web.Models
         }
 
         return dataGrid;
-      }			
+      }
 
       private void GetDataDictionary(String scope, String app)
+      {
+        GetDataDictionary(scope, app, true);
+      }
+
+      private void GetDataDictionary(String scope, String app, bool usesCache)
       {
         try
         {
           string dictKey = string.Format("Dictionary.{0}.{1}", scope, app);
-          dataDict = (DataDictionary) Session[dictKey];
+
+          if (usesCache)
+            dataDict = (DataDictionary)Session[dictKey];
+          else
+            dataDict = null;
 
           if (dataDict == null)
           {
@@ -145,8 +162,8 @@ namespace iRINGTools.Web.Models
           {
             foreach (DataProperty dataProp in dataObj.dataProperties)
             {
-              if (!dataProp.isHidden)
-              {
+              //if (!dataProp.isHidden)
+              //{
                 Field field = new Field();
                 string fieldName = dataProp.propertyName;
                 field.dataIndex = fieldName;
@@ -169,7 +186,7 @@ namespace iRINGTools.Web.Models
                   field.keytype = "key";
 
                 fields.Add(field);
-              }
+              //}
             }
           }
         }

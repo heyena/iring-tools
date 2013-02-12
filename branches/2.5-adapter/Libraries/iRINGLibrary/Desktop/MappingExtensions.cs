@@ -93,7 +93,7 @@ namespace org.iringtools.mapping
     {
       ClassTemplateMap classTemplateMap = graphMap.GetClassTemplateMap(classId);
 
-      if (classTemplateMap.classMap != null)
+      if (classTemplateMap != null && classTemplateMap.classMap != null)
       {
         List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
 

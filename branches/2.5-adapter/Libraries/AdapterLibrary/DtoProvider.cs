@@ -51,6 +51,7 @@ using Microsoft.ServiceModel.Web;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using System.ServiceModel.Web;
 
 namespace org.iringtools.adapter
 {
@@ -73,6 +74,16 @@ namespace org.iringtools.adapter
     private static ConcurrentDictionary<string, RequestStatus> _requests = 
       new ConcurrentDictionary<string, RequestStatus>();
 
+    private static string QueueNewRequest()
+    {
+      var id = Guid.NewGuid().ToString("N");
+      _requests[id] = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+      return id;
+    }
+
     [Inject]
     public DtoProvider(NameValueCollection settings)
     {
@@ -82,6 +93,16 @@ namespace org.iringtools.adapter
       _kernel.Load(new XmlExtensionModule());
       _settings = _kernel.Get<AdapterSettings>();
       _settings.AppendSettings(settings);
+
+      // capture request headers
+      if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest != null &&
+        WebOperationContext.Current.IncomingRequest.Headers != null)
+      {
+        foreach (string headerName in WebOperationContext.Current.IncomingRequest.Headers.AllKeys)
+        {
+          _settings["http-header-" + headerName] = WebOperationContext.Current.IncomingRequest.Headers[headerName];
+        }
+      }
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
@@ -148,8 +169,8 @@ namespace org.iringtools.adapter
         Revision = version.Revision
       };
     }
-
-    public Manifest GetManifest(string scope, string app)
+    
+    public Manifest GetManifest(string scope, string app, string graph)
     {
       Manifest manifest = new Manifest()
       {
@@ -167,12 +188,22 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          Graph manifestGraph = new Graph
+          Graph manifestGraph = null;
+
+          if (string.IsNullOrEmpty(graph) || graph.ToLower() == graphMap.name.ToLower())
           {
-            classTemplatesList = new ClassTemplatesList(),
-            name = graphMap.name
-          };
-          manifest.graphs.Add(manifestGraph);
+            manifestGraph = new Graph
+            {
+              classTemplatesList = new ClassTemplatesList(),
+              name = graphMap.name
+            };
+
+            manifest.graphs.Add(manifestGraph);
+          }
+          else 
+          {
+            continue;
+          }
 
           string dataObjectName = graphMap.dataObjectName;
           DataObject dataObject = null;
@@ -221,7 +252,6 @@ namespace org.iringtools.adapter
                       string objectName = property[0].Trim();
                       string propertyName = property[1].Trim();
 
-
                       foreach (String identifier in classMap.identifiers)
                       {
                         if (identifier.ToLower() == roleMap.propertyName.ToLower())
@@ -231,14 +261,18 @@ namespace org.iringtools.adapter
                           key.roleId = roleId;
                           key.classId = anyClassMap.id;
                           keys.Add(key);
-
                         }
-
                       }
                     }
                   }
                 }
               }
+
+              if (keys.Count == 0)
+              {
+                throw new Exception("Key property is not mapped.");
+              }
+
               Class manifestClass = new Class
               {
                 id = classMap.id,
@@ -281,6 +315,12 @@ namespace org.iringtools.adapter
                       string propertyName = property[1].Trim();
 
                       DataProperty dataProp = dataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+
+                      if (dataProp == null)
+                      {
+                        throw new Exception("Property " + roleMap.propertyName + " does not exist in data dictionary.");
+                      }
+
                       manifestRole.dataLength = dataProp.dataLength;
 
                       if (dataObject.isKeyProperty(propertyName))
@@ -316,6 +356,11 @@ namespace org.iringtools.adapter
       }
 
       return manifest;
+    }
+
+    public Manifest GetManifest(string scope, string app)
+    {
+      return GetManifest(scope, app, null);
     }
 
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
@@ -360,7 +405,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string id = Guid.NewGuid().ToString("N");
+        var id = QueueNewRequest();
         Task task = Task.Factory.StartNew(() => DoGetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, dxiRequest, id));
         return "/requests/" + id;
       }
@@ -373,24 +418,17 @@ namespace org.iringtools.adapter
 
     private void DoGetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest, string id)
     {
-      RequestStatus requestStatus = new RequestStatus()
-      {
-        State = State.InProgress
-      };
-
-      _requests[id] = requestStatus;
-
       try
       {
         DataTransferIndices dataTransferIndices = GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, dxiRequest);
 
-        requestStatus.State = State.Completed;
-        requestStatus.ResponseText = Utility.Serialize<DataTransferIndices>(dataTransferIndices, true);
+        _requests[id].ResponseText = Utility.Serialize<DataTransferIndices>(dataTransferIndices, true);
+        _requests[id].State = State.Completed;
       }
       catch (Exception ex)
       {
-        requestStatus.State = State.Error;
-        requestStatus.Message = ex.Message;
+        _requests[id].Message = ex.Message;
+        _requests[id].State = State.Error;
       }
     }
 
@@ -422,11 +460,12 @@ namespace org.iringtools.adapter
 
         if (_settings["MultiGetDTIs"] == null || bool.Parse(_settings["MultiGetDTIs"]))
         {
+          _logger.Debug("Running muti-threaded DTIs.");
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
         else
         {
-          _logger.Debug("Single threaded get DTIs.");            
+          _logger.Debug("Running single-threaded DTIs.");            
           List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
           dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
         }
@@ -530,7 +569,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string id = Guid.NewGuid().ToString("N");
+        var id = QueueNewRequest();
         Task task = Task.Factory.StartNew(() => DoGetDataTransferObjects(scope, app, graph, dxoRequest, id));
         return "/requests/" + id;
       }
@@ -543,24 +582,17 @@ namespace org.iringtools.adapter
 
     private void DoGetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest, string id)
     {
-      RequestStatus requestStatus = new RequestStatus()
-      {
-        State = State.InProgress
-      };
-
-      _requests[id] = requestStatus;
-
       try
       {
         DataTransferObjects dtos = GetDataTransferObjects(scope, app, graph, dxoRequest);
 
-        requestStatus.State = State.Completed;
-        requestStatus.ResponseText = Utility.Serialize<DataTransferObjects>(dtos, true);
+        _requests[id].ResponseText = Utility.Serialize<DataTransferObjects>(dtos, true);
+        _requests[id].State = State.Completed;
       }
       catch (Exception ex)
       {
-        requestStatus.State = State.Error;
-        requestStatus.Message = ex.Message;
+        _requests[id].Message = ex.Message;
+        _requests[id].State = State.Error;
       }
     }
 
@@ -621,7 +653,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string id = Guid.NewGuid().ToString("N");
+        var id = QueueNewRequest();
         Task task = Task.Factory.StartNew(() => DoPostDataTransferObjects(scope, app, graph, dtos, id));
         return "/requests/" + id;
       }
@@ -634,24 +666,17 @@ namespace org.iringtools.adapter
 
     private void DoPostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dtos, string id)
     {
-      RequestStatus requestStatus = new RequestStatus()
-      {
-        State = State.InProgress
-      };
-
-      _requests[id] = requestStatus;
-
       try
       {
         Response response = PostDataTransferObjects(scope, app, graph, dtos);
 
-        requestStatus.State = State.Completed;
-        requestStatus.ResponseText = Utility.Serialize<Response>(response, true);
+        _requests[id].ResponseText = Utility.Serialize<Response>(response, true);
+        _requests[id].State = State.Completed;
       }
       catch (Exception ex)
       {
-        requestStatus.State = State.Error;
-        requestStatus.Message = ex.Message;
+        _requests[id].Message = ex.Message;
+        _requests[id].State = State.Error;
       }
     }
 
@@ -1175,7 +1200,11 @@ namespace org.iringtools.adapter
 
       for (int offset = 0; offset < count; offset = offset + pageSize)
       {
+        _logger.Debug(string.Format("Getting paged data {0}-{1}.", offset, offset + pageSize));
+
         dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, offset));
+
+        _logger.Debug(string.Format("Paged data {0}-{1} completed.", offset, offset + pageSize));
       }
 
       return dataObjects;
