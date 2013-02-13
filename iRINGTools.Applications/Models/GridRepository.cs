@@ -162,8 +162,8 @@ namespace iRINGTools.Web.Models
           {
             foreach (DataProperty dataProp in dataObj.dataProperties)
             {
-              if (!dataProp.isHidden)
-              {
+              //if (!dataProp.isHidden)
+              //{
                 Field field = new Field();
                 string fieldName = dataProp.propertyName;
                 field.dataIndex = fieldName;
@@ -186,7 +186,7 @@ namespace iRINGTools.Web.Models
                   field.keytype = "key";
 
                 fields.Add(field);
-              }
+              //}
             }
           }
         }

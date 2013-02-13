@@ -1461,13 +1461,14 @@ namespace org.iringtools.utility
       // with:
       //string utcStr = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Unspecified);
 
-      //if (!utcStr.Contains("."))
-      //  utcStr = utcStr.Replace("Z", ".000-00:00");
-      //else
-      //  utcStr = utcStr.Replace("Z", "-00:00");
-
-      // Straight UTC
+      // temporary restoring the old format to support POMA
       string utcStr = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Utc);
+
+      if (!utcStr.Contains("."))
+        utcStr = utcStr.Replace("Z", ".000-00:00");
+      else
+        utcStr = utcStr.Replace("Z", "-00:00");
+
       return utcStr;
     }
 
