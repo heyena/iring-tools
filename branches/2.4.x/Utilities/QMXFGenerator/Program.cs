@@ -48,7 +48,7 @@ namespace QMXFGenerator
       try
       {
         {
-          QMXF qmxf = new QMXF();
+          var qmxf = new QMXF();
           if (Initialize(args))
           {
             using (document = SpreadsheetDocumentWrapper.Open(_excelFilePath))
@@ -69,7 +69,7 @@ namespace QMXFGenerator
               Console.WriteLine("Processing Base Templates...");
               qmxf.templateDefinitions = ProcessBaseTemplate(_baseTemplateWorksheet);
 
-              WorksheetPartWrapper specializedIndividualTemplateWorksheet = GetWorksheet(document, "Specialized Individual Template");
+              var specializedIndividualTemplateWorksheet = GetWorksheet(document, "Specialized Individual Template");
 
               Console.WriteLine("Processing Specialized Individual Templates...");
               qmxf.templateQualifications = ProcessSpecializedIndividualTemplates(specializedIndividualTemplateWorksheet);
@@ -94,7 +94,7 @@ namespace QMXFGenerator
                   }
                   var q = new QMXF { targetRepository = _targetRepository };
                   q.classDefinitions.Add(cls);
-                  Response resp = _refdataClient.Post<QMXF, Response>("/classes", q, true);
+                  var resp = _refdataClient.Post<QMXF, Response>("/classes", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting class: " + cls.name[0].value);
@@ -165,14 +165,11 @@ namespace QMXFGenerator
                     error = true;
                     continue;
                   }
-                  foreach (var r in t.roleQualification)
+                  foreach (var r in t.roleQualification.Where(r => string.IsNullOrEmpty(r.range) && (r.value == null && string.IsNullOrEmpty(r.value.reference))))
                   {
-                    if (string.IsNullOrEmpty(r.range))
-                    {
-                      Utility.WriteString("\n" + r.identifier + " do not have range defined \n", "error.log", true);
-                      Console.WriteLine("error in template " + t.identifier + " see : error.log");
-                      error = true;
-                    }
+                    Utility.WriteString("\n" + r.identifier + " do not have range defined \n", "error.log", true);
+                    Console.WriteLine("error in template " + t.identifier + " see : error.log");
+                    error = true;
                   }
                   if (error)
                   {
@@ -181,7 +178,7 @@ namespace QMXFGenerator
                   }
                   var q = new QMXF { targetRepository = _targetRepository };
                   q.templateQualifications.Add(t);
-                  Response resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
+                  var resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting specializedTemplate: " + t.name[0].value);
@@ -210,7 +207,10 @@ namespace QMXFGenerator
 
     private static bool CheckUri(string uri)
     {
-      return !uri.Contains("example");
+      if (uri.Contains("example"))
+        return false;
+      else
+        return true;
     }
 
     private static WorksheetPartWrapper GetWorksheet(SpreadsheetDocumentWrapper document, string sheetName)
@@ -428,9 +428,9 @@ namespace QMXFGenerator
                                  where Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) == className
                                  select specialization;
         //Get their details from the Class List
-        List<ArrayList> superclasses = new List<ArrayList>();
+        var superclasses = new List<ArrayList>();
 
-        foreach (ArrayList specialization in specializationList)
+        foreach (var specialization in specializationList)
         {
           object subclass = specialization[(int)ClassSpecializationColumns.Subclass];
           var query = from @class in _classes
@@ -506,7 +506,10 @@ namespace QMXFGenerator
                   lang = "en",
                   value = name,
                 };
-                templateDefinition.name = new List<QMXFName> { englishUSName };
+                templateDefinition.name = new List<QMXFName>
+                                {
+                                  englishUSName
+                                };
               }
             }
             if (templateIdentifier == null || templateIdentifier.ToString() == String.Empty)
@@ -531,7 +534,10 @@ namespace QMXFGenerator
                 lang = "en",
                 value = description.ToString(),
               };
-              templateDefinition.description = new List<Description> { englishUSDescription };
+              templateDefinition.description = new List<Description>
+                            {
+                                englishUSDescription,
+                            };
             }
             templateDefinition.roleDefinition = ProcessRoleDefinition(templateDefinition.name.FirstOrDefault().value, row, Convert.ToInt32(row[row.Count - 1]), part);
             load = String.Empty;
@@ -575,7 +581,10 @@ namespace QMXFGenerator
               value = name,
             };
 
-            roleDefinition.name = new List<QMXFName> { englishUSName };
+            roleDefinition.name = new List<QMXFName>
+            {
+              englishUSName
+            };
 
             if (identifier == null || identifier.ToString() == String.Empty)
             {
@@ -591,7 +600,11 @@ namespace QMXFGenerator
 
             if (description != null && description.ToString() != String.Empty)
             {
-              Description englishUSDescription = new Description { lang = "en", value = description.ToString() };
+              Description englishUSDescription = new Description
+              {
+                lang = "en",
+                value = description.ToString(),
+              };
               roleDefinition.description = englishUSDescription;
             }
             object clist;
@@ -738,82 +751,90 @@ namespace QMXFGenerator
         for (roleIndex = 0; roleIndex <= (int)RoleColumns.Max - 1; roleIndex++)
         {
           int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
-          object identifier = parentRow[(int)RoleColumns.ID + roleOffset];
+          object identifier = row[(int)RoleColumns.ID + roleOffset];
           object label = parentRow[(int)RoleColumns.Name + roleOffset];
-          object description = row[(int)RoleColumns.Description + roleOffset];
-          object type = parentRow[(int)RoleColumns.Type + roleOffset];
+          object description = parentRow[(int)RoleColumns.Description + roleOffset];
+          object type = row[(int)RoleColumns.Type + roleOffset];
           object value = row[(int)RoleColumns.Value + roleOffset];
           object parentRole = parentRow[(int)RoleColumns.ID + roleOffset];
 
-          if (label != null && label.ToString().Trim() != String.Empty)
+          if (label == null || label.ToString().Trim() == String.Empty) continue;
+          var name = label.ToString();
+
+          if (parentRole == null)
           {
-            string name = label.ToString();
+            Utility.WriteString("Error Processing Role Qualification: Role \"" + name + "\" at index " + roleIndex + " on template \"" + templateName + "\" not found.\n", "error.log", true);
+            continue;
+          }
 
-            if (parentRole == null)
+          var roleQualification = new RoleQualification {identifier = identifier.ToString()};
+
+          var englishUsName = new QMXFName
             {
-              Utility.WriteString("Error Processing Role Qualification: Role \"" + name + "\" at index " + roleIndex + " on template \"" + templateName + "\" not found.\n", "error.log", true);
-              continue;
-            }
+              lang = "en",
+              value = name,
+            };
 
-            RoleQualification roleQualification = new RoleQualification();
-            roleQualification.identifier = identifier.ToString();
-
-            QMXFName englishUSName = new QMXFName { lang = "en", value = name };
-
-            roleQualification.name = new List<QMXFName> { englishUSName };
-
-            if (description != null && description.ToString() != String.Empty)
+          roleQualification.name = new List<QMXFName>
             {
-              Description englishUSDescription = new Description { lang = "en", value = description.ToString() };
+              englishUsName
+            };
 
-              roleQualification.description = new List<Description>
+          if (description != null && description.ToString() != String.Empty)
+          {
+            var englishUsDescription = new Description
               {
-                englishUSDescription
+                lang = "en",
+                value = description.ToString(),
               };
-            }
 
-            roleQualification.qualifies = (parentRole ?? "").ToString().Trim();
-
-            if (type != null && type.ToString() != String.Empty)
-            {
-              var query = from @class in _classes
-                          where Convert.ToString(@class[(int)ClassColumns.Label]).Trim() == type.ToString().Trim()
-                          select @class;
-
-              if (query.FirstOrDefault() != null)
+            roleQualification.description = new List<Description>
               {
-                object classId = query.FirstOrDefault()[(int)ClassColumns.ID];
-                if (classId != null)
-                {
-                  roleQualification.range = classId.ToString().Trim();
-                }
-                else
-                {
-                  Utility.WriteString("\n " + type.ToString() + " Does not have an id in Class List While Processing Role Qualification", "error.log", true);
-                }
+                englishUsDescription
+              };
+          }
+
+          roleQualification.qualifies = (parentRole ?? "").ToString().Trim();
+
+          if (type != null && type.ToString() != String.Empty)
+          {
+            var query = from @class in _classes
+                        where Convert.ToString(@class[(int)ClassColumns.Label]).Trim() == type.ToString().Trim()
+                        select @class;
+
+            if (query.FirstOrDefault() != null)
+            {
+              object classId = query.FirstOrDefault()[(int)ClassColumns.ID];
+              if (classId != null)
+              {
+                roleQualification.range = classId.ToString().Trim();
               }
               else
               {
-                Utility.WriteString("\n " + type.ToString() + " Was Not Found in Class List While Processing Role Qualification", "error.log", true);
-              }
-            }
-            if (value != null && value.ToString() != String.Empty)
-            {
-              var query = from @class in _classes
-                          where Convert.ToString(@class[(int)ClassColumns.Label]) == value.ToString()
-                          select @class;
-
-              if (query.FirstOrDefault() != null)
-              {
-                roleQualification.value = new QMXFValue { reference = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim() };
+                Utility.WriteString("\n " + type.ToString() + " Does not have an id in Class List While Processing Role Qualification", "error.log", true);
               }
             }
             else
             {
-              Utility.WriteString("\nType/Value Was Not Set for Role Qualification \"" + englishUSName.value + "\" on template \"" + templateName + "\".", "error.log", true);
+              Utility.WriteString("\n " + type.ToString() + " Was Not Found in Class List While Processing Role Qualification", "error.log", true);
             }
-            roleQualifications.Add(roleQualification);
           }
+          if (value != null && value.ToString() != String.Empty)
+          {
+            var query = from @class in _classes
+                        where Convert.ToString(@class[(int)ClassColumns.Label]) == value.ToString()
+                        select @class;
+
+            if (query.FirstOrDefault() != null)
+            {
+              roleQualification.value = new QMXFValue { reference = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim() };
+            }
+          }
+          else
+          {
+            Utility.WriteString("\nType/Value Was Not Set for Role Qualification \"" + englishUsName.value + "\" on template \"" + templateName + "\".", "error.log", true);
+          }
+          roleQualifications.Add(roleQualification);
         }
 
         return roleQualifications;
