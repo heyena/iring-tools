@@ -9,6 +9,7 @@ using System.Data;
 using System.IO;
 using System.Collections.Concurrent;
 using System.Collections;
+using Microsoft.Win32;
 
 
 ///TODO: 
@@ -1406,17 +1407,17 @@ namespace org.iringtools.adapter.datalayer
           if (stream != null)
           {
             string docName = stream.Name.ToLower();
-            string contentType = "text/plain";
+            int extIndex = docName.LastIndexOf('.');
+            string contentType = "application/msword";
 
-            //TODO: handle more content types
-            if (docName.EndsWith(".rtf") || docName.EndsWith(".doc"))
-              contentType = "application/msword";
-            else if (docName.EndsWith(".docx"))
-              contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-            else if (docName.EndsWith(".ppt"))
-              contentType = "application/vnd.ms-powerpoint";
-            else if (docName.EndsWith(".pdf"))
-              contentType = "application/pdf";
+            try
+            {
+              contentType = Registry.ClassesRoot.OpenSubKey(docName.Substring(extIndex)).GetValue("Content Type").ToString();
+            }
+            catch (Exception e)
+            {
+              //TODO: logger error
+            }
 
             MemoryStream outStream = new MemoryStream();
             stream.CopyTo(outStream);
