@@ -140,7 +140,7 @@ namespace QMXFGenerator
                   }
                   var q = new QMXF { targetRepository = _targetRepository };
                   q.templateDefinitions.Add(t);
-                  Response resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
+                  var resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting baseTemplate: " + t.name[0].value);
@@ -752,7 +752,7 @@ namespace QMXFGenerator
         {
           int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
           object identifier = row[(int)RoleColumns.ID + roleOffset];
-          object label = parentRow[(int)RoleColumns.Name + roleOffset];
+          object label = row[(int)RoleColumns.Name + roleOffset];
           object description = parentRow[(int)RoleColumns.Description + roleOffset];
           object type = row[(int)RoleColumns.Type + roleOffset];
           object value = row[(int)RoleColumns.Value + roleOffset];
@@ -832,7 +832,7 @@ namespace QMXFGenerator
           }
           else
           {
-            Utility.WriteString("\nType/Value Was Not Set for Role Qualification \"" + englishUsName.value + "\" on template \"" + templateName + "\".", "error.log", true);
+            //Utility.WriteString("\nType/Value Was Not Set for Role Qualification \"" + englishUsName.value + "\" on template \"" + templateName + "\".", "error.log", true);
           }
           roleQualifications.Add(roleQualification);
         }
