@@ -215,15 +215,7 @@ namespace org.iringtools.adapter
     #region application methods
     public ScopeProjects GetScopes()
     {
-      try
-      {
-        return _scopes;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in GetScopes: {0}", ex));
-        throw new Exception(string.Format("Error getting the list of scopes: {0}", ex));
-      }
+      return _scopes;
     }
 
     public VersionInfo GetVersion()
@@ -995,9 +987,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string errMsg = String.Format("Error refreshing data objects: {0}", ex);
-        _logger.Error(errMsg);
-        throw new Exception(errMsg);
+        _logger.Error(string.Format("Error refreshing data objects: {0}", ex));
+        throw ex;
       }
     }
 
@@ -1012,7 +1003,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _requests[id].Message = ex.Message;
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+
         _requests[id].State = State.Error;
       }
     }
@@ -1030,9 +1029,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string errMsg = String.Format("Error refreshing data objects: {0}", ex);
-        _logger.Error(errMsg);
-        throw new Exception(errMsg);
+        _logger.Error(string.Format("Error refreshing data objects: {0}", ex));
+        throw ex;
       }
     }
 
@@ -1048,9 +1046,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string errMsg = String.Format("Error refreshing data objects: {0}", ex);
-        _logger.Error(errMsg);
-        throw new Exception(errMsg);
+        _logger.Error(string.Format("Error refreshing data objects: {0}", ex));
+        throw ex;
       }
     }
 
@@ -1067,10 +1064,10 @@ namespace org.iringtools.adapter
 
         return Encoding.UTF8.GetString(json, 0, json.Length);
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        _logger.Error("Error converting XElement to JSON.");
-        throw e;
+        _logger.Error(string.Format("Error converting XElement to JSON: {0}", ex));
+        throw ex;
       }
     }
 
@@ -1115,7 +1112,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _requests[id].Message = ex.Message;
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+
         _requests[id].State = State.Error;
       }
     }
@@ -1198,10 +1203,11 @@ namespace org.iringtools.adapter
               if (prop != null)
                 DataProperties.Insert(0, prop);
             }
-          } utility.Utility.Write<DataDictionary>(dataDictionary, path, true);
+          } 
+          
+          utility.Utility.Write<DataDictionary>(dataDictionary, path, true);
           return dataDictionary;
         }
-
 
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
@@ -1245,7 +1251,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetContexts for {0}: {1}", applicationName, ex));
-        throw new Exception(string.Format("Error in GetContexts for {0}: {1}", applicationName, ex));
+        throw ex;
       }
     }
 
@@ -2443,7 +2449,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetMapping: {0}", ex));
-        throw new Exception(string.Format("Error getting mapping: {0}", ex));
+        throw ex;
       }
     }
 
@@ -3109,47 +3115,48 @@ namespace org.iringtools.adapter
 
     private void AddURIsInSettingCollection(string ProjectName, string applicationName, string resourceName, string resourceIdentifier = null, string relatedResourceName = null, string relatedId = null)
     {
-        try
+      try
+      {
+        _logger.Debug("Adding URI in setting Collection.");
+
+        string keyPropertyName = _dataObjDef.keyProperties[0].keyPropertyName;
+
+        string genericURI = "/" + resourceName;
+        string specificURI = "/" + resourceName;
+
+        if (resourceIdentifier != null)
         {
-            _logger.Debug("Adding URI in setting Collection.");
-
-            string keyPropertyName = _dataObjDef.keyProperties[0].keyPropertyName;
-
-            string genericURI = "/" + resourceName;
-            string specificURI = "/" + resourceName;
-
-            if (resourceIdentifier != null)
-            {
-                genericURI = resourceName + "/{" + keyPropertyName + "}";
-                specificURI = resourceName + "/" + resourceIdentifier;
-            }
-
-            if (relatedResourceName != null)
-            {
-                genericURI = resourceName + "/{" + keyPropertyName + "}/" + relatedResourceName;
-                specificURI = resourceName + "/" + resourceIdentifier + "/" + relatedResourceName;
-            }
-            if (relatedId != null)
-            {
-                DataObject releteddataObject = _dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == relatedResourceName.ToUpper());
-
-                // null checked needed!
-                if (releteddataObject != null)
-                {
-                    string reletedKeyPropertyName = releteddataObject.keyProperties[0].keyPropertyName;
-
-                    genericURI = resourceName + "/{" + keyPropertyName + "}/" + reletedKeyPropertyName + "/{" + reletedKeyPropertyName + "}";
-                    specificURI = resourceName + "/" + resourceIdentifier + "/" + reletedKeyPropertyName + "/" + relatedId;
-                }
-            }
-
-            _settings["GenericURI"] = genericURI;
-            _settings["SpecificURI"] = specificURI;
+          genericURI = resourceName + "/{" + keyPropertyName + "}";
+          specificURI = resourceName + "/" + resourceIdentifier;
         }
-        catch
+
+        if (relatedResourceName != null)
         {
-            _logger.Debug("Exception in Adding URI in setting Collection.");
+          genericURI = resourceName + "/{" + keyPropertyName + "}/" + relatedResourceName;
+          specificURI = resourceName + "/" + resourceIdentifier + "/" + relatedResourceName;
         }
+        if (relatedId != null)
+        {
+          DataObject releteddataObject = _dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == relatedResourceName.ToUpper());
+
+          // null checked needed!
+          if (releteddataObject != null)
+          {
+            string reletedKeyPropertyName = releteddataObject.keyProperties[0].keyPropertyName;
+
+            genericURI = resourceName + "/{" + keyPropertyName + "}/" + reletedKeyPropertyName + "/{" + reletedKeyPropertyName + "}";
+            specificURI = resourceName + "/" + resourceIdentifier + "/" + reletedKeyPropertyName + "/" + relatedId;
+          }
+        }
+
+        _settings["GenericURI"] = genericURI;
+        _settings["SpecificURI"] = specificURI;
+      }
+      catch (Exception ex)
+      {
+        _logger.Debug(string.Format("Exception in Adding URI in setting Collection: {0}", ex));
+        throw ex;
+      }
     }
 
     //Individual
@@ -3660,7 +3667,6 @@ namespace org.iringtools.adapter
       return response;
     }
 
-
     public Response Post(string projectName, string applicationName, string graphName, string format, DataItems dataItems)
     {
       Response response = null;
@@ -4061,7 +4067,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
+        throw ex;
       }
     }
 
@@ -4147,7 +4153,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
+        throw ex;
       }
     }
 
@@ -4193,7 +4199,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
+        throw ex;
       }
     }
 
@@ -4218,10 +4224,10 @@ namespace org.iringtools.adapter
 
           _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-          _logger.Error("Error initializing data dictionary: " + e.Message);
-          throw e;
+          _logger.Error(string.Format("Error initializing data dictionary: {0}" + ex));
+          throw ex;
         }
       }
     }
@@ -4938,9 +4944,10 @@ namespace org.iringtools.adapter
           }
         }
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        _logger.Error("Error loading data layer: " + e);
+        _logger.Error(string.Format("Error loading data layer: {0}" + ex));
+        throw ex;
       }
 
       return dataLayers;
@@ -5015,6 +5022,7 @@ namespace org.iringtools.adapter
         response.Messages.Add(ex.Message);
         response.Level = StatusLevel.Error;
       }
+
       return response;
     }
 
@@ -5030,7 +5038,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
-        throw new Exception(string.Format("Error getting configuration: {0}", ex));
+        throw ex;
       }
     }
 
@@ -5053,9 +5061,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string errMsg = String.Format("Error refreshing data objects: {0}", ex);
-        _logger.Error(errMsg);
-        throw new Exception(errMsg);
+        _logger.Error(string.Format("Error refreshing data objects: {0}", ex));
+        throw ex;
       }
     }
 
@@ -5087,9 +5094,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string errMsg = String.Format("Error refreshing data object [{0}]: {1}", objectType, ex);
-        _logger.Error(errMsg);
-        throw new Exception(errMsg);
+        _logger.Error(string.Format("Error refreshing data object [{0}]: {1}", objectType, ex));
+        throw ex;
       }
     }
 
@@ -5169,7 +5175,7 @@ namespace org.iringtools.adapter
             }
           }
 
-          string contentType =  Registry.ClassesRoot.OpenSubKey("." + format).GetValue("Content Type").ToString();
+          string contentType = Registry.ClassesRoot.OpenSubKey("." + format).GetValue("Content Type").ToString();
           HttpContext.Current.Response.ContentType = contentType;
         }
 
@@ -5357,9 +5363,7 @@ namespace org.iringtools.adapter
       else
         return null;
     }
-
   }
-
 
   public class DataObjectComparer : IComparer<IDataObject>
   {
@@ -5451,6 +5455,7 @@ namespace org.iringtools.adapter
       }
     }
   }
+
   public class DataPropertyComparer : IComparer<DataProperty>
   {
     public int Compare(DataProperty left, DataProperty right)

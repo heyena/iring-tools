@@ -427,7 +427,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _requests[id].Message = ex.Message;
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+        
         _requests[id].State = State.Error;
       }
     }
@@ -591,7 +599,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _requests[id].Message = ex.Message;
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+
         _requests[id].State = State.Error;
       }
     }
@@ -675,7 +691,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _requests[id].Message = ex.Message;
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+
         _requests[id].State = State.Error;
       }
     }
@@ -830,9 +854,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string errMsg = String.Format("Error getting request status: {0}", ex);
-        _logger.Error(errMsg);
-        throw new Exception(errMsg);
+        _logger.Error(string.Format("Error getting request status: {0}", ex));
+        throw ex;
       }
     }
 
@@ -928,9 +951,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string message = "Error initializing scope: " + ex;
-        _logger.Error(message);
-        throw new Exception(message);
+        _logger.Error(string.Format("Error initializing scope: {0}" + ex));
+        throw ex;
       }
     }
 
@@ -957,9 +979,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string message = "Error initializing datalayer: " + ex;
-        _logger.Error(message);
-        throw new Exception(message);
+        _logger.Error(string.Format("Error initializing datalayer: {0}" + ex));
+        throw ex;
       }
     }
 
@@ -975,8 +996,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error initializing identity: {0}", ex));
-        throw new Exception(string.Format("Error initializing identity: {0})", ex));
+        _logger.Error(string.Format("Error initializing identity: {0}" + ex));
+        throw ex;
       }
     }
 
