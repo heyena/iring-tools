@@ -2518,12 +2518,12 @@ namespace org.iringtools.adapter
       try
       {
         DataDictionary dictionary = GetDictionary(projectName, applicationName);
-        DataObject dataObject = dictionary.GetDataObject(resourceName);
+        _dataObjDef = dictionary.GetDataObject(resourceName);
 
         AddURIsInSettingCollection(projectName, applicationName, resourceName);
 
-        if (dataObject != null)
-          filter.AppendFilter(dataObject.dataFilter);
+        if (_dataObjDef != null)
+          filter.AppendFilter(_dataObjDef.dataFilter);
 
         _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
