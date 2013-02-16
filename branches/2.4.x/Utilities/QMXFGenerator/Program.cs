@@ -126,11 +126,9 @@ namespace QMXFGenerator
                       Console.WriteLine("error in template " + t.identifier + " see : error.log");
                       error = true;
                     }
-                    else if (!CheckUri(r.identifier))
-                    {
-                      Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\n", "error.log", true);
-                      error = true;
-                    }
+                    if (CheckUri(r.identifier)) continue;
+                    Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\n", "error.log", true);
+                    error = true;
                   }
                   if (error)
                   {
@@ -613,7 +611,7 @@ namespace QMXFGenerator
             roleDefinition.description = englishUsDescription;
           }
           object clist;
-          if (string.IsNullOrEmpty(type.ToString()))
+          if (!string.IsNullOrEmpty(type.ToString()))
           {
             var query = from clss in _classes
                         where
@@ -693,7 +691,7 @@ namespace QMXFGenerator
             part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int) TemplateColumns.ID), templateIdentifier);
           }
           templateQualification.identifier = templateIdentifier.ToString().Trim();
-          if (string.IsNullOrEmpty(description.ToString()))
+          if (!string.IsNullOrEmpty(description.ToString()))
           {
             var englishUsDescription = new Description
               {
@@ -705,7 +703,7 @@ namespace QMXFGenerator
                 englishUsDescription,
               };
           }
-          if (parentTemplate != null && parentTemplate.ToString() != String.Empty)
+          if (!string.IsNullOrEmpty(parentTemplate.ToString()))
           {
             var query = from template in _baseTemplates
                         where Convert.ToString(template[(int) TemplateColumns.Name]) == parentTemplate.ToString()
@@ -823,7 +821,7 @@ namespace QMXFGenerator
 
           roleQualification.qualifies = (parentRole ?? "").ToString().Trim();
 
-          if (type != null && type.ToString() != String.Empty)
+          if (!string.IsNullOrEmpty(type.ToString()))
           {
             var query = from @class in _classes
                         where Convert.ToString(@class[(int) ClassColumns.Label]).Trim() == type.ToString().Trim()
