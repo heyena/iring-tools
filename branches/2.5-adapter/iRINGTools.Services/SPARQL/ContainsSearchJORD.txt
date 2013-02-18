@@ -1,6 +1,9 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 PREFIX rds: <http://posccaesar.org/rdl/>
 SELECT ?uri ?label ?rds
+FROM <http://irm.dnv.com/ontologies/iring.map> 
+FROM <http://irm.dnv.com/ontologies/pcardl> 
+WHERE
 { 
   
   ?rds rdfs:label ?label .
