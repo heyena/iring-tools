@@ -3,6 +3,9 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rds: <http://posccaesar.org/rdl/>
 PREFIX rdl: <http://rdl.rdlfacade.org/data#> 
 SELECT ?uri ?label  ?rdsuri
+FROM <http://irm.dnv.com/ontologies/iring.map> 
+FROM <http://irm.dnv.com/ontologies/pcardl> 
+WHERE
 {
   BIND (rdl:param1 as ?uri)
   ?uri  rds:rdsWipEquivalent ?c .
