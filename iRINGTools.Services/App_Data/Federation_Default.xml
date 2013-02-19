@@ -10,6 +10,14 @@
       <uri>http://rds.posccaesar.org/2008/02/OWL/ISO-15926-2_2003#</uri>
     </namespace>
     <namespace>
+      <description>JORD RDL CLasses</description>
+      <id>10</id>
+      <idgenerator>0</idgenerator>
+      <iswriteable>false</iswriteable>
+      <prefix>jordrdl</prefix>
+      <uri>http://posccaesar.org/rdl/</uri>
+    </namespace>
+    <namespace>
       <description i:nil="true"/>
       <id>0</id>
       <idgenerator>0</idgenerator>
