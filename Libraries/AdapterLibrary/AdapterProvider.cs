@@ -432,6 +432,12 @@ namespace org.iringtools.adapter
                     new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateAuthorization, NHibernateExtension")
                   )
                 );
+
+                // create white-list authorization file
+                string authorizationPath = string.Format("{0}Authorization.{1}.{2}.xml", _settings["AppDataPath"], scope.Name, application.Name);
+                AuthorizedUsers authorizedUsers = new AuthorizedUsers();
+                authorizedUsers.Add(_settings["UserName"]);
+                Utility.Write<AuthorizedUsers>(authorizedUsers, authorizationPath, true);
               }
 
               authorizationBinding.Save(String.Format("{0}AuthorizationBindingConfiguration.{1}.{2}.xml",
@@ -3331,7 +3337,7 @@ namespace org.iringtools.adapter
         {
           _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, filter, limit, start);
         }
-        catch (NotImplementedException ex)
+        catch (NotImplementedException)
         {
           _dataObjects = _dataLayer.Get(relatedObjectType, filter, limit, start);
         }
