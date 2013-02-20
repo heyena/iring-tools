@@ -523,15 +523,15 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           notifyDrop: function (dd, e, data) {
             if (data.node.attributes.type == 'DataPropertyNode' ||
               data.node.attributes.type == 'KeyDataPropertyNode') {
-              Ext.get('propertyName').dom.value = data.node.attributes.record.Name;
 
-              if (data.node.parentNode != undefined
-                              && data.node.parentNode.attributes.record != undefined
-                              && data.node.parentNode.attributes.type != 'DataObjectNode') {
-                Ext.get('relatedObject').dom.value = data.node.parentNode.attributes.record.Related;
-              }
+              var propPath = data.node.attributes.id.split('/');
+              propPath.splice(0, 5);
 
-              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.attributes.record.Name +
+              var propName = propPath.join('.');
+
+              Ext.get('propertyName').dom.value = propName;
+
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + propName +
                                 '</b></td></tr></table>';
 
               Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg);
