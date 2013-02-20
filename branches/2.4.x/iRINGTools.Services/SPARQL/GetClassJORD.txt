@@ -5,8 +5,7 @@ PREFIX tpl: <http://tpl.rdlfacade.org/data#>
 SELECT DISTINCT ?label ?type
   ?definition ?creator ?creationDate ?class
   ?comment ?authority ?recorded ?from
-
-  FROM <http://irm.dnv.com/ontologies/iring.map> 
+FROM <http://irm.dnv.com/ontologies/iring.map> 
 FROM <http://irm.dnv.com/ontologies/pcardl> 
 WHERE
 { 
