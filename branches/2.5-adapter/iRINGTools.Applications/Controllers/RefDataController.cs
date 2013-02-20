@@ -28,7 +28,7 @@ namespace org.iringtools.web.controllers
     private IRefDataRepository _refdataRepository = null;
     private NamespaceMapper _nsMap = new NamespaceMapper();
     private List<Namespace> _namespaces = null;
-    private Federation _federaton = null;
+    private Federation _federation = null;
     private string _adapterServiceURI = String.Empty;
     private string _refDataServiceURI = String.Empty;
     public RefDataController()
@@ -38,8 +38,8 @@ namespace org.iringtools.web.controllers
     public RefDataController(IRefDataRepository repository)
     {
       _refdataRepository = repository;
-      _federaton = _refdataRepository.GetFederation();
-      _namespaces = _federaton.Namespaces;
+      _federation = _refdataRepository.GetFederation();
+      _namespaces = _federation.Namespaces;
       //_nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
       //_nsMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
       //_nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
@@ -146,7 +146,7 @@ namespace org.iringtools.web.controllers
       if (!string.IsNullOrEmpty(id))
       {
         if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
 
         Entities dataEntities = _refdataRepository.GetClassMembers(id, repository);
         foreach (Entity entity in dataEntities)
@@ -332,7 +332,7 @@ namespace org.iringtools.web.controllers
       if (!string.IsNullOrEmpty(classId))
       {
         if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
 
         dataEntities = _refdataRepository.GetClasses(classId, repository);
         foreach (var entity in dataEntities.classDefinitions)
@@ -515,7 +515,7 @@ namespace org.iringtools.web.controllers
       if (!string.IsNullOrEmpty(classId))
       {
         if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
 
         Entities dataEntities = _refdataRepository.GetSubClasses(classId, repository);
         foreach (var entity in dataEntities)
@@ -562,7 +562,7 @@ namespace org.iringtools.web.controllers
       if (!string.IsNullOrEmpty(classId))
       {
         if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
 
         Entities dataEntities = _refdataRepository.GetSubClasses(classId, repository);
         foreach (var entity in dataEntities)
@@ -594,7 +594,7 @@ namespace org.iringtools.web.controllers
       if (!string.IsNullOrEmpty(classId))
       {
         if(!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
         Entities dataEntities = _refdataRepository.GetSuperClasses(classId, repository);
         foreach (var entity in dataEntities)
         {
@@ -624,7 +624,7 @@ namespace org.iringtools.web.controllers
       if (!string.IsNullOrEmpty(classId))
       {
         if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
 
         Entities dataEntities = _refdataRepository.GetClassMembers(classId, repository);
         foreach (Entity entity in dataEntities)
