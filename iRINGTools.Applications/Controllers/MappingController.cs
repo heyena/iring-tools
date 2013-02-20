@@ -870,7 +870,6 @@ namespace org.iringtools.web.controllers
         string graphName = mappingCtx[2];
 
         string classId = form["classId"];
-        string relatedObject = form["relatedObject"];
         string roleName = mappingCtx[mappingCtx.Length - 1];
         int index = Convert.ToInt16(form["index"]);
         Mapping mapping = GetMapping(scope, application);
@@ -884,19 +883,7 @@ namespace org.iringtools.web.controllers
 
           if (!string.IsNullOrEmpty(rMap.dataType) && rMap.dataType.StartsWith("xsd"))
           {
-            if (relatedObject != "undefined" && relatedObject != "")
-            {
-              rMap.propertyName = string.Format("{0}.{1}.{2}",
-                graphMap.dataObjectName,
-                relatedObject,
-                propertyName);
-            }
-            else
-            {
-              rMap.propertyName =
-                  string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
-            }
-
+            rMap.propertyName = propertyName;
             rMap.type = RoleType.DataProperty;
             rMap.valueListName = null;
           }

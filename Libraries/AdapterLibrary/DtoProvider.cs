@@ -311,12 +311,35 @@ namespace org.iringtools.adapter
                 {
                   if (!String.IsNullOrEmpty(roleMap.propertyName))
                   {
-                    string[] property = roleMap.propertyName.Split('.');
-                    string objectName = property[0].Trim();
-                    string propertyName = property[1].Trim();
+                    string[] propertyParts = roleMap.propertyName.Split('.');
+                    string objectName = propertyParts[propertyParts.Length - 2].Trim();
+                    string propertyName = propertyParts[propertyParts.Length - 1].Trim();
+                    DataObject dataObj = dataObject;
 
-                    DataProperty dataProp = dataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                    if (propertyParts.Length < 2)
+                    {
+                      throw new Exception("Property [" + roleMap.propertyName + "] is invalid.");
+                    }
+                    else if (propertyParts.Length > 2) // related property
+                    {
+                      // find related object
+                      for (int i = 1; i < propertyParts.Length - 1; i++)
+                      {
+                        DataRelationship rel = dataObj.dataRelationships.Find(x => x.relationshipName.ToLower() == propertyParts[i].ToLower());
+                        if (rel == null)
+                        {
+                          throw new Exception("Relationship [" + rel.relationshipName + "] does not exist.");
+                        }
 
+                        dataObj = dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == rel.relatedObjectName.ToLower());
+                        if (dataObj == null)
+                        {
+                          throw new Exception("Related object [" + rel.relatedObjectName + "] is not found.");
+                        }
+                      }
+                    }
+
+                    DataProperty dataProp = dataObj.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
                     if (dataProp == null)
                     {
                       throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
@@ -324,7 +347,7 @@ namespace org.iringtools.adapter
 
                     manifestRole.dataLength = dataProp.dataLength;
 
-                    if (dataObject.isKeyProperty(propertyName))
+                    if (dataObj.isKeyProperty(propertyName))
                     {
                       manifestTemplate.transferOption = TransferOption.Required;
                     }

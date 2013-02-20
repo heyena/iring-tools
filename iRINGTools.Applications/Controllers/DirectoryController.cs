@@ -332,12 +332,13 @@ namespace org.iringtools.web.controllers
               {
                 keytype = getKeytype(property.propertyName, dataObject.dataProperties);
                 datatype = getDatatype(property.propertyName, dataObject.dataProperties);
+
                 JsonTreeNode node = new JsonTreeNode
                 {
                   nodeType = "async",
                   type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
                   iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
-                  id = context + "/" + property.propertyName,
+                  id = context + "/" + dataObject.objectName + "/" + property.propertyName,
                   text = property.propertyName,
                   expanded = true,
                   leaf = true,
@@ -355,6 +356,7 @@ namespace org.iringtools.web.controllers
                 node.property.Add("Datatype", datatype);
                 nodes.Add(node);
               }
+
               if (dataObject.dataRelationships.Count > 0)
               {
                 foreach (DataRelationship relation in dataObject.dataRelationships)

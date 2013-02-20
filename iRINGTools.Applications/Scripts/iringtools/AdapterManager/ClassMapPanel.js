@@ -125,7 +125,7 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
             }
             else {
               if (objectName != data.node.parentNode.text) {
-                var message = 'Identifiers must come from the same Data Object!';
+                var message = 'Properties must root from the same data object as graph!';
                 showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
                 return false;
               }
