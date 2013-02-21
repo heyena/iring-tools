@@ -983,7 +983,7 @@ namespace org.iringtools.web.controllers
           if (rMap != null)
           {
             rMap.valueListName = valueListName;
-            rMap.propertyName = string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
+            rMap.propertyName = propertyName;
             rMap.type = RoleType.ObjectProperty;
             rMap.value = null;
           }

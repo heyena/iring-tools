@@ -633,6 +633,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       afterRender: function (cmp) {
         Ext.FormPanel.prototype.afterRender.apply(this, arguments);
 
+        // drag & drop data property
         var propertyTarget = this.body.child('div.property-target' + formid);
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
@@ -651,20 +652,24 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
               return this.dropNotAllowed;
           },
           notifyDrop: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode') {
-              return false;
-            }
-            else {
-              Ext.get('propertyName').dom.value = data.node.id;
-              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[5] + '</b></td></tr>'
-              msg += '</table>'
+            if (data.node.attributes.type == 'DataPropertyNode' ||
+                data.node.attributes.type == 'KeyDataPropertyNode') {
+
+              var propPath = data.node.attributes.id.split('/');
+              propPath.splice(0, 5);
+
+              var propName = propPath.join('.');
+
+              Ext.get('propertyName').dom.value = propName;
+
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + propName + '</table>'
               Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
               return true;
             }
           } //eo notifyDrop
         }); //eo propertydd
 
-
+        // drag & drop value list
         var valueListTarget = this.body.child('div.class-target' + formid);
         var classdd = new Ext.dd.DropTarget(valueListTarget, {
           ddGroup: 'propertyGroup',

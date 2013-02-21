@@ -617,7 +617,6 @@ Ext.onReady(function () {
       if (node.expanded == false)
         node.expand();
 
-      showDialog(400, 100, 'Info', 'The new ValueListMap is added.', Ext.Msg.OK, null);
     }, this);
 
     newTab.on('Cancel', function (panel) {
