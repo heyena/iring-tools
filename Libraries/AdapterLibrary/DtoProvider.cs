@@ -269,9 +269,14 @@ namespace org.iringtools.adapter
             List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
             
             Keys keys = new Keys();
-            foreach (string identifier in classMap.identifiers)
+
+            if (templateMaps.Count > 0)
             {
-              keys.Add(GetKey(graphMap, classMap, identifier));
+              foreach (string identifier in classMap.identifiers)
+              {
+                Key key = GetKey(graphMap, classMap, identifier);
+                keys.Add(key);
+              }
             }
 
             Class manifestClass = new Class
