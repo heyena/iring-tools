@@ -3121,48 +3121,51 @@ namespace org.iringtools.adapter
 
     private void AddURIsInSettingCollection(string ProjectName, string applicationName, string resourceName, string resourceIdentifier = null, string relatedResourceName = null, string relatedId = null)
     {
-      try
-      {
-        _logger.Debug("Adding URI in setting Collection.");
-
-        string keyPropertyName = _dataObjDef.keyProperties[0].keyPropertyName;
-
-        string genericURI = "/" + resourceName;
-        string specificURI = "/" + resourceName;
-
-        if (resourceIdentifier != null)
+        try
         {
-          genericURI = resourceName + "/{" + keyPropertyName + "}";
-          specificURI = resourceName + "/" + resourceIdentifier;
-        }
+            _logger.Debug("Adding URI in setting Collection.");
 
-        if (relatedResourceName != null)
+            if (_dataObjDef.keyProperties.Count > 0)
+            {
+                string keyPropertyName = _dataObjDef.keyProperties[0].keyPropertyName;
+
+                string genericURI = "/" + resourceName;
+                string specificURI = "/" + resourceName;
+
+                if (resourceIdentifier != null)
+                {
+                    genericURI = resourceName + "/{" + keyPropertyName + "}";
+                    specificURI = resourceName + "/" + resourceIdentifier;
+                }
+
+                if (relatedResourceName != null)
+                {
+                    genericURI = resourceName + "/{" + keyPropertyName + "}/" + relatedResourceName;
+                    specificURI = resourceName + "/" + resourceIdentifier + "/" + relatedResourceName;
+                }
+                if (relatedId != null)
+                {
+                    DataObject releteddataObject = _dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == relatedResourceName.ToUpper());
+
+                    // null checked needed!
+                    if (releteddataObject != null)
+                    {
+                        string reletedKeyPropertyName = releteddataObject.keyProperties[0].keyPropertyName;
+
+                        genericURI = resourceName + "/{" + keyPropertyName + "}/" + reletedKeyPropertyName + "/{" + reletedKeyPropertyName + "}";
+                        specificURI = resourceName + "/" + resourceIdentifier + "/" + reletedKeyPropertyName + "/" + relatedId;
+                    }
+                }
+
+                _settings["GenericURI"] = genericURI;
+                _settings["SpecificURI"] = specificURI;
+            }
+        }
+        catch (Exception ex)
         {
-          genericURI = resourceName + "/{" + keyPropertyName + "}/" + relatedResourceName;
-          specificURI = resourceName + "/" + resourceIdentifier + "/" + relatedResourceName;
+            _logger.Debug(string.Format("Exception in Adding URI in setting Collection: {0}", ex));
+            throw ex;
         }
-        if (relatedId != null)
-        {
-          DataObject releteddataObject = _dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == relatedResourceName.ToUpper());
-
-          // null checked needed!
-          if (releteddataObject != null)
-          {
-            string reletedKeyPropertyName = releteddataObject.keyProperties[0].keyPropertyName;
-
-            genericURI = resourceName + "/{" + keyPropertyName + "}/" + reletedKeyPropertyName + "/{" + reletedKeyPropertyName + "}";
-            specificURI = resourceName + "/" + resourceIdentifier + "/" + reletedKeyPropertyName + "/" + relatedId;
-          }
-        }
-
-        _settings["GenericURI"] = genericURI;
-        _settings["SpecificURI"] = specificURI;
-      }
-      catch (Exception ex)
-      {
-        _logger.Debug(string.Format("Exception in Adding URI in setting Collection: {0}", ex));
-        throw ex;
-      }
     }
 
     //Individual

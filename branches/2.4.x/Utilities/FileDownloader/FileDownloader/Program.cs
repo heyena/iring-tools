@@ -24,9 +24,9 @@ namespace FileDownloader
             {
                 if (args.Length >= 3)
                 {
-                    baseUrl = args[0];
-                    relativeUrl = args[1];
-                    filePath = args[2];
+                    baseUrl = args[0];            //http:/localhost:54321/adapter
+                    relativeUrl = args[1];        //"Scope/app/resourcebytes"
+                    filePath = args[2];           //Local file path where you want to download the file.
 
                     string uri = baseUrl + relativeUrl;
 
