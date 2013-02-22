@@ -377,6 +377,11 @@ namespace org.iringtools.utility
 
     public Stream GetStream(string relativeUri)
     {
+        return GetStream(relativeUri, null);
+    }
+   
+    private Stream GetStream(string relativeUri,string acceptType)
+    {
       try
       {
         string uri = _baseUri + relativeUri;
@@ -388,6 +393,15 @@ namespace org.iringtools.utility
         _logger.Debug("Got Credentials!");
         PrepareHeaders(request);
         _logger.Debug("Got Headers!");
+
+        //Add Accept header
+        if (!string.IsNullOrEmpty(acceptType))
+        {
+            _logger.Debug("Accept: " + acceptType);
+            ((HttpWebRequest)request).Accept = acceptType;
+
+        }
+        
         request.Method = "Get";
         request.Timeout = TIMEOUT;
 
@@ -448,6 +462,20 @@ namespace org.iringtools.utility
       {
         throw e;
       }
+    }
+
+    public String GetJson(string relativeUri)
+    {
+        try
+        {
+            Stream stream = GetStream(relativeUri,"application/json");
+            string message = Utility.SerializeFromStream(stream);
+            return message;
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
     }
 
     public R Post<T, R>(string relativeUri, T requestEntity)
@@ -698,6 +726,54 @@ namespace org.iringtools.utility
       }
     }
 
+    public string PutJson(string relativeUri, string requestMessage)
+    {
+        try
+        {
+            string uri = _baseUri + relativeUri;
+            _logger.Debug(string.Format("Posting message to URL [{0}]...", uri));
+
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(requestMessage);
+            writer.Flush();
+            byte[] bytes = stream.ToArray();
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+            PrepareCredentials(request);
+            PrepareHeaders(request);
+
+            request.Timeout = TIMEOUT;
+            request.Method = "PUT";
+            request.ContentType = "application/json";
+            request.ContentLength = bytes.Length;
+
+            System.Net.ServicePointManager.Expect100Continue = false;
+
+            // allows for validation of SSL conversations
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+              ValidateRemoteCertificate
+            );
+
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(bytes, 0, bytes.Length);
+            requestStream.Flush();
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+            return responseMessage;
+        }
+        catch (Exception exception)
+        {
+            string uri = _baseUri + relativeUri;
+
+            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+        }
+    }
+
     public string PostStream(string relativeUri, Stream stream)
     {
       try
@@ -796,6 +872,54 @@ namespace org.iringtools.utility
 
         throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
       }
+    }
+
+    public string PostJson(string relativeUri, string requestMessage)
+    {
+        try
+        {
+            string uri = _baseUri + relativeUri;
+            _logger.Debug(string.Format("Posting message to URL [{0}]...", uri));
+
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(requestMessage);
+            writer.Flush();
+            byte[] bytes = stream.ToArray();
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+            PrepareCredentials(request);
+            PrepareHeaders(request);
+
+            request.Timeout = TIMEOUT;
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.ContentLength = bytes.Length;
+
+            System.Net.ServicePointManager.Expect100Continue = false;
+
+            // allows for validation of SSL conversations
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+              ValidateRemoteCertificate
+            );
+
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(bytes, 0, bytes.Length);
+            requestStream.Flush();
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+            return responseMessage;
+        }
+        catch (Exception exception)
+        {
+            string uri = _baseUri + relativeUri;
+
+            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+        }
     }
 
     public R PutMessage<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
