@@ -1,14 +1,11 @@
 PREFIX tpl: <http://tpl.rdlfacade.org/data#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX p8: <http://standards.tc184-sc4.org/iso/15926/-8/template-model#>
-PREFIX p7tm:<http://standards.iso.org/iso/ts/15926/-8/ed-1/tech/reference-data/p7tm#>
 select ?role ?index ?label ?type ?comment
 {
-   ?role p7tm:hasTemplate tpl:param1 ;
-         a p7tm:TemplateRoleDescription ;
-         p7tm:valRoleIndex ?index ;
-         p7tm:hasRole ?r ;
-         p7tm:hasRoleFillerType ?type .
-    ?r rdfs:label ?label .
-   OPTIONAL{?r rdfs:comment ?comment  }
+   ?role p8:hasTemplate tpl:param1 .
+   ?role p8:valRoleIndex ?index .
+   ?role rdfs:label ?label .
+   ?role p8:hasRoleFillerType ?type .
+   OPTIONAL{ ?role rdfs:comment ?comment }
 }
