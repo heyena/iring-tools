@@ -454,7 +454,7 @@ Ext.define('AM.controller.Directory', {
         params.graph = graph;
       }, me);
 
-      gridProxy.on('exception', function(proxy, response, operation) {
+      gridProxy.on('exception', function(server, response, operation, options) {
         content.getEl().unmask();
         gridPanel.destroy();
         var rtext = response.responseText;
@@ -464,18 +464,8 @@ Ext.define('AM.controller.Directory', {
         showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
       }, me);
 
-      gridStore.load({
-        callback: function (records, response) {
-          if(records[0].store.proxy.reader.metaData) {
-            gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.fields);
-            content.getEl().unmask();
-          } else {
-            if(response)
-            showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
-            return true;
-          }
-        }
-      });
+      gridStore.load();
+
       content.getEl().unmask();
       content.add(gridPanel);
     }

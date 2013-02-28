@@ -24,7 +24,7 @@ Ext.define('AM.store.DataGridStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
-      autoLoad: true,
+      //autoLoad: true,
       remoteFilter: true,
       remoteSort: true,
       storeId: 'DataGridStore',

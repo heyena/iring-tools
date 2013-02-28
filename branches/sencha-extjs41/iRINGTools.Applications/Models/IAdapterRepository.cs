@@ -9,7 +9,7 @@ namespace org.iringtools.web.Models
 {
   public interface IAdapterRepository
   {
-    Directories GetScopes();
+    ResourceDirectory GetScopes();
 
     DataLayers GetDataLayers(string baseUrl);
 
