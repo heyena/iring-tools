@@ -141,7 +141,7 @@ public class DataModel {
 		String fullDtiKey = FULL_DTI_KEY_PREFIX + dtiRelativePath;
 		String partDtiKey = PART_DTI_KEY_PREFIX + dtiRelativePath;
 		String lastFilterKey = FILTER_KEY_PREFIX + dtiRelativePath;
-		String dataFilterKey = DATAFILTER_PREFIX + dataFilterRelativePath;
+		//String dataFilterKey = DATAFILTER_PREFIX + dataFilterRelativePath;
 		String currFilter = filter + "/" + sortBy + "/" + sortOrder;
 
 		try {
@@ -156,7 +156,7 @@ public class DataModel {
 				try {
 					dataFilterFile = httpClient.get(DataFilter.class,
 							dataFilterRelativePath);
-					session.put(dataFilterKey, dataFilterFile);
+					//session.put(dataFilterKey, dataFilterFile);
 				} catch (HttpClientException e) {
 					logger.error(e.getMessage());
 					throw new DataModelException(e.getMessage());
@@ -174,7 +174,7 @@ public class DataModel {
 
 			dtis = getFullDtis(serviceUri, manifestRelativePath,
 					dtiRelativePath, fullDtiKey, partDtiKey, lastFilterKey);
-
+			
 			if (dataFilter != null
 					&& (dataFilter.getExpressions() != null || dataFilter
 							.getOrderExpressions() != null)) {
@@ -339,9 +339,16 @@ public class DataModel {
 						httpClient.setAsync(true);
 						String statusUrl = httpClient.post(String.class,
 								dtiRelativePath, dxiRequest);
-						fullDtis = waitForRequestCompletion(
-								DataTransferIndices.class, serviceUri
-										+ statusUrl);
+						try
+						{
+							fullDtis = waitForRequestCompletion(
+									DataTransferIndices.class, serviceUri
+											+ statusUrl);
+						}
+						catch (Exception ex)
+						{
+							throw new DataModelException(ex.getMessage());
+						}
 					} else {
 						fullDtis = httpClient.post(DataTransferIndices.class,
 								dtiRelativePath, dxiRequest);
@@ -360,9 +367,16 @@ public class DataModel {
 						httpClient.setAsync(true);
 						String statusUrl = httpClient.post(String.class,
 								dtiRelativePath, dxiRequest);
-						fullDtis = waitForRequestCompletion(
+						
+						try
+						{
+							fullDtis = waitForRequestCompletion(
 								DataTransferIndices.class, serviceUri
 										+ statusUrl);
+						}
+						catch (Exception ex) {
+							throw new DataModelException(ex.getMessage());
+						}
 					} else {
 						fullDtis = httpClient.post(DataTransferIndices.class,
 								dtiRelativePath, dxiRequest);
@@ -436,8 +450,15 @@ public class DataModel {
 					httpClient.setAsync(true);
 					String statusUrl = httpClient.post(String.class,
 							dtiRelativePath, dxiRequest);
-					dtis = waitForRequestCompletion(DataTransferIndices.class,
+					
+					try
+					{
+						dtis = waitForRequestCompletion(DataTransferIndices.class,
 							serviceUri + statusUrl);
+					}
+					catch (Exception ex) {
+						throw new DataModelException(ex.getMessage());
+					}
 				} else {
 					dtis = httpClient.post(DataTransferIndices.class,
 							dtiRelativePath, dxiRequest);
@@ -876,8 +897,16 @@ public class DataModel {
 				httpClient.setAsync(true);
 				String statusUrl = httpClient.post(String.class,
 						dtoRelativePath, dxoRequest);
-				dtos = waitForRequestCompletion(DataTransferObjects.class,
+				
+				try
+				{
+					dtos = waitForRequestCompletion(DataTransferObjects.class,
 						serviceUri + statusUrl);
+				}
+				catch (Exception ex) {
+					throw new DataModelException(ex.getMessage());
+				}
+				
 			} else {
 				dtos = httpClient.post(DataTransferObjects.class,
 						dtoRelativePath, dxoRequest);
@@ -894,7 +923,7 @@ public class DataModel {
 			String manifestRelativePath, String dtiRelativePath,
 			String dtoRelativePath, String filter, String sortBy,
 			String sortOrder, int start, int limit,
-			String dataFilterRelativePath) throws DataModelException {
+			String dataFilterRelativePath, boolean flag) throws DataModelException {
 		DataTransferIndices dtis = getDtis(serviceUri, manifestRelativePath,
 				dtiRelativePath, filter, sortBy, sortOrder,
 				dataFilterRelativePath);
@@ -1045,9 +1074,16 @@ public class DataModel {
 						httpClient.setAsync(true);
 						String statusUrl = httpClient.post(String.class,
 								dtoRelativePath, dxoRequest);
-						relatedDtos = waitForRequestCompletion(
+						
+						try
+						{
+							relatedDtos = waitForRequestCompletion(
 								DataTransferObjects.class, serviceUri
 										+ statusUrl);
+						}
+						catch (Exception ex) {
+							throw new DataModelException(ex.getMessage());
+						}
 					} else {
 						relatedDtos = httpClient.post(
 								DataTransferObjects.class, dtoRelativePath,
@@ -1842,33 +1878,35 @@ public class DataModel {
 		return roleValueBuilder.toString();
 	}
 
-	protected <T> T waitForRequestCompletion(Class<T> clazz, String url) {
+	protected <T> T waitForRequestCompletion(Class<T> clazz, String url) throws Exception {
 		T obj = null;
 
-		try {
-			RequestStatus requestStatus = null;
-			long timeoutCount = 0;
+		RequestStatus requestStatus = null;
+		long timeoutCount = 0;
 
-			HttpClient httpClient = new HttpClient(url);
-			HttpUtils.addHttpHeaders(session, httpClient);
+		HttpClient httpClient = new HttpClient(url);
+		HttpUtils.addHttpHeaders(session, httpClient);
 
-			while (timeoutCount < timeout) {
-				requestStatus = httpClient.get(RequestStatus.class);
+		while (timeoutCount < timeout) {
+			requestStatus = httpClient.get(RequestStatus.class);
 
-				if (requestStatus.getState() != State.IN_PROGRESS)
-					break;
+			if (requestStatus.getState() != State.IN_PROGRESS)
+				break;
 
-				Thread.sleep(interval);
-				timeoutCount += interval;
-			}
+			Thread.sleep(interval);
+			timeoutCount += interval;
+		}
 
-// Note that the requestStatus object will have been decoded (out of UTF-8) during the httpClient.get(), so if the object embedded within the
-// requestStatus.ResponseText has non UTF-8 characters then we must encode that back into UTF-8 before passing to JaxbUtils.toObject
+		if (requestStatus.getState() == State.COMPLETED)
+		{
+			// Note that the requestStatus object will have been decoded (out of UTF-8) during the httpClient.get(), so if the object embedded within the
+			// requestStatus.ResponseText has non UTF-8 characters then we must encode that back into UTF-8 before passing to JaxbUtils.toObject
 			InputStream streamUTF8 = new ByteArrayInputStream(requestStatus.getResponseText().getBytes("UTF-8"));
 			obj = (T) JaxbUtils.toObject(clazz, streamUTF8);
-			
-		} catch (Exception ex) {
-			logger.error(ex.getMessage());
+		}
+		else
+		{
+			throw new Exception(requestStatus.getMessage());
 		}
 
 		return obj;
