@@ -45,6 +45,58 @@
                 "designer|userClassName": "MyGridView"
             },
             "designerId": "596aa836-aad9-42c4-a4d8-55246c96a13b"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "handleBeforeLoad",
+                "fn": "handleBeforeLoad",
+                "designer|params": [
+                    "store",
+                    "operation",
+                    "e"
+                ],
+                "implHandler": [
+                    "var me = this;\r",
+                    "\r",
+                    "    store.on({\r",
+                    "        metachange: {\r",
+                    "            fn: function(store, meta, e) {\r",
+                    "                me.handleMetaChange(me, meta);\r",
+                    "            }, \r",
+                    "            scope: me, \r",
+                    "            single: true\r",
+                    "        }\r",
+                    "    });\r",
+                    ""
+                ]
+            },
+            "designerId": "4e4fb562-7d24-451e-b70c-2a750b98b069"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "handleMetaChange",
+                "fn": "handleMetaChange",
+                "designer|params": [
+                    "grid",
+                    "meta"
+                ],
+                "implHandler": [
+                    "grid.reconfigure(grid.getStore(), meta.columns);"
+                ]
+            },
+            "designerId": "d1bf775e-2acd-4cba-9a63-c4e73e07210f"
         }
     ]
 }

@@ -44,10 +44,24 @@ Ext.define('AM.view.AMViewport', {
           xtype: 'centerpanel',
           region: 'center'
         }
-      ]
+      ],
+      listeners: {
+        afterrender: {
+          fn: me.onAfterRender,
+          scope: me
+        }
+      }
     });
 
     me.callParent(arguments);
+  },
+
+  onAfterRender: function(abstractcomponent, options) {
+    // After the component has been rendered, disable the default browser
+    // context menu
+    Ext.getBody().on("contextmenu", Ext.emptyFn, null, {
+      preventDefault: true
+    });
   }
 
 });

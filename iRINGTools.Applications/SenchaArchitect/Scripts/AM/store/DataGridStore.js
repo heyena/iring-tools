@@ -47,6 +47,7 @@ Ext.define('AM.store.DataGridStore', {
         url: 'datagrid/getdata',
         reader: {
           type: 'json',
+          metaProperty: 'metaData',
           root: 'data',
           totalProperty: 'totalCount'
         }

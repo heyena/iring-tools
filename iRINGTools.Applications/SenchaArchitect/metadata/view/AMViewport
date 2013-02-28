@@ -57,6 +57,28 @@
             },
             "designerId": "d7e0246b-1bad-43ae-98c3-60488f8a9755",
             "masterInstanceId": "ExtBox1-ext-gen36174"
+        },
+        {
+            "type": "basiceventbinding",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "onAfterRender",
+                "fn": "onAfterRender",
+                "implHandler": [
+                    "// After the component has been rendered, disable the default browser\r",
+                    "// context menu\r",
+                    "Ext.getBody().on(\"contextmenu\", Ext.emptyFn, null, {\r",
+                    "    preventDefault: true\r",
+                    "});"
+                ],
+                "name": "afterrender",
+                "scope": "me"
+            },
+            "designerId": "1720bff7-ccb5-4999-a25a-35b1a5f714ef"
         }
     ]
 }

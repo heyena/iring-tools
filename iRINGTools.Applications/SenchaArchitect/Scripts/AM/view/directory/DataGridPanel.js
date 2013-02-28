@@ -44,6 +44,25 @@ Ext.define('AM.view.directory.DataGridPanel', {
     });
 
     me.callParent(arguments);
+  },
+
+  handleBeforeLoad: function(store, operation, e) {
+    var me = this;
+
+    store.on({
+      metachange: {
+        fn: function(store, meta, e) {
+          me.handleMetaChange(me, meta);
+        }, 
+        scope: me, 
+        single: true
+      }
+    });
+
+  },
+
+  handleMetaChange: function(grid, meta) {
+    grid.reconfigure(grid.getStore(), meta.columns);
   }
 
 });
