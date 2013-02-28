@@ -52,7 +52,7 @@ public class ExchangeDataModel extends DataModel
       if (graph != null)
       {
         DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
-            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath);
+            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath, false);
         
         pageDtoGrid = getDtoGrid(dtiRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
@@ -113,7 +113,15 @@ public class ExchangeDataModel extends DataModel
       {
         httpClient.setAsync(true);      
         String statusURL = httpClient.post(String.class, "/submit", request);
-        xRes = waitForRequestCompletion(ExchangeResponse.class, serviceUri + statusURL);
+        
+        try
+        {
+        	xRes = waitForRequestCompletion(ExchangeResponse.class, serviceUri + statusURL);
+        }
+		catch (Exception ex)
+		{
+			throw new DataModelException(ex.getMessage());
+		}
       }
       else
       {
@@ -557,4 +565,39 @@ public class ExchangeDataModel extends DataModel
 
     return summaryGrid;
   }
+
+public Grid getErrorDtos(String exchangeServiceUri, String scope, String xid, String filter, String sortBy, String sortOrder, 
+	      int start, int limit) throws DataModelException 	
+	{
+	    String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
+	    String dtoRelativePath = dtiRelativePath + "/page";
+	    String manifestRelativePath = dtiRelativePath + "/manifest";
+	    String dataFilterRelativePath = dtiRelativePath + "/datafilter";
+	    
+	    Grid pageDtoGrid = null;
+	    Manifest manifest = getManifest(exchangeServiceUri, manifestRelativePath);
+	    
+	    if (manifest != null && manifest.getGraphs() != null)
+	    {
+	      Graph graph = manifest.getGraphs().getItems().get(0);
+	      
+	      if (graph != null)
+	      {
+	        DataTransferObjects pageDtos = getPageDtos(exchangeServiceUri, manifestRelativePath, dtiRelativePath, 
+	            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath,true);
+	        
+	        pageDtoGrid = getDtoGrid(dtiRelativePath, manifest, graph, pageDtos);
+	        DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
+	        
+	        if (dtis == null || dtis.getDataTransferIndexList() == null || dtis.getDataTransferIndexList().getItems().size() == 0)
+	          pageDtoGrid.setTotal(0);
+	        else
+	          pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
+	      }      
+	    }
+	    
+	    return pageDtoGrid;
+	  }
+	
 }
+

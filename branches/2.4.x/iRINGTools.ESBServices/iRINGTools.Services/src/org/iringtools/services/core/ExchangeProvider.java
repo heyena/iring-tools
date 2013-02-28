@@ -195,24 +195,24 @@ public class ExchangeProvider {
 	public DataTransferIndices getDataTransferIndices(String scope, String id,
 			DxiRequest dxiRequest, boolean dtiOnly)
 			throws ServiceProviderException {
-		ExchangeDefinition xdef = getExchangeDefinition(scope, id);
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-
-		DtiTask dtiTask = new DtiTask(settings, xdef, dxiRequest, dtiOnly, null);
-		executor.execute(dtiTask);
-		executor.shutdown();
-
+		
 		try {
+			ExchangeDefinition xdef = getExchangeDefinition(scope, id);
+			ExecutorService executor = Executors.newSingleThreadExecutor();
+	
+			DtiTask dtiTask = new DtiTask(settings, xdef, dxiRequest, dtiOnly, null);
+			executor.execute(dtiTask);
+			executor.shutdown();
+	
 			executor.awaitTermination(60, TimeUnit.MINUTES);
-		} catch (InterruptedException e) {
+			
+			DataTransferIndices dtis = dtiTask.getDataTransferIndices();
+			return dtis;
+		}
+		catch (Exception e) {
 			logger.error(e);
 			throw new ServiceProviderException(e.getMessage());
 		}
-
-		DataTransferIndices dtis = dtiTask.getDataTransferIndices();
-	//	dtis.setError(dtiTask.errorMsg);
-
-		return dtis;
 	}
 
 	public Response processDxiRequest(String scope, String id,
