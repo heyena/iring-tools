@@ -9,6 +9,7 @@ using org.iringtools.library;
 using iRINGTools.Web.Models;
 using log4net;
 using System.Web.Script.Serialization;
+using org.iringtools.web.Helpers;
 using org.iringtools.web.Models;
 
 namespace org.iringtools.web.controllers
@@ -41,11 +42,13 @@ namespace org.iringtools.web.controllers
                 SetContextEndpoint(form);
                 _response = Repository.DataServiceUri();
                 if (_response != "")
-                    return Json(new { success = false } + _response, JsonRequestBehavior.AllowGet);
+                  return Json(new { success = false } + _response, JsonRequestBehavior.AllowGet);
 
-                var metaData = new Dictionary<string, object>();
-                var gridData = new List<Dictionary<string, object>>();
-                var encode = new Dictionary<string, object>();
+                StoreViewModel model = null;
+                var columns = new List<ColumnViewModel>();
+                var fields = new List<FieldViewModel>();
+                var rows = new List<Dictionary<string, object>>();
+
                 var graph = form["graph"];
                 _key = adapter_PREFIX + string.Format("Datadictionary-{0}.{1}", _context, _endpoint, _baseUrl);
                 var filter = form["filter"];
@@ -62,17 +65,16 @@ namespace org.iringtools.web.controllers
                     GetDatadictionary(_context, _endpoint, _baseUrl);
 
                 var dataObject = ((DataDictionary)Session[_key]).dataObjects.FirstOrDefault(d => d.objectName == graph);
-                var fields = (from dataProperty in dataObject.dataProperties
+                 columns = (from dataProperty in dataObject.dataProperties
                               where !dataProperty.isHidden
-                              select new Field
+                              select new ColumnViewModel
                                   {
-                                      name = dataProperty.propertyName,
-                                      header = dataProperty.propertyName,
-                                      dataIndex = dataProperty.propertyName,
-                                      sortable = true,
-                                      type = ToExtJsType(dataProperty.dataType),
-                                      filterable = true
+                                      Text = dataProperty.propertyName,
+                                      DataIndex = dataProperty.propertyName,
+                                      Flex = 2
                                   }).ToList();
+
+              fields.AddRange(columns.Select(o => new FieldViewModel {Name = o.DataIndex}).ToList());
 
                 var dataItems = GetDataObjects(_context, _endpoint, graph, dataFilter, start, limit, _baseUrl);
 
@@ -82,10 +84,10 @@ namespace org.iringtools.web.controllers
                 {
                     var rowData = new Dictionary<string, object>();
 
-                    foreach (var field in fields)
+                    foreach (var column in columns)
                     {
                         var found = false;
-                        foreach (var property in dataItem.properties.Where(property => field.dataIndex.ToLower() == property.Key.ToLower()))
+                        foreach (var property in dataItem.properties.Where(property => column.DataIndex.ToLower() == property.Key.ToLower()))
                         {
                             rowData.Add(property.Key, property.Value);
                             found = true;
@@ -94,19 +96,20 @@ namespace org.iringtools.web.controllers
 
                         if (!found)
                         {
-                            rowData.Add(field.dataIndex, "");
+                            rowData.Add(column.DataIndex, "");
                         }
                     }
-                    gridData.Add(rowData);
+                    rows.Add(rowData);
                 }
+              model = new StoreViewModel
+                {
+                  Data = rows.ToArray(),
+                  MetaData = new MetaDataViewModel {Columns = columns, Fields = fields},
+                  Total = total,
+                  Success = true
+                };
 
-                metaData.Add("root", "data");
-                metaData.Add("fields", fields);
-                encode.Add("metaData", metaData);
-                encode.Add("success", "true");
-                encode.Add("data", gridData);
-                encode.Add("totalCount", total);
-                return Json(encode, JsonRequestBehavior.AllowGet);
+                return Json(model, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

@@ -39,7 +39,7 @@ Ext.define('AM.view.search.SearchPanel', {
         {
           xtype: 'propertypanel',
           width: 250,
-          collapseDirection: 'right',
+        //  collapseDirection: 'right',
           title: 'Search Details',
           region: 'east',
           split: true

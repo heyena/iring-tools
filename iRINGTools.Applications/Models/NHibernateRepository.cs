@@ -82,9 +82,9 @@ namespace org.iringtools.web.Models
     {
       Response totalObj = new Response();
       string _key = user + "." + "directory";
-      Directories directory = null;
+      ResourceDirectory directory = null;
       if (HttpContext.Current.Session[_key] != null)
-        directory = (Directories)HttpContext.Current.Session[_key];
+        directory = (ResourceDirectory)HttpContext.Current.Session[_key];
 
       foreach (Folder folder in directory)
       {

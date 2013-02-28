@@ -5,7 +5,13 @@ Ext.define('AM.view.override.directory.DataGridPanel', {
      var storeId = Ext.data.IdGenerator.get("uuid").generate();
 
     me.store = Ext.create('AM.store.DataGridStore', {
-      storeId: "DataGrid" + storeId
+      storeId: "DataGrid" + storeId,
+      listeners: {
+        beforeload: {
+          fn: me.handleBeforeLoad,
+          scope: me
+        }
+      }
     });
     
     var ptb = Ext.create('Ext.PagingToolbar', {

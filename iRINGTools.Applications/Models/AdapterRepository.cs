@@ -104,14 +104,14 @@ namespace org.iringtools.web.Models
       return resources;
     }
 
-    public Directories GetScopes()
+    public ResourceDirectory GetScopes()
     {
       _logger.Debug("In AdapterRepository GetScopes");
-      Directories obj = null;     
+      ResourceDirectory obj = null;     
 
       try
       {
-        obj = _javaServiceClient.Get<Directories>("/directory", true);             
+        obj = _javaServiceClient.Get<ResourceDirectory>("/directory", true);             
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -147,7 +147,7 @@ namespace org.iringtools.web.Models
     public Tree GetDirectoryTree(string user)
     {
       _logger.Debug("In ScopesNode case block");
-      Directories directory = null;
+      ResourceDirectory directory = null;
 
         var key = user + "." + "directory";
       var resource = user + "." + "resource";
@@ -236,13 +236,13 @@ namespace org.iringtools.web.Models
       return obj;
     }
 
-    public string PostScopes(Directories scopes)
+    public string PostScopes(ResourceDirectory scopes)
     {
       string obj = null;
 
       try
       {
-        obj = _javaServiceClient.Post<Directories>("/directory", scopes, true);
+        obj = _javaServiceClient.Post("/directory", scopes, true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -613,9 +613,9 @@ namespace org.iringtools.web.Models
     {
       var totalObj = new Response();
       var key = user + "." + "directory";
-      Directories directory = null;
+      ResourceDirectory directory = null;
       if (HttpContext.Current.Session[key] != null)      
-        directory = (Directories)HttpContext.Current.Session[key];
+        directory = (ResourceDirectory)HttpContext.Current.Session[key];
 
       foreach (var folder in directory)
       {
@@ -715,7 +715,7 @@ namespace org.iringtools.web.Models
       var key = user + "." + "directory";
       if (HttpContext.Current.Session[key] != null)
       {
-        var directory = (Directories)HttpContext.Current.Session[key];
+        var directory = (ResourceDirectory)HttpContext.Current.Session[key];
         return FindFolder(directory, path);        
       }
       return null;
@@ -897,7 +897,7 @@ namespace org.iringtools.web.Models
     {
       var _key = user + "." + "directory";
         if (HttpContext.Current.Session[_key] == null) return;
-        var directory = (Directories)HttpContext.Current.Session[_key];
+        var directory = (ResourceDirectory)HttpContext.Current.Session[_key];
         var folder = FindFolder(directory, path);
         CheckCombination(folder, path, context, oldContext, user);
     }

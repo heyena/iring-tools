@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using org.iringtools.adapter.security;
@@ -8,6 +9,7 @@ using System.Collections;
 using log4net;
 using System.Configuration;
 using org.iringtools.utility;
+using org.iringtools.web.Helpers;
 
 namespace org.iringtools.web.controllers
 {
@@ -73,6 +75,16 @@ namespace org.iringtools.web.controllers
       }
 
       return "guest";
+    }
+    
+    protected override JsonResult Json(object data, string contentType, Encoding contentEncoding)
+    {
+      return Json(data, contentType, contentEncoding, JsonRequestBehavior.AllowGet);
+    }
+
+    protected override JsonResult Json(object data, string contentType, Encoding contentEncoding, JsonRequestBehavior behavior)
+    {
+      return new JsonNetResult { ContentType = contentType, ContentEncoding = contentEncoding, Data = data, JsonRequestBehavior = behavior };
     }
   }
 }
