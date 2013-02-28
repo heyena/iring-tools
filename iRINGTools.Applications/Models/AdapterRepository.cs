@@ -104,6 +104,11 @@ namespace iRINGTools.Web.Models
           timeoutCount += asyncPollingInterval;
         }
 
+        if (requestStatus.State != State.Completed)
+        {
+          throw new Exception(requestStatus.Message);
+        }
+
         if (typeof(T) == typeof(string))
         {
           obj = (T)Convert.ChangeType(requestStatus.ResponseText, typeof(T));
