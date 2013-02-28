@@ -923,7 +923,7 @@ public class DataModel {
 			String manifestRelativePath, String dtiRelativePath,
 			String dtoRelativePath, String filter, String sortBy,
 			String sortOrder, int start, int limit,
-			String dataFilterRelativePath, boolean flag) throws DataModelException {
+			String dataFilterRelativePath) throws DataModelException {
 		DataTransferIndices dtis = getDtis(serviceUri, manifestRelativePath,
 				dtiRelativePath, filter, sortBy, sortOrder,
 				dataFilterRelativePath);
