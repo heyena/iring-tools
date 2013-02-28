@@ -52,7 +52,7 @@ public class ExchangeDataModel extends DataModel
       if (graph != null)
       {
         DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
-            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath, false);
+            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath);
         
         pageDtoGrid = getDtoGrid(dtiRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
@@ -584,7 +584,7 @@ public Grid getErrorDtos(String exchangeServiceUri, String scope, String xid, St
 	      if (graph != null)
 	      {
 	        DataTransferObjects pageDtos = getPageDtos(exchangeServiceUri, manifestRelativePath, dtiRelativePath, 
-	            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath,true);
+	            dtoRelativePath, filter, sortBy, sortOrder, start, limit, dataFilterRelativePath);
 	        
 	        pageDtoGrid = getDtoGrid(dtiRelativePath, manifest, graph, pageDtos);
 	        DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
