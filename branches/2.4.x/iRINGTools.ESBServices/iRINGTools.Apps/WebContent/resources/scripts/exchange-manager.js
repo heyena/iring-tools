@@ -1572,19 +1572,24 @@ function submitExchange(userResponse) {
 	var scope = this[1];
 	var xid = this[2];
 	var reviewed = this[3];
-
+	var exchtab = Ext.getCmp('content-pane').getItem('tab-' + exchange);
+	
 	if (userResponse == 'ok') {
-		Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl().mask(
-				'Exchange in progress, please wait ...', 'x-mask-loading');
-
+		if (exchtab)
+		{
+			exchtab.getEl().mask('Exchange in progress, please wait ...', 'x-mask-loading');
+		}
+		
 		Ext.Ajax.request({
 			url : 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed='
 					+ reviewed,
 			timeout : 86400000, // 24 hours
 			success : function(response, request) {
-				Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl()
-						.unmask();
-
+				if (exchtab)
+				{
+					exchtab.getEl().unmask();
+				}
+				
 				var responseText = Ext.decode(response.responseText);
 				var message = 'Data exchange [' + exchange + ']: '
 						+ responseText;
@@ -1599,9 +1604,11 @@ function submitExchange(userResponse) {
 			failure : function(response, request) {
 				// ignore timeout error from proxy server
 				if (response.responseText.indexOf('Error Code 1460') != -1) {
-					Ext.getCmp('content-pane').getItem('tab-' + exchange)
-							.getEl().unmask();
-
+					if (exchtab)
+					{
+						exchtab.getEl().unmask();
+					}
+					
 					var title = 'Exchange Error (' + response.status + ')';
 					var message = 'Error while exchanging [' + exchange + '].';
 
