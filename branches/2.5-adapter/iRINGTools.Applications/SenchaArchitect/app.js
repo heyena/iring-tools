@@ -23,8 +23,7 @@ Ext.Loader.setConfig({
 
 Ext.application({
   views: [
-    'AMViewport',
-    'nhibernate.RelationPropertyGrid'
+    'AMViewport'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,
