@@ -1,11 +1,12 @@
 PREFIX tpl: <http://tpl.rdlfacade.org/data#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX p8: <http://standards.tc184-sc4.org/iso/15926/-8/template-model#>
+PREFIX p7tm: <http://standards.iso.org/iso/ts/15926/-8/ed-1/tech/reference-data/p7tm#>
 SELECT	DISTINCT ?label ?definition
 {
-  tpl:param1 rdfs:subClassOf p8:BaseTemplateStatement . 
-  tpl:param1 rdfs:label ?label . 
-  OPTIONAL{ tpl:param1 rdfs:comment ?definition . }
+  <param1> rdfs:subClassOf p7tm:BaseTemplateStatement ;
+      rdfs:label ?label . 
+  OPTIONAL{ <param1> rdfs:comment ?definition . }
 }
 
 

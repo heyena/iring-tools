@@ -1,16 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
+﻿
 using org.iringtools.library;
-using org.iringtools.mapping;
-using iRINGTools.Web.Helpers;
 
-namespace iRINGTools.Web.Models
+namespace org.iringtools.web.Models
 {
   public interface IGridRepository
   {
-		Grid GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit);
-		string GetResponse();
+    DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl);
+
+    DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit, string baseUrl);
+
+    string DataServiceUri();
   }
 }

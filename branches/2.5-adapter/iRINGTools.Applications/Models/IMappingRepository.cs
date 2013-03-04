@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using org.iringtools.mapping;
+﻿using org.iringtools.mapping;
 
-namespace iRINGTools.Web.Models
+namespace org.iringtools.web.Models
 {
   public interface IMappingRepository
   {
-    Mapping GetMapping(string scopeName, string applicationName);
-    void UpdateMapping(string scopeName, string applicationName, Mapping mapping);
+    Mapping GetMapping(string context, string endpoint, string baseUrl);
+    void UpdateMapping(Mapping mapping, string context, string endpoint, string baseUrl);
   }
 }

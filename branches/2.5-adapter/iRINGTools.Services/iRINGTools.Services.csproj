@@ -158,7 +158,6 @@
     <Content Include="SPARQL\TemplateExactSearch.txt" />
     <Content Include="SPARQL\TemplateGetProperties.txt" />
     <Content Include="SPARQL\TemplateTypes.txt" />
-    <None Include="App_Data\config.ttl" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

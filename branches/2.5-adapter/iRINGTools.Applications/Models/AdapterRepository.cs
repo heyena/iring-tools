@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Xml.Linq;
 using System.Web;
-using Ninject;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
-using System.Text;
 using System.Net;
 using System.IO;
-using System.Threading.Tasks;
 using System.Threading;
 
 
@@ -57,7 +53,7 @@ namespace iRINGTools.Web.Models
 
       if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+        var webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
         client = new WebHttpClient(baseUri, null, webProxy);
       }
       else
@@ -83,14 +79,14 @@ namespace iRINGTools.Web.Models
         }
         asyncTimeout *= 1000;  // convert to milliseconds
 
-        int asyncPollingInterval = 2;  // seconds
+        var asyncPollingInterval = 2;  // seconds
         if (_settings["AsyncPollingInterval"] != null)
         {
           int.TryParse(_settings["AsyncPollingInterval"], out asyncPollingInterval);
         }
         asyncPollingInterval *= 1000;  // convert to milliseconds
 
-        WebHttpClient client = CreateWebClient(baseUri);
+        var client = CreateWebClient(baseUri);
         RequestStatus requestStatus = null;
 
         while (timeoutCount < asyncTimeout)
@@ -130,7 +126,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        var client = CreateWebClient(_adapterServiceUri);
         obj = client.Get<ScopeProjects>("/scopes");
 
         _logger.Debug("Successfully called Adapter.");
@@ -150,7 +146,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        var client = CreateWebClient(_adapterServiceUri);
         obj = client.Get<DataLayers>("/datalayers");
       }
       catch (Exception ex)
@@ -163,10 +159,10 @@ namespace iRINGTools.Web.Models
 
     public Entity GetClassLabel(string classId)
     {
-      Entity entity = new Entity();
+      var entity = new Entity();
       try
       {
-        WebHttpClient client = CreateWebClient(_referenceDataServiceUri);
+        var client = CreateWebClient(_referenceDataServiceUri);
         entity = client.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
       }
       catch (Exception ex)
@@ -178,14 +174,14 @@ namespace iRINGTools.Web.Models
 
     public ScopeProject GetScope(string scopeName)
     {
-      ScopeProjects scopes = GetScopes();
+      var scopes = GetScopes();
 
       return scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
     }
 
     public ScopeApplication GetScopeApplication(string scopeName, string applicationName)
     {
-      ScopeProject scope = GetScope(scopeName);
+      var scope = GetScope(scopeName);
 
       ScopeApplication obj = null;
 
