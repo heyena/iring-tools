@@ -52,18 +52,18 @@ namespace org.iringtools.adapter.datalayer.test
       Assert.Greater(dt.Rows.Count, 0);
     }
 
-    //[Test]
-    //REST URL: http://localhost:54321/data/pw/pilot/dtp_eng2/8bdd1237-7e3f-415b-9e21-ad18b5d64f2b?format=doc
-    public void TestGetContent()
+    [Test]
+    public void TestGetContents()
     {
-      long count = _dataLayer.GetCount("DTP_ENG2", null);
-      Assert.Greater(count, 0);
+      IDictionary<string, string> pairs = new Dictionary<string, string>()
+      {
+        {"8bdd1237-7e3f-415b-9e21-ad18b5d64f2b", "doc"},
+        {"c3831c9b-a2de-447e-96c6-fae0a26c6ac9", "pdf"}
+      };
 
-      DataTable dt = _dataLayer.GetDataTable("DTP_ENG2", string.Empty, 0, 25);
-      DataRow row = dt.Rows[0];
-      _dataLayer.GetProjectWiseFile(row["DocumentGUID"].ToString(), "c:\\temp\\projectwise\\");
-      
-      Assert.Greater(dt.Rows.Count, 0);
+      IList<IContentObject> objects = _dataLayer.GetContents("DTP_ENG2", pairs);
+
+      Assert.Greater(objects.Count, 0);
     }
 
     //[Test]
@@ -87,7 +87,7 @@ namespace org.iringtools.adapter.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    [Test]
+    //[Test]
     public void TestPostWithContent()
     {
       GenericContentObject contentObject = new GenericContentObject()
@@ -95,8 +95,8 @@ namespace org.iringtools.adapter.datalayer.test
         ObjectType = "DTP_ENG2"
       };
 
-      contentObject.content = Utility.ReadStream(@"C:\iring-tools\datalayers\pw\samples\sample.pdf");
-      contentObject.contentType = "pdf";
+      contentObject.Content = Utility.ReadStream(@"C:\iring-tools\datalayers\pw\samples\sample.pdf");
+      contentObject.ContentType = "pdf";
 
       contentObject.SetPropertyValue("DWGNO", "DWG-" + DateTime.Now.Ticks);
       
@@ -104,19 +104,19 @@ namespace org.iringtools.adapter.datalayer.test
     }
 
     //[Test]
-    public void TestGetFolders()
-    {
-      SortedList<int, string> folders = _dataLayer.GetTopLevelFolders();
+    //public void TestGetFolders()
+    //{
+    //  SortedList<int, string> folders = _dataLayer.GetTopLevelFolders();
 
-      foreach (var pair in folders)
-      {
-        SortedList<int, string>  childFolders = _dataLayer.GetChildFolders(pair.Key);
+    //  foreach (var pair in folders)
+    //  {
+    //    SortedList<int, string>  childFolders = _dataLayer.GetChildFolders(pair.Key);
 
-        foreach (var grandChildFolder in childFolders)
-        {
-          SortedList<int, string> grandChildFolders = _dataLayer.GetChildFolders(grandChildFolder.Key);
-        }
-      }
-    }
+    //    foreach (var grandChildFolder in childFolders)
+    //    {
+    //      SortedList<int, string> grandChildFolders = _dataLayer.GetChildFolders(grandChildFolder.Key);
+    //    }
+    //  }
+    //}
   }
 }

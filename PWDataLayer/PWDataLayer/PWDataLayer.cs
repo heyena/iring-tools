@@ -31,8 +31,7 @@ namespace org.iringtools.adapter.datalayer
   public class PWDataLayer : BaseSQLDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(PWDataLayer));
-    private static ConcurrentDictionary<string, DataTable> objCache = new ConcurrentDictionary<string, DataTable>();    
-
+    
     private string _sUserName, _sPassword, _sDatasource;
     private string _sProject, _sApp, _sDataPath;
 
@@ -49,539 +48,6 @@ namespace org.iringtools.adapter.datalayer
       _sDataPath = settings["AppDataPath"];
     }
 
-    public bool Login()
-    {
-      /// If user name and password are null, process creds will be used
-      return PWWrapper.aaApi_Login(PWWrapper.DataSourceType.Unknown, _sDatasource, _sUserName, _sPassword, null, true);
-    }
-
-    public bool Logout()
-    {
-      return PWWrapper.aaApi_Logout(_sDatasource);
-    }
-
-    public DataTable GetGenericDocumentProperties()
-    {
-      DataTable dt = new DataTable();
-      dt.Columns.Add(new DataColumn("ProjectId", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("DocumentId", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("DocumentGUID", Type.GetType("System.String")));
-      dt.Columns.Add(new DataColumn("DocumentName", Type.GetType("System.String")));
-      dt.Columns.Add(new DataColumn("FileName", Type.GetType("System.String")));
-      dt.Columns.Add(new DataColumn("DocumentDesc", Type.GetType("System.String")));
-      dt.Columns.Add(new DataColumn("MimeType", Type.GetType("System.String")));
-      dt.Columns.Add(new DataColumn("FileUpdateTime", Type.GetType("System.DateTime")));
-      dt.Columns.Add(new DataColumn("FileSize", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("DocumentVersion", Type.GetType("System.String")));
-      dt.Columns.Add(new DataColumn("ApplicationId", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("OriginalNo", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("StateId", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("VersionNum", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("ItemType", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("CreatorId", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("UpdaterId", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("FileUpdaterId", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("CreateTime", Type.GetType("System.DateTime")));
-      dt.Columns.Add(new DataColumn("UpdateTime", Type.GetType("System.DateTime")));
-      dt.Columns.Add(new DataColumn("DMSStatus", Type.GetType("System.String")));
-      dt.Columns.Add(new DataColumn("SetId", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("SetType", Type.GetType("System.Int32")));
-      dt.Columns.Add(new DataColumn("ProjectGUID", Type.GetType("System.String")));
-
-      return dt;
-    }
-
-    public List<DataProperty> GetGenericProperties()
-    {
-      DataTable dt = GetGenericDocumentProperties();
-      List<DataProperty> props = new List<DataProperty>();
-
-      foreach (DataColumn dc in dt.Columns)
-      {
-        ///TODO: type conversion
-        Type dataType = dc.DataType;
-
-        DataProperty prop = new DataProperty()
-        {
-          propertyName = dc.ColumnName,
-          columnName = dc.ColumnName,
-          dataType = DataType.String
-        };
-
-        props.Add(prop);
-      }
-
-      return props;
-    }
-
-    public SortedList<string, SortedList<string, TypeAndLength>> GetEnvironments()
-    {
-      try
-      {
-        SortedList<string, SortedList<string, TypeAndLength>> slEnvironments = new SortedList<string, SortedList<string, TypeAndLength>>();
-
-        if (!PWWrapper.aaApi_IsConnectionLost())
-        {
-          int iNumEnvrs = PWWrapper.aaApi_SelectAllEnvs(false);
-
-          if (iNumEnvrs > 0)
-          {
-            for (int i = 0; i < iNumEnvrs; i++)
-            {
-              string sEnvName = PWWrapper.aaApi_GetEnvStringProperty(PWWrapper.EnvironmentProperty.Name, i);
-
-              if (!slEnvironments.ContainsKey(sEnvName))
-                slEnvironments.Add(sEnvName,
-                new SortedList<string, TypeAndLength>());
-            }
-
-
-            if (slEnvironments.Count > 0)
-            {
-              string[] listEnvNames = new string[slEnvironments.Count];
-              slEnvironments.Keys.CopyTo(listEnvNames, 0);
-
-              foreach (string sEnvName in listEnvNames)
-              {
-                slEnvironments[sEnvName] = GetEnvironmentAttributes(sEnvName);
-              }
-            }
-          }
-        }
-
-        return slEnvironments;
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.Message);
-        throw e;
-      }
-      finally
-      {
-        Logout();
-      }
-    }
-
-    public enum SQLDataType : int
-    {
-      FIRST = UNKNOWN,
-      UNKNOWN = 0,
-      NUMERIC = 1,
-      DECIMAL = 2,
-      INTEGER = 3,
-      SMALLINT = 4,
-      FLOAT = 5,
-      REAL = 6,
-      DOUBLE = 7,
-      DATETIME = 8,
-      CHAR = 9,
-      VARCHAR = 10,
-      LONGVARCHAR = 11,
-      WCHAR = 12,
-      VARWCHAR = 13,
-      LONGVARWCHAR = 14,
-      DATE = 15,
-      TIME = 16,
-      TIMESTAMP = 17,
-      BINARY = 18,
-      VARBINARY = 19,
-      LONGVARBINARY = 20,
-      GUID = 21,
-      BIT = 22,
-      BIGINT = 23,
-      TINYINT = 26,
-      LAST = TINYINT
-    }
-
-    public class TypeAndLength
-    {
-      public TypeAndLength(string sDataType, int iLength)
-      {
-        DataType = sDataType;
-        DataLength = iLength;
-      }
-
-      public TypeAndLength()
-      {
-      }
-
-      public string DataType { get; set; }
-      public int DataLength { get; set; }
-
-    }
-
-    public SortedList<string, TypeAndLength> GetEnvironmentAttributes(string sEnvironmentName)
-    {
-      SortedList<string, TypeAndLength> slColumnDataTypesAndLengths = new SortedList<string, TypeAndLength>(StringComparer.CurrentCultureIgnoreCase);
-
-      int iEnvrID = PWWrapper.GetEnvironmentId(sEnvironmentName);
-
-      if (PWWrapper.aaApi_SelectEnv(iEnvrID) > 0)
-      {
-        int iColCount = 0;
-        int iTableID = PWWrapper.aaApi_GetEnvNumericProperty(PWWrapper.EnvironmentProperty.TableID, 0);
-
-        iColCount = PWWrapper.aaApi_SelectColumnsByTable(iTableID);
-
-        if (iColCount > 0)
-        {
-          string sType = "";
-
-          for (int i = 0; i < iColCount; i++)
-          {
-            if (PWWrapper.aaApi_GetColumnStringProperty(PWWrapper.ColumnProperty.Name, i).ToLower() != "a_attrno")
-            {
-              int iType = PWWrapper.aaApi_GetColumnNumericProperty(PWWrapper.ColumnProperty.SQLType, i);
-
-              switch (iType)
-              {
-                case (int)SQLDataType.UNKNOWN:
-                  sType = "Unknown";
-                  break;
-                case (int)SQLDataType.BINARY:
-                  sType = "Binary";
-                  break;
-                case (int)SQLDataType.DATE:
-                  sType = "Date";
-                  break;
-                case (int)SQLDataType.DATETIME:
-                  sType = "DateTime";
-                  break;
-                case (int)SQLDataType.DECIMAL:
-                  sType = "Decimal";
-                  break;
-                case (int)SQLDataType.DOUBLE:
-                  sType = "Double";
-                  break;
-                case (int)SQLDataType.VARCHAR:
-                  sType = "VarChar";
-                  break;
-                case (int)SQLDataType.CHAR:
-                  sType = "Char";
-                  break;
-                case (int)SQLDataType.WCHAR:
-                  sType = "WChar"; // returns this for dates, too
-                  break;
-                case (int)SQLDataType.BIGINT:
-                  sType = "Big Int";
-                  break;
-                case (int)SQLDataType.INTEGER:
-                  sType = "Int";
-                  break;
-                case (int)SQLDataType.FLOAT:
-                  sType = "Float";
-                  break;
-                case (int)SQLDataType.TIMESTAMP:
-                  sType = "TimeStamp";
-                  break;
-                case (int)SQLDataType.BIT:
-                  sType = "Boolean";
-                  break;
-                case (int)SQLDataType.VARWCHAR:
-                  sType = "VarWChar";
-                  break;
-                default:
-                  sType = string.Format("{0}", iType);
-                  break;
-              }
-
-              TypeAndLength colTypeAndLength = new TypeAndLength(sType, PWWrapper.aaApi_GetColumnNumericProperty(PWWrapper.ColumnProperty.Length, i));
-
-              slColumnDataTypesAndLengths.Add(PWWrapper.aaApi_GetColumnStringProperty(PWWrapper.ColumnProperty.Name, i),
-              colTypeAndLength);
-
-              BPSUtilities.WriteLog(string.Format("Environment:{0} ColumnName:{1} DataType:{2}",
-              sEnvironmentName, PWWrapper.aaApi_GetColumnStringProperty(PWWrapper.ColumnProperty.Name, i),
-              sType));
-            }
-          }
-        }
-      }
-      return slColumnDataTypesAndLengths;
-    }
-
-    unsafe public static SortedList<string, int> GetListOfProjectTypes()
-    {
-      SortedList<string, int> slListOfProjectTypes = new SortedList<string, int>();
-
-      PWWrapper.aaApi_Initialize(0);
-      PWWrapper.aaOApi_Initialize();
-      PWWrapper.aaOApi_LoadAllClasses(0);
-
-      IntPtr pQualPtr = PWWrapper.aaOApi_FindQualifierPtrByName("AAQUAL_PROJECTTYPE");
-
-      if (pQualPtr != null)
-      {
-        int iQualId = PWWrapper.aaOApi_GetQualifierId(pQualPtr);
-
-        IntPtr pClassIdsArray = IntPtr.Zero;
-
-        int iClassCount = PWWrapper.aaOApi_GetClassesByQualId(iQualId, ref pClassIdsArray);
-
-        if (pClassIdsArray.ToInt32() != 0)
-        {
-          int[] iClassArrayP = new int[iClassCount];
-          iClassArrayP[0] = 0;
-
-          // this is the unsafe part, but it works
-          fixed (int* pDest = iClassArrayP)
-          {
-            int* pSrc = (int*)pClassIdsArray.ToPointer();
-
-            for (int index = 0; index < iClassCount; index++)
-            {
-              pDest[index] = pSrc[index];
-            }
-          }
-
-          for (int i = 0; i < iClassCount; i++)
-          {
-            string sClassName = PWWrapper.GetClassNameFromClassId(iClassArrayP[i]);
-
-            slListOfProjectTypes.Add(sClassName, iClassArrayP[i]);
-          }
-        }
-        else
-        {
-          BPSUtilities.WriteLog("No classes found");
-        }
-      }
-      else
-      {
-        BPSUtilities.WriteLog("Qualifier not found");
-      }
-
-      return slListOfProjectTypes;
-    }
-
-    unsafe public static SortedList<int, string> GetListOfProjectTypesByIds()
-    {
-      SortedList<int, string> slListOfProjectTypes = new SortedList<int, string>();
-
-      PWWrapper.aaApi_Initialize(0);
-      PWWrapper.aaOApi_Initialize();
-      PWWrapper.aaOApi_LoadAllClasses(0);
-
-      IntPtr pQualPtr = PWWrapper.aaOApi_FindQualifierPtrByName("AAQUAL_PROJECTTYPE");
-
-      if (pQualPtr != null)
-      {
-        int iQualId = PWWrapper.aaOApi_GetQualifierId(pQualPtr);
-
-        //if (iQualId == 0) iQualId = 47;
-
-        IntPtr pClassIdsArray = IntPtr.Zero;
-
-        int iClassCount = PWWrapper.aaOApi_GetClassesByQualId(iQualId, ref pClassIdsArray);
-
-        if (pClassIdsArray.ToInt32() != 0)
-        {
-          int[] iClassArrayP = new int[iClassCount];
-          iClassArrayP[0] = 0;
-
-          // this is the unsafe part, but it works
-          fixed (int* pDest = iClassArrayP)
-          {
-            int* pSrc = (int*)pClassIdsArray.ToPointer();
-
-            for (int index = 0; index < iClassCount; index++)
-            {
-              pDest[index] = pSrc[index];
-            }
-          }
-
-          for (int i = 0; i < iClassCount; i++)
-          {
-            string sClassName = PWWrapper.GetClassNameFromClassId(iClassArrayP[i]);
-
-            slListOfProjectTypes.Add(iClassArrayP[i], sClassName);
-          }
-        }
-        else
-        {
-          BPSUtilities.WriteLog("No classes found");
-        }
-      }
-      else
-      {
-        BPSUtilities.WriteLog("Qualifier not found");
-        BPSUtilities.WriteLog("Error: {0}", PWWrapper.aaApi_GetLastErrorId());
-      }
-
-      return slListOfProjectTypes;
-    }
-
-    public SortedList<string, SortedList<string, TypeAndLength>> GetProjectTypes()
-    {
-      //SortedList<int, string> slProjectTypes = ECComponentAssembly.ODSDataWrapper.GetListOfProjectTypesByIds();
-
-      SortedList<int, string> slProjectTypes = GetListOfProjectTypesByIds();
-      SortedList<string, SortedList<string, TypeAndLength>> slProjectsAndProperties = new SortedList<string, SortedList<string, TypeAndLength>>(StringComparer.CurrentCultureIgnoreCase);
-
-      if (slProjectTypes.Count == 0)
-      {
-        BPSUtilities.WriteLog("No rich project types found");
-        return slProjectsAndProperties;
-      }
-
-      foreach (int iClassId in slProjectTypes.Keys)
-      {
-        if (!slProjectsAndProperties.ContainsKey(slProjectTypes[iClassId]))
-        {
-          SortedList<string, int> slProperties = PWWrapper.GetClassPropertyIdsInList(iClassId);
-
-          SortedList<string, TypeAndLength> slPropNamesTypesAndLengths = new SortedList<string, TypeAndLength>(StringComparer.CurrentCultureIgnoreCase);
-
-          foreach (KeyValuePair<string, int> kvp in slProperties)
-          {
-            TypeAndLength typeAndLength = GetAttributeDataTypeAndLength(kvp.Value);
-
-            if (!slPropNamesTypesAndLengths.ContainsKey(kvp.Key))
-              slPropNamesTypesAndLengths.Add(kvp.Key, typeAndLength);
-          }
-
-          slProjectsAndProperties.Add(slProjectTypes[iClassId], slPropNamesTypesAndLengths);
-        }
-      }
-
-      return slProjectsAndProperties;
-    }
-
-    private TypeAndLength GetAttributeDataTypeAndLength(int iAttrId)
-    {
-      int iRetVal = -1;
-
-      TypeAndLength typeAndLength = new TypeAndLength();
-
-      IntPtr pAttr = IntPtr.Zero;
-
-      // find the attribute using the id
-      if (PWWrapper.aaOApi_FindAttribute(ref pAttr, iAttrId))
-      {
-        StringBuilder wAttrName = new StringBuilder(256);
-        StringBuilder wAttrDesc = new StringBuilder(256);
-
-        int lVisibility = 0, iType = 0, iDataLen = 0;
-
-        if (PWWrapper.aaOApi_GetAttributeCmnProps(pAttr, ref iAttrId, wAttrName, wAttrDesc,
-        ref lVisibility, ref iType, ref iDataLen))
-        {
-          iRetVal = iType;
-        }
-
-        BPSUtilities.WriteLog("Name: {0}", wAttrName.ToString());
-
-        typeAndLength.DataType = GetAttributeDataTypeName(iType);
-        typeAndLength.DataLength = iDataLen;
-
-        BPSUtilities.WriteLog("Control: {0}",
-        PWWrapper.aaOApi_GetAttributeNumericProperty(pAttr,
-        PWWrapper.ODSAttributeProperty.Control));
-
-        BPSUtilities.WriteLog("UIType: {0}",
-        PWWrapper.aaOApi_GetAttributeNumericProperty(pAttr,
-        PWWrapper.ODSAttributeProperty.UIType));
-
-        // PWWrapper.aaOApi_SetAttributeDbProps();
-
-        int iControl = 0;
-        StringBuilder sbColName = new StringBuilder(256);
-
-        PWWrapper.aaOApi_GetAttributeDbProps(pAttr, ref iControl, sbColName);
-
-        // PWWrapper.aaOApi_SetAttributeDbProps(pAttr, 0, sbColName.ToString());
-
-        BPSUtilities.WriteLog("DBControl: {0}", iControl);
-        BPSUtilities.WriteLog("Column: {0}", sbColName.ToString());
-
-        IntPtr pQual = IntPtr.Zero;
-
-        PWWrapper.aaOApi_FindQualifierByName("ForceToList", ref pQual);
-
-        int iQualId = PWWrapper.aaOApi_GetQualifierId(pQual);
-
-        int iQualId2 = 0, iTypeId2 = 0, iQualVal = 0;
-
-        PWWrapper.aaOApi_GetAttributeQualifierProperties(pAttr, iQualId, 0, ref iQualId2,
-        ref iTypeId2, ref iQualVal);
-
-        BPSUtilities.WriteLog("ForceToList, ID: {0}, Type: {1}, Val: {2}",
-        iQualId, iTypeId2, iQualVal);
-
-        // PWWrapper.aaOApi_RemoveAttributeQualifier(iQualId, pAttr);
-
-        // PWWrapper.aaOApi_SaveAttribute(ref pAttr);
-
-        // PWWrapper.aaOApi_FindQualifierByName();
-
-        // PWWrapper.aaOApi_GetQualifierId()
-      }
-
-      return typeAndLength;
-    }
-
-    private string GetAttributeDataTypeName(int iType)
-    {
-      string sRetVal = "None";
-
-      switch ((PWWrapper.ODSAttributeDataType)iType)
-      {
-        case PWWrapper.ODSAttributeDataType.Int16:
-          sRetVal = "Int16";
-          break;
-        case PWWrapper.ODSAttributeDataType.Long32:
-          sRetVal = "Long32";
-          break;
-        case PWWrapper.ODSAttributeDataType.Float32:
-          sRetVal = "Float32";
-          break;
-        case PWWrapper.ODSAttributeDataType.Double64:
-          sRetVal = "Double64";
-          break;
-        case PWWrapper.ODSAttributeDataType.DateTime:
-          sRetVal = "DateTime";
-          break;
-        case PWWrapper.ODSAttributeDataType.Timestamp:
-          sRetVal = "Timestamp";
-          break;
-        case PWWrapper.ODSAttributeDataType.String:
-          sRetVal = "String";
-          break;
-        case PWWrapper.ODSAttributeDataType.Raw:
-          sRetVal = "Raw";
-          break;
-        case PWWrapper.ODSAttributeDataType.LongRaw:
-          sRetVal = "LongRaw";
-          break;
-        default:
-          break;
-      }
-
-
-      return sRetVal;
-    }
-
-    //public SortedList<string, SortedList<string, string>> GetEnvironments()
-    //{
-    //  SortedList<string, SortedList<string, string>> slEnvironments = new SortedList<string, SortedList<string, string>>();
-
-    //  if (!PWWrapper.aaApi_IsConnectionLost())
-    //  {
-    //    int iNumEnvrs = PWWrapper.aaApi_SelectAllEnvs(false);
-
-    //    if (iNumEnvrs > 0)
-    //    {
-    //      for (int i = 0; i < iNumEnvrs; i++)
-    //      {
-    //        if (!slEnvironments.ContainsKey(PWWrapper.aaApi_GetEnvStringProperty(PWWrapper.EnvironmentProperty.Name, i)))
-    //          slEnvironments.Add(PWWrapper.aaApi_GetEnvStringProperty(PWWrapper.EnvironmentProperty.Name, i),
-    //          new SortedList<string, string>());
-    //      }
-    //    }
-    //  }
-
-    //  return slEnvironments;
-    //}
 
     public override DatabaseDictionary GetDatabaseDictionary()
     {
@@ -741,12 +207,12 @@ namespace org.iringtools.adapter.datalayer
         Login();
 
         DataTable dt = GetDocumentsForProject(
-          _settings["PW.ProjectType"],
-          _settings["PW.ProjectProperty"],
-          _settings["PW.ProjectName"]);
+        _settings["PW.ProjectType"],
+        _settings["PW.ProjectProperty"],
+        _settings["PW.ProjectName"]);
 
-        string key = _sProject + "." + _sApp + "." + tableName;
-        objCache[key] = dt;
+        if (dt == null)
+          return 0;
 
         return dt.Rows.Count;
       }
@@ -761,33 +227,17 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    //TODO: implement paging
     public override DataTable GetDataTable(string tableName, string whereClause, long start, long limit)
     {
       try
       {
-        string key = _sProject + "." + _sApp + "." + tableName;
-        DataTable dt = objCache[key];
-        
-        //if (limit >= dt.Rows.Count)
-        //  limit = dt.Rows.Count - 1;
+        Login();
 
-        //DataObject objDef = _dbDictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower());
-        //DataTable pageDt = NewDataTable(objDef);
-        
-        //List<DataRow> rows = dt.AsEnumerable().ToList<DataRow>().GetRange((int)start, (int)limit);
-        //foreach (DataRow row in rows)
-        //{
-        //  DataRow newRow = dt.NewRow();
-
-        //  foreach (DataColumn c in dt.Columns)
-        //  {
-        //    newRow[c] = row[c];
-        //  }
-
-        //  pageDt.Rows.Add(newRow);
-        //}
-
-        //return pageDt;
+        DataTable dt = GetDocumentsForProject(
+        _settings["PW.ProjectType"],
+        _settings["PW.ProjectProperty"],
+        _settings["PW.ProjectName"]);
 
         return dt;
       }
@@ -796,9 +246,862 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error(e.Message);
         throw e;
       }
+      finally
+      {
+        Logout();
+      }
     }
 
-    public System.IO.FileStream GetProjectWiseFile(string sDocumentGuid, string sWorkingDirectory)
+    public override DataTable GetDataTable(string tableName, IList<string> identifiers) { return null; }
+
+    // Return content if available or metadata otherwise
+    public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
+    {
+      IList<IDataObject> dataObjects = new List<IDataObject>();
+
+      try
+      {
+        ///TODO: get from config
+        string tempFoder = "c:\\temp\\projectwise\\";
+
+        DatabaseDictionary dictionary = GetDatabaseDictionary();
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        List<string> listAttributes = new List<string>();
+
+        foreach (DataProperty prop in objDef.dataProperties)
+        {
+          listAttributes.Add(prop.columnName);
+        }
+
+        foreach (string identifier in identifiers)
+        {
+          FileStream stream = GetProjectWiseFile(identifier, tempFoder);
+
+          if (stream != null)
+          {
+            string docName = stream.Name.ToLower();
+            int extIndex = docName.LastIndexOf('.');
+            string contentType = "application/msword";
+
+            try
+            {
+              //TODO: get content type from configuration
+              contentType = Registry.ClassesRoot.OpenSubKey(docName.Substring(extIndex)).GetValue("Content Type").ToString();
+            }
+            catch (Exception ex)
+            {
+              _logger.Error("Error getting content type: " + ex.ToString());
+              throw ex;
+            }
+
+            MemoryStream outStream = new MemoryStream();
+            stream.CopyTo(outStream);
+            outStream.Position = 0;
+            stream.Close();
+
+            IContentObject contentObject = new GenericContentObject()
+            {
+              ObjectType = objectType,
+              Identifier = identifier,
+              Content = outStream,
+              ContentType = contentType
+            };
+
+            dataObjects.Add(contentObject);
+          }
+          else
+          {
+            try
+            {
+              Login();
+
+              DataTable dt = GetDocumentMetadata(identifier, listAttributes);
+
+              if (dt != null && dt.Rows.Count > 0)
+              {
+                IDataObject dataObject = new GenericDataObject()
+                {
+                  ObjectType = objectType
+                };
+
+                foreach (string attr in listAttributes)
+                {
+                  //TODO: attrs need to be property names instead of column names
+                  dataObject.SetPropertyValue(attr, dt.Rows[0][attr]);
+                }
+
+                dataObjects.Add(dataObject);
+              }
+            }
+            finally
+            {
+              Logout();
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.Message);
+        throw e;
+      }
+
+      return dataObjects;
+    }
+
+    public override IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormatPairs)
+    {
+      IList<IContentObject> contentObjects = new List<IContentObject>();
+
+      if (idFormatPairs != null && idFormatPairs.Count > 0)
+      {
+        ///TODO: get from config
+        string tempFoder = "c:\\temp\\projectwise\\";
+
+        Login();
+
+        try
+        {
+          foreach (var pair in idFormatPairs)
+          {
+            string identifier = pair.Key;
+            string format = pair.Value;
+            string contentType = "application/msword";
+
+            FileStream stream = GetProjectWiseFile(identifier, tempFoder);
+
+            if (stream != null)
+            {
+              if (string.IsNullOrEmpty(format))
+              {
+                string docName = stream.Name.ToLower();
+                int extIndex = docName.LastIndexOf('.');
+                format = docName.Substring(extIndex);
+              }
+              else if (!format.StartsWith("."))
+              {
+                format = "." + format;
+              }
+
+              try
+              {
+                //TODO: get content type from configuration
+                contentType = Registry.ClassesRoot.OpenSubKey(format).GetValue("Content Type").ToString();
+              }
+              catch (Exception ex)
+              {
+                _logger.Error("Error getting content type: " + ex.ToString());
+                throw ex;
+              }
+
+              MemoryStream outStream = new MemoryStream();
+              stream.CopyTo(outStream);
+              outStream.Position = 0;
+              stream.Close();
+
+              IContentObject contentObject = new GenericContentObject()
+              {
+                ObjectType = objectType,
+                Identifier = identifier,
+                Content = outStream,
+                ContentType = contentType
+              };
+
+              contentObjects.Add(contentObject);
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error getting content objects: " + ex.ToString());
+          throw ex;
+        }
+        finally
+        {
+          Logout();
+        }
+      }
+
+      return contentObjects;
+    }
+
+    public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override IList<string> GetIdentifiers(string tableName, string whereClause)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override long GetRelatedCount(DataRow dataRow, string relatedTableName)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override Response Post(IList<IDataObject> dataObjects)
+    {
+      Response response = new Response();
+
+      try
+      {
+        DatabaseDictionary dictionary = GetDatabaseDictionary();
+
+        Login();
+
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          SortedList<string, string> slProps = new SortedList<string, string>();
+          string objectType = ((GenericDataObject)dataObject).ObjectType;
+
+          Stream fsi = null;
+          if (dataObject is IContentObject)
+          {
+            fsi = ((IContentObject)dataObject).Content;
+
+            ///TODO: check inbound DataObject for DocumentName          
+            slProps.Add("DocumentName", "DWG-" + DateTime.Now.Ticks + "." + ((IContentObject)dataObject).ContentType);
+          }
+
+          DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+          foreach (DataProperty prop in objDef.dataProperties)
+          {
+            object propValue = null;
+
+            try
+            {
+              propValue = dataObject.GetPropertyValue(prop.propertyName);
+            }
+            catch (Exception) { }
+
+            if (propValue != null)
+            {
+              slProps.Add(prop.columnName, propValue.ToString());
+            }
+          }
+
+          slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
+
+          string docGUID = CreateNewPWDocument(fsi, slProps);
+          Status status = new Status()
+          {
+            Identifier = docGUID
+          };
+
+          response.StatusList.Add(status);
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.Message);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+      finally
+      {
+        Logout();
+      }
+
+      return response;
+    }
+
+    public override Response PostDataTables(IList<DataTable> dataTables)
+    {
+      try
+      {
+        return null;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.Message);
+        throw e;
+      }
+      finally
+      {
+        Logout();
+      }
+    }
+
+    public override Response DeleteDataTable(string tableName, IList<string> identifiers)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override Response DeleteDataTable(string tableName, string whereClause)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override Response Delete(string objectType, IList<string> identifiers)
+    {
+      Response response = new Response();
+
+      try
+      {
+        Login();
+
+        bool success = DeletePWDocuments(identifiers.ToList());
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception e)
+      {
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+      finally
+      {
+        Logout();
+      }
+
+      return response;
+    }
+    
+    private bool Login()
+    {
+      /// If user name and password are null, process creds will be used
+      return PWWrapper.aaApi_Login(PWWrapper.DataSourceType.Unknown, _sDatasource, _sUserName, _sPassword, null, true);
+    }
+
+    private bool Logout()
+    {
+      return PWWrapper.aaApi_Logout(_sDatasource);
+    }
+
+    private DataTable GetGenericDocumentProperties()
+    {
+      DataTable dt = new DataTable();
+      dt.Columns.Add(new DataColumn("ProjectId", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("DocumentId", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("DocumentGUID", Type.GetType("System.String")));
+      dt.Columns.Add(new DataColumn("DocumentName", Type.GetType("System.String")));
+      dt.Columns.Add(new DataColumn("FileName", Type.GetType("System.String")));
+      dt.Columns.Add(new DataColumn("DocumentDesc", Type.GetType("System.String")));
+      dt.Columns.Add(new DataColumn("MimeType", Type.GetType("System.String")));
+      dt.Columns.Add(new DataColumn("FileUpdateTime", Type.GetType("System.DateTime")));
+      dt.Columns.Add(new DataColumn("FileSize", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("DocumentVersion", Type.GetType("System.String")));
+      dt.Columns.Add(new DataColumn("ApplicationId", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("OriginalNo", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("StateId", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("VersionNum", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("ItemType", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("CreatorId", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("UpdaterId", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("FileUpdaterId", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("CreateTime", Type.GetType("System.DateTime")));
+      dt.Columns.Add(new DataColumn("UpdateTime", Type.GetType("System.DateTime")));
+      dt.Columns.Add(new DataColumn("DMSStatus", Type.GetType("System.String")));
+      dt.Columns.Add(new DataColumn("SetId", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("SetType", Type.GetType("System.Int32")));
+      dt.Columns.Add(new DataColumn("ProjectGUID", Type.GetType("System.String")));
+
+      return dt;
+    }
+
+    private List<DataProperty> GetGenericProperties()
+    {
+      DataTable dt = GetGenericDocumentProperties();
+      List<DataProperty> props = new List<DataProperty>();
+
+      foreach (DataColumn dc in dt.Columns)
+      {
+        ///TODO: type conversion
+        Type dataType = dc.DataType;
+
+        DataProperty prop = new DataProperty()
+        {
+          propertyName = dc.ColumnName,
+          columnName = dc.ColumnName,
+          dataType = DataType.String
+        };
+
+        props.Add(prop);
+      }
+
+      return props;
+    }
+
+    private SortedList<string, SortedList<string, TypeAndLength>> GetEnvironments()
+    {
+      try
+      {
+        SortedList<string, SortedList<string, TypeAndLength>> slEnvironments = new SortedList<string, SortedList<string, TypeAndLength>>();
+
+        if (!PWWrapper.aaApi_IsConnectionLost())
+        {
+          int iNumEnvrs = PWWrapper.aaApi_SelectAllEnvs(false);
+
+          if (iNumEnvrs > 0)
+          {
+            for (int i = 0; i < iNumEnvrs; i++)
+            {
+              string sEnvName = PWWrapper.aaApi_GetEnvStringProperty(PWWrapper.EnvironmentProperty.Name, i);
+
+              if (!slEnvironments.ContainsKey(sEnvName))
+                slEnvironments.Add(sEnvName,
+                new SortedList<string, TypeAndLength>());
+            }
+
+
+            if (slEnvironments.Count > 0)
+            {
+              string[] listEnvNames = new string[slEnvironments.Count];
+              slEnvironments.Keys.CopyTo(listEnvNames, 0);
+
+              foreach (string sEnvName in listEnvNames)
+              {
+                slEnvironments[sEnvName] = GetEnvironmentAttributes(sEnvName);
+              }
+            }
+          }
+        }
+
+        return slEnvironments;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.Message);
+        throw e;
+      }
+      finally
+      {
+        Logout();
+      }
+    }
+
+    private enum SQLDataType : int
+    {
+      FIRST = UNKNOWN,
+      UNKNOWN = 0,
+      NUMERIC = 1,
+      DECIMAL = 2,
+      INTEGER = 3,
+      SMALLINT = 4,
+      FLOAT = 5,
+      REAL = 6,
+      DOUBLE = 7,
+      DATETIME = 8,
+      CHAR = 9,
+      VARCHAR = 10,
+      LONGVARCHAR = 11,
+      WCHAR = 12,
+      VARWCHAR = 13,
+      LONGVARWCHAR = 14,
+      DATE = 15,
+      TIME = 16,
+      TIMESTAMP = 17,
+      BINARY = 18,
+      VARBINARY = 19,
+      LONGVARBINARY = 20,
+      GUID = 21,
+      BIT = 22,
+      BIGINT = 23,
+      TINYINT = 26,
+      LAST = TINYINT
+    }
+
+    private class TypeAndLength
+    {
+      public TypeAndLength(string sDataType, int iLength)
+      {
+        DataType = sDataType;
+        DataLength = iLength;
+      }
+
+      public TypeAndLength()
+      {
+      }
+
+      public string DataType { get; set; }
+      public int DataLength { get; set; }
+
+    }
+
+    private SortedList<string, TypeAndLength> GetEnvironmentAttributes(string sEnvironmentName)
+    {
+      SortedList<string, TypeAndLength> slColumnDataTypesAndLengths = new SortedList<string, TypeAndLength>(StringComparer.CurrentCultureIgnoreCase);
+
+      int iEnvrID = PWWrapper.GetEnvironmentId(sEnvironmentName);
+
+      if (PWWrapper.aaApi_SelectEnv(iEnvrID) > 0)
+      {
+        int iColCount = 0;
+        int iTableID = PWWrapper.aaApi_GetEnvNumericProperty(PWWrapper.EnvironmentProperty.TableID, 0);
+
+        iColCount = PWWrapper.aaApi_SelectColumnsByTable(iTableID);
+
+        if (iColCount > 0)
+        {
+          string sType = "";
+
+          for (int i = 0; i < iColCount; i++)
+          {
+            if (PWWrapper.aaApi_GetColumnStringProperty(PWWrapper.ColumnProperty.Name, i).ToLower() != "a_attrno")
+            {
+              int iType = PWWrapper.aaApi_GetColumnNumericProperty(PWWrapper.ColumnProperty.SQLType, i);
+
+              switch (iType)
+              {
+                case (int)SQLDataType.UNKNOWN:
+                  sType = "Unknown";
+                  break;
+                case (int)SQLDataType.BINARY:
+                  sType = "Binary";
+                  break;
+                case (int)SQLDataType.DATE:
+                  sType = "Date";
+                  break;
+                case (int)SQLDataType.DATETIME:
+                  sType = "DateTime";
+                  break;
+                case (int)SQLDataType.DECIMAL:
+                  sType = "Decimal";
+                  break;
+                case (int)SQLDataType.DOUBLE:
+                  sType = "Double";
+                  break;
+                case (int)SQLDataType.VARCHAR:
+                  sType = "VarChar";
+                  break;
+                case (int)SQLDataType.CHAR:
+                  sType = "Char";
+                  break;
+                case (int)SQLDataType.WCHAR:
+                  sType = "WChar"; // returns this for dates, too
+                  break;
+                case (int)SQLDataType.BIGINT:
+                  sType = "Big Int";
+                  break;
+                case (int)SQLDataType.INTEGER:
+                  sType = "Int";
+                  break;
+                case (int)SQLDataType.FLOAT:
+                  sType = "Float";
+                  break;
+                case (int)SQLDataType.TIMESTAMP:
+                  sType = "TimeStamp";
+                  break;
+                case (int)SQLDataType.BIT:
+                  sType = "Boolean";
+                  break;
+                case (int)SQLDataType.VARWCHAR:
+                  sType = "VarWChar";
+                  break;
+                default:
+                  sType = string.Format("{0}", iType);
+                  break;
+              }
+
+              TypeAndLength colTypeAndLength = new TypeAndLength(sType, PWWrapper.aaApi_GetColumnNumericProperty(PWWrapper.ColumnProperty.Length, i));
+
+              slColumnDataTypesAndLengths.Add(PWWrapper.aaApi_GetColumnStringProperty(PWWrapper.ColumnProperty.Name, i),
+              colTypeAndLength);
+
+              BPSUtilities.WriteLog(string.Format("Environment:{0} ColumnName:{1} DataType:{2}",
+              sEnvironmentName, PWWrapper.aaApi_GetColumnStringProperty(PWWrapper.ColumnProperty.Name, i),
+              sType));
+            }
+          }
+        }
+      }
+      return slColumnDataTypesAndLengths;
+    }
+
+    unsafe private static SortedList<string, int> GetListOfProjectTypes()
+    {
+      SortedList<string, int> slListOfProjectTypes = new SortedList<string, int>();
+
+      PWWrapper.aaApi_Initialize(0);
+      PWWrapper.aaOApi_Initialize();
+      PWWrapper.aaOApi_LoadAllClasses(0);
+
+      IntPtr pQualPtr = PWWrapper.aaOApi_FindQualifierPtrByName("AAQUAL_PROJECTTYPE");
+
+      if (pQualPtr != null)
+      {
+        int iQualId = PWWrapper.aaOApi_GetQualifierId(pQualPtr);
+
+        IntPtr pClassIdsArray = IntPtr.Zero;
+
+        int iClassCount = PWWrapper.aaOApi_GetClassesByQualId(iQualId, ref pClassIdsArray);
+
+        if (pClassIdsArray.ToInt32() != 0)
+        {
+          int[] iClassArrayP = new int[iClassCount];
+          iClassArrayP[0] = 0;
+
+          // this is the unsafe part, but it works
+          fixed (int* pDest = iClassArrayP)
+          {
+            int* pSrc = (int*)pClassIdsArray.ToPointer();
+
+            for (int index = 0; index < iClassCount; index++)
+            {
+              pDest[index] = pSrc[index];
+            }
+          }
+
+          for (int i = 0; i < iClassCount; i++)
+          {
+            string sClassName = PWWrapper.GetClassNameFromClassId(iClassArrayP[i]);
+
+            slListOfProjectTypes.Add(sClassName, iClassArrayP[i]);
+          }
+        }
+        else
+        {
+          BPSUtilities.WriteLog("No classes found");
+        }
+      }
+      else
+      {
+        BPSUtilities.WriteLog("Qualifier not found");
+      }
+
+      return slListOfProjectTypes;
+    }
+
+    unsafe private static SortedList<int, string> GetListOfProjectTypesByIds()
+    {
+      SortedList<int, string> slListOfProjectTypes = new SortedList<int, string>();
+
+      PWWrapper.aaApi_Initialize(0);
+      PWWrapper.aaOApi_Initialize();
+      PWWrapper.aaOApi_LoadAllClasses(0);
+
+      IntPtr pQualPtr = PWWrapper.aaOApi_FindQualifierPtrByName("AAQUAL_PROJECTTYPE");
+
+      if (pQualPtr != null)
+      {
+        int iQualId = PWWrapper.aaOApi_GetQualifierId(pQualPtr);
+
+        //if (iQualId == 0) iQualId = 47;
+
+        IntPtr pClassIdsArray = IntPtr.Zero;
+
+        int iClassCount = PWWrapper.aaOApi_GetClassesByQualId(iQualId, ref pClassIdsArray);
+
+        if (pClassIdsArray.ToInt32() != 0)
+        {
+          int[] iClassArrayP = new int[iClassCount];
+          iClassArrayP[0] = 0;
+
+          // this is the unsafe part, but it works
+          fixed (int* pDest = iClassArrayP)
+          {
+            int* pSrc = (int*)pClassIdsArray.ToPointer();
+
+            for (int index = 0; index < iClassCount; index++)
+            {
+              pDest[index] = pSrc[index];
+            }
+          }
+
+          for (int i = 0; i < iClassCount; i++)
+          {
+            string sClassName = PWWrapper.GetClassNameFromClassId(iClassArrayP[i]);
+
+            slListOfProjectTypes.Add(iClassArrayP[i], sClassName);
+          }
+        }
+        else
+        {
+          BPSUtilities.WriteLog("No classes found");
+        }
+      }
+      else
+      {
+        BPSUtilities.WriteLog("Qualifier not found");
+        BPSUtilities.WriteLog("Error: {0}", PWWrapper.aaApi_GetLastErrorId());
+      }
+
+      return slListOfProjectTypes;
+    }
+
+    private SortedList<string, SortedList<string, TypeAndLength>> GetProjectTypes()
+    {
+      //SortedList<int, string> slProjectTypes = ECComponentAssembly.ODSDataWrapper.GetListOfProjectTypesByIds();
+
+      SortedList<int, string> slProjectTypes = GetListOfProjectTypesByIds();
+      SortedList<string, SortedList<string, TypeAndLength>> slProjectsAndProperties = new SortedList<string, SortedList<string, TypeAndLength>>(StringComparer.CurrentCultureIgnoreCase);
+
+      if (slProjectTypes.Count == 0)
+      {
+        BPSUtilities.WriteLog("No rich project types found");
+        return slProjectsAndProperties;
+      }
+
+      foreach (int iClassId in slProjectTypes.Keys)
+      {
+        if (!slProjectsAndProperties.ContainsKey(slProjectTypes[iClassId]))
+        {
+          SortedList<string, int> slProperties = PWWrapper.GetClassPropertyIdsInList(iClassId);
+
+          SortedList<string, TypeAndLength> slPropNamesTypesAndLengths = new SortedList<string, TypeAndLength>(StringComparer.CurrentCultureIgnoreCase);
+
+          foreach (KeyValuePair<string, int> kvp in slProperties)
+          {
+            TypeAndLength typeAndLength = GetAttributeDataTypeAndLength(kvp.Value);
+
+            if (!slPropNamesTypesAndLengths.ContainsKey(kvp.Key))
+              slPropNamesTypesAndLengths.Add(kvp.Key, typeAndLength);
+          }
+
+          slProjectsAndProperties.Add(slProjectTypes[iClassId], slPropNamesTypesAndLengths);
+        }
+      }
+
+      return slProjectsAndProperties;
+    }
+
+    private TypeAndLength GetAttributeDataTypeAndLength(int iAttrId)
+    {
+      int iRetVal = -1;
+
+      TypeAndLength typeAndLength = new TypeAndLength();
+
+      IntPtr pAttr = IntPtr.Zero;
+
+      // find the attribute using the id
+      if (PWWrapper.aaOApi_FindAttribute(ref pAttr, iAttrId))
+      {
+        StringBuilder wAttrName = new StringBuilder(256);
+        StringBuilder wAttrDesc = new StringBuilder(256);
+
+        int lVisibility = 0, iType = 0, iDataLen = 0;
+
+        if (PWWrapper.aaOApi_GetAttributeCmnProps(pAttr, ref iAttrId, wAttrName, wAttrDesc,
+        ref lVisibility, ref iType, ref iDataLen))
+        {
+          iRetVal = iType;
+        }
+
+        BPSUtilities.WriteLog("Name: {0}", wAttrName.ToString());
+
+        typeAndLength.DataType = GetAttributeDataTypeName(iType);
+        typeAndLength.DataLength = iDataLen;
+
+        BPSUtilities.WriteLog("Control: {0}",
+        PWWrapper.aaOApi_GetAttributeNumericProperty(pAttr,
+        PWWrapper.ODSAttributeProperty.Control));
+
+        BPSUtilities.WriteLog("UIType: {0}",
+        PWWrapper.aaOApi_GetAttributeNumericProperty(pAttr,
+        PWWrapper.ODSAttributeProperty.UIType));
+
+        // PWWrapper.aaOApi_SetAttributeDbProps();
+
+        int iControl = 0;
+        StringBuilder sbColName = new StringBuilder(256);
+
+        PWWrapper.aaOApi_GetAttributeDbProps(pAttr, ref iControl, sbColName);
+
+        // PWWrapper.aaOApi_SetAttributeDbProps(pAttr, 0, sbColName.ToString());
+
+        BPSUtilities.WriteLog("DBControl: {0}", iControl);
+        BPSUtilities.WriteLog("Column: {0}", sbColName.ToString());
+
+        IntPtr pQual = IntPtr.Zero;
+
+        PWWrapper.aaOApi_FindQualifierByName("ForceToList", ref pQual);
+
+        int iQualId = PWWrapper.aaOApi_GetQualifierId(pQual);
+
+        int iQualId2 = 0, iTypeId2 = 0, iQualVal = 0;
+
+        PWWrapper.aaOApi_GetAttributeQualifierProperties(pAttr, iQualId, 0, ref iQualId2,
+        ref iTypeId2, ref iQualVal);
+
+        BPSUtilities.WriteLog("ForceToList, ID: {0}, Type: {1}, Val: {2}",
+        iQualId, iTypeId2, iQualVal);
+
+        // PWWrapper.aaOApi_RemoveAttributeQualifier(iQualId, pAttr);
+
+        // PWWrapper.aaOApi_SaveAttribute(ref pAttr);
+
+        // PWWrapper.aaOApi_FindQualifierByName();
+
+        // PWWrapper.aaOApi_GetQualifierId()
+      }
+
+      return typeAndLength;
+    }
+
+    private string GetAttributeDataTypeName(int iType)
+    {
+      string sRetVal = "None";
+
+      switch ((PWWrapper.ODSAttributeDataType)iType)
+      {
+        case PWWrapper.ODSAttributeDataType.Int16:
+          sRetVal = "Int16";
+          break;
+        case PWWrapper.ODSAttributeDataType.Long32:
+          sRetVal = "Long32";
+          break;
+        case PWWrapper.ODSAttributeDataType.Float32:
+          sRetVal = "Float32";
+          break;
+        case PWWrapper.ODSAttributeDataType.Double64:
+          sRetVal = "Double64";
+          break;
+        case PWWrapper.ODSAttributeDataType.DateTime:
+          sRetVal = "DateTime";
+          break;
+        case PWWrapper.ODSAttributeDataType.Timestamp:
+          sRetVal = "Timestamp";
+          break;
+        case PWWrapper.ODSAttributeDataType.String:
+          sRetVal = "String";
+          break;
+        case PWWrapper.ODSAttributeDataType.Raw:
+          sRetVal = "Raw";
+          break;
+        case PWWrapper.ODSAttributeDataType.LongRaw:
+          sRetVal = "LongRaw";
+          break;
+        default:
+          break;
+      }
+
+
+      return sRetVal;
+    }
+
+    //private SortedList<string, SortedList<string, string>> GetEnvironments()
+    //{
+    //  SortedList<string, SortedList<string, string>> slEnvironments = new SortedList<string, SortedList<string, string>>();
+
+    //  if (!PWWrapper.aaApi_IsConnectionLost())
+    //  {
+    //    int iNumEnvrs = PWWrapper.aaApi_SelectAllEnvs(false);
+
+    //    if (iNumEnvrs > 0)
+    //    {
+    //      for (int i = 0; i < iNumEnvrs; i++)
+    //      {
+    //        if (!slEnvironments.ContainsKey(PWWrapper.aaApi_GetEnvStringProperty(PWWrapper.EnvironmentProperty.Name, i)))
+    //          slEnvironments.Add(PWWrapper.aaApi_GetEnvStringProperty(PWWrapper.EnvironmentProperty.Name, i),
+    //          new SortedList<string, string>());
+    //      }
+    //    }
+    //  }
+
+    //  return slEnvironments;
+    //}
+
+    private System.IO.FileStream GetProjectWiseFile(string sDocumentGuid, string sWorkingDirectory)
     {
       try
       {
@@ -834,7 +1137,7 @@ namespace org.iringtools.adapter.datalayer
       return null;
     }
 
-    //public DataTable GetDocumentsForProject(string sProjectType, string sProjectPropertyName, string sPropertyValue)
+    //private DataTable GetDocumentsForProject(string sProjectType, string sProjectPropertyName, string sPropertyValue)
     //{
     //  SavedSearchAssembly.SavedSearchWrapper.InitializeQuery(0, false);
 
@@ -867,7 +1170,7 @@ namespace org.iringtools.adapter.datalayer
     //  return dtReturn;
     //}
 
-    public DataTable GetDocumentsForProject(string sProjectType, string sProjectPropertyName, string sPropertyValue)
+    private DataTable GetDocumentsForProject(string sProjectType, string sProjectPropertyName, string sPropertyValue)
     {
       SavedSearchAssembly.SavedSearchWrapper.InitializeQuery(0, false);
 
@@ -910,7 +1213,7 @@ namespace org.iringtools.adapter.datalayer
       return dtReturn;
     }
 
-    public SortedList<string, TypeAndLength> GetEnvironmentAttributes(string sEnvironmentName, int iEnvId)
+    private SortedList<string, TypeAndLength> GetEnvironmentAttributes(string sEnvironmentName, int iEnvId)
     {
       SortedList<string, TypeAndLength> slColumnDataTypesAndLengths = new SortedList<string, TypeAndLength>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -1004,7 +1307,7 @@ namespace org.iringtools.adapter.datalayer
       return slColumnDataTypesAndLengths;
     }
 
-    public int CreateNewFileOrVersion1(int iProjectId, string sFilePath, SortedList<string, string> slProps)
+    private int CreateNewFileOrVersion1(int iProjectId, string sFilePath, SortedList<string, string> slProps)
     {
       SavedSearchAssembly.SavedSearchWrapper.InitializeQuery(iProjectId, false);
       SavedSearchAssembly.SavedSearchWrapper.AddDocumentCriteria(slProps["ProjectWiseName"], null, null, 0);
@@ -1081,7 +1384,7 @@ namespace org.iringtools.adapter.datalayer
       return 0;
     }
 
-    public string CreateNewPWDocument(Stream fsi, SortedList<string, string> slProps)
+    private string CreateNewPWDocument(Stream fsi, SortedList<string, string> slProps)
     {
       string sFileName = string.Empty;
 
@@ -1203,7 +1506,7 @@ namespace org.iringtools.adapter.datalayer
       return string.Empty;
     }
 
-    public bool UpdatePWAttributes(SortedList<string, string> slProps)
+    private bool UpdatePWAttributes(SortedList<string, string> slProps)
     {
       if (slProps.ContainsKey("DocumentGUID"))
       {
@@ -1246,7 +1549,7 @@ namespace org.iringtools.adapter.datalayer
       return false;
     }
 
-    public int CreateNewFileOrVersion(int iProjectId, string sFilePath, SortedList<string, string> slProps)
+    private int CreateNewFileOrVersion(int iProjectId, string sFilePath, SortedList<string, string> slProps)
     {
       SavedSearchAssembly.SavedSearchWrapper.InitializeQuery(iProjectId, false);
       SavedSearchAssembly.SavedSearchWrapper.AddDocumentCriteria(slProps["ProjectWiseName"], null, null, 0);
@@ -1379,102 +1682,7 @@ namespace org.iringtools.adapter.datalayer
     //  }
     //}
 
-    public override DataTable GetDataTable(string tableName, IList<string> identifiers) { return null; }
-
-    // Return content if available or metadata otherwise
-    public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
-    {
-      IList<IDataObject> dataObjects = new List<IDataObject>();
-      
-      try
-      {
-        ///TODO: get from config
-        string tempFoder = "c:\\temp\\projectwise\\";
-
-        DatabaseDictionary dictionary = GetDatabaseDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-        List<string> listAttributes = new List<string>();
-
-        foreach (DataProperty prop in objDef.dataProperties)
-        {
-          listAttributes.Add(prop.columnName);
-        }
-        
-        foreach (string identifier in identifiers)
-        {
-          FileStream stream = GetProjectWiseFile(identifier, tempFoder);
-
-          if (stream != null)
-          {
-            string docName = stream.Name.ToLower();
-            int extIndex = docName.LastIndexOf('.');
-            string contentType = "application/msword";
-
-            try
-            {
-              contentType = Registry.ClassesRoot.OpenSubKey(docName.Substring(extIndex)).GetValue("Content Type").ToString();
-            }
-            catch (Exception e)
-            {
-              //TODO: logger error
-            }
-
-            MemoryStream outStream = new MemoryStream();
-            stream.CopyTo(outStream);
-            outStream.Position = 0;
-            stream.Close();
-
-            IContentObject contentObject = new GenericContentObject()
-            {
-              ObjectType = objectType,
-              identifier = identifier,
-              content = outStream,
-              contentType = contentType
-            };
-
-            dataObjects.Add(contentObject);
-          }
-          else
-          {
-            try
-            {
-              Login();
-
-              DataTable dt = GetDocumentMetadata(identifier, listAttributes);
-
-              if (dt != null && dt.Rows.Count > 0)
-              {
-                IDataObject dataObject = new GenericDataObject()
-                {
-                  ObjectType = objectType
-                };
-
-                foreach (string attr in listAttributes)
-                {
-                  //TODO: attrs need to be property names instead of column names
-                  dataObject.SetPropertyValue(attr, dt.Rows[0][attr]);
-                }
-
-                dataObjects.Add(dataObject);
-              } 
-            }
-            finally
-            {
-              Logout();
-            }
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.Message);
-        throw e;
-      }
-
-      return dataObjects;
-    }
-
-    public DataTable GetDocumentMetadata(string docGuid, List<string> listAttributes)
+    private DataTable GetDocumentMetadata(string docGuid, List<string> listAttributes)
     {
       SavedSearchAssembly.SavedSearchWrapper.InitializeQuery(0, false);
       SavedSearchAssembly.SavedSearchWrapper.AddDocumentGuidCriterion(docGuid, 0);
@@ -1482,7 +1690,7 @@ namespace org.iringtools.adapter.datalayer
       return dt;
     }
 
-    public DataTable GetDocumentMetadata(List<string> docGuids, List<string> listAttributes)
+    private DataTable GetDocumentMetadata(List<string> docGuids, List<string> listAttributes)
     {
       DataTable dtReturn = new DataTable();
 
@@ -1505,97 +1713,7 @@ namespace org.iringtools.adapter.datalayer
       return dtReturn;
     }
 
-    public override Response Post(IList<IDataObject> dataObjects)
-    {
-      Response response = new Response();
-
-      try
-      {
-        DatabaseDictionary dictionary = GetDatabaseDictionary();
-
-        Login();
-
-        foreach (IDataObject dataObject in dataObjects)
-        {
-          SortedList<string, string> slProps = new SortedList<string, string>();
-          string objectType = ((GenericDataObject)dataObject).ObjectType;
-
-          Stream fsi = null;
-          if (dataObject is IContentObject)
-          {
-            fsi = ((IContentObject)dataObject).content;
-            
-            ///TODO: check inbound DataObject for DocumentName          
-            slProps.Add("DocumentName", "DWG-" + DateTime.Now.Ticks + "." + ((IContentObject)dataObject).contentType);
-          }
-
-          DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-          foreach (DataProperty prop in objDef.dataProperties)
-          {
-            object propValue = null;
-
-            try
-            {
-              propValue = dataObject.GetPropertyValue(prop.propertyName);
-            }
-            catch (Exception) { }
-
-            if (propValue != null)
-            {
-              slProps.Add(prop.columnName, propValue.ToString());
-            }
-          }
-
-          slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
-      
-          string docGUID = CreateNewPWDocument(fsi, slProps);
-          Status status = new Status()
-          {
-            Identifier = docGUID
-          };
-
-          response.StatusList.Add(status);
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.Message);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
-      }
-      finally
-      {
-        Logout();
-      }
-
-      return response;
-    }
-
-    public override Response Delete(string objectType, IList<string> identifiers)
-    {
-      Response response = new Response();
-
-      try
-      {
-        Login();
-
-        bool success = DeletePWDocuments(identifiers.ToList());
-        response.Level = StatusLevel.Success;
-      }
-      catch (Exception e)
-      {
-        response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
-      }
-      finally
-      {
-        Logout();
-      }
-
-      return response;
-    }
-
-    public bool DeletePWDocuments(List<string> docGuids)
+    private bool DeletePWDocuments(List<string> docGuids)
     {
       int iSuccessfulDeletes = 0;
 
@@ -1617,7 +1735,7 @@ namespace org.iringtools.adapter.datalayer
       return (iSuccessfulDeletes == docGuids.Count);
     }
 
-    public SortedList<int, string> GetTopLevelFolders()
+    private SortedList<int, string> GetTopLevelFolders()
     {
       try
       {
@@ -1640,7 +1758,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public SortedList<int, string> GetChildFolders(int iParentId)
+    private SortedList<int, string> GetChildFolders(int iParentId)
     {
       try
       {
@@ -1663,12 +1781,12 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public string GetFolderPath(int iFolderId)
+    private string GetFolderPath(int iFolderId)
     {
       return PWWrapper.GetProjectNamePath(iFolderId);
     }
 
-    public DataTable GetDocumentsForFolder(int iFolderId, List<string> listAttributes)
+    private DataTable GetDocumentsForFolder(int iFolderId, List<string> listAttributes)
     {
       DataTable dtReturn = new DataTable();
 
@@ -1687,58 +1805,6 @@ namespace org.iringtools.adapter.datalayer
       }
 
       return dtReturn;
-    }
-
-    public override Response PostDataTables(IList<DataTable> dataTables)
-    {
-      try
-      {
-        return null;
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.Message);
-        throw e;
-      }
-      finally
-      {
-        Logout();
-      }
-    }
-
-    public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
-    {
-      throw new NotImplementedException();
-    }
-
-    public override Response DeleteDataTable(string tableName, IList<string> identifiers)
-    {
-      throw new NotImplementedException();
-    }
-
-    public override Response DeleteDataTable(string tableName, string whereClause)
-    {
-      throw new NotImplementedException();
-    }
-
-    public override IList<string> GetIdentifiers(string tableName, string whereClause)
-    {
-      throw new NotImplementedException();
-    }
-
-    public override long GetRelatedCount(DataRow dataRow, string relatedTableName)
-    {
-      throw new NotImplementedException();
-    }
-
-    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit)
-    {
-      throw new NotImplementedException();
-    }
-
-    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName)
-    {
-      throw new NotImplementedException();
     }
   }
 }
