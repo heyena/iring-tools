@@ -118,7 +118,7 @@ namespace org.iringtools.adapter.projection
 
                 if (!String.IsNullOrEmpty(base64Content))
                 {
-                  ((IContentObject)dataObject).content = base64Content.ToMemoryStream();
+                  ((IContentObject)dataObject).Content = base64Content.ToMemoryStream();
                 }
               }
             }

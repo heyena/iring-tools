@@ -3800,11 +3800,11 @@ namespace org.iringtools.adapter
         dataObjects = _dataLayer.Create(graphName, identifiers);
 
         IContentObject contentObject = (IContentObject)dataObjects[0];
-        contentObject.content = stream;
+        contentObject.Content = stream;
 
         IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
         string contentType = request.ContentType;
-        contentObject.contentType = contentType;
+        contentObject.ContentType = contentType;
 
         dataObjects = new List<IDataObject>();
         dataObjects.Add(contentObject);
@@ -5168,9 +5168,9 @@ namespace org.iringtools.adapter
       {
         IContentObject contentObject = (IContentObject)content;
 
-        if (!string.IsNullOrEmpty(contentObject.contentType))
+        if (!string.IsNullOrEmpty(contentObject.ContentType))
         {
-          HttpContext.Current.Response.ContentType = contentObject.contentType;
+          HttpContext.Current.Response.ContentType = contentObject.ContentType;
         }
         else
         {
@@ -5188,7 +5188,7 @@ namespace org.iringtools.adapter
           HttpContext.Current.Response.ContentType = contentType;
         }
 
-        HttpContext.Current.Response.BinaryWrite(contentObject.content.ToMemoryStream().GetBuffer());
+        HttpContext.Current.Response.BinaryWrite(contentObject.Content.ToMemoryStream().GetBuffer());
       }
       else if (content.GetType() == typeof(XDocument))
       {

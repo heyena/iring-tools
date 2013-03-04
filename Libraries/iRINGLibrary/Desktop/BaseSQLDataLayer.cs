@@ -659,6 +659,17 @@ namespace org.iringtools.library
               throw ex;
             }
           }
+
+          if (_settings["HasContentProperty"] != null && 
+            dataObject.GetPropertyValue(_settings["HasContentProperty"]) != null)
+          {
+            if (_settings["HasContentPropertyValue"] == null ||
+              dataObject.GetPropertyValue(_settings["HasContentProperty"]).ToString().ToLower().Contains( 
+                _settings["HasContentPropertyValue"].ToString().ToLower()))
+            {
+              ((GenericDataObject)dataObject).HasContent = true;
+            }
+          }
         }
       }
       else

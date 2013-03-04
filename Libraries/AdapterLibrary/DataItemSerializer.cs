@@ -107,6 +107,7 @@ namespace org.iringtools.adapter
   {
     private string _idFieldName = "_ID_";
     private string _linksFieldName = "_LINKS_";
+    private string _hasContentFieldName = "_HAS_CONTENT_";
     private bool _displayLinks = false;
 
     public DataItemConverter(string idFieldName, string linksFieldName, bool displayLinks)
@@ -133,6 +134,7 @@ namespace org.iringtools.adapter
       if (dataItem != null)
       {
         result[_idFieldName] = dataItem.id;
+        result[_hasContentFieldName] = dataItem.hasContent;
 
         foreach (var property in dataItem.properties)
         {
@@ -155,8 +157,13 @@ namespace org.iringtools.adapter
 
       DataItem dataItem = new DataItem()
       {
-        properties = new Dictionary<string, string>()
+        properties = new Dictionary<string, string>(),
       };
+
+      if (dictionary[_hasContentFieldName] != null && bool.Parse(dictionary[_hasContentFieldName].ToString()))
+      {
+        dataItem.hasContent = true;
+      }
 
       foreach (var pair in dictionary)
       {

@@ -127,6 +127,11 @@ namespace org.iringtools.library
         return null;
     }
 
+    public virtual IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormatDictionary)
+    {
+      throw new NotImplementedException();
+    }
+
     #region Abstract Public Interface Methods
 
     public abstract IList<string> GetIdentifiers(string objectType, DataFilter filter);
