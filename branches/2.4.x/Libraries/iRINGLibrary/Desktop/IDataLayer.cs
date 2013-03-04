@@ -39,18 +39,17 @@ namespace org.iringtools.library
   public interface IDataObject
   {    
     object GetPropertyValue(string propertyName);
-
     void SetPropertyValue(string propertyName, object value);
   }
 
   public interface IContentObject : IDataObject
   {
-    string identifier { get; set; }
-    string contentType { get; set; }
-    Stream content { get; set; }
-    string hashType { get; set; }
-    string hash { get; set; }
-    string url { get; set; }
+    string Identifier { get; set; }
+    string ContentType { get; set; }
+    Stream Content { get; set; }
+    string HashType { get; set; }
+    string HashValue { get; set; }
+    string URL { get; set; }
   }
 
   public interface IDataLayer
@@ -77,9 +76,9 @@ namespace org.iringtools.library
 
     long GetRelatedCount(IDataObject dataObject, string relatedObjectType);
 
-    //IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
-
     IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex);
+
+    IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormatDictionary);
   }
 
   public interface IDataLayer2 : IDataLayer
