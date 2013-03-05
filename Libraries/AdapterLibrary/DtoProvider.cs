@@ -1029,6 +1029,38 @@ namespace org.iringtools.adapter
       }
     }
 
+    public IContentObject GetContent(string scope, string app, string graph, string id, string format)
+    {
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        GraphMap graphMap = _mapping.FindGraphMap(graph);
+        IContentObject contentObject = _dataLayer.GetContent(graphMap.dataObjectName, id, format);
+
+        return contentObject;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting content: " + ex.ToString());
+        throw ex;
+      }
+    }
+
+    public Response PostContent(IContentObject contentObject)
+    {
+      try
+      {
+        return null;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error posting content: " + ex.ToString());
+        throw ex;
+      }
+    }
+
     // build cross _graphmap from manifest graph and mapping graph
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {

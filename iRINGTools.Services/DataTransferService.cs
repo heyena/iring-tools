@@ -293,6 +293,24 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Get content objects by ids in specific formats.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/{graph}/{id}/content?format={format}")]
+    public Stream GetContent(string scope, string app, string graph, string id, string format)
+    {
+      try
+      {
+        IContentObject contentObject = _dtoProvider.GetContent(scope, app, graph, id, format);
+        WebOperationContext.Current.OutgoingResponse.ContentType = contentObject.ContentType;
+        return contentObject.Content;
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.Write(e.ToString());
+        return null;
+      }
+    }
+
     [Description("Gets status of a asynchronous request.")]
     [WebGet(UriTemplate = "/requests/{id}")]
     public void GetRequestStatus(string id)
