@@ -349,80 +349,71 @@ namespace org.iringtools.adapter.datalayer
       return dataObjects;
     }
 
-    public override IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormatPairs)
+    public override IContentObject GetContent(string objectType, string id, string format)
     {
-      IList<IContentObject> contentObjects = new List<IContentObject>();
+      IContentObject contentObject = null;
 
-      if (idFormatPairs != null && idFormatPairs.Count > 0)
+      try
       {
-        ///TODO: get from config
-        string tempFoder = "c:\\temp\\projectwise\\";
+          ///
+          ///TODO: get from config
+          ///
+          string contentType = "application/msword";
+          string tempFoder = "c:\\temp\\projectwise\\";
 
-        Login();
+          Login();
+      
+          FileStream stream = GetProjectWiseFile(id, tempFoder);
 
-        try
-        {
-          foreach (var pair in idFormatPairs)
+          if (stream != null)
           {
-            string identifier = pair.Key;
-            string format = pair.Value;
-            string contentType = "application/msword";
-
-            FileStream stream = GetProjectWiseFile(identifier, tempFoder);
-
-            if (stream != null)
+            if (string.IsNullOrEmpty(format))
             {
-              if (string.IsNullOrEmpty(format))
-              {
-                string docName = stream.Name.ToLower();
-                int extIndex = docName.LastIndexOf('.');
-                format = docName.Substring(extIndex);
-              }
-              else if (!format.StartsWith("."))
-              {
-                format = "." + format;
-              }
-
-              try
-              {
-                //TODO: get content type from configuration
-                contentType = Registry.ClassesRoot.OpenSubKey(format).GetValue("Content Type").ToString();
-              }
-              catch (Exception ex)
-              {
-                _logger.Error("Error getting content type: " + ex.ToString());
-                throw ex;
-              }
-
-              MemoryStream outStream = new MemoryStream();
-              stream.CopyTo(outStream);
-              outStream.Position = 0;
-              stream.Close();
-
-              IContentObject contentObject = new GenericContentObject()
-              {
-                ObjectType = objectType,
-                Identifier = identifier,
-                Content = outStream,
-                ContentType = contentType
-              };
-
-              contentObjects.Add(contentObject);
+              string docName = stream.Name.ToLower();
+              int extIndex = docName.LastIndexOf('.');
+              format = docName.Substring(extIndex);
             }
+            else if (!format.StartsWith("."))
+            {
+              format = "." + format;
+            }
+
+            try
+            {
+              //TODO: get content type from configuration
+              contentType = Registry.ClassesRoot.OpenSubKey(format).GetValue("Content Type").ToString();
+            }
+            catch (Exception ex)
+            {
+              _logger.Error("Error getting content type: " + ex.ToString());
+              throw ex;
+            }
+
+            MemoryStream outStream = new MemoryStream();
+            stream.CopyTo(outStream);
+            outStream.Position = 0;
+            stream.Close();
+
+            contentObject = new GenericContentObject()
+            {
+              ObjectType = objectType,
+              Identifier = id,
+              Content = outStream,
+              ContentType = contentType
+            };
           }
-        }
-        catch (Exception ex)
-        {
-          _logger.Error("Error getting content objects: " + ex.ToString());
-          throw ex;
-        }
-        finally
-        {
-          Logout();
-        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting content objects: " + ex.ToString());
+        throw ex;
+      }
+      finally
+      {
+        Logout();
       }
 
-      return contentObjects;
+      return contentObject;
     }
 
     public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
