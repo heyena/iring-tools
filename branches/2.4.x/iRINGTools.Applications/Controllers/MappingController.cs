@@ -730,8 +730,8 @@ namespace org.iringtools.web.controllers
         string delimiter = form["delimiter"];
         string className = form["className"];
         string classId = form["classId"];
-        
-        string context = string.Format("{0}/{1}", scope, app);        
+
+        string context = string.Format("{0}/{1}", scope, app);
         Mapping mapping = GetMapping(scope, app);
 
         bool qn = false;
@@ -743,18 +743,18 @@ namespace org.iringtools.web.controllers
             mapping.graphMaps = new GraphMaps();
 
           GraphMap graphMap = new GraphMap
-          {
-            name = graphName,
-            dataObjectName = objectName
-          };
+            {
+              name = graphName,
+              dataObjectName = objectName
+            };
 
           ClassMap classMap = new ClassMap
-          {
-            name = className,
-            id = qn ? qName : classId,
-            identifierDelimiter = delimiter,
-            identifiers = new Identifiers()
-          };
+            {
+              name = className,
+              id = qn ? qName : classId,
+              identifierDelimiter = delimiter,
+              identifiers = new Identifiers()
+            };
 
           if (identifier.Contains(','))
           {
@@ -774,16 +774,16 @@ namespace org.iringtools.web.controllers
           mapping.graphMaps.Add(graphMap);
           nodes.Add(CreateGraphNode(context, graphMap, classMap));
         }
-        else
+        else // Edit existing graph
         {
-          GraphMap graphMap = mapping.FindGraphMap(graphName);
+          GraphMap graphMap = mapping.FindGraphMap(oldGraphName);//Get graph with old name
 
           if (graphMap == null)
             graphMap = new GraphMap();
 
           graphMap.name = graphName;
           graphMap.dataObjectName = objectName;
-          
+
           ClassMap classMap = graphMap.classTemplateMaps[0].classMap;
           classMap.name = className;
           classMap.id = qn ? qName : classId;
@@ -813,7 +813,7 @@ namespace org.iringtools.web.controllers
         return Json(nodes, JsonRequestBehavior.AllowGet);
       }
 
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      return Json(new {success = true}, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult UpdateMapping(FormCollection form)
