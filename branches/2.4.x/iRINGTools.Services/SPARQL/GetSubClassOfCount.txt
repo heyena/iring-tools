@@ -4,5 +4,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 SELECT (COUNT(DISTINCT ?uri) AS ?label) 
 { 
-  rdl:param1 rdfs:subClassOf ?uri .
+    rdl:param1 rdfs:subClassOf ?uri  .
+  	OPTIONAL{ ?uri rdfs:label ?label . }
+    FILTER (?uri != rdl:param1 && isIRI(?uri) && ?uri != owl:Class)
 }
