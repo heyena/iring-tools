@@ -2603,14 +2603,16 @@ namespace org.iringtools.refdata
                   {
                     foreach (var oc in from oc in oldClsDef.classification let nc = newClsDef.classification.Find(c => c.reference == oc.reference) where nc == null select oc)
                     {
-                      GenerateSuperClass(ref delete, oc.reference, clsId); ///delete from old
+                      GenerateClassMember(ref delete, oc.reference, clsId);
+                     // GenerateSuperClass(ref delete, oc.reference, clsId); ///delete from old
                     }
                   }
                   else if (newClsDef.classification.Count > oldClsDef.classification.Count)//some is added ... find added classifications
                   {
                     foreach (var nc in from nc in newClsDef.classification let oc = oldClsDef.classification.Find(c => c.reference == nc.reference) where oc == null select nc)
                     {
-                      GenerateSuperClass(ref insert, nc.reference, clsId); ///insert from new
+                      GenerateClassMember(ref insert, nc.reference, clsId);
+                      //GenerateSuperClass(ref insert, nc.reference, clsId); ///insert from new
                     }
                   }
                 }
@@ -2661,7 +2663,8 @@ namespace org.iringtools.refdata
               {
                 if (repository.RepositoryType == RepositoryType.Part8)
                 {
-                  GenerateSuperClass(ref insert, nc.reference, clsId);
+                  GenerateClassMember(ref insert, nc.reference, clsId);
+                  //GenerateSuperClass(ref insert, nc.reference, clsId);
                 }
                 else
                 {
@@ -2707,6 +2710,8 @@ namespace org.iringtools.refdata
       }
       return response;      
     }
+
+
 
     public List<Entity> Find(string queryString)
     {
@@ -3044,6 +3049,14 @@ namespace org.iringtools.refdata
       _subj = work.CreateUriNode(new Uri(subjectId));
       _pred = work.CreateUriNode("rdfs:comment");
       _obj = work.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
+      work.Assert(new Triple(_subj, _pred, _obj));
+    }
+
+    private void GenerateClassMember(ref Graph work, string subjId, string clsId)
+    {
+      _subj = work.CreateUriNode(new Uri(subjId));
+      _pred = work.CreateUriNode(rdfType);
+      _obj = work.CreateUriNode(new Uri(clsId));
       work.Assert(new Triple(_subj, _pred, _obj));
     }
 
