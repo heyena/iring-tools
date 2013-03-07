@@ -349,20 +349,22 @@ namespace org.iringtools.adapter.datalayer
       return dataObjects;
     }
 
-    public override IContentObject GetContent(string objectType, string id, string format)
+    public override IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormats)
     {
-      IContentObject contentObject = null;
-
       try
       {
-          ///
-          ///TODO: get from config
-          ///
-          string contentType = "application/msword";
-          string tempFoder = "c:\\temp\\projectwise\\";
+        IList<IContentObject> contentObjects = new List<IContentObject>();
 
-          Login();
-      
+        string contentType = "application/msword";
+        string tempFoder = "c:\\temp\\projectwise\\";
+
+        Login();
+
+        foreach (var pair in idFormats)
+        {
+          string id = pair.Key;
+          string format = pair.Value;
+
           FileStream stream = GetProjectWiseFile(id, tempFoder);
 
           if (stream != null)
@@ -394,27 +396,32 @@ namespace org.iringtools.adapter.datalayer
             outStream.Position = 0;
             stream.Close();
 
-            contentObject = new GenericContentObject()
+            IContentObject contentObject = new GenericContentObject()
             {
               ObjectType = objectType,
               Identifier = id,
               Content = outStream,
               ContentType = contentType
             };
+
+            contentObjects.Add(contentObject);
           }
+        }
+
+        return contentObjects;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error getting content objects: " + ex.ToString());
+        _logger.Debug("Error getting contents: " + ex.ToString());
         throw ex;
       }
       finally
       {
         Logout();
       }
-
-      return contentObject;
     }
+
+    
 
     public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
     {
