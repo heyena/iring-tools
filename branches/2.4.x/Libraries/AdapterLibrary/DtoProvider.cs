@@ -52,6 +52,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.ServiceModel.Web;
+using Newtonsoft.Json;
 
 namespace org.iringtools.adapter
 {
@@ -1029,34 +1030,87 @@ namespace org.iringtools.adapter
       }
     }
 
-    public IContentObject GetContent(string scope, string app, string graph, string id, string format)
+    public ContentObjects GetContents(string scope, string app, string graph, string filter)
     {
       try
       {
+        ContentObjects contentObjects = new ContentObjects();
+
+        IDictionary<string, string> idFormats = (IDictionary<string, string>)
+          JsonConvert.DeserializeObject<Dictionary<string, string>>(filter);
+
         InitializeScope(scope, app);
         InitializeDataLayer();
 
         GraphMap graphMap = _mapping.FindGraphMap(graph);
-        IContentObject contentObject = _dataLayer.GetContent(graphMap.dataObjectName, id, format);
+        if (graph == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        }
+        
+        IList<IContentObject> iContentObjects = _dataLayer.GetContents(graphMap.dataObjectName, idFormats);
+        
+        #region marshall iContentObjects into contentObjects
+        foreach (IContentObject iContentObject in iContentObjects)
+        {
+          ContentObject contentObject = new ContentObject()
+          {
+            Identifier = iContentObject.Identifier,
+            MimeType = iContentObject.ContentType,
+            Content = iContentObject.Content.ToMemoryStream().ToArray()
+          };
 
-        return contentObject;
+          contentObjects.Add(contentObject);
+        }
+        #endregion
+
+        return contentObjects;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error getting content: " + ex.ToString());
+        _logger.Error("Error getting content objects: " + ex.ToString());
         throw ex;
       }
     }
 
-    public Response PostContent(IContentObject contentObject)
+    public Response PostContents(string scope, string app, string graph, ContentObjects contentObjects)
     {
       try
       {
-        return null;
+        IList<IContentObject> iContentObjects = new List<IContentObject>();
+
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        GraphMap graphMap = _mapping.FindGraphMap(graph);
+        if (graph == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        } 
+        
+        #region marshall contentObjects into iContentObjects
+        foreach (ContentObject contentObject in contentObjects)
+        {
+          IContentObject iContentObject = new GenericContentObject();
+          iContentObject.Identifier = contentObject.Identifier;
+          iContentObject.ContentType = contentObject.MimeType;
+          iContentObject.Content = iContentObject.Content.ToMemoryStream();
+
+          foreach (Attribute attr in contentObject.Attributes)
+          {
+            iContentObject.SetPropertyValue(attr.Name, attr.Value);
+          }
+
+          contentObjects.Add(contentObject);
+        }
+        #endregion
+
+        Response response = _dataLayer.PostContents(iContentObjects);
+        return response;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error posting content: " + ex.ToString());
+        _logger.Error("Error posting content objects: " + ex.ToString());
         throw ex;
       }
     }

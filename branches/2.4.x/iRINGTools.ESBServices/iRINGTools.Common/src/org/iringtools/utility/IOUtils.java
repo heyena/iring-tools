@@ -36,7 +36,7 @@ public final class IOUtils
 {
   private static final int DEFAULT_BUFFER_SIZE = 1024;
 
-  public static byte[] toByteArray(InputStream stream) throws IOException 
+  public static ByteArrayOutputStream toByteArrayOutputStream(InputStream stream) throws IOException 
   {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -47,6 +47,12 @@ public final class IOUtils
       output.write(buffer, 0, n);
     }
     
+    return output;
+  }
+  
+  public static byte[] toByteArray(InputStream stream) throws IOException 
+  {
+    ByteArrayOutputStream output = toByteArrayOutputStream(stream);    
     return output.toByteArray();
   }
   

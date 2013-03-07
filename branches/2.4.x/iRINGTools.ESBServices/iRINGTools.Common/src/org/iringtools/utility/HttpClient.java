@@ -110,6 +110,12 @@ public class HttpClient
         if (conn.getContentLength() == 0)
           return null;
         
+        if (responseClass == ByteArrayOutputStream.class)
+        {
+          ByteArrayOutputStream outStream = IOUtils.toByteArrayOutputStream(responseStream);
+          return (T) outStream;
+        }
+        
         return JaxbUtils.toObject(responseClass, responseStream);
       }
       else
@@ -157,6 +163,11 @@ public class HttpClient
   {
     return post(responseClass, relativeUri, requestEntity, "application/xml");    
   }
+  
+  public <T, R> R post(Class<R> responseClass, T requestEntity, String contentType) throws HttpClientException
+  {
+    return post(responseClass, "", requestEntity, contentType);    
+  }
 
   @SuppressWarnings("unchecked")
   public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity, String contentType) throws HttpClientException
@@ -166,7 +177,16 @@ public class HttpClient
 
     try
     {
-      ByteArrayOutputStream requestStream = (ByteArrayOutputStream)JaxbUtils.toStream(requestEntity, false);
+      ByteArrayOutputStream requestStream = null;
+      
+      if (requestEntity.getClass() == ByteArrayOutputStream.class)
+      {
+        requestStream = (ByteArrayOutputStream) requestEntity;
+      }
+      else 
+	  {
+        requestStream = (ByteArrayOutputStream)JaxbUtils.toStream(requestEntity, false);
+      }
       
       conn = getConnection(POST_METHOD, relativeUri);
       conn.setRequestProperty("Content-Type", contentType);
@@ -196,6 +216,12 @@ public class HttpClient
         
         if (conn.getContentLength() == 0)
           return null;
+                
+        if (responseClass == ByteArrayOutputStream.class)
+        {
+          ByteArrayOutputStream outStream = IOUtils.toByteArrayOutputStream(responseStream);
+          return (R) outStream;
+        }
         
         return JaxbUtils.toObject(responseClass, responseStream);
       }

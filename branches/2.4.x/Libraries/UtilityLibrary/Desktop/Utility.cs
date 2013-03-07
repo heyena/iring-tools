@@ -1024,6 +1024,7 @@ namespace org.iringtools.utility
       {
         XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
         quotas.MaxStringContentLength = int.MaxValue;
+        quotas.MaxArrayLength = int.MaxValue;
 
         reader = XmlDictionaryReader.CreateTextReader(stream, quotas);
         if (useDataContractSerializer)

@@ -30,11 +30,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Scope }
+     * 
+     */
+    public Scope createScope() {
+        return new Scope();
+    }
+
+    /**
      * Create an instance of {@link Scopes }
      * 
      */
     public Scopes createScopes() {
         return new Scopes();
+    }
+
+    /**
+     * Create an instance of {@link Application }
+     * 
+     */
+    public Application createApplication() {
+        return new Application();
     }
 
     /**
@@ -51,22 +67,6 @@ public class ObjectFactory {
      */
     public Applications createApplications() {
         return new Applications();
-    }
-
-    /**
-     * Create an instance of {@link Application }
-     * 
-     */
-    public Application createApplication() {
-        return new Application();
-    }
-
-    /**
-     * Create an instance of {@link Scope }
-     * 
-     */
-    public Scope createScope() {
-        return new Scope();
     }
 
 }

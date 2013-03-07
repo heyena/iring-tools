@@ -102,9 +102,6 @@ public class DtiTask implements Runnable
         targetDtis = new DataTransferIndices();
     }
     
-    logger.info("Sender [" + xdef.getSourceAppName() + "] DTI count: " + sourceDtis.getDataTransferIndexList().getItems().size());
-    logger.info("Receiver [" + xdef.getTargetAppName() + "] DTI count: " + targetDtis.getDataTransferIndexList().getItems().size());
-
     if (dtiOnly)
     {
       dtis = sourceDtis;

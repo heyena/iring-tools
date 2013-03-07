@@ -224,7 +224,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Post data transfer objects to perfom add/update/delete.")]
+    [Description("Posts data transfer objects to perfom add/update/delete.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
     public void PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {
@@ -245,11 +245,12 @@ namespace org.iringtools.services
 
     [Description("Posts data transfer objects as stream to perform add/update/delete.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}?format=stream")]
-    public void PostStream(string scope, string app, string graph, Stream stream)
+    public void PostDataTransferObjectsStream(string scope, string app, string graph, Stream stream)
     {
       try
       {
-        DataTransferObjects dtos = Utility.DeserializeFromStream<DataTransferObjects>(stream.ToMemoryStream(), true);
+        MemoryStream ms = stream.ToMemoryStream();
+        DataTransferObjects dtos = Utility.DeserializeFromStream<DataTransferObjects>(ms);
          
         if (IsAsync())
         {
@@ -293,21 +294,41 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Get content objects by ids in specific formats.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/{graph}/{id}/content?format={format}")]
-    public Stream GetContent(string scope, string app, string graph, string id, string format)
+    [Description("Gets content objects by ids and formats in JSON format.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/{graph}/content?filter={filter}")]
+    public void GetContents(string scope, string app, string graph, string filter)
     {
       try
       {
-        IContentObject contentObject = _dtoProvider.GetContent(scope, app, graph, id, format);
-        WebOperationContext.Current.OutgoingResponse.ContentType = contentObject.ContentType;
-        return contentObject.Content;
+        ContentObjects contentObjects = _dtoProvider.GetContents(scope, app, graph, filter);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<ContentObjects>(contentObjects));
       }
       catch (Exception e)
       {
         WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.Write(e.ToString());
-        return null;
+        HttpContext.Current.Response.Write(e.Message);
+      }
+    }
+
+    [Description("Posts list of content objects as stream to service.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/content")]
+    public void PostContents(string scope, string app, string graph, Stream stream)
+    {
+      try
+      {
+        MemoryStream ms = stream.ToMemoryStream();
+        ContentObjects contentObjects = Utility.DeserializeFromStream<ContentObjects>(ms);
+
+        Response response = _dtoProvider.PostContents(scope, app, graph, contentObjects);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.Serialize<Response>(response, true));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.Write(e.Message);
       }
     }
 

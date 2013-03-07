@@ -127,12 +127,12 @@ namespace org.iringtools.library
         return null;
     }
 
-    public virtual IContentObject GetContent(string objectType, string id, string format)
+    public virtual IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormats)
     {
       throw new NotImplementedException();
     }
 
-    public virtual Response PostContent(IContentObject contentObject)
+    public virtual Response PostContents(IList<IContentObject> contentObjects)
     {
       throw new NotImplementedException();
     }
