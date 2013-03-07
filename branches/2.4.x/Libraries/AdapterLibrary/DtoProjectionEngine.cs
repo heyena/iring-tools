@@ -241,6 +241,11 @@ namespace org.iringtools.adapter.projection
               string values = propertyValues.ToString();
               dti.HashValue = Utility.MD5Hash(values);
 
+              if (_dataObjects[dataObjectIndex].GetType() == typeof(GenericDataObject))
+              {
+                dti.HasContent = ((GenericDataObject)(_dataObjects[dataObjectIndex])).HasContent;
+              }
+
               if (string.IsNullOrEmpty(dti.Identifier))
               {
                 _logger.Warn("DTI has no identifier: [" + values + "]");

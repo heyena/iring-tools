@@ -44,6 +44,7 @@ namespace org.iringtools.library
 
   public interface IContentObject : IDataObject
   {
+    string ObjectType { get; set; }
     string Identifier { get; set; }
     string ContentType { get; set; }
     Stream Content { get; set; }
