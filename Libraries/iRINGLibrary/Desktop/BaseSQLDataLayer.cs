@@ -661,7 +661,7 @@ namespace org.iringtools.library
           }
 
           if (_settings["HasContentProperty"] != null && 
-            dataObject.GetPropertyValue(_settings["HasContentProperty"]) != null)
+            !string.IsNullOrEmpty(Convert.ToString(dataObject.GetPropertyValue(_settings["HasContentProperty"]))))
           {
             if (_settings["HasContentPropertyValue"] == null ||
               dataObject.GetPropertyValue(_settings["HasContentProperty"]).ToString().ToLower().Contains( 

@@ -911,7 +911,7 @@ namespace org.iringtools.adapter
 
           string scope = String.Format("{0}.{1}", projectName, applicationName);
 
-          if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
+          if (!isScopeValid) throw new Exception(string.Format("Scope [{0}] not found.", scope));
 
           _settings["ProjectName"] = projectName;
           _settings["ApplicationName"] = applicationName;
@@ -980,7 +980,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error initializing scope: {0}" + ex));
+        _logger.Error(string.Format("Error initializing scope: {0}", ex));
         throw ex;
       }
     }
@@ -1008,7 +1008,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error initializing datalayer: {0}" + ex));
+        _logger.Error(string.Format("Error initializing datalayer: {0}",  ex));
         throw ex;
       }
     }
@@ -1025,7 +1025,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error initializing identity: {0}" + ex));
+        _logger.Error(string.Format("Error initializing identity: {0}", ex));
         throw ex;
       }
     }

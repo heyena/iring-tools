@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dti}TransferType"/>
  *         &lt;element name="sortIndex" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="internalIdentifier" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="hasContent" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="duplicateCount" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -38,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
     "transferType",
     "sortIndex",
     "internalIdentifier",
+    "hasContent",
     "duplicateCount"
 })
 public class DataTransferIndex {
@@ -51,6 +53,7 @@ public class DataTransferIndex {
     @XmlElement(required = true)
     protected String sortIndex;
     protected String internalIdentifier;
+    protected Boolean hasContent;
     protected Integer duplicateCount;
 
     /**
@@ -171,6 +174,31 @@ public class DataTransferIndex {
      */
     public void setInternalIdentifier(String value) {
         this.internalIdentifier = value;
+    }
+
+    /**
+     * Gets the value of the hasContent property.
+     * This getter has been renamed from isHasContent() to getHasContent() by cxf-xjc-boolean plugin.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean getHasContent() {
+        return hasContent;
+    }
+
+    /**
+     * Sets the value of the hasContent property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setHasContent(Boolean value) {
+        this.hasContent = value;
     }
 
     /**

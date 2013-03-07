@@ -75,5 +75,11 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "internalIdentifier", Order = 4, EmitDefaultValue = false)]
     public string InternalIdentifier { get; set; }
+
+    [DataMember(Name = "hasContent", Order = 5, EmitDefaultValue = false)]
+    public bool HasContent { get; set; }
+
+    [DataMember(Name = "duplicateCount", Order = 6, EmitDefaultValue = false)]
+    public int DuplicateCount { get; set; }
   }
 }
