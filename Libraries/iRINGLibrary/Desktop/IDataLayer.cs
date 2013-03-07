@@ -78,9 +78,9 @@ namespace org.iringtools.library
 
     IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex);
 
-    IContentObject GetContent(string objectType, string id, string format);
+    IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormats);
 
-    Response PostContent(IContentObject content);
+    Response PostContents(IList<IContentObject> contentObjects);
   }
 
   public interface IDataLayer2 : IDataLayer
