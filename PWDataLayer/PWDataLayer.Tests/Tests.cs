@@ -55,9 +55,15 @@ namespace org.iringtools.adapter.datalayer.test
     [Test]
     public void TestGetContents()
     {
-      IContentObject contentObject = _dataLayer.GetContent("DTP_ENG2", "8bdd1237-7e3f-415b-9e21-ad18b5d64f2b", "doc");
+      IDictionary<string, string> idFormats = new Dictionary<string, string>()
+      {
+        {"8bdd1237-7e3f-415b-9e21-ad18b5d64f2b", "doc"},        
+        {"e7ac674a-1a58-46c8-9460-c500e6776573", "pdf"}
+      };
 
-      Assert.AreNotEqual(contentObject, null);
+      IList<IContentObject> contentObjects = _dataLayer.GetContents("DTP_ENG2", idFormats); 
+
+      Assert.Greater(contentObjects.Count, 0);
     }
 
     //[Test]
