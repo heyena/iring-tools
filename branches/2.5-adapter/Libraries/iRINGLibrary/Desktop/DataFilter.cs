@@ -110,18 +110,35 @@ namespace org.iringtools.library
 
         if (OrderExpressions != null && OrderExpressions.Count > 0)
         {
-          whereClause.Append(" ORDER BY ");
+            whereClause.Append(" ORDER BY ");
 
-          foreach (OrderExpression orderExpression in this.OrderExpressions)
-          {
-            string propertyName = orderExpression.PropertyName;
-            DataProperty dataProperty = null;
+            foreach (OrderExpression orderExpression in this.OrderExpressions)
+            {
+                string propertyName = orderExpression.PropertyName;
+                DataProperty dataProperty = null;
+                string orderStatement = string.Empty;
 
-            dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+                if (propertyName.Contains(","))  //Handling multiple columns in Sort By.
+                {
+                    string[] properties = propertyName.Split(',');
 
-            string orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
-            whereClause.Append(orderStatement);
-          }
+                    foreach (string propName in properties)
+                    {
+                        dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propName.ToUpper());
+
+                        orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
+                        whereClause.Append(orderStatement + ",");
+                    }
+                    whereClause.Remove(whereClause.ToString().LastIndexOf(","), 1);
+                }
+                else
+                {
+                    dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+
+                    orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
+                    whereClause.Append(orderStatement);
+                }
+            }
         }
 
         return whereClause.ToString();
