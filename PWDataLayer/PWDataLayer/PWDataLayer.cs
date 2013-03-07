@@ -252,101 +252,35 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public override DataTable GetDataTable(string tableName, IList<string> identifiers) { return null; }
-
-    // Return content if available or metadata otherwise
-    public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
+    public override DataTable GetDataTable(string tableName, IList<string> identifiers)
     {
-      IList<IDataObject> dataObjects = new List<IDataObject>();
-
       try
       {
-        ///TODO: get from config
-        string tempFoder = "c:\\temp\\projectwise\\";
+        List<string> docGuids = identifiers.ToList();
+        List<string> listAttributes = new List<string>();
 
         DatabaseDictionary dictionary = GetDatabaseDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-        List<string> listAttributes = new List<string>();
+        DataObject objDef = dictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower());
 
         foreach (DataProperty prop in objDef.dataProperties)
         {
           listAttributes.Add(prop.columnName);
         }
 
-        foreach (string identifier in identifiers)
-        {
-          FileStream stream = GetProjectWiseFile(identifier, tempFoder);
+        Login();
 
-          if (stream != null)
-          {
-            string docName = stream.Name.ToLower();
-            int extIndex = docName.LastIndexOf('.');
-            string contentType = "application/msword";
-
-            try
-            {
-              //TODO: get content type from configuration
-              contentType = Registry.ClassesRoot.OpenSubKey(docName.Substring(extIndex)).GetValue("Content Type").ToString();
-            }
-            catch (Exception ex)
-            {
-              _logger.Error("Error getting content type: " + ex.ToString());
-              throw ex;
-            }
-
-            MemoryStream outStream = new MemoryStream();
-            stream.CopyTo(outStream);
-            outStream.Position = 0;
-            stream.Close();
-
-            IContentObject contentObject = new GenericContentObject()
-            {
-              ObjectType = objectType,
-              Identifier = identifier,
-              Content = outStream,
-              ContentType = contentType
-            };
-
-            dataObjects.Add(contentObject);
-          }
-          else
-          {
-            try
-            {
-              Login();
-
-              DataTable dt = GetDocumentMetadata(identifier, listAttributes);
-
-              if (dt != null && dt.Rows.Count > 0)
-              {
-                IDataObject dataObject = new GenericDataObject()
-                {
-                  ObjectType = objectType
-                };
-
-                foreach (string attr in listAttributes)
-                {
-                  //TODO: attrs need to be property names instead of column names
-                  dataObject.SetPropertyValue(attr, dt.Rows[0][attr]);
-                }
-
-                dataObjects.Add(dataObject);
-              }
-            }
-            finally
-            {
-              Logout();
-            }
-          }
-        }
+        DataTable dt = GetDocumentMetadata(docGuids, listAttributes);
+        return dt;
       }
       catch (Exception e)
       {
         _logger.Error(e.Message);
         throw e;
       }
-
-      return dataObjects;
+      finally
+      {
+        Logout();
+      }
     }
 
     public override IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormats)
@@ -420,8 +354,6 @@ namespace org.iringtools.adapter.datalayer
         Logout();
       }
     }
-
-    
 
     public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
     {
@@ -1648,37 +1580,6 @@ namespace org.iringtools.adapter.datalayer
 
       return 0;
     }
-
-    //public override DataTable GetDataTable(string tableName, IList<string> identifiers)
-    //{
-    //  try
-    //  {
-    //    List<string> docGuids = identifiers.ToList();
-    //    List<string> listAttributes = new List<string>();
-
-    //    DatabaseDictionary dictionary = GetDatabaseDictionary();
-    //    DataObject objDef = dictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower());
-        
-    //    foreach (DataProperty prop in objDef.dataProperties)
-    //    {
-    //      listAttributes.Add(prop.columnName);
-    //    }
-
-    //    Login();
-
-    //    DataTable dt = GetDocumentMetadata(docGuids, listAttributes);
-    //    return dt;
-    //  }
-    //  catch (Exception e)
-    //  {
-    //    _logger.Error(e.Message);
-    //    throw e;
-    //  }
-    //  finally
-    //  {
-    //    Logout();
-    //  }
-    //}
 
     private DataTable GetDocumentMetadata(string docGuid, List<string> listAttributes)
     {
