@@ -71,14 +71,20 @@ namespace org.iringtools.adapter
       classObjects = new List<ClassObject>();
     }
 
-    [DataMember(Order = 0)]
+    [DataMember(Order = 0, Name = "identifier")]
     public string identifier { get; set; }
 
-    [DataMember(Order = 1)]
+    [DataMember(Order = 1, Name = "classObjects")]
     public List<ClassObject> classObjects { get; set; }
 
-    [DataMember(Order = 2)]
+    [DataMember(Order = 2, Name = "transferType")]
     public TransferType transferType { get; set; }
+
+    [DataMember(Order = 3, Name = "hasContent", EmitDefaultValue = false)]
+    public bool hasContent { get; set; }
+
+    [DataMember(Order = 4, Name = "duplicateCount", EmitDefaultValue = false)]
+    public int duplicateCount { get; set; }
 
     public ClassObject GetClassObject(string classId)
     {

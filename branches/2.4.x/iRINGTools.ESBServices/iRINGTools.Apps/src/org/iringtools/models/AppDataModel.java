@@ -2,10 +2,15 @@ package org.iringtools.models;
 
 import java.util.Map;
 
+import org.iringtools.dxfr.content.ContentObject;
+import org.iringtools.dxfr.content.ContentObjects;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Manifest;
+import org.iringtools.utility.HttpClient;
+import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.widgets.grid.Grid;
 
 public class AppDataModel extends DataModel
@@ -37,7 +42,7 @@ public class AppDataModel extends DataModel
         DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
             dtoRelativePath, filter, sortBy, sortOrder, start, limit, null);
         
-        pageDtoGrid = getDtoGrid(appRelativePath, manifest, graph, pageDtos);
+        pageDtoGrid = getDtoGrid(serviceUri, appRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
         
         if (dtis == null || dtis.getDataTransferIndexList() == null || dtis.getDataTransferIndexList().getItems().size() == 0)
@@ -76,5 +81,15 @@ public class AppDataModel extends DataModel
     }
     
     return pageDtoGrid;
+  }
+  
+  public ContentObject getContent(String targetUri) throws HttpClientException
+  {
+    HttpClient httpClient = new HttpClient(targetUri);
+    HttpUtils.addHttpHeaders(session, httpClient);
+
+    ContentObjects contentObjects = httpClient.get(ContentObjects.class);
+    
+    return contentObjects.getContentObject().get(0);
   }
 }

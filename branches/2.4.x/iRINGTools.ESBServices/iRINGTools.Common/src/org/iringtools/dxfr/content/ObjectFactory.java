@@ -30,14 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ContentObject }
-     * 
-     */
-    public ContentObject createContentObject() {
-        return new ContentObject();
-    }
-
-    /**
      * Create an instance of {@link ContentObjects }
      * 
      */
@@ -51,6 +43,14 @@ public class ObjectFactory {
      */
     public Attribute createAttribute() {
         return new Attribute();
+    }
+
+    /**
+     * Create an instance of {@link ContentObject }
+     * 
+     */
+    public ContentObject createContentObject() {
+        return new ContentObject();
     }
 
     /**

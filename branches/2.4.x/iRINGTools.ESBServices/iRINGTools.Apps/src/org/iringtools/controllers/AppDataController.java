@@ -1,5 +1,9 @@
 package org.iringtools.controllers;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import org.iringtools.dxfr.content.ContentObject;
 import org.iringtools.models.AppDataModel;
 import org.iringtools.widgets.grid.Grid;
 
@@ -9,7 +13,9 @@ public class AppDataController extends AbstractController
   private String refDataServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
-
+  private InputStream contentStream;
+  private String contentType;
+    
   private String baseUri;
   private String scope;
   private String app;
@@ -22,6 +28,7 @@ public class AppDataController extends AbstractController
   private String dir;  // sort direction
   private int start;
   private int limit;
+  private String target;
   
   public AppDataController() 
   {
@@ -80,6 +87,33 @@ public class AppDataController extends AbstractController
   public Grid getPageRelatedItemGrid()
   {
     return pageRelatedItemGrid;
+  }
+  
+  public String getContent()
+  {
+    try
+    {
+      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit, 
+          isAsync, asyncTimeout, pollingInterval);
+      
+      ContentObject contenObject = appDataModel.getContent(target);
+      contentType = contenObject.getMimeType();
+      contentStream = new ByteArrayInputStream(contenObject.getContent());
+      return SUCCESS;
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.getMessage());
+      return ERROR;
+    }
+  }
+
+  public InputStream getContentStream() {
+    return contentStream;
+  }
+  
+  public String getContentType() {
+    return contentType;
   }
   
   // --------------------------
@@ -203,5 +237,15 @@ public class AppDataController extends AbstractController
   public int getLimit()
   {
     return limit;
+  }
+
+  public String getTarget()
+  {
+    return target;
+  }
+
+  public void setTarget(String target)
+  {
+    this.target = target;
   }
 }

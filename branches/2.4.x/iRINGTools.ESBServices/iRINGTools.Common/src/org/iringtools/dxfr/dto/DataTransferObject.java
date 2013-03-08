@@ -4,22 +4,24 @@ package org.iringtools.dxfr.dto;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for DataTransferObject complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DataTransferObject">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="classObjects" type="{http://www.iringtools.org/dxfr/dto}ClassObjects" minOccurs="0"/>
+ *         &lt;element ref="{http://www.iringtools.org/dxfr/dto}classObjects" minOccurs="0"/>
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType" minOccurs="0"/>
+ *         &lt;element name="hasContent" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="duplicateCount" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -30,18 +32,21 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DataTransferObject", propOrder = {
+@XmlType(name = "", propOrder = {
     "identifier",
     "classObjects",
     "transferType",
+    "hasContent",
     "duplicateCount"
 })
+@XmlRootElement(name = "dataTransferObject")
 public class DataTransferObject {
 
     @XmlElement(required = true)
     protected String identifier;
     protected ClassObjects classObjects;
     protected TransferType transferType;
+    protected boolean hasContent;
     protected Integer duplicateCount;
 
     /**
@@ -114,6 +119,23 @@ public class DataTransferObject {
      */
     public void setTransferType(TransferType value) {
         this.transferType = value;
+    }
+
+    /**
+     * Gets the value of the hasContent property.
+     * This getter has been renamed from isHasContent() to getHasContent() by cxf-xjc-boolean plugin.
+     * 
+     */
+    public boolean getHasContent() {
+        return hasContent;
+    }
+
+    /**
+     * Sets the value of the hasContent property.
+     * 
+     */
+    public void setHasContent(boolean value) {
+        this.hasContent = value;
     }
 
     /**
