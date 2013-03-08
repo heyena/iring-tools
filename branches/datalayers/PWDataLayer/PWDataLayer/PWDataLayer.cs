@@ -303,42 +303,55 @@ namespace org.iringtools.adapter.datalayer
 
           if (stream != null)
           {
-            if (string.IsNullOrEmpty(format))
-            {
-              string docName = stream.Name.ToLower();
-              int extIndex = docName.LastIndexOf('.');
-              format = docName.Substring(extIndex);
-            }
-            else if (!format.StartsWith("."))
-            {
-              format = "." + format;
-            }
-
             try
             {
+              if (string.IsNullOrEmpty(format))
+              {
+                string docName = stream.Name.ToLower();
+                int extIndex = docName.LastIndexOf('.');
+
+                if (extIndex < 0)
+                {
+                  //TODO: get default format from config
+                  format = ".pdf";
+                }
+                else
+                {
+                  format = docName.Substring(extIndex);
+                }
+              }
+              else if (!format.StartsWith("."))
+              {
+                format = "." + format;
+              }
+
               //TODO: get content type from configuration
               contentType = Registry.ClassesRoot.OpenSubKey(format).GetValue("Content Type").ToString();
+
+              MemoryStream outStream = new MemoryStream();
+              stream.CopyTo(outStream);
+              outStream.Position = 0;
+              stream.Close();
+
+              IContentObject contentObject = new GenericContentObject()
+              {
+                ObjectType = objectType,
+                Identifier = id,
+                Content = outStream,
+                ContentType = contentType
+              };
+
+              contentObjects.Add(contentObject);
             }
             catch (Exception ex)
             {
               _logger.Error("Error getting content type: " + ex.ToString());
               throw ex;
             }
-
-            MemoryStream outStream = new MemoryStream();
-            stream.CopyTo(outStream);
-            outStream.Position = 0;
-            stream.Close();
-
-            IContentObject contentObject = new GenericContentObject()
+            finally
             {
-              ObjectType = objectType,
-              Identifier = id,
-              Content = outStream,
-              ContentType = contentType
-            };
-
-            contentObjects.Add(contentObject);
+              stream.Close();
+            }
           }
         }
 
