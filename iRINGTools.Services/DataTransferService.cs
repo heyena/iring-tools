@@ -312,6 +312,23 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets single content object.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/{graph}/{id}/content?format={format}")]
+    public void GetContent(string scope, string app, string graph, string id, string format)
+    {
+      try
+      {
+        IContentObject iContentObject = _dtoProvider.GetContent(scope, app, graph, id, format);
+        HttpContext.Current.Response.ContentType = iContentObject.ContentType;
+        HttpContext.Current.Response.BinaryWrite(iContentObject.Content.ToMemoryStream().GetBuffer());
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.Write(e.Message);
+      }
+    }
+
     [Description("Posts list of content objects as stream to service.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/content")]
     public void PostContents(string scope, string app, string graph, Stream stream)

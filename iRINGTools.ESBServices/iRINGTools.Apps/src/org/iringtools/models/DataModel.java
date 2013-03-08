@@ -99,7 +99,8 @@ public class DataModel {
 
 	protected final int MIN_FIELD_WIDTH = 50;
 	protected final int MAX_FIELD_WIDTH = 300;
-	protected final int INFO_FIELD_WIDTH = 28;
+  protected final int INFO_FIELD_WIDTH = 40;
+  protected final int CONTENT_FIELD_WIDTH = 60;
 	protected final int STATUS_FIELD_WIDTH = 60;
 	protected final int FIELD_PADDING = 2;
 	protected final int HEADER_PX_PER_CHAR = 6;
@@ -244,7 +245,6 @@ public class DataModel {
 				 * dtiRelativePath, serviceUri, fullDtiKey, partDtiKey,
 				 * lastFilterKey, currFilter); }
 				 */
-
 			}
 		}
 
@@ -935,7 +935,7 @@ public class DataModel {
 				pageDtis);
 	}
 
-	protected Grid getDtoGrid(String fieldsContext, Manifest manifest,
+	protected Grid getDtoGrid(String serviceUri, String relativePath, Manifest manifest,
 			Graph graph, DataTransferObjects dtos) throws DataModelException {
 		Grid dtoGrid = new Grid();
 
@@ -950,7 +950,7 @@ public class DataModel {
 				dtoGrid.setDescription(className);
 			}
 
-			List<Field> fields = getFields(fieldsContext, graph, null);
+			List<Field> fields = getFields(relativePath, graph, null);
 			dtoGrid.setFields(fields);
 
 			List<List<String>> gridData = new ArrayList<List<String>>();
@@ -958,9 +958,12 @@ public class DataModel {
 
 			List<DataTransferObject> dtoList = dtos.getDataTransferObjectList()
 					.getItems();
+			
+			boolean showContentField = false;
 
 			for (int dtoIndex = 0; dtoIndex < dtoList.size(); dtoIndex++) {
 				DataTransferObject dto = dtoList.get(dtoIndex);
+				
 				List<String> rowData = new ArrayList<String>();
 				List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
 
@@ -1023,9 +1026,24 @@ public class DataModel {
 				 * "</span>");
 				 * 
 				 * }else {
-				 */
+				 */				
+        
+				if (dataMode == DataMode.APP) {
+          if (dto.getHasContent())
+          {
+            String target = serviceUri + relativePath + "/content?filter={%22" + dto.getIdentifier() + "%22:%22%22}";
+            String value = String.format("<a href=\"content?target=%s\" target=\"_blank\"><img src=\"resources/images/content.png\"/></a>", target);          
+            rowData.set(1, value);
+            
+            showContentField = true;
+          }     
+          else
+          {
+            rowData.set(1, "");
+          }
+				}
+        
 				// update info field
-
 				rowData.set(
 						0,
 						"<input type=\"image\" src=\"resources/images/info-small.png\" "
@@ -1036,7 +1054,11 @@ public class DataModel {
 				// }
 
 				gridData.add(rowData);
-
+			}
+			
+			if (showContentField)
+			{
+			  // hide content field?
 			}
 		}
 
@@ -1529,7 +1551,8 @@ public class DataModel {
 
 		if (session.containsKey(fieldsKey)) {
 			fields = (List<Field>) session.get(fieldsKey);
-		} else {
+		} 
+		else {
 			fields = createFields(graph, startClassId);
 			session.put(fieldsKey, fields);
 		}
@@ -1541,7 +1564,6 @@ public class DataModel {
 		List<Field> fields = new ArrayList<Field>();
 
 		if (dataMode == DataMode.EXCHANGE) {
-
 			// Dups count field
 			Field dupField = new Field();
 			dupField.setName("Status");
@@ -1554,13 +1576,13 @@ public class DataModel {
 			fields.add(0, dupField);
 
 			// transfer-type field
-			Field field = new Field();
-			field.setName("Transfer Type");
-			field.setDataIndex("Transfer Type");
-			field.setType("string");
-			field.setWidth(100);
-			field.setFilterable(true);
-			fields.add(0, field);
+			Field transferField = new Field();
+			transferField.setName("Transfer Type");
+			transferField.setDataIndex("Transfer Type");
+			transferField.setType("string");
+			transferField.setWidth(100);
+			transferField.setFilterable(true);
+			fields.add(0, transferField);
 
 		/*	// Status field
 			Field statusField = new Field();
@@ -1571,16 +1593,28 @@ public class DataModel {
 			field.setFilterable(true);
 			fields.add(0, statusField);*/
 		}
-
+		
+		if (dataMode == DataMode.APP) {
+  		// content field
+  		Field contentField = new Field();
+  		contentField.setName("Content");
+  		contentField.setDataIndex("_content_");
+  		contentField.setType("string");
+  		contentField.setWidth(CONTENT_FIELD_WIDTH);
+  		contentField.setFixed(true);
+  		contentField.setFilterable(false);
+  		fields.add(0, contentField);
+		}
+		
 		// info field
-		Field field = new Field();
-		field.setName("&nbsp;");
-		field.setDataIndex("&nbsp;");
-		field.setType("string");
-		field.setWidth(INFO_FIELD_WIDTH);
-		field.setFixed(true);
-		field.setFilterable(false);
-		fields.add(0, field);
+    Field infoField = new Field();
+    infoField.setName("Info");
+    infoField.setDataIndex("_info_");
+    infoField.setType("string");
+    infoField.setWidth(INFO_FIELD_WIDTH);
+    infoField.setFixed(true);
+    infoField.setFilterable(false);
+    fields.add(0, infoField);
 
 		List<ClassTemplates> classTemplatesItems = graph
 				.getClassTemplatesList().getItems();

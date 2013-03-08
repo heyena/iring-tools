@@ -1073,6 +1073,34 @@ namespace org.iringtools.adapter
       }
     }
 
+    public IContentObject GetContent(string scope, string app, string graph, string id, string format)
+    {
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        GraphMap graphMap = _mapping.FindGraphMap(graph);
+        if (graph == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        }
+
+        IDictionary<string, string> idFormats = new Dictionary<string, string>() { {id, format} };
+        IList<IContentObject> iContentObjects = _dataLayer.GetContents(graphMap.dataObjectName, idFormats);
+
+        if (iContentObjects == null || iContentObjects.Count == 0)
+          throw new Exception("Content object [" + id + "] not found.");
+
+        return iContentObjects[0];
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting content object: " + ex.ToString());
+        throw ex;
+      }
+    }
+
     public Response PostContents(string scope, string app, string graph, ContentObjects contentObjects)
     {
       try

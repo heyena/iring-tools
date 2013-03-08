@@ -4,22 +4,23 @@ package org.iringtools.dxfr.dto;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TemplateObject complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TemplateObject">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="roleObjects" type="{http://www.iringtools.org/dxfr/dto}RoleObjects" minOccurs="0"/>
+ *         &lt;element ref="{http://www.iringtools.org/dxfr/dto}roleObjects" minOccurs="0"/>
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -30,12 +31,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TemplateObject", propOrder = {
+@XmlType(name = "", propOrder = {
     "templateId",
     "name",
     "roleObjects",
     "transferType"
 })
+@XmlRootElement(name = "templateObject")
 public class TemplateObject {
 
     @XmlElement(required = true)

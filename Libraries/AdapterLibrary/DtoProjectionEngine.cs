@@ -439,6 +439,12 @@ namespace org.iringtools.adapter.projection
         for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
           DataTransferObject dto = new DataTransferObject();
+
+          if (_dataObjects[dataObjectIndex].GetType() == typeof(GenericDataObject))
+          {
+            dto.hasContent = ((GenericDataObject)_dataObjects[dataObjectIndex]).HasContent;
+          }
+
           dataTransferObjects.DataTransferObjectList.Add(dto);
 
           bool hasRelatedProperty;

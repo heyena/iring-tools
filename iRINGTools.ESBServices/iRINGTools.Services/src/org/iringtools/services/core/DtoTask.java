@@ -273,7 +273,13 @@ public class DtoTask implements Runnable
       for (DataTransferObject dto : resultDtoListItems)
       {
         if (dti.getIdentifier().equalsIgnoreCase(dto.getIdentifier()))
-        {         dto.setDuplicateCount(dti.getDuplicateCount());
+        {      
+          if (dti.getHasContent() != null)
+          {
+            dto.setHasContent(dti.getHasContent());
+          }
+          
+          dto.setDuplicateCount(dti.getDuplicateCount());
           orderedDtoListItems.add(dto);
           break;
         }

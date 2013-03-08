@@ -160,6 +160,7 @@ public class ExchangeDataController extends AbstractController
     
     return SUCCESS;
   }
+  
   public Grid getSummaryGrid() {
 		return summaryGrid;
 	}

@@ -9,18 +9,18 @@ import org.iringtools.dxfr.response.ExchangeResponse;
 
 
 /**
- * <p>Java class for DataTransferObjects complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DataTransferObjects">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="scopeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="appName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="dataTransferObjectList" type="{http://www.iringtools.org/dxfr/dto}DataTransferObjectList" minOccurs="0"/>
+ *         &lt;element ref="{http://www.iringtools.org/dxfr/dto}dataTransferObjectList" minOccurs="0"/>
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="senderScopeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="senderAppName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -34,7 +34,7 @@ import org.iringtools.dxfr.response.ExchangeResponse;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DataTransferObjects", propOrder = {
+@XmlType(name = "", propOrder = {
     "scopeName",
     "appName",
     "dataTransferObjectList",
