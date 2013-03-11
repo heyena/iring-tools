@@ -1157,10 +1157,17 @@ namespace org.iringtools.adapter
           iContentObject.ContentType = contentObject.MimeType;
           iContentObject.Content = iContentObject.Content.ToMemoryStream();
 
+          IDataObject dataObject = new GenericDataObject()
+          {
+            ObjectType = graphMap.dataObjectName
+          };
+
           foreach (Attribute attr in contentObject.Attributes)
           {
-            iContentObject.SetPropertyValue(attr.Name, attr.Value);
+            dataObject.SetPropertyValue(attr.Name, attr.Value);
           }
+
+          iContentObject.DataObject = dataObject;
 
           contentObjects.Add(contentObject);
         }
