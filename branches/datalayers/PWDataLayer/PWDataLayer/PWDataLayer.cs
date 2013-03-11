@@ -406,12 +406,7 @@ namespace org.iringtools.adapter.datalayer
     {
       throw new NotImplementedException();
     }
-
-    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit)
-    {
-      throw new NotImplementedException();
-    }
-
+    
     public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName)
     {
       throw new NotImplementedException();
@@ -431,17 +426,8 @@ namespace org.iringtools.adapter.datalayer
         {
           SortedList<string, string> slProps = new SortedList<string, string>();
           string objectType = ((GenericDataObject)dataObject).ObjectType;
-
-          Stream fsi = null;
-          if (dataObject is IContentObject)
-          {
-            fsi = ((IContentObject)dataObject).Content;
-
-            ///TODO: check inbound DataObject for DocumentName          
-            slProps.Add("DocumentName", "DWG-" + DateTime.Now.Ticks + "." + ((IContentObject)dataObject).ContentType);
-          }
-
           DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
           foreach (DataProperty prop in objDef.dataProperties)
           {
             object propValue = null;
@@ -460,13 +446,77 @@ namespace org.iringtools.adapter.datalayer
 
           slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
 
-          string docGUID = CreateNewPWDocument(fsi, slProps);
+          string docGUID = CreateNewPWDocument(null, slProps);
+
           Status status = new Status()
           {
-            Identifier = docGUID
+            Identifier = docGUID,
+            Messages = new Messages { "saved successfully." }
           };
 
           response.StatusList.Add(status);
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.Message);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+      finally
+      {
+        Logout();
+      }
+
+      return response;
+    }
+
+    public override Response PostContents(IList<IContentObject> contentObjects)
+    {
+      Response response = new Response();
+
+      try
+      {
+        DatabaseDictionary dictionary = GetDatabaseDictionary();
+
+        Login();
+
+        foreach (IContentObject contentObject in contentObjects)
+        {
+          DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == contentObject.ObjectType.ToLower());
+          SortedList<string, string> slProps = new SortedList<string, string>();
+
+          foreach (DataProperty prop in objDef.dataProperties)
+          {
+            object propValue = null;
+
+            try
+            {
+              propValue = contentObject.DataObject.GetPropertyValue(prop.propertyName);
+            }
+            catch (Exception) { }
+
+            if (propValue != null)
+            {
+              slProps.Add(prop.columnName, propValue.ToString());
+            }
+          }
+
+          slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
+
+          if (contentObject.Content != null)
+          {
+            //TODO: validate DocumentName in the property list
+            string docGUID = CreateNewPWDocument(contentObject.Content, slProps);
+
+            Status status = new Status()
+            {
+              Identifier = docGUID,
+              Messages = new Messages { docGUID + " saved successfully." }
+            };
+
+            response.StatusList.Add(status);
+          }
         }
       }
       catch (Exception e)
