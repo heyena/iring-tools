@@ -292,6 +292,15 @@ namespace org.iringtools.adapter.datalayer
         string contentType = "application/msword";
         string tempFoder = "c:\\temp\\projectwise\\";
 
+        List<string> listAttributes = new List<string>();
+        DatabaseDictionary dictionary = GetDatabaseDictionary();
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+        foreach (DataProperty prop in objDef.dataProperties)
+        {
+          listAttributes.Add(prop.columnName);
+        }
+
         Login();
 
         foreach (var pair in idFormats)
@@ -299,8 +308,30 @@ namespace org.iringtools.adapter.datalayer
           string id = pair.Key;
           string format = pair.Value;
 
-          FileStream stream = GetProjectWiseFile(id, tempFoder);
+          IContentObject contentObject = new GenericContentObject()
+          {
+            ObjectType = objectType,
+            Identifier = id,
+          };
 
+          contentObjects.Add(contentObject);
+
+          #region get meta data
+          DataTable dt = GetDocumentMetadata(id, listAttributes);
+          if (dt == null)
+          {
+            throw new Exception("Object [" + id + "] does not exist.");
+          }
+
+          if (dt.Rows.Count > 0)
+          {
+            IDataObject dataObject = ToDataObject(dt.Rows[0], objDef);
+            contentObject.DataObject = dataObject;
+          }
+          #endregion
+
+          #region get content
+          FileStream stream = GetProjectWiseFile(id, tempFoder);
           if (stream != null)
           {
             try
@@ -332,15 +363,8 @@ namespace org.iringtools.adapter.datalayer
               outStream.Position = 0;
               stream.Close();
 
-              IContentObject contentObject = new GenericContentObject()
-              {
-                ObjectType = objectType,
-                Identifier = id,
-                Content = outStream,
-                ContentType = contentType
-              };
-
-              contentObjects.Add(contentObject);
+              contentObject.Content = outStream;
+              contentObject.ContentType = contentType;
             }
             catch (Exception ex)
             {
@@ -352,6 +376,7 @@ namespace org.iringtools.adapter.datalayer
               stream.Close();
             }
           }
+          #endregion
         }
 
         return contentObjects;
@@ -1605,10 +1630,10 @@ namespace org.iringtools.adapter.datalayer
     {
       DataTable dtReturn = new DataTable();
 
-      foreach (string sDocGuid in docGuids)
+      foreach (string docGuid in docGuids)
       {
         SavedSearchAssembly.SavedSearchWrapper.InitializeQuery(0, false);
-        SavedSearchAssembly.SavedSearchWrapper.AddDocumentGuidCriterion(sDocGuid, 0);
+        SavedSearchAssembly.SavedSearchWrapper.AddDocumentGuidCriterion(docGuid, 0);
 
         DataTable dt = SavedSearchAssembly.SavedSearchWrapper.Search(listAttributes);
 
