@@ -141,6 +141,7 @@
     <Compile Include="DataObjects.cs" />
     <Compile Include="DataProviders.cs" />
     <Compile Include="DataRelationships.cs" />
+    <Compile Include="MimeTypes.cs" />
     <Compile Include="OAuthProvider.cs" />
     <Compile Include="Picklists.cs" />
     <Compile Include="PredicateBuilder.cs" />
