@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="mimeType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="content" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="hashType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="hashValue" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="URL" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element ref="{http://www.iringtools.org/dxfr/content}attributes" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -36,6 +39,9 @@ import javax.xml.bind.annotation.XmlType;
     "identifier",
     "mimeType",
     "content",
+    "hashType",
+    "hashValue",
+    "url",
     "attributes"
 })
 @XmlRootElement(name = "contentObject")
@@ -46,6 +52,10 @@ public class ContentObject {
     protected String mimeType;
     @XmlInlineBinaryData
     protected byte[] content;
+    protected String hashType;
+    protected String hashValue;
+    @XmlElement(name = "URL")
+    protected String url;
     protected Attributes attributes;
 
     /**
@@ -116,6 +126,78 @@ public class ContentObject {
      */
     public void setContent(byte[] value) {
         this.content = ((byte[]) value);
+    }
+
+    /**
+     * Gets the value of the hashType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getHashType() {
+        return hashType;
+    }
+
+    /**
+     * Sets the value of the hashType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setHashType(String value) {
+        this.hashType = value;
+    }
+
+    /**
+     * Gets the value of the hashValue property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getHashValue() {
+        return hashValue;
+    }
+
+    /**
+     * Sets the value of the hashValue property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setHashValue(String value) {
+        this.hashValue = value;
+    }
+
+    /**
+     * Gets the value of the url property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getURL() {
+        return url;
+    }
+
+    /**
+     * Sets the value of the url property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setURL(String value) {
+        this.url = value;
     }
 
     /**

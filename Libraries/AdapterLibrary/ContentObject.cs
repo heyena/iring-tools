@@ -24,7 +24,16 @@ namespace org.iringtools.adapter
     [DataMember(Name = "content", Order = 2, EmitDefaultValue = false)]
     public byte[] Content { get; set; }
 
-    [DataMember(Name = "attributes", Order = 3, EmitDefaultValue = false)]
+    [DataMember(Name = "hashType", Order = 3, EmitDefaultValue = false)]
+    public string HashType { get; set; }
+
+    [DataMember(Name = "hashValue", Order = 4, EmitDefaultValue = false)]
+    public string HashValue { get; set; }
+
+    [DataMember(Name = "URL", Order = 5, EmitDefaultValue = false)]
+    public string URL { get; set; }
+
+    [DataMember(Name = "attributes", Order = 6, EmitDefaultValue = false)]
     public Attributes Attributes { get; set; }
   }
 
