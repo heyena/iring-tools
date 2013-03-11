@@ -325,8 +325,7 @@ namespace org.iringtools.adapter.datalayer
                 format = "." + format;
               }
 
-              //TODO: get content type from configuration
-              contentType = Registry.ClassesRoot.OpenSubKey(format).GetValue("Content Type").ToString();
+              contentType = MimeTypes.Dictionary[format];
 
               MemoryStream outStream = new MemoryStream();
               stream.CopyTo(outStream);
