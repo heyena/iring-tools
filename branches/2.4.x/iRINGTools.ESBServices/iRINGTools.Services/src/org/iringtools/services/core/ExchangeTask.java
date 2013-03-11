@@ -123,7 +123,6 @@ public class ExchangeTask implements Runnable
     }
     else
     {
-
     	Manifest manifest = xReq.getManifest();
     	DataTransferIndices dtis = xReq.getDataTransferIndices();
 

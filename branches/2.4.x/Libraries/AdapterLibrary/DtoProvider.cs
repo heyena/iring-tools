@@ -1047,7 +1047,13 @@ namespace org.iringtools.adapter
         {
           throw new Exception("Graph [" + graph + "] not found.");
         }
-        
+
+        DataObject objDef = _dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == graphMap.dataObjectName.ToLower());
+        if (objDef == null)
+        {
+          throw new Exception("Data object [" + graphMap.dataObjectName + "] not found.");
+        }
+
         IList<IContentObject> iContentObjects = _dataLayer.GetContents(graphMap.dataObjectName, idFormats);
         
         #region marshall iContentObjects into contentObjects
@@ -1057,8 +1063,35 @@ namespace org.iringtools.adapter
           {
             Identifier = iContentObject.Identifier,
             MimeType = iContentObject.ContentType,
-            Content = iContentObject.Content.ToMemoryStream().ToArray()
+            Content = iContentObject.Content.ToMemoryStream().ToArray(),
+            HashType = iContentObject.HashType,
+            HashValue = iContentObject.HashValue,
+            URL = iContentObject.URL
           };
+
+          IDataObject dataObj = iContentObject.DataObject;
+          if (dataObj != null)
+          {            
+            foreach (DataProperty prop in objDef.dataProperties)
+            {
+              object value = dataObj.GetPropertyValue(prop.propertyName);
+              if (value != null)
+              {
+                string valueStr = Convert.ToString(value);
+
+                if (prop.dataType == DataType.DateTime)
+                  valueStr = Utility.ToXsdDateTime(valueStr);
+
+                Attribute attr = new Attribute()
+                {
+                  Name = prop.propertyName,
+                  Value = valueStr
+                };
+
+                contentObject.Attributes.Add(attr);
+              }
+            }
+          }
 
           contentObjects.Add(contentObject);
         }

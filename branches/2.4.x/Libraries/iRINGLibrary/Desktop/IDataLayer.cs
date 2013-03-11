@@ -43,7 +43,7 @@ namespace org.iringtools.library
   }
 
   public interface IContentObject : IDataObject
-  {
+  {    
     string ObjectType { get; set; }
     string Identifier { get; set; }
     string ContentType { get; set; }
@@ -51,6 +51,7 @@ namespace org.iringtools.library
     string HashType { get; set; }
     string HashValue { get; set; }
     string URL { get; set; }
+    IDataObject DataObject { get; set; }
   }
 
   public interface IDataLayer

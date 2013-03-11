@@ -29,6 +29,9 @@
     <xs:element name="identifier" type="xs:string" />
     <xs:element name="mimeType" type="xs:string" minOccurs="0" />
     <xs:element name="content" type="xs:base64Binary" minOccurs="0" />
+    <xs:element name="hashType" type="xs:string" minOccurs="0" />
+    <xs:element name="hashValue" type="xs:string" minOccurs="0" />
+    <xs:element name="URL" type="xs:string" minOccurs="0" />
     <xs:element ref="attributes" minOccurs="0" />
    </xs:sequence>
   </xs:complexType>

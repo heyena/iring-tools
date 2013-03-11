@@ -18,5 +18,8 @@ namespace org.iringtools.library
     public string URL { get; set; }
 
     public string Identifier { get; set; }
+
+    [IgnoreDataMember]
+    public IDataObject DataObject { get; set; }
   }
 }
