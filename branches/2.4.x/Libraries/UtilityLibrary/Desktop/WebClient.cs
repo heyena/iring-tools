@@ -377,10 +377,22 @@ namespace org.iringtools.utility
 
     public Stream GetStream(string relativeUri)
     {
-        return GetStream(relativeUri, null);
+        string contentType;
+        return GetStream(relativeUri, null, out contentType);
+    }
+
+    public Stream GetStream(string relativeUri, out string contentType)
+    {
+      return GetStream(relativeUri, null, out contentType);
+    }
+
+    private Stream GetStream(string relativeUri, string acceptType)
+    {
+      string contentType;
+      return GetStream(relativeUri, acceptType, out contentType);
     }
    
-    private Stream GetStream(string relativeUri,string acceptType)
+    private Stream GetStream(string relativeUri, string acceptType, out string contentType)
     {
       try
       {
@@ -399,7 +411,6 @@ namespace org.iringtools.utility
         {
             _logger.Debug("Accept: " + acceptType);
             ((HttpWebRequest)request).Accept = acceptType;
-
         }
         
         request.Method = "Get";
@@ -414,6 +425,8 @@ namespace org.iringtools.utility
         
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         _logger.Debug("Get Response!");
+
+        contentType = response.ContentType;
 
         if (response.StatusCode == HttpStatusCode.Accepted)
         {
@@ -468,7 +481,7 @@ namespace org.iringtools.utility
     {
         try
         {
-            Stream stream = GetStream(relativeUri,"application/json");
+            Stream stream = GetStream(relativeUri, "application/json");
             string message = Utility.SerializeFromStream(stream);
             return message;
         }

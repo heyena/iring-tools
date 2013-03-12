@@ -241,9 +241,13 @@ namespace org.iringtools.adapter.projection
               string values = propertyValues.ToString();
               dti.HashValue = Utility.MD5Hash(values);
 
-              if (_dataObjects[dataObjectIndex].GetType() == typeof(GenericDataObject))
+              if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericDataObject)))
               {
                 dti.HasContent = ((GenericDataObject)(_dataObjects[dataObjectIndex])).HasContent;
+              } 
+              else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
+              {
+                dti.HasContent = ((GenericContentObject)(_dataObjects[dataObjectIndex])).HasContent;
               }
 
               if (string.IsNullOrEmpty(dti.Identifier))
@@ -440,9 +444,13 @@ namespace org.iringtools.adapter.projection
         {
           DataTransferObject dto = new DataTransferObject();
 
-          if (_dataObjects[dataObjectIndex].GetType() == typeof(GenericDataObject))
+          if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericDataObject)))
           {
             dto.hasContent = ((GenericDataObject)_dataObjects[dataObjectIndex]).HasContent;
+          }
+          else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
+          {
+            dto.hasContent = ((GenericContentObject)_dataObjects[dataObjectIndex]).HasContent;
           }
 
           dataTransferObjects.DataTransferObjectList.Add(dto);
