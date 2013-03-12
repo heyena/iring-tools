@@ -660,12 +660,32 @@ namespace org.iringtools.library
             }
           }
 
-          if (_settings["HasContentProperty"] != null && 
-            !string.IsNullOrEmpty(Convert.ToString(dataObject.GetPropertyValue(_settings["HasContentProperty"]))))
+          // evaluate has-content expression            
+          if (_settings["HasContentExpression"] != null)
           {
-            if (_settings["HasContentPropertyValue"] == null ||
-              dataObject.GetPropertyValue(_settings["HasContentProperty"]).ToString().ToLower().Contains( 
-                _settings["HasContentPropertyValue"].ToString().ToLower()))
+            string expression = _settings["HasContentExpression"].ToString();
+
+            foreach (DataProperty prop in objectDefinition.dataProperties)
+            {
+              if (expression.Contains(prop.propertyName))
+              {
+                object value = dataObject.GetPropertyValue(prop.propertyName);
+
+                if (value != null)
+                {
+                  string valueStr = value.ToString();
+
+                  if (prop.dataType == DataType.Char || prop.dataType == DataType.String)
+                  {
+                    valueStr = "\"" + valueStr + "\"";
+                  }
+
+                  expression = expression.Replace(prop.propertyName, valueStr);
+                }
+              }
+            }
+
+            if ((bool)Utility.Evaluate(expression))
             {
               ((GenericDataObject)dataObject).HasContent = true;
             }
