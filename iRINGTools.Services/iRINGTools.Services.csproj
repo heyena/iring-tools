@@ -66,10 +66,6 @@
     <Reference Include="Iesi.Collections">
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="IWDataLayer, Version=1.1.1.616, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\iringtools_datalayers\iw_datalayer\trunk\IWDataLayer\bin\Debug\IWDataLayer.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
