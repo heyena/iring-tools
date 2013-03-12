@@ -506,11 +506,21 @@ namespace org.iringtools.adapter
           scope.Applications = new ScopeApplications();
         }
 
-        scope.Applications.Add(application);
-        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+        ScopeApplication sa = scope.Applications.Find(x => x.Name.ToLower() == application.Name.ToLower());
 
-        response.Append(Generate(scope.Name, application.Name));
-        status.Messages.Add("Application [{0}.{1}] updated successfully.");
+        if (sa == null)
+        {
+            scope.Applications.Add(application);
+            Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+
+            response.Append(Generate(scope.Name, application.Name));
+            status.Messages.Add("Application [{0}.{1}] Added successfully.");
+        }
+        else
+        {
+            status.Level = StatusLevel.Error;
+            status.Messages.Add(String.Format("Application [{0}.{1}] already exists.", application));
+        }
       }
       catch (Exception ex)
       {
