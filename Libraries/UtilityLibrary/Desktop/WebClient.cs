@@ -665,8 +665,9 @@ namespace org.iringtools.utility
         requestStream.Flush();
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        T responseEntity = Utility.DeserializeFromStream<T>(response.GetResponseStream(), useDataContractSerializer);
-
+        Stream responseStream = response.GetResponseStream();
+        
+        T responseEntity = Utility.DeserializeFromStream<T>(responseStream, useDataContractSerializer);
         return responseEntity;
       }
       catch (Exception exception)
