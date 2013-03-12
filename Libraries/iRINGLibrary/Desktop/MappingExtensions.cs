@@ -413,7 +413,7 @@ namespace org.iringtools.mapping
           if (propertyParts.Length > 2)
           {
             DataObject dataObject = dataDictionary.dataObjects.First(c => c.objectName == propertyParts[0]);
-            DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == propertyParts[1]);
+            DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == propertyParts[1]);
 
             if (dataRelationship.relationshipType == RelationshipType.OneToMany)
             {
