@@ -2,6 +2,8 @@ package org.iringtools.models;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1005,7 +1007,6 @@ public class DataModel {
 						rowData.add("<input type=\"image\" src=\"resources/images/error.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Error"+ "\")' "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
 					}
 					}
-					
 				}
 
 				if (dto.getClassObjects().getItems().size() > 0) {
@@ -1031,7 +1032,19 @@ public class DataModel {
 				if (dataMode == DataMode.APP) {
           if (dto.getHasContent())
           {
-            String target = serviceUri + relativePath + "/content?filter={%22" + dto.getIdentifier() + "%22:%22%22}";
+            String filter = "";
+            
+            try
+            {
+              filter = URLEncoder.encode("{\"" + dto.getIdentifier() + "\":\"\"}", "utf-8");
+            }
+            catch (UnsupportedEncodingException e)
+            {
+              e.printStackTrace();
+              filter = "{%22" + dto.getIdentifier() + "%22:%22%22}";
+            } 
+            
+            String target = serviceUri + relativePath + "/content?filter=" + filter;
             String value = String.format("<a href=\"content?target=%s\" target=\"_blank\"><img src=\"resources/images/content.png\"/></a>", target);          
             rowData.set(1, value);
             
