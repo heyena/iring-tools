@@ -47,6 +47,7 @@ using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Ionic.Zip;
+using System.Reflection;
 
 namespace org.iringtools.utility
 {
@@ -1645,6 +1646,45 @@ namespace org.iringtools.utility
       finally
       {
         fs.Close();
+      }
+    }
+
+    public static object Evaluate(string expression)
+    {
+      try
+      {
+        string source = string.Format(@"
+namespace org.iringtools.dynamic
+{{
+  public class Evaluator
+  {{
+    public object Evaluate()
+    {{
+      return {0};
+    }}
+  }}
+}}", expression);
+
+        CodeDomProvider provider = new CSharpCodeProvider();
+        CompilerParameters parameters = new CompilerParameters();
+
+        CompilerResults compiler = provider.CompileAssemblyFromSource(parameters, source);
+        if (compiler.Errors.Count > 0)
+        {
+          return null;
+        }
+
+        Assembly assembly = compiler.CompiledAssembly;
+        object instance = assembly.CreateInstance("org.iringtools.dynamic.Evaluator");
+
+        Type type = instance.GetType();
+        MethodInfo method = type.GetMethod("Evaluate");
+
+        return method.Invoke(instance, null);
+      }
+      catch
+      {
+        return null;
       }
     }
   }
