@@ -100,6 +100,7 @@ namespace org.iringtools.adapter.datalayer
 
           if (form["Generate"] != null)
           {
+              configuration.Generate = true;
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
             hpf.InputStream.Flush();
             hpf.InputStream.Position = 0;
@@ -333,11 +334,11 @@ namespace org.iringtools.adapter.datalayer
       
       else
       {
-        return new JsonResult() //(6)
-        {
-          ContentType = "text/html",
-          Data = new { success = false }
-        };
+          return new JsonResult() //(6)
+          {
+              ContentType = "text/html",
+              Data = new { success = false }
+          };
       }
     }
 
