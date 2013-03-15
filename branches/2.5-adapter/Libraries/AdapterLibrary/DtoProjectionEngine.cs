@@ -241,6 +241,15 @@ namespace org.iringtools.adapter.projection
               string values = propertyValues.ToString();
               dti.HashValue = Utility.MD5Hash(values);
 
+              if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericDataObject)))
+              {
+                dti.HasContent = ((GenericDataObject)(_dataObjects[dataObjectIndex])).HasContent;
+              } 
+              else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
+              {
+                dti.HasContent = ((GenericContentObject)(_dataObjects[dataObjectIndex])).HasContent;
+              }
+
               if (string.IsNullOrEmpty(dti.Identifier))
               {
                 _logger.Warn("DTI has no identifier: [" + values + "]");
@@ -434,6 +443,16 @@ namespace org.iringtools.adapter.projection
         for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
           DataTransferObject dto = new DataTransferObject();
+
+          if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericDataObject)))
+          {
+            dto.hasContent = ((GenericDataObject)_dataObjects[dataObjectIndex]).HasContent;
+          }
+          else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
+          {
+            dto.hasContent = ((GenericContentObject)_dataObjects[dataObjectIndex]).HasContent;
+          }
+
           dataTransferObjects.DataTransferObjectList.Add(dto);
 
           bool hasRelatedProperty;

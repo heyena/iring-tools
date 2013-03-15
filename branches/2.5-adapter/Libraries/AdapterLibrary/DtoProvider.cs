@@ -52,6 +52,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.ServiceModel.Web;
+using Newtonsoft.Json;
 
 namespace org.iringtools.adapter
 {
@@ -169,6 +170,39 @@ namespace org.iringtools.adapter
         Revision = version.Revision
       };
     }
+
+    public Key GetKey(GraphMap graphMap, ClassMap classMap, string identifier)
+    {
+      foreach (var classTemplateMap in graphMap.classTemplateMaps)
+      {
+        foreach (var templateMap in classTemplateMap.templateMaps)
+        {
+          foreach (var roleMap in templateMap.roleMaps)
+          {
+            if ((roleMap.type == RoleType.Property ||
+                 roleMap.type == RoleType.DataProperty ||
+                 roleMap.type == RoleType.ObjectProperty) &&
+                 identifier.ToLower() == roleMap.propertyName.ToLower())
+            {
+              Key key = new Key()
+              {
+                classId = classMap.id,
+                templateId = templateMap.id,
+                roleId = roleMap.id
+              };
+
+              return key;
+            }
+          }
+        }
+      }
+
+      string error = string.Format(
+        "Property [{0}], which is class identifier of class [{1}], is not mapped to any role in graph [{2}].",
+        identifier, classMap.name, graphMap.name);
+
+      throw new Exception(error);
+    }
     
     public Manifest GetManifest(string scope, string app, string graph)
     {
@@ -205,6 +239,11 @@ namespace org.iringtools.adapter
             continue;
           }
 
+          if (manifestGraph == null)
+          {
+            throw new Exception("Graph [" + graph + "] does not exist in mapping.");
+          }
+
           string dataObjectName = graphMap.dataObjectName;
           DataObject dataObject = null;
 
@@ -217,130 +256,120 @@ namespace org.iringtools.adapter
             }
           }
 
-          if (dataObject != null)
+          if (dataObject == null)
           {
-            foreach (var classTemplateMap in graphMap.classTemplateMaps)
+            throw new Exception("Data Object [" + dataObjectName + "] does not exist in data dictionary.");
+          }
+
+          foreach (var classTemplateMap in graphMap.classTemplateMaps)
+          {
+            ClassTemplates manifestClassTemplates = new ClassTemplates();
+            manifestGraph.classTemplatesList.Add(manifestClassTemplates);
+
+            ClassMap classMap = classTemplateMap.classMap;
+            List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+            
+            Keys keys = new Keys();
+
+            if (templateMaps.Count > 0)
             {
-              ClassTemplates manifestClassTemplates = new ClassTemplates()
+              foreach (string identifier in classMap.identifiers)
               {
-                templates = new Templates()
+                Key key = GetKey(graphMap, classMap, identifier);
+                keys.Add(key);
+              }
+            }
+
+            Class manifestClass = new Class
+            {
+              id = classMap.id,
+              name = classMap.name,
+              keys = keys,
+            };
+            manifestClassTemplates.@class = manifestClass;
+
+            foreach (TemplateMap templateMap in templateMaps)
+            {
+              Template manifestTemplate = new Template
+              {
+                roles = new Roles(),
+                id = templateMap.id,
+                name = templateMap.name,
+                transferOption = TransferOption.Desired,
               };
-              manifestGraph.classTemplatesList.Add(manifestClassTemplates);
+              manifestClassTemplates.templates.Add(manifestTemplate);
 
-              ClassMap classMap = classTemplateMap.classMap;
-              TemplateMaps templateMaps = classTemplateMap.templateMaps;
-              String templateName, roleName, roleId, templateId;
-
-              Keys keys = new Keys();
-              foreach (ClassTemplateMap anyClassTemplateMap in graphMap.classTemplateMaps)
+              foreach (RoleMap roleMap in templateMap.roleMaps)
               {
-                ClassMap anyClassMap = anyClassTemplateMap.classMap;
-
-                foreach (TemplateMap templateMap in anyClassTemplateMap.templateMaps)
+                Role manifestRole = new Role
                 {
-                  templateName = templateMap.name;
-                  templateId = templateMap.id;
+                  type = roleMap.type,
+                  id = roleMap.id,
+                  name = roleMap.name,
+                  dataType = roleMap.dataType,
+                  value = roleMap.value,
+                };
+                manifestTemplate.roles.Add(manifestRole);
 
-                  foreach (RoleMap roleMap in templateMap.roleMaps)
+                if (roleMap.type == RoleType.Property ||
+                    roleMap.type == RoleType.DataProperty ||
+                    roleMap.type == RoleType.ObjectProperty)
+                {
+                  if (!String.IsNullOrEmpty(roleMap.propertyName))
                   {
-                    roleName = roleMap.name;
-                    roleId = roleMap.id;
+                    string[] propertyParts = roleMap.propertyName.Split('.');
+                    string objectName = propertyParts[propertyParts.Length - 2].Trim();
+                    string propertyName = propertyParts[propertyParts.Length - 1].Trim();
+                    DataObject dataObj = dataObject;
 
-                    if (!String.IsNullOrEmpty(roleMap.propertyName))
+                    if (propertyParts.Length < 2)
                     {
-                      string[] property = roleMap.propertyName.Split('.');
-                      string objectName = property[0].Trim();
-                      string propertyName = property[1].Trim();
-
-                      foreach (String identifier in classMap.identifiers)
+                      throw new Exception("Property [" + roleMap.propertyName + "] is invalid.");
+                    }
+                    else if (propertyParts.Length > 2) // related property
+                    {
+                      // find related object
+                      for (int i = 1; i < propertyParts.Length - 1; i++)
                       {
-                        if (identifier.ToLower() == roleMap.propertyName.ToLower())
+                        DataRelationship rel = dataObj.dataRelationships.Find(x => x.relationshipName.ToLower() == propertyParts[i].ToLower());
+                        if (rel == null)
                         {
-                          Key key = new Key();
-                          key.templateId = templateId;
-                          key.roleId = roleId;
-                          key.classId = anyClassMap.id;
-                          keys.Add(key);
+                          throw new Exception("Relationship [" + rel.relationshipName + "] does not exist.");
+                        }
+
+                        dataObj = dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == rel.relatedObjectName.ToLower());
+                        if (dataObj == null)
+                        {
+                          throw new Exception("Related object [" + rel.relatedObjectName + "] is not found.");
                         }
                       }
                     }
-                  }
-                }
-              }
 
-              if (keys.Count == 0)
-              {
-                throw new Exception("Key property is not mapped.");
-              }
-
-              Class manifestClass = new Class
-              {
-                id = classMap.id,
-                name = classMap.name,
-                keys = keys,
-              };
-              manifestClassTemplates.@class = manifestClass;
-
-              foreach (TemplateMap templateMap in templateMaps)
-              {
-                Template manifestTemplate = new Template
-                {
-                  roles = new Roles(),
-                  id = templateMap.id,
-                  name = templateMap.name,
-                  transferOption = TransferOption.Desired,
-                };
-                manifestClassTemplates.templates.Add(manifestTemplate);
-
-                foreach (RoleMap roleMap in templateMap.roleMaps)
-                {
-                  Role manifestRole = new Role
-                  {
-                    type = roleMap.type,
-                    id = roleMap.id,
-                    name = roleMap.name,
-                    dataType = roleMap.dataType,
-                    value = roleMap.value,
-                  };
-                  manifestTemplate.roles.Add(manifestRole);
-
-                  if (roleMap.type == RoleType.Property ||
-                      roleMap.type == RoleType.DataProperty ||
-                      roleMap.type == RoleType.ObjectProperty)
-                  {
-                    if (!String.IsNullOrEmpty(roleMap.propertyName))
+                    DataProperty dataProp = dataObj.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                    if (dataProp == null)
                     {
-                      string[] property = roleMap.propertyName.Split('.');
-                      string objectName = property[0].Trim();
-                      string propertyName = property[1].Trim();
+                      throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
+                    }
 
-                      DataProperty dataProp = dataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                    manifestRole.dataLength = dataProp.dataLength;
 
-                      if (dataProp == null)
-                      {
-                        throw new Exception("Property " + roleMap.propertyName + " does not exist in data dictionary.");
-                      }
-
-                      manifestRole.dataLength = dataProp.dataLength;
-
-                      if (dataObject.isKeyProperty(propertyName))
-                      {
-                        manifestTemplate.transferOption = TransferOption.Required;
-                      }
+                    if (dataObj.isKeyProperty(propertyName))
+                    {
+                      manifestTemplate.transferOption = TransferOption.Required;
                     }
                   }
+                }
 
-                  if (roleMap.classMap != null)
+                if (roleMap.classMap != null)
+                {
+                  Cardinality cardinality = graphMap.GetCardinality(roleMap, _dataDictionary, _fixedIdentifierBoundary);
+                  manifestRole.cardinality = cardinality;
+
+                  manifestRole.@class = new Class
                   {
-                    Cardinality cardinality = graphMap.GetCardinality(roleMap, _dataDictionary, _fixedIdentifierBoundary);
-                    manifestRole.cardinality = cardinality;
-
-                    manifestRole.@class = new Class
-                    {
-                      id = roleMap.classMap.id,
-                      name = roleMap.classMap.name,
-                    };
-                  }
+                    id = roleMap.classMap.id,
+                    name = roleMap.classMap.name,
+                  };
                 }
               }
             }
@@ -427,7 +456,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _requests[id].Message = ex.Message;
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+        
         _requests[id].State = State.Error;
       }
     }
@@ -591,7 +628,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _requests[id].Message = ex.Message;
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+
         _requests[id].State = State.Error;
       }
     }
@@ -675,7 +720,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _requests[id].Message = ex.Message;
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+
         _requests[id].State = State.Error;
       }
     }
@@ -830,9 +883,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string errMsg = String.Format("Error getting request status: {0}", ex);
-        _logger.Error(errMsg);
-        throw new Exception(errMsg);
+        _logger.Error(string.Format("Error getting request status: {0}", ex));
+        throw ex;
       }
     }
 
@@ -859,7 +911,7 @@ namespace org.iringtools.adapter
 
           string scope = String.Format("{0}.{1}", projectName, applicationName);
 
-          if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
+          if (!isScopeValid) throw new Exception(string.Format("Scope [{0}] not found.", scope));
 
           _settings["ProjectName"] = projectName;
           _settings["ApplicationName"] = applicationName;
@@ -928,9 +980,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string message = "Error initializing scope: " + ex;
-        _logger.Error(message);
-        throw new Exception(message);
+        _logger.Error(string.Format("Error initializing scope: {0}", ex));
+        throw ex;
       }
     }
 
@@ -957,9 +1008,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string message = "Error initializing datalayer: " + ex;
-        _logger.Error(message);
-        throw new Exception(message);
+        _logger.Error(string.Format("Error initializing datalayer: {0}",  ex));
+        throw ex;
       }
     }
 
@@ -976,7 +1026,160 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error initializing identity: {0}", ex));
-        throw new Exception(string.Format("Error initializing identity: {0})", ex));
+        throw ex;
+      }
+    }
+
+    public ContentObjects GetContents(string scope, string app, string graph, string filter)
+    {
+      try
+      {
+        ContentObjects contentObjects = new ContentObjects();
+
+        IDictionary<string, string> idFormats = (IDictionary<string, string>)
+          JsonConvert.DeserializeObject<Dictionary<string, string>>(filter);
+
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        GraphMap graphMap = _mapping.FindGraphMap(graph);
+        if (graph == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        }
+
+        DataObject objDef = _dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == graphMap.dataObjectName.ToLower());
+        if (objDef == null)
+        {
+          throw new Exception("Data object [" + graphMap.dataObjectName + "] not found.");
+        }
+
+        IList<IContentObject> iContentObjects = _dataLayer.GetContents(graphMap.dataObjectName, idFormats);
+        
+        #region marshall iContentObjects into contentObjects
+        foreach (IContentObject iContentObject in iContentObjects)
+        {
+          ContentObject contentObject = new ContentObject()
+          {
+            Identifier = iContentObject.Identifier,
+            MimeType = iContentObject.ContentType,
+            Content = iContentObject.Content.ToMemoryStream().ToArray(),
+            HashType = iContentObject.HashType,
+            HashValue = iContentObject.HashValue,
+            URL = iContentObject.URL
+          };
+
+          IDataObject dataObj = iContentObject.DataObject;
+          if (dataObj != null)
+          {            
+            foreach (DataProperty prop in objDef.dataProperties)
+            {
+              object value = dataObj.GetPropertyValue(prop.propertyName);
+              if (value != null)
+              {
+                string valueStr = Convert.ToString(value);
+
+                if (prop.dataType == DataType.DateTime)
+                  valueStr = Utility.ToXsdDateTime(valueStr);
+
+                Attribute attr = new Attribute()
+                {
+                  Name = prop.propertyName,
+                  Value = valueStr
+                };
+
+                contentObject.Attributes.Add(attr);
+              }
+            }
+          }
+
+          contentObjects.Add(contentObject);
+        }
+        #endregion
+
+        return contentObjects;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting content objects: " + ex.ToString());
+        throw ex;
+      }
+    }
+
+    public IContentObject GetContent(string scope, string app, string graph, string id, string format)
+    {
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        GraphMap graphMap = _mapping.FindGraphMap(graph);
+        if (graph == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        }
+
+        IDictionary<string, string> idFormats = new Dictionary<string, string>() { {id, format} };
+        IList<IContentObject> iContentObjects = _dataLayer.GetContents(graphMap.dataObjectName, idFormats);
+
+        if (iContentObjects == null || iContentObjects.Count == 0)
+          throw new Exception("Content object [" + id + "] not found.");
+
+        return iContentObjects[0];
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting content object: " + ex.ToString());
+        throw ex;
+      }
+    }
+
+    public Response PostContents(string scope, string app, string graph, ContentObjects contentObjects)
+    {
+      try
+      {
+        IList<IContentObject> iContentObjects = new List<IContentObject>();
+
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        GraphMap graphMap = _mapping.FindGraphMap(graph);
+        if (graph == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        } 
+        
+        #region marshall contentObjects into iContentObjects
+        foreach (ContentObject contentObject in contentObjects)
+        {
+          IContentObject iContentObject = new GenericContentObject();
+          iContentObject.Identifier = contentObject.Identifier;
+          iContentObject.ContentType = contentObject.MimeType;
+          iContentObject.Content = iContentObject.Content.ToMemoryStream();
+
+          IDataObject dataObject = new GenericDataObject()
+          {
+            ObjectType = graphMap.dataObjectName
+          };
+
+          foreach (Attribute attr in contentObject.Attributes)
+          {
+            dataObject.SetPropertyValue(attr.Name, attr.Value);
+          }
+
+          iContentObject.DataObject = dataObject;
+
+          contentObjects.Add(contentObject);
+        }
+        #endregion
+
+        Response response = _dataLayer.PostContents(iContentObjects);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error posting content objects: " + ex.ToString());
+        throw ex;
       }
     }
 

@@ -45,12 +45,14 @@ namespace org.iringtools.library
 
   public interface IContentObject : IDataObject
   {
-    string identifier { get; set; }
-    string contentType { get; set; }
-    Stream content { get; set; }
-    string hashType { get; set; }
-    string hash { get; set; }
-    string url { get; set; }
+    string ObjectType { get; set; }
+    string Identifier { get; set; }
+    string ContentType { get; set; }
+    Stream Content { get; set; }
+    string HashType { get; set; }
+    string HashValue { get; set; }
+    string URL { get; set; }
+    IDataObject DataObject { get; set; }
   }
 
   public interface IDataLayer
@@ -80,6 +82,8 @@ namespace org.iringtools.library
     //IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
 
     IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex);
+    IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormats);
+    Response PostContents(IList<IContentObject> contentObjects);
   }
 
   public interface IDataLayer2 : IDataLayer

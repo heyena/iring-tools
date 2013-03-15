@@ -661,11 +661,16 @@ namespace org.iringtools.adapter.projection
 
     private string GetReferenceRoleValue(RoleMap referenceRole)
     {
-      string value = referenceRole.value;
+      string value = referenceRole.dataType;
 
-      if (!String.IsNullOrEmpty(referenceRole.valueListName))
-        value = _mapping.ResolveValueList(referenceRole.valueListName, value);
+      if (string.IsNullOrEmpty(value))
+      {
+        value = referenceRole.value;  // for backward compatibility
+      }
 
+      if (string.IsNullOrEmpty(value) || (!value.StartsWith(RDL_PREFIX) && !value.StartsWith(RDL_NS.NamespaceName)))
+        throw new Exception("Role map [" + referenceRole.name + "] has invalid class reference.");
+ 
       return value.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
     }
     #endregion

@@ -380,15 +380,28 @@ namespace QMXFGenerator
               };
           }
 
-          var classSpecialization = ProcessClassSpecialization(name);
+          var sList = from specialization in _classSpecializations
+                                   where
+                                     Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) ==
+                                     name
+                                   select specialization;
+          if (sList.Count() > 0)
+          {
+            var classSpecialization = ProcessClassSpecialization(name, sList);
 
           if (classSpecialization.Count > 0)
             classDefinition.specialization = classSpecialization;
-
+          }
           load = String.Empty;
           idx++;
-          if (!string.IsNullOrEmpty(ent)) /// must have entity type
+          if (string.IsNullOrEmpty(ent))/// must have entity type
+          {
+            Utility.WriteString(string.Format("Class {0} does not have a entity type!!", name), "error.log");
+          }
+          else
+          {
             classDefinitions.Add(classDefinition);
+          }
         }
         Console.WriteLine("  processed " + idx + " classes.");
         return classDefinitions;
@@ -421,37 +434,49 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<Specialization> ProcessClassSpecialization(string className)
+    private static List<Specialization> ProcessClassSpecialization(string className, IEnumerable<ArrayList> specializationList)
     {
       try
       {
         List<Specialization> classSpecializations = new List<Specialization>();
 
         //Find the class specializations
-        var specializationList = from specialization in _classSpecializations
-                                 where
-                                   Convert.ToString(specialization[(int) ClassSpecializationColumns.Superclass]) ==
-                                   className
-                                 select specialization;
+        //var specializationList = from specialization in _classSpecializations
+        //                         where
+        //                           Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) ==
+        //                           className
+        //                         select specialization;
         //Get their details from the Class List
         var superclasses = new List<ArrayList>();
 
         foreach (var specialization in specializationList)
         {
           object subclass = specialization[(int) ClassSpecializationColumns.Subclass];
-          var query = from @class in _classes
+          object supclass = specialization[(int)ClassSpecializationColumns.Superclass];
+          var supc = from @class in _classes
+                   where Convert
+                           .ToString(@class[(int)ClassColumns.Label])
+                           .Trim() == supclass.ToString().Trim()
+                   select @class;
+          var sc = from @class in _classes
                       where Convert
                               .ToString(@class[(int) ClassColumns.Label])
                               .Trim() == subclass.ToString().Trim()
                       select @class;
-
-          if (query.Count() > 0 && query.FirstOrDefault().Count > 0)
+          if (supc.Count() > 0 && supc.FirstOrDefault().Count > 0)
           {
-            superclasses.Add(query.FirstOrDefault());
+            if (sc.Count() > 0 && sc.FirstOrDefault().Count > 0)
+          {
+              superclasses.Add(sc.FirstOrDefault());
           }
           else
           {
             Utility.WriteString("\n " + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
+            }
+          }
+          else
+          {
+            Utility.WriteString("\n " + supclass.ToString() + " Was Not Found in Class List", "error.log", true);
           }
         }
 

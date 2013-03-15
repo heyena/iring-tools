@@ -67,7 +67,7 @@ namespace org.iringtools.library
     // refresh dictionary for a specific data table
     public abstract Response RefreshDataTable(string tableName);
 
-    public virtual Response RefreshDataTable(string objectType, DataFilter dataFilter) 
+    public virtual Response RefreshDataTable(string objectType, DataFilter dataFilter)
     {
       Response response = new Response()
       {
@@ -81,20 +81,20 @@ namespace org.iringtools.library
     // post related data rows
     public virtual Response PostRelatedDataTable(string parentObjectType, string parentObjectId, string relatedObjectType, IList<DataTable> childDataTables)
     {
-        throw new NotImplementedException();
+      throw new NotImplementedException();
     }
 
     // get related data rows of a given data row
     [System.Obsolete("Instead Use GetRelatedDataTable with filter")]
     public virtual DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit)
     {
-        throw new NotImplementedException();
+      throw new NotImplementedException();
     }
 
     // get related data rows of a given data row with filter
     public virtual DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, DataFilter filter, long start, long limit)
     {
-        throw new NotImplementedException();
+      throw new NotImplementedException();
     }
 
     #endregion
@@ -102,39 +102,47 @@ namespace org.iringtools.library
     #region IDataLayer implementation methods
     public override DataDictionary GetDictionary()
     {
+      try
+      {
         InitializeDatabaseDictionary();
 
         DataDictionary dictionary = null;
 
         if (_dbDictionary == null)
         {
-            dictionary = new DataDictionary()
-            {
-                dataObjects = new List<DataObject>(),
-                picklists = new List<PicklistObject>(),
-            };
+          dictionary = new DataDictionary()
+          {
+            dataObjects = new List<DataObject>(),
+            picklists = new List<PicklistObject>(),
+          };
         }
         else
         {
-            dictionary = new DataDictionary()
-            {
-                dataVersion = _dbDictionary.dataVersion,
-                enableSearch = _dbDictionary.enableSearch,
-                enableSummary = _dbDictionary.enableSummary
-            };
+          dictionary = new DataDictionary()
+          {
+            dataVersion = _dbDictionary.dataVersion,
+            enableSearch = _dbDictionary.enableSearch,
+            enableSummary = _dbDictionary.enableSummary
+          };
 
-            if (_dbDictionary.dataObjects == null)
-                dictionary.dataObjects = new List<DataObject>();
-            else
-                dictionary.dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects);
+          if (_dbDictionary.dataObjects == null)
+            dictionary.dataObjects = new List<DataObject>();
+          else
+            dictionary.dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects);
 
-            if (_dbDictionary.picklists == null)
-                dictionary.picklists = new List<PicklistObject>();
-            else
-                dictionary.picklists = utility.Utility.CloneDataContractObject<List<PicklistObject>>(_dbDictionary.picklists);
+          if (_dbDictionary.picklists == null)
+            dictionary.picklists = new List<PicklistObject>();
+          else
+            dictionary.picklists = utility.Utility.CloneDataContractObject<List<PicklistObject>>(_dbDictionary.picklists);
         }
 
         return dictionary;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error getting dictionary: {0}", ex));
+        throw ex;
+      }
     }
 
     public override long GetCount(string objectType, DataFilter filter)
@@ -155,7 +163,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error getting data count: " + ex);
+        _logger.Error(string.Format("Error getting object count: {0}", ex));
         throw ex;
       }
     }
@@ -178,7 +186,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error getting data table: " + ex);
+        _logger.Error(string.Format("Error getting data table: {0}", ex));
         throw ex;
       }
     }
@@ -194,7 +202,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error creating data table: " + ex);
+        _logger.Error(string.Format("Error creating data table: {0}", ex));
         throw ex;
       }
     }
@@ -210,7 +218,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error getting data table: " + ex);
+        _logger.Error(string.Format("Error getting data objects: {0}", ex));
         throw ex;
       }
     }
@@ -235,7 +243,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error get data table: " + ex);
+        _logger.Error(string.Format("Error getting data objects: {0}", ex));
         throw ex;
       }
     }
@@ -271,7 +279,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error getting related objects: " + ex);
+        _logger.Error(string.Format("Error getting related objects: {0}", ex));
         throw ex;
       }
 
@@ -307,7 +315,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error getting related objects: " + ex);
+        _logger.Error(string.Format("Error getting related objects: {0}", ex));
         throw ex;
       }
     }
@@ -342,45 +350,44 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error getting related objects: " + ex);
+        _logger.Error(string.Format("Error getting related objects: {0}", ex));
         throw ex;
       }
     }
 
-
     public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex)
     {
-        string objectType = dataObject.GetType().Name;
+      string objectType = dataObject.GetType().Name;
 
-        if (objectType == typeof(GenericDataObject).Name)
+      if (objectType == typeof(GenericDataObject).Name)
+      {
+        objectType = ((GenericDataObject)dataObject).ObjectType;
+      }
+
+      try
+      {
+        DataObject objectDefinition = GetObjectDefinition(objectType);
+        DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
+
+        DataTable dataTable = NewDataTable(objectDefinition);
+        DataRow dataRow = dataTable.NewRow();
+        PopulateColumnValues(dataRow, objectDefinition, dataObject);
+
+        if (dataRow != null)
         {
-            objectType = ((GenericDataObject)dataObject).ObjectType;
+          DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName, filter, startIndex, pageSize);
+          return ToDataObjects(relatedDataTable, relatedObjectDefinition.objectName);
         }
-
-        try
+        else
         {
-            DataObject objectDefinition = GetObjectDefinition(objectType);
-            DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
-
-            DataTable dataTable = NewDataTable(objectDefinition);
-            DataRow dataRow = dataTable.NewRow();
-            PopulateColumnValues(dataRow, objectDefinition, dataObject);
-
-            if (dataRow != null)
-            {
-                DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName, filter, startIndex, pageSize);
-                return ToDataObjects(relatedDataTable, relatedObjectDefinition.objectName);
-            }
-            else
-            {
-                throw new Exception("Error creating/getting data row for object [" + objectDefinition.objectName + "]");
-            }
+          throw new Exception("Error creating/getting data row for object [" + objectDefinition.objectName + "]");
         }
-        catch (Exception ex)
-        {
-            _logger.Error("Error getting related objects: " + ex);
-            throw ex;
-        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error getting related objects: {0}", ex));
+        throw ex;
+      }
     }
 
     public override Response Post(IList<IDataObject> dataObjects)
@@ -406,37 +413,37 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error posting data tables: " + ex);
+        _logger.Error(string.Format("Error getting posting data tables: {0}", ex));
         throw ex;
       }
     }
 
     public override Response PostRelatedObjects(string parentObjectType, string parentObjectId, string relatedObjectType, IList<IDataObject> childDataObjects)
     {
-        try
-        {
-            IList<DataTable> childDataTables = ToDataTables(childDataObjects);
+      try
+      {
+        IList<DataTable> childDataTables = ToDataTables(childDataObjects);
 
-            if (childDataTables.Count > 0)
-            {
-                return PostRelatedDataTable(parentObjectType, parentObjectId, relatedObjectType,childDataTables);
-            }
-            else
-            {
-                Response response = new Response()
-                {
-                    Level = StatusLevel.Warning,
-                    Messages = new Messages() { "No records to post." }
-                };
-
-                return response;
-            }
-        }
-        catch (Exception ex)
+        if (childDataTables.Count > 0)
         {
-            _logger.Error("Error posting related data tables: " + ex);
-            throw ex;
+          return PostRelatedDataTable(parentObjectType, parentObjectId, relatedObjectType, childDataTables);
         }
+        else
+        {
+          Response response = new Response()
+          {
+            Level = StatusLevel.Warning,
+            Messages = new Messages() { "No records to post." }
+          };
+
+          return response;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error getting posting data tables: {0}", ex));
+        throw ex;
+      }
     }
 
     public override Response Delete(string objectType, DataFilter filter)
@@ -457,7 +464,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error deleting data table: " + ex);
+        _logger.Error(string.Format("Error deleting data table: {0}", ex));
         throw ex;
       }
     }
@@ -472,7 +479,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        _logger.Error("Error deleting data table: " + ex);
+        _logger.Error(string.Format("Error deleting data table: {0}", ex));        
         throw ex;
       }
     }
@@ -484,7 +491,7 @@ namespace org.iringtools.library
       if (!string.IsNullOrEmpty(objectType))
         tableName = GetTableName(objectType);
 
-      DeleteCachedDictionary();      
+      DeleteCachedDictionary();
 
       return RefreshDataTable(tableName);
     }
@@ -496,7 +503,7 @@ namespace org.iringtools.library
       if (!string.IsNullOrEmpty(objectType))
         tableName = GetTableName(objectType);
 
-      DeleteCachedDictionary();      
+      DeleteCachedDictionary();
 
       return RefreshDataTable(tableName, dataFilter);
     }
@@ -541,7 +548,7 @@ namespace org.iringtools.library
         }
         catch (Exception ex)
         {
-          _logger.Error("Error initializing dictionary: " + ex);
+          _logger.Error(string.Format("Error initializing dictionary: {0}", ex));        
           throw ex;
         }
       }
@@ -583,8 +590,7 @@ namespace org.iringtools.library
         }
       }
 
-      throw new Exception("ObjectType [" + objectType + "] not found in dictionary [" +
-        utility.Utility.SerializeDataContract<DatabaseDictionary>(_dbDictionary) + "]");
+      throw new Exception("ObjectType [" + objectType + "] not found.");
     }
 
     public DataObject GetObjectDefinition(string objectType)
@@ -617,7 +623,7 @@ namespace org.iringtools.library
         }
         catch (Exception ex)
         {
-          _logger.Error("Error instantiating data object: " + ex);
+          _logger.Error(string.Format("Error instantiating data object: {0}", ex));
           throw ex;
         }
 
@@ -649,8 +655,39 @@ namespace org.iringtools.library
             }
             catch (Exception ex)
             {
-              _logger.Error("Error getting data row value: " + ex);
+              _logger.Error(string.Format("Error getting data row value: {0}", ex));
               throw ex;
+            }
+          }
+
+          // evaluate has-content expression            
+          if (_settings["HasContentExpression"] != null)
+          {
+            string expression = _settings["HasContentExpression"].ToString();
+
+            foreach (DataProperty prop in objectDefinition.dataProperties)
+            {
+              if (expression.Contains(prop.propertyName))
+              {
+                object value = dataObject.GetPropertyValue(prop.propertyName);
+
+                if (value != null)
+                {
+                  string valueStr = value.ToString();
+
+                  if (prop.dataType == DataType.Char || prop.dataType == DataType.String)
+                  {
+                    valueStr = "\"" + valueStr + "\"";
+                  }
+
+                  expression = expression.Replace(prop.propertyName, valueStr);
+                }
+              }
+            }
+
+            if ((bool)Utility.Evaluate(expression))
+            {
+              ((GenericDataObject)dataObject).HasContent = true;
             }
           }
         }
@@ -691,7 +728,7 @@ namespace org.iringtools.library
             }
             catch (Exception ex)
             {
-              _logger.Error("Error converting data row to data object: " + ex);
+              _logger.Error(string.Format("Error converting data row to data object: {0}", ex));              
               throw ex;
             }
 
@@ -855,10 +892,10 @@ namespace org.iringtools.library
 
         return dataTables;
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        _logger.Error("Error marshalling data objects to data tables: " + e);
-        throw e;
+        _logger.Error(string.Format("Error marshalling data objects to data tables: {0}", ex));
+        throw ex;
       }
     }
 
@@ -888,9 +925,8 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        string error = "Error forming identifier from data row: " + ex.Message;
-        _logger.Error(error);
-        throw new Exception(error);
+        _logger.Error(string.Format("Error forming identifier from data row: {0}", ex));
+        throw ex;
       }
     }
 

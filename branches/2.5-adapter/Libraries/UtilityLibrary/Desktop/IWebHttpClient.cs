@@ -11,5 +11,8 @@ namespace org.iringtools.utility
     R Post<T, R>(string relativeUri, T requestEntity);
     T PostMessage<T>(string relativeUri, string requestMessage, bool useDataContractSerializer);
     void PostMultipartMessage(string relativeUri, System.Collections.Generic.List<MultiPartMessage> requestMessages);
+    string PutJson(string relativeUri, string requestMessage);
+    string PostJson(string relativeUri, string requestMessage);
+    string GetJson(string relativeUri);
   }
 }

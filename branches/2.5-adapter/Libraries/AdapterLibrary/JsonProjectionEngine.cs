@@ -77,8 +77,13 @@ namespace org.iringtools.adapter.projection
 
               DataItem dataItem = new DataItem()
               {
-                properties = new Dictionary<string, string>()
+                properties = new Dictionary<string, string>(),
               };
+
+              if (dataObj is GenericDataObject)
+              {
+                dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
+              }
 
               foreach (KeyProperty keyProperty in dataObject.keyProperties)
               {
