@@ -299,10 +299,13 @@ namespace org.iringtools.library
         for (int i = 0; i < expression.Values.Count; i++)
         {
           string dateTimeValue = expression.Values[i];
-          DateTime dateTime = DateTime.Parse(dateTimeValue);
-          string formattedDateTimeValue = dateTime.ToString(SYSTEM_DATETIME_FORMAT);
+          if (dateTimeValue != null)
+          {
+              DateTime dateTime = DateTime.Parse(dateTimeValue);
+              string formattedDateTimeValue = dateTime.ToString(SYSTEM_DATETIME_FORMAT);
 
-          expression.Values[i] = formattedDateTimeValue;
+              expression.Values[i] = formattedDateTimeValue;
+          }
         }
       }
 
@@ -381,6 +384,14 @@ namespace org.iringtools.library
           }
           else if (dataProperty.dataType == DataType.DateTime)
           {
+              if (expression.Values.Contains(null)) // Filter on null
+              {
+                  Values val = Utility.CloneSerializableObject<Values>(expression.Values);
+                  val.Remove(null);
+                  value = String.Join("','", val.ToArray()).ToUpper();
+                  sqlExpression.Append(qualColumnName + " IN ('" + value + "') OR " + qualColumnName + " is null");
+                  break;
+              }
             if (_provider.ToUpper().StartsWith("ORACLE"))
             {
               //e.g. dateTimeCol IN (TO_TIMESTAMP_TZ('<date string 1>', '<format>'), TO_TIMESTAMP_TZ('<date string 2>', '<format>'))
@@ -395,6 +406,14 @@ namespace org.iringtools.library
           }
           else
           {
+              if (expression.Values.Contains(null)) // Filter on null
+              {
+                  Values val = Utility.CloneSerializableObject<Values>(expression.Values);
+                  val.Remove(null);
+                  value = String.Join(",", val.ToArray());
+                  sqlExpression.Append(qualColumnName + " IN (" + value + ") OR " + qualColumnName + " is null");
+                  break;
+              }
             sqlExpression.Append(qualColumnName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
           }
           break;
@@ -420,6 +439,11 @@ namespace org.iringtools.library
           }
           else if (dataProperty.dataType == DataType.DateTime)
           {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
             if (_provider.ToUpper().StartsWith("ORACLE"))
             {
               //e.g. dateTimeCol = TO_TIMESTAMP_TZ('<date string>', '<format>')
@@ -433,6 +457,11 @@ namespace org.iringtools.library
           }
           else
           {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
             sqlExpression.Append(qualColumnName + "=" + expression.Values.FirstOrDefault() + "");
           }
           break;
@@ -458,6 +487,11 @@ namespace org.iringtools.library
           }
           else if (dataProperty.dataType == DataType.DateTime)
           {
+              if (expression.Values.FirstOrDefault() == null)      // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is not null");
+                  break;
+              }
             if (_provider.ToUpper().StartsWith("ORACLE"))
             {
               //e.g. dateTimeCol <> TO_TIMESTAMP_TZ('<date string>', '<format>')
@@ -471,6 +505,11 @@ namespace org.iringtools.library
           }
           else
           {
+              if (expression.Values.FirstOrDefault() == null)      // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is not null");
+                  break;
+              }
             sqlExpression.Append(qualColumnName + "<>" + expression.Values.FirstOrDefault() + "");
           }
           break;
