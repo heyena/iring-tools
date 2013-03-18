@@ -360,6 +360,14 @@ namespace org.iringtools.library
         case RelationalOperator.In:
           if (isString)
           {
+              if (expression.Values.Contains(null)) // Filter on null
+              {
+                  Values val = Utility.CloneSerializableObject<Values>(expression.Values);
+                  val.Remove(null);
+                  value = String.Join("','", val.ToArray()).ToUpper();
+                  sqlExpression.Append(qualColumnName + " IN ('" + value + "') OR " + qualColumnName + " is null");
+                  break;
+              }
             if (expression.IsCaseSensitive)
             {
               value = String.Join("','", expression.Values.ToArray());
@@ -394,6 +402,11 @@ namespace org.iringtools.library
         case RelationalOperator.EqualTo:
           if (isString)
           {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
             if (expression.IsCaseSensitive)
             {
               value = expression.Values.FirstOrDefault();
@@ -427,6 +440,11 @@ namespace org.iringtools.library
         case RelationalOperator.NotEqualTo:
           if (isString)
           {
+              if (expression.Values.FirstOrDefault() == null)      // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is not null");
+                  break;
+              }
             if (expression.IsCaseSensitive)
             {
               value = expression.Values.FirstOrDefault();
