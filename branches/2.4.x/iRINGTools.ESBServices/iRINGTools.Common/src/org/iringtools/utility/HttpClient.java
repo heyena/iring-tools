@@ -120,12 +120,16 @@ public class HttpClient
       }
       else
       {
-        String error = "";
+        String error = "Request to URL [" + conn.getURL() + "] failed. ";
         
         try
         {
           InputStream errorStream = conn.getErrorStream();
-          error = IOUtils.toString(errorStream);
+          
+          if (errorStream != null)
+          {
+            error += IOUtils.toString(errorStream);
+          } 
         }
         catch (Exception e)
         {
@@ -227,12 +231,16 @@ public class HttpClient
       }
       else
       {
-        String error = "";
+        String error = "Request to URL [" + conn.getURL() + "] failed. ";
         
         try
         {
           InputStream errorStream = conn.getErrorStream();
-          error = IOUtils.toString(errorStream);
+          
+          if (errorStream != null)
+          {
+            error += IOUtils.toString(errorStream);
+          } 
         }
         catch (Exception e)
         {

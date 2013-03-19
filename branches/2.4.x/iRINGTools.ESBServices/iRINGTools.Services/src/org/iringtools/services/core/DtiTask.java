@@ -192,6 +192,7 @@ public class DtiTask implements Runnable
         }
       }
   }
+  
   public void targetDups(DataTransferIndices targetDtis) 
   {     
       List<DataTransferIndex> targetDtiItems = targetDtis.getDataTransferIndexList().getItems();
