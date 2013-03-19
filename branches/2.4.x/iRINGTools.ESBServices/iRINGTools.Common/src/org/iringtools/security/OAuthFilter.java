@@ -59,6 +59,7 @@ public class OAuthFilter implements Filter
     if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))
     {
       String ref = request.getParameter(REF_PARAM);
+      authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
       
       if (IOUtils.isNullOrEmpty(ref))  // case 1: user needs to login
       {
