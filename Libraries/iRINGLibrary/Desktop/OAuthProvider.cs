@@ -37,6 +37,7 @@ namespace org.iringtools.adapter.security
         allClaims = new Dictionary<String, String>();
 
         HttpCookie authCookie = HttpContext.Current.Request.Cookies[LOGON_COOKIE_NAME];
+        authCookie.Expires = DateTime.Now.AddHours(8.0);
 
         NameValueCollection col = new NameValueCollection(authCookie.Values);
         String[] keyNames = col.AllKeys;
