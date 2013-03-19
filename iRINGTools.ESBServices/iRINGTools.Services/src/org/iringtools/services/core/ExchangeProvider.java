@@ -186,7 +186,7 @@ public class ExchangeProvider {
 	}
 
 	public Manifest getManifest(String scope, String id)
-			throws ServiceProviderException {
+			throws Exception {
 		logger.debug("getManifest(" + scope + "," + id + ")");
 		initExchangeDefinition(scope, id);
 		return createCrossedManifest();
@@ -615,11 +615,14 @@ public class ExchangeProvider {
 		}
 
 		Manifest sourceManifest = sourceManifestTask.getManifest();
+    if (sourceManifest == null
+        || sourceManifest.getGraphs().getItems().size() == 0)
+      throw new ServiceProviderException(sourceManifestTask.getError());
+    
 		Manifest targetManifest = targetManifestTask.getManifest();
-
 		if (targetManifest == null
 				|| targetManifest.getGraphs().getItems().size() == 0)
-			return null;
+			throw new ServiceProviderException(targetManifestTask.getError());
 
 		Graph sourceGraph = getGraph(sourceManifest, sourceGraphName);
 		Graph targetGraph = getGraph(targetManifest, targetGraphName);

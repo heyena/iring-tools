@@ -13,6 +13,7 @@ public class ManifestTask implements Runnable
   private Map<String, Object> settings;
   private String url;
   private Manifest manifest;
+  private String error;
   
   public ManifestTask(final Map<String, Object> settings, final String url)
   {
@@ -27,16 +28,23 @@ public class ManifestTask implements Runnable
     {
       HttpClient httpClient = new HttpClient(url);
       HttpUtils.addHttpHeaders(settings, httpClient);
+      httpClient.setAsync(false);
       manifest = httpClient.get(Manifest.class);
     }
     catch (Exception e) 
     {
-      logger.error("Error getting manifest: " + e.getMessage());
+      error = "Error getting manifest: " + e.getMessage();
+      logger.error(error);
     }
   }
   
   public Manifest getManifest()
   {
     return manifest;
+  }  
+  
+  public String getError()
+  {
+    return error;
   }  
 }

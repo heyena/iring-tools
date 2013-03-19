@@ -1138,7 +1138,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        IList<IContentObject> iContentObjects = new List<IContentObject>();
+        IList<IDataObject> iDataObjects = new List<IDataObject>();
 
         InitializeScope(scope, app);
         InitializeDataLayer();
@@ -1173,7 +1173,7 @@ namespace org.iringtools.adapter
         }
         #endregion
 
-        Response response = _dataLayer.PostContents(iContentObjects);
+        Response response = _dataLayer.Post(iDataObjects);
         return response;
       }
       catch (Exception ex)
