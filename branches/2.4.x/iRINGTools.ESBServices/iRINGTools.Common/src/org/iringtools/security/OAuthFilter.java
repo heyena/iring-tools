@@ -59,7 +59,6 @@ public class OAuthFilter implements Filter
     if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))
     {
       String ref = request.getParameter(REF_PARAM);
-      authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
       
       if (IOUtils.isNullOrEmpty(ref))  // case 1: user needs to login
       {
@@ -147,6 +146,7 @@ public class OAuthFilter implements Filter
       String authCookieMultiValue = authCookie.getValue();      
       logger.debug("User info [" + authCookieMultiValue + "]");
       
+      authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
       Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookieMultiValue);
             
       session.setAttribute(AUTHORIZATION, userAttrs.get(OAUTH_TOKEN));
