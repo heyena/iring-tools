@@ -39,7 +39,7 @@ namespace org.iringtools.adapter.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    //[Test]
+    [Test]
     public void TestGet()
     {
       long count = _dataLayer.GetCount("DTP_ENG2", null);
@@ -52,7 +52,7 @@ namespace org.iringtools.adapter.datalayer.test
       Assert.Greater(dt.Rows.Count, 0);
     }
 
-    [Test]
+    //[Test]
     public void TestGetContents()
     {
       IDictionary<string, string> idFormats = new Dictionary<string, string>()

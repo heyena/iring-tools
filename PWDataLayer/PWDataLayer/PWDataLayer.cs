@@ -471,67 +471,67 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
-    public override Response PostContents(IList<IContentObject> contentObjects)
-    {
-      Response response = new Response();
+    //public override Response PostContents(IList<IContentObject> contentObjects)
+    //{
+    //  Response response = new Response();
 
-      try
-      {
-        DatabaseDictionary dictionary = GetDatabaseDictionary();
+    //  try
+    //  {
+    //    DatabaseDictionary dictionary = GetDatabaseDictionary();
 
-        Login();
+    //    Login();
 
-        foreach (IContentObject contentObject in contentObjects)
-        {
-          DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == contentObject.ObjectType.ToLower());
-          SortedList<string, string> slProps = new SortedList<string, string>();
+    //    foreach (IContentObject contentObject in contentObjects)
+    //    {
+    //      DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == contentObject.ObjectType.ToLower());
+    //      SortedList<string, string> slProps = new SortedList<string, string>();
 
-          foreach (DataProperty prop in objDef.dataProperties)
-          {
-            object propValue = null;
+    //      foreach (DataProperty prop in objDef.dataProperties)
+    //      {
+    //        object propValue = null;
 
-            try
-            {
-              propValue = contentObject.DataObject.GetPropertyValue(prop.propertyName);
-            }
-            catch (Exception) { }
+    //        try
+    //        {
+    //          propValue = contentObject.DataObject.GetPropertyValue(prop.propertyName);
+    //        }
+    //        catch (Exception) { }
 
-            if (propValue != null)
-            {
-              slProps.Add(prop.columnName, propValue.ToString());
-            }
-          }
+    //        if (propValue != null)
+    //        {
+    //          slProps.Add(prop.columnName, propValue.ToString());
+    //        }
+    //      }
 
-          slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
+    //      slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
 
-          if (contentObject.Content != null)
-          {
-            //TODO: validate DocumentName in the property list
-            string docGUID = CreateNewPWDocument(contentObject.Content, slProps);
+    //      if (contentObject.Content != null)
+    //      {
+    //        //TODO: validate DocumentName in the property list
+    //        string docGUID = CreateNewPWDocument(contentObject.Content, slProps);
 
-            Status status = new Status()
-            {
-              Identifier = docGUID,
-              Messages = new Messages { docGUID + " saved successfully." }
-            };
+    //        Status status = new Status()
+    //        {
+    //          Identifier = docGUID,
+    //          Messages = new Messages { docGUID + " saved successfully." }
+    //        };
 
-            response.StatusList.Add(status);
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.Message);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
-      }
-      finally
-      {
-        Logout();
-      }
+    //        response.StatusList.Add(status);
+    //      }
+    //    }
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error(e.Message);
+    //    response.Level = StatusLevel.Error;
+    //    response.Messages.Add(e.Message);
+    //  }
+    //  finally
+    //  {
+    //    Logout();
+    //  }
 
-      return response;
-    }
+    //  return response;
+    //}
 
     public override Response PostDataTables(IList<DataTable> dataTables)
     {
@@ -583,11 +583,20 @@ namespace org.iringtools.adapter.datalayer
 
       return response;
     }
-    
+
     private bool Login()
     {
-      /// If user name and password are null, process creds will be used
-      return PWWrapper.aaApi_Login(PWWrapper.DataSourceType.Unknown, _sDatasource, _sUserName, _sPassword, null, true);
+      string currDir = Directory.GetCurrentDirectory();
+
+      try
+      {
+        /// If user name and password are null, process creds will be used
+        return PWWrapper.aaApi_Login(PWWrapper.DataSourceType.Unknown, _sDatasource, _sUserName, _sPassword, null, true);
+      }
+      finally
+      {
+        Directory.SetCurrentDirectory(currDir);
+      }
     }
 
     private bool Logout()
