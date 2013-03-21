@@ -6,30 +6,31 @@ namespace org.iringtools.library
 	[DataContract(Name = "Field", Namespace = "http://www.iringtools.org/library")]
 	public class Field
 	{
-		[DataMember(Name = "text", IsRequired = true, Order = 0)]
-		public string Name { get; set; }  // header
+		[DataMember(Name = "name", IsRequired = true, Order = 0)]
+		public string name { get; set; }  // header
 
 		[DataMember(Name = "dataIndex", IsRequired = true, Order = 1)]
-		public string DataIndex { get; set; }
-
+		public string dataIndex { get; set; }
+    
 		[DataMember(Name = "type", IsRequired = true, Order = 2)]
-		public string Type { get; set; }  // data type
+		public string type { get; set; }  // data type
 
 		[DataMember(Name = "width", IsRequired = true, Order = 3)]
-		public int Width { get; set; }
+		public int width { get; set; }
+    
+    [DataMember(Name = "fixed", IsRequired = true, Order = 4)]
+    public bool @fixed { get; set; }
 
-    [DataMember(Name = "fix", IsRequired = true, Order = 4, EmitDefaultValue = false)]
-		public bool Fix = false;  // fixed width
+		[DataMember(Name = "filterable", IsRequired = true, Order = 5)]
+    public bool filterable { get; set; }
 
-    [DataMember(Name = "filterable", IsRequired = true, Order = 5, EmitDefaultValue = false)]
-		public bool Filterable = true;
+		[DataMember(Name = "sortable", IsRequired = true, Order = 6)]
+    public bool sortable { get; set; }
 
-		[DataMember(Name = "sortable", IsRequired = true, Order = 6, EmitDefaultValue = false)]
-		public bool Sortable = true;
+    [DataMember(Name = "keytype", IsRequired = true, Order = 7)]
+    public string keytype { get; set; }
 
-    [DataMember(Name = "keytype", IsRequired = true, Order = 7, EmitDefaultValue = false)]
-    public string Keytype = null;
-
-  
+    [DataMember(Name = "hidden", EmitDefaultValue = false, Order = 8)]
+    public bool hidden { get; set; }
 	}
 }

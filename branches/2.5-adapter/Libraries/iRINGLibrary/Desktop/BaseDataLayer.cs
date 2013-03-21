@@ -131,10 +131,7 @@ namespace org.iringtools.library
     {
       throw new NotImplementedException();
     }
-    public virtual Response PostContents(IList<IContentObject> contentObjects)
-    {
-      throw new NotImplementedException();
-    }
+
     #region Abstract Public Interface Methods
 
     public abstract IList<string> GetIdentifiers(string objectType, DataFilter filter);

@@ -110,35 +110,35 @@ namespace org.iringtools.library
 
         if (OrderExpressions != null && OrderExpressions.Count > 0)
         {
-            whereClause.Append(" ORDER BY ");
+          whereClause.Append(" ORDER BY ");
 
-            foreach (OrderExpression orderExpression in this.OrderExpressions)
+          foreach (OrderExpression orderExpression in this.OrderExpressions)
+          {
+            string propertyName = orderExpression.PropertyName;
+            DataProperty dataProperty = null;
+            string orderStatement = string.Empty;
+
+            if (propertyName.Contains(","))  //Handling multiple columns in Sort By.
             {
-                string propertyName = orderExpression.PropertyName;
-                DataProperty dataProperty = null;
-                string orderStatement = string.Empty;
+                string[] properties = propertyName.Split(',');
 
-                if (propertyName.Contains(","))  //Handling multiple columns in Sort By.
+                foreach (string propName in properties)
                 {
-                    string[] properties = propertyName.Split(',');
-
-                    foreach (string propName in properties)
-                    {
-                        dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propName.ToUpper());
-
-                        orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
-                        whereClause.Append(orderStatement + ",");
-                    }
-                    whereClause.Remove(whereClause.ToString().LastIndexOf(","), 1);
-                }
-                else
-                {
-                    dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+                    dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propName.ToUpper());
 
                     orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
-                    whereClause.Append(orderStatement);
+                    whereClause.Append(orderStatement + ",");
                 }
+                whereClause.Remove(whereClause.ToString().LastIndexOf(","), 1);
             }
+            else
+            {
+                dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+
+                orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
+                whereClause.Append(orderStatement);
+            }
+          }
         }
 
         return whereClause.ToString();
@@ -299,10 +299,13 @@ namespace org.iringtools.library
         for (int i = 0; i < expression.Values.Count; i++)
         {
           string dateTimeValue = expression.Values[i];
-          DateTime dateTime = DateTime.Parse(dateTimeValue);
-          string formattedDateTimeValue = dateTime.ToString(SYSTEM_DATETIME_FORMAT);
+          if (dateTimeValue != null)
+          {
+              DateTime dateTime = DateTime.Parse(dateTimeValue);
+              string formattedDateTimeValue = dateTime.ToString(SYSTEM_DATETIME_FORMAT);
 
-          expression.Values[i] = formattedDateTimeValue;
+              expression.Values[i] = formattedDateTimeValue;
+          }
         }
       }
 
@@ -360,6 +363,14 @@ namespace org.iringtools.library
         case RelationalOperator.In:
           if (isString)
           {
+              if (expression.Values.Contains(null)) // Filter on null
+              {
+                  Values val = Utility.CloneSerializableObject<Values>(expression.Values);
+                  val.Remove(null);
+                  value = String.Join("','", val.ToArray()).ToUpper();
+                  sqlExpression.Append(qualColumnName + " IN ('" + value + "') OR " + qualColumnName + " is null");
+                  break;
+              }
             if (expression.IsCaseSensitive)
             {
               value = String.Join("','", expression.Values.ToArray());
@@ -373,6 +384,14 @@ namespace org.iringtools.library
           }
           else if (dataProperty.dataType == DataType.DateTime)
           {
+              if (expression.Values.Contains(null)) // Filter on null
+              {
+                  Values val = Utility.CloneSerializableObject<Values>(expression.Values);
+                  val.Remove(null);
+                  value = String.Join("','", val.ToArray()).ToUpper();
+                  sqlExpression.Append(qualColumnName + " IN ('" + value + "') OR " + qualColumnName + " is null");
+                  break;
+              }
             if (_provider.ToUpper().StartsWith("ORACLE"))
             {
               //e.g. dateTimeCol IN (TO_TIMESTAMP_TZ('<date string 1>', '<format>'), TO_TIMESTAMP_TZ('<date string 2>', '<format>'))
@@ -387,6 +406,14 @@ namespace org.iringtools.library
           }
           else
           {
+              if (expression.Values.Contains(null)) // Filter on null
+              {
+                  Values val = Utility.CloneSerializableObject<Values>(expression.Values);
+                  val.Remove(null);
+                  value = String.Join(",", val.ToArray());
+                  sqlExpression.Append(qualColumnName + " IN (" + value + ") OR " + qualColumnName + " is null");
+                  break;
+              }
             sqlExpression.Append(qualColumnName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
           }
           break;
@@ -394,6 +421,11 @@ namespace org.iringtools.library
         case RelationalOperator.EqualTo:
           if (isString)
           {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
             if (expression.IsCaseSensitive)
             {
               value = expression.Values.FirstOrDefault();
@@ -407,6 +439,11 @@ namespace org.iringtools.library
           }
           else if (dataProperty.dataType == DataType.DateTime)
           {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
             if (_provider.ToUpper().StartsWith("ORACLE"))
             {
               //e.g. dateTimeCol = TO_TIMESTAMP_TZ('<date string>', '<format>')
@@ -420,6 +457,11 @@ namespace org.iringtools.library
           }
           else
           {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
             sqlExpression.Append(qualColumnName + "=" + expression.Values.FirstOrDefault() + "");
           }
           break;
@@ -427,6 +469,11 @@ namespace org.iringtools.library
         case RelationalOperator.NotEqualTo:
           if (isString)
           {
+              if (expression.Values.FirstOrDefault() == null)      // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is not null");
+                  break;
+              }
             if (expression.IsCaseSensitive)
             {
               value = expression.Values.FirstOrDefault();
@@ -440,6 +487,11 @@ namespace org.iringtools.library
           }
           else if (dataProperty.dataType == DataType.DateTime)
           {
+              if (expression.Values.FirstOrDefault() == null)      // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is not null");
+                  break;
+              }
             if (_provider.ToUpper().StartsWith("ORACLE"))
             {
               //e.g. dateTimeCol <> TO_TIMESTAMP_TZ('<date string>', '<format>')
@@ -453,6 +505,11 @@ namespace org.iringtools.library
           }
           else
           {
+              if (expression.Values.FirstOrDefault() == null)      // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is not null");
+                  break;
+              }
             sqlExpression.Append(qualColumnName + "<>" + expression.Values.FirstOrDefault() + "");
           }
           break;

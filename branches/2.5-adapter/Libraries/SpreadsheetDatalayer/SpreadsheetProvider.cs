@@ -58,6 +58,8 @@ namespace org.iringtools.adapter.datalayer
             _configuration.Generate = false;
             Utility.Write<SpreadsheetConfiguration>(_configuration, _configurationPath, true);
           }
+
+          Dispose();
         }
       }
     }
@@ -70,23 +72,26 @@ namespace org.iringtools.adapter.datalayer
 
     private SpreadsheetDocument GetDocument(string path)
     {
-      SpreadsheetDocument doc = null;
-     
+    //  SpreadsheetDocument doc = null;
+        
       try
       {
-        if (File.Exists(path))
-          doc = SpreadsheetDocument.Open(path, true);
+          if (File.Exists(path))
+          {
+              _document = SpreadsheetDocument.Open(path, true);
+          }
       }
       catch (IOException e)
       {
         throw new IOException(string.Format("File {0} is locked by other process. " + e, _configuration.Location));
       }
 
-      return doc;
+      return _document;
     }
 
     public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile)
     {
+        Dispose();
         List<SpreadsheetTable> tables = new List<SpreadsheetTable>();
         if (inputFile == null)
         {
@@ -402,6 +407,7 @@ namespace org.iringtools.adapter.datalayer
         _document.Close();
         _document = null;
       }
+     
     }
   }
 }

@@ -1463,17 +1463,14 @@ namespace org.iringtools.utility
       // with:
       //string utcStr = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Unspecified);
 
-      //if (!utcStr.Contains("."))
-      //  utcStr = utcStr.Replace("Z", ".000-00:00");
-      //else
-      //  utcStr = utcStr.Replace("Z", "-00:00");
-
-      // Straight UTC
+      // temporary restoring the old format to support POMA
       string utcStr = XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.Utc);
+
       if (!utcStr.Contains("."))
         utcStr = utcStr.Replace("Z", ".000-00:00");
       else
         utcStr = utcStr.Replace("Z", "-00:00");
+
       return utcStr;
     }
 
@@ -1651,6 +1648,7 @@ namespace org.iringtools.utility
         fs.Close();
       }
     }
+
     public static object Evaluate(string expression)
     {
       try
@@ -1666,17 +1664,22 @@ namespace org.iringtools.dynamic
     }}
   }}
 }}", expression);
+
         CodeDomProvider provider = new CSharpCodeProvider();
         CompilerParameters parameters = new CompilerParameters();
+
         CompilerResults compiler = provider.CompileAssemblyFromSource(parameters, source);
         if (compiler.Errors.Count > 0)
         {
           return null;
         }
+
         Assembly assembly = compiler.CompiledAssembly;
         object instance = assembly.CreateInstance("org.iringtools.dynamic.Evaluator");
+
         Type type = instance.GetType();
         MethodInfo method = type.GetMethod("Evaluate");
+
         return method.Invoke(instance, null);
       }
       catch

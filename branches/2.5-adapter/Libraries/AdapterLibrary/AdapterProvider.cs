@@ -4928,33 +4928,39 @@ namespace org.iringtools.adapter
 
         foreach (Assembly asm in domainAssemblies)
         {
+          Type[] asmTypes = null;
           try
           {
-            Type[] asmTypes = asm.GetTypes();
-            try
-            {
-              if (asmTypes != null)
-              {
-                foreach (System.Type asmType in asmTypes)
-                {
-                  if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
-                  {
-                    bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-                    string name = asm.FullName.Split(',')[0];
+            asmTypes = asm.GetTypes();
+          }
+          catch (ReflectionTypeLoadException e)
+          {
+            // if we are running the the iRing site under Anonymous authentication with the DefaultApplicationPool Identity we
+            // can run into ReflectionPermission issues but as our datalayer assemblies are in our web site's bin folder we
+            // should be able to ignore the exceptions and work with the accessibe types loaded in e.Types.
+            asmTypes = e.Types;
+            _logger.Warn("GetTypes() cannot access all types, but datalayer loading is continuing: " + e);
+          }
 
-                    if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
-                    {
-                      string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-                      DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-                      dataLayers.Add(dataLayer);
-                    }
+          try
+          {
+            if (asmTypes != null)
+            {
+              foreach (System.Type asmType in asmTypes)
+              {
+                if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                {
+                  bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+                  string name = asm.FullName.Split(',')[0];
+
+                  if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
+                  {
+                    string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+                    DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
+                    dataLayers.Add(dataLayer);
                   }
                 }
               }
-            }
-            catch (Exception e)
-            {
-              _logger.Error("Error loading data layer (while getting types): " + e);
             }
           }
           catch (Exception e)

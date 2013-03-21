@@ -39,12 +39,11 @@ namespace org.iringtools.library
   public interface IDataObject
   {    
     object GetPropertyValue(string propertyName);
-
     void SetPropertyValue(string propertyName, object value);
   }
 
   public interface IContentObject : IDataObject
-  {
+  {    
     string ObjectType { get; set; }
     string Identifier { get; set; }
     string ContentType { get; set; }
@@ -79,11 +78,9 @@ namespace org.iringtools.library
 
     long GetRelatedCount(IDataObject dataObject, string relatedObjectType);
 
-    //IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
-
     IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex);
+
     IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormats);
-    Response PostContents(IList<IContentObject> contentObjects);
   }
 
   public interface IDataLayer2 : IDataLayer

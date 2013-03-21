@@ -40,6 +40,7 @@ namespace org.iringtools.library
     public string ObjectNamespace { get; set; }
 
     public string ObjectType { get; set; }
+
     public bool HasContent { get; set; }
   }
 }
