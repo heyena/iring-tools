@@ -6,5 +6,5 @@ SELECT (COUNT(DISTINCT  ?uri) AS ?label)
   ?classRole a tpl:R76288246068 .
   ?classRole tpl:R98983340497 rdl:param1 .
   ?classRole tpl:R99672026745 ?uri .
-  ?uri rdfs:label ?label
+ # ?uri rdfs:label ?label
 }
