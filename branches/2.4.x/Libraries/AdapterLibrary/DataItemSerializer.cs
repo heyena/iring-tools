@@ -135,7 +135,7 @@ namespace org.iringtools.adapter
       {
         result[_idFieldName] = dataItem.id;
 
-        if (result[_hasContentFieldName] != null)
+        if (result.Keys.Contains(_hasContentFieldName)) 
           result[_hasContentFieldName] = dataItem.hasContent;
 
         foreach (var property in dataItem.properties)
