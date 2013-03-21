@@ -77,7 +77,7 @@ namespace org.iringtools.adapter.projection
 
               DataItem dataItem = new DataItem()
               {
-                properties = new Dictionary<string, string>(),
+                properties = new Dictionary<string, object>(),
               };
 
               if (dataObj is GenericDataObject)
@@ -94,18 +94,26 @@ namespace org.iringtools.adapter.projection
                   object value = dataObj.GetPropertyValue(keyProperty.keyPropertyName);
                   if (value != null)
                   {
-                    string valueStr = Convert.ToString(value);
-                    valueStr = Utility.ConvertSpecialCharOutbound(valueStr, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
+                    if (dataProperty.dataType == DataType.Char ||
+                        dataProperty.dataType == DataType.DateTime ||
+                        dataProperty.dataType == DataType.String ||
+                        dataProperty.dataType == DataType.TimeStamp)
+                    {
+                      string valueStr = Convert.ToString(value);
+                      valueStr = Utility.ConvertSpecialCharOutbound(valueStr, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
 
-                    if (dataProperty.dataType == DataType.DateTime)
-                      valueStr = Utility.ToXsdDateTime(valueStr);
+                      if (dataProperty.dataType == DataType.DateTime)
+                        valueStr = Utility.ToXsdDateTime(valueStr);
+
+                      value = valueStr;
+                    }
 
                     if (!string.IsNullOrEmpty(dataItem.id))
                     {
                       dataItem.id += dataObject.keyDelimeter;
                     }
 
-                    dataItem.id += valueStr;
+                    dataItem.id += value;
                   }
                 }
               }
@@ -116,14 +124,22 @@ namespace org.iringtools.adapter.projection
 
                 if (value != null)
                 {
-                  string valueStr = Convert.ToString(value);
+                  if (dataProperty.dataType == DataType.Char ||
+                        dataProperty.dataType == DataType.DateTime ||
+                        dataProperty.dataType == DataType.String ||
+                        dataProperty.dataType == DataType.TimeStamp)
+                  {
+                    string valueStr = Convert.ToString(value);
 
-                  if (dataProperty.dataType == DataType.DateTime)
+                    if (dataProperty.dataType == DataType.DateTime)
                       valueStr = Utility.ToXsdDateTime(valueStr);
+
+                    value = valueStr;
+                  }
 
                   if (!dataProperty.isHidden)
                   {
-                    dataItem.properties.Add(dataProperty.propertyName, valueStr);
+                    dataItem.properties.Add(dataProperty.propertyName, value);
                   }                  
                 }
                 else if (showNullValue) 
