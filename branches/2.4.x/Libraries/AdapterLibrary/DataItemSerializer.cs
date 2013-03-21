@@ -134,7 +134,9 @@ namespace org.iringtools.adapter
       if (dataItem != null)
       {
         result[_idFieldName] = dataItem.id;
-        result[_hasContentFieldName] = dataItem.hasContent;
+
+        if (result[_hasContentFieldName] != null)
+          result[_hasContentFieldName] = dataItem.hasContent;
 
         foreach (var property in dataItem.properties)
         {

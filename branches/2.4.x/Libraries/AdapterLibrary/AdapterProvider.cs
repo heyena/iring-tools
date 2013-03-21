@@ -2559,9 +2559,11 @@ namespace org.iringtools.adapter
         }
 
         _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+        _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
+
         _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
         _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-        _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
+
         _projectionEngine.FullIndex = fullIndex;
 
         if (_isProjectionPart7)
@@ -3093,19 +3095,19 @@ namespace org.iringtools.adapter
             dataFilter.OrderExpressions.Add(orderBy);
           }
 
-          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, dataFilter);
-          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-
           _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, dataFilter, limit, start);
+
+          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, dataFilter);
+          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
         }
         else
         {
-          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
-          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-
           _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, new DataFilter(), limit, start);
+
+          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
+          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
         }
 
         _projectionEngine.FullIndex = fullIndex;
