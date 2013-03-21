@@ -35,7 +35,7 @@ namespace org.iringtools.library
     public string id { get; set; }
 
     [DataMember(Name = "properties", Order = 1, EmitDefaultValue = false)]
-    public Dictionary<string, string> properties { get; set; }
+    public Dictionary<string, object> properties { get; set; }
     
     [DataMember(Name = "links", Order = 2, EmitDefaultValue = false)]
     public List<Link> links { get; set; }

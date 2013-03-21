@@ -199,12 +199,12 @@ namespace iRINGTools.Web.Models
           {
             bool found = false;
 
-            foreach (KeyValuePair<string, string> property in dataItem.properties)
+            foreach (KeyValuePair<string, object> property in dataItem.properties)
             {
               if (field.dataIndex.ToLower() == property.Key.ToLower())
               {
-                rowData.Add(property.Value);
-                newWid = property.Value.Count() * 4 + 40;
+                rowData.Add(property.Value.ToString());
+                newWid = property.Value.ToString().Count() * 4 + 40;
                 if (newWid > 40 && newWid > field.width && newWid < 400)
                   field.width = newWid;
                 found = true;
@@ -226,7 +226,7 @@ namespace iRINGTools.Web.Models
         switch (dataType)
         {
           case org.iringtools.library.DataType.Boolean:
-            return "boolean";
+            return "string";
 
           case org.iringtools.library.DataType.Char:
           case org.iringtools.library.DataType.String:

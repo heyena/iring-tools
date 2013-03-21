@@ -140,6 +140,8 @@ namespace org.iringtools.adapter
 
         foreach (var property in dataItem.properties)
         {
+          object value = property.Value;
+
           result[property.Key] = property.Value;
         }
 
@@ -159,10 +161,10 @@ namespace org.iringtools.adapter
 
       DataItem dataItem = new DataItem()
       {
-        properties = new Dictionary<string, string>(),
+        properties = new Dictionary<string, object>(),
       };
 
-      if (dictionary[_hasContentFieldName] != null && bool.Parse(dictionary[_hasContentFieldName].ToString()))
+      if (dictionary.Keys.Contains(_hasContentFieldName) && bool.Parse(dictionary[_hasContentFieldName].ToString()))
       {
         dataItem.hasContent = true;
       }
