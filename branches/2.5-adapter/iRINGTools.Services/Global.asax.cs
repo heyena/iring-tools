@@ -3,6 +3,7 @@ using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
 using System.Web.Services.Description;
+using System.IO;
 
 namespace org.iringtools.adapter
 {
@@ -17,14 +18,29 @@ namespace org.iringtools.adapter
     private void RegisterRoutes()
     {
       // Edit the base address of AdapterService by replacing the "AdapterService" string below
+
       RouteTable.Routes.Add(new ServiceRoute("sandbox/svc", new WebServiceHostFactory(), typeof(org.iringtools.services.SandboxService)));
+
       RouteTable.Routes.Add(new ServiceRoute("refdata", new WebServiceHostFactory(), typeof(org.iringtools.services.ReferenceDataService)));
+
       RouteTable.Routes.Add(new ServiceRoute("hibernate", new WebServiceHostFactory(), typeof(org.iringtools.services.HibernateService)));
+
       RouteTable.Routes.Add(new ServiceRoute("adapter", new WebServiceHostFactory(), typeof(org.iringtools.services.AdapterService)));
+
       RouteTable.Routes.Add(new ServiceRoute("data", new RawServiceHostFactory(), typeof(org.iringtools.services.DataService)));
+
       RouteTable.Routes.Add(new ServiceRoute("dxfr", new WebServiceHostFactory(), typeof(org.iringtools.services.DataTransferService)));
+
       RouteTable.Routes.Add(new ServiceRoute("facade/svc", new WebServiceHostFactory(), typeof(org.iringtools.services.FacadeService)));
+
       RouteTable.Routes.Add(new ServiceRoute("adata", new RawServiceHostFactory(), typeof(org.iringtools.services.AdapterDataService)));
+
+    }
+
+    void Application_End(object sender, EventArgs e)
+    {
+      string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+      File.SetCreationTime(baseDir + @"bin\AdapterLibrary.dll", DateTime.Now);
     }
   }
 }
