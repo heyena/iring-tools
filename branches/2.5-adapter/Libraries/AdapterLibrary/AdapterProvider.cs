@@ -33,6 +33,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Web;
+using System.Web.Compilation;
 using System.Xml;
 using System.Xml.Linq;
 using log4net;
@@ -2559,9 +2560,11 @@ namespace org.iringtools.adapter
         }
 
         _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+        _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
+
         _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
         _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-        _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
+
         _projectionEngine.FullIndex = fullIndex;
 
         if (_isProjectionPart7)
@@ -3093,19 +3096,19 @@ namespace org.iringtools.adapter
             dataFilter.OrderExpressions.Add(orderBy);
           }
 
-          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, dataFilter);
-          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-
           _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, dataFilter, limit, start);
+
+          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, dataFilter);
+          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
         }
         else
         {
-          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
-          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-
           _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, new DataFilter(), limit, start);
+
+          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
+          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
         }
 
         _projectionEngine.FullIndex = fullIndex;
@@ -4924,6 +4927,7 @@ namespace org.iringtools.adapter
       try
       {
         Type type = typeof(IDataLayer);
+        BuildManager.GetReferencedAssemblies(); // make sure assemblies are loaded even though methods may not have been called yet
         Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
         foreach (Assembly asm in domainAssemblies)
@@ -4931,23 +4935,25 @@ namespace org.iringtools.adapter
           Type[] asmTypes = null;
           try
           {
-            asmTypes = asm.GetTypes();
+            asmTypes = asm.GetTypes().Where(a => a != null && (type.IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract))).ToArray();
           }
           catch (ReflectionTypeLoadException e)
           {
             // if we are running the the iRing site under Anonymous authentication with the DefaultApplicationPool Identity we
             // can run into ReflectionPermission issues but as our datalayer assemblies are in our web site's bin folder we
             // should be able to ignore the exceptions and work with the accessibe types loaded in e.Types.
-            asmTypes = e.Types;
-            _logger.Warn("GetTypes() cannot access all types, but datalayer loading is continuing: " + e);
+            asmTypes = e.Types.Where(a => a != null && (type.IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract))).ToArray();
+            _logger.Warn("GetTypes() for " + asm.FullName +" cannot access all types, but datalayer loading is continuing: " + e);
           }
 
           try
           {
-            if (asmTypes != null)
+            if (asmTypes.Any()) 
             {
+              _logger.Debug("assembly:" + asm.FullName);
               foreach (System.Type asmType in asmTypes)
               {
+                _logger.Debug("asmType:" + asmType.ToString());
                 if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
                 {
                   bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
