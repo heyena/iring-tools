@@ -71,7 +71,7 @@ namespace iRINGTools.Web.Models
 
       private void GetDataDictionary(String scope, String app)
       {
-        GetDataDictionary(scope, app, true);
+        GetDataDictionary(scope, app, false);
       }
 
       private void GetDataDictionary(String scope, String app, bool usesCache)
@@ -90,7 +90,50 @@ namespace iRINGTools.Web.Models
             WebHttpClient client = CreateWebClient(_dataServiceUri);
             dataDict = client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
 
-            Session[dictKey] = dataDict;
+            // sort data objects & properties
+            if (dataDict != null && dataDict.dataObjects.Count > 0)
+            {
+              dataDict.dataObjects.Sort(new DataObjectsComparer());
+
+              foreach (DataObject dataObject in dataDict.dataObjects)
+              {
+                dataObject.dataProperties.Sort(new DataPropertyComparer());
+
+                // Adding Key elements to TOP of the List.
+                List<String> keyPropertyNames = new List<String>();
+                foreach (KeyProperty keyProperty in dataObject.keyProperties)
+                {
+                  keyPropertyNames.Add(keyProperty.keyPropertyName);
+                }
+                var value = "";
+                for (int i = 0; i < keyPropertyNames.Count; i++)
+                {
+                  value = keyPropertyNames[i];
+                  // removing the property name from the list and adding at TOP
+                  List<DataProperty> DataProperties = dataObject.dataProperties;
+                  DataProperty prop = null;
+
+                  for (int j = 0; j < DataProperties.Count; j++)
+                  {
+                    if (DataProperties[j].propertyName == value)
+                    {
+                      prop = DataProperties[j];
+                      DataProperties.RemoveAt(j);
+                      break;
+
+                    }
+                  }
+
+                  if (prop != null)
+                    DataProperties.Insert(0, prop);
+                }
+              }
+            }
+
+            if (usesCache)
+            {
+              Session[dictKey] = dataDict;
+            }
           }
 
           if (dataDict == null || dataDict.dataObjects.Count == 0)
@@ -346,6 +389,32 @@ namespace iRINGTools.Web.Models
         }
 
         return dataFilter;
+      }
+    }
+
+    public class DataObjectsComparer : IComparer<DataObject>
+    {
+      public int Compare(DataObject left, DataObject right)
+      {
+        // compare strings
+        {
+          string leftValue = left.tableName.ToString();
+          string rightValue = right.tableName.ToString();
+          return string.Compare(leftValue, rightValue);
+        }
+      }
+    }
+
+    public class DataPropertyComparer : IComparer<DataProperty>
+    {
+      public int Compare(DataProperty left, DataProperty right)
+      {
+        // compare strings
+        {
+          string leftValue = left.propertyName.ToString();
+          string rightValue = right.propertyName.ToString();
+          return string.Compare(leftValue, rightValue);
+        }
       }
     }
 }
