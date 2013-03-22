@@ -1180,52 +1180,6 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
-             _settings["AppDataPath"], projectName, applicationName);
-
-        if (File.Exists(path))
-        {
-          DataDictionary dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
-          // Sorting DataObjects and data properties. 
-          dataDictionary.dataObjects.Sort(new DataObjectsComparer());
-          foreach (DataObject dataObject in dataDictionary.dataObjects)
-          {
-            dataObject.dataProperties.Sort(new DataPropertyComparer());
-
-            // Adding Key elements to TOP of the List.
-            List<String> keyPropertyNames = new List<String>();
-            foreach (KeyProperty keyProperty in dataObject.keyProperties)
-            {
-              keyPropertyNames.Add(keyProperty.keyPropertyName);
-            }
-            var value = "";
-            for (int i = 0; i < keyPropertyNames.Count; i++)
-            {
-              value = keyPropertyNames[i];
-              // removing the property name from the list and adding at TOP
-              List<DataProperty> DataProperties = dataObject.dataProperties;
-              DataProperty prop = null;
-
-              for (int j = 0; j < DataProperties.Count; j++)
-              {
-                if (DataProperties[j].propertyName == value)
-                {
-                  prop = DataProperties[j];
-                  DataProperties.RemoveAt(j);
-                  break;
-
-                }
-              }
-
-              if (prop != null)
-                DataProperties.Insert(0, prop);
-            }
-          } 
-          
-          utility.Utility.Write<DataDictionary>(dataDictionary, path, true);
-          return dataDictionary;
-        }
-
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
@@ -4232,17 +4186,24 @@ namespace org.iringtools.adapter
         try
         {
           string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
-             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+                 _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
 
-          if (File.Exists(path))
+          if (_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true)
           {
-            _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
+            if (File.Exists(path))
+            {
+              _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
+            }
           }
           else
           {
             _dataDictionary = _dataLayer.GetDictionary();
-            utility.Utility.Write<DataDictionary>(_dataDictionary, path, true);
-          }
+
+            if (_dataDictionary != null)
+            {
+                utility.Utility.Write<DataDictionary>(_dataDictionary, path, true);
+            }
+          }        
 
           _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
         }
@@ -5396,6 +5357,32 @@ namespace org.iringtools.adapter
     }
   }
 
+  public class ScopeComparer : IComparer<ScopeProject>
+  {
+    public int Compare(ScopeProject left, ScopeProject right)
+    {
+      // compare strings
+      {
+        string leftValue = left.Name.ToString();
+        string rightValue = right.Name.ToString();
+        return string.Compare(leftValue, rightValue);
+      }
+    }
+  }
+
+  public class ApplicationComparer : IComparer<ScopeApplication>
+  {
+    public int Compare(ScopeApplication left, ScopeApplication right)
+    {
+      // compare strings
+      {
+        string leftValue = left.Name.ToString();
+        string rightValue = right.Name.ToString();
+        return string.Compare(leftValue, rightValue);
+      }
+    }
+  }
+
   public class DataObjectComparer : IComparer<IDataObject>
   {
     private DataProperty _dataProp;
@@ -5456,58 +5443,6 @@ namespace org.iringtools.adapter
       {
         string leftValue = left.GetPropertyValue(_dataProp.propertyName).ToString();
         string rightValue = right.GetPropertyValue(_dataProp.propertyName).ToString();
-        return string.Compare(leftValue, rightValue);
-      }
-    }
-  }
-
-  public class ApplicationComparer : IComparer<ScopeApplication>
-  {
-    public int Compare(ScopeApplication left, ScopeApplication right)
-    {
-      // compare strings
-      {
-        string leftValue = left.Name.ToString();
-        string rightValue = right.Name.ToString();
-        return string.Compare(leftValue, rightValue);
-      }
-    }
-  }
-
-  public class DataObjectsComparer : IComparer<DataObject>
-  {
-    public int Compare(DataObject left, DataObject right)
-    {
-      // compare strings
-      {
-        string leftValue = left.tableName.ToString();
-        string rightValue = right.tableName.ToString();
-        return string.Compare(leftValue, rightValue);
-      }
-    }
-  }
-
-  public class DataPropertyComparer : IComparer<DataProperty>
-  {
-    public int Compare(DataProperty left, DataProperty right)
-    {
-      // compare strings
-      {
-        string leftValue = left.propertyName.ToString();
-        string rightValue = right.propertyName.ToString();
-        return string.Compare(leftValue, rightValue);
-      }
-    }
-  }
-
-  public class ScopeComparer : IComparer<ScopeProject>
-  {
-    public int Compare(ScopeProject left, ScopeProject right)
-    {
-      // compare strings
-      {
-        string leftValue = left.Name.ToString();
-        string rightValue = right.Name.ToString();
         return string.Compare(leftValue, rightValue);
       }
     }
