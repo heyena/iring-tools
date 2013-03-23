@@ -36,11 +36,5 @@ namespace org.iringtools.adapter
       RouteTable.Routes.Add(new ServiceRoute("adata", new RawServiceHostFactory(), typeof(org.iringtools.services.AdapterDataService)));
 
     }
-
-    void Application_End(object sender, EventArgs e)
-    {
-      string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-      File.SetCreationTime(baseDir + @"bin\AdapterLibrary.dll", DateTime.Now);
-    }
   }
 }

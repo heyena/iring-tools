@@ -7,6 +7,11 @@ namespace org.iringtools.library
 {
   public class GenericContentObject : GenericDataObject, IContentObject
   {
+    public GenericContentObject()
+    {
+      DataObject = new GenericDataObject();
+    }
+
     [IgnoreDataMember]
     [XmlIgnore]
     public Stream Content { get; set; }

@@ -4887,10 +4887,11 @@ namespace org.iringtools.adapter
 
       try
       {
-        Type type = typeof(IDataLayer);
         BuildManager.GetReferencedAssemblies(); // make sure assemblies are loaded even though methods may not have been called yet
         Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
+        
+        Type type = typeof(IDataLayer);
+        
         foreach (Assembly asm in domainAssemblies)
         {
           Type[] asmTypes = null;
