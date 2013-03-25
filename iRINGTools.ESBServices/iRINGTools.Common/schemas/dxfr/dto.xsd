@@ -6,6 +6,18 @@
 
  <xs:import namespace="http://www.iringtools.org/dxfr/response" schemaLocation="../dxfr/exchangeResponse.xsd" />
 
+ <xs:annotation>
+  <xs:appinfo>
+   <jaxb:bindings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+    <jxb:bindings schemaLocation="dto.xsd">
+     <jxb:bindings node="//xsd:element[@name='dataTransferObject']/xsd:complexType/xsd:sequence/xsd:element[@name='content']">
+      <jxb:inlineBinaryData />
+     </jxb:bindings>
+    </jxb:bindings>
+   </jaxb:bindings>
+  </xs:appinfo>
+ </xs:annotation>
+ 
  <xs:element name="dataTransferObjects">
   <xs:complexType>
    <xs:sequence>
@@ -42,6 +54,7 @@
     <xs:element name="transferType" type="TransferType" minOccurs="0" maxOccurs="1" />
     <xs:element name="hasContent" type="xs:boolean" />
     <xs:element name="duplicateCount" type="xs:int" minOccurs="0" />
+    <xs:element name="content" type="xs:base64Binary" minOccurs="0" />
    </xs:sequence>
   </xs:complexType>
  </xs:element>

@@ -4,6 +4,7 @@ package org.iringtools.dxfr.dto;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlInlineBinaryData;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -23,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType" minOccurs="0"/>
  *         &lt;element name="hasContent" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="duplicateCount" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="content" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,7 +39,8 @@ import javax.xml.bind.annotation.XmlType;
     "classObjects",
     "transferType",
     "hasContent",
-    "duplicateCount"
+    "duplicateCount",
+    "content"
 })
 @XmlRootElement(name = "dataTransferObject")
 public class DataTransferObject {
@@ -48,6 +51,8 @@ public class DataTransferObject {
     protected TransferType transferType;
     protected boolean hasContent;
     protected Integer duplicateCount;
+    @XmlInlineBinaryData
+    protected byte[] content;
 
     /**
      * Gets the value of the identifier property.
@@ -160,6 +165,28 @@ public class DataTransferObject {
      */
     public void setDuplicateCount(Integer value) {
         this.duplicateCount = value;
+    }
+
+    /**
+     * Gets the value of the content property.
+     * 
+     * @return
+     *     possible object is
+     *     byte[]
+     */
+    public byte[] getContent() {
+        return content;
+    }
+
+    /**
+     * Sets the value of the content property.
+     * 
+     * @param value
+     *     allowed object is
+     *     byte[]
+     */
+    public void setContent(byte[] value) {
+        this.content = ((byte[]) value);
     }
 
 }

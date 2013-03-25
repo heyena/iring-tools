@@ -52,6 +52,12 @@
       <include name="**/*.jar"/>
     </fileset>
 	</path>
+    
+	<path id="gson-1.4.userclasspath">
+    <fileset dir="../libraries/google-gson-1.4">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
 	
 	<path id="iRINGTools.Common.classpath">
 		<pathelement location="${iringtools-common.location}/bin" />
@@ -101,6 +107,7 @@
 			<classpath refid="commons-codec-1.4.userclasspath" />      
 			<classpath refid="json-utils.userclasspath" />
 			<classpath refid="jena-2.6.4.userclasspath" />
+			<classpath refid="gson-1.4.userclasspath" />
 		</javac>
 	</target>
 

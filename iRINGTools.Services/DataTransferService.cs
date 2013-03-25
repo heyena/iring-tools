@@ -178,20 +178,20 @@ namespace org.iringtools.services
     }
 
     [Description("Gets data transfer objects of requested indices and manifest.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
-    public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo?includeContent={includeContent}")]
+    public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest, bool includeContent)
     {
       try
       {
         if (IsAsync())
         {
-          string statusURL = _dtoProvider.AsyncGetDataTransferObjects(scope, app, graph, dxoRequest);
+          string statusURL = _dtoProvider.AsyncGetDataTransferObjects(scope, app, graph, dxoRequest, includeContent);
           WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
           WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
         }
         else
         {
-          DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
+          DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest, includeContent);
 
           HttpContext.Current.Response.ContentType = "application/xml";
           HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
