@@ -684,12 +684,12 @@ namespace org.iringtools.adapter
               if (hasContent)
               {
                 _settings["IncludeContent"] = includeContent.ToString();
-
-                IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, idFormats.Keys.ToList<string>());
-                DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-
-                dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
               }
+
+              IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, idFormats.Keys.ToList<string>());
+              DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+
+              dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
             }
           }
         }
