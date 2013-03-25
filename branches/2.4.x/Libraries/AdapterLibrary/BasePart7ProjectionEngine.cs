@@ -589,9 +589,13 @@ namespace org.iringtools.adapter.projection
             IDataObject dataObject = _dataLayer.Create(objectType, null).First();
             SetAppCode(dataObject);
 
-            if (dataObject.GetType() == typeof(GenericDataObject))
+            if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
             {
               ((GenericDataObject)dataObject).ObjectType = objectType;
+            }
+            else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+            {
+              ((GenericContentObject)dataObject).ObjectType = objectType;
             }
 
             foreach (var pair in dataRecord)
@@ -628,9 +632,13 @@ namespace org.iringtools.adapter.projection
       {
         IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
 
-        if (dataObject.GetType() == typeof(GenericDataObject))
+        if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
         {
           ((GenericDataObject)dataObject).ObjectType = objectType;
+        }
+        else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+        {
+          ((GenericContentObject)dataObject).ObjectType = objectType;
         }
 
         SetAppCode(dataObject);

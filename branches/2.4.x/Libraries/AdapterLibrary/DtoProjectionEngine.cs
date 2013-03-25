@@ -9,6 +9,7 @@ using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using System.Text;
+using System.IO;
 
 namespace org.iringtools.adapter.projection
 {
@@ -64,6 +65,14 @@ namespace org.iringtools.adapter.projection
       }
 
       return dtoDoc;
+    }
+
+    public DataTransferObjects BuildDataTransferObjects(GraphMap graphMap, ref IList<IDataObject> dataObjects)
+    {
+      _graphMap = graphMap;
+      _dataObjects = dataObjects;
+
+      return BuildDataTransferObjects();
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
@@ -162,7 +171,22 @@ namespace org.iringtools.adapter.projection
             try
             {
               dataObject = CreateDataObject(_graphMap.dataObjectName, dataObjectIndex);
-              _dataObjects.Add(dataObject);
+
+              DataTransferObject dto = dataTransferObjects.DataTransferObjectList[dataObjectIndex];
+              if (dto.content != null)
+              {
+                IContentObject contentObject = new GenericContentObject()
+                {
+                   Content = new MemoryStream(dto.content),
+                   ObjectType = _graphMap.dataObjectName
+                };
+
+                _dataObjects.Add(contentObject);
+              }
+              else
+              {
+                _dataObjects.Add(dataObject);
+              }
             }
             catch (Exception e)
             {
@@ -450,7 +474,13 @@ namespace org.iringtools.adapter.projection
           }
           else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
           {
-            dto.hasContent = ((GenericContentObject)_dataObjects[dataObjectIndex]).HasContent;
+            GenericContentObject contentObject = (GenericContentObject)_dataObjects[dataObjectIndex];
+            dto.hasContent = contentObject.HasContent;
+
+            if (_settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString()))
+            {
+              dto.content = contentObject.Content.ToMemoryStream().ToArray();
+            }
           }
 
           dataTransferObjects.DataTransferObjectList.Add(dto);

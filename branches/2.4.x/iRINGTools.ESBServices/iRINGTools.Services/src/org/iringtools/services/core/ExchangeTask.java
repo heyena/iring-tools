@@ -16,8 +16,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
-import org.iringtools.library.RequestStatus;
-import org.iringtools.library.State;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.directory.ExchangeDefinition;
@@ -32,6 +30,8 @@ import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
+import org.iringtools.library.RequestStatus;
+import org.iringtools.library.State;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpUtils;
 import org.iringtools.utility.IOUtils;
@@ -127,7 +127,7 @@ public class ExchangeTask implements Runnable
     	DataTransferIndices dtis = xReq.getDataTransferIndices();
 
     	//
-    	//check data transfer indices
+    	// check data transfer indices
     	//
     	if (dtis == null)
     	{
@@ -151,7 +151,7 @@ public class ExchangeTask implements Runnable
 		
 		    for (DataTransferIndex dxi : dtis.getDataTransferIndexList().getItems())
 		    {
-		      // exclude ones with duplicates
+		      // exclude DTOs with duplicates
 		      if (dxi.getDuplicateCount() != null && dxi.getDuplicateCount() > 1)
 		      {
 		        String message = "Excluding DTO [" + dxi.getIdentifier() + "] due to [" + dxi.getDuplicateCount() + "] duplicates. ";
@@ -266,7 +266,9 @@ public class ExchangeTask implements Runnable
 			      //
 			      // create deleted DTOs and collect add/change DTIs from source
 			      //
-			
+			      
+			      boolean hasContent = false;
+			      
 			      for (DataTransferIndex poolDtiItem : poolDtiItems)
 			      {
 			        if (poolDtiItem.getTransferType() == TransferType.DELETE)
@@ -285,6 +287,11 @@ public class ExchangeTask implements Runnable
 			          }
 			
 			          sourceDtiItems.add(poolDtiItem);
+                
+                if (poolDtiItem.getHasContent() != null && poolDtiItem.getHasContent())
+                {
+                  hasContent = true;                  
+                }
 			        }
 			      }
 			
@@ -304,13 +311,14 @@ public class ExchangeTask implements Runnable
 			      {
 			        manifest.getGraphs().getItems().get(0).setName(xDef.getSourceGraphName());
 			
-			        logger.debug("Requesting source DTOs from [" + sourceDtoUrl + "]: ");
-			        logger.debug(JaxbUtils.toXml(sourceDtosRequest, false));
-			
 			        HttpClient httpClient = new HttpClient();
-			        HttpUtils.addHttpHeaders(settings, httpClient);
-			
-			        if (isAsync())
+              HttpUtils.addHttpHeaders(settings, httpClient);
+                    
+		          logger.debug("Requesting source DTOs from [" + sourceDtoUrl + "]: ");
+              logger.debug(JaxbUtils.toXml(sourceDtosRequest, false));
+      
+              //TODO: handle asynchronous for content DTO also
+              if (isAsync() || !hasContent)
 			        {
 			          httpClient.setAsync(true);
 			          String statusURL = httpClient.post(String.class, sourceDtoUrl, sourceDtosRequest);
@@ -318,11 +326,12 @@ public class ExchangeTask implements Runnable
 			        }
 			        else
 			        {
-			          sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtosRequest);
+			          String dtoContentURL = sourceDtoUrl + "?includeContent=true";
+			          sourceDtos = httpClient.post(DataTransferObjects.class, dtoContentURL, sourceDtosRequest);
 			        }
-			        
-			        logger.debug("Source DTOs: ");
-			        logger.debug(JaxbUtils.toXml(sourceDtos, false));
+              
+              logger.debug("Source DTOs: ");
+              logger.debug(JaxbUtils.toXml(sourceDtos, false));
 			
 			        sourceDtosRequest = null;
 			      }
@@ -365,7 +374,8 @@ public class ExchangeTask implements Runnable
 			          HttpClient httpClient = new HttpClient();
 			          HttpUtils.addHttpHeaders(settings, httpClient);
 			
-			          if (isAsync())
+			          //TODO: handle asynchronous for content DTO also
+	              if (isAsync() || !hasContent)
 			          {
 			            httpClient.setAsync(true);
 			            String statusURL = httpClient.post(String.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);

@@ -86,6 +86,9 @@ namespace org.iringtools.adapter
     [DataMember(Order = 4, Name = "duplicateCount", EmitDefaultValue = false)]
     public int duplicateCount { get; set; }
 
+    [DataMember(Order = 5, Name = "content", EmitDefaultValue = false)]
+    public byte[] content { get; set; }
+
     public ClassObject GetClassObject(string classId)
     {
       foreach (ClassObject classObject in classObjects)

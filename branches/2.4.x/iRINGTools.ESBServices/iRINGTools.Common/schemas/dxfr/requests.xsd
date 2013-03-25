@@ -57,7 +57,7 @@
       <xs:element name="sourceAppName" type="xs:string" />
       <xs:element name="targetScopeName" type="xs:string" />
       <xs:element name="targetAppName" type="xs:string" />
-      <xs:element name="dataTransferObjects" type="dto:DataTransferObjects" maxOccurs="2" />
+      <xs:element ref="dto:dataTransferObjects" maxOccurs="2" />
       <xs:element name="manifest" type="mnf:Manifest" />
     </xs:sequence>
   </xs:complexType>
