@@ -4872,14 +4872,14 @@ namespace org.iringtools.adapter
       DataLayers dataLayers = new DataLayers();
 
       // Load NHibernate data layer
-      Type nhType = Type.GetType("org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", true);
+      Type nhType = typeof(NHibernateDataLayer);
       string nhLibrary = nhType.Assembly.GetName().Name;
       string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
       DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
       dataLayers.Add(nhDataLayer);
 
       // Load Spreadsheet data layer
-      Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer", true);
+      Type ssType = typeof(SpreadsheetDatalayer);
       string ssLibrary = ssType.Assembly.GetName().Name;
       string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
       DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
@@ -4887,7 +4887,6 @@ namespace org.iringtools.adapter
 
       try
       {
-        BuildManager.GetReferencedAssemblies(); // make sure assemblies are loaded even though methods may not have been called yet
         Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
         
         Type type = typeof(IDataLayer);
