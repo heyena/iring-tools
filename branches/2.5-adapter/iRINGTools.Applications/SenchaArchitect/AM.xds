@@ -7,12 +7,13 @@
         "sdkPath": "",
         "lineEnding": "CRLF",
         "genTimestamps": false,
-        "cacheBust": false
+        "cacheBust": false,
+        "buildShouldOverwriteIndex": true
     },
-    "xdsVersion": "2.1.0",
-    "xdsBuild": 678,
+    "xdsVersion": "2.2.0",
+    "xdsBuild": 908,
     "schemaVersion": 1,
-    "upgradeVersion": 210000000498,
+    "upgradeVersion": 210000000499,
     "framework": "ext41",
     "topInstanceFileMap": {
         "be3f23ad-f579-463e-98fb-9e65fd3b6f6a": {

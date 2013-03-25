@@ -1,5 +1,5 @@
 {
-    "type": "form",
+    "type": "Ext.form.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -9,11 +9,10 @@
         "mappingNode": "",
         "parentClassId": "",
         "formid": "",
-        "designer|userClassName": "mapping.ClassMapForm",
-        "designer|userAlias": "classmapform",
-        "floating": false,
         "height": null,
         "width": null,
+        "designer|userClassName": "mapping.ClassMapForm",
+        "designer|userAlias": "classmapform",
         "bodyPadding": null,
         "bodyStyle": [
             "padding:10px 5px 0"
@@ -22,7 +21,6 @@
         "method": "POST",
         "url": "mapping/addclassmap"
     },
-    "id": "ExtBox1-ext-gen26988",
     "designerId": "53fd65a8-de84-4832-8c1a-247338700860",
     "customConfigs": [
         {
@@ -43,21 +41,21 @@
     ],
     "cn": [
         {
-            "type": "fieldset",
+            "type": "Ext.form.FieldSet",
             "reference": {
                 "name": "items",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyFieldSet",
                 "hidden": true,
+                "designer|userClassName": "MyFieldSet",
                 "title": null
             },
             "designerId": "bffe865e-3fdc-4fc8-bb48-36282e5f05d4",
             "cn": [
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -66,13 +64,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField8",
-                        "name": "graphName",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "graphName"
                     },
                     "designerId": "f554763d-742e-4020-9ec6-027eef03c5b8"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -81,13 +79,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField12",
-                        "name": "index",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "index"
                     },
                     "designerId": "1d1ac07c-8efb-4bc8-a302-d1acc80a5df6"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -96,13 +94,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField11",
-                        "name": "parentClassId",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "parentClassId"
                     },
                     "designerId": "8ecdce4c-5389-4b57-b659-697e4157bf40"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -111,13 +109,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField10",
-                        "name": "roleName",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "roleName"
                     },
                     "designerId": "b28a6acf-8495-497d-83ba-4f825d8414c9"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -126,13 +124,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField9",
-                        "name": "dataObject",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "dataObject"
                     },
                     "designerId": "05df8f3c-187e-4685-b281-7810181a22e6"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -141,13 +139,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField7",
-                        "name": "propertyName",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "propertyName"
                     },
                     "designerId": "63bce1f6-5842-41cb-8548-2e617a59987b"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -156,13 +154,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField6",
-                        "name": "baseUrl",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "baseUrl"
                     },
                     "designerId": "9b6d21ac-2117-48ca-977d-c1d5713f7b94"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -171,13 +169,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField5",
-                        "name": "endpoint",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "endpoint"
                     },
                     "designerId": "87c5bcf7-10d6-4307-ba95-08d2e0050447"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -186,13 +184,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField4",
-                        "name": "contextName",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "contextName"
                     },
                     "designerId": "01748739-45aa-4172-8cdf-333abca88c2c"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -201,13 +199,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField3",
-                        "name": "relation",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "relation"
                     },
                     "designerId": "c86c85cc-a06e-41dc-8225-c161b0093edc"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -216,13 +214,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField2",
-                        "name": "classID",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "classID"
                     },
                     "designerId": "8f840530-c13e-4837-b790-6f438dca09d2"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -231,13 +229,13 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField1",
-                        "name": "classLabel",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "classLabel"
                     },
                     "designerId": "7251bfbd-febf-4df4-bd55-198ad0bba071"
                 },
                 {
-                    "type": "hiddenfield",
+                    "type": "Ext.form.field.Hidden",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -246,15 +244,15 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "designer|userClassName": "MyHiddenField",
-                        "name": "objectName",
-                        "fieldLabel": null
+                        "fieldLabel": null,
+                        "name": "objectName"
                     },
                     "designerId": "f74c65bb-a34d-4b1c-b4f4-f23e5617fb2f"
                 }
             ]
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -267,7 +265,7 @@
             "designerId": "f76134a5-2752-4ada-a81a-f676454e45ee",
             "cn": [
                 {
-                    "type": "tbfill",
+                    "type": "Ext.toolbar.Fill",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -280,7 +278,7 @@
                     "designerId": "9d92c675-f409-49c6-92d2-59df807b0fd2"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -316,7 +314,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -409,7 +407,7 @@
             "designerId": "7b6e8428-b518-4f6b-a90b-9d2b5b69ee01"
         },
         {
-            "type": "container",
+            "type": "Ext.container.Container",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -417,8 +415,6 @@
             "codeClass": null,
             "userConfig": {
                 "anchor": "100%",
-                "designer|userClassName": "mapping.PropertyContainer",
-                "designer|userAlias": "propertycontainer",
                 "html": [
                     "Drop a Property Node here."
                 ],
@@ -428,6 +424,8 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
+                "designer|userClassName": "mapping.PropertyContainer",
+                "designer|userAlias": "propertycontainer",
                 "anchorSize": null
             },
             "designerId": "0121b4fa-f3bc-477a-b5cb-ce74b247711b",
@@ -440,7 +438,7 @@
             ]
         },
         {
-            "type": "container",
+            "type": "Ext.container.Container",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -448,8 +446,6 @@
             "codeClass": null,
             "userConfig": {
                 "anchor": "100%",
-                "designer|userClassName": "mapping.ClassContainer",
-                "designer|userAlias": "classcontainer",
                 "height": null,
                 "html": [
                     "Drop a Class Node here."
@@ -460,7 +456,9 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
-                "width": null
+                "width": null,
+                "designer|userClassName": "mapping.ClassContainer",
+                "designer|userAlias": "classcontainer"
             },
             "designerId": "f0db1991-6b19-40bd-971d-912e84d62f6b",
             "customConfigs": [

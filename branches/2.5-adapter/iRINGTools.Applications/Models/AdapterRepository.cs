@@ -53,7 +53,7 @@ namespace iRINGTools.Web.Models
 
       if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        var webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
         client = new WebHttpClient(baseUri, null, webProxy);
       }
       else

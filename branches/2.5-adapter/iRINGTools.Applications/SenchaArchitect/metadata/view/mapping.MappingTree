@@ -1,5 +1,5 @@
 {
-    "type": "treepanel",
+    "type": "Ext.tree.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -9,14 +9,17 @@
         "contextName": null,
         "endpoint": null,
         "baseUrl": null,
-        "designer|userClassName": "mapping.MappingTree",
-        "designer|userAlias": "mappingtree",
+        "stateEvents": [
+            "itemcollapse",
+            "itemexpand"
+        ],
+        "stateful": true,
         "border": true,
         "height": null,
         "minWidth": null,
         "width": null,
-        "stateEvents": " ['itemcollapse', 'itemexpand']",
-        "stateful": true,
+        "designer|userClassName": "mapping.MappingTree",
+        "designer|userAlias": "mappingtree",
         "collapsible": null,
         "title": null,
         "store": "MappingStore",
@@ -25,7 +28,6 @@
     "configAlternates": {
         "border": "boolean"
     },
-    "id": "ExtBox1-ext-gen54902",
     "designerId": "37ca6ad3-7180-4c3d-bcd8-22f9493320a6",
     "customConfigs": [
         {
@@ -46,7 +48,7 @@
     ],
     "cn": [
         {
-            "type": "treeview",
+            "type": "Ext.tree.View",
             "reference": {
                 "name": "viewConfig",
                 "type": "object"
@@ -58,7 +60,7 @@
             "designerId": "a291d01c-747c-4845-9481-a6e55174dd98",
             "cn": [
                 {
-                    "type": "treedragdropplugin",
+                    "type": "Ext.tree.plugin.TreeViewDragDrop",
                     "reference": {
                         "name": "plugins",
                         "type": "array"
@@ -173,7 +175,7 @@
             ]
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -181,13 +183,13 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "designer|userClassName": "MyToolbar6",
-                "width": null
+                "width": null,
+                "designer|userClassName": "MyToolbar6"
             },
             "designerId": "2c635a91-7155-4759-93ac-8c9b1fb7c4a9",
             "cn": [
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -226,7 +228,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -494,7 +496,7 @@
             "designerId": "d33a65fb-af75-4cf5-93fe-b8e94ffef6e3"
         },
         {
-            "type": "rowselectionmodel",
+            "type": "Ext.selection.RowModel",
             "reference": {
                 "name": "selModel",
                 "type": "object"

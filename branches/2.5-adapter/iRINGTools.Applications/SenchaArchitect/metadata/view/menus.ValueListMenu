@@ -1,21 +1,19 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "width": 130,
         "designer|userClassName": "menus.ValueListMenu",
-        "designer|userAlias": "valuelistmenu",
-        "floating": true,
-        "width": 130
+        "designer|userAlias": "valuelistmenu"
     },
-    "id": "ExtBox1-ext-gen36077",
     "designerId": "4d5a5695-f281-47a6-8f8b-63eeccfa1450",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -23,8 +21,8 @@
             "codeClass": null,
             "userConfig": {
                 "action": "editnewvaluelist",
-                "designer|userClassName": "MyMenuItem21",
                 "itemId": "editvaluelist",
+                "designer|userClassName": "MyMenuItem21",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit ValueList"
             },
@@ -38,7 +36,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -60,7 +58,7 @@
             ]
         },
         {
-            "type": "menuseparator",
+            "type": "Ext.menu.Separator",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -72,7 +70,7 @@
             "designerId": "a7a65672-c3a9-4b06-9ca5-9d51419ad526"
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

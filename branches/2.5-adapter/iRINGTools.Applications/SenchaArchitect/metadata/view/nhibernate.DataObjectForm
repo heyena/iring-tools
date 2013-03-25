@@ -1,28 +1,25 @@
 {
-    "type": "form",
+    "type": "Ext.form.Panel",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "nhibernate.DataObjectForm",
-        "designer|userAlias": "dataobjectform",
-        "disabled": false,
         "height": null,
         "width": null,
-        "defaultType": "textfield",
+        "designer|userClassName": "nhibernate.DataObjectForm",
+        "designer|userAlias": "dataobjectform",
         "bodyPadding": null,
         "bodyStyle": [
             "background:#eee;padding:10px 0px 0px 10px"
         ],
         "title": null
     },
-    "id": "ExtBox1-ext-gen3853",
     "designerId": "926170c4-1014-4c33-b926-bf1625034d16",
     "cn": [
         {
-            "type": "label",
+            "type": "Ext.form.Label",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -30,17 +27,17 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyLabel4",
                 "cls": "x-form-item",
                 "style": [
                     "font-weight:bold;"
                 ],
+                "designer|userClassName": "MyLabel4",
                 "text": "Data Object"
             },
             "designerId": "699f5e22-b0b9-4cf1-8b0e-94a96b0c0735"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -48,18 +45,18 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField20",
-                "disabled": true,
                 "saveDelay": 160,
-                "name": "tableName",
+                "disabled": true,
+                "designer|userClassName": "MyTextField20",
                 "fieldLabel": "Table Name",
                 "labelWidth": 160,
+                "name": "tableName",
                 "allowBlank": false
             },
             "designerId": "5135b9ad-e5ce-4722-9f6b-c0ecd667add0"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -67,12 +64,11 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField20",
-                "disabled": false,
                 "saveDelay": 160,
-                "name": "objectNamespace",
+                "designer|userClassName": "MyTextField20",
                 "fieldLabel": "Object Namespace",
                 "labelWidth": 160,
+                "name": "objectNamespace",
                 "allowBlank": false,
                 "regex": null,
                 "regexText": null
@@ -80,7 +76,7 @@
             "designerId": "97c9d57e-4d11-4ed9-a06d-3828ca826ac6"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -88,12 +84,11 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField20",
-                "disabled": false,
                 "saveDelay": 160,
-                "name": "objectName",
+                "designer|userClassName": "MyTextField20",
                 "fieldLabel": "Object Name",
                 "labelWidth": 160,
+                "name": "objectName",
                 "allowBlank": false,
                 "regex": "/^[a-zA-Z_][a-zA-Z0-9_]*$/",
                 "regexText": "<b>Error</b></br>Invalid Value. A valid value should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters"
@@ -101,7 +96,7 @@
             "designerId": "ad387926-824f-44de-8091-365c884762d6"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -109,18 +104,17 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField20",
-                "disabled": false,
                 "saveDelay": 160,
-                "name": "keyDelimiter",
+                "designer|userClassName": "MyTextField20",
                 "fieldLabel": "Key Delimiter",
                 "labelWidth": 160,
+                "name": "keyDelimiter",
                 "allowBlank": false
             },
             "designerId": "bb4f3230-5ff6-4fc6-bfbe-3c56799f5f73"
         },
         {
-            "type": "textareafield",
+            "type": "Ext.form.field.TextArea",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -128,16 +122,16 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextArea2",
                 "height": 140,
-                "name": "description",
+                "designer|userClassName": "MyTextArea2",
                 "fieldLabel": "Description",
-                "labelWidth": 160
+                "labelWidth": 160,
+                "name": "description"
             },
             "designerId": "a568c03c-3ff4-4866-8a74-13731fb03287"
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -151,7 +145,7 @@
             "designerId": "9307f72b-6b52-4777-bf7e-e26364cb38cd",
             "cn": [
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -159,13 +153,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer9",
-                        "width": 4
+                        "width": 4,
+                        "designer|userClassName": "MySpacer9"
                     },
                     "designerId": "865371fa-1991-498b-9bc8-4bd1ba11820a"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -188,7 +182,7 @@
                     ]
                 },
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -196,13 +190,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer9",
-                        "width": 4
+                        "width": 4,
+                        "designer|userClassName": "MySpacer9"
                     },
                     "designerId": "edb41fb0-354b-4915-a2f7-4dae789e1e3e"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"

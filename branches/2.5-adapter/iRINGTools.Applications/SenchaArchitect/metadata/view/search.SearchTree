@@ -1,5 +1,5 @@
 {
-    "type": "treepanel",
+    "type": "Ext.tree.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -7,14 +7,14 @@
     "codeClass": null,
     "userConfig": {
         "region": "center",
-        "designer|userClassName": "search.SearchTree",
-        "designer|userAlias": "searchtree",
         "border": false,
         "height": null,
         "style": [
             "padding-left:5px;"
         ],
         "width": null,
+        "designer|userClassName": "search.SearchTree",
+        "designer|userAlias": "searchtree",
         "closable": true,
         "title": null,
         "store": "SearchStore",
@@ -23,7 +23,6 @@
     "configAlternates": {
         "border": "boolean"
     },
-    "id": "ExtBox1-ext-gen35383",
     "designerId": "1fac45c3-2ccd-492d-bbfa-a9e3c3c2c427",
     "customConfigs": [
         {
@@ -34,7 +33,7 @@
     ],
     "cn": [
         {
-            "type": "treeview",
+            "type": "Ext.tree.View",
             "reference": {
                 "name": "viewConfig",
                 "type": "object"
@@ -46,7 +45,7 @@
             "designerId": "8a73aaab-55bd-4eec-b703-686706f05bed",
             "cn": [
                 {
-                    "type": "treedragdropplugin",
+                    "type": "Ext.tree.plugin.TreeViewDragDrop",
                     "reference": {
                         "name": "plugins",
                         "type": "array"
@@ -55,7 +54,6 @@
                     "userConfig": {
                         "dragField": "text",
                         "designer|userClassName": "MyTreeDragDropPlugin2",
-                        "appendOnly": false,
                         "ddGroup": "refdataGroup",
                         "dragText": "{0}",
                         "dropGroup": null,

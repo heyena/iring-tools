@@ -1,5 +1,5 @@
 {
-    "type": "datamodel",
+    "type": "Ext.data.Model",
     "reference": {
         "name": "items",
         "type": "array"
@@ -8,58 +8,57 @@
     "userConfig": {
         "designer|userClassName": "SpreadsheetModel"
     },
-    "id": "ExtBox1-ext-gen6816",
     "designerId": "975a262c-12eb-4d94-a784-080c158bd614",
     "cn": [
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyField39",
-                "name": "id"
+                "name": "id",
+                "designer|userClassName": "MyField39"
             },
             "designerId": "58254259-63c6-4334-8ff2-5b9accfad557"
         },
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyField40",
-                "name": "text"
+                "name": "text",
+                "designer|userClassName": "MyField40"
             },
             "designerId": "fa0118a0-2d6f-4183-b7fa-dfffb12ff9c6"
         },
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyField41",
-                "name": "type"
+                "name": "type",
+                "designer|userClassName": "MyField41"
             },
             "designerId": "25cb1ee5-ea23-422c-b851-35ceabf31aea"
         },
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyField42",
-                "name": "record"
+                "name": "record",
+                "designer|userClassName": "MyField42"
             },
             "designerId": "5ed94ce2-a397-44ce-8033-54d2d951f9af"
         }

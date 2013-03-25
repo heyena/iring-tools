@@ -1,5 +1,5 @@
 {
-    "type": "panel",
+    "type": "Ext.panel.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -7,12 +7,12 @@
     "codeClass": null,
     "userConfig": {
         "split": true,
-        "designer|userClassName": "directory.DirectoryPanel",
-        "designer|userAlias": "directorypanel",
         "border": true,
         "height": null,
         "padding": 2,
         "width": 250,
+        "designer|userClassName": "directory.DirectoryPanel",
+        "designer|userAlias": "directorypanel",
         "layout": "border",
         "collapsed": false,
         "collapsible": true,
@@ -22,7 +22,6 @@
         "padding": "number",
         "border": "boolean"
     },
-    "id": "ExtBox1-ext-gen58599",
     "designerId": "6bc9213f-3a48-425f-9010-d4a1b6e19a83",
     "customConfigs": [
         {
@@ -44,7 +43,7 @@
                 "layout|region": "center"
             },
             "designerId": "6d689f73-2094-47cb-a4b1-9d456f5dbcbe",
-            "masterInstanceId": "ExtBox1-ext-gen62823"
+            "masterInstanceId": "2db71765-76f0-4f2a-a25b-ef028a9633da"
         },
         {
             "type": "linkedinstance",
@@ -54,14 +53,14 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|displayName": "DirectoryProperty",
                 "height": 220,
+                "designer|displayName": "DirectoryProperty",
                 "collapseDirection": "bottom",
                 "layout|region": "south",
                 "layout|split": true
             },
             "designerId": "65288633-c720-48f9-a5e7-fea6cb37ce98",
-            "masterInstanceId": "ExtBox1-ext-gen36671"
+            "masterInstanceId": "c7d5b81d-b855-40e2-947f-dd51935bc9e0"
         }
     ]
 }

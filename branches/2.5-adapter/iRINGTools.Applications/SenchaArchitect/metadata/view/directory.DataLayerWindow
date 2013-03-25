@@ -1,18 +1,16 @@
 {
-    "type": "window",
+    "type": "Ext.window.Window",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "directory.DataLayerWindow",
-        "designer|userAlias": "datalayerwindow",
         "border": false,
-        "floating": true,
-        "frame": false,
         "height": 180,
         "width": 460,
+        "designer|userClassName": "directory.DataLayerWindow",
+        "designer|userAlias": "datalayerwindow",
         "layout": "fit",
         "bodyPadding": 1,
         "iconCls": "tabsScope",
@@ -22,7 +20,6 @@
         "border": "boolean",
         "bodyPadding": "number"
     },
-    "id": "ExtBox1-ext-gen34868",
     "designerId": "f84720ec-a5c9-4ebd-94ae-2d99104ab3de",
     "cn": [
         {
@@ -62,7 +59,7 @@
                 "itemId": null
             },
             "designerId": "41308c91-9917-4fdc-93fa-7303e27b1670",
-            "masterInstanceId": "ExtBox1-ext-gen80753"
+            "masterInstanceId": "f80d391f-dcab-42e6-adf6-2505c539da0f"
         }
     ]
 }

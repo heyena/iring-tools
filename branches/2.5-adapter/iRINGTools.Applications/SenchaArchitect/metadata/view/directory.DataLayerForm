@@ -1,17 +1,16 @@
 {
-    "type": "form",
+    "type": "Ext.form.Panel",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "directory.DataLayerForm",
-        "designer|userAlias": "datalayerform",
         "border": false,
-        "frame": false,
         "height": null,
         "width": null,
+        "designer|userClassName": "directory.DataLayerForm",
+        "designer|userAlias": "datalayerform",
         "defaults": [
             "{width: 400, msgTarget: 'side'}"
         ],
@@ -26,11 +25,10 @@
     "configAlternates": {
         "border": "boolean"
     },
-    "id": "ExtBox1-ext-gen80753",
     "designerId": "f80d391f-dcab-42e6-adf6-2505c539da0f",
     "cn": [
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -43,7 +41,7 @@
             "designerId": "fb8fbdd2-27ef-44ec-acca-acbc27ac4da5",
             "cn": [
                 {
-                    "type": "tbfill",
+                    "type": "Ext.toolbar.Fill",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -56,7 +54,7 @@
                     "designerId": "8fac9b48-73d4-48d1-a2c6-1e376d4543c2"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -92,7 +90,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -185,7 +183,7 @@
             "designerId": "94cbae24-7adc-4a47-b7d8-04d284ef1c07"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -194,13 +192,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField36",
-                "name": "state",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "state"
             },
             "designerId": "d2d44a10-b425-4007-a35d-3ea22cf773a8"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -209,14 +207,14 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyTextField3",
-                "name": "name",
                 "fieldLabel": "Name",
+                "name": "name",
                 "allowBlank": false
             },
             "designerId": "9e18bfae-67a3-4503-8cdb-3b994ccdcb97"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -225,14 +223,14 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyTextField4",
-                "name": "mainDLL",
                 "fieldLabel": "Main DLL",
+                "name": "mainDLL",
                 "allowBlank": false
             },
             "designerId": "41e49b7c-ddca-49b7-b972-308df3ebc695"
         },
         {
-            "type": "filefield",
+            "type": "Ext.form.field.File",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -241,8 +239,8 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyFileUpload",
-                "name": "packageFile",
                 "fieldLabel": "Package File",
+                "name": "packageFile",
                 "allowBlank": false
             },
             "designerId": "fa8f0b77-1eb8-415c-97a4-75078e38140a"

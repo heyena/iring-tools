@@ -1,27 +1,29 @@
 {
-    "type": "gridpanel",
+    "type": "Ext.grid.Panel",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "height": null,
+        "width": null,
         "designer|userClassName": "directory.DataGridPanel",
         "designer|userAlias": "dynamicgrid",
+        "requires": [
+            "AM.store.DataGridStore"
+        ],
         "uses": [
             "Ext.ux.grid.FiltersFeature"
         ],
-        "height": null,
-        "width": null,
         "closable": true,
         "title": null,
         "store": "DataGridStore"
     },
-    "id": "ExtBox1-ext-gen3360",
     "designerId": "fa0cc7c0-9539-4b11-858b-bfefff02b36c",
     "cn": [
         {
-            "type": "gridcolumn",
+            "type": "Ext.grid.column.Column",
             "reference": {
                 "name": "columns",
                 "type": "array"
@@ -35,7 +37,7 @@
             "designerId": "18a99a4a-040f-42f5-b1e3-26a1e7819a16"
         },
         {
-            "type": "gridview",
+            "type": "Ext.grid.View",
             "reference": {
                 "name": "viewConfig",
                 "type": "object"

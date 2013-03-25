@@ -1,5 +1,5 @@
 {
-    "type": "treepanel",
+    "type": "Ext.tree.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -8,10 +8,10 @@
     "userConfig": {
         "dirNode": "",
         "selectedTables": "",
-        "designer|userClassName": "nhibernate.NhibernateTree",
-        "designer|userAlias": "nhibernatetree",
         "height": null,
         "width": null,
+        "designer|userClassName": "nhibernate.NhibernateTree",
+        "designer|userAlias": "nhibernatetree",
         "bodyStyle": [
             "padding:0.5px 0px 1px 1px"
         ],
@@ -26,7 +26,6 @@
             "  }"
         ]
     },
-    "id": "ExtBox1-ext-gen4285",
     "designerId": "c72f1844-42ae-497d-ac17-9b294bfd2e8c",
     "customConfigs": [
         {
@@ -42,7 +41,7 @@
     ],
     "cn": [
         {
-            "type": "treeview",
+            "type": "Ext.tree.View",
             "reference": {
                 "name": "viewConfig",
                 "type": "object"
@@ -54,7 +53,7 @@
             "designerId": "e2c9d3b4-41b2-49a3-8e67-cc364497b778"
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -68,7 +67,7 @@
             "designerId": "04368cd6-39b4-4ee0-bd5c-78aca6d98411",
             "cn": [
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -76,13 +75,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer2",
-                        "width": 4
+                        "width": 4,
+                        "designer|userClassName": "MySpacer2"
                     },
                     "designerId": "faae635d-589e-44a9-82cd-445d037d8037"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -131,7 +130,7 @@
                     ]
                 },
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -139,13 +138,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer3",
-                        "width": 2
+                        "width": 2,
+                        "designer|userClassName": "MySpacer3"
                     },
                     "designerId": "11969168-77af-4831-8f7c-526532c75a67"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -169,7 +168,7 @@
                     ]
                 },
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -177,13 +176,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer4",
-                        "width": 2
+                        "width": 2,
+                        "designer|userClassName": "MySpacer4"
                     },
                     "designerId": "88ee6909-7a21-43d9-8b27-ea1e0d88da93"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"

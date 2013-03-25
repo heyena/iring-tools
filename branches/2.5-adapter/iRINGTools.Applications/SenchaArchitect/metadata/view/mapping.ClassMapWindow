@@ -1,20 +1,18 @@
 {
-    "type": "window",
+    "type": "Ext.window.Window",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "mapping.ClassMapWindow",
-        "designer|userAlias": "classmapwindow",
-        "floating": true,
         "height": 180,
         "width": 430,
+        "designer|userClassName": "mapping.ClassMapWindow",
+        "designer|userAlias": "classmapwindow",
         "layout": "fit",
         "title": "Add new ClassMap to RoleMap"
     },
-    "id": "ExtBox1-ext-gen44895",
     "designerId": "e9ec1c30-2f52-4e60-abb8-a39f46463919",
     "cn": [
         {
@@ -25,7 +23,7 @@
             },
             "codeClass": null,
             "designerId": "10adad42-a6a4-42cc-8655-7841cfa15b57",
-            "masterInstanceId": "ExtBox1-ext-gen26988"
+            "masterInstanceId": "53fd65a8-de84-4832-8c1a-247338700860"
         },
         {
             "type": "customevent",

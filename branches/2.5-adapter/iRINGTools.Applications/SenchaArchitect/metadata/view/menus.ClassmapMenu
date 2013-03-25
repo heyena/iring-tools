@@ -1,20 +1,19 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "width": 130,
         "designer|userClassName": "menus.ClassmapMenu",
-        "designer|userAlias": "classmapmenu",
-        "width": 130
+        "designer|userAlias": "classmapmenu"
     },
-    "id": "ExtBox1-ext-gen6818",
     "designerId": "2f81f74f-e932-492b-97a3-24ea87dc1d41",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -36,7 +35,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

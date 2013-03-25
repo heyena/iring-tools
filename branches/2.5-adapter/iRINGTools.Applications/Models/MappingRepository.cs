@@ -44,14 +44,13 @@ namespace org.iringtools.web.Models
       #endregion
     }
 
-    public Mapping GetMapping(string context, string endpoint, string baseUrl)
+    public Mapping GetMapping(string scopeName, string applicationName)
     {
       Mapping obj = null;
 
       try
       {
-        var newServiceClient = GetAdapterServiceClient(baseUrl);
-        obj = newServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", context, endpoint), true);
+        obj = _adapterServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
       }
       catch (Exception ex)
       {
@@ -61,13 +60,12 @@ namespace org.iringtools.web.Models
       return obj;
     }
 
-    public void UpdateMapping(Mapping mapping, string context, string endpoint, string baseUrl)
+    public void UpdateMapping(Mapping mapping, string scopeName, string applicationName)
     {
-      var mappingXml = XElement.Parse(Utility.SerializeDataContract<Mapping>(mapping));
+      XElement mappingXml = XElement.Parse(Utility.SerializeDataContract<Mapping>(mapping));
       try
       {
-        var newServiceClient = GetAdapterServiceClient(baseUrl);
-        newServiceClient.Post<XElement>(String.Format("/{0}/{1}/mapping", context, endpoint), mappingXml, true);
+        _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), mappingXml, true);
       }
       catch (Exception ex)
       {

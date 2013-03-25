@@ -6,19 +6,18 @@
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "DataGridStore",
         "autoLoad": true,
+        "model": "DynamicModel",
         "remoteFilter": true,
         "remoteSort": true,
         "storeId": "DataGridStore",
-        "model": "DynamicModel",
+        "designer|userClassName": "DataGridStore",
         "pageSize": 25
     },
-    "id": "ExtBox1-ext-gen67787",
     "designerId": "bd0c2146-a07f-405b-85d7-72edd111ce14",
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -45,16 +44,16 @@
             ],
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyJsonReader3",
                         "root": "data",
-                        "totalProperty": "totalCount"
+                        "totalProperty": "totalCount",
+                        "designer|userClassName": "MyJsonReader3"
                     },
                     "designerId": "9a65677e-94fc-42bd-987e-c085691146af"
                 }

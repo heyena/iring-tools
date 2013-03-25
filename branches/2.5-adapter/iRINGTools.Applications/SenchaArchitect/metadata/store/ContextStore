@@ -9,12 +9,11 @@
         "actionMethod": [
             "{\"read\":\"POST\"}"
         ],
-        "designer|userClassName": "ContextStore",
         "autoLoad": true,
+        "model": "ContextModel",
         "storeId": "ContextJsonStore",
-        "model": "ContextModel"
+        "designer|userClassName": "ContextStore"
     },
-    "id": "ExtBox1-ext-gen41556",
     "designerId": "2db45ef9-18a6-4bb9-9db3-921bfcb6c5e7",
     "customConfigs": [
         {
@@ -25,7 +24,7 @@
     ],
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -42,15 +41,15 @@
             "designerId": "42db462c-0b8a-4b94-8f5a-1b9c03d82875",
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyJsonReader8",
-                        "root": "items"
+                        "root": "items",
+                        "designer|userClassName": "MyJsonReader8"
                     },
                     "designerId": "36cbe638-877e-4cf2-9dd9-37a8732b4d50"
                 }

@@ -1,12 +1,11 @@
 {
-    "type": "controller",
+    "type": "Ext.app.Controller",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "Search",
         "models": [
             "SearchModel"
         ],
@@ -18,9 +17,9 @@
             "search.SearchPanel",
             "search.SearchToolbar",
             "search.SearchTree"
-        ]
+        ],
+        "designer|userClassName": "Search"
     },
-    "id": "ExtBox1-ext-gen3536",
     "designerId": "5b36ea62-f472-4b96-bf97-b38668a73c4b",
     "cn": [
         {

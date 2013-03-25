@@ -1,5 +1,5 @@
 {
-    "type": "combobox",
+    "type": "Ext.form.field.ComboBox",
     "reference": {
         "name": "items",
         "type": "array"
@@ -15,6 +15,5 @@
         "store": "DataLayerStore",
         "valueField": "assembly"
     },
-    "id": "ExtBox1-ext-gen23010",
     "designerId": "89827f86-cc75-4149-b7e4-3defbfcb6ebd"
 }

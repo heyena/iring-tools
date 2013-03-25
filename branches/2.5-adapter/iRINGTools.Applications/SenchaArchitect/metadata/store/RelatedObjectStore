@@ -6,35 +6,34 @@
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "RelatedObjectStore",
-        "storeId": "RelatedObjectStore"
+        "storeId": "RelatedObjectStore",
+        "designer|userClassName": "RelatedObjectStore"
     },
-    "id": "ExtBox1-ext-gen25182",
     "designerId": "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd",
     "cn": [
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "field49",
-                "name": "value"
+                "name": "value",
+                "designer|userClassName": "field49"
             },
             "designerId": "6fcadd1c-201a-494e-88cc-f996ac0e9344"
         },
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "field50",
-                "name": "text"
+                "name": "text",
+                "designer|userClassName": "field50"
             },
             "designerId": "d12b2450-a205-4963-99cd-ccce9f0e1941"
         }

@@ -1,12 +1,11 @@
 {
-    "type": "controller",
+    "type": "Ext.app.Controller",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "Spreadsheet",
         "models": [
             "SpreadsheetModel"
         ],
@@ -17,9 +16,9 @@
             "spreadsheet.SpreadsheetTree",
             "spreadsheet.SpreadsheetWindow",
             "spreadsheet.SpreadsheetForm"
-        ]
+        ],
+        "designer|userClassName": "Spreadsheet"
     },
-    "id": "ExtBox1-ext-gen71057",
     "designerId": "3021e323-c731-4792-a77c-abef556efa44",
     "cn": [
         {

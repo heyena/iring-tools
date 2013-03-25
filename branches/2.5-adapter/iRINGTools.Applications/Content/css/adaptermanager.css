@@ -46,3 +46,23 @@ input.button {
 a {
   color: #3E62A6;
 }
+
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeClass 
+{
+  background-image: url("../img/class.png")  !important;
+}
+
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeTemplate 
+{
+  background-image: url("../img/template.png")  !important;
+}
+
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeRole
+{
+  background-image: url("../img/role.png")  !important;
+}
+
+.x-tree-panel .x-grid-row .x-grid-cell-inner .folder
+{
+  background-image: url("../img/folder.png")  !important;
+}

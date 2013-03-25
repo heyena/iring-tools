@@ -1,21 +1,19 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "width": 130,
         "designer|userClassName": "menus.ScopeMenu",
-        "designer|userAlias": "scopemenu",
-        "floating": true,
-        "width": 130
+        "designer|userAlias": "scopemenu"
     },
-    "id": "ExtBox1-ext-gen28956",
     "designerId": "35c9bdb8-12eb-4d81-af9c-35af6c8f394e",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -23,8 +21,8 @@
             "codeClass": null,
             "userConfig": {
                 "action": "neweditscope",
-                "designer|userClassName": "MyMenuItem12",
                 "itemId": "newfolder",
+                "designer|userClassName": "MyMenuItem12",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New Folder"
             },
@@ -38,7 +36,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -46,8 +44,8 @@
             "codeClass": null,
             "userConfig": {
                 "action": "neweditscope",
-                "designer|userClassName": "MyMenuItem13",
                 "itemId": "editfolder",
+                "designer|userClassName": "MyMenuItem13",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit Folder"
             },
@@ -61,7 +59,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -83,7 +81,7 @@
             ]
         },
         {
-            "type": "menuseparator",
+            "type": "Ext.menu.Separator",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -95,7 +93,7 @@
             "designerId": "559bbe78-9cab-4f07-9ef9-3edcfb51c0ef"
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

@@ -1,5 +1,5 @@
 {
-    "type": "combobox",
+    "type": "Ext.form.field.ComboBox",
     "reference": {
         "name": "items",
         "type": "array"
@@ -8,18 +8,14 @@
     "userConfig": {
         "designer|userClassName": "directory.ContextCombo",
         "designer|userAlias": "contextcombo",
-        "name": "contextCombo",
         "fieldLabel": "Context Name",
-        "selectOnFocus": false,
+        "name": "contextCombo",
         "displayField": "context",
-        "forceSelection": false,
         "hiddenName": "Context",
         "minChars": 100000,
         "store": "ContextStore",
-        "typeAhead": false,
         "valueField": "context"
     },
-    "id": "ExtBox1-ext-gen41020",
     "designerId": "3f6306a7-11d6-4ef2-894e-dbea2ac88a90",
     "cn": [
         {

@@ -1,5 +1,5 @@
 {
-    "type": "toolbar",
+    "type": "Ext.toolbar.Toolbar",
     "reference": {
         "name": "items",
         "type": "array"
@@ -10,11 +10,10 @@
         "designer|userClassName": "search.SearchToolbar",
         "designer|userAlias": "searchtoolbar"
     },
-    "id": "ExtBox1-ext-gen44358",
     "designerId": "04f491e5-2e6e-4a0d-97a5-458d4166966b",
     "cn": [
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -22,12 +21,12 @@
             "codeClass": null,
             "userConfig": {
                 "layout|flex": null,
-                "designer|userClassName": "MyTextField",
                 "id": "referencesearch",
                 "width": 200,
-                "name": "referencesearch",
+                "designer|userClassName": "MyTextField",
                 "fieldLabel": null,
-                "labelWidth": 200
+                "labelWidth": 200,
+                "name": "referencesearch"
             },
             "designerId": "50cd3b71-dd13-4c1a-a2d7-28b67f38fece",
             "cn": [
@@ -55,7 +54,7 @@
             ]
         },
         {
-            "type": "button",
+            "type": "Ext.button.Button",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -64,10 +63,10 @@
             "userConfig": {
                 "action": "search",
                 "layout|flex": null,
-                "designer|userClassName": "MyButton",
                 "style": [
                     "marginLeft: 5px"
                 ],
+                "designer|userClassName": "MyButton",
                 "icon": null,
                 "iconCls": "am-document-properties",
                 "text": "Search"
@@ -82,7 +81,7 @@
             ]
         },
         {
-            "type": "checkboxfield",
+            "type": "Ext.form.field.Checkbox",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -90,19 +89,19 @@
             "codeClass": null,
             "userConfig": {
                 "layout|flex": null,
-                "designer|userClassName": "MyCheckbox",
                 "autoShow": true,
                 "style": [
                     "{marginLeft: '5px', marginBottom: '8px'}"
                 ],
-                "name": "reset",
+                "designer|userClassName": "MyCheckbox",
                 "fieldLabel": null,
+                "name": "reset",
                 "boxLabel": null
             },
             "designerId": "f31abf99-56f8-4e6a-97d1-1ca48cb92433"
         },
         {
-            "type": "tbspacer",
+            "type": "Ext.toolbar.Spacer",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -115,7 +114,7 @@
             "designerId": "4c108aea-4e37-4963-9894-346c858b431e"
         },
         {
-            "type": "label",
+            "type": "Ext.form.Label",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -129,7 +128,7 @@
             "designerId": "5c7b238e-c73f-403f-8a20-89ec893d0b39"
         },
         {
-            "type": "tbspacer",
+            "type": "Ext.toolbar.Spacer",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -142,7 +141,7 @@
             "designerId": "2322078d-e721-4fbc-9710-1b9ff79f1a39"
         },
         {
-            "type": "combobox",
+            "type": "Ext.form.field.ComboBox",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -150,22 +149,18 @@
             "codeClass": null,
             "userConfig": {
                 "layout|flex": null,
-                "designer|userClassName": "search.SearchCombo",
-                "designer|userAlias": "searchcombo",
                 "itemId": "searchLimitCombo",
                 "width": 90,
-                "name": "searchLimit",
-                "submitValue": false,
-                "value": [
-                    "50"
-                ],
+                "designer|userClassName": "search.SearchCombo",
+                "designer|userAlias": "searchcombo",
                 "fieldLabel": "Limit",
                 "hideEmptyLabel": false,
-                "hideLabel": false,
                 "labelWidth": 40,
+                "name": "searchLimit",
+                "submitValue": false,
+                "value": "50",
                 "allowBlank": false,
                 "displayField": "limit",
-                "forceSelection": false,
                 "queryCaching": null,
                 "queryMode": "local",
                 "store": "SearchCmbStore",
@@ -184,7 +179,7 @@
                         "designer|userClassName": "onComboboxBeforeRender",
                         "fn": "onComboboxBeforeRender",
                         "implHandler": [
-                            "abstractcomponent.getStore().load();"
+                            "component.getStore().load();"
                         ],
                         "name": "beforerender",
                         "scope": "me"

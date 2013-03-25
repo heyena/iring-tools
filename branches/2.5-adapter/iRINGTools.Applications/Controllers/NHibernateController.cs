@@ -29,11 +29,11 @@ namespace org.iringtools.web.Controllers
 
 
 
-    private DatabaseDictionary GetDbDictionary(string contextName, string endpoint, string baseUrl)
+    private DatabaseDictionary GetDbDictionary(string contextName, string endpoint)
     {
-      string key = adapter_PREFIX + string.Format(_keyFormat, contextName, endpoint, baseUrl);
+      var key = adapter_PREFIX + string.Format(_keyFormat, contextName, endpoint);
       DatabaseDictionary databaseDictionary = null;
-      bool getDbDict = false;
+      var getDbDict = false;
 
       if (Session[key] != null)
       {
@@ -46,7 +46,7 @@ namespace org.iringtools.web.Controllers
      
       if (getDbDict)
       {
-        databaseDictionary = _repository.GetDbDictionary(contextName, endpoint, baseUrl);
+        databaseDictionary = _repository.GetDbDictionary(contextName, endpoint);
       }
 
       Session[key] = databaseDictionary;
@@ -58,8 +58,7 @@ namespace org.iringtools.web.Controllers
     {
       try
       {
-        List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
-          form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+        var dbObjects = _repository.GetDbObjects(form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
           form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"], form["serName"]);
 
         return Json(dbObjects, JsonRequestBehavior.AllowGet);
@@ -75,18 +74,18 @@ namespace org.iringtools.web.Controllers
     {
       try
       {
-        string response = string.Empty;
+        var response = string.Empty;
 
-        response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
+        response = _repository.SaveDbDictionary(form["scope"], form["app"], form["tree"]);
 
         if (response != null)
         {
           response = response.ToLower();
           if (response.Contains("error"))
           {
-            int inds = response.IndexOf("<message>");
-            int inde = response.IndexOf("</message>");
-            string msg = response.Substring(inds + 9, inde - inds - 9);
+            var inds = response.IndexOf("<message>", System.StringComparison.Ordinal);
+            var inde = response.IndexOf("</message>", System.StringComparison.Ordinal);
+            var msg = response.Substring(inds + 9, inde - inds - 9);
             return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
           }
         }
@@ -103,12 +102,7 @@ namespace org.iringtools.web.Controllers
     {
       try
       {
-        Dictionary<String, String> dataTypeNames = new Dictionary<String, String>();
-
-        foreach (DataType dataType in Enum.GetValues(typeof(DataType)))
-        {
-          dataTypeNames.Add(((int)dataType).ToString(), dataType.ToString());
-        }
+        var dataTypeNames = Enum.GetValues(typeof (DataType)).Cast<DataType>().ToDictionary(dataType => ((int) dataType).ToString(), dataType => dataType.ToString());
 
         return Json(dataTypeNames, JsonRequestBehavior.AllowGet);
       }
@@ -121,18 +115,14 @@ namespace org.iringtools.web.Controllers
 
     public ActionResult DBProviders()
     {
-      JsonContainer<List<DBProvider>> container = new JsonContainer<List<DBProvider>>();
+      var container = new JsonContainer<List<DBProvider>>();
 
       try
       {
-        DataProviders dataProviders = _repository.GetDBProviders();
+        var dataProviders = _repository.GetDbProviders();
 
-        List<DBProvider> providers = new List<DBProvider>();
-        foreach (Provider dataProvider in dataProviders)
-        {
-          providers.Add(new DBProvider() { Provider = dataProvider.ToString() });
-        }
-        
+        var providers = dataProviders.Select(dataProvider => new DBProvider() {Provider = dataProvider.ToString()}).ToList();
+
         container.items = providers;
         container.success = true;
         container.total = dataProviders.Count;
@@ -150,7 +140,7 @@ namespace org.iringtools.web.Controllers
     {
       try
       {
-        DatabaseDictionary dbDict = _repository.GetDBDictionary(form["scope"], form["app"]);
+        var dbDict = _repository.GetDbDictionary(form["scope"], form["app"]);
         return Json(dbDict, JsonRequestBehavior.AllowGet);
       }
       catch (Exception e)
@@ -162,14 +152,13 @@ namespace org.iringtools.web.Controllers
 
     public ActionResult TableNames(FormCollection form)
     {
-      JsonContainer<List<string>> container = new JsonContainer<List<string>>();
+      var container = new JsonContainer<List<string>>();
 
       try
       {
-        List<string> dataObjects = _repository.GetTableNames(
+        var dataObjects = _repository.GetTableNames(
           form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
           form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"], form["serName"]);
-
 
         container.items = dataObjects;
         container.success = true;
@@ -184,15 +173,15 @@ namespace org.iringtools.web.Controllers
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
-    private string GetKeytype(string name, List<DataProperty> properties)
+    private string GetKeytype(string name, IEnumerable<DataProperty> properties)
     {
-      string keyType = string.Empty;
+      var keyType = string.Empty;
       keyType = properties.FirstOrDefault(p => p.propertyName == name).keyType.ToString();
       return keyType;
     }
-    private string GetDatatype(string name, List<DataProperty> properties)
+    private string GetDatatype(string name, IEnumerable<DataProperty> properties)
     {
-      string dataType = string.Empty;
+      var dataType = string.Empty;
       dataType = properties.FirstOrDefault(p => p.propertyName == name).dataType.ToString();
       return dataType;
     }
@@ -200,9 +189,9 @@ namespace org.iringtools.web.Controllers
     private void AddContextEndpointtoNode(JsonTreeNode node, FormCollection form)
     {
       if (form["contextName"] != null)
-        node.property.Add("context", form["contextName"]);
+        node.properties.Add("context", form["contextName"]);
       if (form["endpoint"] != null)
-        node.property.Add("endpoint", form["endpoint"]);
+        node.properties.Add("endpoint", form["endpoint"]);
     }
   }
 

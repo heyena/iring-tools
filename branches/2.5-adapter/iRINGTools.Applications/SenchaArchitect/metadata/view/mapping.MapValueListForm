@@ -1,15 +1,15 @@
 {
-    "type": "form",
+    "type": "Ext.form.Panel",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "mapping.MapValueListForm",
-        "designer|userAlias": "mapvaluelistform",
         "height": null,
         "width": null,
+        "designer|userClassName": "mapping.MapValueListForm",
+        "designer|userAlias": "mapvaluelistform",
         "bodyPadding": null,
         "bodyStyle": [
             "padding:10px 5px 0\r",
@@ -19,11 +19,10 @@
         "method": "POST",
         "url": "mapping/mapvaluelist"
     },
-    "id": "ExtBox1-ext-gen6527",
     "designerId": "74ae9be1-debc-4ec9-b65c-72f3107b7df0",
     "cn": [
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -31,13 +30,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "valueListName",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "valueListName"
             },
             "designerId": "50158e76-e675-41b4-8037-ab293713cd97"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -45,13 +44,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "relatedObject",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "relatedObject"
             },
             "designerId": "6895e05b-ad3d-4bb4-b5e7-bf85942f7d4a"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -59,13 +58,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "propertyName",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "propertyName"
             },
             "designerId": "72432b26-ecb0-46ef-a4f3-a786a1fb925a"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -73,13 +72,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "mappingNode",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "mappingNode"
             },
             "designerId": "b433308a-2bbf-46f8-8178-c8344788d150"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -87,13 +86,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "index",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "index"
             },
             "designerId": "aefc1061-1552-404e-8dd9-1dd2799b49ad"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -101,13 +100,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "classId",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "classId"
             },
             "designerId": "a685a138-f05c-400e-bfa2-c7ead28973bd"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -115,13 +114,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "graphName",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "graphName"
             },
             "designerId": "46c441c8-e98f-40b4-b741-653178b987eb"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -129,13 +128,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "roleName",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "roleName"
             },
             "designerId": "a228190b-c727-40ee-a4a4-d9d3f101e701"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -143,13 +142,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "contextName",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "contextName"
             },
             "designerId": "164e16dd-2e4e-4256-89a3-e1c6f2bdd753"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -157,13 +156,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "endpoint",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "endpoint"
             },
             "designerId": "ac1e9480-9528-4887-a952-3745bdf1789e"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -171,13 +170,13 @@
             "codeClass": null,
             "userConfig": {
                 "designer|userClassName": "MyHiddenField54",
-                "name": "baseUrl",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "baseUrl"
             },
             "designerId": "5d395eae-25de-4bbb-b10f-eaf2205f1c1d"
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -190,7 +189,7 @@
             "designerId": "6fcbf2f4-b468-43a7-a162-fb16f4768695",
             "cn": [
                 {
-                    "type": "tbfill",
+                    "type": "Ext.toolbar.Fill",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -203,7 +202,7 @@
                     "designerId": "d65acdf9-8463-47df-803d-40d8a8d2ae43"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -239,7 +238,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -400,7 +399,7 @@
             "designerId": "53066816-d4e9-4e41-834d-5a2cbdcf86d2"
         },
         {
-            "type": "container",
+            "type": "Ext.container.Container",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -408,8 +407,6 @@
             "codeClass": null,
             "userConfig": {
                 "anchor": "100%",
-                "designer|userClassName": "mapping.PropertyContainer",
-                "designer|userAlias": "propertycontainer",
                 "html": [
                     "Drop a Property Node here."
                 ],
@@ -418,6 +415,8 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
+                "designer|userClassName": "mapping.PropertyContainer",
+                "designer|userAlias": "propertycontainer",
                 "anchorSize": null
             },
             "designerId": "afb8c092-88cb-4d3c-ab52-a2a069a19526",
@@ -430,7 +429,7 @@
             ]
         },
         {
-            "type": "container",
+            "type": "Ext.container.Container",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -438,8 +437,6 @@
             "codeClass": null,
             "userConfig": {
                 "anchor": "100%",
-                "designer|userClassName": "mapping.ClassContainer",
-                "designer|userAlias": "classcontainer",
                 "height": null,
                 "html": [
                     "Drop a Class Node here."
@@ -449,7 +446,9 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
-                "width": null
+                "width": null,
+                "designer|userClassName": "mapping.ClassContainer",
+                "designer|userAlias": "classcontainer"
             },
             "designerId": "13f66bcb-80df-4c8c-a053-b91315952c53",
             "customConfigs": [

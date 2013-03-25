@@ -1,21 +1,19 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "width": 140,
         "designer|userClassName": "menus.TemplatemapMenu",
-        "designer|userAlias": "templatemapmenu",
-        "floating": true,
-        "width": 140
+        "designer|userAlias": "templatemapmenu"
     },
-    "id": "ExtBox1-ext-gen2562",
     "designerId": "f57a866d-01e3-41f0-aa33-5e4f7693a206",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

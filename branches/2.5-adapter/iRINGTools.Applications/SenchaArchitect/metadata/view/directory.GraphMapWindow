@@ -1,25 +1,22 @@
 {
-    "type": "window",
+    "type": "Ext.window.Window",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "directory.GraphMapWindow",
-        "designer|userAlias": "graphmapwindow",
         "border": false,
-        "floating": true,
-        "frame": false,
         "height": 200,
         "width": 400,
+        "designer|userClassName": "directory.GraphMapWindow",
+        "designer|userAlias": "graphmapwindow",
         "layout": "fit",
         "title": null
     },
     "configAlternates": {
         "border": "boolean"
     },
-    "id": "ExtBox1-ext-gen78516",
     "designerId": "154512ba-4b82-4d9e-aa03-fbacbe79da52",
     "cn": [
         {
@@ -30,7 +27,7 @@
             },
             "codeClass": null,
             "designerId": "89ab57f8-944a-4e6c-a8e7-b5151850e654",
-            "masterInstanceId": "ExtBox1-ext-gen3341"
+            "masterInstanceId": "282350c9-5e2f-409a-a866-f63237e0a174"
         }
     ]
 }

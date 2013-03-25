@@ -1,21 +1,20 @@
 {
-    "type": "panel",
+    "type": "Ext.panel.Panel",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "search.SearchPanel",
-        "designer|userAlias": "searchpanel",
         "height": 220,
         "margin": "0 0 5 0",
         "width": null,
+        "designer|userClassName": "search.SearchPanel",
+        "designer|userAlias": "searchpanel",
         "layout": "border",
         "collapsible": true,
         "title": "Reference Data Search"
     },
-    "id": "ExtBox1-ext-gen40195",
     "designerId": "b966cc72-9af0-45fd-828f-bf50eb7ffb69",
     "cn": [
         {
@@ -26,15 +25,15 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|displayName": "SearchProperties",
                 "width": 250,
+                "designer|displayName": "SearchProperties",
                 "collapseDirection": "right",
                 "title": "Search Details",
                 "layout|region": "east",
                 "layout|split": true
             },
             "designerId": "a045354d-3280-47c4-8186-ba17ff0d352f",
-            "masterInstanceId": "ExtBox1-ext-gen36671"
+            "masterInstanceId": "c7d5b81d-b855-40e2-947f-dd51935bc9e0"
         },
         {
             "type": "linkedinstance",
@@ -48,7 +47,7 @@
                 "dock": "top"
             },
             "designerId": "27504f48-a876-4c75-b93d-270023416e63",
-            "masterInstanceId": "ExtBox1-ext-gen44358"
+            "masterInstanceId": "04f491e5-2e6e-4a0d-97a5-458d4166966b"
         },
         {
             "type": "linkedinstance",
@@ -63,7 +62,7 @@
                 "dock": null
             },
             "designerId": "ea7705cb-c99a-4752-b0b0-897e96737908",
-            "masterInstanceId": "ExtBox1-ext-gen84476"
+            "masterInstanceId": "91c55eab-5eda-4bef-81cb-f2088b20b160"
         }
     ]
 }

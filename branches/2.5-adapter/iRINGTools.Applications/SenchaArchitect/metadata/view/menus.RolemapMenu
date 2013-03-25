@@ -1,20 +1,19 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "width": 130,
         "designer|userClassName": "menus.RolemapMenu",
-        "designer|userAlias": "rolemapmenu",
-        "width": 130
+        "designer|userAlias": "rolemapmenu"
     },
-    "id": "ExtBox1-ext-gen4191",
     "designerId": "da94e311-ccae-4d19-a64e-3fb703924c97",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -36,7 +35,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -57,7 +56,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -78,7 +77,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -99,7 +98,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -120,7 +119,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

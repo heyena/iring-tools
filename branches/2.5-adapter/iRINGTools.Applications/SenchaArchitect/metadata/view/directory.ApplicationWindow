@@ -1,5 +1,5 @@
 {
-    "type": "window",
+    "type": "Ext.window.Window",
     "reference": {
         "name": "items",
         "type": "array"
@@ -7,14 +7,11 @@
     "codeClass": null,
     "userConfig": {
         "node": "",
-        "designer|userClassName": "directory.ApplicationWindow",
-        "designer|userAlias": "applicationwindow",
         "border": false,
-        "floating": true,
-        "frame": false,
         "height": 260,
         "width": 460,
-        "defaultType": "textfield",
+        "designer|userClassName": "directory.ApplicationWindow",
+        "designer|userAlias": "applicationwindow",
         "layout": "fit",
         "bodyPadding": 1,
         "title": null
@@ -23,7 +20,6 @@
         "border": "boolean",
         "bodyPadding": "number"
     },
-    "id": "ExtBox1-ext-gen95691",
     "designerId": "9b8b876f-3900-407d-b67c-d724b3321ba5",
     "customConfigs": [
         {
@@ -67,7 +63,7 @@
             },
             "codeClass": null,
             "designerId": "20a19a7b-b7be-432c-908a-eb4e5a07b151",
-            "masterInstanceId": "ExtBox1-ext-gen19163"
+            "masterInstanceId": "140dde75-d72b-47c5-a76b-9c6cf6c94388"
         }
     ]
 }

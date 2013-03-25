@@ -6,16 +6,15 @@
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "DataLayerStore",
         "autoLoad": true,
+        "model": "DataLayerModel",
         "storeId": "dataLayerStore",
-        "model": "DataLayerModel"
+        "designer|userClassName": "DataLayerStore"
     },
-    "id": "ExtBox1-ext-gen16005",
     "designerId": "a249d4c0-23f0-4051-acef-d74eb07471ea",
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -32,15 +31,15 @@
             "designerId": "2ff6f980-3649-4ea0-8888-94a18e6f6b2a",
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyJsonReader9",
-                        "root": "items"
+                        "root": "items",
+                        "designer|userClassName": "MyJsonReader9"
                     },
                     "designerId": "1e104bf5-39f1-461e-a301-93d9e8178f50"
                 }

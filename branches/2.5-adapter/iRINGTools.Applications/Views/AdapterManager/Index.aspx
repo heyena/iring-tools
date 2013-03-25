@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
-
+<!DOCTYPE html>
 <html>
 <head id="Head1" runat="server">
     <title>iRINGTools: Adapter Manager</title>

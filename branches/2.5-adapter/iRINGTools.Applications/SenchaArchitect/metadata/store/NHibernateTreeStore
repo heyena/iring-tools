@@ -1,15 +1,15 @@
 {
-    "type": "treestore",
+    "type": "Ext.data.TreeStore",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "NHibernateTreeStore",
         "autoLoad": null,
-        "storeId": "NHibernateTreeStore",
         "model": "NHibernateTreeModel",
+        "storeId": "NHibernateTreeStore",
+        "designer|userClassName": "NHibernateTreeStore",
         "root": [
             "{\r",
             "  expanded: true,\r",
@@ -19,11 +19,10 @@
             "    }"
         ]
     },
-    "id": "ExtBox1-ext-gen22120",
     "designerId": "a3fb05dd-4586-4c2d-82bb-23b8d97d9bc9",
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -64,7 +63,7 @@
             ],
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"

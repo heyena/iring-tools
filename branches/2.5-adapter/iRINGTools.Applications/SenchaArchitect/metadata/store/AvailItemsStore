@@ -1,22 +1,20 @@
 {
-    "type": "store",
+    "type": "Ext.data.Store",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "AvailItemsStore",
         "autoLoad": true,
-        "storeId": "AvailItemsStore",
         "model": "AvailItemsModel",
-        "buffered": false
+        "storeId": "AvailItemsStore",
+        "designer|userClassName": "AvailItemsStore"
     },
-    "id": "ExtBox1-ext-gen20707",
     "designerId": "0e821c48-d10a-4414-9854-eaa251d9df17",
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -33,15 +31,15 @@
             "designerId": "550b5b53-ed7c-41f6-82f4-45d2c5777035",
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyJsonReader5",
-                        "root": "items"
+                        "root": "items",
+                        "designer|userClassName": "MyJsonReader5"
                     },
                     "designerId": "a39afdd8-1dbe-4df3-99ce-9abbfeecb6da"
                 }

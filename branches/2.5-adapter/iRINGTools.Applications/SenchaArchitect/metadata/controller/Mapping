@@ -1,5 +1,5 @@
 {
-    "type": "controller",
+    "type": "Ext.app.Controller",
     "reference": {
         "name": "items",
         "type": "array"
@@ -7,7 +7,6 @@
     "codeClass": null,
     "userConfig": {
         "parentClass": "",
-        "designer|userClassName": "Mapping",
         "models": [
             "MappingModel"
         ],
@@ -29,9 +28,9 @@
             "mapping.ValueListWindow",
             "mapping.MappingPanel",
             "mapping.ValueListForm"
-        ]
+        ],
+        "designer|userClassName": "Mapping"
     },
-    "id": "ExtBox1-ext-gen72135",
     "designerId": "5fd4e1f1-2736-412f-8d21-bfa7afb08b0b",
     "customConfigs": [
         {

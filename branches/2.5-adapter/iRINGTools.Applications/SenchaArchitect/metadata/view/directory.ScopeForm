@@ -1,5 +1,5 @@
 {
-    "type": "form",
+    "type": "Ext.form.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -7,12 +7,10 @@
     "codeClass": null,
     "userConfig": {
         "node": "",
-        "designer|userClassName": "directory.ScopeForm",
-        "designer|userAlias": "scopeform",
-        "floating": false,
         "height": 250,
         "width": 400,
-        "defaultType": "textfield",
+        "designer|userClassName": "directory.ScopeForm",
+        "designer|userAlias": "scopeform",
         "defaults": [
             "{anchor: '100%', msgTarget: 'side'}"
         ],
@@ -23,7 +21,6 @@
         "title": null,
         "url": "directory/folder"
     },
-    "id": "ExtBox1-ext-gen38779",
     "designerId": "354a52a2-af56-440e-a28d-e03f1135a5e9",
     "customConfigs": [
         {
@@ -34,7 +31,7 @@
     ],
     "cn": [
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -47,7 +44,7 @@
             "designerId": "17de2cb0-9bcc-4e4b-b173-2373210be668",
             "cn": [
                 {
-                    "type": "tbfill",
+                    "type": "Ext.toolbar.Fill",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -60,7 +57,7 @@
                     "designerId": "f1121f3f-5e1e-4b03-a999-758c3d927005"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -96,7 +93,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -208,7 +205,7 @@
             "designerId": "7e2f1024-97a2-477f-9fba-23d19ba8270e"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -217,13 +214,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField32",
-                "name": "path",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "path"
             },
             "designerId": "1d5f2d7e-9ba3-4251-85b6-e5b690586719"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -232,13 +229,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField33",
-                "name": "state",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "state"
             },
             "designerId": "28375050-6d64-4be6-9d07-b42ccc547f34"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -247,13 +244,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField34",
-                "name": "oldContext",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "oldContext"
             },
             "designerId": "45623dc5-9751-4f7f-befb-fb6594f5726a"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -262,14 +259,14 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyTextField2",
-                "name": "folderName",
                 "fieldLabel": "Folder Name",
+                "name": "folderName",
                 "allowBlank": false
             },
             "designerId": "50e2271b-c35b-4359-9f38-3b3eb854d6af"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -278,8 +275,8 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField35",
-                "name": "contextName",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "contextName"
             },
             "designerId": "4d7dacf2-c6f5-473b-8e2f-78e2450a3058"
         },
@@ -294,10 +291,10 @@
                 "allowBlank": false
             },
             "designerId": "075ebdd5-bfff-484a-bbc1-3d578d3c2c57",
-            "masterInstanceId": "ExtBox1-ext-gen41020"
+            "masterInstanceId": "3f6306a7-11d6-4ef2-894e-dbea2ac88a90"
         },
         {
-            "type": "textareafield",
+            "type": "Ext.form.field.TextArea",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -306,8 +303,8 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyTextArea",
-                "name": "description",
-                "fieldLabel": "Description"
+                "fieldLabel": "Description",
+                "name": "description"
             },
             "designerId": "9ef16378-a5b3-4867-ade6-cfbb89267fe0"
         }

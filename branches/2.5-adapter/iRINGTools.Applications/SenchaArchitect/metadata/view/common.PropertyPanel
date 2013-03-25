@@ -1,5 +1,5 @@
 {
-    "type": "propertygrid",
+    "type": "Ext.grid.property.Grid",
     "reference": {
         "name": "items",
         "type": "array"
@@ -9,12 +9,11 @@
         "viewConfig": [
             "{\"stripeRows\":true}"
         ],
-        "designer|userClassName": "common.PropertyPanel",
-        "designer|userAlias": "propertypanel",
         "border": true,
-        "frame": false,
         "height": null,
         "width": null,
+        "designer|userClassName": "common.PropertyPanel",
+        "designer|userAlias": "propertypanel",
         "autoScroll": true,
         "collapsed": false,
         "collapsible": true,
@@ -27,7 +26,6 @@
         "border": "boolean",
         "viewConfig": "object"
     },
-    "id": "ExtBox1-ext-gen36671",
     "designerId": "c7d5b81d-b855-40e2-947f-dd51935bc9e0",
     "customConfigs": [
         {

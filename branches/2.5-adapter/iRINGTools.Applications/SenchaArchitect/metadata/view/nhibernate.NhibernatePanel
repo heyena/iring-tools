@@ -1,5 +1,5 @@
 {
-    "type": "panel",
+    "type": "Ext.panel.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -8,11 +8,11 @@
     "userConfig": {
         "dirNode": "",
         "treeNode": "",
-        "designer|userClassName": "nhibernate.NhibernatePanel",
-        "designer|userAlias": "nhibernatepanel",
         "border": false,
         "height": null,
         "width": null,
+        "designer|userClassName": "nhibernate.NhibernatePanel",
+        "designer|userAlias": "nhibernatepanel",
         "layout": "border",
         "closable": true,
         "title": null
@@ -20,7 +20,6 @@
     "configAlternates": {
         "border": "boolean"
     },
-    "id": "ExtBox1-ext-gen3673",
     "designerId": "5af3046f-215b-4db5-9b98-11970c954bdf",
     "customConfigs": [
         {
@@ -49,10 +48,10 @@
                 "layout|region": "center"
             },
             "designerId": "4cd3060f-2f7c-4e42-923d-3255343fab45",
-            "masterInstanceId": "ExtBox1-ext-gen4285"
+            "masterInstanceId": "c72f1844-42ae-497d-ac17-9b294bfd2e8c"
         },
         {
-            "type": "container",
+            "type": "Ext.container.Container",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -63,9 +62,9 @@
                 "layout|floatable": false,
                 "layout|region": "east",
                 "layout|split": true,
-                "designer|userClassName": "MyContainer13",
                 "itemId": "nhibernateContent",
                 "width": 150,
+                "designer|userClassName": "MyContainer13",
                 "layout": "fit"
             },
             "designerId": "ebb5ac25-f61a-4708-8d1d-f1d197b5163d"

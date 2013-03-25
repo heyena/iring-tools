@@ -1,24 +1,23 @@
 {
-    "type": "treestore",
+    "type": "Ext.data.TreeStore",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "SpreadsheetStore",
         "autoLoad": false,
-        "storeId": "SpreadsheetTreeStore",
         "model": "SpreadsheetModel",
+        "storeId": "SpreadsheetTreeStore",
+        "designer|userClassName": "SpreadsheetStore",
         "root": [
             "{ expanded: true, loaded: true, text: 'WorkBook', icon: 'Content/img/excel.png', type: 'ExcelWorkbookNode'}"
         ]
     },
-    "id": "ExtBox1-ext-gen42785",
     "designerId": "f38a99b9-b2d4-4f72-9e08-b126caa893b7",
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -46,7 +45,7 @@
             ],
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"

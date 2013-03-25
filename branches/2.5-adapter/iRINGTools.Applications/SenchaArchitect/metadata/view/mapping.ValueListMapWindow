@@ -1,22 +1,20 @@
 {
-    "type": "window",
+    "type": "Ext.window.Window",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "mapping.ValueListMapWindow",
-        "designer|userAlias": "valuelistmapwindow",
-        "floating": true,
         "height": 155,
         "width": 430,
+        "designer|userClassName": "mapping.ValueListMapWindow",
+        "designer|userAlias": "valuelistmapwindow",
         "layout": "fit",
         "bodyStyle": null,
         "iconCls": "tabsValueListMap",
         "title": null
     },
-    "id": "ExtBox1-ext-gen10775",
     "designerId": "85013fe8-a167-416c-a879-3908f02f545c",
     "cn": [
         {
@@ -56,7 +54,7 @@
                 "designer|displayName": "ValueListMapForm"
             },
             "designerId": "d26339c1-fde3-4acc-90a2-2135a4c38515",
-            "masterInstanceId": "ExtBox1-ext-gen11554"
+            "masterInstanceId": "5577ecda-9535-47c4-b091-cc2a8adf958d"
         }
     ]
 }

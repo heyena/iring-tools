@@ -1,24 +1,23 @@
 {
-    "type": "treestore",
+    "type": "Ext.data.TreeStore",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "MappingStore",
         "autoLoad": null,
-        "storeId": "MappingStore",
         "model": "MappingModel",
+        "storeId": "MappingStore",
+        "designer|userClassName": "MappingStore",
         "root": [
             "{type: 'MappingNode', expanded: true, loaded: true}"
         ]
     },
-    "id": "ExtBox1-ext-gen34040",
     "designerId": "73348ec9-a390-493b-aabd-e1cee85f950c",
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -45,7 +44,7 @@
             ],
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"

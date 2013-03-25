@@ -1,5 +1,5 @@
 {
-    "type": "treepanel",
+    "type": "Ext.tree.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -13,18 +13,17 @@
         "endpoint": "",
         "baseUrl": "",
         "datalayer": "",
-        "designer|userClassName": "spreadsheet.SpreadsheetTree",
-        "designer|userAlias": "spreadsheettree",
         "border": true,
         "height": null,
         "width": null,
+        "designer|userClassName": "spreadsheet.SpreadsheetTree",
+        "designer|userAlias": "spreadsheettree",
         "title": null,
         "store": "SpreadsheetStore"
     },
     "configAlternates": {
         "border": "boolean"
     },
-    "id": "ExtBox1-ext-gen71300",
     "designerId": "29d484ee-d238-403e-80d3-e37beae94517",
     "customConfigs": [
         {
@@ -65,7 +64,7 @@
     ],
     "cn": [
         {
-            "type": "treeview",
+            "type": "Ext.tree.View",
             "reference": {
                 "name": "viewConfig",
                 "type": "object"
@@ -77,7 +76,7 @@
             "designerId": "0edf735b-1a25-49cd-b352-583a306c3867"
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -91,7 +90,7 @@
             "designerId": "2536645f-b98d-4804-a3a8-ae233d719090",
             "cn": [
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -115,7 +114,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -139,7 +138,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -163,7 +162,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -174,7 +173,6 @@
                         "designer|userClassName": "MyButton25",
                         "baseParams": null,
                         "href": "spreadsheet/export",
-                        "hrefTarget": "_blank",
                         "icon": null,
                         "iconCls": "am-document-down",
                         "params": null,

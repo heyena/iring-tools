@@ -1,24 +1,22 @@
 {
-    "type": "gridpanel",
+    "type": "Ext.grid.Panel",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "nhibernate.RelationsGrid",
-        "designer|userAlias": "relationsgrid",
-        "frame": false,
         "height": null,
         "width": null,
+        "designer|userClassName": "nhibernate.RelationsGrid",
+        "designer|userAlias": "relationsgrid",
         "title": null,
         "store": "RelationsStore"
     },
-    "id": "ExtBox1-ext-gen3617",
     "designerId": "17fb1af5-2569-49f4-927f-dd778c03c1a1",
     "cn": [
         {
-            "type": "gridview",
+            "type": "Ext.grid.View",
             "reference": {
                 "name": "viewConfig",
                 "type": "object"
@@ -30,7 +28,7 @@
             "designerId": "35dff96c-8b35-4b48-b88f-49375f2929f1"
         },
         {
-            "type": "gridcolumn",
+            "type": "Ext.grid.column.Column",
             "reference": {
                 "name": "columns",
                 "type": "array"
@@ -39,13 +37,13 @@
             "userConfig": {
                 "designer|userClassName": "MyColumn7",
                 "dataIndex": "relationName",
-                "flex": 1,
-                "text": "Data Relationship Name"
+                "text": "Data Relationship Name",
+                "flex": 1
             },
             "designerId": "f6cd348b-ea01-4063-8a26-ac7a14217b68"
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -59,7 +57,7 @@
             "designerId": "7c95afc6-03ba-41ff-ad6a-45aa1703d2b0",
             "cn": [
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -96,7 +94,7 @@
                     ]
                 },
                 {
-                    "type": "tbseparator",
+                    "type": "Ext.toolbar.Separator",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -104,13 +102,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySeparator10",
-                        "width": 4
+                        "width": 4,
+                        "designer|userClassName": "MySeparator10"
                     },
                     "designerId": "f014aa2c-0f67-4e62-8feb-2a9c4321dde9"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"

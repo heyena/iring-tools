@@ -1,5 +1,5 @@
 {
-    "type": "datamodel",
+    "type": "Ext.data.Model",
     "reference": {
         "name": "items",
         "type": "array"
@@ -8,48 +8,47 @@
     "userConfig": {
         "designer|userClassName": "DataLayerModel"
     },
-    "id": "ExtBox1-ext-gen5178",
     "designerId": "b2925ef6-3b68-49c8-b67b-e2f0f003ae2e",
     "cn": [
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyField3",
+                "mapping": "Assembly",
                 "name": "assembly",
-                "mapping": "Assembly"
+                "designer|userClassName": "MyField3"
             },
             "designerId": "2c4a70a5-b8e0-41f6-be8b-d36045f61cd5"
         },
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyField4",
+                "mapping": "Name",
                 "name": "name",
-                "mapping": "Name"
+                "designer|userClassName": "MyField4"
             },
             "designerId": "0982d796-abbc-428c-8e7e-5cbb73be847e"
         },
         {
-            "type": "datafield",
+            "type": "Ext.data.Field",
             "reference": {
                 "name": "fields",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyField5",
+                "mapping": "Configurable",
                 "name": "configurable",
-                "mapping": "Configurable"
+                "designer|userClassName": "MyField5"
             },
             "designerId": "e81cd543-44fa-49cd-b54e-83a026c97d97"
         }

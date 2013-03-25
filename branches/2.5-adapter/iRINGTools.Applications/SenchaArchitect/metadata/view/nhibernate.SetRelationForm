@@ -1,5 +1,5 @@
 {
-    "type": "form",
+    "type": "Ext.form.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -10,17 +10,16 @@
         "endpoint": "",
         "contextName": "",
         "node": "",
-        "designer|userClassName": "nhibernate.SetRelationForm",
-        "designer|userAlias": "setrelationform",
         "height": null,
         "width": null,
+        "designer|userClassName": "nhibernate.SetRelationForm",
+        "designer|userAlias": "setrelationform",
         "bodyPadding": null,
         "bodyStyle": [
             "background:#eee;padding:10 0 0 10"
         ],
         "title": null
     },
-    "id": "ExtBox1-ext-gen21986",
     "designerId": "ef191768-2bd4-46be-864b-6386fbb488a5",
     "customConfigs": [
         {
@@ -46,24 +45,24 @@
     ],
     "cn": [
         {
-            "type": "label",
+            "type": "Ext.form.Label",
             "reference": {
                 "name": "items",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyLabel9",
                 "cls": "x-form-item",
                 "style": [
                     "font-weight:bold;"
                 ],
+                "designer|userClassName": "MyLabel9",
                 "text": "Configure Relationship"
             },
             "designerId": "528dde09-4029-4027-87d5-0d7ce455debe"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -71,18 +70,18 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField39",
                 "disabled": null,
-                "name": "relationshipName",
-                "readOnly": true,
+                "designer|userClassName": "MyTextField39",
                 "fieldLabel": "Relationship Name",
                 "labelWidth": 160,
+                "name": "relationshipName",
+                "readOnly": true,
                 "allowBlank": false
             },
             "designerId": "122595ff-0943-4dc6-a9a5-31b91573fbec"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -90,18 +89,18 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField39",
                 "disabled": null,
-                "name": "objectName",
-                "readOnly": true,
+                "designer|userClassName": "MyTextField39",
                 "fieldLabel": "Object Name",
                 "labelWidth": 160,
+                "name": "objectName",
+                "readOnly": true,
                 "allowBlank": false
             },
             "designerId": "0acef42a-c096-48c2-9bef-6bbb9a33a25e"
         },
         {
-            "type": "combobox",
+            "type": "Ext.form.field.ComboBox",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -109,11 +108,11 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyComboBox5",
                 "itemId": "relatedObjectCmb",
-                "name": "relatedObjectName",
+                "designer|userClassName": "MyComboBox5",
                 "fieldLabel": "Related Object Name",
                 "labelWidth": 160,
+                "name": "relatedObjectName",
                 "selectOnFocus": true,
                 "queryMode": "local",
                 "valueField": "value"
@@ -176,7 +175,7 @@
             ]
         },
         {
-            "type": "combobox",
+            "type": "Ext.form.field.ComboBox",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -184,14 +183,16 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyComboBox6",
                 "itemId": "relationType",
-                "name": "relationType",
+                "designer|userClassName": "MyComboBox6",
                 "fieldLabel": "Relation Type",
                 "labelWidth": 160,
+                "name": "relationType",
                 "allowBlank": false,
                 "queryMode": "local",
-                "store": "[['OneToOne', 'OneToOne'], ['OneToMany', 'OneToMany']]"
+                "store": [
+                    "[['OneToOne', 'OneToOne'], ['OneToMany', 'OneToMany']]"
+                ]
             },
             "configAlternates": {
                 "store": "array"
@@ -199,7 +200,7 @@
             "designerId": "7db78196-5fb8-4563-a7cb-27a9b32fb020"
         },
         {
-            "type": "combobox",
+            "type": "Ext.form.field.ComboBox",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -207,11 +208,11 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyComboBox7",
                 "itemId": "propertyNameCmb",
-                "name": "propertyName",
+                "designer|userClassName": "MyComboBox7",
                 "fieldLabel": "Property Name",
                 "labelWidth": 160,
+                "name": "propertyName",
                 "queryMode": "local"
             },
             "designerId": "5c0a786e-bf5d-4120-a623-dbe00cd14fa3",
@@ -237,7 +238,7 @@
             ]
         },
         {
-            "type": "combobox",
+            "type": "Ext.form.field.ComboBox",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -245,11 +246,11 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyComboBox8",
                 "itemId": "mapPropertyNameCmb",
-                "name": "mapPropertyName",
+                "designer|userClassName": "MyComboBox8",
                 "fieldLabel": "Mapping Property",
                 "labelWidth": 160,
+                "name": "mapPropertyName",
                 "queryMode": "local"
             },
             "designerId": "7134a791-3d07-445c-aec3-a5c0cb5b0fcd"
@@ -262,14 +263,14 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|displayName": "relationPropertyGrid",
-                "minHeight": 100
+                "minHeight": 100,
+                "designer|displayName": "relationPropertyGrid"
             },
             "designerId": "05200275-ebdd-45b1-909c-aed07f201d49",
-            "masterInstanceId": "ExtBox1-ext-gen3160"
+            "masterInstanceId": "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c"
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -282,7 +283,7 @@
             "designerId": "b6c750d2-40b6-4c87-864f-6ad503b8ace5",
             "cn": [
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -347,7 +348,7 @@
                     ]
                 },
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -360,7 +361,7 @@
                     "designerId": "d10df495-eea8-4536-a520-d5e1c6c9ece1"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"

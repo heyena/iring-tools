@@ -1,5 +1,5 @@
 {
-    "type": "application",
+    "type": "Ext.app.Application",
     "reference": {
         "name": "items",
         "type": "array"
@@ -11,33 +11,32 @@
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,
-        "name": "AM",
         "controllers": [
             "Mapping",
             "Directory",
             "Search",
             "Spreadsheet",
             "NHibernate"
-        ]
+        ],
+        "name": "AM"
     },
-    "id": "ExtBox1-ext-gen1526",
     "designerId": "application",
     "cn": [
         {
-            "type": "loader",
+            "type": "Ext.Loader",
             "reference": {
                 "name": "loader",
                 "type": "object"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "Loader",
-                "designer|displayName": "AM",
                 "enabled": true,
+                "garbageCollect": true,
                 "paths": [
                     "{'Ext.ux': 'Scripts/AM/ux'}"
                 ],
-                "garbageCollect": true
+                "designer|userClassName": "Loader",
+                "designer|displayName": "AM"
             },
             "designerId": "a43a39a0-44e3-4fc8-a6d4-14184ad6249c"
         }

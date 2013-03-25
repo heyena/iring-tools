@@ -1,23 +1,20 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "menus.ApplicationMenu",
-        "designer|userAlias": "applicationmenu",
-        "floating": true,
         "minWidth": null,
         "width": 140,
-        "minButtonWidth": 85
+        "designer|userClassName": "menus.ApplicationMenu",
+        "designer|userAlias": "applicationmenu"
     },
-    "id": "ExtBox1-ext-gen31027",
     "designerId": "053fa732-8da3-4a99-b955-917bc25f4cbe",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -25,8 +22,8 @@
             "codeClass": null,
             "userConfig": {
                 "action": "neweditendpoint",
-                "designer|userClassName": "MyMenuItem16",
                 "itemId": "editendpoint",
+                "designer|userClassName": "MyMenuItem16",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit Endpoint"
             },
@@ -40,7 +37,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -62,7 +59,7 @@
             ]
         },
         {
-            "type": "menuseparator",
+            "type": "Ext.menu.Separator",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -74,7 +71,7 @@
             "designerId": "f7bd238d-8ec3-4390-b0ab-a45d9676ee7c"
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

@@ -1,5 +1,5 @@
 {
-    "type": "gridpanel",
+    "type": "Ext.grid.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -7,13 +7,12 @@
     "codeClass": null,
     "userConfig": {
         "propertyPairs": "",
-        "designer|userClassName": "nhibernate.PropertyGrid",
-        "designer|userAlias": "propertygrid",
         "height": null,
         "width": null,
+        "designer|userClassName": "nhibernate.PropertyGrid",
+        "designer|userAlias": "propertygrid",
         "title": null
     },
-    "id": "ExtBox1-ext-gen6589",
     "designerId": "02e5600b-0e29-4250-9b2b-34467449933a",
     "customConfigs": [
         {
@@ -24,7 +23,7 @@
     ],
     "cn": [
         {
-            "type": "gridcolumn",
+            "type": "Ext.grid.column.Column",
             "reference": {
                 "name": "columns",
                 "type": "array"
@@ -33,29 +32,29 @@
             "userConfig": {
                 "designer|userClassName": "MyColumn2",
                 "dataIndex": "property",
-                "flex": 1,
-                "text": "Property"
+                "text": "Property",
+                "flex": 1
             },
             "designerId": "d0dc7bde-20a1-4adf-bd96-49542db2fb83"
         },
         {
-            "type": "gridcolumn",
+            "type": "Ext.grid.column.Column",
             "reference": {
                 "name": "columns",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyColumn2",
                 "hidden": true,
+                "designer|userClassName": "MyColumn2",
                 "dataIndex": "columnName",
-                "flex": 1,
-                "text": null
+                "text": null,
+                "flex": 1
             },
             "designerId": "4efb6848-89f6-4485-ae49-5d9b919906ee"
         },
         {
-            "type": "gridcolumn",
+            "type": "Ext.grid.column.Column",
             "reference": {
                 "name": "columns",
                 "type": "array"
@@ -64,29 +63,29 @@
             "userConfig": {
                 "designer|userClassName": "MyColumn2",
                 "dataIndex": "relatedProperty",
-                "flex": 1,
-                "text": "Related Property"
+                "text": "Related Property",
+                "flex": 1
             },
             "designerId": "cf6e3534-0377-40ef-b244-ced4b3e08721"
         },
         {
-            "type": "gridcolumn",
+            "type": "Ext.grid.column.Column",
             "reference": {
                 "name": "columns",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyColumn2",
                 "hidden": true,
+                "designer|userClassName": "MyColumn2",
                 "dataIndex": "relatedColumnName",
-                "flex": 1,
-                "text": null
+                "text": null,
+                "flex": 1
             },
             "designerId": "a13d328d-93d4-4e36-8655-27e37e8d6f5a"
         },
         {
-            "type": "gridview",
+            "type": "Ext.grid.View",
             "reference": {
                 "name": "viewConfig",
                 "type": "object"
@@ -98,7 +97,7 @@
             "designerId": "c53359fb-22bc-4d8e-bb07-86027d664e43"
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -112,7 +111,7 @@
             "designerId": "ed74f130-487d-43d8-812b-383629480bee",
             "cn": [
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -120,13 +119,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer7",
-                        "width": 4
+                        "width": 4,
+                        "designer|userClassName": "MySpacer7"
                     },
                     "designerId": "fa40e9df-feae-4a7f-ba3f-f31c510beba3"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -150,7 +149,7 @@
                     ]
                 },
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -158,13 +157,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer7",
-                        "width": 4
+                        "width": 4,
+                        "designer|userClassName": "MySpacer7"
                     },
                     "designerId": "a6110260-b30e-4de5-815f-5f3281cd4338"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"

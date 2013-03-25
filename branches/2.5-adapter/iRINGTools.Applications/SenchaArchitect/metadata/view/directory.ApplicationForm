@@ -1,5 +1,5 @@
 {
-    "type": "form",
+    "type": "Ext.form.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -7,12 +7,11 @@
     "codeClass": null,
     "userConfig": {
         "record": "",
-        "designer|userClassName": "directory.ApplicationForm",
-        "designer|userAlias": "applicationform",
         "border": true,
-        "frame": false,
         "height": null,
         "width": null,
+        "designer|userClassName": "directory.ApplicationForm",
+        "designer|userAlias": "applicationform",
         "defaults": [
             "{msgTarget: 'side', anchor: '100%'}"
         ],
@@ -27,7 +26,6 @@
     "configAlternates": {
         "border": "boolean"
     },
-    "id": "ExtBox1-ext-gen19163",
     "designerId": "140dde75-d72b-47c5-a76b-9c6cf6c94388",
     "customConfigs": [
         {
@@ -38,7 +36,7 @@
     ],
     "cn": [
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -51,7 +49,7 @@
             "designerId": "9bb1588e-4fb4-48a2-a780-98d8467a8c9a",
             "cn": [
                 {
-                    "type": "tbfill",
+                    "type": "Ext.toolbar.Fill",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -64,7 +62,7 @@
                     "designerId": "e871ddfa-0204-4b1d-bca2-ff47ea4d22d7"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -100,7 +98,7 @@
                     ]
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -232,7 +230,7 @@
             "designerId": "33208ca5-1f85-4eaa-a544-bf7b2b58f48b"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -241,13 +239,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField44",
-                "name": "oldAssembly",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "oldAssembly"
             },
             "designerId": "7ccde611-28c3-49a4-86d1-2f4e1050f323"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -256,13 +254,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField43",
-                "name": "baseUrl",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "baseUrl"
             },
             "designerId": "959c5153-f950-4d39-8c18-7e15b73433c2"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -271,13 +269,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField42",
-                "name": "assembly",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "assembly"
             },
             "designerId": "d601416f-a1ee-44c6-a140-dde500319a01"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -286,13 +284,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField41",
-                "name": "oldBaseUrl",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "oldBaseUrl"
             },
             "designerId": "c0bb73b2-5b47-4f89-96e6-75df0c2281ba"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -301,13 +299,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField40",
-                "name": "contextValue",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "contextValue"
             },
             "designerId": "40ca7705-d93d-461c-a8ca-27d674a7dc5d"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -316,13 +314,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField39",
-                "name": "state",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "state"
             },
             "designerId": "113b3811-54f6-4be9-806d-df079da7d719"
         },
         {
-            "type": "hiddenfield",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -331,13 +329,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField38",
-                "name": "path",
-                "fieldLabel": null
+                "fieldLabel": null,
+                "name": "path"
             },
             "designerId": "57f49f85-8f2e-4c15-b54b-b8d04bdc52df"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -346,13 +344,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyTextField5",
-                "name": "endpoint",
-                "fieldLabel": "Endpoint Name"
+                "fieldLabel": "Endpoint Name",
+                "name": "endpoint"
             },
             "designerId": "5e270425-4108-41d2-95f4-cb0c3292a47c"
         },
         {
-            "type": "textareafield",
+            "type": "Ext.form.field.TextArea",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -361,13 +359,13 @@
             "userConfig": {
                 "layout|anchor": null,
                 "designer|userClassName": "MyTextArea1",
-                "name": "description",
-                "fieldLabel": "Description"
+                "fieldLabel": "Description",
+                "name": "description"
             },
             "designerId": "ad4d7859-d760-4de9-b0e4-48973c51ce94"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -375,10 +373,10 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextField6",
                 "disabled": true,
-                "name": "context",
-                "fieldLabel": "Context Name"
+                "designer|userClassName": "MyTextField6",
+                "fieldLabel": "Context Name",
+                "name": "context"
             },
             "designerId": "2617fadf-03b2-420e-aea2-2aa90b6db62c"
         },
@@ -393,20 +391,19 @@
                 "designer|displayName": "DataLayerCombo"
             },
             "designerId": "eebfb9f9-0d2a-4775-9fda-c6aa962e1aa5",
-            "masterInstanceId": "ExtBox1-ext-gen23010"
+            "masterInstanceId": "89827f86-cc75-4149-b7e4-3defbfcb6ebd"
         },
         {
-            "type": "form",
+            "type": "Ext.form.Panel",
             "reference": {
                 "name": "items",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyForm12",
                 "border": false,
-                "frame": false,
                 "itemId": "baseurlform",
+                "designer|userClassName": "MyForm12",
                 "layout": "column",
                 "bodyPadding": null,
                 "title": null
@@ -428,10 +425,10 @@
                         "layout|columnWidth": 0.87
                     },
                     "designerId": "86857215-1472-4824-9c0a-a657af32ad20",
-                    "masterInstanceId": "ExtBox1-ext-gen27243"
+                    "masterInstanceId": "58e927fe-fafa-4674-b907-2df5d6711a7d"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -439,10 +436,10 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|columnWidth": 0.13,
-                        "designer|userClassName": "MyButton15",
                         "style": [
                             "float: right;"
                         ],
+                        "designer|userClassName": "MyButton15",
                         "text": "Test Url",
                         "tooltip": [
                             "Test the entered Url"

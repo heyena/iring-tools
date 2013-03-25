@@ -1,21 +1,19 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "width": 130,
         "designer|userClassName": "menus.GraphMenu",
-        "designer|userAlias": "graphmenu",
-        "floating": true,
-        "width": 130
+        "designer|userAlias": "graphmenu"
     },
-    "id": "ExtBox1-ext-gen41155",
     "designerId": "b89bd8a3-9e2c-4842-89a1-ab5f17dcc936",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -37,7 +35,7 @@
             ]
         },
         {
-            "type": "menuseparator",
+            "type": "Ext.menu.Separator",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -49,7 +47,7 @@
             "designerId": "d8f13301-0125-4b9b-9929-b7a3ef639c5e"
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -57,8 +55,8 @@
             "codeClass": null,
             "userConfig": {
                 "action": "editnewgraph",
-                "designer|userClassName": "MyMenuItem28",
                 "itemId": "editgraph",
+                "designer|userClassName": "MyMenuItem28",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit GraphMap"
             },
@@ -72,7 +70,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -94,7 +92,7 @@
             ]
         },
         {
-            "type": "menuseparator",
+            "type": "Ext.menu.Separator",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -106,7 +104,7 @@
             "designerId": "4641f6e8-7efc-4e51-bd00-91a1de6418a5"
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

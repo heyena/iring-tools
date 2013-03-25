@@ -6,10 +6,9 @@
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "MultiStore",
+        "model": "MultiSelect",
         "storeId": "MultiStore",
-        "model": "MultiSelect"
+        "designer|userClassName": "MultiStore"
     },
-    "id": "ExtBox1-ext-gen4487",
     "designerId": "82edf86f-a5e2-4e95-8ce8-b5152d4a2cd6"
 }

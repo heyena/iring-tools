@@ -1,5 +1,5 @@
 {
-    "type": "panel",
+    "type": "Ext.panel.Panel",
     "reference": {
         "name": "items",
         "type": "array"
@@ -11,16 +11,15 @@
         "baseUrl": "",
         "graphName": "",
         "contextName": "",
-        "designer|userClassName": "mapping.MappingPanel",
-        "designer|userAlias": "mappingpanel",
         "height": null,
         "width": null,
+        "designer|userClassName": "mapping.MappingPanel",
+        "designer|userAlias": "mappingpanel",
         "layout": "border",
         "closable": true,
         "iconCls": "tabsMapping",
         "title": null
     },
-    "id": "ExtBox1-ext-gen27682",
     "designerId": "65df1f92-f476-4bca-b264-de0fd62a3eca",
     "customConfigs": [
         {
@@ -62,7 +61,7 @@
                 "layout|region": "center"
             },
             "designerId": "584c5235-0c80-4e3b-a095-fa89521ba77c",
-            "masterInstanceId": "ExtBox1-ext-gen54902"
+            "masterInstanceId": "37ca6ad3-7180-4c3d-bcd8-22f9493320a6"
         },
         {
             "type": "linkedinstance",
@@ -72,14 +71,14 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|displayName": "MappingDetails",
                 "width": 250,
+                "designer|displayName": "MappingDetails",
                 "title": "Mapping Details",
                 "layout|region": "east",
                 "layout|split": true
             },
             "designerId": "7206d4a8-7588-44f8-a4af-83f05910f31d",
-            "masterInstanceId": "ExtBox1-ext-gen36671"
+            "masterInstanceId": "c7d5b81d-b855-40e2-947f-dd51935bc9e0"
         },
         {
             "type": "basiceventbinding",

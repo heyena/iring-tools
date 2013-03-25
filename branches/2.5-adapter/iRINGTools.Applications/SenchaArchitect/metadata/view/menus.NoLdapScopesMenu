@@ -1,21 +1,19 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "width": 130,
         "designer|userClassName": "menus.NoLdapScopesMenu",
-        "designer|userAlias": "noldapscopesmenu",
-        "floating": true,
-        "width": 130
+        "designer|userAlias": "noldapscopesmenu"
     },
-    "id": "ExtBox1-ext-gen26560",
     "designerId": "066aa598-61b3-402a-8029-13803d2c2c42",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -37,7 +35,7 @@
             ]
         },
         {
-            "type": "menuseparator",
+            "type": "Ext.menu.Separator",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -49,7 +47,7 @@
             "designerId": "73d742dd-961a-42f2-9449-fc477951b552"
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -71,7 +69,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -93,7 +91,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

@@ -1,43 +1,42 @@
 {
-    "type": "form",
+    "type": "Ext.form.Panel",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "nhibernate.SetPropertyForm",
-        "designer|userAlias": "setpropertyform",
         "height": null,
         "width": 400,
+        "designer|userClassName": "nhibernate.SetPropertyForm",
+        "designer|userAlias": "setpropertyform",
         "bodyPadding": 10,
         "bodyStyle": [
             "background:#eee;padding:10px 0px 0px 10px"
         ],
         "title": null
     },
-    "id": "ExtBox1-ext-gen3081",
     "designerId": "d1c34e2a-9007-4641-b713-a25c592fadbd",
     "cn": [
         {
-            "type": "label",
+            "type": "Ext.form.Label",
             "reference": {
                 "name": "items",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyLabel8",
                 "cls": "x-form-item",
                 "style": [
                     "font-weight:bold;"
                 ],
+                "designer|userClassName": "MyLabel8",
                 "text": "Data Property"
             },
             "designerId": "996f144f-a6f4-40d8-a576-72bfe584a14c"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -46,15 +45,15 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField32",
-                "name": "columnName",
-                "readOnly": true,
                 "fieldLabel": "Column Name",
-                "labelWidth": 160
+                "labelWidth": 160,
+                "name": "columnName",
+                "readOnly": true
             },
             "designerId": "94332b66-0b83-4fd8-a427-a5849b01871f"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -63,10 +62,9 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField32",
-                "name": "propertyName",
-                "readOnly": false,
                 "fieldLabel": "Property Name (editable)",
                 "labelWidth": 160,
+                "name": "propertyName",
                 "allowBlank": false,
                 "regex": "/^[a-zA-Z_][a-zA-Z0-9_]*$/",
                 "regexText": "<b>Error</b></br>Invalid Value. A valid value should start with alphabet or \"_\", and follow by any number of \"_\", alphabet, or number characters"
@@ -74,7 +72,7 @@
             "designerId": "3606017f-6f3e-48f8-98a4-5a909a556b35"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -83,15 +81,15 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField32",
-                "name": "dataType",
-                "readOnly": true,
                 "fieldLabel": "Data Type",
-                "labelWidth": 160
+                "labelWidth": 160,
+                "name": "dataType",
+                "readOnly": true
             },
             "designerId": "c839ad66-7968-43d3-922b-771db9a21566"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -100,15 +98,15 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField32",
-                "name": "dataLength",
-                "readOnly": true,
                 "fieldLabel": "Data Length",
-                "labelWidth": 160
+                "labelWidth": 160,
+                "name": "dataLength",
+                "readOnly": true
             },
             "designerId": "efb80e26-5f12-4b5e-b534-fe641a3fee48"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -117,15 +115,15 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField32",
-                "name": "nullable",
-                "readOnly": true,
                 "fieldLabel": "Nullable",
-                "labelWidth": 160
+                "labelWidth": 160,
+                "name": "nullable",
+                "readOnly": true
             },
             "designerId": "78fdf052-b93f-4c29-b770-48aac7de154c"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -134,15 +132,15 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField32",
-                "name": "showOnIndex",
-                "readOnly": true,
                 "fieldLabel": "Show On Index",
-                "labelWidth": 160
+                "labelWidth": 160,
+                "name": "showOnIndex",
+                "readOnly": true
             },
             "designerId": "a1060b2d-66fa-44bb-8c10-0cfa284d76f5"
         },
         {
-            "type": "textfield",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -151,15 +149,15 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "designer|userClassName": "MyTextField32",
-                "name": "numberOfDecimals",
-                "readOnly": true,
                 "fieldLabel": "Number of Decimals",
-                "labelWidth": 160
+                "labelWidth": 160,
+                "name": "numberOfDecimals",
+                "readOnly": true
             },
             "designerId": "462404b2-dfb7-4843-85ad-3476f0b65a69"
         },
         {
-            "type": "toolbar",
+            "type": "Ext.toolbar.Toolbar",
             "reference": {
                 "name": "dockedItems",
                 "type": "array"
@@ -173,7 +171,7 @@
             "designerId": "6bf00d34-09cc-4a30-829f-d7e86a39f428",
             "cn": [
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -181,13 +179,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer17",
-                        "width": 4
+                        "width": 4,
+                        "designer|userClassName": "MySpacer17"
                     },
                     "designerId": "59a45ae1-c9bb-4559-aa79-17d5e72ca77f"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -210,7 +208,7 @@
                     ]
                 },
                 {
-                    "type": "tbspacer",
+                    "type": "Ext.toolbar.Spacer",
                     "reference": {
                         "name": "items",
                         "type": "array"
@@ -218,13 +216,13 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MySpacer17",
-                        "width": 4
+                        "width": 4,
+                        "designer|userClassName": "MySpacer17"
                     },
                     "designerId": "99437475-c75b-4e2b-a094-d355cb1fe74c"
                 },
                 {
-                    "type": "button",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"

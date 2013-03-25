@@ -1,24 +1,23 @@
 {
-    "type": "treestore",
+    "type": "Ext.data.TreeStore",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "SearchStore",
         "autoLoad": false,
-        "storeId": "SearchStore",
         "model": "SearchModel",
+        "storeId": "SearchStore",
+        "designer|userClassName": "SearchStore",
         "root": [
             "{expanded: true, loaded: true}"
         ]
     },
-    "id": "ExtBox1-ext-gen2902",
     "designerId": "88fb5df4-c2c7-4ed8-a325-8140a2eb98bf",
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -50,7 +49,7 @@
             ],
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"

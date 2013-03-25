@@ -1,17 +1,17 @@
 {
-    "type": "gridpanel",
+    "type": "Ext.grid.Panel",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "nhibernate.MultiSelectionGrid",
-        "designer|userAlias": "multiselectiongrid",
         "height": null,
         "maxHeight": 260,
         "maxWidth": null,
         "width": null,
+        "designer|userClassName": "nhibernate.MultiSelectionGrid",
+        "designer|userAlias": "multiselectiongrid",
         "autoScroll": true,
         "frameHeader": false,
         "header": false,
@@ -23,7 +23,6 @@
         "sortableColumns": false,
         "store": "MultiStore"
     },
-    "id": "ExtBox1-ext-gen55549",
     "designerId": "806180c3-0c42-425f-b6f1-5b85a7b5017b",
     "cn": [
         {
@@ -133,7 +132,7 @@
             "designerId": "11b00b3c-148f-4b21-983a-2c93abe50fe0"
         },
         {
-            "type": "gridview",
+            "type": "Ext.grid.View",
             "reference": {
                 "name": "viewConfig",
                 "type": "object"
@@ -145,28 +144,28 @@
             "designerId": "b8b8dc12-7072-478f-9f73-ca3931d6f06c"
         },
         {
-            "type": "rowselectionmodel",
+            "type": "Ext.selection.RowModel",
             "reference": {
                 "name": "selModel",
                 "type": "object"
             },
             "codeClass": "Ext.selection.RowModel",
             "userConfig": {
-                "designer|userClassName": "MyRowSelectionModel",
-                "mode": "MULTI"
+                "mode": "MULTI",
+                "designer|userClassName": "MyRowSelectionModel"
             },
             "designerId": "81422dda-83e9-4cb4-8811-f0178769bc3b"
         },
         {
-            "type": "gridcolumn",
+            "type": "Ext.grid.column.Column",
             "reference": {
                 "name": "columns",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyColumn6",
                 "width": 220,
+                "designer|userClassName": "MyColumn6",
                 "align": "center",
                 "dataIndex": "DisplayField",
                 "text": "DisplayField"

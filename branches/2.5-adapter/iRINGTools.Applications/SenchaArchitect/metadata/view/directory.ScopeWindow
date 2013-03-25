@@ -1,18 +1,16 @@
 {
-    "type": "window",
+    "type": "Ext.window.Window",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "directory.ScopeWindow",
-        "designer|userAlias": "scopewindow",
         "border": false,
-        "floating": true,
-        "frame": false,
         "height": 200,
         "width": 460,
+        "designer|userClassName": "directory.ScopeWindow",
+        "designer|userAlias": "scopewindow",
         "layout": "fit",
         "bodyPadding": 1,
         "iconCls": "tabsScope",
@@ -22,7 +20,6 @@
         "border": "boolean",
         "bodyPadding": "number"
     },
-    "id": "ExtBox1-ext-gen138086",
     "designerId": "90c99fcb-05cd-42f8-a3df-8a16712e5601",
     "cn": [
         {
@@ -33,7 +30,7 @@
             },
             "codeClass": null,
             "designerId": "e17e2ec1-59e1-409f-b953-f01cb465332c",
-            "masterInstanceId": "ExtBox1-ext-gen38779"
+            "masterInstanceId": "354a52a2-af56-440e-a28d-e03f1135a5e9"
         },
         {
             "type": "customevent",

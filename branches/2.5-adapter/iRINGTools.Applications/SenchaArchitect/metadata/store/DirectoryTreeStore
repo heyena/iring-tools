@@ -1,25 +1,24 @@
 {
-    "type": "treestore",
+    "type": "Ext.data.TreeStore",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "DirectoryTreeStore",
         "autoLoad": null,
         "filterOnLoad": false,
-        "storeId": "directorytreestore",
         "model": "DirectoryModel",
+        "storeId": "directorytreestore",
+        "designer|userClassName": "DirectoryTreeStore",
         "root": [
             "{expanded: true, type: 'ScopesNode', iconCls: 'scopes', text: 'World', security: ''}"
         ]
     },
-    "id": "ExtBox1-ext-gen15004",
     "designerId": "199ea7ae-35b2-4084-9980-34e8fc1aca2c",
     "cn": [
         {
-            "type": "ajaxproxy",
+            "type": "Ext.data.proxy.Ajax",
             "reference": {
                 "name": "proxy",
                 "type": "object"
@@ -46,15 +45,15 @@
             ],
             "cn": [
                 {
-                    "type": "jsonreader",
+                    "type": "Ext.data.reader.Json",
                     "reference": {
                         "name": "reader",
                         "type": "object"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyJsonReader8",
-                        "readRecordsOnFailure": null
+                        "readRecordsOnFailure": null,
+                        "designer|userClassName": "MyJsonReader8"
                     },
                     "designerId": "bc309761-b3fe-40c1-9ab4-72570f49b7d3"
                 }

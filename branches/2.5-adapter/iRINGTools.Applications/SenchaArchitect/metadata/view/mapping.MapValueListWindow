@@ -1,20 +1,18 @@
 {
-    "type": "window",
+    "type": "Ext.window.Window",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
-        "designer|userClassName": "mapping.MapValueListWindow",
-        "designer|userAlias": "mapvaluelistwindow",
-        "floating": true,
         "height": 170,
         "width": 430,
+        "designer|userClassName": "mapping.MapValueListWindow",
+        "designer|userAlias": "mapvaluelistwindow",
         "layout": "fit",
         "title": "Map Valuelist to RoleMap"
     },
-    "id": "ExtBox1-ext-gen5784",
     "designerId": "c0e41fc6-6d2b-4e05-8ed0-d714dc2d2827",
     "cn": [
         {
@@ -54,7 +52,7 @@
                 "designer|displayName": "ValueListForm"
             },
             "designerId": "6a93fb30-eb7d-4731-82e3-77e8d70bb086",
-            "masterInstanceId": "ExtBox1-ext-gen6527"
+            "masterInstanceId": "74ae9be1-debc-4ec9-b65c-72f3107b7df0"
         }
     ]
 }

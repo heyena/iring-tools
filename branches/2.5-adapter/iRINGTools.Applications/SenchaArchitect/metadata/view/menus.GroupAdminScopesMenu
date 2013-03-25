@@ -1,21 +1,19 @@
 {
-    "type": "menu",
+    "type": "Ext.menu.Menu",
     "reference": {
         "name": "items",
         "type": "array"
     },
     "codeClass": null,
     "userConfig": {
+        "width": 130,
         "designer|userClassName": "menus.GroupAdminScopesMenu",
-        "designer|userAlias": "groupadminscopesmenu",
-        "floating": true,
-        "width": 130
+        "designer|userAlias": "groupadminscopesmenu"
     },
-    "id": "ExtBox1-ext-gen20646",
     "designerId": "7898ced7-5511-4e58-a6a1-0ef46bf44e3d",
     "cn": [
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -23,8 +21,8 @@
             "codeClass": null,
             "userConfig": {
                 "action": "newdatalayer",
-                "designer|userClassName": "MyMenuItem4",
                 "floating": null,
+                "designer|userClassName": "MyMenuItem4",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New Data Layer"
             },
@@ -38,7 +36,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -60,7 +58,7 @@
             ]
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -82,7 +80,7 @@
             ]
         },
         {
-            "type": "menuseparator",
+            "type": "Ext.menu.Separator",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -94,7 +92,7 @@
             "designerId": "10d76a5f-fcb8-44e8-beec-e4c3d8eaa5e1"
         },
         {
-            "type": "menuitem",
+            "type": "Ext.menu.Item",
             "reference": {
                 "name": "items",
                 "type": "array"

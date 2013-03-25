@@ -1,5 +1,5 @@
 {
-    "type": "controller",
+    "type": "Ext.app.Controller",
     "reference": {
         "name": "items",
         "type": "array"
@@ -7,7 +7,6 @@
     "codeClass": null,
     "userConfig": {
         "dataTypes": "",
-        "designer|userClassName": "NHibernate",
         "models": [
             "AvailItemsModel",
             "TableSelectModel",
@@ -38,9 +37,9 @@
             "nhibernate.SetPropertyForm",
             "nhibernate.SetRelationForm",
             "nhibernate.RelationsGrid"
-        ]
+        ],
+        "designer|userClassName": "NHibernate"
     },
-    "id": "ExtBox1-ext-gen3053",
     "designerId": "732f42fe-9dc6-418c-8ca8-80f24bb50936",
     "customConfigs": [
         {
@@ -998,7 +997,7 @@
                 "fn": "onTreepanelItemClick",
                 "implHandler": [
                     "var me = this;\r",
-                    "var panel = tablepanel.up('nhibernatepanel');\r",
+                    "var panel = dataview.up('nhibernatepanel');\r",
                     "var dataNode = record.store.getAt(index);\r",
                     "panel.treeNode = dataNode;\r",
                     "var nodeType = dataNode.data.type.toUpperCase();\r",
