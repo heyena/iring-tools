@@ -252,6 +252,104 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
+    {
+      try
+      {
+        List<string> docGuids = identifiers.ToList();
+        List<string> listAttributes = new List<string>();
+
+        DatabaseDictionary dictionary = GetDatabaseDictionary();
+        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+
+        foreach (DataProperty prop in objDef.dataProperties)
+        {
+          listAttributes.Add(prop.columnName);
+        }
+
+        Login();
+
+        DataTable dt = GetDocumentMetadata(docGuids, listAttributes);
+
+        if (dt == null)
+        {
+          throw new Exception("Objects not found.");
+        }
+
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        bool includeContent = _settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString());
+
+        foreach (DataRow row in dt.Rows)
+        {
+          IDataObject dataObject = ToDataObject(row, objDef);
+
+          if (includeContent)
+          {
+            IContentObject contentObject = new GenericContentObject(dataObject);
+            contentObject.ObjectType = objectType;
+
+            //TODO: get id property from config
+            string id = dataObject.GetPropertyValue("DocumentGUID").ToString();
+            string tempFoder = "c:\\temp\\projectwise\\";
+
+            FileStream stream = GetProjectWiseFile(id, tempFoder);
+
+            if (stream != null)
+            {
+              try
+              {
+                //TODO: get default format from config
+                string format = ".pdf";
+
+                string docName = stream.Name.ToLower();
+                int extIndex = docName.LastIndexOf('.');
+
+                if (extIndex >= 0)
+                {
+                  format = docName.Substring(extIndex);
+                }
+
+                string contentType = MimeTypes.Dictionary[format];
+
+                MemoryStream outStream = new MemoryStream();
+                stream.CopyTo(outStream);
+                outStream.Position = 0;
+                stream.Close();
+
+                contentObject.Content = outStream;
+              }
+              catch (Exception ex)
+              {
+                _logger.Error("Error getting content type: " + ex.ToString());
+                throw ex;
+              }
+              finally
+              {
+                stream.Close();
+              }
+            }
+
+            dataObjects.Add(contentObject);
+          }
+          else
+          {
+            dataObjects.Add(dataObject);
+          }
+        }
+
+        return dataObjects;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.Message);
+        throw e;
+      }
+      finally
+      {
+        Logout();
+      }
+    }
+
     public override DataTable GetDataTable(string tableName, IList<string> identifiers)
     {
       try
@@ -326,7 +424,6 @@ namespace org.iringtools.adapter.datalayer
           if (dt.Rows.Count > 0)
           {
             IDataObject dataObject = ToDataObject(dt.Rows[0], objDef);
-            contentObject.DataObject = dataObject;
           }
           #endregion
 
@@ -392,6 +489,19 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    //TODO: look up dictionary for object type and handle list
+    public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    {
+      IList<IDataObject> dataObjects = new List<IDataObject>();
+
+      if (identifiers.Count == 1)
+      {
+        dataObjects.Add(new GenericDataObject() { ObjectType = objectType });
+      }
+
+      return dataObjects;
+    }
+
     public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
     {
       throw new NotImplementedException();
@@ -446,7 +556,14 @@ namespace org.iringtools.adapter.datalayer
 
           slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
 
-          string docGUID = CreateNewPWDocument(null, slProps);
+          Stream content = null;
+
+          if (typeof(IContentObject).IsAssignableFrom(dataObject.GetType()))
+          {
+            content = ((IContentObject)dataObject).Content;
+          }
+
+          string docGUID = CreateNewPWDocument(content, slProps);
 
           Status status = new Status()
           {
