@@ -4188,12 +4188,9 @@ namespace org.iringtools.adapter
           string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
                  _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
 
-          if (_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true)
+          if ((_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true) && File.Exists(path))
           {
-            if (File.Exists(path))
-            {
-              _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
-            }
+             _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
           }
           else
           {
@@ -4201,7 +4198,10 @@ namespace org.iringtools.adapter
 
             if (_dataDictionary != null)
             {
+              if (_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true) // only create cache if settings indicate we will use it
+              {
                 utility.Utility.Write<DataDictionary>(_dataDictionary, path, true);
+              }
             }
           }        
 
