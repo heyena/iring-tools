@@ -516,19 +516,21 @@ namespace org.iringtools.library
       {
         try
         {
+          bool useDictionaryCache = _settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString());
+
           string dbPath = string.Format("{0}DatabaseDictionary.{1}.{2}.xml",
             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
 
-          if (File.Exists(dbPath))
-          {
-            _dbDictionary = Utility.Read<DatabaseDictionary>(dbPath, true);
-          }
-          else
-          {
-            string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
-             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
-
-            if (File.Exists(path))
+          string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
+               _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+ 
+          if (useDictionaryCache && (File.Exists(dbPath) || File.Exists(path)))
+          {            
+            if (File.Exists(dbPath))
+            {
+              _dbDictionary = Utility.Read<DatabaseDictionary>(dbPath, true);
+            }
+            else if (File.Exists(path))
             {
               DataDictionary dataDictionary = Utility.Read<DataDictionary>(path, true);
 
@@ -539,11 +541,13 @@ namespace org.iringtools.library
                 dataVersion = dataDictionary.dataVersion
               };
             }
-            else
-            {
-              _dbDictionary = GetDatabaseDictionary();
+          }
+          else
+          {
+            _dbDictionary = GetDatabaseDictionary();
+
+            if (useDictionaryCache)
               Utility.Write<DatabaseDictionary>(_dbDictionary, dbPath, true);
-            }
           }
         }
         catch (Exception ex)
