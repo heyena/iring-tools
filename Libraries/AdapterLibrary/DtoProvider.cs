@@ -535,9 +535,16 @@ namespace org.iringtools.adapter
         }
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        
-        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-        filter.AppendFilter(GetPredeterminedFilter());
+
+        if (filter != null)
+        {
+          dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+          filter.AppendFilter(GetPredeterminedFilter());
+        }
+        else
+        {
+          filter = GetPredeterminedFilter();
+        }
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, limit, start);
 
