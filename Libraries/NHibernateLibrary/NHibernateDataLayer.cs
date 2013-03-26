@@ -171,8 +171,13 @@ namespace org.iringtools.adapter.datalayer
 
     public override long GetCount(string objectType, DataFilter filter)
     {
-      DataFilter newFilter = Utility.CloneDataContractObject<DataFilter>(filter);
-      newFilter.OrderExpressions = null;
+      DataFilter newFilter = null;
+
+      if (filter != null)
+      {
+        newFilter = Utility.CloneDataContractObject<DataFilter>(filter);
+        newFilter.OrderExpressions = null;
+      }
 
       AccessLevel accessLevel = Authorize(objectType, ref newFilter);
 

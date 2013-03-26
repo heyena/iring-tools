@@ -2,6 +2,7 @@ package org.iringtools.models;
 
 import java.util.Map;
 
+import org.iringtools.data.filter.DataFilter;
 import org.iringtools.dxfr.content.ContentObject;
 import org.iringtools.dxfr.content.ContentObjects;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -22,42 +23,65 @@ public class AppDataModel extends DataModel
     this.session = session;
   }
   
-  public Grid getDtoGrid(String serviceUri, String scopeName, String appName, String graphName, String filter, 
-      String sortBy, String sortOrder, int start, int limit) throws DataModelException
+  public Grid getDtoGrid(String serviceUri, String scopeName, String appName, String graphName, 
+      String filter, String sortBy, String sortOrder, int start, int limit) throws DataModelException
   {
-    String appRelativePath = "/" + scopeName + "/" + appName + "/" + graphName;
-    String dtiRelativePath = appRelativePath + "/dxi/filter";
-    String dtoRelativePath = appRelativePath + "/dxo";  
-    String manifestRelativePath = appRelativePath + "/manifest";
-    
-    Grid pageDtoGrid = null;
-    Manifest manifest = getManifest(serviceUri, manifestRelativePath);
-    
-    if (manifest != null && manifest.getGraphs() != null)
+    String graphPath = "/" + scopeName + "/" + appName + "/" + graphName;
+     
+    try
     {
-      Graph graph = getGraph(manifest, graphName);
+      HttpClient httpClient = new HttpClient(serviceUri);
+      HttpUtils.addHttpHeaders(session, httpClient);
+    
+      String manifestPath = graphPath + "/manifest";
+      Manifest manifest = getManifest(serviceUri, manifestPath);
       
-      if (graph != null)
+      if (manifest != null && manifest.getGraphs() != null)
       {
-        DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
-            dtoRelativePath, filter, sortBy, sortOrder, start, limit, null);
+        Graph graph = getGraph(manifest, graphName);
         
-        pageDtoGrid = getDtoGrid(serviceUri, appRelativePath, manifest, graph, pageDtos);
-        DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
-        
-        if (dtis == null || dtis.getDataTransferIndexList() == null || dtis.getDataTransferIndexList().getItems().size() == 0)
-          pageDtoGrid.setTotal(0);
-        else
-          pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
-      }
-      else
-      {
-        throw new DataModelException("Graph [" + graphName + "] not found.");
+        if (graph != null)
+        {
+          DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
+              
+          String dtiPath = graphPath + "/dti?start=" + start + "&limit=" + limit;
+          DataTransferIndices pageDtis = null;
+          
+          if (dataFilter == null)
+          {
+            pageDtis = httpClient.get(DataTransferIndices.class, dtiPath);
+          }
+          else
+          {
+            pageDtis = httpClient.post(DataTransferIndices.class, dtiPath, dataFilter);
+          }
+          
+          Grid grid = null;
+          
+          if (pageDtis != null)
+          {
+            String dtoPath = graphPath + "/page";
+            DataTransferObjects pageDtos = httpClient.post(DataTransferObjects.class, dtoPath, pageDtis);
+                        
+            grid = getDtoGrid(serviceUri, graphPath, manifest, graph, pageDtos);
+            grid.setTotal(pageDtis.getTotalCount());
+          }
+          else
+          {
+            grid = getDtoGrid(serviceUri, graphPath, manifest, graph, null);
+          }
+          
+          return grid;
+        }
       }
     }
+    catch (HttpClientException e)
+    {
+      throw new DataModelException(e);
+    }
     
-    return pageDtoGrid;
-  }
+    return null;
+  }  
   
   public Grid getRelatedDtoGrid(String serviceUri, String scopeName, String appName, String graphName, String dtoIdentifier, 
       String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit) 

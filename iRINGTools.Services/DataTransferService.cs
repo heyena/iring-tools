@@ -158,6 +158,44 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets a page data transfer indices.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/dti?start={start}&limit={limit}")]
+    public void GetPagedDataTransferIndices(string scope, string app, string graph, int start, int limit)
+    {
+      try
+      {
+        DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndices(scope, app, graph, null, start, limit);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Gets a page data transfer indices with filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dti?start={start}&limit={limit}")]
+    public void GetPagedDataTransferIndicesWithFilter(string scope, string app, string graph, DataFilter filter, int start, int limit)
+    {
+      try
+      {
+        DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndices(scope, app, graph, filter, start, limit);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
     [Description("Gets data transfer objects of requested indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
     public void GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)

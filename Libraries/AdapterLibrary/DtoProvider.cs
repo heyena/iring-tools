@@ -519,6 +519,40 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
+    public DataTransferIndices GetPagedDataTransferIndices(string scope, string app, string graph, DataFilter filter, int start, int limit)
+    {
+      DataTransferIndices dataTransferIndices = null;
+
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        _graphMap = _mapping.FindGraphMap(graph);
+        if (_graphMap == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        }
+
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        
+        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+        filter.AppendFilter(GetPredeterminedFilter());
+
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, limit, start);
+
+        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
+        dataTransferIndices.TotalCount = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+
+        return dataTransferIndices;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
+      }
+    }
+
     // get single data transfer object (but wrap it in a list!)
     public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
     {
@@ -551,7 +585,6 @@ namespace org.iringtools.adapter
       return dataTransferObjects;
     }
 
-    // get list (page) of data transfer objects per data transfer indicies
     public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {
       DataTransferObjects dataTransferObjects = new DataTransferObjects();

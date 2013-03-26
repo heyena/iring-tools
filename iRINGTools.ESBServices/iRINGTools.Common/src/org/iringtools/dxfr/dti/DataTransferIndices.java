@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="dataTransferIndexList" type="{http://www.iringtools.org/dxfr/dti}DataTransferIndexList"/>
  *         &lt;element name="sortType" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="sortOrder" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="totalCount" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,7 +38,8 @@ import javax.xml.bind.annotation.XmlType;
     "appName",
     "dataTransferIndexList",
     "sortType",
-    "sortOrder"
+    "sortOrder",
+    "totalCount"
 })
 @XmlRootElement(name = "dataTransferIndices")
 public class DataTransferIndices {
@@ -52,6 +54,7 @@ public class DataTransferIndices {
     protected String sortType;
     @XmlElement(required = true)
     protected String sortOrder;
+    protected Integer totalCount;
 
     /**
      * Gets the value of the scopeName property.
@@ -171,6 +174,30 @@ public class DataTransferIndices {
      */
     public void setSortOrder(String value) {
         this.sortOrder = value;
+    }
+
+    /**
+     * Gets the value of the totalCount property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getTotalCount() {
+        return totalCount;
+    }
+
+    /**
+     * Sets the value of the totalCount property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setTotalCount(Integer value) {
+        this.totalCount = value;
     }
 
 }
