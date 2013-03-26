@@ -958,120 +958,124 @@ public class DataModel {
 			List<List<String>> gridData = new ArrayList<List<String>>();
 			dtoGrid.setData(gridData);
 
-			List<DataTransferObject> dtoList = dtos.getDataTransferObjectList()
-					.getItems();
-			
-			boolean showContentField = false;
-
-			for (int dtoIndex = 0; dtoIndex < dtoList.size(); dtoIndex++) {
-				DataTransferObject dto = dtoList.get(dtoIndex);
-				
-				List<String> rowData = new ArrayList<String>();
-				List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
-
-				// create a place holder for info field
-				rowData.add("");
-				String relatedClassesJson;
-
-				try {
-					relatedClassesJson = JSONUtil.serialize(relatedClasses);
-				} catch (JSONException e) {
-					relatedClassesJson = "[]";
-				}
-
-				if (dataMode == DataMode.EXCHANGE) {
-					String transferType = dto.getTransferType().toString();
-					/*
-					 * rowData.add("<span class=\"" + transferType.toLowerCase()
-					 * + "\">" + transferType + "</span>");
-					 */
-					rowData.add("<input type=\"image\" src=\"resources/images/"
-							+ transferType.toLowerCase()
-							+ ".png\" width=15 heigt=15 "+"  onMouseOver= 'javascript:showMessage(\"" + transferType.toLowerCase()+ "\")' "+ "onClick='javascript:showChangedItemsInfo()'>");
-				}
-
-				// Adding dup's count to dup's column
-				if (dataMode == DataMode.EXCHANGE) {
-
-					//String dups = "";
-					if (dto.getDuplicateCount() == null) {
-						//dups = "0";
-						rowData.add("<input type=\"image\" src=\"resources/images/warning.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Warning"+ "\")' "+ "onClick='javascript:showStatus(\"" + 0 + "\")'>");
-					} else{
-					//	rowData.add((dto.getDuplicateCount().toString()));
-						if(dto.getDuplicateCount() == 1)
-						{
-						rowData.add("<input type=\"image\" src=\"resources/images/success.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Success"+ "\")' "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
-					}else
-					{
-						rowData.add("<input type=\"image\" src=\"resources/images/error.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Error"+ "\")' "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
-					}
-					}
-				}
-
-				if (dto.getClassObjects().getItems().size() > 0) {
-					ClassObject classObject = dto.getClassObjects().getItems()
-							.get(0);
-					dtoGrid.setIdentifier(classObject.getClassId());
-
-					processClassObject(manifest, graph, dto, dtoIndex, fields,
-							classObject, dtoGrid, rowData, relatedClasses);
-				}
-				
-				// setting color icon if the row contain Dup's
-
-				/*
-				 * if(dto.getDuplicateCount() > 1) { String transferType =
-				 * dto.getTransferType().toString();
-				 * rowData.add("<span class=\"icon\">" + transferType +
-				 * "</span>");
-				 * 
-				 * }else {
-				 */				
-        
-				if (dataMode == DataMode.APP) {
-          if (dto.getHasContent())
-          {
-            String filter = "";
-            
-            try
-            {
-              filter = URLEncoder.encode("{\"" + dto.getIdentifier() + "\":\"\"}", "utf-8");
-            }
-            catch (UnsupportedEncodingException e)
-            {
-              e.printStackTrace();
-              filter = "{%22" + dto.getIdentifier() + "%22:%22%22}";
-            } 
-            
-            String target = serviceUri + relativePath + "/content?filter=" + filter;
-            String value = String.format("<a href=\"content?target=%s\" target=\"_blank\"><img src=\"resources/images/content.png\"/></a>", target);          
-            rowData.set(1, value);
-            
-            showContentField = true;
-          }     
-          else
-          {
-            rowData.set(1, "");
-          }
-				}
-        
-				// update info field
-				rowData.set(
-						0,
-						"<input type=\"image\" src=\"resources/images/info-small.png\" "
-								+ "onClick='javascript:showIndividualInfo(\""
-								+ dto.getIdentifier() + "\",\""
-								+ dto.getIdentifier() + "\","
-								+ relatedClassesJson + ")'>");
-				// }
-
-				gridData.add(rowData);
-			}
-			
-			if (showContentField)
+			if (dtos != null && dtos.getDataTransferObjectList() != null &&
+			    dtos.getDataTransferObjectList().getItems().size() > 0)
 			{
-			  // hide content field?
+  			List<DataTransferObject> dtoList = dtos.getDataTransferObjectList()
+  					.getItems();
+  			
+  			boolean showContentField = false;
+  
+  			for (int dtoIndex = 0; dtoIndex < dtoList.size(); dtoIndex++) {
+  				DataTransferObject dto = dtoList.get(dtoIndex);
+  				
+  				List<String> rowData = new ArrayList<String>();
+  				List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
+  
+  				// create a place holder for info field
+  				rowData.add("");
+  				String relatedClassesJson;
+  
+  				try {
+  					relatedClassesJson = JSONUtil.serialize(relatedClasses);
+  				} catch (JSONException e) {
+  					relatedClassesJson = "[]";
+  				}
+  
+  				if (dataMode == DataMode.EXCHANGE) {
+  					String transferType = dto.getTransferType().toString();
+  					/*
+  					 * rowData.add("<span class=\"" + transferType.toLowerCase()
+  					 * + "\">" + transferType + "</span>");
+  					 */
+  					rowData.add("<input type=\"image\" src=\"resources/images/"
+  							+ transferType.toLowerCase()
+  							+ ".png\" width=15 heigt=15 "+"  onMouseOver= 'javascript:showMessage(\"" + transferType.toLowerCase()+ "\")' "+ "onClick='javascript:showChangedItemsInfo()'>");
+  				}
+  
+  				// Adding dup's count to dup's column
+  				if (dataMode == DataMode.EXCHANGE) {
+  
+  					//String dups = "";
+  					if (dto.getDuplicateCount() == null) {
+  						//dups = "0";
+  						rowData.add("<input type=\"image\" src=\"resources/images/warning.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Warning"+ "\")' "+ "onClick='javascript:showStatus(\"" + 0 + "\")'>");
+  					} else{
+  					//	rowData.add((dto.getDuplicateCount().toString()));
+  						if(dto.getDuplicateCount() == 1)
+  						{
+  						rowData.add("<input type=\"image\" src=\"resources/images/success.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Success"+ "\")' "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
+  					}else
+  					{
+  						rowData.add("<input type=\"image\" src=\"resources/images/error.png\" width=15 heigt=15  "+ " onMouseOver= 'javascript:showMessage(\"" + "Error"+ "\")' "+ "onClick='javascript:showStatus(\"" + dto.getDuplicateCount()+ "\")'>");
+  					}
+  					}
+  				}
+  
+  				if (dto.getClassObjects().getItems().size() > 0) {
+  					ClassObject classObject = dto.getClassObjects().getItems()
+  							.get(0);
+  					dtoGrid.setIdentifier(classObject.getClassId());
+  
+  					processClassObject(manifest, graph, dto, dtoIndex, fields,
+  							classObject, dtoGrid, rowData, relatedClasses);
+  				}
+  				
+  				// setting color icon if the row contain Dup's
+  
+  				/*
+  				 * if(dto.getDuplicateCount() > 1) { String transferType =
+  				 * dto.getTransferType().toString();
+  				 * rowData.add("<span class=\"icon\">" + transferType +
+  				 * "</span>");
+  				 * 
+  				 * }else {
+  				 */				
+          
+  				if (dataMode == DataMode.APP) {
+            if (dto.getHasContent())
+            {
+              String filter = "";
+              
+              try
+              {
+                filter = URLEncoder.encode("{\"" + dto.getIdentifier() + "\":\"\"}", "utf-8");
+              }
+              catch (UnsupportedEncodingException e)
+              {
+                e.printStackTrace();
+                filter = "{%22" + dto.getIdentifier() + "%22:%22%22}";
+              } 
+              
+              String target = serviceUri + relativePath + "/content?filter=" + filter;
+              String value = String.format("<a href=\"content?target=%s\" target=\"_blank\"><img src=\"resources/images/content.png\"/></a>", target);          
+              rowData.set(1, value);
+              
+              showContentField = true;
+            }     
+            else
+            {
+              rowData.set(1, "");
+            }
+  				}
+          
+  				// update info field
+  				rowData.set(
+  						0,
+  						"<input type=\"image\" src=\"resources/images/info-small.png\" "
+  								+ "onClick='javascript:showIndividualInfo(\""
+  								+ dto.getIdentifier() + "\",\""
+  								+ dto.getIdentifier() + "\","
+  								+ relatedClassesJson + ")'>");
+  				// }
+  
+  				gridData.add(rowData);
+  			}
+  			
+  			if (showContentField)
+  			{
+  			  // hide content field?
+  			}
 			}
 		}
 

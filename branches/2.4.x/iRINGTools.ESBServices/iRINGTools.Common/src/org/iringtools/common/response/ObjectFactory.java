@@ -30,35 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatusList }
+     * Create an instance of {@link Result }
      * 
      */
-    public StatusList createStatusList() {
-        return new StatusList();
-    }
-
-    /**
-     * Create an instance of {@link Status }
-     * 
-     */
-    public Status createStatus() {
-        return new Status();
-    }
-
-    /**
-     * Create an instance of {@link Results }
-     * 
-     */
-    public Results createResults() {
-        return new Results();
-    }
-
-    /**
-     * Create an instance of {@link Response }
-     * 
-     */
-    public Response createResponse() {
-        return new Response();
+    public Result createResult() {
+        return new Result();
     }
 
     /**
@@ -70,11 +46,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Result }
+     * Create an instance of {@link StatusList }
      * 
      */
-    public Result createResult() {
-        return new Result();
+    public StatusList createStatusList() {
+        return new StatusList();
+    }
+
+    /**
+     * Create an instance of {@link Results }
+     * 
+     */
+    public Results createResults() {
+        return new Results();
+    }
+
+    /**
+     * Create an instance of {@link Status }
+     * 
+     */
+    public Status createStatus() {
+        return new Status();
+    }
+
+    /**
+     * Create an instance of {@link Response }
+     * 
+     */
+    public Response createResponse() {
+        return new Response();
     }
 
 }

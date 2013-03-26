@@ -20,6 +20,7 @@
       <xs:element name="dataTransferIndexList" type="DataTransferIndexList" />
       <xs:element name="sortType" type="xs:string" />
       <xs:element name="sortOrder" type="xs:string" />
+      <xs:element name="totalCount" type="xs:int" minOccurs="0" />
     </xs:sequence>
   </xs:complexType>
 
