@@ -3170,12 +3170,6 @@ namespace org.iringtools.adapter
 
           if (_dataObjects != null && _dataObjects.Count > 0)
           {
-            if (_dataObjects.Count == 1 && typeof(IContentObject).IsAssignableFrom(_dataObjects[0].GetType()))
-            {
-              IContentObject contentObject = (IContentObject)_dataObjects[0];
-              return contentObject;
-            }
-
             if (_isProjectionPart7)
             {
               return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects, className, classIdentifier);
@@ -3193,16 +3187,12 @@ namespace org.iringtools.adapter
         }
         else
         {
-          List<string> identifiers = new List<string> { classIdentifier };
-          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
+          IDictionary<string, string> idFormats = new Dictionary<string, string> {
+                    {classIdentifier, format}
+          };
 
-          if (_dataObjects != null && _dataObjects.Count > 0)
-          {
-            IContentObject contentObject = (IContentObject)_dataObjects[0];
-            return contentObject;
-          }
-
-          return null;
+          IContentObject contentObject = _dataLayer.GetContents(_dataObjDef.objectName, idFormats).FirstOrDefault();
+          return contentObject;
         }
       }
       catch (Exception ex)
