@@ -33,7 +33,7 @@ public class ManifestTask implements Runnable
     }
     catch (Exception e) 
     {
-      error = "Error getting manifest: " + e.getMessage();
+      error = "Error getting manifest: " + e.toString();
       logger.error(error);
     }
   }
