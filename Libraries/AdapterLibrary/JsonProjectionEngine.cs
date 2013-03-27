@@ -120,25 +120,25 @@ namespace org.iringtools.adapter.projection
 
               foreach (DataProperty dataProperty in dataObject.dataProperties)
               {
-                object value = dataObj.GetPropertyValue(dataProperty.propertyName);
-
-                if (value != null)
+                if (!dataProperty.isHidden)
                 {
-                  if (dataProperty.dataType == DataType.Char ||
-                        dataProperty.dataType == DataType.DateTime ||
-                        dataProperty.dataType == DataType.String ||
-                        dataProperty.dataType == DataType.TimeStamp)
+                  object value = dataObj.GetPropertyValue(dataProperty.propertyName);
+
+                  if (value != null)
                   {
-                    string valueStr = Convert.ToString(value);
+                    if (dataProperty.dataType == DataType.Char ||
+                          dataProperty.dataType == DataType.DateTime ||
+                          dataProperty.dataType == DataType.String ||
+                          dataProperty.dataType == DataType.TimeStamp)
+                    {
+                      string valueStr = Convert.ToString(value);
 
-                    if (dataProperty.dataType == DataType.DateTime)
-                      valueStr = Utility.ToXsdDateTime(valueStr);
+                      if (dataProperty.dataType == DataType.DateTime)
+                        valueStr = Utility.ToXsdDateTime(valueStr);
 
-                    value = valueStr;
-                  }
+                      value = valueStr;
+                    }
 
-                  if (!dataProperty.isHidden)
-                  {
                     dataItem.properties.Add(dataProperty.propertyName, value);
                   }                  
                 }

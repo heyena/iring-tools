@@ -158,20 +158,30 @@ namespace org.iringtools.adapter.projection
     {
       foreach(DataProperty dataProperty in dataObject.dataProperties)
       {
-        XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName));
-        
-        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
-        
-        if (value != null)
+        if (!dataProperty.isHidden)
         {
-          if (dataProperty.dataType.ToString().ToLower().Contains("date"))
-            value = Utility.ToXsdDateTime(value.ToString());
-
-          propertyElement.Value = value.ToString();
-
-          parentElement.Add(propertyElement);
-        }
+          object value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         
+          if (value != null)
+          {
+            if (dataProperty.dataType == DataType.Char ||
+                  dataProperty.dataType == DataType.DateTime ||
+                  dataProperty.dataType == DataType.String ||
+                  dataProperty.dataType == DataType.TimeStamp)
+            {
+              string valueStr = Convert.ToString(value);
+
+              if (dataProperty.dataType == DataType.DateTime)
+                valueStr = Utility.ToXsdDateTime(valueStr);
+
+              value = valueStr;
+            }
+
+            XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName));
+            propertyElement.Value = value.ToString();
+            parentElement.Add(propertyElement);
+          }
+        }
       }
 
       foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
