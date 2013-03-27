@@ -200,6 +200,7 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
+    //TODO: apply where clause
     public override long GetCount(string tableName, string whereClause)
     {
       try
