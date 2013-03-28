@@ -336,6 +336,8 @@ namespace org.iringtools.library
     [EnumMember]
     @DateTime,
     [EnumMember]
+    @Date,
+    [EnumMember]
     @TimeStamp,
     [EnumMember]
     @Decimal,

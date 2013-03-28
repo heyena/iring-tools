@@ -1474,6 +1474,16 @@ namespace org.iringtools.utility
       return utcStr;
     }
 
+    public static string ToXsdDate(DateTime date)
+    {
+        string utcStr = XmlConvert.ToString(date, XmlDateTimeSerializationMode.Utc);
+
+        if (utcStr.Contains("T"))
+            utcStr = utcStr.Substring(0, utcStr.IndexOf("T"));
+
+        return utcStr;
+    }
+
     public static string ToXsdDateTime(string dateTime)
     { 
       if (String.IsNullOrEmpty(dateTime))
@@ -1481,6 +1491,15 @@ namespace org.iringtools.utility
       
       DateTime dt = DateTime.Parse(dateTime);      
       return ToXsdDateTime(dt); 
+    }
+
+    public static string ToXsdDate(string date)
+    {
+        if (String.IsNullOrEmpty(date))
+            return date;
+
+        DateTime dt = DateTime.Parse(date);
+        return ToXsdDate(dt);
     }
 
     public static DateTime FromXsdDateTime(string dateTime)
