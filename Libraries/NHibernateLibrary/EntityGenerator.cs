@@ -690,6 +690,10 @@ namespace org.iringtools.nhibernate
         configWriter.WriteAttributeString("name", "show_sql");
         configWriter.WriteString("true");
         configWriter.WriteEndElement(); // end property element
+        configWriter.WriteStartElement("property");
+        configWriter.WriteAttributeString("name", "command_timeout");
+        configWriter.WriteString("0");
+        configWriter.WriteEndElement(); // end property element
         configWriter.WriteEndElement(); // end session-factory element
         configWriter.WriteEndElement(); // end hibernate-configuration element
         configWriter.WriteEndElement(); // end configuration element
