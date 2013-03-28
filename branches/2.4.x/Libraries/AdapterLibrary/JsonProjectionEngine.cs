@@ -96,13 +96,15 @@ namespace org.iringtools.adapter.projection
                   {
                     if (dataProperty.dataType == DataType.Char ||
                         dataProperty.dataType == DataType.DateTime ||
+                        dataProperty.dataType == DataType.Date ||
                         dataProperty.dataType == DataType.String ||
                         dataProperty.dataType == DataType.TimeStamp)
                     {
                       string valueStr = Convert.ToString(value);
                       valueStr = Utility.ConvertSpecialCharOutbound(valueStr, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
 
-                      if (dataProperty.dataType == DataType.DateTime)
+                      if (dataProperty.dataType == DataType.DateTime ||
+                          dataProperty.dataType == DataType.Date )
                         valueStr = Utility.ToXsdDateTime(valueStr);
 
                       value = valueStr;
@@ -128,12 +130,14 @@ namespace org.iringtools.adapter.projection
                   {
                     if (dataProperty.dataType == DataType.Char ||
                           dataProperty.dataType == DataType.DateTime ||
+                          dataProperty.dataType == DataType.Date ||
                           dataProperty.dataType == DataType.String ||
                           dataProperty.dataType == DataType.TimeStamp)
                     {
                       string valueStr = Convert.ToString(value);
 
-                      if (dataProperty.dataType == DataType.DateTime)
+                      if (dataProperty.dataType == DataType.DateTime ||
+                          dataProperty.dataType == DataType.Date )
                         valueStr = Utility.ToXsdDateTime(valueStr);
 
                       value = valueStr;

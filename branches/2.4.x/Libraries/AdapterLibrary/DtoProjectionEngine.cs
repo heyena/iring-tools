@@ -811,6 +811,10 @@ namespace org.iringtools.adapter.projection
         {
           value = Utility.ToXsdDateTime(value);
         }
+        else if (propertyRole.dataType.ToLower().Contains("date"))
+        {
+            value = Utility.ToXsdDate(value);
+        }
         else if (propertyRole.dataType == "xsd:string" &&
           propertyRole.dataLength > 0 && value.Length > propertyRole.dataLength)
         {

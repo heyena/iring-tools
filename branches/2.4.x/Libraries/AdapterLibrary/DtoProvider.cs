@@ -1339,6 +1339,7 @@ namespace org.iringtools.adapter
                             manifestRole.type == RoleType.ObjectProperty)
                         {
                           roleMap.dataLength = manifestRole.dataLength;
+                          roleMap.dataType = manifestRole.dataType;
                         }
 
                         break;
