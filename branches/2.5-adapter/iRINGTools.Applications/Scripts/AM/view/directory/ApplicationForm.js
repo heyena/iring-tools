@@ -18,22 +18,21 @@ Ext.define('AM.view.directory.ApplicationForm', {
   alias: 'widget.applicationform',
 
   requires: [
-    'AM.view.directory.DataLayerCombo',
-    'AM.view.directory.AvailBaseUrlCombo'
+    'AM.view.directory.DataLayerCombo'
   ],
 
   record: '',
   border: true,
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
-  url: 'directory/endpoint',
+  url: 'directory/application',
 
   initComponent: function() {
     var me = this;
 
     me.initialConfig = Ext.apply({
       method: 'POST',
-      url: 'directory/endpoint'
+      url: 'directory/application'
     }, me.initialConfig);
 
     Ext.applyIf(me, {
@@ -73,10 +72,6 @@ Ext.define('AM.view.directory.ApplicationForm', {
         },
         {
           xtype: 'hiddenfield',
-          name: 'baseUrl'
-        },
-        {
-          xtype: 'hiddenfield',
           name: 'assembly'
         },
         {
@@ -113,49 +108,6 @@ Ext.define('AM.view.directory.ApplicationForm', {
         },
         {
           xtype: 'datalayercombo'
-        },
-        {
-          xtype: 'form',
-          border: false,
-          itemId: 'baseurlform',
-          layout: {
-            type: 'column'
-          },
-          items: [
-            {
-              xtype: 'availbaseurlcombo',
-              columnWidth: 0.87
-            },
-            {
-              xtype: 'button',
-              handler: function(button, event) {
-                var me = this;
-                var urlCombo = me.up('form').down('combo');
-                var baseUrl = urlCombo.value;
-                Ext.Ajax.request({
-                  url: 'directory/testBaseUrl',
-                  timeout: 600000,
-                  method: 'POST',
-                  params: {
-                    baseUrl: baseUrl
-                  },
-                  success: function (response, request) {
-                    if (response.responseText.indexOf('error') == -1)
-                    showDialog(400, 100, 'Testing Result', 'The url is valid and the server is connected.', Ext.Msg.OK, null);
-                    else
-                    showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid url.', Ext.Msg.OK, null);
-                  },
-                  failure: function (response, request) {
-                    showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid url.', Ext.Msg.OK, null);
-                  }
-                });
-              },
-              columnWidth: 0.13,
-              style: 'float: right;',
-              text: 'Test Url',
-              tooltip: 'Test the entered Url'
-            }
-          ]
         }
       ]
     });
@@ -167,64 +119,29 @@ Ext.define('AM.view.directory.ApplicationForm', {
     var me = this;
     var win = me.up('window');
     var endpointName = me.getForm().findField('endpoint').getValue();
-    var urlCombo = me.down('form').down('combo');
+
     var dlCombo = me.down('combo');
-    var baseUrl;
+
     var state = me.getForm().findField('state').getValue();
-    if (urlCombo.value !== '' && dlCombo.value !== null) {
-      me.getForm().findField('baseUrl').setValue(urlCombo.value);
-      baseUrl = urlCombo.value;
-    }
+    me.getForm().submit({
+      waitMsg: 'Saving Data...',
+      success: function (response, request) {
 
-    if(baseUrl) {
-      Ext.Ajax.request({
-        url: 'directory/testBaseUrl',
-        timeout: 600000,
-        method: 'POST',
-        params: {
-          baseUrl: baseUrl
-        },
-        success: function (response, request) {
-          if (response.responseText.indexOf('error') > -1) {
-            showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid base url.', Ext.Msg.OK, null);
-            return;
-          }
-          else {
-            if (ifExistSibling(endpointName, win.node, state)) {
-              showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
-              return;
-            }
-
-            me.getForm().submit({
-              waitMsg: 'Saving Data...',
-              success: function (response, request) {
-
-                win.fireEvent('save', me);
-              },
-              failure: function (response, request) {
-                var rtext = request.result;
-                if (rtext.toUpperCase().indexOf('FALSE') > 0) {
-                var ind = rtext.indexOf('}');
-                var len = rtext.length - ind - 1;
-                var msg = rtext.substring(ind + 1, rtext.length - 1);
-                showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
-                return;
-              }
-              var message = 'Error saving changes!';
-              showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-            }
-          });
-        }
+        win.fireEvent('save', me);
       },
       failure: function (response, request) {
-        showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid base url.', Ext.Msg.OK, null);
+        var rtext = request.result;
+        if (rtext.toUpperCase().indexOf('FALSE') > 0) {
+        var ind = rtext.indexOf('}');
+        var len = rtext.length - ind - 1;
+        var msg = rtext.substring(ind + 1, rtext.length - 1);
+        showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
         return;
       }
-    });
-  } else {
-    showDialog(400, 100, 'Testing Result', 'Enter values for required fields.', Ext.Msg.OK, null);
-    return;
-  }
+      var message = 'Error saving changes!';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+    }
+  });
   },
 
   onReset: function() {

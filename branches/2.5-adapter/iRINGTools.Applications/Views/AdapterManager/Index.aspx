@@ -7,7 +7,6 @@
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>
 
-  <link href="../../Content/css/adaptermanager-gray.css" rel="stylesheet" type="text/css" />
   <link href="http://localhost/extjs411/resources/css/ext-all.css" rel="stylesheet" type="text/css" />
   <link href="http://localhost/extjs411/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
    <link rel="stylesheet" href="../../Content/css/adaptermanager-gray.css" type="text/css" />

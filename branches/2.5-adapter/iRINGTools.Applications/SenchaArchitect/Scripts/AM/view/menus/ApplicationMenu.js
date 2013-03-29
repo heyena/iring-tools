@@ -29,13 +29,13 @@ Ext.define('AM.view.menus.ApplicationMenu', {
           action: 'neweditendpoint',
           itemId: 'editendpoint',
           icon: 'Content/img/16x16/document-properties.png',
-          text: 'Edit Endpoint'
+          text: 'Edit Application'
         },
         {
           xtype: 'menuitem',
           action: 'deleteendpoint',
           icon: 'Content/img/16x16/edit-delete.png',
-          text: 'Delete Endpoint'
+          text: 'Delete Application'
         },
         {
           xtype: 'menuseparator'

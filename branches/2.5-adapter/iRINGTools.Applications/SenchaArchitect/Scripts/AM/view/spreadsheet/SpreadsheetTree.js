@@ -17,10 +17,6 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.spreadsheettree',
 
-  requires: [
-    'AM.view.override.spreadsheet.SpreadsheetTree'
-  ],
-
   region: 'center',
   layout: {
     type: 'fit'
@@ -30,7 +26,6 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
   baseUrl: '',
   datalayer: '',
   border: true,
-  store: 'SpreadsheetStore',
 
   initComponent: function() {
     var me = this;
@@ -87,7 +82,17 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
       ]
     });
 
+    me.processSpreadsheetSpreadsheetTree(me);
     me.callParent(arguments);
+  },
+
+  processSpreadsheetSpreadsheetTree: function(config) {
+    var storeId = Ext.data.IdGenerator.get("uuid").generate();
+
+    config.store = Ext.create('AM.store.SpreadsheetStore', {
+      storeId: "Spread_" + storeId
+    }); 
+    return config;
   },
 
   onButtonClick: function(button, e, eOpts) {

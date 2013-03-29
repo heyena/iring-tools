@@ -25,10 +25,12 @@ Ext.Loader.setConfig({
 Ext.application({
 
   requires: [
-    'AM.view.AMViewport'
+    'AM.view.Main',
+    'AM.view.menus.ScopeMenu'
   ],
   views: [
-    'AMViewport'
+    'Main',
+    'menus.ScopeMenu'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

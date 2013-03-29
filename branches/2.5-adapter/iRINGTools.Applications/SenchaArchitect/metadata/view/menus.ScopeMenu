@@ -6,11 +6,11 @@
     },
     "codeClass": null,
     "userConfig": {
-        "width": 130,
+        "width": 120,
         "designer|userClassName": "menus.ScopeMenu",
         "designer|userAlias": "scopemenu"
     },
-    "designerId": "35c9bdb8-12eb-4d81-af9c-35af6c8f394e",
+    "designerId": "9bd589c9-51f7-49a5-9901-9f9203de0d1d",
     "cn": [
         {
             "type": "Ext.menu.Item",
@@ -21,35 +21,11 @@
             "codeClass": null,
             "userConfig": {
                 "action": "neweditscope",
-                "itemId": "newfolder",
-                "designer|userClassName": "MyMenuItem12",
-                "icon": "Content/img/16x16/document-new.png",
-                "text": "New Folder"
-            },
-            "designerId": "d94a5806-0697-4537-b740-55743745d302",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "action",
-                    "type": "string"
-                }
-            ]
-        },
-        {
-            "type": "Ext.menu.Item",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "action": "neweditscope",
-                "itemId": "editfolder",
-                "designer|userClassName": "MyMenuItem13",
+                "designer|userClassName": "MyMenuItem2",
                 "icon": "Content/img/16x16/document-properties.png",
-                "text": "Edit Folder"
+                "text": "Edit Scope"
             },
-            "designerId": "e5335ceb-0c74-418a-86c7-9c42931a6dee",
+            "designerId": "320825e5-0e15-43ba-8840-a4971f42dd72",
             "customConfigs": [
                 {
                     "group": "(Custom Properties)",
@@ -67,11 +43,11 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletescope",
-                "designer|userClassName": "MyMenuItem14",
+                "designer|userClassName": "MyMenuItem3",
                 "icon": "Content/img/16x16/edit-delete.png",
-                "text": "Delete Folder"
+                "text": "Delete Scope"
             },
-            "designerId": "b394bf95-79e5-4f73-9b61-91a5ce2a26ff",
+            "designerId": "22ae3716-6f2b-43a1-9f6d-3e92427dc78a",
             "customConfigs": [
                 {
                     "group": "(Custom Properties)",
@@ -88,9 +64,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MySeparator3"
+                "designer|userClassName": "MySeparator"
             },
-            "designerId": "559bbe78-9cab-4f07-9ef9-3edcfb51c0ef"
+            "designerId": "078cc668-bafe-4199-8432-3ab007490743"
         },
         {
             "type": "Ext.menu.Item",
@@ -101,11 +77,11 @@
             "codeClass": null,
             "userConfig": {
                 "action": "neweditendpoint",
-                "designer|userClassName": "MyMenuItem15",
+                "designer|userClassName": "MyMenuItem26",
                 "icon": "Content/img/16x16/document-new.png",
-                "text": "New Endpoint"
+                "text": "New Application"
             },
-            "designerId": "2b75e3d7-be86-4e44-8a0c-9b74c2437ee5",
+            "designerId": "6d44ab1d-7552-4664-b342-da289b6f2540",
             "customConfigs": [
                 {
                     "group": "(Custom Properties)",

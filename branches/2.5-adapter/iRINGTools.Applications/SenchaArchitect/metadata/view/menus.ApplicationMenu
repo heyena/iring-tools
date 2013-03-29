@@ -25,7 +25,7 @@
                 "itemId": "editendpoint",
                 "designer|userClassName": "MyMenuItem16",
                 "icon": "Content/img/16x16/document-properties.png",
-                "text": "Edit Endpoint"
+                "text": "Edit Application"
             },
             "designerId": "4d50d77d-fa94-4fa9-94d9-2572c0e30878",
             "customConfigs": [
@@ -47,7 +47,7 @@
                 "action": "deleteendpoint",
                 "designer|userClassName": "MyMenuItem17",
                 "icon": "Content/img/16x16/edit-delete.png",
-                "text": "Delete Endpoint"
+                "text": "Delete Application"
             },
             "designerId": "99e248d5-4d9a-47b9-b343-9443ed9217e3",
             "customConfigs": [

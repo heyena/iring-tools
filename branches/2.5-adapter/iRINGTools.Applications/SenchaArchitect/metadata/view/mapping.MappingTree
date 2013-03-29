@@ -506,6 +506,30 @@
                 "designer|userClassName": "MyRowSelectionModel1"
             },
             "designerId": "9a74fcfe-3f6f-4073-b6f8-8efa93d36867"
+        },
+        {
+            "type": "processcfgfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "processMappingMappingTree",
+                "fn": "processMappingMappingTree",
+                "designer|params": [
+                    "config"
+                ],
+                "implHandler": [
+                    "var storeId = Ext.data.IdGenerator.get(\"uuid\").generate();\r",
+                    "\r",
+                    "config.store = Ext.create('AM.store.MappingStore', {\r",
+                    "  storeId: \"Mapping_\" + storeId\r",
+                    "}); \r",
+                    "return config;"
+                ]
+            },
+            "designerId": "ea9b7a41-7562-4e41-bdc8-9db2bc94e0f0"
         }
     ]
 }

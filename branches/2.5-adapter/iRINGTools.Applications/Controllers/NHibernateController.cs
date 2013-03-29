@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -58,7 +59,7 @@ namespace org.iringtools.web.Controllers
     {
       try
       {
-        var dbObjects = _repository.GetDbObjects(form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+        var dbObjects = _repository.GetDbObjects(form["contextName"], form["endpoint"], form["dbProvider"], form["dbServer"], form["dbInstance"],
           form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"], form["serName"]);
 
         return Json(dbObjects, JsonRequestBehavior.AllowGet);
@@ -76,7 +77,7 @@ namespace org.iringtools.web.Controllers
       {
         var response = string.Empty;
 
-        response = _repository.SaveDbDictionary(form["scope"], form["app"], form["tree"]);
+        response = _repository.SaveDbDictionary(form["contextName"], form["endpoint"], form["tree"]);
 
         if (response != null)
         {
@@ -140,7 +141,7 @@ namespace org.iringtools.web.Controllers
     {
       try
       {
-        var dbDict = _repository.GetDbDictionary(form["scope"], form["app"]);
+        var dbDict = _repository.GetDbDictionary(form["contextName"], form["endpoint"]);
         return Json(dbDict, JsonRequestBehavior.AllowGet);
       }
       catch (Exception e)
@@ -157,7 +158,7 @@ namespace org.iringtools.web.Controllers
       try
       {
         var dataObjects = _repository.GetTableNames(
-          form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+          form["contextName"], form["endpoint"], form["dbProvider"], form["dbServer"], form["dbInstance"],
           form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"], form["serName"]);
 
         container.items = dataObjects;
@@ -186,7 +187,7 @@ namespace org.iringtools.web.Controllers
       return dataType;
     }
 
-    private void AddContextEndpointtoNode(JsonTreeNode node, FormCollection form)
+    private void AddContextEndpointtoNode(JsonTreeNode node, NameValueCollection form)
     {
       if (form["contextName"] != null)
         node.properties.Add("context", form["contextName"]);

@@ -79,9 +79,9 @@ namespace org.iringtools.web.Models
       return obj;
     }
 
-    public DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit, string baseUrl)
+    public DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit)
     {
-      var newServiceClient = PrepareServiceClient(baseUrl, "data");      
+      var newServiceClient = PrepareServiceClient(DataServiceUri(), "data");      
       var fmt = "json";
       var relUrl = string.Format("/{0}/{1}/{2}/filter?format={3}&start={4}&limit={5}", endpoint, context, graph, fmt, start, limit);
       var json = newServiceClient.Post<DataFilter, string>(relUrl, dataFilter, fmt, true);

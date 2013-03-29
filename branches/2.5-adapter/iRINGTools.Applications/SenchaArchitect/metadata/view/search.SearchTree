@@ -9,19 +9,18 @@
         "region": "center",
         "border": false,
         "height": null,
-        "style": [
-            "padding-left:5px;"
-        ],
+        "style": "padding-left:5px;",
         "width": null,
         "designer|userClassName": "search.SearchTree",
         "designer|userAlias": "searchtree",
         "closable": true,
         "title": null,
-        "store": "SearchStore",
+        "store": null,
         "rootVisible": false
     },
     "configAlternates": {
-        "border": "boolean"
+        "border": "boolean",
+        "style": "string"
     },
     "designerId": "1fac45c3-2ccd-492d-bbfa-a9e3c3c2c427",
     "customConfigs": [
@@ -87,6 +86,30 @@
                 ]
             },
             "designerId": "8af5e369-a2d2-4800-b468-80b6da1326b9"
+        },
+        {
+            "type": "processcfgfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "processSearchSearchTree",
+                "fn": "processSearchSearchTree",
+                "designer|params": [
+                    "config"
+                ],
+                "implHandler": [
+                    "var storeId = Ext.data.IdGenerator.get(\"uuid\").generate();\r",
+                    "\r",
+                    "config.store = Ext.create('AM.store.SearchStore', {\r",
+                    "  storeId: \"Search_\" + storeId\r",
+                    "});\r",
+                    "return config;"
+                ]
+            },
+            "designerId": "f5acd04c-c816-4824-9462-bf74005aa8b1"
         }
     ]
 }

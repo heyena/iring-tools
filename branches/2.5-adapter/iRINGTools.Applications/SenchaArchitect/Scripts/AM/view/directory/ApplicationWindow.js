@@ -23,7 +23,7 @@ Ext.define('AM.view.directory.ApplicationWindow', {
 
   node: '',
   border: false,
-  height: 260,
+  height: 230,
   width: 460,
   layout: {
     type: 'fit'

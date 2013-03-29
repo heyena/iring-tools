@@ -98,6 +98,79 @@
                 ]
             },
             "designerId": "cc4b43e0-5a5e-49b9-8739-8354235b610d"
+        },
+        {
+            "type": "processcfgfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "processDirectoryDataGridPanel",
+                "fn": "processDirectoryDataGridPanel",
+                "designer|params": [
+                    "config"
+                ],
+                "implHandler": [
+                    " var me = this,\r",
+                    "    storeId = Ext.data.IdGenerator.get(\"uuid\").generate();\r",
+                    "\r",
+                    "    config.store = Ext.create('AM.store.DataGridStore', {\r",
+                    "      storeId: \"DataGrid\" + storeId,\r",
+                    "      listeners: {\r",
+                    "        beforeload: {\r",
+                    "          fn: me.handleBeforeLoad,\r",
+                    "          scope: me\r",
+                    "        }\r",
+                    "      }\r",
+                    "    });\r",
+                    "    \r",
+                    "\tconfig.dockedItems = [\r",
+                    "        {\r",
+                    "          xtype: 'pagingtoolbar',\r",
+                    "          dock: 'bottom',\r",
+                    "          displayInfo: true,\r",
+                    "          store: config.store,\r",
+                    "          plugins: [Ext.create('Ext.ux.plugin.GridPageSizer', { options: [25, 50, 100, 200] })]\r",
+                    "        }];\r",
+                    "    \r",
+                    "    var filters = {\r",
+                    "      ftype: 'filters',\r",
+                    "      local: false,\r",
+                    "      buildQuery: function (filters) {\r",
+                    "        var processed_filters = [];\r",
+                    "\r",
+                    "        for (var i = 0; i < filters.length; i++) {\r",
+                    "          var pf = {};\r",
+                    "          var filter = filters[i];\r",
+                    "          pf.field = filter.field;\r",
+                    "\r",
+                    "          if (filter.data.type == 'numeric') {\r",
+                    "            pf.comparison = filter.data.comparison;\r",
+                    "            pf.value = filter.data.value;\r",
+                    "            pf.type = filter.data.type;\r",
+                    "          }\r",
+                    "          else {\r",
+                    "            for (var key in filter.data) {\r",
+                    "              pf[key] = filter.data[key];\r",
+                    "            }\r",
+                    "            pf.comparison = 'eq';\r",
+                    "          }\r",
+                    "\r",
+                    "          processed_filters.push(pf);\r",
+                    "\r",
+                    "        }\r",
+                    "        return { filter: Ext.encode(processed_filters) };\r",
+                    "      }\r",
+                    "    };\r",
+                    "    \r",
+                    "    config.iconCls = 'tabsData';\r",
+                    "    config.features = [filters];\r",
+                    "    return config;"
+                ]
+            },
+            "designerId": "0cdcb92f-49da-47cc-b2f3-2ea0cfc734d9"
         }
     ]
 }

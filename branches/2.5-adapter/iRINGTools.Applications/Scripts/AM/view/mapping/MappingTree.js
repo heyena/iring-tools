@@ -17,10 +17,6 @@ Ext.define('AM.view.mapping.MappingTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.mappingtree',
 
-  requires: [
-    'AM.view.override.mapping.MappingTree'
-  ],
-
   stateful: true,
   border: true,
   store: 'MappingStore',
@@ -89,7 +85,17 @@ Ext.define('AM.view.mapping.MappingTree', {
       })
     });
 
+    me.processMappingMappingTree(me);
     me.callParent(arguments);
+  },
+
+  processMappingMappingTree: function(config) {
+    var storeId = Ext.data.IdGenerator.get("uuid").generate();
+
+    config.store = Ext.create('AM.store.MappingStore', {
+      storeId: "Mapping_" + storeId
+    }); 
+    return config;
   },
 
   onBeforeNodeDrop: function(node, data, overModel, dropPosition, dropHandler, eOpts) {

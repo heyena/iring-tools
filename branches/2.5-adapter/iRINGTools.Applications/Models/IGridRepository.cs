@@ -7,7 +7,7 @@ namespace org.iringtools.web.Models
   {
     DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl);
 
-    DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit, string baseUrl);
+    DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit);
 
     string DataServiceUri();
   }

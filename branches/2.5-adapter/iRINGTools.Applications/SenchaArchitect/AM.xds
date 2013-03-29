@@ -166,37 +166,13 @@
             ],
             "className": "DirectoryTreeStore"
         },
-        "8b388d0f-baa1-4e91-b5ea-366c58f6e09c": {
-            "paths": [
-                "metadata/view/menus.RootAdminScopesMenu",
-                "Scripts/AM/view/override/menus/RootAdminScopesMenu.js",
-                "Scripts/AM/view/menus/RootAdminScopesMenu.js"
-            ],
-            "className": "menus.RootAdminScopesMenu"
-        },
-        "7898ced7-5511-4e58-a6a1-0ef46bf44e3d": {
-            "paths": [
-                "metadata/view/menus.GroupAdminScopesMenu",
-                "Scripts/AM/view/override/menus/GroupAdminScopesMenu.js",
-                "Scripts/AM/view/menus/GroupAdminScopesMenu.js"
-            ],
-            "className": "menus.GroupAdminScopesMenu"
-        },
-        "066aa598-61b3-402a-8029-13803d2c2c42": {
-            "paths": [
-                "metadata/view/menus.NoLdapScopesMenu",
-                "Scripts/AM/view/override/menus/NoLdapScopesMenu.js",
-                "Scripts/AM/view/menus/NoLdapScopesMenu.js"
-            ],
-            "className": "menus.NoLdapScopesMenu"
-        },
         "35c9bdb8-12eb-4d81-af9c-35af6c8f394e": {
             "paths": [
-                "metadata/view/menus.ScopeMenu",
-                "Scripts/AM/view/override/menus/ScopeMenu.js",
-                "Scripts/AM/view/menus/ScopeMenu.js"
+                "metadata/view/menus.ScopesMenu",
+                "Scripts/AM/view/override/menus/ScopesMenu.js",
+                "Scripts/AM/view/menus/ScopesMenu.js"
             ],
-            "className": "menus.ScopeMenu"
+            "className": "menus.ScopesMenu"
         },
         "053fa732-8da3-4a99-b955-917bc25f4cbe": {
             "paths": [
@@ -280,12 +256,12 @@
         },
         "e1a148c2-5e0e-4031-961f-487cefec646a": {
             "paths": [
-                "metadata/view/AMViewport",
-                "Scripts/AM/view/override/AMViewport.js",
-                "Scripts/AM/view/AMViewport.js",
+                "metadata/view/Main",
+                "Scripts/AM/view/override/Main.js",
+                "Scripts/AM/view/Main.js",
                 "Scripts/AM/view/Viewport.js"
             ],
-            "className": "AMViewport"
+            "className": "Main"
         },
         "a46fefc6-18f7-4ef1-81f9-482e75561f30": {
             "paths": [
@@ -876,15 +852,21 @@
                 "Scripts/AM/store/PropertyMap.js"
             ],
             "className": "PropertyMap"
+        },
+        "9bd589c9-51f7-49a5-9901-9f9203de0d1d": {
+            "paths": [
+                "metadata/view/menus.ScopeMenu",
+                "Scripts/AM/view/override/menus/ScopeMenu.js",
+                "Scripts/AM/view/menus/ScopeMenu.js"
+            ],
+            "className": "menus.ScopeMenu"
         }
     },
     "viewOrderMap": {
         "view": [
             "260ff6ba-bf2c-4869-bb24-1f2cd987c47e",
-            "8b388d0f-baa1-4e91-b5ea-366c58f6e09c",
-            "7898ced7-5511-4e58-a6a1-0ef46bf44e3d",
-            "066aa598-61b3-402a-8029-13803d2c2c42",
             "35c9bdb8-12eb-4d81-af9c-35af6c8f394e",
+            "9bd589c9-51f7-49a5-9901-9f9203de0d1d",
             "053fa732-8da3-4a99-b955-917bc25f4cbe",
             "ed24cb4c-689d-4c1c-b268-d122c9d3ed12",
             "bcfb38e6-e465-49d3-991a-a24f67f9cf6b",

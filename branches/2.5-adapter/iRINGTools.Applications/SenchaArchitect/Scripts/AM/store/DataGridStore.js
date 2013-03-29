@@ -24,7 +24,7 @@ Ext.define('AM.store.DataGridStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
-      autoLoad: true,
+      autoLoad: false,
       model: 'AM.model.DynamicModel',
       remoteFilter: true,
       remoteSort: true,

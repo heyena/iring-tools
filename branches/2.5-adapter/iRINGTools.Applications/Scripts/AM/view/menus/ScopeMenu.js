@@ -17,7 +17,7 @@ Ext.define('AM.view.menus.ScopeMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.scopemenu',
 
-  width: 130,
+  width: 120,
 
   initComponent: function() {
     var me = this;
@@ -27,22 +27,14 @@ Ext.define('AM.view.menus.ScopeMenu', {
         {
           xtype: 'menuitem',
           action: 'neweditscope',
-          itemId: 'newfolder',
-          icon: 'Content/img/16x16/document-new.png',
-          text: 'New Folder'
-        },
-        {
-          xtype: 'menuitem',
-          action: 'neweditscope',
-          itemId: 'editfolder',
           icon: 'Content/img/16x16/document-properties.png',
-          text: 'Edit Folder'
+          text: 'Edit Scope'
         },
         {
           xtype: 'menuitem',
           action: 'deletescope',
           icon: 'Content/img/16x16/edit-delete.png',
-          text: 'Delete Folder'
+          text: 'Delete Scope'
         },
         {
           xtype: 'menuseparator'
@@ -51,7 +43,7 @@ Ext.define('AM.view.menus.ScopeMenu', {
           xtype: 'menuitem',
           action: 'neweditendpoint',
           icon: 'Content/img/16x16/document-new.png',
-          text: 'New Endpoint'
+          text: 'New Application'
         }
       ]
     });

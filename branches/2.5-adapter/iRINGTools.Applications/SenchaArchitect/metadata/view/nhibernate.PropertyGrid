@@ -187,6 +187,31 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "processcfgfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "processNhibernatePropertyGrid",
+                "fn": "processNhibernatePropertyGrid",
+                "designer|params": [
+                    "config"
+                ],
+                "implHandler": [
+                    "var storeId = Ext.data.IdGenerator.get(\"uuid\").generate();\r",
+                    "\r",
+                    "config.store = Ext.create('Ext.data.ArrayStore', {\r",
+                    "  model: 'Am.model.PropertyMapModel',\r",
+                    "  data: config.propertyPairs\r",
+                    "}); \r",
+                    "return config;"
+                ]
+            },
+            "designerId": "26ae6baf-ca7a-4245-8bff-5d562d802676"
         }
     ]
 }

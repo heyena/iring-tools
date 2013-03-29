@@ -21,7 +21,7 @@
         ],
         "title": null,
         "method": "POST",
-        "url": "directory/endpoint"
+        "url": "directory/application"
     },
     "configAlternates": {
         "border": "boolean"
@@ -149,64 +149,29 @@
                     "var me = this;\r",
                     "var win = me.up('window');\r",
                     "var endpointName = me.getForm().findField('endpoint').getValue();\r",
-                    "var urlCombo = me.down('form').down('combo');\r",
-                    "var dlCombo = me.down('combo');\r",
-                    "var baseUrl;\r",
-                    "var state = me.getForm().findField('state').getValue();\r",
-                    "if (urlCombo.value !== '' && dlCombo.value !== null) {\r",
-                    "  me.getForm().findField('baseUrl').setValue(urlCombo.value);\r",
-                    "  baseUrl = urlCombo.value;\r",
-                    "}\r",
                     "\r",
-                    "if(baseUrl) {\r",
-                    "  Ext.Ajax.request({\r",
-                    "    url: 'directory/testBaseUrl',\r",
-                    "    timeout: 600000,\r",
-                    "    method: 'POST',\r",
-                    "    params: {\r",
-                    "      baseUrl: baseUrl\r",
-                    "    },\r",
-                    "    success: function (response, request) {\r",
-                    "      if (response.responseText.indexOf('error') > -1) {\r",
-                    "        showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid base url.', Ext.Msg.OK, null);\r",
-                    "        return;\r",
-                    "      }\r",
-                    "      else {\r",
-                    "        if (ifExistSibling(endpointName, win.node, state)) {\r",
-                    "          showDialog(400, 100, 'Warning', 'The name \\\"' + endpointName + '\\\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);\r",
-                    "          return;\r",
-                    "        }\r",
-                    "  \r",
-                    "        me.getForm().submit({\r",
-                    "          waitMsg: 'Saving Data...',\r",
-                    "          success: function (response, request) {\r",
-                    "            \r",
-                    "            win.fireEvent('save', me);\r",
-                    "          },\r",
-                    "          failure: function (response, request) {\r",
-                    "            var rtext = request.result;\r",
-                    "            if (rtext.toUpperCase().indexOf('FALSE') > 0) {\r",
-                    "            var ind = rtext.indexOf('}');\r",
-                    "            var len = rtext.length - ind - 1;\r",
-                    "            var msg = rtext.substring(ind + 1, rtext.length - 1);\r",
-                    "            showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);\r",
-                    "            return;\r",
-                    "          }\r",
-                    "          var message = 'Error saving changes!';\r",
-                    "          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
-                    "        }\r",
-                    "      });\r",
-                    "    }\r",
+                    "var dlCombo = me.down('combo');\r",
+                    "\r",
+                    "var state = me.getForm().findField('state').getValue();\r",
+                    "me.getForm().submit({\r",
+                    "  waitMsg: 'Saving Data...',\r",
+                    "  success: function (response, request) {\r",
+                    "    \r",
+                    "    win.fireEvent('save', me);\r",
                     "  },\r",
                     "  failure: function (response, request) {\r",
-                    "    showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid base url.', Ext.Msg.OK, null);\r",
-                    "    return;\r",
+                    "    var rtext = request.result;\r",
+                    "    if (rtext.toUpperCase().indexOf('FALSE') > 0) {\r",
+                    "      var ind = rtext.indexOf('}');\r",
+                    "      var len = rtext.length - ind - 1;\r",
+                    "      var msg = rtext.substring(ind + 1, rtext.length - 1);\r",
+                    "      showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);\r",
+                    "      return;\r",
+                    "    }\r",
+                    "    var message = 'Error saving changes!';\r",
+                    "    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
                     "  }\r",
-                    "  });\r",
-                    "} else {\r",
-                    "  showDialog(400, 100, 'Testing Result', 'Enter values for required fields.', Ext.Msg.OK, null);\r",
-                    "  return;\r",
-                    "}"
+                    "});"
                 ]
             },
             "designerId": "a394ae97-1a06-435d-aaeb-4f8276426129"
@@ -253,41 +218,11 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField43",
-                "fieldLabel": null,
-                "name": "baseUrl"
-            },
-            "designerId": "959c5153-f950-4d39-8c18-7e15b73433c2"
-        },
-        {
-            "type": "Ext.form.field.Hidden",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField42",
                 "fieldLabel": null,
                 "name": "assembly"
             },
             "designerId": "d601416f-a1ee-44c6-a140-dde500319a01"
-        },
-        {
-            "type": "Ext.form.field.Hidden",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField41",
-                "fieldLabel": null,
-                "name": "oldBaseUrl"
-            },
-            "designerId": "c0bb73b2-5b47-4f89-96e6-75df0c2281ba"
         },
         {
             "type": "Ext.form.field.Hidden",
@@ -392,103 +327,6 @@
             },
             "designerId": "eebfb9f9-0d2a-4775-9fda-c6aa962e1aa5",
             "masterInstanceId": "89827f86-cc75-4149-b7e4-3defbfcb6ebd"
-        },
-        {
-            "type": "Ext.form.Panel",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "border": false,
-                "itemId": "baseurlform",
-                "designer|userClassName": "MyForm12",
-                "layout": "column",
-                "bodyPadding": null,
-                "title": null
-            },
-            "configAlternates": {
-                "border": "boolean"
-            },
-            "designerId": "ce2d1441-07e3-4574-8e5c-7dad42b8f106",
-            "cn": [
-                {
-                    "type": "linkedinstance",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "designer|displayName": "BaseUrlCombo",
-                        "layout|columnWidth": 0.87
-                    },
-                    "designerId": "86857215-1472-4824-9c0a-a657af32ad20",
-                    "masterInstanceId": "58e927fe-fafa-4674-b907-2df5d6711a7d"
-                },
-                {
-                    "type": "Ext.button.Button",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "layout|columnWidth": 0.13,
-                        "style": [
-                            "float: right;"
-                        ],
-                        "designer|userClassName": "MyButton15",
-                        "text": "Test Url",
-                        "tooltip": [
-                            "Test the entered Url"
-                        ]
-                    },
-                    "designerId": "8cda2bec-1f0c-4229-bf65-ad1cf21eff6b",
-                    "cn": [
-                        {
-                            "type": "fixedfunction",
-                            "reference": {
-                                "name": "items",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "designer|userClassName": "handler",
-                                "fn": "handler",
-                                "designer|params": [
-                                    "button",
-                                    "event"
-                                ],
-                                "implHandler": [
-                                    "var me = this;\r",
-                                    "var urlCombo = me.up('form').down('combo');\r",
-                                    "var baseUrl = urlCombo.value;\r",
-                                    "Ext.Ajax.request({\r",
-                                    "  url: 'directory/testBaseUrl',\r",
-                                    "  timeout: 600000,\r",
-                                    "  method: 'POST',\r",
-                                    "  params: {\r",
-                                    "    baseUrl: baseUrl\r",
-                                    "  },\r",
-                                    "  success: function (response, request) {\r",
-                                    "    if (response.responseText.indexOf('error') == -1)\r",
-                                    "    showDialog(400, 100, 'Testing Result', 'The url is valid and the server is connected.', Ext.Msg.OK, null);\r",
-                                    "    else\r",
-                                    "    showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid url.', Ext.Msg.OK, null);\r",
-                                    "  },\r",
-                                    "  failure: function (response, request) {\r",
-                                    "    showDialog(400, 100, 'Testing Result', 'Connection failed. Please enter/select a valid url.', Ext.Msg.OK, null);\r",
-                                    "  }\r",
-                                    "});"
-                                ]
-                            },
-                            "designerId": "a91b05e3-9513-4635-9711-52957f6f327e"
-                        }
-                    ]
-                }
-            ]
         }
     ]
 }

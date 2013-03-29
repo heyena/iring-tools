@@ -17,10 +17,6 @@ Ext.define('AM.view.nhibernate.PropertyGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.propertygrid',
 
-  requires: [
-    'AM.view.override.nhibernate.PropertyGrid'
-  ],
-
   propertyPairs: '',
 
   initComponent: function() {
@@ -87,7 +83,18 @@ Ext.define('AM.view.nhibernate.PropertyGrid', {
       ]
     });
 
+    me.processNhibernatePropertyGrid(me);
     me.callParent(arguments);
+  },
+
+  processNhibernatePropertyGrid: function(config) {
+    var storeId = Ext.data.IdGenerator.get("uuid").generate();
+
+    config.store = Ext.create('Ext.data.ArrayStore', {
+      model: 'Am.model.PropertyMapModel',
+      data: config.propertyPairs
+    }); 
+    return config;
   }
 
 });

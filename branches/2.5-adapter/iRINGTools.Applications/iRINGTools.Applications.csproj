@@ -112,6 +112,7 @@
     <Compile Include="Controllers\DataGridController.cs" />
     <Compile Include="Controllers\FacadeController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\NHibernateController.cs" />
     <Compile Include="Controllers\RefDataController.cs" />

@@ -12,10 +12,11 @@
         "designer|userAlias": "selectpropertiesform",
         "layout": "fit",
         "bodyPadding": null,
-        "bodyStyle": [
-            "background:#eee;padding:10px 10px 0px 10px"
-        ],
+        "bodyStyle": "background:#eee;padding:10px 10px 0px 10px",
         "title": null
+    },
+    "configAlternates": {
+        "bodyStyle": "string"
     },
     "designerId": "ec59aff5-4f53-425e-b721-7a31fd5f30f5",
     "cn": [

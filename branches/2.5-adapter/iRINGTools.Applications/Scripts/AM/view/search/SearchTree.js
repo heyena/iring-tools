@@ -17,15 +17,10 @@ Ext.define('AM.view.search.SearchTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.searchtree',
 
-  requires: [
-    'AM.view.override.search.SearchTree'
-  ],
-
   region: 'center',
   border: false,
   style: 'padding-left:5px;',
   closable: true,
-  store: 'SearchStore',
   rootVisible: false,
 
   initComponent: function() {
@@ -44,7 +39,17 @@ Ext.define('AM.view.search.SearchTree', {
       }
     });
 
+    me.processSearchSearchTree(me);
     me.callParent(arguments);
+  },
+
+  processSearchSearchTree: function(config) {
+    var storeId = Ext.data.IdGenerator.get("uuid").generate();
+
+    config.store = Ext.create('AM.store.SearchStore', {
+      storeId: "Search_" + storeId
+    });
+    return config;
   },
 
   getSelectedNode: function() {

@@ -47,7 +47,7 @@ Ext.define('AM.controller.Directory', {
     'directory.AvailBaseUrlCombo',
     'directory.DataLayerCombo',
     'directory.ApplicationForm',
-    'menus.ScopeMenu',
+    'menus.ScopesMenu',
     'menus.AppDataMenu',
     'menus.ApplicationMenu',
     'menus.ValueListsMenu',
@@ -56,10 +56,7 @@ Ext.define('AM.controller.Directory', {
     'menus.GraphMenu',
     'menus.TemplatemapMenu',
     'menus.RolemapMenu',
-    'menus.ClassmapMenu',
-    'menus.RootAdminScopesMenu',
-    'menus.GroupAdminScopesMenu',
-    'menus.NoLdapScopesMenu'
+    'menus.ClassmapMenu'
   ],
 
   refs: [
@@ -250,19 +247,15 @@ Ext.define('AM.controller.Directory', {
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
 
-    if (node.data.property.Context === '' || node.data.property.Context === undefined) {
-      showDialog(400, 100, 'Warning', 'Parent Folder must have a valid context.', Ext.Msg.OK, null);
-      return;
-    }
 
     if(item.itemId == 'editendpoint') {
-      name = node.data.record.Name;
+      name = node.data.record.Endpoint;
       description = node.data.record.Description;
       datalayer = node.data.record.DataLayer;
       assembly = node.data.record.Assembly;
-      baseurl = node.data.record.BaseUrl;
+
       wintitle =  'Edit Endpoint \"' + node.data.text + '\"';
-      endpoint = node.data.record.endpoint; 
+      endpoint = node.data.record.Endpoint; 
       state = 'edit';
     } else {
       wintitle = 'Add New Endpoint';
@@ -270,7 +263,7 @@ Ext.define('AM.controller.Directory', {
       path = node.internalId;
     }
 
-    context = node.data.record.context;
+    context = node.data.record.ContextName;
 
     var conf = { 
       id: 'newwin-' + node.data.id, 
@@ -293,45 +286,12 @@ Ext.define('AM.controller.Directory', {
       win.close();
     }, me);
 
-    var buCmb = me.getBaseUrlCombo();
-
-    buCmb.store.on('load', function (store, action) {
-      if(baseurl === '') 
-      if(store) 
-      baseurl = store.data.items[0].data.baseurl;
-    }, me);
-
-    buCmb.on('afterrender', function (combo, eopts) {
-      if (baseurl !== '' && baseurl !== undefined && combo.store.data.length == 1) {
-        combo.setValue(baseurl);
-      }
-    }, me);
-
-    buCmb.on('select', function(combo, records, eopts) {
-      if(records !== undefined && node.data.record !== undefined)
-      baseurl = records[0].data.baseurl;
-    }, me);
-
     var dlCmb = me.getDatalayerCombo();
 
     dlCmb.on('select', function(combo, records, eopts) {
       if (records !== null && node.data.record !== null) {
         form.getForm().findField('assembly').setValue(records[0].data.assembly);
       }
-    }, me);
-
-    dlCmb.store.on('beforeload', function (store, action) {
-      var useNodeUrl = false;
-      if(buCmb !== undefined) 
-      if(buCmb.value !== undefined) 
-      store.proxy.extraParams.baseUrl = buCmb.value;
-      else 
-      useNodeUrl = true; 
-      if(baseurl === '' || baseurl === "") 
-      return;
-      if(useNodeUrl)
-      store.proxy.extraParams.baseUrl = baseurl;
-
     }, me);
 
     dlCmb.on('afterrender', function (combo, eopts) {
@@ -343,10 +303,8 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('path').setValue(path);
     form.getForm().findField('state').setValue(state);
     form.getForm().findField('contextValue').setValue(context);
-    form.getForm().findField('oldBaseUrl').setValue(baseurl);
     form.getForm().findField('oldAssembly').setValue(assembly);
-    form.getForm().findField('baseUrl').setValue(baseurl);
-    form.getForm().findField('endpoint').setValue(name);
+    form.getForm().findField('endpoint').setValue(endpoint);
     form.getForm().findField('description').setValue(description);
     form.getForm().findField('context').setValue(context);
     form.getForm().findField('assembly').setValue(assembly);
@@ -440,8 +398,8 @@ Ext.define('AM.controller.Directory', {
     var tree = this.getDirTree();
     var node = tree.getSelectedNode(),
       content = me.getMainContent(),
-      contextName = node.data.property.context,
-      endpointName = node.data.property.endpoint,
+      contextName = node.data.property.ContextName,
+      endpointName = node.data.property.Endpoint,
       baseurl = node.data.property.baseUrl;
 
     var graph = node.data.text;
@@ -496,7 +454,7 @@ Ext.define('AM.controller.Directory', {
       url: 'facade/refreshFacade',
       method: 'POST',
       params: {
-        scope: node.data.id,
+        contextName: node.data.id,
         baseUrl: node.data.property.baseUrl
       },
       success: function (o) {
@@ -540,109 +498,36 @@ Ext.define('AM.controller.Directory', {
     //tree.onClick(dataview, record, 0, index, e);
 
     var obj = node.data;
-    var ifsuperadmin = false;
-    var useLdap = 'false';
 
-    var securityRole = '';
-
-    if (obj) {
-      if (obj.record) {
-        if (obj.record.securityRole) {
-          securityRole = obj.record.securityRole;
-        }
-        else {
-          ifsuperadmin = true;
-        }
-      }
+    if (obj.type === "ScopesNode") {
+      var scopesMenu = Ext.widget('scopesmenu');
+      scopesMenu.showAt(e.getXY());
+    } else if (obj.type === "ScopeNode") {
+      var scopeMenu = Ext.widget('scopemenu');
+      scopeMenu.showAt(e.getXY());
+    } else if (obj.type === "ApplicationNode") {
+      var applicationMenu = Ext.widget('applicationmenu');
+      applicationMenu.showAt(e.getXY());
+    } else if (obj.type === "DataObjectNode") {
+      var appDataMenu = Ext.widget('appdatamenu');  
+      appDataMenu.showAt(e.getXY());
+    } else if (obj.type === "ValueListsNode") {
+      var valueListsMenu = Ext.widget('valuelistsmenu');
+      valueListsMenu.showAt(e.getXY());
+    } else if (obj.type === "ValueListNode") {
+      var valueListMenu = Ext.widget('valuelistmenu');
+      valueListMenu.showAt(e.getXY());
+    } else if (obj.type === "ListMapNode") {
+      var valueListMapMenu = Ext.widget('valuelistmapmenu');
+      valueListMapMenu.showAt(e.getXY());
+    } else if (obj.type === "GraphsNode") {
+      var graphsMenu = Ext.widget('graphsmenu');
+      graphsMenu.showAt(e.getXY());
+    } else if (obj.type === "GraphNode") {
+      var graphMenu = Ext.widget('graphmenu');
+      graphMenu.showAt(e.getXY());
     }
 
-    // right clicks the root node
-    if (index === 0) {
-      Ext.Ajax.request({
-        url: 'directory/UseLdap',
-        method: 'GET',
-        success: function (response, request) {
-          useLdap = response.responseText;
-          // when root node has children use securityRold of the first childNode
-          if (node.childNodes[0]) {
-            if (useLdap.toLowerCase().indexOf('true') > -1) {
-              if (node.childNodes[0].data.record.securityRole) {
-                securityRole = node.childNodes[0].data.record.securityRole;
-
-                if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1) {
-                  ifsuperadmin = true;
-                  var rootAdminScopesMenu = Ext.widget('rootadminscopesmenu');
-                  rootAdminScopesMenu.showAt(e.getXY());
-                }
-                else if (securityRole.indexOf('admin') > -1) {
-                  var groupAdminScopesMenu = Ext.widget('groupadminscopesmenu');
-                  groupAdminScopesMenu.showAt(e.getXY());
-                }
-              }
-            }
-            else {
-              ifsuperadmin = true;
-              var noLdapScopesMenu = Ext.widget('noldapscopesmenu');
-              noLdapScopesMenu.showAt(e.getXY());
-            }
-          }
-          // when starting from scratch (root node has no children) using the rootNode's security
-          else {
-            if (useLdap === 'false') {
-              var noLdapScopeMenu = Ext.widget('noldapscopesmenu');
-              noLdapScopeMenu.showAt(e.getXY());
-            }
-            else {
-              Ext.Ajax.request({
-                url: 'directory/RootSecurityRole',
-                method: 'GET',
-                success: function (response, request) {
-                  var rootSecurityRole = response.responseText;
-                  if (rootSecurityRole.indexOf('rootadmin') > -1) {
-                    ifsuperadmin = true;
-                    var rootAdminScopesMenu = Ext.widget('rootadminscopesmenu');
-                    rootAdminScopesMenu.showAt(e.getXY());
-                  }
-                  else if (securityRole.indexOf('admin') > -1) {
-                    var groupAdminScopesMenu = Ext.widget('groupadminscopesmenu');
-                  groupAdminScopesMenu.showAt(e.getXY());              }
-                },
-                failure: function () { }
-              });
-            }
-          }
-        },
-        failure: function () { }
-      });
-    }
-    //right clicks tree nodes which are not the root node
-    else if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
-      if (obj.type == "folder") {
-        var scopeMenu = Ext.widget('scopemenu');
-        scopeMenu.showAt(e.getXY());
-      } else if (obj.type == "ApplicationNode") {
-        var applicationMenu = Ext.widget('applicationmenu');
-        applicationMenu.showAt(e.getXY());
-      } else if (obj.type == "DataObjectNode") {
-        var appDataMenu = Ext.widget('appdatamenu');  
-        appDataMenu.showAt(e.getXY());
-      } else if (obj.type == "ValueListsNode") {
-        var valueListsMenu = Ext.widget('valuelistsmenu');
-        valueListsMenu.showAt(e.getXY());
-      } else if (obj.type == "ValueListNode") {
-        var valueListMenu = Ext.widget('valuelistmenu');
-        valueListMenu.showAt(e.getXY());
-      } else if (obj.type == "ListMapNode") {
-        var valueListMapMenu = Ext.widget('valuelistmapmenu');
-        valueListMapMenu.showAt(e.getXY());
-      } else if (obj.type == "GraphsNode") {
-        var graphsMenu = Ext.widget('graphsmenu');
-        graphsMenu.showAt(e.getXY());
-      } else if (obj.type == "GraphNode") {
-        var graphMenu = Ext.widget('graphmenu');
-        graphMenu.showAt(e.getXY());
-      }
-    }
   },
 
   init: function(application) {

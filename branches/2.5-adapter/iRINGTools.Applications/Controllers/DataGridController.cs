@@ -9,6 +9,7 @@ using org.iringtools.library;
 using iRINGTools.Web.Models;
 using log4net;
 using System.Web.Script.Serialization;
+using org.iringtools.web.Helpers;
 using org.iringtools.web.Models;
 
 namespace org.iringtools.web.controllers
@@ -68,12 +69,12 @@ namespace org.iringtools.web.controllers
                        where !dataProperty.isHidden
                        select new ColumnViewModel
                        {
-                         Text = dataProperty.propertyName,
-                         DataIndex = dataProperty.propertyName,
-                         Flex = 2
+                         text = dataProperty.propertyName,
+                         dataIndex = dataProperty.propertyName,
+                         flex = 2
                        }).ToList();
 
-            fields.AddRange(columns.Select(o => new FieldViewModel { Name = o.DataIndex }).ToList());
+            fields.AddRange(columns.Select(o => new FieldViewModel { name = o.dataIndex }).ToList());
 
             var dataItems = GetDataObjects(_context, _endpoint, graph, dataFilter, start, limit, _baseUrl);
 
@@ -86,7 +87,7 @@ namespace org.iringtools.web.controllers
               foreach (var column in columns)
               {
                 var found = false;
-                foreach (var property in dataItem.properties.Where(property => column.DataIndex.ToLower() == property.Key.ToLower()))
+                foreach (var property in dataItem.properties.Where(property => column.dataIndex.ToLower() == property.Key.ToLower()))
                 {
                   rowData.Add(property.Key, property.Value);
                   found = true;
@@ -95,17 +96,17 @@ namespace org.iringtools.web.controllers
 
                 if (!found)
                 {
-                  rowData.Add(column.DataIndex, "");
+                  rowData.Add(column.dataIndex, "");
                 }
               }
               rows.Add(rowData);
             }
             model = new StoreViewModel
             {
-              Data = rows.ToArray(),
-              MetaData = new MetaDataViewModel { Columns = columns, Fields = fields },
-              Total = total,
-              Success = true
+              data = rows.ToArray(),
+              metaData = new MetaDataViewModel { columns = columns, fields = fields },
+              total = total,
+              success = true
             };
 
             return Json(model, JsonRequestBehavior.AllowGet);
@@ -242,7 +243,7 @@ namespace org.iringtools.web.controllers
             DataItems dataItems = null;
             try
             {
-                dataItems = Repository.GetDataItems(endpoint, context, graph, dataFilter, start, limit, baseurl);
+                dataItems = Repository.GetDataItems(endpoint, context, graph, dataFilter, start, limit);
             }
             catch (Exception ex)
             {

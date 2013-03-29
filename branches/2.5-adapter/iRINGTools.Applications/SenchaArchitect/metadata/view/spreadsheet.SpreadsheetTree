@@ -19,7 +19,7 @@
         "designer|userClassName": "spreadsheet.SpreadsheetTree",
         "designer|userAlias": "spreadsheettree",
         "title": null,
-        "store": "SpreadsheetStore"
+        "store": null
     },
     "configAlternates": {
         "border": "boolean"
@@ -249,6 +249,30 @@
                 ]
             },
             "designerId": "b2e26715-ac8d-4dac-9bc1-fde6263ba534"
+        },
+        {
+            "type": "processcfgfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|userClassName": "processSpreadsheetSpreadsheetTree",
+                "fn": "processSpreadsheetSpreadsheetTree",
+                "designer|params": [
+                    "config"
+                ],
+                "implHandler": [
+                    "var storeId = Ext.data.IdGenerator.get(\"uuid\").generate();\r",
+                    "\r",
+                    "config.store = Ext.create('AM.store.SpreadsheetStore', {\r",
+                    "  storeId: \"Spread_\" + storeId\r",
+                    "}); \r",
+                    "return config;"
+                ]
+            },
+            "designerId": "85faee3a-0e74-4c2d-b5ed-287beb2020e4"
         }
     ]
 }

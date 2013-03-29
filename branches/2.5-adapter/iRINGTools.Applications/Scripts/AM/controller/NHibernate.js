@@ -16,6 +16,10 @@
 Ext.define('AM.controller.NHibernate', {
   extend: 'Ext.app.Controller',
 
+  requires: [
+    'AM.view.nhibernate.Utility'
+  ],
+
   dataTypes: '',
   models: [
     'AvailItemsModel',
@@ -150,8 +154,8 @@ Ext.define('AM.controller.NHibernate', {
       timeout: 600000,
       method: 'POST',
       params: {
-        scope: contextName,
-        app: endpoint,
+        contextName: contextName,
+        endpoint: endpoint,
         baseUrl: baseUrl,
         tree: Ext.JSON.encode(treeProperty)
       },
@@ -235,7 +239,7 @@ Ext.define('AM.controller.NHibernate', {
           for (var k = 0; k < relChildenNodes.length; k++) {
             var relationNode = relChildenNodes[k];
 
-            if (relationNode.text == '')
+            if (relationNode.text === '')
             continue;
 
             if (relationNode.data)
@@ -380,9 +384,9 @@ Ext.define('AM.controller.NHibernate', {
           }
         }
 
-        for (var jj = 0; jj < hiddenRootNode.children.length; jj++) {
-          if (hiddenRootNode.children[jj].text.toLowerCase() == selectValues[j].toLowerCase()) {
-            var properties = hiddenRootNode.children[jj].property;
+        for (var kk = 0; kk < hiddenRootNode.children.length; kk++) {
+          if (hiddenRootNode.children[kk].text.toLowerCase() == selectValues[j].toLowerCase()) {
+            var properties = hiddenRootNode.children[kk].property;
             properties.keyType = 'assigned';
             properties.nullable = false;
             newKeyNode = {
@@ -394,8 +398,8 @@ Ext.define('AM.controller.NHibernate', {
               property: properties
             };
             keysNode.appendChild(newKeyNode);
-            hiddenRootNode.children.splice(jj, 1);
-            jj--;
+            hiddenRootNode.children.splice(kk, 1);
+            kk--;
             break;
           }
         }
@@ -473,8 +477,8 @@ Ext.define('AM.controller.NHibernate', {
     for (var j = 0; j < selectValues.length; j++) {
       found = false;
 
-      for (var i = 0; i < treeNode.childNodes.length; i++) {
-        if (selectValues[j].toLowerCase() == treeNode.childNodes[i].data.text.toLowerCase()) {
+      for (var l = 0; l < treeNode.childNodes.length; l++) {
+        if (selectValues[j].toLowerCase() == treeNode.childNodes[l].data.text.toLowerCase()) {
           found = true;
           break;
         }
@@ -675,8 +679,8 @@ Ext.define('AM.controller.NHibernate', {
       method: 'POST',
       timeout: 600000,
       params: {
-        scope: context,
-        app: endpoint,
+        contextName: context,
+        endpoint: endpoint,
         serName: serName,
         baseUrl: baseUrl
       },
@@ -815,9 +819,9 @@ Ext.define('AM.controller.NHibernate', {
 
     var dbDict, dbInfo, tree;
 
-    var context = dirNode.data.record.context;
+    var context = dirNode.data.record.ContextName;
     var datalayer = dirNode.data.record.DataLayer;
-    var endpoint = dirNode.data.record.endpoint;
+    var endpoint = dirNode.data.record.Endpoint;
     var baseUrl = dirNode.data.record.BaseUrl;
     var title = 'Nhibernate Configuration - ' + context + '.' + endpoint;
 
@@ -962,8 +966,8 @@ Ext.define('AM.controller.NHibernate', {
       method: 'POST',
       timeout: 6000000,
       params: {
-        scope: context,
-        app: endpoint,
+        contextName: context,
+        endpoint: endpoint,
         baseUrl: baseUrl
       },
       success: function (response, request) {
@@ -986,8 +990,8 @@ Ext.define('AM.controller.NHibernate', {
       method: 'POST',
       timeout: 6000000,
       params: {
-        scope: context,
-        app: endpoint,
+        contextName: context,
+        endpoint: endpoint,
         dbProvider: dbDict.Provider,
         dbServer: dbInfo.dbServer,
         dbInstance: dbInfo.dbInstance,
