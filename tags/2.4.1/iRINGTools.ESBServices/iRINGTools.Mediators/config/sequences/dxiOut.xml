@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="dxiOut">
+	<log level="custom">
+		<property name="DXI_OUT" expression="*" />
+	</log>
+	<send />
+</sequence>

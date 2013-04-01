@@ -1,0 +1,235 @@
+﻿<controls:ChildWindow x:Class="org.iringtools.modules.templateeditor.rolespopup.RolesPopup"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+           xmlns:controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"
+           xmlns:dataInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data.Input"
+           Width="600" Height="400" 
+           Title="Role Range/Value and Restrictions">
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Border Margin="4" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="4">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="95"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <RadioButton
+                        x:Name="radRoleRange"
+                        Height="22"
+                        Grid.Column="0" 
+                        Grid.Row="0"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Bottom"
+                        IsChecked="{Binding HasRange, Mode=OneWay}"
+                        GroupName="RoleRangeValue"
+                        Content="Range:" />
+                    <ComboBox
+                        x:Name="roleRange"
+                        Height="22"
+                        Grid.Column="1" 
+                        Grid.Row="0"
+                        Margin="0,0,112,0"
+		                VerticalAlignment="Center"                        
+                        ItemsSource="{Binding Ranges, Mode=TwoWay}"
+                        DisplayMemberPath="Value"                        
+                        SelectedItem="{Binding RoleRange, Mode=TwoWay}"/>
+                    <!--IsEnabled="{Binding HasRange}"-->
+
+                    <Button 
+                        x:Name="Btn_UseSelectedItem" 
+                        Grid.Column="1" 
+                        Grid.Row="0"
+                        Content="Use Selected Item" 
+                        Click="BtnUseSelectedItem_Click" 
+                        Width="110" 
+                        Height="22" 
+                        HorizontalAlignment="Right"                         
+                        />
+
+                    <RadioButton
+                        x:Name="radRoleValue"
+                        Height="22"
+                        Grid.Column="0" 
+                        Grid.Row="1"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Bottom"
+                        GroupName="RoleRangeValue"
+                        Content="Value:" 
+                        IsChecked="{Binding HasValue, Mode=OneWay}"
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
+
+                    <RadioButton
+                        x:Name="radRoleValueReference"
+                        Height="22"
+                        Grid.Column="0" 
+                        Grid.Row="2"
+                        Margin="12,0,0,0"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Bottom"
+                        IsChecked="{Binding ValueHasReference, Mode=OneWay}"
+                        GroupName="RoleValueType"
+                        Content="Reference:" 
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
+                    <TextBox 
+                        x:Name="roleValueReference" 
+                        Height="22" 
+                        Grid.Column="1" 
+                        Grid.Row="2"
+				        VerticalAlignment="Center"					    
+                        Text="{Binding RoleValueReference, Mode=TwoWay}"
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
+
+                    <RadioButton
+                        x:Name="radRoleValueLiteral"
+                        Height="22"
+                        Grid.Column="0" 
+                        Grid.Row="3"
+                        Margin="12,0,0,0"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Bottom"
+                        GroupName="RoleValueType"
+                        Content="Literal:" 
+                        IsChecked="{Binding ValueHasLiteral, Mode=OneWay}"
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
+                    <TextBox 
+                        x:Name="roleValueLiteral" 
+                        Height="22" 
+                        Grid.Column="1" 
+                        Grid.Row="3"
+				        VerticalAlignment="Center"					    
+                        Text="{Binding RoleValueLiteral, Mode=TwoWay}"
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
+
+                    <dataInput:Label 
+                        Grid.Row="4"
+                        Margin="30,0,0,0"
+					    VerticalAlignment="Center" 
+					    Content="Data Type:" HorizontalAlignment="Left" Width="70" />
+                    <ComboBox
+                        x:Name="roleValueLiteralDatatype"
+                        Height="22"
+                        Grid.Column="1" 
+                        Grid.Row="4"
+		                VerticalAlignment="Center"                        
+                        IsEnabled="{Binding IsSpecializedTemplate, Mode=OneWay}"
+                        ItemsSource="{Binding LiteralDataTypes, Mode=TwoWay}"
+                        DisplayMemberPath="Value"
+                        SelectedItem="{Binding RoleValueLiteralDatatype, Mode=TwoWay}"/>
+                </Grid>
+            </Border>
+            <dataInput:Label Background="#FFF0F0F0"
+				                Margin="12,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+				                Content=" Range/Value "/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="85"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Margin="4" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
+                <Grid Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+
+                    <ListBox
+                        x:Name="lstRestrictions" 
+                        Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        Grid.RowSpan="2"
+                        DisplayMemberPath="Key"
+                        Margin="2"
+                        ItemsSource="{Binding RoleRestrictions, Mode=OneWay}"
+                        IsEnabled="{Binding IsBaseTemplate}"/>
+
+                    <dataInput:Label 
+                        Grid.Row="2" 
+                        Grid.Column="0"
+                        VerticalAlignment="Center"                        
+					    Content="Restriction Type:" />
+                    <ComboBox
+                        x:Name="roleRestrictionType"
+                        Height="22"
+                        Grid.Column="1" 
+                        Grid.Row="2"
+                        VerticalAlignment="Center"                        
+                        IsEnabled="{Binding IsBaseTemplate, Mode=OneWay}"
+                        ItemsSource="{Binding RestrictionTypes, Mode=TwoWay}"
+                        DisplayMemberPath="Value"
+                        SelectedItem="{Binding SelectedRoleRestrictionType, Mode=TwoWay}"/>
+
+                    <dataInput:Label 
+                        Grid.Column="0" 
+                        Grid.Row="3" 
+                        VerticalAlignment="Center" 
+                        Content="Value:"/>
+                    <TextBox 
+                        x:Name="roleRestrictionValue" 
+                        Grid.Column="1" 
+                        Grid.Row="3" 
+                        Height="22" 
+				        VerticalAlignment="Center"
+                        Text="{Binding SelectedRoleRestrictionValue, Mode=TwoWay}"
+                        IsEnabled="{Binding IsBaseTemplate}"/>
+
+                    <Button 
+                        x:Name="addRestriction" 
+				        Grid.ColumnSpan="2"
+                        Grid.Row="4" 
+                        Height="21" 
+                        Width="60" 
+				        Margin="100,0,0,8" 
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        IsEnabled="{Binding IsBaseTemplate}"
+				        Content="Add" />
+
+                    <Button 
+                        x:Name="removeRestriction" Grid.Row="4" 
+                        Height="21" 
+                        Width="60" 
+				        Margin="0,0,339,8" 
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Bottom"
+                        IsEnabled="{Binding IsRestrictionSelected}"
+				        Content="Remove" Grid.Column="1" />
+
+                </Grid>
+            </Border>
+            <dataInput:Label IsEnabled="False" Grid.Column="0" Background="#FFF0F0F0"
+				                Margin="12,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+				                Content=" Restrictions "/>
+        </Grid>
+
+        <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click" Width="75" Height="23" HorizontalAlignment="Right" Margin="0,12,0,0" Grid.Row="2" />
+        <Button x:Name="OKButton" Content="OK" Click="OKButton_Click" Width="75" Height="23" HorizontalAlignment="Right" Margin="0,12,79,0" Grid.Row="2" />
+    </Grid>
+</controls:ChildWindow>
