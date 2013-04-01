@@ -1,16 +1,1 @@
-<resource xmlns="http://www.iringtools.org/directory" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <baseUrl>http:..localhost:54321.adapter</baseUrl>
-    <locators>
-      <locator>
-        <context>12345_000</context>
-        <applications>
-          <application>
-            <endpoint>ABC</endpoint>
-          </application>
-          <application>
-            <endpoint>DEF</endpoint>
-          </application>          
-        </applications>
-      </locator>      
-    </locators>
-  </resource>
+<scopes xmlns="http://www.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><scope><name>12345_000</name><description>Test Project</description><applications><application><name>ABC</name><description>Test Application</description></application></applications></scope></scopes>

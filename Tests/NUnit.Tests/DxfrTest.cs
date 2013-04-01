@@ -24,7 +24,7 @@ namespace NUnit.Tests
 	    private static readonly ILog _logger = LogManager.GetLogger(typeof(DxfrTest));      
       private AdapterSettings _settings = null;
       private string _baseDirectory = string.Empty;
-      private DataTranferProvider _dxfrProvider = null;			
+      private DtoProvider _dxfrProvider = null;			
 
       public DxfrTest()
       {
@@ -41,12 +41,7 @@ namespace NUnit.Tests
 				_baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
 				_settings["BaseDirectoryPath"] = _baseDirectory;       
 				Directory.SetCurrentDirectory(_baseDirectory);
-        _dxfrProvider = new DataTranferProvider(_settings);
-
-        string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-
-        Resource importScopes = Utility.Read<Resource>(scopesPath);
-        _dxfrProvider.setScopes(importScopes);
+        _dxfrProvider = new DtoProvider(_settings);
 
         ResetDatabase();
       }			
@@ -75,29 +70,112 @@ namespace NUnit.Tests
 				{
 					dti.HashValue = null;
 				}
-			}			      
+			}
+
+      [Test]
+      public void GetDataTransferIndices()
+      {
+        XDocument benchmark = null;
+        DxiRequest dxiRequest = new DxiRequest();
+        dxiRequest.DataFilter = new DataFilter();
+        dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
+        DataTransferIndices dtiList = null;
+
+        dtiList =
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
+            _settings["ProjectName"], _settings["ApplicationName"],
+            _settings["GraphName"], null, dxiRequest);
+
+        deleteHashValue(ref dtiList);
+
+        string path = String.Format(
+          "{0}DxfrGetDataTransferIndices.xml",
+            _settings["AppDataPath"]
+            );
+
+        XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
+        xDocument.Save(path);
+        Assert.AreNotEqual(null, xDocument);
+        
+        benchmark = XDocument.Load(path);
+        String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
+        String benchmarkString = benchmark.ToString();
+        Assert.AreEqual(dtiListString, benchmarkString); 
+      }
+
+      [Test]
+      public void GetDataTransferIndicesWithFilter()
+      {
+        XDocument benchmark = null;
+        DxiRequest dxiRequest = new DxiRequest();
+        dxiRequest.DataFilter = new DataFilter();
+        dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
+        DataFilter filter = new DataFilter();
+        filter.Expressions.Add(
+          new Expression
+          {
+            PropertyName = "PipingNetworkSystem.NominalDiameter.valValue",
+            Values = new Values
+            {
+              "40"
+            },
+            RelationalOperator = RelationalOperator.EqualTo
+          }
+        );
+
+        filter.OrderExpressions.Add(
+          new OrderExpression
+          {
+            PropertyName = "PipingNetworkSystem.IdentificationByTag.valIdentifier",
+            SortOrder = SortOrder.Asc
+          }
+        );
+
+        DataTransferIndices dtiList = null;
+
+        dtiList =
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
+            _settings["ProjectName"], _settings["ApplicationName"],
+            _settings["GraphName"], null, dxiRequest);
+
+        deleteHashValue(ref dtiList);
+
+        string path = String.Format(
+          "{0}DxfrGetDataTransferIndicesWithFilter.xml",
+            _settings["AppDataPath"]
+            );
+
+        XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
+        xDocument.Save(path);
+        Assert.AreNotEqual(null, xDocument);
+       
+        benchmark = XDocument.Load(path);
+        String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
+        String benchmarkString = benchmark.ToString();
+        Assert.AreEqual(dtiListString, benchmarkString);       
+      }
 
       [Test]
       public void GetManifest()
       {
-        XDocument benchmark = null;
+        XDocument benchmark = null;           
         Manifest manifest = null;
 
-        manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
-
+				manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
+            
         string path = String.Format(
           "{0}DxfrGetManifest.xml",
             _settings["AppDataPath"]
             );
 
-        XDocument xDocument = ToXml(manifest);
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-
-        String manifestString = ToXml(manifest).ToString();
-        benchmark = XDocument.Load(path);
-        String benchmarkString = benchmark.ToString();
-        Assert.AreEqual(manifestString, benchmarkString);		
+				XDocument xDocument = ToXml(manifest);
+				xDocument.Save(path);
+				Assert.AreNotEqual(null, xDocument);
+				
+				String manifestString = ToXml(manifest).ToString();
+				benchmark = XDocument.Load(path);
+				String benchmarkString = benchmark.ToString();        
+				Assert.AreEqual(manifestString, benchmarkString);				
       }
 
 
@@ -124,15 +202,15 @@ namespace NUnit.Tests
           "{0}DxfrGetDataTransferIndicesWithManifest.xml",
             _settings["AppDataPath"]
             );
-
+        
         XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
         xDocument.Save(path);
         Assert.AreNotEqual(null, xDocument);
-
+        
         benchmark = XDocument.Load(path);
         String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
         String benchmarkString = benchmark.ToString();
-        Assert.AreEqual(dtiListString, benchmarkString);  
+        Assert.AreEqual(dtiListString, benchmarkString);        
       }
 
       [Test]
@@ -140,19 +218,19 @@ namespace NUnit.Tests
       {
         XDocument benchmark = null;
         DxiRequest dxiRequest = new DxiRequest();
-        dxiRequest.DataFilter = new DataFilter();
-        DataTransferIndices dtiList = null;
+        dxiRequest.DataFilter = new DataFilter();          
+        DataTransferIndices dtiList = null;       
 
         dxiRequest.DataFilter.Expressions.Add(
           new Expression
-          {
-            PropertyName = "PipingNetworkSystem.NominalDiameter.valValue",
-            Values = new Values
+            {
+              PropertyName = "PipingNetworkSystem.NominalDiameter.valValue",
+              Values = new Values
                 {
                   "80"
                 },
-            RelationalOperator = RelationalOperator.EqualTo
-          }
+              RelationalOperator = RelationalOperator.EqualTo
+            }
             );
 
         dxiRequest.DataFilter.OrderExpressions.Add(
@@ -163,28 +241,29 @@ namespace NUnit.Tests
           }
         );
 
-        dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
+				dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
-          _dxfrProvider.GetDataTransferIndicesByRequest(
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
             _settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], "MD5", dxiRequest);
-
-        deleteHashValue(ref dtiList);
+				
+				deleteHashValue(ref dtiList);
 
         string path = String.Format(
             "{0}DxfrGetDataTransferIndicesByRequest.xml",
             _settings["AppDataPath"]
           );
 
-        XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-
-        benchmark = XDocument.Load(path);
-        String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
-        String benchmarkString = benchmark.ToString();
-        Assert.AreEqual(dtiListString, benchmarkString);
+				XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
+				xDocument.Save(path);
+				Assert.AreNotEqual(null, xDocument);
+				
+				benchmark = XDocument.Load(path);
+				String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
+				String benchmarkString = benchmark.ToString();          
+				Assert.AreEqual(dtiListString, benchmarkString);
+				
       }
 
       [Test]
@@ -216,20 +295,20 @@ namespace NUnit.Tests
         XDocument xDocument = ToXml(dtos.DataTransferObjectList);
         xDocument.Save(path);
         Assert.AreNotEqual(null, xDocument);
-
+        
         benchmark = XDocument.Load(path);
         String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
         String benchmarkString = benchmark.ToString();
-        Assert.AreEqual(dtosString, benchmarkString);  
+        Assert.AreEqual(dtosString, benchmarkString);        
       }
 
       [Test]
       public void GetDataTransferObjectsWithDxoRequest()
-      {
+      {				
         XDocument benchmark = null;
         DataTransferIndices dtiList = null;
         DataTransferObjects dtos = null;
-
+            
         DxiRequest dxiRequest = new DxiRequest();
         dxiRequest.DataFilter = new DataFilter();
 
@@ -256,7 +335,7 @@ namespace NUnit.Tests
         dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
-          _dxfrProvider.GetDataTransferIndicesByRequest(
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
             _settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], "MD5", dxiRequest);
 
@@ -270,19 +349,19 @@ namespace NUnit.Tests
         dxoRequest.DataTransferIndices = dtiList;
 
         dtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-            _settings["GraphName"], dxoRequest);
+            _settings["GraphName"], dxoRequest, false);
 
         string path = String.Format(
             "{0}DxfrGetDataTransferObjectsWithDxoRequest.xml",
             _settings["AppDataPath"]
           );
 
-        XDocument xDocument = ToXml(dtos.DataTransferObjectList);
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-        benchmark = XDocument.Load(path);
-        String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
-        String benchmarkString = benchmark.ToString();
+				XDocument xDocument = ToXml(dtos.DataTransferObjectList);
+				xDocument.Save(path);
+				Assert.AreNotEqual(null, xDocument);				
+				benchmark = XDocument.Load(path);
+				String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
+				String benchmarkString = benchmark.ToString();
         Assert.AreEqual(dtosString, benchmarkString);			
       }
 			
@@ -290,10 +369,10 @@ namespace NUnit.Tests
 			public void PostDataTransferObjects()
 			{
         XDocument benchmark = null;
-        Response response = null;
-        DxoRequest dxoRequest = new DxoRequest();
-        DataTransferObjects postDtos = null;
-        List<DataTransferObject> dtoList = null;
+				Response response = null;				
+				DxoRequest dxoRequest = new DxoRequest();
+				DataTransferObjects postDtos = null;
+				List<DataTransferObject> dtoList = null;
 
         DxiRequest dxiRequest = new DxiRequest();
         dxiRequest.DataFilter = new DataFilter();
@@ -322,63 +401,67 @@ namespace NUnit.Tests
         dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
-          _dxfrProvider.GetDataTransferIndicesByRequest(
+          _dxfrProvider.GetDataTransferIndicesWithFilter(
             _settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], "MD5", dxiRequest);
+				
+				dxoRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
-        dxoRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
+        dxoRequest.DataTransferIndices = dtiList;
 
-        dxoRequest.DataTransferIndices = dtiList;        
+        //dxoRequest.DataTransferIndices =
+        //  _dxfrProvider.GetDataTransferIndicesWithManifest(
+        //    _settings["ProjectName"], _settings["ApplicationName"],
+        //    _settings["GraphName"], "MD5", dxoRequest.Manifest);
 
-        postDtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-            _settings["GraphName"], dxoRequest);
+				postDtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
+						_settings["GraphName"], dxoRequest, false);				
 
-        dtoList = postDtos.DataTransferObjectList;
+				dtoList = postDtos.DataTransferObjectList;
 
-        dtoList[0].transferType = TransferType.Delete;
-        dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].oldValue = dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value;
-        dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value = "200";
+				dtoList[0].transferType = TransferType.Delete;
+				dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].oldValue = dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value; 
+				dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value = "200";
 
-        string path = String.Format(
-            "{0}DxfrNewDto.xml",
-            _settings["AppDataPath"]
-          );
-        benchmark = XDocument.Load(path);
+				string path = String.Format(
+						"{0}DxfrNewDto.xml",
+						_settings["AppDataPath"]
+					);
+				benchmark = XDocument.Load(path);
 
-        DataTransferObject newDto = Utility.DeserializeDataContract<DataTransferObject>(benchmark.ToString());
+				DataTransferObject newDto = Utility.DeserializeDataContract<DataTransferObject>(benchmark.ToString());
 
-        dtoList.Add(newDto);
+				dtoList.Add(newDto);				
 
-        response = _dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-            _settings["GraphName"], postDtos);
+				response = _dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
+						_settings["GraphName"], postDtos);
 
-        path = String.Format(
-            "{0}DxfrResponse.xml",
-            _settings["AppDataPath"]
-          );
+				path = String.Format(
+						"{0}DxfrResponse.xml",
+						_settings["AppDataPath"]
+					);
 
-        XDocument xDocument = ToXml(response);
-        xDocument.Save(path);
-        Assert.AreNotEqual(null, xDocument);
-        benchmark = XDocument.Load(path);
+				XDocument xDocument = ToXml(response);
+				xDocument.Save(path);
+				Assert.AreNotEqual(null, xDocument);			
+				benchmark = XDocument.Load(path);
 
-        String res = ToXml(response).ToString();
-        Response xmlResponse = Utility.DeserializeDataContract<Response>(benchmark.ToString());
+				String res = ToXml(response).ToString();
+				Response xmlResponse = Utility.DeserializeDataContract<Response>(benchmark.ToString());
 
-        Assert.AreEqual(response.Level.ToString(), xmlResponse.Level.ToString());
-        foreach (Status status in response.StatusList)
-          foreach (Status xmlStatus in xmlResponse.StatusList)
-          {
-            Assert.AreEqual(status.Messages.ToString(), xmlStatus.Messages.ToString());
+				Assert.AreEqual(response.Level.ToString(), xmlResponse.Level.ToString());
+				foreach (Status status in response.StatusList)
+					foreach (Status xmlStatus in xmlResponse.StatusList)
+					{
+						Assert.AreEqual(status.Messages.ToString(), xmlStatus.Messages.ToString());
             Assert.AreEqual(status.Identifier, xmlStatus.Identifier);
-            xmlResponse.StatusList.Remove(xmlStatus);
-            break;
-          }
+						xmlResponse.StatusList.Remove(xmlStatus);
+						break;
+					}		
 
-        //restore the table
-        ResetDatabase();
-      }
-
+				//restore the table
+				ResetDatabase();
+			}
     }
 }
 

@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/library"
+ targetNamespace="http://www.iringtools.org/library" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+ jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+ <xs:element name="scopes">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element ref="scope" maxOccurs="unbounded">
+     <xs:annotation>
+      <xs:appinfo>
+       <jaxb:property name="items" />
+      </xs:appinfo>
+     </xs:annotation>
+    </xs:element>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+ <xs:element name="scope">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="name" type="xs:string" />
+    <xs:element name="description" type="xs:string" />
+    <xs:element ref="applications" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+ <xs:element name="applications">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element ref="application" maxOccurs="unbounded">
+     <xs:annotation>
+      <xs:appinfo>
+       <jaxb:property name="items" />
+      </xs:appinfo>
+     </xs:annotation>
+    </xs:element>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+ <xs:element name="application">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="name" type="xs:string" />
+    <xs:element name="description" type="xs:string" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+ <xs:element name="requestStatus">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="state" type="State" />
+    <xs:element name="percentComplete" type="xs:int" />
+    <xs:element name="message" type="xs:string" />
+    <xs:element name="responseText" type="xs:string" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+ <xs:simpleType name="State">
+  <xs:restriction base="xs:string">
+   <xs:enumeration value="InProgress" />
+   <xs:enumeration value="Completed" />
+   <xs:enumeration value="Error" />
+   <xs:enumeration value="NotFound" />
+  </xs:restriction>
+ </xs:simpleType>
+</xs:schema>

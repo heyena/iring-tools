@@ -47,11 +47,11 @@ namespace org.iringtools.services
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   public class DataTransferService
   {
-    private DataTranferProvider _dxfrProvider = null;
+    private DtoProvider _dtoProvider = null;
 
     public DataTransferService()
     {
-      _dxfrProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
+      _dtoProvider = new DtoProvider(ConfigurationManager.AppSettings);
     }
 
     [Description("Gets service version.")]
@@ -60,7 +60,7 @@ namespace org.iringtools.services
     {
       try
       {
-        VersionInfo versionInfo = _dxfrProvider.GetVersion();
+        VersionInfo versionInfo = _dtoProvider.GetVersion();
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<VersionInfo>(versionInfo));
@@ -79,8 +79,27 @@ namespace org.iringtools.services
     {
       try
       {
-        Manifest manifest = _dxfrProvider.GetManifest(scope, app);
+        Manifest manifest = _dtoProvider.GetManifest(scope, app);
         
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Manifest>(manifest));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Gets manifest for a specific graph of an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/manifest")]
+    public void GetManifestByGraph(string scope, string app, string graph)
+    {
+      try
+      {
+        Manifest manifest = _dtoProvider.GetManifest(scope, app, graph);
+
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Manifest>(manifest));
       }
@@ -98,7 +117,54 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+        DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));        
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Gets data transfer indices of requested manifest with filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
+    public void GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    {
+      try
+      {
+        if (IsAsync())
+        {
+          string statusURL = _dtoProvider.AsyncGetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, request);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
+        }
+        else
+        {
+          DataTransferIndices dtis = _dtoProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, request);
+
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+        }
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Gets a page data transfer indices.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/dti?start={start}&limit={limit}")]
+    public void GetPagedDataTransferIndices(string scope, string app, string graph, int start, int limit)
+    {
+      try
+      {
+        DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndices(scope, app, graph, null, start, limit);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
@@ -111,13 +177,13 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer indices of requested manifest with filter.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
-    public void GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    [Description("Gets a page data transfer indices with filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dti?start={start}&limit={limit}")]
+    public void GetPagedDataTransferIndicesWithFilter(string scope, string app, string graph, DataFilter filter, int start, int limit)
     {
       try
       {
-        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
+        DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndices(scope, app, graph, filter, start, limit);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
@@ -136,7 +202,7 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
+        DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
@@ -150,15 +216,24 @@ namespace org.iringtools.services
     }
 
     [Description("Gets data transfer objects of requested indices and manifest.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
-    public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo?includeContent={includeContent}")]
+    public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest, bool includeContent)
     {
       try
       {
-        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
+        if (IsAsync())
+        {
+          string statusURL = _dtoProvider.AsyncGetDataTransferObjects(scope, app, graph, dxoRequest, includeContent);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
+        }
+        else
+        {
+          DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest, includeContent);
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
+        }
       }
       catch (Exception e)
       {
@@ -174,7 +249,7 @@ namespace org.iringtools.services
     {
       try
       {
-        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObject(scope, app, graph, id);
+        DataTransferObjects dtos = _dtoProvider.GetDataTransferObject(scope, app, graph, id);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
@@ -187,13 +262,13 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Post data transfer objects to perfom add/update/delete.")]
+    [Description("Posts data transfer objects to perfom add/update/delete.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
     public void PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {
       try
       {
-        Response response = _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
+        Response response = _dtoProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
@@ -208,14 +283,27 @@ namespace org.iringtools.services
 
     [Description("Posts data transfer objects as stream to perform add/update/delete.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}?format=stream")]
-    public void PostStream(string scope, string app, string graph, Stream stream)
+    public void PostDataTransferObjectsStream(string scope, string app, string graph, Stream stream)
     {
       try
       {
-        DataTransferObjects dataTransferObjects = Utility.DeserializeFromStream<DataTransferObjects>(stream.ToMemoryStream(), true);
-        Response response = _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+        MemoryStream ms = stream.ToMemoryStream();
+        DataTransferObjects dtos = Utility.DeserializeFromStream<DataTransferObjects>(ms);
+         
+        if (IsAsync())
+        {
+          string statusURL = _dtoProvider.AsyncPostDataTransferObjects(scope, app, graph, dtos);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
+        }
+        else
+        {
+          Response response = _dtoProvider.PostDataTransferObjects(scope, app, graph, dtos);
+          string responseXml = Utility.SerializeDataContract<Response>(response);
+
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(responseXml);
+        }
       }
       catch (Exception e)
       {
@@ -231,7 +319,7 @@ namespace org.iringtools.services
     {
       try
       {
-        Response response = _dxfrProvider.DeleteDataTransferObject(scope, app, graph, id);
+        Response response = _dtoProvider.DeleteDataTransferObject(scope, app, graph, id);
 
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
@@ -242,6 +330,104 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "text/plain";
         HttpContext.Current.Response.Write(e.ToString());
       }
+    }
+
+    [Description("Gets content objects by ids and formats in JSON format.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/{graph}/content?filter={filter}")]
+    public void GetContents(string scope, string app, string graph, string filter)
+    {
+      try
+      {
+        ContentObjects contentObjects = _dtoProvider.GetContents(scope, app, graph, filter);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<ContentObjects>(contentObjects));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.Write(e.Message);
+      }
+    }
+
+    [Description("Gets single content object.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/{graph}/{id}/content?format={format}")]
+    public void GetContent(string scope, string app, string graph, string id, string format)
+    {
+      try
+      {
+        IContentObject iContentObject = _dtoProvider.GetContent(scope, app, graph, id, format);
+        HttpContext.Current.Response.ContentType = iContentObject.ContentType;
+        HttpContext.Current.Response.BinaryWrite(iContentObject.Content.ToMemoryStream().GetBuffer());
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.Write(e.Message);
+      }
+    }
+
+    [Description("Posts list of content objects as stream to service.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/content")]
+    public void PostContents(string scope, string app, string graph, Stream stream)
+    {
+      try
+      {
+        MemoryStream ms = stream.ToMemoryStream();
+        ContentObjects contentObjects = Utility.DeserializeFromStream<ContentObjects>(ms);
+
+        Response response = _dtoProvider.PostContents(scope, app, graph, contentObjects);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.Serialize<Response>(response, true));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.Write(e.Message);
+      }
+    }
+
+    [Description("Gets status of a asynchronous request.")]
+    [WebGet(UriTemplate = "/requests/{id}")]
+    public void GetRequestStatus(string id)
+    {
+      RequestStatus status = null;
+
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        status = _dtoProvider.GetRequestStatus(id);
+
+        if (status.State == State.NotFound)
+        {
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+        }
+      }
+      catch (Exception ex)
+      {
+        status = new RequestStatus()
+        {
+          State = State.Error,
+          Message = ex.Message
+        };
+      }
+
+      string xml = Utility.SerializeDataContract<RequestStatus>(status);
+      HttpContext.Current.Response.ContentType = "application/xml";
+      HttpContext.Current.Response.Write(xml);
+    }
+
+    private bool IsAsync()
+    {
+      bool async = false;
+      string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
+
+      if (asyncHeader != null && asyncHeader.ToLower() == "true")
+      {
+        async = true;
+      }
+
+      return async;
     }
   }
 }

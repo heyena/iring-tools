@@ -9,7 +9,6 @@ using org.iringtools.library;
 using org.iringtools.adapter.projection;
 using System.Xml.Linq;
 using Microsoft.ServiceModel.Web;
-using org.iringtools.refdata.federation;
 
 namespace org.iringtools.adapter
 {

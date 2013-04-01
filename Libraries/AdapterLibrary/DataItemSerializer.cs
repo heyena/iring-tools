@@ -38,6 +38,7 @@ namespace org.iringtools.adapter
         else
         {
           JavaScriptSerializer serializer = new JavaScriptSerializer();
+          serializer.MaxJsonLength = int.MaxValue;
           serializer.RegisterConverters(new JavaScriptConverter[] { _converter });
           string json = serializer.Serialize(graph);
           byte[] byteArray = Encoding.UTF8.GetBytes(json);
@@ -88,6 +89,7 @@ namespace org.iringtools.adapter
         else
         {
           JavaScriptSerializer serializer = new JavaScriptSerializer();
+          serializer.MaxJsonLength = int.MaxValue;
           serializer.RegisterConverters(new JavaScriptConverter[] { _converter });
           graph = (T)serializer.Deserialize<T>(json);
         }
@@ -105,6 +107,7 @@ namespace org.iringtools.adapter
   {
     private string _idFieldName = "_ID_";
     private string _linksFieldName = "_LINKS_";
+    private string _hasContentFieldName = "_HAS_CONTENT_";
     private bool _displayLinks = false;
 
     public DataItemConverter(string idFieldName, string linksFieldName, bool displayLinks)
@@ -132,8 +135,13 @@ namespace org.iringtools.adapter
       {
         result[_idFieldName] = dataItem.id;
 
+        if (result.Keys.Contains(_hasContentFieldName)) 
+          result[_hasContentFieldName] = dataItem.hasContent;
+
         foreach (var property in dataItem.properties)
         {
+          object value = property.Value;
+
           result[property.Key] = property.Value;
         }
 
@@ -153,8 +161,13 @@ namespace org.iringtools.adapter
 
       DataItem dataItem = new DataItem()
       {
-        properties = new Dictionary<string, string>()
+        properties = new Dictionary<string, object>(),
       };
+
+      if (dictionary.Keys.Contains(_hasContentFieldName) && bool.Parse(dictionary[_hasContentFieldName].ToString()))
+      {
+        dataItem.hasContent = true;
+      }
 
       foreach (var pair in dictionary)
       {

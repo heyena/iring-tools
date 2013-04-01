@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/data/filter"
+  targetNamespace="http://www.iringtools.org/data/filter" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+  <xs:annotation>
+    <xs:appinfo>
+      <jaxb:globalBindings>
+        <xjc:simple />
+      </jaxb:globalBindings>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:element name="dataFilter" type="DataFilter" />
+
+  <xs:complexType name="DataFilter">
+    <xs:sequence>      
+      <xs:element name="expressions" type="Expressions" />
+      <xs:element name="orderExpressions" type="OrderExpressions" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Expressions">
+    <xs:sequence>
+      <xs:element name="expression" type="Expression" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>      
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="OrderExpressions">
+    <xs:sequence>     
+      <xs:element name="orderExpression" type="OrderExpression" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Expression">
+    <xs:sequence>
+      <xs:element name="openGroupCount" type="xs:int" />
+      <xs:element name="propertyName" type="xs:string" />
+      <xs:element name="relationalOperator" type="RelationalOperator" />
+      <xs:element name="values" type = "Values"/>
+      <xs:element name="logicalOperator" type="LogicalOperator" />
+      <xs:element name="closeGroupCount" type="xs:int" />
+      <xs:element name="isCaseSensitive" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Values">
+    <xs:sequence>
+      <xs:element name="value" type="xs:string" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="RelationalOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EqualTo" />
+      <xs:enumeration value="NotEqualTo" />
+      <xs:enumeration value="StartsWith" />
+      <xs:enumeration value="EndsWith" />
+      <xs:enumeration value="Contains" />
+      <xs:enumeration value="In" />
+      <xs:enumeration value="GreaterThan" />
+      <xs:enumeration value="GreaterThanOrEqual" />
+      <xs:enumeration value="LesserThan" />
+      <xs:enumeration value="LesserThanOrEqual" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="LogicalOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="And" />
+      <xs:enumeration value="Or" />
+      <xs:enumeration value="Not" />
+      <xs:enumeration value="AndNot" />
+      <xs:enumeration value="OrNot" />    
+    </xs:restriction>
+  </xs:simpleType>  
+  
+  <xs:complexType name="OrderExpression">
+    <xs:sequence>
+      <xs:element name="propertyName" type="xs:string" />
+      <xs:element name="sortOrder" type="SortOrder" />     
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="SortOrder">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Asc" />
+      <xs:enumeration value="Desc" />     
+    </xs:restriction>
+  </xs:simpleType>  
+  
+</xs:schema>

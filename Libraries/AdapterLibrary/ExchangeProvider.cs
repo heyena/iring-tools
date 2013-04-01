@@ -32,7 +32,7 @@ namespace org.iringtools.exchange
     private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private Resource _scopes = null;
+    private ScopeProjects _scopes = null;
     private IIdentityLayer _identityLayer = null;
     private IDictionary _keyRing = null;
     private IDataLayer _dataLayer = null;
@@ -63,12 +63,12 @@ namespace org.iringtools.exchange
 
       if (File.Exists(scopesPath))
       {
-        _scopes = Utility.Read<Resource>(scopesPath);
+        _scopes = Utility.Read<ScopeProjects>(scopesPath);
       }
       else
       {
-        _scopes = new Resource();
-        Utility.Write<Resource>(_scopes, scopesPath);
+        _scopes = new ScopeProjects();
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
       _response = new Response();
@@ -206,9 +206,16 @@ namespace org.iringtools.exchange
         string proxyPort = _settings["ProxyPort"];
         if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
+          WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
           WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
-          endpoint.Proxy = proxyCrendentials.GetWebProxy() as WebProxy;
-          endpoint.ProxyCredentials = proxyCrendentials.GetNetworkCredential();
+          if (proxyCrendentials != null)
+          {
+            webProxy.Credentials = _settings.GetProxyCredential();
+          }
+      
+          endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password, proxyCrendentials.domain);
+          endpoint.SetProxy(webProxy.Address);
         }
 
         String query = "CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}";
@@ -331,34 +338,23 @@ namespace org.iringtools.exchange
     }
 
     #region helper methods
-
-    private void getResource()
-    {
-      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
-      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port;
-      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
-    }
-
     private void InitializeScope(string projectName, string applicationName)
     {
       try
       {
-        if (_scopes.Locators == null)
-          getResource();
-
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
-
-          foreach (Locator project in _scopes.Locators)
+          foreach (ScopeProject project in _scopes)
           {
-            if (project.Context.ToUpper() == projectName.ToUpper())
+            if (project.Name == projectName)
             {
-              foreach (EndpointApplication application in project.Applications)
+              foreach (ScopeApplication application in project.Applications)
               {
-                if (application.Endpoint.ToUpper() == applicationName.ToUpper())
+                if (application.Name == applicationName)
+                {
                   isScopeValid = true;
+                }
               }
             }
           }
