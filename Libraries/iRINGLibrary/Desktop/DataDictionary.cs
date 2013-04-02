@@ -336,8 +336,6 @@ namespace org.iringtools.library
     [EnumMember]
     @DateTime,
     [EnumMember]
-    @Date,
-    [EnumMember]
     @TimeStamp,
     [EnumMember]
     @Decimal,
@@ -354,7 +352,9 @@ namespace org.iringtools.library
     [EnumMember]
     @String,
     [EnumMember]
-    @Reference
+    @Reference,
+    [EnumMember]
+    @Date
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]
