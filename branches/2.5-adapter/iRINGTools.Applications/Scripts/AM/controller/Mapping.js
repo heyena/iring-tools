@@ -161,7 +161,7 @@ Ext.define('AM.controller.Mapping', {
     var content = me.getMainContent(),
       context = node.data.property.context,
       endpoint = node.data.property.endpoint,
-      baseUrl = node.data.property.baseUrl,
+      // baseUrl = node.data.property.baseUrl,
       graphName = node.data.text,
       title = 'GraphMap - ' + context + "." + endpoint + '.' + node.data.text;
 
@@ -171,7 +171,7 @@ Ext.define('AM.controller.Mapping', {
       mapPanel = Ext.widget('mappingpanel', {
         'title': title, 
         'contextName': context,
-        'baseUrl': baseUrl, 
+        //'baseUrl': baseUrl, 
         'graphName': graphName,
         'endpoint': endpoint
       });

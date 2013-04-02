@@ -448,6 +448,8 @@ namespace org.iringtools.web.controllers
 
                 node.property = new Dictionary<string, string>
                   {
+                    {"context", contextName},
+                    {"endpoint", endpoint},
                     {"Data Object Name", graph.dataObjectName},
                     {"Name", graph.name},
                     {"Identifier", string.Join(",", classMap.identifiers)},

@@ -8,6 +8,6 @@ namespace org.iringtools.library
   public class StoreViewModel : ResponseViewModel
   {
     [DataMember(Name = "metaData")]
-    public MetaDataViewModel metaData { get; set; }
+    public MetaDataViewModel MetaData { get; set; }
   }
 }

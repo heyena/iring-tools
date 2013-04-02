@@ -9,35 +9,35 @@ namespace org.iringtools.library
     //public IEnumerable<ColumnViewModel> columns { get; set; }
 
     [DataMember(Name = "dataIndex")]
-    public string dataIndex { get; set; }
+    public string DataIndex { get; set; }
 
     [DataMember(Name = "groupable")]
     [DefaultValue(false)]
-    public bool groupable { get; set; }
+    public bool Groupable { get; set; }
 
     [DataMember(Name = "hidden")]
     [DefaultValue(false)]
-    public bool hidden { get; set; }
+    public bool Hidden { get; set; }
 
     [DataMember(Name = "text")]
-    public string text { get; set; }
+    public string Text { get; set; }
 
     [DataMember(Name = "xtype")]
-    public string xtype { get; set; }
+    public string Xtype { get; set; }
 
     [DataMember(Name = "format")]
-    public string format { get; set; }
+    public string Format { get; set; }
 
     [DataMember(Name = "flex")]
     [DefaultValue(0)]
-    public int flex { get; set; }
+    public int Flex { get; set; }
 
 
 
     public ColumnViewModel()
     {
-      this.flex = 0;
-      this.xtype = "gridcolumn";
+      this.Flex = 0;
+      this.Xtype = "gridcolumn";
     }
   }
 }

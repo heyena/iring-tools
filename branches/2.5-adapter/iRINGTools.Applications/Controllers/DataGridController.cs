@@ -69,12 +69,12 @@ namespace org.iringtools.web.controllers
                        where !dataProperty.isHidden
                        select new ColumnViewModel
                        {
-                         text = dataProperty.propertyName,
-                         dataIndex = dataProperty.propertyName,
-                         flex = 2
+                         Text = dataProperty.propertyName,
+                         DataIndex = dataProperty.propertyName,
+                         Flex = 2
                        }).ToList();
 
-            fields.AddRange(columns.Select(o => new FieldViewModel { name = o.dataIndex }).ToList());
+            fields.AddRange(columns.Select(o => new FieldViewModel { Name = o.DataIndex }).ToList());
 
             var dataItems = GetDataObjects(_context, _endpoint, graph, dataFilter, start, limit, _baseUrl);
 
@@ -87,7 +87,7 @@ namespace org.iringtools.web.controllers
               foreach (var column in columns)
               {
                 var found = false;
-                foreach (var property in dataItem.properties.Where(property => column.dataIndex.ToLower() == property.Key.ToLower()))
+                foreach (var property in dataItem.properties.Where(property => column.DataIndex.ToLower() == property.Key.ToLower()))
                 {
                   rowData.Add(property.Key, property.Value);
                   found = true;
@@ -96,26 +96,26 @@ namespace org.iringtools.web.controllers
 
                 if (!found)
                 {
-                  rowData.Add(column.dataIndex, "");
+                  rowData.Add(column.DataIndex, "");
                 }
               }
               rows.Add(rowData);
             }
             model = new StoreViewModel
             {
-              data = rows.ToArray(),
-              metaData = new MetaDataViewModel { columns = columns, fields = fields },
-              total = total,
-              success = true
+              Data = rows.ToArray(),
+              MetaData = new MetaDataViewModel { Columns = columns, Fields = fields },
+              Total = total,
+              Success = true
             };
 
-            return Json(model, JsonRequestBehavior.AllowGet);
+            return new JsonNetResult { Data = model, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
           }
           catch (Exception ex)
           {
             _response = _response + " " + ex.Message.ToString();
             _logger.Error(ex + " " + _response);
-            return Json(new { success = false } + _response, JsonRequestBehavior.AllowGet);
+            return (JsonNetResult) Json(new { success = false } + _response, JsonRequestBehavior.AllowGet);
           }
         }
 

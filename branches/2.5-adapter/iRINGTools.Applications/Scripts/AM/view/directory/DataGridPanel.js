@@ -18,6 +18,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
   alias: 'widget.dynamicgrid',
 
   requires: [
+    'AM.view.override.directory.DataGridPanel',
     'AM.store.DataGridStore'
   ],
   uses: [

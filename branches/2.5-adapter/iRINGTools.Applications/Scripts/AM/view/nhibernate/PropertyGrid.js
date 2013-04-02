@@ -17,6 +17,10 @@ Ext.define('AM.view.nhibernate.PropertyGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.propertygrid',
 
+  requires: [
+    'AM.view.override.nhibernate.PropertyGrid'
+  ],
+
   propertyPairs: '',
 
   initComponent: function() {

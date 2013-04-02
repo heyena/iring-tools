@@ -76,10 +76,6 @@ Ext.define('AM.view.directory.ApplicationForm', {
         },
         {
           xtype: 'hiddenfield',
-          name: 'oldBaseUrl'
-        },
-        {
-          xtype: 'hiddenfield',
           name: 'contextValue'
         },
         {

@@ -9,26 +9,26 @@ namespace org.iringtools.library
 
     
     [DataMember(Name = "dateFormat", EmitDefaultValue = true)]
-    public string dateFormat { get; set; }
+    public string DateFormat { get; set; }
 
     [DataMember(Name = "dateValue", EmitDefaultValue = true)]
     [DefaultValue("")]
-    public string dateValue { get; set; }
+    public string DateValue { get; set; }
 
     [DataMember(Name = "mapping", EmitDefaultValue = true)]
-    public string mapping { get; set; }
+    public string Mapping { get; set; }
 
     [DataMember(Name = "name", EmitDefaultValue = true)]
-    public string name { get; set; }
+    public string Name { get; set; }
 
     [DataMember(Name = "persist", EmitDefaultValue = true)]
     [DefaultValue(true)]
-    public bool persist { get; set; }
+    public bool Persist { get; set; }
 
 
     [DataMember(Name = "sortDir", EmitDefaultValue = true)]
     [DefaultValue("ASC")]
-    public string sortDir { get; set; }
+    public string SortDir { get; set; }
 
 
     [DataMember(Name = "type", EmitDefaultValue = true)]
@@ -37,15 +37,15 @@ namespace org.iringtools.library
 
     [DataMember(Name = "useNull", EmitDefaultValue = true)]
     [DefaultValue("false")]
-    public bool useNull { get; set; }
+    public bool UseNull { get; set; }
 
     public FieldViewModel()
     {
-      dateValue = "";
-      persist = true;
-      sortDir = "ASC";
+      DateValue = "";
+      Persist = true;
+      SortDir = "ASC";
       type = "auto";
-      useNull = false;
+      UseNull = false;
     }
   }
 }

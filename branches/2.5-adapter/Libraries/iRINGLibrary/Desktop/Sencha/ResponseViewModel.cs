@@ -7,15 +7,15 @@ namespace org.iringtools.library
   public class ResponseViewModel 
   {
     [DataMember(Name = "success")]
-    public bool success { get; set; }
+    public bool Success { get; set; }
 
     [DataMember(Name = "total")]
-    public long total { get; set; }
+    public long Total { get; set; }
 
     [DataMember(Name = "data")]
-    public Array data { get; set; }
+    public Array Data { get; set; }
 
     [DataMember(Name = "message")]
-    public string message { get; set; }
+    public string Message { get; set; }
   }
 }

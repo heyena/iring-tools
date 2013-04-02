@@ -29,7 +29,7 @@
                 ],
                 "designer|userClassName": "MyAjaxProxy9",
                 "extraParams": [
-                    "{type: 'MappingNode',id: null,range: null,graphName: null, contextName: null,endpoint: null,baseUrl: null}"
+                    "{type: 'MappingNode',id: null,range: null,graphName: null, contextName: null,endpoint: null}"
                 ],
                 "timeout": 600000,
                 "url": "mapping/getnode"

@@ -34,8 +34,8 @@ namespace org.iringtools.web.Helpers
         { 
           NullValueHandling = NullValueHandling.Ignore,
           DefaultValueHandling = DefaultValueHandling.Ignore,
-          DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
-          ContractResolver = new CamelCasePropertyNamesContractResolver() 
+          DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
+          //ContractResolver = new CamelCasePropertyNamesContractResolver() 
         }
       );
       
