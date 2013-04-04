@@ -184,6 +184,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="HibernateService.cs" />
+    <Compile Include="modules\WcfReadEntityBodyModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdapterService.cs" />
     <Compile Include="RawContentTypeMapper.cs" />
