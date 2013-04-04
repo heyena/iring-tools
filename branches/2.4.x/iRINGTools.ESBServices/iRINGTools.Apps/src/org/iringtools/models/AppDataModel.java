@@ -2,6 +2,7 @@ package org.iringtools.models;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.dxfr.content.ContentObject;
 import org.iringtools.dxfr.content.ContentObjects;
@@ -16,6 +17,8 @@ import org.iringtools.widgets.grid.Grid;
 
 public class AppDataModel extends DataModel
 {  
+  private static final Logger logger = Logger.getLogger(AppDataModel.class);
+  
   public AppDataModel(Map<String, Object> session, String refDataServiceUri, FieldFit fieldFit, 
       boolean isAsync, long timeout, long interval)
   {
@@ -58,8 +61,10 @@ public class AppDataModel extends DataModel
           
           Grid grid = null;
           
-          if (pageDtis != null)
+          if (pageDtis != null && pageDtis.getDataTransferIndexList() != null && 
+              pageDtis.getDataTransferIndexList().getItems().size() > 0)
           {
+            logger.debug("Getting page (" + pageDtis.getDataTransferIndexList().getItems().size() + ") of DTOs...");
             String dtoPath = graphPath + "/page";
             DataTransferObjects pageDtos = httpClient.post(DataTransferObjects.class, dtoPath, pageDtis);
                         

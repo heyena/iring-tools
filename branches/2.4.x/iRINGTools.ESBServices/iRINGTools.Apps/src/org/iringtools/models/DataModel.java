@@ -888,8 +888,7 @@ public class DataModel {
 			dtis.setDataTransferIndexList(dtiListObj);
 
 			DxoRequest dxoRequest = new DxoRequest();
-			dxoRequest
-					.setManifest(getManifest(serviceUri, manifestRelativePath));
+			dxoRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
 			dxoRequest.setDataTransferIndices(dtis);
 
 			HttpClient httpClient = new HttpClient(serviceUri);
@@ -897,21 +896,18 @@ public class DataModel {
 
 			if (isAsync) {
 				httpClient.setAsync(true);
-				String statusUrl = httpClient.post(String.class,
-						dtoRelativePath, dxoRequest);
+				String statusUrl = httpClient.post(String.class, dtoRelativePath, dxoRequest);
 				
 				try
 				{
-					dtos = waitForRequestCompletion(DataTransferObjects.class,
-						serviceUri + statusUrl);
+					dtos = waitForRequestCompletion(DataTransferObjects.class, serviceUri + statusUrl);
 				}
 				catch (Exception ex) {
 					throw new DataModelException(ex.getMessage());
 				}
 				
 			} else {
-				dtos = httpClient.post(DataTransferObjects.class,
-						dtoRelativePath, dxoRequest);
+				dtos = httpClient.post(DataTransferObjects.class,	dtoRelativePath, dxoRequest);
 			}
 		} catch (HttpClientException e) {
 			logger.error(e.getMessage());
@@ -925,16 +921,35 @@ public class DataModel {
 			String manifestRelativePath, String dtiRelativePath,
 			String dtoRelativePath, String filter, String sortBy,
 			String sortOrder, int start, int limit,
-			String dataFilterRelativePath) throws DataModelException {
-		DataTransferIndices dtis = getDtis(serviceUri, manifestRelativePath,
-				dtiRelativePath, filter, sortBy, sortOrder,
-				dataFilterRelativePath);
-		List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList()
-				.getItems();
-		int actualLimit = Math.min(start + limit, dtiList.size());
-		List<DataTransferIndex> pageDtis = dtiList.subList(start, actualLimit);
-		return getDtos(serviceUri, manifestRelativePath, dtoRelativePath,
-				pageDtis);
+			String dataFilterRelativePath) throws DataModelException 
+	{
+	  
+	  DataTransferObjects dtos = new DataTransferObjects();
+	  
+	  try
+	  {	  
+	    logger.debug("Getting page of DTIs...");
+	    
+  		DataTransferIndices dtis = getDtis(serviceUri, manifestRelativePath,
+  				dtiRelativePath, filter, sortBy, sortOrder, dataFilterRelativePath);
+  		
+  		if (dtis.getDataTransferIndexList() != null && dtis.getDataTransferIndexList().getItems().size() > 0)
+  		{
+  		  List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
+        int actualLimit = Math.min(start + limit, dtiList.size());
+    		List<DataTransferIndex> pageDtis = dtiList.subList(start, actualLimit);
+    		
+    		logger.debug("Getting page (" + pageDtis.size() + ") of DTOs...");
+        dtos = getDtos(serviceUri, manifestRelativePath, dtoRelativePath,	pageDtis);
+  		}
+	  }
+	  catch (Exception e)
+	  {
+	    e.printStackTrace();
+	    throw new DataModelException("Error getting a page of DTOs: " + e);
+	  }
+	  
+	  return dtos;
 	}
 
 	protected Grid getDtoGrid(String serviceUri, String relativePath, Manifest manifest,
