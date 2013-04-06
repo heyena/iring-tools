@@ -79,19 +79,6 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region Test Connection
-    /// <summary>
-    /// Testing if connection exists.
-    /// </summary>
-    /// <returns>Returns a string.</returns>
-    [Description("Gets the scopes (project and application combinations) available from the service.")]
-    [WebGet(UriTemplate = "/test")]
-    public string TestBaseUrl()
-    {      
-      return "connected";
-    }
-    #endregion
-
     #region GetScopes
     /// <summary>
     /// Gets the scopes (project and application combinations) available from the service.
@@ -99,7 +86,7 @@ namespace org.iringtools.services
     /// <returns>Returns a list of ScopeProject objects.</returns>
     [Description("Gets the scopes (project and application combinations) available from the service.")]
     [WebGet(UriTemplate = "/scopes")]
-    public Resource GetScopes()
+    public ScopeProjects GetScopes()
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
@@ -109,16 +96,39 @@ namespace org.iringtools.services
     #endregion
 
     #region GetResourceData
-    /// <summary>
-    /// Gets the resource data for a datalayer.
-    /// </summary>
-    /// <returns>Returns a list of service settings.</returns>
+    ///// <summary>
+    ///// Gets the resource data for a datalayer.
+    ///// </summary>
+    ///// <returns>Returns a list of service settings.</returns>
     [Description("Gets datalayer resource data.")]
     [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/resourcedata")]
     public DocumentBytes GetResourceData(string scope, string app)
     {
-      return _adapterProvider.GetResourceData(scope, app);
+        return _adapterProvider.GetResourceData(scope, app);
     }
+
+
+    ///// <summary>
+    ///// Currently Supporting the .mdb file only.
+    ///// </summary>
+    [Description("Gets datalayer resource data.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/resourcebytes")]
+    public Stream GetResourceDataBytes(string scope, string app)
+    {
+        byte[] data = _adapterProvider.GetResourceDataBytes(scope, app);
+        if (data != null)
+        {
+            MemoryStream stream = new MemoryStream(data);
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-msaccess"; //or whatever your mime type is
+            stream.Position = 0;
+            return stream;
+        }
+        else
+        {
+            return new MemoryStream();
+        }
+    }
+
     #endregion
 
     #region Config methods
@@ -145,28 +155,28 @@ namespace org.iringtools.services
     #endregion Config methods
     #endregion
 
-    //#region Private Resources
-    //[Description("Creates a new scope.")]
-    //[WebInvoke(Method = "POST", UriTemplate = "/scopes")]
-    //public Response AddScope(ScopeProject scope)
-    //{
-    //  try
-    //  {
-    //    return _adapterProvider.AddScope(scope);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    return PrepareErrorResponse(ex);
-    //  }
-    //}
-
-    [Description("Updates an existing scope.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}")]
-    public Response UpdateScope(string scope, Locator oldScope)
+    #region Private Resources
+    [Description("Creates a new scope.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/scopes")]
+    public Response AddScope(ScopeProject scope)
     {
       try
       {
-        return _adapterProvider.UpdateScope(scope, oldScope);
+        return _adapterProvider.AddScope(scope);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    [Description("Updates an existing scope.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}")]
+    public Response UpdateScope(string scope, ScopeProject updatedScope)
+    {
+      try
+      {
+        return _adapterProvider.UpdateScope(scope, updatedScope);
       }
       catch (Exception ex)
       {
@@ -189,12 +199,12 @@ namespace org.iringtools.services
     }
 
     [Description("Creates a new application in a specific scope.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{application}/apps")]
-    public Response AddApplication(string application, EndpointApplication newApplication)
+    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}/apps")]
+    public Response AddApplication(string scope, ScopeApplication application)
     {
       try
       {
-        return _adapterProvider.AddApplication(application, newApplication);
+        return _adapterProvider.AddApplication(scope, application);
       }
       catch (Exception ex)
       {
@@ -204,21 +214,21 @@ namespace org.iringtools.services
 
     [Description("Updates an existing application in a specific scope.")]
     [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}/apps/{app}")]
-    public Response UpdateApplication(string scope, string app, EndpointApplication oldApplication)
+    public Response UpdateApplication(string scope, string app, ScopeApplication updatedApplication)
     {
       try
       {
-        return _adapterProvider.UpdateApplication(scope, app, oldApplication);
+        return _adapterProvider.UpdateApplication(scope, app, updatedApplication);
       }
       catch (Exception ex)
       {
         return PrepareErrorResponse(ex);
       }
-    }    
+    }
 
     [Description("Deletes an application in a specific scope.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}/delete")]
-    public Response DeleteApplication(string scope, EndpointApplication app)
+    [WebInvoke(Method = "GET", UriTemplate = "/scopes/{scope}/apps/{app}/delete")]
+    public Response DeleteApplication(string scope, string app)
     {
       try
       {
@@ -283,20 +293,6 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Generate artifacts for a specific application in a project.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/generate")]
-    public Response Generate(string scope, string app)
-    {
-      try
-      {
-        return _adapterProvider.Generate(scope, app);
-      }
-      catch (Exception ex)
-      {
-        return PrepareErrorResponse(ex);
-      }
-    }
-
     [Description("Generate artifacts for all applications in a specific project.")]
     [WebInvoke(Method = "GET", UriTemplate = "/{scope}/generate")]
     public Response GenerateScope(string scope)
@@ -310,7 +306,20 @@ namespace org.iringtools.services
         return PrepareErrorResponse(ex);
       }
     }
-    
+
+    [Description("Generate artifacts for a specific application in a project.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/generate")]
+    public Response Generate(string scope, string app)
+    {
+      try
+      {
+        return _adapterProvider.Generate(scope, app);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
     #endregion Generate methods
 
     #region GetDictionary
@@ -327,7 +336,8 @@ namespace org.iringtools.services
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.GetDictionary(scope, app);
+      DataDictionary dictionary = _adapterProvider.GetDictionary(scope, app);
+      return dictionary;
     }
     #endregion
 
@@ -370,7 +380,7 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region DataLayers Management
+    #region GetDataLayers
     [Description("Get a list of Data Layers available from the service.")]
     [WebGet(UriTemplate = "/datalayers")]
     public void GetDatalayers()
@@ -392,85 +402,97 @@ namespace org.iringtools.services
         HttpContext.Current.Response.Write(e);
       }
     }
+    #endregion
 
-    [Description("Adds or updates a dataLayer to the service.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/datalayers")]
-    public void PostDataLayer(Stream dataLayerStream)
-    {
-      try
-      {
-        DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
-        DataLayer dataLayer = (DataLayer)serializer.ReadObject(dataLayerStream);
-        
-        Response response = _adapterProvider.PostDataLayer(dataLayer);
-        string xml = Utility.Serialize<Response>(response, true);
+    //TODO: pending on testing, do not delete
+    #region data layers managment
+    //[Description("Adds/updates a dataLayer to/in adapter.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/datalayers")]
+    //public void PostDataLayer(Stream dataLayerStream)
+    //{
+    //  try
+    //  {
+    //    DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
+    //    DataLayer dataLayer = (DataLayer)serializer.ReadObject(dataLayerStream);
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(xml);
-      }
-      catch (Exception e)
-      {
-        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        context.StatusCode = HttpStatusCode.InternalServerError;
+    //    Response response = _adapterProvider.PostDataLayer(dataLayer);
+    //    string xml = Utility.Serialize<Response>(response, true);
 
-        HttpContext.Current.Response.ContentType = "text/html";
-        HttpContext.Current.Response.Write(e);
-      }
-    }
+    //    HttpContext.Current.Response.ContentType = "application/xml";
+    //    HttpContext.Current.Response.Write(xml);
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+    //    context.StatusCode = HttpStatusCode.InternalServerError;
 
-    [Description("Deletes a data layer from the service.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/datalayers/{name}")]
-    public void DeleteDatalayer(string name)
-    {
-      try
-      {
-        Response response = _adapterProvider.DeleteDataLayer(name);
-        string xml = Utility.Serialize<Response>(response, true);
+    //    HttpContext.Current.Response.ContentType = "text/html";
+    //    HttpContext.Current.Response.Write(e);
+    //  }
+    //}
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(xml);
-      }
-      catch (Exception e)
-      {
-        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        context.StatusCode = HttpStatusCode.InternalServerError;
+    //[Description("Deletes a data layer from adapter.")]
+    //[WebInvoke(Method = "DELETE", UriTemplate = "/datalayers/{name}")]
+    //public void DeleteDatalayer(string name)
+    //{
+    //  try
+    //  {
+    //    Response response = _adapterProvider.DeleteDataLayer(name);
+    //    string xml = Utility.Serialize<Response>(response, true);
 
-        HttpContext.Current.Response.ContentType = "text/html";
-        HttpContext.Current.Response.Write(e);
-      }
-    }
-    #endregion DataLayers Management
+    //    HttpContext.Current.Response.ContentType = "application/xml";
+    //    HttpContext.Current.Response.Write(xml);
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+    //    context.StatusCode = HttpStatusCode.InternalServerError;
+
+    //    HttpContext.Current.Response.ContentType = "text/html";
+    //    HttpContext.Current.Response.Write(e);
+    //  }
+    //}
+    #endregion
 
     #region RefreshDataObjects
     [Description("Resets all data objects state in data layer.")]
     [WebGet(UriTemplate = "/{scope}/{app}/refresh")]
-    public Response RefreshDataObjects(string scope, string app)
+    public void RefreshDataObjects(string scope, string app)
     {
       try
       {
-        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        context.ContentType = "application/xml";
-
-        return _adapterProvider.RefreshDataObjects(scope, app);
+        if (IsAsync())
+        {
+          string statusUrl = _adapterProvider.AsyncRefreshDictionary(scope, app);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+        }
+        else
+        {
+          Response response = _adapterProvider.RefreshDataObjects(scope, app);
+          _adapterProvider.FormatOutgoingMessage<Response>(response, "xml", true);
+        }
       }
       catch (Exception ex)
       {
-        return PrepareErrorResponse(ex);
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(ex.Message);
       }
     }
     #endregion
 
     #region RefreshDataObject
     [Description("Resets a data object state in data layer.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{dataObject}/refresh")]
-    public Response RefreshDataObject(string scope, string app, string dataObject)
+    [WebGet(UriTemplate = "/{scope}/{app}/{objectType}/refresh")]
+    public Response RefreshDataObject(string scope, string app, string objectType)
     {
       try
       {
         OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
         context.ContentType = "application/xml";
 
-        return _adapterProvider.RefreshDataObject(scope, app, dataObject);
+        return _adapterProvider.RefreshDataObject(scope, app, objectType);
       }
       catch (Exception ex)
       {
@@ -479,7 +501,57 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region Helper Methods
+    #region RefreshDataObject with filter
+    [Description("Resets a data object state in data layer.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{objectType}/refresh")]
+    public Response RefreshDataObjectWithFilter(string scope, string app, string objectType, DataFilter dataFilter)
+    {
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.ContentType = "application/xml";
+
+        return _adapterProvider.RefreshDataObject(scope, app, objectType, dataFilter);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    //[WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/binding")]
+    #endregion
+
+    #region Async request queue
+    [Description("Gets status of a asynchronous request.")]
+    [WebGet(UriTemplate = "/requests/{id}")]
+    public void GetRequestStatus(string id)
+    {
+      RequestStatus status = null;
+
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        status = _adapterProvider.GetRequestStatus(id);
+
+        if (status.State == State.NotFound)
+        {
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+        }
+      }
+      catch (Exception ex)
+      {
+        status = new RequestStatus()
+        {
+          State = State.Error,
+          Message = ex.Message
+        };
+      }
+
+      _adapterProvider.FormatOutgoingMessage<RequestStatus>(status, "xml", true);
+    }
+    #endregion
+
     private Response PrepareErrorResponse(Exception ex)
     {
       Response response = new Response
@@ -492,6 +564,19 @@ namespace org.iringtools.services
       };
 
       return response;
+    }
+
+    private bool IsAsync()
+    {
+      bool async = false;
+      string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
+
+      if (asyncHeader != null && asyncHeader.ToLower() == "true")
+      {
+        async = true;
+      }
+
+      return async;
     }
     #endregion
   }

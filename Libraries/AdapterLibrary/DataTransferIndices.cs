@@ -56,6 +56,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "sortOrder", Order = 4, EmitDefaultValue = false)]
     public string SortOrder { get; set; }
+
+    [DataMember(Name = "totalCount", Order = 5, EmitDefaultValue = false)]
+    public long TotalCount { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/dti", Name = "dataTransferIndex")]
@@ -67,7 +70,7 @@ namespace org.iringtools.adapter
     [DataMember(Name = "hashValue", Order = 1, EmitDefaultValue = false)]
     public string HashValue { get; set; }
 
-    [DataMember(Name = "transferType", Order = 2, EmitDefaultValue = false)]
+    [DataMember(Name = "transferType", Order = 2)]
     public TransferType TransferType { get; set; }
 
     [DataMember(Name = "sortIndex", Order = 3, EmitDefaultValue = false)]
@@ -75,5 +78,11 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "internalIdentifier", Order = 4, EmitDefaultValue = false)]
     public string InternalIdentifier { get; set; }
+
+    [DataMember(Name = "hasContent", Order = 5, EmitDefaultValue = false)]
+    public bool HasContent { get; set; }
+
+    [DataMember(Name = "duplicateCount", Order = 6, EmitDefaultValue = false)]
+    public int DuplicateCount { get; set; }
   }
 }

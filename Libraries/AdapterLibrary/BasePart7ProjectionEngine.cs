@@ -466,7 +466,7 @@ namespace org.iringtools.adapter.projection
 
       if (objProp == null)
       {
-        throw new Exception("Object property [" + pair.Key + "] not found.");
+        _logger.Error("Object property [" + pair.Key + "] not found.");
       }
 
       try
@@ -504,6 +504,26 @@ namespace org.iringtools.adapter.projection
       {
         string error = "Error setting value for property [" + objProp.propertyName + "]. " + e;
         _logger.Error(error);
+      }
+    }
+
+    protected void SetAppCode(IDataObject dataObject)
+    {
+      string senderContext = _settings["SenderProjectName"];
+      string senderApp = _settings["SenderApplicationName"];
+      string appCodeProperty = _settings["AppCodeProperty"];
+      string includeAppCodeContext = _settings["IncludeAppCodeContext"];
+
+      if (appCodeProperty != null && senderApp != null)
+      {
+        if (includeAppCodeContext != null && includeAppCodeContext.ToLower() == "true" && senderContext != null)
+        {
+          dataObject.SetPropertyValue(appCodeProperty, senderContext + "." + senderApp);
+        }
+        else
+        {
+          dataObject.SetPropertyValue(appCodeProperty, senderApp);
+        }
       }
     }
 
@@ -567,10 +587,15 @@ namespace org.iringtools.adapter.projection
           if (!ContainsAssignedKey(objDef))
           {
             IDataObject dataObject = _dataLayer.Create(objectType, null).First();
+            SetAppCode(dataObject);
 
-            if (dataObject.GetType() == typeof(GenericDataObject))
+            if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
             {
               ((GenericDataObject)dataObject).ObjectType = objectType;
+            }
+            else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+            {
+              ((GenericContentObject)dataObject).ObjectType = objectType;
             }
 
             foreach (var pair in dataRecord)
@@ -607,10 +632,16 @@ namespace org.iringtools.adapter.projection
       {
         IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
 
-        if (dataObject.GetType() == typeof(GenericDataObject))
+        if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
         {
           ((GenericDataObject)dataObject).ObjectType = objectType;
         }
+        else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+        {
+          ((GenericContentObject)dataObject).ObjectType = objectType;
+        }
+
+        SetAppCode(dataObject);
 
         foreach (var pair in dataRecord)
         {
@@ -734,6 +765,9 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
+
+      if (classIdentifiers == null)
+        return new List<string>();
 
       return classIdentifiers.ToList<string>();
     }

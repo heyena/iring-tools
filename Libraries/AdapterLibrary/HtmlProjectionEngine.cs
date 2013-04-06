@@ -165,35 +165,45 @@ namespace org.iringtools.adapter.projection
       for (int i = 0; i < dataObjectDef.dataProperties.Count; i++ )
       {
         DataProperty dataProperty = dataObjectDef.dataProperties[i];
-        string propertyName = dataProperty.propertyName;
-        string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-
-        XElement row = new XElement("tr");
-        table.Add(row);
-
-        if (i % 2 == 0)
+        
+        if (!dataProperty.isHidden)
         {
-          row.Add(new XAttribute("class", "even"));
-        }
-        else
-        {
-          row.Add(new XAttribute("class", "odd"));
-        }
+          object value = dataObject.GetPropertyValue(dataProperty.propertyName);
 
-        XElement nameCol = new XElement("td", propertyName);
-        row.Add(nameCol);
+          if (value != null)
+          {
+            if (dataProperty.dataType == DataType.Char ||
+                  dataProperty.dataType == DataType.DateTime ||
+                  dataProperty.dataType == DataType.String ||
+                  dataProperty.dataType == DataType.TimeStamp)
+            {
+              string valueStr = Convert.ToString(value);
 
-        if (value == null)
-        {
-          value = String.Empty;
-        }
-        else if (dataProperty.dataType == DataType.DateTime)
-        {
-          value = Utility.ToXsdDateTime(value);
-        }
+              if (dataProperty.dataType == DataType.DateTime)
+                valueStr = Utility.ToXsdDateTime(valueStr);
 
-        XElement valueCol = new XElement("td", value);
-        row.Add(valueCol);
+              value = valueStr;
+            }
+
+            XElement row = new XElement("tr");
+            table.Add(row);
+
+            if (i % 2 == 0)
+            {
+              row.Add(new XAttribute("class", "even"));
+            }
+            else
+            {
+              row.Add(new XAttribute("class", "odd"));
+            }
+
+            XElement nameCol = new XElement("td", dataProperty.propertyName);
+            row.Add(nameCol);
+
+            XElement valueCol = new XElement("td", value);
+            row.Add(valueCol);
+          }
+        }
       }
 
       return html;

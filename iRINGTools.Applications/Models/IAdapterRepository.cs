@@ -6,49 +6,44 @@ using System.Web;
 using org.iringtools.library;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
-using System.Collections;
 using System.IO;
-
 
 namespace iRINGTools.Web.Models
 {
   public interface IAdapterRepository
   {
-    Directories GetScopes();
+    ScopeProjects GetScopes();
 
-    DataLayers GetDataLayers(string baseUrl);
+    ScopeProject GetScope(string name);
 
-    Tree GetDirectoryTree(string user);
+    DataLayers GetDataLayers();
 
-    Mapping GetMapping(string contextName, string endpoint, string baseUrl);
+    ScopeApplication GetScopeApplication(string scope, string application);
 
-    DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl);
+    DataLayer GetDataLayer(string scope, string application);
+
+    Mapping GetMapping(string scope, string application);
+
+    DataDictionary GetDictionary(string scope, string application);
 
     Entity GetClassLabel(string classId);
 
-    string Folder(string newFolderName, string description, string path, string state, string context, string oldContext, string user);
+    string AddScope(string name, string description);
 
-    string DeleteEntry(string path, string type, string context, string baseUrl, string user);
+    string UpdateScope(string name, string newName, string newDescription);
 
-    string Endpoint(string newEndpointName, string path, string description, string states, string context, string oldAssembly, string newAssembly, string baseUrl, string oldBaseUrl, string user);
+    string DeleteScope(string name);
 
-    string GetNodeIconCls(string type);
+    string AddApplication(string scopeName, ScopeApplication application);
 
-    string GetRootSecurityRole();
+    string UpdateApplication(string scopeName, string applicationName, ScopeApplication updatedApplication);
 
-    string GetUserLdap();
+    string DeleteApplication(string scope, string application);
 
-    string TestBaseUrl(string baseUrl);
+    Response Refresh(string scope, string application);
 
-    Urls GetEndpointBaseUrl(string user);
-
-    ContextNames GetFolderContexts(string user);
-
-    string GetCombinationMsg();
-
-    Response RegenAll(string user);
-
-    Response SaveDataLayer(MemoryStream dataLayerStream);
-      
+    Response Refresh(string scope, string application, string dataObjectName);
+    
+    Response UpdateDataLayer(MemoryStream dataLayerStream);
   }
 }

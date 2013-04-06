@@ -2,36 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-using System.Net;
-using System.Web;
-using System.Xml.Linq;
+using ExtremeML.Packaging;
+using ExtremeML.Spreadsheet.Address;
 using IDS_ADI.InformationModel;
 using org.ids_adi.qmxf;
-using org.iringtools.utility;
-using ExtremeML.Packaging;
-using ExtremeML.Spreadsheet;
-using System.Text.RegularExpressions;
-using ExtremeML.Spreadsheet.Address;
 using org.iringtools.library;
+using org.iringtools.utility;
 
 namespace QMXFGenerator
 {
-  class Program
+  internal class Program
   {
     #region Private Members
+
     private static string _excelFilePath = String.Empty;
     private static string _qmxfFilePath = String.Empty;
     private static string _processedFilePath = String.Empty;
     private static string _proxyHost = String.Empty;
     private static string _proxyPort = String.Empty;
     private static string _proxyCredentials = String.Empty;
-    private static string _idsADICredentials = String.Empty;
     private static string _classRegistryBase = String.Empty;
     private static string _templateRegistryBase = String.Empty;
     private static string _targetRepository = string.Empty;
     private static string _updateRun = string.Empty;
-    private static SpreadsheetDocumentWrapper document = null;
+    private static SpreadsheetDocumentWrapper _document = null;
 
     private static WorksheetPartWrapper _classWorksheet = null;
     private static WorksheetPartWrapper _classSpecializationWorksheet = null;
@@ -45,36 +39,36 @@ namespace QMXFGenerator
     private static List<ArrayList> _baseTemplates = new List<ArrayList>();
     private static List<ArrayList> _siTemplates = new List<ArrayList>();
     private static List<ArrayList> _roles = new List<ArrayList>();
-    #endregion
 
-    static void Main(string[] args)
+    #endregion Private Members
+
+    private static void Main(string[] args)
     {
-
       try
       {
         {
-          QMXF qmxf = new QMXF();
+          var qmxf = new QMXF();
           if (Initialize(args))
           {
-            using (document = SpreadsheetDocumentWrapper.Open(_excelFilePath))
+            using (_document = SpreadsheetDocumentWrapper.Open(_excelFilePath))
             {
               _refdataClient = new WebHttpClient(_refdataServiceUri);
-              _classWorksheet = GetWorksheet(document, "Class");
-              _classSpecializationWorksheet = GetWorksheet(document, "Class Specialization");
+              _classWorksheet = GetWorksheet(_document, "Class");
+              _classSpecializationWorksheet = GetWorksheet(_document, "Class Specialization");
               Console.WriteLine("Processing Classes...");
               qmxf.classDefinitions = ProcessClass(_classWorksheet, _classSpecializationWorksheet);
-              
-              _classificationWorksheet = GetWorksheet(document, "Classification");
+
+              _classificationWorksheet = GetWorksheet(_document, "Classification");
 
               Console.WriteLine("Processing Classifications...");
               ProcessClassDefinitions(_classificationWorksheet, qmxf.classDefinitions);
 
-              _baseTemplateWorksheet = GetWorksheet(document, "Base Template");
+              _baseTemplateWorksheet = GetWorksheet(_document, "Base Template");
 
               Console.WriteLine("Processing Base Templates...");
               qmxf.templateDefinitions = ProcessBaseTemplate(_baseTemplateWorksheet);
-             
-              WorksheetPartWrapper specializedIndividualTemplateWorksheet = GetWorksheet(document, "Specialized Individual Template");
+
+              var specializedIndividualTemplateWorksheet = GetWorksheet(_document, "Specialized Individual Template");
 
               Console.WriteLine("Processing Specialized Individual Templates...");
               qmxf.templateQualifications = ProcessSpecializedIndividualTemplates(specializedIndividualTemplateWorksheet);
@@ -97,9 +91,9 @@ namespace QMXFGenerator
                     Utility.WriteString("Cannot Post Example namespace " + cls.identifier + "\n", "error.log", true);
                     continue;
                   }
-                  var q = new QMXF { targetRepository = _targetRepository };
+                  var q = new QMXF {targetRepository = _targetRepository};
                   q.classDefinitions.Add(cls);
-                  Response resp = _refdataClient.Post<QMXF, Response>("/classes", q, true);
+                  var resp = _refdataClient.Post<QMXF, Response>("/classes", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting class: " + cls.name[0].value);
@@ -108,7 +102,7 @@ namespace QMXFGenerator
                   else
                     Console.WriteLine("Success: posted class: " + cls.name[0].value);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                   Utility.WriteString("Error posting class: " + cls.name[0].value + "\n", "error.log", true);
                 }
@@ -132,21 +126,18 @@ namespace QMXFGenerator
                       Console.WriteLine("error in template " + t.identifier + " see : error.log");
                       error = true;
                     }
-                    else if (!CheckUri(r.identifier))
-                    {
-                      Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\n", "error.log", true);
-                      error = true;
-                    }
-
+                    if (CheckUri(r.identifier)) continue;
+                    Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\n", "error.log", true);
+                    error = true;
                   }
                   if (error)
                   {
                     error = false;
                     break;
                   }
-                  var q = new QMXF { targetRepository = _targetRepository };
+                  var q = new QMXF {targetRepository = _targetRepository};
                   q.templateDefinitions.Add(t);
-                  Response resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
+                  var resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting baseTemplate: " + t.name[0].value);
@@ -155,7 +146,7 @@ namespace QMXFGenerator
                   else
                     Console.WriteLine("Success: posted baseTemplate: " + t.name[0].value);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                   Utility.WriteString("Error posting baseTemplate: " + t.name[0].value + "\n", "error.log", true);
                 }
@@ -171,32 +162,34 @@ namespace QMXFGenerator
                     error = true;
                     continue;
                   }
-                  foreach (var r in t.roleQualification)
+                  foreach (
+                    var r in
+                      t.roleQualification.Where(
+                        r =>
+                        string.IsNullOrEmpty(r.range) && (r.value == null && string.IsNullOrEmpty(r.value.reference))))
                   {
-                    if (string.IsNullOrEmpty(r.range))
-                    {
-                      Utility.WriteString("\n" + r.identifier + " do not have range defined \n", "error.log", true);
-                      Console.WriteLine("error in template " + t.identifier + " see : error.log");
-                      error = true;
-                    }
+                    Utility.WriteString("\n" + r.identifier + " do not have range defined \n", "error.log", true);
+                    Console.WriteLine("error in template " + t.identifier + " see : error.log");
+                    error = true;
                   }
                   if (error)
                   {
                     error = false;
                     break;
                   }
-                  var q = new QMXF { targetRepository = _targetRepository };
+                  var q = new QMXF {targetRepository = _targetRepository};
                   q.templateQualifications.Add(t);
-                  Response resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
+                  var resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting specializedTemplate: " + t.name[0].value);
-                    Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\n", "error.log", true);
+                    Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\n", "error.log",
+                                        true);
                   }
                   else
                     Console.WriteLine("Success: posted specializedTemplate: " + t.name[0].value);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                   Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\n", "error.log", true);
                 }
@@ -216,7 +209,7 @@ namespace QMXFGenerator
 
     private static bool CheckUri(string uri)
     {
-      if(uri.Contains("example"))
+      if (uri.Contains("example"))
         return false;
       else
         return true;
@@ -229,12 +222,12 @@ namespace QMXFGenerator
 
     private string GetCellValue(WorksheetPartWrapper part, int startCol, int startRow)
     {
-
       var row = part.Worksheet.SheetData.Rows.FirstOrDefault(c => c.RowIndex == startRow);
       return row.GetCell(startCol, false).CellValue.Value;
     }
 
-    private static void ProcessClassDefinitions(WorksheetPartWrapper _classificationWorksheet, List<ClassDefinition> list)
+    private static void ProcessClassDefinitions(WorksheetPartWrapper _classificationWorksheet,
+                                                List<ClassDefinition> list)
     {
       try
       {
@@ -242,24 +235,27 @@ namespace QMXFGenerator
         foreach (var c in _classifications)
         {
           var query = from cls in _classes
-                      where cls[(int)ClassColumns.Label].ToString().Trim().Equals(c[(int)ClassificationColumns.Classified].ToString())
-                      select cls[(int)ClassColumns.ID];
-          var cl = list.SingleOrDefault(l => l.name[0].value.Equals(c[(int)ClassificationColumns.Class].ToString()));
+                      where
+                        cls[(int) ClassColumns.Label].ToString().Trim().Equals(
+                          c[(int) ClassificationColumns.Classified].ToString())
+                      select cls[(int) ClassColumns.ID];
+          var cl = list.SingleOrDefault(l => l.name[0].value.Equals(c[(int) ClassificationColumns.Class].ToString()));
           if (cl != null && query != null && query.Count() > 0)
           {
             cl.classification.Add(new Classification
-            {
-              label = c[(int)ClassificationColumns.Classified].ToString(),
-              lang = "en",
-              reference = query.FirstOrDefault().ToString()
-            });
+              {
+                label = c[(int) ClassificationColumns.Classified].ToString(),
+                lang = "en",
+                reference = query.FirstOrDefault().ToString()
+              });
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
       }
     }
+
     private static bool Initialize(string[] args)
     {
       try
@@ -274,7 +270,6 @@ namespace QMXFGenerator
         else
         {
           _excelFilePath = args[0];
-
         }
 
         if (_excelFilePath == String.Empty)
@@ -286,13 +281,12 @@ namespace QMXFGenerator
         _proxyHost = System.Configuration.ConfigurationManager.AppSettings["ProxyHost"];
         _proxyPort = System.Configuration.ConfigurationManager.AppSettings["ProxyPort"];
         _proxyCredentials = System.Configuration.ConfigurationManager.AppSettings["ProxyCredentialToken"];
-        _idsADICredentials = System.Configuration.ConfigurationManager.AppSettings["IDSADICredentialToken"];
 
-        bool useTestRegistry = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["UseTestRegistry"]);
+        var useTestRegistry = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["UseTestRegistry"]);
 
         if (useTestRegistry)
         {
-          string testRegistryBase = System.Configuration.ConfigurationManager.AppSettings["TestRegistryBase"];
+          var testRegistryBase = System.Configuration.ConfigurationManager.AppSettings["TestRegistryBase"];
 
           _classRegistryBase = testRegistryBase;
           _templateRegistryBase = testRegistryBase;
@@ -312,89 +306,101 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<ClassDefinition> ProcessClass(WorksheetPartWrapper classPart, WorksheetPartWrapper specializationPart)
+    private static List<ClassDefinition> ProcessClass(WorksheetPartWrapper classPart,
+                                                      WorksheetPartWrapper specializationPart)
     {
-      int rowIndex = 0;
-      int idx = 0;
+      var rowIndex = 0;
+      var idx = 0;
       try
       {
         _classes = MarshallToList(classPart);
         _classSpecializations = MarshallToList(specializationPart);
 
-        List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
-        foreach (ArrayList row in _classes)
+        var classDefinitions = new List<ClassDefinition>();
+        foreach (var row in _classes)
         {
-          object load = row[(int)ClassColumns.Load];
+          var load = row[(int) ClassColumns.Load];
           rowIndex = Convert.ToInt32(row[row.Count - 1]);
-          if (load != null && load.ToString().Trim() != String.Empty && load.ToString() != "Load")
-          {            
-            object identifier = row[(int)ClassColumns.ID];
-            object label = row[(int)ClassColumns.Label];
-            object description = row[(int)ClassColumns.Description];
-            object entityType = row[(int)ClassColumns.EntityType];
+          if (load == null || load.ToString().Trim() == String.Empty || load.ToString() == "Load") continue;
+          var identifier = row[(int) ClassColumns.ID];
+          var label = row[(int) ClassColumns.Label];
+          var description = row[(int) ClassColumns.Description];
+          var entityType = row[(int) ClassColumns.EntityType];
 
-            ClassDefinition classDefinition = new ClassDefinition();
+          var classDefinition = new ClassDefinition();
 
-            string name = String.Empty;
-            if (label != null)
+          var name = String.Empty;
+          if (label != null)
+          {
+            name = label.ToString();
+
+            if (name != String.Empty)
             {
-              name = label.ToString();
-
-              if (name != String.Empty)
-              {
-                QMXFName englishUSName = new QMXFName
+              var englishUsName = new QMXFName
                 {
                   lang = "en",
                   value = name,
                 };
 
-                classDefinition.name = new List<QMXFName>
-                { 
-                  englishUSName 
+              classDefinition.name = new List<QMXFName>
+                {
+                  englishUsName
                 };
-              }
             }
+          }
 
-            if (identifier == null || identifier.ToString() == String.Empty)
-            {
-              identifier = GenerateID(_classRegistryBase, name);
-              //write to the in-memory list
-              _classes[idx][(int)ClassColumns.ID] = identifier;
-              //write to the sheet, but offset counters for 1-based array
-              classPart.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)ClassColumns.ID), identifier);
-            }
+          if (identifier == null || identifier.ToString() == String.Empty)
+          {
+            identifier = GenerateId(_classRegistryBase, name);
+            //write to the in-memory list
+            _classes[idx][(int) ClassColumns.ID] = identifier;
+            //write to the sheet, but offset counters for 1-based array
+            classPart.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int) ClassColumns.ID), identifier);
+          }
 
-            classDefinition.identifier = identifier.ToString();
-            if (description != null && description.ToString() != String.Empty)
-            {
-              Description englishUSDescription = new Description
+          classDefinition.identifier = identifier.ToString();
+          if (description != null && description.ToString() != String.Empty)
+          {
+            var englishUsDescription = new Description
               {
                 lang = "en",
                 value = description.ToString(),
               };
-              classDefinition.description = new List<Description> 
+            classDefinition.description = new List<Description>
               {
-                englishUSDescription,
+                englishUsDescription,
               };
-            }
-            string ent = entityType.ToString();
-            if (!string.IsNullOrEmpty(ent))
-            {
-              classDefinition.entityType = new EntityType
+          }
+          string ent = entityType.ToString();
+          if (!string.IsNullOrEmpty(ent))
+          {
+            classDefinition.entityType = new EntityType
               {
                 reference = ent
               };
-            }
+          }
 
-            List<Specialization> classSpecialization = ProcessClassSpecialization(name);
+          var sList = from specialization in _classSpecializations
+                                   where
+                                     Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) ==
+                                     name
+                                   select specialization;
+          if (sList.Count() > 0)
+          {
+            var classSpecialization = ProcessClassSpecialization(name, sList);
 
             if (classSpecialization.Count > 0)
               classDefinition.specialization = classSpecialization;
-
-            load = String.Empty;
-            idx++;
-            if (!string.IsNullOrEmpty(ent)) /// must have entity type
-              classDefinitions.Add(classDefinition);
+          }
+          load = String.Empty;
+          idx++;
+          if (string.IsNullOrEmpty(ent))/// must have entity type
+          {
+            Utility.WriteString(string.Format("Class {0} does not have a entity type!!", name), "error.log");
+          }
+          else
+          {
+            classDefinitions.Add(classDefinition);
           }
         }
         Console.WriteLine("  processed " + idx + " classes.");
@@ -408,22 +414,18 @@ namespace QMXFGenerator
       }
     }
 
-       private static string GenerateID(string registryBase, string name)
+    private static string GenerateId(string registryBase, string name)
     {
       try
       {
-        string identifier = String.Empty;
-
-
         if (!string.IsNullOrEmpty(registryBase))
-          return string.Format("{0}R{1}", registryBase, Guid.NewGuid().ToString().Replace("_", "").Replace("-", "").ToUpper());
+          return string.Format("{0}R{1}", registryBase,
+                               Guid.NewGuid().ToString().Replace("_", "").Replace("-", "").ToUpper());
         else
         {
-           Utility.WriteString("Failed to create id for "+ name , "error.log");
-          throw new Exception("CreateIdsAdiId: Failed to create id ");
-
+          Utility.WriteString("Failed to create id for " + name, "error.log");
+          throw new Exception("GenerateID: Failed to create id ");
         }
-      
       }
       catch (Exception ex)
       {
@@ -432,52 +434,69 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<Specialization> ProcessClassSpecialization(string className)
+    private static List<Specialization> ProcessClassSpecialization(string className, IEnumerable<ArrayList> specializationList)
     {
       try
       {
         List<Specialization> classSpecializations = new List<Specialization>();
 
         //Find the class specializations
-        var specializationList = from specialization in _classSpecializations
-                                 where Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) == className
-                                 select specialization;
+        //var specializationList = from specialization in _classSpecializations
+        //                         where
+        //                           Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) ==
+        //                           className
+        //                         select specialization;
         //Get their details from the Class List
-        List<ArrayList> superclasses = new List<ArrayList>();
+ 
+        var superclasses = new List<ArrayList>();
 
-        foreach (ArrayList specialization in specializationList)
+        foreach (var specialization in specializationList)
         {
-          object subclass = specialization[(int)ClassSpecializationColumns.Subclass];
-          var query = from @class in _classes
-                      where Convert
-                         .ToString(@class[(int)ClassColumns.Label])
-                         .Trim() == subclass.ToString().Trim()
-                      select @class;
+          object subclass = specialization[(int) ClassSpecializationColumns.Subclass];
+          object supclass = specialization[(int)ClassSpecializationColumns.Superclass];
 
-          if (query.Count() > 0 && query.FirstOrDefault().Count > 0)
+          var supc = from @class in _classes
+                   where Convert
+                           .ToString(@class[(int)ClassColumns.Label])
+                           .Trim() == supclass.ToString().Trim()
+                   select @class;
+
+          var sc = from @class in _classes
+                      where Convert
+                              .ToString(@class[(int) ClassColumns.Label])
+                              .Trim() == subclass.ToString().Trim()
+                      select @class;
+          if (supc.Count() > 0 && supc.FirstOrDefault().Count > 0)
           {
-            superclasses.Add(query.FirstOrDefault());
+            if (sc.Count() > 0 && sc.FirstOrDefault().Count > 0)
+            {
+              superclasses.Add(sc.FirstOrDefault());
+            }
+            else
+            {
+              Utility.WriteString("\n " + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
+            }
           }
           else
           {
-            Utility.WriteString("\n " + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
+            Utility.WriteString("\n " + supclass.ToString() + " Was Not Found in Class List", "error.log", true);
           }
         }
 
         //Use the details for each to create the Specializations and add to List to return
         foreach (ArrayList superClassRow in superclasses)
         {
-          object superclassIdentifier = superClassRow[(int)ClassColumns.ID];
-          object superclassName = superClassRow[(int)ClassColumns.Label];
+          object superclassIdentifier = superClassRow[(int) ClassColumns.ID];
+          object superclassName = superClassRow[(int) ClassColumns.Label];
 
           if (superclassIdentifier != null && superclassName != null &&
               superclassIdentifier.ToString() != String.Empty)
           {
             Specialization specialization = new Specialization
-            {
-              label = superclassName.ToString(),
-              reference = superclassIdentifier.ToString().Trim(),
-            };
+              {
+                label = superclassName.ToString(),
+                reference = superclassIdentifier.ToString().Trim(),
+              };
 
             classSpecializations.Add(specialization);
           }
@@ -487,79 +506,75 @@ namespace QMXFGenerator
       catch (Exception ex)
       {
         Utility.WriteString("\nError Processing Class Specialization \n" +
-                            "Worksheet: " + _classSpecializationWorksheet + " \n" + ex.ToString() + "\n", "error.log", true);
+                            "Worksheet: " + _classSpecializationWorksheet + " \n" + ex.ToString() + "\n", "error.log",
+                            true);
         throw ex;
       }
     }
 
     private static List<TemplateDefinition> ProcessBaseTemplate(WorksheetPartWrapper part)
     {
-      int rowIndex = 0;
-      int idx = 0;
+      var rowIndex = 0;
+      var idx = 0;
       try
       {
         _baseTemplates = MarshallToList(part);
-        List<TemplateDefinition> templateDefinitions = new List<TemplateDefinition>();
-        foreach (ArrayList row in _baseTemplates)
+        var templateDefinitions = new List<TemplateDefinition>();
+        foreach (var row in _baseTemplates)
         {
           rowIndex = Convert.ToInt32(row[row.Count - 1]);
-          object load = row[(int)TemplateColumns.Load];
-          if (load != null && load.ToString().Trim() != String.Empty && load.ToString() != "Load")
+          var load = row[(int) TemplateColumns.Load];
+          if (load == null || load.ToString().Trim() == String.Empty || load.ToString() == "Load") continue;
+          var templateIdentifier = row[(int) TemplateColumns.ID];
+          var templateName = row[(int) TemplateColumns.Name];
+          var description = row[(int) TemplateColumns.Description];
+          var templateDefinition = new TemplateDefinition();
+          var name = String.Empty;
+          if (templateName != null)
           {
-            object templateIdentifier = row[(int)TemplateColumns.ID];
-            object templateName = row[(int)TemplateColumns.Name];
-            object description = row[(int)TemplateColumns.Description];
-            TemplateDefinition templateDefinition = new TemplateDefinition();
-            string name = String.Empty;
-            if (templateName != null)
+            name = templateName.ToString();
+            if (name != String.Empty)
             {
-              name = templateName.ToString();
-              if (name != String.Empty)
-              {
-                QMXFName englishUSName = new QMXFName
+              var englishUsName = new QMXFName
                 {
                   lang = "en",
                   value = name,
                 };
-                templateDefinition.name = new List<QMXFName>
-                                { 
-                                  englishUSName 
-                                };
-              }
-            }
-            if (templateIdentifier == null || templateIdentifier.ToString() == String.Empty)
-            {
-              templateIdentifier = GenerateID(_templateRegistryBase, name);
-              //write to the in-memory list
-              foreach (var b in _baseTemplates)
-              {
-                if (Convert.ToInt32(b[b.Count - 1]) == rowIndex)
+              templateDefinition.name = new List<QMXFName>
                 {
-                  b[(int)TemplateColumns.ID] = templateIdentifier;
-                }
-              }
-              //write to the sheet, but offset counters for 1-based array
-              part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)TemplateColumns.ID), templateIdentifier);
+                  englishUsName
+                };
             }
-            templateDefinition.identifier = templateIdentifier.ToString().Trim();
-            if (description != null && description.ToString() != String.Empty)
+          }
+          if (templateIdentifier == null || templateIdentifier.ToString() == String.Empty)
+          {
+            templateIdentifier = GenerateId(_templateRegistryBase, name);
+            //write to the in-memory list
+            foreach (var b in _baseTemplates.Where(b => Convert.ToInt32(b[b.Count - 1]) == rowIndex))
             {
-              Description englishUSDescription = new Description
+              b[(int) TemplateColumns.ID] = templateIdentifier;
+            }
+            //write to the sheet, but offset counters for 1-based array
+            part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int) TemplateColumns.ID), templateIdentifier);
+          }
+          templateDefinition.identifier = templateIdentifier.ToString().Trim();
+          if (description != null && description.ToString() != String.Empty)
+          {
+            var englishUsDescription = new Description
               {
                 lang = "en",
                 value = description.ToString(),
               };
-              templateDefinition.description = new List<Description> 
-                            {
-                                englishUSDescription,
-                            };
-            }
-            templateDefinition.roleDefinition = ProcessRoleDefinition(templateDefinition.name.FirstOrDefault().value, row, Convert.ToInt32(row[row.Count - 1]), part);
-            load = String.Empty;
-            templateDefinitions.Add(templateDefinition);
-            idx++;
+            templateDefinition.description = new List<Description>
+              {
+                englishUsDescription,
+              };
           }
-          
+          templateDefinition.roleDefinition = ProcessRoleDefinition(templateDefinition.name.FirstOrDefault().value,
+                                                                    row, Convert.ToInt32(row[row.Count - 1]), part);
+          load = String.Empty;
+          templateDefinitions.Add(templateDefinition);
+          idx++;
         }
         Console.WriteLine("  processed " + idx + " base templates.");
         return templateDefinitions;
@@ -567,183 +582,192 @@ namespace QMXFGenerator
       catch (Exception e)
       {
         Utility.WriteString("\nError Processing Template \n Worksheet: " + part.Name + "\tRow: "
-                             + idx + " \n" + e.ToString() + "\n", "error.log", true);
+                            + idx + " \n" + e.ToString() + "\n", "error.log", true);
         throw e;
       }
     }
 
-    private static List<RoleDefinition> ProcessRoleDefinition(string templateName, ArrayList row, int rowIndex, WorksheetPartWrapper part)
+    private static List<RoleDefinition> ProcessRoleDefinition(string templateName, IList row, int rowIndex,
+                                                              WorksheetPartWrapper part)
     {
       try
       {
-        int idx = 0;
-        List<RoleDefinition> roleDefinitions = new List<RoleDefinition>();
-        for (int roleIndex = 0; roleIndex <= (int)RoleColumns.Max - 1; roleIndex++)
+        var idx = 0;
+        var roleDefinitions = new List<RoleDefinition>();
+        for (var roleIndex = 0; roleIndex <= (int) RoleColumns.Max - 1; roleIndex++)
         {
-          int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
-          object identifier = row[(int)RoleColumns.ID + roleOffset];
-          object label = row[(int)RoleColumns.Name + roleOffset];
-          object description = row[(int)RoleColumns.Description + roleOffset];
-          object type = row[(int)RoleColumns.Type + roleOffset];
+          var roleOffset = (int) TemplateColumns.Roles + ((int) RoleColumns.Count*roleIndex);
+          var identifier = row[(int) RoleColumns.ID + roleOffset];
+          var label = row[(int) RoleColumns.Name + roleOffset];
+          var description = row[(int) RoleColumns.Description + roleOffset];
+          var type = row[(int) RoleColumns.Type + roleOffset];
 
-          if (label != null && label.ToString().Trim() != String.Empty)
-          {
-            string name = label.ToString();
-            RoleDefinition roleDefinition = new RoleDefinition();
+          if (label == null || label.ToString().Trim() == String.Empty) continue;
+          var name = label.ToString();
+          var roleDefinition = new RoleDefinition();
 
-            QMXFName englishUSName = new QMXFName
+          var englishUsName = new QMXFName
             {
               lang = "en",
               value = name,
             };
 
-            roleDefinition.name = new List<QMXFName>
-            { 
-              englishUSName 
+          roleDefinition.name = new List<QMXFName>
+            {
+              englishUsName
             };
 
-            if (identifier == null || identifier.ToString() == String.Empty)
-            {
-              identifier = GenerateID(_templateRegistryBase, name);
+          if (string.IsNullOrEmpty(identifier.ToString()))
+          {
+            identifier = GenerateId(_templateRegistryBase, name);
 
-              //write to the in-memory list
-              _baseTemplates[idx][(int)RoleColumns.ID + roleOffset] = identifier;
+            //write to the in-memory list
+            _baseTemplates[idx][(int) RoleColumns.ID + roleOffset] = identifier;
 
-              //write to the sheet, but offset counters for 1-based array
-              part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)RoleColumns.ID + roleOffset), identifier);
-            }
-            roleDefinition.identifier = identifier.ToString();
+            //write to the sheet, but offset counters for 1-based array
+            part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int) RoleColumns.ID + roleOffset), identifier);
+          }
+          roleDefinition.identifier = identifier.ToString();
 
-            if (description != null && description.ToString() != String.Empty)
-            {
-              Description englishUSDescription = new Description
+          if (description != null && description.ToString() != String.Empty)
+          {
+            var englishUsDescription = new Description
               {
                 lang = "en",
                 value = description.ToString(),
               };
-              roleDefinition.description = englishUSDescription;
-            }
-            
-            if (type != null && type.ToString() != String.Empty)
+            roleDefinition.description = englishUsDescription;
+          }
+          object clist;
+          if (!string.IsNullOrEmpty(type.ToString()))
+          {
+            var query = from clss in _classes
+                        where
+                          Convert.ToString(clss[(int) ClassColumns.Label].ToString().ToUpper()) ==
+                          type.ToString().ToUpper()
+                        select clss;
+            if (query.FirstOrDefault() != null &
+                query.FirstOrDefault()[(int) ClassColumns.Label].ToString().Trim().Equals(type.ToString()))
             {
-              var query = from clss in _classes
-                          where Convert.ToString(clss[(int)ClassColumns.Label].ToString().ToUpper()) == type.ToString().ToUpper()
-                          select clss;
-              if (query.FirstOrDefault() != null & query.FirstOrDefault()[(int)ClassColumns.Label].ToString().Trim().Equals(type.ToString()))
-              {
-                roleDefinition.range = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim();
-              }
-              else
-              {
-                Utility.WriteString("\n " + type.ToString() + " Was Not Found in Class List While Processing Role Definition", "error.log", true);
-              }
+              roleDefinition.range = query.FirstOrDefault()[(int) ClassColumns.ID].ToString().Trim();
             }
             else
             {
-              Utility.WriteString("\nType Was Not Set for Role Definition \"" + englishUSName.value + "\" on template \"" + templateName + "\".", "error.log", true);
+              Utility.WriteString(
+                "\n " + type.ToString() + " Was Not Found in Class List While Processing Role Definition", "error.log",
+                true);
             }
-            roleDefinitions.Add(roleDefinition);
           }
+          else
+          {
+            Utility.WriteString(
+              "\nType Was Not Set for Role Definition \"" + englishUsName.value + "\" on template \"" + templateName +
+              "\".", "error.log", true);
+          }
+          roleDefinitions.Add(roleDefinition);
         }
         return roleDefinitions;
       }
       catch (Exception e)
       {
-        Utility.WriteString("\nError Processing Role \n Row: " + rowIndex + " \n" + e.ToString() + "\n", "error.log", true);
+        Utility.WriteString("\nError Processing Role \n Row: " + rowIndex + " \n" + e.ToString() + "\n", "error.log",
+                            true);
         throw e;
       }
     }
 
     private static List<TemplateQualification> ProcessSpecializedIndividualTemplates(WorksheetPartWrapper part)
     {
-      int rowIndex = 0;
-      int idx = 0;
+      var rowIndex = 0;
+      var idx = 0;
       try
       {
         _siTemplates = MarshallToList(part);
-        List<TemplateQualification> templateQualifications = new List<TemplateQualification>();
-        foreach (ArrayList row in _siTemplates)
+        var templateQualifications = new List<TemplateQualification>();
+        foreach (var row in _siTemplates)
         {
           rowIndex = Convert.ToInt32(row[row.Count - 1]);
-          object load = row[(int)TemplateColumns.Load];
+          var load = row[(int) TemplateColumns.Load];
 
-          if (load != null && load.ToString().Trim() != String.Empty && load.ToString() != "Load")
+          if (load == null || load.ToString().Trim() == String.Empty || load.ToString() == "Load") continue;
+          var templateIdentifier = row[(int) TemplateColumns.ID];
+          var templateName = row[(int) TemplateColumns.Name];
+          var description = row[(int) TemplateColumns.Description];
+          var parentTemplate = row[(int) TemplateColumns.ParentTemplate];
+          var templateQualification = new TemplateQualification();
+          var name = String.Empty;
+          if (templateName != null)
           {
-            object templateIdentifier = row[(int)TemplateColumns.ID];
-            object templateName = row[(int)TemplateColumns.Name];
-            object description = row[(int)TemplateColumns.Description];
-            object parentTemplate = row[(int)TemplateColumns.ParentTemplate];
-            TemplateQualification templateQualification = new TemplateQualification();
-            string name = String.Empty;
-            if (templateName != null)
+            name = templateName.ToString();
+            if (name != String.Empty)
             {
-              name = templateName.ToString();
-              if (name != String.Empty)
-              {
-                QMXFName englishUSName = new QMXFName
+              var englishUsName = new QMXFName
                 {
                   lang = "en",
                   value = name,
                 };
-                templateQualification.name = new List<QMXFName>
-                    { 
-                      englishUSName 
-                    };
-              }
+              templateQualification.name = new List<QMXFName>
+                {
+                  englishUsName
+                };
             }
-            if (templateIdentifier == null || templateIdentifier.ToString() == String.Empty)
-            {
-              templateIdentifier = GenerateID(_templateRegistryBase, name);
-              //write to the in-memory list
-              _siTemplates[rowIndex - 1][(int)TemplateColumns.ID] = templateIdentifier;
-              //write to the sheet, but offset counters for 1-based array
-              part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)TemplateColumns.ID), templateIdentifier);
-            }
-            templateQualification.identifier = templateIdentifier.ToString().Trim();
-            if (description != null && description.ToString() != String.Empty)
-            {
-              Description englishUSDescription = new Description
+          }
+          if (string.IsNullOrEmpty(templateIdentifier.ToString()))
+          {
+            templateIdentifier = GenerateId(_templateRegistryBase, name);
+            _siTemplates[rowIndex - 1][(int) TemplateColumns.ID] = templateIdentifier;
+            part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int) TemplateColumns.ID), templateIdentifier);
+          }
+          templateQualification.identifier = templateIdentifier.ToString().Trim();
+          if (!string.IsNullOrEmpty(description.ToString()))
+          {
+            var englishUsDescription = new Description
               {
                 lang = "en",
                 value = description.ToString(),
               };
-              templateQualification.description = new List<Description> 
-                  {
-                    englishUSDescription,
-                  };
-            }
-            if (parentTemplate != null && parentTemplate.ToString() != String.Empty)
-            {
-              var query = from template in _baseTemplates
-                          where Convert.ToString(template[(int)TemplateColumns.Name]) == parentTemplate.ToString()
-                          select template;
+            templateQualification.description = new List<Description>
+              {
+                englishUsDescription,
+              };
+          }
+          if (!string.IsNullOrEmpty(parentTemplate.ToString()))
+          {
+            var query = from template in _baseTemplates
+                        where Convert.ToString(template[(int) TemplateColumns.Name]) == parentTemplate.ToString()
+                        select template;
 
-              ArrayList parentRow = query.FirstOrDefault();
-              if (parentRow != null)
-              {
-                object templateQualifiesId = parentRow[(int)TemplateColumns.ID];
-                if (templateQualifiesId == null)
-                {
-                  Utility.WriteString("Template Qualification \"" + templateQualification.identifier + "\" qualifies ID not found.\n", "error.log", true);
-                }
-                templateQualification.qualifies = (templateQualifiesId ?? "").ToString().Trim();
-                templateQualification.roleQualification = ProcessRoleQualification(templateQualification.name.FirstOrDefault().value, row, parentRow, rowIndex, part);
-              }
-              else
-              {
-                Utility.WriteString(parentTemplate.ToString() + " Was Not Found in Template List While Processing Specialized Templates.\n", "error.log", true);
-              }
-            }
-            load = String.Empty;
-            idx++;
-            if (templateQualification.roleQualification.Count > 0)
+            var parentRow = query.FirstOrDefault();
+            if (parentRow != null)
             {
-              templateQualifications.Add(templateQualification);
+              var templateQualifiesId = parentRow[(int) TemplateColumns.ID];
+              if (templateQualifiesId == null)
+              {
+                Utility.WriteString(
+                  "Template Qualification \"" + templateQualification.identifier + "\" qualifies ID not found.\n",
+                  "error.log", true);
+              }
+              templateQualification.qualifies = (templateQualifiesId ?? "").ToString().Trim();
+              templateQualification.roleQualification =
+                ProcessRoleQualification(templateQualification.name.FirstOrDefault().value, row, parentRow, rowIndex, part);
             }
             else
-              Utility.WriteString("Template Qualification \"" + templateQualification.identifier + "\" RoleQualifications failed.\n", "error.log", true);
+            {
+              Utility.WriteString(
+                parentTemplate.ToString() + " Was Not Found in Template List While Processing Specialized Templates.\n",
+                "error.log", true);
+            }
           }
-          
+          load = String.Empty;
+          idx++;
+          if (templateQualification.roleQualification.Count > 0)
+          {
+            templateQualifications.Add(templateQualification);
+          }
+          else
+            Utility.WriteString(
+              "Template Qualification \"" + templateQualification.identifier + "\" RoleQualifications failed.\n",
+              "error.log", true);
         }
         Console.WriteLine("  processed " + idx + " Specialized templates.");
         return templateQualifications;
@@ -757,107 +781,118 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow, int rowIndex, WorksheetPartWrapper part) 
+    private static List<RoleQualification> ProcessRoleQualification(string templateName, IList row, IList parentRow,
+                                                                    int rowIndex, WorksheetPartWrapper part)
     {
-      int roleIndex = 0;
-      
+      var roleIndex = 0;
+      var idx = 0;
       try
       {
-        List<RoleQualification> roleQualifications = new List<RoleQualification>();
+        var roleQualifications = new List<RoleQualification>();
 
-        for (roleIndex = 0; roleIndex <= (int)RoleColumns.Max - 1; roleIndex++)
+        for (roleIndex = 0; roleIndex <= (int) RoleColumns.Max - 1; roleIndex++)
         {
-          int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
-          object identifier = parentRow[(int)RoleColumns.ID + roleOffset];
-          object label = row[(int)RoleColumns.Name + roleOffset];
-          object description = row[(int)RoleColumns.Description + roleOffset];
-          object type = row[(int)RoleColumns.Type + roleOffset];
-          object value = row[(int)RoleColumns.Value + roleOffset];
-          object parentRole = parentRow[(int)RoleColumns.ID + roleOffset];
+          var roleOffset = (int) TemplateColumns.Roles + ((int) RoleColumns.Count*roleIndex);
+          var identifier = row[(int) RoleColumns.ID + roleOffset];
+          var label = row[(int) RoleColumns.Name + roleOffset];
+          var description = parentRow[(int) RoleColumns.Description + roleOffset];
+          var type = row[(int) RoleColumns.Type + roleOffset];
+          var value = row[(int) RoleColumns.Value + roleOffset];
+          var parentRole = parentRow[(int) RoleColumns.ID + roleOffset];
 
-          if (label != null && label.ToString().Trim() != String.Empty)
+          if (label == null || label.ToString().Trim() == String.Empty) continue;
+          var name = label.ToString();
+
+          if (parentRole == null)
           {
-            string name = label.ToString();
+            Utility.WriteString(
+              "Error Processing Role Qualification: Role \"" + name + "\" at index " + roleIndex + " on template \"" +
+              templateName + "\" not found.\n", "error.log", true);
+            continue;
+          }
+          if (string.IsNullOrEmpty(identifier.ToString())) // == null || identifier.ToString() == String.Empty)
+          {
+            identifier = GenerateId(_templateRegistryBase, name);
 
-            if (parentRole == null)
-            {
-              Utility.WriteString("Error Processing Role Qualification: Role \"" + name + "\" at index " + roleIndex + " on template \"" + templateName + "\" not found.\n", "error.log", true);
-              continue;
-            }
+            //write to the in-memory list
+            _siTemplates[idx][(int) RoleColumns.ID + roleOffset] = identifier;
 
-            RoleQualification roleQualification = new RoleQualification();
-            roleQualification.identifier = identifier.ToString();
+            //write to the sheet, but offset counters for 1-based array
+            part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int) RoleColumns.ID + roleOffset), identifier);
+          }
+          var roleQualification = new RoleQualification {identifier = identifier.ToString()};
 
-            QMXFName englishUSName = new QMXFName
+          var englishUsName = new QMXFName
             {
               lang = "en",
               value = name,
             };
 
-            roleQualification.name = new List<QMXFName>
-            { 
-              englishUSName 
+          roleQualification.name = new List<QMXFName>
+            {
+              englishUsName
             };
 
-            if (description != null && description.ToString() != String.Empty)
-            {
-              Description englishUSDescription = new Description
+          if (description != null && description.ToString() != String.Empty)
+          {
+            var englishUsDescription = new Description
               {
                 lang = "en",
                 value = description.ToString(),
               };
 
-              roleQualification.description = new List<Description>
+            roleQualification.description = new List<Description>
               {
-                englishUSDescription
+                englishUsDescription
               };
-            }
+          }
 
-            roleQualification.qualifies = (parentRole ?? "").ToString().Trim();
+          roleQualification.qualifies = (parentRole ?? "").ToString().Trim();
 
-            if (type != null && type.ToString() != String.Empty)
+          if (!string.IsNullOrEmpty(type.ToString()))
+          {
+            var query = from @class in _classes
+                        where Convert.ToString(@class[(int) ClassColumns.Label]).Trim() == type.ToString().Trim()
+                        select @class;
+
+            if (query.FirstOrDefault() != null)
             {
-              var query = from @class in _classes
-                          where Convert.ToString(@class[(int)ClassColumns.Label]).Trim() == type.ToString().Trim()
-                          select @class;
-
-              if (query.FirstOrDefault() != null)
+              var classId = query.FirstOrDefault()[(int) ClassColumns.ID];
+              if (classId != null)
               {
-                object classId = query.FirstOrDefault()[(int)ClassColumns.ID];
-                if (classId != null)
-                {
-                  roleQualification.range = classId.ToString().Trim();
-                }
-                else
-                {
-                  Utility.WriteString("\n " + type.ToString() + " Does not have an id in Class List While Processing Role Qualification", "error.log", true);
-                }
+                roleQualification.range = classId.ToString().Trim();
               }
               else
               {
-                Utility.WriteString("\n " + type.ToString() + " Was Not Found in Class List While Processing Role Qualification", "error.log", true);
-              }
-            }
-            else if (value != null && value.ToString() != String.Empty)
-            {
-              var query = from @class in _classes
-                          where Convert.ToString(@class[(int)ClassColumns.Label]) == value.ToString()
-                          select @class;
-
-              if (query.FirstOrDefault() != null)
-              {
-                roleQualification.value = new QMXFValue
-                {
-                  reference = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim(),
-                };
+                Utility.WriteString(
+                  "\n " + type.ToString() + " Does not have an id in Class List While Processing Role Qualification",
+                  "error.log", true);
               }
             }
             else
             {
-              Utility.WriteString("\nType/Value Was Not Set for Role Qualification \"" + englishUSName.value + "\" on template \"" + templateName + "\".", "error.log", true);
+              Utility.WriteString(
+                "\n " + type.ToString() + " Was Not Found in Class List While Processing Role Qualification",
+                "error.log", true);
             }
-            roleQualifications.Add(roleQualification);
           }
+          if (value != null && value.ToString() != String.Empty)
+          {
+            var query = from @class in _classes
+                        where Convert.ToString(@class[(int) ClassColumns.Label]) == value.ToString()
+                        select @class;
+
+            if (query.FirstOrDefault() != null)
+            {
+              roleQualification.value = new QMXFValue
+                {reference = query.FirstOrDefault()[(int) ClassColumns.ID].ToString().Trim()};
+            }
+          }
+          else
+          {
+            //Utility.WriteString("\nType/Value Was Not Set for Role Qualification \"" + englishUsName.value + "\" on template \"" + templateName + "\".", "error.log", true);
+          }
+          roleQualifications.Add(roleQualification);
         }
 
         return roleQualifications;
@@ -874,32 +909,22 @@ namespace QMXFGenerator
     {
       try
       {
-        string vals = string.Empty;
-        List<ArrayList> table = new List<ArrayList>();
-        ArrayList rw;
+        var vals = string.Empty;
+        var table = new List<ArrayList>();
         foreach (var row in part.Worksheet.SheetData.Rows)
         {
           var value = row.GetCellValue<string>(0);
 
-          rw = new ArrayList();
-          for (int i = 0; i <= row.Worksheet.ColumnSets[0].Columns.Count; i++)
+          var rw = new ArrayList();
+          for (var i = 0; i <= row.Worksheet.ColumnSets[0].Columns.Count; i++)
           {
-            if (row.GetCellValue<string>(i) != null)
-            {
-              vals = row.GetCellValue<string>(i).Trim();
-            }
-            else
-            {
-              vals = string.Empty;
-            }
+            vals = row.GetCellValue<string>(i) != null ? row.GetCellValue<string>(i).Trim() : string.Empty;
             rw.Add(vals);
           }
 
-          if (rw.Count > 0)
-          {
-            rw.Add(row.RowIndex.Value.ToString());
-            table.Add(rw);
-          }
+          if (rw.Count <= 0) continue;
+          rw.Add(row.RowIndex.Value.ToString());
+          table.Add(rw);
         }
         return table;
       }

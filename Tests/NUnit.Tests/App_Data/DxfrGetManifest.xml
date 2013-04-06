@@ -8,6 +8,13 @@
           <class>
             <id>rdl:R19192462550</id>
             <name>PIPING NETWORK SYSTEM</name>
+            <keys>
+              <key>
+                <classId>rdl:R19192462550</classId>
+                <templateId>tpl:R66921101783</templateId>
+                <roleId>tpl:R22674749688</roleId>
+              </key>
+            </keys>
           </class>
           <templates>
             <template>
@@ -30,6 +37,7 @@
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
+                  <dataLength>100</dataLength>
                 </role>
               </roles>
               <transferOption>Required</transferOption>
@@ -106,6 +114,7 @@
                   <id>tpl:R93884193692</id>
                   <name>hasScale</name>
                   <dataType>xsd:string</dataType>
+                  <dataLength>20</dataLength>
                 </role>
                 <role>
                   <type>Reference</type>
@@ -118,6 +127,7 @@
                   <id>tpl:R90688063648</id>
                   <name>valValue</name>
                   <dataType>xsd:single</dataType>
+                  <dataLength>8</dataLength>
                 </role>
               </roles>
               <transferOption>Desired</transferOption>
@@ -128,6 +138,13 @@
           <class>
             <id>rdl:R49658319833</id>
             <name>PLANT AREA</name>
+            <keys>
+              <key>
+                <classId>rdl:R49658319833</classId>
+                <templateId>tpl:R66921101783</templateId>
+                <roleId>tpl:R22674749688</roleId>
+              </key>
+            </keys>
           </class>
           <templates>
             <template>
@@ -150,6 +167,7 @@
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
+                  <dataLength>10</dataLength>
                 </role>
               </roles>
               <transferOption>Desired</transferOption>
@@ -160,6 +178,13 @@
           <class>
             <id>rdl:R99486931975</id>
             <name>P AND I DIAGRAM</name>
+            <keys>
+              <key>
+                <classId>rdl:R99486931975</classId>
+                <templateId>tpl:R30193386273</templateId>
+                <roleId>tpl:R22674749688</roleId>
+              </key>
+            </keys>
           </class>
           <templates>
             <template>
@@ -182,6 +207,7 @@
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
+                  <dataLength>50</dataLength>
                 </role>
               </roles>
               <transferOption>Desired</transferOption>
@@ -191,7 +217,7 @@
       </classTemplatesList>
     </graph>
   </graphs>
-  <version>2.1.1</version>
+  <version>2.3.1</version>
   <valueListMaps xmlns:d2p1="http://www.iringtools.org/mapping">
     <d2p1:valueListMap>
       <d2p1:name>Length</d2p1:name>

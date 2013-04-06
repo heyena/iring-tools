@@ -22,7 +22,7 @@ namespace org.iringtools.adapter.datalayer
     protected const string UNAUTHORIZED_ERROR = "User not authorized to access NHibernate data layer of [{0}]";
     
     protected string _dataDictionaryPath = String.Empty;
-    protected string _databaseDictionaryPath = String.Empty;
+    protected string _dbDictionaryPath = String.Empty;
     
     protected string _authorizationBindingPath = String.Empty;
     protected string _summaryBindingPath = String.Empty;
@@ -50,14 +50,15 @@ namespace org.iringtools.adapter.datalayer
         _settings["Scope"]
       );
 
-      string dbDictionaryPath = string.Format("{0}DatabaseDictionary.{1}.xml",
+      _dbDictionaryPath = string.Format("{0}DatabaseDictionary.{1}.xml",
         _settings["AppDataPath"],
         _settings["Scope"]
       );
 
-      if (File.Exists(dbDictionaryPath))
+      if (File.Exists(_dbDictionaryPath))
       {
-        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
+        _dataDictionary = (DataDictionary)_dbDictionary;
       }
 
       string relativePath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml",
@@ -79,6 +80,8 @@ namespace org.iringtools.adapter.datalayer
         _settings["BaseDirectoryPath"],
         relativePath
       );
+
+      _kernel.Load(_authorizationBindingPath);
     }
 
     #region public methods
@@ -99,7 +102,7 @@ namespace org.iringtools.adapter.datalayer
         string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
           ? String.Empty : (objectDefinition.objectNamespace + ".");
 
-        Type type = Type.GetType(ns + objectType + ", " + _settings["ExecutingAssemblyName"]);
+        Type type = Type.GetType(ns + objectDefinition.objectName + ", " + _settings["ExecutingAssemblyName"]);
         IDataObject dataObject = null;
 
         if (identifiers != null)
@@ -108,8 +111,30 @@ namespace org.iringtools.adapter.datalayer
           {
             if (!String.IsNullOrEmpty(identifier))
             {
-              IQuery query = session.CreateQuery("from " + objectType + " where Id = ?");
-              query.SetString(0, identifier);
+              IQuery query = null;
+
+              if (objectDefinition.keyProperties.Count == 1)
+              {
+                query = session.CreateQuery("from " + objectType + " where Id = ?");
+                query.SetString(0, identifier);
+              }
+              else
+              {
+                string conjunction = " and ";
+                string[] idParts = identifier.Split(objectDefinition.keyDelimeter.ToCharArray());
+                StringBuilder builder = new StringBuilder();
+
+                for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+                {
+                  string propName = objectDefinition.keyProperties[i].keyPropertyName;
+                  builder.Append(conjunction + propName + "='" + idParts[i] + "'");
+                }
+
+                builder.Remove(0, conjunction.Length);
+
+                query = session.CreateQuery("from " + objectType + " where " + builder.ToString());
+              }
+              
               dataObject = query.List<IDataObject>().FirstOrDefault<IDataObject>();
 
               if (dataObject == null)
@@ -147,7 +172,15 @@ namespace org.iringtools.adapter.datalayer
 
     public override long GetCount(string objectType, DataFilter filter)
     {
-      AccessLevel accessLevel = Authorize(objectType, ref filter);
+      DataFilter newFilter = null;
+
+      if (filter != null)
+      {
+        newFilter = Utility.CloneDataContractObject<DataFilter>(filter);
+        newFilter.OrderExpressions = null;
+      }
+
+      AccessLevel accessLevel = Authorize(objectType, ref newFilter);
 
       if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
@@ -162,19 +195,17 @@ namespace org.iringtools.adapter.datalayer
 
           if (identityProperties.UseIdentityFilter)
           {
-            filter = FilterByIdentity(objectType, filter, identityProperties);
+            newFilter = FilterByIdentity(objectType, newFilter, identityProperties);
           }
         }
 
         StringBuilder queryString = new StringBuilder();
         queryString.Append("select count(*) from " + objectType);
 
-        if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
+        if (newFilter != null && newFilter.Expressions != null && newFilter.Expressions.Count > 0)
         {
-          DataFilter clonedFilter = Utility.CloneDataContractObject<DataFilter>(filter);
-          clonedFilter.OrderExpressions = null;
           DataObject dataObject = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
-          string whereClause = clonedFilter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);
+          string whereClause = newFilter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);
           queryString.Append(whereClause);
         }
 
@@ -195,7 +226,8 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
-      AccessLevel accessLevel = Authorize(objectType, ref filter);
+      DataFilter newFilter = Utility.CloneDataContractObject<DataFilter>(filter);
+      AccessLevel accessLevel = Authorize(objectType, ref newFilter);
 
       if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
@@ -209,16 +241,17 @@ namespace org.iringtools.adapter.datalayer
           IdentityProperties identityProperties = _dbDictionary.IdentityConfiguration[objectType];
           if (identityProperties.UseIdentityFilter)
           {
-            filter = FilterByIdentity(objectType, filter, identityProperties);
+            newFilter = FilterByIdentity(objectType, newFilter, identityProperties);
           }
         }
+
         StringBuilder queryString = new StringBuilder();
         queryString.Append("select Id from " + objectType);
 
-        if (filter != null && filter.Expressions.Count > 0)
+        if (newFilter != null && newFilter.Expressions.Count > 0)
         {
           DataObject dataObject = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
-          string whereClause = filter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);
+          string whereClause = newFilter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);
           queryString.Append(whereClause);
         }
 
@@ -234,6 +267,17 @@ namespace org.iringtools.adapter.datalayer
       {
         CloseSession(session);
       }
+    }
+
+    private bool IsNumeric(DataType dataType)
+    {
+      return (dataType == DataType.Byte ||
+        dataType == DataType.Decimal ||
+        dataType == DataType.Double ||
+        dataType == DataType.Int16 ||
+        dataType == DataType.Int32 ||
+        dataType == DataType.Int64 ||
+        dataType == DataType.Single);
     }
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
@@ -265,47 +309,47 @@ namespace org.iringtools.adapter.datalayer
           }
           else if (dataObjectDef.keyProperties.Count > 1)
           {
-            string[] keyList = null;
-            int identifierIndex = 1;
-            foreach (string identifier in identifiers)
+            List<DataProperty> dataProps = new List<DataProperty>();
+
+            foreach (KeyProperty keyProp in dataObjectDef.keyProperties)
             {
-              string[] idParts = identifier.Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
+              DataProperty dataProp = dataObjectDef.dataProperties.Find(
+                x => x.propertyName.ToLower() == keyProp.keyPropertyName.ToLower());
 
-              keyList = new string[idParts.Count()];
-
-              int partIndex = 0;
-              foreach (string part in idParts)
-              {
-                if (identifierIndex == identifiers.Count())
-                {
-                  keyList[partIndex] += part;
-                }
-                else
-                {
-                  keyList[partIndex] += part + ", ";
-                }
-
-                partIndex++;
-              }
-
-              identifierIndex++;
+              dataProps.Add(dataProp);
             }
 
-            int propertyIndex = 0;
-            foreach (KeyProperty keyProperty in dataObjectDef.keyProperties)
+            for (int i = 0; i < identifiers.Count; i++)
             {
-              string propertyValues = keyList[propertyIndex];
+              string[] idParts = identifiers[i].Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
 
-              if (propertyIndex == 0)
+              if (i == 0)
               {
-                queryString.Append(" where " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+                queryString.Append(" WHERE ");
               }
               else
               {
-                queryString.Append(" and " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+                queryString.Append(" OR ");
               }
 
-              propertyIndex++;
+              queryString.Append("(");
+
+              for (int j = 0; j < dataObjectDef.keyProperties.Count; j++)
+              {
+                string propName = dataObjectDef.keyProperties[j].keyPropertyName;
+
+                if (j > 0)
+                {
+                  queryString.Append(" AND ");
+                }
+
+                if (!IsNumeric(dataProps[j].dataType))
+                  idParts[j] = "'" + idParts[j] + "'";
+
+                queryString.Append(propName + " = " + idParts[j]);
+              }
+
+              queryString.Append(")");
             }
           }
         }
@@ -399,7 +443,16 @@ namespace org.iringtools.adapter.datalayer
 
           while (numOfRows < totalCount)
           {
-            criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
+            if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
+            {
+              criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
+            }
+            else
+            {
+              NHibernate.Criterion.Order order = new NHibernate.Criterion.Order(objectDefinition.keyProperties.First().keyPropertyName, true);
+              criteria.AddOrder(order).SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
+            }
+
             dataObjects.AddRange(criteria.List<IDataObject>());
             numOfRows += internalPageSize;
           }
@@ -408,7 +461,16 @@ namespace org.iringtools.adapter.datalayer
         }
         else
         {
-          criteria.SetFirstResult(startIndex).SetMaxResults(pageSize);
+          if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
+          {
+            criteria.SetFirstResult(startIndex).SetMaxResults(pageSize);
+          }
+          else
+          {
+            NHibernate.Criterion.Order order = new NHibernate.Criterion.Order(objectDefinition.keyProperties.First().keyPropertyName, true);
+            criteria.AddOrder(order).SetFirstResult(startIndex).SetMaxResults(pageSize);
+          }
+          
           IList<IDataObject> dataObjects = criteria.List<IDataObject>();
           return dataObjects;
         }
@@ -513,7 +575,7 @@ namespace org.iringtools.adapter.datalayer
               {
                 session.SaveOrUpdate(dataObject);
                 session.Flush();
-                status.Messages.Add(string.Format("Record [{0}] have been saved successfully.", identifier));
+                status.Messages.Add(string.Format("Record [{0}] saved successfully.", identifier));
               }
               catch (Exception ex)
               {
@@ -572,7 +634,7 @@ namespace org.iringtools.adapter.datalayer
           Status status = new Status();
           status.Messages = new Messages();
           status.Identifier = identifier;
-          status.Messages.Add(string.Format("Record [{0}] have been deleted successfully.", identifier));
+          status.Messages.Add(string.Format("Record [{0}] deleted successfully.", identifier));
 
           response.Append(status);
         }
@@ -598,7 +660,8 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Delete(string objectType, DataFilter filter)
     {
-      AccessLevel accessLevel = Authorize(objectType, ref filter);
+      DataFilter newFilter = Utility.CloneDataContractObject<DataFilter>(filter);
+      AccessLevel accessLevel = Authorize(objectType, ref newFilter);
 
       if (accessLevel < AccessLevel.Delete)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
@@ -615,7 +678,7 @@ namespace org.iringtools.adapter.datalayer
           IdentityProperties identityProperties = _dbDictionary.IdentityConfiguration[objectType];
           if (identityProperties.UseIdentityFilter)
           {
-            filter = FilterByIdentity(objectType, filter, identityProperties);
+            newFilter = FilterByIdentity(objectType, newFilter, identityProperties);
           }
         }
         status.Identifier = objectType;
@@ -623,16 +686,16 @@ namespace org.iringtools.adapter.datalayer
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
-        if (filter.Expressions.Count > 0)
+        if (newFilter.Expressions.Count > 0)
         {
           DataObject dataObject = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
-          string whereClause = filter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);          
+          string whereClause = newFilter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);          
           queryString.Append(whereClause);
         }
 
         session.Delete(queryString.ToString());
         session.Flush();
-        status.Messages.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
+        status.Messages.Add(string.Format("Records of type [{0}] deleted succesfully.", objectType));
       }
       catch (Exception ex)
       {
@@ -651,9 +714,8 @@ namespace org.iringtools.adapter.datalayer
 
     public override DataDictionary GetDictionary()
     {
-      if (File.Exists(_dataDictionaryPath))
+      if (_dataDictionary != null)
       {
-        _dataDictionary = Utility.Read<DataDictionary>(_dataDictionaryPath);
         return _dataDictionary;
       }
       else
@@ -814,11 +876,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        if (_authorization == null)
-        {
-          _kernel.Load(_authorizationBindingPath);
-          _authorization = _kernel.Get<IAuthorization>();
-        }
+        _authorization = _kernel.Get<IAuthorization>();
         return _authorization.Authorize(objectType, ref dataFilter);
       }
       catch (Exception e)

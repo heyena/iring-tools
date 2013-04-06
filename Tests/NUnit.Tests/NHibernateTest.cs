@@ -107,6 +107,8 @@ namespace NUnit.Tests
         dictionary.dataObjects.Add(schemaObject);
       }
 
+      dictionary.enableSummary = true;
+
       Response response = _hibernateProvider.PostDictionary(
         _settings["ProjectName"], _settings["ApplicationName"],
         dictionary);

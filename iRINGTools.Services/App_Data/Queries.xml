@@ -20,6 +20,30 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>ContainsSearchJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>type</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>rds</name>
+          <type>Uri</type>
+        </queryBinding>
+      </bindings>
+      <fileName>ContainsSearchJORD.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>ExactSearch</key>
     <query>
       <bindings>
@@ -52,6 +76,18 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetLabelRdlEquivalent</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetLabelRdlEquivalent.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetMembers</key>
     <query>
       <bindings>
@@ -65,6 +101,26 @@
         </queryBinding>
       </bindings>
       <fileName>GetMembers.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetMembersJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>rds</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetMembersJORD.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -100,6 +156,38 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetSubClassesJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>rdsuri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSubClassJORD.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetSubClassesCountJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSubClassCountJORD.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetSubClassesCount</key>
     <query>
       <bindings>
@@ -132,6 +220,30 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetClassificationJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>type</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>rdsuri</name>
+          <type>Uri</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetClassificationJORD.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetPart8Classification</key>
     <query>
       <bindings>
@@ -148,7 +260,7 @@
     </query>
   </queryItem>
   <queryItem>
-    <key>GetSpecialization</key>
+    <key>GetSuperclass</key>
     <query>
       <bindings>
         <queryBinding>
@@ -211,6 +323,55 @@
       <fileName>GetClass.txt</fileName>
     </query>
   </queryItem>
+  <queryItem>
+    <key>GetClassJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>type</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>definition</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>creator</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>creationDate</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>class</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>comment</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>authority</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>recorded</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>from</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetClassJORD.txt</fileName>
+    </query>
+  </queryItem>
+
   <queryItem>
     <key>GetTemplate</key>
     <query>
@@ -303,10 +464,10 @@
     <key>GetRoles</key>
     <query>
       <bindings>
-				<queryBinding>
-					<name>comment</name>
-					<type>Literal</type>
-				</queryBinding>
+        <queryBinding>
+          <name>comment</name>
+          <type>Literal</type>
+        </queryBinding>
         <queryBinding>
           <name>type</name>
           <type>Uri</type>
@@ -479,7 +640,6 @@
       <fileName>ClassRelations.txt</fileName>
     </query>
   </queryItem>
-  <!-- part8 queries-->
   <queryItem>
     <key>GetTemplateClassification</key>
     <query>
@@ -566,6 +726,26 @@
         </queryBinding>
       </bindings>
       <fileName>GetSuperClassOf.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetSuperclassJORD</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>rdsuri</name>
+          <type>Uri</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSuperClassJORD.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -696,42 +876,6 @@
     <key>GetEntityTypes</key>
     <query>
       <fileName>GetEntityTypes.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_1</key>
-    <query>
-      <fileName>PostPart8Template_1.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_2</key>
-    <query>
-      <fileName>PostPart8Template_2.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_3</key>
-    <query>
-      <fileName>PostPart8Template_3.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_4</key>
-    <query>
-      <fileName>PostPart8Template_4.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_5_1</key>
-    <query>
-      <fileName>PostPart8Template_5_1.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>PostPart8Template_5_2</key>
-    <query>
-      <fileName>PostPart8Template_5_2.txt</fileName>
     </query>
   </queryItem>
 </queries>

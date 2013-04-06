@@ -6,11 +6,11 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using org.iringtools.adapter;
 using org.iringtools.library;
-using org.iringtools.utility;
+using System.Collections.Generic;
 
 namespace NUnit.Tests
 {
-  [TestFixture]
+ // [TestFixture]
   public class DataTest : BaseTest
   {
     private AdapterProvider _adapterProvider = null;
@@ -27,6 +27,7 @@ namespace NUnit.Tests
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
       _settings["Identifier"] = "90002-RV";
+      _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
       _settings["ClassName"] = "PIPINGNETWORKSYSTEM";
 
       _baseDirectory = Directory.GetCurrentDirectory();
@@ -37,391 +38,477 @@ namespace NUnit.Tests
 
       _adapterProvider = new AdapterProvider(_settings);
 
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-
-      Resource importScopes = Utility.Read<Resource>(scopesPath);
-      _adapterProvider.SetScopes(importScopes);
-
       ResetDatabase();
     }
 
-    [Test]
-    public void GetIndividual()
-    {
-      XDocument benchmark = null;
+    //[Test]
+    //public void GetSummary()
+    //{
+    //  IList<object> response =
+    //    _adapterProvider.GetSummary(
+    //      _settings["ProjectName"], _settings["ApplicationName"]);
+    //}
 
-      string format = "Xml";
+    //[Test]
+    //public void GetIndividual()
+    //{
+    //  XDocument benchmark = null;
 
-      object response =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"], _settings["ClassName"],
-          _settings["Identifier"],
-          ref format, false
-        );
+    //  string format = "Xml";
 
-      XDocument xDocument = (XDocument)response;
+    //  object response =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"], _settings["ClassName"],
+    //      _settings["Identifier"],
+    //      ref format, false
+    //    );
 
-      string path = String.Format(
-         "{0}GetIndividual.xml",
-         _settings["AppDataPath"]
-       );
+    //  XDocument xDocument = (XDocument)response;
 
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-     
-    }
+    //  string path = String.Format(
+    //     "{0}GetIndividual.xml",
+    //     _settings["AppDataPath"]
+    //   );
 
-    [Test]
-    public void GetIndex()
-    {
-      XDocument benchmark = null;
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
+    //}
 
-      string format = "Xml";
+    //[Test]
+    //public void GetIndex()
+    //{
+    //  XDocument benchmark = null;
 
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 0, null, null,
-          false,
-          null
-        );
+    //  string format = "Xml";
 
-      string path = String.Format(
-          "{0}GetIndex.xml",
-          _settings["AppDataPath"]
-        );
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 0, null, null,
+    //      false,
+    //      null
+    //    );
 
-      xDocument.Save(path);      
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  string path = String.Format(
+    //      "{0}GetIndex.xml",
+    //      _settings["AppDataPath"]
+    //    );
+
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
+    //}
+
+    //[Test]
+    //public void GetFull()
+    //{
+    //  XDocument benchmark = null;
+
+    //  string format = "Xml";
+
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 0, null, null,
+    //      true,
+    //      null
+    //    );
+
+    //  string path = String.Format(
+    //      "{0}GetFull.xml",
+    //      _settings["AppDataPath"]
+    //    );
+
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
+    //}
+
+    //[Test]
+    //public void GetPageIndex()
+    //{
+    //  XDocument benchmark = null;
+
+    //  string format = "Xml";
+
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 5, null, null,
+    //      false,
+    //      null
+    //    );
+
+    //  string path = String.Format(
+    //      "{0}GetPageIndex.xml",
+    //      _settings["AppDataPath"]
+    //    );
+
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
+
+    //  int total = 0;
+
+    //  if (xDocument.Root.Attribute("total") != null)
+    //    int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+
+    //  for (int i = 5; i < total; i += 5)
+    //  {
+    //    xDocument =
+    //     _adapterProvider.GetDataProjection(
+    //       _settings["ProjectName"], _settings["ApplicationName"],
+    //       _settings["GraphName"],
+    //       ref format,
+    //       i, 5, null, null,
+    //       false,
+    //       null
+    //     );
+
+    //    path = String.Format(
+    //        "{0}GetPageIndex.{1}.xml",
+    //        _settings["AppDataPath"],
+    //        (i / 5) + 1
+    //      );
+
+    //    if (_settings["TestMode"].ToLower() != "usefiles")
+    //    {
+    //      xDocument.Save(path);
+    //      Assert.AreNotEqual(null, xDocument);
+    //    }
+    //    else
+    //    {
+    //      benchmark = XDocument.Load(path);
+    //      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //    }
+    //  }
+    //}
+
+    //[Test]
+    //public void GetPageFull()
+    //{
+    //  XDocument benchmark = null;
       
-    }
+    //  string format = "Xml";
 
-    [Test]
-    public void GetFull()
-    {
-      XDocument benchmark = null;
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 5, null, null,
+    //      true,
+    //      null
+    //    );
 
-      string format = "Xml";
+    //  string path = String.Format(
+    //      "{0}GetPageFull.xml",
+    //      _settings["AppDataPath"]
+    //    );
 
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 0, null, null,
-          true,
-          null
-        );
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
 
-      string path = String.Format(
-          "{0}GetFull.xml",
-          _settings["AppDataPath"]
-        );
+    //  int total = 0;
 
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());      
-    }
+    //  if (xDocument.Root.Attribute("total") != null)
+    //    int.TryParse(xDocument.Root.Attribute("total").Value, out total);
 
-    [Test]
-    public void GetPageIndex()
-    {
-      XDocument benchmark = null;
+    //  for (int i = 5; i < total; i += 5)
+    //  {
+    //    xDocument =
+    //     _adapterProvider.GetDataProjection(
+    //       _settings["ProjectName"], _settings["ApplicationName"],
+    //       _settings["GraphName"],
+    //       ref format,
+    //       i, 5, null, null,
+    //       true,
+    //       null
+    //     );
 
-      string format = "Xml";
+    //    path = String.Format(
+    //        "{0}GetPageFull.{1}.xml",
+    //        _settings["AppDataPath"],
+    //        (i / 5) + 1
+    //      );
 
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 5, null, null,
-          false,
-          null
-        );
+    //    if (_settings["TestMode"].ToLower() != "usefiles")
+    //    {
+    //      xDocument.Save(path);
+    //      Assert.AreNotEqual(null, xDocument);
+    //    }
+    //    else
+    //    {
+    //      benchmark = XDocument.Load(path);
+    //      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //    }
+    //  }
+    //}
 
-      string path = String.Format(
-          "{0}GetPageIndex.xml",
-          _settings["AppDataPath"]
-        );
+    //[Test]
+    //public void GetFilterIndex()
+    //{
+    //  NameValueCollection parameters = new NameValueCollection();
 
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      
+    //  parameters.Add("System", "SC");
 
-      int total = 0;
+    //  XDocument benchmark = null;
 
-      if (xDocument.Root.Attribute("total") != null)
-        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+    //  string format = "Xml";
 
-      for (int i = 5; i < total; i += 5)
-      {
-        xDocument =
-         _adapterProvider.GetDataProjection(
-           _settings["ProjectName"], _settings["ApplicationName"],
-           _settings["GraphName"],
-           ref format,
-           i, 5, null, null,
-           false,
-           null
-         );
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 0, null, null,
+    //      false,
+    //      parameters
+    //    );
 
-        path = String.Format(
-            "{0}GetPageIndex.{1}.xml",
-            _settings["AppDataPath"],
-            (i / 5) + 1
-          );
+    //  string path = String.Format(
+    //      "{0}GetFilterIndex.xml",
+    //      _settings["AppDataPath"]
+    //    );
 
-        xDocument.Save(path);
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());       
-      }
-    }
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
+    //}
 
-    [Test]
-    public void GetPageFull()
-    {
-      XDocument benchmark = null;
-      
-      string format = "Xml";
+    //[Test]
+    //public void GetFilterFull()
+    //{
+    //  NameValueCollection parameters = new NameValueCollection();
 
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 5, null, null,
-          true,
-          null
-        );
+    //  parameters.Add("System", "SC");
 
-      string path = String.Format(
-          "{0}GetPageFull.xml",
-          _settings["AppDataPath"]
-        );
+    //  XDocument benchmark = null;
 
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      
+    //  string format = "Xml";
 
-      int total = 0;
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 0, null, null,
+    //      true,
+    //      parameters
+    //    );
 
-      if (xDocument.Root.Attribute("total") != null)
-        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+    //  string path = String.Format(
+    //      "{0}GetFilterFull.xml",
+    //      _settings["AppDataPath"]
+    //    );
 
-      for (int i = 5; i < total; i += 5)
-      {
-        xDocument =
-         _adapterProvider.GetDataProjection(
-           _settings["ProjectName"], _settings["ApplicationName"],
-           _settings["GraphName"],
-           ref format,
-           i, 5, null, null,
-           true,
-           null
-         );
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
+    //}
 
-        path = String.Format(
-            "{0}GetPageFull.{1}.xml",
-            _settings["AppDataPath"],
-            (i / 5) + 1
-          );
+    //[Test]
+    //public void GetSortIndex()
+    //{
+    //  NameValueCollection parameters = new NameValueCollection();
 
-        xDocument.Save(path);
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());        
-      }
-    }
+    //  XDocument benchmark = null;
 
-    [Test]
-    public void GetFilterIndex()
-    {
-      NameValueCollection parameters = new NameValueCollection();
+    //  string format = "Xml";
 
-      parameters.Add("System", "SC");
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 0, "Asc", "System",
+    //      false,
+    //      parameters
+    //    );
 
-      XDocument benchmark = null;
+    //  string path = String.Format(
+    //      "{0}GetSortIndex.xml",
+    //      _settings["AppDataPath"]
+    //    );
 
-      string format = "Xml";
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
+    //}
 
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 0, null, null,
-          false,
-          parameters
-        );
+    //[Test]
+    //public void GetSortFull()
+    //{
+    //  NameValueCollection parameters = new NameValueCollection();
 
-      string path = String.Format(
-          "{0}GetFilterIndex.xml",
-          _settings["AppDataPath"]
-        );
+    //  XDocument benchmark = null;
 
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-     
-    }
+    //  string format = "Xml";
 
-    [Test]
-    public void GetFilterFull()
-    {
-      NameValueCollection parameters = new NameValueCollection();
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 0, "Asc", "System",
+    //      true,
+    //      parameters
+    //    );
 
-      parameters.Add("System", "SC");
+    //  string path = String.Format(
+    //      "{0}GetSortFull.xml",
+    //      _settings["AppDataPath"]
+    //    );
 
-      XDocument benchmark = null;
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
+    //}
 
-      string format = "Xml";
+    //[Test]
+    //public void GetFilterPageSortIndex()
+    //{
+    //  NameValueCollection parameters = new NameValueCollection();
 
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 0, null, null,
-          true,
-          parameters
-        );
+    //  parameters.Add("Area", "90");
 
-      string path = String.Format(
-          "{0}GetFilterFull.xml",
-          _settings["AppDataPath"]
-        );
+    //  XDocument benchmark = null;
 
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      
-    }
+    //  string format = "Xml";
 
-    [Test]
-    public void GetSortIndex()
-    {
-      NameValueCollection parameters = new NameValueCollection();
+    //  XDocument xDocument =
+    //    _adapterProvider.GetDataProjection(
+    //      _settings["ProjectName"], _settings["ApplicationName"],
+    //      _settings["GraphName"],
+    //      ref format,
+    //      0, 5, "Desc", "System",
+    //      false,
+    //      parameters
+    //    );
 
-      XDocument benchmark = null;
+    //  string path = String.Format(
+    //      "{0}GetFilterPageSortIndex.xml",
+    //      _settings["AppDataPath"]
+    //    );
 
-      string format = "Xml";
+    //  if (_settings["TestMode"].ToLower() != "usefiles")
+    //  {
+    //    xDocument.Save(path);
+    //    Assert.AreNotEqual(null, xDocument);
+    //  }
+    //  else
+    //  {
+    //    benchmark = XDocument.Load(path);
+    //    Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //  }
 
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 0, "Asc", "System",
-          false,
-          parameters
-        );
+    //  int total = 0;
 
-      string path = String.Format(
-          "{0}GetSortIndex.xml",
-          _settings["AppDataPath"]
-        );
+    //  if (xDocument.Root.Attribute("total") != null)
+    //    int.TryParse(xDocument.Root.Attribute("total").Value, out total);
 
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());      
-    }
+    //  for (int i = 5; i < total; i += 5)
+    //  {
+    //    xDocument =
+    //     _adapterProvider.GetDataProjection(
+    //       _settings["ProjectName"], _settings["ApplicationName"],
+    //       _settings["GraphName"],
+    //       ref format,
+    //       i, 5, "Desc", "System",
+    //       false,
+    //       parameters
+    //     );
 
-    [Test]
-    public void GetSortFull()
-    {
-      NameValueCollection parameters = new NameValueCollection();
+    //    path = String.Format(
+    //        "{0}GetFilterPageSortIndex.{1}.xml",
+    //        _settings["AppDataPath"],
+    //        (i / 5) + 1
+    //      );
 
-      XDocument benchmark = null;
-
-      string format = "Xml";
-
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 0, "Asc", "System",
-          true,
-          parameters
-        );
-
-      string path = String.Format(
-          "{0}GetSortFull.xml",
-          _settings["AppDataPath"]
-        );
-
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      
-    }
-
-    [Test]
-    public void GetFilterPageSortIndex()
-    {
-      NameValueCollection parameters = new NameValueCollection();
-
-      parameters.Add("Area", "90");
-
-      XDocument benchmark = null;
-
-      string format = "Xml";
-
-      XDocument xDocument =
-        _adapterProvider.GetDataProjection(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"],
-          ref format,
-          0, 5, "Desc", "System",
-          false,
-          parameters
-        );
-
-      string path = String.Format(
-          "{0}GetFilterPageSortIndex.xml",
-          _settings["AppDataPath"]
-        );
-
-      xDocument.Save(path);
-      benchmark = XDocument.Load(path);
-      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
-      
-
-      int total = 0;
-
-      if (xDocument.Root.Attribute("total") != null)
-        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
-
-      for (int i = 5; i < total; i += 5)
-      {
-        xDocument =
-         _adapterProvider.GetDataProjection(
-           _settings["ProjectName"], _settings["ApplicationName"],
-           _settings["GraphName"],
-           ref format,
-           i, 5, "Desc", "System",
-           false,
-           parameters
-         );
-
-        path = String.Format(
-            "{0}GetFilterPageSortIndex.{1}.xml",
-            _settings["AppDataPath"],
-            (i / 5) + 1
-          );
-
-        xDocument.Save(path);
-        benchmark = XDocument.Load(path);
-        Assert.AreEqual(benchmark.ToString(), xDocument.ToString());          
-      }
-    }
+    //    if (_settings["TestMode"].ToLower() != "usefiles")
+    //    {
+    //      xDocument.Save(path);
+    //      Assert.AreNotEqual(null, xDocument);
+    //    }
+    //    else
+    //    {
+    //      benchmark = XDocument.Load(path);
+    //      Assert.AreEqual(benchmark.ToString(), xDocument.ToString());
+    //    }
+    //  }
+    //}
 
     //[Test]
     //public void GetFilterPageSortFull()
@@ -543,7 +630,7 @@ namespace NUnit.Tests
     //  }
     //}
 
-    //[Test] Move to JUnit
+    //[Test]
     //public void GetDataFilterFull()
     //{
     //  DataFilter filter = new DataFilter();

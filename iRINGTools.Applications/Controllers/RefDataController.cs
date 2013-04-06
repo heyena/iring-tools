@@ -24,10 +24,11 @@ namespace org.iringtools.web.controllers
 {
   public class RefDataController : BaseController
   {
+
     private IRefDataRepository _refdataRepository = null;
     private NamespaceMapper _nsMap = new NamespaceMapper();
     private List<Namespace> _namespaces = null;
-    private Federation _federaton = null;
+    private Federation _federation = null;
     private string _adapterServiceURI = String.Empty;
     private string _refDataServiceURI = String.Empty;
     public RefDataController()
@@ -37,12 +38,12 @@ namespace org.iringtools.web.controllers
     public RefDataController(IRefDataRepository repository)
     {
       _refdataRepository = repository;
-      _federaton = _refdataRepository.GetFederation();
-      _namespaces = _federaton.Namespaces;
+      _federation = _refdataRepository.GetFederation();
+      _namespaces = _federation.Namespaces;
       //_nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
       //_nsMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
       //_nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
-      //_nsMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+      //_nsMap.AddNamespace("tpL", new Uri("http://tpl.rdlfacade.org/data#"));
       //_nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
       //_nsMap.AddNamespace("p8dm", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/data-model#"));
       //_nsMap.AddNamespace("owl2xml", new Uri("http://www.w3.org/2006/12/owl2-xml#"));
@@ -52,6 +53,7 @@ namespace org.iringtools.web.controllers
 
     public JsonResult Index(FormCollection form)
     {
+
       int start = 0;
       int limit = 100;
       string id = form["id"];
@@ -80,16 +82,16 @@ namespace org.iringtools.web.controllers
       int start = 0;
       int limit = 100;
       string roleClassId = string.Empty;
+      string repositoryName = form["repositoryName"];
       string id = form["id"];
       string searchtype = form["type"];
-      string repositoryName = form["repositoryName"];
       string query = form["query"];
       if (string.IsNullOrEmpty(query)) return Json(nodes, JsonRequestBehavior.AllowGet);
       string range = form["range"];
       string isreset = form["reset"];
-
       Int32.TryParse(form["limit"], out limit);
       Int32.TryParse(form["start"], out start);
+
 
       if (!string.IsNullOrEmpty(range))
       {
@@ -137,23 +139,25 @@ namespace org.iringtools.web.controllers
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
-    private List<JsonTreeNode> GetClassMembers(string id)
+    private List<JsonTreeNode> GetClassMembers(string id, string repositoryName)
     {
       Repository repository = null;
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       if (!string.IsNullOrEmpty(id))
       {
+        if (!string.IsNullOrEmpty(repositoryName))
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
+
         Entities dataEntities = _refdataRepository.GetClassMembers(id, repository);
-        
         foreach (Entity entity in dataEntities)
         {
-          TreeNode node = new TreeNode
+          JsonTreeNode node = new JsonTreeNode
           {
             type = "MemberNode",
-            iconCls = "treeClass",
+            icon = "Content/img/class.png",
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
-            text = entity.Label,
+            text = string.Format("{0}[{1}]", entity.Label, entity.Repository),
             leaf = false,
             children = GetDefaultChildren(entity.Label),
             record = entity
@@ -171,7 +175,7 @@ namespace org.iringtools.web.controllers
       JsonTreeNode memberNode = new JsonTreeNode
       {
         id = Guid.NewGuid().ToString(),
-
+        children = null,
         iconCls = "folder",
         leaf = false,
         text = "Members",
@@ -181,9 +185,9 @@ namespace org.iringtools.web.controllers
       nodes.Add(memberNode);
       JsonTreeNode clasifNode = new JsonTreeNode
       {
-        iconCls = "folder",
+        icon = "Content/img/folder.png",
         id = Guid.NewGuid().ToString(),
-
+        children = null,
         leaf = false,
         text = "Member Of",
         type = "ClassificationsNode",
@@ -192,9 +196,9 @@ namespace org.iringtools.web.controllers
       nodes.Add(clasifNode);
       JsonTreeNode supersNode = new JsonTreeNode
       {
-        iconCls = "folder",
+        icon = "Content/img/folder.png",
         id = Guid.NewGuid().ToString(),
-
+        children = null,
         leaf = false,
         text = "Superclasses",
         type = "SuperclassesNode",
@@ -203,9 +207,9 @@ namespace org.iringtools.web.controllers
       nodes.Add(supersNode);
       JsonTreeNode subsNode = new JsonTreeNode
       {
-        iconCls = "folder",
+        icon = "Content/img/folder.png",
         id = Guid.NewGuid().ToString(),
-
+        children = null,
         leaf = false,
         text = "Subclasses",
         type = "SubclassesNode",
@@ -215,8 +219,8 @@ namespace org.iringtools.web.controllers
       JsonTreeNode tempsNode = new JsonTreeNode
       {
         id = Guid.NewGuid().ToString(),
-        iconCls = "folder",
-
+        icon = "Content/img/folder.png",
+        children = null,
         leaf = false,
         text = "Templates",
         type = "ClassTemplatesNode",
@@ -245,7 +249,6 @@ namespace org.iringtools.web.controllers
       foreach (Entity entity in dataEntities.Entities.Values.ToList<Entity>())
       {
         string label = entity.Label + '[' + entity.Repository + ']';
-
         if (entity.Uri.Contains("#"))
         {
           prefix = _namespaces.Find(n => n.Uri == entity.Uri.Substring(0, entity.Uri.IndexOf("#") + 1)).Prefix;
@@ -255,12 +258,12 @@ namespace org.iringtools.web.controllers
         {
           prefix = _namespaces.Find(n => n.Uri == entity.Uri.Substring(0, entity.Uri.LastIndexOf("/") + 1)).Prefix;
           ident = entity.Uri.Substring(entity.Uri.LastIndexOf("/") + 1);
-        } 
-        
+        }
+
         JsonTreeNode node = new JsonTreeNode
         {
-          type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
-          iconCls = (prefix.Equals("rdl")) ? "treeClass" : "treeTemplate",
+          type = (prefix.Contains("rdl")) ? "ClassNode" : "TemplateNode",
+          icon = (prefix.Contains("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
           identifier = ident,
           id = Guid.NewGuid().ToString(),
           text = label,
@@ -282,7 +285,6 @@ namespace org.iringtools.web.controllers
       string prefix = string.Empty;
       string ident = string.Empty;
       string ns = string.Empty;
-
       if (classId != string.Empty)
       {
         QMXF dataEntities = _refdataRepository.GetClasses(classId, null);
@@ -301,19 +303,16 @@ namespace org.iringtools.web.controllers
             ident = entity.identifier.Substring(entity.identifier.LastIndexOf("/") + 1);
             ns = _namespaces.Find(n => n.Uri == entity.identifier.Substring(0, entity.identifier.LastIndexOf("/") + 1)).Uri;
           }
-
           string label = entity.name[0].value.ToString() + '[' + entity.repositoryName + ']';
 
-          JsonRefDataNode node = new JsonRefDataNode
+          JsonTreeNode node = new JsonTreeNode
           {
             type = (prefix.Contains("rdl")) ? "ClassNode" : "TemplateNode",
-            iconCls = (prefix.Contains("rdl")) ? "treeClass" : "treeTemplate",
+            icon = (prefix.Contains("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
             identifier = ident,
             id = Guid.NewGuid().ToString(),
             text = label,
-            //     expanded = false,
             leaf = false,
-            //  children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
             record = entity,
             Namespace = ns
           };
@@ -326,23 +325,22 @@ namespace org.iringtools.web.controllers
 
     private List<JsonTreeNode> GetClasses(string classId, string repositoryName)
     {
+
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       QMXF dataEntities = null;
       Repository repository = null;
-
       if (!string.IsNullOrEmpty(classId))
       {
         if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
 
         dataEntities = _refdataRepository.GetClasses(classId, repository);
-
         foreach (var entity in dataEntities.classDefinitions)
         {
           #region Default Nodes------------------
           var label = entity.name[0].value;
 
-          TreeNode memberNode = new TreeNode
+          JsonTreeNode memberNode = new JsonTreeNode
           {
             id = Guid.NewGuid().ToString(),
             children = new List<JsonTreeNode>(),
@@ -354,7 +352,7 @@ namespace org.iringtools.web.controllers
             //    expanded = false
           };
 
-          TreeNode clasifNode = new TreeNode
+          JsonTreeNode clasifNode = new JsonTreeNode
           {
             id = Guid.NewGuid().ToString(),
             children = new List<JsonTreeNode>(),
@@ -366,7 +364,7 @@ namespace org.iringtools.web.controllers
             //  expanded = false
           };
 
-          TreeNode supersNode = new TreeNode
+          JsonTreeNode supersNode = new JsonTreeNode
           {
             id = Guid.NewGuid().ToString(),
             children = new List<JsonTreeNode>(),
@@ -377,10 +375,10 @@ namespace org.iringtools.web.controllers
             //    expanded = false
           };
 
-          TreeNode subsNode = new TreeNode
+          JsonTreeNode subsNode = new JsonTreeNode
           {
             id = Guid.NewGuid().ToString(),
-
+            children = null,
             iconCls = "folder",
             leaf = false,
             text = "Subclasses",
@@ -388,10 +386,10 @@ namespace org.iringtools.web.controllers
             //    expanded = false
           };
 
-          TreeNode tempsNode = new TreeNode
+          JsonTreeNode tempsNode = new JsonTreeNode
           {
             id = Guid.NewGuid().ToString(),
-
+            children = null,
             iconCls = "folder",
             leaf = false,
             text = "Templates",
@@ -428,13 +426,13 @@ namespace org.iringtools.web.controllers
             JsonTreeNode leafNode = new JsonTreeNode
             {
               type = "ClassNode",
-              iconCls = "treeClass",
+              icon = "Content/img/class.png",
               leaf = false,
               identifier = classification.reference.Split('#')[1],
               id = Guid.NewGuid().ToString(),
-              text = classification.label,
+              text = string.Format("{0}[{1}]",classification.label,classification.repository),
               //       expanded = false,
-
+              children = null,
               record = classification
             };
 
@@ -460,13 +458,13 @@ namespace org.iringtools.web.controllers
             JsonTreeNode leafNode = new JsonTreeNode
             {
               type = "ClassNode",
-              iconCls = "treeClass",
+              icon = "Content/img/class.png",
               leaf = false,
               identifier = specialization.reference.Split('#')[1],
               id = Guid.NewGuid().ToString(),
-              text = specialization.label,
+              text = string.Format("{0}[{1}]",specialization.label,specialization.repository),
               //      expanded = false,
-
+              children = null,
               record = specialization
             };
 
@@ -476,7 +474,7 @@ namespace org.iringtools.web.controllers
           if (supersNode.children.Count() == 0)
           {
             supersNode.leaf = true;
-            supersNode.iconCls = "folder";
+            supersNode.icon = "Content/img/folder.png";
           }
           #endregion
 
@@ -489,7 +487,7 @@ namespace org.iringtools.web.controllers
           {
             subsNode.children = null;
             subsNode.leaf = true;
-            subsNode.iconCls = "folder";
+            subsNode.icon = "Content/img/folder.png";
           }
           nodes.Add(subsNode);
 
@@ -501,7 +499,7 @@ namespace org.iringtools.web.controllers
           {
             tempsNode.children = null;
             tempsNode.leaf = true;
-            tempsNode.iconCls = "folder";
+            tempsNode.icon = "Content/img/folder.png";
           }
 
           nodes.Add(tempsNode);
@@ -509,6 +507,38 @@ namespace org.iringtools.web.controllers
       }
 
       return nodes;
+    }
+
+    private JsonTreeNode GetSubClasses(string classId, JsonTreeNode subsNode, string repositoryName)
+    {
+      Repository repository = null;
+      if (!string.IsNullOrEmpty(classId))
+      {
+        if (!string.IsNullOrEmpty(repositoryName))
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
+
+        Entities dataEntities = _refdataRepository.GetSubClasses(classId, repository);
+        foreach (var entity in dataEntities)
+        {
+          JsonTreeNode node = new JsonTreeNode
+          {
+            type = "ClassNode",
+            icon = "Content/img/class.png",
+            identifier = entity.Uri.Split('#')[1],
+            id = Guid.NewGuid().ToString(),
+            text = entity.Label,
+            //   expanded = false,
+            leaf = false,
+            children = null,
+            record = entity
+          };
+
+          subsNode.children.Add(node);
+        }
+        subsNode.text = subsNode.text + " (" + subsNode.children.Count() + ")";
+      }
+
+      return subsNode;
     }
 
     private string GetSubClassesCount(string classId)
@@ -529,11 +559,10 @@ namespace org.iringtools.web.controllers
     {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       Repository repository = null;
-
       if (!string.IsNullOrEmpty(classId))
       {
         if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
 
         Entities dataEntities = _refdataRepository.GetSubClasses(classId, repository);
         foreach (var entity in dataEntities)
@@ -541,10 +570,10 @@ namespace org.iringtools.web.controllers
           JsonTreeNode node = new JsonTreeNode
           {
             type = "ClassNode",
-            iconCls = "treeClass",
+            icon = "Content/img/class.png",
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
-            text = entity.Label,
+            text = string.Format("{0}[{1}]",entity.Label, entity.Repository),
             //    expanded = false,
             leaf = false,
             //  children = GetDefaultChildren(entity.Label),
@@ -562,22 +591,20 @@ namespace org.iringtools.web.controllers
     {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       Repository repository = null;
-
       if (!string.IsNullOrEmpty(classId))
       {
-        if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
-
+        if(!string.IsNullOrEmpty(repositoryName))
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
         Entities dataEntities = _refdataRepository.GetSuperClasses(classId, repository);
         foreach (var entity in dataEntities)
         {
           JsonTreeNode node = new JsonTreeNode
           {
             type = "ClassNode",
-            iconCls = "treeClass",
+            icon = "Content/img/class.png",
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
-            text = entity.Label,
+            text = string.Format("{0}[{1}]", entity.Label, entity.Repository),
             //   expanded = false,
             leaf = false,
             //  children = GetDefaultChildren(entity.Label),
@@ -590,14 +617,14 @@ namespace org.iringtools.web.controllers
       return nodes;
     }
 
-    private JsonTreeNode GetClassMembers(string classId, TreeNode tempsNode, string repositoryName)
+    private JsonTreeNode GetClassMembers(string classId, JsonTreeNode tempsNode, string repositoryName)
     {
       Repository repository = null;
 
       if (!string.IsNullOrEmpty(classId))
       {
         if (!string.IsNullOrEmpty(repositoryName))
-          repository = _refdataRepository.GetFederation().Repositories.Find(r => r.Name == repositoryName);
+          repository = _federation.Repositories.Find(r => r.Name == repositoryName);
 
         Entities dataEntities = _refdataRepository.GetClassMembers(classId, repository);
         foreach (Entity entity in dataEntities)
@@ -605,13 +632,13 @@ namespace org.iringtools.web.controllers
           JsonTreeNode node = new JsonTreeNode
           {
             type = "ClassNode",
-            iconCls = "treeClass",
+            icon = "Content/img/class.png",
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
-            text = entity.Label,
+            text = string.Format("{0}[{1}]",entity.Label, entity.Repository),
             //    expanded = false,
             leaf = false,
-            //   
+            //   children = null,
             record = entity
           };
           tempsNode.children.Add(node);
@@ -623,7 +650,7 @@ namespace org.iringtools.web.controllers
       return tempsNode;
     }
 
-    private JsonTreeNode GetTemplates(string classId, TreeNode tempsNode)
+    private JsonTreeNode GetTemplates(string classId, JsonTreeNode tempsNode)
     {
 
       if (!string.IsNullOrEmpty(classId))
@@ -634,13 +661,13 @@ namespace org.iringtools.web.controllers
           JsonTreeNode node = new JsonTreeNode
           {
             type = "TemplateNode",
-            iconCls = "treeTemplate",
+            icon = "Content/img/template.png",
             id = Guid.NewGuid().ToString(),
             identifier = entity.Uri.Split('#')[1],
-            text = entity.Label,
+            text = string.Format("{0}[{1}]", entity.Label, entity.Repository),
             //    expanded = false,
             leaf = false,
-
+            children = null,
             record = entity
           };
 
@@ -679,13 +706,13 @@ namespace org.iringtools.web.controllers
           {
             nodeType = "async",
             type = "TemplateNode",
-            iconCls = "treeTemplate",
+            icon = "Content/img/template.png",
             id = Guid.NewGuid().ToString(),
             identifier = entity.Uri.Split('#')[1],
-            text = entity.Label,
+            text = string.Format("{0}[{1}]", entity.Label, entity.Repository),
             //    expanded = false,
             leaf = false,
-
+            children = null,
             record = entity
           };
 
@@ -709,12 +736,12 @@ namespace org.iringtools.web.controllers
           {
             identifier = entity.classDefinitions[0].identifier.Split('#')[1],
             leaf = false,
-
+            children = null,
             text = entity.classDefinitions[0].name[0].value,
             id = Guid.NewGuid().ToString(),
             record = entity.classDefinitions[0],
             type = "ClassNode",
-            iconCls = "treeClass"
+            icon = "Content/img/class.png"
           };
           nodes.Add(classNode);
         }
@@ -732,16 +759,22 @@ namespace org.iringtools.web.controllers
 
         if (dataEntities.templateDefinitions.Count > 0)
         {
+          var id = string.Empty; // solving bug when id exists in more than one repository
           foreach (var entity in dataEntities.templateDefinitions)
           {
+            if (id != entity.identifier)
+              id = entity.identifier;
+            else
+              continue; // multiple id's 
+
             foreach (var role in entity.roleDefinition)
             {
               JsonTreeNode entityNode = new JsonTreeNode
               {
                 id = Guid.NewGuid().ToString(),
                 type = "RoleNode",
-                iconCls = "treeRole",
-
+                icon = "Content/img/role.png",
+                children = null,
                 leaf = false,
                 text = role.name[0].value,
                 identifier = role.identifier,
@@ -753,8 +786,14 @@ namespace org.iringtools.web.controllers
         }
         else if (dataEntities.templateQualifications.Count > 0)
         {
+          var id = string.Empty; // solving bug when id exists in more than one repository
           foreach (var entity in dataEntities.templateQualifications)
           {
+            if (id != entity.identifier)
+              id = entity.identifier;
+            else
+              continue; // multiple id's 
+
             foreach (var role in entity.roleQualification)
             {
               string roleId = string.Empty;
@@ -762,12 +801,12 @@ namespace org.iringtools.web.controllers
               {
                 roleId = role.range.Split('#')[1];
               }
-              TreeNode entityNode = new TreeNode
+              JsonTreeNode entityNode = new JsonTreeNode
               {
                 id = Guid.NewGuid().ToString(),
                 type = "RoleNode",
                 text = role.name[0].value,
-                iconCls = "treeRole",
+                icon = "Content/img/role.png",
                 children = GetTemplateRoleClasses(roleId),
                 leaf = false,
                 identifier = role.identifier,

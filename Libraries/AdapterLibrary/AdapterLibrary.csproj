@@ -42,6 +42,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -67,16 +68,9 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF, Version=0.6.0.16595, Culture=neutral, PublicKeyToken=8b91af99db2769f2, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.3.0.18547, Culture=neutral, PublicKeyToken=d6907caf9fc97226, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\dotnetRDF\core\net40\dotNetRDF.dll</HintPath>
-    </Reference>
-    <Reference Include="dotNetRDF.Data.Sql, Version=0.5.1.17871, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\dotnetRDF\data\Sql\net40\dotNetRDF.Data.Sql.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\..\ExternalBinaries\zip-v1.9\Ionic.Zip.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -85,6 +79,10 @@
     <Reference Include="Microsoft.ServiceModel.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\Json.NET 4.5\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
@@ -132,13 +130,14 @@
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
     <Compile Include="BaseProvider.cs" />
+    <Compile Include="ContentObject.cs" />
     <Compile Include="DtiTask.cs" />
-    <Compile Include="ExchangeProvider.cs" />
     <Compile Include="InboundDtoTask.cs" />
+    <Compile Include="OutboundDtoTask.cs" />
+    <Compile Include="DataItemSerializer.cs" />
     <Compile Include="JsonProjectionEngine.cs" />
     <Compile Include="HtmlProjectionEngine.cs" />
-    <Compile Include="OutboundDtoTask.cs" />
-    <Compile Include="SSOIdentityProvider.cs" />
+    <Compile Include="MockIdentityProvider.cs" />
     <Compile Include="DxiRequest.cs" />
     <Compile Include="DxoRequest.cs" />
     <Compile Include="DataProjectionEngine.cs" />
@@ -156,9 +155,34 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
     <Compile Include="RdfProjectionEngine.cs" />
-    <Compile Include="DataItemSerializer.cs" />
     <Compile Include="WindowsIdentityProvider.cs" />
     <Compile Include="XmlProjectionEngine.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernateExtension\NHibernateExtension.csproj">
+      <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
+      <Name>NHibernateExtension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernateLibrary\NHibernateLibrary.csproj">
+      <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
+      <Name>NHibernateLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
+      <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
+      <Name>SpreadsheetDatalayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WADLLibrary\WADLLibrary.csproj">
+      <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>
+      <Name>WADLLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -176,32 +200,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
-      <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
-      <Name>iRINGLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NHibernateExtension\NHibernateExtension.csproj">
-      <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
-      <Name>NHibernateExtension</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NHibernateLibrary\NHibernateLibrary.csproj">
-      <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
-      <Name>NHibernateLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
-      <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
-      <Name>SpreadsheetLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
-      <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
-      <Name>UtilityLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WADLLibrary\WADLLibrary.csproj">
-      <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>
-      <Name>WADLLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

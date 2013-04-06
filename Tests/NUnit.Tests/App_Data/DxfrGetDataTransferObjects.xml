@@ -31,6 +31,7 @@
                 <value>66015-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -58,6 +59,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -90,8 +92,10 @@
                 <value>0</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -121,10 +125,13 @@
                 <value>66</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90002-RV</identifier>
@@ -157,6 +164,7 @@
                 <value>90002-RV</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -184,6 +192,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -211,6 +220,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -243,8 +253,10 @@
                 <value>40</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -274,8 +286,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -305,10 +319,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90002-SW</identifier>
@@ -341,6 +358,7 @@
                 <value>90002-SW</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -368,6 +386,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -400,8 +419,10 @@
                 <value>40</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -431,10 +452,13 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90003-SC</identifier>
@@ -467,6 +491,7 @@
                 <value>90003-SC</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -494,6 +519,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -521,6 +547,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -553,8 +580,10 @@
                 <value>80</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -584,8 +613,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -615,10 +646,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90003-SL</identifier>
@@ -651,6 +685,7 @@
                 <value>90003-SL</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -678,6 +713,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -710,8 +746,10 @@
                 <value>150</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -741,10 +779,13 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90003-V</identifier>
@@ -777,6 +818,7 @@
                 <value>90003-V</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -804,6 +846,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -831,6 +874,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -863,8 +907,10 @@
                 <value>40</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -894,8 +940,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -925,10 +973,13 @@
                 <value>90-AO5678</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90004-SC</identifier>
@@ -961,6 +1012,7 @@
                 <value>90004-SC</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -988,6 +1040,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -1015,6 +1068,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -1047,8 +1101,10 @@
                 <value>40</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -1078,8 +1134,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -1109,10 +1167,13 @@
                 <value>90-AO5678</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90004-SL</identifier>
@@ -1145,6 +1206,7 @@
                 <value>90004-SL</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -1172,6 +1234,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -1199,6 +1262,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -1231,8 +1295,10 @@
                 <value>100</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -1262,8 +1328,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -1293,10 +1361,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90005-RV</identifier>
@@ -1329,6 +1400,7 @@
                 <value>90005-RV</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -1356,6 +1428,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -1383,6 +1456,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -1415,8 +1489,10 @@
                 <value>80</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -1446,8 +1522,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -1477,10 +1555,13 @@
                 <value>90-AO5678</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90006-O</identifier>
@@ -1513,6 +1594,7 @@
                 <value>90006-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -1540,6 +1622,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -1567,6 +1650,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -1599,8 +1683,10 @@
                 <value>250</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -1630,8 +1716,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -1661,10 +1749,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90006-SL</identifier>
@@ -1697,6 +1788,7 @@
                 <value>90006-SL</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -1724,6 +1816,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -1756,8 +1849,10 @@
                 <value>50</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -1787,10 +1882,13 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90007-SL</identifier>
@@ -1823,6 +1921,7 @@
                 <value>90007-SL</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -1850,6 +1949,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -1882,8 +1982,10 @@
                 <value>40</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -1913,10 +2015,13 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90008-RV</identifier>
@@ -1949,6 +2054,7 @@
                 <value>90008-RV</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -1976,6 +2082,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -2003,6 +2110,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -2035,8 +2143,10 @@
                 <value>150</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -2066,8 +2176,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -2097,10 +2209,13 @@
                 <value>90-AO5678</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90009-O</identifier>
@@ -2133,6 +2248,7 @@
                 <value>90009-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -2160,6 +2276,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -2192,8 +2309,10 @@
                 <value>150</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -2223,10 +2342,13 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90010-O</identifier>
@@ -2259,6 +2381,7 @@
                 <value>90010-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -2286,6 +2409,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -2313,6 +2437,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -2345,8 +2470,10 @@
                 <value>80</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -2376,8 +2503,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -2407,10 +2536,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90011-O</identifier>
@@ -2443,6 +2575,7 @@
                 <value>90011-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -2470,6 +2603,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -2497,6 +2631,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -2529,8 +2664,10 @@
                 <value>80</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -2560,8 +2697,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -2591,10 +2730,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90012-O</identifier>
@@ -2627,6 +2769,7 @@
                 <value>90012-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -2654,6 +2797,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -2681,6 +2825,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -2713,8 +2858,10 @@
                 <value>100</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -2744,8 +2891,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -2775,10 +2924,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90013-O</identifier>
@@ -2811,6 +2963,7 @@
                 <value>90013-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -2838,6 +2991,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -2865,6 +3019,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -2897,8 +3052,10 @@
                 <value>100</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -2928,8 +3085,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -2959,10 +3118,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90014-RV</identifier>
@@ -2995,6 +3157,7 @@
                 <value>90014-RV</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -3022,6 +3185,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -3049,6 +3213,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -3081,8 +3246,10 @@
                 <value>80</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -3112,8 +3279,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -3143,10 +3312,13 @@
                 <value>90-AO5678</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90020-O</identifier>
@@ -3179,6 +3351,7 @@
                 <value>90020-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -3206,6 +3379,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -3238,8 +3412,10 @@
                 <value>50</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -3269,10 +3445,13 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90024-RV</identifier>
@@ -3305,6 +3484,7 @@
                 <value>90024-RV</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -3332,6 +3512,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -3359,6 +3540,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -3391,8 +3573,10 @@
                 <value>25</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -3422,8 +3606,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -3453,10 +3639,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90025-SW</identifier>
@@ -3489,6 +3678,7 @@
                 <value>90025-SW</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -3516,6 +3706,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -3543,6 +3734,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -3575,8 +3767,10 @@
                 <value>50</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -3606,8 +3800,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -3637,10 +3833,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90026-RV</identifier>
@@ -3673,6 +3872,7 @@
                 <value>90026-RV</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -3700,6 +3900,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -3732,8 +3933,10 @@
                 <value>40</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -3763,10 +3966,13 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90028-RV</identifier>
@@ -3799,6 +4005,7 @@
                 <value>90028-RV</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -3826,6 +4033,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -3853,6 +4061,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -3885,8 +4094,10 @@
                 <value>25</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -3916,8 +4127,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -3947,10 +4160,13 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
   <dataTransferObject>
     <identifier>90030-O</identifier>
@@ -3983,6 +4199,7 @@
                 <value>90030-O</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R41248767846</templateId>
@@ -4010,6 +4227,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R11327281485</templateId>
@@ -4037,6 +4255,7 @@
                 </values>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
           <templateObject>
             <templateId>tpl:R77443358818</templateId>
@@ -4069,8 +4288,10 @@
                 <value>300</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R49658319833</classId>
@@ -4100,8 +4321,10 @@
                 <value>90</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
       <classObject>
         <classId>rdl:R99486931975</classId>
@@ -4131,9 +4354,12 @@
                 <value>90-AO5676</value>
               </roleObject>
             </roleObjects>
+            <transferType>Sync</transferType>
           </templateObject>
         </templateObjects>
+        <transferType>Sync</transferType>
       </classObject>
     </classObjects>
+    <transferType>Sync</transferType>
   </dataTransferObject>
 </ArrayOfdataTransferObject>
