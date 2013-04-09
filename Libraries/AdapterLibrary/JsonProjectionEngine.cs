@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
+using org.iringtools.adapter.datalayer;
 
 namespace org.iringtools.adapter.projection
 {
@@ -233,7 +234,25 @@ namespace org.iringtools.adapter.projection
                         dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                     }
 
-                    IDataObject dataObject = _dataLayer.Create(graphName, null)[0];
+                    IDataObject dataObject = null;
+                     
+                    if (_dataLayer.GetType() == typeof(NHibernateDataLayer))
+                    {
+                      dataObject = _dataLayer.Create(graphName, null)[0];
+                    }
+                    else
+                    {
+                      dataObject = new GenericDataObject()
+                      {
+                        ObjectNamespace = objectDefinition.objectNamespace,
+                        ObjectType = objectDefinition.objectName
+                      };
+                    }
+
+                    if (dataObject == null)
+                    {
+                      throw new Exception("Unable to create object of type: " + objectDefinition.objectName);
+                    }
 
                     //
                     // set key properties from id
