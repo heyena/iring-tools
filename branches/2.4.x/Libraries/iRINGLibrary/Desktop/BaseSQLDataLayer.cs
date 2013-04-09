@@ -950,6 +950,14 @@ namespace org.iringtools.library
     {
       foreach (DataProperty prop in objDef.dataProperties)
       {
+        if (dataObject.GetType() == typeof(GenericDataObject) || dataObject.GetType() == typeof(GenericContentObject))
+        {
+          IDictionary<string, object> postedProperties = ((GenericDataObject)dataObject).Dictionary;
+
+          if (!postedProperties.ContainsKey(prop.propertyName))
+            continue;
+        }
+
         if (!prop.propertyName.EndsWith("_URL"))
         {
           object value = dataObject.GetPropertyValue(prop.propertyName);

@@ -232,8 +232,32 @@ namespace org.iringtools.adapter.projection
                     {
                         dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                     }
-                    IDataObject dataObject = _dataLayer.Create(graphName, new List<string> { dataItem.id })[0];
 
+                    IDataObject dataObject = _dataLayer.Create(graphName, null)[0];
+
+                    //
+                    // set key properties from id
+                    //
+                    if (objectDefinition.keyProperties.Count == 1)
+                    {
+                      dataObject.SetPropertyValue(objectDefinition.keyProperties[0].keyPropertyName, dataItem.id);
+                    }
+                    else if (objectDefinition.keyProperties.Count > 1)
+                    {
+                      string[] idParts = dataItem.id.Split(new string[] {objectDefinition.keyDelimeter}, StringSplitOptions.None);
+
+                      for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+                      {
+                        string keyProp = objectDefinition.keyProperties[i].keyPropertyName;
+                        string keyValue = idParts[i];
+
+                        dataObject.SetPropertyValue(keyProp, keyValue);
+                      }
+                    }
+                    
+                    //
+                    // set data properties
+                    //
                     foreach (var pair in dataItem.properties)
                     {
                         dataObject.SetPropertyValue(pair.Key, pair.Value);
