@@ -883,12 +883,13 @@ namespace org.iringtools.library
           }
           else // all rows exist, update column values            
           {
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-            {
-              DataRow row = dataTable.Rows[i];
-              string identifier = FormIdentifier(objInfo.ObjectDefinition, row);
-              PopulateColumnValues(row, objInfo.ObjectDefinition, objInfo.IdentifierDataObjects[identifier]);
-            }
+              for (int i = 0; i < dataTable.Rows.Count; i++)
+              {
+                  DataRow row = dataTable.Rows[i];
+                  string identifier = FormIdentifier(objInfo.ObjectDefinition, row);
+                  if (i < identifiers.Count)   //make sure for that particular row we have updated object
+                      PopulateColumnValues(row, objInfo.ObjectDefinition, objInfo.IdentifierDataObjects[identifier]);
+              }
           }
 
           dataTables.Add(dataTable);
