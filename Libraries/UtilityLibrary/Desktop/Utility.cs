@@ -699,9 +699,10 @@ namespace org.iringtools.utility
 
     public static string SerializeXml<T>(T graph)
     {
-      return Serialize<T>(graph, Encoding.UTF8, false, null);
+        return Serialize<T>(graph, Encoding.UTF8, false, null);
     }
 
+   
     public static string SerializeDataContract<T>(T graph)
     {
       return Serialize<T>(graph, Encoding.UTF8);
@@ -1020,34 +1021,46 @@ namespace org.iringtools.utility
     {
       
       T graph;
-      XmlDictionaryReader reader = null;
+      
       try
       {
         XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
         quotas.MaxStringContentLength = int.MaxValue;
         quotas.MaxArrayLength = int.MaxValue;
 
-        reader = XmlDictionaryReader.CreateTextReader(stream, quotas);
         if (useDataContractSerializer)
         {
-          DataContractSerializer serializer = new DataContractSerializer(typeof(T));
-          graph = (T)serializer.ReadObject(reader, true);
+          XmlDictionaryReader reader = null;
+          try
+          {
+            reader = XmlDictionaryReader.CreateTextReader(stream, quotas);
+            DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+            graph = (T)serializer.ReadObject(reader, true);
+          }
+          finally
+          {
+            if (reader != null) reader.Close();
+          }
         }
         else
         {
-          XmlSerializer serializer = new XmlSerializer(typeof(T));
-          graph = (T)serializer.Deserialize(reader);
+          StreamReader reader = null;
+          try
+          {
+            reader = new StreamReader(stream);
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            graph = (T)serializer.Deserialize(reader);
+          }
+          finally
+          {
+            if (reader != null) reader.Close();
+          }
         }        
-        
         return graph;
       }
       catch (Exception exception)
       {
         throw new Exception("Error deserializing stream to [" + typeof(T).Name + "].", exception);
-      }
-      finally
-      {
-        if (reader != null) reader.Close();
       }
     }
 
