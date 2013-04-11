@@ -125,6 +125,7 @@ public class ExchangeDataModel extends DataModel
       }
       else
       {
+        httpClient.setAsync(false);      
         xRes = httpClient.post(ExchangeResponse.class, "/submit", request);
       }
     }

@@ -318,17 +318,19 @@ public class ExchangeTask implements Runnable
               logger.debug(JaxbUtils.toXml(sourceDtosRequest, false));
       
               //TODO: handle asynchronous for content DTO also
-              if (isAsync() || !hasContent)
+              if (!isAsync() || hasContent)
 			        {
+            	      httpClient.setAsync(false);
+            	      String dtoContentURL = sourceDtoUrl + "?includeContent=true";
+			          sourceDtos = httpClient.post(DataTransferObjects.class, dtoContentURL, sourceDtosRequest);
+				    }
+			        else
+			        {   
 			          httpClient.setAsync(true);
 			          String statusURL = httpClient.post(String.class, sourceDtoUrl, sourceDtosRequest);
 			          sourceDtos = waitForRequestCompletion(DataTransferObjects.class, xDef.getSourceUri() + statusURL);
-			        }
-			        else
-			        {
-			          String dtoContentURL = sourceDtoUrl + "?includeContent=true";
-			          sourceDtos = httpClient.post(DataTransferObjects.class, dtoContentURL, sourceDtosRequest);
-			        }
+			
+			         }
               
               logger.debug("Source DTOs: ");
               logger.debug(JaxbUtils.toXml(sourceDtos, false));
@@ -375,16 +377,17 @@ public class ExchangeTask implements Runnable
 			          HttpUtils.addHttpHeaders(settings, httpClient);
 			
 			          //TODO: handle asynchronous for content DTO also
-	              if (isAsync() || !hasContent)
+			          if (!isAsync() || hasContent)
 			          {
-			            httpClient.setAsync(true);
-			            String statusURL = httpClient.post(String.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
-			            poolResponse = waitForRequestCompletion(Response.class, xDef.getTargetUri() + statusURL);
+			        	  httpClient.setAsync(false);
+			        	  poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
 			          }
 			          else
 			          {
-			            poolResponse = httpClient.post(Response.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
-			          }         
+			        	  httpClient.setAsync(true);
+			              String statusURL = httpClient.post(String.class, targetUrl, poolDtos, MediaType.TEXT_PLAIN);
+			              poolResponse = waitForRequestCompletion(Response.class, xDef.getTargetUri() + statusURL);
+				      }         
 			
 			          logger.info("Pool [" + poolRange + "] completed."); 
 			          

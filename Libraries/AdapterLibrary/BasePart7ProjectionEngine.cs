@@ -554,66 +554,98 @@ namespace org.iringtools.adapter.projection
         }
       }
 
-      // key property not mapped, create filter to get data object
-      if (identifier == String.Empty)
+      if (identifier == string.Empty)
       {
-        DataFilter filter = new DataFilter()
-        {
-          Expressions = new List<Expression>()
-        };
+        throw new Exception("Key property not mapped.");
+      }
 
-        foreach (var pair in dataRecord)
-        {
-          Expression expression = new Expression()
-          {
-            Values = new Values()
-          };
+      // key property not mapped, create filter to get data object
+      //if (identifier == String.Empty)
+      //{
+      //  DataFilter filter = new DataFilter()
+      //  {
+      //    Expressions = new List<Expression>()
+      //  };
 
-          if (filter.Expressions.Count > 0)
-          {
-            expression.LogicalOperator = LogicalOperator.And;
-          }
+      //  foreach (var pair in dataRecord)
+      //  {
+      //    Expression expression = new Expression()
+      //    {
+      //      Values = new Values()
+      //    };
 
-          expression.PropertyName = pair.Key;
-          expression.Values.Add(pair.Value);
-          filter.Expressions.Add(expression);
-        }
+      //    if (filter.Expressions.Count > 0)
+      //    {
+      //      expression.LogicalOperator = LogicalOperator.And;
+      //    }
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, 0, 0);
+      //    expression.PropertyName = pair.Key;
+      //    expression.Values.Add(pair.Value);
+      //    filter.Expressions.Add(expression);
+      //  }
+
+        //IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, 0, 0);
+
+        //if (dataObjects == null || dataObjects.Count == 0)
+        //{
+        //  // only create data object if key property (properties) is (are) unassigned (auto generated)
+        //  if (!ContainsAssignedKey(objDef))
+        //  {
+        //    IDataObject dataObject = _dataLayer.Create(objectType, null).First();
+        //    SetAppCode(dataObject);
+
+        //    if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
+        //    {
+        //      ((GenericDataObject)dataObject).ObjectType = objectType;
+        //    }
+        //    else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+        //    {
+        //      ((GenericContentObject)dataObject).ObjectType = objectType;
+        //    }
+
+        //    foreach (var pair in dataRecord)
+        //    {
+        //      SetPropertyValue(objDef, pair, dataObject);
+        //    }
+
+        //    return dataObject;
+        //  }
+        //  else
+        //  {
+        //    _logger.Error("Data object not found and can not be created because it contains assigned key and the key is not mapped.");
+        //    return null;  // return null here and let data layer create proper error status later
+        //  }
+        //}
+        //else if (dataObjects.Count == 1)
+
+        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, new List<string> { identifier });
 
         if (dataObjects == null || dataObjects.Count == 0)
         {
-          // only create data object if key property (properties) is (are) unassigned (auto generated)
-          if (!ContainsAssignedKey(objDef))
+          IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
+
+          if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
           {
-            IDataObject dataObject = _dataLayer.Create(objectType, null).First();
-            SetAppCode(dataObject);
-
-            if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
-            {
-              ((GenericDataObject)dataObject).ObjectType = objectType;
-            }
-            else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
-            {
-              ((GenericContentObject)dataObject).ObjectType = objectType;
-            }
-
-            foreach (var pair in dataRecord)
-            {
-              SetPropertyValue(objDef, pair, dataObject);
-            }
-
-            return dataObject;
+            ((GenericDataObject)dataObject).ObjectType = objectType;
           }
-          else
+          else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
           {
-            _logger.Error("Data object not found and can not be created because it contains assigned key and the key is not mapped.");
-            return null;  // return null here and let data layer create proper error status later
+            ((GenericContentObject)dataObject).ObjectType = objectType;
           }
+
+          SetAppCode(dataObject);
+
+          foreach (var pair in dataRecord)
+          {
+            SetPropertyValue(objDef, pair, dataObject);
+          }
+
+          return dataObject;
         }
         else if (dataObjects.Count == 1)
         {
           IDataObject dataObject = dataObjects[0];
+          SetAppCode(dataObject);
 
           foreach (var pair in dataRecord)
           {
@@ -627,29 +659,29 @@ namespace org.iringtools.adapter.projection
           _logger.Error("Data object has duplicates.");
           return null;  // return null here and let data layer create proper error status later
         }
-      }
-      else  // key property is mapped, expect only one data object created/retrieved from data layer
-      {
-        IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
+      //}
+      //else  // key property is mapped, expect only one data object created/retrieved from data layer
+      //{
+      //  IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
 
-        if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
-        {
-          ((GenericDataObject)dataObject).ObjectType = objectType;
-        }
-        else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
-        {
-          ((GenericContentObject)dataObject).ObjectType = objectType;
-        }
+      //  if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
+      //  {
+      //    ((GenericDataObject)dataObject).ObjectType = objectType;
+      //  }
+      //  else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+      //  {
+      //    ((GenericContentObject)dataObject).ObjectType = objectType;
+      //  }
 
-        SetAppCode(dataObject);
+      //  SetAppCode(dataObject);
 
-        foreach (var pair in dataRecord)
-        {
-          SetPropertyValue(objDef, pair, dataObject);
-        }
+      //  foreach (var pair in dataRecord)
+      //  {
+      //    SetPropertyValue(objDef, pair, dataObject);
+      //  }
 
-        return dataObject;
-      }
+      //  return dataObject;
+      //}
     }
 
     protected List<IDataObject> GetValueObjects(string propertyMap, int dataObjectIndex)
