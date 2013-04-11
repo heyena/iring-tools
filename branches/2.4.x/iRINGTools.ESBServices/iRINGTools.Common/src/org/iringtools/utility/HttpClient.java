@@ -61,11 +61,7 @@ public class HttpClient
     setBaseUri(baseUri);
     setNetworkCredentials(networkCredentials);
     headers = new HashMap<String, String>();
-    
-    if (async)
-    {
-      addHeader("async", "true");
-    }
+    setAsync(false);
   }
   
   public void setAsync(boolean value)
