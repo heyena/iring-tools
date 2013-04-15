@@ -233,6 +233,27 @@ namespace org.iringtools.adapter.projection
                     {
                         dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                     }
+                    else // If id doen't exist make it from key properties.
+                    {
+                        string identifier = string.Empty;
+                        for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+                        {
+                            string keyValue = string.Empty;
+                            foreach (var pair in dataItem.properties)
+                            {
+                                if (pair.Key == objectDefinition.keyProperties[i].keyPropertyName)
+                                {
+                                    keyValue = pair.Value.ToString();
+                                    break;
+                                }
+                            }
+                            if (string.IsNullOrEmpty(keyValue)) // Make sure Key property value exist.
+                                throw new Exception("Value of Key property: " + objectDefinition.keyProperties[i].keyPropertyName + " not found.");
+                            identifier += keyValue + objectDefinition.keyDelimeter;
+                        }
+                        if (!string.IsNullOrEmpty(identifier))
+                            dataItem.id = identifier.Substring(0, identifier.LastIndexOf(objectDefinition.keyDelimeter));
+                    }
 
                     IDataObject dataObject = null;
                      
