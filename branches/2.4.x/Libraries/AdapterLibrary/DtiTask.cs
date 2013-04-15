@@ -10,9 +10,9 @@ using org.iringtools.adapter.projection;
 
 namespace org.iringtools.adapter
 {
-  public class DataTransferIndicesTask
+  public class DtiTask
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataTransferIndicesTask));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DtiTask));
 
     private ManualResetEvent _doneEvent;
     private DtoProjectionEngine _projectionLayer;
@@ -23,7 +23,7 @@ namespace org.iringtools.adapter
     private int _startIndex;
     private DataTransferIndices _dataTransferIndices;
 
-    public DataTransferIndicesTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, IDataLayer dataLayer, 
+    public DtiTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, IDataLayer dataLayer, 
       GraphMap graphMap, DataFilter filter, int pageSize, int startIndex)
     {
       _doneEvent = doneEvent;

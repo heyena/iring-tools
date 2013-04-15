@@ -618,29 +618,31 @@ namespace org.iringtools.adapter.projection
         //}
         //else if (dataObjects.Count == 1)
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, new List<string> { identifier });
+        IList<IDataObject> dataObjects = _dataLayer.Create(objectType, new List<string> { identifier });
 
         if (dataObjects == null || dataObjects.Count == 0)
         {
-          IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
+          //IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
 
-          if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
-          {
-            ((GenericDataObject)dataObject).ObjectType = objectType;
-          }
-          else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
-          {
-            ((GenericContentObject)dataObject).ObjectType = objectType;
-          }
+          //if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
+          //{
+          //  ((GenericDataObject)dataObject).ObjectType = objectType;
+          //}
+          //else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+          //{
+          //  ((GenericContentObject)dataObject).ObjectType = objectType;
+          //}
 
-          SetAppCode(dataObject);
+          //SetAppCode(dataObject);
 
-          foreach (var pair in dataRecord)
-          {
-            SetPropertyValue(objDef, pair, dataObject);
-          }
+          //foreach (var pair in dataRecord)
+          //{
+          //  SetPropertyValue(objDef, pair, dataObject);
+          //}
 
-          return dataObject;
+          //return dataObject;
+
+          throw new Exception("Data layer failed to create data object for identifier: " + identifier);
         }
         else if (dataObjects.Count == 1)
         {

@@ -3570,8 +3570,7 @@ namespace org.iringtools.adapter
 
           return response;
         }
-        IList<IDataObject> parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id });
-
+        
         IList<IDataObject> childdataObjects = null;
         if (_isProjectionPart7)
         {
@@ -3588,6 +3587,7 @@ namespace org.iringtools.adapter
         }
         catch (NotImplementedException)
         {
+          IList<IDataObject> parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id });
           IList<IDataObject> MeregedDataObjects = new List<IDataObject>();
           MeregedDataObjects = parentDataObject;
 
