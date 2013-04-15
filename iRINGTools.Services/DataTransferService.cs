@@ -40,6 +40,7 @@ using System.Web;
 using org.iringtools.utility;
 using System.Net;
 using System.IO;
+using org.iringtools.mapping;
 
 namespace org.iringtools.services
 {
@@ -148,6 +149,34 @@ namespace org.iringtools.services
 
           HttpContext.Current.Response.ContentType = "application/xml";
           HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+        }
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Gets internal identifiers for a given manifest with filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter")]
+    public void GetInternalIdentifiers(string scope, string app, string graph, DxiRequest request)
+    {
+      try
+      {
+        if (IsAsync())
+        {
+          string statusURL = _dtoProvider.AsyncGetInternalIdentifiers(scope, app, graph, request);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
+        }
+        else
+        {
+          Identifiers identifiers = _dtoProvider.GetInternalIdentifiers(scope, app, graph, request);
+
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(Utility.SerializeDataContract<Identifiers>(identifiers));
         }
       }
       catch (Exception e)

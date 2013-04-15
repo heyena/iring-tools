@@ -469,6 +469,76 @@ namespace org.iringtools.adapter
       }
     }
 
+    public string AsyncGetInternalIdentifiers(string scope, string app, string graph, DxiRequest dxiRequest)
+    {
+      try
+      {
+        var id = QueueNewRequest();
+        Task task = Task.Factory.StartNew(() => DoGetInternalIdentifiers(scope, app, graph, dxiRequest, id));
+        return "/requests/" + id;
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting data transfer indices: " + e.Message);
+        throw e;
+      }
+    }
+
+    private void DoGetInternalIdentifiers(string scope, string app, string graph, DxiRequest dxiRequest, string id)
+    {
+      try
+      {
+        Identifiers identifiers = GetInternalIdentifiers(scope, app, graph, dxiRequest);
+
+        _requests[id].ResponseText = Utility.Serialize<Identifiers>(identifiers, true);
+        _requests[id].State = State.Completed;
+      }
+      catch (Exception ex)
+      {
+        if (ex is WebFaultException)
+        {
+          _requests[id].Message = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        }
+        else
+        {
+          _requests[id].Message = ex.Message;
+        }
+
+        _requests[id].State = State.Error;
+      }
+    }
+
+    public Identifiers GetInternalIdentifiers(string scope, string app, string graph, DxiRequest dxiRequest)
+    {
+      Identifiers identifiers = new Identifiers();
+
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        BuildCrossGraphMap(dxiRequest.Manifest, graph);
+
+        DataFilter filter = dxiRequest.DataFilter;
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+        filter.AppendFilter(GetPredeterminedFilter());
+
+        IList<string> identifierList = _dataLayer.GetIdentifiers(_graphMap.dataObjectName, filter);
+        if (identifierList != null)
+        {
+          identifiers.AddRange(identifierList.ToList<string>());
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting internal identifiers: " + ex);
+        throw ex;
+      }
+
+      return identifiers;
+    }
+
     public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -521,7 +591,7 @@ namespace org.iringtools.adapter
 
     public DataTransferIndices GetPagedDataTransferIndices(string scope, string app, string graph, DataFilter filter, int start, int limit)
     {
-      DataTransferIndices dataTransferIndices = null;
+      DataTransferIndices dataTransferIndices = new DataTransferIndices();
 
       try
       {
@@ -548,8 +618,11 @@ namespace org.iringtools.adapter
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, limit, start);
 
-        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
-        dataTransferIndices.TotalCount = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+        if (dataObjects != null && dataObjects.Count > 0)
+        {
+          dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
+          dataTransferIndices.TotalCount = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+        }
 
         return dataTransferIndices;
       }
@@ -1469,7 +1542,7 @@ namespace org.iringtools.adapter
         int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
         List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
-        List<DataTransferIndicesTask> dtiTasks = new List<DataTransferIndicesTask>();
+        List<DtiTask> dtiTasks = new List<DtiTask>();
         int threadCount;
 
         for (threadCount = 0; threadCount < numOfThreads; threadCount++)
@@ -1481,7 +1554,7 @@ namespace org.iringtools.adapter
           int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           ManualResetEvent doneEvent = new ManualResetEvent(false);
-          DataTransferIndicesTask dtiTask = new DataTransferIndicesTask(doneEvent, projectionLayer, _dataLayer, _graphMap,
+          DtiTask dtiTask = new DtiTask(doneEvent, projectionLayer, _dataLayer, _graphMap,
             filter, pageSize, offset);
 
           doneEvents.Add(doneEvent);
