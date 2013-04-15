@@ -398,8 +398,8 @@ namespace iRINGTools.Web.Models
       {
         // compare strings
         {
-          string leftValue = left.tableName.ToString();
-          string rightValue = right.tableName.ToString();
+          string leftValue = left.objectName.ToString();
+          string rightValue = right.objectName.ToString();
           return string.Compare(leftValue, rightValue);
         }
       }
