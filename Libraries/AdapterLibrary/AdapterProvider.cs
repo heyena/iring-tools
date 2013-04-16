@@ -3168,7 +3168,7 @@ namespace org.iringtools.adapter
             ? String.Format("/{0}/{1}", applicationName, resourceName)
             : String.Format("/{0}/{1}/{2}", applicationName, projectName, resourceName);
 
-          if (_dataObjects != null && _dataObjects.Count > 0)
+          if (_dataObjects != null )
           {
             if (_isProjectionPart7)
             {
