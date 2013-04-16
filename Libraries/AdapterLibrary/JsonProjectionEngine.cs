@@ -200,6 +200,13 @@ namespace org.iringtools.adapter.projection
 
         dataItems.limit = dataItems.items.Count;
 
+        if (dataItems.limit == 0) //Blank data item must have atleast version and type
+        {
+            DataObject dataObject = FindGraphDataObject(graphName);
+            dataItems.version = dataObject.version;
+            dataItems.type = graphName;
+        }
+
         string xml = Utility.SerializeDataContract<DataItems>(dataItems);
         XElement xElement = XElement.Parse(xml);
         return new XDocument(xElement);
