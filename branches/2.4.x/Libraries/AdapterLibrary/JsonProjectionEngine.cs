@@ -235,24 +235,42 @@ namespace org.iringtools.adapter.projection
                     }
                     else // If id doen't exist make it from key properties.
                     {
-                        string identifier = string.Empty;
-                        for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+                        if (objectDefinition.keyProperties.Count == 1)
                         {
-                            string keyValue = string.Empty;
                             foreach (var pair in dataItem.properties)
                             {
-                                if (pair.Key == objectDefinition.keyProperties[i].keyPropertyName)
+                                if (pair.Key == objectDefinition.keyProperties[0].keyPropertyName)
                                 {
-                                    keyValue = pair.Value.ToString();
+                                    dataItem.id = pair.Value.ToString();
                                     break;
                                 }
                             }
-                            if (string.IsNullOrEmpty(keyValue)) // Make sure Key property value exist.
-                                throw new Exception("Value of Key property: " + objectDefinition.keyProperties[i].keyPropertyName + " not found.");
-                            identifier += keyValue + objectDefinition.keyDelimeter;
+                            if (string.IsNullOrEmpty(dataItem.id)) // Make sure Key property value exist.
+                                throw new Exception("Value of Key property: " + objectDefinition.keyProperties[0].keyPropertyName + " not found.");    
                         }
-                        if (!string.IsNullOrEmpty(identifier))
-                            dataItem.id = identifier.Substring(0, identifier.LastIndexOf(objectDefinition.keyDelimeter));
+                        else
+                        {
+                            string identifier = string.Empty;
+                            for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+                            {
+                                string keyValue = string.Empty;
+                                foreach (var pair in dataItem.properties)
+                                {
+                                    if (pair.Key == objectDefinition.keyProperties[i].keyPropertyName)
+                                    {
+                                        keyValue = pair.Value.ToString();
+                                        break;
+                                    }
+                                }
+                                if (string.IsNullOrEmpty(keyValue)) // Make sure Key property value exist.
+                                    throw new Exception("Value of Key property: " + objectDefinition.keyProperties[i].keyPropertyName + " not found.");
+                                identifier += keyValue + objectDefinition.keyDelimeter;
+                            }
+                            if (!string.IsNullOrEmpty(identifier) && identifier.Contains(objectDefinition.keyDelimeter))
+                            {
+                                dataItem.id = identifier.Substring(0, identifier.LastIndexOf(objectDefinition.keyDelimeter));
+                            }
+                        }
                     }
 
                     IDataObject dataObject = null;
