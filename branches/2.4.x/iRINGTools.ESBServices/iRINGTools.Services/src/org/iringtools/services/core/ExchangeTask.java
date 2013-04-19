@@ -170,7 +170,7 @@ public class ExchangeTask implements Runnable
 		        {
 		          iCountAdd++;
 		        }
-		        else if (transferType != TransferType.CHANGE)
+		        else if (transferType == TransferType.CHANGE)
 		        {
 		          iCountChange++;
 		        }
