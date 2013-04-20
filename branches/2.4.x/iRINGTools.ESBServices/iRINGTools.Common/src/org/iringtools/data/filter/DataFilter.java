@@ -9,17 +9,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for DataFilter complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DataFilter">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="expressions" type="{http://www.iringtools.org/data/filter}Expressions"/>
- *         &lt;element name="orderExpressions" type="{http://www.iringtools.org/data/filter}OrderExpressions"/>
+ *         &lt;element ref="{http://www.iringtools.org/data/filter}expressions"/>
+ *         &lt;element ref="{http://www.iringtools.org/data/filter}orderExpressions"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DataFilter", propOrder = {
+@XmlType(name = "", propOrder = {
     "expressions",
     "orderExpressions"
 })

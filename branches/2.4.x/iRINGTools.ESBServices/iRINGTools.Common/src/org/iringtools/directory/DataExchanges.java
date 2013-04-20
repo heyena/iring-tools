@@ -6,20 +6,21 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for DataExchanges complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DataExchanges">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="commodity" type="{http://www.iringtools.org/directory}Commodity" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.iringtools.org/directory}commodity" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,27 +30,28 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DataExchanges", propOrder = {
-    "items"
+@XmlType(name = "", propOrder = {
+    "commodity"
 })
+@XmlRootElement(name = "dataExchanges")
 public class DataExchanges {
 
-    @XmlElement(name = "commodity", required = true)
-    protected List<Commodity> items;
+    @XmlElement(required = true)
+    protected List<Commodity> commodity;
 
     /**
-     * Gets the value of the items property.
+     * Gets the value of the commodity property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the items property.
+     * This is why there is not a <CODE>set</CODE> method for the commodity property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getItems().add(newItem);
+     *    getCommodity().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +61,23 @@ public class DataExchanges {
      * 
      * 
      */
-    public List<Commodity> getItems() {
-        if (items == null) {
-            items = new ArrayList<Commodity>();
+    public List<Commodity> getCommodity() {
+        if (commodity == null) {
+            commodity = new ArrayList<Commodity>();
         }
-        return this.items;
+        return this.commodity;
     }
 
     /**
-     * Sets the value of the items property.
+     * Sets the value of the commodity property.
      * 
-     * @param items
+     * @param commodity
      *     allowed object is
      *     {@link Commodity }
      *     
      */
-    public void setItems(List<Commodity> items) {
-        this.items = items;
+    public void setCommodity(List<Commodity> commodity) {
+        this.commodity = commodity;
     }
 
 }

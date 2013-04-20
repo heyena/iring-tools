@@ -69,6 +69,8 @@ namespace org.iringtools.utility
     private const int TIMEOUT = 600000;
     private Encoding encoding = Encoding.UTF8;
 
+    public IDictionary<string, string> Headers { get; set; }
+
     public WebHttpClient(string baseUri)
     {
       _baseUri = baseUri;
@@ -155,23 +157,15 @@ namespace org.iringtools.utility
           WebOperationContext.Current.IncomingRequest != null &&
           WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
         {
-          _logger.Debug("Trying to get header");
-
           if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
           {
-            _logger.Debug("Reading header");
-
             _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
           }
         }
         else if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
         {
-          _logger.Debug("Trying to get cookie");
-
           if (HttpContext.Current.Request.Cookies["Authorization"] != null)
           {
-            _logger.Debug("Reading cookie");
-
             HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
             _accessToken = authorizationCookie.Value;
           }
@@ -259,45 +253,59 @@ namespace org.iringtools.utility
       return encodedUri;
     }
 
+    //TODO: delete hardcoded Authorization & AppKey
     private void PrepareHeaders(WebRequest request)
     {
-      var ac = AccessToken;
-      var ak = AppKey;
-
-      if (!string.IsNullOrEmpty(ac))
+      try
       {
-        _logger.Debug("Authorization: " + AccessToken);
-        request.Headers.Add("Authorization", AccessToken);
-      }
-      if (!string.IsNullOrEmpty(ak))
-      {
-        _logger.Debug("X-myPSN-AppKey: " + AppKey);
-        request.Headers.Add("X-myPSN-AppKey", AppKey);
-      }
+        var ac = AccessToken;
+        var ak = AppKey;
 
-      request.Headers.Add("async", Async ? "True" : "False");
+        if (!string.IsNullOrEmpty(ac))
+        {
+          _logger.Debug("Authorization: " + AccessToken);
+          request.Headers.Add("Authorization", AccessToken);
+        }
+        if (!string.IsNullOrEmpty(ak))
+        {
+          _logger.Debug("X-myPSN-AppKey: " + AppKey);
+          request.Headers.Add("X-myPSN-AppKey", AppKey);
+        }
+
+        request.Headers.Add("async", Async ? "True" : "False");
+
+        if (Headers != null)
+        {
+          foreach (var pair in Headers)
+          {
+            request.Headers.Add(pair.Key, pair.Value);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error preparing headers: " + e);
+        throw e;
+      }
     }
 
     private void PrepareCredentials(WebRequest request)
     {
       if (_credentials == null)
       {
-        _logger.Debug("Default Creds");
         request.Credentials = CredentialCache.DefaultCredentials;
-        _logger.Debug("Valid");
+        _logger.Debug("Use default credentials.");
       }
       else
       {
-        _logger.Debug("Saved Creds");
         request.Credentials = _credentials;
-        _logger.Debug("Valid");
+        _logger.Debug("Use saved credentials.");
       }
 
       if (_proxy != null)
       {
-        _logger.Debug("Proxy");
         request.Proxy = _proxy;
-        _logger.Debug("Valid");
+        _logger.Debug("Use proxy.");
       }
     }
 
@@ -327,7 +335,7 @@ namespace org.iringtools.utility
         if (relativeUri.Contains(" ")) HttpUtility.HtmlEncode(relativeUri);
 
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Getting data from URL {0}...", uri));
+        _logger.Debug(string.Format("Connecting to URL: {0}.", uri));
 
         WebRequest request = HttpWebRequest.Create(uri);
 
@@ -343,6 +351,10 @@ namespace org.iringtools.utility
         );
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+        _logger.Debug("Response status code: " + response.StatusCode);
+        _logger.Debug("Response content type: " + response.ContentType);
+        _logger.Debug("Response content length: " + response.ContentLength);
 
         if (response.StatusCode == HttpStatusCode.Accepted)
         {
@@ -370,7 +382,6 @@ namespace org.iringtools.utility
       catch (Exception exception)
       {
         string uri = _baseUri + relativeUri;
-
         throw new Exception("Error while executing HTTP GET request [" + uri + "].", exception);
       }
     }
@@ -402,14 +413,11 @@ namespace org.iringtools.utility
         WebRequest request = HttpWebRequest.Create(uri);
 
         PrepareCredentials(request);
-        _logger.Debug("Got Credentials!");
         PrepareHeaders(request);
-        _logger.Debug("Got Headers!");
 
         //Add Accept header
         if (!string.IsNullOrEmpty(acceptType))
         {
-            _logger.Debug("Accept: " + acceptType);
             ((HttpWebRequest)request).Accept = acceptType;
         }
         
@@ -420,11 +428,8 @@ namespace org.iringtools.utility
         ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
           ValidateRemoteCertificate
         );
-
-        _logger.Debug("Past SSL Check!");
         
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        _logger.Debug("Get Response!");
 
         contentType = response.ContentType;
 
@@ -437,7 +442,6 @@ namespace org.iringtools.utility
         else
         {
           Stream responseStream = response.GetResponseStream();
-          _logger.Debug("Get Stream!");
           return responseStream.ToMemoryStream();
         }
       }

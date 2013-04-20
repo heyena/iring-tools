@@ -1,25 +1,26 @@
 
-package org.iringtools.directory;
+package org.iringtools.common;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Graphs complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Graphs">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="graph" type="{http://www.iringtools.org/directory}Graph" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.iringtools.org/common}setting" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,53 +30,54 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Graphs", propOrder = {
-    "items"
+@XmlType(name = "", propOrder = {
+    "setting"
 })
-public class Graphs {
+@XmlRootElement(name = "configuration")
+public class Configuration {
 
-    @XmlElement(name = "graph", required = true)
-    protected List<Graph> items;
+    @XmlElement(required = true)
+    protected List<Setting> setting;
 
     /**
-     * Gets the value of the items property.
+     * Gets the value of the setting property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the items property.
+     * This is why there is not a <CODE>set</CODE> method for the setting property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getItems().add(newItem);
+     *    getSetting().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Graph }
+     * {@link Setting }
      * 
      * 
      */
-    public List<Graph> getItems() {
-        if (items == null) {
-            items = new ArrayList<Graph>();
+    public List<Setting> getSetting() {
+        if (setting == null) {
+            setting = new ArrayList<Setting>();
         }
-        return this.items;
+        return this.setting;
     }
 
     /**
-     * Sets the value of the items property.
+     * Sets the value of the setting property.
      * 
-     * @param items
+     * @param setting
      *     allowed object is
-     *     {@link Graph }
+     *     {@link Setting }
      *     
      */
-    public void setItems(List<Graph> items) {
-        this.items = items;
+    public void setSetting(List<Setting> setting) {
+        this.setting = setting;
     }
 
 }

@@ -10,15 +10,15 @@
     <action name="fedmgr">
       <result>/federation-manager.jsp</result>
     </action>
-  </package>
+  </package>  
 
   <package name="exchange-manager" extends="json-default">
     <global-results>
-      <result name="error">errors/500.jsp</result>
+      <result name="exception">/exception.jsp</result>
     </global-results>
-
+    
     <global-exception-mappings>
-      <exception-mapping exception="java.lang.Exception" result="error" />
+      <exception-mapping exception="java.lang.Exception" result="exception" />
     </global-exception-mappings>
 
     <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
@@ -73,15 +73,15 @@
       </result>
     </action>
     <!-- exchange logs -->
-    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXLogs">
+    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXHistory">
       <result type="json">
-        <param name="root">xLogsGrid</param>
+        <param name="root">xHistoryGrid</param>
       </result>
     </action>
     <!-- exchange logs pagination -->
-    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXLogs">
+    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXHistory">
       <result type="json">
-        <param name="root">pageXLogsGrid</param>
+        <param name="root">pageXHistoryGrid</param>
       </result>
     </action>
   </package>
@@ -139,4 +139,5 @@
       </result>
     </action>
   </package>
+    
 </struts>

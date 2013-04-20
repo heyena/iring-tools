@@ -29,6 +29,29 @@
   <script type="text/javascript" src="resources/ext-3.4.0/ux/gridfilters/filter/BooleanFilter.js"></script>
   <script type="text/javascript" src="resources/ext-3.4.0/ux/paging-toolbar-resizer.js"></script>
   <script type="text/javascript" src="resources/ext-3.4.0/ux/Ext.ux.form.ReadonlyField.txt"></script>
+  
+  <!--
+  <link rel="stylesheet" type="text/css" href="http://localhost:8081/docs/ext-3.4.0/resources/css/ext-all.css" />  
+  <link rel="stylesheet" type="text/css" href="http://localhost:8081/docs/ext-3.4.0/resources/css/xtheme-gray.css" /> 
+  <link rel="stylesheet" type="text/css" href="resources/css/exchange-manager-gray.css"/>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/adapter/ext/ext-base.js"></script> 
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ext-all.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/css/GridFilters.css" />
+  <link rel="stylesheet" type="text/css" href="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/css/RangeMenu.css" />
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/menu/RangeMenu.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/menu/ListMenu.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/GridFilters.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/filter/Filter.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/filter/StringFilter.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/filter/DateFilter.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/filter/ListFilter.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/filter/NumericFilter.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/gridfilters/filter/BooleanFilter.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/paging-toolbar-resizer.js"></script>
+  <script type="text/javascript" src="http://localhost:8081/docs/ext-3.4.0/ux/Ext.ux.form.ReadonlyField.txt"></script>
+  -->
+  
   <script type="text/javascript" src="resources/scripts/iringtools-commons.js"></script>
   <script type="text/javascript" src="resources/scripts/exchange-manager.js"></script>
 </head>

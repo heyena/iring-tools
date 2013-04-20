@@ -10,7 +10,7 @@ import org.iringtools.widgets.grid.Grid;
 public class AppDataController extends AbstractController
 {
   private static final long serialVersionUID = 1L;
-  private String refDataServiceUri;
+
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
   private InputStream contentStream;
@@ -30,71 +30,36 @@ public class AppDataController extends AbstractController
   private int limit;
   private String target;
   
-  public AppDataController() 
+  public AppDataController() throws Exception
   {
     super();
-    
-	  refDataServiceUri = context.getInitParameter("RefDataServiceUri");
-	  authorize("exchangeManager", "exchangeAdmins");
+	  authorize("exchangeAdmins");
   }
   
   //-------------------------------------
   // get a page of data transfer objects 
   // ------------------------------------
-  public String getPageDtos()
+  public String getPageDtos() throws Exception
   {
     try
     {
-      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit, 
-          isAsync, asyncTimeout, pollingInterval);
+      AppDataModel appDataModel = new AppDataModel(settings, session);      
       pageDtoGrid = appDataModel.getDtoGrid(baseUri, scope, app, graph, filter, sort, dir, start, limit);    
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
+      e.printStackTrace();
+      throw new Exception(e.toString());
     }
     
     return SUCCESS;
   }
   
-  public Grid getPageDtoGrid()
-  {
-    return pageDtoGrid;
-  }
-  
-  //-----------------------------
-  // get a page of related items
-  // ----------------------------
-  public String getPageRelatedItems() 
+  public String getContent() throws Exception
   {
     try
     {
-      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit, 
-          isAsync, asyncTimeout, pollingInterval);
-      pageRelatedItemGrid = appDataModel.getRelatedDtoGrid(baseUri, scope, app, graph, individual, 
-          classId, classIdentifier, filter, sort, dir, start, limit);
-    }
-    catch (Exception e)
-    {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
-    }
-    
-    return SUCCESS;
-  }
-
-  public Grid getPageRelatedItemGrid()
-  {
-    return pageRelatedItemGrid;
-  }
-  
-  public String getContent()
-  {
-    try
-    {
-      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit, 
-          isAsync, asyncTimeout, pollingInterval);
+      AppDataModel appDataModel = new AppDataModel(settings, session);
       
       ContentObject contenObject = appDataModel.getContent(target);
       contentType = contenObject.getMimeType();
@@ -103,9 +68,42 @@ public class AppDataController extends AbstractController
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
+      throw new Exception(e.toString());
     }
+  }
+
+  // --------------------------
+  // getter and setter methods
+  // --------------------------
+  
+  public Grid getPageDtoGrid()
+  {
+    return pageDtoGrid;
+  }
+  
+  //TODO: complete implementation
+  //-----------------------------
+  // get a page of related items
+  // ----------------------------
+//  public String getPageRelatedItems() throws Exception
+//  {
+//    try
+//    {
+//      AppDataModel appDataModel = new AppDataModel(settings, session);
+//      pageRelatedItemGrid = appDataModel.getRelatedDtoGrid(baseUri, scope, app, graph, individual, 
+//          classId, classIdentifier, filter, sort, dir, start, limit);
+//    }
+//    catch (Exception e)
+//    {
+//      throw new Exception(e.toString());
+//    }
+//    
+//    return SUCCESS;
+//  }
+
+  public Grid getPageRelatedItemGrid()
+  {
+    return pageRelatedItemGrid;
   }
 
   public InputStream getContentStream() {
@@ -116,9 +114,6 @@ public class AppDataController extends AbstractController
     return contentType;
   }
   
-  // --------------------------
-  // getter and setter methods
-  // --------------------------
   public void setBaseUri(String baseUri)
   {
     this.baseUri = baseUri;

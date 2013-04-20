@@ -1,5 +1,7 @@
 package org.iringtools.controllers;
 
+import java.util.Map;
+
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
 import org.iringtools.widgets.grid.Grid;
@@ -8,16 +10,16 @@ public class ExchangeDataController extends AbstractController
 {
   private static final long serialVersionUID = 1L;
   
-  private String refDataServiceUri;
+  //TODO remove
   private String exchangeServiceUri;
-  private String historyServiceUri;
+  
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
-  private Grid summaryGrid;
-
-  private Grid xLogsGrid;
   private String xResultsGrid;
-  private Grid pageXLogsGrid;
+  private Map<String, String> summaryGrid;
+
+  private Grid xHistoryGrid;
+  private Grid pageXHistoryGrid;
   
   private String scope;
   private String individual;
@@ -34,169 +36,126 @@ public class ExchangeDataController extends AbstractController
   private String xtime;
   private int itemCount;  
   
-  public ExchangeDataController() 
+  public ExchangeDataController() throws Exception
   {   
-    super();
-    
-    refDataServiceUri = context.getInitParameter("RefDataServiceUri");
-    exchangeServiceUri = context.getInitParameter("ExchangeServiceUri");
-    historyServiceUri = context.getInitParameter("HistoryServiceUri"); 
-    
-    authorize("exchangeManager", "exchangeAdmins");
+    super();    
+    authorize("exchangeAdmins");
   }
   
   //-------------------------------------
   // get a page of data transfer objects 
   // ------------------------------------
-  public String getPageDtos()
+  public String getPageDtos() throws Exception
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit, 
-          isAsync, asyncTimeout, pollingInterval);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);    
       pageDtoGrid = exchangeDataModel.getDtoGrid(exchangeServiceUri, scope, xid, filter, sort, dir, start, limit);  
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
+      e.printStackTrace();
+      throw new Exception(e.toString());
     }
     
     return SUCCESS;
   }
   
-  public Grid getPageDtoGrid()
-  {
-    return pageDtoGrid;
-  }
-  
+  //TODO: implement this method
   //-----------------------------
   // get a page of related items
   // ----------------------------
-  public String getPageRelatedItems() 
-  {
-    try
-    {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
-          isAsync, asyncTimeout, pollingInterval);
-      pageRelatedItemGrid = exchangeDataModel.getRelatedDtoGrid(exchangeServiceUri, scope, xid, individual, 
-          classId, classIdentifier, filter, sort, dir, start, limit);  
-    }
-    catch (Exception e)
-    {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
-    }
-    
-    return SUCCESS;
-  }
-
-  public Grid getPageRelatedItemGrid()
-  {
-    return pageRelatedItemGrid;
-  }
+//  public String getPageRelatedItems() throws Exception 
+//  {
+//    try
+//    {
+//      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+//      pageRelatedItemGrid = exchangeDataModel.getRelatedDtoGrid(exchangeServiceUri, scope, xid, individual, 
+//          classId, classIdentifier, filter, sort, dir, start, limit);  
+//    }
+//    catch (Exception e)
+//    {
+//      throw new Exception(e.toString());
+//    }
+//    
+//    return SUCCESS;
+//  }
   
   //--------------------
   // submit an exchange
   // -------------------
-  public String submitExchange() 
+  public String submitExchange() throws Exception 
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
-          isAsync, asyncTimeout, pollingInterval);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);    
       ExchangeResponse response = exchangeDataModel.submitExchange(exchangeServiceUri, scope, xid, reviewed);  
       xResultsGrid = response.getSummary();
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
+      e.printStackTrace();
+      throw new Exception(e.toString());
     }
       
     return SUCCESS;
-  }
- 
-  public String getXResultsGrid()
-  {
-    return xResultsGrid;
   }
   
   //----------------------------
   // get all exchange responses 
   // ---------------------------
-  public String getXLogs()
+  public String getXHistory() throws Exception
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
-          isAsync, asyncTimeout, pollingInterval);    
-      xLogsGrid = exchangeDataModel.getXlogsGrid(historyServiceUri, scope, xid, xlabel);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);    
+      xHistoryGrid = exchangeDataModel.getXHistoryGrid(scope, xid, xlabel);    
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
+      e.printStackTrace();
+      throw new Exception(e.toString());
     }
     
     return SUCCESS;
   }
-//----------------------------
+  
+  //----------------------------
   // get exchange summary responses 
   // ---------------------------
-  public String getSummary()
+  public String getSummary() throws Exception
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
-          isAsync, asyncTimeout, pollingInterval);    
-      summaryGrid = exchangeDataModel.getSummaryGrid(exchangeServiceUri, scope, xid, xlabel);    
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);    
+      summaryGrid = exchangeDataModel.getPreSummaryGrid(exchangeServiceUri, scope, xid);    
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
+      e.printStackTrace();
+      throw new Exception(e.toString());
     }
     
     return SUCCESS;
-  }
-  
-  public Grid getSummaryGrid() {
-		return summaryGrid;
-	}
-
-	public void setSummaryGrid(Grid summaryGrid) {
-		this.summaryGrid = summaryGrid;
-	}
-  
-  public Grid getXLogsGrid()
-  {
-    return xLogsGrid;
   }
   
   //----------------------------------
   // get a page of exchange responses 
   // ---------------------------------
-  public String getPageXLogs()
+  public String getPageXHistory() throws Exception
   {
     try
     {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit,
-          isAsync, asyncTimeout, pollingInterval);
-      pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(historyServiceUri, scope, xid, xlabel, xtime, start, limit, itemCount); 
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      pageXHistoryGrid = exchangeDataModel.getPageXHistoryGrid(scope, xid, xtime, start, limit, itemCount); 
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
+      e.printStackTrace();
+      throw new Exception(e.toString());
     }
        
     return SUCCESS;
-  }
-  
-  public Grid getPageXLogsGrid()
-  {
-    return pageXLogsGrid;
   }
   
   // --------------------------
@@ -340,5 +299,34 @@ public class ExchangeDataController extends AbstractController
   public int getItemCount()
   {
     return itemCount;
+  }
+  
+  public Grid getPageDtoGrid()
+  {
+    return pageDtoGrid;
+  }
+  
+  public Grid getPageRelatedItemGrid()
+  {
+    return pageRelatedItemGrid;
+  }
+  
+  public String getXResultsGrid()
+  {
+    return xResultsGrid;
+  }
+  
+  public Map<String, String> getSummaryGrid() {
+    return summaryGrid;
+  }
+  
+  public Grid getXHistoryGrid()
+  {
+    return xHistoryGrid;
+  }
+  
+  public Grid getPageXHistoryGrid()
+  {
+    return pageXHistoryGrid;
   }
 }

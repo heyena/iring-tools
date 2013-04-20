@@ -25,7 +25,7 @@ using System.Text.RegularExpressions;
 
 namespace org.iringtools.web.controllers
 {
-  public class MappingController : BaseController
+  public class MappingController : Controller
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingController));
     NamespaceMapper _nsMap = new NamespaceMapper();

@@ -11,16 +11,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Directory complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Directory">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="scope" type="{http://www.iringtools.org/directory}Scope" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.iringtools.org/directory}scope" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,28 +30,28 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Directory", propOrder = {
-    "items"
+@XmlType(name = "", propOrder = {
+    "scope"
 })
 @XmlRootElement(name = "directory")
 public class Directory {
 
-    @XmlElement(name = "scope", required = true)
-    protected List<Scope> items;
+    @XmlElement(required = true)
+    protected List<Scope> scope;
 
     /**
-     * Gets the value of the items property.
+     * Gets the value of the scope property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the items property.
+     * This is why there is not a <CODE>set</CODE> method for the scope property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getItems().add(newItem);
+     *    getScope().add(newItem);
      * </pre>
      * 
      * 
@@ -61,23 +61,23 @@ public class Directory {
      * 
      * 
      */
-    public List<Scope> getItems() {
-        if (items == null) {
-            items = new ArrayList<Scope>();
+    public List<Scope> getScope() {
+        if (scope == null) {
+            scope = new ArrayList<Scope>();
         }
-        return this.items;
+        return this.scope;
     }
 
     /**
-     * Sets the value of the items property.
+     * Sets the value of the scope property.
      * 
-     * @param items
+     * @param scope
      *     allowed object is
      *     {@link Scope }
      *     
      */
-    public void setItems(List<Scope> items) {
-        this.items = items;
+    public void setScope(List<Scope> scope) {
+        this.scope = scope;
     }
 
 }

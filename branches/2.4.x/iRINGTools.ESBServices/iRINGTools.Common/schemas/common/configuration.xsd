@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/common"
+ targetNamespace="http://www.iringtools.org/common" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+ jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+ <xs:element name="configuration">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element ref="setting" maxOccurs="unbounded" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+ <xs:element name="setting">
+  <xs:complexType>
+   <xs:simpleContent>
+    <xs:extension base="xs:string">
+     <xs:attribute name="name" type="xs:string" />
+    </xs:extension>
+   </xs:simpleContent>
+  </xs:complexType>
+ </xs:element>
+
+</xs:schema>

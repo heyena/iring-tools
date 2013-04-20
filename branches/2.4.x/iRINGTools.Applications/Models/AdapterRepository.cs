@@ -6,7 +6,6 @@ using System.Configuration;
 using System.Linq;
 using System.Xml.Linq;
 using System.Web;
-using Ninject;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
@@ -32,7 +31,9 @@ namespace iRINGTools.Web.Models
     protected string _dataServiceUri = null;
     protected string _hibernateServiceUri = null;
     protected string _referenceDataServiceUri = null;
-    
+
+    public IDictionary<string, string> AuthHeaders { get; set; }
+
     public AdapterRepository()
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
@@ -44,9 +45,20 @@ namespace iRINGTools.Web.Models
       _proxyPort = _settings["ProxyPort"];
 
       _adapterServiceUri = _settings["AdapterServiceUri"];
+      if (_adapterServiceUri.EndsWith("/"))
+        _adapterServiceUri = _adapterServiceUri.Remove(_adapterServiceUri.Length - 1);
+
       _dataServiceUri = _settings["DataServiceUri"];
-      _hibernateServiceUri = _settings["NHibernateServiceUri"];
-      _referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+      if (_dataServiceUri.EndsWith("/"))
+        _dataServiceUri = _dataServiceUri.Remove(_dataServiceUri.Length - 1);
+
+      _hibernateServiceUri = _settings["HibernateServiceUri"];
+      if (_hibernateServiceUri.EndsWith("/"))
+        _hibernateServiceUri = _hibernateServiceUri.Remove(_hibernateServiceUri.Length - 1);
+
+      _referenceDataServiceUri = _settings["RefDataServiceUri"];
+      if (_referenceDataServiceUri.EndsWith("/"))
+        _referenceDataServiceUri = _referenceDataServiceUri.Remove(_referenceDataServiceUri.Length - 1);
     }
 
     public HttpSessionStateBase Session { get; set; }
@@ -63,6 +75,16 @@ namespace iRINGTools.Web.Models
       else
       {
         client = new WebHttpClient(baseUri);
+      }
+
+      if (AuthHeaders != null && AuthHeaders.Count > 0)
+      {
+        _logger.Debug("Injecting authorization [" + AuthHeaders.Count + "] headers.");
+        client.Headers = AuthHeaders;
+      }
+      else
+      {
+        _logger.Debug("No authorization headers.");
       }
 
       return client;
@@ -215,11 +237,7 @@ namespace iRINGTools.Web.Models
         WebHttpClient client = CreateWebClient(_dataServiceUri);        
         string isAsync = _settings["Async"];
 
-        if (isAsync != null && isAsync.ToLower() == "false")
-        {
-          dictionary = client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName), true);
-        }
-        else
+        if (isAsync != null && isAsync.ToLower() == "true")
         {
           client.Async = true;
           string statusUrl = client.Get<string>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName));
@@ -230,6 +248,10 @@ namespace iRINGTools.Web.Models
           }
 
           dictionary = WaitForRequestCompletion<DataDictionary>(_dataServiceUri, statusUrl);
+        }
+        else
+        {
+          dictionary = client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName), true);
         }
       }
       catch (Exception ex)
@@ -270,6 +292,7 @@ namespace iRINGTools.Web.Models
       catch (Exception ex)
       {
         _logger.Error(ex.ToString());
+        throw ex;
       }
 
       return obj;
@@ -303,15 +326,20 @@ namespace iRINGTools.Web.Models
 
     public DataLayer GetDataLayer(string scopeName, string applicationName)
     {
-      XElement binding = GetBinding(scopeName, applicationName);
-
       DataLayer dataLayer = null;
+      XElement binding = GetBinding(scopeName, applicationName);
 
       if (binding != null)
       {
+        _logger.Debug("Received data layer binding: " + binding.ToString());
+
         dataLayer = new DataLayer();
         dataLayer.Assembly = binding.Element("bind").Attribute("to").Value;
         dataLayer.Name = binding.Element("bind").Attribute("to").Value.Split(',')[1].Trim();
+      }
+      else
+      {
+        throw new Exception("Error getting data layer binding configuration for [" + scopeName + "." + applicationName + "]");
       }
 
       return dataLayer;
@@ -445,11 +473,7 @@ namespace iRINGTools.Web.Models
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
         string isAsync = _settings["Async"];
 
-        if (isAsync != null && isAsync.ToLower() == "false")
-        {
-          response = client.Get<Response>(String.Format("/{0}/{1}/refresh?format=xml", scope, application), true);
-        }
-        else
+        if (isAsync != null && isAsync.ToLower() == "true")
         {
           client.Async = true;
           string statusUrl = client.Get<string>(String.Format("/{0}/{1}/refresh?format=xml", scope, application));
@@ -459,7 +483,11 @@ namespace iRINGTools.Web.Models
             throw new Exception("Asynchronous status URL not found.");
           }
 
-          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);          
+          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);
+        }
+        else
+        {
+          response = client.Get<Response>(String.Format("/{0}/{1}/refresh?format=xml", scope, application), true);
         }
 
         string dictKey = string.Format("Dictionary.{0}.{1}", scope, application);

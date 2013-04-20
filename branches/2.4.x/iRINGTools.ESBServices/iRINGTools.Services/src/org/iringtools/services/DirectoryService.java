@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.DirectoryProvider;
 
 @Path("/")
@@ -29,7 +28,7 @@ public class DirectoryService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -58,7 +57,7 @@ public class DirectoryService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }

@@ -30,7 +30,7 @@
     <xs:complexType name="DxiRequest">
     <xs:sequence>      
       <xs:element name="manifest" type="mnf:Manifest" />
-      <xs:element name="dataFilter" type="dtf:DataFilter" />
+      <xs:element ref="dtf:dataFilter" />
     </xs:sequence>
   </xs:complexType>  
 

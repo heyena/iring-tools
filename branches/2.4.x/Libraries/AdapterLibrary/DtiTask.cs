@@ -7,6 +7,7 @@ using log4net;
 using org.iringtools.mapping;
 using org.iringtools.library;
 using org.iringtools.adapter.projection;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter
 {
@@ -30,7 +31,7 @@ namespace org.iringtools.adapter
       _projectionLayer = projectionLayer;
       _dataLayer = dataLayer;
       _graphMap = graphMap;
-      _filter = filter;
+      _filter = Utility.CloneDataContractObject<DataFilter>(filter);
       _pageSize = pageSize;
       _startIndex = startIndex;
     }

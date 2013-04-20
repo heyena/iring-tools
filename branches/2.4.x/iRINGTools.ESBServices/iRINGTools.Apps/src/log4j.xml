@@ -9,7 +9,7 @@
   
   <appender name="fileout" class="org.apache.log4j.RollingFileAppender"> 
     <param name="file" value="${catalina.home}/logs/iring-apps.log"/>
-    <param name="maxFileSize" value="100KB"/>
+    <param name="maxFileSize" value="500KB"/>
     <param name="maxBackupIndex" value="5"/>
     <layout class="org.apache.log4j.PatternLayout"> 
       <param name="ConversionPattern" value="%d{ISO8601} %-5p [%C] %m%n"/> 

@@ -4,22 +4,23 @@ package org.iringtools.directory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Scope complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Scope">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="applicationData" type="{http://www.iringtools.org/directory}ApplicationData"/>
- *         &lt;element name="dataExchanges" type="{http://www.iringtools.org/directory}DataExchanges"/>
+ *         &lt;element ref="{http://www.iringtools.org/directory}applicationData"/>
+ *         &lt;element ref="{http://www.iringtools.org/directory}dataExchanges"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,11 +30,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Scope", propOrder = {
+@XmlType(name = "", propOrder = {
     "name",
     "applicationData",
     "dataExchanges"
 })
+@XmlRootElement(name = "scope")
 public class Scope {
 
     @XmlElement(required = true)

@@ -28,13 +28,14 @@ namespace org.iringtools.web.controllers
 	{
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(GridManagerController));
 		private GridRepository _repository { get; set; }
-		private Grid pageDtoGrid;		
+		private Grid dataGrid;		
 
-		public GridManagerController() : this(new GridRepository()) { }
+		public GridManagerController() : this(new GridRepository()) {}
 
 		public GridManagerController(GridRepository repository)
 		{
 			_repository = repository;
+      _repository.AuthHeaders = _authHeaders;
 		}
 
 		public ActionResult Pages(FormCollection form)
@@ -42,7 +43,7 @@ namespace org.iringtools.web.controllers
       _repository.Session = Session;
 
 			JsonContainer<Grid> container = new JsonContainer<Grid>();
-			pageDtoGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
+			dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
 
 			string response = _repository.GetResponse();
 			if (response != "")
@@ -50,7 +51,7 @@ namespace org.iringtools.web.controllers
 				return Json(new { success = false } + response, JsonRequestBehavior.AllowGet);
 			}
 
-			return Json(pageDtoGrid, JsonRequestBehavior.AllowGet);
+			return Json(dataGrid, JsonRequestBehavior.AllowGet);
 		}		
 	}
 }

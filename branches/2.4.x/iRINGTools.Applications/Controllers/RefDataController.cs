@@ -22,7 +22,7 @@ using org.iringtools.refdata.federation;
 
 namespace org.iringtools.web.controllers
 {
-  public class RefDataController : BaseController
+  public class RefDataController : Controller
   {
 
     private IRefDataRepository _refdataRepository = null;

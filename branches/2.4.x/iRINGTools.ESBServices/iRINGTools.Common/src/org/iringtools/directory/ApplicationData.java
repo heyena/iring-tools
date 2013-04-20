@@ -6,20 +6,21 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ApplicationData complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ApplicationData">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="application" type="{http://www.iringtools.org/directory}Application" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.iringtools.org/directory}application" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,27 +30,28 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ApplicationData", propOrder = {
-    "items"
+@XmlType(name = "", propOrder = {
+    "application"
 })
+@XmlRootElement(name = "applicationData")
 public class ApplicationData {
 
-    @XmlElement(name = "application", required = true)
-    protected List<Application> items;
+    @XmlElement(required = true)
+    protected List<Application> application;
 
     /**
-     * Gets the value of the items property.
+     * Gets the value of the application property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the items property.
+     * This is why there is not a <CODE>set</CODE> method for the application property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getItems().add(newItem);
+     *    getApplication().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +61,23 @@ public class ApplicationData {
      * 
      * 
      */
-    public List<Application> getItems() {
-        if (items == null) {
-            items = new ArrayList<Application>();
+    public List<Application> getApplication() {
+        if (application == null) {
+            application = new ArrayList<Application>();
         }
-        return this.items;
+        return this.application;
     }
 
     /**
-     * Sets the value of the items property.
+     * Sets the value of the application property.
      * 
-     * @param items
+     * @param application
      *     allowed object is
      *     {@link Application }
      *     
      */
-    public void setItems(List<Application> items) {
-        this.items = items;
+    public void setApplication(List<Application> application) {
+        this.application = application;
     }
 
 }

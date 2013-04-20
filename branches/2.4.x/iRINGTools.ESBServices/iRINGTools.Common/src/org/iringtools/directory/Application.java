@@ -1,28 +1,30 @@
 
 package org.iringtools.directory;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Application complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Application">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="context" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="context" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="baseUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="graphs" type="{http://www.iringtools.org/directory}Graphs"/>
+ *         &lt;element ref="{http://www.iringtools.org/directory}graph" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,50 +34,49 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Application", propOrder = {
-    "id",
-    "context",
+@XmlType(name = "", propOrder = {
     "name",
+    "context",
     "description",
     "baseUri",
-    "graphs"
+    "graph"
 })
+@XmlRootElement(name = "application")
 public class Application {
 
     @XmlElement(required = true)
-    protected String id;
-    protected String context;
-    @XmlElement(required = true)
     protected String name;
+    @XmlElement(required = true)
+    protected String context;
     @XmlElement(required = true)
     protected String description;
     @XmlElement(required = true)
     protected String baseUri;
     @XmlElement(required = true)
-    protected Graphs graphs;
+    protected List<Graph> graph;
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setName(String value) {
+        this.name = value;
     }
 
     /**
@@ -100,30 +101,6 @@ public class Application {
      */
     public void setContext(String value) {
         this.context = value;
-    }
-
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
     }
 
     /**
@@ -175,27 +152,44 @@ public class Application {
     }
 
     /**
-     * Gets the value of the graphs property.
+     * Gets the value of the graph property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Graphs }
-     *     
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the graph property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getGraph().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Graph }
+     * 
+     * 
      */
-    public Graphs getGraphs() {
-        return graphs;
+    public List<Graph> getGraph() {
+        if (graph == null) {
+            graph = new ArrayList<Graph>();
+        }
+        return this.graph;
     }
 
     /**
-     * Sets the value of the graphs property.
+     * Sets the value of the graph property.
      * 
-     * @param value
+     * @param graph
      *     allowed object is
-     *     {@link Graphs }
+     *     {@link Graph }
      *     
      */
-    public void setGraphs(Graphs value) {
-        this.graphs = value;
+    public void setGraph(List<Graph> graph) {
+        this.graph = graph;
     }
 
 }

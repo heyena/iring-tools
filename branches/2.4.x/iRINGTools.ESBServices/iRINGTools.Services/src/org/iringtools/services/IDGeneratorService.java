@@ -13,7 +13,6 @@ import javax.ws.rs.QueryParam;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
-import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.IDGeneratorProvider;
 
 @Path("/")
@@ -56,7 +55,7 @@ public class IDGeneratorService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }

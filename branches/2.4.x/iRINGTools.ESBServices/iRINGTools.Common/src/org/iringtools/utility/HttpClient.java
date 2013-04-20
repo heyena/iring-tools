@@ -28,7 +28,7 @@ public class HttpClient
   
   private String baseUri;
   private NetworkCredentials networkCredentials = null;
-  private Map<String, String> headers = null;
+  private Map<String, String> headers = new HashMap<String, String>();
 
   private final static String GET_METHOD = "GET";
   private final static String POST_METHOD = "POST";
@@ -60,8 +60,7 @@ public class HttpClient
   {
     setBaseUri(baseUri);
     setNetworkCredentials(networkCredentials);
-    headers = new HashMap<String, String>();
-    setAsync(false);
+    setAsync(async);
   }
   
   public void setAsync(boolean value)

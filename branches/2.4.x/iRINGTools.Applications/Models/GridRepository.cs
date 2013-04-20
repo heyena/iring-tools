@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Linq;
 using System.Web.Script.Serialization;
 using log4net;
-using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
 using System.Net;
@@ -15,7 +14,7 @@ namespace iRINGTools.Web.Models
 {
     public class GridRepository : AdapterRepository, IGridRepository
     {
-      private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
+      private static readonly ILog _logger = LogManager.GetLogger(typeof(GridRepository));
       
       private DataDictionary dataDict;
       private DataItems dataItems;
@@ -158,21 +157,21 @@ namespace iRINGTools.Web.Models
           WebHttpClient client = CreateWebClient(_dataServiceUri);
           string isAsync = _settings["Async"];
 
-          if (isAsync != null && isAsync.ToLower() == "false")
-          {
-            dataItemsJson = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
-          }
-          else
+          if (isAsync != null && isAsync.ToLower() == "true")
           {
             client.Async = true;
             string statusUrl = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
-          
+
             if (string.IsNullOrEmpty(statusUrl))
             {
               throw new Exception("Asynchronous status URL not found.");
             }
 
             dataItemsJson = WaitForRequestCompletion<string>(_dataServiceUri, statusUrl);
+          }
+          else
+          {
+            dataItemsJson = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
           }
 
           DataItemSerializer serializer = new DataItemSerializer();

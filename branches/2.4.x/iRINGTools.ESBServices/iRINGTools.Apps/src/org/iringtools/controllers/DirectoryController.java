@@ -1,8 +1,10 @@
 package org.iringtools.controllers;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.iringtools.directory.Directory;
 import org.iringtools.models.DataModel;
 import org.iringtools.models.DirectoryModel; 
 import org.iringtools.utility.IOUtils;
@@ -12,38 +14,42 @@ public class DirectoryController extends AbstractController
 {
   private static final long serialVersionUID = 1L;
   
-  private String exchangeServiceUri;;
   private Tree directoryTree;
   private String dtoContext;
 
-  public DirectoryController()
+  public DirectoryController() throws Exception
   {
-    super();    
-    exchangeServiceUri = context.getInitParameter("ExchangeServiceUri");
-    authorize("exchangeManager", "exchangeAdmins");
+    super();
+    authorize("exchangeAdmins");
   }
 
-  public String getDirectory()
+  public String getDirectory() throws Exception
   {
     try
     {      
-      for (Entry<String, Object> entry : session.entrySet())
+      Iterator<Entry<String, Object>> iterator = settings.entrySet().iterator();
+      
+      while (iterator.hasNext()) 
       {
+        Entry<String, Object> entry = iterator.next();
         String key = entry.getKey();
-  
+        
         if (key.startsWith(DataModel.APP_PREFIX))
         {
-          session.remove(key);
+          iterator.remove();
         }
       }
   
-      DirectoryModel directoryModel = new DirectoryModel(session);      
-      directoryTree = directoryModel.getDirectoryTree(exchangeServiceUri + "/directory");
+      DirectoryModel directoryModel = new DirectoryModel(settings);   
+      Directory directory = directoryModel.getDirectory();
+      
+      session.put(DataModel.DIRECTORY_KEY, directory);
+      directoryTree = directoryModel.directoryToTree(directory);
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.getMessage());
-      return ERROR;
+      e.printStackTrace();
+      throw new Exception(e.toString());
     }
 
     return SUCCESS;
@@ -59,8 +65,8 @@ public class DirectoryController extends AbstractController
     Map<String, String> map = IOUtils.splitQueryParams(dtoContext);    
     
     String dtoContextKey = (map.containsKey("xid"))    
-      ? map.get("scope") + "/exchanges/" + map.get("xid")    
-      : map.get("scope") + "/" + map.get("app") + "/" + map.get("graph"); 
+      ? map.get("scope") + "." + map.get("xid")    
+      : map.get("scope") + "." + map.get("app") + "." + map.get("graph"); 
     
     for (String key : session.keySet())
     {

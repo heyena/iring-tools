@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.iringtools.history.History;
-import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.HistoryProvider;
 
 @Path("/")
@@ -31,7 +30,7 @@ public class HistoryService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -64,7 +63,7 @@ public class HistoryService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }

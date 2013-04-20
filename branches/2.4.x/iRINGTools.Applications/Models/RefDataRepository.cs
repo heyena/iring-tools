@@ -10,7 +10,6 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using org.ids_adi.qmxf;
-using Ninject;
 using System.Net;
 using org.iringtools.refdata.federation;
 
@@ -18,12 +17,10 @@ namespace iRINGTools.Web.Models
 {
   public class RefDataRepository : IRefDataRepository
   {
-    //private NameValueCollection _settings = null;
     private WebHttpClient _referenceDataServiceClient = null;
     private string _refDataServiceURI = string.Empty;
     private string relativeUri = string.Empty;
 
-    [Inject]
     public RefDataRepository()
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
@@ -33,7 +30,7 @@ namespace iRINGTools.Web.Models
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
       string proxyPort = _settings["ProxyPort"];
-      string referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+      string referenceDataServiceUri = _settings["RefDataServiceUri"];
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {

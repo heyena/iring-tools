@@ -806,16 +806,22 @@ namespace org.iringtools.adapter.projection
       return classIdentifiers.ToList<string>();
     }
 
-    //get real property name
-    public void ProjectDataFilter(DataDictionary dictionary, ref DataFilter filter, string graph)
+    public void ProjectDataFilter(DataObject dataObject, ref DataFilter filter, string graph)
+    {
+      GraphMap graphMap = _mapping.FindGraphMap(graph);
+      ProjectDataFilter(dataObject, ref filter, graphMap);
+    }
+
+    // get real property name
+    public void ProjectDataFilter(DataObject dataObject, ref DataFilter filter, GraphMap graphMap)
     {
       try
       {
         if (filter != null && (filter.Expressions != null || filter.OrderExpressions != null))
         {
-          _graphMap = _mapping.FindGraphMap(graph);
+          _graphMap = graphMap;
 
-          DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+          DataObject _dataObject = dataObject;
 
           if (filter.Expressions != null)
           {

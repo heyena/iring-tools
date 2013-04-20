@@ -1,93 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
-using iRINGTools.Web.Models;
-using org.iringtools.library;
-using org.iringtools.adapter.security;
 using iRINGTools.Web.Helpers;
-using System;
-using System.Web;
-using System.IO;
+using iRINGTools.Web.Models;
 using log4net;
-using System.Configuration;
-using System.Collections;
-using org.iringtools.utility;
+using org.iringtools.library;
 
 namespace org.iringtools.web.controllers
 {
-  public abstract class BaseController : Controller
-  {
-    protected IAuthenticationLayer _authenticationLayer = new OAuthProvider();
-    protected IDictionary _allClaims = new Dictionary<string, string>();
-    protected string _oAuthToken = String.Empty;
-    protected IAuthorizationLayer _authorizationLayer = new LdapAuthorizationProvider();
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseController));
-
-    public BaseController()
-    {
-      try
-      {
-        string enableOAuth = ConfigurationManager.AppSettings["EnableOAuth"];
-        _logger.Debug("EnableOAuth: " + enableOAuth);
-
-        if (!String.IsNullOrEmpty(enableOAuth) && enableOAuth.ToUpper() == "TRUE")
-        {
-          _logger.Debug("Calling SSO...");
-
-          _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
-
-          _logger.Debug("Claims: " + _allClaims.ToString());
-          _logger.Debug("OAuthToken: " + _oAuthToken);
-
-          if (System.Web.HttpContext.Current.Response.IsRequestBeingRedirected)
-            return;
-
-          string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-          string ldapConfigFilePath = baseDirectory + @"App_Data\ldap.conf";
-
-          _logger.Debug("LDAPConfigPath: " + ldapConfigFilePath);
-          
-          if (System.IO.File.Exists(ldapConfigFilePath))
-          {
-            Properties ldapConfig = new Properties();
-            ldapConfig.Load(ldapConfigFilePath);
-
-            _logger.Debug("LDAPConfig loaded.");
-
-            ldapConfig["authorizedGroup"] = "adapterAdmins";
-            _authorizationLayer.Init(ldapConfig);
-
-            _logger.Debug("LDAP Authorization Intialized.");
-
-            if (!_authorizationLayer.IsAuthorized(_allClaims))
-            {
-              throw new UnauthorizedAccessException("User not authorized to access AdapterManager.");
-            }
-          }
-          else
-          {
-            _logger.Warn("LDAP Configuration is missing!");
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
-    }
-  }
-
   public class AdapterManagerController : BaseController
   {
-    private AdapterRepository _repository;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterManagerController));
+    private AdapterRepository _repository;
 
-    public AdapterManagerController() : this(new AdapterRepository()) { }
+    public AdapterManagerController() : this(new AdapterRepository()) {}
 
     public AdapterManagerController(AdapterRepository repository)
       : base()
     {
       _repository = repository;
+      _repository.AuthHeaders = _authHeaders;
     }
 
     public ActionResult Index()
@@ -146,8 +78,7 @@ namespace org.iringtools.web.controllers
         List<string> dataObjects = _repository.GetTableNames(
           form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
           form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"], form["serName"]);
-
-
+        
         container.items = dataObjects;
         container.success = true;
         container.total = dataObjects.Count;
@@ -177,7 +108,6 @@ namespace org.iringtools.web.controllers
         throw e;
       }
     }
-
 
     public ActionResult Trees(FormCollection form)
     {
