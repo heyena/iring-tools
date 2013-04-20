@@ -6,20 +6,21 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for OrderExpressions complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="OrderExpressions">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="orderExpression" type="{http://www.iringtools.org/data/filter}OrderExpression" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.iringtools.org/data/filter}orderExpression" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,9 +30,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "OrderExpressions", propOrder = {
+@XmlType(name = "", propOrder = {
     "items"
 })
+@XmlRootElement(name = "orderExpressions")
 public class OrderExpressions {
 
     @XmlElement(name = "orderExpression", required = true)

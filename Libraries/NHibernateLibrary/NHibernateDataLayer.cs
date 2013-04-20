@@ -18,7 +18,7 @@ namespace org.iringtools.adapter.datalayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private IKernel _kernel = null;
-    private IAuthorization _authorization;
+    private org.iringtools.nhibernate.IAuthorization _authorization;
     protected const string UNAUTHORIZED_ERROR = "User not authorized to access NHibernate data layer of [{0}]";
     
     protected string _dataDictionaryPath = String.Empty;
@@ -876,7 +876,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        _authorization = _kernel.Get<IAuthorization>();
+        _authorization = _kernel.Get<org.iringtools.nhibernate.IAuthorization>();
         return _authorization.Authorize(objectType, ref dataFilter);
       }
       catch (Exception e)

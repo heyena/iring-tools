@@ -29,7 +29,6 @@ import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.library.RequestStatus;
-import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.ExchangeProvider;
 
 @Path("/")
@@ -48,7 +47,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -77,7 +76,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -106,7 +105,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -134,7 +133,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -160,7 +159,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -186,7 +185,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -219,7 +218,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -249,7 +248,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -288,7 +287,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -347,7 +346,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -373,7 +372,7 @@ public class ExchangeService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }

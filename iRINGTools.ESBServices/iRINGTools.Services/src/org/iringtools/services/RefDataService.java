@@ -18,7 +18,6 @@ import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.response.Entity;
-import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.RefDataProvider;
 
 @Path("/")
@@ -38,7 +37,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -66,7 +65,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -94,7 +93,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -122,7 +121,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -150,7 +149,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -178,7 +177,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -206,7 +205,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -242,7 +241,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -270,7 +269,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -298,7 +297,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -326,7 +325,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -354,7 +353,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -382,7 +381,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -411,7 +410,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -439,7 +438,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -467,7 +466,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -495,7 +494,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -523,7 +522,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -551,7 +550,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -580,7 +579,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -621,7 +620,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -667,7 +666,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -711,7 +710,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -739,7 +738,7 @@ public class RefDataService extends AbstractService
     {
       initService(SERVICE_NAME);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }

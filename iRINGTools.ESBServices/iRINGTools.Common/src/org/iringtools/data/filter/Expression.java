@@ -4,23 +4,24 @@ package org.iringtools.data.filter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Expression complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Expression">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="openGroupCount" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="propertyName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="relationalOperator" type="{http://www.iringtools.org/data/filter}RelationalOperator"/>
- *         &lt;element name="values" type="{http://www.iringtools.org/data/filter}Values"/>
+ *         &lt;element ref="{http://www.iringtools.org/data/filter}values"/>
  *         &lt;element name="logicalOperator" type="{http://www.iringtools.org/data/filter}LogicalOperator"/>
  *         &lt;element name="closeGroupCount" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="isCaseSensitive" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
@@ -33,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Expression", propOrder = {
+@XmlType(name = "", propOrder = {
     "openGroupCount",
     "propertyName",
     "relationalOperator",
@@ -42,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
     "closeGroupCount",
     "isCaseSensitive"
 })
+@XmlRootElement(name = "expression")
 public class Expression {
 
     protected int openGroupCount;

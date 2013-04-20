@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Linq;
 using System.Xml.Linq;
 using System.Web;
-using Ninject;
 using log4net;
 
 using org.iringtools.library;
@@ -18,11 +17,9 @@ namespace iRINGTools.Web.Models
     public class MappingRepository : IMappingRepository
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingRepository));
-        //private NameValueCollection _settings = null;
         private WebHttpClient _adapterServiceClient = null;
         private string _refDataServiceURI = string.Empty;
 
-        [Inject]
         public MappingRepository()
         {
           NameValueCollection settings = ConfigurationManager.AppSettings;

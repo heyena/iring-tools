@@ -6,7 +6,7 @@ using org.iringtools.library;
 
 namespace org.iringtools.web.Controllers
 {
-    public class FacadeController : BaseController
+    public class FacadeController : Controller
     {
         private IFacadeRepository _facadeRepository = null;
 

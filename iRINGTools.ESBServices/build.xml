@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="dist" name="iringtools">
   <property name="iringtools-apps.location" value="./iRINGTools.Apps" />
-  <property name="iringtools-mediators.location" value="./iRINGTools.Mediators" />
-  <property name="iringtools-services.location" value="./iRINGTools.Services" />
   <property name="tomcat.webapps.location" value="c:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps" />
   <property name="bamboo.dist.location" value="c:/bamboo.iringtools.org/dist" />
 
@@ -19,30 +17,26 @@
   </target>
   
   <target name="init">
-    <svn> 
+    <svn javahl="false" svnkit="false"> 
       <update dir="${basedir}"/>                                 
-    </svn> 
+    </svn>
     <mkdir dir="dist" />
   </target>
   
   <target name="build" depends="init">
     <ant antfile="build.xml" dir="${iringtools-apps.location}" target="build" />
-    <ant antfile="build.xml" dir="${iringtools-mediators.location}" target="build" />
-    <ant antfile="build.xml" dir="${iringtools-services.location}" target="build" />
   </target>
   
   <target name="dist" depends="clean">
     <ant antfile="build.xml" dir="${iringtools-apps.location}" target="dist" />
-    <ant antfile="build.xml" dir="${iringtools-mediators.location}" target="dist" />
-    <ant antfile="build.xml" dir="${iringtools-services.location}" target="dist" />
     <copy todir="dist">
       <fileset dir="${iringtools-apps.location}/dist" />
-      <fileset dir="${iringtools-mediators.location}/dist" />
-      <fileset dir="${iringtools-services.location}/dist" />
     </copy>
     <zip destfile="dist/iringtools-utilities.zip" >
-		   <zipfileset dir="./libraries/commons-codec-1.4" includes="*.jar" />
-		   <zipfileset dir="./iRINGTools.Common/dist" includes="*.jar" />
+		   <zipfileset dir="./libraries/commons-codec-1.4" prefix="lib" includes="*.jar" />
+		   <zipfileset dir="./libraries/jaxb-ri-20100511/lib" prefix="lib" includes="*.jar" />
+		   <zipfileset dir="./libraries/axiom-1.2.8" prefix="lib" includes="*.jar" />
+		   <zipfileset dir="./iRINGTools.Common/dist" prefix="lib" includes="*.jar" />
        <zipfileset dir="./iRINGTools.Common/bin" includes="*.bat,*.sh" />
 	  </zip>
   </target>

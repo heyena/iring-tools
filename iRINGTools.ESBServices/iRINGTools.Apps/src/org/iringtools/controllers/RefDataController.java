@@ -43,7 +43,7 @@ public class RefDataController extends AbstractController implements ServletRequ
 
   private HttpServletRequest httpRequest = null;
 
-  public RefDataController()
+  public RefDataController() throws Exception
   {
     super();
   }
@@ -76,7 +76,7 @@ public class RefDataController extends AbstractController implements ServletRequ
   public String searchPage()
   {
 
-    RefDataModel refdata = new RefDataModel(session);
+    RefDataModel refdata = new RefDataModel(settings);
     Type type = Type.fromValue(httpRequest.getParameter("type"));
 
     switch (type)
@@ -111,7 +111,7 @@ public class RefDataController extends AbstractController implements ServletRequ
 
   public String getTemplates()
   {
-    RefDataModel refdata = new RefDataModel(session);
+    RefDataModel refdata = new RefDataModel(settings);
     String id = httpRequest.getParameter("id");
     tree = refdata.getTemplates(id);
     return Action.SUCCESS;
@@ -119,7 +119,7 @@ public class RefDataController extends AbstractController implements ServletRequ
 
   public String postClass()
   {
-    RefDataModel refdata = new RefDataModel(session); 
+    RefDataModel refdata = new RefDataModel(settings); 
     boolean successStatus = refdata.postClass(httpRequest);
     result.setSuccess(successStatus);
     return Action.SUCCESS;
@@ -127,7 +127,7 @@ public class RefDataController extends AbstractController implements ServletRequ
 
   public String postTemplate()
   {
-    RefDataModel refdata = new RefDataModel(session);
+    RefDataModel refdata = new RefDataModel(settings);
     boolean successStatus = refdata.postTemplate(httpRequest);
     result.setSuccess(successStatus);
     return Action.SUCCESS;

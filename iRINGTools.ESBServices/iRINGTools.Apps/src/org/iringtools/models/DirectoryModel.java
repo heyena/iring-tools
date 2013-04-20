@@ -12,9 +12,7 @@ import org.iringtools.directory.Directory;
 import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
-import org.iringtools.utility.HttpClient;
-import org.iringtools.utility.HttpClientException;
-import org.iringtools.utility.HttpUtils;
+import org.iringtools.library.directory.DirectoryProvider;
 import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
@@ -22,28 +20,24 @@ import org.iringtools.widgets.tree.TreeNode;
 
 public class DirectoryModel 
 {
-  private Map<String, Object> settings;
+  private DirectoryProvider provider;
   
   public DirectoryModel(Map<String, Object> settings)
   {
-    this.settings = settings;
+    provider = new DirectoryProvider(settings);
   }
   
-  public Tree getDirectoryTree(String directoryUrl) throws HttpClientException
+  public Directory getDirectory() throws Exception
   {
-    HttpClient httpClient = new HttpClient(directoryUrl);
-    HttpUtils.addHttpHeaders(settings, httpClient);
-    
-    Directory directory = httpClient.get(Directory.class);
-    return directoryToTree(directory);
+    return provider.getDirectory();
   }
   
-  private Tree directoryToTree(Directory directory)
+  public Tree directoryToTree(Directory directory)
   {
     Tree tree = new Tree();
     List<Node> scopeNodes = tree.getNodes();
 
-    for (Scope scope : directory.getItems())
+    for (Scope scope : directory.getScope())
     {
       TreeNode scopeNode = new TreeNode();
       scopeNode.setText(scope.getName());
@@ -62,7 +56,7 @@ public class DirectoryModel
 
         List<Node> appDataNodeList = appDataNode.getChildren();
 
-        for (Application app : appData.getItems())
+        for (Application app : appData.getApplication())
         {
           TreeNode appNode = new TreeNode();
           appNode.setText(app.getName());
@@ -75,7 +69,7 @@ public class DirectoryModel
 
           List<Node> appNodeList = appNode.getChildren();          
           
-          for (Graph graph : app.getGraphs().getItems())
+          for (Graph graph : app.getGraph())
           {
             LeafNode graphNode = new LeafNode();
             graphNode.setText(graph.getName());
@@ -93,9 +87,9 @@ public class DirectoryModel
         }
       }
 
-      DataExchanges exchangeData = scope.getDataExchanges();
+      DataExchanges dataExchanges = scope.getDataExchanges();
 
-      if (exchangeData != null)
+      if (dataExchanges != null)
       {
         TreeNode exchangeDataNode = new TreeNode();
         exchangeDataNode.setText("Data Exchanges");
@@ -104,7 +98,7 @@ public class DirectoryModel
 
         List<Node> exchangeDataNodeList = exchangeDataNode.getChildren();
 
-        for (Commodity commodity : exchangeData.getItems())
+        for (Commodity commodity : dataExchanges.getCommodity())
         {
           TreeNode commodityNode = new TreeNode();
           commodityNode.setText(commodity.getName());
@@ -113,15 +107,16 @@ public class DirectoryModel
 
           List<Node> commodityNodeList = commodityNode.getChildren();
 
-          for (Exchange exchange : commodity.getExchanges().getItems())
+          for (Exchange exchange : commodity.getExchange())
           {
             LeafNode exchangeNode = new LeafNode();
+            exchangeNode.setIdentifier(exchange.getId());
             exchangeNode.setText(exchange.getName());
             exchangeNode.setIconCls("exchange");
             exchangeNode.setLeaf(true);
             commodityNodeList.add(exchangeNode);
             
-            HashMap<String, String> properties = exchangeNode.getProperties();            
+            HashMap<String, String> properties = exchangeNode.getProperties();
             properties.put("Id", exchange.getId());
             properties.put("Name", exchange.getName());
             properties.put("Description", exchange.getDescription());

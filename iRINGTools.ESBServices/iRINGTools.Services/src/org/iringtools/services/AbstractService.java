@@ -16,7 +16,6 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.apache.log4j.Logger;
-import org.iringtools.security.AuthorizationException;
 import org.iringtools.utility.HttpUtils;
 import org.iringtools.utility.IOUtils;
 
@@ -32,7 +31,7 @@ public abstract class AbstractService
   protected HttpServletRequest request;
   protected HttpServletResponse response;
   
-  public void initService(String serviceName) throws AuthorizationException
+  public void initService(String serviceName) throws Exception
   {
     logger.info("Initializing " + serviceName);
     

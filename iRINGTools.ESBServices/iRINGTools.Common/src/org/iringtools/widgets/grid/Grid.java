@@ -1,9 +1,12 @@
 package org.iringtools.widgets.grid;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Grid
+public class Grid implements Serializable
 {
+  private static final long serialVersionUID = 1L;
+  
   protected String identifier;  // optional
   protected String description; // optional
   protected int total;

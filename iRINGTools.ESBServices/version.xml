@@ -18,7 +18,7 @@
   </path>
   
   <target name="build">
-    <svn>
+    <svn javahl="false" svnkit="false">
       <status path="${basedir}" revisionProperty="revision" />
     </svn>
     <echo message="${version}.${revision}" file="${version.outfile}" />

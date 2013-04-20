@@ -18,18 +18,17 @@ namespace org.iringtools.web.controllers
 {
   public class DirectoryController : BaseController
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
+    
     private AdapterRepository _repository;
     private string _keyFormat = "Mapping.{0}.{1}";
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
+    
+    public DirectoryController() : this(new AdapterRepository()) {}
 
-    public DirectoryController()
-      : this(new AdapterRepository())
-    {
-    }
-
-    public DirectoryController(AdapterRepository repository)
+    public DirectoryController(AdapterRepository repository) : base()
     {
       _repository = repository;
+      _repository.AuthHeaders = _authHeaders;
     }
 
     public ActionResult Index()

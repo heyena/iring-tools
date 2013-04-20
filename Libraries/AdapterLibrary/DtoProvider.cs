@@ -402,23 +402,22 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         BuildCrossGraphMap(manifest, graph);
-        DataFilter filter = GetPredeterminedFilter();
+
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        DataFilter filter = GetPresetFilters(dtoProjectionEngine);
 
         if (_settings["MultiGetDTIs"] == null || bool.Parse(_settings["MultiGetDTIs"]))
         {
-          _logger.Debug("Multi-threading enabled!");
+          _logger.Debug("Running multi-threaded mode.");
           dataTransferIndices = MultiGetDataTransferIndices(filter);
         }
         else
         {
-          _logger.Debug("Single threading...");
-          DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-
-          _logger.Debug("Fetching Data...");
+          _logger.Debug("Running single-threaded mode.");
           List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
 
           _logger.Debug("Transforming into DTI");
-          dataTransferIndices = projectionLayer.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
+          dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
         }
       }
       catch (Exception ex)
@@ -521,8 +520,10 @@ namespace org.iringtools.adapter
 
         DataFilter filter = dxiRequest.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-        filter.AppendFilter(GetPredeterminedFilter());
+        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+
+        dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);
+        filter.AppendFilter(GetPresetFilters(dtoProjectionEngine));
 
         IList<string> identifierList = _dataLayer.GetIdentifiers(_graphMap.dataObjectName, filter);
         if (identifierList != null)
@@ -552,8 +553,10 @@ namespace org.iringtools.adapter
 
         DataFilter filter = dxiRequest.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-        filter.AppendFilter(GetPredeterminedFilter());
+        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+        
+        dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);        
+        filter.AppendFilter(GetPresetFilters(dtoProjectionEngine));
 
         // get sort index
         string sortIndex = String.Empty;
@@ -605,15 +608,16 @@ namespace org.iringtools.adapter
         }
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         if (filter != null)
         {
-          dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-          filter.AppendFilter(GetPredeterminedFilter());
+          dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);
+          filter.AppendFilter(GetPresetFilters(dtoProjectionEngine));
         }
         else
         {
-          filter = GetPredeterminedFilter();
+          filter = GetPresetFilters(dtoProjectionEngine);
         }
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, limit, start);
@@ -1336,17 +1340,21 @@ namespace org.iringtools.adapter
       }
     }
 
-    private DataFilter GetPredeterminedFilter()
+    private DataFilter GetPresetFilters(DtoProjectionEngine dtoProjection)
     {
+      DataFilter dataFilter = new DataFilter();
+      
       if (_dataDictionary == null)
       {
         _dataDictionary = _dataLayer.GetDictionary();
       }
 
       DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.dataObjectName);
-      DataFilter dataFilter = new DataFilter();
+      DataFilter graphFilter = _graphMap.dataFilter;
+
+      dtoProjection.ProjectDataFilter(dataObject, ref graphFilter, _graphMap);
       dataFilter.AppendFilter(dataObject.dataFilter);
-      dataFilter.AppendFilter(_graphMap.dataFilter);
+      dataFilter.AppendFilter(graphFilter);
 
       return dataFilter;
     }
@@ -1554,6 +1562,7 @@ namespace org.iringtools.adapter
           int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           ManualResetEvent doneEvent = new ManualResetEvent(false);
+
           DtiTask dtiTask = new DtiTask(doneEvent, projectionLayer, _dataLayer, _graphMap,
             filter, pageSize, offset);
 

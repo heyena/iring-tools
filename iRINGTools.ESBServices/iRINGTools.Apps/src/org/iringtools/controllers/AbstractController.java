@@ -1,24 +1,24 @@
 package org.iringtools.controllers;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Map.Entry;
 
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.SessionAware;
-import org.iringtools.models.DataModel.FieldFit;
-import org.iringtools.security.LdapAuthorizationProvider;
-import org.iringtools.security.OAuthFilter;
+import org.iringtools.common.Configuration;
+import org.iringtools.common.Setting;
+import org.iringtools.security.IAuthHeaders;
+import org.iringtools.security.IAuthorization;
 import org.iringtools.utility.HttpUtils;
-import org.iringtools.utility.IOUtils;
+import org.iringtools.utility.JaxbUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -27,38 +27,35 @@ public abstract class AbstractController extends ActionSupport implements Sessio
   private static final long serialVersionUID = 1L;
   private static final Logger logger = Logger.getLogger(AbstractController.class);
 
-  protected Map<String, Object> session;
-
+  protected Map<String, Object> settings;
   protected ServletContext context;
   protected HttpServletRequest request;
   protected HttpServletResponse response;
+  protected Map<String, Object> session;
   
-  protected FieldFit fieldFit;
-  
-  protected boolean isAsync;
-  protected long asyncTimeout;
-  protected long pollingInterval;
-
-  public AbstractController()
+  public AbstractController() throws Exception
   {
+    settings = new HashMap<String, Object>();
     context = ServletActionContext.getServletContext();
     request = ServletActionContext.getRequest();
     response = ServletActionContext.getResponse();
     
     HttpUtils.prepareHttpProxy(context);
     
-    String fieldFitSetting = context.getInitParameter("FieldFit");    
-    fieldFit = IOUtils.isNullOrEmpty(fieldFitSetting) 
-      ? FieldFit.VALUE : FieldFit.valueOf(fieldFitSetting.toUpperCase());
+    String basePath = context.getRealPath("/");
+    settings.put("basePath", basePath);
     
-    String async = context.getInitParameter("Async");    
-    isAsync = IOUtils.isNullOrEmpty(async) ? true : Boolean.valueOf(async);
+    File appConfig = new File(basePath.concat("WEB-INF/config/app.xml"));
     
-    String asyncTimeoutStr = context.getInitParameter("AsyncTimeout");    
-    asyncTimeout = IOUtils.isNullOrEmpty(asyncTimeoutStr) ? 1800 : Long.valueOf(asyncTimeoutStr);
-   
-    String pollingIntervalStr = context.getInitParameter("PollingInterval");    
-    pollingInterval = IOUtils.isNullOrEmpty(pollingIntervalStr) ? 2 : Long.valueOf(pollingIntervalStr);
+    if (appConfig.exists())
+    {
+      Configuration config = JaxbUtils.read(Configuration.class, appConfig.getPath());
+    
+      for (Setting setting : config.getSetting())
+      {
+        settings.put(setting.getName(), setting.getValue());
+      }
+    }
   }
 
   @Override
@@ -67,99 +64,81 @@ public abstract class AbstractController extends ActionSupport implements Sessio
     this.session = session;
   }
 
-  protected void authorize(String app, String group)
+  protected void authorize(String app)
   {
-    String authorizationEnabled = context.getInitParameter("AuthorizationEnabled");
-
-    if (!IOUtils.isNullOrEmpty(authorizationEnabled) && authorizationEnabled.equalsIgnoreCase("true"))
+    String user = request.getRemoteUser();
+    
+    //
+    // process authorization if a provider is configured
+    //
+    Object authProviderName = context.getInitParameter("AuthorizationProvider");    
+    if (authProviderName != null)
     {
-      String ldapConfigPath = context.getRealPath("/") + "WEB-INF/config/ldap.conf";
-
-      if (!IOUtils.fileExists(ldapConfigPath))
-      {
-        try
+      logger.info("Using authorization provider: " + authProviderName);
+      
+      try
+      {        
+        @SuppressWarnings("unchecked")
+        Class<IAuthorization> authProviderCls = (Class<IAuthorization>)Class.forName(authProviderName.toString());
+        IAuthorization authProvider = authProviderCls.newInstance();
+        
+        boolean authorized = authProvider.authorize(context, request.getSession(), app, user);        
+        if (!authorized)
         {
-          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ldap configuration not found.");
-          return;
-        }
-        catch (IOException unexpectedException)
-        {
-          logger.error(unexpectedException.toString());
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         }
       }
-
-      Cookie[] cookies = request.getCookies();
-      Cookie authorizedCookie = HttpUtils.getCookie(cookies, app);
-
-      if (authorizedCookie == null) // user not authorized, attempt to authorize
+      catch (Exception e)
       {
-        Properties props = new Properties();
-
+        logger.info("Error authorizing user [" + user + "]: " + e.toString());
         try
         {
-          props.load(new FileInputStream(ldapConfigPath));
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         }
         catch (IOException ioe)
         {
-          try
-          {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading LDAP properties: " + ioe);
-            return;
-          }
-          catch (IOException unexpectedException)
-          {
-            logger.error(unexpectedException.toString());
-          }
-        }
-
-        props.put("authorizedGroup", group);
-
-        LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
-
-        try
-        {
-          authProvider.init(props);
-        }
-        catch (NamingException ne)
-        {
-          try
-          {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                "Error initializing authentication provider: " + ne);
-            return;
-          }
-          catch (IOException unexpectedException)
-          {
-            logger.error(unexpectedException.toString());
-          }
-        }
-        
-        String userId = request.getSession().getAttribute(OAuthFilter.USER_ID).toString();
-
-        if (!authProvider.isAuthorized(userId))
-        {
-          try
-          {
-            String errorMessage = "User [" + userId + "] not authorized.";
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMessage);
-            return;
-          }
-          catch (Exception e)
-          {
-            logger.error(e.toString());
-          }
-        }
-        else
-        {
-          response.addCookie(new Cookie(app, "authorized"));
+          ioe.printStackTrace();
         }
       }
     }
-  }
-
-  protected void prepareErrorResponse(int errorCode, String errorMessage)
-  {
-    request.setAttribute("javax.servlet.error.message", errorMessage);
-    response.setStatus(errorCode);
+    
+    //
+    // prepare authorization headers if a provider is configured
+    //
+    Object headersProviderName = context.getInitParameter("AuthHeadersProvider");    
+    if (headersProviderName != null)
+    {
+      logger.info("Using headers provider: " + headersProviderName);
+      
+      try
+      {
+        @SuppressWarnings("unchecked")
+        Class<IAuthHeaders> headersProviderCls = (Class<IAuthHeaders>)Class.forName(headersProviderName.toString());
+        if (headersProviderCls == null)
+        {
+          logger.error("Unable to resolve headers provider type.");
+        }
+        
+        IAuthHeaders headersProvider = headersProviderCls.newInstance();
+        if (headersProvider == null)
+        {
+          logger.error("Unable to instantiate headers provider instance.");
+        }
+        
+        Map<String, String> headers = headersProvider.get(request);
+        
+        if (headers != null)
+        {
+          for (Entry<String, String> entry : headers.entrySet())
+          {
+            settings.put("http-header-" + entry.getKey(), entry.getValue());
+          }
+        }
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+        logger.info("Error creating authorization headers: " + e.toString());
+      }
+    }
   }
 }

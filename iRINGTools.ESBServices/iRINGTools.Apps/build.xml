@@ -4,6 +4,7 @@
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
 	<property name="iringtools-common.location" value="../iRINGTools.Common" />
+	<property name="iringtools-exchange.location" value="../iRINGTools.Exchange" />
   
   <path id="tomcat-6.0.userclasspath">
     <fileset dir="../libraries/apache-tomcat-6.0">
@@ -47,8 +48,12 @@
 		</fileset>
 	</path>
 
-	<path id="iRINGTools.Common.classpath">
+	<path id="iringtools-common.userclasspath">
 		<pathelement location="${iringtools-common.location}/bin" />
+	</path>
+
+	<path id="iringtools-exchange.userclasspath">
+		<pathelement location="${iringtools-exchange.location}/bin" />
 	</path>
 
 	<target name="clean">
@@ -69,14 +74,20 @@
 	</target>
 
 	<target name="build-subprojects">
-		<ant antfile="build.xml" dir="${iringtools-common.location}" inheritAll="false" target="build">
+		<ant antfile="build.xml" dir="${iringtools-exchange.location}" inheritAll="false" target="build">
 			<propertyset>
 				<propertyref name="build.compiler" />
 			</propertyset>
 		</ant>
 	</target>
 
-	<target name="dist-subprojects">
+	<target name="dist-subprojects">    
+		<ant antfile="build.xml" dir="${iringtools-exchange.location}" inheritAll="false" target="dist">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+    
 		<ant antfile="build.xml" dir="${iringtools-common.location}" inheritAll="false" target="dist">
 			<propertyset>
 				<propertyref name="build.compiler" />
@@ -86,10 +97,11 @@
 
 	<target name="build" depends="init, build-subprojects">
 		<echo message="${ant.project.name}: ${ant.file}" />
-		<javac debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes" source="${source}" target="${target}">
+		<javac includeantruntime="false" debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes" source="${source}" target="${target}">
 			<src path="src" />
 			<exclude name="**/.svn/" />
-			<classpath refid="iRINGTools.Common.classpath" />
+			<classpath refid="iringtools-common.userclasspath" />
+			<classpath refid="iringtools-exchange.userclasspath" />
       <classpath refid="tomcat-6.0.userclasspath" />
 			<classpath refid="struts2-2.2.1.userclasspath" />
 			<classpath refid="log4j-1.2.16.userclasspath" />
@@ -103,6 +115,7 @@
 		</delete>
 		<copy todir="WebContent/WEB-INF/lib" flatten="true">
 			<fileset dir="${iringtools-common.location}/dist" />
+			<fileset dir="${iringtools-exchange.location}/dist" />
 			<path refid="struts2-2.2.1.userclasspath" />
 			<path refid="axiom-1.2.8.userclasspath" />
 			<path refid="commons-logging-1.1.1.userclasspath" />

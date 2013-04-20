@@ -11,7 +11,6 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.request.DfiRequest;
 import org.iringtools.dxfr.request.DfoRequest;
-import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.DifferencingProvider;
 
 @Path("/")
@@ -31,7 +30,7 @@ public class DifferencingService extends AbstractService
     {
       initService(SERVICE_TYPE);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
@@ -59,7 +58,7 @@ public class DifferencingService extends AbstractService
     {
       initService(SERVICE_TYPE);
     }
-    catch (AuthorizationException e)
+    catch (Exception e)
     {
       return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
