@@ -152,23 +152,33 @@ namespace org.iringtools.utility
     {
       get
       {
-        if (
-          WebOperationContext.Current != null &&
-          WebOperationContext.Current.IncomingRequest != null &&
-          WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+        try
         {
-          if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+          if (
+            WebOperationContext.Current != null &&
+            WebOperationContext.Current.IncomingRequest != null &&
+            WebOperationContext.Current.IncomingRequest.Headers != null &&
+            WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
           {
-            _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
+            if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+            {
+              _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
+            }
+          }
+          else if (HttpContext.Current != null &&
+            HttpContext.Current.Request.Cookies != null &&
+            HttpContext.Current.Request.Cookies.Count > 0)
+          {
+            if (HttpContext.Current.Request.Cookies["Authorization"] != null)
+            {
+              HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
+              _accessToken = authorizationCookie.Value;
+            }
           }
         }
-        else if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+        catch (Exception e)
         {
-          if (HttpContext.Current.Request.Cookies["Authorization"] != null)
-          {
-            HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
-            _accessToken = authorizationCookie.Value;
-          }
+          _logger.Warn("Unable to obtain authorization token from request headers.");
         }
 
         return _accessToken;
@@ -183,25 +193,32 @@ namespace org.iringtools.utility
     {
       get
       {
-        if (
-          WebOperationContext.Current != null &&
-          WebOperationContext.Current.IncomingRequest != null &&
-          WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+        try
         {
-          if (WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != null &&
-              WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != String.Empty)
+          if (
+            WebOperationContext.Current != null &&
+            WebOperationContext.Current.IncomingRequest != null &&
+            WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
           {
-            _appKey = WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"];
+            if (WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != null &&
+                WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != String.Empty)
+            {
+              _appKey = WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"];
+            }
+          }
+          else if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+          {
+              if (HttpContext.Current.Request.Cookies["X-myPSN-AppKey"] != null &&
+                  HttpContext.Current.Request.Cookies["X-myPSN-AppKey"].ToString() != String.Empty)
+            {
+              HttpCookie appKeyCookie = HttpContext.Current.Request.Cookies["X-myPSN-AppKey"];
+              _appKey = appKeyCookie.Value;
+            }
           }
         }
-        else if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+        catch (Exception e)
         {
-            if (HttpContext.Current.Request.Cookies["X-myPSN-AppKey"] != null &&
-                HttpContext.Current.Request.Cookies["X-myPSN-AppKey"].ToString() != String.Empty)
-          {
-            HttpCookie appKeyCookie = HttpContext.Current.Request.Cookies["X-myPSN-AppKey"];
-            _appKey = appKeyCookie.Value;
-          }
+          _logger.Warn("Unable to obtain application key from request headers.");
         }
 
         return _appKey;

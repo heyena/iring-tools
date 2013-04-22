@@ -18,6 +18,12 @@
 		</fileset>
 	</path>
 
+	<path id="gson-1.4.userclasspath">
+		<fileset dir="../libraries/google-gson-1.4">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
 	<path id="commons-logging-1.1.1.userclasspath">
 		<fileset dir="../libraries/commons-logging-1.1.1">
 			<include name="**/*.jar" />
@@ -122,6 +128,7 @@
 			<path refid="commons-codec-1.4.userclasspath" />
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="jaxb-ri-20100511.userclasspath" />
+			<path refid="gson-1.4.userclasspath" />
 		</copy>
     <ant antfile="version.xml" dir="../" inheritAll="false" target="build"/>
 		<jar destfile="dist/${ant.project.name}.war" basedir="WebContent" excludes="WEB-INF/web.xml,**/.svn/" >
