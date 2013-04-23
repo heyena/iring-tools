@@ -1380,6 +1380,7 @@ namespace org.iringtools.web.controllers
                 roleMap.type = RoleType.Reference;
                 qn = _nsMap.ReduceToQName(roleQualification.value.reference, out qRange);
                 roleMap.dataType = qn ? qRange : roleQualification.value.reference;
+                roleMap.value = GetClassLabel(qRange);
               }
               else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
               {
@@ -1399,12 +1400,12 @@ namespace org.iringtools.web.controllers
               roleMap.dataType = qRange;
               roleMap.propertyName = string.Empty;
             }
-            else if (!qRange.StartsWith("dm:"))  // reference role
-            {
-              roleMap.type = RoleType.Reference;
-              roleMap.dataType = qRange;
-              roleMap.value = GetClassLabel(qRange);
-            }
+            //else if (!qRange.StartsWith("dm:"))  // reference role
+            //{
+            //  roleMap.type = RoleType.Reference;
+            //  roleMap.dataType = qRange;
+            //  roleMap.value = GetClassLabel(qRange);
+            //}
             else  // unknown
             {
               roleMap.type = RoleType.Unknown;
