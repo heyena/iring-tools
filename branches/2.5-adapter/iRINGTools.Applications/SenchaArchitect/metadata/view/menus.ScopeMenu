@@ -21,6 +21,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "neweditscope",
+                "itemId": "editfolder",
                 "designer|userClassName": "MyMenuItem2",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit Scope"

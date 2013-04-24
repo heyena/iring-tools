@@ -77,9 +77,7 @@
                 "fieldLabel": "Database Provider",
                 "labelWidth": 150,
                 "name": "dbProvider",
-                "value": [
-                    "MsSql2008"
-                ],
+                "value": "MsSql2008",
                 "editable": false,
                 "displayField": "Provider",
                 "hiddenName": null,
@@ -102,9 +100,7 @@
                 "fieldLabel": "Database Server",
                 "labelWidth": 150,
                 "name": "dbServer",
-                "value": [
-                    "localhost\r"
-                ],
+                "value": "localhost\r",
                 "allowBlank": false
             },
             "designerId": "84fd7818-4ffe-41cf-a342-5bc765f8e83f"
@@ -142,9 +138,7 @@
                 "fieldLabel": "Port Number",
                 "labelWidth": 150,
                 "name": "portNumber",
-                "value": [
-                    "1433"
-                ],
+                "value": "1433",
                 "allowBlank": false
             },
             "designerId": "d390d424-b2e1-4286-8064-c871ae014966"
@@ -162,9 +156,7 @@
                 "fieldLabel": "Database Instance",
                 "labelWidth": 150,
                 "name": "dbInstance",
-                "value": [
-                    "default"
-                ],
+                "value": "default",
                 "allowBlank": false
             },
             "designerId": "e0bcb17f-d99c-4014-98e1-0a5626bc5edb"
@@ -263,9 +255,7 @@
                 "fieldLabel": "Schema Name",
                 "labelWidth": 150,
                 "name": "dbSchema",
-                "value": [
-                    "dbo"
-                ],
+                "value": "dbo",
                 "allowBlank": false
             },
             "designerId": "f1e420e8-675b-4500-b178-8bb16af3fe48"

@@ -311,9 +311,10 @@
                 ],
                 "implHandler": [
                     "var me = this;\r",
-                    "var label = record.record.label;\r",
+                    "//var label = record.record.label;\r",
+                    "var label = record.label;\r",
                     "var ccon = me.down('#vlmfccontainer');\r",
-                    "if(record.record !== undefined && label !== undefined) {\r",
+                    "if(record!== undefined && label !== undefined) {\r",
                     "  ccon.update('Class Label: ' + label);\r",
                     "} else {\r",
                     "  return true;\r",

@@ -89,14 +89,33 @@ Ext.define('AM.controller.Mapping', {
     var tree = me.getDirTree();
     var node = tree.getSelectedNode(),
       record = node.data.record;
+    var contextName;// This is scope
+    var endpoint; //This is application
 
-    if (record && record.record) {
-      identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];
-      graphName = record.record.name;
-      objectName = contextName + '/' + endpoint + '/' + 'DataObjects/DataObject/' + 
-      record.record.classTemplateMaps[0].classMap.identifiers[0].replace('.', '/');
-      classLabel = record.record.classTemplateMaps[0].classMap.name;
-      classUrl = record.record.classTemplateMaps[0].classMap.id;
+    if (record) {
+      identifier = record.classTemplateMaps[0].classMap.identifiers[0];
+      if(record.classTemplateMaps[0].classMap.identifiers.length>1){
+        for(var i=1;i<record.classTemplateMaps[0].classMap.identifiers.length;i++){
+          identifier = identifier+','+record.classTemplateMaps[0].classMap.identifiers[i];
+        }
+      } 
+
+      //identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];
+      //graphName = record.record.name;
+      graphName = record.name;
+      objectName = getLastXString(record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[0];
+      //objectName = contextName + '/' + endpoint + '/' + 'DataObjects/DataObject/' + 
+      //record.classTemplateMaps[0].classMap.identifiers[0].replace('.', '/');
+      //classLabel = record.record.classTemplateMaps[0].classMap.name;
+      // classUrl = record.record.classTemplateMaps[0].classMap.id;
+      classLabel = record.classTemplateMaps[0].classMap.name;
+      classUrl = record.classTemplateMaps[0].classMap.id;
+      contextName = node.parentNode.parentNode.parentNode.data.text;
+      endpoint = node.parentNode.parentNode.data.text; 
+    }
+    else{
+      contextName = node.parentNode.parentNode.data.text;
+      endpoint = node.parentNode.data.text; 
     }
 
     if(item.itemId == 'editgraph') {
@@ -114,25 +133,27 @@ Ext.define('AM.controller.Mapping', {
 
     var win = Ext.widget('graphmapwindow', conf);
 
-    if(node) {
-      nodeId = node.data.id;
-      contextName = node.data.property.context;
-      endpoint = node.data.property.endpoint;
-      baseUrl = node.data.property.baseUrl; 
-    }
+    /*if(node) {
+    nodeId = node.data.id;
+    contextName = node.data.property.context;
+    endpoint = node.data.property.endpoint;
+    baseUrl = node.data.property.baseUrl; 
+    }*/
     var formRecord = {
-      'contextName': contextName,
-      'endpoint': endpoint,
+      'scope': contextName,
+      'app': endpoint,
       'oldGraphName': graphName,
-      'baseUrl': baseUrl,
-      'mappingNode': nodeId,
       'graphName': graphName,
       'objectName': objectName,
-      'classUrl': classUrl,
-      'classLabel': classLabel,
-      'oldClassUrl': classUrl,
-      'oldClassLabel': classLabel,
-      'keyProperty': identifier
+      'classId': classUrl,
+      'identifier': identifier,
+      'className': classLabel,
+      //'baseUrl': baseUrl,
+      //'mappingNode': nodeId,
+
+      //'oldClassUrl': classUrl,
+      //'oldClassLabel': classLabel,
+
     };
 
     var form = win.down('form').getForm();
@@ -349,8 +370,10 @@ Ext.define('AM.controller.Mapping', {
     }
 
     if(node.data.record && node.data.type == 'ListMapNode') {
-      interName = node.data.record.record.internalValue;
-      classUrl = node.data.record.record.uri;
+      //interName = node.data.record.record.internalValue;
+      interName = node.data.record.internalValue;
+      //classUrl = node.data.record.record.uri;
+      classUrl = node.data.record.uri;
       classLabel = node.data.text.split('[')[0];
     }
 
@@ -412,7 +435,9 @@ Ext.define('AM.controller.Mapping', {
         endpoint: node.data.property.endpoint,
         baseUrl: node.data.property.baseUrl,
         valueList: node.parentNode.data.property.Name,
-        oldClassUrl: node.data.record.record.uri
+        //oldClassUrl: node.data.record.record.uri
+        oldClassUrl: node.data.record.uri,
+        mappingNode:node.data.id
       },
       success: function () {
         var parentNode = node.parentNode;                 
@@ -494,12 +519,16 @@ Ext.define('AM.controller.Mapping', {
     var tree = this.getDirTree(),
       node = tree.getSelectedNode();
 
+
     if(item.itemId == 'editvaluelist') {
       state = 'edit';
-      valueList = node.data.record.record.name;
+      nodeId = node.data.id;
+      valueListName = node.data.record.name;//node.data.record.record.name;
       wintitle = 'Edit Value List \"' + node.data.text + '\"';
     } else {
       state = 'new';
+      nodeId = node.data.id;
+      valueListName = null;
       wintitle = 'Add New ValueList';
     }
 
@@ -510,11 +539,13 @@ Ext.define('AM.controller.Mapping', {
 
     var formRecord = {
       'state': state,
-      'oldValueList': valueList,
-      'contextName': node.data.property.context,
-      'endpoint': node.data.property.endpoint,
-      'baseUrl': node.data.property.baseUrl,
-      'valueList': valueList
+      'oldValueList': valueListName,//valueList,
+      'mappingNode':nodeId,
+      'valueList': valueListName
+      //'contextName': node.data.property.context,
+      //'endpoint': node.data.property.endpoint,
+      //'baseUrl': node.data.property.baseUrl,
+
     };
 
     var form = win.down('form').getForm();
@@ -530,7 +561,44 @@ Ext.define('AM.controller.Mapping', {
     }, me);
 
     win.show();
+    /*
+    if(item.itemId == 'editvaluelist') {
+    state = 'edit';
+    valueList = node.data.record.record.name;
+    wintitle = 'Edit Value List \"' + node.data.text + '\"';
+    } else {
+    state = 'new';
+    wintitle = 'Add New ValueList';
+    }
 
+    var win = Ext.widget('valuelistwindow', {
+    id: 'tab-' + node.data.id,
+    title: wintitle
+    });
+
+    var formRecord = {
+    'state': state,
+    'oldValueList': valueList,
+    'contextName': node.data.property.context,
+    'endpoint': node.data.property.endpoint,
+    'baseUrl': node.data.property.baseUrl,
+    'valueList': valueList
+    };
+
+    var form = win.down('form').getForm();
+    form.setValues(formRecord);
+
+    win.on('save', function () {
+    win.close();
+    tree.onReload();
+    }, me);
+
+    win.on('reset', function () {
+    win.close();
+    }, me);
+
+    win.show();
+    */
   },
 
   onMakePossessor: function(item, e, eOpts) {
@@ -595,10 +663,11 @@ Ext.define('AM.controller.Mapping', {
       url: 'mapping/deletevaluelist',
       method: 'POST',
       params: {
-        contextName: node.data.property.context,
-        endpoint: node.data.property.endpoint,
-        baseUrl: node.data.property.baseUrl,
-        valueList: valueList
+        //contextName: node.data.property.context,
+        //endpoint: node.data.property.endpoint,
+        //baseUrl: node.data.property.baseUrl,
+        valueList: valueList,
+        mappingNode:node.data.id
       },
       success: function () {
         tree.getSelectionModel().select(parentNode);

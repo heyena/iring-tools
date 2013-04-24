@@ -26,13 +26,13 @@ Ext.define('AM.view.directory.ScopeForm', {
   width: 400,
   bodyPadding: 10,
   bodyStyle: 'padding:10px 5px 0',
-  url: 'directory/folder',
+  url: 'directory/Scope',
 
   initComponent: function() {
     var me = this;
 
     me.initialConfig = Ext.apply({
-      url: 'directory/folder'
+      url: 'directory/Scope'
     }, me.initialConfig);
 
     Ext.applyIf(me, {
@@ -86,11 +86,12 @@ Ext.define('AM.view.directory.ScopeForm', {
         },
         {
           xtype: 'hiddenfield',
+          itemId: 'contextname',
           name: 'contextName'
         },
         {
           xtype: 'contextcombo',
-          allowBlank: false
+          hidden: true
         },
         {
           xtype: 'textareafield',
@@ -113,7 +114,7 @@ Ext.define('AM.view.directory.ScopeForm', {
 
     var context = form.findField('contextCombo').getValue();
 
-    contextNameField.setValue(context);
+    //contextNameField.setValue(context);
     node.eachChild(function(n) {
       if(n.data.text == folderName) {
         if(state == 'new') {
@@ -130,7 +131,7 @@ Ext.define('AM.view.directory.ScopeForm', {
           win.fireEvent('save', me);
         },
         failure: function (response, request) {
-          if (response.items[3].value !== undefined) {
+          if (response.items!=undefined && response.items[3].value !== undefined) {
             var rtext = response.items[3].value;
             showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);
             return;

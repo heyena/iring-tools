@@ -1,9 +1,9 @@
 {
     "name": "AM",
     "settings": {
-        "urlPrefix": "http://localhost:12345/",
+        "urlPrefix": "http://localhost:52277/",
         "spacesToIndent": 2,
-        "exportPath": "C:/iring-tools/branches/2.5-adapter/iRINGTools.Applications",
+        "exportPath": "C:/Adapter-2.5/iRINGTools.Applications",
         "sdkPath": "",
         "lineEnding": "CRLF",
         "genTimestamps": false,
@@ -11,7 +11,7 @@
         "buildShouldOverwriteIndex": true
     },
     "xdsVersion": "2.2.0",
-    "xdsBuild": 908,
+    "xdsBuild": 894,
     "schemaVersion": 1,
     "upgradeVersion": 210000000499,
     "framework": "ext41",
@@ -884,6 +884,14 @@
                 "Scripts/AM/view/menus/RootAdminScopesMenu.js"
             ],
             "className": "menus.RootAdminScopesMenu"
+        },
+        "0649446d-cfb0-4646-8081-ce7bd59c7cd6": {
+            "paths": [
+                "metadata/view/menus.AppDataRefreshMenu",
+                "Scripts/AM/view/override/menus/AppDataRefreshMenu.js",
+                "Scripts/AM/view/menus/AppDataRefreshMenu.js"
+            ],
+            "className": "menus.AppDataRefreshMenu"
         }
     },
     "viewOrderMap": {
@@ -958,7 +966,8 @@
             "ef191768-2bd4-46be-864b-6386fbb488a5",
             "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c",
             "ee4b18be-7210-4e88-9a5c-50e9ca131349",
-            "17fb1af5-2569-49f4-927f-dd778c03c1a1"
+            "17fb1af5-2569-49f4-927f-dd778c03c1a1",
+            "0649446d-cfb0-4646-8081-ce7bd59c7cd6"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

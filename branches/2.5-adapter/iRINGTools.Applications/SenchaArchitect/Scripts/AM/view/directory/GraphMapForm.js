@@ -223,17 +223,30 @@ Ext.define('AM.view.directory.GraphMapForm', {
     var me = this;
     var pcon = me.down('#gmfpcontainer');
     var ccon = me.down('#gmfccontainer');
-    var identifier, label;
-    if(record.record) {
-      identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];
-      label = record.record.classTemplateMaps[0].classMap.name;
-    } else {
-      return true;
+    var identifier = 'Drop property node(s) here.';
+    var classlabel = 'Drop a class node here.';
+    if (record != null) {
+      identifier =  record.classTemplateMaps[0].classMap.identifiers[0];
+      if(record.classTemplateMaps[0].classMap.identifiers.length>1){
+        for(var i=1;i<record.classTemplateMaps[0].classMap.identifiers.length;i++){
+          identifier = identifier+','+record.classTemplateMaps[0].classMap.identifiers[i];
+        }
+      }
+      //identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];
+      //identifier = record.classTemplateMaps[0].classMap.identifiers[0];
+      classlabel = record.classTemplateMaps[0].classMap.name;
     }
-    identifier = 'Identifier: ' + identifier;
+    //if(record!=null)
+    //identifier = 'Identifier: ' + identifier;
+
     pcon.update(identifier);
 
-    var classlabel = 'Class Label: ' + label;
+    //if(record!=null)
+    //var classlabel = 'Class Label: ' + label;
+    // else
+    // var classlabel = 'Drop a class node here.';
+
+    ccon.update(classlabel);
     ccon.update(classlabel);
   },
 

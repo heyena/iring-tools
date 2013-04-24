@@ -8,7 +8,8 @@
     "userConfig": {
         "views": [
             "Main",
-            "menus.ScopeMenu"
+            "menus.ScopeMenu",
+            "menus.AppDataRefreshMenu"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

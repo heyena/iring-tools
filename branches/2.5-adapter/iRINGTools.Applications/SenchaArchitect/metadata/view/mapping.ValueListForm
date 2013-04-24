@@ -149,6 +149,21 @@
                 "layout|anchor": null,
                 "designer|userClassName": "MyHiddenField65",
                 "fieldLabel": null,
+                "name": "mappingNode"
+            },
+            "designerId": "2bde4b0b-adfc-407d-8599-fb0d714f8b9f"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "designer|userClassName": "MyHiddenField65",
+                "fieldLabel": null,
                 "name": "oldValueList"
             },
             "designerId": "8fa5220e-5c27-4421-91c2-ed14e90e4dd1"

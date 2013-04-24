@@ -19,7 +19,7 @@
             "padding:10px 5px 0"
         ],
         "title": null,
-        "url": "directory/folder"
+        "url": "directory/Scope"
     },
     "designerId": "354a52a2-af56-440e-a28d-e03f1135a5e9",
     "customConfigs": [
@@ -150,7 +150,7 @@
                     "\r",
                     "var context = form.findField('contextCombo').getValue();\r",
                     "\r",
-                    "contextNameField.setValue(context);\r",
+                    "//contextNameField.setValue(context);\r",
                     "node.eachChild(function(n) {\r",
                     "  if(n.data.text == folderName) {\r",
                     "    if(state == 'new') {\r",
@@ -161,21 +161,21 @@
                     "});\r",
                     "\r",
                     "if(form.isValid()) {\r",
-                    "form.submit({\r",
-                    "  waitMsg: 'Saving Data...',\r",
-                    "  success: function (response, request) {\r",
-                    "    win.fireEvent('save', me);\r",
-                    "  },\r",
-                    "  failure: function (response, request) {\r",
-                    "    if (response.items[3].value !== undefined) {\r",
-                    "      var rtext = response.items[3].value;\r",
-                    "      showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);\r",
-                    "      return;\r",
+                    "  form.submit({\r",
+                    "    waitMsg: 'Saving Data...',\r",
+                    "    success: function (response, request) {\r",
+                    "      win.fireEvent('save', me);\r",
+                    "    },\r",
+                    "    failure: function (response, request) {\r",
+                    "      if (response.items!=undefined && response.items[3].value !== undefined) {\r",
+                    "        var rtext = response.items[3].value;\r",
+                    "        showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);\r",
+                    "        return;\r",
+                    "      }\r",
+                    "      var message = 'Error saving changes!';\r",
+                    "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
                     "    }\r",
-                    "    var message = 'Error saving changes!';\r",
-                    "    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
-                    "  }\r",
-                    "});\r",
+                    "  });\r",
                     "} else {\r",
                     "  showDialog(400, 100, 'Warning', 'Please complete all required fields...', Ext.Msg.OK, null);\r",
                     "  return;\r",
@@ -261,6 +261,7 @@
                 "designer|userClassName": "MyTextField2",
                 "fieldLabel": "Folder Name",
                 "name": "folderName",
+                "value": null,
                 "allowBlank": false
             },
             "designerId": "50e2271b-c35b-4359-9f38-3b3eb854d6af"
@@ -274,6 +275,7 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "itemId": "contextname",
                 "designer|userClassName": "MyHiddenField35",
                 "fieldLabel": null,
                 "name": "contextName"
@@ -288,7 +290,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "allowBlank": false
+                "hidden": true
             },
             "designerId": "075ebdd5-bfff-484a-bbc1-3d578d3c2c57",
             "masterInstanceId": "3f6306a7-11d6-4ef2-894e-dbea2ac88a90"

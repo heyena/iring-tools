@@ -55,7 +55,7 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
           fieldLabel: 'Database Server',
           labelWidth: 150,
           name: 'dbServer',
-          value: 'localhost',
+          value: 'localhost\r',
           allowBlank: false
         },
         {
@@ -74,7 +74,7 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
           fieldLabel: 'Port Number',
           labelWidth: 150,
           name: 'portNumber',
-          value: 1433,
+          value: '1433',
           allowBlank: false
         },
         {

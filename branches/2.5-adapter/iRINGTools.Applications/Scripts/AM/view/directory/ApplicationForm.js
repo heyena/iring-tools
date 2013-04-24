@@ -80,6 +80,11 @@ Ext.define('AM.view.directory.ApplicationForm', {
         },
         {
           xtype: 'hiddenfield',
+          name: 'application'
+        },
+        {
+          xtype: 'hiddenfield',
+          itemId: 'state',
           name: 'state'
         },
         {

@@ -17,6 +17,10 @@ Ext.define('AM.view.spreadsheet.SpreadsheetTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.spreadsheettree',
 
+  requires: [
+    'AM.view.override.spreadsheet.SpreadsheetTree'
+  ],
+
   region: 'center',
   layout: {
     type: 'fit'

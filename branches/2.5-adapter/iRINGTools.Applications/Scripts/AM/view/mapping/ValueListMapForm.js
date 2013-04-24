@@ -141,9 +141,10 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
 
   updateDDContainer: function(record) {
     var me = this;
-    var label = record.record.label;
+    //var label = record.record.label;
+    var label = record.label;
     var ccon = me.down('#vlmfccontainer');
-    if(record.record !== undefined && label !== undefined) {
+    if(record!== undefined && label !== undefined) {
       ccon.update('Class Label: ' + label);
     } else {
       return true;

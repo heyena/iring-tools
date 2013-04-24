@@ -83,14 +83,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           allowBlank: false,
           queryMode: 'local',
           store: [
-            [
-              'OneToOne',
-              'OneToOne'
-            ],
-            [
-              'OneToMany',
-              'OneToMany'
-            ]
+            '[[\'OneToOne\', \'OneToOne\'], [\'OneToMany\', \'OneToMany\']]'
           ]
         },
         {

@@ -56,7 +56,9 @@ Ext.define('AM.controller.Directory', {
     'menus.GraphMenu',
     'menus.TemplatemapMenu',
     'menus.RolemapMenu',
-    'menus.ClassmapMenu'
+    'menus.ClassmapMenu',
+    'menus.ValueListMapMenu',
+    'menus.AppDataRefreshMenu'
   ],
 
   refs: [
@@ -162,10 +164,12 @@ Ext.define('AM.controller.Directory', {
       description = node.data.record.Description;
       wintitle = 'Edit folder \"' + node.data.text + '\"';
       state = 'edit';
+
     } else {
       name = '';
       state = 'new';
       wintitle = 'Add New Folder';
+
     }
 
     var conf = {
@@ -209,6 +213,7 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('oldContext').setValue(context);
     form.getForm().findField('description').setValue(description);
     form.getForm().findField('folderName').setValue(name);
+    form.getForm().findField('contextName').setValue(name);
 
     win.show();
   },
@@ -220,13 +225,14 @@ Ext.define('AM.controller.Directory', {
     var node = tree.getSelectedNode();
 
     Ext.Ajax.request({
-      url: 'directory/deleteEntry',
+      url: 'directory/DeleteScope',//'directory/deleteEntry',
       method: 'POST',
       params: {
-        'path': node.data.id,
-        'type': 'folder',
-        'baseUrl': '',
-        'contextName': node.data.property.Context
+        'nodeid': node.data.id
+        //'path': node.data.id,
+        //'type': 'folder',
+        //'baseUrl': '',
+        //'contextName': node.data.property.Context
       },
       success: function () {
         var parentNode = node.parentNode;
@@ -243,27 +249,30 @@ Ext.define('AM.controller.Directory', {
 
   newOrEditEndpoint: function(item, e, eOpts) {
     var me = this;
-    var name, description, datalayer, assembly, baseurl, showconfig, wintitle, state, path, context;
+    var name, description, datalayer, assembly,application, baseurl, showconfig,endpoint,wintitle, state, path, context;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
 
-
+    context = node.data.record.ContextName;
     if(item.itemId == 'editendpoint') {
       name = node.data.record.Endpoint;
       description = node.data.record.Description;
       datalayer = node.data.record.DataLayer;
       assembly = node.data.record.Assembly;
-
+      application = name;
       wintitle =  'Edit Endpoint \"' + node.data.text + '\"';
       endpoint = node.data.record.Endpoint; 
       state = 'edit';
     } else {
       wintitle = 'Add New Endpoint';
-      state = 'new';
+      //state = 'new';
+      state = '';
+      application = '';
+      context = node.data.record.Name;
       path = node.internalId;
     }
 
-    context = node.data.record.ContextName;
+
 
     var conf = { 
       id: 'newwin-' + node.data.id, 
@@ -305,9 +314,11 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('contextValue').setValue(context);
     form.getForm().findField('oldAssembly').setValue(assembly);
     form.getForm().findField('endpoint').setValue(endpoint);
+    //form.getForm().findField('folderName').setValue(endpoint);
     form.getForm().findField('description').setValue(description);
     form.getForm().findField('context').setValue(context);
     form.getForm().findField('assembly').setValue(assembly);
+    form.getForm().findField('application').setValue(application);
 
     win.show();
   },
@@ -318,13 +329,14 @@ Ext.define('AM.controller.Directory', {
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
     Ext.Ajax.request({
-      url: 'directory/deleteEntry',
+      url: 'directory/deleteapplication',
       method: 'POST',
       params: {
-        'path': node.data.id,
-        'type': 'endpoint',
-        'baseUrl': node.data.record.BaseUrl,
-        'contextName': node.data.property.Context
+        nodeid: node.data.id
+        //'path': node.data.id,
+        //'type': 'endpoint',
+        //'baseUrl': node.data.record.BaseUrl,
+        //'contextName': node.data.property.Context
       },
       success: function () {
         var parentNode = node.parentNode;
@@ -526,8 +538,15 @@ Ext.define('AM.controller.Directory', {
     } else if (obj.type === "GraphNode") {
       var graphMenu = Ext.widget('graphmenu');
       graphMenu.showAt(e.getXY());
+    }else if (obj.type === "DataObjectsNode") {
+      var graphMenu = Ext.widget('appdatarefreshmenu');
+      graphMenu.showAt(e.getXY());
     }
 
+  },
+
+  onAppDataRefreshClick: function(item, e, eOpts) {
+    alert('Ha.ha.ha');
   },
 
   init: function(application) {
@@ -567,6 +586,9 @@ Ext.define('AM.controller.Directory', {
       },
       "directorytree": {
         itemcontextmenu: this.showContextMenu
+      },
+      "menuitem[action=refreshdata]": {
+        click: this.onAppDataRefreshClick
       }
     });
   }

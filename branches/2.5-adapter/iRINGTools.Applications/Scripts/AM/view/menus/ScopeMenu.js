@@ -27,6 +27,7 @@ Ext.define('AM.view.menus.ScopeMenu', {
         {
           xtype: 'menuitem',
           action: 'neweditscope',
+          itemId: 'editfolder',
           icon: 'Content/img/16x16/document-properties.png',
           text: 'Edit Scope'
         },

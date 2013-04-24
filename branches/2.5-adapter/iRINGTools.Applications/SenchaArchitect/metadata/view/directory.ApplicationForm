@@ -248,6 +248,22 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "designer|userClassName": "MyHiddenField40",
+                "fieldLabel": null,
+                "name": "application"
+            },
+            "designerId": "2bcef4f5-8018-4337-8abe-e23e2d79bc9f"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "itemId": "state",
                 "designer|userClassName": "MyHiddenField39",
                 "fieldLabel": null,
                 "name": "state"

@@ -6,7 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
-        "width": 130,
+        "width": null,
         "designer|userClassName": "menus.ValueListMapMenu",
         "designer|userAlias": "valuelistmapmenu"
     },
@@ -24,7 +24,7 @@
                 "itemId": "editvaluemap",
                 "designer|userClassName": "MyMenuItem24",
                 "icon": "Content/img/16x16/document-properties.png",
-                "text": "Edit ValueMap"
+                "text": "Edit Value List Map"
             },
             "designerId": "3bc76631-79f3-440c-8fed-a30192af538c",
             "customConfigs": [
@@ -46,7 +46,7 @@
                 "action": "deletevaluemap",
                 "designer|userClassName": "MyMenuItem25",
                 "icon": "Content/img/16x16/edit-delete.png",
-                "text": "Delete ValueMap"
+                "text": "Delete Value List Map"
             },
             "designerId": "7a17aafd-edde-45fa-88cf-9690412b9e93",
             "customConfigs": [

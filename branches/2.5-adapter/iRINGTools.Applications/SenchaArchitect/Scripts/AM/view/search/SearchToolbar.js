@@ -74,7 +74,7 @@ Ext.define('AM.view.search.SearchToolbar', {
           labelWidth: 40,
           name: 'searchLimit',
           submitValue: false,
-          value: 50,
+          value: '50',
           allowBlank: false,
           displayField: 'limit',
           queryMode: 'local',

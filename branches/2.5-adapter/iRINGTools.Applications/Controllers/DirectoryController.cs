@@ -525,7 +525,7 @@ namespace org.iringtools.web.controllers
     {
       var success = String.Empty;
 
-      success = String.IsNullOrEmpty(form["contextName"]) ? _repository.AddScope(form["endpoint"], form["description"]) : _repository.UpdateScope(form["contextName"], form["endpoint"], form["description"]);
+      success = String.IsNullOrEmpty(form["contextName"]) ? _repository.AddScope(form["folderName"], form["description"]) : _repository.UpdateScope(form["contextName"], form["folderName"], form["description"]);
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
@@ -572,10 +572,10 @@ namespace org.iringtools.web.controllers
         Assembly = form["assembly"],
         Configuration = configuration
       };
-
+      
       success = String.IsNullOrEmpty(form["state"]) 
-        ? _repository.AddApplication(context, application) 
-        : _repository.UpdateApplication(context, form["endpoint"], application);
+        ? _repository.AddApplication(context, application)
+        : _repository.UpdateApplication(context, form["application"], application);
 
       var result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
       return result;

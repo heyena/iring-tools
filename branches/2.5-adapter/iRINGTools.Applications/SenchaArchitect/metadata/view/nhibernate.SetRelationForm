@@ -190,9 +190,7 @@
                 "name": "relationType",
                 "allowBlank": false,
                 "queryMode": "local",
-                "store": [
-                    "[['OneToOne', 'OneToOne'], ['OneToMany', 'OneToMany']]"
-                ]
+                "store": "[\"[['OneToOne', 'OneToOne'], ['OneToMany', 'OneToMany']]\"]"
             },
             "configAlternates": {
                 "store": "array"
