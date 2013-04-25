@@ -28,30 +28,36 @@ namespace MappingMigration
 
         static void Main(string[] args)
         {
-            if (Initialize(args))
+            try
             {
-                _refdataClient = new WebHttpClient(_refdataServiceUri);
-                foreach (var path in Directory.GetFiles(_mappingFolderPath))
+                if (Initialize(args))
                 {
-                    string fileName = System.IO.Path.GetFileName(path);
-                    
-                    if (!fileName.ToUpper().StartsWith("MAPPING."))
-                        continue;
+                    _refdataClient = new WebHttpClient(_refdataServiceUri);
+                    foreach (var path in Directory.GetFiles(_mappingFolderPath))
+                    {
+                        string fileName = System.IO.Path.GetFileName(path);
 
-                    try
-                    {
-                        Console.WriteLine("Processing file: {0}\n", fileName);
-                        ProcessFile(path);
+                        if (!fileName.ToUpper().StartsWith("MAPPING."))
+                            continue;
+
+                        try
+                        {
+                            Console.WriteLine("Processing file: {0}\n", fileName);
+                            ProcessFile(path);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Error in processing file: {0}", fileName);
+                        }
                     }
-                    catch
-                    {
-                        Console.WriteLine("Error in processing file: {0}", fileName);
-                    }
+
                 }
-            
             }
-
-            Console.WriteLine("Completed....\n Press any key to continue.");
+            catch(Exception ex)
+            {
+                Console.WriteLine("\n {0}",ex.Message);
+            }
+            Console.WriteLine("\n Press any key to continue.");
             Console.ReadLine();
         }
 
