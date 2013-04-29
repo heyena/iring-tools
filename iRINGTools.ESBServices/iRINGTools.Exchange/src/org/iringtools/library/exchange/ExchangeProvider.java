@@ -329,6 +329,30 @@ public class ExchangeProvider
     return JaxbUtils.read(Response.class, exchangeFile);
   }
   
+  public RequestStatus getRequestStatus(String id) {
+	  RequestStatus requestStatus = null;
+
+	  try {
+		  if (requests.containsKey(id)) {
+			  requestStatus = requests.get(id);
+		  } else {
+			  requestStatus = new RequestStatus();
+			  requestStatus.setState(State.NOT_FOUND);
+			  requestStatus.setMessage("Request [" + id + "] not found.");
+		  }
+
+		  if (requestStatus.getState() == State.COMPLETED) {
+			  requests.remove(id);
+		  }
+	  } catch (Exception e) {
+		  requestStatus.setState(State.ERROR);
+		  requestStatus.setMessage(e.getMessage());
+		  requests.remove(id);
+	  }
+
+	  return requestStatus;
+  }
+  
   private Graph getGraph(Manifest manifest, String graphName)
   {
     for (Graph graph : manifest.getGraphs().getItems())
