@@ -94,23 +94,23 @@
     </AppsDeployment>
 
     <UtilitiesDeployment
-      Include="Utilities\EncryptCredentials\bin\Debug\*.exe;
-               Utilities\EncryptCredentials\bin\Debug\*.dll;
-               Utilities\ConfigurationTool\bin\Debug\*.exe;
-               Utilities\ConfigurationTool\bin\Debug\*.dll;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\*.exe;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\*.dll;
+      Include="Utilities\EncryptCredentials\bin\release\*.exe;
+               Utilities\EncryptCredentials\bin\release\*.dll;
+               Utilities\ConfigurationTool\bin\release\*.exe;
+               Utilities\ConfigurationTool\bin\release\*.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\release\*.exe;
+               Utilities\RDFImportExport\RDFImportExport\bin\release\*.dll;
                Utilities\RDFImportExport\RDFImportExport\RDFImportExport_Default.config;
-               Utilities\QMXFGenerator\bin\Debug\*.exe;
-               Utilities\QMXFGenerator\bin\Debug\*.dll;
+               Utilities\QMXFGenerator\bin\release\*.exe;
+               Utilities\QMXFGenerator\bin\release\*.dll;
                Utilities\QMXFGenerator\QMXFGenerator_Default.config;
                Utilities\QMXFGenerator\InformationModel.xlsx;
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
                Utilities\QMXFTransforms\*.xsl;
-               Utilities\FacadeExchange\bin\Debug\*.exe;
-               Utilities\FacadeExchange\bin\Debug\*.dll;
-               Utilities\FacadeExchange\bin\Debug\*.xml;
+               Utilities\FacadeExchange\bin\release\*.exe;
+               Utilities\FacadeExchange\bin\release\*.dll;
+               Utilities\FacadeExchange\bin\release\*.xml;
                Utilities\FacadeExchange\App_Default.config;">
     </UtilitiesDeployment>
   </ItemGroup>
