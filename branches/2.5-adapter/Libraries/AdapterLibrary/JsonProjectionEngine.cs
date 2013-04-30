@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
+using org.iringtools.adapter.datalayer;
+using System.Text;
 
 namespace org.iringtools.adapter.projection
 {
@@ -29,8 +31,8 @@ namespace org.iringtools.adapter.projection
       _dataLayer = dataLayer;
       if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
       {
-          arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
-          arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
+        arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
+        arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
       }
     }
 
@@ -38,14 +40,14 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
-      
+
         string app = _settings["ApplicationName"].ToLower();
         string proj = _settings["ProjectName"].ToLower();
 
         string resource = graphName.ToLower();
 
         DataItems dataItems = new DataItems()
-        {          
+        {
           total = this.Count,
           start = this.Start,
           items = new List<DataItem>()
@@ -61,7 +63,7 @@ namespace org.iringtools.adapter.projection
             return new XDocument();
           }
 
-          bool showNullValue = _settings["ShowJsonNullValues"] != null && 
+          bool showNullValue = _settings["ShowJsonNullValues"] != null &&
             _settings["ShowJsonNullValues"].ToString() == "True";
 
           for (int i = 0; i < dataObjects.Count; i++)
@@ -96,13 +98,15 @@ namespace org.iringtools.adapter.projection
                   {
                     if (dataProperty.dataType == DataType.Char ||
                         dataProperty.dataType == DataType.DateTime ||
+                        dataProperty.dataType == DataType.Date ||
                         dataProperty.dataType == DataType.String ||
                         dataProperty.dataType == DataType.TimeStamp)
                     {
                       string valueStr = Convert.ToString(value);
                       valueStr = Utility.ConvertSpecialCharOutbound(valueStr, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
 
-                      if (dataProperty.dataType == DataType.DateTime)
+                      if (dataProperty.dataType == DataType.DateTime ||
+                          dataProperty.dataType == DataType.Date)
                         valueStr = Utility.ToXsdDateTime(valueStr);
 
                       value = valueStr;
@@ -120,29 +124,31 @@ namespace org.iringtools.adapter.projection
 
               foreach (DataProperty dataProperty in dataObject.dataProperties)
               {
-                object value = dataObj.GetPropertyValue(dataProperty.propertyName);
-
-                if (value != null)
+                if (!dataProperty.isHidden)
                 {
-                  if (dataProperty.dataType == DataType.Char ||
-                        dataProperty.dataType == DataType.DateTime ||
-                        dataProperty.dataType == DataType.String ||
-                        dataProperty.dataType == DataType.TimeStamp)
+                  object value = dataObj.GetPropertyValue(dataProperty.propertyName);
+
+                  if (value != null)
                   {
-                    string valueStr = Convert.ToString(value);
+                    if (dataProperty.dataType == DataType.Char ||
+                          dataProperty.dataType == DataType.DateTime ||
+                          dataProperty.dataType == DataType.Date ||
+                          dataProperty.dataType == DataType.String ||
+                          dataProperty.dataType == DataType.TimeStamp)
+                    {
+                      string valueStr = Convert.ToString(value);
 
-                    if (dataProperty.dataType == DataType.DateTime)
-                      valueStr = Utility.ToXsdDateTime(valueStr);
+                      if (dataProperty.dataType == DataType.DateTime ||
+                          dataProperty.dataType == DataType.Date)
+                        valueStr = Utility.ToXsdDateTime(valueStr);
 
-                    value = valueStr;
-                  }
+                      value = valueStr;
+                    }
 
-                  if (!dataProperty.isHidden)
-                  {
                     dataItem.properties.Add(dataProperty.propertyName, value);
-                  }                  
+                  }
                 }
-                else if (showNullValue) 
+                else if (showNullValue)
                 {
                   dataItem.properties.Add(dataProperty.propertyName, null);
                 }
@@ -195,6 +201,13 @@ namespace org.iringtools.adapter.projection
 
         dataItems.limit = dataItems.items.Count;
 
+        if (dataItems.limit == 0) //Blank data item must have atleast version and type
+        {
+          DataObject dataObject = FindGraphDataObject(graphName);
+          dataItems.version = dataObject.version;
+          dataItems.type = graphName;
+        }
+
         string xml = Utility.SerializeDataContract<DataItems>(dataItems);
         XElement xElement = XElement.Parse(xml);
         return new XDocument(xElement);
@@ -213,40 +226,109 @@ namespace org.iringtools.adapter.projection
 
     public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
     {
-        try
+      try
+      {
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        DataObject objectDefinition = FindGraphDataObject(graphName);
+
+        if (objectDefinition != null)
         {
-            IList<IDataObject> dataObjects = new List<IDataObject>();
-            DataObject objectDefinition = FindGraphDataObject(graphName);
+          DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
 
-            if (objectDefinition != null)
+          foreach (DataItem dataItem in dataItems.items)
+          {
+            if (dataItem.id != null)
             {
-                DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
+              dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
+            }
+            else // if id doesn't exist, make it from key properties.
+            {
+              if (objectDefinition.keyProperties.Count == 1)
+              {
+                string keyProp = objectDefinition.keyProperties[0].keyPropertyName;
+                object id = dataItem.properties[keyProp];
 
-                foreach (DataItem dataItem in dataItems.items)
+                if (id == null || id.ToString() == string.Empty)
                 {
-                    if (dataItem.id != null)
-                    {
-                        dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
-                    }
-                    IDataObject dataObject = _dataLayer.Create(graphName, new List<string> { dataItem.id })[0];
-
-                    foreach (var pair in dataItem.properties)
-                    {
-                        dataObject.SetPropertyValue(pair.Key, pair.Value);
-                    }
-
-                    dataObjects.Add(dataObject);
+                  throw new Exception("Value of key property: " + keyProp + " cannot be null.");
                 }
+
+                dataItem.id = id.ToString();
+              }
+              else
+              {
+                StringBuilder builder = new StringBuilder();
+
+                foreach (KeyProperty keyProp in objectDefinition.keyProperties)
+                {
+                  string propName = objectDefinition.keyProperties[0].keyPropertyName;
+                  object propValue = dataItem.properties[propName];
+
+                  // it is acceptable to have some key property values to be null but not all
+                  if (propValue == null)
+                    propValue = string.Empty;
+
+                  builder.Append(objectDefinition.keyDelimeter + propValue);
+                }
+
+                builder.Remove(0, objectDefinition.keyDelimeter.Length);
+
+                if (builder.Length == 0)
+                {
+                  throw new Exception("Invalid identifier.");
+                }
+                
+                dataItem.id = builder.ToString();
+              }
             }
 
-            return dataObjects;
+            IDataObject dataObject = _dataLayer.Create(graphName, new List<string> {dataItem.id})[0];
+
+            if (dataObject == null)
+            {
+              throw new Exception("Data Layer failed to create data object of type: " + objectDefinition.objectName);
+            }
+
+            //
+            // set key properties from id
+            //
+            if (objectDefinition.keyProperties.Count == 1)
+            {
+              dataObject.SetPropertyValue(objectDefinition.keyProperties[0].keyPropertyName, dataItem.id);
+            }
+            else if (objectDefinition.keyProperties.Count > 1)
+            {
+              string[] idParts = dataItem.id.Split(new string[] { objectDefinition.keyDelimeter }, StringSplitOptions.None);
+
+              for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+              {
+                string keyProp = objectDefinition.keyProperties[i].keyPropertyName;
+                string keyValue = idParts[i];
+
+                dataObject.SetPropertyValue(keyProp, keyValue);
+              }
+            }
+
+            //
+            // set data properties
+            //
+            foreach (var pair in dataItem.properties)
+            {
+              dataObject.SetPropertyValue(pair.Key, pair.Value);
+            }
+
+            dataObjects.Add(dataObject);
+          }
         }
-        catch (Exception e)
-        {
-            string message = "Error marshalling data items to data objects." + e;
-            _logger.Error(message);
-            throw new Exception(message);
-        }
+
+        return dataObjects;
+      }
+      catch (Exception e)
+      {
+        string message = "Error marshalling data items to data objects." + e;
+        _logger.Error(message);
+        throw new Exception(message);
+      }
     }
 
     #region helper methods

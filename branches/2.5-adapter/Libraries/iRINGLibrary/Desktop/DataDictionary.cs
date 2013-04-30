@@ -352,7 +352,9 @@ namespace org.iringtools.library
     [EnumMember]
     @String,
     [EnumMember]
-    @Reference
+    @Reference,
+    [EnumMember]
+    @Date
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]

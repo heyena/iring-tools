@@ -699,9 +699,10 @@ namespace org.iringtools.utility
 
     public static string SerializeXml<T>(T graph)
     {
-      return Serialize<T>(graph, Encoding.UTF8, false, null);
+        return Serialize<T>(graph, Encoding.UTF8, false, null);
     }
 
+   
     public static string SerializeDataContract<T>(T graph)
     {
       return Serialize<T>(graph, Encoding.UTF8);
@@ -1020,34 +1021,46 @@ namespace org.iringtools.utility
     {
       
       T graph;
-      XmlDictionaryReader reader = null;
+      
       try
       {
         XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
         quotas.MaxStringContentLength = int.MaxValue;
         quotas.MaxArrayLength = int.MaxValue;
 
-        reader = XmlDictionaryReader.CreateTextReader(stream, quotas);
         if (useDataContractSerializer)
         {
-          DataContractSerializer serializer = new DataContractSerializer(typeof(T));
-          graph = (T)serializer.ReadObject(reader, true);
+          XmlDictionaryReader reader = null;
+          try
+          {
+            reader = XmlDictionaryReader.CreateTextReader(stream, quotas);
+            DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+            graph = (T)serializer.ReadObject(reader, true);
+          }
+          finally
+          {
+            if (reader != null) reader.Close();
+          }
         }
         else
         {
-          XmlSerializer serializer = new XmlSerializer(typeof(T));
-          graph = (T)serializer.Deserialize(reader);
+          StreamReader reader = null;
+          try
+          {
+            reader = new StreamReader(stream);
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            graph = (T)serializer.Deserialize(reader);
+          }
+          finally
+          {
+            if (reader != null) reader.Close();
+          }
         }        
-        
         return graph;
       }
       catch (Exception exception)
       {
         throw new Exception("Error deserializing stream to [" + typeof(T).Name + "].", exception);
-      }
-      finally
-      {
-        if (reader != null) reader.Close();
       }
     }
 
@@ -1474,6 +1487,16 @@ namespace org.iringtools.utility
       return utcStr;
     }
 
+    public static string ToXsdDate(DateTime date)
+    {
+        string utcStr = XmlConvert.ToString(date, XmlDateTimeSerializationMode.Utc);
+
+        if (utcStr.Contains("T"))
+            utcStr = utcStr.Substring(0, utcStr.IndexOf("T"));
+
+        return utcStr;
+    }
+
     public static string ToXsdDateTime(string dateTime)
     { 
       if (String.IsNullOrEmpty(dateTime))
@@ -1481,6 +1504,15 @@ namespace org.iringtools.utility
       
       DateTime dt = DateTime.Parse(dateTime);      
       return ToXsdDateTime(dt); 
+    }
+
+    public static string ToXsdDate(string date)
+    {
+        if (String.IsNullOrEmpty(date))
+            return date;
+
+        DateTime dt = DateTime.Parse(date);
+        return ToXsdDate(dt);
     }
 
     public static DateTime FromXsdDateTime(string dateTime)

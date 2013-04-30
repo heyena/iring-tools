@@ -56,6 +56,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "sortOrder", Order = 4, EmitDefaultValue = false)]
     public string SortOrder { get; set; }
+
+    [DataMember(Name = "totalCount", Order = 5, EmitDefaultValue = false)]
+    public long TotalCount { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/dti", Name = "dataTransferIndex")]

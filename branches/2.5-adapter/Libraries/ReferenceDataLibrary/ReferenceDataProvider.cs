@@ -1548,10 +1548,16 @@ namespace org.iringtools.refdata
                   descr.value = ((LiteralNode)result["comment"]).Value;
                   descr.lang = string.IsNullOrEmpty(((LiteralNode)result["comment"]).Language) ? defaultLanguage : ((LiteralNode)result["comment"]).Language;
                 }
+                if (result["value"] != null)
+                {
+                    valvalue.reference = ((UriNode)result["value"]).Uri.ToString();
+                    roleQualification.value = valvalue;
+                }
                 if (result["type"] != null)
                 {
                   roleQualification.range = ((UriNode)result["type"]).Uri.ToString();
                 }
+                
                 if (result["label"] == null)
                 {
                   var entity = GetLabel(uri);
@@ -2270,9 +2276,11 @@ namespace org.iringtools.refdata
             GenerateRoleIndexPart8(ref insert, roleID, ++roleCount, newRole);
             GenerateHasTemplate(ref insert, roleID, templateID, newRole);
             GenerateHasRole(ref insert, templateID, roleID, newTQ);
+          
             if (newRole.value != null && !string.IsNullOrEmpty(newRole.value.reference))
             {
-              GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
+                GenerateValRoleFiller(ref insert, roleID, newRole.value.reference);
+              //GenerateRoleFillerType(ref insert, roleID, newRole.value.reference);
 
             }
             else if (newRole.range != null)
@@ -2891,6 +2899,14 @@ namespace org.iringtools.refdata
       _obj = work.CreateUriNode(new Uri(range));
       work.Assert(new Triple(_subj, _pred, _obj));
     }
+
+    private void GenerateValRoleFiller(ref Graph work, string subjId, string value)
+    {
+        _subj = work.CreateUriNode(new Uri(subjId));
+        _pred = work.CreateUriNode("p8:valRoleFiller");
+        _obj = work.CreateUriNode(new Uri(value));
+        work.Assert(new Triple(_subj, _pred, _obj));
+    }  
 
     private void GenerateRoleCount(ref Graph work, int rolecount, string subjId, object gobj)
     {

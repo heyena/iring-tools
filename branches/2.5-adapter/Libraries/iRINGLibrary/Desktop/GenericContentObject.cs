@@ -7,6 +7,14 @@ namespace org.iringtools.library
 {
   public class GenericContentObject : GenericDataObject, IContentObject
   {
+    public GenericContentObject() : base() {}
+
+    public GenericContentObject(IDataObject dataObject)
+    {
+      if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
+        _dictionary = ((GenericDataObject)dataObject).Dictionary;
+    }
+
     [IgnoreDataMember]
     [XmlIgnore]
     public Stream Content { get; set; }
@@ -20,9 +28,5 @@ namespace org.iringtools.library
     public string URL { get; set; }
 
     public string Identifier { get; set; }
-
-    [IgnoreDataMember]
-    [XmlIgnore]
-    public IDataObject DataObject { get; set; }
   }
 }

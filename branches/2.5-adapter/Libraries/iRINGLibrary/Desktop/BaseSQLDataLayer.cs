@@ -516,19 +516,21 @@ namespace org.iringtools.library
       {
         try
         {
+          bool useDictionaryCache = _settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString());
+
           string dbPath = string.Format("{0}DatabaseDictionary.{1}.{2}.xml",
             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
 
-          if (File.Exists(dbPath))
-          {
-            _dbDictionary = Utility.Read<DatabaseDictionary>(dbPath, true);
-          }
-          else
-          {
-            string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
-             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
-
-            if (File.Exists(path))
+          string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
+               _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+ 
+          if (useDictionaryCache && (File.Exists(dbPath) || File.Exists(path)))
+          {            
+            if (File.Exists(dbPath))
+            {
+              _dbDictionary = Utility.Read<DatabaseDictionary>(dbPath, true);
+            }
+            else if (File.Exists(path))
             {
               DataDictionary dataDictionary = Utility.Read<DataDictionary>(path, true);
 
@@ -539,11 +541,13 @@ namespace org.iringtools.library
                 dataVersion = dataDictionary.dataVersion
               };
             }
-            else
-            {
-              _dbDictionary = GetDatabaseDictionary();
+          }
+          else
+          {
+            _dbDictionary = GetDatabaseDictionary();
+
+            if (useDictionaryCache)
               Utility.Write<DatabaseDictionary>(_dbDictionary, dbPath, true);
-            }
           }
         }
         catch (Exception ex)
@@ -879,12 +883,13 @@ namespace org.iringtools.library
           }
           else // all rows exist, update column values            
           {
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-            {
-              DataRow row = dataTable.Rows[i];
-              string identifier = FormIdentifier(objInfo.ObjectDefinition, row);
-              PopulateColumnValues(row, objInfo.ObjectDefinition, objInfo.IdentifierDataObjects[identifier]);
-            }
+              for (int i = 0; i < dataTable.Rows.Count; i++)
+              {
+                  DataRow row = dataTable.Rows[i];
+                  string identifier = FormIdentifier(objInfo.ObjectDefinition, row);
+                  if (i < identifiers.Count)   //make sure for that particular row we have updated object
+                      PopulateColumnValues(row, objInfo.ObjectDefinition, objInfo.IdentifierDataObjects[identifier]);
+              }
           }
 
           dataTables.Add(dataTable);
@@ -946,6 +951,14 @@ namespace org.iringtools.library
     {
       foreach (DataProperty prop in objDef.dataProperties)
       {
+        if (dataObject.GetType() == typeof(GenericDataObject) || dataObject.GetType() == typeof(GenericContentObject))
+        {
+          IDictionary<string, object> postedProperties = ((GenericDataObject)dataObject).Dictionary;
+
+          if (!postedProperties.ContainsKey(prop.propertyName))
+            continue;
+        }
+
         if (!prop.propertyName.EndsWith("_URL"))
         {
           object value = dataObject.GetPropertyValue(prop.propertyName);

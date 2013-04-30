@@ -1180,52 +1180,6 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
-             _settings["AppDataPath"], projectName, applicationName);
-
-        if (File.Exists(path))
-        {
-          DataDictionary dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
-          // Sorting DataObjects and data properties. 
-          dataDictionary.dataObjects.Sort(new DataObjectsComparer());
-          foreach (DataObject dataObject in dataDictionary.dataObjects)
-          {
-            dataObject.dataProperties.Sort(new DataPropertyComparer());
-
-            // Adding Key elements to TOP of the List.
-            List<String> keyPropertyNames = new List<String>();
-            foreach (KeyProperty keyProperty in dataObject.keyProperties)
-            {
-              keyPropertyNames.Add(keyProperty.keyPropertyName);
-            }
-            var value = "";
-            for (int i = 0; i < keyPropertyNames.Count; i++)
-            {
-              value = keyPropertyNames[i];
-              // removing the property name from the list and adding at TOP
-              List<DataProperty> DataProperties = dataObject.dataProperties;
-              DataProperty prop = null;
-
-              for (int j = 0; j < DataProperties.Count; j++)
-              {
-                if (DataProperties[j].propertyName == value)
-                {
-                  prop = DataProperties[j];
-                  DataProperties.RemoveAt(j);
-                  break;
-
-                }
-              }
-
-              if (prop != null)
-                DataProperties.Insert(0, prop);
-            }
-          } 
-          
-          utility.Utility.Write<DataDictionary>(dataDictionary, path, true);
-          return dataDictionary;
-        }
-
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
@@ -3214,14 +3168,8 @@ namespace org.iringtools.adapter
             ? String.Format("/{0}/{1}", applicationName, resourceName)
             : String.Format("/{0}/{1}/{2}", applicationName, projectName, resourceName);
 
-          if (_dataObjects != null && _dataObjects.Count > 0)
+          if (_dataObjects != null )
           {
-            if (_dataObjects.Count == 1 && typeof(IContentObject).IsAssignableFrom(_dataObjects[0].GetType()))
-            {
-              IContentObject contentObject = (IContentObject)_dataObjects[0];
-              return contentObject;
-            }
-
             if (_isProjectionPart7)
             {
               return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects, className, classIdentifier);
@@ -3239,16 +3187,12 @@ namespace org.iringtools.adapter
         }
         else
         {
-          List<string> identifiers = new List<string> { classIdentifier };
-          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
+          IDictionary<string, string> idFormats = new Dictionary<string, string> {
+                    {classIdentifier, format}
+          };
 
-          if (_dataObjects != null && _dataObjects.Count > 0)
-          {
-            IContentObject contentObject = (IContentObject)_dataObjects[0];
-            return contentObject;
-          }
-
-          return null;
+          IContentObject contentObject = _dataLayer.GetContents(_dataObjDef.objectName, idFormats).FirstOrDefault();
+          return contentObject;
         }
       }
       catch (Exception ex)
@@ -3626,8 +3570,7 @@ namespace org.iringtools.adapter
 
           return response;
         }
-        IList<IDataObject> parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id });
-
+        
         IList<IDataObject> childdataObjects = null;
         if (_isProjectionPart7)
         {
@@ -3644,6 +3587,7 @@ namespace org.iringtools.adapter
         }
         catch (NotImplementedException)
         {
+          IList<IDataObject> parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id });
           IList<IDataObject> MeregedDataObjects = new List<IDataObject>();
           MeregedDataObjects = parentDataObject;
 
@@ -4232,17 +4176,24 @@ namespace org.iringtools.adapter
         try
         {
           string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
-             _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+                 _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
 
-          if (File.Exists(path))
+          if ((_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true) && File.Exists(path))
           {
-            _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
+             _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
           }
           else
           {
             _dataDictionary = _dataLayer.GetDictionary();
-            utility.Utility.Write<DataDictionary>(_dataDictionary, path, true);
-          }
+
+            if (_dataDictionary != null)
+            {
+              if (_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true) // only create cache if settings indicate we will use it
+              {
+                utility.Utility.Write<DataDictionary>(_dataDictionary, path, true);
+              }
+            }
+          }        
 
           _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
         }
@@ -4911,14 +4862,14 @@ namespace org.iringtools.adapter
       DataLayers dataLayers = new DataLayers();
 
       // Load NHibernate data layer
-      Type nhType = Type.GetType("org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", true);
+      Type nhType = typeof(NHibernateDataLayer);
       string nhLibrary = nhType.Assembly.GetName().Name;
       string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
       DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
       dataLayers.Add(nhDataLayer);
 
       // Load Spreadsheet data layer
-      Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer", true);
+      Type ssType = typeof(SpreadsheetDatalayer);
       string ssLibrary = ssType.Assembly.GetName().Name;
       string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
       DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
@@ -4926,10 +4877,10 @@ namespace org.iringtools.adapter
 
       try
       {
-        Type type = typeof(IDataLayer);
-        BuildManager.GetReferencedAssemblies(); // make sure assemblies are loaded even though methods may not have been called yet
         Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
+        
+        Type type = typeof(IDataLayer);
+        
         foreach (Assembly asm in domainAssemblies)
         {
           Type[] asmTypes = null;
@@ -5396,6 +5347,32 @@ namespace org.iringtools.adapter
     }
   }
 
+  public class ScopeComparer : IComparer<ScopeProject>
+  {
+    public int Compare(ScopeProject left, ScopeProject right)
+    {
+      // compare strings
+      {
+        string leftValue = left.Name.ToString();
+        string rightValue = right.Name.ToString();
+        return string.Compare(leftValue, rightValue);
+      }
+    }
+  }
+
+  public class ApplicationComparer : IComparer<ScopeApplication>
+  {
+    public int Compare(ScopeApplication left, ScopeApplication right)
+    {
+      // compare strings
+      {
+        string leftValue = left.Name.ToString();
+        string rightValue = right.Name.ToString();
+        return string.Compare(leftValue, rightValue);
+      }
+    }
+  }
+
   public class DataObjectComparer : IComparer<IDataObject>
   {
     private DataProperty _dataProp;
@@ -5456,58 +5433,6 @@ namespace org.iringtools.adapter
       {
         string leftValue = left.GetPropertyValue(_dataProp.propertyName).ToString();
         string rightValue = right.GetPropertyValue(_dataProp.propertyName).ToString();
-        return string.Compare(leftValue, rightValue);
-      }
-    }
-  }
-
-  public class ApplicationComparer : IComparer<ScopeApplication>
-  {
-    public int Compare(ScopeApplication left, ScopeApplication right)
-    {
-      // compare strings
-      {
-        string leftValue = left.Name.ToString();
-        string rightValue = right.Name.ToString();
-        return string.Compare(leftValue, rightValue);
-      }
-    }
-  }
-
-  public class DataObjectsComparer : IComparer<DataObject>
-  {
-    public int Compare(DataObject left, DataObject right)
-    {
-      // compare strings
-      {
-        string leftValue = left.tableName.ToString();
-        string rightValue = right.tableName.ToString();
-        return string.Compare(leftValue, rightValue);
-      }
-    }
-  }
-
-  public class DataPropertyComparer : IComparer<DataProperty>
-  {
-    public int Compare(DataProperty left, DataProperty right)
-    {
-      // compare strings
-      {
-        string leftValue = left.propertyName.ToString();
-        string rightValue = right.propertyName.ToString();
-        return string.Compare(leftValue, rightValue);
-      }
-    }
-  }
-
-  public class ScopeComparer : IComparer<ScopeProject>
-  {
-    public int Compare(ScopeProject left, ScopeProject right)
-    {
-      // compare strings
-      {
-        string leftValue = left.Name.ToString();
-        string rightValue = right.Name.ToString();
         return string.Compare(leftValue, rightValue);
       }
     }

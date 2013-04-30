@@ -51,7 +51,6 @@ namespace org.iringtools.library
     string HashType { get; set; }
     string HashValue { get; set; }
     string URL { get; set; }
-    IDataObject DataObject { get; set; }
   }
 
   public interface IDataLayer

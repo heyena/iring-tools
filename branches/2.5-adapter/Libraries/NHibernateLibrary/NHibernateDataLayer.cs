@@ -18,11 +18,11 @@ namespace org.iringtools.adapter.datalayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private IKernel _kernel = null;
-    private IAuthorization _authorization;
+    private org.iringtools.nhibernate.IAuthorization _authorization;
     protected const string UNAUTHORIZED_ERROR = "User not authorized to access NHibernate data layer of [{0}]";
     
     protected string _dataDictionaryPath = String.Empty;
-    protected string _databaseDictionaryPath = String.Empty;
+    protected string _dbDictionaryPath = String.Empty;
     
     protected string _authorizationBindingPath = String.Empty;
     protected string _summaryBindingPath = String.Empty;
@@ -50,14 +50,15 @@ namespace org.iringtools.adapter.datalayer
         _settings["Scope"]
       );
 
-      string dbDictionaryPath = string.Format("{0}DatabaseDictionary.{1}.xml",
+      _dbDictionaryPath = string.Format("{0}DatabaseDictionary.{1}.xml",
         _settings["AppDataPath"],
         _settings["Scope"]
       );
 
-      if (File.Exists(dbDictionaryPath))
+      if (File.Exists(_dbDictionaryPath))
       {
-        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath, _settings["KeyFile"]);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
+        _dataDictionary = (DataDictionary)_dbDictionary;
       }
 
       string relativePath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml",
@@ -171,8 +172,13 @@ namespace org.iringtools.adapter.datalayer
 
     public override long GetCount(string objectType, DataFilter filter)
     {
-      DataFilter newFilter = Utility.CloneDataContractObject<DataFilter>(filter);
-      newFilter.OrderExpressions = null;
+      DataFilter newFilter = null;
+
+      if (filter != null)
+      {
+        newFilter = Utility.CloneDataContractObject<DataFilter>(filter);
+        newFilter.OrderExpressions = null;
+      }
 
       AccessLevel accessLevel = Authorize(objectType, ref newFilter);
 
@@ -708,9 +714,8 @@ namespace org.iringtools.adapter.datalayer
 
     public override DataDictionary GetDictionary()
     {
-      if (File.Exists(_dataDictionaryPath))
+      if (_dataDictionary != null)
       {
-        _dataDictionary = Utility.Read<DataDictionary>(_dataDictionaryPath);
         return _dataDictionary;
       }
       else
@@ -871,7 +876,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        _authorization = _kernel.Get<IAuthorization>();
+        _authorization = _kernel.Get<org.iringtools.nhibernate.IAuthorization>();
         return _authorization.Authorize(objectType, ref dataFilter);
       }
       catch (Exception e)
