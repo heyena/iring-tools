@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,6 @@ import org.iringtools.library.State;
 import org.iringtools.mapping.ValueListMap;
 import org.iringtools.mapping.ValueMap;
 import org.iringtools.refdata.response.Entity;
-import org.iringtools.utility.DtiComparator;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
@@ -200,8 +198,6 @@ public class DataModel
 
         if (filterExpressions != null && filterExpressions.size() > 0)
         {
-          // dataFilter = new DataFilter();
-
           Expressions expressions = new Expressions();
           dataFilter.setExpressions(expressions);
 
@@ -258,17 +254,20 @@ public class DataModel
       // process sorting
       if (sortBy != null && sortBy.length() > 0 && sortOrder != null && sortOrder.length() > 0)
       {
-        OrderExpressions orderExpressions = new OrderExpressions();
-        dataFilter.setOrderExpressions(orderExpressions);
-
-        OrderExpression orderExpression = new OrderExpression();
-        orderExpressions.getItems().add(orderExpression);
-
-        if (sortBy != null)
-          orderExpression.setPropertyName(sortBy);
-
-        if (sortOrder != null)
-          orderExpression.setSortOrder(SortOrder.valueOf(sortOrder));
+        if (!sortBy.equalsIgnoreCase("Transfer Type"))
+        {
+          OrderExpressions orderExpressions = new OrderExpressions();
+          dataFilter.setOrderExpressions(orderExpressions);
+  
+          OrderExpression orderExpression = new OrderExpression();
+          orderExpressions.getItems().add(orderExpression);
+  
+          if (sortBy != null)
+            orderExpression.setPropertyName(sortBy);
+  
+          if (sortOrder != null)
+            orderExpression.setSortOrder(SortOrder.valueOf(sortOrder));
+        }
       }
       else
       {
@@ -724,6 +723,7 @@ public class DataModel
       transferField.setType("string");
       transferField.setWidth(TRANSFER_FIELD_WIDTH);
       transferField.setFilterable(true);
+      transferField.setSortable(false);
       fields.add(0, transferField);
     }
 
@@ -748,6 +748,7 @@ public class DataModel
     infoField.setWidth(INFO_FIELD_WIDTH);
     infoField.setFixed(true);
     infoField.setFilterable(false);
+    infoField.setSortable(false);
     fields.add(0, infoField);
 
     List<ClassTemplates> classTemplatesItems = graph.getClassTemplatesList().getItems();
@@ -992,50 +993,31 @@ public class DataModel
     return null;
   }
   
+  // NOTE: the order of the indices in the list needs to retain to honor grid sorting
   protected void collapseDuplicates(DataTransferIndices dtis) throws Exception
   {
     try
     {
-      DtiComparator DtiComparator = new DtiComparator();
-      Collections.sort(dtis.getDataTransferIndexList().getItems(), DtiComparator);
+      if (dtis == null || dtis.getDataTransferIndexList() == null)
+        return;
 
       List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
-      DataTransferIndex prevDti = null;
 
       for (int i = 0; i < dtiList.size(); i++)
       {
         DataTransferIndex dti = dtiList.get(i);
-        dti.setDuplicateCount(1);
-
-        if (prevDti != null && dti.getIdentifier().equalsIgnoreCase(prevDti.getIdentifier()))
+        int dupes = 1;
+        
+        for (int j = i + 1; j < dtiList.size(); j++)
         {
-          // indices with same identifiers but different hash values are considered different
-          int j = i;
-
-          do
+          if (dti.getIdentifier().equalsIgnoreCase(dtiList.get(j).getIdentifier()))
           {
-            if (dti.getInternalIdentifier().toLowerCase().compareTo(prevDti.getInternalIdentifier().toLowerCase()) == 0)
-            {
-              prevDti.setDuplicateCount(prevDti.getDuplicateCount() + 1);
-              dtiList.remove(j);
-            }
-            else
-            {
-              j++;
-            }
-
-            if (j < dtiList.size())
-              dti = dtiList.get(j);
-            else
-              break;
-
+            dupes++;
+            dtiList.remove(j--);
           }
-          while (dti.getIdentifier().equalsIgnoreCase(prevDti.getIdentifier()));
         }
-        else
-        {
-          prevDti = dti;
-        }
+        
+        dti.setDuplicateCount(dupes);
       }
     }
     catch (Exception e)
