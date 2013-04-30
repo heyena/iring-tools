@@ -46,6 +46,7 @@ namespace iRINGTools.Web
     protected void Session_End(object sender, EventArgs e)
     {
       SessionState.End(Session.SessionID);
+      Session.Abandon();
     }
 
     protected void Application_End(object sender, EventArgs e)
