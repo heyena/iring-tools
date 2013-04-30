@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -179,7 +178,7 @@ public class ExchangeProvider
     return dtis;
   }
   
-  public Set<String> getIdentifiers(Exchange exchange, DxiRequest dxiRequest) throws Exception
+  public List<String> getIdentifiers(Exchange exchange, DxiRequest dxiRequest) throws Exception
   {
     ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -189,7 +188,7 @@ public class ExchangeProvider
 
     executor.awaitTermination(60, TimeUnit.MINUTES);
 
-    Set<String> ids = idTask.getIdentifiers();
+    List<String> ids = idTask.getIdentifiers();
     return ids;
   }
   

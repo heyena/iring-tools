@@ -5,7 +5,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
@@ -570,7 +569,7 @@ public class ExchangeDataModel extends DataModel
       dxiRequest.setManifest(manifest);
       dxiRequest.setDataFilter(filter);
 
-      Set<String> ids = provider.getIdentifiers(exchange, dxiRequest);
+      List<String> ids = provider.getIdentifiers(exchange, dxiRequest);
 
       if (ids != null)
       {
@@ -581,8 +580,8 @@ public class ExchangeDataModel extends DataModel
         {
           for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
           {
-            if (dti.getIdentifier().equalsIgnoreCase(id))
-            {
+            if (!dtiList.getItems().contains(dti) && dti.getIdentifier().equalsIgnoreCase(id))
+            {              
               dtiList.getItems().add(dti);
               break;
             }

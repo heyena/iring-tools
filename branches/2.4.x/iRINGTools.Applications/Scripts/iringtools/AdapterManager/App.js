@@ -265,6 +265,13 @@ Ext.extend(Ext.App, Ext.util.Observable, {
     }
 });
 
+Ext.Ajax.on('requestexception', function (conn, response, options) {
+  if (response.status == 408) {
+    window.location.reload();
+  }
+});
+
+
 //Overrides
 Ext.override(Ext.form.ComboBox, {
     setValue: function (v) {

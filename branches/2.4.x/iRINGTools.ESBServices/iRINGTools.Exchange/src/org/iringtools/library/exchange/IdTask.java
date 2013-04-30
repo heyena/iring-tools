@@ -2,9 +2,9 @@ package org.iringtools.library.exchange;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +28,7 @@ public class IdTask implements Runnable
   private Exchange exchange; 
   private DxiRequest dxiRequest;
   private RequestStatus requestStatus;
-  private Set<String> ids;
+  private List<String> ids;
 
   public IdTask(Map<String, Object> settings, Exchange exchange, DxiRequest dxiRequest,
       RequestStatus requestStatus)
@@ -76,7 +76,7 @@ public class IdTask implements Runnable
     Identifiers sourceIds = sourceIdTask.getIdentifiers();
     Identifiers targetIds = targetIdTask.getIdentifiers();
     
-    ids = new HashSet<String>();
+    ids = new ArrayList<String>();
     
     if (sourceIds != null && sourceIds.getItems().size() > 0)
       ids.addAll(sourceIds.getItems());
@@ -113,7 +113,7 @@ public class IdTask implements Runnable
     }
   }
 
-  public Set<String> getIdentifiers()
+  public List<String> getIdentifiers()
   {
     return ids;
   }

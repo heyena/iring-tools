@@ -248,7 +248,7 @@ namespace org.iringtools.adapter.datalayer
         StringBuilder queryString = new StringBuilder();
         queryString.Append("select Id from " + objectType);
 
-        if (newFilter != null && newFilter.Expressions.Count > 0)
+        if (newFilter != null && (newFilter.Expressions.Count > 0 || newFilter.OrderExpressions.Count > 0))
         {
           DataObject dataObject = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
           string whereClause = newFilter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);
