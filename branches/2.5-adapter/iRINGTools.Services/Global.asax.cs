@@ -4,6 +4,7 @@ using System.Web;
 using System.Web.Routing;
 using System.Web.Services.Description;
 using System.IO;
+using System.Web.Compilation;
 
 namespace org.iringtools.adapter
 {
@@ -13,6 +14,8 @@ namespace org.iringtools.adapter
     {
       RegisterRoutes();
       log4net.Config.XmlConfigurator.Configure();
+
+      BuildManager.GetReferencedAssemblies(); // make sure assemblies are loaded even though methods may not have been called yet        
     }
 
     private void RegisterRoutes()
@@ -34,13 +37,6 @@ namespace org.iringtools.adapter
       RouteTable.Routes.Add(new ServiceRoute("facade/svc", new WebServiceHostFactory(), typeof(org.iringtools.services.FacadeService)));
 
       RouteTable.Routes.Add(new ServiceRoute("adata", new RawServiceHostFactory(), typeof(org.iringtools.services.AdapterDataService)));
-
-    }
-
-    void Application_End(object sender, EventArgs e)
-    {
-      string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-      File.SetCreationTime(baseDir + @"bin\AdapterLibrary.dll", DateTime.Now);
     }
   }
 }

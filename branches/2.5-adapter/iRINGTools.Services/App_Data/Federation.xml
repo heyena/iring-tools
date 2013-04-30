@@ -107,17 +107,6 @@
       <repositorytype>JORD</repositorytype>
       <updateuri i:nil="true"/>
       <uri>http://posccaesar.org/endpoint/sparql</uri>
-    </repository>
-    <repository>
-      <description>Development Sandbox</description>
-      <encryptedcredentials i:nil="true"/>
-      <id>4</id>
-      <isreadonly>false</isreadonly>
-      <name>Development Sandbox</name>
-      <namespaces i:nil="true"/>
-      <repositorytype>Part8</repositorytype>
-      <updateuri>http://localhost/Services/SandboxService/update</updateuri>
-      <uri>http://localhost/Services/SandboxService/query</uri>
-    </repository>
+    </repository> 
   </repositorylist>
 </federation>

@@ -40,6 +40,7 @@ using System.Web;
 using org.iringtools.utility;
 using System.Net;
 using System.IO;
+using org.iringtools.mapping;
 
 namespace org.iringtools.services
 {
@@ -158,6 +159,72 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets internal identifiers for a given manifest with filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter")]
+    public void GetInternalIdentifiers(string scope, string app, string graph, DxiRequest request)
+    {
+      try
+      {
+        if (IsAsync())
+        {
+          string statusURL = _dtoProvider.AsyncGetInternalIdentifiers(scope, app, graph, request);
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
+        }
+        else
+        {
+          Identifiers identifiers = _dtoProvider.GetInternalIdentifiers(scope, app, graph, request);
+
+          HttpContext.Current.Response.ContentType = "application/xml";
+          HttpContext.Current.Response.Write(Utility.SerializeDataContract<Identifiers>(identifiers));
+        }
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Gets a page data transfer indices.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/dti?start={start}&limit={limit}")]
+    public void GetPagedDataTransferIndices(string scope, string app, string graph, int start, int limit)
+    {
+      try
+      {
+        DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndices(scope, app, graph, null, start, limit);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Gets a page data transfer indices with filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dti?start={start}&limit={limit}")]
+    public void GetPagedDataTransferIndicesWithFilter(string scope, string app, string graph, DataFilter filter, int start, int limit)
+    {
+      try
+      {
+        DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndices(scope, app, graph, filter, start, limit);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
     [Description("Gets data transfer objects of requested indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
     public void GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
@@ -178,20 +245,20 @@ namespace org.iringtools.services
     }
 
     [Description("Gets data transfer objects of requested indices and manifest.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
-    public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo?includeContent={includeContent}")]
+    public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest, bool includeContent)
     {
       try
       {
         if (IsAsync())
         {
-          string statusURL = _dtoProvider.AsyncGetDataTransferObjects(scope, app, graph, dxoRequest);
+          string statusURL = _dtoProvider.AsyncGetDataTransferObjects(scope, app, graph, dxoRequest, includeContent);
           WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
           WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusURL;
         }
         else
         {
-          DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
+          DataTransferObjects dtos = _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest, includeContent);
 
           HttpContext.Current.Response.ContentType = "application/xml";
           HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
