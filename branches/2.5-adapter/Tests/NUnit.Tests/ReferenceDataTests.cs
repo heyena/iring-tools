@@ -168,7 +168,7 @@ namespace NUnit.Tests
 
            
 
-          var idg1 = new IdGenerator
+          IDGenerator idg1 = new IDGenerator
           {
             Id = 1,
             Name = "ids-adi.org",
@@ -217,7 +217,7 @@ namespace NUnit.Tests
           };
 
 
-          fed.IdGenerators.Add(idg1);
+          fed.IDGenerators.Add(idg1);
           fed.Namespaces.Add(owl);
           fed.Namespaces.Add(owl2xml);
           fed.Namespaces.Add(p8dm);

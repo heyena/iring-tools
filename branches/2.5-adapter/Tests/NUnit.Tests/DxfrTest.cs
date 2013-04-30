@@ -349,7 +349,7 @@ namespace NUnit.Tests
         dxoRequest.DataTransferIndices = dtiList;
 
         dtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-            _settings["GraphName"], dxoRequest);
+            _settings["GraphName"], dxoRequest, false);
 
         string path = String.Format(
             "{0}DxfrGetDataTransferObjectsWithDxoRequest.xml",
@@ -415,7 +415,7 @@ namespace NUnit.Tests
         //    _settings["GraphName"], "MD5", dxoRequest.Manifest);
 
 				postDtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-						_settings["GraphName"], dxoRequest);				
+						_settings["GraphName"], dxoRequest, false);				
 
 				dtoList = postDtos.DataTransferObjectList;
 

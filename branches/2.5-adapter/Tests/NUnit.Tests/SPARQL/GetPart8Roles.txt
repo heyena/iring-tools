@@ -6,6 +6,7 @@ select ?role ?index ?label ?type ?comment
    ?role p8:hasTemplate tpl:param1 .
    ?role p8:valRoleIndex ?index .
    ?role rdfs:label ?label .
-   ?role p8:hasRoleFillerType ?type .
+   ?role ?pre ?type .
+   FILTER (?pre = p8:hasRoleFillerType || ?pre = p8:valRoleFiller )
    OPTIONAL{ ?role rdfs:comment ?comment }
-}
+   }
