@@ -23,6 +23,13 @@ Ext.App = function (config) {
 
     // init when onReady fires.
     Ext.onReady(this.onReady, this);
+	
+	
+  Ext.Ajax.on('requestexception', function (conn, response, options) {
+      if (response.status == 0 || response.status == 408) {
+          location.reload(true);
+      }
+  });
 
     Ext.App.superclass.constructor.apply(this, arguments);
 }
@@ -264,13 +271,6 @@ Ext.extend(Ext.App, Ext.util.Observable, {
         Ext.MessageBox.alert(res.type.toUpperCase(), res.message);
     }
 });
-
-Ext.Ajax.on('requestexception', function (conn, response, options) {
-  if (response.status == 408) {
-    window.location.reload();
-  }
-});
-
 
 //Overrides
 Ext.override(Ext.form.ComboBox, {
