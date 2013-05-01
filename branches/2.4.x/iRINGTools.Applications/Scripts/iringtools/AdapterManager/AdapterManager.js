@@ -10,13 +10,6 @@ Ext.onReady(function () {
   Ext.QuickTips.init();
   Ext.Ajax.timeout = 120000; //increase request time
 
-  Ext.Ajax.on('requestexception', function (conn, response, options) {
-
-      if (response.status === 408) {
-          window.location.reload();
-      }
-  });
-
   Ext.get('about-link').on('click', function () {
     var win = new Ext.Window({
       title: 'About Adapter Manager',

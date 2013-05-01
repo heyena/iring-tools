@@ -737,6 +737,7 @@ public class DataModel
       contentField.setWidth(CONTENT_FIELD_WIDTH);
       contentField.setFixed(true);
       contentField.setFilterable(false);
+      contentField.setSortable(false);
       fields.add(0, contentField);
     }
 
