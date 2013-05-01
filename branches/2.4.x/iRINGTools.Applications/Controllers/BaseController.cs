@@ -21,8 +21,8 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        if (System.Web.HttpContext.Current.Session.IsNewSession)
-        {
+        //if (System.Web.HttpContext.Current.Session.IsNewSession)
+        //{
           //
           // process authentication if a provider is configured
           //
@@ -34,6 +34,13 @@ namespace org.iringtools.web.controllers
             if (authNProviderType == null)
             {
               SendError(401, "Unable to load authentication provider.");
+            }
+
+            //when the request is ajax call and there is no authenticated user.
+            if (System.Web.HttpContext.Current.Request.Headers["X-Requested-With"] == "XMLHttpRequest" &&
+               SessionState.Get(System.Web.HttpContext.Current.Session.SessionID, "AuthenticatedUser") == null)
+            {
+                SendError(408, "Request Timeout.");
             }
 
             IAuthentication authNProvider = (IAuthentication)Activator.CreateInstance(authNProviderType);
@@ -96,7 +103,7 @@ namespace org.iringtools.web.controllers
               throw e;
             }
           }
-        }
+      //  }
       }
       catch (Exception e)
       {
