@@ -31,7 +31,6 @@
                 "style": [
                     "font-weight:bold;"
                 ],
-                "designer|userClassName": "MyLabel4",
                 "text": "Data Object"
             },
             "designerId": "699f5e22-b0b9-4cf1-8b0e-94a96b0c0735"
@@ -47,7 +46,6 @@
                 "layout|anchor": "100%",
                 "saveDelay": 160,
                 "disabled": true,
-                "designer|userClassName": "MyTextField20",
                 "fieldLabel": "Table Name",
                 "labelWidth": 160,
                 "name": "tableName",
@@ -65,7 +63,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "saveDelay": 160,
-                "designer|userClassName": "MyTextField20",
                 "fieldLabel": "Object Namespace",
                 "labelWidth": 160,
                 "name": "objectNamespace",
@@ -85,7 +82,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "saveDelay": 160,
-                "designer|userClassName": "MyTextField20",
                 "fieldLabel": "Object Name",
                 "labelWidth": 160,
                 "name": "objectName",
@@ -105,7 +101,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "saveDelay": 160,
-                "designer|userClassName": "MyTextField20",
                 "fieldLabel": "Key Delimiter",
                 "labelWidth": 160,
                 "name": "keyDelimiter",
@@ -123,7 +118,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "height": 140,
-                "designer|userClassName": "MyTextArea2",
                 "fieldLabel": "Description",
                 "labelWidth": 160,
                 "name": "description"
@@ -139,8 +133,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar20"
+                "container|padding": 4
             },
             "designerId": "9307f72b-6b52-4777-bf7e-e26364cb38cd",
             "cn": [
@@ -153,8 +146,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer9"
+                        "width": 4
                     },
                     "designerId": "865371fa-1991-498b-9bc8-4bd1ba11820a"
                 },
@@ -168,7 +160,6 @@
                     "userConfig": {
                         "action": "dataobjectformapply",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton40",
                         "iconCls": "am-apply",
                         "text": "Apply"
                     },
@@ -190,8 +181,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer9"
+                        "width": 4
                     },
                     "designerId": "edb41fb0-354b-4915-a2f7-4dae789e1e3e"
                 },
@@ -205,7 +195,6 @@
                     "userConfig": {
                         "action": "dataobjectformreset",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton40",
                         "iconCls": "am-edit-clear",
                         "text": "Reset"
                     },

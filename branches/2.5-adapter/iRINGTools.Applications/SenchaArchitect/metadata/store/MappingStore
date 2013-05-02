@@ -27,7 +27,6 @@
                 "actionMethods": [
                     "{\"read\":\"POST\"}"
                 ],
-                "designer|userClassName": "MyAjaxProxy9",
                 "extraParams": [
                     "{type: 'MappingNode',id: null,range: null,graphName: null, contextName: null,endpoint: null}"
                 ],
@@ -50,9 +49,6 @@
                         "type": "object"
                     },
                     "codeClass": null,
-                    "userConfig": {
-                        "designer|userClassName": "MyJsonReader9"
-                    },
                     "designerId": "efb158a5-d732-4f92-8985-a402a760a6e0"
                 }
             ]

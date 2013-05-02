@@ -9,7 +9,7 @@ using org.iringtools.library;
 using iRINGTools.Web.Models;
 using log4net;
 using System.Web.Script.Serialization;
-using org.iringtools.web.Helpers;
+using iRINGTools.Web.Helpers;
 using org.iringtools.web.Models;
 
 namespace org.iringtools.web.controllers
@@ -115,7 +115,7 @@ namespace org.iringtools.web.controllers
           {
             _response = _response + " " + ex.Message.ToString();
             _logger.Error(ex + " " + _response);
-            return (JsonNetResult) Json(new { success = false } + _response, JsonRequestBehavior.AllowGet);
+            return Json(new { success = false } + _response, JsonRequestBehavior.AllowGet);
           }
         }
 

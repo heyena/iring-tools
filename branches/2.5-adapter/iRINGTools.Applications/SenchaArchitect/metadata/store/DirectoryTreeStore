@@ -28,7 +28,6 @@
                 "actionMethods": [
                     "{\"read\":\"POST\"}"
                 ],
-                "designer|userClassName": "MyAjaxProxy8",
                 "extraParams": [
                     "{id: null, type: 'ScopesNode', contextName: null, endpoint: null, baseUrl: null, related: null, security: null}"
                 ],
@@ -52,8 +51,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "readRecordsOnFailure": null,
-                        "designer|userClassName": "MyJsonReader8"
+                        "readRecordsOnFailure": null
                     },
                     "designerId": "bc309761-b3fe-40c1-9ab4-72570f49b7d3"
                 }

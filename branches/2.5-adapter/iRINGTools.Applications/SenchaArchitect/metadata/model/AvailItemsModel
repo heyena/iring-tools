@@ -18,8 +18,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "Provider",
-                "designer|userClassName": "MyField"
+                "name": "Provider"
             },
             "designerId": "5de81b70-780b-4315-a9ba-9798bb4e2036"
         }

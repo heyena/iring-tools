@@ -29,8 +29,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "stateId": null,
-                "designer|userClassName": "MyTreeView"
+                "stateId": null
             },
             "designerId": "f6615855-8fc8-4677-8215-c2af677ac7df",
             "cn": [
@@ -43,7 +42,6 @@
                     "codeClass": "Ext.tree.plugin.TreeViewDragDrop",
                     "userConfig": {
                         "dragField": "text",
-                        "designer|userClassName": "MyTreeDragDropPlugin",
                         "ddGroup": "propertyGroup",
                         "dragGroup": "propertyGroup",
                         "dragText": "{0}",
@@ -73,8 +71,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar4"
+                "container|padding": 4
             },
             "designerId": "d6c514dc-06dc-4f44-a592-77d3c55ffc8d",
             "cn": [
@@ -87,7 +84,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton1",
                         "icon": null,
                         "iconCls": "am-view-refresh",
                         "text": "Reload Tree"
@@ -102,7 +98,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -126,7 +121,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getState",
                 "fn": "getState",
                 "implHandler": [
                     "var me = this;\r",
@@ -160,7 +154,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "applyState",
                 "fn": "applyState",
                 "designer|params": [
                     "state"
@@ -186,7 +179,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onClick",
                 "fn": "onClick",
                 "implHandler": [
                     "var me = this;\r",
@@ -212,7 +204,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReload",
                 "fn": "onReload",
                 "implHandler": [
                     "var me = this;\r",
@@ -239,7 +230,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getSelectedNode",
                 "fn": "getSelectedNode",
                 "implHandler": [
                     "var me = this;\r",

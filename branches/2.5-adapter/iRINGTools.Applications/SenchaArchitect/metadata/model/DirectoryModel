@@ -19,8 +19,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "id",
-                "type": "string",
-                "designer|userClassName": "MyField6"
+                "type": "string"
             },
             "designerId": "4609ccb6-ad60-4d67-a395-416fdd279601"
         },
@@ -33,8 +32,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "hidden",
-                "type": "boolean",
-                "designer|userClassName": "MyField7"
+                "type": "boolean"
             },
             "designerId": "27b27836-3e6b-4029-93fc-53486bb66d01"
         },
@@ -47,8 +45,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "property",
-                "type": "auto",
-                "designer|userClassName": "MyField8"
+                "type": "auto"
             },
             "designerId": "521cdff0-3d95-4110-923e-6974f99c07af"
         },
@@ -61,8 +58,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "identifier",
-                "type": "string",
-                "designer|userClassName": "MyField9"
+                "type": "string"
             },
             "designerId": "67633b4b-e835-47da-a733-9e9bdf6cf930"
         },
@@ -75,8 +71,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "text",
-                "type": "string",
-                "designer|userClassName": "MyField10"
+                "type": "string"
             },
             "designerId": "e6d61e5e-f25f-463e-86f2-3b0c9d0135a3"
         },
@@ -89,8 +84,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "type",
-                "type": "string",
-                "designer|userClassName": "MyField11"
+                "type": "string"
             },
             "designerId": "fd77c999-22a8-4c84-8f36-6f3661728b69"
         },
@@ -103,8 +97,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "record",
-                "type": "auto",
-                "designer|userClassName": "MyField12"
+                "type": "auto"
             },
             "designerId": "ee4dbae1-219d-49eb-a73f-d8f8011a1391"
         }

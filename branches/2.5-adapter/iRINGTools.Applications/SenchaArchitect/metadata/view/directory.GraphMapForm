@@ -28,7 +28,6 @@
             "codeClass": null,
             "userConfig": {
                 "hidden": true,
-                "designer|userClassName": "MyFieldSet2",
                 "layout": "fit",
                 "title": null
             },
@@ -42,7 +41,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField22",
                         "fieldLabel": null,
                         "name": "contextName"
                     },
@@ -56,7 +54,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField23",
                         "fieldLabel": null,
                         "name": "endpoint"
                     },
@@ -70,7 +67,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField24",
                         "fieldLabel": null,
                         "name": "oldGraphName"
                     },
@@ -84,7 +80,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField25",
                         "fieldLabel": null,
                         "name": "baseUrl"
                     },
@@ -98,7 +93,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField26",
                         "fieldLabel": null,
                         "name": "mappingNode"
                     },
@@ -112,7 +106,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField27",
                         "fieldLabel": null,
                         "name": "objectName"
                     },
@@ -126,7 +119,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField28",
                         "fieldLabel": null,
                         "name": "classLabel"
                     },
@@ -140,7 +132,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField29",
                         "fieldLabel": null,
                         "name": "classUrl"
                     },
@@ -154,7 +145,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField30",
                         "fieldLabel": null,
                         "name": "oldClassLabel"
                     },
@@ -168,7 +158,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField31",
                         "fieldLabel": null,
                         "name": "oldClassUrl"
                     },
@@ -182,7 +171,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "MyHiddenField37",
                         "fieldLabel": null,
                         "name": "keyProperty"
                     },
@@ -199,7 +187,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextField1",
                 "fieldLabel": "Graph Name",
                 "name": "graphName",
                 "allowBlank": false,
@@ -215,7 +202,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onFormAfterRender",
                 "fn": "onFormAfterRender",
                 "implHandler": [
                     "var me = this;\r",
@@ -298,8 +284,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "bottom",
-                "designer|userClassName": "MyToolbar9"
+                "dock": "bottom"
             },
             "designerId": "fe0014e8-e6de-428c-8e80-bb1d40fee21d",
             "cn": [
@@ -311,8 +296,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyFill5"
+                        "layout|flex": null
                     },
                     "designerId": "1dab312a-11ee-4de4-8505-2ce6907ea4b8"
                 },
@@ -325,7 +309,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton13",
                         "text": "Ok"
                     },
                     "designerId": "c7d5bbe4-b164-460c-826d-7c4ad89c03b0",
@@ -338,7 +321,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -361,7 +343,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton14",
                         "text": "Cancel"
                     },
                     "designerId": "38388b47-4b78-488b-adb4-5c3435534426",
@@ -374,7 +355,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -398,7 +378,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "updateDDContainers",
                 "fn": "updateDDContainers",
                 "designer|params": [
                     "record"
@@ -444,7 +423,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReset",
                 "fn": "onReset",
                 "implHandler": [
                     "var me = this;\r",
@@ -463,7 +441,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
@@ -495,7 +472,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "CustomEvent1",
                 "name": "save"
             },
             "designerId": "630a8301-3b22-4e6e-86c3-bed616420a70"
@@ -517,8 +493,6 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
-                "designer|userClassName": "mapping.PropertyContainer",
-                "designer|userAlias": "propertycontainer",
                 "anchorSize": null
             },
             "designerId": "0b5095f9-4e88-4ef8-8535-27e355e26b56",
@@ -548,9 +522,7 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
-                "width": null,
-                "designer|userClassName": "mapping.ClassContainer",
-                "designer|userAlias": "classcontainer"
+                "width": null
             },
             "designerId": "802c33cb-5f16-4cd5-849e-b5f3393dcc29",
             "customConfigs": [
@@ -569,7 +541,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "CustomEvent2",
                 "name": "reset"
             },
             "designerId": "e7e30472-bd30-489e-8a1c-69c4da51ccef"

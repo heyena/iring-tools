@@ -47,9 +47,6 @@
                 "type": "object"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyTreeView4"
-            },
             "designerId": "e2c9d3b4-41b2-49a3-8e67-cc364497b778"
         },
         {
@@ -61,8 +58,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar17"
+                "container|padding": 4
             },
             "designerId": "04368cd6-39b4-4ee0-bd5c-78aca6d98411",
             "cn": [
@@ -75,8 +71,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer2"
+                        "width": 4
                     },
                     "designerId": "faae635d-589e-44a9-82cd-445d037d8037"
                 },
@@ -90,7 +85,6 @@
                     "userConfig": {
                         "action": "reloaddataobjects",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton32",
                         "icon": null,
                         "iconCls": "am-view-refresh",
                         "text": "Reload",
@@ -115,7 +109,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -138,8 +131,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 2,
-                        "designer|userClassName": "MySpacer3"
+                        "width": 2
                     },
                     "designerId": "11969168-77af-4831-8f7c-526532c75a67"
                 },
@@ -153,7 +145,6 @@
                     "userConfig": {
                         "action": "editdbconnection",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton33",
                         "icon": null,
                         "iconCls": "am-document-properties",
                         "text": "Edit Connection"
@@ -176,8 +167,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 2,
-                        "designer|userClassName": "MySpacer4"
+                        "width": 2
                     },
                     "designerId": "88ee6909-7a21-43d9-8b27-ea1e0d88da93"
                 },
@@ -191,7 +181,6 @@
                     "userConfig": {
                         "action": "savedbobjectstree",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton34",
                         "icon": null,
                         "iconCls": "am-document-save",
                         "text": "Save",
@@ -218,7 +207,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReload",
                 "fn": "onReload",
                 "implHandler": [
                     "var me = this;\r",
@@ -242,7 +230,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getSelectedNode",
                 "fn": "getSelectedNode",
                 "implHandler": [
                     "var me = this;\r",

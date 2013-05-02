@@ -43,8 +43,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "bottom",
-                "designer|userClassName": "MyToolbar4"
+                "dock": "bottom"
             },
             "designerId": "9bb1588e-4fb4-48a2-a780-98d8467a8c9a",
             "cn": [
@@ -56,8 +55,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyFill1"
+                        "layout|flex": null
                     },
                     "designerId": "e871ddfa-0204-4b1d-bca2-ff47ea4d22d7"
                 },
@@ -70,7 +68,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton4",
                         "text": "Ok"
                     },
                     "designerId": "66c0774f-4366-43fb-9718-10da33a15199",
@@ -83,7 +80,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -106,7 +102,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton5",
                         "text": "Cancel"
                     },
                     "designerId": "e1dc46fd-0f14-4e67-a434-d6eee614dd2d",
@@ -119,7 +114,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -143,7 +137,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
@@ -156,21 +149,21 @@
                     "me.getForm().submit({\r",
                     "  waitMsg: 'Saving Data...',\r",
                     "  success: function (response, request) {\r",
-                    "    \r",
+                    "\r",
                     "    win.fireEvent('save', me);\r",
                     "  },\r",
                     "  failure: function (response, request) {\r",
                     "    var rtext = request.result;\r",
                     "    if (rtext.toUpperCase().indexOf('FALSE') > 0) {\r",
-                    "      var ind = rtext.indexOf('}');\r",
-                    "      var len = rtext.length - ind - 1;\r",
-                    "      var msg = rtext.substring(ind + 1, rtext.length - 1);\r",
-                    "      showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);\r",
-                    "      return;\r",
-                    "    }\r",
-                    "    var message = 'Error saving changes!';\r",
-                    "    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "    var ind = rtext.indexOf('}');\r",
+                    "    var len = rtext.length - ind - 1;\r",
+                    "    var msg = rtext.substring(ind + 1, rtext.length - 1);\r",
+                    "    showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);\r",
+                    "    return;\r",
                     "  }\r",
+                    "  var message = 'Error saving changes!';\r",
+                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "}\r",
                     "});"
                 ]
             },
@@ -184,7 +177,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReset",
                 "fn": "onReset",
                 "implHandler": [
                     "var me = this;\r",
@@ -203,7 +195,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField44",
                 "fieldLabel": null,
                 "name": "oldAssembly"
             },
@@ -218,7 +209,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField42",
                 "fieldLabel": null,
                 "name": "assembly"
             },
@@ -233,57 +223,11 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField40",
-                "fieldLabel": null,
-                "name": "contextValue"
-            },
-            "designerId": "40ca7705-d93d-461c-a8ca-27d674a7dc5d"
-        },
-        {
-            "type": "Ext.form.field.Hidden",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField40",
-                "fieldLabel": null,
-                "name": "application"
-            },
-            "designerId": "2bcef4f5-8018-4337-8abe-e23e2d79bc9f"
-        },
-        {
-            "type": "Ext.form.field.Hidden",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
                 "itemId": "state",
-                "designer|userClassName": "MyHiddenField39",
                 "fieldLabel": null,
                 "name": "state"
             },
             "designerId": "113b3811-54f6-4be9-806d-df079da7d719"
-        },
-        {
-            "type": "Ext.form.field.Hidden",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField38",
-                "fieldLabel": null,
-                "name": "path"
-            },
-            "designerId": "57f49f85-8f2e-4c15-b54b-b8d04bdc52df"
         },
         {
             "type": "Ext.form.field.Text",
@@ -294,8 +238,7 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextField5",
-                "fieldLabel": "Endpoint Name",
+                "fieldLabel": "Application Name",
                 "name": "endpoint"
             },
             "designerId": "5e270425-4108-41d2-95f4-cb0c3292a47c"
@@ -309,7 +252,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextArea1",
                 "fieldLabel": "Description",
                 "name": "description"
             },
@@ -324,10 +266,10 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "disabled": true,
-                "designer|userClassName": "MyTextField6",
-                "fieldLabel": "Context Name",
-                "name": "context"
+                "fieldLabel": "Scope Name",
+                "name": "context",
+                "readOnly": true,
+                "allowBlank": false
             },
             "designerId": "2617fadf-03b2-420e-aea2-2aa90b6db62c"
         },

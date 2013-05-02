@@ -49,7 +49,6 @@
             "codeClass": null,
             "userConfig": {
                 "hidden": true,
-                "designer|userClassName": "MyFieldSet",
                 "title": null
             },
             "designerId": "bffe865e-3fdc-4fc8-bb48-36282e5f05d4",
@@ -63,7 +62,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField8",
                         "fieldLabel": null,
                         "name": "graphName"
                     },
@@ -78,7 +76,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField12",
                         "fieldLabel": null,
                         "name": "index"
                     },
@@ -93,7 +90,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField11",
                         "fieldLabel": null,
                         "name": "parentClassId"
                     },
@@ -108,7 +104,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField10",
                         "fieldLabel": null,
                         "name": "roleName"
                     },
@@ -123,7 +118,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField9",
                         "fieldLabel": null,
                         "name": "dataObject"
                     },
@@ -138,7 +132,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField7",
                         "fieldLabel": null,
                         "name": "propertyName"
                     },
@@ -153,7 +146,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField6",
                         "fieldLabel": null,
                         "name": "baseUrl"
                     },
@@ -168,7 +160,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField5",
                         "fieldLabel": null,
                         "name": "endpoint"
                     },
@@ -183,7 +174,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField4",
                         "fieldLabel": null,
                         "name": "contextName"
                     },
@@ -198,7 +188,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField3",
                         "fieldLabel": null,
                         "name": "relation"
                     },
@@ -213,7 +202,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField2",
                         "fieldLabel": null,
                         "name": "classID"
                     },
@@ -228,7 +216,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField1",
                         "fieldLabel": null,
                         "name": "classLabel"
                     },
@@ -243,7 +230,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|anchor": null,
-                        "designer|userClassName": "MyHiddenField",
                         "fieldLabel": null,
                         "name": "objectName"
                     },
@@ -259,8 +245,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "bottom",
-                "designer|userClassName": "MyToolbar8"
+                "dock": "bottom"
             },
             "designerId": "f76134a5-2752-4ada-a81a-f676454e45ee",
             "cn": [
@@ -272,8 +257,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyFill4"
+                        "layout|flex": null
                     },
                     "designerId": "9d92c675-f409-49c6-92d2-59df807b0fd2"
                 },
@@ -286,7 +270,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton11",
                         "text": "Ok"
                     },
                     "designerId": "f5618601-fd63-4f2b-89af-9a8f8c495f0f",
@@ -299,7 +282,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -322,7 +304,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton12",
                         "text": "Cancel"
                     },
                     "designerId": "caf5e631-f85b-4e30-8626-0f0a82e8b9f3",
@@ -335,7 +316,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -359,7 +339,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReset",
                 "fn": "onReset",
                 "implHandler": [
                     "var me = this;\r",
@@ -378,7 +357,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
@@ -424,8 +402,6 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
-                "designer|userClassName": "mapping.PropertyContainer",
-                "designer|userAlias": "propertycontainer",
                 "anchorSize": null
             },
             "designerId": "0121b4fa-f3bc-477a-b5cb-ce74b247711b",
@@ -456,9 +432,7 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
-                "width": null,
-                "designer|userClassName": "mapping.ClassContainer",
-                "designer|userAlias": "classcontainer"
+                "width": null
             },
             "designerId": "f0db1991-6b19-40bd-971d-912e84d62f6b",
             "customConfigs": [
@@ -477,7 +451,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onFormAfterRender",
                 "fn": "onFormAfterRender",
                 "implHandler": [
                     "var me = this;\r",

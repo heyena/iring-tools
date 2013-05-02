@@ -21,7 +21,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "showdata",
-                "designer|userClassName": "MyMenuItem19",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Open Grid"
             },

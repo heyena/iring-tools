@@ -21,7 +21,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "editnewvaluelist",
-                "designer|userClassName": "MyMenuItem20",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New ValueList"
             },

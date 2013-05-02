@@ -21,7 +21,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "templatemapdelete",
-                "designer|userClassName": "MyMenuItem31",
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Delete TemplateMap"
             },

@@ -1,8 +1,9 @@
 <federation xmlns="http://www.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <idgeneratorlist/>
+  <idgeneratorlist>
+  </idgeneratorlist>
   <namespacelist>
     <namespace>
-      <description i:nil="true"/>
+      <description>RDL Classes</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -18,7 +19,7 @@
       <uri>http://rdl.rdlfacade.org/data#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>RDL Templates</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -26,7 +27,7 @@
       <uri>http://tpl.rdlfacade.org/data#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>Data Model</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -34,7 +35,7 @@
       <uri>http://dm.rdlfacade.org/data#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>W3 OWL</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -42,7 +43,7 @@
       <uri>http://www.w3.org/2002/07/owl#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>W3 OWL2-XML</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -50,7 +51,7 @@
       <uri>http://www.w3.org/2006/12/owl2-xml#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>ISO 15926 Part 8</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -58,7 +59,7 @@
       <uri>http://standards.tc184-sc4.org/iso/15926/-8/template-model#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>Part8 Data Model</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -66,7 +67,7 @@
       <uri>http://standards.tc184-sc4.org/iso/15926/-8/data-model#</uri>
     </namespace>
     <namespace>
-      <description i:nil="true"/>
+      <description>Part8 Templates</description>
       <id>0</id>
       <idgenerator>0</idgenerator>
       <iswriteable>false</iswriteable>
@@ -75,24 +76,46 @@
     </namespace>
   </namespacelist>
   <repositorylist>
-    <repository>
-      <description>iRING Sandbox</description>
+<!--     <repository>
+      <description>Hatch Sandbox</description>
       <encryptedcredentials i:nil="true"/>
       <id>1</id>
-      <isreadonly>true</isreadonly>
-      <name>iRING Sandbox</name>
-      <namespaces i:nil="true"/>
+      <isreadonly>false</isreadonly>
+      <name>Hatch Sandbox</name>
+      <namespaces/>
       <repositorytype>Part8</repositorytype>
-      <updateuri i:nil="true"/>
-      <uri>http://www.iringsandbox.org/repositories/SandboxPt8/query</uri>
-    </repository>
+      <updateuri>http://iring.hatch.com.au/services/sandbox/statements</updateuri>
+      <uri>http://iring.hatch.com.au/services/sandbox</uri>
+    </repository>-->
+    <repository>
+      <description>Local Sandbox</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>1</id>
+      <isreadonly>false</isreadonly>
+      <name>Local Sandbox</name>
+      <namespaces/>
+      <repositorytype>Part8</repositorytype>
+      <updateuri>http://localhost:8080/openrdf-sesame/repositories/HatchSandbox/statements</updateuri>
+      <uri>http://localhost:8080/openrdf-sesame/repositories/HatchSandbox</uri>
+    </repository> 
+      <repository>
+        <description>iRING Sandbox</description>
+        <encryptedcredentials i:nil="true"/>
+        <id>2</id>
+        <isreadonly>true</isreadonly>
+        <name>iRING Sandbox Part8</name>
+        <namespaces/>
+        <repositorytype>Part8</repositorytype>
+        <updateuri i:nil="true"/>
+        <uri>http://www.iringsandbox.org/repositories/SandboxPt8/query</uri>
+      </repository>
     <repository>
       <description>RDS/Proto and P7 Initial Set Templates</description>
       <encryptedcredentials i:nil="true"/>
-      <id>2</id>
+      <id>4</id>
       <isreadonly>true</isreadonly>
-      <name>Proto and Initial</name>
-      <namespaces i:nil="true"/>
+      <name>Proto and Initial Part8</name>
+      <namespaces/>
       <repositorytype>Part8</repositorytype>
       <updateuri i:nil="true"/>
       <uri>http://www.iringsandbox.org/repositories/TempInitSetPt8/query</uri>
@@ -100,13 +123,13 @@
     <repository>
       <description>JORD Endpoint</description>
       <encryptedcredentials i:nil="true"/>
-      <id>3</id>
+      <id>5</id>
       <isreadonly>true</isreadonly>
       <name>JORD</name>
-      <namespaces i:nil="true"/>
+      <namespaces/>
       <repositorytype>JORD</repositorytype>
       <updateuri i:nil="true"/>
       <uri>http://posccaesar.org/endpoint/sparql</uri>
-    </repository> 
+    </repository>
   </repositorylist>
 </federation>

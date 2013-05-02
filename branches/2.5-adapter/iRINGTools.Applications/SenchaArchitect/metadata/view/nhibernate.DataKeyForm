@@ -38,7 +38,6 @@
                 "style": [
                     "font-weight:bold;"
                 ],
-                "designer|userClassName": "MyLabel5",
                 "text": "Key Property"
             },
             "designerId": "c6091f62-91a3-445b-872f-db83bc484dc8"
@@ -52,7 +51,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField24",
                 "fieldLabel": "Column Name",
                 "labelWidth": 160,
                 "name": "columnName",
@@ -69,7 +67,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField24",
                 "fieldLabel": "Property Name (editable)",
                 "labelWidth": 160,
                 "name": "propertyName",
@@ -88,7 +85,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField24",
                 "fieldLabel": "Data Type",
                 "labelWidth": 160,
                 "name": "dataType",
@@ -105,7 +101,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField24",
                 "fieldLabel": "Data Length",
                 "labelWidth": 160,
                 "name": "dataLength",
@@ -122,7 +117,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField24",
                 "fieldLabel": "Nullable",
                 "labelWidth": 160,
                 "name": "nullable",
@@ -139,7 +133,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField24",
                 "fieldLabel": "Show on Index",
                 "labelWidth": 160,
                 "name": "showOnIndex",
@@ -156,7 +149,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField24",
                 "fieldLabel": "Number of Decimals",
                 "labelWidth": 160,
                 "name": "numberOfDecimals",
@@ -173,7 +165,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField24",
                 "fieldLabel": "Key Type",
                 "labelWidth": 160,
                 "name": "keyType",
@@ -190,8 +181,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar21"
+                "container|padding": 4
             },
             "designerId": "9b8091e4-b5a4-4321-a68a-e0a525d7b25d",
             "cn": [
@@ -204,8 +194,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer11"
+                        "width": 4
                     },
                     "designerId": "a68af1a1-4a23-43be-9911-2c87ed435fc9"
                 },
@@ -219,7 +208,6 @@
                     "userConfig": {
                         "action": "savekeyfield",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton42",
                         "iconCls": "am-apply",
                         "text": "Apply"
                     },
@@ -241,8 +229,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer11"
+                        "width": 4
                     },
                     "designerId": "033677f0-9c5d-464a-96b0-fca506ab0f12"
                 },
@@ -256,7 +243,6 @@
                     "userConfig": {
                         "action": "resetkeyproperty",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton42",
                         "iconCls": "am-edit-clear",
                         "text": "Reset"
                     },
@@ -279,7 +265,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "setActiveRecord",
                 "fn": "setActiveRecord",
                 "designer|params": [
                     "record"

@@ -18,8 +18,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "id",
-                "designer|userClassName": "MyField32"
+                "name": "id"
             },
             "designerId": "42404b32-cf3a-4cb6-be48-4c771da88eba"
         },
@@ -31,8 +30,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "property",
-                "designer|userClassName": "MyField33"
+                "name": "property"
             },
             "designerId": "67a06ef3-b204-4841-8ceb-66e3bcaf0cb7"
         },
@@ -44,8 +42,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "identifier",
-                "designer|userClassName": "MyField34"
+                "name": "identifier"
             },
             "designerId": "7a2d394d-61cf-4ddc-a639-b278104314b0"
         },
@@ -57,8 +54,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "text",
-                "designer|userClassName": "MyField35"
+                "name": "text"
             },
             "designerId": "ce860b84-501e-4989-a5a1-3bb4ca3b9963"
         },
@@ -70,8 +66,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "type",
-                "designer|userClassName": "MyField36"
+                "name": "type"
             },
             "designerId": "6f61bc1c-037e-4a62-b598-8ea13272faef"
         },
@@ -83,8 +78,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "record",
-                "designer|userClassName": "MyField37"
+                "name": "record"
             },
             "designerId": "059890ee-6262-4a7f-8cec-1ebe93d9f8eb"
         },
@@ -96,8 +90,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "properties",
-                "designer|userClassName": "MyField38"
+                "name": "properties"
             },
             "designerId": "60753163-b8f0-4e3f-8b8d-fc2409cdb7c1"
         }

@@ -35,8 +35,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "bottom",
-                "designer|userClassName": "MyToolbar5"
+                "dock": "bottom"
             },
             "designerId": "fb8fbdd2-27ef-44ec-acca-acbc27ac4da5",
             "cn": [
@@ -48,8 +47,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyFill2"
+                        "layout|flex": null
                     },
                     "designerId": "8fac9b48-73d4-48d1-a2c6-1e376d4543c2"
                 },
@@ -62,7 +60,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton6",
                         "text": "Ok"
                     },
                     "designerId": "24689253-2484-421c-8b19-529ad7a17987",
@@ -75,7 +72,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -98,7 +94,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton7",
                         "text": "Cancel"
                     },
                     "designerId": "1bed6fb1-9943-4747-8b4e-b31405d92850",
@@ -111,7 +106,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -135,7 +129,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReset",
                 "fn": "onReset",
                 "implHandler": [
                     "var me = this;\r",
@@ -153,7 +146,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
@@ -191,7 +183,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField36",
                 "fieldLabel": null,
                 "name": "state"
             },
@@ -206,7 +197,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextField3",
                 "fieldLabel": "Name",
                 "name": "name",
                 "allowBlank": false
@@ -222,7 +212,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextField4",
                 "fieldLabel": "Main DLL",
                 "name": "mainDLL",
                 "allowBlank": false
@@ -238,7 +227,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyFileUpload",
                 "fieldLabel": "Package File",
                 "name": "packageFile",
                 "allowBlank": false

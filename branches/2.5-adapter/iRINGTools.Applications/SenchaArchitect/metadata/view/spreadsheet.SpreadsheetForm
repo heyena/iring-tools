@@ -34,8 +34,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "bottom",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar14"
+                "container|padding": 4
             },
             "designerId": "ee726ea3-80c5-46fb-b2fa-1a1c9a265884",
             "cn": [
@@ -47,8 +46,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyFill9"
+                        "layout|flex": null
                     },
                     "designerId": "abb17c28-8074-432e-b0bc-d8b6404ee505"
                 },
@@ -61,7 +59,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton26",
                         "icon": "Content/img/16x16/document-up.png",
                         "text": "Upload"
                     },
@@ -78,7 +75,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField70",
                 "fieldLabel": null,
                 "name": "contectName"
             },
@@ -93,7 +89,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField70",
                 "fieldLabel": null,
                 "name": "endpoint"
             },
@@ -108,7 +103,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField70",
                 "fieldLabel": null,
                 "name": "baseUrl"
             },
@@ -123,7 +117,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField70",
                 "fieldLabel": null,
                 "name": "datalayer"
             },
@@ -138,7 +131,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyFileUpload1",
                 "fieldLabel": "Spreadsheet Source",
                 "labelWidth": 150,
                 "name": "sourceFile",
@@ -159,7 +151,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyCheckbox1",
                 "fieldLabel": "Generate Configuration",
                 "labelWidth": 150,
                 "name": "generate",

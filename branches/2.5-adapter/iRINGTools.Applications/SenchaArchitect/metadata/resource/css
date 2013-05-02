@@ -6,6 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
+        "designer|userClassName": "css",
         "url": "Content/css/adaptermanager-gray.css"
     },
     "designerId": "ac4d90f8-b4e0-485c-a04a-e19fd423b21c"

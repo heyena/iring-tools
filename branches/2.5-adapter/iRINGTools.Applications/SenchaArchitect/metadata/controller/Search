@@ -30,7 +30,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "searchPanel",
                 "ref": "searchPanel",
                 "selector": "viewport > centerpanel > searchpanel"
             },
@@ -44,7 +43,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "searchProperty",
                 "ref": "searchProperty",
                 "selector": "viewport > centerpanel > searchpanel > propertypanel"
             },
@@ -58,7 +56,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "searchContent",
                 "ref": "searchContent",
                 "selector": "viewport > centerpanel > searchpanel > contentpanel"
             },
@@ -72,7 +69,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSearchRdl",
                 "fn": "onSearchRdl",
                 "implHandler": [
                     "var me = this;  \r",
@@ -162,7 +158,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSearchClick",
                 "fn": "onSearchClick",
                 "designer|params": [
                     "view",

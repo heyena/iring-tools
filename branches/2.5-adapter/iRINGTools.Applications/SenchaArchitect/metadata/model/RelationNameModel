@@ -18,8 +18,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "relationName",
-                "designer|userClassName": "MyField31"
+                "name": "relationName"
             },
             "designerId": "e0faaa48-a071-4681-96a6-e7ec73d75b92"
         }

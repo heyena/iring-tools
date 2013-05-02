@@ -64,7 +64,6 @@
                 "layout|split": true,
                 "itemId": "nhibernateContent",
                 "width": 150,
-                "designer|userClassName": "MyContainer13",
                 "layout": "fit"
             },
             "designerId": "ebb5ac25-f61a-4708-8d1d-f1d197b5163d"

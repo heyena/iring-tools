@@ -21,7 +21,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "encode",
                 "fn": "encode",
                 "designer|params": [
                     "data"
@@ -73,7 +72,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "decode",
                 "fn": "decode",
                 "designer|params": [
                     "data"
@@ -126,7 +124,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "utf8Encode",
                 "fn": "utf8Encode",
                 "designer|params": [
                     "argString"
@@ -181,7 +178,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "utf8Decode",
                 "fn": "utf8Decode",
                 "designer|params": [
                     "argString"

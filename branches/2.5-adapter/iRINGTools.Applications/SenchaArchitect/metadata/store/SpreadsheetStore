@@ -27,7 +27,6 @@
                 "actionMethods": [
                     "{\"read\":\"POST\"}"
                 ],
-                "designer|userClassName": "MyAjaxProxy10",
                 "designer|displayName": "SpreadsheetProxy",
                 "extraParams": [
                     "{type: 'ExcelWorkbookNode', context: null, endpoint: null, baseurl: null}"
@@ -51,9 +50,6 @@
                         "type": "object"
                     },
                     "codeClass": null,
-                    "userConfig": {
-                        "designer|userClassName": "MyJsonReader10"
-                    },
                     "designerId": "bf469920-f2f5-43e5-8793-93323079f1e0"
                 }
             ]

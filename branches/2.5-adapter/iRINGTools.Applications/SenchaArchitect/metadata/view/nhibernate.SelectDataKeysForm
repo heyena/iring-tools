@@ -28,8 +28,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar22"
+                "container|padding": 4
             },
             "designerId": "97a8deea-c724-4706-adbd-a7fd3e4cd6aa",
             "cn": [
@@ -42,8 +41,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer13"
+                        "width": 4
                     },
                     "designerId": "76c9aa5a-d8af-4b09-80c9-cdca1c7d8591"
                 },
@@ -57,7 +55,6 @@
                     "userConfig": {
                         "action": "saveselectkeys",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton44",
                         "iconCls": "am-apply",
                         "text": "Apply"
                     },
@@ -79,8 +76,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer13"
+                        "width": 4
                     },
                     "designerId": "7e786d86-b75d-45a0-8fea-6f4f8a42f6be"
                 },
@@ -94,7 +90,6 @@
                     "userConfig": {
                         "action": "resetselectkeys",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton44",
                         "iconCls": "am-edit-clear",
                         "text": "Reset"
                     },

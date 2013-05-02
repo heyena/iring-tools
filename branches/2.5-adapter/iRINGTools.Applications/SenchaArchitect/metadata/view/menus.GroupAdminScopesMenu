@@ -22,7 +22,6 @@
             "userConfig": {
                 "action": "newdatalayer",
                 "floating": null,
-                "designer|userClassName": "MyMenuItem4",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New Data Layer"
             },
@@ -44,7 +43,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "editdatalayer",
-                "designer|userClassName": "MyMenuItem5",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit Data Layer"
             },
@@ -66,7 +64,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletedatalayer",
-                "designer|userClassName": "MyMenuItem6",
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Delete Data Layer"
             },
@@ -86,9 +83,6 @@
                 "type": "array"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MySeparator1"
-            },
             "designerId": "10d76a5f-fcb8-44e8-beec-e4c3d8eaa5e1"
         },
         {
@@ -100,7 +94,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "regenerateall",
-                "designer|userClassName": "MyMenuItem7",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "Regenerate Hibernate Artifacts"
             },

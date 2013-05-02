@@ -56,7 +56,6 @@
                 "style": [
                     "font-weight:bold;"
                 ],
-                "designer|userClassName": "MyLabel9",
                 "text": "Configure Relationship"
             },
             "designerId": "528dde09-4029-4027-87d5-0d7ce455debe"
@@ -71,7 +70,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "disabled": null,
-                "designer|userClassName": "MyTextField39",
                 "fieldLabel": "Relationship Name",
                 "labelWidth": 160,
                 "name": "relationshipName",
@@ -90,7 +88,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "disabled": null,
-                "designer|userClassName": "MyTextField39",
                 "fieldLabel": "Object Name",
                 "labelWidth": 160,
                 "name": "objectName",
@@ -109,7 +106,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "itemId": "relatedObjectCmb",
-                "designer|userClassName": "MyComboBox5",
                 "fieldLabel": "Related Object Name",
                 "labelWidth": 160,
                 "name": "relatedObjectName",
@@ -130,7 +126,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "onRelatedObjectSelect",
                         "fn": "onRelatedObjectSelect",
                         "implHandler": [
                             "var me = this;\r",
@@ -184,13 +179,14 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "itemId": "relationType",
-                "designer|userClassName": "MyComboBox6",
                 "fieldLabel": "Relation Type",
                 "labelWidth": 160,
                 "name": "relationType",
                 "allowBlank": false,
                 "queryMode": "local",
-                "store": "[\"[['OneToOne', 'OneToOne'], ['OneToMany', 'OneToMany']]\"]"
+                "store": [
+                    "[\"[['OneToOne', 'OneToOne'], ['OneToMany', 'OneToMany']]\"]"
+                ]
             },
             "configAlternates": {
                 "store": "array"
@@ -207,7 +203,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "itemId": "propertyNameCmb",
-                "designer|userClassName": "MyComboBox7",
                 "fieldLabel": "Property Name",
                 "labelWidth": 160,
                 "name": "propertyName",
@@ -223,7 +218,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "onPropertySelect",
                         "fn": "onPropertySelect",
                         "implHandler": [
                             ""
@@ -245,7 +239,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "itemId": "mapPropertyNameCmb",
-                "designer|userClassName": "MyComboBox8",
                 "fieldLabel": "Mapping Property",
                 "labelWidth": 160,
                 "name": "mapPropertyName",
@@ -275,8 +268,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "top",
-                "designer|userClassName": "MyToolbar20"
+                "dock": "top"
             },
             "designerId": "b6c750d2-40b6-4c87-864f-6ad503b8ace5",
             "cn": [
@@ -289,7 +281,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton40",
                         "iconCls": "am-apply",
                         "text": "Apply"
                     },
@@ -303,7 +294,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "onPropertyMapClick",
                                 "fn": "onPropertyMapClick",
                                 "implHandler": [
                                     "var me = this;\r",
@@ -353,8 +343,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MySpacer20"
+                        "layout|flex": null
                     },
                     "designerId": "d10df495-eea8-4536-a520-d5e1c6c9ece1"
                 },
@@ -367,7 +356,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton41",
                         "iconCls": "am-edit-clear",
                         "text": "Reset"
                     },

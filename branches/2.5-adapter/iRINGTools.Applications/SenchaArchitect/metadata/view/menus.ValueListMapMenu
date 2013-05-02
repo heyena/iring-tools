@@ -22,7 +22,6 @@
             "userConfig": {
                 "action": "editnewvaluemap",
                 "itemId": "editvaluemap",
-                "designer|userClassName": "MyMenuItem24",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit Value List Map"
             },
@@ -44,7 +43,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletevaluemap",
-                "designer|userClassName": "MyMenuItem25",
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Delete Value List Map"
             },

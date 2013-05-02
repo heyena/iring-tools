@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using iRINGTools.Web.Models;
 using org.iringtools.library;
-using org.iringtools.adapter.security;
+//using org.iringtools.adapter.security;
 using iRINGTools.Web.Helpers;
 using System;
 using System.Web;

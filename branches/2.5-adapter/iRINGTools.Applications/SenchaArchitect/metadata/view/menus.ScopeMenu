@@ -22,7 +22,6 @@
             "userConfig": {
                 "action": "neweditscope",
                 "itemId": "editfolder",
-                "designer|userClassName": "MyMenuItem2",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit Scope"
             },
@@ -44,7 +43,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletescope",
-                "designer|userClassName": "MyMenuItem3",
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Delete Scope"
             },
@@ -64,9 +62,6 @@
                 "type": "array"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MySeparator"
-            },
             "designerId": "078cc668-bafe-4199-8432-3ab007490743"
         },
         {
@@ -78,7 +73,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "neweditendpoint",
-                "designer|userClassName": "MyMenuItem26",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New Application"
             },

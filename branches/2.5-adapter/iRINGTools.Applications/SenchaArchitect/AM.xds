@@ -3,17 +3,17 @@
     "settings": {
         "urlPrefix": "http://localhost:52277/",
         "spacesToIndent": 2,
-        "exportPath": "C:/Adapter-2.5/iRINGTools.Applications",
+        "exportPath": "C:/iring-tools/branches/2.5-adapter/iRINGTools.Applications",
         "sdkPath": "",
         "lineEnding": "CRLF",
         "genTimestamps": false,
         "cacheBust": false,
         "buildShouldOverwriteIndex": true
     },
-    "xdsVersion": "2.2.0",
-    "xdsBuild": 894,
+    "xdsVersion": "2.2.2",
+    "xdsBuild": 971,
     "schemaVersion": 1,
-    "upgradeVersion": 210000000499,
+    "upgradeVersion": 210000000501,
     "framework": "ext41",
     "topInstanceFileMap": {
         "be3f23ad-f579-463e-98fb-9e65fd3b6f6a": {

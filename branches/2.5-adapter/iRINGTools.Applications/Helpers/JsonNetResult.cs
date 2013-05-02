@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace org.iringtools.web.Helpers
+namespace iRINGTools.Web.Helpers
 {
    public class JsonNetResult : JsonResult
   {

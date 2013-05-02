@@ -32,7 +32,6 @@
                 "actionMethods": [
                     "{\"read\":\"POST\"}"
                 ],
-                "designer|userClassName": "MyAjaxProxy6",
                 "extraParams": [
                     "{\r",
                     "  contextName: null,\r",
@@ -69,9 +68,6 @@
                         "type": "object"
                     },
                     "codeClass": null,
-                    "userConfig": {
-                        "designer|userClassName": "MyJsonReader6"
-                    },
                     "designerId": "e9706447-dbdf-4be5-8da2-17f703d15a60"
                 }
             ]

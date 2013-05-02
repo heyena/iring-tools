@@ -29,7 +29,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "valueListName"
             },
@@ -43,7 +42,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "relatedObject"
             },
@@ -57,7 +55,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "propertyName"
             },
@@ -71,7 +68,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "mappingNode"
             },
@@ -85,7 +81,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "index"
             },
@@ -99,7 +94,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "classId"
             },
@@ -113,7 +107,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "graphName"
             },
@@ -127,7 +120,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "roleName"
             },
@@ -141,7 +133,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "contextName"
             },
@@ -155,7 +146,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "endpoint"
             },
@@ -169,7 +159,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyHiddenField54",
                 "fieldLabel": null,
                 "name": "baseUrl"
             },
@@ -183,8 +172,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "bottom",
-                "designer|userClassName": "MyToolbar12"
+                "dock": "bottom"
             },
             "designerId": "6fcbf2f4-b468-43a7-a162-fb16f4768695",
             "cn": [
@@ -196,8 +184,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyFill8"
+                        "layout|flex": null
                     },
                     "designerId": "d65acdf9-8463-47df-803d-40d8a8d2ae43"
                 },
@@ -210,7 +197,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton20",
                         "text": "Ok"
                     },
                     "designerId": "6c1de92d-8d45-4856-9eaa-b712134686aa",
@@ -223,7 +209,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -246,7 +231,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton21",
                         "text": "Cancel"
                     },
                     "designerId": "c37ff24a-514f-4102-9e28-18d21b3bc376",
@@ -259,7 +243,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -283,7 +266,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onFormAfterRender",
                 "fn": "onFormAfterRender",
                 "implHandler": [
                     "var me = this;\r",
@@ -359,7 +341,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReset",
                 "fn": "onReset",
                 "implHandler": [
                     "var me = this;\r",
@@ -377,7 +358,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
@@ -415,8 +395,6 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
-                "designer|userClassName": "mapping.PropertyContainer",
-                "designer|userAlias": "propertycontainer",
                 "anchorSize": null
             },
             "designerId": "afb8c092-88cb-4d3c-ab52-a2a069a19526",
@@ -446,9 +424,7 @@
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
                 "styleHtmlContent": true,
-                "width": null,
-                "designer|userClassName": "mapping.ClassContainer",
-                "designer|userAlias": "classcontainer"
+                "width": null
             },
             "designerId": "13f66bcb-80df-4c8c-a053-b91315952c53",
             "customConfigs": [
@@ -467,7 +443,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "updateDDContainers",
                 "fn": "updateDDContainers",
                 "designer|params": [
                     "record"

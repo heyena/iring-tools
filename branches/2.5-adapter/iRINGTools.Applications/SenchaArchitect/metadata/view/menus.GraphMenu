@@ -21,7 +21,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "refreshfacade",
-                "designer|userClassName": "MyMenuItem27",
                 "icon": "Content/img/table_refresh.png",
                 "text": "Refresh Facade"
             },
@@ -41,9 +40,6 @@
                 "type": "array"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MySeparator6"
-            },
             "designerId": "d8f13301-0125-4b9b-9929-b7a3ef639c5e"
         },
         {
@@ -56,7 +52,6 @@
             "userConfig": {
                 "action": "editnewgraph",
                 "itemId": "editgraph",
-                "designer|userClassName": "MyMenuItem28",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit GraphMap"
             },
@@ -78,7 +73,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletegraph",
-                "designer|userClassName": "MyMenuItem29",
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Delete GraphMap"
             },
@@ -98,9 +92,6 @@
                 "type": "array"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MySeparator7"
-            },
             "designerId": "4641f6e8-7efc-4e51-bd00-91a1de6418a5"
         },
         {
@@ -112,7 +103,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "opengraph",
-                "designer|userClassName": "MyMenuItem30",
                 "icon": "Content/img/16x16/mapping.png",
                 "text": "Open GraphMap"
             },

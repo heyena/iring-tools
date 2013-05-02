@@ -10,7 +10,17 @@
         "storeId": "searchcmbstore",
         "designer|userClassName": "SearchCmbStore",
         "clearOnPageLoad": false,
-        "data": "[\r\n  {\"limit\":\"50\", \"value\":50},\r\n  {\"limit\":\"100\", \"value\":100},\r\n  {\"limit\":\"200\", \"value\":200},\r\n  {\"limit\":\"400\", \"value\":400},\r\n  {\"limit\":\"600\", \"value\":600},\r\n  {\"limit\":\"800\", \"value\":800}\r\n]\r\n"
+        "data": [
+            "[\r",
+            "  {\"limit\":\"50\", \"value\":50},\r",
+            "  {\"limit\":\"100\", \"value\":100},\r",
+            "  {\"limit\":\"200\", \"value\":200},\r",
+            "  {\"limit\":\"400\", \"value\":400},\r",
+            "  {\"limit\":\"600\", \"value\":600},\r",
+            "  {\"limit\":\"800\", \"value\":800}\r",
+            "]\r",
+            ""
+        ]
     },
     "designerId": "cdfeedca-6f01-4cca-8571-032eb19b8cdc",
     "cn": [
@@ -24,8 +34,7 @@
             "userConfig": {
                 "name": "limit",
                 "persist": null,
-                "type": "string",
-                "designer|userClassName": "MyField45"
+                "type": "string"
             },
             "designerId": "05aef29d-1e52-4e5d-b769-d5e75957e0cd"
         },
@@ -38,8 +47,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "value",
-                "type": "string",
-                "designer|userClassName": "MyField46"
+                "type": "string"
             },
             "designerId": "01b8c596-fcf0-47ca-81f9-89671ab4d939"
         }

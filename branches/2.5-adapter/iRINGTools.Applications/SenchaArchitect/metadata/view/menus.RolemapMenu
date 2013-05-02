@@ -21,7 +21,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "addclassmap",
-                "designer|userClassName": "MyMenuItem32",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "Add ClassMap"
             },
@@ -43,7 +42,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "makepossessor",
-                "designer|userClassName": "MyMenuItem33",
                 "text": "Make Possessor"
             },
             "designerId": "42d21458-aaed-42d3-9409-a28bcfb0dd66",
@@ -64,7 +62,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "makereference",
-                "designer|userClassName": "MyMenuItem34",
                 "text": "Make Reference"
             },
             "designerId": "928f718c-d20a-4160-b03c-dbfa2703e41f",
@@ -85,7 +82,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "mapproperty",
-                "designer|userClassName": "MyMenuItem35",
                 "text": "Map Property"
             },
             "designerId": "8f914b5c-0a7a-4d35-9e5e-4934a0a8c458",
@@ -106,7 +102,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "mapvaluelist",
-                "designer|userClassName": "MyMenuItem36",
                 "text": "Map ValueList"
             },
             "designerId": "f6e9be1d-fe43-439a-8269-8c972c524bf4",
@@ -127,7 +122,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "resetmapping",
-                "designer|userClassName": "MyMenuItem37",
                 "text": "Reset Mapping"
             },
             "designerId": "6b9ab722-1f82-4200-94c7-c787299aca98",

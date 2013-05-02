@@ -19,8 +19,7 @@
             "codeClass": null,
             "userConfig": {
                 "mapping": "Context",
-                "name": "context",
-                "designer|userClassName": "MyField2"
+                "name": "context"
             },
             "designerId": "c6cd1ba2-52ed-4a47-9e4b-ad527a44706f"
         }

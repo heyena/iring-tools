@@ -21,7 +21,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyAjaxProxy1",
                 "extraParams": [
                     "{}"
                 ],
@@ -38,8 +37,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "root": "items",
-                        "designer|userClassName": "MyJsonReader1"
+                        "root": "items"
                     },
                     "designerId": "17267c28-bbab-445a-a437-4a0008e05267"
                 }

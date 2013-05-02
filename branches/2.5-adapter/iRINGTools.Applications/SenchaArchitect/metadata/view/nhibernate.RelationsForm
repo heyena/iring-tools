@@ -57,7 +57,6 @@
                 "style": [
                     "font-weight:bold;"
                 ],
-                "designer|userClassName": "MyLabel2",
                 "text": "Add/Remove relationship"
             },
             "designerId": "7da1185d-6ca6-45cd-99ee-ac1cc6d5e47a"
@@ -70,7 +69,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyTextField16",
                 "fieldLabel": "Relationship Name",
                 "labelWidth": null,
                 "name": "relationName",
@@ -87,7 +85,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "onRelationKeydown",
                         "fn": "onRelationKeydown",
                         "implHandler": [
                             "var me = this;\r",
@@ -126,7 +123,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "addRelationship",
                 "fn": "addRelationship",
                 "designer|params": [
                     "form"
@@ -226,7 +222,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "CustomEvent1",
                 "name": "createrelation",
                 "params": [
                     "form",

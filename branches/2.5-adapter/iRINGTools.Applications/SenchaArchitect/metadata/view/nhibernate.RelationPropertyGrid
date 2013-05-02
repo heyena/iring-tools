@@ -23,9 +23,6 @@
                 "type": "object"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyGridView4"
-            },
             "designerId": "a90adf2a-10ae-4abd-8cc1-3ce2759974e7"
         },
         {
@@ -36,8 +33,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "top",
-                "designer|userClassName": "MyToolbar18"
+                "dock": "top"
             },
             "designerId": "a3c7b4ad-a009-4d74-8473-5ff64f02dd8f",
             "cn": [
@@ -50,7 +46,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton36",
                         "iconCls": "am-list-add",
                         "text": "Add"
                     },
@@ -64,7 +59,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "onAddClick",
                                 "fn": "onAddClick",
                                 "implHandler": [
                                     "var me = this;\r",
@@ -128,8 +122,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer19"
+                        "width": 4
                     },
                     "designerId": "a05088ee-309a-4005-bd9a-0c59b430b940"
                 },
@@ -142,7 +135,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton37",
                         "iconCls": "am-list-remove",
                         "text": "Remove"
                     },
@@ -156,7 +148,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "onRemoveClick",
                                 "fn": "onRemoveClick",
                                 "implHandler": [
                                     ""
@@ -178,7 +169,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyColumn6",
                 "dataIndex": "property",
                 "text": "Property"
             },
@@ -192,7 +182,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyColumn7",
                 "dataIndex": "relatedProperty",
                 "text": "Related Property"
             },

@@ -20,8 +20,7 @@
             "userConfig": {
                 "mapping": "dataObjects",
                 "name": "text",
-                "type": "string",
-                "designer|userClassName": "MyField43"
+                "type": "string"
             },
             "designerId": "a46a78ac-92f3-41ee-a5ac-50293b55f12a"
         },
@@ -35,8 +34,7 @@
             "userConfig": {
                 "mapping": "dataObjects",
                 "name": "tableName",
-                "type": "string",
-                "designer|userClassName": "MyField44"
+                "type": "string"
             },
             "designerId": "163df5fd-baed-431d-a1db-b2e51d24117b"
         }

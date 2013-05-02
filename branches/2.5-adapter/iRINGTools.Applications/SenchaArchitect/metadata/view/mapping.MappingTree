@@ -54,9 +54,6 @@
                 "type": "object"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyTreeView1"
-            },
             "designerId": "a291d01c-747c-4845-9481-a6e55174dd98",
             "cn": [
                 {
@@ -67,7 +64,6 @@
                     },
                     "codeClass": "Ext.tree.plugin.TreeViewDragDrop",
                     "userConfig": {
-                        "designer|userClassName": "MyTreeDragDropPlugin1",
                         "ddGroup": "refdataGroup",
                         "enableDrag": false
                     },
@@ -81,7 +77,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "onBeforeNodeDrop",
                                 "fn": "onBeforeNodeDrop",
                                 "implHandler": [
                                     "var me = this;\r",
@@ -183,8 +178,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "width": null,
-                "designer|userClassName": "MyToolbar6"
+                "width": null
             },
             "designerId": "2c635a91-7155-4759-93ac-8c9b1fb7c4a9",
             "cn": [
@@ -197,7 +191,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton8",
                         "icon": "Content/img/16x16/view-refresh.png",
                         "text": "Reload Tree"
                     },
@@ -211,7 +204,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -236,7 +228,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton31",
                         "icon": "Content/img/16x16/document-save.png",
                         "text": "Save"
                     },
@@ -250,7 +241,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -274,7 +264,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showContextMenu",
                 "fn": "showContextMenu",
                 "implHandler": [
                     "var me = this;\r",
@@ -305,7 +294,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "applyState",
                 "fn": "applyState",
                 "designer|params": [
                     "state"
@@ -331,7 +319,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getState",
                 "fn": "getState",
                 "implHandler": [
                     "var me = this;\r",
@@ -365,7 +352,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReload",
                 "fn": "onReload",
                 "implHandler": [
                     "var me = this;\r",
@@ -403,7 +389,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
@@ -435,7 +420,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getParentClass",
                 "fn": "getParentClass",
                 "designer|params": [
                     "n"
@@ -464,7 +448,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onBeforeLoad",
                 "fn": "onBeforeLoad",
                 "implHandler": [
                     "store.proxy.extraParams.type = operation.node.data.type;\r",
@@ -485,7 +468,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getSelectedNode",
                 "fn": "getSelectedNode",
                 "implHandler": [
                     "var me = this;\r",
@@ -502,9 +484,6 @@
                 "type": "object"
             },
             "codeClass": "Ext.selection.RowModel",
-            "userConfig": {
-                "designer|userClassName": "MyRowSelectionModel1"
-            },
             "designerId": "9a74fcfe-3f6f-4073-b6f8-8efa93d36867"
         },
         {
@@ -515,8 +494,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "processMappingMappingTree",
-                "fn": "processMappingMappingTree",
+                "fn": "processMappingTree",
                 "designer|params": [
                     "config"
                 ],

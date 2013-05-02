@@ -60,25 +60,23 @@ namespace org.iringtools.web.controllers
 
               if (contexts != null)
               {
-                foreach (var scope in contexts)
-                {
-                  var node = new JsonTreeNode
-                    {
-                      nodeType = "async",
-                      type = "ScopeNode",
-                      iconCls = "scope",
-                      id = scope.Name,
-                      text = scope.Name,
-                      expanded = false,
-                      leaf = false,
-                      children = null,
-                      record = scope,
-                      property =
-                        new Dictionary<string, string> {{"Name", scope.Name}, {"Description", scope.Description}}
-                    };
-
-                  nodes.Add(node);
-                }
+                nodes.AddRange(contexts.Select(scope => new JsonTreeNode
+                  {
+                    nodeType = "async", 
+                    type = "ScopeNode", 
+                    iconCls = "scope", 
+                    id = scope.Name, 
+                    text = scope.Name, 
+                    expanded = false, 
+                    leaf = false, 
+                    children = null, 
+                    record = scope, 
+                    property = new Dictionary<string, string>
+                      {
+                        {"Name", scope.Name}, 
+                        {"Description", scope.Description}
+                      }
+                  }));
               }
 
               return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -532,8 +530,8 @@ namespace org.iringtools.web.controllers
 
     public JsonResult Application(FormCollection form)
     {
-      var success = String.Empty;
-      var context = form["contextValue"];
+      string success = String.Empty;
+      string context = form["context"];
       library.Configuration configuration = new Configuration
       {
         AppSettings = new AppSettings
@@ -542,20 +540,22 @@ namespace org.iringtools.web.controllers
         }
       };
 
-      for (var i = 0; i < form.AllKeys.Length; i++)
+      for (int i = 0; i < form.AllKeys.Length; i++)
       {
-        if (form.GetKey(i).ToLower() != "contextValue" &&
-          form.GetKey(i).ToLower() != "endpoint" &&
-          form.GetKey(i).ToLower() != "description"
-          && form.GetKey(i).ToLower() != "assembly" &&
-          form.GetKey(i).ToLower() != "application" &&
-          form.GetKey(i).ToLower().Substring(0, 3) != "val")
+        if (form.GetKey(i).ToLower() != "context" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "endpoint" && form.GetKey(i).ToLower().Substring(0, 3) != "val")
         {
-
-          var key = form[i];
+          //if (configuration.AppSettings == null)
+          //{
+          //    configuration.AppSettings = new AppSettings();
+          //}
+          //if (configuration.AppSettings.Settings == null)
+          //{
+          //    configuration.AppSettings.Settings = new List<Setting>();
+          //}
+          String key = form[i];
           if (i + 1 < form.AllKeys.Length)
           {
-            var value = form[i + 1];
+            String value = form[i + 1];
             configuration.AppSettings.Settings.Add(new Setting()
             {
               Key = key,
@@ -575,7 +575,7 @@ namespace org.iringtools.web.controllers
       
       success = String.IsNullOrEmpty(form["state"]) 
         ? _repository.AddApplication(context, application)
-        : _repository.UpdateApplication(context, form["application"], application);
+        : _repository.UpdateApplication(context, form["endpoint"], application);
 
       var result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
       return result;

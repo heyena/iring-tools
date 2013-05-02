@@ -23,7 +23,6 @@
                 "layout|flex": null,
                 "id": "referencesearch",
                 "width": 200,
-                "designer|userClassName": "MyTextField",
                 "fieldLabel": null,
                 "labelWidth": 200,
                 "name": "referencesearch"
@@ -38,7 +37,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "onSpecialkey",
                         "fn": "onSpecialkey",
                         "implHandler": [
                             "var me = this;\r",
@@ -66,7 +64,6 @@
                 "style": [
                     "marginLeft: 5px"
                 ],
-                "designer|userClassName": "MyButton",
                 "icon": null,
                 "iconCls": "am-document-properties",
                 "text": "Search"
@@ -93,7 +90,6 @@
                 "style": [
                     "{marginLeft: '5px', marginBottom: '8px'}"
                 ],
-                "designer|userClassName": "MyCheckbox",
                 "fieldLabel": null,
                 "name": "reset",
                 "boxLabel": null
@@ -108,8 +104,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "layout|flex": null,
-                "designer|userClassName": "MySpacer"
+                "layout|flex": null
             },
             "designerId": "4c108aea-4e37-4963-9894-346c858b431e"
         },
@@ -122,7 +117,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|flex": null,
-                "designer|userClassName": "MyLabel",
                 "text": "Reset"
             },
             "designerId": "5c7b238e-c73f-403f-8a20-89ec893d0b39"
@@ -135,8 +129,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "layout|flex": null,
-                "designer|userClassName": "MySpacer1"
+                "layout|flex": null
             },
             "designerId": "2322078d-e721-4fbc-9710-1b9ff79f1a39"
         },
@@ -151,14 +144,14 @@
                 "layout|flex": null,
                 "itemId": "searchLimitCombo",
                 "width": 90,
-                "designer|userClassName": "search.SearchCombo",
-                "designer|userAlias": "searchcombo",
                 "fieldLabel": "Limit",
                 "hideEmptyLabel": false,
                 "labelWidth": 40,
                 "name": "searchLimit",
                 "submitValue": false,
-                "value": "50",
+                "value": [
+                    "50"
+                ],
                 "allowBlank": false,
                 "displayField": "limit",
                 "queryCaching": null,
@@ -176,7 +169,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "onComboboxBeforeRender",
                         "fn": "onComboboxBeforeRender",
                         "implHandler": [
                             "component.getStore().load();"
@@ -196,7 +188,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSearch",
                 "fn": "onSearch",
                 "implHandler": [
                     "var me = this;\r",

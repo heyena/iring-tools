@@ -15,7 +15,9 @@
         "views": [
             "spreadsheet.SpreadsheetTree",
             "spreadsheet.SpreadsheetWindow",
-            "spreadsheet.SpreadsheetForm"
+            "spreadsheet.SpreadsheetForm",
+            "spreadsheet.SpreadsheetPanel",
+            "spreadsheet.SourceWindow"
         ],
         "designer|userClassName": "Spreadsheet"
     },
@@ -29,7 +31,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "dirTree",
                 "ref": "dirTree",
                 "selector": "viewport > directorypanel > directorytree",
                 "xtype": "directorytree"
@@ -44,7 +45,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "mainContent",
                 "ref": "mainContent",
                 "selector": "viewport > centerpanel > contentpanel",
                 "xtype": "contentpanel"
@@ -59,7 +59,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "init",
                 "fn": "init",
                 "designer|params": [
                     "application"
@@ -79,32 +78,28 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onConfigSpreadsheet",
                 "fn": "onConfigSpreadsheet",
                 "implHandler": [
                     "var me = this;\r",
                     "var dirTree = me.getDirTree(),\r",
-                    "dirNode = dirTree.getSelectedNode(),\r",
-                    "content = me.getMainContent(),\r",
-                    "title = 'Spreadsheet Configuration - ' + contextName + '.' + endpoint;\r",
+                    "  dirNode = dirTree.getSelectedNode(),\r",
+                    "  content = me.getMainContent();\r",
                     "\r",
-                    "var contextName = dirNode.data.record.context;\r",
+                    "var contextName = dirNode.data.record.ContextName;\r",
                     "var datalayer = dirNode.data.record.DataLayer;\r",
-                    "var endpoint = dirNode.data.record.endpoint;\r",
-                    "var baseUrl = dirNode.data.record.BaseUrl;\r",
-                    "\r",
+                    "var endpoint = dirNode.data.record.Endpoint;\r",
+                    "var title = 'Spreadsheet Configuration - ' + contextName + '.' + endpoint;\r",
                     "\r",
                     "var scPanel = content.down('spreadsheetpanel[title=' + title+']');\r",
                     "\r",
                     "if(!scPanel) {\r",
                     "  scPanel = Ext.widget('spreadsheetpanel', {\r",
-                    "    'title': title\r",
+                    "    'title': title,\r",
+                    "    context : contextName,\r",
+                    "    datalayer : datalayer,\r",
+                    "    endpoint : endpoint\r",
                     "  });\r",
                     "  var scTree = scPanel.down('spreadsheettree');\r",
-                    "  scTree.context = contextName;\r",
-                    "  scTree.datalayer = datalayer;\r",
-                    "  scTree.endpoint = endpoint;\r",
-                    "  scTree.baseUrl = baseUrl;\r",
                     "\r",
                     "  var treeStore = scTree.getStore();\r",
                     "  var scProp = scPanel.down('propertypanel');\r",
@@ -112,7 +107,6 @@
                     "    var params = store.getProxy().extraParams;\r",
                     "    params.context = contextName;\r",
                     "    params.endpoint = endpoint;\r",
-                    "    params.baseurl = baseUrl;\r",
                     "  }, me);\r",
                     "\r",
                     "  scTree.on('beforeitemexpand', function () {\r",
@@ -157,12 +151,11 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onOpenUploadForm",
                 "fn": "onOpenUploadForm",
                 "implHandler": [
                     "var me = this;\r",
                     "var win = me.getSpreadsheetSourceWindow();\r",
-                    "var panel = button.up('spreadsheettree');\r",
+                    "var panel = button.up('spreadsheetpanel');\r",
                     "var title = 'Upload Spreadsheet for ' + panel.context + '.' + panel.endpoint;\r",
                     "\r",
                     "win.setTitle(title);\r",
@@ -171,7 +164,6 @@
                     "\r",
                     "form.getForm().findField('context').setValue(panel.context);\r",
                     "form.getForm().findField('endpoint').setValue(panel.endpoint);\r",
-                    "form.getForm().findField('baseUrl').setValue(panel.baseUrl);\r",
                     "form.getForm().findField('datalayer').setValue(panel.datalayer);\r",
                     "\r",
                     "win.show();"
@@ -191,7 +183,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "spreadsheetPanel",
                 "ref": "spreadsheetPanel",
                 "selector": "spreadsheetpanel"
             },
@@ -205,7 +196,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onUploadSpreadsheet",
                 "fn": "onUploadSpreadsheet",
                 "implHandler": [
                     "var me = this;\r",
@@ -240,7 +230,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "spreadsheetSourceWindow",
                 "autoCreate": true,
                 "ref": "spreadsheetSourceWindow",
                 "selector": "spreadsheetsourcewindow",
@@ -256,7 +245,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSaveSpreadsheet",
                 "fn": "onSaveSpreadsheet",
                 "implHandler": [
                     "var me = this;\r",
@@ -265,7 +253,6 @@
                     "var context = pan.context;\r",
                     "var endpoint = pan.endpoint;\r",
                     "var datalayer = pan.datalayer;\r",
-                    "var baseUrl = pan.baseUrl;\r",
                     "\r",
                     "Ext.Ajax.request({\r",
                     "  url: 'Spreadsheet/Configure',    // where you wanna post\r",
@@ -273,7 +260,6 @@
                     "  params: {\r",
                     "    'context': context,\r",
                     "    'endpoint': endpoint,\r",
-                    "    'baseurl': baseUrl,\r",
                     "    'DataLayer': datalayer\r",
                     "  },\r",
                     "  success: function (f, a) {\r",

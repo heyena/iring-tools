@@ -56,7 +56,6 @@
                 "style": [
                     "font-weight:bold;"
                 ],
-                "designer|userClassName": "MyLabel7",
                 "text": "Add/Remove Data Relationship"
             },
             "designerId": "12ccc4f4-880e-4bc3-8c31-eadbfdd7a932"
@@ -70,7 +69,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField41",
                 "fieldLabel": "Relationship Name",
                 "name": "relationName",
                 "allowBlank": false
@@ -85,7 +83,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "onTextfieldKeydown",
                         "fn": "onTextfieldKeydown",
                         "implHandler": [
                             "var me = this;\r",
@@ -108,8 +105,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "top",
-                "designer|userClassName": "MyToolbar26"
+                "dock": "top"
             },
             "designerId": "d6c650fa-ebd3-4c57-9238-c664c09e85b7",
             "cn": [
@@ -122,8 +118,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySeparator12"
+                        "width": 4
                     },
                     "designerId": "89102f8e-1b4a-471e-b73a-e9995ddb0078"
                 },
@@ -136,7 +131,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton52",
                         "iconCls": "am-apply",
                         "text": "Apply"
                     },
@@ -151,8 +145,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySeparator12"
+                        "width": 4
                     },
                     "designerId": "a20d8a8e-4fa0-4a49-9834-b1f5ef501930"
                 },
@@ -165,7 +158,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton52",
                         "iconCls": "am-edit-clear",
                         "text": "Reset"
                     },

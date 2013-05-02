@@ -22,7 +22,6 @@
             "userConfig": {
                 "action": "editnewvaluelist",
                 "itemId": "editvaluelist",
-                "designer|userClassName": "MyMenuItem21",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit ValueList"
             },
@@ -44,7 +43,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletevaluelist",
-                "designer|userClassName": "MyMenuItem22",
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Delete ValueList"
             },
@@ -64,9 +62,6 @@
                 "type": "array"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MySeparator5"
-            },
             "designerId": "a7a65672-c3a9-4b06-9ca5-9d51419ad526"
         },
         {
@@ -78,7 +73,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "editnewvaluemap",
-                "designer|userClassName": "MyMenuItem23",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New ValueMap"
             },

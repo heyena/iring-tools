@@ -19,8 +19,7 @@
             "codeClass": null,
             "userConfig": {
                 "mapping": "Assembly",
-                "name": "assembly",
-                "designer|userClassName": "MyField3"
+                "name": "assembly"
             },
             "designerId": "2c4a70a5-b8e0-41f6-be8b-d36045f61cd5"
         },
@@ -33,8 +32,7 @@
             "codeClass": null,
             "userConfig": {
                 "mapping": "Name",
-                "name": "name",
-                "designer|userClassName": "MyField4"
+                "name": "name"
             },
             "designerId": "0982d796-abbc-428c-8e7e-5cbb73be847e"
         },
@@ -47,8 +45,7 @@
             "codeClass": null,
             "userConfig": {
                 "mapping": "Configurable",
-                "name": "configurable",
-                "designer|userClassName": "MyField5"
+                "name": "configurable"
             },
             "designerId": "e81cd543-44fa-49cd-b54e-83a026c97d97"
         }

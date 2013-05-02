@@ -42,8 +42,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar19"
+                "container|padding": 4
             },
             "designerId": "e779d4b1-634a-4a69-84b7-c87450211e57",
             "cn": [
@@ -56,8 +55,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer5"
+                        "width": 4
                     },
                     "designerId": "4cdd8c9c-836d-4fd2-91b8-e9576063f711"
                 },
@@ -71,7 +69,6 @@
                     "userConfig": {
                         "action": "applyobjects",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton36",
                         "icon": null,
                         "iconCls": "am-apply",
                         "text": "Apply"
@@ -94,8 +91,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySpacer5"
+                        "width": 4
                     },
                     "designerId": "9f9298ae-495e-4c42-a762-6fc826d563d3"
                 },
@@ -109,7 +105,6 @@
                     "userConfig": {
                         "action": "resetobjects",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton36",
                         "icon": null,
                         "iconCls": "am-edit-clear",
                         "text": "Reset"
@@ -148,7 +143,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyCheckbox3",
                 "fieldLabel": "Enable Summary:",
                 "labelWidth": 150,
                 "name": "enableSummary",

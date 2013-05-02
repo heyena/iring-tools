@@ -28,7 +28,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "CustomEvent",
                 "name": "save"
             },
             "designerId": "e7f6a17a-c4db-4880-a15a-b65538584612"
@@ -41,7 +40,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "CustomEvent1",
                 "name": "reset"
             },
             "designerId": "28211626-7cea-400a-95d0-ddd35e11aeac"

@@ -22,9 +22,6 @@
                 "type": "object"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MyGridView3"
-            },
             "designerId": "35dff96c-8b35-4b48-b88f-49375f2929f1"
         },
         {
@@ -35,7 +32,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "MyColumn7",
                 "dataIndex": "relationName",
                 "text": "Data Relationship Name",
                 "flex": 1
@@ -51,8 +47,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "weight": 50,
-                "designer|userClassName": "MyToolbar25"
+                "weight": 50
             },
             "designerId": "7c95afc6-03ba-41ff-ad6a-45aa1703d2b0",
             "cn": [
@@ -65,7 +60,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton50",
                         "iconCls": "am-list-add",
                         "text": "Add"
                     },
@@ -79,7 +73,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "onAddClick",
                                 "fn": "onAddClick",
                                 "implHandler": [
                                     "var me = this;\r",
@@ -102,8 +95,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "width": 4,
-                        "designer|userClassName": "MySeparator10"
+                        "width": 4
                     },
                     "designerId": "f014aa2c-0f67-4e62-8feb-2a9c4321dde9"
                 },
@@ -116,7 +108,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton50",
                         "iconCls": "am-list-remove",
                         "text": "Remove"
                     },
@@ -130,7 +121,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "removeRelationship",
                                 "fn": "removeRelationship",
                                 "implHandler": [
                                     "var grid = button.up('relationsgrid');\r",
@@ -169,7 +159,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "CustomEvent",
                 "name": "createrelation",
                 "params": [
                     "form"

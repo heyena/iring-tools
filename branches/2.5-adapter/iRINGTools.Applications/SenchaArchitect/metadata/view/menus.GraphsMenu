@@ -21,7 +21,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "editnewgraph",
-                "designer|userClassName": "MyMenuItem26",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New GraphMap"
             },

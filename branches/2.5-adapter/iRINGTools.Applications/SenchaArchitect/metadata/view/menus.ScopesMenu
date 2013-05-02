@@ -22,7 +22,6 @@
             "userConfig": {
                 "action": "neweditscope",
                 "itemId": null,
-                "designer|userClassName": "MyMenuItem12",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New Scope"
             },
@@ -44,7 +43,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "regenerateall",
-                "designer|userClassName": "MyMenuItem1",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "Regenerate HibernateDataLayer artifacts"
             },

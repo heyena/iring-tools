@@ -31,8 +31,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "bottom",
-                "designer|userClassName": "MyToolbar12"
+                "dock": "bottom"
             },
             "designerId": "fc0ae82b-6b50-4155-b540-e5aff12706f0",
             "cn": [
@@ -44,8 +43,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyFill8"
+                        "layout|flex": null
                     },
                     "designerId": "f8126642-5d4f-4b46-a7f4-91fc7acf9bcc"
                 },
@@ -58,7 +56,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton20",
                         "text": "Ok"
                     },
                     "designerId": "35c1a0b9-d2a1-409a-a9fd-1bc9b5d89560",
@@ -71,7 +68,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -94,7 +90,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton21",
                         "text": "Cancel"
                     },
                     "designerId": "bb1aa268-2544-4be3-85c2-c7f0e197b5fd",
@@ -107,7 +102,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -132,7 +126,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField65",
                 "fieldLabel": null,
                 "name": "state"
             },
@@ -147,7 +140,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField65",
                 "fieldLabel": null,
                 "name": "mappingNode"
             },
@@ -162,7 +154,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField65",
                 "fieldLabel": null,
                 "name": "oldValueList"
             },
@@ -177,7 +168,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField65",
                 "fieldLabel": null,
                 "name": "contextName"
             },
@@ -192,7 +182,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField65",
                 "fieldLabel": null,
                 "name": "endpoint"
             },
@@ -207,7 +196,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField65",
                 "fieldLabel": null,
                 "name": "baseUrl"
             },
@@ -222,7 +210,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextField7",
                 "fieldLabel": "Value List Name",
                 "name": "valueList",
                 "allowBlank": false
@@ -237,7 +224,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
@@ -269,7 +255,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReset",
                 "fn": "onReset",
                 "implHandler": [
                     "var me = this;\r",

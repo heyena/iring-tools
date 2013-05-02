@@ -79,9 +79,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
-    <Reference Include="iRINGSecurity">
-      <HintPath>..\..\..\..\..\filez\dev\csharp\iRINGSecurity\iRINGSecurity\bin\Debug\iRINGSecurity.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
@@ -93,6 +90,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.DirectoryServices.Protocols" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -135,14 +133,20 @@
     <Compile Include="GenericDataObject.cs" />
     <Compile Include="Grid.cs" />
     <Compile Include="IAuthentication.cs" />
+    <Compile Include="IAuthenticationLayer.cs" />
     <Compile Include="IAuthorization.cs" />
     <Compile Include="IAuthHeaders.cs" />
+    <Compile Include="IAuthorizationLayer.cs" />
+    <Compile Include="LdapAuthorizationProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Mapping.cs" />
     <Compile Include="MappingExtensions.cs" />
     <Compile Include="DataObjects.cs" />
     <Compile Include="DataProviders.cs" />
     <Compile Include="DataRelationships.cs" />
     <Compile Include="MimeTypes.cs" />
+    <Compile Include="OAuthProvider.cs" />
     <Compile Include="Picklists.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="DatabaseDictionary.cs" />
@@ -162,6 +166,12 @@
     <Compile Include="RefDataEntities.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
+    <Compile Include="Sencha\ColumnViewModel.cs" />
+    <Compile Include="Sencha\FieldViewModel.cs" />
+    <Compile Include="Sencha\MetaDataViewModel.cs" />
+    <Compile Include="Sencha\ResponseViewModel.cs" />
+    <Compile Include="Sencha\StoreViewModel.cs" />
+    <Compile Include="Sencha\TreeNodeViewModel.cs" />
     <Compile Include="ServiceClient.cs" />
     <Compile Include="ServiceSettings.cs" />
     <Compile Include="SPARQLClient.cs" />

@@ -26,7 +26,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onComboboxSelect",
                 "fn": "onComboboxSelect",
                 "implHandler": [
                     "var me = this;\r",
@@ -51,7 +50,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onComboboxChange",
                 "fn": "onComboboxChange",
                 "implHandler": [
                     "var me = this;\r",

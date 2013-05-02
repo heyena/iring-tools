@@ -37,7 +37,6 @@
                 "paths": [
                     "{'Ext.ux': 'Scripts/AM/ux'}"
                 ],
-                "designer|userClassName": "Loader",
                 "designer|displayName": "AM"
             },
             "designerId": "a43a39a0-44e3-4fc8-a6d4-14184ad6249c"

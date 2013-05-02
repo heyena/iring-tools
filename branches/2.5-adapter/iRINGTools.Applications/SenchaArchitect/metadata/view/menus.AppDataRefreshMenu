@@ -21,7 +21,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "refreshdata",
-                "designer|userClassName": "MyMenuItem43",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Refresh"
             },

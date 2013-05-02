@@ -18,8 +18,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "id",
-                "designer|userClassName": "MyField13"
+                "name": "id"
             },
             "designerId": "e2cd987e-93ec-4811-9716-2cf8ed99d54d"
         },
@@ -31,8 +30,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "property",
-                "designer|userClassName": "MyField14"
+                "name": "property"
             },
             "designerId": "80ceccd3-af42-4a92-8296-515bee01773b"
         },
@@ -44,8 +42,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "identifier",
-                "designer|userClassName": "MyField15"
+                "name": "identifier"
             },
             "designerId": "b87ee931-7d0b-4796-85ae-6f81630a98fc"
         },
@@ -57,8 +54,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "text",
-                "designer|userClassName": "MyField16"
+                "name": "text"
             },
             "designerId": "a3e1d5a0-54b4-4c27-830e-34b5fc033eaa"
         },
@@ -70,8 +66,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "type",
-                "designer|userClassName": "MyField17"
+                "name": "type"
             },
             "designerId": "10691bf3-7030-4f6f-86a2-6697e4fcbc31"
         },
@@ -83,8 +78,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "record",
-                "designer|userClassName": "MyField18"
+                "name": "record"
             },
             "designerId": "8492f84c-5f97-461d-8ac6-e6c8051aafb1"
         }

@@ -23,7 +23,6 @@
             "userConfig": {
                 "action": "neweditendpoint",
                 "itemId": "editendpoint",
-                "designer|userClassName": "MyMenuItem16",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit Application"
             },
@@ -45,7 +44,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deleteendpoint",
-                "designer|userClassName": "MyMenuItem17",
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Delete Application"
             },
@@ -65,9 +63,6 @@
                 "type": "array"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MySeparator4"
-            },
             "designerId": "f7bd238d-8ec3-4390-b0ab-a45d9676ee7c"
         },
         {
@@ -79,7 +74,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "configureendpoint",
-                "designer|userClassName": "MyMenuItem18",
                 "icon": "Content/img/16x16/preferences-system.png",
                 "text": "Open Configuration"
             },

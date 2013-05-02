@@ -27,7 +27,6 @@
                 "actionMethods": [
                     "{\"read\":\"POST\"}"
                 ],
-                "designer|userClassName": "MyAjaxProxy3",
                 "extraParams": [
                     "{context: null, start: 0, limit: 25, endpoint: null, graph: null, baseUrl: null}"
                 ],
@@ -52,8 +51,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "root": "data",
-                        "totalProperty": "totalCount",
-                        "designer|userClassName": "MyJsonReader3"
+                        "totalProperty": "totalCount"
                     },
                     "designerId": "9a65677e-94fc-42bd-987e-c085691146af"
                 }

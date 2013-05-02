@@ -19,8 +19,7 @@
             "codeClass": null,
             "userConfig": {
                 "name": "DisplayField",
-                "type": "string",
-                "designer|userClassName": "MyField47"
+                "type": "string"
             },
             "designerId": "de6d1f64-e170-495d-ae1a-e7e19bd137ee"
         }

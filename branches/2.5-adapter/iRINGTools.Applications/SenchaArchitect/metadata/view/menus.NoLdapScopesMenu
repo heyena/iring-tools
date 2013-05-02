@@ -21,7 +21,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "neweditscope",
-                "designer|userClassName": "MyMenuItem8",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New Folder"
             },
@@ -41,9 +40,6 @@
                 "type": "array"
             },
             "codeClass": null,
-            "userConfig": {
-                "designer|userClassName": "MySeparator2"
-            },
             "designerId": "73d742dd-961a-42f2-9449-fc477951b552"
         },
         {
@@ -55,7 +51,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "newdatalayer",
-                "designer|userClassName": "MyMenuItem9",
                 "icon": "Content/img/16x16/document-new.png",
                 "text": "New Data Layer"
             },
@@ -77,7 +72,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "editdatalayer",
-                "designer|userClassName": "MyMenuItem10",
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Edit Data Layer"
             },
@@ -99,7 +93,6 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletedatalayer",
-                "designer|userClassName": "MyMenuItem11",
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Delete Data Layer"
             },

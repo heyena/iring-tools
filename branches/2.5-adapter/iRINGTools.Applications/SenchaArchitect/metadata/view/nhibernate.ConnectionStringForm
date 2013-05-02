@@ -57,7 +57,6 @@
                 "style": [
                     "font-weight:bold"
                 ],
-                "designer|userClassName": "MyLabel1",
                 "text": "Configure Data Source"
             },
             "designerId": "78ae07c7-b64d-487d-ad16-49e9ace99a89"
@@ -73,11 +72,12 @@
                 "layout|anchor": "100%",
                 "dock": null,
                 "itemId": "providerCombo",
-                "designer|userClassName": "MyComboBox7",
                 "fieldLabel": "Database Provider",
                 "labelWidth": 150,
                 "name": "dbProvider",
-                "value": "MsSql2008",
+                "value": [
+                    "MsSql2008"
+                ],
                 "editable": false,
                 "displayField": "Provider",
                 "hiddenName": null,
@@ -96,11 +96,12 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField9",
                 "fieldLabel": "Database Server",
                 "labelWidth": 150,
                 "name": "dbServer",
-                "value": "localhost\r",
+                "value": [
+                    "localhost\r"
+                ],
                 "allowBlank": false
             },
             "designerId": "84fd7818-4ffe-41cf-a342-5bc765f8e83f"
@@ -115,7 +116,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "hidden": true,
-                "designer|userClassName": "MyTextField9",
                 "fieldLabel": "Host Name",
                 "labelWidth": 150,
                 "name": "host",
@@ -134,11 +134,12 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "hidden": true,
-                "designer|userClassName": "MyTextField9",
                 "fieldLabel": "Port Number",
                 "labelWidth": 150,
                 "name": "portNumber",
-                "value": "1433",
+                "value": [
+                    "1433"
+                ],
                 "allowBlank": false
             },
             "designerId": "d390d424-b2e1-4286-8064-c871ae014966"
@@ -152,11 +153,12 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField9",
                 "fieldLabel": "Database Instance",
                 "labelWidth": 150,
                 "name": "dbInstance",
-                "value": "default",
+                "value": [
+                    "default"
+                ],
                 "allowBlank": false
             },
             "designerId": "e0bcb17f-d99c-4014-98e1-0a5626bc5edb"
@@ -170,7 +172,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField9",
                 "fieldLabel": "Database Name",
                 "labelWidth": 150,
                 "name": "dbName",
@@ -188,7 +189,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField9",
                 "fieldLabel": "User Name",
                 "labelWidth": 150,
                 "name": "dbUserName",
@@ -205,7 +205,6 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "designer|userClassName": "onDbUserChange",
                         "fn": "onDbUserChange",
                         "implHandler": [
                             "var me = this; \r",
@@ -232,7 +231,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField9",
                 "fieldLabel": "Password",
                 "labelWidth": 150,
                 "name": "dbPassword",
@@ -251,11 +249,12 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "designer|userClassName": "MyTextField9",
                 "fieldLabel": "Schema Name",
                 "labelWidth": 150,
                 "name": "dbSchema",
-                "value": "dbo",
+                "value": [
+                    "dbo"
+                ],
                 "allowBlank": false
             },
             "designerId": "f1e420e8-675b-4500-b178-8bb16af3fe48"
@@ -270,7 +269,6 @@
             "userConfig": {
                 "hidden": true,
                 "itemId": "oraclecontainer",
-                "designer|userClassName": "MyContainer10",
                 "layout": "column"
             },
             "designerId": "4c1078b5-ad4b-4ed6-95f4-a0a636ceac07",
@@ -284,7 +282,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "width": 25,
-                        "designer|userClassName": "MyRadioGroup",
                         "fieldLabel": null,
                         "columns": [
                             "1\r",
@@ -302,7 +299,6 @@
                             "codeClass": null,
                             "userConfig": {
                                 "style": null,
-                                "designer|userClassName": "MyRadio",
                                 "fieldLabel": null,
                                 "labelWidth": 125,
                                 "name": "sid",
@@ -321,7 +317,6 @@
                             "codeClass": null,
                             "userConfig": {
                                 "style": null,
-                                "designer|userClassName": "MyRadio1",
                                 "fieldLabel": null,
                                 "name": "sid",
                                 "boxLabel": null,
@@ -338,7 +333,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "onRadiogroupChange",
                                 "fn": "onRadiogroupChange",
                                 "implHandler": [
                                     "var me = this; \r",
@@ -378,7 +372,6 @@
                     "userConfig": {
                         "layout|columnWidth": 1,
                         "disabled": true,
-                        "designer|userClassName": "MyTextField18",
                         "fieldLabel": "Sid",
                         "labelWidth": 125,
                         "name": "field_sid",
@@ -396,7 +389,6 @@
                     "userConfig": {
                         "layout|columnWidth": 1,
                         "disabled": true,
-                        "designer|userClassName": "MyTextField18",
                         "fieldLabel": "Service Name",
                         "labelWidth": 125,
                         "name": "field_serviceName",
@@ -415,8 +407,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar15"
+                "container|padding": 4
             },
             "designerId": "607a5997-199f-409c-9d50-c3bad39b80b7",
             "cn": [
@@ -430,7 +421,6 @@
                     "userConfig": {
                         "action": "connecttodatabase",
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton27",
                         "icon": null,
                         "iconCls": "am-document-properties",
                         "text": "Connect",
@@ -455,7 +445,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "setActiveRecord",
                                 "fn": "setActiveRecord",
                                 "designer|params": [
                                     "record"
@@ -481,8 +470,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MySeparator8"
+                        "layout|flex": null
                     },
                     "designerId": "e19fa93b-abac-457f-9e45-204f24cf3acb"
                 },
@@ -495,7 +483,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton28",
                         "icon": null,
                         "iconCls": "am-edit-clear",
                         "text": "Reset",
@@ -515,7 +502,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "setActive",
                 "fn": "setActive",
                 "designer|params": [
                     "record"
