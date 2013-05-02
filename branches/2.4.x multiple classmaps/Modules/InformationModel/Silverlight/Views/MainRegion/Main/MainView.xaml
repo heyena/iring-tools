@@ -1,0 +1,11 @@
+﻿<UserControl x:Name="MainView1"
+    x:Class="InformationModel.Views.MainRegion.Main.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
+    Width="990" Height="570" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+
+  <Grid x:Name="LayoutRoot" Background="Beige">
+    <Image Height="61.566" Margin="214.87,310,199.13,328" Source="../../../Images/iRING.png"/>
+  </Grid>
+</UserControl>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory" name="dxiIn">
+	<log level="custom">
+		<property name="DXI_IN" expression="*" />
+	</log>
+	
+  <property name="relativeUri" expression="fn:substring-after(get-property('To'), 'dxi/')"/>
+  <property name="scope" expression="fn:substring-before(get-property('relativeUri'), '/')"/>
+  <property name="exchangeId" expression="fn:substring-after(get-property('relativeUri'), '/')"/>
+  <sequence key="conf:/repository/synapse/sequences/exchangeDefinition"/>
+
+	<header name="To" expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />
+  <class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value=""/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+	
+  <property name="REST_URL_POSTFIX" expression="fn:concat('dxiAggr?sourceURL=', get-property('sourceUri'), '/', get-property('sourceScopeName'), '/', get-property('sourceAppName'), '/', get-property('sourceGraphName'), '/xfr', '&amp;targetURL=', get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/', get-property('targetGraphName'), '/xfr')" />
+	<class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value="conf:/repository/synapse/endpoints/axis2Service"/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="POST" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+	
+  <class name="org.iringtools.mediators.DtiDiffMediator"/>  
+	<sequence key="conf:/repository/synapse/sequences/restRespone"/>
+</sequence>

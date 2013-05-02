@@ -1,0 +1,129 @@
+﻿/**************************/
+/* YUI Reset and Font CSS */
+/**************************/
+/* Copyright (c) 2008, Yahoo! Inc. All rights reserved. Code licensed under the BSD License: http://developer.yahoo.net/yui/license.txt version: 2.5.2 */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}table{border-collapse:collapse;border-spacing:0;}fieldset,img{border:0;}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}li{list-style:none;}caption,th{text-align:left;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym {border:0;font-variant:normal;}sup {vertical-align:text-top;}sub {vertical-align:text-bottom;}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;}input,textarea,select{*font-size:100%;}legend{color:#000;}body {font:13px/1.231 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small;}table {font-size:inherit;font:100%;}pre,code,kbd,samp,tt{font-family:monospace;*font-size:100%;line-height:100%;}
+
+
+/**********************/
+/* MVC Storefront CSS */
+/**********************/
+
+/* base css
+----------------------------------------------------------*/
+body { background-color:#fff; font-family:'Lucida Sans','Trebuchet MS'; color: #696969; line-height:1.4em; }
+strong { font-weight:bold; }
+h1, h2, h3, h4, h5, h6 { font-weight:bold; color:#333; font-family:Arial,Helvetica,sans-serif; }
+h1,h2 { color:#444444; }
+h1 { font-size: 138.5%; margin-bottom:0.5em; }
+h2{ font-size:123.1%; }
+h3{ font-size:108%; }
+h5{ font-size:92%; }
+a:link,a:active,a:visited { color:#006699; text-decoration: none; }
+a:hover { color: #336699; text-decoration: underline; }
+p { margin-bottom: 1em; }
+em { font-style:italic; } 
+blockquote,ul,ol,dl { margin:1em; }
+ol,ul,dl { margin-left:2em; }
+ol li { list-style: decimal outside; } 
+ul li { list-style: disc outside; }
+dl dd { margin-left:1em; }
+fieldset { padding: 10px; -moz-border-radius: 1em; border-radius: 1em; margin-bottom: 10px; }
+legend { font-family: Arial; font-weight: bold; }
+
+/* accessibility
+----------------------------------------------------------*/
+.skip-nav { left: -1000em; position: absolute; width: 20em; }
+
+/* template
+----------------------------------------------------------*/
+#pg { width: 100%; margin: 0 auto; }
+#hd { margin-bottom: 0px; color: #000; padding: 0 0px 0 0; position:relative; }
+#logo { margin-top:10px; }
+#logo a { color: #FFF; text-decoration: none; }
+#bd { background-color: #FFF; zoom:1; }
+#bd:after{display:block;clear:both;visibility:hidden;content:'.';height:0;}
+#content { float:left; width:790px; padding-top:7px; }
+#ft { color: #999; padding: 5px 0 0 0; text-align: center; clear:both; }
+#ft p { padding: 5px 0; margin: 0; }
+
+#main-nav { margin: 0; background-color: #cccccc; padding:5px; border-bottom:solid 5px #aaaaaa; }
+#main-nav ul { margin:0; }
+#main-nav li { display: inline; list-style: none; border-left:solid 1px #666666; }
+#main-nav li.first { border-left:none; }
+#main-nav a { font-size: 120%; text-decoration: none; font-weight: bolder; color: #fff; margin: 10px; }
+#main-nav a:hover { color: #FF6600; }
+
+#sd-nav { float:left; width:150px; padding:10px; background:#f6f6f6; min-height:500px;}
+#sd-nav ul { margin:0; margin-left:5px; }
+#sd-nav ul li { list-style:none; }
+#sd-nav li h3 { font-size:92.5%; }
+#sd-nav li li { font-size:85%; }
+
+/* product results
+----------------------------------------------------------*/
+ul.product-results { margin:14px; }
+ul.product-results li { list-style:none; width:180px; float:left; margin-left:7px; height:215px; text-align:center;}
+ul.product-results li h3 { font-size:100%; }
+
+/* product details
+----------------------------------------------------------*/
+#product-details { float:left; width:615px; padding:7px; zoom:1; }
+#product-details .prod-wrap { zoom:1; }
+#product-details .prod-wrap:after{display:block;clear:both;visibility:hidden;content:'.';height:0;}
+#product-details .prod-img { float:left; width:225px; text-align:center; }
+#product-details .prod-info { float:left; width:390px; }
+#product-details .price { font-weight:bold; margin-top: 14px; color:#333333; }
+#product-details .add-to-bag { margin-top: 14px; }
+
+#product-details .descriptors { margin-top:42px; padding:10px; }
+
+#related-products {float:right; width:150px; text-align:center; }
+#related-products ul { margin:0; }
+#related-products li { list-style:none; border:solid 1px #f0f0f0; }
+#related-products h3 { background:#f0f0f0; }
+
+/* cart
+----------------------------------------------------------*/
+#shopping-cart { padding:14px; }
+#shopping-cart table { width:100%; margin-top:14px; }
+#shopping-cart th { font-weight:bold; border-bottom:solid 1px #f0f0f0; background:#f6f6f6; }
+#shopping-cart th, #shopping-cart td { padding:2px 10px; }
+#shopping-cart tr .quantity, #shopping-cart tr .remove { text-align:center; }
+#shopping-cart p.added-on { color:#999999; }
+#shopping-cart div.action a:link,#shopping-cart div.action a:active, #shopping-cart div.action a:visited { float:right; padding:5px 10px; background:#f0f0f0; border:solid 1px #cccccc;font-size:115%; font-weight:bold; }
+#shopping-cart div.action a:hover { background:#d0d0d0; }
+
+div.item-added { padding:7px; }
+
+/* checkout
+----------------------------------------------------------*/
+div.checkout { padding:14px; }
+div.checkout h2 { border-bottom: 1px solid #cccccc; background:#f0f0f0;padding: 5px 10px;}
+div.checkout .hint { font-size: 85%; font-style: italic; }
+div.checkout .open-id {width:49%; float:left; margin-right:2%; }
+div.checkout .email-password {width:49%; float:left; }
+div.checkout .guest { clear:both; padding-top:14px; }
+div.checkout .guest div.wrap { padding-left:25px; }
+div.checkout div.wrap { padding:7px; }
+div.checkout ul li { list-style:none; }
+div.checkout legend { display:none; }
+div.checkout ol { margin:0; }
+div.checkout ol li { list-style:none; padding:2px 0; }
+div.checkout ol li label { width:150px; float:left; }
+div.checkout p.action { padding-left:160px; }
+div.paypal p { padding-top:7px; }
+
+/* MISC  
+----------------------------------------------------------*/
+
+.addressBook, .favorites { float: right; width: 150px; margin-left: 10px; margin-right: 0px; }
+.contentTextDisplay { padding:10px; }
+
+#useraccount { position: absolute; top: 15px; right: 15px; }
+
+.notify-error { padding: 10px; color: #990000; border: 1px solid #990000; background-color: #ffffcc; margin-bottom: 15px; width: 500px; }
+.notify-message { padding: 10px; width: 600px; border: 1px solid #006600; vertical-align: middle; margin-bottom: 20px; background-color: #CCFFCC; }
+
+
+

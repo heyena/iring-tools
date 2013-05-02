@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+  <package name="default" extends="struts-default">
+    <action name="xchmgr">
+      <result>/exchange-manager.jsp</result>
+    </action>
+    <action name="fedmgr">
+      <result>/federation-manager.jsp</result>
+    </action>
+  </package>  
+
+  <package name="exchange-manager" extends="json-default">
+    <global-results>
+      <result name="exception">/exception.jsp</result>
+    </global-results>
+    
+    <global-exception-mappings>
+      <exception-mapping exception="java.lang.Exception" result="exception" />
+    </global-exception-mappings>
+
+    <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
+      <result type="json">
+        <param name="root">directoryTree.nodes</param>
+      </result>
+    </action>
+    
+    <action name="reset" class="org.iringtools.controllers.DirectoryController" method="resetDtoContext"/>
+
+    <!-- app data -->
+    <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
+      <result type="json">
+        <param name="root">pageDtoGrid</param>
+      </result>
+    </action>
+    <!-- content -->
+    <action name="content" class="org.iringtools.controllers.AppDataController" method="getContent">
+      <result name="success" type="stream">
+        <param name="inputName">contentStream</param>
+        <param name="bufferSize">4096</param>
+      </result>
+    </action>
+    <!-- related app data -->
+    <action name="radata" class="org.iringtools.controllers.AppDataController" method="getPageRelatedItems">
+      <result type="json">
+        <param name="root">pageRelatedItemGrid</param>
+      </result>
+    </action>
+    <!-- exchange data -->
+    <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDtos">
+      <result type="json">
+        <param name="root">pageDtoGrid</param>
+      </result>
+    </action>
+    <!-- related exchange data -->
+    <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
+      <result type="json">
+        <param name="root">pageRelatedItemGrid</param>
+      </result>
+    </action>
+    <!-- exchange submission -->
+    <action name="xsubmit" class="org.iringtools.controllers.ExchangeDataController" method="submitExchange">
+      <result type="json">
+        <param name="root">xResultsGrid</param>
+      </result>
+    </action>
+    <!-- summary data -->
+    <action name="sdata" class="org.iringtools.controllers.ExchangeDataController" method="getSummary">
+      <result type="json">
+        <param name="root">summaryGrid</param>
+      </result>
+    </action>
+    <!-- exchange logs -->
+    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXHistory">
+      <result type="json">
+        <param name="root">xHistoryGrid</param>
+      </result>
+    </action>
+    <!-- exchange logs pagination -->
+    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXHistory">
+      <result type="json">
+        <param name="root">pageXHistoryGrid</param>
+      </result>
+    </action>
+  </package>
+
+  <package name="federation-manager" extends="json-default">
+    <action name="refdata" class="org.iringtools.controllers.RefDataController" method="searchPage">
+      <result type="json">
+        <param name="root">tree.nodes</param>
+      </result>
+    </action>
+
+    <action name="class" class="org.iringtools.controllers.RefDataController" method="getClassifications">
+      <result type="json">
+        <param name="root">tree.nodes</param>
+      </result>
+    </action>
+    <action name="template" class="org.iringtools.controllers.RefDataController" method="getTemplates">
+      <result type="json">
+        <param name="root">tree.nodes</param>
+      </result>
+    </action>
+    <action name="postTemplate" class="org.iringtools.controllers.RefDataController" method="postTemplate">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>
+    <action name="postClass" class="org.iringtools.controllers.RefDataController" method="postClass">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>
+    <action name="roles" class="org.iringtools.controllers.RefDataController" method="getRoles">
+      <result type="json">
+        <param name="root">qmxf</param>
+      </result>
+    </action>
+    <action name="federation" class="org.iringtools.controllers.FederationController" method="getFederation">
+      <result type="json">
+        <param name="root">tree.nodes</param>
+      </result>
+    </action>
+    <action name="postFederation" class="org.iringtools.controllers.FederationController" method="postFederation">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>
+    <action name="deleteNode" class="org.iringtools.controllers.FederationController" method="deleteNode">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>
+    <action name="repositoryTypes" class="org.iringtools.controllers.FederationController" method="getRepoTypes">
+      <result type="json">
+        <param name="root">repositoryTypes</param>
+      </result>
+    </action>
+  </package>
+    
+</struts>
