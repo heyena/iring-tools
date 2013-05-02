@@ -6,7 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
-        "width": 130,
+        "width": null,
         "designer|userClassName": "menus.ScopesMenu",
         "designer|userAlias": "scopesmenu"
     },

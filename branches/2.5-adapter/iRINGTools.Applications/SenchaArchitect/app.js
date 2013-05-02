@@ -18,7 +18,7 @@ Ext.Loader.setConfig({
   enabled: true,
   garbageCollect: true,
   paths: {
-    'Ext.ux': 'Scripts/AM/ux'
+    'Ext.ux': 'Scripts/extjs-4.1.1/ux'
   }
 });
 
@@ -27,12 +27,14 @@ Ext.application({
   requires: [
     'AM.view.Main',
     'AM.view.menus.ScopeMenu',
-    'AM.view.menus.AppDataRefreshMenu'
+    'AM.view.menus.AppDataRefreshMenu',
+    'AM.view.nhibernate.MultiSelectComponentGrid'
   ],
   views: [
     'Main',
     'menus.ScopeMenu',
-    'menus.AppDataRefreshMenu'
+    'menus.AppDataRefreshMenu',
+    'nhibernate.MultiSelectComponentGrid'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

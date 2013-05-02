@@ -22,11 +22,10 @@ using VDS.RDF;
 using System.Text;
 using log4net;
 using System.Text.RegularExpressions;
-using org.iringtools.web.Models;
 
 namespace org.iringtools.web.controllers
 {
-  public class MappingController : BaseController
+  public class MappingController : Controller
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingController));
     NamespaceMapper _nsMap = new NamespaceMapper();
@@ -731,8 +730,8 @@ namespace org.iringtools.web.controllers
         string delimiter = form["delimiter"];
         string className = form["className"];
         string classId = form["classId"];
-        
-        string context = string.Format("{0}/{1}", scope, app);        
+
+        string context = string.Format("{0}/{1}", scope, app);
         Mapping mapping = GetMapping(scope, app);
 
         bool qn = false;
@@ -744,18 +743,18 @@ namespace org.iringtools.web.controllers
             mapping.graphMaps = new GraphMaps();
 
           GraphMap graphMap = new GraphMap
-          {
-            name = graphName,
-            dataObjectName = objectName
-          };
+            {
+              name = graphName,
+              dataObjectName = objectName
+            };
 
           ClassMap classMap = new ClassMap
-          {
-            name = className,
-            id = qn ? qName : classId,
-            identifierDelimiter = delimiter,
-            identifiers = new Identifiers()
-          };
+            {
+              name = className,
+              id = qn ? qName : classId,
+              identifierDelimiter = delimiter,
+              identifiers = new Identifiers()
+            };
 
           if (identifier.Contains(','))
           {
@@ -775,16 +774,16 @@ namespace org.iringtools.web.controllers
           mapping.graphMaps.Add(graphMap);
           nodes.Add(CreateGraphNode(context, graphMap, classMap));
         }
-        else
+        else // Edit existing graph
         {
-          GraphMap graphMap = mapping.FindGraphMap(graphName);
+          GraphMap graphMap = mapping.FindGraphMap(oldGraphName);//Get graph with old name
 
           if (graphMap == null)
             graphMap = new GraphMap();
 
           graphMap.name = graphName;
           graphMap.dataObjectName = objectName;
-          
+
           ClassMap classMap = graphMap.classTemplateMaps[0].classMap;
           classMap.name = className;
           classMap.id = qn ? qName : classId;
@@ -806,7 +805,7 @@ namespace org.iringtools.web.controllers
           }
         }
 
-        _repository.UpdateMapping(mapping, scope, app);
+        _repository.UpdateMapping(scope, app, mapping);
       }
       catch (Exception ex)
       {
@@ -814,7 +813,7 @@ namespace org.iringtools.web.controllers
         return Json(nodes, JsonRequestBehavior.AllowGet);
       }
 
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      return Json(new {success = true}, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult UpdateMapping(FormCollection form)
@@ -824,7 +823,7 @@ namespace org.iringtools.web.controllers
       Mapping mapping = GetMapping(scope, application);
       try
       {
-        _repository.UpdateMapping(mapping, scope, application);
+        _repository.UpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
@@ -847,7 +846,7 @@ namespace org.iringtools.web.controllers
         if (graphMap != null)
         {
           mapping.graphMaps.Remove(graphMap);
-          _repository.UpdateMapping(mapping, scope, application);
+          _repository.UpdateMapping(scope, application, mapping);
         }
       }
       catch (Exception ex)
@@ -871,7 +870,6 @@ namespace org.iringtools.web.controllers
         string graphName = mappingCtx[2];
 
         string classId = form["classId"];
-        string relatedObject = form["relatedObject"];
         string roleName = mappingCtx[mappingCtx.Length - 1];
         int index = Convert.ToInt16(form["index"]);
         Mapping mapping = GetMapping(scope, application);
@@ -885,19 +883,7 @@ namespace org.iringtools.web.controllers
 
           if (!string.IsNullOrEmpty(rMap.dataType) && rMap.dataType.StartsWith("xsd"))
           {
-            if (relatedObject != "undefined" && relatedObject != "")
-            {
-              rMap.propertyName = string.Format("{0}.{1}.{2}",
-                graphMap.dataObjectName,
-                relatedObject,
-                propertyName);
-            }
-            else
-            {
-              rMap.propertyName =
-                  string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
-            }
-
+            rMap.propertyName = propertyName;
             rMap.type = RoleType.DataProperty;
             rMap.valueListName = null;
           }
@@ -997,7 +983,7 @@ namespace org.iringtools.web.controllers
           if (rMap != null)
           {
             rMap.valueListName = valueListName;
-            rMap.propertyName = string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
+            rMap.propertyName = propertyName;
             rMap.type = RoleType.ObjectProperty;
             rMap.value = null;
           }
@@ -1054,7 +1040,7 @@ namespace org.iringtools.web.controllers
         var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
         if (valueListMap != null)
           mapping.valueListMaps.Remove(valueListMap);
-        _repository.UpdateMapping(mapping, scope, application);
+        _repository.UpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
@@ -1115,7 +1101,7 @@ namespace org.iringtools.web.controllers
           if (valuelistMap.valueMaps == null)
             valuelistMap.valueMaps = new ValueMaps();
           valuelistMap.valueMaps.Add(valueMap);
-          _repository.UpdateMapping(mapping, scope, application);
+          _repository.UpdateMapping(scope, application, mapping);
         }
         else
         {
@@ -1125,7 +1111,7 @@ namespace org.iringtools.web.controllers
             valueMap.internalValue = internalName;
             valueMap.uri = qName;
             valueMap.label = classLabel;
-            _repository.UpdateMapping(mapping, scope, application);
+            _repository.UpdateMapping(scope, application, mapping);
           }
         }
       }
@@ -1156,7 +1142,7 @@ namespace org.iringtools.web.controllers
         ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
         if (valueMap != null)
           valuelistMap.valueMaps.Remove(valueMap);
-        _repository.UpdateMapping(mapping, scope, application);
+        _repository.UpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
@@ -1193,7 +1179,7 @@ namespace org.iringtools.web.controllers
                     targetMapping.valueListMaps.Add(Utility.CloneSerializableObject(valuelistMap));
                 }
             }
-            _repository.UpdateMapping(targetMapping, targetScope, targetApplication);
+            _repository.UpdateMapping(targetScope, targetApplication, targetMapping);
         }
         catch (Exception ex)
         {
@@ -1236,12 +1222,12 @@ namespace org.iringtools.web.controllers
           };
 
           mapping.valueListMaps.Add(valuelistMap);
-          _repository.UpdateMapping(mapping, scope, application);
+          _repository.UpdateMapping(scope, application, mapping);
         }
         else
         {
           valueListMap.name = newvalueList;
-          _repository.UpdateMapping(mapping, scope, application);
+          _repository.UpdateMapping(scope, application, mapping);
         }
       }
       catch (Exception ex)
@@ -1394,6 +1380,7 @@ namespace org.iringtools.web.controllers
                 roleMap.type = RoleType.Reference;
                 qn = _nsMap.ReduceToQName(roleQualification.value.reference, out qRange);
                 roleMap.dataType = qn ? qRange : roleQualification.value.reference;
+                roleMap.value = GetClassLabel(qRange);
               }
               else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
               {
@@ -1413,12 +1400,12 @@ namespace org.iringtools.web.controllers
               roleMap.dataType = qRange;
               roleMap.propertyName = string.Empty;
             }
-            else if (!qRange.StartsWith("dm:"))  // reference role
-            {
-              roleMap.type = RoleType.Reference;
-              roleMap.dataType = qRange;
-              roleMap.value = GetClassLabel(qRange);
-            }
+            //else if (!qRange.StartsWith("dm:"))  // reference role
+            //{
+            //  roleMap.type = RoleType.Reference;
+            //  roleMap.dataType = qRange;
+            //  roleMap.value = GetClassLabel(qRange);
+            //}
             else  // unknown
             {
               roleMap.type = RoleType.Unknown;

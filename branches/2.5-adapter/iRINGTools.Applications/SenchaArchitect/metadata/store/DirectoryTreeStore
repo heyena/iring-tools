@@ -12,7 +12,7 @@
         "storeId": "directorytreestore",
         "designer|userClassName": "DirectoryTreeStore",
         "root": [
-            "{expanded: true, type: 'ScopesNode', iconCls: 'scopes', text: 'World', security: ''}"
+            "{expanded: true, type: 'ScopesNode', iconCls: 'scopes', text: 'Scopes', security: ''}"
         ]
     },
     "designerId": "199ea7ae-35b2-4084-9980-34e8fc1aca2c",

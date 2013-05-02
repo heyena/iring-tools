@@ -50,7 +50,7 @@
                     "}"
                 ],
                 "timeout": 600000,
-                "url": "NHibernate/DBObjects"
+                "url": "Adapter/DBObjects"
             },
             "designerId": "33e0092b-58da-454c-9de8-cb78073da37c",
             "customConfigs": [

@@ -108,14 +108,16 @@
     </Compile>
     <Compile Include="ConfigFile.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
+    <Compile Include="Controllers\AppEditorController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\DataGridController.cs" />
     <Compile Include="Controllers\FacadeController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\GridManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
-    <Compile Include="Controllers\NHibernateController.cs" />
+    <Compile Include="Controllers\MappingEditorController.cs" />
     <Compile Include="Controllers\RefDataController.cs" />
+    <Compile Include="Controllers\RefDataEditorController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -161,6 +163,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app.html" />
     <Content Include="app.js" />
     <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
@@ -434,7 +437,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>52277</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

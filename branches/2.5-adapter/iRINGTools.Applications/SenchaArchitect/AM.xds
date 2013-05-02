@@ -892,6 +892,14 @@
                 "Scripts/AM/view/menus/AppDataRefreshMenu.js"
             ],
             "className": "menus.AppDataRefreshMenu"
+        },
+        "55e4d2fa-9ebe-4466-b024-6d81829b1584": {
+            "paths": [
+                "metadata/view/nhibernate.MultiSelectComponentGrid",
+                "Scripts/AM/view/override/nhibernate/MultiSelectComponentGrid.js",
+                "Scripts/AM/view/nhibernate/MultiSelectComponentGrid.js"
+            ],
+            "className": "nhibernate.MultiSelectComponentGrid"
         }
     },
     "viewOrderMap": {
@@ -967,7 +975,8 @@
             "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c",
             "ee4b18be-7210-4e88-9a5c-50e9ca131349",
             "17fb1af5-2569-49f4-927f-dd778c03c1a1",
-            "0649446d-cfb0-4646-8081-ce7bd59c7cd6"
+            "0649446d-cfb0-4646-8081-ce7bd59c7cd6",
+            "55e4d2fa-9ebe-4466-b024-6d81829b1584"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

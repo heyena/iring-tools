@@ -202,7 +202,7 @@ Ext.define('AM.controller.Mapping', {
       treeStore.on('beforeload', function (store, operation, eopts) {
         params.contextName = context;
         params.endpoint = endpoint;
-        params.baseUrl = baseUrl;
+        //params.baseUrl = baseUrl;
         params.graphName = graphName;
       }, me);
 

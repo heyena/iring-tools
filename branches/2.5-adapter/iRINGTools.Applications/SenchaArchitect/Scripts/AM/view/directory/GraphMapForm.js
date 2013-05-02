@@ -46,11 +46,11 @@ Ext.define('AM.view.directory.GraphMapForm', {
           items: [
             {
               xtype: 'hiddenfield',
-              name: 'contextName'
+              name: 'scope'
             },
             {
               xtype: 'hiddenfield',
-              name: 'endpoint'
+              name: 'app'
             },
             {
               xtype: 'hiddenfield',
@@ -70,11 +70,11 @@ Ext.define('AM.view.directory.GraphMapForm', {
             },
             {
               xtype: 'hiddenfield',
-              name: 'classLabel'
+              name: 'className'
             },
             {
               xtype: 'hiddenfield',
-              name: 'classUrl'
+              name: 'classId'
             },
             {
               xtype: 'hiddenfield',
@@ -86,7 +86,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
             },
             {
               xtype: 'hiddenfield',
-              name: 'keyProperty'
+              name: 'identifier'
             }
           ]
         },
@@ -174,10 +174,23 @@ Ext.define('AM.view.directory.GraphMapForm', {
           return false;
         }
         else {
-          me.getForm().findField('objectName').setValue(getLastXString(data.records[0].data.id, 2));
-          var msg = 'Identifier: ' + getLastXString(data.records[0].data.id, 1);
-          me.getForm().findField('keyProperty').setValue(getLastXString(data.records[0].data.id, 1));
-          ptarget.update(msg);
+          var ident = getLastXString(data.records[0].data.id, 1);
+          var object = getLastXString(data.records[0].data.id, 2);
+          //var key1 = getLastXString(data.records[0].data.id, 2)
+          //var key2 = getLastXString(data.records[0].data.id, 1);
+          var key = object+'.'+ident;//key1+'.'+key2;
+          if(me.getForm().findField('identifier').getValue()!='Drop property node(s) here.'){
+
+            var existingIdentifier =  me.getForm().findField('identifier').getValue();
+            key = existingIdentifier+','+ key;
+            me.getForm().findField('identifier').setValue(key);
+          }else{
+            me.getForm().findField('identifier').setValue(key);
+          }
+          me.getForm().findField('objectName').setValue(object);
+
+          //ptarget.update(msg);
+          ptarget.update(key);
           return true;
         }
       }   
@@ -203,16 +216,17 @@ Ext.define('AM.view.directory.GraphMapForm', {
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
           return false;
         } else {
-          var tempClassLabel = me.getForm().findField('classLabel').getValue();
-          var tempClassUrl = me.getForm().findField('classUrl').getValue();
+          var tempClassLabel = me.getForm().findField('className').getValue();
+          var tempClassUrl = me.getForm().findField('classId').getValue();
           if (tempClassLabel !== "") {
             me.getForm().findField('oldClassLabel').setValue(tempClassLabel);
             me.getForm().findField('oldClassUrl').setValue(tempClassUrl);
           }
-          me.getForm().findField('classLabel').setValue(data.records[0].data.record.Label);
-          me.getForm().findField('classUrl').setValue(data.records[0].data.record.Uri);
+          me.getForm().findField('className').setValue(data.records[0].data.record.Label);
+          me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
           var msg = 'Class Label: ' + data.records[0].data.record.Label;
-          ctarget.update(msg);
+          //ctarget.update(msg);
+          ctarget.update(data.records[0].data.record.Label);
           return true;
         }
       } 
@@ -260,9 +274,9 @@ Ext.define('AM.view.directory.GraphMapForm', {
   onSave: function() {
     var me = this;
     var win = me.up('window');
-    if (me.getForm().findField('objectName').getValue() === '' || 
-    me.getForm().findField('graphName').getValue() === '' || 
-    me.getForm().findField('classLabel').getValue() === '') {
+    if (me.getForm().findField('objectName').getValue() === '' ||
+    me.getForm().findField('graphName').getValue() === '' ||
+    me.getForm().findField('className').getValue() === '') {
       showDialog(400, 50, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
       return;
     }

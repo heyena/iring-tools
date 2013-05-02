@@ -36,7 +36,8 @@
             "nhibernate.SelectDataKeysForm",
             "nhibernate.SetPropertyForm",
             "nhibernate.SetRelationForm",
-            "nhibernate.RelationsGrid"
+            "nhibernate.RelationsGrid",
+            "nhibernate.MultiSelectComponentGrid"
         ],
         "designer|userClassName": "NHibernate",
         "requires": [
@@ -60,6 +61,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onSaveDbObjectTree",
                 "fn": "onSaveDbObjectTree",
                 "implHandler": [
                     "var me = this;\r",
@@ -76,6 +78,7 @@
                     "}\r",
                     "var contextName = dirNode.data.record.context;\r",
                     "var endpoint = dirNode.data.record.endpoint;\r",
+                    "var baseUrl = dirNode.data.record.BaseUrl;\r",
                     "dirNode.data.record.dbInfo.dbProvider = dirNode.data.record.dbDict.Provider;\r",
                     "var rootNode = dbObjectsTree.getRootNode();\r",
                     "var treeProperty = me.getJsonTree(rootNode, dirNode, gridSelected);\r",
@@ -87,6 +90,7 @@
                     "  params: {\r",
                     "    contextName: contextName,\r",
                     "    endpoint: endpoint,\r",
+                    "    baseUrl: baseUrl,\r",
                     "    tree: Ext.JSON.encode(treeProperty)\r",
                     "  },\r",
                     "  success: function (response, request) {\r",
@@ -126,6 +130,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onSaveDataObject",
                 "fn": "onSaveDataObject",
                 "implHandler": [
                     "var me = this; \r",
@@ -222,6 +227,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onResetDataObject",
                 "fn": "onResetDataObject",
                 "implHandler": [
                     "var me = this;\r",
@@ -269,8 +275,10 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onSaveKeyProperties",
                 "fn": "onSaveKeyProperties",
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "var content = this.getMainContent();\r",
                     "var panel = button.up('nhibernatepanel');\r",
@@ -289,7 +297,7 @@
                     "\r",
                     "var keysNode = panel.treeNode;\r",
                     "var propertiesNode = keysNode.parentNode.childNodes[1];\r",
-                    "var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;\r",
+                    "//var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;\r",
                     "\r",
                     "for (var i = 0; i < keysNode.childNodes.length; i++) {\r",
                     "  var found = false;\r",
@@ -359,25 +367,25 @@
                     "      }\r",
                     "    }\r",
                     "\r",
-                    "    for (var kk = 0; kk < hiddenRootNode.children.length; kk++) {\r",
-                    "      if (hiddenRootNode.children[kk].text.toLowerCase() == selectValues[j].toLowerCase()) {\r",
-                    "        var properties = hiddenRootNode.children[kk].property;\r",
-                    "        properties.keyType = 'assigned';\r",
-                    "        properties.nullable = false;\r",
-                    "        newKeyNode = {\r",
-                    "          text: selectValues[j],\r",
-                    "          type: \"keyProperty\",\r",
-                    "          leaf: true,\r",
-                    "          iconCls: 'treeKey',\r",
-                    "          hidden: false,\r",
-                    "          property: properties\r",
-                    "        };\r",
-                    "        keysNode.appendChild(newKeyNode);\r",
-                    "        hiddenRootNode.children.splice(kk, 1);\r",
-                    "        kk--;\r",
-                    "        break;\r",
-                    "      }\r",
+                    "    /* for (var kk = 0; kk < hiddenRootNode.children.length; kk++) {\r",
+                    "    if (hiddenRootNode.children[kk].text.toLowerCase() == selectValues[j].toLowerCase()) {\r",
+                    "    var properties = hiddenRootNode.children[kk].property;\r",
+                    "    properties.keyType = 'assigned';\r",
+                    "    properties.nullable = false;\r",
+                    "    newKeyNode = {\r",
+                    "    text: selectValues[j],\r",
+                    "    type: \"keyProperty\",\r",
+                    "    leaf: true,\r",
+                    "    iconCls: 'treeKey',\r",
+                    "    hidden: false,\r",
+                    "    property: properties\r",
+                    "    };\r",
+                    "    keysNode.appendChild(newKeyNode);\r",
+                    "    hiddenRootNode.children.splice(kk, 1);\r",
+                    "    kk--;\r",
+                    "    break;\r",
                     "    }\r",
+                    "    }*/\r",
                     "    newKeyNode.dirty = true;\r",
                     "  }\r",
                     "}\r",
@@ -401,6 +409,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onSaveDataProperties",
                 "fn": "onSaveDataProperties",
                 "implHandler": [
                     "var me = this;\r",
@@ -513,6 +522,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onEditDbConnection",
                 "fn": "onEditDbConnection",
                 "implHandler": [
                     "var me = this;\r",
@@ -534,6 +544,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onResetKeyProperties",
                 "fn": "onResetKeyProperties",
                 "implHandler": [
                     "alert('Not Implemented yet');"
@@ -553,8 +564,10 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onSaveKeyProperty",
                 "fn": "onSaveKeyProperty",
                 "implHandler": [
+                    "alert('onSaveKeyPoperty...');\r",
                     "var me = this;\r",
                     "form = button.up('datakeyform');\r",
                     "var panel = form.up('nhibernatepanel');\r",
@@ -586,6 +599,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onResetKeyProperty",
                 "fn": "onResetKeyProperty",
                 "implHandler": [
                     "var me = this;\r",
@@ -621,6 +635,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onSaveDataProperty",
                 "fn": "onSaveDataProperty",
                 "implHandler": [
                     "var me = this;\r",
@@ -630,7 +645,6 @@
                     "var node = tree.getSelectedNode();\r",
                     "var propertyNameField = form.getForm().findField('propertyName');\r",
                     "var propertyName = propertyNameField.getValue();\r",
-                    "\r",
                     "if (propertyNameField.validate()) {\r",
                     "  node.data.property.propertyName = propertyName;\r",
                     "  node.set('text', propertyName);\r",
@@ -654,17 +668,18 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onResetDataProperty",
                 "fn": "onResetDataProperty",
                 "implHandler": [
                     "var me = this;\r",
                     "form = button.up('setpropertyform');\r",
                     "var panel = form.up('nhibernatepanel');\r",
                     "var tree = panel.down('nhibernatetree');\r",
+                    "\r",
                     "var node = tree.getSelectedNode();\r",
                     "var propertyNameField = form.getForm().findField('propertyName');\r",
                     "propertyNameField.setValue(node.data.property.columnName);\r",
                     "var propertyName = propertyNameField.getValue();\r",
-                    "\r",
                     "if (propertyNameField.validate()) {\r",
                     "  node.data.property.propertyName = propertyName;\r",
                     "  node.set('text', propertyName);\r",
@@ -689,6 +704,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "selectTablesForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "selectTablesForm",
@@ -705,6 +721,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "connectionStringForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "connectionStringForm",
@@ -721,6 +738,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "dataObjectForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "dataObjectForm",
@@ -737,6 +755,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "dataKeyForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "dataKeyForm",
@@ -753,6 +772,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "selectKeyFieldsForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "selectKeyFieldsForm",
@@ -769,6 +789,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "selectPropertiesForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "selectPropertiesForm",
@@ -785,6 +806,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "dataPropertyForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "dataPropertyForm",
@@ -801,6 +823,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "relationsForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "relationsForm",
@@ -817,6 +840,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "setRelationForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "setRelationForm",
@@ -833,6 +857,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "dirTree",
                 "ref": "dirTree",
                 "selector": "viewport > directorypanel > directorytree",
                 "xtype": "directorytree"
@@ -847,6 +872,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "mainContent",
                 "ref": "mainContent",
                 "selector": "viewport > centerpanel > contentpanel",
                 "xtype": "contentpanel"
@@ -861,6 +887,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onConfignhibernate",
                 "fn": "onConfignhibernate",
                 "implHandler": [
                     "var me = this;\r",
@@ -870,9 +897,9 @@
                     "\r",
                     "var dbDict, dbInfo, tree;\r",
                     "\r",
-                    "var context = dirNode.data.record.ContextName;\r",
+                    "var context = dirNode.parentNode.data.text;//dirNode.data.record.ContextName;\r",
                     "var datalayer = dirNode.data.record.DataLayer;\r",
-                    "var endpoint = dirNode.data.record.Endpoint;\r",
+                    "var endpoint = dirNode.data.record.Name;//dirNode.data.record.Endpoint;\r",
                     "var baseUrl = dirNode.data.record.BaseUrl;\r",
                     "var title = 'Nhibernate Configuration - ' + context + '.' + endpoint;\r",
                     "\r",
@@ -891,7 +918,7 @@
                     "  var treeProxy = treeStore.getProxy();\r",
                     "\r",
                     "  dbDict = me.getDbDictionary(context, endpoint, baseUrl, function(dbDict) { \r",
-                    "    if(dbDict.ConnectionString !== null) {\r",
+                    "    if(dbDict.ConnectionString !== null && dbDict.ConnectionString !=undefined ) {\r",
                     "      var base64 = AM.view.nhibernate.Utility;\r",
                     "      dbDict.ConnectionString = base64.decode(dbDict.ConnectionString);\r",
                     "      if(dbDict) {\r",
@@ -951,6 +978,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "init",
                 "fn": "init",
                 "designer|params": [
                     "application"
@@ -970,6 +998,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onTreepanelItemClick",
                 "fn": "onTreepanelItemClick",
                 "implHandler": [
                     "var me = this;\r",
@@ -1024,6 +1053,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "hasShown",
                 "fn": "hasShown",
                 "designer|params": [
                     "shownArray",
@@ -1046,6 +1076,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getDbDictionary",
                 "fn": "getDbDictionary",
                 "designer|params": [
                     "context",
@@ -1057,7 +1088,7 @@
                     "var me = this;\r",
                     "var dbDict, dbInfo;\r",
                     "Ext.Ajax.request({\r",
-                    "  url: 'NHibernate/DBDictionary',\r",
+                    "  url: 'AdapterManager/DBProviders',//'NHibernate/DBDictionary',\r",
                     "  method: 'POST',\r",
                     "  timeout: 6000000,\r",
                     "  params: {\r",
@@ -1085,6 +1116,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getTableNames",
                 "fn": "getTableNames",
                 "designer|params": [
                     "context",
@@ -1098,7 +1130,7 @@
                     "var dbDict = dirNode.data.record.dbDict;\r",
                     "\r",
                     "Ext.Ajax.request({\r",
-                    "  url: 'NHibernate/TableNames',\r",
+                    "  url: 'AdapterManager/TableNames',\r",
                     "  method: 'POST',\r",
                     "  timeout: 6000000,\r",
                     "  params: {\r",
@@ -1135,6 +1167,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "setTableNames",
                 "fn": "setTableNames",
                 "designer|params": [
                     "dbDict"
@@ -1159,6 +1192,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getAvailableItems",
                 "fn": "getAvailableItems",
                 "designer|params": [
                     "node"
@@ -1168,18 +1202,18 @@
                     "var propertiesNode = node.parentNode.childNodes[1];\r",
                     "\r",
                     "for (var i = 0; i < propertiesNode.childNodes.length; i++) {\r",
-                    "  var itemName = propertiesNode.childNodes[i].text;\r",
+                    "  var itemName = propertiesNode.childNodes[i].data.text;//propertiesNode.childNodes[i].text;\r",
                     "  var found = false;\r",
                     "\r",
                     "  for (var j = 0; j < node.childNodes.length; j++) {\r",
-                    "    if (node.childNodes[j].text.toLowerCase() == itemName.toLowerCase()) {\r",
+                    "    if (node.childNodes[j].data.text.toLowerCase() == itemName.toLowerCase()) {//if (node.childNodes[j].text.toLowerCase() == itemName.toLowerCase()) {\r",
                     "      found = true;\r",
                     "      break;\r",
                     "    }\r",
                     "  }\r",
-                    "  if (!found) {\r",
-                    "    availItems.push([itemName, itemName]);\r",
-                    "  }\r",
+                    "  //if (!found) {\r",
+                    "  availItems.push([itemName, itemName]);\r",
+                    "  //}\r",
                     "}\r",
                     "return availItems;"
                 ]
@@ -1194,6 +1228,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getSelectedItems",
                 "fn": "getSelectedItems",
                 "designer|params": [
                     "node"
@@ -1220,6 +1255,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getSelectItems",
                 "fn": "getSelectItems",
                 "designer|params": [
                     "node"
@@ -1245,6 +1281,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showSelectTablesForm",
                 "fn": "showSelectTablesForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1255,14 +1292,25 @@
                     "var dataTree = nhibernatePanel.down('nhibernatetree');\r",
                     "var dirNode = me.getDirNode(dataTree.dirNode);\r",
                     "var selected = [];\r",
-                    "var dict = dirNode.data.record.dbDict.dataObjects;\r",
+                    "/*var dict = dirNode.data.record.dbDict.dataObjects;\r",
                     "Ext.each(dict, function(table) {\r",
-                    "  selected.push(table.tableName);\r",
+                    "selected.push(table.tableName);\r",
                     "});\r",
+                    "*/\r",
                     "var tables = dirNode.data.record.dbInfo.dbTableNames.items; \r",
                     "var grid = form.down('#tablesSelectionGrid');\r",
-                    "grid.loadItems(tables);\r",
+                    "var itemSelecter = form.down('#multiselectcomponentgrid');\r",
                     "\r",
+                    "//var tempStore = itemSelecter.items.items[0].getStore();\r",
+                    "grid.loadItems(tables);\r",
+                    "//var updatedStore = grid.getStore();\r",
+                    "for(var i=0;i<tables.length;i++){\r",
+                    "  grid.getStore().data.items[i].data.text = tables[i];\r",
+                    "  grid.getStore().data.items[i].data.value = tables[i];\r",
+                    "}\r",
+                    "itemSelecter.items.items[2].bindStore(grid.getStore());\r",
+                    "//itemSelecter.items.items[2].buttons = [\"add\",\"remove\"];\r",
+                    "//itemSelecter.items.items[2].doLayout();\r",
                     "grid.down('gridcolumn').setText('Select Data Tables');\r",
                     "grid.selectItems(selected);\r",
                     "panel = nhibernatePanel.down('#nhibernateContent');\r",
@@ -1286,6 +1334,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showConnectionStringForm",
                 "fn": "showConnectionStringForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1293,7 +1342,7 @@
                 "implHandler": [
                     "var me = this,\r",
                     "\r",
-                    "form = me.getConnectionStringForm();\r",
+                    "  form = me.getConnectionStringForm();\r",
                     "var dataTree = nhibernatePanel.down('nhibernatetree');\r",
                     "\r",
                     "var dirNode = me.getDirNode(dataTree.dirNode);\r",
@@ -1427,6 +1476,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showDataObjectForm",
                 "fn": "showDataObjectForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1438,19 +1488,29 @@
                     "var dataTree = nhibernatePanel.down('nhibernatetree');\r",
                     "var treeNode = dataTree.getSelectedNode();\r",
                     "\r",
-                    "if (treeNode.data.property.keyDelimiter === 'null' || \r",
+                    "/*if (!treeNode.data.property || treeNode.data.property.keyDelimiter === 'null' || \r",
                     "!treeNode.data.property.keyDelimiter || treeNode.data.property.keyDelimiter === undefined) {\r",
-                    "  keyDelimiter = '_';\r",
+                    "keyDelimiter = '_';\r",
                     "}   else {\r",
-                    "  keyDelimiter = treeNode.data.property.keyDelimiter;\r",
+                    "keyDelimiter = treeNode.data.property.keyDelimiter;\r",
                     "}\r",
                     "\r",
                     "form.getForm().findField('tableName').setValue(treeNode.data.property.tableName);\r",
                     "form.getForm().findField('objectNamespace').setValue(treeNode.data.property.objectNamespace);\r",
                     "form.getForm().findField('objectName').setValue(treeNode.data.property.objectName);\r",
                     "form.getForm().findField('keyDelimiter').setValue(keyDelimiter);\r",
+                    "*/\r",
+                    "if (treeNode.raw.properties.keyDelimiter === 'null' || \r",
+                    "!treeNode.raw.properties.keyDelimiter || treeNode.raw.properties.keyDelimiter === undefined) {\r",
+                    "  keyDelimiter = '_';\r",
+                    "}   else {\r",
+                    "  keyDelimiter = treeNode.raw.properties.keyDelimiter;\r",
+                    "}\r",
                     "\r",
-                    "panel = nhibernatePanel.down('#nhibernateContent');\r",
+                    "form.getForm().findField('tableName').setValue(treeNode.raw.text);\r",
+                    "form.getForm().findField('objectNamespace').setValue(treeNode.raw.properties.objectNamespace);\r",
+                    "form.getForm().findField('objectName').setValue(treeNode.raw.properties.objectName);\r",
+                    "form.getForm().findField('keyDelimiter').setValue(keyDelimiter);\r",
                     "\r",
                     "panel.removeAll();\r",
                     "\r",
@@ -1468,6 +1528,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showRelationsForm",
                 "fn": "showRelationsForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1516,6 +1577,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showSetRelationForm",
                 "fn": "showSetRelationForm",
                 "designer|params": [
                     "nhibernatepanel"
@@ -1638,6 +1700,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getConnStringParts",
                 "fn": "getConnStringParts",
                 "designer|params": [
                     "connString",
@@ -1726,6 +1789,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showSelectKeyFieldsForm",
                 "fn": "showSelectKeyFieldsForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1738,8 +1802,8 @@
                     "var dataNode = dataTree.getSelectedNode();\r",
                     "var dirNode = me.getDirNode(dataTree.dirNode);\r",
                     "\r",
-                    "var context = dirNode.data.record.context;\r",
-                    "var endpoint = dirNode.data.record.endpoint;\r",
+                    "var context = dirNode.data.record.ContextName;//dirNode.data.record.context;\r",
+                    "var endpoint = dirNode.data.record.Endpoint;//dirNode.data.record.endpoint;\r",
                     "var baseUrl = dirNode.data.record.baseUrl;\r",
                     "\r",
                     "var grid = form.down('#multiSelectDataKeys');\r",
@@ -1748,20 +1812,24 @@
                     "\r",
                     "var availItems = [];\r",
                     "var propertiesNode = dataNode.parentNode.childNodes[1];\r",
-                    "var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;\r",
+                    "//var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;\r",
                     "\r",
-                    "var selectItems = me.getSelectItems(dataNode);\r",
+                    "/*var selectItems = me.getSelectItems(dataNode);\r",
                     "Ext.each(selectItems, function (item) {\r",
-                    "  availItems.push(item);\r",
+                    "availItems.push(item);\r",
                     "});\r",
+                    "*/\r",
+                    "/*Ext.each(hiddenRootNode.children, function(node) {\r",
+                    "availItems.push(node.text);\r",
+                    "});*/\r",
                     "\r",
-                    "Ext.each(hiddenRootNode.children, function(node) {\r",
-                    "  availItems.push(node.text);\r",
-                    "});\r",
-                    "\r",
+                    "var availableItem = me.getAvailableItems(dataNode);\r",
+                    "Ext.each(availableItem, function(node) {\r",
+                    "  availItems.push(node[0]);\r",
+                    "})\r",
                     "\r",
                     "grid.loadItems(availItems);\r",
-                    "grid.selectItems(selectItems);\r",
+                    "//grid.selectItems(selectItems);\r",
                     "panel = nhibernatePanel.down('#nhibernateContent');\r",
                     "\r",
                     "panel.removeAll();\r",
@@ -1784,6 +1852,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showSelectPropertiesForm",
                 "fn": "showSelectPropertiesForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1805,19 +1874,26 @@
                     "\r",
                     "var availItems = [];\r",
                     "var propertiesNode = dataNode.parentNode.childNodes[1];\r",
-                    "var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;\r",
+                    "//var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;\r",
                     "\r",
                     "var selectItems = me.getSelectItems(dataNode);\r",
-                    "Ext.each(selectItems, function (item) {\r",
-                    "  availItems.push(item);\r",
+                    "var availableItems = me.getAvailableItems(dataNode);\r",
+                    "/*Ext.each(selectItems, function (item) {\r",
+                    "availItems.push(item);\r",
                     "});\r",
-                    "\r",
+                    "*/\r",
+                    "/*\r",
                     "Ext.each(hiddenRootNode.children, function(node) {\r",
-                    "  availItems.push(node.text);\r",
+                    "availItems.push(node.text);\r",
+                    "});\r",
+                    "*/\r",
+                    "\r",
+                    "Ext.each(availableItems, function(node) {\r",
+                    "  availItems.push(node[0]);\r",
                     "});\r",
                     "\r",
                     "grid.loadItems(availItems);\r",
-                    "grid.selectItems(selectItems);\r",
+                    "//grid.selectItems(selectItems);\r",
                     "panel = nhibernatePanel.down('#nhibernateContent');\r",
                     "\r",
                     "panel.removeAll();\r",
@@ -1838,6 +1914,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showDataKeyForm",
                 "fn": "showDataKeyForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1872,6 +1949,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getDirNode",
                 "fn": "getDirNode",
                 "designer|params": [
                     "nodeInternalId"
@@ -1893,6 +1971,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "showDataPropertyForm",
                 "fn": "showDataPropertyForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1927,6 +2006,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getJsonTree",
                 "fn": "getJsonTree",
                 "designer|params": [
                     "rootNode",
@@ -1974,6 +2054,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "setTreeProperty",
                 "fn": "setTreeProperty",
                 "designer|params": [
                     "dbInfo",
@@ -2023,7 +2104,7 @@
                     "  dbServer + ')(PORT=' + dbInfo.portNumber + \r",
                     "  ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + serName + '=' + serviceName + ')))';\r",
                     "  else if (upProvider.indexOf('MYSQL') > -1)\r",
-                    "    var dataSrc = 'Data Source=' + dbServer;\r",
+                    "  var dataSrc = 'Data Source=' + dbServer;\r",
                     "  treeProperty.connectionString = dataSrc + ';User ID=' + dbInfo.dbUserName + ';Password=' + dbInfo.dbPassword;\r",
                     "  treeProperty.schemaName = dbDict.SchemaName;\r",
                     "}\r",
@@ -2065,6 +2146,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getFolderFromChildNode",
                 "fn": "getFolderFromChildNode",
                 "designer|params": [
                     "folderNode"
@@ -2075,13 +2157,13 @@
                     "var folder = {};\r",
                     "var keyName = '';\r",
                     "\r",
-                    "folder.tableName = folderNodeProp.tableName;\r",
-                    "folder.objectNamespace = folderNodeProp.objectNamespace;\r",
-                    "folder.objectName = folderNodeProp.objectName;\r",
-                    "folder.description = folderNodeProp.description;\r",
+                    "folder.tableName = folderNode.data.text;//folderNodeProp.tableName;\r",
+                    "folder.objectNamespace = folderNode.raw.properties.objectNamespace;//folderNodeProp.objectNamespace;\r",
+                    "folder.objectName = folderNode.raw.properties.objectName;//folderNodeProp.objectName;\r",
+                    "folder.description = '';//folderNodeProp.description;\r",
                     "\r",
-                    "if (folderNodeProp.keyDelimiter && folderNodeProp.keyDelimiter != 'null')\r",
-                    "folder.keyDelimeter = folderNodeProp.keyDelimiter;    \r",
+                    "if (folderNode.raw.properties.keyDelimiter && folderNode.raw.properties.keyDelimiter != 'null')\r",
+                    "folderNode.raw.properties.keyDelimiter = folderNode.raw.properties.keyDelimiter;    \r",
                     "else\r",
                     "folder.keyDelimeter = '_';\r",
                     "\r",
@@ -2090,9 +2172,9 @@
                     "folder.dataRelationships = [];\r",
                     "\r",
                     "folderNode.eachChild(function(child) {\r",
-                    "  \r",
+                    "\r",
                     "});\r",
-                    "                     \r",
+                    "\r",
                     "for (var j = 0; j < folderNode.childNodes.length; j++) {\r",
                     "  if (folderNode.childNodes[1])\r",
                     "  var propertyFolderNode = folderNode.childNodes[1];    \r",
@@ -2228,6 +2310,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "prepareProperties",
                 "fn": "prepareProperties",
                 "designer|params": [
                     "folder",
@@ -2250,21 +2333,21 @@
                     "  }\r",
                     "\r",
                     "  if (!hasData)\r",
-                    "  var propertyNodeProf = propertyNode.property;\r",
+                    "  var propertyNodeProf = propertyNode.raw.properties;//propertyNode.property;\r",
                     "\r",
                     "  var props = {};\r",
-                    "  props.columnName = propertyNodeProf.columnName;\r",
-                    "  props.propertyName = propertyNodeProf.propertyName;\r",
+                    "  props.columnName = propertyNode.raw.properties.columnName;//propertyNodeProf.columnName;\r",
+                    "  props.propertyName = propertyNode.raw.properties.propertyName;//propertyNodeProf.propertyName;\r",
                     "\r",
-                    "  if (typeof propertyNodeProf.dataType.toLowerCase() == 'string')\r",
-                    "  props.dataType = me.getDataTypeIndex(propertyNodeProf.dataType);\r",
+                    "  if (typeof propertyNode.raw.properties.dataType.toLowerCase() == 'string')\r",
+                    "  props.dataType = me.getDataTypeIndex(propertyNode.raw.properties.dataType);\r",
                     "  else\r",
                     "  props.dataType = propertyNodeProf.dataType;\r",
                     "\r",
-                    "  props.dataLength = propertyNodeProf.dataLength;\r",
+                    "  props.dataLength = propertyNode.raw.properties.dataLength;\r",
                     "\r",
-                    "  if (propertyNodeProf.nullable)\r",
-                    "  props.isNullable = propertyNodeProf.nullable.toString().toLowerCase();\r",
+                    "  if (propertyNode.raw.properties.nullable)\r",
+                    "  props.isNullable =propertyNode.raw.properties.nullable.toString().toLowerCase();\r",
                     "  else\r",
                     "  props.isNullable = 'false';\r",
                     "\r",
@@ -2277,13 +2360,13 @@
                     "  else\r",
                     "  props.keyType = 0;\r",
                     "\r",
-                    "  if (propertyNodeProf.showOnIndex)\r",
-                    "  props.showOnIndex = propertyNodeProf.showOnIndex.toString().toLowerCase();\r",
+                    "  if (propertyNode.raw.properties.showOnIndex)\r",
+                    "  props.showOnIndex = propertyNode.raw.properties.showOnIndex.toString().toLowerCase();\r",
                     "  else\r",
                     "  props.showOnIndex = 'false';\r",
                     "\r",
                     "  props.isHidden = ifHidden;\r",
-                    "  props.numberOfDecimals = propertyNodeProf.numberOfDecimals;\r",
+                    "  props.numberOfDecimals = propertyNode.raw.properties.numberOfDecimals;\r",
                     "  folder.dataProperties.push(props);\r",
                     "}\r",
                     "return folder;"
@@ -2299,6 +2382,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getDataTypeIndex",
                 "fn": "getDataTypeIndex",
                 "designer|params": [
                     "dataType"
@@ -2329,11 +2413,12 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getDataTypes",
                 "fn": "getDataTypes",
                 "implHandler": [
                     "var me = this;\r",
                     "Ext.Ajax.request({\r",
-                    "  url: 'NHibernate/DataType',\r",
+                    "  url: 'AdapterManager/DataType',\r",
                     "  method: 'GET',\r",
                     "  timeout: 6000000,\r",
                     "  success: function (response, request) {\r",
@@ -2364,6 +2449,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onConnectToDatabase",
                 "fn": "onConnectToDatabase",
                 "implHandler": [
                     "var me = this;\r",
@@ -2371,8 +2457,8 @@
                     "var panel = form.up('nhibernatepanel');\r",
                     "var dataTree = panel.down('nhibernatetree');\r",
                     "var dirNode = me.getDirNode(dataTree.dirNode);\r",
-                    "var context = dirNode.data.record.ContextName;\r",
-                    "var endpoint = dirNode.data.record.Endpoint;\r",
+                    "var context = dirNode.parentNode.data.text;//dirNode.data.record.ContextName;\r",
+                    "var endpoint = dirNode.data.record.Name;//dirNode.data.record.Endpoint;\r",
                     "var baseUrl = dirNode.data.record.BaseUrl;\r",
                     "var content = me.getMainContent();\r",
                     "var dbProvider = form.getForm().findField('dbProvider').getValue().toUpperCase();\r",
@@ -2386,8 +2472,8 @@
                     "var servieName = '';\r",
                     "var serName = '';\r",
                     "\r",
-                    "dirNode.data.record.dbDict.Provider = dbProvider;\r",
-                    "dirNode.data.record.dbDict.SchemaName = dbSchema.getValue();\r",
+                    "//dirNode.data.record.dbDict.Provider = dbProvider;\r",
+                    "//dirNode.data.record.dbDict.SchemaName = dbSchema.getValue();\r",
                     "\r",
                     "if (dbProvider.indexOf('ORACLE') > -1) {\r",
                     "  dbServer.setValue(host.getValue());\r",
@@ -2406,12 +2492,12 @@
                     "}\r",
                     "\r",
                     "form.getForm().submit({\r",
-                    "  url: 'nhibernate/TableNames',\r",
+                    "  url: 'AdapterManager/TableNames',//'nhibernate/TableNames',\r",
                     "  method: 'POST',\r",
                     "  timeout: 600000,\r",
                     "  params: {\r",
-                    "    contextName: context,\r",
-                    "    endpoint: endpoint,\r",
+                    "    scope: context,\r",
+                    "    app: endpoint,\r",
                     "    serName: serName,\r",
                     "    baseUrl: baseUrl\r",
                     "  },\r",
@@ -2451,8 +2537,10 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onSaveDataObjects",
                 "fn": "onSaveDataObjects",
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "var content = this.getMainContent();\r",
                     "var panel = button.up('nhibernatepanel');\r",
@@ -2527,6 +2615,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "resetConfigOracle",
                 "fn": "resetConfigOracle",
                 "designer|params": [
                     "host",
@@ -2570,6 +2659,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "resetConfigMsSql",
                 "fn": "resetConfigMsSql",
                 "designer|params": [
                     "dbName",
@@ -2609,6 +2699,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onResetDataObjects",
                 "fn": "onResetDataObjects",
                 "implHandler": [
                     "var me = this;\r",
@@ -2662,6 +2753,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onFormCreaterelation",
                 "fn": "onFormCreaterelation",
                 "implHandler": [
                     "var me = this;\r",

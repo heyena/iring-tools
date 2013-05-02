@@ -53,7 +53,7 @@ Ext.define('AM.store.NHibernateTreeStore', {
           baseUrl: null
         },
         timeout: 600000,
-        url: 'NHibernate/DBObjects',
+        url: 'Adapter/DBObjects',
         reader: {
           type: 'json'
         }

@@ -18,10 +18,24 @@
             },
             "codeClass": null,
             "userConfig": {
-                "name": "DisplayField",
+                "name": "value",
                 "type": "string"
             },
             "designerId": "de6d1f64-e170-495d-ae1a-e7e19bd137ee"
+        },
+        {
+            "type": "Ext.data.Field",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "text",
+                "type": "string",
+                "designer|userClassName": "MyField48"
+            },
+            "designerId": "e150fc07-62a5-47ad-9cb8-1a8e1ec0c2e1"
         }
     ]
 }

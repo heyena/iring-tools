@@ -3,74 +3,110 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using org.iringtools.adapter.security;
-using System.Collections;
 using log4net;
+using System.Net;
 using System.Configuration;
-using org.iringtools.utility;
+using org.iringtools.library;
 
 namespace org.iringtools.web.controllers
 {
   public abstract class BaseController : Controller
   {
-    protected IAuthenticationLayer _authenticationLayer = new OAuthProvider();
-    protected IDictionary _allClaims = new Dictionary<string, string>();
-    protected string _oAuthToken = String.Empty;
-    protected string adapter_PREFIX = "adpmgr-";
-    protected IAuthorizationLayer _authorizationLayer = new LdapAuthorizationProvider();
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseController));
-    private const string USERID_KEY = "emailaddress";
+
+    protected string _authenticatedUser;
+    protected IDictionary<string, string> _authHeaders;
 
     public BaseController()
     {
       try
       {
-        var enableOAuth = ConfigurationManager.AppSettings["EnableOAuth"];
+        //
+        // process authentication if a provider is configured
+        //
+        string authNProviderName = ConfigurationManager.AppSettings["AuthenticationProvider"];
 
-        if (String.IsNullOrEmpty(enableOAuth) || enableOAuth.ToUpper() != "TRUE") return;
-        _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
+        if (!string.IsNullOrEmpty(authNProviderName))
+        {
+          Type authNProviderType = Type.GetType(authNProviderName);
+          if (authNProviderType == null)
+          {
+            Send401Error("Unable to load authentication provider.");
+          }
 
-        if (System.Web.HttpContext.Current.Response.IsRequestBeingRedirected)
-          return;
+          IAuthentication authNProvider = (IAuthentication)Activator.CreateInstance(authNProviderType);
+          _authenticatedUser = authNProvider.Authenticate(System.Web.HttpContext.Current.Session);
 
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        var ldapConfigFilePath = baseDirectory + @"App_Data\ldap.conf";
+          if (System.Web.HttpContext.Current.Response.IsRequestBeingRedirected)
+            return;
 
-    //    if (System.IO.File.Exists(ldapConfigFilePath))
-    //    {
-    //      var ldapConfig = new Properties();
-    //      ldapConfig.Load(ldapConfigFilePath);
-    //      ldapConfig["authorizedGroup"] = "adapterAdmins";
-    //      _authorizationLayer.Init(ldapConfig);
+          if (string.IsNullOrEmpty(_authenticatedUser))
+          {
+            Send401Error("Authentication failed.");
+          }
 
-    //      if (!_authorizationLayer.IsAuthorized(_allClaims))
-    //      {
-    //        throw new UnauthorizedAccessException("User not authorized to access AdapterManager.");
-    //      }
-    //    }
-    //    else
-    //    {
-    //      _logger.Warn("LDAP Configuration is missing!");
-    //    }
+          //
+          // process authorization if a provider is configured
+          //
+          string authZProviderName = ConfigurationManager.AppSettings["AuthorizationProvider"];
+
+          if (!string.IsNullOrEmpty(authZProviderName))
+          {
+            Type authZProviderType = Type.GetType(authZProviderName);
+
+            if (authZProviderType == null)
+            {
+              Send401Error("Unable to load authorization provider.");
+            }
+
+            IAuthorization authZProvider = (IAuthorization)Activator.CreateInstance(authZProviderType);
+            bool authorized = authZProvider.Authorize(System.Web.HttpContext.Current.Session, "adapterAdmins", _authenticatedUser);
+
+            if (!authorized)
+            {
+              Send401Error("User [" + _authenticatedUser + "] not authorized.");
+            }
+          }
+
+          //
+          // get authorization headers if a provider is configured
+          //
+          try
+          {
+            string headersProviderName = ConfigurationManager.AppSettings["AuthHeadersProvider"];
+
+            if (!string.IsNullOrEmpty(headersProviderName))
+            {
+              Type headersProviderType = Type.GetType(headersProviderName);
+
+              if (headersProviderType == null)
+              {
+                Send401Error("Unable to load auth header provider.");
+              }
+
+              IAuthHeaders headersProvider = (IAuthHeaders)Activator.CreateInstance(headersProviderType);
+              _authHeaders = headersProvider.Get(_authenticatedUser);
+            }
+          }
+          catch (Exception e)
+          {
+            _logger.Error("Error getting authorization headers: " + e);
+            throw e;
+          }
+        }
       }
       catch (Exception e)
       {
-        _logger.Error(e.ToString());
-        throw e;
+        _logger.Error("Authentication error: " + e.Message + ": " + e.StackTrace.ToString());
+        Send401Error(e.ToString());
       }
     }
 
-    protected string GetUserId(IDictionary<string, string> claims)
+    protected void Send401Error(string error)
     {
-      foreach (var pair in claims)
-      {
-        if (pair.Key.ToLower() == USERID_KEY)
-        {
-          return pair.Value;
-        }
-      }
-
-      return "guest";
+      System.Web.HttpContext.Current.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+      System.Web.HttpContext.Current.Response.Write(error);
+      System.Web.HttpContext.Current.Response.End();
     }
   }
 }

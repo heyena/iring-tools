@@ -43,7 +43,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
           },
           width: 220,
           align: 'center',
-          dataIndex: 'DisplayField',
+          dataIndex: 'value',
           text: 'DisplayField'
         }
       ]

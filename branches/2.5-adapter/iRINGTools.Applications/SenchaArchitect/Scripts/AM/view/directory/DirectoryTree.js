@@ -120,15 +120,25 @@ Ext.define('AM.view.directory.DirectoryTree', {
     var me = this;
     var node = me.getSelectedNode();
     var store = me.store;
-
+    var path;
+    var panel = me.up();
+    //panel.body.mask('Loading', 'x-mask-loading');
     if (!node)
-    node = me.getRootNode();
+    node = me.getRootNode();    
+    if (node) {
+      path = node.getPath('text');
+      store.load(node);
+      //if(node.isExpanded())
+      //node.collapse();
+    }
+    if(path) {
+      me.expandPath(path, 'text');
+      me.getSelectionModel().select(node);
+    }
+    //panel.body.unmask();
 
-    var path = node.getPath('text');
-    store.load(node);
-    if(node.isExpanded())
-    node.collapse();
-    me.expandPath(path, 'text');
+
+
   },
 
   getSelectedNode: function() {

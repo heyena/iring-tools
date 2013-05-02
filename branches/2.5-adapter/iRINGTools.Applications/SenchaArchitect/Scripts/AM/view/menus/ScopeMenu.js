@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.ScopeMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.scopemenu',
 
-  width: 120,
-
   initComponent: function() {
     var me = this;
 

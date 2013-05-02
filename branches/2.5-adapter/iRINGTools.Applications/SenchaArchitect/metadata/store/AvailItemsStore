@@ -25,7 +25,7 @@
                     "{baseUrl: null}"
                 ],
                 "timeout": 600000,
-                "url": "NHibernate/DBProviders"
+                "url": "AdapterManager/DBProviders"
             },
             "designerId": "550b5b53-ed7c-41f6-82f4-45d2c5777035",
             "cn": [

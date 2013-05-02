@@ -158,7 +158,7 @@
             "userConfig": {
                 "width": 220,
                 "align": "center",
-                "dataIndex": "DisplayField",
+                "dataIndex": "value",
                 "text": "DisplayField"
             },
             "designerId": "a4be971a-e012-42f6-be4d-5f879c0fe725",

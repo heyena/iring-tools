@@ -18,7 +18,11 @@ Ext.define('AM.model.MultiSelect', {
 
   fields: [
     {
-      name: 'DisplayField',
+      name: 'value',
+      type: 'string'
+    },
+    {
+      name: 'text',
       type: 'string'
     }
   ]

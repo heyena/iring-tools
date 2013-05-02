@@ -33,7 +33,7 @@ Ext.define('AM.store.ProviderStore', {
           baseUrl: null
         },
         timeout: 600000,
-        url: 'NHibernate/DBProviders',
+        url: 'AdapterManager/DBProviders',
         reader: {
           type: 'json',
           root: 'items'

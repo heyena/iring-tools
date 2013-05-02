@@ -7,7 +7,7 @@ using System.Net;
 
 namespace org.iringtools.web.controllers
 {
-  public class HomeController : BaseController
+  public class HomeController : Controller
   {
     //
     // GET: /Home/

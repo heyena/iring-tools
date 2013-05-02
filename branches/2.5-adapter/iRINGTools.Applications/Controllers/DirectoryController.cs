@@ -18,18 +18,17 @@ namespace org.iringtools.web.controllers
 {
   public class DirectoryController : BaseController
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
+    
     private AdapterRepository _repository;
     private string _keyFormat = "Mapping.{0}.{1}";
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
+    
+    public DirectoryController() : this(new AdapterRepository()) {}
 
-    public DirectoryController()
-      : this(new AdapterRepository())
-    {
-    }
-
-    public DirectoryController(AdapterRepository repository)
+    public DirectoryController(AdapterRepository repository) : base()
     {
       _repository = repository;
+      _repository.AuthHeaders = _authHeaders;
     }
 
     public ActionResult Index()
@@ -55,76 +54,85 @@ namespace org.iringtools.web.controllers
                 ie = Session.GetEnumerator();
               }
 
-              var nodes = new List<JsonTreeNode>();
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();              
               var contexts = _repository.GetScopes();
 
               if (contexts != null)
               {
-                nodes.AddRange(contexts.Select(scope => new JsonTreeNode
+                foreach (ScopeProject scope in contexts)
+                {
+                  JsonTreeNode node = new JsonTreeNode
                   {
-                    nodeType = "async", 
-                    type = "ScopeNode", 
-                    iconCls = "scope", 
-                    id = scope.Name, 
-                    text = scope.Name, 
-                    expanded = false, 
-                    leaf = false, 
-                    children = null, 
-                    record = scope, 
-                    property = new Dictionary<string, string>
-                      {
-                        {"Name", scope.Name}, 
-                        {"Description", scope.Description}
-                      }
-                  }));
+                    nodeType = "async",
+                    type = "ScopeNode",
+                    iconCls = "scope",
+                    id = scope.Name,
+                    text = scope.Name,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = scope
+                  };
+
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", scope.Name);
+                  node.property.Add("Description", scope.Description);
+                  nodes.Add(node);
+                }
               }
 
               return Json(nodes, JsonRequestBehavior.AllowGet);
             }
           case "ScopeNode":
             {
-              var context = _repository.GetScope(form["node"]);
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-              var nodes = (from endpoint in context.Applications
-                           let dataLayer = _repository.GetDataLayer(context.Name, endpoint.Name)
-                           where dataLayer != null
-                           select new JsonTreeNode
-                             {
-                               nodeType = "async", 
-                               type = "ApplicationNode", 
-                               iconCls = "applications", 
-                               id = context.Name + "/" + endpoint.Name, 
-                               text = endpoint.Name, 
-                               expanded = false, 
-                               leaf = false, 
-                               children = null, 
-                               record = new
-                                 {
-                                   ContextName = context.Name, 
-                                   Endpoint = endpoint.Name, 
-                                   Description = endpoint.Description, 
-                                   DataLayer = dataLayer.Name, 
-                                   Assembly = dataLayer.Assembly, 
-                                   Configuration = endpoint.Configuration
-                                 }, property = new Dictionary<string, string>
-                                   {
-                                     {"contextName", context.Name}, 
-                                     {"endpoint", endpoint.Name}, 
-                                     {"Description", endpoint.Description}, 
-                                     {"Data Layer", dataLayer.Name}
-                                   }
-                             }).ToList();
+              ScopeProject scope = _repository.GetScope(form["node"]);
+
+              foreach (ScopeApplication application in scope.Applications)
+              {
+                DataLayer dataLayer = _repository.GetDataLayer(scope.Name, application.Name);
+
+                if (dataLayer != null)
+                {
+                  JsonTreeNode node = new JsonTreeNode
+                  {
+                    nodeType = "async",
+                    type = "ApplicationNode",
+                    iconCls = "application",
+                    id = scope.Name + "/" + application.Name,
+                    text = application.Name,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = new
+                    {
+                      Name = application.Name,
+                      Description = application.Description,
+                      DataLayer = dataLayer.Name,
+                      Assembly = dataLayer.Assembly,
+                      Configuration = application.Configuration
+                    }
+                  };
+
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", application.Name);
+                  node.property.Add("Description", application.Description);
+                  node.property.Add("Data Layer", dataLayer.Name);
+                  nodes.Add(node);
+                }
+              }
 
               ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
               return result;
             }
           case "ApplicationNode":
             {
-              var context = form["node"];
+              string context = form["node"];
 
-              var nodes = new List<JsonTreeNode>();
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-              var dataObjectsNode = new JsonTreeNode
+              JsonTreeNode dataObjectsNode = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "DataObjectsNode",
@@ -136,7 +144,7 @@ namespace org.iringtools.web.controllers
                 children = null
               };
 
-              var graphsNode = new JsonTreeNode
+              JsonTreeNode graphsNode = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "GraphsNode",
@@ -148,7 +156,7 @@ namespace org.iringtools.web.controllers
                 children = null
               };
 
-              var ValueListsNode = new JsonTreeNode
+              JsonTreeNode ValueListsNode = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "ValueListsNode",
@@ -168,46 +176,52 @@ namespace org.iringtools.web.controllers
             }
           case "ValueListsNode":
             {
-              var context = form["node"];
-              var scopeName = context.Split('/')[0];
-              var applicationName = context.Split('/')[1];
+              string context = form["node"];
+              string scopeName = context.Split('/')[0];
+              string applicationName = context.Split('/')[1];
 
-              var mapping = GetMapping(scopeName, applicationName);
+              Mapping mapping = GetMapping(scopeName, applicationName);
 
-              var nodes = mapping.valueListMaps.Select(valueList => new JsonTreeNode
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+              foreach (ValueListMap valueList in mapping.valueListMaps)
+              {
+                JsonTreeNode node = new JsonTreeNode
                 {
-                  nodeType = "async", 
-                  type = "ValueListNode", 
-                  iconCls = "treeValuelist", 
-                  id = context + "/ValueList/" + valueList.name, 
-                  text = valueList.name, 
-                  expanded = false, 
-                  leaf = false, 
+                  nodeType = "async",
+                  type = "ValueListNode",
+                  iconCls = "valuemap",
+                  id = context + "/ValueList/" + valueList.name,
+                  text = valueList.name,
+                  expanded = false,
+                  leaf = false,
                   children = null,
-                  record = valueList, 
-                  property = new Dictionary<string, string> {{"Name", valueList.name}}
-                }).ToList();
+                  record = valueList
+                };
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Name", valueList.name);
+                nodes.Add(node);
+              }
 
               return Json(nodes, JsonRequestBehavior.AllowGet);
             }
           case "ValueListNode":
             {
-              var context = form["node"];
-              var scopeName = context.Split('/')[0];
-              var applicationName = context.Split('/')[1];
-              var valueList = context.Split('/')[4];
+              string context = form["node"];
+              string scopeName = context.Split('/')[0];
+              string applicationName = context.Split('/')[1];
+              string valueList = context.Split('/')[4];
 
-              var nodes = new List<JsonTreeNode>();
-              var mapping = GetMapping(scopeName, applicationName);
-              var valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+              Mapping mapping = GetMapping(scopeName, applicationName);
+              ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
 
               foreach (var valueMap in valueListMap.valueMaps)
               {
-                var classLabel = String.Empty;
+                string classLabel = String.Empty;
 
                 if (!String.IsNullOrEmpty(valueMap.uri))
                 {
-                  var valueMapUri = valueMap.uri.Split(':')[1];
+                  string valueMapUri = valueMap.uri.Split(':')[1];
 
                   if (!String.IsNullOrEmpty(valueMap.label))
                   {
@@ -224,21 +238,22 @@ namespace org.iringtools.web.controllers
                   }
                 }
 
-                var node = new JsonTreeNode
-                  {
-                    nodeType = "async",
-                    type = "ListMapNode",
-                    iconCls = "treeValue",
-                    id = context + "/ValueMap/" + valueMap.internalValue,
-                    text = classLabel + " [" + valueMap.internalValue + "]",
-                    expanded = false,
-                    leaf = true,
-                    children = null,
-                    record = valueMap,
-                    property =
-                      new Dictionary<string, string> {{"Name", valueMap.internalValue}, {"Class Label", classLabel}}
-                  };
+                JsonTreeNode node = new JsonTreeNode
+                {
+                  nodeType = "async",
+                  type = "ListMapNode",
+                  iconCls = "valuelistmap",
+                  id = context + "/ValueMap/" + valueMap.internalValue,
+                  text = classLabel + " [" + valueMap.internalValue + "]",
+                  expanded = false,
+                  leaf = true,
+                  children = null,
+                  record = valueMap
+                };
 
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Name", valueMap.internalValue);
+                node.property.Add("Class Label", classLabel);
                 nodes.Add(node);
               }
 
@@ -247,26 +262,26 @@ namespace org.iringtools.web.controllers
 
           case "DataObjectsNode":
             {
-              var context = form["node"];
-              var contextName = context.Split('/')[0];
-              var endpoint = context.Split('/')[1];
-              var dataLayer = form["datalayer"];
-              var refresh = form["refresh"];
-
+              string context = form["node"];
+              string scopeName = context.Split('/')[0];
+              string applicationName = context.Split('/')[1];
+              string dataLayer = form["datalayer"];
+              string refresh = form["refresh"];
+              
               if (refresh == "true")
-              {
-                var response = _repository.Refresh(contextName, endpoint);
+              {   
+                Response response = _repository.Refresh(scopeName, applicationName);
                 _logger.Info(Utility.Serialize<Response>(response, true));
               }
 
-              var nodes = new List<JsonTreeNode>();
-              var dictionary = _repository.GetDictionary(contextName, endpoint);
-
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+              DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+              
               if (dictionary != null && dictionary.dataObjects != null)
               {
-                foreach (var dataObject in dictionary.dataObjects)
+                foreach (DataObject dataObject in dictionary.dataObjects)
                 {
-                  var node = new JsonTreeNode
+                  JsonTreeNode node = new JsonTreeNode
                   {
                     nodeType = "async",
                     type = "DataObjectNode",
@@ -289,13 +304,8 @@ namespace org.iringtools.web.controllers
                     node.hidden = true;
                   }
 
-                  node.property = new Dictionary<string, string>
-                    {
-                      {"Name", dataObject.objectName},
-                      {"ContextName", contextName},
-                      {"Endpoint", endpoint},
-                      {"BaseUrl", null}
-                    };
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", dataObject.objectName);
                   nodes.Add(node);
 
                 }
@@ -305,71 +315,74 @@ namespace org.iringtools.web.controllers
             }
           case "DataObjectNode":
             {
-              string datatype;
-              string keytype;
-              var context = form["node"];
-              var contextName = context.Split('/')[0];
-              var endpoint = context.Split('/')[1];
-              var dataObjectName = context.Split('/')[4];
+              string datatype, keytype;
+              string context = form["node"];
+              string scopeName = context.Split('/')[0];
+              string applicationName = context.Split('/')[1];
+              string dataObjectName = context.Split('/')[4];              
 
-              var dictionary = _repository.GetDictionary(contextName, endpoint);
-              var dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == dataObjectName);
+              DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+              DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == dataObjectName);
 
-              var nodes = new List<JsonTreeNode>();
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-              foreach (var property in dataObject.dataProperties)
+              foreach (DataProperty property in dataObject.dataProperties)
               {
-                keytype = GetKeytype(property.propertyName, dataObject.dataProperties);
-                datatype = GetDatatype(property.propertyName, dataObject.dataProperties);
+                keytype = getKeytype(property.propertyName, dataObject.dataProperties);
+                datatype = getDatatype(property.propertyName, dataObject.dataProperties);
 
-                var node = new JsonTreeNode
+                JsonTreeNode node = new JsonTreeNode
+                {
+                  nodeType = "async",
+                  type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
+                  iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
+                  id = context + "/" + dataObject.objectName + "/" + property.propertyName,
+                  text = property.propertyName,
+                  expanded = true,
+                  leaf = true,
+                  children = new List<JsonTreeNode>(),
+                  record = new
                   {
-                    nodeType = "async",
-                    type =
-                      (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
-                    iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
-                    id = context + "/" + dataObject.objectName + "/" + property.propertyName,
-                    text = property.propertyName,
-                    expanded = true,
-                    leaf = true,
-                    children = new List<JsonTreeNode>(),
-                    record = new
-                      {
-                        Name = property.propertyName,
-                        Keytype = keytype,
-                        Datatype = datatype
-                      },
-                    property =
-                      new Dictionary<string, string> {
-                        {"Name", property.propertyName}, 
-                        {"Keytype", keytype}, 
-                        {"Datatype", datatype}
-                      }
-                  };
+                    Name = property.propertyName,
+                    Keytype = keytype,
+                    Datatype = datatype
+                  }                 
+                };
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Name", property.propertyName);
+                node.property.Add("Keytype", keytype);
+                node.property.Add("Datatype", datatype);
                 nodes.Add(node);
               }
 
               if (dataObject.dataRelationships.Count > 0)
               {
-                nodes.AddRange(dataObject.dataRelationships.Select(relation => new JsonTreeNode
+                foreach (DataRelationship relation in dataObject.dataRelationships)
+                {
+                  JsonTreeNode node = new JsonTreeNode
                   {
-                    nodeType = "async", 
-                    type = "RelationshipNode", 
-                    iconCls = "treeRelation", 
-                    id = context + "/" + dataObject.objectName + "/" + relation.relationshipName, 
+                    nodeType = "async",
+                    type = "RelationshipNode",
+                    iconCls = "treeRelation",
+                    id = context + "/" + dataObject.objectName + "/" + relation.relationshipName,
                     text = relation.relationshipName,
-                    expanded = false, 
-                    leaf = false, 
-                    children = null, 
+                    expanded = false,
+                    leaf = false,
+                    children = null,
                     record = new
-                      {
-                        Name = relation.relationshipName, Type = relation.relationshipType, Related = relation.relatedObjectName
-                      }, property = new Dictionary<string, string> {
-                          {"Name", relation.relationshipName}, 
-                          {"Type", relation.relationshipType.ToString()}, 
-                          {"Related", relation.relatedObjectName}
-                        }
-                  }));
+                    {
+                      Name = relation.relationshipName,
+                      Type = relation.relationshipType,
+                      Related = relation.relatedObjectName
+                    }
+                  };
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", relation.relationshipName);
+                  node.property.Add("Type", relation.relationshipType.ToString());
+                  node.property.Add("Related", relation.relatedObjectName);
+                  nodes.Add(node);
+                }
+
               }
 
               return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -377,59 +390,65 @@ namespace org.iringtools.web.controllers
 
           case "RelationshipNode":
             {
-              var context = form["node"];
-              var related = form["related"];
-              var nodes = new List<JsonTreeNode>();
-
+              string keytype, datatype;
+              string context = form["node"];
+              string related = form["related"];
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                
               if (!String.IsNullOrEmpty(related))
               {
-                var contextName = context.Split('/')[0];
-                var endpoint = context.Split('/')[1];
-                var dictionary = _repository.GetDictionary(contextName, endpoint);
-                var dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
+                string scopeName = context.Split('/')[0];
+                string applicationName = context.Split('/')[1];
+                DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+                DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
 
-                nodes.AddRange(from property in dataObject.dataProperties
-                               let keytype = GetKeytype(property.propertyName, dataObject.dataProperties)
-                               let datatype = GetDatatype(property.propertyName, dataObject.dataProperties)
-                               select new JsonTreeNode
-                                 {
-                                   nodeType = "async", 
-                                   type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode", 
-                                   iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty", 
-                                   id = context + "/" + property.propertyName, text = property.propertyName, 
-                                   expanded = true, 
-                                   leaf = true, 
-                                   children = new List<JsonTreeNode>(), record = new 
-                                   {
-                                       Name = property.propertyName, 
-                                       Keytype = keytype,
-                                       Datatype = datatype
-                                   }, property = new Dictionary<string, string>
-                                       {
-                                         {"Name", property.propertyName},
-                                         {"Type", keytype}, 
-                                         {"Related", datatype}
-                                       }
-                                 });
+                foreach (DataProperty property in dataObject.dataProperties)
+                {
+                  keytype = getKeytype(property.propertyName, dataObject.dataProperties);
+                  datatype = getDatatype(property.propertyName, dataObject.dataProperties);
+
+                  JsonTreeNode node = new JsonTreeNode
+                  {
+                    nodeType = "async",
+                    type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
+                    iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
+                    id = context + "/" + property.propertyName,
+                    text = property.propertyName,
+                    expanded = true,
+                    leaf = true,
+                    children = new List<JsonTreeNode>(),
+                    record = new
+                    {
+                      Name = property.propertyName,
+                      Keytype = keytype,
+                      Datatype = datatype
+                    }
+                  };
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", property.propertyName);
+                  node.property.Add("Type", keytype);
+                  node.property.Add("Related", datatype);
+                  nodes.Add(node);
+                }
               }
-
+              
               return Json(nodes, JsonRequestBehavior.AllowGet);
             }
 
           case "GraphsNode":
             {
 
-              var context = form["node"];
-              var contextName = context.Split('/')[0];
-              var endpoint = context.Split('/')[1];
+              string context = form["node"];
+              string scopeName = context.Split('/')[0];
+              string applicationName = context.Split('/')[1];
 
-              var mapping = GetMapping(contextName, endpoint);
+              Mapping mapping = GetMapping(scopeName, applicationName);
 
-              var nodes = new List<JsonTreeNode>();
+              List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-              foreach (var graph in mapping.graphMaps)
+              foreach (GraphMap graph in mapping.graphMaps)
               {
-                var node = new JsonTreeNode
+                JsonTreeNode node = new JsonTreeNode
                 {
                   nodeType = "async",
                   type = "GraphNode",
@@ -440,20 +459,17 @@ namespace org.iringtools.web.controllers
                   leaf = true,
                   children = new List<JsonTreeNode>(),
                   record = graph
+
                 };
 
-                var classMap = graph.classTemplateMaps[0].classMap;
+                ClassMap classMap = graph.classTemplateMaps[0].classMap;
 
-                node.property = new Dictionary<string, string>
-                  {
-                    {"context", contextName},
-                    {"endpoint", endpoint},
-                    {"Data Object Name", graph.dataObjectName},
-                    {"Name", graph.name},
-                    {"Identifier", string.Join(",", classMap.identifiers)},
-                    {"Delimiter", classMap.identifierDelimiter},
-                    {"Class Label", classMap.name}
-                  };
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Data Object Name", graph.dataObjectName);
+                node.property.Add("Name", graph.name);
+                node.property.Add("Identifier", string.Join(",", classMap.identifiers));
+                node.property.Add("Delimiter", classMap.identifierDelimiter);
+                node.property.Add("Class Label", classMap.name);
                 nodes.Add(node);
               }
 
@@ -475,28 +491,26 @@ namespace org.iringtools.web.controllers
 
     public ActionResult DataLayers()
     {
-      var dataLayers = _repository.GetDataLayers();
+      DataLayers dataLayers = _repository.GetDataLayers();
 
-      var container = new JsonContainer<DataLayers>
-        {
-          items = dataLayers,
-          success = true, 
-          total = dataLayers.Count
-        };
+      JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
+      container.items = dataLayers;
+      container.success = true;
+      container.total = dataLayers.Count;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
     public string DataLayer(JsonTreeNode node, FormCollection form)
     {
-      var files = Request.Files;
-      var hpf = files[0] as HttpPostedFileBase;
+      HttpFileCollectionBase files = Request.Files;
+      HttpPostedFileBase hpf = files[0] as HttpPostedFileBase;
 
-      var dataLayerName = string.Empty;
+      string dataLayerName = string.Empty;
 
       if (string.IsNullOrEmpty(form["Name"]))
       {
-        var lastDot = hpf.FileName.LastIndexOf(".", System.StringComparison.Ordinal);
+        int lastDot = hpf.FileName.LastIndexOf(".");
         dataLayerName = hpf.FileName.Substring(0, lastDot);
       }
       else
@@ -504,26 +518,33 @@ namespace org.iringtools.web.controllers
         dataLayerName = form["Name"];
       }
 
-      var dataLayer = new DataLayer()
+      DataLayer dataLayer = new DataLayer()
       {
         Name = dataLayerName,
         Package = Utility.ToMemoryStream(hpf.InputStream)
       };
 
-      var dataLayerStream = new MemoryStream();
-      var serializer = new DataContractSerializer(typeof(DataLayer));
+      MemoryStream dataLayerStream = new MemoryStream();
+      DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
       serializer.WriteObject(dataLayerStream, dataLayer);
       dataLayerStream.Position = 0;
 
-      var response = _repository.UpdateDataLayer(dataLayerStream);
+      Response response = _repository.UpdateDataLayer(dataLayerStream);
       return Utility.ToJson<Response>(response);
     }
 
     public JsonResult Scope(FormCollection form)
     {
-      var success = String.Empty;
+      string success = String.Empty;
 
-      success = String.IsNullOrEmpty(form["contextName"]) ? _repository.AddScope(form["folderName"], form["description"]) : _repository.UpdateScope(form["contextName"], form["folderName"], form["description"]);
+      if (form["state"]=="new")//if (String.IsNullOrEmpty(form["scope"]))
+      {
+          success = _repository.AddScope(form["scope"], form["description"]);
+      }
+      else
+      {
+          success = _repository.UpdateScope(form["contextName"], form["scope"], form["description"]);
+      }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
@@ -531,53 +552,58 @@ namespace org.iringtools.web.controllers
     public JsonResult Application(FormCollection form)
     {
       string success = String.Empty;
-      string context = form["context"];
+      string scopeName = form["Scope"];
       library.Configuration configuration = new Configuration
       {
-        AppSettings = new AppSettings
-        {
-          Settings = new List<Setting>()
+        AppSettings = new AppSettings 
+        { 
+           Settings = new List<Setting>()
         }
       };
 
       for (int i = 0; i < form.AllKeys.Length; i++)
       {
-        if (form.GetKey(i).ToLower() != "context" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "endpoint" && form.GetKey(i).ToLower().Substring(0, 3) != "val")
-        {
-          //if (configuration.AppSettings == null)
-          //{
-          //    configuration.AppSettings = new AppSettings();
-          //}
-          //if (configuration.AppSettings.Settings == null)
-          //{
-          //    configuration.AppSettings.Settings = new List<Setting>();
-          //}
-          String key = form[i];
-          if (i + 1 < form.AllKeys.Length)
+          if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val")
           {
-            String value = form[i + 1];
-            configuration.AppSettings.Settings.Add(new Setting()
-            {
-              Key = key,
-              Value = value
-            });
+              //if (configuration.AppSettings == null)
+              //{
+              //    configuration.AppSettings = new AppSettings();
+              //}
+              //if (configuration.AppSettings.Settings == null)
+              //{
+              //    configuration.AppSettings.Settings = new List<Setting>();
+              //}
+              String key = form[i];
+              if (i + 1 < form.AllKeys.Length)
+              {
+                  String value = form[i + 1];
+                  configuration.AppSettings.Settings.Add(new Setting()
+                  {
+                      Key = key,
+                      Value = value
+                  });
+              }
           }
-        }
       }
 
-      var application = new ScopeApplication()
+      ScopeApplication application = new ScopeApplication()
       {
-        Name = form["endpoint"],
+        Name = form["Name"],
         Description = form["Description"],
         Assembly = form["assembly"],
         Configuration = configuration
       };
-      
-      success = String.IsNullOrEmpty(form["state"]) 
-        ? _repository.AddApplication(context, application)
-        : _repository.UpdateApplication(context, form["endpoint"], application);
 
-      var result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      if (String.IsNullOrEmpty(form["Application"]))
+      {
+        success = _repository.AddApplication(scopeName, application);
+      }
+      else
+      {
+        success = _repository.UpdateApplication(scopeName, form["Application"], application);
+      }
+
+      JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
       return result;
     }
 
@@ -590,9 +616,9 @@ namespace org.iringtools.web.controllers
 
     public JsonResult DeleteApplication(FormCollection form)
     {
-      var context = form["nodeid"];
-      var scope = context.Split('/')[0];
-      var application = context.Split('/')[1];
+      string context = form["nodeid"];
+      string scope = context.Split('/')[0];
+      string application = context.Split('/')[1];
 
       _repository.DeleteApplication(scope, application);
 
@@ -603,7 +629,7 @@ namespace org.iringtools.web.controllers
 
     private Mapping GetMapping(string scope, string application)
     {
-      var key = string.Format(_keyFormat, scope, application);
+      string key = string.Format(_keyFormat, scope, application);
 
       if (Session[key] == null)
       {
@@ -615,21 +641,21 @@ namespace org.iringtools.web.controllers
 
     private string GetClassLabel(string classId)
     {
-      var dataEntity = _repository.GetClassLabel(classId);
+      Entity dataEntity = _repository.GetClassLabel(classId);
 
       return Convert.ToString(dataEntity.Label);
     }
 
-    private string GetKeytype(string name, List<DataProperty> properties)
+    private string getKeytype(string name, List<DataProperty> properties)
     {
-      var keyType = string.Empty;
+      string keyType = string.Empty;
       keyType = properties.FirstOrDefault(p => p.propertyName == name).keyType.ToString();
 
       return keyType;
     }
-    private string GetDatatype(string name, List<DataProperty> properties)
+    private string getDatatype(string name, List<DataProperty> properties)
     {
-      var dataType = string.Empty;
+      string dataType = string.Empty;
       dataType = properties.FirstOrDefault(p => p.propertyName == name).dataType.ToString();
 
       return dataType;

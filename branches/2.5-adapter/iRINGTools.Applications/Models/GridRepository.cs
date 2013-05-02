@@ -1,154 +1,419 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
-using Ninject;
-using iRINGTools.Web.Models;
+using System.Linq;
+using System.Web.Script.Serialization;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.iringtools.adapter;
 using System.Net;
+using org.iringtools.adapter;
 
-namespace org.iringtools.web.Models
+namespace iRINGTools.Web.Models
 {
-  public class GridRepository : IGridRepository
-  {
-    private WebHttpClient _dataServiceClient = null;
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));   
-    ServiceSettings _settings = null;
-    string _proxyHost = "";
-    string _proxyPort = "";
-    string dataServiceUri = null;
-
-    [Inject]
-    public GridRepository()
+    public class GridRepository : AdapterRepository, IGridRepository
     {
-      NameValueCollection settings = ConfigurationManager.AppSettings;
-      _settings = new ServiceSettings();
-      _settings.AppendSettings(settings);
-      _proxyHost = _settings["ProxyHost"];
-      _proxyPort = _settings["ProxyPort"];
-
-      #region initialize webHttpClient for converting old mapping      
-
-        if (_settings["DataServiceURI"] == null) return;
-        dataServiceUri = _settings["DataServiceURI"];      
-     
-        if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
-        {
-            var webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-            _dataServiceClient = new WebHttpClient(dataServiceUri, null, webProxy);
-        }
-        else
-        {
-            _dataServiceClient = new WebHttpClient(dataServiceUri);
-
-        }
-        #endregion
-    }   
-
-    public string DataServiceUri()
-    {
-      GetSetting();
-      var dataServiceUri = _settings["DataServiceURI"];
-      var response = "";     
-
-      if (string.IsNullOrEmpty(dataServiceUri))        
-      {
-        response = "DataServiceURI is not configured.";
-        _logger.Error(response);
-      }
-
-      return response;
-    }
-
-    public DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl)
-    {
-      DataDictionary obj = null;
-
-      try
-      {
-        var newServiceClient = PrepareServiceClient(baseUrl, "data");
-        obj = newServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", endpoint, contextName), true);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(ex.ToString());
-      }
-
-      return obj;
-    }
-
-    public DataItems GetDataItems(string endpoint, string context, string graph, DataFilter dataFilter, int start, int limit)
-    {
-      var newServiceClient = PrepareServiceClient(DataServiceUri(), "data");      
-      var fmt = "json";
-      var relUrl = string.Format("/{0}/{1}/{2}/filter?format={3}&start={4}&limit={5}", endpoint, context, graph, fmt, start, limit);
-      var json = newServiceClient.Post<DataFilter, string>(relUrl, dataFilter, fmt, true);
+      private static readonly ILog _logger = LogManager.GetLogger(typeof(GridRepository));
       
-      var serializer = new DataItemSerializer();
-      var dataItems = serializer.Deserialize<DataItems>(json, false); 
-      return dataItems;
-    }
+      private DataDictionary dataDict;
+      private DataItems dataItems;
+      private Grid dataGrid;
+      private string graph;
+      private string response = "";
 
-    private void GetSetting()
-    {
-      if (_settings == null)
-        _settings = new ServiceSettings();     
-    }
-
-    private void GetAllSetting()
-    {
-      if (_settings == null)
-        _settings = new ServiceSettings();
-      GetProxy();
-    }
-
-    private void GetProxy()
-    {     
-      _proxyHost = _settings["ProxyHost"];
-      _proxyPort = _settings["ProxyPort"];
-    }
-
-    private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
-    {
-      GetSetting();
-      if (string.IsNullOrEmpty(baseUrl))
-        return _dataServiceClient;
-
-      var baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
-      var adapterBaseUri = CleanBaseUrl(dataServiceUri.ToLower(), '/');
-
-      return !baseUri.Equals(adapterBaseUri) ? GetServiceClient(baseUrl, serviceName) : _dataServiceClient;
-    }
-
-    private static string CleanBaseUrl(string url, char con)
-    {
-      try
+      public GridRepository()
       {
-        var uri = new System.Uri(url);
-        return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
+        dataGrid = new Grid();
       }
-      catch (Exception) { }
-      return null;
+
+      public string GetResponse()
+      {
+        return response;
+      }
+
+      public Grid GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
+      {
+        try
+        {
+          this.graph = graph;
+
+          if (start == "0" || start == "1")
+          {
+            GetDataDictionary(scope, app, false);
+          }
+          else
+          {
+            GetDataDictionary(scope, app);
+          }
+
+          if (response != "")
+            return null;
+
+          GetDataItems(scope, app, graph, filter, sort, dir, start, limit);
+
+          if (response != "")
+            return null;
+
+          GetDataGrid();
+
+          if (response != "")
+            return null;
+        }
+        catch (Exception ex)
+        {
+          response = response + " " + ex.Message.ToString();
+        }
+
+        return dataGrid;
+      }
+
+      private void GetDataDictionary(String scope, String app)
+      {
+        GetDataDictionary(scope, app, false);
+      }
+
+      private void GetDataDictionary(String scope, String app, bool usesCache)
+      {
+        try
+        {
+          string dictKey = string.Format("Dictionary.{0}.{1}", scope, app);
+
+          if (usesCache)
+            dataDict = (DataDictionary)Session[dictKey];
+          else
+            dataDict = null;
+
+          if (dataDict == null)
+          {
+            WebHttpClient client = CreateWebClient(_dataServiceUri);
+            dataDict = client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
+
+            // sort data objects & properties
+            if (dataDict != null && dataDict.dataObjects.Count > 0)
+            {
+              dataDict.dataObjects.Sort(new DataObjectsComparer());
+
+              foreach (DataObject dataObject in dataDict.dataObjects)
+              {
+                dataObject.dataProperties.Sort(new DataPropertyComparer());
+
+                // Adding Key elements to TOP of the List.
+                List<String> keyPropertyNames = new List<String>();
+                foreach (KeyProperty keyProperty in dataObject.keyProperties)
+                {
+                  keyPropertyNames.Add(keyProperty.keyPropertyName);
+                }
+                var value = "";
+                for (int i = 0; i < keyPropertyNames.Count; i++)
+                {
+                  value = keyPropertyNames[i];
+                  // removing the property name from the list and adding at TOP
+                  List<DataProperty> DataProperties = dataObject.dataProperties;
+                  DataProperty prop = null;
+
+                  for (int j = 0; j < DataProperties.Count; j++)
+                  {
+                    if (DataProperties[j].propertyName == value)
+                    {
+                      prop = DataProperties[j];
+                      DataProperties.RemoveAt(j);
+                      break;
+
+                    }
+                  }
+
+                  if (prop != null)
+                    DataProperties.Insert(0, prop);
+                }
+              }
+            }
+
+            if (usesCache)
+            {
+              Session[dictKey] = dataDict;
+            }
+          }
+
+          if (dataDict == null || dataDict.dataObjects.Count == 0)
+            response = response + "Data dictionary of [" + app + "] is empty.";
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error getting dictionary." + ex);
+          response = response + " " + ex.Message.ToString();
+        }
+      }
+
+      private void GetDataItems(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
+      {
+        try
+        {
+          string format = "json";
+          DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
+          string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
+          string dataItemsJson = string.Empty;
+
+          WebHttpClient client = CreateWebClient(_dataServiceUri);
+          string isAsync = _settings["Async"];
+
+          if (isAsync != null && isAsync.ToLower() == "true")
+          {
+            client.Async = true;
+            string statusUrl = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
+
+            if (string.IsNullOrEmpty(statusUrl))
+            {
+              throw new Exception("Asynchronous status URL not found.");
+            }
+
+            dataItemsJson = WaitForRequestCompletion<string>(_dataServiceUri, statusUrl);
+          }
+          else
+          {
+            dataItemsJson = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
+          }
+
+          DataItemSerializer serializer = new DataItemSerializer();
+          dataItems = serializer.Deserialize<DataItems>(dataItemsJson, false); 
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error getting data items." + ex);
+          response = response + " " + ex.Message.ToString();
+        }
+      }
+
+      private void GetDataGrid()
+      {				
+        List<List<string>> gridData = new List<List<string>>();
+        List<Field> fields = new List<Field>();
+        CreateFields(ref fields, ref gridData);
+        dataGrid.total = dataItems.total;
+        dataGrid.fields = fields;
+        dataGrid.data = gridData;
+      }
+
+      private void CreateFields(ref List<Field> fields, ref List<List<string>> gridData)
+      {
+        foreach (DataObject dataObj in dataDict.dataObjects)
+        {
+          if (dataObj.objectName.ToUpper() != graph.ToUpper())
+            continue;
+          else
+          {
+            foreach (DataProperty dataProp in dataObj.dataProperties)
+            {
+              //if (!dataProp.isHidden)
+              //{
+                Field field = new Field();
+                string fieldName = dataProp.propertyName;
+                field.dataIndex = fieldName;
+                field.name = fieldName;
+
+                int fieldWidth = fieldName.Count() * 6;
+
+                if (fieldWidth > 40)
+                {
+                  field.width = fieldWidth + 23;
+                }
+                else
+                {
+                  field.width = 50;
+                }
+
+                field.type = ToExtJsType(dataProp.dataType);
+
+                if (dataProp.keyType == KeyType.assigned || dataProp.keyType == KeyType.foreign)
+                  field.keytype = "key";
+
+                fields.Add(field);
+              //}
+            }
+          }
+        }
+
+        int newWid;
+        foreach (DataItem dataItem in dataItems.items)
+        {
+          List<string> rowData = new List<string>();
+          foreach (Field field in fields)
+          {
+            bool found = false;
+
+            foreach (KeyValuePair<string, object> property in dataItem.properties)
+            {
+              if (field.dataIndex.ToLower() == property.Key.ToLower())
+              {
+                rowData.Add(property.Value.ToString());
+                newWid = property.Value.ToString().Count() * 4 + 40;
+                if (newWid > 40 && newWid > field.width && newWid < 400)
+                  field.width = newWid;
+                found = true;
+                break;
+              }
+            }
+
+            if (!found)
+            {
+              rowData.Add("");
+            }
+          }
+          gridData.Add(rowData);
+        }
+      }
+
+      private String ToExtJsType(org.iringtools.library.DataType dataType)
+      {
+        switch (dataType)
+        {
+          case org.iringtools.library.DataType.Boolean:
+            return "string";
+
+          case org.iringtools.library.DataType.Char:
+          case org.iringtools.library.DataType.String:
+          case org.iringtools.library.DataType.DateTime:
+            return "string";
+
+          case org.iringtools.library.DataType.Byte:
+          case org.iringtools.library.DataType.Int16:
+          case org.iringtools.library.DataType.Int32:
+          case org.iringtools.library.DataType.Int64:
+            return "int";
+
+          case org.iringtools.library.DataType.Single:
+          case org.iringtools.library.DataType.Double:
+          case org.iringtools.library.DataType.Decimal:
+            return "float";
+
+          default:
+            return "auto";
+        }
+      }
+
+      private RelationalOperator GetOpt(string opt)
+      {
+        switch(opt.ToLower())
+        {
+          case "eq":
+            return RelationalOperator.EqualTo;
+          case "lt":
+            return RelationalOperator.LesserThan;
+          case "gt":
+            return RelationalOperator.GreaterThan;
+        }
+        return RelationalOperator.EqualTo;
+      }
+
+      private DataFilter CreateDataFilter(string filter, string sortBy, string sortOrder)
+      {
+        DataFilter dataFilter = new DataFilter();
+        
+        // process filtering
+        if (filter != null && filter.Count() > 0)
+        {
+          try
+          {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            List<Dictionary<String, String>> filterExpressions = 
+              (List<Dictionary<String, String>>)serializer.Deserialize(filter, typeof(List<Dictionary<String, String>>));
+            
+            if (filterExpressions != null && filterExpressions.Count > 0)
+            {
+              List<Expression> expressions = new List<Expression>();
+              dataFilter.Expressions = expressions;
+
+              foreach (Dictionary<String, String> filterExpression in filterExpressions)
+              {
+                Expression expression = new Expression();
+                expressions.Add(expression);
+
+                if (expressions.Count > 1)
+                {
+                  expression.LogicalOperator = LogicalOperator.And;
+                }
+
+                if (filterExpression["comparison"] != null)
+                {										
+                  RelationalOperator optor = GetOpt(filterExpression["comparison"]);
+                  expression.RelationalOperator = optor;
+                }
+                else
+                {
+                  expression.RelationalOperator = RelationalOperator.EqualTo;
+                }
+
+                expression.PropertyName = filterExpression["field"];
+
+                Values values = new Values();
+                expression.Values = values;
+                string value = filterExpression["value"];
+                values.Add(value);
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            _logger.Error("Error deserializing filter: " + ex);
+            response = response + " " + ex.Message.ToString();
+          }
+        }
+
+        // process sorting
+        if (sortBy != null && sortBy.Count() > 0 && sortOrder != null && sortOrder.Count() > 0)
+        {
+          List<OrderExpression> orderExpressions = new List<OrderExpression>();
+          dataFilter.OrderExpressions = orderExpressions;
+
+          OrderExpression orderExpression = new OrderExpression();
+          orderExpressions.Add(orderExpression);
+
+          if (sortBy != null)
+            orderExpression.PropertyName = sortBy;
+
+          string sortOrderEnumVal = sortOrder.Substring(0, 1).ToUpper() + sortOrder.Substring(1).ToLower();
+
+          if (sortOrderEnumVal != null)
+          {
+            try
+            {
+              orderExpression.SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), sortOrderEnumVal);
+            }
+            catch (Exception ex)
+            {
+              _logger.Error(ex.ToString());
+              response = response + " " + ex.Message.ToString();
+            }
+          }
+        }
+
+        return dataFilter;
+      }
     }
 
-    private WebHttpClient GetServiceClient(string uri, string serviceName)
+    public class DataObjectsComparer : IComparer<DataObject>
     {
-      GetProxy();
-      WebHttpClient newServiceClient = null;
-        var serviceUri = uri + "/" + serviceName;
-
-      if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
+      public int Compare(DataObject left, DataObject right)
       {
-          var webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-          newServiceClient = new WebHttpClient(serviceUri, null, webProxy);
+        // compare strings
+        {
+          string leftValue = left.objectName.ToString();
+          string rightValue = right.objectName.ToString();
+          return string.Compare(leftValue, rightValue);
+        }
       }
-      else
-      {
-        newServiceClient = new WebHttpClient(serviceUri);
-      }
-      return newServiceClient;
     }
-  }
+
+    public class DataPropertyComparer : IComparer<DataProperty>
+    {
+      public int Compare(DataProperty left, DataProperty right)
+      {
+        // compare strings
+        {
+          string leftValue = left.propertyName.ToString();
+          string rightValue = right.propertyName.ToString();
+          return string.Compare(leftValue, rightValue);
+        }
+      }
+    }
 }

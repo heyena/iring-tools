@@ -9,7 +9,8 @@
         "views": [
             "Main",
             "menus.ScopeMenu",
-            "menus.AppDataRefreshMenu"
+            "menus.AppDataRefreshMenu",
+            "nhibernate.MultiSelectComponentGrid"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,
@@ -35,7 +36,7 @@
                 "enabled": true,
                 "garbageCollect": true,
                 "paths": [
-                    "{'Ext.ux': 'Scripts/AM/ux'}"
+                    "{'Ext.ux': 'Scripts/extjs-4.1.1/ux' }"
                 ],
                 "designer|displayName": "AM"
             },

@@ -7,20 +7,19 @@
     "codeClass": null,
     "userConfig": {
         "node": "",
-        "height": null,
-        "width": null,
+        "height": 250,
+        "width": 400,
         "designer|userClassName": "directory.ScopeForm",
         "designer|userAlias": "scopeform",
         "defaults": [
             "{anchor: '100%', msgTarget: 'side'}"
         ],
         "bodyPadding": 10,
-        "bodyStyle": "padding:10px 5px 0",
+        "bodyStyle": [
+            "padding:10px 5px 0"
+        ],
         "title": null,
-        "url": "directory/scope"
-    },
-    "configAlternates": {
-        "bodyStyle": "string"
+        "url": "directory/Scope"
     },
     "designerId": "354a52a2-af56-440e-a28d-e03f1135a5e9",
     "customConfigs": [
@@ -39,7 +38,8 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "bottom"
+                "dock": "bottom",
+                "designer|userClassName": "MyToolbar3"
             },
             "designerId": "17de2cb0-9bcc-4e4b-b173-2373210be668",
             "cn": [
@@ -51,7 +51,8 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null
+                        "layout|flex": null,
+                        "designer|userClassName": "MyFill"
                     },
                     "designerId": "f1121f3f-5e1e-4b03-a999-758c3d927005"
                 },
@@ -64,6 +65,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
+                        "designer|userClassName": "MyButton2",
                         "text": "Ok"
                     },
                     "designerId": "ea25992e-a1a2-4184-97fb-7452985c8d71",
@@ -76,6 +78,7 @@
                             },
                             "codeClass": null,
                             "userConfig": {
+                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -98,6 +101,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
+                        "designer|userClassName": "MyButton3",
                         "text": "Cancel"
                     },
                     "designerId": "ac83820c-3cd6-4bbd-8e98-6eea6a2892e8",
@@ -110,6 +114,7 @@
                             },
                             "codeClass": null,
                             "userConfig": {
+                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -133,19 +138,23 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
                     "var win = me.up('window');\r",
                     "var form = me.getForm();\r",
-                    "var context = form.findField('Name').getValue();\r",
+                    "var folderName = form.findField('scope').getValue();\r",
                     "var state = form.findField('state').getValue();\r",
+                    "var contextNameField = form.findField('contextName');\r",
                     "\r",
+                    "var context = form.findField('contextCombo').getValue();\r",
                     "\r",
+                    "//contextNameField.setValue(context);\r",
                     "node.eachChild(function(n) {\r",
-                    "  if(n.data.text == context) {\r",
+                    "  if(n.data.text == folderName) {\r",
                     "    if(state == 'new') {\r",
-                    "      showDialog(400, 100, 'Warning', 'The name \\\"' + context + '\\\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);\r",
+                    "      showDialog(400, 100, 'Warning', 'The name \\\"' + folderName + '\\\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);\r",
                     "      return;\r",
                     "    }\r",
                     "  }\r",
@@ -158,7 +167,7 @@
                     "      win.fireEvent('save', me);\r",
                     "    },\r",
                     "    failure: function (response, request) {\r",
-                    "      if (response.items[3].value !== undefined) {\r",
+                    "      if (response.items!=undefined && response.items[3].value !== undefined) {\r",
                     "        var rtext = response.items[3].value;\r",
                     "        showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);\r",
                     "        return;\r",
@@ -183,6 +192,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onReset",
                 "fn": "onReset",
                 "implHandler": [
                     "var me = this;\r",
@@ -203,6 +213,22 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "designer|userClassName": "MyHiddenField32",
+                "fieldLabel": null,
+                "name": "path"
+            },
+            "designerId": "1d5f2d7e-9ba3-4251-85b6-e5b690586719"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "designer|userClassName": "MyHiddenField33",
                 "fieldLabel": null,
                 "name": "state"
             },
@@ -217,10 +243,11 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "designer|userClassName": "MyHiddenField34",
                 "fieldLabel": null,
-                "name": "scope"
+                "name": "oldContext"
             },
-            "designerId": "3d64d274-5699-4d2c-92b2-1139d1e75c72"
+            "designerId": "45623dc5-9751-4f7f-befb-fb6594f5726a"
         },
         {
             "type": "Ext.form.field.Text",
@@ -231,12 +258,42 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "designer|userClassName": "MyTextField2",
                 "fieldLabel": "Name",
-                "name": "Name",
+                "name": "scope",
                 "value": null,
                 "allowBlank": false
             },
             "designerId": "50e2271b-c35b-4359-9f38-3b3eb854d6af"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "itemId": "contextname",
+                "designer|userClassName": "MyHiddenField35",
+                "fieldLabel": null,
+                "name": "contextName"
+            },
+            "designerId": "4d7dacf2-c6f5-473b-8e2f-78e2450a3058"
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "hidden": true
+            },
+            "designerId": "075ebdd5-bfff-484a-bbc1-3d578d3c2c57",
+            "masterInstanceId": "3f6306a7-11d6-4ef2-894e-dbea2ac88a90"
         },
         {
             "type": "Ext.form.field.TextArea",
@@ -247,8 +304,9 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "designer|userClassName": "MyTextArea",
                 "fieldLabel": "Description",
-                "name": "Description"
+                "name": "description"
             },
             "designerId": "9ef16378-a5b3-4867-ade6-cfbb89267fe0"
         }

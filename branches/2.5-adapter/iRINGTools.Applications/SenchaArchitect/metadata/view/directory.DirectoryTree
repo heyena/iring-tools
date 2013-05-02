@@ -29,7 +29,8 @@
             },
             "codeClass": null,
             "userConfig": {
-                "stateId": null
+                "stateId": null,
+                "designer|userClassName": "MyTreeView"
             },
             "designerId": "f6615855-8fc8-4677-8215-c2af677ac7df",
             "cn": [
@@ -42,6 +43,7 @@
                     "codeClass": "Ext.tree.plugin.TreeViewDragDrop",
                     "userConfig": {
                         "dragField": "text",
+                        "designer|userClassName": "MyTreeDragDropPlugin",
                         "ddGroup": "propertyGroup",
                         "dragGroup": "propertyGroup",
                         "dragText": "{0}",
@@ -71,7 +73,8 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4
+                "container|padding": 4,
+                "designer|userClassName": "MyToolbar4"
             },
             "designerId": "d6c514dc-06dc-4f44-a592-77d3c55ffc8d",
             "cn": [
@@ -84,11 +87,20 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
+                        "scope": null,
+                        "designer|userClassName": "MyButton1",
                         "icon": null,
                         "iconCls": "am-view-refresh",
                         "text": "Reload Tree"
                     },
                     "designerId": "da9e4018-f3fc-4bee-b0b3-bee73985e3fa",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "scope",
+                            "type": "string"
+                        }
+                    ],
                     "cn": [
                         {
                             "type": "fixedfunction",
@@ -98,6 +110,7 @@
                             },
                             "codeClass": null,
                             "userConfig": {
+                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -121,6 +134,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getState",
                 "fn": "getState",
                 "implHandler": [
                     "var me = this;\r",
@@ -154,6 +168,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "applyState",
                 "fn": "applyState",
                 "designer|params": [
                     "state"
@@ -179,13 +194,14 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onClick",
                 "fn": "onClick",
                 "implHandler": [
                     "var me = this;\r",
                     "try {\r",
                     "  var obj = record.store.getAt(index);\r",
                     "  var pan = dataview.up('panel').up('panel'),\r",
-                    "  prop = pan.down('propertygrid');\r",
+                    "    prop = pan.down('propertygrid');\r",
                     "  prop.setSource(obj.data.property);\r",
                     "} catch (e) {\r",
                     "  //  alert(e);\r",
@@ -204,20 +220,31 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "onReload",
                 "fn": "onReload",
                 "implHandler": [
                     "var me = this;\r",
                     "var node = me.getSelectedNode();\r",
                     "var store = me.store;\r",
-                    "\r",
+                    "var path;\r",
+                    "var panel = me.up();\r",
+                    "//panel.body.mask('Loading', 'x-mask-loading');\r",
                     "if (!node)\r",
-                    "  node = me.getRootNode();\r",
+                    "node = me.getRootNode();    \r",
+                    "if (node) {\r",
+                    "      path = node.getPath('text');\r",
+                    "      store.load(node);\r",
+                    "      //if(node.isExpanded())\r",
+                    "      \t//node.collapse();\r",
+                    "    }\r",
+                    "    if(path) {\r",
+                    "      me.expandPath(path, 'text');\r",
+                    "      me.getSelectionModel().select(node);\r",
+                    "    }\r",
+                    " //panel.body.unmask();\r",
                     "\r",
-                    "var path = node.getPath('text');\r",
-                    "store.load(node);\r",
-                    "if(node.isExpanded())\r",
-                    "  node.collapse();\r",
-                    "me.expandPath(path, 'text');"
+                    "\r",
+                    ""
                 ]
             },
             "designerId": "3f0c4b56-94b4-4ff2-b544-8280aa254637"
@@ -230,6 +257,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "designer|userClassName": "getSelectedNode",
                 "fn": "getSelectedNode",
                 "implHandler": [
                     "var me = this;\r",

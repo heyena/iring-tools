@@ -31,7 +31,7 @@ Ext.define('AM.store.DirectoryTreeStore', {
         expanded: true,
         type: 'ScopesNode',
         iconCls: 'scopes',
-        text: 'World',
+        text: 'Scopes',
         security: ''
       },
       proxy: {

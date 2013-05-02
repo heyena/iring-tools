@@ -42,7 +42,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "fieldLabel": null,
-                        "name": "contextName"
+                        "name": "scope"
                     },
                     "designerId": "1612a7b2-103d-4bf4-a877-ed3e4babae0c"
                 },
@@ -55,7 +55,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "fieldLabel": null,
-                        "name": "endpoint"
+                        "name": "app"
                     },
                     "designerId": "d252ec43-5e7c-4110-93e3-006ba950b718"
                 },
@@ -120,7 +120,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "fieldLabel": null,
-                        "name": "classLabel"
+                        "name": "className"
                     },
                     "designerId": "c248be9a-cfb2-42d3-a8f2-f101e7fbf493"
                 },
@@ -133,7 +133,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "fieldLabel": null,
-                        "name": "classUrl"
+                        "name": "classId"
                     },
                     "designerId": "2b57909b-a30e-4cbb-b079-032957de70bb"
                 },
@@ -172,7 +172,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "fieldLabel": null,
-                        "name": "keyProperty"
+                        "name": "identifier"
                     },
                     "designerId": "d492f87a-1fb7-4d97-9c1f-e1fbbc81e1d5"
                 }
@@ -223,16 +223,29 @@
                     "    return this.dropAllowed;\r",
                     "  },  \r",
                     "  notifyDrop: function (propertyDd, e, data) {\r",
-                    "    if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {\r",
-                    "      return false;\r",
-                    "    }\r",
-                    "    else {\r",
-                    "      me.getForm().findField('objectName').setValue(getLastXString(data.records[0].data.id, 2));\r",
-                    "      var msg = 'Identifier: ' + getLastXString(data.records[0].data.id, 1);\r",
-                    "      me.getForm().findField('keyProperty').setValue(getLastXString(data.records[0].data.id, 1));\r",
-                    "      ptarget.update(msg);\r",
-                    "      return true;\r",
-                    "    }\r",
+                    "    \t\t if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {\r",
+                    "                    return false;\r",
+                    "                }\r",
+                    "                else {\r",
+                    "                    var ident = getLastXString(data.records[0].data.id, 1);\r",
+                    "                    var object = getLastXString(data.records[0].data.id, 2);\r",
+                    "                    //var key1 = getLastXString(data.records[0].data.id, 2)\r",
+                    "                    //var key2 = getLastXString(data.records[0].data.id, 1);\r",
+                    "                    var key = object+'.'+ident;//key1+'.'+key2;\r",
+                    "                    if(me.getForm().findField('identifier').getValue()!='Drop property node(s) here.'){\r",
+                    "                    \r",
+                    "                       var existingIdentifier =  me.getForm().findField('identifier').getValue();\r",
+                    "                       key = existingIdentifier+','+ key;\r",
+                    "                       me.getForm().findField('identifier').setValue(key);\r",
+                    "                    }else{\r",
+                    "                        me.getForm().findField('identifier').setValue(key);\r",
+                    "                    }\r",
+                    "                    me.getForm().findField('objectName').setValue(object);\r",
+                    "                   \r",
+                    "                    //ptarget.update(msg);\r",
+                    "                    ptarget.update(key);\r",
+                    "                    return true;\r",
+                    "                }\r",
                     "  }   \r",
                     "});\r",
                     "\r",
@@ -251,23 +264,24 @@
                     "    return this.dropAllowed;\r",
                     "  },\r",
                     "  notifyDrop: function (classdd, e, data) {\r",
-                    "    if (data.records[0].data.type != 'ClassNode') {\r",
-                    "      var message = 'Please slect a RDL Class...';\r",
-                    "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
-                    "      return false;\r",
-                    "    } else {\r",
-                    "      var tempClassLabel = me.getForm().findField('classLabel').getValue();\r",
-                    "      var tempClassUrl = me.getForm().findField('classUrl').getValue();\r",
-                    "      if (tempClassLabel !== \"\") {\r",
-                    "        me.getForm().findField('oldClassLabel').setValue(tempClassLabel);\r",
-                    "        me.getForm().findField('oldClassUrl').setValue(tempClassUrl);\r",
-                    "      }\r",
-                    "      me.getForm().findField('classLabel').setValue(data.records[0].data.record.Label);\r",
-                    "      me.getForm().findField('classUrl').setValue(data.records[0].data.record.Uri);\r",
-                    "      var msg = 'Class Label: ' + data.records[0].data.record.Label;\r",
-                    "      ctarget.update(msg);\r",
-                    "      return true;\r",
-                    "    }\r",
+                    "  if (data.records[0].data.type != 'ClassNode') {\r",
+                    "                    var message = 'Please slect a RDL Class...';\r",
+                    "                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "                    return false;\r",
+                    "                } else {\r",
+                    "                    var tempClassLabel = me.getForm().findField('className').getValue();\r",
+                    "                    var tempClassUrl = me.getForm().findField('classId').getValue();\r",
+                    "                    if (tempClassLabel !== \"\") {\r",
+                    "                        me.getForm().findField('oldClassLabel').setValue(tempClassLabel);\r",
+                    "                        me.getForm().findField('oldClassUrl').setValue(tempClassUrl);\r",
+                    "                    }\r",
+                    "                    me.getForm().findField('className').setValue(data.records[0].data.record.Label);\r",
+                    "                    me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);\r",
+                    "                    var msg = 'Class Label: ' + data.records[0].data.record.Label;\r",
+                    "                    //ctarget.update(msg);\r",
+                    "                    ctarget.update(data.records[0].data.record.Label);\r",
+                    "                    return true;\r",
+                    "                }\r",
                     "  } \r",
                     "}); "
                 ],
@@ -445,9 +459,9 @@
                 "implHandler": [
                     "var me = this;\r",
                     "var win = me.up('window');\r",
-                    "if (me.getForm().findField('objectName').getValue() === '' || \r",
-                    "me.getForm().findField('graphName').getValue() === '' || \r",
-                    "me.getForm().findField('classLabel').getValue() === '') {\r",
+                    "if (me.getForm().findField('objectName').getValue() === '' ||\r",
+                    "me.getForm().findField('graphName').getValue() === '' ||\r",
+                    "me.getForm().findField('className').getValue() === '') {\r",
                     "  showDialog(400, 50, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);\r",
                     "  return;\r",
                     "}\r",

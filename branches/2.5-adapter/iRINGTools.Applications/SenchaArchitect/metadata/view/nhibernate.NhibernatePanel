@@ -42,8 +42,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "width": 280,
-                "layout|flex": 1,
+                "minWidth": 260,
+                "width": 300,
+                "layout|flex": null,
                 "layout|floatable": false,
                 "layout|region": "center"
             },
@@ -58,7 +59,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "layout|flex": 2,
+                "layout|flex": 4,
                 "layout|floatable": false,
                 "layout|region": "east",
                 "layout|split": true,

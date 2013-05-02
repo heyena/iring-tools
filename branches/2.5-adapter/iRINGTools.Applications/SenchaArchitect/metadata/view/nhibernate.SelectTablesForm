@@ -7,7 +7,8 @@
     "codeClass": null,
     "userConfig": {
         "dirNode": "",
-        "border": false,
+        "border": null,
+        "frame": true,
         "height": null,
         "padding": null,
         "width": null,
@@ -16,9 +17,6 @@
         "autoScroll": true,
         "bodyBorder": null,
         "bodyPadding": 5,
-        "bodyStyle": [
-            "background:#eee;padding:10px 0px 0px 10px"
-        ],
         "title": null
     },
     "configAlternates": {
@@ -33,6 +31,32 @@
         }
     ],
     "cn": [
+        {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "labelStyle": null,
+                "margin": null,
+                "padding": null,
+                "style": [
+                    "font-weight:bold;"
+                ],
+                "designer|userClassName": "MyLabel8",
+                "text": "Select Tables"
+            },
+            "designerId": "ea8417a3-2258-4042-9ba4-3229979a4b44",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "labelStyle",
+                    "type": "string"
+                }
+            ]
+        },
         {
             "type": "Ext.toolbar.Toolbar",
             "reference": {
@@ -128,12 +152,26 @@
             },
             "codeClass": null,
             "userConfig": {
+                "hidden": true,
                 "itemId": "tablesSelectionGrid",
                 "minHeight": 200,
                 "title": null
             },
             "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
             "masterInstanceId": "806180c3-0c42-425f-b6f1-5b85a7b5017b"
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "minHeight": null
+            },
+            "designerId": "946d9e3b-44d0-4e2c-a8c6-c92d93f6d361",
+            "masterInstanceId": "55e4d2fa-9ebe-4466-b024-6d81829b1584"
         },
         {
             "type": "Ext.form.field.Checkbox",

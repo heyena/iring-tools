@@ -36,14 +36,14 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
       items: [
         {
           xtype: 'nhibernatetree',
-          width: 280,
-          flex: 1,
+          minWidth: 260,
+          width: 300,
           floatable: false,
           region: 'center'
         },
         {
           xtype: 'container',
-          flex: 2,
+          flex: 4,
           floatable: false,
           region: 'east',
           split: true,
