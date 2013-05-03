@@ -6,7 +6,7 @@ import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
 import org.iringtools.widgets.grid.Grid;
 
-public class ExchangeDataController extends AbstractController
+public class ExchangeDataController extends BaseController
 {
   private static final long serialVersionUID = 1L;
   
