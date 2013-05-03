@@ -3,7 +3,6 @@ package org.iringtools.controllers;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
 import org.iringtools.dxfr.content.ContentObject;
 import org.iringtools.models.AppDataModel;
 import org.iringtools.widgets.grid.Grid;
