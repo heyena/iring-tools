@@ -128,7 +128,7 @@ public class HttpClient
         }
         catch (Exception e)
         {
-          logger.debug(e.getMessage());
+          logger.debug(e.toString());
         }
         
         throw new HttpClientException(responseCode, error);
@@ -136,7 +136,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      throw new HttpClientException(responseCode, e.getMessage());
+      throw new HttpClientException(responseCode, e.toString());
     }
     finally
     {
@@ -239,7 +239,7 @@ public class HttpClient
         }
         catch (Exception e)
         {
-          logger.debug(e.getMessage());
+          logger.debug(e.toString());
         }
         
         throw new HttpClientException(responseCode, error);
@@ -247,7 +247,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      throw new HttpClientException(responseCode, e.getMessage());
+      throw new HttpClientException(responseCode, e.toString());
     }
     finally
     {
@@ -288,7 +288,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.getMessage());
+      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.toString());
     }
     finally
     {
@@ -348,7 +348,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.getMessage());
+      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.toString());
     }
     finally
     {
@@ -522,7 +522,7 @@ public class HttpClient
     }
     catch (Exception ex)
     {
-      logger.error(ex.getMessage());
+      logger.error(ex.toString());
     }
   }
 }

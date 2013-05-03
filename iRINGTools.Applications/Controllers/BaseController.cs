@@ -39,7 +39,7 @@ namespace org.iringtools.web.controllers
           if (System.Web.HttpContext.Current.Request.Headers["X-Requested-With"] == "XMLHttpRequest" &&
               SessionState.Get(System.Web.HttpContext.Current.Session.SessionID, AUTH_USER) == null)
           {
-            SendError(408, "Session timed out");
+            SendError(408, "Session timed out.");
             return;
           }
 

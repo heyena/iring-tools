@@ -27,7 +27,9 @@
       </result>
     </action>
     
-    <action name="reset" class="org.iringtools.controllers.DirectoryController" method="resetDtoContext"/>
+    <action name="reset" class="org.iringtools.controllers.DirectoryController" method="resetDtoContext">
+      <result name="success" type="json"/>
+    </action>
 
     <!-- app data -->
     <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
@@ -35,6 +37,7 @@
         <param name="root">pageDtoGrid</param>
       </result>
     </action>
+    
     <!-- content -->
     <action name="content" class="org.iringtools.controllers.AppDataController" method="getContent">
       <result name="success" type="stream">
