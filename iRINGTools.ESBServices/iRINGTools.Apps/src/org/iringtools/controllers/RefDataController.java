@@ -12,7 +12,7 @@ import org.iringtools.widgets.tree.Type;
 
 import com.opensymphony.xwork2.Action;
 
-public class RefDataController extends AbstractController implements ServletRequestAware
+public class RefDataController extends BaseController implements ServletRequestAware
 {
   private static final long serialVersionUID = 1L;
 
