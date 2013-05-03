@@ -1,5 +1,11 @@
 Ext.ns('org.iringtools.apps.xmgr');
 
+Ext.Ajax.on('requestexception', function (conn, response, options) {
+  if (response.status == 0 || response.status == 408) {
+      location.reload(true);
+  }
+});
+
 function copyToClipboard(celldata) {
   /*
    * if (window.clipboardData) // Internet Explorer window.clipboardData.setData

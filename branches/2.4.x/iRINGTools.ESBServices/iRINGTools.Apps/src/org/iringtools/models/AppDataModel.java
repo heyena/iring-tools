@@ -85,6 +85,8 @@ public class AppDataModel extends DataModel
     }
     catch (HttpClientException e)
     {
+      e.printStackTrace();
+      logger.error(e.toString());
       throw new DataModelException(e);
     }
     

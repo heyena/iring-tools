@@ -49,7 +49,7 @@ public class DirectoryController extends BaseController
     catch (Exception e)
     {
       e.printStackTrace();
-      throw new Exception(e.toString());
+      throw new Exception(e.getMessage());
     }
 
     return SUCCESS;

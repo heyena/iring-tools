@@ -41,6 +41,7 @@ using org.iringtools.utility;
 using System.Net;
 using System.IO;
 using org.iringtools.mapping;
+using System.Collections;
 
 namespace org.iringtools.services
 {
@@ -66,11 +67,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<VersionInfo>(versionInfo));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -85,11 +84,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Manifest>(manifest));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -104,11 +101,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Manifest>(manifest));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -123,11 +118,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));        
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -151,11 +144,9 @@ namespace org.iringtools.services
           HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
         }
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -179,11 +170,9 @@ namespace org.iringtools.services
           HttpContext.Current.Response.Write(Utility.SerializeDataContract<Identifiers>(identifiers));
         }
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -198,11 +187,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -217,11 +204,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -236,11 +221,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -264,11 +247,9 @@ namespace org.iringtools.services
           HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
         }
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -283,11 +264,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -302,11 +281,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -334,11 +311,9 @@ namespace org.iringtools.services
           HttpContext.Current.Response.Write(responseXml);
         }
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -353,11 +328,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
+        ExceptionHander(ex);
       }
     }
 
@@ -372,10 +345,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<ContentObjects>(contentObjects));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.Write(e.Message);
+        ExceptionHander(ex);
       }
     }
 
@@ -389,10 +361,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = iContentObject.ContentType;
         HttpContext.Current.Response.BinaryWrite(iContentObject.Content.ToMemoryStream().GetBuffer());
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.Write(e.Message);
+        ExceptionHander(ex);
       }
     }
 
@@ -409,10 +380,9 @@ namespace org.iringtools.services
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.Serialize<Response>(response, true));
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.Write(e.Message);
+        ExceptionHander(ex);
       }
     }
 
@@ -457,6 +427,28 @@ namespace org.iringtools.services
       }
 
       return async;
+    }
+
+    private void ExceptionHander(Exception ex)
+    {
+      string statusText = string.Empty;
+
+      if (ex is WebFaultException && ex.Data != null)
+      {
+        foreach (DictionaryEntry entry in ex.Data)
+        {
+          statusText += ex.Data[entry.Key].ToString();
+        }
+      }
+
+      if (string.IsNullOrEmpty(statusText))
+      {
+        statusText = ex.ToString();
+      }
+
+      WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+      HttpContext.Current.Response.ContentType = "text/plain";
+      HttpContext.Current.Response.Write(statusText);
     }
   }
 }

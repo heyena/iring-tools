@@ -140,7 +140,8 @@ public final class HttpUtils
     {
       if (entry.getKey().startsWith(prefix))
       {
-        httpClient.addHeader(entry.getKey().substring(index), entry.getValue().toString());
+        if (entry.getKey() != null && entry.getValue() != null)
+          httpClient.addHeader(entry.getKey().substring(index), entry.getValue().toString());
       }
     }
   }
