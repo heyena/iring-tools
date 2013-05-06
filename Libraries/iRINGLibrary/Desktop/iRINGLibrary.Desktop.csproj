@@ -137,6 +137,7 @@
     <Compile Include="IAuthentication.cs" />
     <Compile Include="IAuthorization.cs" />
     <Compile Include="IAuthHeaders.cs" />
+    <Compile Include="ILightweightDataLayer.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="MappingExtensions.cs" />
     <Compile Include="DataObjects.cs" />
