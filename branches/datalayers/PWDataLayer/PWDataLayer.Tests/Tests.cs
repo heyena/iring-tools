@@ -20,19 +20,32 @@ namespace org.iringtools.adapter.datalayer.test
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(Tests));
     private PWDataLayer _dataLayer = null;
-
+    private string _objectType;
+      //IDataLayer _dataLayer1 = null;
+      //AdapterSettings adapterSettings;
     public Tests()
     {
+        _objectType = "DTP_ENG2";
       string baseDir = Directory.GetCurrentDirectory();
       Directory.SetCurrentDirectory(baseDir.Substring(0, baseDir.LastIndexOf("\\bin")));
 
       AdapterSettings adapterSettings = new AdapterSettings();
       adapterSettings.AppendSettings(new AppSettingsReader("app.config"));
 
+      string pwConfigFile = String.Format("{0}{1}.{2}.config",
+               adapterSettings["AppDataPath"],
+               adapterSettings["ProjectName"],
+               adapterSettings["ApplicationName"]
+             );
+
+      AppSettingsReader twSettings = new AppSettingsReader(pwConfigFile);
+      adapterSettings.AppendSettings(twSettings);
+
       _dataLayer = new PWDataLayer(adapterSettings);
+      
     }
 
-    //[Test]
+    [Test]
     public void TestDictionary()
     {
       Response response = _dataLayer.RefreshAll();
@@ -65,7 +78,35 @@ namespace org.iringtools.adapter.datalayer.test
 
       Assert.Greater(contentObjects.Count, 0);
     }
+    [Test]
+    public void Test_GetDataTable()
+    {
+        DataDictionary dictionary = _dataLayer.GetDictionary();
+        IList<string> identifiers = new List<string>();
+        identifiers.Add("4a44297f-3456-4e70-a073-ae0a3e92dae0");
+        IList<IDataObject> dataObject = _dataLayer.Get(_objectType, identifiers);
 
+        
+        Assert.AreEqual(dataObject.Count, 1);
+    }
+
+  //  [Test]
+    public void TestCreate()
+    {
+      
+        IList<string> identifiers = new List<string>();
+        identifiers.Add("4a44297f-3456-4e70-a073-ae0a3e92dae0");
+        IList<IDataObject> dataObjects = _dataLayer.Create(_objectType, identifiers);
+        Assert.AreNotEqual(dataObjects, null);
+    }
+   // [Test]
+    public void TestGetIdentifiers()
+    {
+
+        string docGUID = "d730d646-fccc-47b1-b974-97ec9c0ddb90";
+        IList<string> GetID = _dataLayer.GetIdentifiers(_objectType, docGUID);
+        //Assert.AreEqual(response.Level, StatusLevel.Success);
+    }
     //[Test]
     public void TestPost()
     {
@@ -87,7 +128,7 @@ namespace org.iringtools.adapter.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
-    //[Test]
+    [Test]
     public void TestPostWithContent()
     {
       GenericContentObject contentObject = new GenericContentObject()
@@ -95,28 +136,30 @@ namespace org.iringtools.adapter.datalayer.test
         ObjectType = "DTP_ENG2"
       };
 
-      contentObject.Content = Utility.ReadStream(@"C:\iring-tools\datalayers\pw\samples\sample.pdf");
+     // contentObject.Content = Utility.ReadStream(@"C:\iring-tools\datalayers\pw\samples\sample.pdf");
+      contentObject.Content = Utility.ReadStream(@"C:\PW\samples\sample.pdf");
       contentObject.ContentType = "pdf";
 
       contentObject.SetPropertyValue("DWGNO", "DWG-" + DateTime.Now.Ticks);
       
       _dataLayer.Post(new List<IDataObject>() { contentObject });
     }
+   
 
     //[Test]
     //public void TestGetFolders()
     //{
-    //  SortedList<int, string> folders = _dataLayer.GetTopLevelFolders();
+    //    SortedList<int, string> folders = _dataLayer.GetTopLevelFolders();
 
-    //  foreach (var pair in folders)
-    //  {
-    //    SortedList<int, string>  childFolders = _dataLayer.GetChildFolders(pair.Key);
-
-    //    foreach (var grandChildFolder in childFolders)
+    //    foreach (var pair in folders)
     //    {
-    //      SortedList<int, string> grandChildFolders = _dataLayer.GetChildFolders(grandChildFolder.Key);
+    //        SortedList<int, string> childFolders = _dataLayer.GetChildFolders(pair.Key);
+
+    //        foreach (var grandChildFolder in childFolders)
+    //        {
+    //            SortedList<int, string> grandChildFolders = _dataLayer.GetChildFolders(grandChildFolder.Key);
+    //        }
     //    }
-    //  }
     //}
   }
 }
