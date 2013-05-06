@@ -27,6 +27,7 @@ public class DtiTask implements Runnable
   private DxiRequest dxiRequest;
   private RequestStatus requestStatus;
   private DataTransferIndices dtis;
+  private String error;
     
   public DtiTask(Map<String, Object> settings, Exchange exchange, DxiRequest dxiRequest, 
       RequestStatus requestStatus)
@@ -35,6 +36,7 @@ public class DtiTask implements Runnable
     this.exchange = exchange;
     this.dxiRequest = dxiRequest;
     this.requestStatus = requestStatus;
+    this.error = null;
   }
   
   public void processDxiRequest() throws Exception
@@ -78,10 +80,13 @@ public class DtiTask implements Runnable
     DataTransferIndices sourceDtis = sourceDtiTask.getDataTransferIndices();
     if (sourceDtis == null)
     {
-      String error = sourceDtiTask.getError();
+      String taskError = sourceDtiTask.getError();
       
-      if (error != null)
-        throw new Exception(error);
+      if (taskError != null)
+      {
+        error = taskError;
+        return;
+      }
       else
         sourceDtis = new DataTransferIndices();
     }
@@ -89,10 +94,13 @@ public class DtiTask implements Runnable
     DataTransferIndices targetDtis = targetDtiTask.getDataTransferIndices();
     if (targetDtis == null)
     {
-      String error = targetDtiTask.getError();
+      String taskError = targetDtiTask.getError();
       
-      if (error != null)
-        throw new Exception(error);
+      if (taskError != null)
+      {
+        error = taskError;
+        return;
+      }
       else
         targetDtis = new DataTransferIndices();
     }
@@ -132,6 +140,11 @@ public class DtiTask implements Runnable
   public DataTransferIndices getDataTransferIndices()
   {
     return dtis;
+  }
+  
+  public String getError() 
+  {
+    return error;
   }
 }
 
