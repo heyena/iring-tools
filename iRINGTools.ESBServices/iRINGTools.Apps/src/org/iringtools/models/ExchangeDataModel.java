@@ -523,7 +523,7 @@ public class ExchangeDataModel extends DataModel
     return outFilter;
   }
 
-  protected DataTransferIndices getFullDtis(Exchange exchange, Manifest manifest)
+  protected DataTransferIndices getFullDtis(Exchange exchange, Manifest manifest) throws Exception
   {
     DataTransferIndices dtis = null;
 
@@ -548,6 +548,7 @@ public class ExchangeDataModel extends DataModel
     catch (Exception ex)
     {
       logger.error("Error getting data transfer indices: " + ex.toString());
+      throw new Exception(ex.getMessage());
     }
 
     return dtis;
@@ -603,7 +604,7 @@ public class ExchangeDataModel extends DataModel
   }
 
   protected DataTransferIndices getDtis(Exchange exchange, Manifest manifest, String filter, String sortOrder,
-      String sortBy) throws DataModelException
+      String sortBy) throws Exception
   {
     DataTransferIndices dtis = null;
 
