@@ -12,33 +12,22 @@ using System.Collections;
 using Microsoft.Win32;
 
 
-///TODO: 
-///  project types
-///  data type
-///  count
-///  get
-///  content
-///  post
-///  delete
-///  folders
-///  authorization
-///     SSO: identity
-///  identifier: projectid + document id
-///  
+
 
 namespace org.iringtools.adapter.datalayer
 {
   public class PWDataLayer : BaseSQLDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(PWDataLayer));
-    
-    private string _sUserName, _sPassword, _sDatasource;
+
+    private string _sUserName, _sPassword, _sDatasource, _sFileFormat, _sDocumentGUID; 
     private string _sProject, _sApp, _sDataPath;
 
     [Inject]
     public PWDataLayer(AdapterSettings settings)
       : base(settings)
     {
+         
       _sUserName = settings["PW.UserName"];
       _sPassword = settings["PW.Password"];
       _sDatasource = settings["PW.Datasource"];
@@ -46,6 +35,8 @@ namespace org.iringtools.adapter.datalayer
       _sProject = settings["ProjectName"];
       _sApp = settings["ApplicationName"];
       _sDataPath = settings["AppDataPath"];
+      _sFileFormat = settings["Format"];
+      _sDocumentGUID = settings["DocumentGUID"];
     }
 
 
@@ -53,7 +44,7 @@ namespace org.iringtools.adapter.datalayer
     {
       DatabaseDictionary dbDictionary = null;
       DataDictionary dictionary = new DataDictionary();
-
+     
       try
       {
         string path = string.Format("{0}DataDictionary.{1}.{2}.xml", _sDataPath, _sProject, _sApp);
@@ -73,8 +64,12 @@ namespace org.iringtools.adapter.datalayer
 
           return dbDictionary;
         }
-
+          
+        
+        
         Login();
+        
+        
 
         List<string> dataObjects = new List<string>();
         string dataObjectsStr = _settings["PW.DataObjects"];
@@ -101,8 +96,8 @@ namespace org.iringtools.adapter.datalayer
 
             foreach (var pair in item.Value)
             {
-              ///TODO: type conversion
-              string type = pair.Value.DataType;
+              
+              string type = (string)pair.Value.DataType;   
 
               DataProperty prop = new DataProperty()
               {
@@ -155,7 +150,22 @@ namespace org.iringtools.adapter.datalayer
         //  dictionary.dataObjects.Add(dataObject);
         //}
 
-        utility.Utility.Write<DataDictionary>(dictionary, path, true);
+        utility.Utility.Write<DataDictionary>(dictionary, path);
+
+          
+            dbDictionary = new DatabaseDictionary();
+        
+        
+            dbDictionary.dataObjects = dictionary.dataObjects;
+            dbDictionary.dataVersion = dictionary.dataVersion;
+            dbDictionary.enableSearch = dictionary.enableSearch;
+            dbDictionary.enableSummary = dictionary.enableSearch;
+            dbDictionary.picklists = dictionary.picklists;
+        
+          
+
+        //utility.Utility.Write<DatabaseDictionary>(dbDictionary, path);
+
       }
       catch (Exception e)
       {
@@ -166,6 +176,8 @@ namespace org.iringtools.adapter.datalayer
       {
         Logout();
       }
+
+        
 
       return dbDictionary;
     }
@@ -200,7 +212,7 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
-    //TODO: apply where clause
+    
     public override long GetCount(string tableName, string whereClause)
     {
       try
@@ -213,8 +225,17 @@ namespace org.iringtools.adapter.datalayer
         _settings["PW.ProjectName"]);
 
         if (dt == null)
-          return 0;
+            return 0;
 
+
+        if (whereClause != string.Empty && whereClause != null)
+        {
+            dt.DefaultView.RowFilter = whereClause != null ? whereClause.Replace("WHERE", "").Replace("UPPER", "") : "";
+            
+            //dt.DefaultView.RowFilter = whereClause;
+            return dt.DefaultView.ToTable().Rows.Count ;
+        }
+          
         return dt.Rows.Count;
       }
       catch (Exception e)
@@ -228,17 +249,39 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    //TODO: implement paging
+    
     public override DataTable GetDataTable(string tableName, string whereClause, long start, long limit)
     {
       try
       {
+          string orderBy = string.Empty;
+          string strcolumnname = string.Empty; 
         Login();
 
         DataTable dt = GetDocumentsForProject(
         _settings["PW.ProjectType"],
         _settings["PW.ProjectProperty"],
         _settings["PW.ProjectName"]);
+
+        
+        if (whereClause != string.Empty )
+        {
+            dt.DefaultView.RowFilter = whereClause != null ? whereClause.Replace("WHERE", "").Replace("UPPER", "") : "";
+            return dt.DefaultView.ToTable();
+        }
+
+
+
+        IEnumerable<System.Data.DataRow> query = from d in dt.AsEnumerable().Skip((int)(start)).Take((int)limit) select d; //For Paging
+       
+
+        if (query != null && query.Count() > 0 )
+        {
+            return query.CopyToDataTable();
+        }
+        
+
+
 
         return dt;
       }
@@ -252,104 +295,107 @@ namespace org.iringtools.adapter.datalayer
         Logout();
       }
     }
-
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
-      try
-      {
-        List<string> docGuids = identifiers.ToList();
-        List<string> listAttributes = new List<string>();
-
-        DatabaseDictionary dictionary = GetDatabaseDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-
-        foreach (DataProperty prop in objDef.dataProperties)
+        try
         {
-          listAttributes.Add(prop.columnName);
-        }
+            List<string> docGuids = identifiers.ToList();
+            List<string> listAttributes = new List<string>();
 
-        Login();
 
-        DataTable dt = GetDocumentMetadata(docGuids, listAttributes);
+            DatabaseDictionary dictionary = GetDatabaseDictionary();
+            DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
-        if (dt == null)
-        {
-          throw new Exception("Objects not found.");
-        }
-
-        IList<IDataObject> dataObjects = new List<IDataObject>();
-        bool includeContent = _settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString());
-
-        foreach (DataRow row in dt.Rows)
-        {
-          IDataObject dataObject = ToDataObject(row, objDef);
-
-          if (includeContent)
-          {
-            IContentObject contentObject = new GenericContentObject(dataObject);
-            contentObject.ObjectType = objectType;
-
-            //TODO: get id property from config
-            string id = dataObject.GetPropertyValue("DocumentGUID").ToString();
-            string tempFoder = "c:\\temp\\projectwise\\";
-
-            FileStream stream = GetProjectWiseFile(id, tempFoder);
-
-            if (stream != null)
+            foreach (DataProperty prop in objDef.dataProperties)
             {
-              try
-              {
-                //TODO: get default format from config
-                string format = ".pdf";
-
-                string docName = stream.Name.ToLower();
-                int extIndex = docName.LastIndexOf('.');
-
-                if (extIndex >= 0)
-                {
-                  format = docName.Substring(extIndex);
-                }
-
-                string contentType = MimeTypes.Dictionary[format];
-
-                MemoryStream outStream = new MemoryStream();
-                stream.CopyTo(outStream);
-                outStream.Position = 0;
-                stream.Close();
-
-                contentObject.Content = outStream;
-              }
-              catch (Exception ex)
-              {
-                _logger.Error("Error getting content type: " + ex.ToString());
-                throw ex;
-              }
-              finally
-              {
-                stream.Close();
-              }
+                listAttributes.Add(prop.columnName);
             }
 
-            dataObjects.Add(contentObject);
-          }
-          else
-          {
-            dataObjects.Add(dataObject);
-          }
-        }
+            Login();
 
-        return dataObjects;
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.Message);
-        throw e;
-      }
-      finally
-      {
-        Logout();
-      }
+            DataTable dt = GetDocumentMetadata(docGuids, listAttributes);
+
+            if (dt == null)
+            {
+                throw new Exception("Objects not found.");
+            }
+
+            IList<IDataObject> dataObjects = new List<IDataObject>();
+            bool includeContent = _settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString());
+
+            foreach (DataRow row in dt.Rows)
+            {
+                IDataObject dataObject = ToDataObject(row, objDef);
+
+                if (includeContent)
+                {
+                    IContentObject contentObject = new GenericContentObject(dataObject);
+                    contentObject.ObjectType = objectType;
+
+                    
+                    string id = _sDocumentGUID;
+                    string tempFoder = "c:\\temp\\projectwise\\";
+
+                    FileStream stream = GetProjectWiseFile(id, tempFoder);
+
+                    if (stream != null)
+                    {
+                        try
+                        {
+                            
+                            string format = _sFileFormat;
+
+                            string docName = stream.Name.ToLower();
+                            int extIndex = docName.LastIndexOf('.');
+                             
+                            if (extIndex >= 0)
+                            {
+                                format = docName.Substring(extIndex);
+                            }
+
+                            string contentType = MimeTypes.Dictionary[format];
+
+                            MemoryStream outStream = new MemoryStream();
+                            stream.CopyTo(outStream);
+                            outStream.Position = 0;
+                            stream.Close();
+
+                            contentObject.Content = outStream;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Error("Error getting content type: " + ex.ToString());
+                            throw ex;
+                        }
+                        finally
+                        {
+                            stream.Close();
+                        }
+                    }
+
+                    dataObjects.Add(contentObject);
+                }
+                else
+                {
+                    dataObjects.Add(dataObject);
+                }
+            }
+
+            return dataObjects;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e.Message);
+            throw e;
+        }
+        finally
+        {
+            Logout();
+        }
     }
+
+    
+
 
     public override DataTable GetDataTable(string tableName, IList<string> identifiers)
     {
@@ -441,8 +487,8 @@ namespace org.iringtools.adapter.datalayer
 
                 if (extIndex < 0)
                 {
-                  //TODO: get default format from config
-                  format = ".pdf";
+                 
+                    format = _sFileFormat; 
                 }
                 else
                 {
@@ -489,7 +535,7 @@ namespace org.iringtools.adapter.datalayer
         Logout();
       }
     }
-
+    
     //TODO: look up dictionary for object type and handle list
     public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
@@ -502,6 +548,7 @@ namespace org.iringtools.adapter.datalayer
 
       return dataObjects;
     }
+
 
     public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
     {
@@ -589,6 +636,9 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
+
+    
+
     //public override Response PostContents(IList<IContentObject> contentObjects)
     //{
     //  Response response = new Response();
@@ -651,6 +701,7 @@ namespace org.iringtools.adapter.datalayer
     //  return response;
     //}
 
+
     public override Response PostDataTables(IList<DataTable> dataTables)
     {
       try
@@ -704,17 +755,17 @@ namespace org.iringtools.adapter.datalayer
 
     private bool Login()
     {
-      string currDir = Directory.GetCurrentDirectory();
+        string currDir = Directory.GetCurrentDirectory();
 
-      try
-      {
-        /// If user name and password are null, process creds will be used
-        return PWWrapper.aaApi_Login(PWWrapper.DataSourceType.Unknown, _sDatasource, _sUserName, _sPassword, null, true);
-      }
-      finally
-      {
-        Directory.SetCurrentDirectory(currDir);
-      }
+        try
+        {
+            /// If user name and password are null, process creds will be used
+            return PWWrapper.aaApi_Login(PWWrapper.DataSourceType.Unknown, _sDatasource, _sUserName, _sPassword, null, true);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(currDir);
+        }
     }
 
     private bool Logout()
@@ -760,8 +811,8 @@ namespace org.iringtools.adapter.datalayer
 
       foreach (DataColumn dc in dt.Columns)
       {
-        ///TODO: type conversion
-        Type dataType = dc.DataType;
+        
+        Type dataType =(Type)dc.DataType; 
 
         DataProperty prop = new DataProperty()
         {
@@ -773,7 +824,7 @@ namespace org.iringtools.adapter.datalayer
         props.Add(prop);
       }
 
-      return props;
+      return props; 
     }
 
     private SortedList<string, SortedList<string, TypeAndLength>> GetEnvironments()
@@ -1848,7 +1899,7 @@ namespace org.iringtools.adapter.datalayer
       return (iSuccessfulDeletes == docGuids.Count);
     }
 
-    private SortedList<int, string> GetTopLevelFolders()
+    public SortedList<int, string> GetTopLevelFolders()
     {
       try
       {
@@ -1871,7 +1922,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    private SortedList<int, string> GetChildFolders(int iParentId)
+    public SortedList<int, string> GetChildFolders(int iParentId)
     {
       try
       {
