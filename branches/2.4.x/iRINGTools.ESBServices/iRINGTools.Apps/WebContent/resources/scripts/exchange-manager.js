@@ -51,9 +51,11 @@ function createGridStore(container, url) {
     remoteSort : true,
     listeners : {
       exception : function(proxy, type, action, request, response) {
-        container.getEl().unmask();
-        var message = 'Request URL: /' + request.url + '.\n\nError description: ' + response.responseText;
-        showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+        if (!(response.status == 0 || response.status == 408)) {
+          container.getEl().unmask();
+          var message = 'Request URL: /' + request.url + '.\n\nError description: ' + response.responseText;
+          showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+        }
       }
     }
   });
