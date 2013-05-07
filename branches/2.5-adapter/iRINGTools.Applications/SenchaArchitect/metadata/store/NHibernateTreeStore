@@ -34,8 +34,8 @@
                 ],
                 "extraParams": [
                     "{\r",
-                    "  contextName: null,\r",
-                    "  endpoint: null,\r",
+                    "  scope: null,\r",
+                    "  app: null,\r",
                     "  dbProvider: null,\r",
                     "  dbServer: null,\r",
                     "  dbInstance: null,\r",
@@ -50,7 +50,7 @@
                     "}"
                 ],
                 "timeout": 600000,
-                "url": "Adapter/DBObjects"
+                "url": "AdapterManager/DBObjects"
             },
             "designerId": "33e0092b-58da-454c-9de8-cb78073da37c",
             "customConfigs": [

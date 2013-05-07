@@ -66,6 +66,7 @@ Ext.define('AM.controller.Mapping', {
       params: {
         contextName: panel.contextName,
         endpoint: panel.endpoint,
+        baseUrl: panel.baseUrl,
         mappingNode: node.data.id,
         parentIdentifier: me.parentClass,
         identifier: node.data.identifier,
@@ -83,13 +84,15 @@ Ext.define('AM.controller.Mapping', {
 
   onEditOrNewGraph: function(item, e, eOpts) {
     var me = this;
-    var nodeId, contextName, endpoint, graphName, 
+    var nodeId, contextName, endpoint, baseUrl, graphName, 
     objectName, classLabel, classUrl, identifier, wintitle;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode(),
       record = node.data.record;
+    var contextName;// This is scope
+    var endpoint; //This is application
 
-    if (record && record.record) {
+    if (record) {
       identifier = record.classTemplateMaps[0].classMap.identifiers[0];
       if(record.classTemplateMaps[0].classMap.identifiers.length>1){
         for(var i=1;i<record.classTemplateMaps[0].classMap.identifiers.length;i++){

@@ -18,11 +18,13 @@ Ext.define('AM.view.nhibernate.SelectDataKeysForm', {
   alias: 'widget.selectdatakeysform',
 
   requires: [
-    'AM.view.nhibernate.MultiSelectionGrid'
+    'AM.view.nhibernate.MultiSelectionGrid',
+    'AM.view.nhibernate.MultiSelectComponentGrid'
   ],
 
+  width: 300,
   layout: {
-    type: 'fit'
+    type: 'auto'
   },
   bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 
@@ -30,6 +32,21 @@ Ext.define('AM.view.nhibernate.SelectDataKeysForm', {
     var me = this;
 
     Ext.applyIf(me, {
+      items: [
+        {
+          xtype: 'label',
+          style: 'font-weight:bold;',
+          text: 'Select Keys'
+        },
+        {
+          xtype: 'multiselectiongrid',
+          hidden: true,
+          itemId: 'multiSelectDataKeys'
+        },
+        {
+          xtype: 'multiselectcomponentgrid'
+        }
+      ],
       dockedItems: [
         {
           xtype: 'toolbar',
@@ -60,12 +77,6 @@ Ext.define('AM.view.nhibernate.SelectDataKeysForm', {
               text: 'Reset'
             }
           ]
-        }
-      ],
-      items: [
-        {
-          xtype: 'multiselectiongrid',
-          itemId: 'multiSelectDataKeys'
         }
       ]
     });

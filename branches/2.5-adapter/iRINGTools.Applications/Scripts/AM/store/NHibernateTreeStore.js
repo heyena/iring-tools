@@ -38,8 +38,8 @@ Ext.define('AM.store.NHibernateTreeStore', {
           read: 'POST'
         },
         extraParams: {
-          contextName: null,
-          endpoint: null,
+          scope: null,
+          app: null,
           dbProvider: null,
           dbServer: null,
           dbInstance: null,
@@ -53,7 +53,7 @@ Ext.define('AM.store.NHibernateTreeStore', {
           baseUrl: null
         },
         timeout: 600000,
-        url: 'Adapter/DBObjects',
+        url: 'AdapterManager/DBObjects',
         reader: {
           type: 'json'
         }

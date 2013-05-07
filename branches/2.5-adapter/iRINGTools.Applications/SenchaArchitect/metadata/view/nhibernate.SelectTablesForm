@@ -16,7 +16,10 @@
         "designer|userAlias": "selecttablesform",
         "autoScroll": true,
         "bodyBorder": null,
-        "bodyPadding": 5,
+        "bodyPadding": null,
+        "bodyStyle": [
+            "background:#eee;padding:10px 10px 0px 10px"
+        ],
         "title": null
     },
     "configAlternates": {
@@ -45,7 +48,6 @@
                 "style": [
                     "font-weight:bold;"
                 ],
-                "designer|userClassName": "MyLabel8",
                 "text": "Select Tables"
             },
             "designerId": "ea8417a3-2258-4042-9ba4-3229979a4b44",

@@ -62,7 +62,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "handleMetachange",
                 "fn": "handleMetachange",
                 "implHandler": [
                     "var me = this,\r",
@@ -87,7 +86,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "dirTree",
                 "ref": "dirTree",
                 "selector": "viewport > directorypanel > directorytree"
             },
@@ -101,7 +99,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "dirProperties",
                 "ref": "dirProperties",
                 "selector": "viewport > directorypanel > propertypanel"
             },
@@ -115,7 +112,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "mainContent",
                 "ref": "mainContent",
                 "selector": "viewport > centerpanel > contentpanel"
             },
@@ -129,7 +125,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onBeforeLoad",
                 "fn": "onBeforeLoad",
                 "implHandler": [
                     "var me = this;\r",
@@ -193,9 +188,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "newOrEditScope",
                 "fn": "newOrEditScope",
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "var path, state, context, description, wintitle;\r",
                     "var tree = me.getDirTree();\r",
@@ -284,7 +279,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "deleteScope",
                 "fn": "deleteScope",
                 "implHandler": [
                     "var me = this;\r",
@@ -329,7 +323,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "newOrEditEndpoint",
                 "fn": "newOrEditEndpoint",
                 "implHandler": [
                     "var me = this;\r",
@@ -423,7 +416,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "deleteEndpoint",
                 "fn": "deleteEndpoint",
                 "implHandler": [
                     "var me = this;\r",
@@ -468,7 +460,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onNewDataLayer",
                 "fn": "onNewDataLayer",
                 "implHandler": [
                     "var me = this;\r",
@@ -510,7 +501,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onRegenerateAll",
                 "fn": "onRegenerateAll",
                 "implHandler": [
                     "var me = this;\r",
@@ -553,7 +543,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onShowDataGrid",
                 "fn": "onShowDataGrid",
                 "implHandler": [
                     "var me = this;\r",
@@ -642,7 +631,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onRefreshFacade",
                 "fn": "onRefreshFacade",
                 "implHandler": [
                     "var me = this;\r",
@@ -682,7 +670,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "contextCombo",
                 "ref": "contextCombo",
                 "selector": "contextcombo"
             },
@@ -696,7 +683,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "datalayerCombo",
                 "ref": "datalayerCombo",
                 "selector": "datalayercombo"
             },
@@ -710,7 +696,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "baseUrlCombo",
                 "ref": "baseUrlCombo",
                 "selector": "availbaseurlcombo"
             },
@@ -724,7 +709,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onConfigureEndpoint",
                 "fn": "onConfigureEndpoint",
                 "implHandler": [
                     "\r",
@@ -761,7 +745,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showContextMenu",
                 "fn": "showContextMenu",
                 "implHandler": [
                     "var me = this,\r",
@@ -822,7 +805,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onAppDataRefreshClick",
                 "fn": "onAppDataRefreshClick",
                 "implHandler": [
                     "\r",
@@ -855,7 +837,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onShowDataGridd",
                 "fn": "onShowDataGridd",
                 "implHandler": [
                     "var me = this;\r",

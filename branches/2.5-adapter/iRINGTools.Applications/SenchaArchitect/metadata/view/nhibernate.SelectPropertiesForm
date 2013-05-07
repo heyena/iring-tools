@@ -7,10 +7,10 @@
     "codeClass": null,
     "userConfig": {
         "height": null,
-        "width": null,
+        "width": 300,
         "designer|userClassName": "nhibernate.SelectPropertiesForm",
         "designer|userAlias": "selectpropertiesform",
-        "layout": "fit",
+        "layout": "auto",
         "bodyPadding": null,
         "bodyStyle": "background:#eee;padding:10px 10px 0px 10px",
         "title": null
@@ -106,6 +106,21 @@
             ]
         },
         {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "style": [
+                    "font-weight:bold;"
+                ],
+                "text": "Select Properties"
+            },
+            "designerId": "b6fdaec9-965d-4992-96cb-10fea5921e9c"
+        },
+        {
             "type": "linkedinstance",
             "reference": {
                 "name": "items",
@@ -113,10 +128,21 @@
             },
             "codeClass": null,
             "userConfig": {
+                "hidden": true,
                 "itemId": "propertiesSelectionGrid"
             },
             "designerId": "220cd141-1bb8-4a61-a52f-3f3a370ed0fe",
             "masterInstanceId": "806180c3-0c42-425f-b6f1-5b85a7b5017b"
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "93b2968c-110c-4bdc-94c7-64af72dd0e7c",
+            "masterInstanceId": "55e4d2fa-9ebe-4466-b024-6d81829b1584"
         }
     ]
 }

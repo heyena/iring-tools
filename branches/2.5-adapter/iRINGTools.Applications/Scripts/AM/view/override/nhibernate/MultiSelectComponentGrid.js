@@ -11,9 +11,7 @@ initComponent: function() {
     var me = this;
     var ds = Ext.create('Ext.data.ArrayStore', {
     data: [
-      [123,'One Hundred Twenty Three'],
-      ['1', 'One'], ['2', 'Two'], ['3', 'Three'], ['4', 'Four'], ['5', 'Five'],
-      ['6', 'Six'], ['7', 'Seven'], ['8', 'Eight'], ['9', 'Nine']
+      ['1', 'One'], ['2', 'Two'], ['3', 'Three'], ['4', 'Four'], ['5', 'Five']
     ],
     fields: ['value','text'],
     sortInfo: {
@@ -41,17 +39,12 @@ initComponent: function() {
             name: 'itemselector',
             anchor: '100%',
             //fieldLabel: 'ItemSelector',
-            imagePath: '../ux/images/',
+            //imagePath: '../ux/images/',
             store: ds,
-			height:400,
-			drawUpIcon:false,
-            drawDownIcon:false,
-            drawTopIcon:false,
-            drawBotIcon:false,
+			height:356,
             //displayField: 'text',
             //valueField: 'value',
             //value: ['3', '4', '6'],
-
             allowBlank: false,
             // minSelections: 2,
             // maxSelections: 3,

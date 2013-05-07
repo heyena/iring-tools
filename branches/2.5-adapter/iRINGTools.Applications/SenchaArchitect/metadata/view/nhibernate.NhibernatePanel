@@ -42,6 +42,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "height": null,
                 "minWidth": 260,
                 "width": 300,
                 "layout|flex": null,

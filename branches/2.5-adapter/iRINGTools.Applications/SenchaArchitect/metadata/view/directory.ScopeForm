@@ -38,8 +38,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dock": "bottom",
-                "designer|userClassName": "MyToolbar3"
+                "dock": "bottom"
             },
             "designerId": "17de2cb0-9bcc-4e4b-b173-2373210be668",
             "cn": [
@@ -51,8 +50,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
-                        "designer|userClassName": "MyFill"
+                        "layout|flex": null
                     },
                     "designerId": "f1121f3f-5e1e-4b03-a999-758c3d927005"
                 },
@@ -65,7 +63,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton2",
                         "text": "Ok"
                     },
                     "designerId": "ea25992e-a1a2-4184-97fb-7452985c8d71",
@@ -78,7 +75,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -101,7 +97,6 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
-                        "designer|userClassName": "MyButton3",
                         "text": "Cancel"
                     },
                     "designerId": "ac83820c-3cd6-4bbd-8e98-6eea6a2892e8",
@@ -114,7 +109,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -138,7 +132,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSave",
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
@@ -192,7 +185,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReset",
                 "fn": "onReset",
                 "implHandler": [
                     "var me = this;\r",
@@ -213,7 +205,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField32",
                 "fieldLabel": null,
                 "name": "path"
             },
@@ -228,7 +219,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField33",
                 "fieldLabel": null,
                 "name": "state"
             },
@@ -243,7 +233,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyHiddenField34",
                 "fieldLabel": null,
                 "name": "oldContext"
             },
@@ -258,7 +247,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextField2",
                 "fieldLabel": "Name",
                 "name": "scope",
                 "value": null,
@@ -276,7 +264,6 @@
             "userConfig": {
                 "layout|anchor": null,
                 "itemId": "contextname",
-                "designer|userClassName": "MyHiddenField35",
                 "fieldLabel": null,
                 "name": "contextName"
             },
@@ -304,7 +291,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
-                "designer|userClassName": "MyTextArea",
                 "fieldLabel": "Description",
                 "name": "description"
             },

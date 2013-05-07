@@ -3,7 +3,7 @@
     "settings": {
         "urlPrefix": "http://localhost:52277/",
         "spacesToIndent": 2,
-        "exportPath": "C:/iring-tools/branches/2.5-adapter/iRINGTools.Applications",
+        "exportPath": "C:/Adapter-2.5/iRINGTools.Applications",
         "sdkPath": "",
         "lineEnding": "CRLF",
         "genTimestamps": false,

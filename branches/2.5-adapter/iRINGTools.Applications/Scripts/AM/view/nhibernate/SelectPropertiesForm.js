@@ -18,11 +18,13 @@ Ext.define('AM.view.nhibernate.SelectPropertiesForm', {
   alias: 'widget.selectpropertiesform',
 
   requires: [
-    'AM.view.nhibernate.MultiSelectionGrid'
+    'AM.view.nhibernate.MultiSelectionGrid',
+    'AM.view.nhibernate.MultiSelectComponentGrid'
   ],
 
+  width: 300,
   layout: {
-    type: 'fit'
+    type: 'auto'
   },
   bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 
@@ -64,8 +66,17 @@ Ext.define('AM.view.nhibernate.SelectPropertiesForm', {
       ],
       items: [
         {
+          xtype: 'label',
+          style: 'font-weight:bold;',
+          text: 'Select Properties'
+        },
+        {
           xtype: 'multiselectiongrid',
+          hidden: true,
           itemId: 'propertiesSelectionGrid'
+        },
+        {
+          xtype: 'multiselectcomponentgrid'
         }
       ]
     });

@@ -7,10 +7,10 @@
     "codeClass": null,
     "userConfig": {
         "height": null,
-        "width": null,
+        "width": 300,
         "designer|userClassName": "nhibernate.SelectDataKeysForm",
         "designer|userAlias": "selectdatakeysform",
-        "layout": "fit",
+        "layout": "auto",
         "bodyPadding": null,
         "bodyStyle": [
             "background:#eee;padding:10px 10px 0px 10px"
@@ -19,6 +19,21 @@
     },
     "designerId": "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
     "cn": [
+        {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "style": [
+                    "font-weight:bold;"
+                ],
+                "text": "Select Keys"
+            },
+            "designerId": "2eee59d5-d216-4274-92c3-7c012acfce44"
+        },
         {
             "type": "Ext.toolbar.Toolbar",
             "reference": {
@@ -112,10 +127,21 @@
             },
             "codeClass": null,
             "userConfig": {
+                "hidden": true,
                 "itemId": "multiSelectDataKeys"
             },
             "designerId": "3a4abf9c-20b0-40dc-a9ba-ea4250196ba5",
             "masterInstanceId": "806180c3-0c42-425f-b6f1-5b85a7b5017b"
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "d5a879ce-2866-40df-9d10-8dad2a582084",
+            "masterInstanceId": "55e4d2fa-9ebe-4466-b024-6d81829b1584"
         }
     ]
 }

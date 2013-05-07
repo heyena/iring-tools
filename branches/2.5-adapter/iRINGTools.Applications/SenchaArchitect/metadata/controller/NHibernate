@@ -61,7 +61,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSaveDbObjectTree",
                 "fn": "onSaveDbObjectTree",
                 "implHandler": [
                     "var me = this;\r",
@@ -130,9 +129,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSaveDataObject",
                 "fn": "onSaveDataObject",
                 "implHandler": [
+                    "alert('onSaveDataObject...');\r",
                     "var me = this; \r",
                     "var form = button.up('dataobjectform');\r",
                     "var panel = form.up('nhibernatepanel');\r",
@@ -227,7 +226,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onResetDataObject",
                 "fn": "onResetDataObject",
                 "implHandler": [
                     "var me = this;\r",
@@ -275,7 +273,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSaveKeyProperties",
                 "fn": "onSaveKeyProperties",
                 "implHandler": [
                     "\r",
@@ -288,11 +285,12 @@
                     "var rootNode = dbObjectsTree.getRootNode();\r",
                     "var dirNode = me.getDirNode(dbObjectsTree.dirNode);\r",
                     "var form = panel.down('selectdatakeysform');\r",
-                    "var objectGrid = form.down('multiselectiongrid');\r",
-                    "var selected = objectGrid.getSelectionModel().getSelection();\r",
+                    "var objectGrid =  form.down('multiselectcomponentgrid').items.items[2];//form.down('multiselectiongrid');\r",
+                    "var boundlist = objectGrid.items.items[0].items.items[2].items.items[0].items.items[0];\r",
+                    "var selected = form.down('multiselectcomponentgrid').items.items[2].items.items[0].items.items[2].store.data.items;//objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();\r",
                     "var selectValues = [];\r",
                     "Ext.each(selected, function(item) {\r",
-                    "  selectValues.push(item.data.DisplayField);\r",
+                    "  selectValues.push(item.data.text);\r",
                     "});\r",
                     "\r",
                     "var keysNode = panel.treeNode;\r",
@@ -313,7 +311,7 @@
                     "    if (keysNode.childNodes[i].data.property)\r",
                     "    var properties = keysNode.childNodes[i].data.property;\r",
                     "\r",
-                    "    if (properties) {\r",
+                    "    /*if (properties) {\r",
                     "      properties.isNullable = true;\r",
                     "      delete properties.keyType;\r",
                     "\r",
@@ -327,7 +325,12 @@
                     "\r",
                     "      keysNode.removeChild(keysNode.childNodes[i], false);\r",
                     "      i--;\r",
-                    "    }\r",
+                    "    }*/\r",
+                    "     //keysNode.parentNode.childNodes[1].appendChild(keysNode.childNodes[i]); \r",
+                    "     panel.treeNode.parentNode.childNodes[1].appendChild(keysNode.childNodes[i]); \r",
+                    "    //keysNode.removeChild(keysNode.childNodes[i], false);\r",
+                    "     //panel.treeNode.removeChild(keysNode.childNodes[i], false);\r",
+                    "      i--;\r",
                     "  }\r",
                     "}\r",
                     "\r",
@@ -350,8 +353,8 @@
                     "    for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {\r",
                     "      if (propertiesNode.childNodes[jj].data.text.toLowerCase() == selectValues[j].toLowerCase()) {\r",
                     "        var properties = propertiesNode.childNodes[jj].data.property;\r",
-                    "        properties.keyType = 'assigned';\r",
-                    "        properties.nullable = false;\r",
+                    "        //properties.keyType = 'assigned';\r",
+                    "       // properties.nullable = false;\r",
                     "        newKeyNode = {\r",
                     "          text: selectValues[j],\r",
                     "          type: \"keyProperty\",\r",
@@ -385,11 +388,27 @@
                     "    kk--;\r",
                     "    break;\r",
                     "    }\r",
-                    "    }*/\r",
-                    "    newKeyNode.dirty = true;\r",
+                    "    }\r",
+                    "    newKeyNode.dirty = true;*/\r",
                     "  }\r",
                     "}\r",
-                    "\r",
+                    "//Code to remove non select key form key object.\r",
+                    "/*var founded;\r",
+                    "if(keysNode.childNodes.length > selectValues.length){\r",
+                    "  for (var j = 0; j < keysNode.childNodes.length; j++){\r",
+                    "    founded = false;\r",
+                    "    for (var k = 0; k <selectValues.length ; k++){\r",
+                    "      if (selectValues[k].toLowerCase() == nodeChildren[j].toLowerCase()) {\r",
+                    "\t \t\t founded = true;\r",
+                    "        break\r",
+                    "      }\r",
+                    "    }\r",
+                    "     if(!founded){\r",
+                    "  \t keysNode.removeChild(keysNode.childNodes[j], false);\r",
+                    "  }\r",
+                    " \t }\r",
+                    " \r",
+                    "}*/\r",
                     "if (!keysNode.isExpanded())\r",
                     "keysNode.expand();\r",
                     ""
@@ -409,7 +428,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSaveDataProperties",
                 "fn": "onSaveDataProperties",
                 "implHandler": [
                     "var me = this;\r",
@@ -421,17 +439,18 @@
                     "var rootNode = dbObjectsTree.getRootNode();\r",
                     "var dirNode = me.getDirNode(dbObjectsTree.dirNode);\r",
                     "var form = panel.down('selectpropertiesform');\r",
-                    "var objectGrid = form.down('multiselectiongrid');\r",
-                    "var selected = objectGrid.getSelectionModel().getSelection();\r",
+                    "var objectGrid = form.down('multiselectcomponentgrid').items.items[2];//form.down('multiselectiongrid');\r",
+                    "var boundlist = objectGrid.items.items[0].items.items[2].items.items[0].items.items[0];\r",
+                    "var selected = objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();\r",
                     "var selectValues = [];\r",
                     "Ext.each(selected, function(item) {\r",
-                    "  selectValues.push(item.data.DisplayField);\r",
+                    "  selectValues.push(item.data.text);\r",
                     "});\r",
                     "\r",
                     "var shownProperty = [];\r",
                     "var availItems = [];\r",
-                    "var hiddenRootNode = treeNode.raw.hiddenNodes.hiddenNode;\r",
-                    "\r",
+                    "//var hiddenRootNode = treeNode.raw.hiddenNodes.hiddenNode;\r",
+                    "var hiddenRootNode;\r",
                     "for (var indexOfProperty = 0; indexOfProperty < node.childNodes.length; indexOfProperty++) {\r",
                     "  !me.hasShown(shownProperty, node.childNodes[indexOfProperty].text)\r",
                     "  shownProperty.push(node.childNodes[indexOfProperty].text);\r",
@@ -444,12 +463,13 @@
                     "  selectedItems.push(node.data.text);\r",
                     "});\r",
                     "\r",
-                    "Ext.each(hiddenRootNode.children, function (node) {\r",
+                    "/*Ext.each(hiddenRootNode.children, function (node) {\r",
                     "  availItems.push(node.text);\r",
                     "});\r",
+                    "*/\r",
                     "\r",
-                    "\r",
-                    "var hiddenRootNode = treeNode.raw.hiddenNodes.hiddenNode;\r",
+                    "//var hiddenRootNode = treeNode.raw.hiddenNodes.hiddenNode;\r",
+                    "var hiddenRootNode;\r",
                     "var indexHidden;\r",
                     "\r",
                     "for (var i = 0; i < treeNode.childNodes.length; i++) {\r",
@@ -463,11 +483,11 @@
                     "  }\r",
                     "\r",
                     "  if (!found) {\r",
-                    "    hiddenRootNode.children.push({\r",
+                    "   /* hiddenRootNode.children.push({\r",
                     "      text: treeNode.childNodes[i].data.text,\r",
                     "      property: treeNode.childNodes[i].data.property,\r",
                     "      hidden: true\r",
-                    "    });\r",
+                    "    });*/\r",
                     "    treeNode.removeChild(treeNode.childNodes[i], false);\r",
                     "    i--;\r",
                     "  }\r",
@@ -483,14 +503,14 @@
                     "    }\r",
                     "  }\r",
                     "\r",
-                    "  for (var k = 0; k < hiddenRootNode.children.length; k++) {\r",
+                    "  /*for (var k = 0; k < hiddenRootNode.children.length; k++) {\r",
                     "    if (selectValues[j].toLowerCase() == hiddenRootNode.children[k].text.toLowerCase()) {\r",
                     "      indexHidden = k;\r",
                     "      break;\r",
                     "    }\r",
-                    "  }\r",
+                    "  }*/\r",
                     "\r",
-                    "  if (!found && indexHidden > -1) {\r",
+                    "  /*if (!found && indexHidden > -1) {\r",
                     "    treeNode.appendChild({\r",
                     "      text: hiddenRootNode.children[indexHidden].text,\r",
                     "      property: hiddenRootNode.children[indexHidden].property,\r",
@@ -500,7 +520,7 @@
                     "      iconCls: 'treeProperty'\r",
                     "    });\r",
                     "    hiddenRootNode.children.splice(indexHidden, 1);\r",
-                    "  }\r",
+                    "  }*/\r",
                     "} \r",
                     "if (!treeNode.isExpanded())\r",
                     "treeNode.expand();\r",
@@ -522,7 +542,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onEditDbConnection",
                 "fn": "onEditDbConnection",
                 "implHandler": [
                     "var me = this;\r",
@@ -544,7 +563,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onResetKeyProperties",
                 "fn": "onResetKeyProperties",
                 "implHandler": [
                     "alert('Not Implemented yet');"
@@ -564,7 +582,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSaveKeyProperty",
                 "fn": "onSaveKeyProperty",
                 "implHandler": [
                     "alert('onSaveKeyPoperty...');\r",
@@ -599,7 +616,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onResetKeyProperty",
                 "fn": "onResetKeyProperty",
                 "implHandler": [
                     "var me = this;\r",
@@ -635,7 +651,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSaveDataProperty",
                 "fn": "onSaveDataProperty",
                 "implHandler": [
                     "var me = this;\r",
@@ -668,7 +683,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onResetDataProperty",
                 "fn": "onResetDataProperty",
                 "implHandler": [
                     "var me = this;\r",
@@ -704,7 +718,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "selectTablesForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "selectTablesForm",
@@ -721,7 +734,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "connectionStringForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "connectionStringForm",
@@ -738,7 +750,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "dataObjectForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "dataObjectForm",
@@ -755,7 +766,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "dataKeyForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "dataKeyForm",
@@ -772,7 +782,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "selectKeyFieldsForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "selectKeyFieldsForm",
@@ -789,7 +798,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "selectPropertiesForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "selectPropertiesForm",
@@ -806,7 +814,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "dataPropertyForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "dataPropertyForm",
@@ -823,7 +830,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "relationsForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "relationsForm",
@@ -840,7 +846,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "setRelationForm",
                 "autoCreate": true,
                 "forceCreate": true,
                 "ref": "setRelationForm",
@@ -857,7 +862,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "dirTree",
                 "ref": "dirTree",
                 "selector": "viewport > directorypanel > directorytree",
                 "xtype": "directorytree"
@@ -872,7 +876,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "mainContent",
                 "ref": "mainContent",
                 "selector": "viewport > centerpanel > contentpanel",
                 "xtype": "contentpanel"
@@ -887,7 +890,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onConfignhibernate",
                 "fn": "onConfignhibernate",
                 "implHandler": [
                     "var me = this;\r",
@@ -978,7 +980,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "init",
                 "fn": "init",
                 "designer|params": [
                     "application"
@@ -998,7 +999,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onTreepanelItemClick",
                 "fn": "onTreepanelItemClick",
                 "implHandler": [
                     "var me = this;\r",
@@ -1053,7 +1053,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "hasShown",
                 "fn": "hasShown",
                 "designer|params": [
                     "shownArray",
@@ -1076,7 +1075,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getDbDictionary",
                 "fn": "getDbDictionary",
                 "designer|params": [
                     "context",
@@ -1116,7 +1114,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getTableNames",
                 "fn": "getTableNames",
                 "designer|params": [
                     "context",
@@ -1167,7 +1164,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "setTableNames",
                 "fn": "setTableNames",
                 "designer|params": [
                     "dbDict"
@@ -1192,7 +1188,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getAvailableItems",
                 "fn": "getAvailableItems",
                 "designer|params": [
                     "node"
@@ -1228,7 +1223,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getSelectedItems",
                 "fn": "getSelectedItems",
                 "designer|params": [
                     "node"
@@ -1255,7 +1249,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getSelectItems",
                 "fn": "getSelectItems",
                 "designer|params": [
                     "node"
@@ -1281,7 +1274,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showSelectTablesForm",
                 "fn": "showSelectTablesForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1309,8 +1301,12 @@
                     "  grid.getStore().data.items[i].data.value = tables[i];\r",
                     "}\r",
                     "itemSelecter.items.items[2].bindStore(grid.getStore());\r",
-                    "//itemSelecter.items.items[2].buttons = [\"add\",\"remove\"];\r",
-                    "//itemSelecter.items.items[2].doLayout();\r",
+                    "\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(2);\r",
                     "grid.down('gridcolumn').setText('Select Data Tables');\r",
                     "grid.selectItems(selected);\r",
                     "panel = nhibernatePanel.down('#nhibernateContent');\r",
@@ -1334,7 +1330,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showConnectionStringForm",
                 "fn": "showConnectionStringForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1476,7 +1471,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showDataObjectForm",
                 "fn": "showDataObjectForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1528,7 +1522,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showRelationsForm",
                 "fn": "showRelationsForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1577,7 +1570,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showSetRelationForm",
                 "fn": "showSetRelationForm",
                 "designer|params": [
                     "nhibernatepanel"
@@ -1700,7 +1692,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getConnStringParts",
                 "fn": "getConnStringParts",
                 "designer|params": [
                     "connString",
@@ -1789,7 +1780,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showSelectKeyFieldsForm",
                 "fn": "showSelectKeyFieldsForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1802,14 +1792,13 @@
                     "var dataNode = dataTree.getSelectedNode();\r",
                     "var dirNode = me.getDirNode(dataTree.dirNode);\r",
                     "\r",
-                    "var context = dirNode.data.record.ContextName;//dirNode.data.record.context;\r",
-                    "var endpoint = dirNode.data.record.Endpoint;//dirNode.data.record.endpoint;\r",
+                    "var context =dirNode.parentNode.data.text;//dirNode.data.record.context;\r",
+                    "var endpoint = dirNode.data.record.Name;//dirNode.data.record.endpoint;\r",
                     "var baseUrl = dirNode.data.record.baseUrl;\r",
                     "\r",
                     "var grid = form.down('#multiSelectDataKeys');\r",
-                    "\r",
                     "grid.down('gridcolumn').setText('Select Key Properties');\r",
-                    "\r",
+                    "var itemSelecter = form.down('#multiselectcomponentgrid');\r",
                     "var availItems = [];\r",
                     "var propertiesNode = dataNode.parentNode.childNodes[1];\r",
                     "//var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;\r",
@@ -1830,6 +1819,19 @@
                     "\r",
                     "grid.loadItems(availItems);\r",
                     "//grid.selectItems(selectItems);\r",
+                    "for(var i=0;i<availItems.length;i++){\r",
+                    "  grid.getStore().data.items[i].data.text = availItems[i];\r",
+                    "  grid.getStore().data.items[i].data.value = availItems[i];\r",
+                    "}\r",
+                    "itemSelecter.items.items[2].bindStore(grid.getStore());\r",
+                    "itemSelecter.items.items[0].setText('Available Keys');\r",
+                    "itemSelecter.items.items[1].setText('Selected Keys');\r",
+                    "itemSelecter.items.items[1].margin = '0 0 0 153';\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(2);\r",
                     "panel = nhibernatePanel.down('#nhibernateContent');\r",
                     "\r",
                     "panel.removeAll();\r",
@@ -1852,12 +1854,12 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showSelectPropertiesForm",
                 "fn": "showSelectPropertiesForm",
                 "designer|params": [
                     "nhibernatePanel"
                 ],
                 "implHandler": [
+                    "\r",
                     "var me = this, \r",
                     "form = me.getSelectPropertiesForm();\r",
                     "var selected = [];\r",
@@ -1894,6 +1896,20 @@
                     "\r",
                     "grid.loadItems(availItems);\r",
                     "//grid.selectItems(selectItems);\r",
+                    "var itemSelecter = form.down('#multiselectcomponentgrid');\r",
+                    "for(var i=0;i<availItems.length;i++){\r",
+                    "  grid.getStore().data.items[i].data.text = availItems[i];\r",
+                    "  grid.getStore().data.items[i].data.value = availItems[i];\r",
+                    "}\r",
+                    "itemSelecter.items.items[2].bindStore(grid.getStore());\r",
+                    "itemSelecter.items.items[0].setText('Available Properties');\r",
+                    "itemSelecter.items.items[1].setText('Selected Properties');\r",
+                    "itemSelecter.items.items[1].margin = '0 0 0 120';\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);\r",
+                    "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(2);\r",
                     "panel = nhibernatePanel.down('#nhibernateContent');\r",
                     "\r",
                     "panel.removeAll();\r",
@@ -1914,7 +1930,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showDataKeyForm",
                 "fn": "showDataKeyForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -1949,7 +1964,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getDirNode",
                 "fn": "getDirNode",
                 "designer|params": [
                     "nodeInternalId"
@@ -1971,7 +1985,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "showDataPropertyForm",
                 "fn": "showDataPropertyForm",
                 "designer|params": [
                     "nhibernatePanel"
@@ -2006,7 +2019,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getJsonTree",
                 "fn": "getJsonTree",
                 "designer|params": [
                     "rootNode",
@@ -2054,7 +2066,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "setTreeProperty",
                 "fn": "setTreeProperty",
                 "designer|params": [
                     "dbInfo",
@@ -2146,7 +2157,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getFolderFromChildNode",
                 "fn": "getFolderFromChildNode",
                 "designer|params": [
                     "folderNode"
@@ -2310,7 +2320,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "prepareProperties",
                 "fn": "prepareProperties",
                 "designer|params": [
                     "folder",
@@ -2382,7 +2391,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getDataTypeIndex",
                 "fn": "getDataTypeIndex",
                 "designer|params": [
                     "dataType"
@@ -2413,7 +2421,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getDataTypes",
                 "fn": "getDataTypes",
                 "implHandler": [
                     "var me = this;\r",
@@ -2449,7 +2456,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onConnectToDatabase",
                 "fn": "onConnectToDatabase",
                 "implHandler": [
                     "var me = this;\r",
@@ -2471,7 +2477,8 @@
                     "var dbSchema = form.getForm().findField('dbSchema');\r",
                     "var servieName = '';\r",
                     "var serName = '';\r",
-                    "\r",
+                    "dbPro  = dbProvider;\r",
+                    "dbSch = dbSchema.getValue();\r",
                     "//dirNode.data.record.dbDict.Provider = dbProvider;\r",
                     "//dirNode.data.record.dbDict.SchemaName = dbSchema.getValue();\r",
                     "\r",
@@ -2485,6 +2492,8 @@
                     "else if (dbProvider.indexOf('MSSQL') > -1) {\r",
                     "  host.setValue(dbServer.getValue());\r",
                     "  serviceName = dbInstance.getValue();\r",
+                    "  //dbSchema.setValue(dbSchema.getValue());\r",
+                    "  //dbPro.setValue(dbProvider);\r",
                     "}\r",
                     "else if (dbProvider.indexOf('MYSQL') > -1) {\r",
                     "  dbName.setValue(dbSchema.getValue());\r",
@@ -2537,10 +2546,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onSaveDataObjects",
                 "fn": "onSaveDataObjects",
                 "implHandler": [
-                    "\r",
+                    "alert('onSaveDataObjects...');\r",
                     "var me = this;\r",
                     "var content = this.getMainContent();\r",
                     "var panel = button.up('nhibernatepanel');\r",
@@ -2548,8 +2556,9 @@
                     "var dirNode = me.getDirNode(dbObjectsTree.dirNode);\r",
                     "var rootNode = dbObjectsTree.getRootNode();\r",
                     "var form = panel.down('selecttablesform');\r",
-                    "var objectGrid = form.down('multiselectiongrid');\r",
-                    "var selected = objectGrid.getSelectionModel().getSelection();\r",
+                    "var objectGrid = form.down('multiselectcomponentgrid').items.items[2];//form.down('multiselectiongrid');\r",
+                    "var boundlist = objectGrid.items.items[0].items.items[2].items.items[0].items.items[0];\r",
+                    "var selected = objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();\r",
                     "\r",
                     "var serName = '';\r",
                     "var dbInfo = dirNode.data.record.dbInfo;\r",
@@ -2573,7 +2582,7 @@
                     "\r",
                     "  userTableNames = [];\r",
                     "  Ext.each(selected, function (table) {\r",
-                    "    userTableNames.push(table.data.DisplayField);\r",
+                    "    userTableNames.push(table.data.text);\r",
                     "  });\r",
                     "}\r",
                     "dbObjectsTree.selectedTables = userTableNames;\r",
@@ -2581,18 +2590,18 @@
                     "var treeStore = dbObjectsTree.getStore();\r",
                     "treeStore.on('beforeload', function (store, operation) {\r",
                     "  var params = store.proxy.extraParams;\r",
-                    "  params.dbProvider = dbDict.Provider;\r",
+                    "  params.dbProvider = dbPro;//dbDict.Provider;\r",
                     "  params.dbServer = dbInfo.dbServer;\r",
                     "  params.dbInstance = dbInfo.dbInstance;\r",
                     "  params.dbName = dbInfo.dbName;\r",
-                    "  params.dbSchema = dbInfo.dbSchema;\r",
+                    "  params.dbSchema = dbSch;//dbInfo.dbSchema;\r",
                     "  params.dbPassword = dbInfo.dbPassword;\r",
                     "  params.dbUserName = dbInfo.dbUserName;\r",
                     "  params.portNumber = dbInfo.portNumber;\r",
                     "  params.tableNames = userTableNames;\r",
                     "  params.serName = serName;\r",
-                    "  params.contextName = dirNode.data.record.ContextName;\r",
-                    "  params.endpoint = dirNode.data.record.Endpoint;\r",
+                    "  params.scope = dirNode.parentNode.data.text;//dirNode.data.record.ContextName;\r",
+                    "  params.app = dirNode.data.record.Name;//dirNode.data.record.Endpoint;\r",
                     "  params.baseUrl = dirNode.data.record.BaseUrl;\r",
                     "}, me);\r",
                     "\r",
@@ -2615,7 +2624,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "resetConfigOracle",
                 "fn": "resetConfigOracle",
                 "designer|params": [
                     "host",
@@ -2659,7 +2667,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "resetConfigMsSql",
                 "fn": "resetConfigMsSql",
                 "designer|params": [
                     "dbName",
@@ -2699,7 +2706,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onResetDataObjects",
                 "fn": "onResetDataObjects",
                 "implHandler": [
                     "var me = this;\r",
@@ -2753,7 +2759,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onFormCreaterelation",
                 "fn": "onFormCreaterelation",
                 "implHandler": [
                     "var me = this;\r",
