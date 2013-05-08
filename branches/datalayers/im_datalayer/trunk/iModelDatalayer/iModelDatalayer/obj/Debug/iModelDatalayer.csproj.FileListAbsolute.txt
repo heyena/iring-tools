@@ -1,0 +1,16 @@
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer\bin\Debug\iModelDatalayer.dll
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer\bin\Debug\iModelDatalayer.pdb
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer\obj\Debug\ResolveAssemblyReference.cache
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer\obj\Debug\iModelDatalayer.dll
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer\obj\Debug\iModelDatalayer.pdb
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\bin\Debug\iModelDatalayer.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\bin\Debug\iModelDatalayer.pdb
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\bin\Debug\iRINGLibrary.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\bin\Debug\log4net.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\bin\Debug\Ninject.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\bin\Debug\UtilityLibrary.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\bin\Debug\log4net.xml
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\bin\Debug\Ninject.xml
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\obj\Debug\ResolveAssemblyReference.cache
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\obj\Debug\iModelDatalayer.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer\obj\Debug\iModelDatalayer.pdb
