@@ -90,10 +90,11 @@ namespace org.iringtools.web.controllers
         string delimiter = form["delimiter"];
         string className = form["className"];
         string classId = form["classId"];
+        int parentClassIndex = int.Parse(form["parentClassIndex"]);
 
         Mapping mapping = GetMapping(scope, app);
         GraphMap graphMap = mapping.FindGraphMap(graph);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
 
         if (ctm != null)
         {
@@ -152,6 +153,7 @@ namespace org.iringtools.web.controllers
         string parentType = form["parentType"];
         string parentId = form["parentId"];
         string identifier = form["id"];
+        int classMapIndex = int.Parse(form["classMapIndex"]);
 
         if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
 
@@ -169,13 +171,13 @@ namespace org.iringtools.web.controllers
 
         if (parentType == "GraphMapNode")
         {
-          selectedCtm = graphMap.classTemplateMaps.Find(c => c.classMap.id.Equals(parentId));
+            selectedCtm = graphMap.classTemplateMaps.Find(c => (c.classMap.id.Equals(parentId) && c.classMap.index == classMapIndex));
         }
         else if (parentType == "ClassMapNode")
         {
           foreach (var classTemplateMap in graphMap.classTemplateMaps)
           {
-            if (classTemplateMap.classMap.id == parentId)
+              if (classTemplateMap.classMap.id == parentId && classTemplateMap.classMap.index == classMapIndex)
             {
               selectedCtm = classTemplateMap;
               break;
@@ -333,7 +335,8 @@ namespace org.iringtools.web.controllers
 
                     if (role.classMap != null && role.classMap.id != graphClassMap.id)
                     {
-                      JsonTreeNode classNode = CreateClassNode(context, role.classMap);
+                      //JsonTreeNode classNode = CreateClassNode(templateNode.id + "/" + role.name, role.classMap);
+                        JsonTreeNode classNode = CreateClassNode(templateNode.id + "/" + role.name, role.classMap);
 
                       if (roleNode.children == null)
                         roleNode.children = new List<JsonTreeNode>();
@@ -358,11 +361,13 @@ namespace org.iringtools.web.controllers
 
           case "ClassMapNode":
             var classMapId = form["id"];
+            int classMapIndex = int.Parse(form["index"]);
+
             if (graphMap != null)
             {
               foreach (var classTemplateMap in graphMap.classTemplateMaps)
               {
-                if (classTemplateMap.classMap.id == classMapId)
+                  if (classTemplateMap.classMap.id == classMapId && classTemplateMap.classMap.index == classMapIndex)
                 {
                   int templateIndex = 0;
 
@@ -515,10 +520,12 @@ namespace org.iringtools.web.controllers
         string parentTemplateId = form["parentTemplate"];
         string parentRoleId = form["parentRole"];
         int index = Convert.ToInt32(form["index"]);
+        int parentClassIndex = Convert.ToInt32(form["parentClassIndex"]);
+
         string className = dataObjectVars[dataObjectVars.Count() - 1];
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graph);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
         TemplateMap tMap = ctm.templateMaps[index];
 
         RoleMap rMap = tMap.roleMaps.Find(r => r.id.Equals(parentRoleId));
@@ -544,6 +551,7 @@ namespace org.iringtools.web.controllers
         string roleId = form["roleId"];
         string templateId = form["templateId"];
         string classId = form["parentClassId"];
+        int parentClassIndex = Convert.ToInt32(form["parentClassIndex"]);
         string mappingNode = form["mappingNode"];
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
@@ -551,9 +559,12 @@ namespace org.iringtools.web.controllers
         string graphName = dataObjectVars[2];
 
         int index = Convert.ToInt32(form["index"]);
+        
+          
+
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, parentClassIndex);
         TemplateMap tMap = ctm.templateMaps[index];
         RoleMap rMap = tMap.roleMaps.Find(r => r.id.Equals(roleId));
 
@@ -596,6 +607,7 @@ namespace org.iringtools.web.controllers
 
         object selectedNode = form["node"];
         int index = Convert.ToInt32(form["index"]);
+        int classIndex = Convert.ToInt32(form["classIndex"]);
 
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
@@ -607,7 +619,7 @@ namespace org.iringtools.web.controllers
         string context = string.Format("{0}/{1}/{2}/{3}", scope, application, dataObjectVars[2], dataObjectVars[dataObjectVars.Count() - 2]);
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, classIndex);
         TemplateMap tMap = ctm.templateMaps[index];
         RoleMap rMap = tMap.roleMaps.FirstOrDefault(c => c.name == roleName);
 
@@ -648,7 +660,8 @@ namespace org.iringtools.web.controllers
         expanded = false,
         leaf = false,
         children = null,
-        record = graph
+        record = graph,
+        index = classMap.index
       };
 
       return graphNode;
@@ -667,7 +680,8 @@ namespace org.iringtools.web.controllers
         expanded = false,
         leaf = false,
         children = null,
-        record = classMap
+        record = classMap,
+        index = classMap.index
       };
 
       return classNode;
@@ -753,7 +767,7 @@ namespace org.iringtools.web.controllers
               name = className,
               id = qn ? qName : classId,
               identifierDelimiter = delimiter,
-              identifiers = new Identifiers()
+              identifiers = new Identifiers()             
             };
 
           if (identifier.Contains(','))
@@ -870,11 +884,13 @@ namespace org.iringtools.web.controllers
         string graphName = mappingCtx[2];
 
         string classId = form["classId"];
+        int classIndex = Convert.ToInt16(form["classIndex"]);
+ 
         string roleName = mappingCtx[mappingCtx.Length - 1];
         int index = Convert.ToInt16(form["index"]);
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
-        ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
+        ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId, classIndex);
 
         if (ctMap != null)
         {
@@ -911,6 +927,8 @@ namespace org.iringtools.web.controllers
         string app = form["app"];
         string graph = form["graph"];
         string classId = form["classId"];
+        int classIndex = Convert.ToInt16(form["classIndex"]);
+
         int templateIndex = Convert.ToInt16(form["templateIndex"]);
         string roleName = form["roleName"];
         string refClassId = form["refClassId"];
@@ -918,7 +936,7 @@ namespace org.iringtools.web.controllers
 
         Mapping mapping = GetMapping(scope, app);
         GraphMap graphMap = mapping.FindGraphMap(graph);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, classIndex);
         TemplateMap tMap = ctm.templateMaps[templateIndex];
         RoleMap rMap = tMap.roleMaps.Find(c => c.name == roleName);
 
@@ -964,6 +982,9 @@ namespace org.iringtools.web.controllers
         string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = propertyCtx[0];
         string classId = form["classId"];
+        
+        int classIndex = Convert.ToInt16(form["classIndex"]);
+
         string application = propertyCtx[1];
         string graphName = mappingCtx[2];
 
@@ -973,7 +994,7 @@ namespace org.iringtools.web.controllers
 
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, classIndex);
 
         if (ctm != null)
         {
@@ -1012,11 +1033,12 @@ namespace org.iringtools.web.controllers
         string parentNode = form["mappingNode"].Split('/')[2];
         string templateId = form["identifier"];
         string parentClassId = form["parentIdentifier"];
+        int parentClassIndex = Convert.ToInt32(form["parentClassIndex"]);
         int index = Convert.ToInt16(form["index"]);
 
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(parentNode);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
         ctm.templateMaps.RemoveAt(index);
       }
       catch (Exception ex)

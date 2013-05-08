@@ -439,7 +439,7 @@ namespace org.iringtools.adapter.projection
 
             foreach (RoleMap classRole in classRoles)
             {
-              ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+              ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id,classRole.classMap.index);
 
               if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
               {
@@ -762,7 +762,7 @@ namespace org.iringtools.adapter.projection
           if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
           {
             templateValid = true;
-            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id,classRole.classMap.index);
 
             if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
             {
@@ -885,7 +885,7 @@ namespace org.iringtools.adapter.projection
               case RoleType.Reference:
                 if (roleMap.classMap != null)
                 {
-                  ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(roleMap.classMap.id);
+                  ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(roleMap.classMap.id, roleMap.classMap.index);
 
                   if (classTemplateMap != null && classTemplateMap.classMap != null)
                   {

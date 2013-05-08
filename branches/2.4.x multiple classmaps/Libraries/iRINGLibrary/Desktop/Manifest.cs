@@ -796,6 +796,8 @@ namespace org.iringtools.mapping
 
     private string identifierValueField;
 
+    private int indexField;
+
     public ClassMap()
     {
       identifiers = new Identifiers();
@@ -878,6 +880,21 @@ namespace org.iringtools.mapping
         this.identifierValueField = value;
       }
     }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 6)]
+    public int index
+    {
+        get
+        {
+            return this.indexField;
+        }
+        set
+        {
+            this.indexField = value;
+        }
+    }
+
+
   }
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "templateMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "templateMap")]

@@ -554,7 +554,7 @@ namespace org.iringtools.adapter.projection
               baseTemplateElement.Add(roleElement);              
             }
 
-            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id,classRole.classMap.index);
 
             if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
             {
@@ -598,7 +598,7 @@ namespace org.iringtools.adapter.projection
               }
             }
 
-            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id, classRole.classMap.index);
 
             if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
             {
@@ -714,7 +714,7 @@ namespace org.iringtools.adapter.projection
         ProcessInboundClassIdentifiers(dataObjectIndex, classMap, classInstanceIndex, identifierValue);
       }
 
-      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.id);
+      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.id,classMap.index);
 
       if (classTemplateMap != null)
       {
