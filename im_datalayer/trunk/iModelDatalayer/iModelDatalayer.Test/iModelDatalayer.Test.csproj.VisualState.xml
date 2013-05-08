@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+  <TopNode>[0-1000]C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\iModelDatalayer.Test.csproj</TopNode>
+  <SelectedNode>[0-1002]org.iringtools.adapter.datalayer.test.Test.TestDictionary</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1000]C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\iModelDatalayer.Test.csproj" Expanded="true" />
+    <Node UniqueName="[0-1003]C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iModelDatalayer.Test.dll" Expanded="true" />
+    <Node UniqueName="[0-1004]org" Expanded="true" />
+    <Node UniqueName="[0-1005]org.iringtools" Expanded="true" />
+    <Node UniqueName="[0-1006]org.iringtools.adapter" Expanded="true" />
+    <Node UniqueName="[0-1007]org.iringtools.adapter.datalayer" Expanded="true" />
+    <Node UniqueName="[0-1008]org.iringtools.adapter.datalayer.test" Expanded="true" />
+    <Node UniqueName="[0-1001]org.iringtools.adapter.datalayer.test.Test" Expanded="true" />
+  </Nodes>
+</VisualState>

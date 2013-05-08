@@ -1,0 +1,18 @@
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\NUnit.Runner\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\NUnit.Runner\obj\x86\Debug\NUnit.Runner.Properties.Resources.resources
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\NUnit.Runner\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\NUnit.Runner\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\bin\Debug\NUnit.Runner.exe
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\bin\Debug\NUnit.Runner.pdb
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\bin\Debug\nunit-gui-runner.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\bin\Debug\nunit.util.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\bin\Debug\nunit.uikit.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\bin\Debug\nunit.core.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\bin\Debug\nunit.core.interfaces.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\bin\Debug\nunit.uiexception.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\obj\x86\Debug\NUnit.Runner.Properties.Resources.resources
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\obj\x86\Debug\NUnit.Runner.exe
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\NUnit.Runner\obj\x86\Debug\NUnit.Runner.pdb

@@ -1,0 +1,140 @@
+May 01 17:08:16 ERROR 11708 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 01 17:15:38 ERROR 9780 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 01 17:15:39 ERROR 9780 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:15:39 ERROR 9780 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:26:23 ERROR 5428 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 01 17:26:27 ERROR 5428 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:26:27 ERROR 5428 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:31:41 ERROR 8404 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 01 17:31:42 ERROR 8404 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:31:42 ERROR 8404 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:34:40 ERROR 2372 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 01 17:34:40 ERROR 2372 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:34:40 ERROR 2372 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:42:48 ERROR 6256 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 01 17:42:48 ERROR 6256 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 17:42:48 ERROR 6256 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 18:22:10 ERROR 9156 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 01 18:22:10 ERROR 9156 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 01 18:22:10 ERROR 9156 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:08:47 ERROR 5616 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:08:48 ERROR 5616 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:08:48 ERROR 5616 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:09:44 ERROR 10384 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:09:44 ERROR 10384 .\Statement\Statement.cpp::ExecuteCatalogFunction: [Simba][CLIDSI] Unhandled managed exception caught: System.AccessViolationException: Attempted to read or write protected memory. This is often an indication that other memory is corrupt. (Stack Trace:    at Bentley.DgnPlatform.InstanceCountIterable.begin(InstanceCountIterable* , const_iterator* )
+   at Bentley.DgnPlatformNET.DgnEC.DgnECManager.GetInstanceCounts(DgnModel dgnModel, IList`1 __unnamed001)
+   at Bentley.DgnECPlugin.DgnECPersistenceProvider.ExecuteQuery(RepositoryConnection connection, ECQuer
+May 03 14:10:27 ERROR 4140 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:18:05 ERROR 12808 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:18:05 ERROR 12808 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:18:05 ERROR 12808 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:21:44 ERROR 6988 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:21:45 ERROR 6988 .\Statement\Statement.cpp::ExecuteCatalogFunction: [Simba][CLIDSI] Unhandled managed exception caught: System.AccessViolationException: Attempted to read or write protected memory. This is often an indication that other memory is corrupt. (Stack Trace:    at Bentley.DgnPlatform.InstanceCountIterable.begin(InstanceCountIterable* , const_iterator* )
+   at Bentley.DgnPlatformNET.DgnEC.DgnECManager.GetInstanceCounts(DgnModel dgnModel, IList`1 __unnamed001)
+   at Bentley.DgnECPlugin.DgnECPersistenceProvider.ExecuteQuery(RepositoryConnection connection, ECQuer
+May 03 14:22:17 ERROR 5288 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:26:24 ERROR 2744 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:26:24 ERROR 2744 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:26:24 ERROR 2744 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:27:22 ERROR 8600 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:27:22 ERROR 8600 .\Statement\Statement.cpp::ExecuteCatalogFunction: [Simba][CLIDSI] Unhandled managed exception caught: System.AccessViolationException: Attempted to read or write protected memory. This is often an indication that other memory is corrupt. (Stack Trace:    at Bentley.DgnPlatform.InstanceCountIterable.begin(InstanceCountIterable* , const_iterator* )
+   at Bentley.DgnPlatformNET.DgnEC.DgnECManager.GetInstanceCounts(DgnModel dgnModel, IList`1 __unnamed001)
+   at Bentley.DgnECPlugin.DgnECPersistenceProvider.ExecuteQuery(RepositoryConnection connection, ECQuer
+May 03 14:28:24 ERROR 4868 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:28:24 ERROR 4868 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:28:24 ERROR 4868 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:48:22 ERROR 12072 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 14:48:22 ERROR 12072 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 14:48:22 ERROR 12072 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:02:56 ERROR 7424 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 15:02:56 ERROR 7424 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:02:56 ERROR 7424 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:03:39 ERROR 10604 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 15:03:39 ERROR 10604 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:03:39 ERROR 10604 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:05:33 ERROR 9448 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 15:05:33 ERROR 9448 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:05:33 ERROR 9448 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:07:39 ERROR 12328 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 15:07:39 ERROR 12328 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:07:39 ERROR 12328 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:12:04 ERROR 11088 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 15:12:05 ERROR 11088 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 15:12:05 ERROR 11088 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 17:47:29 ERROR 6700 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 17:48:48 ERROR 12188 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 17:48:51 ERROR 12188 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 17:48:51 ERROR 12188 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 17:49:35 ERROR 10348 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 17:49:39 ERROR 10348 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 17:49:39 ERROR 10348 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 17:50:32 ERROR 5408 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 17:50:35 ERROR 5408 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 17:50:35 ERROR 5408 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 18:05:55 ERROR 6860 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 18:05:58 ERROR 6860 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 18:05:58 ERROR 6860 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 18:07:51 ERROR 4896 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 03 18:07:51 ERROR 4896 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 03 18:07:51 ERROR 4896 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 06 12:33:43 ERROR 6520 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 06 12:33:43 ERROR 6520 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 06 12:33:43 ERROR 6520 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 06 14:28:17 ERROR 8456 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 06 14:28:20 ERROR 8456 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 06 14:28:20 ERROR 8456 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 16:01:28 ERROR 6980 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 07 16:01:32 ERROR 6980 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 16:01:32 ERROR 6980 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 16:07:29 ERROR 6728 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 07 16:07:42 ERROR 6728 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 16:07:42 ERROR 6728 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 16:54:19 ERROR 6368 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 07 16:55:15 ERROR 4868 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 07 16:55:24 ERROR 4868 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 16:55:24 ERROR 4868 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 16:59:19 ERROR 7300 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 07 16:59:21 ERROR 7300 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 16:59:21 ERROR 7300 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 18:41:40 ERROR 5048 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 07 18:42:59 ERROR 5048 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 07 18:42:59 ERROR 5048 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:14:12 ERROR 6504 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 14:14:12 ERROR 6504 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:14:12 ERROR 6504 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:17:10 ERROR 6560 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 14:17:10 ERROR 6560 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:17:10 ERROR 6560 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:31:06 ERROR 5140 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 14:31:54 ERROR 5728 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 14:31:55 ERROR 5728 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:31:55 ERROR 5728 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:34:06 ERROR 5040 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 14:34:07 ERROR 5040 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:34:07 ERROR 5040 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:50:43 ERROR 4292 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 14:50:43 ERROR 4292 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:50:43 ERROR 4292 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:50:48 ERROR 4292 .\Statement\Statement.cpp::SQLExecDirect: [Simba][SQLEngine] syntax error near 'Select * from .<<< ??? >>>SchemaExt.BusinessKey'.
+May 08 14:51:39 ERROR 8060 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 14:51:39 ERROR 8060 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 14:51:39 ERROR 8060 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 15:08:22 ERROR 3768 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 15:08:22 ERROR 3768 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 15:08:22 ERROR 3768 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 16:15:35 ERROR 8144 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 16:15:35 ERROR 8144 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 16:15:35 ERROR 8144 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 16:19:55 ERROR 6700 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 16:19:55 ERROR 6700 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 16:19:55 ERROR 6700 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 16:21:19 ERROR 6436 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 16:21:19 ERROR 6436 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 16:21:19 ERROR 6436 .\Statement\Statement.cpp::SQLSetStmtAttrW: [Simba][ODBC] Attribute identifier invalid or not supported.
+May 08 16:23:22 ERROR 676 .\Connection\Connection.cpp::SQLGetInfoW: [Simba][ODBC] SQLGetInfo property not found.
+May 08 16:23:22 ERROR 676 .\Statement\Statement.cpp::ExecuteCatalogFunction: [Simba][CLIDSI] Unhandled managed exception caught: System.AccessViolationException: Attempted to read or write protected memory. This is often an indication that other memory is corrupt. (Stack Trace:    at Bentley.DgnPlatform.InstanceCountIterable.begin(InstanceCountIterable* , const_iterator* )
+   at Bentley.DgnPlatformNET.DgnEC.DgnECManager.GetInstanceCounts(DgnModel dgnModel, IList`1 __unnamed001)
+   at Bentley.DgnECPlugin.DgnECPersistenceProvider.ExecuteQuery(RepositoryConnection connection, ECQuer
+May 08 16:23:22 ERROR 676 .\Statement\Statement.cpp::ExecuteCatalogFunction: [Simba][CLIDSI] Unhandled managed exception caught: System.AccessViolationException: Attempted to read or write protected memory. This is often an indication that other memory is corrupt. (Stack Trace:    at Bentley.DgnPlatform.InstanceCountIterable.begin(InstanceCountIterable* , const_iterator* )
+   at Bentley.DgnPlatformNET.DgnEC.DgnECManager.GetInstanceCounts(DgnModel dgnModel, IList`1 __unnamed001)
+   at Bentley.DgnECPlugin.DgnECPersistenceProvider.ExecuteQuery(RepositoryConnection connection, ECQuer

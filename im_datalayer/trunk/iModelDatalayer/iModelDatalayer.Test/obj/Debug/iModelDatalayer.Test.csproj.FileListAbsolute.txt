@@ -1,0 +1,22 @@
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iModelDatalayer.Test.dll
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iModelDatalayer.Test.pdb
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer.Test\obj\Debug\ResolveAssemblyReference.cache
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer.Test\obj\Debug\iModelDatalayer.Test.dll
+C:\Devendra Kumar\I-Model Datalayer\iModelDatalayer\iModelDatalayer.Test\obj\Debug\iModelDatalayer.Test.pdb
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iModelDatalayer.Test.dll.config
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iModelDatalayer.Test.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iModelDatalayer.Test.pdb
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iModelDatalayer.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iRINGLibrary.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\log4net.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\Ninject.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\nunit.framework.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\StaticDust.Configuration.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\UtilityLibrary.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\iModelDatalayer.pdb
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\log4net.xml
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\Ninject.xml
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\bin\Debug\nunit.framework.xml
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\obj\Debug\ResolveAssemblyReference.cache
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\obj\Debug\iModelDatalayer.Test.dll
+C:\iringtools_datalayers\im_datalayer\trunk\iModelDatalayer\iModelDatalayer.Test\obj\Debug\iModelDatalayer.Test.pdb

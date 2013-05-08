@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\SVN\trunk\pv_datalayer\trunk\pvDataLayer.Tests\bin\Debug\pvDataLayer.Tests.dll" total="1" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-04-24" time="18:51:07">
+  <environment nunit-version="2.5.9.10348" clr-version="2.0.50727.4984" os-version="Microsoft Windows NT 6.1.7600.0" platform="Win32NT" cwd="C:\SVN\trunk\pv_datalayer\trunk" machine-name="NDHD201207" user="dkumar3" user-domain="IEAMS" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Assembly" name="C:\SVN\trunk\pv_datalayer\trunk\pvDataLayer.Tests\bin\Debug\pvDataLayer.Tests.dll" executed="True" result="Success" success="True" time="0.390" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="org" executed="True" result="Success" success="True" time="0.390" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="iringtools" executed="True" result="Success" success="True" time="0.390" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="adapter" executed="True" result="Success" success="True" time="0.390" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="datalayer" executed="True" result="Success" success="True" time="0.390" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="test" executed="True" result="Success" success="True" time="0.374" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="Tests" executed="True" result="Success" success="True" time="0.359" asserts="0">
+                            <results>
+                              <test-case name="org.iringtools.adapter.datalayer.test.Tests.TestDictionary" executed="True" result="Success" success="True" time="0.031" asserts="1" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
