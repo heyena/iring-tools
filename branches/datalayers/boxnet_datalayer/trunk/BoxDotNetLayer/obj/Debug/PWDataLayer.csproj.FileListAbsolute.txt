@@ -1,0 +1,14 @@
+C:\PW\PWDataLayer\obj\Debug\ResolveAssemblyReference.cache
+C:\PW\PWDataLayer\bin\Debug\PWDataLayer.dll
+C:\PW\PWDataLayer\bin\Debug\PWDataLayer.pdb
+C:\PW\PWDataLayer\bin\Debug\eccomponentassembly.dll
+C:\PW\PWDataLayer\bin\Debug\iRINGLibrary.dll
+C:\PW\PWDataLayer\bin\Debug\log4net.dll
+C:\PW\PWDataLayer\bin\Debug\Ninject.dll
+C:\PW\PWDataLayer\bin\Debug\PWWrapper.dll
+C:\PW\PWDataLayer\bin\Debug\savedsearchassembly.dll
+C:\PW\PWDataLayer\bin\Debug\UtilityLibrary.dll
+C:\PW\PWDataLayer\bin\Debug\log4net.xml
+C:\PW\PWDataLayer\bin\Debug\Ninject.xml
+C:\PW\PWDataLayer\obj\Debug\PWDataLayer.dll
+C:\PW\PWDataLayer\obj\Debug\PWDataLayer.pdb

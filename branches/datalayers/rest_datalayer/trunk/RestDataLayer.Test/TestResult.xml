@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Codes\iringtools_datalayers\rest_datalayer\trunk\RestDataLayer.Test\RestDataLayer.Test.csproj" total="4" errors="3" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-05-08" time="15:49:21">
+  <environment nunit-version="2.5.9.10348" clr-version="2.0.50727.5466" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Codes\iringtools_datalayers\rest_datalayer\trunk" machine-name="NDHD203776" user="npandey1" user-domain="IEAMS" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Project" name="C:\Codes\iringtools_datalayers\rest_datalayer\trunk\RestDataLayer.Test\RestDataLayer.Test.csproj" executed="True" result="Failure" success="False" time="7.940" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="C:\Codes\iringtools_datalayers\rest_datalayer\trunk\RestDataLayer.Test\bin\Debug\RestDataLayer.Test.dll" executed="True" result="Failure" success="False" time="7.933" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="RestDataLayer" executed="True" result="Failure" success="False" time="7.933" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Test" executed="True" result="Failure" success="False" time="7.930" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="Tests" executed="True" result="Failure" success="False" time="7.929" asserts="0">
+                    <results>
+                      <test-case name="RestDataLayer.Test.Tests.Test_Dictionary_Creation" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                      <test-case name="RestDataLayer.Test.Tests.Test_GetRelatedObjects_WithPaging" executed="True" result="Error" success="False" time="4.770" asserts="0">
+                        <failure>
+                          <message><![CDATA[System.Exception : Error while getting a list of data objects of type [contacts].
+  ----> System.Exception : Error with HTTP GET from URI [https://api-staging.mypsn.com/svc1/v2/contacts/skothari]. <fault>token not found, expired or invalid</fault>]]></message>
+                          <stack-trace><![CDATA[at Bechtel.DataLayer.RestDataLayer3.Get(String objectType, IList`1 identifiers) in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer\RestDataLayer3.cs:line 257
+at RestDataLayer.Test.Tests.Test_GetRelatedObjects_WithPaging() in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer.Test\Test.cs:line 98
+--Exception
+at Bechtel.DataLayer.RestDataLayer3.GetJsonResponseFrom(String url) in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer\RestDataLayer3.cs:line 720
+at Bechtel.DataLayer.RestDataLayer3.Get(String objectType, IList`1 identifiers) in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer\RestDataLayer3.cs:line 236
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case name="RestDataLayer.Test.Tests.Test_GetWithId" executed="True" result="Error" success="False" time="1.318" asserts="0">
+                        <failure>
+                          <message><![CDATA[System.Exception : Error while getting a list of data objects of type [contacts].
+  ----> System.Exception : Error with HTTP GET from URI [https://api-staging.mypsn.com/svc1/v2/contacts/skothari]. <fault>token not found, expired or invalid</fault>]]></message>
+                          <stack-trace><![CDATA[at Bechtel.DataLayer.RestDataLayer3.Get(String objectType, IList`1 identifiers) in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer\RestDataLayer3.cs:line 257
+at RestDataLayer.Test.Tests.Test_GetWithId() in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer.Test\Test.cs:line 88
+--Exception
+at Bechtel.DataLayer.RestDataLayer3.GetJsonResponseFrom(String url) in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer\RestDataLayer3.cs:line 720
+at Bechtel.DataLayer.RestDataLayer3.Get(String objectType, IList`1 identifiers) in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer\RestDataLayer3.cs:line 236
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                      <test-case name="RestDataLayer.Test.Tests.Test_Search_WithPaging" executed="True" result="Error" success="False" time="1.269" asserts="0">
+                        <failure>
+                          <message><![CDATA[System.Exception : Error with HTTP GET from URI [https://api-staging.mypsn.com/svc1/v2/contacts/Search?q=pandey]. <fault>token not found, expired or invalid</fault>]]></message>
+                          <stack-trace><![CDATA[at Bechtel.DataLayer.RestDataLayer3.GetJsonResponseFrom(String url) in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer\RestDataLayer3.cs:line 720
+at Bechtel.DataLayer.RestDataLayer3.Search(String objectType, String query, DataFilter filter, Int32 pageSize, Int32 startIndex) in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer\RestDataLayer3.cs:line 159
+at RestDataLayer.Test.Tests.Test_Search_WithPaging() in C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer.Test\Test.cs:line 113
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
