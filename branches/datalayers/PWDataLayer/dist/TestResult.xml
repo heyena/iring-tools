@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\PW\PWDataLayer.Tests\PWDataLayer.Tests.csproj" total="5" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-05-08" time="13:20:28">
+  <environment nunit-version="2.5.9.10348" clr-version="2.0.50727.5466" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\PW" machine-name="NDHD205064" user="gthakral" user-domain="IEAMS" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Project" name="C:\PW\PWDataLayer.Tests\PWDataLayer.Tests.csproj" executed="True" result="Success" success="True" time="79.773" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="C:\PW\PWDataLayer.Tests\bin\Debug\PWDataLayer.Tests.dll" executed="True" result="Success" success="True" time="79.770" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="org" executed="True" result="Success" success="True" time="79.770" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="iringtools" executed="True" result="Success" success="True" time="79.768" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="adapter" executed="True" result="Success" success="True" time="79.768" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="datalayer" executed="True" result="Success" success="True" time="79.767" asserts="0">
+                        <results>
+                          <test-suite type="Namespace" name="test" executed="True" result="Success" success="True" time="79.763" asserts="0">
+                            <results>
+                              <test-suite type="TestFixture" name="Tests" executed="True" result="Success" success="True" time="79.763" asserts="0">
+                                <results>
+                                  <test-case name="org.iringtools.adapter.datalayer.test.Tests.Test_GetDataTable" executed="True" result="Success" success="True" time="14.128" asserts="1" />
+                                  <test-case name="org.iringtools.adapter.datalayer.test.Tests.TestDictionary" executed="True" result="Success" success="True" time="7.703" asserts="1" />
+                                  <test-case name="org.iringtools.adapter.datalayer.test.Tests.TestGet" executed="True" result="Success" success="True" time="24.225" asserts="2" />
+                                  <test-case name="org.iringtools.adapter.datalayer.test.Tests.TestGetContents" executed="True" result="Success" success="True" time="13.785" asserts="1" />
+                                  <test-case name="org.iringtools.adapter.datalayer.test.Tests.TestPostWithContent" executed="True" result="Success" success="True" time="19.819" asserts="0" />
+                                </results>
+                              </test-suite>
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
