@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter">
+  <expressions>
+    <expression>
+      <propertyName>Id</propertyName>
+      <relationalOperator>EqualTo</relationalOperator>
+      <values>
+        <value>3</value>
+      </values>
+      <logicalOperator>And</logicalOperator>
+    </expression>
+    <expression>
+      <propertyName>Name</propertyName>
+      <relationalOperator>EqualTo</relationalOperator>
+      <values>
+        <value>GENERAL MANAGEMENT</value>
+      </values>
+      <logicalOperator>And</logicalOperator>
+    </expression>
+  </expressions>
+  <orderExpressions>
+    <orderExpression>
+      <propertyName>Id</propertyName>
+    </orderExpression>
+    <orderExpression>
+      <propertyName>Name</propertyName>
+    </orderExpression>
+  </orderExpressions>
+</dataFilter>

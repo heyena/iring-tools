@@ -1,0 +1,84 @@
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />-->
+
+  <PropertyGroup>
+    <ZipCmd>"$(MSBuildProjectDirectory)\lib\7-zip\7z.exe"</ZipCmd>
+    <NUnit-ToolPath>$(MSBuildProjectDirectory)\lib\Nunit\</NUnit-ToolPath>
+    <SolutionFile>RestDataLayer.sln</SolutionFile>
+    <BinDir>$(MSBuildProjectDirectory)\RestDataLayer\bin\Debug</BinDir>
+    <ConfDir>$(MSBuildProjectDirectory)\conf</ConfDir>
+    <DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
+    <DocsDir>$(MSBuildProjectDirectory)\docs</DocsDir>
+    <InstallDir>$(MSBuildProjectDirectory)\install</InstallDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <BinFiles
+      Include="$(BinDir)\*.dll;
+               $(BinDir)\*.exe;"
+      Exclude="$(BinDir)\iRINGLibrary.dll;
+               $(BinDir)\log4net.dll;
+               $(BinDir)\Ninject.dll;
+               $(BinDir)\StaticDust.Configuration.dll;
+               $(BinDir)\UtilityLibrary.dll">
+    </BinFiles>
+
+    <ConfFiles Include="$(ConfDir)\*"> </ConfFiles>
+    <InstallFiles Include="$(InstallDir)\*"></InstallFiles>
+    <DocsFiles Include="$(DocsDir)\*"> </DocsFiles>
+
+    <TestResults
+      Include="$(MSBuildProjectDirectory)\RestDataLayer.Test\TestResult.xml">
+    </TestResults>
+  </ItemGroup>
+
+  <ItemGroup>
+    <DeploymentPackage Include="*.*">
+      <Options>a -tzip -y -r</Options>
+      <OutputDir></OutputDir>
+      <ZipFile>$(DistDir)\RestDataLayer-</ZipFile>
+      <FileSet>$(DistDir)\bin</FileSet>
+      <FileSet>$(DistDir)\bin $(DistDir)\conf</FileSet>
+    </DeploymentPackage>
+  </ItemGroup>
+
+  <Target Name="CleanBuild">
+    <Message Text="Performing MSBuild clean-up ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+  </Target>
+
+  <Target Name="CreateDist">
+    <Message Text="Cleaning up old dist folder..." />
+    <Exec Command="RmDir /S /Q $(DistDir)" />
+    <MakeDir Directories="$(DistDir);"/>
+
+    <Message Text="Creating distribution ..." />
+    <Copy SourceFiles="@(BinFiles)"
+          DestinationFiles="@(BinFiles ->'$(DistDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(ConfFiles)"
+          DestinationFiles="@(ConfFiles ->'$(DistDir)\conf\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="CreatePackages" DependsOnTargets="CreateDist">
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile).$(Build).zip %(DeploymentPackage.FileSet)" />
+    <RemoveDir Directories="$(DistDir)\conf;$(DistDir)\bin" />
+    <Copy SourceFiles="@(InstallFiles)"
+          DestinationFiles="@(InstallFiles ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(TestResults)"
+          DestinationFiles="@(TestResults ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="Test">
+    <Exec Command="$(NUnit-ToolPath)nunit-console-x86.exe /nologo /noshadow RestDataLayer.Test\RestDataLayer.Test.csproj /xml=@(TestResults)" />
+  </Target>
+
+  <Target Name="Build" >
+    <Message Text="Performing MSBuild ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+  </Target>
+
+  <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
+
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
+
+</Project>

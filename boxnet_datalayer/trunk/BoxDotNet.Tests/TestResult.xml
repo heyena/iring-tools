@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Codes\iringtools_datalayers\boxnet_datalayer\trunk\BoxDotNet.Tests\BoxDotNetDataLayer.Tests.csproj" total="4" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-05-08" time="16:00:48">
+  <environment nunit-version="2.5.9.10348" clr-version="2.0.50727.5466" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Codes\iringtools_datalayers\boxnet_datalayer\trunk" machine-name="NDHD203776" user="npandey1" user-domain="IEAMS" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Project" name="C:\Codes\iringtools_datalayers\boxnet_datalayer\trunk\BoxDotNet.Tests\BoxDotNetDataLayer.Tests.csproj" executed="True" result="Success" success="True" time="8.097" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="C:\Codes\iringtools_datalayers\boxnet_datalayer\trunk\BoxDotNet.Tests\bin\Debug\PWDataLayer.Tests.dll" executed="True" result="Success" success="True" time="8.094" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="BoxDotNetDataLayer" executed="True" result="Success" success="True" time="8.092" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Test" executed="True" result="Success" success="True" time="8.092" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="Tests" executed="True" result="Success" success="True" time="8.091" asserts="0">
+                    <results>
+                      <test-case name="BoxDotNetDataLayer.Test.Tests.GetFilessUnderFolder" executed="True" result="Success" success="True" time="5.157" asserts="1" />
+                      <test-case name="BoxDotNetDataLayer.Test.Tests.GetFoldersById" executed="True" result="Success" success="True" time="1.057" asserts="2" />
+                      <test-case name="BoxDotNetDataLayer.Test.Tests.GetFoldersUnderFolder" executed="True" result="Success" success="True" time="1.586" asserts="1" />
+                      <test-case name="BoxDotNetDataLayer.Test.Tests.Test_Dictionary_Creation" executed="True" result="Success" success="True" time="0.003" asserts="1" />
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
