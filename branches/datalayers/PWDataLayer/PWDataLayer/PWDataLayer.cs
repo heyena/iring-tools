@@ -537,18 +537,89 @@ namespace org.iringtools.adapter.datalayer
     }
     
     //TODO: look up dictionary for object type and handle list
+    //public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    //{
+    //  IList<IDataObject> dataObjects = new List<IDataObject>();
+
+    //  if (identifiers.Count == 1)
+    //  {
+    //    dataObjects.Add(new GenericDataObject() { ObjectType = objectType });
+    //  }
+
+    //  return dataObjects;
+    //}
     public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
-      IList<IDataObject> dataObjects = new List<IDataObject>();
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        DatabaseDictionary dictionary = GetDatabaseDictionary();
+        int icounter = 0;
+        int iInnerCounter = 0;
+        string[] idParts= new string[100] ;
 
-      if (identifiers.Count == 1)
-      {
-        dataObjects.Add(new GenericDataObject() { ObjectType = objectType });
-      }
+        if (identifiers.Count == 1)
+        {
+            dataObjects.Add(new GenericDataObject() { ObjectType = objectType });
+        }
 
-      return dataObjects;
+        foreach (string identifier in identifiers)
+        {
+            IDataObject obj = new GenericDataObject() { ObjectType = objectType };
+
+
+            var dataObject = (from o in dictionary.dataObjects
+                              where o.objectName == objectType
+                              select o).ToList().First();
+
+
+            if (dataObject.keyDelimeter != string.Empty && dataObject.keyDelimeter != null)
+            {
+
+
+                string[] delim = new string[] { dataObject.keyDelimeter };
+                idParts = identifier.Split(delim, StringSplitOptions.None);
+                icounter = idParts.Length;
+            }
+            foreach (DataProperty dp in dataObject.dataProperties)
+            {
+
+                if (dataObject.isKeyProperty(dp.propertyName))
+                {
+                    if (dataObject.keyDelimeter != string.Empty &&  dataObject.keyDelimeter != null && iInnerCounter < icounter)
+                    {
+                        obj.SetPropertyValue(dp.propertyName, idParts[iInnerCounter]);
+                        iInnerCounter = iInnerCounter + 1;
+                    }
+                    else
+                        obj.SetPropertyValue(dp.propertyName, identifier);
+                }
+                else
+                {
+                    obj.SetPropertyValue(dp.propertyName, null);
+                }
+            }
+
+            // obj.SetPropertyValue("keyfield", identifier);
+        }
+
+        return dataObjects;
     }
+    private DataTable GetDataTableSchema(string objectType)
+    {
+        DatabaseDictionary dictionary = GetDatabaseDictionary();
+        DataObject objDef = dictionary.dataObjects.Find(p => p.objectName.ToUpper() == objectType.ToUpper());
+        DataTable dataTable = new DataTable();
+        dataTable.TableName = objectType;
+        foreach (DataProperty property in objDef.dataProperties)
+        {
+            DataColumn dataColumn = new DataColumn();
+            dataColumn.ColumnName = property.columnName;
+            dataColumn.DataType = Type.GetType("System." + property.dataType.ToString());
+            dataTable.Columns.Add(dataColumn);
+        }
 
+
+        return dataTable;
+    }
 
     public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
     {
