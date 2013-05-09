@@ -6,6 +6,31 @@
 var App = new Ext.App({});
 Ext.BLANK_IMAGE_URL = "Scripts/ext-3.3.1/resources/images/gray/s.gif";
 
+var Runner = function () {
+    var f = function (v, msgbx) {
+
+        return function () {
+
+            if (v == 12) {
+                msgbx.hide();
+            } else {
+                var i = v / 11;
+                msgbx.updateProgress(i, Math.round(100 * i) + '% completed');
+            }
+
+        };
+
+    };
+    return {
+        run: function (msgbx) {
+            for (var i = 1; i < 13; i++) {
+                setTimeout(f(i, msgbx), i * 500);
+
+            }
+        }
+    }
+} ();
+
 Ext.onReady(function () {
   Ext.QuickTips.init();
   Ext.Ajax.timeout = 120000; //increase request time
@@ -214,6 +239,7 @@ Ext.onReady(function () {
   }, this);
 
   directoryPanel.on('configure', function (npanel, node) {
+  
     var dataLayerValue = node.attributes.record.DataLayer;
     var parentNode = node.parentNode;
     var assembly = node.attributes.record.Assembly;
