@@ -134,6 +134,19 @@ namespace org.iringtools.mapping
         return default(ClassTemplateMap);
     }
 
+    public static int GetClassMapMaxIndex(this GraphMap graphMap, string classId)
+    {
+        var list = from c in graphMap.classTemplateMaps
+                        where c.classMap.id == classId
+                        select c.classMap.index;
+
+        if (list != null && list.Count() > 0)
+            return list.Max();
+        else
+            return -1;
+
+    }
+
     public static ClassTemplateMap GetClassTemplateMapByName(this GraphMap graphMap, string className)
     {
       if (!String.IsNullOrEmpty(className))
@@ -152,27 +165,28 @@ namespace org.iringtools.mapping
 
     public static void AddClassMap(this GraphMap graphMap, RoleMap roleMap, ClassMap classMap)
     {
-      ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classMap.id,classMap.index);
-        
-      if (ctm == null)
-      {
-        classMap.index = graphMap.classTemplateMaps.Count;
-        graphMap.classTemplateMaps.Add(
-          new ClassTemplateMap
-          {
-            classMap = classMap,
-            templateMaps = new TemplateMaps()
-          }
-        );
-      }
-      else
-      {
-        ctm.classMap = classMap;
-      }
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classMap.id, classMap.index);
 
-      if (roleMap != null)
-        roleMap.classMap = classMap;
+        if (ctm == null)
+        {
+            graphMap.classTemplateMaps.Add(
+            new ClassTemplateMap
+            {
+                classMap = classMap,
+                templateMaps = new TemplateMaps()
+            }
+          );
+        }
+        else
+        {
+            ctm.classMap = classMap;
+        }
+
+        if (roleMap != null)
+            roleMap.classMap = classMap;
     }
+
+  
 
     public static void AddTemplateMap(this GraphMap graphMap, ClassMap classMap, TemplateMap templateMap)
     {

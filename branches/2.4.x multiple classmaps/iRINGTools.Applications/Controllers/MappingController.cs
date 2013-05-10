@@ -116,6 +116,8 @@ namespace org.iringtools.web.controllers
                 identifierDelimiter = delimiter,
                 identifiers = new Identifiers()
               };
+              
+              classMap.index = graphMap.GetClassMapMaxIndex(classMap.id) + 1; 
 
               classMap.identifiers.AddRange(identifier.Split(','));
               graphMap.AddClassMap(role, classMap);
@@ -336,7 +338,7 @@ namespace org.iringtools.web.controllers
                     if (role.classMap != null && role.classMap.id != graphClassMap.id)
                     {
                       //JsonTreeNode classNode = CreateClassNode(templateNode.id + "/" + role.name, role.classMap);
-                        JsonTreeNode classNode = CreateClassNode(templateNode.id + "/" + role.name, role.classMap);
+                        JsonTreeNode classNode = CreateClassNode(roleNode.id, role.classMap);
 
                       if (roleNode.children == null)
                         roleNode.children = new List<JsonTreeNode>();
@@ -414,7 +416,7 @@ namespace org.iringtools.web.controllers
 
                       if (role.classMap != null && role.classMap.id != graphClassMap.id)
                       {
-                        JsonTreeNode classNode = CreateClassNode(context, role.classMap);
+                        JsonTreeNode classNode = CreateClassNode(roleNode.id, role.classMap);
                         if (roleNode.children == null)
                           roleNode.children = new List<JsonTreeNode>();
                         roleNode.children.Add(classNode);
@@ -994,7 +996,7 @@ namespace org.iringtools.web.controllers
 
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, classIndex);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId,classIndex);
 
         if (ctm != null)
         {
