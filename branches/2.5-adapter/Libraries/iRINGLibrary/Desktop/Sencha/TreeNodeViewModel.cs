@@ -9,25 +9,25 @@ namespace org.iringtools.library
   public class TreeNodeViewModel
   {
     [DataMember(Name = "id")]
-    public Guid Id { get; set; }
+    public Guid id { get; set; }
 
     [DataMember(Name = "nodeType")]
-    public string NodeType { get; set; }
+    public string nodeType { get; set; }
 
     [DataMember(Name = "expanded")]
-    public Boolean Expanded { get; set; }
+    public Boolean expanded { get; set; }
         
     [DataMember(Name = "text")]
-    public string Text { get; set; }
+    public string text { get; set; }
 
     [DataMember(Name = "leaf")]
     [DefaultValue(false)]
-    public bool Leaf { get; set; }
+    public bool leaf { get; set; }
 
     [DataMember(Name = "iconCls")]
-    public string IconCls { get; set; }
+    public string iconCls { get; set; }
 
     [DataMember(Name = "children")]
-    public IEnumerable<TreeNodeViewModel> Children { get; set; }
+    public IEnumerable<TreeNodeViewModel> children { get; set; }
   }
 }

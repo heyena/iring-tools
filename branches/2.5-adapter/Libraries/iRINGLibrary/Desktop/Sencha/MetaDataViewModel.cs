@@ -7,9 +7,9 @@ namespace org.iringtools.library
   public class MetaDataViewModel
   {
     [DataMember(Name = "columns", EmitDefaultValue = true)]
-    public IEnumerable<ColumnViewModel> Columns { get; set; }
+      public IEnumerable<ColumnViewModel> columns { get; set; }
 
     [DataMember(Name = "fields", EmitDefaultValue = true)]
-    public IEnumerable<FieldViewModel> Fields { get; set; }
+    public IEnumerable<FieldViewModel> fields { get; set; }
   }
 }

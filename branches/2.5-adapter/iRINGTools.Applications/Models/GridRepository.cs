@@ -18,13 +18,13 @@ namespace iRINGTools.Web.Models
       
       private DataDictionary dataDict;
       private DataItems dataItems;
-      private Grid dataGrid;
+      private StoreViewModel dataGrid;
       private string graph;
       private string response = "";
 
       public GridRepository()
       {
-        dataGrid = new Grid();
+          dataGrid = new StoreViewModel();
       }
 
       public string GetResponse()
@@ -32,6 +32,7 @@ namespace iRINGTools.Web.Models
         return response;
       }
 
+       /*
       public Grid GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
       {
         try
@@ -67,7 +68,43 @@ namespace iRINGTools.Web.Models
 
         return dataGrid;
       }
+        */
 
+      public StoreViewModel GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
+      {
+          try
+          {
+              this.graph = graph;
+
+              if (start == "0" || start == "1")
+              {
+                  GetDataDictionary(scope, app, false);
+              }
+              else
+              {
+                  GetDataDictionary(scope, app);
+              }
+
+              if (response != "")
+                  return null;
+
+              GetDataItems(scope, app, graph, filter, sort, dir, start, limit);
+
+              if (response != "")
+                  return null;
+
+              GetDataGrid();
+
+              if (response != "")
+                  return null;
+          }
+          catch (Exception ex)
+          {
+              response = response + " " + ex.Message.ToString();
+          }
+
+          return dataGrid;
+      }
       private void GetDataDictionary(String scope, String app)
       {
         GetDataDictionary(scope, app, false);
@@ -185,15 +222,111 @@ namespace iRINGTools.Web.Models
       }
 
       private void GetDataGrid()
-      {				
-        List<List<string>> gridData = new List<List<string>>();
-        List<Field> fields = new List<Field>();
-        CreateFields(ref fields, ref gridData);
-        dataGrid.total = dataItems.total;
-        dataGrid.fields = fields;
+      {
+				
+        //List<List<string>> gridData = new List<List<string>>();
+        //Array gridData = new Array[dataItems.total];
+          Dictionary<string, string>[] gridData = new Dictionary<string, string>[dataItems.limit];
+
+        List<ColumnViewModel> columns = new List<ColumnViewModel>();
+        List<FieldViewModel> fields = new List<FieldViewModel>();
+
+        CreateFieldsAndColumn(gridData, columns, fields);
+
         dataGrid.data = gridData;
+        dataGrid.metaData  = new MetaDataViewModel();
+        dataGrid.metaData.columns = columns;
+        dataGrid.metaData.fields = fields;
+        dataGrid.total = dataItems.total;
+        dataGrid.success = true;
+        dataGrid.message = "";
+
+        
       }
 
+      private void CreateFieldsAndColumn(Array gridData, List<ColumnViewModel> columns, List<FieldViewModel> fields)
+      {
+          foreach (DataObject dataObj in dataDict.dataObjects)
+          {
+              if (dataObj.objectName.ToUpper() != graph.ToUpper())
+                  continue;
+              else
+              {
+                  foreach (DataProperty dataProp in dataObj.dataProperties)
+                  {
+                      //if (!dataProp.isHidden)
+                      //{
+                      //Field field = new Field();
+                      FieldViewModel field = new FieldViewModel();
+                      ColumnViewModel column = new ColumnViewModel();
+
+                      string fieldName = dataProp.propertyName;
+                      column.dataIndex = fieldName;
+                      column.text = fieldName;
+                      
+                      field.name = fieldName;
+                      field.type = ToExtJsType(dataProp.dataType);
+
+                      //int fieldWidth = fieldName.Count() * 6;
+
+                      //if (fieldWidth > 40)
+                      //{
+                      //    field.width = fieldWidth + 23;
+                      //}
+                      //else
+                      //{
+                      //    field.width = 50;
+                      //}
+
+                      
+                      //if (dataProp.keyType == KeyType.assigned || dataProp.keyType == KeyType.foreign)
+                      //    field.keytype = "key";
+                      
+
+                      fields.Add(field);
+                      columns.Add(column);
+                      //}
+                  }
+              }
+          }
+
+          //int newWid;
+          int index = 0;
+          foreach (DataItem dataItem in dataItems.items)
+          {
+              //List<string> rowData = new List<string>();
+              Dictionary<string, string> rowData = new Dictionary<string, string>();
+
+
+              foreach (FieldViewModel field in fields)
+              {
+                  bool found = false;
+
+                  foreach (KeyValuePair<string, object> property in dataItem.properties)
+                  {
+                      if (field.name.ToLower() == property.Key.ToLower())
+                      {
+                          rowData.Add(field.name,property.Value.ToString());
+                          
+                          //newWid = property.Value.ToString().Count() * 4 + 40;
+                          //if (newWid > 40 && newWid > field.width && newWid < 400)
+                          //    field.width = newWid;
+                          found = true;
+                          break;
+                      }
+                  }
+
+                  if (!found)
+                  {
+                      rowData.Add(field.name, "");
+                  }
+              }
+              gridData.SetValue(rowData,index++);
+          }
+          
+      }
+
+    
       private void CreateFields(ref List<Field> fields, ref List<List<string>> gridData)
       {
         foreach (DataObject dataObj in dataDict.dataObjects)

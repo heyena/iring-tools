@@ -21,6 +21,7 @@ using org.ids_adi.qmxf;
 using VDS.RDF;
 using System.Text;
 using log4net;
+using System.Runtime.Serialization.Json;
 
 namespace org.iringtools.web.controllers
 {
@@ -28,7 +29,8 @@ namespace org.iringtools.web.controllers
 	{
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(GridManagerController));
 		private GridRepository _repository { get; set; }
-		private Grid dataGrid;		
+		//private Grid dataGrid;		
+        private StoreViewModel dataGrid;
 
 		public GridManagerController() : this(new GridRepository()) {}
 
@@ -40,6 +42,9 @@ namespace org.iringtools.web.controllers
 
 		public ActionResult Pages(FormCollection form)
     {
+
+       
+
       _repository.Session = Session;
 
 			JsonContainer<Grid> container = new JsonContainer<Grid>();
@@ -51,7 +56,7 @@ namespace org.iringtools.web.controllers
 				return Json(new { success = false } + response, JsonRequestBehavior.AllowGet);
 			}
 
-			return Json(dataGrid, JsonRequestBehavior.AllowGet);
+            return Json(dataGrid, JsonRequestBehavior.AllowGet);
 		}		
 	}
 }
