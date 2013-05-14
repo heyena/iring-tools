@@ -37,22 +37,28 @@ namespace RestDataLayer.Test
             string baseDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(baseDir.Substring(0, baseDir.LastIndexOf("\\bin")));
             AdapterSettings adapterSettings = new AdapterSettings();
-            adapterSettings.AppendSettings(new AppSettingsReader("App.config"));
+            //adapterSettings.AppendSettings(new AppSettingsReader("App.config"));TestNDDL.Restful.config
 
             FileInfo log4netConfig = new FileInfo("Log4net.config");
             log4net.Config.XmlConfigurator.Configure(log4netConfig);
 
+            //string twConfigFile = String.Format("{0}{1}.{2}.config",
+            //  adapterSettings["AppDataPath"],
+            //  adapterSettings["ProjectName"],
+            //  adapterSettings["ApplicationName"] 
+            //);
+
             string twConfigFile = String.Format("{0}{1}.{2}.config",
               adapterSettings["AppDataPath"],
-              adapterSettings["ProjectName"],
-              adapterSettings["ApplicationName"]
+              "TestNDDL",
+              "Restful"
             );
 
             AppSettingsReader twSettings = new AppSettingsReader(twConfigFile); 
             adapterSettings.AppendSettings(twSettings);
 
             //_dataLayer = new Bechtel.DataLayer.RestDataLayer2(adapterSettings);
-            _dataLayer = new Bechtel.DataLayer.RestDataLayer3(adapterSettings);
+            _dataLayer = new Bechtel.DataLayer.RestDataLayer(adapterSettings);
             
             _filter = Utility.Read<DataFilter>(adapterSettings["FilterPath"]);
 
@@ -98,7 +104,7 @@ namespace RestDataLayer.Test
             IList<IDataObject> dataObjects = _dataLayer.Get(_objectType, identifiers);
             Assert.AreEqual(dataObjects.Count, 1);
 
-            IList<IDataObject> dataObject = _dataLayer.GetRelatedObjects(dataObjects[0], _relatedDataObject, _pageSize, _startIndex);
+           IList<IDataObject> dataObject = _dataLayer.GetRelatedObjects(dataObjects[0], _relatedDataObject,null, _pageSize, _startIndex);
 
             //IList<IDataObject> dataObject = _dataLayer.GetRelatedObjects((IDataObject)_objectDefinition, relatedObjectType);
 
@@ -115,6 +121,7 @@ namespace RestDataLayer.Test
             Assert.GreaterOrEqual(dataObject.Count, 1);
         }
 
+        
 
         //[Test]
         //public void Test_GetCount()
