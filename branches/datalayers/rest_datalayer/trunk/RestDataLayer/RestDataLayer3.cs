@@ -56,7 +56,7 @@ namespace Bechtel.DataLayer
             //  NP
             _contentType = Convert.ToString(_settings["contentType"]) ?? string.Empty;
             //_webClient = new IringWebClient(_baseUrl, _appKey, _authToken);            
-            _webClient = new IringWebClient(_baseUrl, _appKey, _authToken, _contentType);
+            _webClient = new IringWebClient(_baseUrl, _appKey, _authToken, _contentType, settings);
 
             GetDictionary();
             // _webClient = new WebClient(_baseUrl, _appKey, _authToken);
