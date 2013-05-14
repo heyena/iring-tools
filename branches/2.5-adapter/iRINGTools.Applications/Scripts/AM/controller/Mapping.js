@@ -91,7 +91,11 @@ Ext.define('AM.controller.Mapping', {
       record = node.data.record;
     var contextName;// This is scope
     var endpoint; //This is application
-
+    var delimeter;
+    if(record)
+    delimeter = record.classTemplateMaps[0].classMap.identifierDelimiter;
+    else
+    delimeter = '_';
     if (record) {
       identifier = record.classTemplateMaps[0].classMap.identifiers[0];
       if(record.classTemplateMaps[0].classMap.identifiers.length>1){
@@ -103,7 +107,7 @@ Ext.define('AM.controller.Mapping', {
       //identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];
       //graphName = record.record.name;
       graphName = record.name;
-      objectName = getLastXString(record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[0];
+      objectName = record.dataObjectName;//getLastXString(record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[0];
       //objectName = contextName + '/' + endpoint + '/' + 'DataObjects/DataObject/' + 
       //record.classTemplateMaps[0].classMap.identifiers[0].replace('.', '/');
       //classLabel = record.record.classTemplateMaps[0].classMap.name;
@@ -121,14 +125,14 @@ Ext.define('AM.controller.Mapping', {
     if(item.itemId == 'editgraph') {
       wintitle = 'Edit Graph \"' + graphName + '\"'; 
     } else {
-      wintitle = 'Add new GraphMap to Mapping';
+      wintitle = 'Add GraphMap';
     }
     var conf = {
       id: 'tab-' + node.data.id,
       title: wintitle ,
       iconCls: 'tabsGraph',
-      height: 200,
-      width: 430
+      //height: 200,
+      //width: 430
     };
 
     var win = Ext.widget('graphmapwindow', conf);
@@ -148,6 +152,7 @@ Ext.define('AM.controller.Mapping', {
       'classId': classUrl,
       'identifier': identifier,
       'className': classLabel,
+      'delimiter':delimeter
       //'baseUrl': baseUrl,
       //'mappingNode': nodeId,
 
@@ -637,8 +642,8 @@ Ext.define('AM.controller.Mapping', {
       url: 'mapping/deletegraphmap',
       method: 'POST',
       params: {
-        contextName: node.data.property.context,
-        endpoint: node.data.property.endpoint,
+        scope: node.parentNode.parentNode.parentNode.data.text,//node.data.property.context,
+        application: node.parentNode.parentNode.data.text,//node.data.property.endpoint,
         baseUrl: node.data.property.baseUrl,
         mappingNode: node.id,
         graphName: getLastXString(node.id, 1)

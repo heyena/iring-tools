@@ -19,7 +19,13 @@ var ifExistSibling = function (str, node, state) {
 
   return ifExist;
 };
-
+Ext.ux.Utils = function(src) {  
+    this.deletedRecords = [];
+	this.deletedTables = [];
+};
+Ext.ux.Utils.prototype = {
+};
+var utilsObj = new Ext.ux.Utils(null);
 
 String.format = String.prototype.format = function () {
   var i = 0;

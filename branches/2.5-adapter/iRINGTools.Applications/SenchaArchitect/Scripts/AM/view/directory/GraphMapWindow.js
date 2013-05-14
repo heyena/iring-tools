@@ -22,10 +22,9 @@ Ext.define('AM.view.directory.GraphMapWindow', {
   ],
 
   border: false,
-  height: 200,
-  width: 400,
+  resizable: false,
   layout: {
-    type: 'fit'
+    type: 'anchor'
   },
 
   initComponent: function() {
@@ -34,7 +33,8 @@ Ext.define('AM.view.directory.GraphMapWindow', {
     Ext.applyIf(me, {
       items: [
         {
-          xtype: 'graphmapform'
+          xtype: 'graphmapform',
+          anchor: '100%'
         }
       ]
     });

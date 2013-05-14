@@ -6,6 +6,8 @@
     },
     "codeClass": null,
     "userConfig": {
+        "height": 300,
+        "width": 490,
         "designer|userClassName": "directory.GraphMapForm",
         "designer|userAlias": "graphmapform",
         "bodyBorder": false,
@@ -179,6 +181,18 @@
             ]
         },
         {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "text": "Graph Name:"
+            },
+            "designerId": "348f7b3d-01c3-46c1-bf0c-38c74b40f583"
+        },
+        {
             "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
@@ -186,11 +200,12 @@
             },
             "codeClass": null,
             "userConfig": {
-                "layout|anchor": null,
-                "fieldLabel": "Graph Name",
+                "layout|anchor": "100%",
+                "margin": "5 0 15 25",
+                "fieldLabel": null,
                 "name": "graphName",
                 "allowBlank": false,
-                "size": 30
+                "size": null
             },
             "designerId": "0b284041-ab11-42cc-9759-fdbf1b65bb8c"
         },
@@ -223,29 +238,32 @@
                     "    return this.dropAllowed;\r",
                     "  },  \r",
                     "  notifyDrop: function (propertyDd, e, data) {\r",
-                    "    \t\t if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {\r",
-                    "                    return false;\r",
-                    "                }\r",
-                    "                else {\r",
-                    "                    var ident = getLastXString(data.records[0].data.id, 1);\r",
-                    "                    var object = getLastXString(data.records[0].data.id, 2);\r",
-                    "                    //var key1 = getLastXString(data.records[0].data.id, 2)\r",
-                    "                    //var key2 = getLastXString(data.records[0].data.id, 1);\r",
-                    "                    var key = object+'.'+ident;//key1+'.'+key2;\r",
-                    "                    if(me.getForm().findField('identifier').getValue()!='Drop property node(s) here.'){\r",
-                    "                    \r",
-                    "                       var existingIdentifier =  me.getForm().findField('identifier').getValue();\r",
-                    "                       key = existingIdentifier+','+ key;\r",
-                    "                       me.getForm().findField('identifier').setValue(key);\r",
-                    "                    }else{\r",
-                    "                        me.getForm().findField('identifier').setValue(key);\r",
-                    "                    }\r",
-                    "                    me.getForm().findField('objectName').setValue(object);\r",
-                    "                   \r",
-                    "                    //ptarget.update(msg);\r",
-                    "                    ptarget.update(key);\r",
-                    "                    return true;\r",
-                    "                }\r",
+                    "    if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {\r",
+                    "      return false;\r",
+                    "    }\r",
+                    "    else {\r",
+                    "      var ident = getLastXString(data.records[0].data.id, 1);\r",
+                    "      var object = getLastXString(data.records[0].data.id, 2);\r",
+                    "      //var key1 = getLastXString(data.records[0].data.id, 2)\r",
+                    "      //var key2 = getLastXString(data.records[0].data.id, 1);\r",
+                    "      var key = object+'.'+ident;//key1+'.'+key2;\r",
+                    "      if(me.getForm().findField('identifier').getValue()!='Drop property node(s) here.'){\r",
+                    "\r",
+                    "        var existingIdentifier =  me.getForm().findField('identifier').getValue();\r",
+                    "        if(existingIdentifier!='')\r",
+                    "        \tkey = existingIdentifier+','+ key;\r",
+                    "        else\r",
+                    "          key = key;\r",
+                    "        me.getForm().findField('identifier').setValue(key);\r",
+                    "      }else{\r",
+                    "        me.getForm().findField('identifier').setValue(key);\r",
+                    "      }\r",
+                    "      me.getForm().findField('objectName').setValue(object);\r",
+                    "\r",
+                    "      //ptarget.update(msg);\r",
+                    "      ptarget.update(key);\r",
+                    "      return true;\r",
+                    "    }\r",
                     "  }   \r",
                     "});\r",
                     "\r",
@@ -264,24 +282,24 @@
                     "    return this.dropAllowed;\r",
                     "  },\r",
                     "  notifyDrop: function (classdd, e, data) {\r",
-                    "  if (data.records[0].data.type != 'ClassNode') {\r",
-                    "                    var message = 'Please slect a RDL Class...';\r",
-                    "                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
-                    "                    return false;\r",
-                    "                } else {\r",
-                    "                    var tempClassLabel = me.getForm().findField('className').getValue();\r",
-                    "                    var tempClassUrl = me.getForm().findField('classId').getValue();\r",
-                    "                    if (tempClassLabel !== \"\") {\r",
-                    "                        me.getForm().findField('oldClassLabel').setValue(tempClassLabel);\r",
-                    "                        me.getForm().findField('oldClassUrl').setValue(tempClassUrl);\r",
-                    "                    }\r",
-                    "                    me.getForm().findField('className').setValue(data.records[0].data.record.Label);\r",
-                    "                    me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);\r",
-                    "                    var msg = 'Class Label: ' + data.records[0].data.record.Label;\r",
-                    "                    //ctarget.update(msg);\r",
-                    "                    ctarget.update(data.records[0].data.record.Label);\r",
-                    "                    return true;\r",
-                    "                }\r",
+                    "    if (data.records[0].data.type != 'ClassNode') {\r",
+                    "      var message = 'Please slect a RDL Class...';\r",
+                    "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "      return false;\r",
+                    "    } else {\r",
+                    "      var tempClassLabel = me.getForm().findField('className').getValue();\r",
+                    "      var tempClassUrl = me.getForm().findField('classId').getValue();\r",
+                    "      if (tempClassLabel !== \"\") {\r",
+                    "        me.getForm().findField('oldClassLabel').setValue(tempClassLabel);\r",
+                    "        me.getForm().findField('oldClassUrl').setValue(tempClassUrl);\r",
+                    "      }\r",
+                    "      me.getForm().findField('className').setValue(data.records[0].data.record.Label);\r",
+                    "      me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);\r",
+                    "      var msg = 'Class Label: ' + data.records[0].data.record.Label;\r",
+                    "      //ctarget.update(msg);\r",
+                    "      ctarget.update(data.records[0].data.record.Label);\r",
+                    "      return true;\r",
+                    "    }\r",
                     "  } \r",
                     "}); "
                 ],
@@ -289,6 +307,51 @@
                 "scope": "me"
             },
             "designerId": "163b79b0-3fe3-45f4-8a93-93335b9aca97"
+        },
+        {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "margin": "10 0 0 0",
+                "text": "Identifier Delimiter (required for composite identifier):"
+            },
+            "designerId": "c9695f37-0222-4495-9a2f-926da0aeadb7"
+        },
+        {
+            "type": "Ext.form.field.Text",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "margin": "5 0 15 25",
+                "width": null,
+                "fieldLabel": null,
+                "name": "delimiter",
+                "value": [
+                    "_"
+                ]
+            },
+            "designerId": "5a7e75a4-113c-4866-901a-017c7c4f0b23"
+        },
+        {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "margin": "10 0 0 0",
+                "text": "Identifier:"
+            },
+            "designerId": "9f0dd08a-4420-4aa0-ae67-b6d7aee35e45"
         },
         {
             "type": "Ext.toolbar.Toolbar",
@@ -345,6 +408,40 @@
                                 ]
                             },
                             "designerId": "21c8bddf-470f-435c-acfe-d779facf2b5e"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Reset"
+                    },
+                    "designerId": "2f38615c-e58c-4bea-bd31-e67e76c179d1",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "me.onIndentifierReset();"
+                                ]
+                            },
+                            "designerId": "2976f6a0-a5d0-42c0-9ccf-14c9cad4b8d7"
                         }
                     ]
                 },
@@ -503,6 +600,7 @@
                     "Drop a Property Node here."
                 ],
                 "itemId": "gmfpcontainer",
+                "margin": "5 0 15 25",
                 "style": [
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
@@ -519,6 +617,19 @@
             ]
         },
         {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "margin": "10 0 0 0",
+                "text": "Root Class:"
+            },
+            "designerId": "6f118f47-9076-49cd-b8c0-536f23a6483f"
+        },
+        {
             "type": "Ext.container.Container",
             "reference": {
                 "name": "items",
@@ -532,6 +643,7 @@
                     "Drop a Class Node here."
                 ],
                 "itemId": "gmfccontainer",
+                "margin": "5 0 15 25",
                 "style": [
                     "border:1px silver solid;margin:5px;padding:8px;height:40px"
                 ],
@@ -558,6 +670,25 @@
                 "name": "reset"
             },
             "designerId": "e7e30472-bd30-489e-8a1c-69c4da51ccef"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onIndentifierReset",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var win = me.up('window');\r",
+                    "me.getForm().findField('objectName').setValue('');\r",
+                    "me.getForm().findField('identifier').setValue('Drop property node(s) here.');\r",
+                    "me.down('#gmfpcontainer').update('Drop property node(s) here.');"
+                ]
+            },
+            "designerId": "8533797e-59de-4229-a9fc-234b5c73a1ca"
         }
     ]
 }

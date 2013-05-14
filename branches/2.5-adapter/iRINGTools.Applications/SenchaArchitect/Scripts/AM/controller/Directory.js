@@ -464,9 +464,8 @@ Ext.define('AM.controller.Directory', {
               //var newModel = Ext.create('AM.model.DynamicModel');
               // var xyz = records[0].store.proxy.reader.jsonData.fields[0].name;
               //newModel.fields = [{xyz: 'Rijwan'}];
-              var newStore = Ext.create('AM.store.DataGridStore');
-              gridPanel.reconfigure(records[0].store.proxy.reader.jsonData.data, records[0].store.proxy.reader.jsonData.fields);
-
+              //var newStore = Ext.create('AM.store.DataGridStore');
+              gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
               content.getEl().unmask();
             } else {
               if (response)

@@ -36,15 +36,15 @@ Ext.define('AM.store.DataGridStore', {
           read: 'POST'
         },
         extraParams: {
-          context: null,
+          scope: null,
           start: 0,
           limit: 25,
-          endpoint: null,
+          app: null,
           graph: null,
           baseUrl: null
         },
-        timeout: 600000,
-        url: 'datagrid/getdata',
+        timeout: 60000,
+        url: 'GridManager/Pages',
         reader: {
           type: 'json',
           root: 'data',

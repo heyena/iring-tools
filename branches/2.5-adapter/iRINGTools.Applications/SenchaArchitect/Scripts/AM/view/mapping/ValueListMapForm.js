@@ -40,7 +40,8 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
           xtype: 'textfield',
           anchor: '100%',
           fieldLabel: 'Internal Name',
-          name: 'internalName'
+          name: 'internalName',
+          allowBlank: false
         },
         {
           xtype: 'hiddenfield',

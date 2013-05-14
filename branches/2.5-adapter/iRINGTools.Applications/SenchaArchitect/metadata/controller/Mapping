@@ -48,7 +48,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onDeleteTemplateMap",
                 "fn": "onDeleteTemplateMap",
                 "implHandler": [
                     "var me = this;\r",
@@ -56,7 +55,7 @@
                     "var dirTree = me.getDirTree();\r",
                     "var panel = content.down('mappingpanel');\r",
                     "var tree = content.down('mappingtree'),\r",
-                    "node = tree.getSelectedNode();\r",
+                    "  node = tree.getSelectedNode();\r",
                     "\r",
                     "me.getParentClass(node);\r",
                     "Ext.Ajax.request({\r",
@@ -95,7 +94,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "dirTree",
                 "ref": "dirTree",
                 "selector": "viewport > directorypanel > directorytree"
             },
@@ -109,7 +107,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "mainContent",
                 "ref": "mainContent",
                 "selector": "viewport > centerpanel > contentpanel"
             },
@@ -123,7 +120,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getObjectType",
                 "fn": "getObjectType",
                 "designer|params": [
                     "type"
@@ -155,7 +151,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getParentClass",
                 "fn": "getParentClass",
                 "designer|params": [
                     "n"
@@ -187,7 +182,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onEditOrNewGraph",
                 "fn": "onEditOrNewGraph",
                 "implHandler": [
                     "var me = this;\r",
@@ -198,7 +192,11 @@
                     "  record = node.data.record;\r",
                     "var contextName;// This is scope\r",
                     "var endpoint; //This is application\r",
-                    "\r",
+                    "var delimeter;\r",
+                    "if(record)\r",
+                    "  delimeter = record.classTemplateMaps[0].classMap.identifierDelimiter;\r",
+                    "  else\r",
+                    "    delimeter = '_';\r",
                     "if (record) {\r",
                     "  identifier = record.classTemplateMaps[0].classMap.identifiers[0];\r",
                     "  if(record.classTemplateMaps[0].classMap.identifiers.length>1){\r",
@@ -210,7 +208,7 @@
                     "  //identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];\r",
                     "  //graphName = record.record.name;\r",
                     "  graphName = record.name;\r",
-                    "  objectName = getLastXString(record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[0];\r",
+                    "  objectName = record.dataObjectName;//getLastXString(record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[0];\r",
                     "  //objectName = contextName + '/' + endpoint + '/' + 'DataObjects/DataObject/' + \r",
                     "  //record.classTemplateMaps[0].classMap.identifiers[0].replace('.', '/');\r",
                     "  //classLabel = record.record.classTemplateMaps[0].classMap.name;\r",
@@ -228,14 +226,14 @@
                     "if(item.itemId == 'editgraph') {\r",
                     "  wintitle = 'Edit Graph \\\"' + graphName + '\\\"'; \r",
                     "} else {\r",
-                    "  wintitle = 'Add new GraphMap to Mapping';\r",
+                    "  wintitle = 'Add GraphMap';\r",
                     "}\r",
                     "var conf = {\r",
                     "  id: 'tab-' + node.data.id,\r",
                     "  title: wintitle ,\r",
                     "  iconCls: 'tabsGraph',\r",
-                    "  height: 200,\r",
-                    "  width: 430\r",
+                    "  //height: 200,\r",
+                    "  //width: 430\r",
                     "};\r",
                     "\r",
                     "var win = Ext.widget('graphmapwindow', conf);\r",
@@ -255,6 +253,7 @@
                     "  'classId': classUrl,\r",
                     "  'identifier': identifier,\r",
                     "  'className': classLabel,\r",
+                    "  'delimiter':delimeter\r",
                     "  //'baseUrl': baseUrl,\r",
                     "  //'mappingNode': nodeId,\r",
                     "\r",
@@ -296,7 +295,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "openGraphMap",
                 "fn": "openGraphMap",
                 "implHandler": [
                     "var me = this;\r",
@@ -387,7 +385,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "addClassMap",
                 "fn": "addClassMap",
                 "implHandler": [
                     "var me = this;\r",
@@ -444,7 +441,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "mapProperty",
                 "fn": "mapProperty",
                 "implHandler": [
                     "var me = this;\r",
@@ -498,7 +494,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onMakeReference",
                 "fn": "onMakeReference",
                 "implHandler": [
                     "var me = this;\r",
@@ -541,7 +536,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onEditOrNewValueMap",
                 "fn": "onEditOrNewValueMap",
                 "implHandler": [
                     "var me = this;\r",
@@ -623,7 +617,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onDeleteValueMap",
                 "fn": "onDeleteValueMap",
                 "implHandler": [
                     "var me = this;\r",
@@ -666,7 +659,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onResetMapping",
                 "fn": "onResetMapping",
                 "implHandler": [
                     "var me = this;\r",
@@ -710,7 +702,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onMapValueList",
                 "fn": "onMapValueList",
                 "implHandler": [
                     "var me = this;\r",
@@ -762,7 +753,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onEditOrNewValueList",
                 "fn": "onEditOrNewValueList",
                 "implHandler": [
                     "var me = this; \r",
@@ -866,7 +856,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onMakePossessor",
                 "fn": "onMakePossessor",
                 "implHandler": [
                     "var me = this;\r",
@@ -909,19 +898,18 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onDeleteGraphMap",
                 "fn": "onDeleteGraphMap",
                 "implHandler": [
                     "var me = this;\r",
                     "var tree = me.getDirTree(),\r",
-                    "node = tree.getSelectedNode();\r",
+                    "  node = tree.getSelectedNode();\r",
                     "\r",
                     "Ext.Ajax.request({\r",
                     "  url: 'mapping/deletegraphmap',\r",
                     "  method: 'POST',\r",
                     "  params: {\r",
-                    "    contextName: node.data.property.context,\r",
-                    "    endpoint: node.data.property.endpoint,\r",
+                    "    scope: node.parentNode.parentNode.parentNode.data.text,//node.data.property.context,\r",
+                    "    application: node.parentNode.parentNode.data.text,//node.data.property.endpoint,\r",
                     "    baseUrl: node.data.property.baseUrl,\r",
                     "    mappingNode: node.id,\r",
                     "    graphName: getLastXString(node.id, 1)\r",
@@ -949,7 +937,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onDeleteValueList",
                 "fn": "onDeleteValueList",
                 "implHandler": [
                     "var me = this;\r",

@@ -17,6 +17,8 @@ Ext.define('AM.view.directory.GraphMapForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.graphmapform',
 
+  height: 300,
+  width: 490,
   bodyBorder: false,
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
@@ -91,25 +93,52 @@ Ext.define('AM.view.directory.GraphMapForm', {
           ]
         },
         {
+          xtype: 'label',
+          text: 'Graph Name:'
+        },
+        {
           xtype: 'textfield',
-          fieldLabel: 'Graph Name',
+          anchor: '100%',
+          margin: '5 0 15 25',
           name: 'graphName',
-          allowBlank: false,
-          size: 30
+          allowBlank: false
+        },
+        {
+          xtype: 'label',
+          margin: '10 0 0 0',
+          text: 'Identifier Delimiter (required for composite identifier):'
+        },
+        {
+          xtype: 'textfield',
+          margin: '5 0 15 25',
+          name: 'delimiter',
+          value: '_'
+        },
+        {
+          xtype: 'label',
+          margin: '10 0 0 0',
+          text: 'Identifier:'
         },
         {
           xtype: 'container',
           anchor: '100%',
           html: 'Drop a Property Node here.',
           itemId: 'gmfpcontainer',
+          margin: '5 0 15 25',
           style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
           styleHtmlContent: true
+        },
+        {
+          xtype: 'label',
+          margin: '10 0 0 0',
+          text: 'Root Class:'
         },
         {
           xtype: 'container',
           anchor: '100%',
           html: 'Drop a Class Node here.',
           itemId: 'gmfccontainer',
+          margin: '5 0 15 25',
           style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
           styleHtmlContent: true
         }
@@ -134,6 +163,13 @@ Ext.define('AM.view.directory.GraphMapForm', {
                 me.onSave();
               },
               text: 'Ok'
+            },
+            {
+              xtype: 'button',
+              handler: function(button, event) {
+                me.onIndentifierReset();
+              },
+              text: 'Reset'
             },
             {
               xtype: 'button',
@@ -182,7 +218,10 @@ Ext.define('AM.view.directory.GraphMapForm', {
           if(me.getForm().findField('identifier').getValue()!='Drop property node(s) here.'){
 
             var existingIdentifier =  me.getForm().findField('identifier').getValue();
+            if(existingIdentifier!='')
             key = existingIdentifier+','+ key;
+            else
+            key = key;
             me.getForm().findField('identifier').setValue(key);
           }else{
             me.getForm().findField('identifier').setValue(key);
@@ -289,6 +328,14 @@ Ext.define('AM.view.directory.GraphMapForm', {
         showDialog(400, 50, 'Warning', message, Ext.Msg.OK, null);
       }
     });
+  },
+
+  onIndentifierReset: function() {
+    var me = this;
+    var win = me.up('window');
+    me.getForm().findField('objectName').setValue('');
+    me.getForm().findField('identifier').setValue('Drop property node(s) here.');
+    me.down('#gmfpcontainer').update('Drop property node(s) here.');
   }
 
 });

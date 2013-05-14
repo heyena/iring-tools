@@ -73,7 +73,7 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
     sm.bindStore(store);
     var records = [];
     Ext.each(items, function(item) {
-      var record = store.findRecord('DisplayField', item);
+      var record = store.findRecord('text', item);
       if(record) {
         records.push(record); 
       }           

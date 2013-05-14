@@ -72,7 +72,7 @@
                     "sm.bindStore(store);\r",
                     "var records = [];\r",
                     "Ext.each(items, function(item) {\r",
-                    "  var record = store.findRecord('DisplayField', item);\r",
+                    "  var record = store.findRecord('text', item);\r",
                     "  if(record) {\r",
                     "    records.push(record); \r",
                     "  }           \r",

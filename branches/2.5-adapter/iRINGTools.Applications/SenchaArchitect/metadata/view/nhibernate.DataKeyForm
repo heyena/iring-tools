@@ -38,7 +38,7 @@
                 "style": [
                     "font-weight:bold;"
                 ],
-                "text": "Key Property"
+                "text": "Key Properties"
             },
             "designerId": "c6091f62-91a3-445b-872f-db83bc484dc8"
         },
@@ -51,7 +51,9 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
+                "margin": null,
                 "fieldLabel": "Column Name",
+                "labelStyle": null,
                 "labelWidth": 160,
                 "name": "columnName",
                 "readOnly": true
@@ -125,6 +127,39 @@
             "designerId": "b983e87b-21f2-4901-aefc-c976b399da94"
         },
         {
+            "type": "Ext.form.field.Checkbox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "hidden": true,
+                "fieldLabel": "Nullable",
+                "name": "nullable",
+                "readOnly": true,
+                "boxLabel": null
+            },
+            "designerId": "c42d7945-900a-449c-ab3b-d1cc04c8c09f"
+        },
+        {
+            "type": "Ext.form.field.Checkbox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "hidden": true,
+                "fieldLabel": "Show on Index",
+                "name": "showOnIndex",
+                "boxLabel": null
+            },
+            "designerId": "fc3d9668-3868-449d-81cf-5680c28cb484"
+        },
+        {
             "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
@@ -157,6 +192,38 @@
             "designerId": "e34c9c2a-25ae-432e-84d5-e22bf8eff986"
         },
         {
+            "type": "Ext.form.field.Checkbox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "hidden": true,
+                "fieldLabel": "Hidden",
+                "name": "hidden",
+                "boxLabel": null
+            },
+            "designerId": "31006f48-f4c9-44a1-af96-1b8ce78455b7"
+        },
+        {
+            "type": "Ext.form.field.Text",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "fieldLabel": "Hidden",
+                "labelWidth": 160,
+                "name": "hidden",
+                "readOnly": true
+            },
+            "designerId": "b24a11ec-8e56-4574-a3a6-a4f45dabb030"
+        },
+        {
             "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
@@ -170,7 +237,7 @@
                 "name": "keyType",
                 "readOnly": true
             },
-            "designerId": "b24a11ec-8e56-4574-a3a6-a4f45dabb030"
+            "designerId": "9e74d4e9-108c-4c69-86e2-255ae8c60a3a"
         },
         {
             "type": "Ext.toolbar.Toolbar",

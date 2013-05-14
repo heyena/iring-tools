@@ -30,7 +30,7 @@ Ext.define('AM.view.nhibernate.SetPropertyForm', {
           xtype: 'label',
           cls: 'x-form-item',
           style: 'font-weight:bold;',
-          text: 'Data Property'
+          text: 'Data Properties'
         },
         {
           xtype: 'textfield',
@@ -75,6 +75,23 @@ Ext.define('AM.view.nhibernate.SetPropertyForm', {
           readOnly: true
         },
         {
+          xtype: 'checkboxfield',
+          anchor: '100%',
+          hidden: true,
+          fieldLabel: 'Nullable',
+          labelWidth: 160,
+          name: 'nullable',
+          readOnly: true
+        },
+        {
+          xtype: 'checkboxfield',
+          anchor: '100%',
+          hidden: true,
+          fieldLabel: 'Show On Index',
+          labelWidth: 160,
+          name: 'showOnIndex'
+        },
+        {
           xtype: 'textfield',
           anchor: '100%',
           fieldLabel: 'Show On Index',
@@ -89,6 +106,21 @@ Ext.define('AM.view.nhibernate.SetPropertyForm', {
           labelWidth: 160,
           name: 'numberOfDecimals',
           readOnly: true
+        },
+        {
+          xtype: 'checkboxfield',
+          anchor: '100%',
+          hidden: true,
+          fieldLabel: 'Hidden',
+          labelWidth: 160,
+          name: 'hidden'
+        },
+        {
+          xtype: 'textfield',
+          anchor: '100%',
+          fieldLabel: 'Hidden',
+          labelWidth: 160,
+          name: 'hidden'
         }
       ],
       dockedItems: [
