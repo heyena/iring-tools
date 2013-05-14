@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--This file represents the results of running a test suite-->
-<test-results name="C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer.Test\RestDataLayer.Test.csproj" total="4" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-04-24" time="19:31:38">
-  <environment nunit-version="2.5.9.10348" clr-version="2.0.50727.5466" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Users\npandey1\Desktop\RestDataLayer" machine-name="NDHD203776" user="npandey1" user-domain="IEAMS" />
+<test-results name="C:\iringGoogleCode\datalayers\rest_datalayer\trunk\RestDataLayer.Test\RestDataLayer.Test.csproj" total="4" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-05-14" time="19:29:15">
+  <environment nunit-version="2.5.9.10348" clr-version="2.0.50727.5466" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\iringGoogleCode\datalayers\rest_datalayer\trunk" machine-name="NDHD203776" user="npandey1" user-domain="IEAMS" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="Project" name="C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer.Test\RestDataLayer.Test.csproj" executed="True" result="Success" success="True" time="5.896" asserts="0">
+  <test-suite type="Project" name="C:\iringGoogleCode\datalayers\rest_datalayer\trunk\RestDataLayer.Test\RestDataLayer.Test.csproj" executed="True" result="Success" success="True" time="4.029" asserts="0">
     <results>
-      <test-suite type="Assembly" name="C:\Users\npandey1\Desktop\RestDataLayer\RestDataLayer.Test\bin\Debug\RestDataLayer.Test.dll" executed="True" result="Success" success="True" time="5.893" asserts="0">
+      <test-suite type="Assembly" name="C:\iringGoogleCode\datalayers\rest_datalayer\trunk\RestDataLayer.Test\bin\Debug\RestDataLayer.Test.dll" executed="True" result="Success" success="True" time="4.014" asserts="0">
         <results>
-          <test-suite type="Namespace" name="RestDataLayer" executed="True" result="Success" success="True" time="5.893" asserts="0">
+          <test-suite type="Namespace" name="RestDataLayer" executed="True" result="Success" success="True" time="4.013" asserts="0">
             <results>
-              <test-suite type="Namespace" name="Test" executed="True" result="Success" success="True" time="5.889" asserts="0">
+              <test-suite type="Namespace" name="Test" executed="True" result="Success" success="True" time="4.010" asserts="0">
                 <results>
-                  <test-suite type="TestFixture" name="Tests" executed="True" result="Success" success="True" time="5.889" asserts="0">
+                  <test-suite type="TestFixture" name="Tests" executed="True" result="Success" success="True" time="4.010" asserts="0">
                     <results>
                       <test-case name="RestDataLayer.Test.Tests.Test_Dictionary_Creation" executed="True" result="Success" success="True" time="0.009" asserts="1" />
-                      <test-case name="RestDataLayer.Test.Tests.Test_GetDataTable" executed="True" result="Success" success="True" time="2.156" asserts="1" />
-                      <test-case name="RestDataLayer.Test.Tests.Test_GetRelatedObjects" executed="True" result="Success" success="True" time="2.003" asserts="2" />
-                      <test-case name="RestDataLayer.Test.Tests.Test_Search" executed="True" result="Success" success="True" time="1.400" asserts="1" />
+                      <test-case name="RestDataLayer.Test.Tests.Test_GetRelatedObjects_WithPaging" executed="True" result="Success" success="True" time="2.632" asserts="2" />
+                      <test-case name="RestDataLayer.Test.Tests.Test_GetWithId" executed="True" result="Success" success="True" time="0.412" asserts="1" />
+                      <test-case name="RestDataLayer.Test.Tests.Test_Search_WithPaging" executed="True" result="Success" success="True" time="0.621" asserts="1" />
                     </results>
                   </test-suite>
                 </results>
