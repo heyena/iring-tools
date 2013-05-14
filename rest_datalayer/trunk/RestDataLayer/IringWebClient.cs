@@ -61,6 +61,7 @@ namespace Bechtel.DataLayer
 
         }
 
+
         public IringWebClient(string baseUrl, string appKey, string accessToken, string contentType, AdapterSettings settings)
             : this(baseUrl, settings)
         {
