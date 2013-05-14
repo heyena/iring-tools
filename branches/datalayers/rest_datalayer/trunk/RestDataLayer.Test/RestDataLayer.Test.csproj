@@ -64,15 +64,7 @@
     <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App_Data\1234.Restful.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="App_Data\5678.Restful.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
+    <None Include="App_Data\TestNDDL.Restful.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -83,13 +75,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\Configuration.1234.Restful.xml">
+    <Content Include="App_Data\Configuration.TestNDDL.Restful.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_Data\Filter.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Data\XMLFile1.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
