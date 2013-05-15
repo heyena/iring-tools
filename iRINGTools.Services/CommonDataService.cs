@@ -136,7 +136,7 @@ namespace org.iringtools.services
 
             if (dataObject == null)
                 throw new FileNotFoundException();
-                //ExceptionHandler(new FileNotFoundException());
+            //ExceptionHandler(new FileNotFoundException());
 
             _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
         }
@@ -304,17 +304,17 @@ namespace org.iringtools.services
                         object content = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, false);
                         _adapterProvider.FormatOutgoingMessage(content, format);
                     }
-                }
-                else
-                {
-                    NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+                    else
+                    {
+                        NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-                    bool fullIndex = false;
-                    if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-                        fullIndex = true;
+                        bool fullIndex = false;
+                        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+                            fullIndex = true;
 
-                    XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
-                    _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+                        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+                        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+                    }
                 }
             }
             catch (Exception ex)
