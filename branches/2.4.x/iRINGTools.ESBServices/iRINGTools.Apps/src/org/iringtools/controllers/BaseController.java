@@ -86,7 +86,8 @@ public abstract class BaseController extends ActionSupport implements SessionAwa
         boolean authorized = authProvider.authorize(request.getSession(), app, user);        
         if (!authorized)
         {
-          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+          request.getSession().invalidate();
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");          
         }
       }
       catch (Exception e)
@@ -94,7 +95,8 @@ public abstract class BaseController extends ActionSupport implements SessionAwa
         logger.info("Error authorizing user [" + user + "]: " + e.toString());
         try
         {
-          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+          request.getSession().invalidate();
+          response.sendError(408, e.getMessage());
         }
         catch (IOException ioe)
         {

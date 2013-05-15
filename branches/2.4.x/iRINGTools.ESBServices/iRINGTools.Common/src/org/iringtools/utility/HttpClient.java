@@ -4,7 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -425,20 +429,35 @@ public class HttpClient
     URL url = new URL(baseUri + relativeUri);
     logger.debug("Opening URL connection [" + url + "]");
     
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
+    HttpURLConnection conn = null; 
     
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
       String proxyHost = System.getProperty("http.proxyHost");
-      String proxyUserName = System.getProperty("http.proxyUserName");
-      String proxyPassword = System.getProperty("http.proxyPassword");      
-      String proxyDomain = System.getProperty("http.proxyDomain");
+      int proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+      final String proxyUserName = System.getProperty("http.proxyUserName");
+      final String proxyPassword = System.getProperty("http.proxyPassword");      
+      final String proxyDomain = System.getProperty("http.proxyDomain");
       
-      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);      
-      conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
-
+      Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+      conn = (HttpURLConnection) url.openConnection(proxy); 
+      
+      Authenticator.setDefault(new Authenticator() {
+        public PasswordAuthentication getPasswordAuthentication() {
+          return (new PasswordAuthentication(proxyDomain + "\\" + proxyUserName,
+            proxyPassword.toCharArray()));
+        }
+      });
+      
+//      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);      
+//      conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
+      
       logger.debug("Connecting thru proxy server [" + proxyHost + "]");
+    }
+    else
+    {
+      conn = (HttpURLConnection) url.openConnection(); 
     }
 
     if (networkCredentials != null)
