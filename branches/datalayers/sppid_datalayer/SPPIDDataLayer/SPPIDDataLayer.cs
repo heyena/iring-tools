@@ -214,13 +214,11 @@ namespace org.iringtools.adapter.datalayer.sppid
             throw new Exception("Database type not supported.");
           }
         }
-        else if (!string.IsNullOrEmpty(whereClause))
+        else 
         {
+          if (whereClause == null) whereClause = string.Empty;
+
           query = string.Format("SELECT * FROM {0} {1}", tableName, whereClause);
-        }
-        else
-        {
-          throw new Exception("Invalid request.");
         }
 
         result = DBManager.Instance.ExecuteQuery(_stagingConnStr, query);
