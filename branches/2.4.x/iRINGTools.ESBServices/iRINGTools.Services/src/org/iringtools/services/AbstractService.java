@@ -45,6 +45,7 @@ public abstract class AbstractService
      * PREPARE COMMON SETTINGS
      */
     settings.put("baseDirectory", servletContext.getRealPath("/"));
+    settings.put("basePath", servletContext.getRealPath("/"));
 
     String directoryServiceUri = servletContext.getInitParameter("directoryServiceUri");
     if (directoryServiceUri == null || directoryServiceUri.equals(""))

@@ -1,4 +1,4 @@
-package org.iringtools.services.core;
+package org.iringtools.services;
 
 public class ServiceProviderException extends Exception
 {

@@ -3,76 +3,38 @@ package org.iringtools.services;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.iringtools.directory.Directory;
-import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.services.core.DirectoryProvider;
+import org.iringtools.library.directory.DirectoryProvider;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_XML)
-public class DirectoryService extends AbstractService
-{
-  private final String SERVICE_NAME = "DirectoryService";
-  
-  @GET
-  @Path("/directory")
-  public Response getDirectory()
-  {
-    Directory directory = null;
+public class DirectoryService extends AbstractService {
+	private final String SERVICE_NAME = "DirectoryService";
 
-    try
-    {
-      initService(SERVICE_NAME);
-    }
-    catch (Exception e)
-    {
-      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
-    }
+	@GET
+	@Path("/directory")
+	public Response getDirectory() {
+		Directory directory = null;
 
-    DirectoryProvider directoryProvider = new DirectoryProvider(settings);
+		try {
+			initService(SERVICE_NAME);
+		} catch (Exception e) {
+			return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+		}
 
-    try
-    {
-      directory = directoryProvider.getDirectory();
-    }
-    catch (Exception e)
-    {
-      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
-    }
+		DirectoryProvider directoryProvider = new DirectoryProvider(settings);
 
-    return Response.ok().entity(directory).build();
-  }
+		try {
+			directory = directoryProvider.getDirectory();
+		} catch (Exception e) {
+			return prepareErrorResponse(
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+		}
 
-  @GET
-  @Path("/{scope}/exchanges/{exchangeId}")
-  public Response getExchange(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId)
-  {
-    ExchangeDefinition xdef = null;
-
-    try
-    {
-      initService(SERVICE_NAME);
-    }
-    catch (Exception e)
-    {
-      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
-    }
-
-    DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-
-    try
-    {
-      xdef = directoryProvider.getExchangeDefinition(scope, exchangeId);
-    }
-    catch (Exception e)
-    {
-      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
-    }
-
-    return Response.ok().entity(xdef).build();
-  }
+		return Response.ok().entity(directory).build();
+	}
 }
