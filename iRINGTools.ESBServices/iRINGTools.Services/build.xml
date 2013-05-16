@@ -4,6 +4,7 @@
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
 	<property name="iringtools-common.location" value="../iRINGTools.Common" />
+	<property name="iringtools-exchange.location" value="../iRINGTools.Exchange" />
 
 	<path id="cxf-2.3.0.userclasspath">
     <fileset dir="../libraries/apache-cxf-2.3.0">
@@ -59,19 +60,35 @@
     </fileset>
 	</path>
 	
-	<path id="iRINGTools.Common.classpath">
+	<path id="iringtools-common.userclasspath">
 		<pathelement location="${iringtools-common.location}/bin" />
 	</path>
 
+	<path id="iringtools-exchange.userclasspath">
+		<pathelement location="${iringtools-exchange.location}/bin" />
+	</path>
+
 	<target name="build-subprojects">
+		<ant antfile="build.xml" dir="${iringtools-exchange.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+		
 		<ant antfile="build.xml" dir="${iringtools-common.location}" inheritAll="false" target="build">
 			<propertyset>
 				<propertyref name="build.compiler" />
 			</propertyset>
 		</ant>
-	</target>
+		</target>
 
 	<target name="dist-subprojects">
+		<ant antfile="build.xml" dir="${iringtools-exchange.location}" inheritAll="false" target="dist">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+
 		<ant antfile="build.xml" dir="${iringtools-common.location}" inheritAll="false" target="dist">
 			<propertyset>
 				<propertyref name="build.compiler" />
@@ -101,7 +118,8 @@
 		<javac debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes" source="${source}" target="${target}">
 			<src path="src" />
 			<exclude name="**/.svn/" />
-			<classpath refid="iRINGTools.Common.classpath" />
+			<classpath refid="iringtools-common.userclasspath" />
+			<classpath refid="iringtools-exchange.userclasspath" />
 			<classpath refid="cxf-2.3.0.userclasspath" />
 			<classpath refid="log4j-1.2.16.userclasspath" />
 			<classpath refid="commons-codec-1.4.userclasspath" />      
@@ -117,12 +135,13 @@
 			<fileset dir="dist" includes="**/*" />
 		</delete>
 		<copy todir="WebContent/WEB-INF/lib" flatten="true">
-      <fileset dir="${iringtools-common.location}/dist" />
+			<fileset dir="${iringtools-common.location}/dist" />
+			<fileset dir="${iringtools-exchange.location}/dist" />
 			<path refid="cxf-2.3.0.userclasspath" />
 			<path refid="commons-codec-1.4.userclasspath" />
 			<path refid="log4j-1.2.16.userclasspath" />  
 			<path refid="json-utils.userclasspath" />    
-      <path refid="jena-2.6.4.userclasspath" />
+			<path refid="jena-2.6.4.userclasspath" />
 		</copy>
     <ant antfile="version.xml" dir="../" inheritAll="false" target="build"/>
 		<jar destfile="dist/${ant.project.name}.war" basedir="WebContent" excludes="WEB-INF/web.xml,**/.svn/" >
