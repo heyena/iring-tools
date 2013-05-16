@@ -205,7 +205,7 @@ public class DifferencingProvider
         DataTransferIndex resultDti = new DataTransferIndex();
         resultDti.setDuplicateCount(1);
         resultDti.setIdentifier(sourceDti.getIdentifier());
-        resultDti.setInternalIdentifier(sourceDti.getInternalIdentifier() + "->" + targetDti.getInternalIdentifier());
+        resultDti.setInternalIdentifier(sourceDti.getInternalIdentifier() + Constants.CHANGE_TOKEN + targetDti.getInternalIdentifier());
         
         if (sourceDti.getHashValue().equalsIgnoreCase(targetDti.getHashValue()))
         {

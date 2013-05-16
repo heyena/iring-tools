@@ -206,7 +206,21 @@ public class ExchangeProvider
     executor.awaitTermination(60, TimeUnit.MINUTES);
 
     List<String> ids = idTask.getIdentifiers();
-    return ids;
+    
+    //
+    // remove duplicate ids but retain id orders to honor sorting
+    //
+    List<String> uniqueIds = new ArrayList<String>();
+    
+    for (String id : ids)
+    {
+      if (!uniqueIds.contains(id))
+      {
+        uniqueIds.add(id);
+      }
+    }
+    
+    return uniqueIds;
   }
   
   public DataTransferObjects getDataTransferObjects(Exchange exchange, Manifest manifest, 

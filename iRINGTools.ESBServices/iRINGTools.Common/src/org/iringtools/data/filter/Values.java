@@ -1,6 +1,7 @@
 
 package org.iringtools.data.filter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,8 +35,11 @@ import javax.xml.bind.annotation.XmlType;
     "items"
 })
 @XmlRootElement(name = "values")
-public class Values {
+public class Values
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(name = "value", required = true)
     protected List<String> items;
 

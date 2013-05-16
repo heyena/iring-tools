@@ -25,399 +25,370 @@ import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.utility.JaxbUtils;
 
-public class DirectoryMigrationUtility {
-	private static String ns = "http://www.iringtools.org/directory";
+public class DirectoryMigrationUtility
+{
+  private static String ns = "http://www.iringtools.org/directory";
 
-	@SuppressWarnings("unchecked")
-	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
-		Map<String, String> uriMaps = new HashMap<String, String>();
+  @SuppressWarnings("unchecked")
+  public static void main(String[] args)
+  {
+    Scanner scanner = new Scanner(System.in);
+    Map<String, String> uriMaps = new HashMap<String, String>();
 
-		try {
-			
-			String inPath = "";
-			String configFileName = "";
-			String outPath = "";
-			
-			for (String s: args) {
-				if (s.startsWith("-i")) {
-					inPath = s.substring(2);
-				}
-				if (s.startsWith("-u")) {
-					configFileName = s.substring(2);
-				}
-				if (s.startsWith("-o")) {
-					outPath = s.substring(2);
-				}
-	        }
-			
-			if (inPath.length() == 0)
-			{
-				System.out.print("Enter old directory path: ");
-				inPath = scanner.nextLine();
-			}
-			
-			if (configFileName.length() == 0)
-			{
-				System.out.print("Enter uri-map config file: ");
-				configFileName = scanner.nextLine();
-			}
-			
-			if (outPath.length() == 0)
-			{
-				System.out.print("Enter new directory path: ");
-				outPath = scanner.nextLine();
-			}
+    try
+    {
 
-			scanner.close();
+      String inPath = "";
+      String configFileName = "";
+      String outPath = "";
 
-			System.out.print("Old Directory path: ".concat(inPath));
-			System.out.print("Uri-map file: ".concat(configFileName));
-			System.out.print("New Directory path: ".concat(outPath));
-			
-			if (!inPath.endsWith("/"))
-				inPath += "/";
-			if (!(new File(inPath).exists())) 
-				throw new Exception("Old Directory path does not exist.");
+      for (String s : args)
+      {
+        if (s.startsWith("-i"))
+        {
+          inPath = s.substring(2);
+        }
+        if (s.startsWith("-u"))
+        {
+          configFileName = s.substring(2);
+        }
+        if (s.startsWith("-o"))
+        {
+          outPath = s.substring(2);
+        }
+      }
 
-			File uriMapConfigFile = new File(configFileName);
-			if (uriMapConfigFile.exists()) {
-				Configuration config = JaxbUtils.read(Configuration.class,
-						configFileName);
+      if (inPath.length() == 0)
+      {
+        System.out.print("Enter old directory path: ");
+        inPath = scanner.nextLine();
+      }
 
-				if (config != null) {
-					for (Setting setting : config.getSetting()) {
-						uriMaps.put(setting.getName(), setting.getValue());
-					}
-				}
-			}
+      if (configFileName.length() == 0)
+      {
+        System.out.print("Enter uri-map config file: ");
+        configFileName = scanner.nextLine();
+      }
 
-			if (!outPath.endsWith("/"))
-				outPath += "/";
-			if (!(new File(outPath).exists()))
-				throw new Exception("New Directory path does not exist.");
+      if (outPath.length() == 0)
+      {
+        System.out.print("Enter new directory path: ");
+        outPath = scanner.nextLine();
+      }
 
-			String oldDirectoryPath = inPath.concat("directory.xml");
-			String newDirectoryPath = outPath.concat("directory.xml");
+      scanner.close();
 
-			InputStream inStream = new FileInputStream(new File(
-					oldDirectoryPath));
-			OMElement root = OMXMLBuilderFactory.createOMBuilder(inStream)
-					.getDocumentElement();
+      System.out.print("Old Directory path: ".concat(inPath));
+      System.out.print("Uri-map file: ".concat(configFileName));
+      System.out.print("New Directory path: ".concat(outPath));
 
-			Directory directory = new Directory();
+      if (!inPath.endsWith("/"))
+        inPath += "/";
+      if (!(new File(inPath).exists()))
+        throw new Exception("Old Directory path does not exist.");
 
-			//
-			// process scopes
-			//
-			Iterator<OMElement> scopes = root.getChildElements();
+      File uriMapConfigFile = new File(configFileName);
+      if (uriMapConfigFile.exists())
+      {
+        Configuration config = JaxbUtils.read(Configuration.class, configFileName);
 
-			while (scopes.hasNext()) {
-				OMElement scopeElt = scopes.next();
-				OMElement scopeNameElt = scopeElt
-						.getFirstChildWithName(new QName(ns, "name"));
+        if (config != null)
+        {
+          for (Setting setting : config.getSetting())
+          {
+            uriMaps.put(setting.getName(), setting.getValue());
+          }
+        }
+      }
 
-				Scope scope = new Scope();
-				scope.setName(scopeNameElt.getText());
-				directory.getScope().add(scope);
+      if (!outPath.endsWith("/"))
+        outPath += "/";
+      if (!(new File(outPath).exists()))
+        throw new Exception("New Directory path does not exist.");
 
-				//
-				// process app data
-				//
-				ApplicationData appData = new ApplicationData();
-				scope.setApplicationData(appData);
+      String oldDirectoryPath = inPath.concat("directory.xml");
+      String newDirectoryPath = outPath.concat("directory.xml");
 
-				OMElement appDataElt = scopeElt
-						.getFirstChildWithName(new QName(ns, "applicationData"));
+      InputStream inStream = new FileInputStream(new File(oldDirectoryPath));
+      OMElement root = OMXMLBuilderFactory.createOMBuilder(inStream).getDocumentElement();
 
-				if (appDataElt != null) {
-					Iterator<OMElement> appElts = appDataElt
-							.getChildrenWithName(new QName(ns, "application"));
+      Directory directory = new Directory();
 
-					while (appElts.hasNext()) {
-						OMElement appElt = appElts.next();
+      //
+      // process scopes
+      //
+      Iterator<OMElement> scopes = root.getChildElements();
 
-						Application app = new Application();
-						appData.getApplication().add(app);
+      while (scopes.hasNext())
+      {
+        OMElement scopeElt = scopes.next();
+        OMElement scopeNameElt = scopeElt.getFirstChildWithName(new QName(ns, "name"));
 
-						OMElement appNameElt = appElt
-								.getFirstChildWithName(new QName(ns, "name"));
-						if (appNameElt != null) {
-							app.setName(appNameElt.getText());
-						}
+        Scope scope = new Scope();
+        scope.setName(scopeNameElt.getText());
+        directory.getScope().add(scope);
 
-						OMElement appContextElt = appElt
-								.getFirstChildWithName(new QName(ns, "context"));
-						if (appContextElt != null) {
-							app.setContext(appContextElt.getText());
-						}
+        //
+        // process app data
+        //
+        ApplicationData appData = new ApplicationData();
+        scope.setApplicationData(appData);
 
-						OMElement appDescElt = appElt
-								.getFirstChildWithName(new QName(ns,
-										"description"));
-						if (appDescElt != null) {
-							app.setDescription(appDescElt.getText());
-						}
+        OMElement appDataElt = scopeElt.getFirstChildWithName(new QName(ns, "applicationData"));
 
-						OMElement appBaseUriElt = appElt
-								.getFirstChildWithName(new QName(ns, "baseUri"));
-						if (appBaseUriElt != null) {
-							String baseUri = appBaseUriElt.getText();
+        if (appDataElt != null)
+        {
+          Iterator<OMElement> appElts = appDataElt.getChildrenWithName(new QName(ns, "application"));
 
-							if (uriMaps.containsKey(baseUri)) {
-								baseUri = uriMaps.get(baseUri);
-							}
+          while (appElts.hasNext())
+          {
+            OMElement appElt = appElts.next();
 
-							app.setBaseUri(baseUri);
-						}
+            Application app = new Application();
+            appData.getApplication().add(app);
 
-						//
-						// process graph
-						//
-						OMElement graphsWrapElt = appElt
-								.getFirstChildWithName(new QName(ns, "graphs"));
+            OMElement appNameElt = appElt.getFirstChildWithName(new QName(ns, "name"));
+            if (appNameElt != null)
+            {
+              app.setName(appNameElt.getText());
+            }
 
-						if (graphsWrapElt != null) {
-							Iterator<OMElement> graphElts = graphsWrapElt
-									.getChildrenWithName(new QName(ns, "graph"));
+            OMElement appContextElt = appElt.getFirstChildWithName(new QName(ns, "context"));
+            if (appContextElt != null)
+            {
+              app.setContext(appContextElt.getText());
+            }
 
-							while (graphElts.hasNext()) {
-								OMElement graphElt = graphElts.next();
+            OMElement appDescElt = appElt.getFirstChildWithName(new QName(ns, "description"));
+            if (appDescElt != null)
+            {
+              app.setDescription(appDescElt.getText());
+            }
 
-								Graph graph = new Graph();
-								app.getGraph().add(graph);
+            OMElement appBaseUriElt = appElt.getFirstChildWithName(new QName(ns, "baseUri"));
+            if (appBaseUriElt != null)
+            {
+              String baseUri = appBaseUriElt.getText();
 
-								OMElement graphNameElt = graphElt
-										.getFirstChildWithName(new QName(ns,
-												"name"));
-								if (graphNameElt != null) {
-									graph.setName(graphNameElt.getText());
-								}
+              if (uriMaps.containsKey(baseUri))
+              {
+                baseUri = uriMaps.get(baseUri);
+              }
 
-								OMElement graphDescElt = graphElt
-										.getFirstChildWithName(new QName(ns,
-												"description"));
-								if (graphDescElt != null) {
-									graph.setDescription(graphDescElt.getText());
-								}
+              app.setBaseUri(baseUri);
+            }
 
-								OMElement graphCommElt = graphElt
-										.getFirstChildWithName(new QName(ns,
-												"commodity"));
-								if (graphCommElt != null) {
-									graph.setCommodity(graphCommElt.getText());
-								}
-							}
-						}
-					}
-				}
+            //
+            // process graph
+            //
+            OMElement graphsWrapElt = appElt.getFirstChildWithName(new QName(ns, "graphs"));
 
-				//
-				// process data exchange
-				//
-				DataExchanges dxs = new DataExchanges();
-				scope.setDataExchanges(dxs);
+            if (graphsWrapElt != null)
+            {
+              Iterator<OMElement> graphElts = graphsWrapElt.getChildrenWithName(new QName(ns, "graph"));
 
-				OMElement dxElt = scopeElt.getFirstChildWithName(new QName(ns,
-						"dataExchanges"));
+              while (graphElts.hasNext())
+              {
+                OMElement graphElt = graphElts.next();
 
-				if (dxElt != null) {
-					Iterator<OMElement> commElts = dxElt
-							.getChildrenWithName(new QName(ns, "commodity"));
+                Graph graph = new Graph();
+                app.getGraph().add(graph);
 
-					while (commElts.hasNext()) {
-						OMElement commElt = commElts.next();
+                OMElement graphNameElt = graphElt.getFirstChildWithName(new QName(ns, "name"));
+                if (graphNameElt != null)
+                {
+                  graph.setName(graphNameElt.getText());
+                }
 
-						Commodity comm = new Commodity();
-						comm.setName(commElt.getFirstChildWithName(
-								new QName(ns, "name")).getText());
-						dxs.getCommodity().add(comm);
+                OMElement graphDescElt = graphElt.getFirstChildWithName(new QName(ns, "description"));
+                if (graphDescElt != null)
+                {
+                  graph.setDescription(graphDescElt.getText());
+                }
 
-						//
-						// process exchanges
-						//
-						OMElement xsWrapElt = commElt
-								.getFirstChildWithName(new QName(ns,
-										"exchanges"));
+                OMElement graphCommElt = graphElt.getFirstChildWithName(new QName(ns, "commodity"));
+                if (graphCommElt != null)
+                {
+                  graph.setCommodity(graphCommElt.getText());
+                }
+              }
+            }
+          }
+        }
 
-						if (xsWrapElt != null) {
-							Iterator<OMElement> xsElt = xsWrapElt
-									.getChildrenWithName(new QName(ns,
-											"exchange"));
+        //
+        // process data exchange
+        //
+        DataExchanges dxs = new DataExchanges();
+        scope.setDataExchanges(dxs);
+        int xSeqId = 0;
 
-							while (xsElt.hasNext()) {
-								OMElement xElt = xsElt.next();
+        OMElement dxElt = scopeElt.getFirstChildWithName(new QName(ns, "dataExchanges"));
 
-								Exchange xchange = new Exchange();
-								comm.getExchange().add(xchange);
+        if (dxElt != null)
+        {
+          Iterator<OMElement> commElts = dxElt.getChildrenWithName(new QName(ns, "commodity"));
 
-								OMElement xIdElt = xElt
-										.getFirstChildWithName(new QName(ns,
-												"id"));
-								if (xIdElt != null) {
-									xchange.setId(xIdElt.getText());
-								}
+          while (commElts.hasNext())
+          {
+            OMElement commElt = commElts.next();
 
-								OMElement xNameElt = xElt
-										.getFirstChildWithName(new QName(ns,
-												"name"));
-								if (xNameElt != null) {
-									xchange.setName(xNameElt.getText());
-								}
+            Commodity comm = new Commodity();
+            comm.setName(commElt.getFirstChildWithName(new QName(ns, "name")).getText());
+            dxs.getCommodity().add(comm);
 
-								OMElement xDescElt = xElt
-										.getFirstChildWithName(new QName(ns,
-												"description"));
-								if (xDescElt != null) {
-									xchange.setDescription(xDescElt.getText());
-								}
+            //
+            // process exchanges
+            //
+            OMElement xsWrapElt = commElt.getFirstChildWithName(new QName(ns, "exchanges"));
 
-								//
-								// port exchange definitions
-								//
-								String xId = xElt.getFirstChildWithName(
-										new QName(ns, "id")).getText();
-								File xPath = new File(inPath
-										.concat("exchange-")
-										.concat(scopeNameElt.getText())
-										.concat("-").concat(xId).concat(".xml"));
+            if (xsWrapElt != null)
+            {
+              Iterator<OMElement> xsElt = xsWrapElt.getChildrenWithName(new QName(ns, "exchange"));
 
-								if (xPath.exists()) {
-									InputStream xPathStream = new FileInputStream(
-											xPath);
-									OMElement xRoot = OMXMLBuilderFactory
-											.createOMBuilder(xPathStream)
-											.getDocumentElement();
+              while (xsElt.hasNext())
+              {
+                OMElement xElt = xsElt.next();
 
-									//
-									// general exchange info
-									//
-									OMElement xCacheableElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "cachecable"));
-									if (xCacheableElt != null) {
-										xchange.setCacheable(Boolean
-												.parseBoolean(xCacheableElt
-														.getText()));
-									}
+                Exchange xchange = new Exchange();
+                xchange.setId(String.valueOf(xSeqId));
+                xSeqId++;
 
-									OMElement xPoolSizeElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "poolSize"));
-									if (xPoolSizeElt != null) {
-										xchange.setPoolSize(Integer
-												.parseInt(xPoolSizeElt
-														.getText()));
-									}
+                comm.getExchange().add(xchange);
 
-									//
-									// sender info
-									//
-									OMElement xSrcUriElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "sourceUri"));
-									if (xSrcUriElt != null) {
-										String sourceUri = xSrcUriElt.getText();
+                OMElement xNameElt = xElt.getFirstChildWithName(new QName(ns, "name"));
+                if (xNameElt != null)
+                {
+                  xchange.setName(xNameElt.getText());
+                }
 
-										if (uriMaps.containsKey(sourceUri)) {
-											sourceUri = uriMaps.get(sourceUri);
-										}
+                OMElement xDescElt = xElt.getFirstChildWithName(new QName(ns, "description"));
+                if (xDescElt != null)
+                {
+                  xchange.setDescription(xDescElt.getText());
+                }
 
-										xchange.setSourceUri(sourceUri);
-									}
+                //
+                // port exchange definitions
+                //
+                String xId = xElt.getFirstChildWithName(new QName(ns, "id")).getText();
+                File xPath = new File(inPath.concat("exchange-").concat(scopeNameElt.getText()).concat("-").concat(xId)
+                    .concat(".xml"));
 
-									OMElement xSrcScopeElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "sourceScopeName"));
-									if (xSrcScopeElt != null) {
-										xchange.setSourceScope(xSrcScopeElt
-												.getText());
-									}
+                if (xPath.exists())
+                {
+                  InputStream xPathStream = new FileInputStream(xPath);
+                  OMElement xRoot = OMXMLBuilderFactory.createOMBuilder(xPathStream).getDocumentElement();
 
-									OMElement xSrcAppElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "sourceAppName"));
-									if (xSrcAppElt != null) {
-										xchange.setSourceApp(xSrcAppElt
-												.getText());
-									}
+                  //
+                  // general exchange info
+                  //
+                  OMElement xCacheableElt = xRoot.getFirstChildWithName(new QName(ns, "cachecable"));
+                  if (xCacheableElt != null)
+                  {
+                    xchange.setCacheable(Boolean.parseBoolean(xCacheableElt.getText()));
+                  }
 
-									OMElement xSrcGraphElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "sourceGraphName"));
-									if (xSrcGraphElt != null) {
-										xchange.setSourceGraph(xSrcGraphElt
-												.getText());
-									}
+                  OMElement xPoolSizeElt = xRoot.getFirstChildWithName(new QName(ns, "poolSize"));
+                  if (xPoolSizeElt != null)
+                  {
+                    xchange.setPoolSize(Integer.parseInt(xPoolSizeElt.getText()));
+                  }
 
-									//
-									// receiver info
-									//
-									OMElement xTargetUriElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "targetUri"));
-									if (xTargetUriElt != null) {
-										String targetUri = xTargetUriElt
-												.getText();
+                  //
+                  // sender info
+                  //
+                  OMElement xSrcUriElt = xRoot.getFirstChildWithName(new QName(ns, "sourceUri"));
+                  if (xSrcUriElt != null)
+                  {
+                    String sourceUri = xSrcUriElt.getText();
 
-										if (uriMaps.containsKey(targetUri)) {
-											targetUri = uriMaps.get(targetUri);
-										}
+                    if (uriMaps.containsKey(sourceUri))
+                    {
+                      sourceUri = uriMaps.get(sourceUri);
+                    }
 
-										xchange.setTargetUri(targetUri);
-									}
+                    xchange.setSourceUri(sourceUri);
+                  }
 
-									OMElement xTargetScopeElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "targetScopeName"));
-									if (xTargetScopeElt != null) {
-										xchange.setTargetScope(xTargetScopeElt
-												.getText());
-									}
+                  OMElement xSrcScopeElt = xRoot.getFirstChildWithName(new QName(ns, "sourceScopeName"));
+                  if (xSrcScopeElt != null)
+                  {
+                    xchange.setSourceScope(xSrcScopeElt.getText());
+                  }
 
-									OMElement xTargetAppElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "targetAppName"));
-									if (xTargetAppElt != null) {
-										xchange.setTargetApp(xTargetAppElt
-												.getText());
-									}
+                  OMElement xSrcAppElt = xRoot.getFirstChildWithName(new QName(ns, "sourceAppName"));
+                  if (xSrcAppElt != null)
+                  {
+                    xchange.setSourceApp(xSrcAppElt.getText());
+                  }
 
-									OMElement xTargetGraphElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "targetGraphName"));
-									if (xTargetGraphElt != null) {
-										xchange.setTargetGraph(xTargetGraphElt
-												.getText());
-									}
-								}
+                  OMElement xSrcGraphElt = xRoot.getFirstChildWithName(new QName(ns, "sourceGraphName"));
+                  if (xSrcGraphElt != null)
+                  {
+                    xchange.setSourceGraph(xSrcGraphElt.getText());
+                  }
 
-								//
-								// port filter definitions
-								//
-								File filterPath = new File(inPath
-										.concat("Filter-")
-										.concat(scopeNameElt.getText())
-										.concat("-").concat(xId).concat(".xml"));
+                  //
+                  // receiver info
+                  //
+                  OMElement xTargetUriElt = xRoot.getFirstChildWithName(new QName(ns, "targetUri"));
+                  if (xTargetUriElt != null)
+                  {
+                    String targetUri = xTargetUriElt.getText();
 
-								if (filterPath.exists()) {
-									DataFilter filter = JaxbUtils.read(
-											DataFilter.class,
-											filterPath.getAbsolutePath());
-									xchange.setDataFilter(filter);
-								}
-							}
-						}
-					}
-				}
-			}
+                    if (uriMaps.containsKey(targetUri))
+                    {
+                      targetUri = uriMaps.get(targetUri);
+                    }
 
-			JaxbUtils.write(directory, newDirectoryPath, false);
+                    xchange.setTargetUri(targetUri);
+                  }
 
-			System.out.println("Succeded => See new directory output at "
-					+ newDirectoryPath.replace("\\", "/").replace("//", "/"));
-		} catch (Exception e) {
-			System.out.println("Error => " + e.getMessage());
-		}
-	}
+                  OMElement xTargetScopeElt = xRoot.getFirstChildWithName(new QName(ns, "targetScopeName"));
+                  if (xTargetScopeElt != null)
+                  {
+                    xchange.setTargetScope(xTargetScopeElt.getText());
+                  }
+
+                  OMElement xTargetAppElt = xRoot.getFirstChildWithName(new QName(ns, "targetAppName"));
+                  if (xTargetAppElt != null)
+                  {
+                    xchange.setTargetApp(xTargetAppElt.getText());
+                  }
+
+                  OMElement xTargetGraphElt = xRoot.getFirstChildWithName(new QName(ns, "targetGraphName"));
+                  if (xTargetGraphElt != null)
+                  {
+                    xchange.setTargetGraph(xTargetGraphElt.getText());
+                  }
+                }
+
+                //
+                // port filter definitions
+                //
+                File filterPath = new File(inPath.concat("Filter-").concat(scopeNameElt.getText()).concat("-")
+                    .concat(xId).concat(".xml"));
+
+                if (filterPath.exists())
+                {
+                  DataFilter filter = JaxbUtils.read(DataFilter.class, filterPath.getAbsolutePath());
+                  xchange.setDataFilter(filter);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      JaxbUtils.write(directory, newDirectoryPath, false);
+
+      System.out.println("Succeded => See new directory output at "
+          + newDirectoryPath.replace("\\", "/").replace("//", "/"));
+    }
+    catch (Exception e)
+    {
+      System.out.println("Error => " + e.getMessage());
+    }
+  }
 }
