@@ -436,19 +436,26 @@ public class HttpClient
     {
       String proxyHost = System.getProperty("http.proxyHost");
       int proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
-      final String proxyUserName = System.getProperty("http.proxyUserName");
-      final String proxyPassword = System.getProperty("http.proxyPassword");      
-      final String proxyDomain = System.getProperty("http.proxyDomain");
+      String proxyUserName = System.getProperty("http.proxyUser");   
+      
+      String proxyDomain = System.getProperty("http.proxyDomain");
+      if (proxyUserName != null && proxyDomain != null && proxyDomain.length() > 0)
+        proxyUserName = proxyDomain + "\\" + proxyUserName;
+      
+      final String proxyUser = proxyUserName;
+      final String proxyPassword = System.getProperty("http.proxyPassword"); 
       
       Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
       conn = (HttpURLConnection) url.openConnection(proxy); 
       
-      Authenticator.setDefault(new Authenticator() {
-        public PasswordAuthentication getPasswordAuthentication() {
-          return (new PasswordAuthentication(proxyDomain + "\\" + proxyUserName,
-            proxyPassword.toCharArray()));
-        }
-      });
+      if (proxyUser != null && proxyPassword != null)
+      {
+        Authenticator.setDefault(new Authenticator() {
+          public PasswordAuthentication getPasswordAuthentication() {
+            return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
+          }
+        });
+      }
       
 //      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);      
 //      conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);

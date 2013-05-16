@@ -1,6 +1,7 @@
 
 package org.iringtools.directory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,8 +35,11 @@ import javax.xml.bind.annotation.XmlType;
     "scope"
 })
 @XmlRootElement(name = "directory")
-public class Directory {
+public class Directory
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected List<Scope> scope;
 

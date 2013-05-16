@@ -1,6 +1,7 @@
 
 package org.iringtools.directory;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -59,8 +60,11 @@ import org.iringtools.data.filter.DataFilter;
     "dataFilter"
 })
 @XmlRootElement(name = "exchange")
-public class Exchange {
+public class Exchange
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected String id;
     @XmlElement(required = true)

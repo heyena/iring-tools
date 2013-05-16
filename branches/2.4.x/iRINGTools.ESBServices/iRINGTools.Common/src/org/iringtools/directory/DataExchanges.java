@@ -1,6 +1,7 @@
 
 package org.iringtools.directory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,8 +35,11 @@ import javax.xml.bind.annotation.XmlType;
     "commodity"
 })
 @XmlRootElement(name = "dataExchanges")
-public class DataExchanges {
+public class DataExchanges
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected List<Commodity> commodity;
 

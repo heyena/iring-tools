@@ -38,27 +38,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Scope }
+     * Create an instance of {@link ApplicationData }
      * 
      */
-    public Scope createScope() {
-        return new Scope();
-    }
-
-    /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
-    }
-
-    /**
-     * Create an instance of {@link Exchange }
-     * 
-     */
-    public Exchange createExchange() {
-        return new Exchange();
+    public ApplicationData createApplicationData() {
+        return new ApplicationData();
     }
 
     /**
@@ -70,6 +54,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Commodity }
+     * 
+     */
+    public Commodity createCommodity() {
+        return new Commodity();
+    }
+
+    /**
+     * Create an instance of {@link Scope }
+     * 
+     */
+    public Scope createScope() {
+        return new Scope();
+    }
+
+    /**
      * Create an instance of {@link DataExchanges }
      * 
      */
@@ -78,19 +78,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ApplicationData }
-     * 
-     */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
      * Create an instance of {@link Application }
      * 
      */
     public Application createApplication() {
         return new Application();
+    }
+
+    /**
+     * Create an instance of {@link Exchange }
+     * 
+     */
+    public Exchange createExchange() {
+        return new Exchange();
     }
 
 }

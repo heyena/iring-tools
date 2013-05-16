@@ -28,6 +28,7 @@ import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
+import org.iringtools.library.exchange.Constants;
 import org.iringtools.library.exchange.ExchangeProvider;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
@@ -128,7 +129,13 @@ public class ExchangeDataModel extends DataModel
   @SuppressWarnings("unchecked")
   public Map<String, String> getPreSummaryGrid(String serviceUri, String scope, String xId) throws Exception
   {
-    String preSummaryKey = PRE_SUMMARY_PREFIX + "." + scope + "." + xId;
+    // retrieve last filter
+    String exchangeKey = EXCHANGE_PREFIX + "." + scope + "." + xId;
+    String filter = (String) session.get(exchangeKey + ".filter");
+    String sortOrder = (String) session.get(exchangeKey + ".sortOrder");
+    String sortBy = (String) session.get(exchangeKey + ".sortBy");
+    
+    String preSummaryKey = PRE_SUMMARY_PREFIX + "." + scope + "." + xId + "." + filter;    
     Map<String, String> data = null;
     
     if (session.containsKey(preSummaryKey))
@@ -141,12 +148,6 @@ public class ExchangeDataModel extends DataModel
   
       Exchange exchange = getExchange(scope, xId);
       Manifest manifest = getCrossedManifest(exchange, scope, xId);    
-      
-      // retrieve last filter
-      String exchangeKey = EXCHANGE_PREFIX + "." + scope + "." + xId;
-      String filter = (String) session.get(exchangeKey + ".filter");
-      String sortOrder = (String) session.get(exchangeKey + ".sortOrder");
-      String sortBy = (String) session.get(exchangeKey + ".sortBy");
       
       DataTransferIndices dtis = getDtis(exchange, manifest, filter, sortOrder, sortBy);
   
@@ -539,7 +540,7 @@ public class ExchangeDataModel extends DataModel
       dxiRequest.setDataFilter(filter);
 
       dtis = provider.getDataTransferIndices(exchange, dxiRequest);
-
+      
       if (transferTypeExpressions.size() > 0)
       {
         applyTransferTypeFilterToDtis(dtis, transferTypeExpressions);
@@ -566,25 +567,46 @@ public class ExchangeDataModel extends DataModel
       DataFilter preFilter = exchange.getDataFilter();
       DataFilter filter = mergeDataFilters(preFilter, uiFilter, transferTypeExpressions);
 
-      DxiRequest dxiRequest = new DxiRequest();
-      dxiRequest.setManifest(manifest);
-      dxiRequest.setDataFilter(filter);
-
-      List<String> ids = provider.getIdentifiers(exchange, dxiRequest);
-
-      if (ids != null)
+      //
+      // if filter contains only transfer type expression(s), then no need to fetch data but use the full DTIs
+      //
+      if (filter == null || (filter.getExpressions().getItems().size() == 0 && 
+          filter.getOrderExpressions().getItems().size() == 0))
       {
-        DataTransferIndexList dtiList = new DataTransferIndexList();
-        dtis.setDataTransferIndexList(dtiList);
-
-        for (String id : ids)
+        dtis = getFullDtis(exchange, manifest);
+      }
+      else  // fetch data with filter
+      {
+        DxiRequest dxiRequest = new DxiRequest();
+        dxiRequest.setManifest(manifest);
+        dxiRequest.setDataFilter(filter);
+  
+        List<String> ids = provider.getIdentifiers(exchange, dxiRequest);
+  
+        if (ids != null)
         {
-          for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
+          DataTransferIndexList dtiList = new DataTransferIndexList();
+          dtis.setDataTransferIndexList(dtiList);
+  
+          for (String id : ids)
           {
-            if (!dtiList.getItems().contains(dti) && dti.getIdentifier().equalsIgnoreCase(id))
-            {              
-              dtiList.getItems().add(dti);
-              break;
+            for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
+            {
+              if (dti.getInternalIdentifier().equals(id))
+              {              
+                dtiList.getItems().add(dti);
+                break;
+              }
+              else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN))
+              {
+                String[] internalIds = dti.getInternalIdentifier().split(Constants.CHANGE_TOKEN);
+                
+                if (id.equals(internalIds[0]) || id.equals(internalIds[1]))
+                {
+                  dtiList.getItems().add(dti);
+                  break;
+                }
+              }
             }
           }
         }

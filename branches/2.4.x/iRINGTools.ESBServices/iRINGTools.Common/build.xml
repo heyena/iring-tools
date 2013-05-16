@@ -22,39 +22,40 @@
 		</fileset>
 	</path>
 
-  <path id="log4j-1.2.16.userclasspath">
-    <fileset dir="../libraries/apache-log4j-1.2.16">
-      <include name="**/*.jar" />
-    </fileset>
-  </path>
+	<path id="log4j-1.2.16.userclasspath">
+		<fileset dir="../libraries/apache-log4j-1.2.16">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
 
-  <path id="jaxb-ri-20100511.userclasspath">
-  	<fileset dir="../libraries/jaxb-ri-20100511/lib">
-  	  <include name="**/*.jar" />
-    </fileset>
-  </path>
+	<path id="jaxb-ri-20100511.userclasspath">
+		<fileset dir="../libraries/jaxb-ri-20100511/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
 
 	<path id="tomcat-6.0.userclasspath">
-  	<fileset dir="../libraries/apache-tomcat-6.0">
-  	  <include name="**/*.jar" />
-    </fileset>
-  </path>
-  
-  <path id="json-utils.userclasspath">
-    <fileset dir="../libraries/json-utils">
-      <include name="**/*.jar" />
-    </fileset>
-  </path>
+		<fileset dir="../libraries/apache-tomcat-6.0">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="json-utils.userclasspath">
+		<fileset dir="../libraries/json-utils">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
 
 	<target name="generate">
 		<taskdef name="xjc" classname="com.sun.tools.xjc.XJC2Task">
-      <classpath refid="jaxb-ri-20100511.userclasspath" />
+			<classpath refid="jaxb-ri-20100511.userclasspath" />
 		</taskdef>
 		<xjc destdir="src" extension="true">
 			<schema dir="schemas" includes="**/*.xsd" />
+			<binding dir="schemas" includes="bindings.xml" />
 			<arg value="-no-header" />
-      <arg value="-Xcollection-setter-injector" />
-      <arg value="-Xbg" />
+			<arg value="-Xcollection-setter-injector" />
+			<arg value="-Xbg" />
 		</xjc>
 	</target>
 
@@ -84,8 +85,8 @@
 			<classpath refid="commons-codec-1.4.userclasspath" />
 			<classpath refid="log4j-1.2.16.userclasspath" />
 			<classpath refid="jaxb-ri-20100511.userclasspath" />
-			<classpath refid="tomcat-6.0.userclasspath" />    
-      <classpath refid="json-utils.userclasspath" />
+			<classpath refid="tomcat-6.0.userclasspath" />
+			<classpath refid="json-utils.userclasspath" />
 		</javac>
 	</target>
 
