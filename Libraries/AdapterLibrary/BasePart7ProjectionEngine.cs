@@ -862,12 +862,14 @@ namespace org.iringtools.adapter.projection
       string roleName = propertyNameParts[2];
 
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
-        cm => Utility.TitleCase(cm.classMap.name).ToUpper() == className.ToUpper());
+        cm => cm.classMap.name.Replace(" ", "").ToLower() == className.Replace(" ", "").ToLower());
+
+      if (classTemplateMap == null)
+        throw new Exception("Classmap [" + className + "] not found.");
 
       List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-      TemplateMap templateMap = templateMaps.Find(tm => tm.name == templateName);
-
-      RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name == roleName);
+      TemplateMap templateMap = templateMaps.Find(tm => tm.name.ToLower() == templateName.ToLower());
+      RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name.ToLower() == roleName.ToLower());
 
       switch (roleMap.type)
       {
