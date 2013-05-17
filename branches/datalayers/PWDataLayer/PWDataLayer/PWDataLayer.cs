@@ -22,12 +22,14 @@ namespace org.iringtools.adapter.datalayer
 
     private string _sUserName, _sPassword, _sDatasource, _sFileFormat, _sDocumentGUID; 
     private string _sProject, _sApp, _sDataPath;
-
+    private int _iFoldrCount;
     [Inject]
     public PWDataLayer(AdapterSettings settings)
       : base(settings)
     {
-         
+
+        
+        //_logger.Debug("In Datalyer constructor");
       _sUserName = settings["PW.UserName"];
       _sPassword = settings["PW.Password"];
       _sDatasource = settings["PW.Datasource"];
@@ -42,6 +44,8 @@ namespace org.iringtools.adapter.datalayer
 
     public override DatabaseDictionary GetDatabaseDictionary()
     {
+
+        //_logger.Debug("In Dictionary Creation");
       DatabaseDictionary dbDictionary = null;
       DataDictionary dictionary = new DataDictionary();
      
@@ -85,7 +89,7 @@ namespace org.iringtools.adapter.datalayer
         {
           string itemName = item.Key;
 
-          if (dataObjects == null || dataObjects.Count == 0 || dataObjects.Contains(itemName))
+          if (dataObjects == null || dataObjects.Count == 0 || dataObjects.Contains(itemName.Replace(" ", "")))
           {
             DataObject dataObject = new DataObject()
             {
@@ -121,6 +125,47 @@ namespace org.iringtools.adapter.datalayer
             dictionary.dataObjects.Add(dataObject);
           }
         }
+
+        DataObject folderDataObject = new DataObject();
+        folderDataObject.objectName = "Folders";
+        folderDataObject.tableName= "Folders";
+        //folderDataObject.hasContent = false;
+          
+
+
+        DataProperty dp = new DataProperty();
+        dp.columnName = "Name";
+        dp.propertyName = "Name";
+        dp.dataType = DataType.String;
+        dp.dataLength = 100;
+
+        folderDataObject.dataProperties.Add(dp);
+        
+         DataProperty dp1 = new DataProperty();
+        dp1.columnName = "ID";
+        dp1.propertyName = "ID";
+        dp1.dataType = DataType.String;
+        dp1.dataLength = 100;
+         
+        folderDataObject.dataProperties.Add(dp1);
+
+        DataProperty dp2 = new DataProperty();
+        dp2.columnName = "Path";
+        dp2.propertyName = "Path";
+        dp2.dataType = DataType.String;
+        dp2.dataLength = 1000;
+        folderDataObject.dataProperties.Add(dp2);
+
+        folderDataObject.keyProperties = new List<KeyProperty>()
+            {
+              new KeyProperty()
+              {
+                keyPropertyName = "ID"
+              }
+            };
+
+        dictionary.dataObjects.Add(folderDataObject);
+
 
         //env = GetProjectTypes();
         //foreach (var item in env)
@@ -184,6 +229,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response RefreshDataTable(string tableName)
     {
+        //_logger.Debug("In  RefreshDataTable()");
       Response response = new Response();
 
       try
@@ -217,6 +263,14 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
+          //_logger.Debug(" In GetCount()");
+          if (tableName == "Folders")
+          {
+
+              return _iFoldrCount;
+          }
+
+          
         Login();
 
         DataTable dt = GetDocumentsForProject(
@@ -248,15 +302,57 @@ namespace org.iringtools.adapter.datalayer
         Logout();
       }
     }
-
     
     public override DataTable GetDataTable(string tableName, string whereClause, long start, long limit)
     {
+       
       try
       {
+          DataTable dtFolderDetails;
+          
+
+          
+          if (tableName == "Folders")
+          {
+              string setting = _settings["HasContentExpression"];
+              List<string> strFolderPath = new List<string>();
+              dtFolderDetails = new DataTable();
+
+              dtFolderDetails.Columns.Add("Name");
+              dtFolderDetails.Columns.Add("ID");
+             dtFolderDetails.Columns.Add("Path");
+
+              SortedList<int, string> lstFolder = this.GetTopLevelFolders();
+              foreach (var pair in lstFolder)
+              {
+                  dtFolderDetails.Rows.Add(pair.Value, pair.Key, this.GetFolderPath(pair.Key));
+              }
+
+              _iFoldrCount = dtFolderDetails.Rows.Count;
+              _settings["HasContentExpression"] = null;
+              if (whereClause != string.Empty)
+              {
+                  dtFolderDetails.DefaultView.RowFilter = whereClause != null ? whereClause.Replace("WHERE", "").Replace("UPPER", "") : "";
+                  _iFoldrCount = dtFolderDetails.DefaultView.ToTable().Rows.Count;
+                  return dtFolderDetails.DefaultView.ToTable();
+
+              }
+              IEnumerable<System.Data.DataRow> query = from d in dtFolderDetails.AsEnumerable().Skip((int)(start)).Take((int)limit) select d; //For Paging            
+              if (query != null && query.Count() > 0)
+              {
+                  return query.CopyToDataTable();
+              }            
+             
+
+              return dtFolderDetails;            
+              
+
+          }
+
+
           string orderBy = string.Empty;
           string strcolumnname = string.Empty; 
-        Login();
+          Login();
 
         DataTable dt = GetDocumentsForProject(
         _settings["PW.ProjectType"],
@@ -269,21 +365,12 @@ namespace org.iringtools.adapter.datalayer
             dt.DefaultView.RowFilter = whereClause != null ? whereClause.Replace("WHERE", "").Replace("UPPER", "") : "";
             return dt.DefaultView.ToTable();
         }
-
-
-
-        IEnumerable<System.Data.DataRow> query = from d in dt.AsEnumerable().Skip((int)(start)).Take((int)limit) select d; //For Paging
-       
-
-        if (query != null && query.Count() > 0 )
+       IEnumerable<System.Data.DataRow> query1 = from d in dt.AsEnumerable().Skip((int)(start)).Take((int)limit) select d; //For Paging
+       if (query1 != null && query1.Count() > 0)
         {
-            return query.CopyToDataTable();
+            return query1.CopyToDataTable();
         }
-        
-
-
-
-        return dt;
+       return dt;
       }
       catch (Exception e)
       {
@@ -293,19 +380,57 @@ namespace org.iringtools.adapter.datalayer
       finally
       {
         Logout();
+      //  _settings["HasContentExpression"] = setting;
       }
     }
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
         try
         {
+            //_logger.Debug("In Get()"); 
+           
+
+            if (objectType.ToUpper() == "FOLDERS")
+            {                
+                IList<IDataObject> dataObjects1 = new List<IDataObject>(); 
+                DatabaseDictionary dictionary1 = GetDatabaseDictionary();
+                DataObject objDef1 = dictionary1.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+               
+                List<string> strFolderPath = new List<string>();
+                DataTable dtFolderDetails;
+
+                dtFolderDetails = new DataTable();
+                dtFolderDetails.Columns.Add("Name");
+                dtFolderDetails.Columns.Add("ID");
+                dtFolderDetails.Columns.Add("Path");
+
+                SortedList<int, string> lstFolder = this.GetTopLevelFolders();
+                foreach (var pair in lstFolder)
+                {
+                    dtFolderDetails.Rows.Add(pair.Value, pair.Key, this.GetFolderPath(pair.Key));
+                }
+                string[] strArray = identifiers.ToArray<string>();
+                dtFolderDetails.DefaultView.RowFilter = "ID = " + "'" + strArray[0] + "'";
+                _iFoldrCount = dtFolderDetails.DefaultView.ToTable().Rows.Count;
+                DataRow dr = dtFolderDetails.DefaultView.ToTable().Rows[0];
+                _settings["HasContentExpression"] = null;
+                IDataObject dataObject = ToDataObject(dr, objDef1);
+
+               // IList<IDataObject> dataObjects1 = ToDataObjects(dtFolderDetails.DefaultView.ToTable(), objectType);
+                dataObjects1.Add(dataObject);
+                
+                return dataObjects1;
+            
+            }
+
+
+
             List<string> docGuids = identifiers.ToList();
             List<string> listAttributes = new List<string>();
 
 
             DatabaseDictionary dictionary = GetDatabaseDictionary();
             DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
-
             foreach (DataProperty prop in objDef.dataProperties)
             {
                 listAttributes.Add(prop.columnName);
@@ -401,18 +526,48 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        List<string> docGuids = identifiers.ToList();
-        List<string> listAttributes = new List<string>();
+          List<string> docGuids = identifiers.ToList();
+          List<string> listAttributes = new List<string>();
+          DatabaseDictionary dictionary = GetDatabaseDictionary();
+          DataObject objDef = dictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower());
+          foreach (DataProperty prop in objDef.dataProperties)
+          {
+              listAttributes.Add(prop.columnName);
+              
+          }
+          Login();
+          if (tableName == "Folders")
+          {
+              string setting = _settings["HasContentExpression"];
+              List<string> strFolderPath = new List<string>();
+              DataTable dtFolderDetails;
 
-        DatabaseDictionary dictionary = GetDatabaseDictionary();
-        DataObject objDef = dictionary.dataObjects.Find(x => x.tableName.ToLower() == tableName.ToLower());
+              dtFolderDetails = new DataTable();
+              dtFolderDetails.Columns.Add("Name");
+              dtFolderDetails.Columns.Add("ID");
+              dtFolderDetails.Columns.Add("Path");
 
-        foreach (DataProperty prop in objDef.dataProperties)
-        {
-          listAttributes.Add(prop.columnName);
-        }
+              SortedList<int, string> lstFolder = this.GetTopLevelFolders();
+              foreach (var pair in lstFolder)
+              {
+                  dtFolderDetails.Rows.Add(pair.Value, pair.Key, this.GetFolderPath(pair.Key));
 
-        Login();
+              }
+              string[] strArray = identifiers.ToArray<string>();
+              dtFolderDetails.DefaultView.RowFilter = "ID = " + "'" + strArray[0] + "'";
+              _iFoldrCount = dtFolderDetails.DefaultView.ToTable().Rows.Count;
+             // _settings["HasContentExpression"] = null;
+              return  dtFolderDetails.DefaultView.ToTable();
+                
+          }
+
+       
+
+       
+
+       
+
+       
 
         DataTable dt = GetDocumentMetadata(docGuids, listAttributes);
         return dt;
@@ -527,7 +682,7 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-        _logger.Debug("Error getting contents: " + ex.ToString());
+        //_logger.Debug("Error getting contents: " + ex.ToString());
         throw ex;
       }
       finally
@@ -706,70 +861,67 @@ namespace org.iringtools.adapter.datalayer
 
       return response;
     }
-
-
-    
-
+      //GAGAN
     //public override Response PostContents(IList<IContentObject> contentObjects)
     //{
-    //  Response response = new Response();
+    //    Response response = new Response();
 
-    //  try
-    //  {
-    //    DatabaseDictionary dictionary = GetDatabaseDictionary();
-
-    //    Login();
-
-    //    foreach (IContentObject contentObject in contentObjects)
+    //    try
     //    {
-    //      DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == contentObject.ObjectType.ToLower());
-    //      SortedList<string, string> slProps = new SortedList<string, string>();
+    //        DatabaseDictionary dictionary = GetDatabaseDictionary();
 
-    //      foreach (DataProperty prop in objDef.dataProperties)
-    //      {
-    //        object propValue = null;
+    //        Login();
 
-    //        try
+    //        foreach (IContentObject contentObject in contentObjects)
     //        {
-    //          propValue = contentObject.DataObject.GetPropertyValue(prop.propertyName);
+    //            DataObject objDef = dictionary.dataObjects.Find(x => x.objectName.ToLower() == contentObject.ObjectType.ToLower());
+    //            SortedList<string, string> slProps = new SortedList<string, string>();
+
+    //            foreach (DataProperty prop in objDef.dataProperties)
+    //            {
+    //                object propValue = null;
+
+    //                try
+    //                {
+    //                    propValue = contentObject.DataObject.GetPropertyValue(prop.propertyName);
+    //                }
+    //                catch (Exception) { }
+
+    //                if (propValue != null)
+    //                {
+    //                    slProps.Add(prop.columnName, propValue.ToString());
+    //                }
+    //            }
+
+    //            slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
+
+    //            if (contentObject.Content != null)
+    //            {
+    //                //TODO: validate DocumentName in the property list
+    //                string docGUID = CreateNewPWDocument(contentObject.Content, slProps);
+
+    //                Status status = new Status()
+    //                {
+    //                    Identifier = docGUID,
+    //                    Messages = new Messages { docGUID + " saved successfully." }
+    //                };
+
+    //                response.StatusList.Add(status);
+    //            }
     //        }
-    //        catch (Exception) { }
-
-    //        if (propValue != null)
-    //        {
-    //          slProps.Add(prop.columnName, propValue.ToString());
-    //        }
-    //      }
-
-    //      slProps.Add("ProjectWiseFolderPath", "Bechtel Sample Project\\" + Guid.NewGuid().ToString());
-
-    //      if (contentObject.Content != null)
-    //      {
-    //        //TODO: validate DocumentName in the property list
-    //        string docGUID = CreateNewPWDocument(contentObject.Content, slProps);
-
-    //        Status status = new Status()
-    //        {
-    //          Identifier = docGUID,
-    //          Messages = new Messages { docGUID + " saved successfully." }
-    //        };
-
-    //        response.StatusList.Add(status);
-    //      }
     //    }
-    //  }
-    //  catch (Exception e)
-    //  {
-    //    _logger.Error(e.Message);
-    //    response.Level = StatusLevel.Error;
-    //    response.Messages.Add(e.Message);
-    //  }
-    //  finally
-    //  {
-    //    Logout();
-    //  }
+    //    catch (Exception e)
+    //    {
+    //        _logger.Error(e.Message);
+    //        response.Level = StatusLevel.Error;
+    //        response.Messages.Add(e.Message);
+    //    }
+    //    finally
+    //    {
+    //        Logout();
+    //    }
 
-    //  return response;
+    //    return response;
     //}
 
 
@@ -826,6 +978,7 @@ namespace org.iringtools.adapter.datalayer
 
     private bool Login()
     {
+        //_logger.Debug("In login()");
         string currDir = Directory.GetCurrentDirectory();
 
         try
@@ -877,6 +1030,8 @@ namespace org.iringtools.adapter.datalayer
 
     private List<DataProperty> GetGenericProperties()
     {
+        //_logger.Debug("In  GetEnvironments()");
+
       DataTable dt = GetGenericDocumentProperties();
       List<DataProperty> props = new List<DataProperty>();
 
@@ -902,6 +1057,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
+          //_logger.Debug("In GetEnvironments()");
         SortedList<string, SortedList<string, TypeAndLength>> slEnvironments = new SortedList<string, SortedList<string, TypeAndLength>>();
 
         if (!PWWrapper.aaApi_IsConnectionLost())
@@ -1345,32 +1501,13 @@ namespace org.iringtools.adapter.datalayer
       return sRetVal;
     }
 
-    //private SortedList<string, SortedList<string, string>> GetEnvironments()
-    //{
-    //  SortedList<string, SortedList<string, string>> slEnvironments = new SortedList<string, SortedList<string, string>>();
-
-    //  if (!PWWrapper.aaApi_IsConnectionLost())
-    //  {
-    //    int iNumEnvrs = PWWrapper.aaApi_SelectAllEnvs(false);
-
-    //    if (iNumEnvrs > 0)
-    //    {
-    //      for (int i = 0; i < iNumEnvrs; i++)
-    //      {
-    //        if (!slEnvironments.ContainsKey(PWWrapper.aaApi_GetEnvStringProperty(PWWrapper.EnvironmentProperty.Name, i)))
-    //          slEnvironments.Add(PWWrapper.aaApi_GetEnvStringProperty(PWWrapper.EnvironmentProperty.Name, i),
-    //          new SortedList<string, string>());
-    //      }
-    //    }
-    //  }
-
-    //  return slEnvironments;
-    //}
+   
 
     private System.IO.FileStream GetProjectWiseFile(string sDocumentGuid, string sWorkingDirectory)
     {
       try
       {
+          //_logger.Debug("In   GetProjectWiseFile()");
         Login();
 
         Guid docGuid = new Guid(sDocumentGuid);
@@ -1438,6 +1575,7 @@ namespace org.iringtools.adapter.datalayer
 
     private DataTable GetDocumentsForProject(string sProjectType, string sProjectPropertyName, string sPropertyValue)
     {
+        //_logger.Debug(" In GetDocumentsForProject()");
       SavedSearchAssembly.SavedSearchWrapper.InitializeQuery(0, false);
 
       SortedList<string, string> slQueryPropVals = new SortedList<string, string>();
@@ -1448,6 +1586,8 @@ namespace org.iringtools.adapter.datalayer
       slQueryPropVals, false);
 
       DataTable dtReturn = new DataTable("Documents");
+
+        
 
       foreach (int iProjectId in slProjects.Keys)
       {
@@ -1927,6 +2067,7 @@ namespace org.iringtools.adapter.datalayer
 
     private DataTable GetDocumentMetadata(List<string> docGuids, List<string> listAttributes)
     {
+        //_logger.Debug("In GetDocumentMetadata()");
       DataTable dtReturn = new DataTable();
 
       foreach (string docGuid in docGuids)
@@ -1970,6 +2111,8 @@ namespace org.iringtools.adapter.datalayer
       return (iSuccessfulDeletes == docGuids.Count);
     }
 
+   
+      
     public SortedList<int, string> GetTopLevelFolders()
     {
       try
@@ -2018,7 +2161,7 @@ namespace org.iringtools.adapter.datalayer
 
     private string GetFolderPath(int iFolderId)
     {
-      return PWWrapper.GetProjectNamePath(iFolderId);
+      return PWWrapper.GetProjectNamePath(iFolderId);        
     }
 
     private DataTable GetDocumentsForFolder(int iFolderId, List<string> listAttributes)
