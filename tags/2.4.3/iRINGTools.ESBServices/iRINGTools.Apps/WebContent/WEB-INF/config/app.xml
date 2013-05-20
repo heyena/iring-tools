@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration xmlns="http://www.iringtools.org/common">
+  <setting name="refDataServiceUri">http://localhost:54321/refdata</setting>
+  <setting name="fieldFit">HEADER</setting>
+  <setting name="async">false</setting>
+  <setting name="asyncTimeout">1800</setting>
+  <setting name="asyncPollingInterval">5</setting>
+  <setting name="poolSize">100</setting>
+  <setting name="manifestTaskTimeout">300</setting>
+  <setting name="dtiTaskTimeout">1800</setting>
+  <setting name="dtoTaskTimeout">600</setting>
+  <setting name="exchangeHistory">10</setting>
+</configuration>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<qmxf xmlns="http://ns.ids-adi.org/qxf/model#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<template-definition id="http://tpl.rdlfacade.org/data#R51069385220">
+    <name>CompositionRelation</name>
+    <description />
+    <textual-definition />
+  <role-definition id="http://tpl.rdlfacade.org/data#R56241580337" range="http://rdl.rdlfacade.org/data#R82407290725">
+      <name>hasClassOfPart</name>
+      <description />
+    <status />
+    </role-definition>
+  <role-definition range="http://rdl.rdlfacade.org/data#R82407290725">
+    <name>hasClassOfPart2</name>
+    <description />
+    <status />
+  </role-definition>
+  </template-definition>
+</qmxf>

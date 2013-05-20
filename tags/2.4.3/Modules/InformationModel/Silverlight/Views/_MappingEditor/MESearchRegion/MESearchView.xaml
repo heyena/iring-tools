@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="InformationModel.Views.MESearchRegion.MESearchView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    Width="712" Height="33" 
+    xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" >
+
+    <Grid x:Name="LayoutRoot" >
+    <Grid.Background>
+      <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FFC9E7E7" />
+        <GradientStop Color="#FFFFFFFF" Offset="1"/>
+      </LinearGradientBrush>
+    </Grid.Background>
+    	<TextBox Margin="4,0,0,0" Width="360" Height="25" HorizontalAlignment="Left" RenderTransformOrigin="0.297,1" Text="" TextWrapping="Wrap" x:Name="txtSearch"/>
+    	<Button  Margin="368,0,0,0" Width="110" Height="25" HorizontalAlignment="Left" Content="Search" x:Name="btnSearch"/>        
+        <Button  Margin="596,0,0,0" Width="110" Height="25" HorizontalAlignment="Left" Content="Generate" x:Name="btnGenerate"/>
+        <Button  Margin="482,0,0,0" Width="110" Height="25" HorizontalAlignment="Left" Content="Refresh Interface" x:Name="btnRefresh"/>
+
+        <ItemsControl Margin="325,0,0,0" Regions:RegionManager.RegionName="MESearchRightRegion"/>
+     
+    </Grid>
+</UserControl>
