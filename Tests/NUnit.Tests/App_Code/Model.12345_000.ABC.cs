@@ -407,7 +407,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
           LINENO = Convert.ToString(value);
           break;
         case "NOMDIAMETER":
-          NOMDIAMETER = Single.Parse((String)value, NumberStyles.Any);
+          NOMDIAMETER = Convert.ToSingle(value);
           break;
         case "INSULATIONTYPE":
           INSULATIONTYPE = Convert.ToString(value);

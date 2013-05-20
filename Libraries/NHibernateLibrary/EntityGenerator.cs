@@ -141,7 +141,7 @@ namespace org.iringtools.nhibernate
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
           dataDictionary.dataVersion = dbSchema.dataVersion;
           dataDictionary.enableSearch = dbSchema.enableSearch;
-          dataDictionary.enableSummary = dbSchema.enableSummary;          
+          dataDictionary.enableSummary = dbSchema.enableSummary;
 
           Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
@@ -274,7 +274,14 @@ namespace org.iringtools.nhibernate
           DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
           string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
-          _dataObjectWriter.WriteLine("_idString += {0}.ToString();", keyName);
+          if (i == 0)
+          {
+            _dataObjectWriter.WriteLine("_idString += {0}.ToString();", keyName);
+          }
+          else
+          {
+            _dataObjectWriter.WriteLine("_idString += \"{0}\" + {1}.ToString();", dataObject.keyDelimeter, keyName);
+          }
         }
 
         _dataObjectWriter.WriteLine("return _idString;");
@@ -557,14 +564,7 @@ namespace org.iringtools.nhibernate
           bool dataPropertyIsNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
           if (dataPropertyIsNullable)
           {
-            if (IsNumeric(dataProperty.dataType))
-            {
-              _dataObjectWriter.WriteLine("{0} = {1}.Parse((String)value, NumberStyles.Any);", dataProperty.propertyName, dataProperty.dataType);
-            }
-            else
-            {
-              _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
-            }
+            _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
           }
           else
           {
@@ -689,6 +689,10 @@ namespace org.iringtools.nhibernate
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "show_sql");
         configWriter.WriteString("true");
+        configWriter.WriteEndElement(); // end property element
+        configWriter.WriteStartElement("property");
+        configWriter.WriteAttributeString("name", "command_timeout");
+        configWriter.WriteString("0");
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteEndElement(); // end session-factory element
         configWriter.WriteEndElement(); // end hibernate-configuration element

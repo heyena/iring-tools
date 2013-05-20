@@ -9,6 +9,7 @@ using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using System.Text;
+using System.IO;
 
 namespace org.iringtools.adapter.projection
 {
@@ -64,6 +65,14 @@ namespace org.iringtools.adapter.projection
       }
 
       return dtoDoc;
+    }
+
+    public DataTransferObjects BuildDataTransferObjects(GraphMap graphMap, ref IList<IDataObject> dataObjects)
+    {
+      _graphMap = graphMap;
+      _dataObjects = dataObjects;
+
+      return BuildDataTransferObjects();
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
@@ -162,7 +171,22 @@ namespace org.iringtools.adapter.projection
             try
             {
               dataObject = CreateDataObject(_graphMap.dataObjectName, dataObjectIndex);
-              _dataObjects.Add(dataObject);
+
+              DataTransferObject dto = dataTransferObjects.DataTransferObjectList[dataObjectIndex];
+              if (dto.content != null)
+              {
+                IContentObject contentObject = new GenericContentObject()
+                {
+                   Content = new MemoryStream(dto.content),
+                   ObjectType = _graphMap.dataObjectName
+                };
+
+                _dataObjects.Add(contentObject);
+              }
+              else
+              {
+                _dataObjects.Add(dataObject);
+              }
             }
             catch (Exception e)
             {
@@ -196,72 +220,102 @@ namespace org.iringtools.adapter.projection
 
     public DataTransferIndices GetDataTransferIndices(GraphMap graphMap, IList<IDataObject> dataObjects, string sortIndex)
     {
-      _graphMap = graphMap;
-      _dataObjects = dataObjects;
-
       DataTransferIndices dtis = new DataTransferIndices();
 
-      if (_graphMap != null && _graphMap.classTemplateMaps != null && _graphMap.classTemplateMaps.Count > 0 &&
-        dataObjects != null && dataObjects.Count > 0)
+      try
       {
-        ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
-        string keyDelimiter = classTemplateMap.classMap.identifierDelimiter;
-        List<KeyProperty> keyProperties = GetKeyProperties(_graphMap.dataObjectName);
-        List<string> keyPropertyNames = new List<string>();
+        _graphMap = graphMap;
+        _dataObjects = dataObjects;
 
-        foreach (KeyProperty keyProperty in keyProperties)
+        if (_graphMap != null && _graphMap.classTemplateMaps != null && _graphMap.classTemplateMaps.Count > 0 &&
+          dataObjects != null && dataObjects.Count > 0)
         {
-          keyPropertyNames.Add(_graphMap.dataObjectName + '.' + keyProperty.keyPropertyName);
-        }
+          ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
+          DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
+          string keyDelimiter = dataObject.keyDelimeter ?? "";
 
-        string sortType = null;
-
-        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
-        {
-          if (_dataObjects[dataObjectIndex] != null)
+          List<string> keyPropertyNames = new List<string>();
+          foreach (KeyProperty keyProperty in dataObject.keyProperties)
           {
-            DataTransferIndex dti = new DataTransferIndex();
-            Dictionary<string, string> keyValues = new Dictionary<string, string>();
-            StringBuilder internalIdentifier = new StringBuilder();
-            StringBuilder propertyValues = new StringBuilder();
+            keyPropertyNames.Add(_graphMap.dataObjectName + '.' + keyProperty.keyPropertyName);
+          }
 
-            BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
-              propertyValues, sortIndex, ref sortType);
+          string sortType = null;
 
-            foreach (string identifierValue in keyValues.Values)
+          for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+          {
+            if (_dataObjects[dataObjectIndex] != null)
             {
-              if (internalIdentifier.Length > 0)
+              DataTransferIndex dti = new DataTransferIndex();
+              StringBuilder internalIdentifier = new StringBuilder();
+              StringBuilder propertyValues = new StringBuilder();
+
+              BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyPropertyNames,
+                propertyValues, sortIndex, ref sortType);
+
+              foreach (KeyProperty keyProp in dataObject.keyProperties)
               {
                 internalIdentifier.Append(keyDelimiter);
+                internalIdentifier.Append(_dataObjects[dataObjectIndex].GetPropertyValue(keyProp.keyPropertyName));
               }
 
-              internalIdentifier.Append(identifierValue);
-            }
+              internalIdentifier.Remove(0, keyDelimiter.Length);
+              dti.InternalIdentifier = internalIdentifier.ToString();
 
-            dti.InternalIdentifier = internalIdentifier.ToString();
-            dti.HashValue = Utility.MD5Hash(propertyValues.ToString());
-            dtis.DataTransferIndexList.Add(dti);
+              string values = propertyValues.ToString();
+              dti.HashValue = Utility.MD5Hash(values);
+
+              if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericDataObject)))
+              {
+                dti.HasContent = ((GenericDataObject)(_dataObjects[dataObjectIndex])).HasContent;
+              } 
+              else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
+              {
+                dti.HasContent = ((GenericContentObject)(_dataObjects[dataObjectIndex])).HasContent;
+              }
+
+              if (string.IsNullOrEmpty(dti.Identifier))
+              {
+                _logger.Warn("DTI has no identifier: [" + values + "]");
+              }
+              else
+              {
+                dtis.DataTransferIndexList.Add(dti);
+              }
+            }
+          }
+
+          if (sortType != null)
+          {
+            dtis.SortType = sortType;
           }
         }
 
-        if (sortType != null)
+        if (dtis != null)
         {
-          dtis.SortType = sortType;
+          _logger.Debug(string.Format("DTI count [{0}.{1}]: {2}",
+            _settings["ProjectName"], _settings["ApplicationName"], dtis.DataTransferIndexList.Count));
         }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error gettting data indices: " + e.Message + e.StackTrace);
+        throw e;
       }
 
       return dtis;
     }
 
     #region data transfer indices helper methods
-    private void BuildDataTransferIndex(DataTransferIndex dti, int dataObjectIndex, ClassTemplateMap classTemplateMap, string keyDelimiter,
-      List<string> keyPropertyNames, Dictionary<string, string> keyValues, StringBuilder propertyValues, string sortIndex, ref string sortType)
+    private void BuildDataTransferIndex(DataTransferIndex dti, int dataObjectIndex, ClassTemplateMap classTemplateMap,
+      List<string> keyPropertyNames, StringBuilder propertyValues, string sortIndex, ref string sortType)
     {
       if (classTemplateMap != null && classTemplateMap.classMap != null)
       {
         IDataObject dataObject = _dataObjects[dataObjectIndex];
         bool hasRelatedProperty;
         List<string> classIdentifiers = GetClassIdentifiers(classTemplateMap.classMap, dataObjectIndex, out hasRelatedProperty);
+        string identifierDelimiter = classTemplateMap.classMap.identifierDelimiter;
 
         for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
         {
@@ -275,22 +329,6 @@ namespace org.iringtools.adapter.projection
             if (String.IsNullOrEmpty(dti.Identifier))
             {
               dti.Identifier = classIdentifier;
-            }
-
-            // if key property(properties) is(are) mapped in classMap identifier(s), append it(them) to keyValues
-            List<string> identifierParts = classTemplateMap.classMap.identifiers;
-            string[] identifierValueParts = classIdentifier.Split(new string[] { keyDelimiter }, StringSplitOptions.None);
-
-            for (int identifierIndex = 0; identifierIndex < identifierParts.Count; identifierIndex++)
-            {
-              string identifierPart = identifierParts[identifierIndex];
-
-              if (!IsFixedIdentifier(identifierPart) && identifierValueParts.Length >= identifierIndex &&
-                !keyValues.ContainsKey(identifierPart) && keyPropertyNames.Contains(identifierPart))
-              {
-                string identifierValue = identifierValueParts[identifierIndex];
-                keyValues.Add(identifierPart, identifierValue);
-              }
             }
 
             foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
@@ -319,6 +357,7 @@ namespace org.iringtools.adapter.projection
                   if (propertyParts.Length == 2)  // direct property
                   {
                     string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+                    string keyValue = propertyValue;
                     propertyValue = ParsePropertyValue(roleMap, propertyValue);
 
                     if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
@@ -337,15 +376,7 @@ namespace org.iringtools.adapter.projection
                       }
                     }
 
-                    if (keyPropertyNames.Contains(roleMap.propertyName))
-                    {
-                      if (!keyValues.ContainsKey(roleMap.propertyName))
-                      {
-                        keyValues.Add(roleMap.propertyName, propertyValue);
-                      }
-                    }
-
-                    tempPropertyValues.Append(propertyValue);                    
+                    tempPropertyValues.Append(propertyValue);              
                   }
                   else  // related property
                   {
@@ -362,6 +393,7 @@ namespace org.iringtools.adapter.projection
                     {
                       IDataObject relatedObject = relatedObjects[classIdentifierIndex];
                       string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+                      string keyValue = propertyValue;
                       propertyValue = ParsePropertyValue(roleMap, propertyValue);
 
                       if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
@@ -377,6 +409,7 @@ namespace org.iringtools.adapter.projection
                       foreach (IDataObject relatedObject in relatedObjects)
                       {
                         string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+                        string keyValue = propertyValue;
                         propertyValue = ParsePropertyValue(roleMap, propertyValue);
 
                         if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
@@ -410,7 +443,7 @@ namespace org.iringtools.adapter.projection
 
               if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
               {
-                BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
+                BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyPropertyNames,
                   propertyValues, sortIndex, ref sortType);
               }
             }
@@ -434,6 +467,22 @@ namespace org.iringtools.adapter.projection
         for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
           DataTransferObject dto = new DataTransferObject();
+
+          if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericDataObject)))
+          {
+            dto.hasContent = ((GenericDataObject)_dataObjects[dataObjectIndex]).HasContent;
+          }
+          else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
+          {
+            GenericContentObject contentObject = (GenericContentObject)_dataObjects[dataObjectIndex];
+            dto.hasContent = contentObject.HasContent;
+
+            if (_settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString()))
+            {
+              dto.content = contentObject.Content.ToMemoryStream().ToArray();
+            }
+          }
+
           dataTransferObjects.DataTransferObjectList.Add(dto);
 
           bool hasRelatedProperty;
@@ -595,6 +644,7 @@ namespace org.iringtools.adapter.projection
           if (propertyParts.Length == 2)  // direct property
           {
             string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+            string keyValue = propertyValue;
             propertyValue = ParsePropertyValue(propertyRole, propertyValue);
 
             RoleObject roleObject = new RoleObject()
@@ -645,6 +695,7 @@ namespace org.iringtools.adapter.projection
             {
               IDataObject relatedObject = relatedObjects[classIdentifierIndex];
               string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+              string keyValue = propertyValue;
               propertyValue = ParsePropertyValue(propertyRole, propertyValue);
               roleObject.value = propertyValue;
             }
@@ -655,6 +706,7 @@ namespace org.iringtools.adapter.projection
               foreach (IDataObject relatedObject in relatedObjects)
               {
                 string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+                string keyValue = propertyValue;
                 propertyValue = ParsePropertyValue(propertyRole, propertyValue);
 
                 if (!String.IsNullOrEmpty(propertyRole.valueListName))
@@ -751,12 +803,26 @@ namespace org.iringtools.adapter.projection
 
     private string ParsePropertyValue(RoleMap propertyRole, string propertyValue)
     {
-      string value = propertyValue;
+      string value = propertyValue.Trim();
 
       if (String.IsNullOrEmpty(propertyRole.valueListName))
       {
         if (propertyRole.dataType.ToLower().Contains("datetime"))
-          value = Utility.ToXsdDateTime(propertyValue);
+        {
+          value = Utility.ToXsdDateTime(value);
+        }
+        else if (propertyRole.dataType.ToLower().Contains("date"))
+        {
+            value = Utility.ToXsdDate(value);
+        }
+        else if (propertyRole.dataType == "xsd:string" &&
+          propertyRole.dataLength > 0 && value.Length > propertyRole.dataLength)
+        {
+          value = value.Substring(0, propertyRole.dataLength);
+
+          //value might contain trailing whitespaces when taking substring, trim it again
+          value = value.TrimEnd();
+        }
       }
       else  // resolve value list to uri
       {
@@ -851,34 +917,21 @@ namespace org.iringtools.adapter.projection
         }
         else
         {
-          // handle value list that has no uri map
           foreach (RoleMap roleMap in templateMap.roleMaps)
           {
-            if (!String.IsNullOrEmpty(roleMap.valueListName))
+            if (roleMap.type == RoleType.DataProperty || roleMap.type == RoleType.ObjectProperty ||
+              roleMap.type == RoleType.Property)
             {
-              ValueListMap valueListMap = _mapping.valueListMaps.Find(x => x.name.ToLower() == roleMap.valueListName.ToLower());
+              string[] propertyPath = roleMap.propertyName.Split('.');
+              string propertyName = propertyPath[propertyPath.Length - 1];
 
-              if (valueListMap != null && valueListMap.valueMaps != null)
+              if (propertyPath.Length > 2)  // related property
               {
-                ValueMap valueMap = valueListMap.valueMaps.Find(x => String.IsNullOrEmpty(x.uri));
-
-                if (valueMap != null)
-                {
-                  string[] propertyPath = roleMap.propertyName.Split('.');
-                  string propertyName = propertyPath[propertyPath.Length - 1];
-
-                  if (propertyPath.Length > 2)  // related property
-                  {
-                    List<string> values = new List<string>();         
-                    values.Add(valueMap.internalValue);
-
-                    SetRelatedRecords(dataObjectIndex, classObjectIndex, roleMap.propertyName, values);
-                  }
-                  else
-                  {
-                    _dataRecords[dataObjectIndex][propertyName] = valueMap.internalValue;
-                  }
-                }
+                SetRelatedRecords(dataObjectIndex, classObjectIndex, roleMap.propertyName, null);
+              }
+              else
+              {
+                _dataRecords[dataObjectIndex][propertyName] = null;
               }
             }
           }
@@ -907,7 +960,7 @@ namespace org.iringtools.adapter.projection
           {
             string value = roleObject.value;
 
-            if (!String.IsNullOrEmpty(roleMap.valueListName))
+            if (!string.IsNullOrEmpty(roleMap.valueListName))
             {
               value = _mapping.ResolveValueMap(roleMap.valueListName, value);
             }

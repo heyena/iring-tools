@@ -8,5 +8,5 @@ SELECT ?uri ?label ?rdsuri
   ?s dm:hasSuperclass ?c . 
   ?s dm:hasSubclass ?rdsuri .
   ?uri rds:rdsWipEquivalent ?rdsuri .
-  ?uri rdfs:label ?label 
+  ?rdsuri rdfs:label ?label .
 } 

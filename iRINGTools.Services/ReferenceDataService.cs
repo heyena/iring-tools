@@ -86,7 +86,7 @@ namespace org.iringtools.services
     /// </summary>
     [Description("Gets configured repositories.")]
     [WebGet(UriTemplate = "/repositories")]
-    public Repositories GetRepositories()
+    public List<Repository> GetRepositories()
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
@@ -195,7 +195,19 @@ namespace org.iringtools.services
       return _referenceDataProvider.GetEntityTypes();
     }
 
+       /// <summary>
+    /// return class details
+    /// </summary>
+    //[XmlSerializerFormat]
+    [Description("return class details from repository")]
+    [WebInvoke(UriTemplate = "/classes/{id}?namespace={namespace}")]
+    public QMXF GetClassFromRepository(string id, string @namespace, Repository repository)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
 
+      return _referenceDataProvider.GetClass(id, @namespace, repository);
+    }
     /// <summary>
     /// return class details
     /// </summary>
@@ -204,11 +216,13 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}?namespace={namespace}")]
     public QMXF GetClass(string id, string @namespace)
     {
+     
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-
+      
       return _referenceDataProvider.GetClass(id, @namespace, null);
     }
+
 
     /// <summary>
     /// return immediate superclasses of specified class
@@ -220,7 +234,7 @@ namespace org.iringtools.services
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _referenceDataProvider.GetSuperClasses(id);
+      return _referenceDataProvider.GetSuperClasses(id, null);
     }
 
     /// <summary>
@@ -246,7 +260,20 @@ namespace org.iringtools.services
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _referenceDataProvider.GetSubClasses(id);
+      return _referenceDataProvider.GetSubClasses(id, null);
+    }
+
+    /// <summary>
+    /// return immediate subclasses of specified class
+    /// </summary>
+    [Description("return immediate subclasses of specified class from repository")]
+    [WebInvoke(UriTemplate = "/classes/{id}/subclasses")]
+    public Entities GetSubClassesFromRepository(string id, Repository repository)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetSubClasses(id, repository);
     }
 
     /// <summary>
@@ -330,6 +357,19 @@ namespace org.iringtools.services
     /// <summary>
     /// members on a class
     /// </summary>
+    [Description("members on a class from repository")]
+    [WebInvoke(UriTemplate = "/classes/{id}/members")]
+    public Entities GetClassMembersFromRepository(string id, Repository repository)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetClassMembers(id, repository);
+    }
+
+    /// <summary>
+    /// members on a class
+    /// </summary>
     [Description("members on a class")]
     [WebGet(UriTemplate = "/classes/{id}/members")]
     public Entities GetClassMembers(string id)
@@ -337,7 +377,7 @@ namespace org.iringtools.services
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _referenceDataProvider.GetClassMembers(id);
+      return _referenceDataProvider.GetClassMembers(id, null);
     }
   }
 }

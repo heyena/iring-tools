@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dto="http://www.iringtools.org/dxfr/dto" name="exchangePoolOut">
+	<aggregate>
+		<correlateOn expression="//dto:dataTransferObjects" />
+		<completeCondition>
+			<messageCount min="-1" max="-1" />
+		</completeCondition>
+		<onComplete expression="//dto:dataTransferObjects">
+			<script language="js"><![CDATA[
+        var soapenv = new Namespace("http://schemas.xmlsoap.org/soap/envelope/");
+        var payload = mc.getEnvelopeXML().soapenv::Body.*;                   
+        mc.setPayloadXML(
+          <resp:exchangeResponse xmlns:resp="http://wso2.org/response">
+           {payload}
+          </resp:exchangeResponse>);
+      ]]></script>
+			<log level="custom">
+				<property name="EXCHANGE_POOL_OUT" expression="*" />
+			</log>
+			<send />
+		</onComplete>
+	</aggregate>
+</sequence>

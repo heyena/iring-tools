@@ -25,16 +25,16 @@
          provides technology solution providers with usage patterns for the implementation of iRING protocols in their respective 
          solutions.</p><br>
       <p>The iRINGTools open source software was created to provide users with a deployable implementation of ISO 15926 
-         services. With iRINGTools you can browse and extend ISO 15926 reference data, map an application schema to the<br>
-         ISO 15926 reference data, and transform an application's data into an ISO 15926 representation. iRINGTools can perform 
-         these functions via the following services:</p><br>
+      	 services. With iRINGTools you can browse and extend ISO 15926 reference data, map an application schema to the<br>
+      	 ISO 15926 reference data, and transform an application's data into an ISO 15926 representation. iRINGTools can perform 
+      	 these functions via the following services:</p><br>
       <h2>iRINGTools Applications</h2>
       <ul>
       <li><a href="services/sandbox/sparql/query">Sandbox SPARQL Query</a></li>
       <!--<li><a href="<%=ResolveUrl("~/RefDataEditor") %>">Reference Data Editor</a></li>-->
       <li><a href="<%=ResolveUrl("~/AdapterManager") %>">Adapter Manager</a></li>
       <li><a href="services/facade/sparql/query">Facade SPARQL Query</a></li>
-      </ul>
+	    </ul>
     </div>
   </body>
 </html>

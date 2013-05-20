@@ -11,7 +11,7 @@ using log4net;
 
 public static class ConfigFile
 {
-	private static readonly ILog _logger = LogManager.GetLogger(typeof(ConfigFile));
+  private static readonly ILog _logger = LogManager.GetLogger(typeof(ConfigFile));
     
     public const string AppSettings = "appSettings";
 
@@ -56,11 +56,15 @@ public static class ConfigFile
 
             System.Xml.XmlNode nodeList = xmlDoc.ChildNodes[0];
             foreach (System.Xml.XmlNode node in nodeList)
-                retList.Add(node.Attributes[0].Value, node.Attributes[1].Value);
+            {
+              if (node.Attributes != null)
+                if (node.Attributes[0] != null && node.Attributes[1].Value != null)
+                  retList.Add(node.Attributes[0].Value, node.Attributes[1].Value);
+            }
         }
         catch (Exception ex) {
-					_logger.Error("Error in GetSection: " + ex);
-				}
+          _logger.Error("Error in GetSection: " + ex);
+        }
 
         // If an append list is provided then add it to the list we are returning
         if (appendList != null && appendList.Count > 0)
@@ -90,8 +94,8 @@ public static class ConfigFile
                     return node.Attributes[1].Value;
         }
         catch (Exception ex){
-					_logger.Error("Error in GetSection: " + ex);
-				}
+          _logger.Error("Error in GetSection: " + ex);
+        }
 
         return "";
     }

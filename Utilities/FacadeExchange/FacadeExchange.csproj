@@ -40,9 +40,8 @@
     <ApplicationIcon>Resources\iRING.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF, Version=0.5.0.20572, Culture=neutral, PublicKeyToken=8b91af99db2769f2, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\dotnetRDF\core\net35\dotNetRDF.dll</HintPath>
+    <Reference Include="dotNetRDF">
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -98,6 +97,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -123,6 +125,16 @@
     <Resource Include="Resources\info_22.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary.Desktop</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Resources\iRINGTools_logo_small.png" />
   </ItemGroup>
   <ItemGroup>
@@ -135,19 +147,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
-      <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
-      <Name>iRINGLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
-      <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
-      <Name>UtilityLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if not exist $(ProjectDir)\app.config copy $(ProjectDir)\app_Default.config $(ProjectDir)\app.config</PreBuildEvent>
+    <PreBuildEvent>if not exist "$(ProjectDir)\app.config" copy "$(ProjectDir)\app_Default.config" "$(ProjectDir)\app.config"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

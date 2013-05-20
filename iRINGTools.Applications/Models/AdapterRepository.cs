@@ -6,112 +6,160 @@ using System.Configuration;
 using System.Linq;
 using System.Xml.Linq;
 using System.Web;
-using Ninject;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using System.Text;
-using System.Collections;
 using System.Net;
 using System.IO;
+using System.Threading.Tasks;
+using System.Threading;
 
 
 namespace iRINGTools.Web.Models
 {
   public class AdapterRepository : IAdapterRepository
   {
-    private ServiceSettings _settings = null;
-    private WebHttpClient _adapterServiceClient = null;
-    private WebHttpClient _hibernateServiceClient = null;
-    private WebHttpClient _referenceDataServiceClient = null;
-    private WebHttpClient _javaServiceClient = null;
-    private string proxyHost = "";
-    private string proxyPort = "";
-    private WebProxy webProxy = null;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
-    private static Dictionary<string, NodeIconCls> nodeIconClsMap;
-    private string combinationMsg = null;
-    private string adapterServiceUri = "";
-    private string hibernateServiceUri = "";
-    private string referenceDataServiceUri = "";
 
-    [Inject]
+    protected ServiceSettings _settings;
+    protected string _proxyHost;
+    protected string _proxyPort;
+    protected string _adapterServiceUri = null;
+    protected string _dataServiceUri = null;
+    protected string _hibernateServiceUri = null;
+    protected string _referenceDataServiceUri = null;
+
+    public IDictionary<string, string> AuthHeaders { get; set; }
+
     public AdapterRepository()
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
+
       _settings = new ServiceSettings();
       _settings.AppendSettings(settings);
-      #region initialize webHttpClient for converting old mapping
-      proxyHost = _settings["ProxyHost"];
-      proxyPort = _settings["ProxyPort"];
-      adapterServiceUri = _settings["AdapterServiceUri"];
-      string javaCoreUri = _settings["JavaCoreUri"];
-      hibernateServiceUri = _settings["NHibernateServiceUri"];
-      referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
-      SetNodeIconClsMap();
 
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      _proxyHost = _settings["ProxyHost"];
+      _proxyPort = _settings["ProxyPort"];
+
+      _adapterServiceUri = _settings["AdapterServiceUri"];
+      if (_adapterServiceUri.EndsWith("/"))
+        _adapterServiceUri = _adapterServiceUri.Remove(_adapterServiceUri.Length - 1);
+
+      _dataServiceUri = _settings["DataServiceUri"];
+      if (_dataServiceUri.EndsWith("/"))
+        _dataServiceUri = _dataServiceUri.Remove(_dataServiceUri.Length - 1);
+
+      _hibernateServiceUri = _settings["HibernateServiceUri"];
+      if (_hibernateServiceUri.EndsWith("/"))
+        _hibernateServiceUri = _hibernateServiceUri.Remove(_hibernateServiceUri.Length - 1);
+
+      _referenceDataServiceUri = _settings["RefDataServiceUri"];
+      if (_referenceDataServiceUri.EndsWith("/"))
+        _referenceDataServiceUri = _referenceDataServiceUri.Remove(_referenceDataServiceUri.Length - 1);
+    }
+
+    public HttpSessionStateBase Session { get; set; }
+
+    protected WebHttpClient CreateWebClient(string baseUri)
+    {
+      WebHttpClient client = null;
+
+      if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
       {
-        webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-        _javaServiceClient = new WebHttpClient(javaCoreUri, null, webProxy);
-        _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
-        _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
-        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri, null, webProxy);
+        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+        client = new WebHttpClient(baseUri, null, webProxy);
       }
       else
       {
-        _javaServiceClient = new WebHttpClient(javaCoreUri);
-        _adapterServiceClient = new WebHttpClient(adapterServiceUri);
-        _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
-        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri);
+        client = new WebHttpClient(baseUri);
       }
-      #endregion
-    }
 
-    public WebHttpClient getServiceClient(string uri, string serviceName)
-    {
-      getSetting();
-      WebHttpClient _newServiceClient = null;
-      string serviceUri = uri + "/" + serviceName;
-
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      if (AuthHeaders != null && AuthHeaders.Count > 0)
       {
-        _newServiceClient = new WebHttpClient(serviceUri, null, webProxy);
+        _logger.Debug("Injecting authorization [" + AuthHeaders.Count + "] headers.");
+        client.Headers = AuthHeaders;
       }
       else
       {
-        _newServiceClient = new WebHttpClient(serviceUri);       
+        _logger.Debug("No authorization headers.");
       }
-      return _newServiceClient;
+
+      return client;
     }
 
-    public Resources GetResource(String user)
+    protected T WaitForRequestCompletion<T>(string baseUri, string statusUrl)
     {
-      Resources resources = null;      
+      T obj;
 
       try
       {
-        resources = _javaServiceClient.Get<Resources>("/directory/resources", true);
-        HttpContext.Current.Session[user + "." + "resources"] = resources; 
+        long timeoutCount = 0;
+
+        long asyncTimeout = 1800;  // seconds
+        if (_settings["AsyncTimeout"] != null)
+        {
+          long.TryParse(_settings["AsyncTimeout"], out asyncTimeout);
+        }
+        asyncTimeout *= 1000;  // convert to milliseconds
+
+        int asyncPollingInterval = 2;  // seconds
+        if (_settings["AsyncPollingInterval"] != null)
+        {
+          int.TryParse(_settings["AsyncPollingInterval"], out asyncPollingInterval);
+        }
+        asyncPollingInterval *= 1000;  // convert to milliseconds
+
+        WebHttpClient client = CreateWebClient(baseUri);
+        RequestStatus requestStatus = null;
+
+        while (timeoutCount < asyncTimeout)
+        {
+          requestStatus = client.Get<RequestStatus>(statusUrl);
+
+          if (requestStatus.State != State.InProgress)
+            break;
+
+          Thread.Sleep(asyncPollingInterval);
+          timeoutCount += asyncPollingInterval;
+        }
+
+        if (requestStatus.State != State.Completed)
+        {
+          throw new Exception(requestStatus.Message);
+        }
+
+        if (typeof(T) == typeof(string))
+        {
+          obj = (T)Convert.ChangeType(requestStatus.ResponseText, typeof(T));
+        }
+        else
+        {
+          obj = Utility.Deserialize<T>(requestStatus.ResponseText, true);
+        }
       }
       catch (Exception ex)
       {
-        _logger.Error(ex.ToString());
+        _logger.Error(ex.Message);
+        throw ex;
       }
 
-      return resources;
+      return obj;
     }
 
-    public Directories GetScopes()
+    public ScopeProjects GetScopes()
     {
       _logger.Debug("In AdapterRepository GetScopes");
-      Directories obj = null;     
+
+      ScopeProjects obj = null;
 
       try
       {
-        obj = _javaServiceClient.Get<Directories>("/directory", true);             
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        obj = client.Get<ScopeProjects>("/scopes");
+
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -120,149 +168,17 @@ namespace iRINGTools.Web.Models
       }
 
       return obj;
+
     }
 
-    public string GetNodeIconCls(string type)
-    {
-      try
-      {
-        switch (nodeIconClsMap[type.ToLower()])
-        {
-          case NodeIconCls.folder: return "folder";
-          case NodeIconCls.project: return "treeProject";
-          case NodeIconCls.application: return "application";
-          case NodeIconCls.resource: return "resource";
-          case NodeIconCls.key: return "treeKey";
-          case NodeIconCls.property: return "treeProperty";
-          case NodeIconCls.relation: return "treeRelation";
-          default: return "folder";
-        }
-      }
-      catch (Exception)
-      {
-        return "folder";
-      }
-    }
-
-    public Tree GetDirectoryTree(string user)
-    {
-      _logger.Debug("In ScopesNode case block");
-      Directories directory = null;
-      Resources resources = null;
-
-      string _key = user + "." + "directory";
-      string _resource = user + "." + "resource";
-      directory = GetScopes();
-      HttpContext.Current.Session[_key] = directory; 
-      resources = GetResource(user);
-
-      Tree tree = null;
-      string context = "";
-      string treePath = "";
-
-      if (directory != null)
-      {
-        tree = new Tree();
-        List<JsonTreeNode> folderNodes = tree.getNodes();
-
-        foreach (Folder folder in directory)
-        {
-          TreeNode folderNode = new TreeNode();
-          folderNode.text = folder.Name;
-          folderNode.id = folder.Name;
-          folderNode.identifier = folderNode.id;
-          folderNode.hidden = false;
-          folderNode.leaf = false;
-          folderNode.iconCls = GetNodeIconCls(folder.Type);
-          folderNode.type = "folder";
-          treePath = folder.Name;
-
-          if (folder.Context != null)
-            context = folder.Context;
-
-          Object record = new
-          {
-            Name = folder.Name,
-            context = context,
-            Description = folder.Description,
-            securityRole = folder.SecurityRole
-          };
-
-          folderNode.record = record;
-          folderNode.property = new Dictionary<string, string>();
-          folderNode.property.Add("Name", folder.Name);
-          folderNode.property.Add("Description", folder.Description);
-          folderNode.property.Add("Context", folder.Context);
-          folderNode.property.Add("User", folder.User);
-          folderNodes.Add(folderNode);
-          TraverseDirectory(folderNode, folder, treePath);
-        }
-      }
-     
-      return tree;
-    }
-
-    public XElement GetBinding(string context, string endpoint, string baseUrl)
-    {
-      XElement obj = null;
-
-      try
-      {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<XElement>(String.Format("/{0}/{1}/binding", context, endpoint), true);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(ex.ToString());
-      }
-
-      return obj;
-    }
-
-    public string TestBaseUrl(string baseUrl)
-    {
-      string obj = null;
-
-      try
-      {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<string>("/test");
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(ex.ToString());
-        return "ERROR";
-      }
-
-      return obj;
-    }
-
-    public string PostScopes(Directories scopes)
-    {
-      string obj = null;
-
-      try
-      {
-        obj = _javaServiceClient.Post<Directories>("/directory", scopes, true);
-        _logger.Debug("Successfully called Adapter.");
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(ex.ToString());
-      }
-
-      return obj;
-    }
-
-    
-    public DataLayers GetDataLayers(string baseUrl)
+    public DataLayers GetDataLayers()
     {
       DataLayers obj = null;
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<DataLayers>("/datalayers");
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        obj = client.Get<DataLayers>("/datalayers");
       }
       catch (Exception ex)
       {
@@ -277,8 +193,8 @@ namespace iRINGTools.Web.Models
       Entity entity = new Entity();
       try
       {
-        WebHttpClient _tempClient = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
-        entity = _tempClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
+        WebHttpClient client = CreateWebClient(_referenceDataServiceUri);
+        entity = client.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
       }
       catch (Exception ex)
       {
@@ -287,14 +203,22 @@ namespace iRINGTools.Web.Models
       return entity;
     }
 
-    public DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl)
+    public ScopeProject GetScope(string scopeName)
     {
-      DataDictionary obj = null;
+      ScopeProjects scopes = GetScopes();
+
+      return scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
+    }
+
+    public ScopeApplication GetScopeApplication(string scopeName, string applicationName)
+    {
+      ScopeProject scope = GetScope(scopeName);
+
+      ScopeApplication obj = null;
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", contextName, endpoint), true);
+        obj = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == applicationName);
       }
       catch (Exception ex)
       {
@@ -304,14 +228,49 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public Mapping GetMapping(string contextName, string endpoint, string baseUrl)
+    public DataDictionary GetDictionary(string scopeName, string applicationName)
+    {
+      DataDictionary dictionary = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_dataServiceUri);        
+        string isAsync = _settings["Async"];
+
+        if (isAsync != null && isAsync.ToLower() == "true")
+        {
+          client.Async = true;
+          string statusUrl = client.Get<string>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName));
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          dictionary = WaitForRequestCompletion<DataDictionary>(_dataServiceUri, statusUrl);
+        }
+        else
+        {
+          dictionary = client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName), true);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        throw ex;
+      }
+
+      return dictionary;
+    }
+
+    public Mapping GetMapping(string scopeName, string applicationName)
     {
       Mapping obj = null;
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", contextName, endpoint), true);
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);        
+        obj = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
       }
       catch (Exception ex)
       {
@@ -321,24 +280,41 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string UpdateBinding(string scope, string application, string dataLayer, string baseUrl)
+    public XElement GetBinding(string scope, string application)
+    {
+      XElement obj = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);        
+        obj = client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        throw ex;
+      }
+
+      return obj;
+    }
+
+    public string UpdateBinding(string scope, string application, string dataLayer)
     {
       string obj = null;
 
       try
       {
         XElement binding = new XElement("module",
-            new XAttribute("name", string.Format("{0}.{1}", scope, application)),
-            new XElement("bind",
+          new XAttribute("name", string.Format("{0}.{1}", scope, application)),
+          new XElement("bind",
             new XAttribute("name", "DataLayer"),
             new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
             new XAttribute("to", dataLayer)
           )
         );
 
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        obj = _newServiceClient.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
-
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);        
+        obj = client.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
       }
       catch (Exception ex)
       {
@@ -348,299 +324,203 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string GetRootSecurityRole()
+    public DataLayer GetDataLayer(string scopeName, string applicationName)
     {
-      string rootSecurityRole = "";
+      DataLayer dataLayer = null;
+      XElement binding = GetBinding(scopeName, applicationName);
 
-      try
+      if (binding != null)
       {
-        rootSecurityRole = _javaServiceClient.GetMessage("/directory/security");
-        _logger.Debug("Successfully called Adapter.");
+        _logger.Debug("Received data layer binding: " + binding.ToString());
+
+        dataLayer = new DataLayer();
+        dataLayer.Assembly = binding.Element("bind").Attribute("to").Value;
+        dataLayer.Name = binding.Element("bind").Attribute("to").Value.Split(',')[1].Trim();
       }
-      catch (Exception ex)
-      {
-        _logger.Error(ex.ToString());
-      }
-
-      return rootSecurityRole;
-    }
-
-    public string GetUserLdap()
-    {
-      return _javaServiceClient.GetMessage("/directory/userldap");
-    }
-
-    public Urls GetEndpointBaseUrl(string user)
-    {
-      bool ifExit = false;
-      Urls baseUrls = null;
-
-      if (HttpContext.Current.Session[user + ".baseUrlList"] != null)
-        baseUrls = (Urls)HttpContext.Current.Session[user + ".baseUrlList"];
       else
       {
-        try
-        {
-          baseUrls = _javaServiceClient.Get<Urls>("/directory/baseUrls", true);
-          HttpContext.Current.Session[user + ".baseUrlList"] = baseUrls;
-          _logger.Debug("Successfully called Adapter.");
-        }
-        catch (Exception ex)
-        {
-          _logger.Error(ex.ToString());
-        }
-      }        
-
-      string baseUri = _adapterServiceClient.GetBaseUri();
-
-
-      foreach (Url baseUrl in baseUrls)
-      {
-        if (baseUrl.Urlocator.ToLower().Equals(baseUri.ToLower()))
-          ifExit = true;
+        throw new Exception("Error getting data layer binding configuration for [" + scopeName + "." + applicationName + "]");
       }
 
-      if (!ifExit)
-      {
-        Url newBaseUrl = new Url { Urlocator = baseUri };
-        baseUrls.Add(newBaseUrl);
-      }
-
-      return baseUrls;
+      return dataLayer;
     }
 
-    public ContextNames GetFolderContexts(string user)
-    {
-      ContextNames contextNames = null;
-      if (HttpContext.Current.Session[user + ".contextList"] != null)
-        contextNames = (ContextNames)HttpContext.Current.Session[user + ".contextList"];
-      else
-      {
-        try
-        {
-          contextNames = _javaServiceClient.Get<ContextNames>("/directory/contextNames", true);
-          HttpContext.Current.Session[user + ".contextList"] = contextNames;
-          _logger.Debug("Successfully called Adapter.");
-        }
-        catch (Exception ex)
-        {
-          _logger.Error(ex.ToString());
-        }
-      }
-
-      return contextNames;
-    }
-
-    public string Folder(string newFolderName, string description, string path, string state, string context, string oldContext, string user)
+    public string AddScope(string name, string description)
     {
       string obj = null;
 
-      if (context == "")
-        context = "0";
-
-      if (state.Equals("new"))
-      {
-        if (path != "")
-          path = path + '.' + newFolderName;
-        else
-          path = newFolderName;        
-      }
-     
-      path = path.Replace('/', '.');       
-
       try
       {
-        if (!state.Equals("new"))        
-          CheckCombination(path, context, oldContext, user);
-
-        Resources resources = (Resources)HttpContext.Current.Session[user + ".resources"];
-        obj = _javaServiceClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
-
-        if (state != "new" && !context.Equals(oldContext))
+        ScopeProject scope = new ScopeProject()
         {
-          Folder folder = PrepareFolder(user, path);
+          Name = name,
+          Description = description
+        };
 
-          if (folder != null)
-            obj = UpdateFolders(folder, context, resources, oldContext);          
-        }
-
-        _logger.Debug("Successfully called Adapter and Java Directory Service.");    
-        ClearDirSession(user);        
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        obj = client.Post<ScopeProject>("/scopes", scope, true);
       }
       catch (Exception ex)
       {
         _logger.Error(ex.ToString());
-        obj = "ERROR";
-      }      
+      }
 
       return obj;
     }
 
-    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string oldAssembly, string newAssembly, string baseUrl, string oldBaseUrl, string key)
+    public string UpdateScope(string name, string newName, string newDescription)
     {
-      string obj = "";
-      Locator scope = null;
-      EndpointApplication application = null;
-      string endpointName = null;
-      Resource resourceOld = null;
-      Resource resourceNew = null;
-      bool createApp = false;
-
-      string baseUri = CleanBaseUrl(baseUrl, '.');
-      if (state.Equals("new"))
-      {
-        path = path + '/' + newEndpointName;
-        endpointName = newEndpointName;
-        oldAssembly = newAssembly;
-        oldBaseUrl = baseUrl;
-      }
-      else
-      {
-        endpointName = path.Substring(path.LastIndexOf('/') + 1);
-      }
-
-      path = path.Replace('/', '.');      
+      string obj = null;
 
       try
       {
-        WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-        CheckeCombination(baseUrl, oldBaseUrl, context, context, newEndpointName, endpointName, path, key);
-        Resources resourcesOld = (Resources)HttpContext.Current.Session[key + ".resources"];
-        obj = _javaServiceClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}/{4}", path, newEndpointName, "endpoint", baseUri.Replace('/', '.'), newAssembly), description, true);
-        Resources resourcesNew = GetResource(key); 
-
-        
-        if (!state.Equals("new"))
+        ScopeProject scope = new ScopeProject()
         {
-          if (newAssembly.ToLower() == oldAssembly.ToLower() && newEndpointName.ToLower() == endpointName.ToLower())
-            return "";
-          
-          resourceOld = FindResource(CleanBaseUrl(baseUrl, '/'), resourcesOld); 
-            
-          if (resourceOld != null)
-          {
-            scope = resourceOld.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
-            application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpointName.ToLower());
-            if (application == null)
-              createApp = true;
-          }
-          else
-            createApp = true;
+          Name = newName,
+          Description = newDescription
+        };
 
-          if (createApp)
-          {
-            application = new EndpointApplication()
-            {
-              Endpoint = endpointName,
-              Description = description,
-              Assembly = oldAssembly
-            };
-          }
-          
-          obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps/{1}", context, newEndpointName), application, true);
-        }
-        else if (state.Equals("new"))
-        {
-          resourceNew = FindResource(CleanBaseUrl(baseUrl, '.'), resourcesNew);           
-
-          if (resourceNew != null)
-          {
-            scope = resourceNew.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
-            application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == newEndpointName.ToLower());
-          }
-          else
-          {
-            application = new EndpointApplication()
-            {
-              Endpoint = newEndpointName,
-              Description = description,
-              Assembly = newAssembly
-            };
-          }
-
-          obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps", context), application, true);          
-        }
-
-        _logger.Debug("Successfully called Adapter and Java Directory Service.");
-        ClearDirSession(key);
+        string uri = string.Format("/scopes/{0}", name);
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        obj = client.Post<ScopeProject>(uri, scope, true);
       }
       catch (Exception ex)
       {
-        _logger.Error(ex.Message.ToString());
-        obj = "ERROR";
-      }     
+        _logger.Error(ex.ToString());
+      }
 
       return obj;
     }
 
-    public string DeleteEntry(string path, string type, string context, string baseUrl, string user)
+    public string DeleteScope(string name)
     {
-      string obj = null;     
-
-      string name = null;
-      path = path.Replace('/', '.');
-      Locator scope = null;
-      EndpointApplication application = null;
+      string obj = null;
 
       try
       {
-        Resources resources = (Resources)HttpContext.Current.Session[user + ".resources"];
-        name = path.Substring(path.LastIndexOf('.') + 1);                  
-
-        if (type.Equals("endpoint"))
-        {
-          Resource resource = FindResource(CleanBaseUrl(baseUrl, '/'), resources);
-          scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
-          application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == name.ToLower());
-
-          WebHttpClient _newServiceClient = PrepareServiceClient(baseUrl, "adapter");
-          obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
-        }
-        else if (type.Equals("folder"))
-        {
-          Folder folder = PrepareFolder(user, path);
-
-          if (folder != null)
-            DeleteFolders(folder, context, resources);          
-        }
-
-        obj = _javaServiceClient.Post<String>(String.Format("/directory/{0}", path), "", true);
-        _logger.Debug("Successfully called Adapter.");      
-        ClearDirSession(user);
+        string uri = String.Format("/scopes/{0}/delete", name);
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        obj = client.Get<string>(uri, true);
       }
       catch (Exception ex)
       {
-        _logger.Error(ex.Message.ToString());
+        _logger.Error(ex.ToString());
       }
 
       return obj;
     }
 
-    public Response RegenAll(string user)
+    public string AddApplication(string scopeName, ScopeApplication application)
     {
-      Response totalObj = new Response();
-      string _key = user + "." + "directory";
-      Directories directory = null;
-      if (HttpContext.Current.Session[_key] != null)      
-        directory = (Directories)HttpContext.Current.Session[_key];
+      string obj = null;
 
-      foreach (Folder folder in directory)
+      try
       {
-        GenerateFolders(folder, totalObj);
+        string uri = String.Format("/scopes/{0}/apps", scopeName);
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        obj = client.Post<ScopeApplication>(uri, application, true);
       }
-      return totalObj;      
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return obj;
+    }
+
+    public string UpdateApplication(string scopeName, string applicationName, ScopeApplication application)
+    {
+      string obj = null;
+
+      try
+      {
+        string uri = String.Format("/scopes/{0}/apps/{1}", scopeName, applicationName);
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        obj = client.Post<ScopeApplication>(uri, application, true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return obj;
+    }
+
+    public string DeleteApplication(string scopeName, string applicationName)
+    {
+      string obj = null;
+
+      try
+      {
+        string uri = String.Format("/scopes/{0}/apps/{1}/delete", scopeName, applicationName);
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        obj = client.Get<string>(uri, true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return obj;
+    }
+
+    public Response Refresh(string scope, string application)
+    {
+      Response response = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        string isAsync = _settings["Async"];
+
+        if (isAsync != null && isAsync.ToLower() == "true")
+        {
+          client.Async = true;
+          string statusUrl = client.Get<string>(String.Format("/{0}/{1}/refresh?format=xml", scope, application));
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);
+        }
+        else
+        {
+          response = client.Get<Response>(String.Format("/{0}/{1}/refresh?format=xml", scope, application), true);
+        }
+
+        string dictKey = string.Format("Dictionary.{0}.{1}", scope, application);
+        Session.Remove(dictKey);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+
+        response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
+      }
+
+      return response;
+    }
+
+    public Response Refresh(string scope, string application, string dataObjectName)
+    {
+      WebHttpClient client = CreateWebClient(_adapterServiceUri);
+      Response response = client.Get<Response>(String.Format("/{0}/{1}/{2}/refresh", scope, application, dataObjectName));
+      return response;
     }
     
-    public string GetCombinationMsg()
-    {
-      return combinationMsg;
-    }
-
-    public Response SaveDataLayer(MemoryStream dataLayerStream)
+    public Response UpdateDataLayer(MemoryStream dataLayerStream)
     {
       try
       {
-        return Utility.Deserialize<Response>(_adapterServiceClient.PostStream("/datalayers", dataLayerStream), true);
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        Response response = Utility.Deserialize<Response>(client.PostStream("/datalayers", dataLayerStream), true);
+        return response;
       }
       catch (Exception ex)
       {
@@ -655,476 +535,225 @@ namespace iRINGTools.Web.Models
         return response;
       }
     }
-    
-    #region Private methods for Directory 
 
-    static MemoryStream CreateDataLayerStream(string name, string mainDLL, string path)
+    #region NHibernate Configuration Wizard support methods
+    public DataProviders GetDBProviders()
     {
-      DataLayer dataLayer = new DataLayer()
-      {
-        Name = name,
-        MainDLL = mainDLL,
-        Package = Utility.Zip(path),
-      };
-
-      MemoryStream dataLayerStream = new MemoryStream();
-      DataContractSerializer serializer = new DataContractSerializer(typeof(DataLayer));
-      
-      serializer.WriteObject(dataLayerStream, dataLayer);
-      dataLayerStream.Position = 0;
-
-      return dataLayerStream;
+      WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+      return client.Get<DataProviders>("/providers");
     }
 
-    private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
+    public string SaveDBDictionary(string scope, string application, string tree)
     {
-      if (baseUrl == "" || baseUrl == null)
-        return _adapterServiceClient;
+      DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
 
-      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
-      string adapterBaseUri = CleanBaseUrl(adapterServiceUri.ToLower(), '/');
-
-      if (!baseUri.Equals(adapterBaseUri))
-        return getServiceClient(baseUrl, serviceName);
-      else
-        return _adapterServiceClient;
-    }
-
-    private Response GenerateFolders(Folder folder, Response totalObj)
-    {
-      Response obj = null;
-      Endpoints endpoints = folder.Endpoints;      
-
-      if (endpoints != null)
+      string connStr = dbDictionary.ConnectionString;
+      if (!String.IsNullOrEmpty(connStr))
       {
-        foreach (Endpoint endpoint in endpoints)
-        {
-          WebHttpClient _newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
-          obj = _newServiceClient.Get<Response>(String.Format("/{0}/{1}/generate", endpoint.Context, endpoint.Name));
-          totalObj.Append(obj);          
-        }
+        string urlEncodedConnStr = Utility.DecodeFrom64(connStr);
+        dbDictionary.ConnectionString = HttpUtility.UrlDecode(urlEncodedConnStr);
       }
 
-      Folders subFolders = folder.Folders;
-
-      if (subFolders == null)
-        return totalObj;
-      else
-      {
-        foreach (Folder subFolder in subFolders)
-        {
-          obj = GenerateFolders(subFolder, totalObj);
-        }
-      }
-
-      return totalObj;
-    }
-
-    private Folder PrepareFolder(string user, string path)
-    {
-      string _key = user + "." + "directory";
-      if (HttpContext.Current.Session[_key] != null)
-      {
-        Directories directory = (Directories)HttpContext.Current.Session[_key];
-        return FindFolder(directory, path);        
-      }
-      return null;
-    }
-
-    private void getSetting()
-    {
-      if (_settings == null)
-        _settings = new ServiceSettings();
-      
-      proxyHost = _settings["ProxyHost"];
-      proxyPort = _settings["ProxyPort"];
-    }
-
-    private string UpdateFolders(Folder folder, string context, Resources resources, String oldContext)
-    {
-      string obj = null;
-      Endpoints endpoints = folder.Endpoints;
-      Resource resource = null;
-
-      if (endpoints != null)
-      {
-        foreach (Endpoint endpoint in folder.Endpoints)
-        {
-          resource = FindResource(endpoint.BaseUrl, resources);
-          Locator scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == oldContext.ToLower());
-
-          WebHttpClient _newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
-          obj = _newServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
-        }
-      }
-
-      Folders subFolders = folder.Folders;
-
-      if (subFolders == null)
-        return null;
-      else
-      {
-        foreach (Folder subFolder in subFolders)
-        {
-          obj = UpdateFolders(subFolder, context, resources, oldContext);
-        }
-      }
-
-      return obj;
-    }
-
-    private string DeleteFolders(Folder folder, string context, Resources resources)
-    {
-      string obj = null;
-      Endpoints endpoints = folder.Endpoints;    
-      Resource resource = null;
-      EndpointApplication application = null;
-
-      Locator scope = null;
-
-      if (endpoints != null)
-      {
-        foreach (Endpoint endpoint in endpoints)
-        {
-          resource = FindResource(endpoint.BaseUrl, resources);
-          scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
-          application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpoint.Name.ToLower());
-
-          WebHttpClient _newServiceClient = PrepareServiceClient(endpoint.BaseUrl, "adapter");
-          obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
-        }
-      }
-
-      Folders subFolders = folder.Folders;
-
-      if (subFolders == null)
-        return null;
-      else
-      {
-        foreach (Folder subFolder in subFolders)
-        {
-          obj = DeleteFolders(subFolder, context, resources);
-        }
-      }
-
-      return obj;
-    }
-
-    private static void SetNodeIconClsMap()
-    {
-      nodeIconClsMap = new Dictionary<string, NodeIconCls>()
-      {
-  	    {"folder", NodeIconCls.folder},
-  	    {"project", NodeIconCls.project},
-  	    {"scope", NodeIconCls.scope},
-  	    {"proj", NodeIconCls.project},
-  	    {"application", NodeIconCls.application},
-  	    {"app", NodeIconCls.application},
-  	    {"resource", NodeIconCls.resource},
-  	    {"resrc", NodeIconCls.resource}, 	
-        {"key", NodeIconCls.key}, 
-        {"property", NodeIconCls.property}, 
-        {"relation", NodeIconCls.relation} 
-      };
-    }
-    
-    private void ClearDirSession(string user)
-    {
-      if (HttpContext.Current.Session[user + "." + "directory"] != null)
-        HttpContext.Current.Session[user + "." + "directory"] = null;
-
-      if (HttpContext.Current.Session[user + "." + "resource"] != null)
-        HttpContext.Current.Session[user + "." + "resource"] = null;
-    }
-
-    private Resource FindResource(string baseUrl, Resources resources)
-    {
-      foreach (Resource rc in resources)
-      {
-        if (rc.BaseUrl.ToLower().Equals(baseUrl.ToLower()))
-        {
-          return rc;
-        }
-      }
-      return null;
-    }
-
-    private string CleanBaseUrl(string url, char con)
-    {
+      string postResult = null;
       try
       {
-        System.Uri uri = new System.Uri(url);
-        return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
+        WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+        postResult = client.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
       }
-      catch(Exception){}
-      return null;
+      catch (Exception ex)
+      {
+        _logger.Error("Error posting DatabaseDictionary." + ex);
+      }
+      return postResult;
     }
 
-    private void CheckeCombination(string baseUrl, string oldBaseUrl, string context, string oldContext, string endpointName, string oldEndpointName, string path, string user)
+    public DatabaseDictionary GetDBDictionary(string scope, string application)
     {
-      string _resource = user + ".resources";
-      string lpath = "";
-      Locator scope = null;
+      WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+      DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
 
-      if (HttpContext.Current.Session[_resource] != null)
+      string connStr = dbDictionary.ConnectionString;
+      if (!String.IsNullOrEmpty(connStr))
       {
-        Resources resources = (Resources)HttpContext.Current.Session[_resource];
-        Resource resource = FindResource(CleanBaseUrl(oldBaseUrl, '/'), resources);
+        dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
+      }
 
-        if (resource != null)
-          scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
-        
-        if (scope != null)
+      return dbDictionary;
+    }
+
+    public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
+      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string portNumber, string serName)
+    {
+      var uri = String.Format("/{0}/{1}/tables", scope, application);
+
+      Request request = new Request();
+      request.Add("dbProvider", dbProvider);
+      request.Add("dbServer", dbServer);
+      request.Add("portNumber", portNumber);
+      request.Add("dbInstance", dbInstance);
+      request.Add("dbName", dbName);
+      request.Add("dbSchema", dbSchema);
+      request.Add("dbUserName", dbUserName);
+      request.Add("dbPassword", dbPassword);
+      request.Add("serName", serName);
+
+      WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+      return client.Post<Request, List<string>>(uri, request, true);
+    }
+
+    // use appropriate icons especially node with children
+    public List<JsonTreeNode> GetDBObjects(string scope, string application, string dbProvider, string dbServer,
+      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName)
+    {
+      List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
+      bool hasDBDictionary = false;
+      bool hasDataObjectinDBDictionary = false;
+      DatabaseDictionary dbDictionary = null;
+      string uri = String.Format("/{0}/{1}/objects", scope, application);
+
+      Request request = new Request();
+      request.Add("dbProvider", dbProvider);
+      request.Add("dbServer", dbServer);
+      request.Add("portNumber", portNumber);
+      request.Add("dbInstance", dbInstance);
+      request.Add("dbName", dbName);
+      request.Add("dbSchema", dbSchema);
+      request.Add("dbUserName", dbUserName);
+      request.Add("dbPassword", dbPassword);
+      request.Add("tableNames", tableNames);
+      request.Add("serName", serName);
+
+      WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+      List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
+
+      try
+      {
+        dbDictionary = GetDBDictionary(scope, application);
+
+        if (dbDictionary != null)
+          if (dbDictionary.dataObjects.Count > 0)
+            hasDBDictionary = true;
+      }
+      catch (Exception)
+      {
+        hasDBDictionary = false;
+      }
+
+      foreach (DataObject dataObject in dataObjects)
+      {
+        hasDataObjectinDBDictionary = false;
+
+        if (hasDBDictionary)
+          if (dbDictionary.dataObjects.FirstOrDefault<DataObject>(o => o.tableName.ToLower() == dataObject.tableName.ToLower()) != null)
+            hasDataObjectinDBDictionary = true;
+
+        JsonTreeNode keyPropertiesNode = new JsonTreeNode()
         {
-          EndpointApplication application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpointName.ToLower());
-          
-          if (application != null && !application.Path.Replace("/", ".").Equals(path))
+          text = "Keys",
+          type = "keys",
+          expanded = true,
+          iconCls = "folder",
+          leaf = false,
+          children = new List<JsonTreeNode>()
+        };
+
+        JsonTreeNode dataPropertiesNode = new JsonTreeNode()
+        {
+          text = "Properties",
+          type = "properties",
+          expanded = true,
+          iconCls = "folder",
+          leaf = false,
+          children = new List<JsonTreeNode>()
+        };
+
+        JsonTreeNode relationshipsNode = new JsonTreeNode()
+        {
+          text = "Relationships",
+          type = "relationships",
+          expanded = true,
+          iconCls = "folder",
+          leaf = false,
+          children = new List<JsonTreeNode>()
+        };
+
+        // create data object node
+        JsonTreeNode dataObjectNode = new JsonTreeNode()
+        {
+          text = dataObject.tableName,
+          type = "dataObject",
+          iconCls = "treeObject",
+          leaf = false,
+          children = new List<JsonTreeNode>()
+              {
+                keyPropertiesNode, dataPropertiesNode, relationshipsNode
+              },
+          properties = new Dictionary<string, string>
+              {
+                {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
+                {"objectName", dataObject.objectName},
+                {"keyDelimiter", dataObject.keyDelimeter}
+              }
+        };
+
+        // add key/data property nodes
+        foreach (DataProperty dataProperty in dataObject.dataProperties)
+        {
+          Dictionary<string, string> properties = new Dictionary<string, string>()
+              {
+                {"columnName", dataProperty.columnName},
+                {"propertyName", dataProperty.propertyName},
+                {"dataType", dataProperty.dataType.ToString()},
+                {"dataLength", dataProperty.dataLength.ToString()},
+                {"nullable", dataProperty.isNullable.ToString()},
+                {"showOnIndex", dataProperty.showOnIndex.ToString()},
+                {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
+                {"isHidden", dataProperty.isHidden.ToString()},
+              };
+
+          if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDataObjectinDBDictionary)
           {
-            lpath = application.Path;
-            combinationMsg = "The combination of (" + baseUrl.Replace(".", "/") + ", " + context + ", " + endpointName + ") at " + path.Replace(".", "/") + " is allready existed at " + lpath + ".";
-            _logger.Error("Duplicated combination of baseUrl, context, and endpoint name");
-            throw new Exception("Duplicated combination of baseUrl, context, and endpoint name");
+            properties.Add("keyType", dataProperty.keyType.ToString());
+
+            JsonTreeNode keyPropertyNode = new JsonTreeNode()
+            {
+              text = dataProperty.columnName,
+              type = "keyProperty",
+              properties = properties,
+              iconCls = "treeKey",
+              leaf = true
+            };
+
+            keyPropertiesNode.children.Add(keyPropertyNode);
           }
-        }        
-      }      
-    }
-
-    private void CheckCombination(Folder folder, string path, string context, string oldContext, string user)
-    {
-      Endpoints endpoints = folder.Endpoints;
-      string endpointPath = "";
-      string folderPath = "";
-
-      if (endpoints != null)
-      {
-        foreach (Endpoint endpoint in endpoints)
-        {
-          endpointPath = path + "." + endpoint.Name;
-          CheckeCombination(endpoint.BaseUrl, endpoint.BaseUrl, context, oldContext, endpoint.Name, endpoint.Name, endpointPath, user);
-        }
-      }
-
-      Folders subFolders = folder.Folders;
-
-      if (subFolders == null)
-        return;
-      else
-      {
-        foreach (Folder subFolder in subFolders)
-        {
-          folderPath = path + "." + subFolder.Name;
-          CheckCombination(subFolder, folderPath, context, oldContext, user);
-        }
-      }
-    }
-
-    private void CheckCombination(string path, string context, string oldContext, string user)
-    {
-      string _key = user + "." + "directory";
-      if (HttpContext.Current.Session[_key] != null)
-      {
-        Directories directory = (Directories)HttpContext.Current.Session[_key];
-        Folder folder = FindFolder(directory, path);
-        CheckCombination(folder, path, context, oldContext, user);
-      }
-    }
-
-    private void GetLastName(string path, out string newpath, out string name)
-    {
-      int dotPos = path.LastIndexOf('.');
-
-      if (dotPos < 0)
-      {
-        newpath = "";
-        name = path;
-      }
-      else
-      {
-        newpath = path.Substring(0, dotPos);
-        name = path.Substring(dotPos + 1, path.Length - dotPos - 1);
-      }
-    }
-
-    private Folder FindFolder(List<Folder> scopes, string path)
-    {
-      string folderName, newpath;
-      GetLastName(path, out newpath, out folderName);
-
-      if (newpath == "")
-      {
-        foreach (Folder folder in scopes)
-        {
-          if (folder.Name == folderName)
-            return folder;
-        }
-      }
-      else
-      {
-        Folders folders = GetFolders(scopes, newpath);
-        return folders.FirstOrDefault<Folder>(o => o.Name == folderName);
-      }
-      return null;
-    }
-
-    private Folders GetFolders(List<Folder> scopes, string path)
-    {
-      if (path == "")
-        return (Folders)scopes;
-
-      string[] level = path.Split('.');
-
-      foreach (Folder folder in scopes)
-      {
-        if (folder.Name.Equals(level[0]))
-        {
-          if (level.Length == 1)
-            return folder.Folders;
           else
-            return TraverseGetFolders(folder, level, 0);
-        }
-      }
-      return null;
-    }
-
-    private Folders TraverseGetFolders(Folder folder, string[] level, int depth)
-    {
-      if (folder.Folders == null)
-      {
-        folder.Folders = new Folders();
-        return folder.Folders;
-      }
-      else
-      {
-        if (level.Length > depth + 1)
-        {
-          foreach (Folder subFolder in folder.Folders)
           {
-            if (subFolder.Name == level[depth + 1])
-              return TraverseGetFolders(subFolder, level, depth + 1);
+            JsonTreeNode dataPropertyNode = new JsonTreeNode()
+            {
+              text = dataProperty.columnName,
+              type = "dataProperty",
+              iconCls = "treeProperty",
+              leaf = true,
+              hidden = true,
+              properties = properties
+            };
+
+            dataPropertiesNode.children.Add(dataPropertyNode);
           }
         }
-        else
-        {
-          return folder.Folders;
-        }
+
+        dbObjectNodes.Add(dataObjectNode);
       }
-      return null;
+
+      return dbObjectNodes;
     }
 
-    private void TraverseDirectory(TreeNode folderNode, Folder folder, string treePath)
+    public Response RegenAll()
     {
-      List<JsonTreeNode> folderNodeList = folderNode.getChildren();
-      Endpoints endpoints = folder.Endpoints;
-      string context = "";
-      string endpointName;
-      string folderName;
-      string baseUrl = "";
-      string assembly = "";
-      string dataLayerName = "";
-      string folderPath = treePath;
-
-      if (endpoints != null)
-      {
-        foreach (Endpoint endpoint in endpoints)
-        {
-          LeafNode endPointNode = new LeafNode();
-          endpointName = endpoint.Name;
-          endPointNode.text = endpoint.Name;
-          endPointNode.iconCls = "application";
-          endPointNode.type = "ApplicationNode";
-          endPointNode.setLeaf(false);
-          endPointNode.hidden = false;
-          endPointNode.id = folderNode.id + "/" + endpoint.Name;
-          endPointNode.identifier = endPointNode.id;
-          endPointNode.nodeType = "async";
-          folderNodeList.Add(endPointNode);
-          treePath = folderPath + "." + endpoint.Name;
-
-          if (endpoint.Context != null)
-            context = endpoint.Context;
-
-          if (endpoint.BaseUrl != null)
-            baseUrl = endpoint.BaseUrl + "/adapter";
-
-          #region Get Assambly information
-          XElement bindings = GetBinding(context, endpointName, baseUrl);
-          DataLayer dataLayer = null;
-          if (bindings != null)
-          {
-              dataLayer = new DataLayer();
-              dataLayer.Assembly = bindings.Element("bind").Attribute("to").Value;
-              dataLayer.Name = bindings.Element("bind").Attribute("to").Value.Split(',')[1].Trim();
-          }
-
-          if (dataLayer != null)
-          {
-              assembly = dataLayer.Assembly;
-              dataLayerName = dataLayer.Name;
-          } 
-          #endregion        
-          
-          Object record = new
-          {
-            Name = endpointName,
-            Description = endpoint.Description,
-            DataLayer = dataLayerName,
-            context = context,
-            BaseUrl = baseUrl,
-            endpoint = endpointName,
-            Assembly = assembly,
-            securityRole = endpoint.SecurityRole,
-            dbInfo = new Object(),
-            dbDict = new Object()
-          };
-
-          endPointNode.record = record;
-          endPointNode.property = new Dictionary<string, string>();
-          endPointNode.property.Add("Name", endpointName);
-          endPointNode.property.Add("Description", endpoint.Description);
-          endPointNode.property.Add("Context", context);
-          endPointNode.property.Add("Data Layer", dataLayerName);
-          endPointNode.property.Add("User", endpoint.User);
-        }
-      }
-
-      if (folder.Folders == null)
-        return;
-      else
-      {
-        foreach (Folder subFolder in folder.Folders)
-        {
-          folderName = subFolder.Name;
-          TreeNode subFolderNode = new TreeNode();
-          subFolderNode.text = folderName;
-          subFolderNode.iconCls = GetNodeIconCls(subFolder.Type);
-          subFolderNode.type = "folder";
-          subFolderNode.hidden = false;
-          subFolderNode.leaf = false;
-          subFolderNode.id = folderNode.id + "/" + subFolder.Name;
-          subFolderNode.identifier = subFolderNode.id;
-
-          if (subFolder.Context != null)
-            context = subFolder.Context;
-
-          Object record = new
-          {
-            Name = folderName,
-            context = context,
-            Description = subFolder.Description,
-            securityRole = subFolder.SecurityRole
-          };
-          subFolderNode.record = record;
-          subFolderNode.property = new Dictionary<string, string>();
-          subFolderNode.property.Add("Name", folderName);
-          subFolderNode.property.Add("Description", subFolder.Description);
-          subFolderNode.property.Add("Context", subFolder.Context);
-          subFolderNode.property.Add("User", subFolder.User);
-          folderNodeList.Add(subFolderNode);
-          treePath = folderPath + "." + folderName;
-          TraverseDirectory(subFolderNode, subFolder, treePath);
-        }
-      }
+      WebHttpClient client = CreateWebClient(_adapterServiceUri);
+      Response response = client.Get<Response>("/generate");
+      return response;
     }
-    #endregion   
+    #endregion
   }
 }
