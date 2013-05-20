@@ -269,7 +269,7 @@ namespace org.iringtools.adapter.projection
               {
                 dti.HasContent = ((GenericDataObject)(_dataObjects[dataObjectIndex])).HasContent;
               } 
-              else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
+              else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(IContentObject)))
               {
                 dti.HasContent = ((GenericContentObject)(_dataObjects[dataObjectIndex])).HasContent;
               }
@@ -472,7 +472,7 @@ namespace org.iringtools.adapter.projection
           {
             dto.hasContent = ((GenericDataObject)_dataObjects[dataObjectIndex]).HasContent;
           }
-          else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericContentObject)))
+          else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(IContentObject)))
           {
             GenericContentObject contentObject = (GenericContentObject)_dataObjects[dataObjectIndex];
             dto.hasContent = contentObject.HasContent;
