@@ -58,6 +58,7 @@
       <xs:element name="id" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="keys" type="Keys" /> 
+      <xs:element name="index" type="xs:integer" />
     </xs:sequence>
   </xs:complexType>
   

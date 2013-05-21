@@ -1,6 +1,7 @@
 
 package org.iringtools.dxfr.manifest;
 
+import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -20,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="keys" type="{http://www.iringtools.org/dxfr/manifest}Keys"/>
+ *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}integer"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,10 +31,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Class", namespace = "http://www.iringtools.org/dxfr/manifest", propOrder = {
+@XmlType(name = "Class", propOrder = {
     "id",
     "name",
-    "keys"
+    "keys",
+    "index"
 })
 public class Class {
 
@@ -42,6 +45,8 @@ public class Class {
     protected String name;
     @XmlElement(required = true)
     protected Keys keys;
+    @XmlElement(required = true)
+    protected BigInteger index;
 
     /**
      * Gets the value of the id property.
@@ -113,6 +118,30 @@ public class Class {
      */
     public void setKeys(Keys value) {
         this.keys = value;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getIndex() {
+        return index;
+    }
+
+    /**
+     * Sets the value of the index property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setIndex(BigInteger value) {
+        this.index = value;
     }
 
 }

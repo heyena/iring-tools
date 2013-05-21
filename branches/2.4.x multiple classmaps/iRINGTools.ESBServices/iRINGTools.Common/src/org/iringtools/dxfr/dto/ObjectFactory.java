@@ -30,11 +30,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObjects }
+     * Create an instance of {@link TemplateObjects }
      * 
      */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
+    public TemplateObjects createTemplateObjects() {
+        return new TemplateObjects();
+    }
+
+    /**
+     * Create an instance of {@link RoleObjects }
+     * 
+     */
+    public RoleObjects createRoleObjects() {
+        return new RoleObjects();
+    }
+
+    /**
+     * Create an instance of {@link ClassObjects }
+     * 
+     */
+    public ClassObjects createClassObjects() {
+        return new ClassObjects();
     }
 
     /**
@@ -43,14 +59,6 @@ public class ObjectFactory {
      */
     public RoleObject createRoleObject() {
         return new RoleObject();
-    }
-
-    /**
-     * Create an instance of {@link ClassObject }
-     * 
-     */
-    public ClassObject createClassObject() {
-        return new ClassObject();
     }
 
     /**
@@ -70,19 +78,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassObjects }
+     * Create an instance of {@link DataTransferObjectList }
      * 
      */
-    public ClassObjects createClassObjects() {
-        return new ClassObjects();
-    }
-
-    /**
-     * Create an instance of {@link RoleObjects }
-     * 
-     */
-    public RoleObjects createRoleObjects() {
-        return new RoleObjects();
+    public DataTransferObjectList createDataTransferObjectList() {
+        return new DataTransferObjectList();
     }
 
     /**
@@ -94,19 +94,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TemplateObjects }
+     * Create an instance of {@link DataTransferObjects }
      * 
      */
-    public TemplateObjects createTemplateObjects() {
-        return new TemplateObjects();
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
     }
 
     /**
-     * Create an instance of {@link DataTransferObjectList }
+     * Create an instance of {@link ClassObject }
      * 
      */
-    public DataTransferObjectList createDataTransferObjectList() {
-        return new DataTransferObjectList();
+    public ClassObject createClassObject() {
+        return new ClassObject();
     }
 
 }

@@ -1,6 +1,7 @@
 
 package org.iringtools.mapping;
 
+import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="identifierDelimiter" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element ref="{http://www.iringtools.org/mapping}identifiers"/>
  *         &lt;element name="identifierValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}integer"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,7 +39,8 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "identifierDelimiter",
     "identifiers",
-    "identifierValue"
+    "identifierValue",
+    "index"
 })
 @XmlRootElement(name = "classMap")
 public class ClassMap {
@@ -52,6 +55,8 @@ public class ClassMap {
     protected Identifiers identifiers;
     @XmlElement(required = true)
     protected String identifierValue;
+    @XmlElement(required = true)
+    protected BigInteger index;
 
     /**
      * Gets the value of the id property.
@@ -171,6 +176,30 @@ public class ClassMap {
      */
     public void setIdentifierValue(String value) {
         this.identifierValue = value;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getIndex() {
+        return index;
+    }
+
+    /**
+     * Sets the value of the index property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setIndex(BigInteger value) {
+        this.index = value;
     }
 
 }

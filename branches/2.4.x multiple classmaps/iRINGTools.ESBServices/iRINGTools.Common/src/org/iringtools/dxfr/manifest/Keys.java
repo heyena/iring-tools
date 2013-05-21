@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Keys", namespace = "http://www.iringtools.org/dxfr/manifest", propOrder = {
+@XmlType(name = "Keys", propOrder = {
     "items"
 })
 public class Keys {
