@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Configuration }
-     * 
-     */
-    public Configuration createConfiguration() {
-        return new Configuration();
-    }
-
-    /**
      * Create an instance of {@link Setting }
      * 
      */
     public Setting createSetting() {
         return new Setting();
+    }
+
+    /**
+     * Create an instance of {@link Configuration }
+     * 
+     */
+    public Configuration createConfiguration() {
+        return new Configuration();
     }
 
 }

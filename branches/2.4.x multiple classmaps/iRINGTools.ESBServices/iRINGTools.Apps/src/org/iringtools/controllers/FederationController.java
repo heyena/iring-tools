@@ -9,7 +9,7 @@ import org.iringtools.widgets.tree.Tree;
 import com.opensymphony.xwork2.Action;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
-public class FederationController extends AbstractController implements ServletRequestAware
+public class FederationController extends BaseController implements ServletRequestAware
 {
   private static final long serialVersionUID = 1L;
 

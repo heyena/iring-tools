@@ -1,6 +1,7 @@
 
 package org.iringtools.directory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,8 +43,11 @@ import javax.xml.bind.annotation.XmlType;
     "graph"
 })
 @XmlRootElement(name = "application")
-public class Application {
+public class Application
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)

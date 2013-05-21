@@ -1,6 +1,7 @@
 
 package org.iringtools.data.filter;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,8 +35,11 @@ import javax.xml.bind.annotation.XmlType;
     "orderExpressions"
 })
 @XmlRootElement(name = "dataFilter")
-public class DataFilter {
+public class DataFilter
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected Expressions expressions;
     @XmlElement(required = true)

@@ -10,7 +10,7 @@ import org.iringtools.models.DirectoryModel;
 import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.tree.Tree;
 
-public class DirectoryController extends AbstractController
+public class DirectoryController extends BaseController
 {
   private static final long serialVersionUID = 1L;
   
@@ -49,7 +49,7 @@ public class DirectoryController extends AbstractController
     catch (Exception e)
     {
       e.printStackTrace();
-      throw new Exception(e.toString());
+      throw new Exception(e.getMessage());
     }
 
     return SUCCESS;

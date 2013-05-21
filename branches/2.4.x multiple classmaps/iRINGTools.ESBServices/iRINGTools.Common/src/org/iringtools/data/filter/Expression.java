@@ -1,6 +1,7 @@
 
 package org.iringtools.data.filter;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -44,8 +45,11 @@ import javax.xml.bind.annotation.XmlType;
     "isCaseSensitive"
 })
 @XmlRootElement(name = "expression")
-public class Expression {
+public class Expression
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     protected int openGroupCount;
     @XmlElement(required = true)
     protected String propertyName;

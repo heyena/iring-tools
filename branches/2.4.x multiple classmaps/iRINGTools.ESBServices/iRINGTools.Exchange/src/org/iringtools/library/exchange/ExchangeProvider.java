@@ -166,15 +166,32 @@ public class ExchangeProvider
 
   public DataTransferIndices getDataTransferIndices(Exchange exchange, DxiRequest dxiRequest) throws Exception
   {
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    DtiTask dtiTask = new DtiTask(settings, exchange, dxiRequest, null);
-    executor.execute(dtiTask);
-    executor.shutdown();
-
-    executor.awaitTermination(60, TimeUnit.MINUTES);
-
-    DataTransferIndices dtis = dtiTask.getDataTransferIndices();
+    DataTransferIndices dtis = null;
+    
+    try
+    {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+  
+      DtiTask dtiTask = new DtiTask(settings, exchange, dxiRequest, null);
+      executor.execute(dtiTask);
+      executor.shutdown();
+  
+      executor.awaitTermination(60, TimeUnit.MINUTES);
+      
+      if (dtiTask.getError() == null)
+      {
+        dtis = dtiTask.getDataTransferIndices();
+      }
+      else
+      {
+        throw new Exception(dtiTask.getError());
+      }
+    }
+    catch (Exception e)
+    {
+      throw new Exception(e.getMessage());      
+    }
+    
     return dtis;
   }
   
@@ -189,7 +206,21 @@ public class ExchangeProvider
     executor.awaitTermination(60, TimeUnit.MINUTES);
 
     List<String> ids = idTask.getIdentifiers();
-    return ids;
+    
+    //
+    // remove duplicate ids but retain id orders to honor sorting
+    //
+    List<String> uniqueIds = new ArrayList<String>();
+    
+    for (String id : ids)
+    {
+      if (!uniqueIds.contains(id))
+      {
+        uniqueIds.add(id);
+      }
+    }
+    
+    return uniqueIds;
   }
   
   public DataTransferObjects getDataTransferObjects(Exchange exchange, Manifest manifest, 
@@ -382,7 +413,7 @@ public class ExchangeProvider
   {
     for (Template template : templates)
     {
-      if (template.getId().equals(templateId))
+      if (template != null && template.getId() != null && template.getId().equals(templateId))
         return template;
     }
 

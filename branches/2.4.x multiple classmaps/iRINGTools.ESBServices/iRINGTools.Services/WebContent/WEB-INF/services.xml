@@ -31,21 +31,9 @@
     </jaxrs:serviceBeans>
   </jaxrs:server>
   
-  <jaxrs:server id="RefDataService" address="/refdata" >
-    <jaxrs:serviceBeans>
-      <bean class="org.iringtools.services.RefDataService" />
-    </jaxrs:serviceBeans>
-  </jaxrs:server>
-  
   <jaxrs:server id="HistoryService" address="/history" >
     <jaxrs:serviceBeans>
       <bean class="org.iringtools.services.HistoryService" />
-    </jaxrs:serviceBeans>
-  </jaxrs:server>
-  
-    <jaxrs:server id="IdGenService" address="/idgen" >
-    <jaxrs:serviceBeans>
-      <bean class="org.iringtools.services.IDGeneratorService" />
     </jaxrs:serviceBeans>
   </jaxrs:server>
   

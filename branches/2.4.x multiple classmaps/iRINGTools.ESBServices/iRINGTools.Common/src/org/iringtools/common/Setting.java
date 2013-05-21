@@ -1,6 +1,7 @@
 
 package org.iringtools.common;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,8 +32,11 @@ import javax.xml.bind.annotation.XmlValue;
     "value"
 })
 @XmlRootElement(name = "setting")
-public class Setting {
+public class Setting
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlValue
     protected String value;
     @XmlAttribute(name = "name")

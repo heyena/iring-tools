@@ -35,11 +35,9 @@ public final class HttpUtils
     else
       return;
 
-    String proxyUserName = context.getInitParameter("proxyUserName");
-    if (proxyUserName != null && proxyUserName.length() > 0)
-      sysProps.put("http.proxyUserName", proxyUserName);
-    else
-      return;
+    String proxyUser = context.getInitParameter("proxyUser");
+    if (proxyUser != null && proxyUser.length() > 0)
+      sysProps.put("http.proxyUser", proxyUser);
 
     String encryptedProxyPassword = context.getInitParameter("proxyPassword");
     if (encryptedProxyPassword != null && encryptedProxyPassword.length() > 0)
@@ -55,14 +53,10 @@ public final class HttpUtils
       }
       catch (EncryptionException e)
       {
-        return;
+        e.printStackTrace();
       }
     }
-    else
-    {
-      return;
-    }
-
+    
     String proxyDomain = context.getInitParameter("proxyDomain");
     if (proxyDomain == null)
       proxyDomain = "";
@@ -140,7 +134,8 @@ public final class HttpUtils
     {
       if (entry.getKey().startsWith(prefix))
       {
-        httpClient.addHeader(entry.getKey().substring(index), entry.getValue().toString());
+        if (entry.getKey() != null && entry.getValue() != null)
+          httpClient.addHeader(entry.getKey().substring(index), entry.getValue().toString());
       }
     }
   }

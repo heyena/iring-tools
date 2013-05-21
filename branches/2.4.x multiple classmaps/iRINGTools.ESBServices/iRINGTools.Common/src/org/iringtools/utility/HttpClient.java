@@ -4,7 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -128,7 +132,7 @@ public class HttpClient
         }
         catch (Exception e)
         {
-          logger.debug(e.getMessage());
+          logger.debug(e.toString());
         }
         
         throw new HttpClientException(responseCode, error);
@@ -136,7 +140,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      throw new HttpClientException(responseCode, e.getMessage());
+      throw new HttpClientException(responseCode, e.toString());
     }
     finally
     {
@@ -239,7 +243,7 @@ public class HttpClient
         }
         catch (Exception e)
         {
-          logger.debug(e.getMessage());
+          logger.debug(e.toString());
         }
         
         throw new HttpClientException(responseCode, error);
@@ -247,7 +251,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      throw new HttpClientException(responseCode, e.getMessage());
+      throw new HttpClientException(responseCode, e.toString());
     }
     finally
     {
@@ -288,7 +292,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.getMessage());
+      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.toString());
     }
     finally
     {
@@ -348,7 +352,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.getMessage());
+      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.toString());
     }
     finally
     {
@@ -425,20 +429,42 @@ public class HttpClient
     URL url = new URL(baseUri + relativeUri);
     logger.debug("Opening URL connection [" + url + "]");
     
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
+    HttpURLConnection conn = null; 
     
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
       String proxyHost = System.getProperty("http.proxyHost");
-      String proxyUserName = System.getProperty("http.proxyUserName");
-      String proxyPassword = System.getProperty("http.proxyPassword");      
-      String proxyDomain = System.getProperty("http.proxyDomain");
+      int proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+      String proxyUserName = System.getProperty("http.proxyUser");   
       
-      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);      
-      conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
-
+      String proxyDomain = System.getProperty("http.proxyDomain");
+      if (proxyUserName != null && proxyDomain != null && proxyDomain.length() > 0)
+        proxyUserName = proxyDomain + "\\" + proxyUserName;
+      
+      final String proxyUser = proxyUserName;
+      final String proxyPassword = System.getProperty("http.proxyPassword"); 
+      
+      Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+      conn = (HttpURLConnection) url.openConnection(proxy); 
+      
+      if (proxyUser != null && proxyPassword != null)
+      {
+        Authenticator.setDefault(new Authenticator() {
+          public PasswordAuthentication getPasswordAuthentication() {
+            return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
+          }
+        });
+      }
+      
+//      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);      
+//      conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
+      
       logger.debug("Connecting thru proxy server [" + proxyHost + "]");
+    }
+    else
+    {
+      conn = (HttpURLConnection) url.openConnection(); 
     }
 
     if (networkCredentials != null)
@@ -522,7 +548,7 @@ public class HttpClient
     }
     catch (Exception ex)
     {
-      logger.error(ex.getMessage());
+      logger.error(ex.toString());
     }
   }
 }

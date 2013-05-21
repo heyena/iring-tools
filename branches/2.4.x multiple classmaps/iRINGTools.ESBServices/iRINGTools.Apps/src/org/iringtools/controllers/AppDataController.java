@@ -7,7 +7,7 @@ import org.iringtools.dxfr.content.ContentObject;
 import org.iringtools.models.AppDataModel;
 import org.iringtools.widgets.grid.Grid;
 
-public class AppDataController extends AbstractController
+public class AppDataController extends BaseController
 {
   private static final long serialVersionUID = 1L;
 
@@ -49,7 +49,7 @@ public class AppDataController extends AbstractController
     catch (Exception e)
     {
       e.printStackTrace();
-      throw new Exception(e.toString());
+      throw new Exception(e.getMessage());
     }
     
     return SUCCESS;
@@ -68,7 +68,7 @@ public class AppDataController extends AbstractController
     }
     catch (Exception e)
     {
-      throw new Exception(e.toString());
+      throw new Exception(e.getMessage());
     }
   }
 
@@ -95,7 +95,7 @@ public class AppDataController extends AbstractController
 //    }
 //    catch (Exception e)
 //    {
-//      throw new Exception(e.toString());
+//      throw new Exception(e.getMessage());
 //    }
 //    
 //    return SUCCESS;

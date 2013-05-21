@@ -1,6 +1,7 @@
 
 package org.iringtools.data.filter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,8 +35,11 @@ import javax.xml.bind.annotation.XmlType;
     "items"
 })
 @XmlRootElement(name = "expressions")
-public class Expressions {
+public class Expressions
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(name = "expression", required = true)
     protected List<Expression> items;
 
