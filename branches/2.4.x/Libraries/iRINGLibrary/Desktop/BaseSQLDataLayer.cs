@@ -838,7 +838,7 @@ namespace org.iringtools.library
 
             if (objInfo != null)
             {
-              string identifier = GetIdentifier(objInfo.ObjectDefinition, dataObject);
+              string identifier = GetIdentifier(objInfo.ObjectDefinition, dataObject).ToUpper();
               objInfo.IdentifierDataObjects[identifier] = dataObject;
             }
           }
@@ -886,7 +886,7 @@ namespace org.iringtools.library
               for (int i = 0; i < dataTable.Rows.Count; i++)
               {
                   DataRow row = dataTable.Rows[i];
-                  string identifier = FormIdentifier(objInfo.ObjectDefinition, row);
+                  string identifier = FormIdentifier(objInfo.ObjectDefinition, row).ToUpper();
                   if (i < identifiers.Count)   //make sure for that particular row we have updated object
                       PopulateColumnValues(row, objInfo.ObjectDefinition, objInfo.IdentifierDataObjects[identifier]);
               }
