@@ -22,18 +22,19 @@ import org.iringtools.utility.JaxbUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-public abstract class AbstractController extends ActionSupport implements SessionAware
+public abstract class BaseController extends ActionSupport implements SessionAware
 {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(AbstractController.class);
+  private static final Logger logger = Logger.getLogger(BaseController.class);
 
+  protected String authenticatedUser;
   protected Map<String, Object> settings;
   protected ServletContext context;
   protected HttpServletRequest request;
   protected HttpServletResponse response;
   protected Map<String, Object> session;
   
-  public AbstractController() throws Exception
+  public BaseController() throws Exception
   {
     settings = new HashMap<String, Object>();
     context = ServletActionContext.getServletContext();
@@ -82,10 +83,11 @@ public abstract class AbstractController extends ActionSupport implements Sessio
         Class<IAuthorization> authProviderCls = (Class<IAuthorization>)Class.forName(authProviderName.toString());
         IAuthorization authProvider = authProviderCls.newInstance();
         
-        boolean authorized = authProvider.authorize(context, request.getSession(), app, user);        
+        boolean authorized = authProvider.authorize(request.getSession(), app, user);        
         if (!authorized)
         {
-          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+          request.getSession().invalidate();
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");          
         }
       }
       catch (Exception e)
@@ -93,7 +95,8 @@ public abstract class AbstractController extends ActionSupport implements Sessio
         logger.info("Error authorizing user [" + user + "]: " + e.toString());
         try
         {
-          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+          request.getSession().invalidate();
+          response.sendError(408, e.getMessage());
         }
         catch (IOException ioe)
         {
