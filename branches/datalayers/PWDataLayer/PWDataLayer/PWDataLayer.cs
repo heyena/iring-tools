@@ -23,6 +23,8 @@ namespace org.iringtools.adapter.datalayer
     private string _sUserName, _sPassword, _sDatasource, _sFileFormat, _sDocumentGUID; 
     private string _sProject, _sApp, _sDataPath;
     private int _iFoldrCount;
+    private int iParentFolderID;
+     
     [Inject]
     public PWDataLayer(AdapterSettings settings)
       : base(settings)
@@ -48,7 +50,7 @@ namespace org.iringtools.adapter.datalayer
         //_logger.Debug("In Dictionary Creation");
       DatabaseDictionary dbDictionary = null;
       DataDictionary dictionary = new DataDictionary();
-     
+      
       try
       {
         string path = string.Format("{0}DataDictionary.{1}.{2}.xml", _sDataPath, _sProject, _sApp);
@@ -126,6 +128,49 @@ namespace org.iringtools.adapter.datalayer
           }
         }
 
+          
+        DataObject subFolderDataObject = new DataObject();
+        subFolderDataObject.objectName = "SubFolders";
+        subFolderDataObject.tableName = "SubFolders";
+        subFolderDataObject.isRelatedOnly = true;
+
+
+
+        DataProperty dp11 = new DataProperty();
+        dp11.columnName = "Name";
+        dp11.propertyName = "Name";
+        dp11.dataType = DataType.String;
+        dp11.dataLength = 100;
+
+        subFolderDataObject.dataProperties.Add(dp11);
+
+        DataProperty dp12 = new DataProperty();
+        dp12.columnName = "ID";
+        dp12.propertyName = "ID";
+        dp12.dataType = DataType.String;
+        dp12.dataLength = 100;
+
+        subFolderDataObject.dataProperties.Add(dp12);
+
+        DataProperty dp13 = new DataProperty();
+        dp13.columnName = "Path";
+        dp13.propertyName = "Path";
+        dp13.dataType = DataType.String;
+        dp13.dataLength = 1000;
+        subFolderDataObject.dataProperties.Add(dp13);
+
+            subFolderDataObject.keyProperties = new List<KeyProperty>()
+            {
+              new KeyProperty()
+              {
+                keyPropertyName = "ID"
+              }
+            };
+
+        dictionary.dataObjects.Add(subFolderDataObject);
+
+          
+
         DataObject folderDataObject = new DataObject();
         folderDataObject.objectName = "Folders";
         folderDataObject.tableName= "Folders";
@@ -141,7 +186,7 @@ namespace org.iringtools.adapter.datalayer
 
         folderDataObject.dataProperties.Add(dp);
         
-         DataProperty dp1 = new DataProperty();
+        DataProperty dp1 = new DataProperty();
         dp1.columnName = "ID";
         dp1.propertyName = "ID";
         dp1.dataType = DataType.String;
@@ -164,7 +209,24 @@ namespace org.iringtools.adapter.datalayer
               }
             };
 
+        DataRelationship dataRelation = new DataRelationship();
+        dataRelation.relatedObjectName = "SubFolders";
+        dataRelation.relationshipName = "SubFolders";
+        dataRelation.relationshipType = RelationshipType.OneToMany;
+
+        PropertyMap propertyMap = new PropertyMap();
+        propertyMap.dataPropertyName = "ID";
+        propertyMap.relatedPropertyName = "ID";
+
+        dataRelation.propertyMaps.Add(propertyMap);
+
+       // objectsDataDictionary.dataObjects[0].dataRelationships.Add(dataRelation);
+
+
+
+        
         dictionary.dataObjects.Add(folderDataObject);
+        dictionary.dataObjects[2].dataRelationships.Add(dataRelation);   
 
 
         //env = GetProjectTypes();
@@ -264,7 +326,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
           //_logger.Debug(" In GetCount()");
-          if (tableName == "Folders")
+          if (tableName == "Folders" || tableName == "SubFolders")
           {
 
               return _iFoldrCount;
@@ -309,10 +371,8 @@ namespace org.iringtools.adapter.datalayer
       try
       {
           DataTable dtFolderDetails;
-          
 
-          
-          if (tableName == "Folders")
+          if (tableName.ToUpper() == "FOLDERS")
           {
               string setting = _settings["HasContentExpression"];
               List<string> strFolderPath = new List<string>();
@@ -348,6 +408,31 @@ namespace org.iringtools.adapter.datalayer
               
 
           }
+          if (tableName.ToUpper() == "SUBFOLDERS")
+          {
+              dtFolderDetails = new DataTable();
+
+              dtFolderDetails.Columns.Add("ID");
+              dtFolderDetails.Columns.Add("Name");
+              
+
+              string[] strFrag = whereClause.Split('=');
+              string ID = strFrag[1];
+              ID = ID.Replace("'", "");
+              if (ID == string.Empty)
+              {
+                  return dtFolderDetails;
+              }
+
+              SortedList<int, string> lstSubFolder = this.GetChildFolders(Convert.ToInt32(ID));
+              foreach (var pair in lstSubFolder)
+              {
+                  dtFolderDetails.Rows.Add(pair.Key, pair.Value);
+              }
+              _iFoldrCount = dtFolderDetails.Rows.Count;
+              _settings["HasContentExpression"] = null;
+              return dtFolderDetails;
+          }
 
 
           string orderBy = string.Empty;
@@ -380,22 +465,40 @@ namespace org.iringtools.adapter.datalayer
       finally
       {
         Logout();
-      //  _settings["HasContentExpression"] = setting;
+      
       }
+    }
+    
+
+    private  int iParentFolder
+    {
+        get
+        {
+            return this.iParentFolderID;
+        }
+        set
+        {
+            this.iParentFolderID = value;
+        }
     }
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
         try
         {
             //_logger.Debug("In Get()"); 
-           
+            
 
             if (objectType.ToUpper() == "FOLDERS")
-            {                
+            {
+                
                 IList<IDataObject> dataObjects1 = new List<IDataObject>(); 
                 DatabaseDictionary dictionary1 = GetDatabaseDictionary();
+                iParentFolder = Convert.ToInt32(identifiers[0]); 
                 DataObject objDef1 = dictionary1.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
                
+                
+
+
                 List<string> strFolderPath = new List<string>();
                 DataTable dtFolderDetails;
 
@@ -412,6 +515,21 @@ namespace org.iringtools.adapter.datalayer
                 string[] strArray = identifiers.ToArray<string>();
                 dtFolderDetails.DefaultView.RowFilter = "ID = " + "'" + strArray[0] + "'";
                 _iFoldrCount = dtFolderDetails.DefaultView.ToTable().Rows.Count;
+                if (_iFoldrCount == 0)
+                {
+                    DataRow dr1 = dtFolderDetails.NewRow();
+                    dr1["Name"]=string.Empty;
+                    dr1["ID"] = string.Empty;
+                    dr1["Path"] = string.Empty;
+            
+
+             
+                    _settings["HasContentExpression"] = null;
+                    IDataObject dataObject11 = ToDataObject(dr1, objDef1);
+                    dataObjects1.Add(dataObject11);
+                    return dataObjects1;
+                }
+                    
                 DataRow dr = dtFolderDetails.DefaultView.ToTable().Rows[0];
                 _settings["HasContentExpression"] = null;
                 IDataObject dataObject = ToDataObject(dr, objDef1);
@@ -422,8 +540,55 @@ namespace org.iringtools.adapter.datalayer
                 return dataObjects1;
             
             }
+            
+            if (objectType.ToUpper() == "SUBFOLDERS")
+            {
+                IList<IDataObject> dataObjects1 = new List<IDataObject>();
+                DatabaseDictionary dictionary1 = GetDatabaseDictionary();
+                DataObject objDef1 = dictionary1.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
+                List<string> strFolderPath = new List<string>();
+                DataTable dtsubFolderDetails;
 
+                dtsubFolderDetails = new DataTable();
+
+                dtsubFolderDetails.Columns.Add("ID");
+                dtsubFolderDetails.Columns.Add("Name");
+                
+ 
+                
+                SortedList<int, string> lstSubFolder = this.GetChildFolders(iParentFolder);
+
+                foreach (var pair in lstSubFolder)
+                {
+                    dtsubFolderDetails.Rows.Add(pair.Key, pair.Value);
+                }
+
+                
+                dtsubFolderDetails.DefaultView.RowFilter = "ID = " + "'" + identifiers[0] + "'";
+                _iFoldrCount = dtsubFolderDetails.DefaultView.ToTable().Rows.Count;
+
+                if (_iFoldrCount == 0)
+                {
+                    DataRow dr1 = dtsubFolderDetails.NewRow();
+                   dr1["ID"] = string.Empty;
+                   dr1["Name"] = string.Empty;
+                   
+                    _settings["HasContentExpression"] = null;
+                    IDataObject dataObject11 = ToDataObject(dr1, objDef1);
+                    dataObjects1.Add(dataObject11);
+                    return dataObjects1;
+                }
+
+                DataRow dr = dtsubFolderDetails.DefaultView.ToTable().Rows[0];
+                _settings["HasContentExpression"] = null;
+                IDataObject dataObject = ToDataObject(dr, objDef1);
+
+                
+                dataObjects1.Add(dataObject);
+
+                return dataObjects1;
+            }
 
             List<string> docGuids = identifiers.ToList();
             List<string> listAttributes = new List<string>();
