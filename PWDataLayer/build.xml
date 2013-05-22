@@ -1,11 +1,13 @@
 <Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!--<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />-->
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
     <ZipCmd>"$(MSBuildProjectDirectory)\lib\7-zip\7z.exe"</ZipCmd>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\PWDataLayer\Properties\AssemblyInfo.cs</AssemblyInfoFile>
     <NUnit-ToolPath>$(MSBuildProjectDirectory)\lib\Nunit\</NUnit-ToolPath>
     <SolutionFile>PWDataLayer.sln</SolutionFile>
-    <BinDir>$(MSBuildProjectDirectory)\PWDataLayer\bin\Debug</BinDir>
+    <BinDir>$(MSBuildProjectDirectory)\PWDataLayer\bin\Release</BinDir>
+	<MoreDlls>$(MSBuildProjectDirectory)\PWDataLayer\LibrariesToPutIring</MoreDlls>
     <ConfDir>$(MSBuildProjectDirectory)\conf</ConfDir>
     <DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
     <DocsDir>$(MSBuildProjectDirectory)\docs</DocsDir>
@@ -15,7 +17,8 @@
   <ItemGroup>
     <BinFiles
       Include="$(BinDir)\*.dll;
-               $(BinDir)\*.exe;"
+               $(BinDir)\*.exe;
+			   $(MoreDlls)\*.dll;"
       Exclude="$(BinDir)\iRINGLibrary.dll;
                $(BinDir)\log4net.dll;
                $(BinDir)\Ninject.dll;
@@ -41,6 +44,50 @@
       <FileSet>$(DistDir)\bin $(DistDir)\conf</FileSet>
     </DeploymentPackage>
   </ItemGroup>
+
+<Target Name="Versioning">
+    <Message Text="Updating assembly info ..." />
+
+    <XmlRead
+      XPath="/version/major"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Major" />
+    </XmlRead>
+
+    <XmlRead
+      XPath="/version/minor"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Minor" />
+    </XmlRead>
+
+    <XmlRead
+      XPath="/version/build"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Build" />
+    </XmlRead>
+
+    <XmlRead
+      XPath="/version/revision"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Revision" />
+    </XmlRead>
+
+    <Math.Add Numbers="$(Revision);1">
+      <Output TaskParameter="Result" PropertyName="Revision" />
+    </Math.Add>
+
+    <XmlUpdate
+      XPath="/version/revision"
+      XmlFileName="version.xml"
+      Value="$(Revision)" />
+
+    <FileUpdate
+      Files="$(AssemblyInfoFile)"
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
+      ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
+  </Target>
+
+
 
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
@@ -79,6 +126,6 @@
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
 
-  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
+  <Target Name="All" DependsOnTargets="versioning; Rebuild; Test; CreatePackages"/>
 
 </Project>
