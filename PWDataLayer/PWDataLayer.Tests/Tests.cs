@@ -55,17 +55,21 @@ namespace org.iringtools.adapter.datalayer.test
     [Test]
     public void TestGet()
     {
-      long count = _dataLayer.GetCount("DTP_ENG2", null);
+        IList<string> identifiers = new List<string>();
+        identifiers.Add("93");
+        IList<IDataObject> dataObject = _dataLayer.Get("Folders", identifiers);
+        
+        long count = _dataLayer.GetCount("DTP_ENG2", null);
       Assert.Greater(count, 0);
-
-      DataTable dt = _dataLayer.GetDataTable("DTP_ENG2", string.Empty, 0, 25);
+      DataTable dt = _dataLayer.GetDataTable("Folders", string.Empty, 0, 25);
+      dt = _dataLayer.GetDataTable("DTP_ENG2", string.Empty, 0, 25);
       string docGuid = dt.Rows[0]["DocumentGUID"].ToString();
 
       dt = _dataLayer.GetDataTable("DTP_ENG2", new List<string> { docGuid });
       Assert.Greater(dt.Rows.Count, 0);
     }
 
-    //[Test]
+    [Test]
     public void TestGetContents()
     {
       IDictionary<string, string> idFormats = new Dictionary<string, string>()
@@ -90,7 +94,7 @@ namespace org.iringtools.adapter.datalayer.test
         Assert.AreEqual(dataObject.Count, 1);
     }
 
-  //  [Test]
+    [Test]
     public void TestCreate()
     {
       
@@ -105,6 +109,15 @@ namespace org.iringtools.adapter.datalayer.test
 
         string docGUID = "d730d646-fccc-47b1-b974-97ec9c0ddb90";
         IList<string> GetID = _dataLayer.GetIdentifiers(_objectType, docGUID);
+        //Assert.AreEqual(response.Level, StatusLevel.Success);
+    }
+
+     [Test]
+    public void TestPostContents()
+    {
+
+        string docGUID = "4a44297f-3456-4e70-a073-ae0a3e92dae0";
+       // IList<string> GetID = _dataLayer.PostContents(_objectType, docGUID);
         //Assert.AreEqual(response.Level, StatusLevel.Success);
     }
     //[Test]
@@ -127,7 +140,13 @@ namespace org.iringtools.adapter.datalayer.test
       Response response = _dataLayer.Delete("DTP_ENG2", new List<string> { docGUID });
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
-
+    //[Test]
+    public void TestDeleteDataTable()
+    {
+        string docGUID = "d730d646-fccc-47b1-b974-97ec9c0ddb90";
+        Response response = _dataLayer.DeleteDataTable("DTP_ENG2", new List<string> { docGUID });
+        Assert.AreEqual(response.Level, StatusLevel.Success);
+    }
     [Test]
     public void TestPostWithContent()
     {
