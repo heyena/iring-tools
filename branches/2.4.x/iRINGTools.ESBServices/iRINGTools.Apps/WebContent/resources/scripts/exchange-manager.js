@@ -873,6 +873,7 @@ function submitExchange(userResponse) {
   }
 }
 
+
 function showDialog(width, height, title, message, buttons, callback) {
   var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height
       + 'px;border:1px solid #aaa;overflow:auto"';
@@ -885,10 +886,1268 @@ function showDialog(width, height, title, message, buttons, callback) {
   });
 }
 
+function onTreeItemContextMenu  (node, e)
+{
+	  var obj = node;
+var x = e.browserEvent.clientX;
+var y = e.browserEvent.clientY;
+/*utilsObj.record = record;
+utilsObj.index = index;
+//utilsObj.scope = scope;
+var exchangeId = obj.data.properties.Id;
+//utilsObj.xid = obj.data.properties.Id;
+context = '?scope=' + scope + '&xid=' + exchangeId;
+utilsObj.context = context;
+utilsObj.appName = obj.data.text;
+obj.data.reviewed = true;
+//setting URL for Exchange Summary in utility class object.
+utilsObj.exchangeSummaryUrl = 'sdata'+context+'&xlabel='+obj.data.text;*/
+var directoryTree = Ext.getCmp('directory-tree');
+var node = directoryTree.getSelectionModel().getSelectedNode();
+if(node != null)
+	{// var obj = node;
+if ((obj !== null))
+{
+    if(obj.parentNode !== null)
+    {
+        var dataTypeNode = obj.parentNode.text;
+        if( obj.parentNode.parentNode !== null)
+        {
+            var dataExchangeNode = obj.parentNode.parentNode.text;
+            if (dataExchangeNode !== null && dataExchangeNode === 'Data Exchanges'){
+
+             //   var dataExchangeMenu = Ext.widget('dataexchangemenu');
+            	commodityMenu.showAt([ x, y ]);
+                e.stopEvent();
+            } }
+
+            if (dataTypeNode !== null && dataTypeNode === 'Data Exchanges'){ 
+
+                // if (node.isSelected()) {
+
+                //	var obj = node.attributes;
+
+                // if (obj.type == "ExchangeNode") {
+            	newExchangemenu.showAt([ x, y ]);
+                e.stopEvent();
+                // this.MenuClick(obj);
+                // }
+            }else if(obj.parentNode.text === 'Directory')
+            {
+            	editDeleteScopeMenu.showAt([ x, y ]);
+                e.stopEvent(); 
+            } 
+            else if((obj.text === 'Application Data'))
+            {
+            	newappmenu.showAt([ x, y ]);
+                e.stopEvent(); 
+            }else if((obj.parentNode.text === 'Application Data'))
+            {
+            	applicationMenu.showAt([ x, y ]);
+                e.stopEvent(); 
+            }else if((obj.parentNode.parentNode.text === 'Application Data'))
+            {
+            	graphSubMenu.showAt([ x, y ]);
+                e.stopEvent()
+
+            } else if((obj.text === 'Data Exchanges'))
+            {
+            	newCommoditymenu.showAt([ x, y ]);
+                e.stopEvent(); 
+            }}
+            else if (obj.text === 'Directory')
+            {
+            	newScopemenu.showAt([ x, y ]);
+                e.stopEvent();
+            }
+
+        }
+	}
+}
+
+function buildEditDeleteSubMenu () 
+{
+	 return  [
+              {
+                  xtype: 'menuitem',
+                  handler: function(node, event) {
+                 	              newScope(node, event);
+                 	             editDeleteScope(node, event);
+                                  },
+                  text: 'Edit Scope'
+              },
+              {
+                  xtype: 'menuitem',
+                 handler: function(node, event) {
+                	 deleteScope(node, event);
+                                  },
+                  text: 'Delete Scope'
+              }
+          ]
+}
+function buildNewCommodityMenu () 
+{
+	 return[
+            {
+                xtype: 'menuitem',
+                handler: function(node, event) {
+                	        
+                	newCommodity(node, event);
+                    var view = Ext.getCmp('newCommWin');
+                      //var view = Ext.widget('editDir');
+                    view.show();
+                },
+                text: 'New Commodity'
+            }
+        ]
+}
+function deleteApp(node, event)
+{
+	
+//var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	var appName = node.text;
+	var scope = node.parentNode.parentNode.text;
+
+	Ext.Msg.show({
+	    //  title: 'Choose',
+	    msg: 'Are you sure to delete '+ appName + ' Application ?',
+	    buttons: Ext.MessageBox.YESNOCANCEL,
+	    modal: true,
+	    // buttons: Ext.MessageBox.OKCANCEL,
+	    //inputField: new IMS.form.DateField(),
+	    fn: function(buttonId, text) {
+	        //  if (buttonId == 'ok')
+	        if(buttonId == 'yes'){
+
+	            Ext.Ajax.request({
+	                url : 'deleteApplication?'+'&scope =' + scope +'&appName =' + appName,
+	                method: 'POST',
+	                timeout : 86400000, // 24 hours
+	                success : function(response, request) {
+	        //          Ext.Msg.alert('"'+ appName + '"' +'  Application is deleted');
+	                   refresh();
+	                },
+	                failure : function(response, request) {
+	                    Ext.Msg.alert('Delete Failed');
+	                } });  
+	            }
+	        }
+	    });
+}
+
+function deleteGraph(node, event)
+{
+//var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	var name = node.text;
+	var appName = node.parentNode.text;
+	var scope = node.parentNode.parentNode.parentNode.text;
+
+	Ext.Msg.show({
+	    //  title: 'Choose',
+	    msg: 'Are you sure to delete '+ name + ' Graph ?',
+	    buttons: Ext.MessageBox.YESNOCANCEL,
+	    modal: true,
+	    // buttons: Ext.MessageBox.OKCANCEL,
+	    //inputField: new IMS.form.DateField(),
+	    fn: function(buttonId, text) {
+	        //  if (buttonId == 'ok')
+	        if(buttonId == 'yes'){
+
+	            Ext.Ajax.request({
+	                url : 'deleteGraph?'+ '&name ='+ name +'&scope =' + scope +'&appName =' + appName,
+	                method: 'POST',
+	                timeout : 86400000, // 24 hours
+	                success : function(response, request) {
+	       //           Ext.Msg.alert('"'+ name + '"' +'  Graph is deleted');
+	                    refresh();
+	                },
+	                failure : function(response, request) {
+	                    Ext.Msg.alert('Delete Failed');
+	                } });  
+	            }
+	        }
+	    });
+}
+
+function deleteCommodity(node, event)
+{
+//var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	var commName = node.text;
+	var scope = node.parentNode.parentNode.text;
+
+	Ext.Msg.show({
+	    //  title: 'Choose',
+	    msg: 'Are you sure to delete '+ commName + ' Commodity ?',
+	    buttons: Ext.MessageBox.YESNOCANCEL,
+	    modal: true,
+	    // buttons: Ext.MessageBox.OKCANCEL,
+	    //inputField: new IMS.form.DateField(),
+	    fn: function(buttonId, text) {
+	        //  if (buttonId == 'ok')
+	        if(buttonId == 'yes'){
+
+	            Ext.Ajax.request({
+	                url : 'deleteCommodity?'+ '&commName =' + commName +'&scope =' + scope ,
+	                method: 'POST',
+	                timeout : 86400000, // 24 hours
+	                success : function(response, request) {
+	            //      Ext.Msg.alert('"'+ commName + '"' +'  Commodity is deleted');
+	                  refresh();
+	                },
+	                failure : function(response, request) {
+	                    Ext.Msg.alert('Delete Failed');
+	                } });  
+	            }
+	        }
+	    });
+}
+
+function deleteConfig()
+{
+	 var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	var exchangeConfigName = node.text;
+	var commName = node.parentNode.text;
+	var scope = node.parentNode.parentNode.parentNode.text;
+
+	Ext.Msg.show({
+	    //   title: 'Choose',
+	    msg: 'Are you sure to delete '+ '"' +exchangeConfigName+'"' + ' Exchange ?',
+	    buttons: Ext.MessageBox.YESNOCANCEL,
+	    modal: true,
+	    // buttons: Ext.MessageBox.OKCANCEL,
+	    //inputField: new IMS.form.DateField(),
+	    fn: function(buttonId, text) {
+	        //  if (buttonId == 'ok')
+	        if(buttonId == 'yes'){
+
+	            Ext.Ajax.request({
+	                url : 'deleteExchangeConfig?'+'&scope =' + scope +'&commName =' + commName +'&name =' +exchangeConfigName,
+	                method: 'POST',
+	                timeout : 86400000, // 24 hours
+	                success : function(response, request) {
+	  //                Ext.Msg.alert('"'+ exchangeConfigName + '"' +' Exchange is deleted');
+	                   refresh();
+	                },
+	                failure : function(response, request) {
+	                    Ext.Msg.alert('Delete Failed');
+	                } });  
+	            }
+	        }
+	    });
+}
+function buildNewExchangeMenu () 
+{
+	 return[
+            {
+                xtype: 'menuitem',
+                handler: function(item, event) {
+                	newexchangeConfig();
+                    var view = Ext.getCmp('newExchangeConfigWin');
+                    view.show();
+                },
+                text: 'New Exchange Configuration'
+            },
+        {
+            xtype: 'menuitem',
+           handler: function(item, event) {
+        	   newCommodity();
+        	   editCommodity();
+            },
+            text: 'Edit Commodity'
+        },
+        {
+            xtype: 'menuitem',
+            handler: function(item, event) {
+            	deleteCommodity();
+            },
+            text: 'Delete commodity'
+        }
+        ]
+}
+
+function newexchangeConfig()  
+{
+	var newExchConfig= new Ext.FormPanel({
+		 id:'newExchConfig',
+		 height: 596,
+		    width: 584,
+		    bodyPadding: 10,
+		    layout:'form',
+		    frame: true,
+		    bodyStyle:'padding:5px 5px 0',
+		    labelwidth: 75,
+		
+		    items: [
+	                {
+	                    xtype: 'label',
+	                    formBind: true,
+	                    height: 35,
+	                    html: '<font size = 2><b><u>Config Details:- </b></u></font><br>',
+	                    minHeight: 30,
+	                    padding: 0,
+	                    width: 47,
+	                    text: 'Config Details:-'
+	                },
+	                {
+	                    xtype: 'textfield',
+	                    anchor: '90%',
+	                    padding: 0,
+	                    fieldLabel: 'Name',
+	                    labelWidth: 125,
+	                    name: 'name'
+	                },
+	                {
+	                    xtype: 'textfield',
+	                    anchor: '90%',
+	                    fieldLabel: 'Description',
+	                    labelWidth: 125,
+	                    name: 'description'
+	                },
+	                {
+	                    xtype: 'fieldset',
+	                    height: 212,
+	                    width: 553,
+	                    title: 'Source Config',
+	                    items: [
+	                        {
+	                            xtype: 'textfield',
+	                            anchor: '90%',
+	                            fieldLabel: 'Source Uri',
+	                            labelWidth: 125,
+	                            name: 'sourceUri'
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            anchor: '90%',
+	                            fieldLabel: 'Source Scope Name',
+	                            labelWidth: 125,
+	                            name: 'sourceScopeName'
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            anchor: '90%',
+	                            fieldLabel: 'Source App Name',
+	                            labelWidth: 125,
+	                            name: 'sourceAppName'
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            anchor: '90%',
+	                            fieldLabel: 'Source Graph Name',
+	                            labelWidth: 125,
+	                            name: 'sourceGraphName'
+	                        },
+	                     
+	                    ],
+	                    buttons: [{
+	                    	 text: 'Test',
+	                    	   handler: function(button, event) {
+	                    		   SourceUri();
+
+	                            }	                            
+	                           }]
+	                },
+	                {
+	                    xtype: 'fieldset',
+	                    height: 220,
+	                    margin: '',
+	                    width: 537,
+	                    title: 'Target Config',
+	                    items: [
+	                        {
+	                            xtype: 'textfield',
+	                            anchor: '90%',
+	                            fieldLabel: 'Target Uri',
+	                            labelWidth: 125,
+	                            name: 'targetUri'
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            anchor: '90%',
+	                            fieldLabel: 'Target Scope Name',
+	                            labelWidth: 125,
+	                            name: 'targetScopeName'
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            anchor: '90%',
+	                            fieldLabel: 'Target App Name',
+	                            labelWidth: 125,
+	                            name: 'targetAppName'
+	                        },
+	                        {
+	                            xtype: 'textfield',
+	                            anchor: '90%',
+	                            fieldLabel: 'Target Graph Name',
+	                            labelWidth: 125,
+	                            name: 'targetGraphName'
+	                        },
+	                        
+	                    ],
+	                    buttons: [{
+	                    	 text: 'Test',
+	                    	   handler: function(button, event) {
+	                                TargetUri();
+
+	                            }	                            
+	                           }]
+	                },
+	               
+	                {
+	                    xtype: 'hidden',
+	                    anchor: '100%',
+	                    fieldLabel: 'Label',
+	                    name: 'oldConfigName'
+	                },
+	                {
+	                    xtype: 'hidden',
+	                    anchor: '100%',
+	                    fieldLabel: 'Label',
+	                    name: 'oldCommName'
+	                },
+	                {
+	                    xtype: 'hidden',
+	                    anchor: '100%',
+	                    fieldLabel: 'Label',
+	                    name: 'oldScope'
+	                }
+	            ],
+	            buttons: [{
+	                text: 'Save',
+	                handler: function(button, event) {
+                     saveExchangeConfig();
+                 	newExchangeConfigWin.close();
+                    }
+	              
+	            },{
+	                text: 'Cancel',
+	                handler: function(button, event) {
+	                	newExchangeConfigWin.close();
+	            }}]
+	        });
+	var newExchangeConfigWin = new Ext.Window({
+		id:'newExchangeConfigWin',
+		  height: 515,
+		    width: 568,
+	    layout: {
+	        type: 'fit'
+	    },
+	    title: 'New Exchange Configration',
+	    modal: true,
+	    items:[newExchConfig]
+	            
+	        });
+}
+	
+	function SourceUri()
+	{
+		var obj = Ext.getCmp('newExchConfig');
+		var form = obj.getForm();
+	
+		//console.log("form ! and..."+form.findField('id').getValue());
+		var source = form.findField('sourceUri').getValue();
+		var scope = form.findField('sourceScopeName').getValue();
+		var app = form.findField('sourceAppName').getValue();
+		var sourceUri = source+"/"+scope+"/"+app+"/manifest";
+		console.log("1 is " + sourceUri);
+		Ext.Ajax.request({
+		    url : 'SourcetestUri?' + '&sourceUri =' + sourceUri,
+		    method: 'POST',
+		    timeout : 86400000, // 24 hours
+		    success : function(response, request) {
+		        var result = Ext.decode(response.responseText);
+		        alert(result);
+		    },
+		    failure : function(response, request) {
+		        alert("failed to connect to the specified Url");
+		    }
+		});
+	}
+	
+	function TargetUri()
+	{
+		var obj = Ext.getCmp('newExchConfig');
+		var form = obj.getForm();
+		var target = form.findField('targetUri').getValue();
+		var scope = form.findField('targetScopeName').getValue();
+		var app = form.findField('targetAppName').getValue();
+		var targetUri =target+"/"+scope+"/"+app+"/manifest";
+		console.log("1 is " + targetUri);
+		Ext.Ajax.request({
+		    url : 'testTargetUrl?' + '&targetUri =' + targetUri,
+		    method: 'POST',
+		    timeout : 86400000, // 24 hours
+		    success : function(response, request) {
+		        var result = Ext.decode(response.responseText);
+		        alert(result);
+		    },
+		    failure : function(response, request) {
+		        alert("failed to connect to the specified Url");
+		    }
+		});
+		
+	}
+	
+
+function saveExchangeConfig()
+{
+	 var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	 var obj = Ext.getCmp('newExchConfig').getForm();
+	var form = obj.getValues(true);
+	var scope = node.parentNode.parentNode.text;
+	var commodity = node.text;
+	//var xid = node.attributes.properties['Id'];
+
+
+	Ext.Ajax.request({
+	    //url : 'newExchange?form=' + form,
+	    url : 'newExchange?' + form +'&scope ='+ scope + '&commodity ='+ commodity,
+	    method: 'POST',
+	    timeout : 86400000, // 24 hours
+	    success : function(response, request) {
+	     refresh();
+	    },
+	    failure : function(response, request) {
+	        alert("save failed");
+	    }
+	});
+}
+function buildNewScopeMenu () 
+{
+	 return {
+         xtype: 'menuitem',
+         handler: function(item, event) {
+        	 newScope();
+        	
+        	 var view = Ext.getCmp('newScopeWin');
+             var value = Ext.getCmp('newScopeForm').getForm().findField("oldScope").setValue('null');
+             view.show();
+                         },
+       // icon: 'resources/images/16x16/add.png',
+         text: 'New Scope'
+     }
+}
+function buildNewApplicationMenu () 
+{
+	 return  {
+         xtype: 'menuitem',
+         handler: function(item, event) {
+        	 newApp();
+                             var view = Ext.getCmp('newAppWin');
+                       //           var view = Ext.widget('newScopeDir');
+           
+                             view.show();
+                         },
+        // icon: 'resources/images/16x16/add.png',
+         text: 'New Application'
+     }
+}
+function buildGraphSubMenu () 
+{
+	 return [
+             {
+                 xtype: 'menuitem',
+                handler: function() {
+                    	 newGraph();
+                    	 editGraph();
+                    },
+                 text: 'Edit Graph'
+             },
+             {
+                 xtype: 'menuitem',
+                 handler: function(item, event) {
+                	 deleteGraph();
+                                  },
+                 text: 'Delete Graph'
+             }
+         ]
+}
+function editCommodity()
+{
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	 var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	 var scope = node.parentNode.parentNode.text;
+	 var commNameValue = node.text;
+
+	 var view = Ext.getCmp('newCommWin');
+	 view.setTitle("Edit Commodity");
+	 var obj =Ext.getCmp('newCommForm');
+	 var form = obj.getForm();
+	 //form.setValues({scope: scopevalue, oldScope: scopevalue});
+	 //form.setValues({scope: scopevalue});
+
+	 Ext.Ajax.request({
+	     url:'getComm?' + '&scope =' + scope +'&commName =' + commNameValue,
+	     method: 'POST',
+	     timeout : 86400000, // 24 hours
+	     success : function(response, request) {
+	         // alert("saved successfuly");
+	         // var application =  obj.getForm().setValues(Ext.JSON.decode(response.data));
+	         var comDetails = Ext.decode(response.responseText);
+	         form.setValues({commName : comDetails.name, oldCommName : commNameValue, oldScope :scope});   
+	         centerPanel.getEl().unmask();
+	         view.show();
+	     },
+	     failure : function(response, request) {
+	         centerPanel.getEl().unmask();
+	         alert("Error fetching data to fill form");
+	     }
+	 });
+
+}
+function editGraph()
+{
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	 var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	var scope = node.parentNode.parentNode.parentNode.text;
+	var graphValue = node.text;
+	var appNameValue = node.parentNode.text;
+
+
+	var view = Ext.getCmp('newGraphWin');
+	view.setTitle("Edit Graph");
+	var obj = Ext.getCmp('newGraphForm');
+	var form = obj.getForm();
+
+	Ext.Ajax.request({
+	    url:'getGraph?' + '&scope =' + scope +'&appName =' + appNameValue + '&name =' + graphValue,
+	    method: 'POST',
+	    timeout : 86400000, // 24 hours
+	    success : function(response, request) {
+	        var graph = Ext.decode(response.responseText);
+	        form.setValues({name : graph.name, description : graph.description,  CommName : graph.commodity, oldAppName : appNameValue, oldScope :scope, oldGraphName : graphValue});   
+	        centerPanel.getEl().unmask();
+	        view.show();
+	    },
+	    failure : function(response, request) {
+	        centerPanel.getEl().unmask();
+	        alert("Error fetching data to fill form");
+	    }
+	});
+
+}
+
+function newGraph()
+{
+	var newGraphForm= new Ext.FormPanel({
+	id: 'newGraphForm',
+	 height: 120,
+	    width: 400,
+	    bodyPadding: 10,
+	    layout:'form',
+	    frame: true,
+	    bodyStyle:'padding:5px 5px 0',
+	    labelwidth: 75,
+	    items: [
+                {
+                    xtype: 'textfield',
+                    anchor: '95%',
+                    fieldLabel: 'Graph Name',
+                    name: 'name'
+                },
+                {
+                    xtype: 'textfield',
+                    anchor: '95%',
+                    fieldLabel: 'description',
+                    name: 'description'
+                },
+                {
+                    xtype: 'textfield',
+                    anchor: '95%',
+                    fieldLabel: 'Commodity',
+                    name: 'CommName'
+                },
+                {
+                    xtype: 'hidden',
+                    anchor: '100%',
+                    fieldLabel: 'Label',
+                    name: 'oldScope'
+                },
+                {
+                    xtype: 'hidden',
+                    anchor: '100%',
+                    fieldLabel: 'Label',
+                    name: 'oldAppName'
+                },
+                {
+                    xtype: 'hidden',
+                    anchor: '100%',
+                    fieldLabel: 'Label',
+                    name: 'oldGraphName'
+                }
+            ],
+            buttons: [{
+                text: 'Save',
+                handler: function(node,button, event){
+              	  saveGraph();
+              	newGraphWin.close();
+                }
+               // margin: 10,
+            },{
+                text: 'Cancel',
+                handler: function(button, event) {
+                	newGraphWin.close();
+            }}]
+                });
+	
+	var newGraphWin = new Ext.Window({
+		id:'newGraphWin',
+	    height: 120,
+	    width: 400,
+	    layout: {
+	        type: 'fit'
+	    },
+	    title: 'New Graph',
+	    modal: true,
+	    items:[newGraphForm]
+	            
+	        });
+       
+}
+
+function saveGraph() 
+{var me = this;
+var obj = Ext.getCmp('newGraphForm').getForm();
+var form = obj.getValues(true);
+var directoryTree = Ext.getCmp('directory-tree');
+var node = directoryTree.getSelectionModel().getSelectedNode();
+var scope = node.parentNode.parentNode.text;
+var appName = node.text;
+
+Ext.Ajax.request({
+    url : 'newGraph?' + form +'&scope =' + scope + '&appName =' + appName,
+    method: 'POST',
+    timeout : 86400000, // 24 hours
+    success : function(response, request) {
+       //lert("saved successfuly");
+      
+    	 refresh();
+    },
+    failure : function(response, request) {
+        alert("save failed");
+    }
+});
+	}
+
+function buildApplicationSubMenu () 
+{
+	 return  [
+                {
+                    xtype: 'menuitem',
+                    handler: function() {
+                    	 newApp();
+                    	editApplication();
+                    },
+                    text: 'Edit Application'
+                },
+                {
+                    xtype: 'menuitem',
+                    handler: function() {
+                    	 deleteApp();
+                    },
+                    text: 'Delete Application\''
+                },
+                {
+                    xtype: 'menuitem',
+                    handler: function() {
+                    	 newGraph();
+                        var view = Ext.getCmp('newGraphWin');
+                        //var view = Ext.widget('editDir');
+                        view.show();
+                    },
+                    text: 'Add New Graph'
+                }
+            ]
+}
+function editApplication()
+{
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	 var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	
+	var scope = node.parentNode.parentNode.text;
+	var appNameValue = node.text;
+
+	var view = Ext.getCmp('newAppWin');
+	view.setTitle("Edit Application");
+	var obj = Ext.getCmp('newAppForm');
+	var form = obj.getForm();
+	//form.setValues({scope: scopevalue, oldScope: scopevalue});
+	//form.setValues({scope: scopevalue});
+
+	Ext.Ajax.request({
+	    url:'getApplication?' + '&scope =' + scope +'&appName =' + appNameValue,
+	    method: 'POST',
+	    timeout : 86400000, // 24 hours
+	    success : function(response, request) {
+	        // alert("saved successfuly");
+	        // var application =  obj.getForm().setValues(Ext.JSON.decode(response.data));
+	        var application = Ext.decode(response.responseText);
+	        form.setValues({appName : application.name, appDesc : application.description,  baseUri: application.baseUri, oldAppName : appNameValue, oldScope :scope});   
+	        centerPanel.getEl().unmask();
+	        view.show();
+	    },
+	    failure : function(response, request) {
+	        centerPanel.getEl().unmask();
+	        alert("Error fetching data to fill form");
+	    }
+	});
+	}
+function buildCommoditySubMenu () 
+{
+	 return[
+     {
+         xtype: 'menuitem',
+         handler: function() {
+        	   newexchangeConfig();
+        	   editExchangeConfig();
+         },
+         text: 'Edit Exchange Configuration'
+     },
+     {
+         xtype: 'menuitem',
+         handler: function() {
+        	 deleteConfig();
+         },
+         text: 'Delete Exchange Configuration'
+     },
+     {
+         xtype: 'menuitem',
+         action: 'dataFiltersMenuItem',
+         text: 'Apply Data Filters'
+     }  /*,
+   {
+         xtype: 'menuitem',
+         action: 'exchangereviewandacceptance',
+         text: 'Review and Acceptance'
+     },
+     {
+         xtype: 'menuitem',
+         action: 'exchange',
+         icon: 'resources/images/16x16/exchange-send.png',
+         text: 'Execute Exchange'
+     },
+     {
+         xtype: 'menuitem',
+         action: 'exchangeHistory',
+         icon: 'resources/images/16x16/history.png',
+         text: 'Show History'
+     },
+     {
+         xtype: 'menuitem',
+         action: 'exchangeSummary',
+         icon: 'resources/images/16x16/file-table.png',
+         text: 'Show Summary'
+     }*/
+ ]
+}
+function editExchangeConfig()
+{
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	 var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	 var scope = node.parentNode.parentNode.parentNode.text;
+	 var commodity = node.parentNode.text;
+	 var commConfigName = node.text;
+
+	 var view = Ext.getCmp('newExchangeConfigWin');
+	 view.setTitle("Edit Exchange Configaration");
+	 var obj = Ext.getCmp('newExchConfig');
+	 var formdata =  obj.getForm();
+
+	 Ext.Ajax.request({
+	     url : 'getExchange', //+'&scope ='+ scope + '&commName ='+ commodity +'&name =' + commConfigName,
+	     params: { scope : scope, commName : commodity, name : commConfigName },
+	     method: 'POST',
+	     timeout : 86400000, // 24 hours
+	     success : function(response, request) {
+	         var form = Ext.decode(response.responseText);
+	         formdata.setValues({name : form.name,description : form.description, sourceUri : form.sourceUri, sourceScopeName : form.sourceScope, sourceAppName : form.sourceApp, sourceGraphName : form.sourceGraph , targetUri :form.targetUri, targetScopeName : form.targetScope, targetAppName : form.targetApp, targetGraphName : form.targetGraph, oldConfigName : commConfigName, oldCommName : commodity, oldScope :scope});   
+	         centerPanel.getEl().unmask();
+	         view.show();
+	     },
+	     failure : function(response, request) {
+	         centerPanel.getEl().unmask();
+	         alert("Error fetching data to fill form");
+	     }
+	 });
+
+}
+
+function deleteScope()
+{
+	var me = this;
+	 var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	var scope = node.text;
+
+	Ext.Msg.show({
+	    //   title: 'Choose',
+	    msg: 'Are you sure to delete '+ scope + ' context ?',
+	    buttons: Ext.MessageBox.YESNOCANCEL,
+	    modal: true,
+	    // buttons: Ext.MessageBox.OKCANCEL,
+	    //inputField: new IMS.form.DateField(),
+	    fn: function(buttonId, text) {
+	        //  if (buttonId == 'ok')
+	        if(buttonId == 'yes'){
+
+	            Ext.Ajax.request({
+	                url : 'deleteScope?'+'&scope =' + scope,
+	                method: 'POST',
+	                timeout : 86400000, // 24 hours
+	                success : function(response, request) {
+	           //       Ext.Msg.alert('"'+ scope + '"' +' Context is deleted');
+	                refresh();
+	                },
+	                failure : function(response, request) {
+	                    Ext.Msg.alert('Delete Failed');
+	                } });  
+	            }
+	        }
+	    });
+	}
+function editDeleteScope()
+{var me = this;
+var centerPanel = Ext.getCmp('content-pane');
+centerPanel.getEl().mask("Loading...", "x-mask-loading");
+ var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+var scopevalue = node.text;
+
+var view = Ext.getCmp('newScopeWin');
+view.setTitle("Edit Scope");
+var obj =Ext.getCmp('newScopeForm');
+var form = obj.getForm();
+Ext.Ajax.request({
+    url:'getScope?' + '&scope =' + scopevalue,
+    method: 'POST',
+    timeout : 86400000, // 24 hours
+    success : function(response, request) {
+        // alert("saved successfuly");
+        var newScopeAdd = Ext.decode(response.responseText);
+        
+        form.setValues({scope : newScopeAdd.name, oldScope : scopevalue });
+        centerPanel.getEl().unmask();
+        view.show();
+    },
+    failure : function(response, request) {
+        centerPanel.getEl().unmask();
+        alert("Error fetching data to fill form");
+    }
+});
+	}
+function newScope()
+{
+	var newScopeForm = new Ext.FormPanel({
+		 id: 'newScopeForm',
+		 height: 120,
+		    width: 400,
+		    bodyPadding: 10,
+		    layout:'form',
+		    frame: true,
+		    bodyStyle:'padding:5px 5px 0',
+		    labelwidth: 75,
+		    items: [
+                    {
+                    	 xtype: 'textfield',
+                         anchor: '95%',
+                         fieldLabel: 'Scope Name',
+                         name: 'scope'
+                    },
+                
+                    {
+                        xtype: 'hidden',
+                        anchor: '100%',
+                        fieldLabel: 'Label',
+                        name: 'oldScope'
+                    }
+                ],
+                buttons: [{
+                    text: 'Save',
+                    handler: function(node,button, event){
+                  	  saveScope(node,button, event);
+                  	  newScopeWin.close();
+                    }
+                   // margin: 10,
+                },{
+                    text: 'Cancel',
+                    handler: function(button, event) {
+                    	newScopeWin.close();
+                }}]
+                    });
+	var newScopeWin = new Ext.Window({
+		id:'newScopeWin',
+	    height: 120,
+	    width: 400,
+	    layout: {
+	        type: 'fit'
+	    },
+	    title: 'New Scope',
+	    modal: true,
+	    items:[newScopeForm]
+	            
+	        });
+	
+}
+function saveScope(node,button, event){
+	var me = this;
+	var obj =Ext.getCmp('newScopeForm').getForm();
+	var form = obj.getValues(true);
+var directoryTree = Ext.getCmp('directory-tree');
+var node = directoryTree.getSelectionModel().getSelectedNode();
+	console.log("1 is " + form); // console.log("2 is " + form1);
+  // newScope();
+	Ext.Ajax.request({
+	    url : 'newScope?' + form,
+	    method: 'POST',
+	    timeout : 86400000, // 24 hours
+	    success : function(response, request) {
+	     // alert("saved successfuly");
+	       // newScopeWin.close();
+	        //Ext.getCmp('newCommForm').close();
+	       //newScopeWin.
+	        refresh();
+	    },
+	    failure : function(response, request) {
+	        alert("save failed");
+	    }
+	});
+}
+
+function newCommodity()
+{  var newCommForm = new Ext.FormPanel({
+	id: 'newCommForm',
+    height: 94,
+    width: 400,
+    bodyPadding: 10,
+    layout:'form',
+    frame: true,
+    bodyStyle:'padding:5px 5px 0',
+    labelwidth: 75,
+    items: [
+            {
+                xtype: 'textfield',
+                anchor: '100%',
+                fieldLabel: 'Commodity Name',
+                name: 'commName'
+            }
+        ],
+buttons: [{
+    text: 'Save',
+    handler: function(node,button, event){
+  	  saveComm(node,button, event);
+  	  newCommWin.close();
+    }
+   // margin: 10,
+},{
+    text: 'Cancel',
+    handler: function(button, event) {
+    	newCommWin.close();
+}}]
+    });
+
+var newCommWin = new Ext.Window({
+	id:'newCommWin',
+    height: 152,
+    width: 400,
+    layout: {
+        type: 'fit'
+    },
+    title: 'New Commodity',
+    modal: true,
+    items:[newCommForm]
+            
+        });
+
+   
+}
+function saveComm(node,button, event){
+	var me = this;
+	var obj =Ext.getCmp('newCommForm').getForm();
+	var form = obj.getValues(true);
+	var directoryTree = Ext.getCmp('directory-tree');
+ var node = directoryTree.getSelectionModel().getSelectedNode();
+//r node = directoryTree.getSelectedNode();
+	var scope = node.parentNode.text;
+
+	Ext.Ajax.request({
+	    url : 'newComm?' + form + '&scope=' + scope,
+	    method: 'POST',
+	    timeout : 86400000, // 24 hours
+	    success : function(response, request) {
+	    //  alert("saved successfuly");
+	      
+	       refresh();
+	    },
+	    failure : function(response, request) {
+	        alert("save failed");
+	    }
+	});
+}
+function newApp()
+{  var newAppForm = new Ext.FormPanel({
+	  id: 'newAppForm',
+	    height: 120,
+	    width: 400,
+	    bodyPadding: 10,
+	    layout:'form',
+	    frame: true,
+	    bodyStyle:'padding:5px 5px 0',
+	    labelwidth: 75,
+	    items: [
+              {
+                  xtype: 'textfield',
+                  anchor: '95%',
+                  fieldLabel: 'Application Name',
+                  name: 'appName'
+              },
+              {
+                  xtype: 'textfield',
+                  anchor: '95%',
+                  fieldLabel: 'Description',
+                  name: 'appDesc'
+              },
+              {
+                  xtype: 'textfield',
+                  anchor: '95%',
+                  fieldLabel: 'BaseUrl',
+                  name: 'baseUri'
+              },
+              {
+                  xtype: 'hidden',
+                  anchor: '100%',
+                  fieldLabel: 'Label',
+                  name: 'oldAppName'
+              },
+              {
+                  xtype: 'hidden',
+                  anchor: '100%',
+                  fieldLabel: 'Label',
+                  name: 'oldScope'
+              },
+            /*  {
+                  xtype: 'button',
+                  handler:  function(){
+                	  saveApp(node,button, event);
+                  },
+                  margin: 15,
+                  text: 'Save'
+              },*/
+          ],
+          buttons: [{
+              text: 'Save',
+              handler: function(node,button, event){
+            	  saveApp(node,button, event);
+            	  newAppWin.close();
+              }
+             // margin: 10,
+          },{
+              text: 'Cancel',
+              handler: function(button, event) {
+              	newAppWin.close();
+          }}]
+      });
+
+var newAppWin = new Ext.Window({
+	id:'newAppWin',
+
+	    height: 120,
+	    width: 400,
+	    layout: {
+	        type: 'fit'
+	    },
+	    closable:true,
+	    title: 'New Application',
+	    modal: true,
+	    items: [newAppForm]
+          //     xtype: 'newApp'
+           
+      
+});
+	}
+function saveApp(node,button, event)
+{var me = this;
+var obj = Ext.getCmp('newAppForm').getForm();
+var form = obj.getValues(true);
+var directoryTree = Ext.getCmp('directory-tree');
+var node = directoryTree.getSelectionModel().getSelectedNode();
+var scope = node.parentNode.text;
+
+Ext.Ajax.request({
+    url : 'newApplication?' + form +'&scope =' + scope,
+    method: 'POST',
+    timeout : 86400000, // 24 hours
+    success : function(response, request) {
+     // alert("saved successfuly");
+        
+        refresh();
+    },
+    failure : function(response, request) {
+        alert("save failed");
+    }
+});
+	}
+
+function refresh(){
+	var directoryTree = Ext.getCmp('directory-tree');
+    var contentPane = Ext.getCmp('content-pane');
+
+    // clear dto tabs
+    while (contentPane.items.length > 0) {
+      contentPane.items.items[0].destroy();
+    }
+
+    // clear property grid
+    Ext.getCmp('property-pane').setSource({});
+
+    // disable toolbar buttons
+    Ext.getCmp('exchange-button').disable();
+    Ext.getCmp('xlogs-button').disable();
+
+    // reload tree
+    directoryTree.getLoader().load(directoryTree.root);
+    directoryTree.getRootNode().expand(false);
+}
 Ext
     .onReady(function() {
       Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+    
+      
+      applicationMenu = new Ext.menu.Menu();
+      this.applicationMenu.add(this.buildApplicationSubMenu());
+      
+      commodityMenu = new Ext.menu.Menu();
+      this.commodityMenu.add(this.buildCommoditySubMenu());
+      
+      editDeleteScopeMenu = new Ext.menu.Menu();
+      this.editDeleteScopeMenu.add(this.buildEditDeleteSubMenu()); 
+      
+      graphSubMenu = new Ext.menu.Menu();
+      this.graphSubMenu.add(this.buildGraphSubMenu());
+      
+      newappmenu = new Ext.menu.Menu();
+      this.newappmenu.add(this.buildNewApplicationMenu());
+      
+      newCommoditymenu = new Ext.menu.Menu();
+      this.newCommoditymenu.add(this.buildNewCommodityMenu());
+      
+      newExchangemenu = new Ext.menu.Menu();
+      this.newExchangemenu.add(this.buildNewExchangeMenu());
+      
+      newScopemenu = new Ext.menu.Menu();
+      this.newScopemenu.add(this.buildNewScopeMenu());
+      
+      //exchangeMenu.add(this.buildExchangeMenu());
       Ext.QuickTips.init();
+    /*  this.control({
+         
+          "treepanel": {
+              itemclick: this.onTreeItemClick,
+              itemdblclick: this.onTreeItemDblClick,
+              itemcontextmenu: this.onTreeItemContextMenu
+          }});*/
+          
 
       Ext.get('about-link').on('click', function() {
         var win = new Ext.Window({
@@ -946,24 +2205,8 @@ Ext
                 icon : 'resources/images/16x16/view-refresh.png',
                 text : 'Refresh',
                 handler : function() {
-                  var directoryTree = Ext.getCmp('directory-tree');
-                  var contentPane = Ext.getCmp('content-pane');
-
-                  // clear dto tabs
-                  while (contentPane.items.length > 0) {
-                    contentPane.items.items[0].destroy();
-                  }
-
-                  // clear property grid
-                  Ext.getCmp('property-pane').setSource({});
-
-                  // disable toolbar buttons
-                  Ext.getCmp('exchange-button').disable();
-                  Ext.getCmp('xlogs-button').disable();
-
-                  // reload tree
-                  directoryTree.getLoader().load(directoryTree.root);
-                  directoryTree.getRootNode().expand(false);
+                	refresh();
+                  
                 }
               }, {
                 id : 'exchange-button',
@@ -1047,6 +2290,9 @@ Ext
                 } catch (err) {
                 }
               },
+              contextmenu:function (node, event) {
+            	  onTreeItemContextMenu(node, event);  
+              },
               keydown : function(evnt) {
                 // alert('keydown...');
                 var keyPressed = evnt.getKey();
@@ -1127,6 +2373,10 @@ Ext
         border : true,
         activeItem : 0
       });
+    
+      
+     
+      
 
       var viewport = new Ext.Viewport({
         layout : 'border',

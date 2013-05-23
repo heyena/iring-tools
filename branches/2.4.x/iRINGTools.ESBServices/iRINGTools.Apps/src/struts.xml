@@ -14,11 +14,11 @@
 
   <package name="exchange-manager" extends="json-default">
     <global-results>
-      <result name="exception">/exception.jsp</result>
+      <result name="error">errors/500.jsp</result>
     </global-results>
-    
+
     <global-exception-mappings>
-      <exception-mapping exception="java.lang.Exception" result="exception" />
+      <exception-mapping exception="java.lang.Exception" result="error" />
     </global-exception-mappings>
 
     <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
@@ -31,63 +31,184 @@
       <result name="success" type="json"/>
     </action>
 
-    <!-- app data -->
-    <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
-      <result type="json">
-        <param name="root">pageDtoGrid</param>
-      </result>
-    </action>
-    
-    <!-- content -->
-    <action name="content" class="org.iringtools.controllers.AppDataController" method="getContent">
-      <result name="success" type="stream">
-        <param name="inputName">contentStream</param>
-        <param name="bufferSize">4096</param>
-      </result>
-    </action>
-    <!-- related app data -->
-    <action name="radata" class="org.iringtools.controllers.AppDataController" method="getPageRelatedItems">
-      <result type="json">
-        <param name="root">pageRelatedItemGrid</param>
-      </result>
-    </action>
-    <!-- exchange data -->
-    <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDtos">
-      <result type="json">
-        <param name="root">pageDtoGrid</param>
-      </result>
-    </action>
-    <!-- related exchange data -->
-    <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
-      <result type="json">
-        <param name="root">pageRelatedItemGrid</param>
-      </result>
-    </action>
-    <!-- exchange submission -->
-    <action name="xsubmit" class="org.iringtools.controllers.ExchangeDataController" method="submitExchange">
-      <result type="json">
-        <param name="root">xResultsGrid</param>
-      </result>
-    </action>
     <!-- summary data -->
     <action name="sdata" class="org.iringtools.controllers.ExchangeDataController" method="getSummary">
       <result type="json">
         <param name="root">summaryGrid</param>
       </result>
     </action>
-    <!-- exchange logs -->
-    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXHistory">
+    <!-- New Exchange Configuration -->
+     <action name="newExchange" class="org.iringtools.controllers.ExchangeDataController" method="newExchangeConfig">
       <result type="json">
-        <param name="root">xHistoryGrid</param>
+        <param name="root">form</param>
       </result>
     </action>
-    <!-- exchange logs pagination -->
-    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXHistory">
+     <!-- New Scope -->
+     <action name="newScope" class="org.iringtools.controllers.ExchangeDataController" method="newScope">
       <result type="json">
-        <param name="root">pageXHistoryGrid</param>
+        <param name="root">form</param>
+      </result>
+    </action>
+       <!-- New Application -->
+     <action name="newApplication" class="org.iringtools.controllers.ExchangeDataController" method="newApplication">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+    </action>
+      <!-- New Graph -->
+     <action name="newGraph" class="org.iringtools.controllers.ExchangeDataController" method="newGraph">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+    </action>
+         <!-- New Commodity -->
+     <action name="newComm" class="org.iringtools.controllers.ExchangeDataController" method="newCommodity">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+    </action>
+    <!-- Get Scope -->
+     <action name="getScope" class="org.iringtools.controllers.ExchangeDataController" method="gettingScope">
+      <result type="json">
+        <param name="root">newScopeAdd</param>
+      </result>
+       </action>
+     <!-- Delete Scope -->
+     <action name="deleteScope" class="org.iringtools.controllers.ExchangeDataController" method="deleteScope">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+    </action>
+       <!-- Delete Application -->
+     <action name="deleteApplication" class="org.iringtools.controllers.ExchangeDataController" method="deleteApplication">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+          </action>
+      <!-- Get Application -->
+     <action name="getApplication" class="org.iringtools.controllers.ExchangeDataController" method="gettingApplication">
+      <result type="json">
+        <param name="root">application</param>
+      </result>
+       </action>
+ <!-- Get Graph -->
+     <action name="getGraph" class="org.iringtools.controllers.ExchangeDataController" method="gettingGraph">
+      <result type="json">
+        <param name="root">graph</param>
+      </result>
+       </action>
+      <!-- Delete Graph -->
+     <action name="deleteGraph" class="org.iringtools.controllers.ExchangeDataController" method="deleteGraph">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+    </action>
+         <!-- Delete Commodity -->
+     <action name="deleteCommodity" class="org.iringtools.controllers.ExchangeDataController" method="deleteCommodity">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+    </action>
+    <!-- Get Graph -->
+     <action name="getComm" class="org.iringtools.controllers.ExchangeDataController" method="gettingCommodity">
+      <result type="json">
+        <param name="root">comDetails</param>
+      </result>
+       </action>
+        <!-- Get Exchange config -->
+     <action name="getExchange" class="org.iringtools.controllers.ExchangeDataController" method="gettingCommodityConfig">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+       </action>
+         <!-- Delete Exchange config -->
+     <action name="deleteExchangeConfig" class="org.iringtools.controllers.ExchangeDataController" method="deleteExchangeConfig">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+       </action>
+         <!-- Testing SourceURI-->
+       <action name="SourcetestUri" class="org.iringtools.controllers.ExchangeDataController" method="testSourceUri">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+       </action>
+         <!-- Testing TargetURI-->
+       <action name="testTargetUrl" class="org.iringtools.controllers.ExchangeDataController" method="testTargetUri">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+       </action>
+   
+         <!-- Data Filters Expressions-->
+       <action name="dataFilter" class="org.iringtools.controllers.ExchangeDataController" method="dataFilterExpressions">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+       </action> 
+       
+   <!--      <action name="dataFilterOrderExpress" class="org.iringtools.controllers.ExchangeDataController" method="dataFilterOrderExpression">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+       </action>--> 
+       
+        <action name="getDataFilter" class="org.iringtools.controllers.ExchangeDataController" method="getDataFilterEdit">
+      <result type="json">
+        <param name="root">dfList</param>
+      </result>
+       </action>
+         <action name="getDataFilterOE" class="org.iringtools.controllers.ExchangeDataController" method="getDataFilterEditOE">
+      <result type="json">
+        <param name="root">dfList</param>
+      </result>
+       </action>
+ <!--      <action name="exchangeconfigmodel" class="org.iringtools.controllers.ExchangeDataController" method="newExchangeConfig">
+      <result type="json">
+        <param name="root">form</param>
+      </result>
+    </action>  --> 
+    
+    <!-- app data -->
+    <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
+      <result type="json">
+        <param name="root">pageDtoGrid</param>
+      </result>
+    </action>
+    <action name="radata" class="org.iringtools.controllers.AppDataController" method="getPageRelatedItems">
+      <result type="json">
+        <param name="root">pageRelatedItemGrid</param>
+      </result>
+    </action>
+
+    <!-- exchange data -->
+    <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDtos">
+      <result type="json">
+        <param name="root">pageDtoGrid</param>
+      </result>
+    </action>
+    <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
+      <result type="json">
+        <param name="root">pageRelatedItemGrid</param>
+      </result>
+    </action>
+    <action name="xsubmit" class="org.iringtools.controllers.ExchangeDataController" method="submitExchange">
+      <result type="json">
+        <param name="root">xResultsGrid</param>
+      </result>
+    </action>
+    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXLogs">
+      <result type="json">
+        <param name="root">xLogsGrid</param>
+      </result>
+    </action>
+    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXLogs">
+      <result type="json">
+        <param name="root">pageXLogsGrid</param>
       </result>
     </action>
   </package>
+
 
   <package name="federation-manager" extends="json-default">
     <action name="refdata" class="org.iringtools.controllers.RefDataController" method="searchPage">
