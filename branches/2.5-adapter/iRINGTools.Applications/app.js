@@ -30,6 +30,9 @@ Ext.application({
     'AM.view.menus.AppDataRefreshMenu',
     'AM.view.nhibernate.MultiSelectComponentGrid'
   ],
+  stores: [
+    'RelationStore'
+  ],
   views: [
     'Main',
     'menus.ScopeMenu',

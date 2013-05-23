@@ -18,7 +18,7 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
   alias: 'widget.relationPropertyGrid',
 
   itemId: 'relationPropertyGrid',
-  store: 'PropertyMap',
+  store: 'RelationStore',
 
   initComponent: function() {
     var me = this;
@@ -61,13 +61,15 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
       columns: [
         {
           xtype: 'gridcolumn',
-          dataIndex: 'property',
-          text: 'Property'
+          dataIndex: 'value',
+          text: 'Property',
+          flex: 1
         },
         {
           xtype: 'gridcolumn',
-          dataIndex: 'relatedProperty',
-          text: 'Related Property'
+          dataIndex: 'text',
+          text: 'Related Property',
+          flex: 1
         }
       ]
     });
@@ -99,10 +101,10 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
     var propertyName = propertyCmb.getValue().replace(/^\s*/, "").replace(/\s*$/, "");
     var mapProperty = mapPropertyCmb.getValue().replace(/^\s*/, "").replace(/\s*$/, "");
 
-    var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};
-
-    var propertErr = store.find('property', propertyName);
-    var mapErr = store.find('relatedProperty', mapProperty);
+    //var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};
+    var mapRecord = {'value': propertyName, 'text': mapProperty};
+    var propertErr = store.find('value', propertyName);
+    var mapErr = store.find('text', mapProperty);
 
     if (propertErr != -1) {
       message = 'Property [' + propertyName + '] already in a mapping!';
@@ -123,7 +125,21 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
   },
 
   onRemoveClick: function(button, e, eOpts) {
+    var me = this;
+    var form = button.up('setrelationform');
+    var grid = form.down('relationPropertyGrid');
+    var selectedRec = grid.getSelectionModel().selected.items[0];
+    var store = grid.getStore();
 
+    if (grid.getSelectionModel().hasSelection()) {
+      store.remove(selectedRec);
+    }
+    else {
+      if (store.data.items.length < 1)
+      showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);
+      else
+      showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);
+    }
   }
 
 });

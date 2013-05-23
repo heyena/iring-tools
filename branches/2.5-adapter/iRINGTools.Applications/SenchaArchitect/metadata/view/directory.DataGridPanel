@@ -31,7 +31,7 @@
             "codeClass": null,
             "userConfig": {
                 "dataIndex": "string",
-                "text": "String"
+                "text": null
             },
             "designerId": "18a99a4a-040f-42f5-b1e3-26a1e7819a16"
         },
@@ -160,7 +160,7 @@
                     "\r",
                     "config.iconCls = 'tabsData';\r",
                     "config.features = [filters];\r",
-                    "return config;"
+                    "return config;/*"
                 ]
             },
             "designerId": "0cdcb92f-49da-47cc-b2f3-2ea0cfc734d9"

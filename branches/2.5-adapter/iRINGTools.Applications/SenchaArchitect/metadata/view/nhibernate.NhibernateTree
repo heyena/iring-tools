@@ -209,15 +209,18 @@
             "userConfig": {
                 "fn": "onReload",
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "var selection = me.getSelectionModel();\r",
                     "var store = me.store;\r",
                     "var node = selection.getSelection()[0];\r",
                     "\r",
                     "if(node){\r",
-                    "store.load(node);\r",
+                    "  store.load(node);\r",
                     "  node.expand();\r",
-                    "}"
+                    "}\r",
+                    "\r",
+                    ""
                 ]
             },
             "designerId": "19483211-1f6c-4fc2-be1e-95e30f6e7430"

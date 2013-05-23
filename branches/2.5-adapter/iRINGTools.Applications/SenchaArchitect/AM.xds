@@ -900,6 +900,14 @@
                 "Scripts/AM/view/nhibernate/MultiSelectComponentGrid.js"
             ],
             "className": "nhibernate.MultiSelectComponentGrid"
+        },
+        "cc442d03-be71-4c6c-bb48-90f2a756b8ba": {
+            "paths": [
+                "metadata/store/RelationStore",
+                "Scripts/AM/store/override/RelationStore.js",
+                "Scripts/AM/store/RelationStore.js"
+            ],
+            "className": "RelationStore"
         }
     },
     "viewOrderMap": {
@@ -994,7 +1002,8 @@
             "82edf86f-a5e2-4e95-8ce8-b5152d4a2cd6",
             "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd",
             "b93d62e3-52fe-4c8d-af23-be3ef7516ff4",
-            "19274de1-0fa9-4687-ba97-fd4f4a1cea68"
+            "19274de1-0fa9-4687-ba97-fd4f4a1cea68",
+            "cc442d03-be71-4c6c-bb48-90f2a756b8ba"
         ],
         "controller": [
             "06f88f22-c6f5-473b-a55b-a40aae8ad3b2",

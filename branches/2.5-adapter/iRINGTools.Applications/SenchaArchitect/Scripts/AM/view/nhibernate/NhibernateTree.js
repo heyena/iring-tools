@@ -88,6 +88,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
   },
 
   onReload: function() {
+
     var me = this;
     var selection = me.getSelectionModel();
     var store = me.store;
@@ -97,6 +98,8 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
       store.load(node);
       node.expand();
     }
+
+
   },
 
   getSelectedNode: function() {

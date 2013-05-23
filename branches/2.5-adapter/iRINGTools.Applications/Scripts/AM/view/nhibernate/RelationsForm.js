@@ -40,28 +40,60 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
       },
       items: [
         {
-          xtype: 'label',
-          cls: 'x-form-item',
-          style: 'font-weight:bold;',
-          text: 'Add/Remove relationship'
-        },
-        {
-          xtype: 'textfield',
-          fieldLabel: 'Relationship Name',
-          name: 'relationName',
-          enableKeyEvents: true,
-          size: 40,
-          listeners: {
-            keydown: {
-              fn: me.onRelationKeydown,
-              scope: me
+          xtype: 'panel',
+          frame: true,
+          header: false,
+          items: [
+            {
+              xtype: 'label',
+              cls: 'x-form-item',
+              style: 'font-weight:bold;',
+              text: 'Add/Remove relationship'
+            },
+            {
+              xtype: 'textfield',
+              fieldLabel: 'Relationship Name',
+              labelWidth: 160,
+              name: 'relationName',
+              enableKeyEvents: true,
+              size: 40,
+              listeners: {
+                keydown: {
+                  fn: me.onRelationKeydown,
+                  scope: me
+                }
+              }
+            },
+            {
+              xtype: 'relationsgrid',
+              autoShow: true,
+              height: 700
             }
-          }
-        },
-        {
-          xtype: 'relationsgrid',
-          autoShow: true,
-          minHeight: 50
+          ],
+          dockedItems: [
+            {
+              xtype: 'toolbar',
+              dock: 'top',
+              items: [
+                {
+                  xtype: 'button',
+                  iconCls: 'am-apply',
+                  text: 'Apply',
+                  listeners: {
+                    click: {
+                      fn: me.onButtonClick,
+                      scope: me
+                    }
+                  }
+                },
+                {
+                  xtype: 'button',
+                  iconCls: 'am-edit-clear',
+                  text: 'Reset'
+                }
+              ]
+            }
+          ]
         }
       ]
     });
@@ -74,6 +106,10 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
     if (e.getKey() == e.ENTER) {
       me.addRelationship(me);
     }
+  },
+
+  onButtonClick: function(button, e, eOpts) {
+
   },
 
   addRelationship: function(form) {
@@ -91,11 +127,11 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
 
     if (mydata.length >= numberOfRelation) {
       if (numberOfRelation === 0) {
-        message = 'Data object "' + node.parentNode.text + '" cannot have any relationship since it is the only data object selected';
+        message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected';
         showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
       }
       else {
-        message = 'Data object "' + node.parentNode.text + '" cannot have more than ' + numberOfRelation + ' relationship';
+        message = 'Data object "' +node.parentNode.data.text + '" cannot have more than ' + numberOfRelation + ' relationship';
         showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
       }
       return;

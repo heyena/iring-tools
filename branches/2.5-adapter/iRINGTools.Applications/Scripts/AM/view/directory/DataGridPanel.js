@@ -34,8 +34,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
       columns: [
         {
           xtype: 'gridcolumn',
-          dataIndex: 'string',
-          text: 'String'
+          dataIndex: 'string'
         }
       ]
     });
@@ -99,7 +98,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
 
     config.iconCls = 'tabsData';
     config.features = [filters];
-    return config;
+    return config;/*
   },
 
   handleBeforeLoad: function(store, operation, e) {

@@ -22,6 +22,11 @@ var ifExistSibling = function (str, node, state) {
 Ext.ux.Utils = function(src) {  
     this.deletedRecords = [];
 	this.deletedTables = [];
+	this.availableDataProperties = [];
+	this.deletedDataProperties = [];
+	this.deletedKeyProperties = [];
+	
+
 };
 Ext.ux.Utils.prototype = {
 };

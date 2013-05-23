@@ -83,7 +83,14 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           allowBlank: false,
           queryMode: 'local',
           store: [
-            '[[\'OneToOne\', \'OneToOne\'], [\'OneToMany\', \'OneToMany\']]'
+            [
+              'OneToOne',
+              'OneToOne'
+            ],
+            [
+              'OneToMany',
+              'OneToMany'
+            ]
           ]
         },
         {
@@ -112,7 +119,8 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         },
         {
           xtype: 'relationPropertyGrid',
-          minHeight: 100
+          anchor: '100%',
+          height: 600
         }
       ],
       dockedItems: [

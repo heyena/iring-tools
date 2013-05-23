@@ -413,13 +413,13 @@ Ext.define('AM.controller.Directory', {
   onShowDataGrid: function(item, e, eOpts) {
     var me = this;
     var tree = this.getDirTree();
-    var node = tree.getSelectedNode(),
-      content = me.getMainContent(),
-      //contextName = node.data.property.context,
-      contextName = node.parentNode.parentNode.parentNode.data.property.Name,
-      //endpointName = node.data.property.endpoint,
-      endpointName = node.parentNode.parentNode.data.property.Name,
-      baseurl = node.data.property.baseUrl;
+    var node = tree.getSelectedNode();
+    content = me.getMainContent();
+    //contextName = node.data.property.context,
+    contextName = node.parentNode.parentNode.parentNode.data.property.Name;
+    //endpointName = node.data.property.endpoint,
+    endpointName = node.parentNode.parentNode.data.property.Name;
+    //baseurl = node.data.property.baseUrl;
 
     var graph = node.data.text;
     //var title = 'Data Grid ' + contextName + '.' + endpointName + '.' + graph;

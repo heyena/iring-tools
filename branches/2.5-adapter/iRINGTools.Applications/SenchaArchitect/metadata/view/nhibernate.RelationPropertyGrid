@@ -12,7 +12,7 @@
         "designer|userClassName": "nhibernate.RelationPropertyGrid",
         "designer|userAlias": "relationPropertyGrid",
         "title": null,
-        "store": "PropertyMap"
+        "store": "RelationStore"
     },
     "designerId": "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c",
     "cn": [
@@ -84,10 +84,10 @@
                                     "var propertyName = propertyCmb.getValue().replace(/^\\s*/, \"\").replace(/\\s*$/, \"\");\r",
                                     "var mapProperty = mapPropertyCmb.getValue().replace(/^\\s*/, \"\").replace(/\\s*$/, \"\");\r",
                                     "\r",
-                                    "var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};\r",
-                                    "\r",
-                                    "var propertErr = store.find('property', propertyName);\r",
-                                    "var mapErr = store.find('relatedProperty', mapProperty);\r",
+                                    "//var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};\r",
+                                    "var mapRecord = {'value': propertyName, 'text': mapProperty};\r",
+                                    "var propertErr = store.find('value', propertyName);\r",
+                                    "var mapErr = store.find('text', mapProperty);\r",
                                     "\r",
                                     "if (propertErr != -1) {\r",
                                     "  message = 'Property [' + propertyName + '] already in a mapping!';\r",
@@ -150,7 +150,21 @@
                             "userConfig": {
                                 "fn": "onRemoveClick",
                                 "implHandler": [
-                                    ""
+                                    "    var me = this;\r",
+                                    "    var form = button.up('setrelationform');\r",
+                                    "    var grid = form.down('relationPropertyGrid');\r",
+                                    "\t\tvar selectedRec = grid.getSelectionModel().selected.items[0];\r",
+                                    "    var store = grid.getStore();\r",
+                                    "\t\t\r",
+                                    "\tif (grid.getSelectionModel().hasSelection()) {\r",
+                                    "\t\t\t\t\t\t\tstore.remove(selectedRec);\r",
+                                    "\t\t\t\t\t\t}\r",
+                                    "  else {\r",
+                                    "    if (store.data.items.length < 1)\r",
+                                    "      showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);\r",
+                                    "    else\r",
+                                    "      showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);\r",
+                                    "  }"
                                 ],
                                 "name": "click",
                                 "scope": "me"
@@ -169,8 +183,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dataIndex": "property",
-                "text": "Property"
+                "dataIndex": "value",
+                "text": "Property",
+                "flex": 1
             },
             "designerId": "2d144cf2-6f60-4572-bfac-a2cea951f6c3"
         },
@@ -182,8 +197,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dataIndex": "relatedProperty",
-                "text": "Related Property"
+                "dataIndex": "text",
+                "text": "Related Property",
+                "flex": 1
             },
             "designerId": "bf15cfe6-d61c-4fcb-85f0-c9cf175d97b3"
         }
