@@ -889,21 +889,10 @@ function showDialog(width, height, title, message, buttons, callback) {
 function onTreeItemContextMenu  (node, e)
 {
 	  var obj = node;
+	  var directoryTree = Ext.getCmp('directory-tree');
 var x = e.browserEvent.clientX;
 var y = e.browserEvent.clientY;
-/*utilsObj.record = record;
-utilsObj.index = index;
-//utilsObj.scope = scope;
-var exchangeId = obj.data.properties.Id;
-//utilsObj.xid = obj.data.properties.Id;
-context = '?scope=' + scope + '&xid=' + exchangeId;
-utilsObj.context = context;
-utilsObj.appName = obj.data.text;
-obj.data.reviewed = true;
-//setting URL for Exchange Summary in utility class object.
-utilsObj.exchangeSummaryUrl = 'sdata'+context+'&xlabel='+obj.data.text;*/
-var directoryTree = Ext.getCmp('directory-tree');
-var node = directoryTree.getSelectionModel().getSelectedNode();
+
 if(node != null)
 	{// var obj = node;
 if ((obj !== null))
@@ -963,6 +952,7 @@ if ((obj !== null))
 
         }
 	}
+directoryTree.getSelectionModel().select(node);
 }
 
 function buildEditDeleteSubMenu () 
@@ -2245,18 +2235,30 @@ Ext
             },
             listeners : {
               click : function(node, event) {
-                Ext.getCmp('property-pane').setSource(node.attributes.properties);
-
+            	 if(node.attributes != null)
+            		 {
+            		 if(node.attributes.properties != null)
+            			 {
+              Ext.getCmp('property-pane').setSource(node.attributes.properties);
+            		 }
+            		 }
                 try {
-                  var dataTypeNode = node.parentNode.parentNode;
+                	if(node.parentNode != null)
+                		{
+                		if(node.parentNode.parentNode != null)
+                			{
+                			 var dataTypeNode = node.parentNode.parentNode;
 
-                  if (dataTypeNode != null && dataTypeNode.attributes['text'] == 'Data Exchanges') {
-                    Ext.getCmp('exchange-button').enable();
-                    Ext.getCmp('xlogs-button').enable();
-                  } else {
-                    Ext.getCmp('exchange-button').disable();
-                    Ext.getCmp('xlogs-button').disable();
-                  }
+                             if (dataTypeNode != null && dataTypeNode.attributes['text'] == 'Data Exchanges') {
+                               Ext.getCmp('exchange-button').enable();
+                               Ext.getCmp('xlogs-button').enable();
+                             } else {
+                               Ext.getCmp('exchange-button').disable();
+                               Ext.getCmp('xlogs-button').disable();
+                             }
+                			}
+                		}
+                 
                 } catch (err) {
                 }
               },
