@@ -210,6 +210,7 @@ namespace iRINGTools.Web.Models
                 string fieldName = dataProp.propertyName;
                 field.dataIndex = fieldName;
                 field.name = fieldName;
+                field.filterable = true;
 
                 int fieldWidth = fieldName.Count() * 6;
 
