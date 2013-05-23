@@ -98,7 +98,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
 
     config.iconCls = 'tabsData';
     config.features = [filters];
-    return config;/*
+    return config;
   },
 
   handleBeforeLoad: function(store, operation, e) {

@@ -160,7 +160,7 @@
                     "\r",
                     "config.iconCls = 'tabsData';\r",
                     "config.features = [filters];\r",
-                    "return config;/*"
+                    "return config;"
                 ]
             },
             "designerId": "0cdcb92f-49da-47cc-b2f3-2ea0cfc734d9"
