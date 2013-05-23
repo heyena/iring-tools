@@ -1,5 +1,9 @@
 package org.iringtools.models;
 
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -10,12 +14,17 @@ import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
+import org.iringtools.controllers.DirectoryController;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.data.filter.Expression;
 import org.iringtools.data.filter.Expressions;
 import org.iringtools.data.filter.OrderExpression;
 import org.iringtools.data.filter.OrderExpressions;
+import org.iringtools.data.filter.RelationalOperator;
+import org.iringtools.directory.Application;
+import org.iringtools.directory.Commodity;
 import org.iringtools.directory.Exchange;
+import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -29,6 +38,7 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.library.exchange.Constants;
+import org.iringtools.library.directory.DirectoryProvider;
 import org.iringtools.library.exchange.ExchangeProvider;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
@@ -37,11 +47,13 @@ public class ExchangeDataModel extends DataModel
 {
   private static final Logger logger = Logger.getLogger(ExchangeDataModel.class);
   private ExchangeProvider provider;
+  private DirectoryProvider dprovider;
 
   public ExchangeDataModel(Map<String, Object> settings, Map<String, Object> session)
   {
-    super(DataMode.EXCHANGE, settings, session);
-    provider = new ExchangeProvider(settings);
+	  super(DataMode.EXCHANGE, settings, session);
+	    provider = new ExchangeProvider(settings);
+	    dprovider = new DirectoryProvider(settings);
   }
 
   public Grid getDtoGrid(String serviceUri, String scope, String xId, String filter, String sortBy, String sortOrder,
@@ -461,9 +473,9 @@ public class ExchangeDataModel extends DataModel
     return dataFilter;
   }
 
-  protected void applyTransferTypeFilterToDtis(DataTransferIndices dtis, List<Expression> transferTypeExpressions)
+  protected  void applyTransferTypeFilterToDtis(DataTransferIndices dtis, List<Expression> transferTypeExpressions)
   {
-    if (transferTypeExpressions != null && transferTypeExpressions.size() > 0 && dtis != null
+   if (transferTypeExpressions != null && transferTypeExpressions.size() > 0 && dtis != null
         && dtis.getDataTransferIndexList() != null && dtis.getDataTransferIndexList().getItems().size() > 0)
     {
       List<DataTransferIndex> indices = dtis.getDataTransferIndexList().getItems();
@@ -476,11 +488,23 @@ public class ExchangeDataModel extends DataModel
         // NOTE: only accept OR logical operators
         for (Expression expression : transferTypeExpressions)
         {
-          if (expression.getValues().getItems().get(0).equalsIgnoreCase(transferType.toString()))
+        	String value = expression.getValues().getItems().get(0);
+        	if(expression.getRelationalOperator() == RelationalOperator.EQUAL_TO)
+        	{
+          if (value.equalsIgnoreCase(transferType.toString()))
           {
             found = true;
             break;
           }
+        	}
+        	if(expression.getRelationalOperator() == RelationalOperator.NOT_EQUAL_TO)
+        	{
+        		 if (!value.equalsIgnoreCase(transferType.toString()))
+                 {
+                   found = true;
+                   break;
+                 }
+               	}
         }
 
         if (!found)
@@ -488,8 +512,8 @@ public class ExchangeDataModel extends DataModel
           indices.remove(i--);
         }
       }
+		}
     }
-  }
 
   protected DataFilter separateTransferTypeExpressions(DataFilter inFilter, List<Expression> transferTypeExpressions)
   {
@@ -539,11 +563,12 @@ public class ExchangeDataModel extends DataModel
       dxiRequest.setManifest(manifest);
       dxiRequest.setDataFilter(filter);
 
+     // exchange.setDataFilter(null);
       dtis = provider.getDataTransferIndices(exchange, dxiRequest);
-      
+
       if (transferTypeExpressions.size() > 0)
       {
-        applyTransferTypeFilterToDtis(dtis, transferTypeExpressions);
+    	  applyTransferTypeFilterToDtis(dtis, transferTypeExpressions);
       }
     }
     catch (Exception ex)
@@ -575,29 +600,28 @@ public class ExchangeDataModel extends DataModel
       {
         dtis = getFullDtis(exchange, manifest);
       }
-      else  // fetch data with filter
+      else{
+      DxiRequest dxiRequest = new DxiRequest();
+      dxiRequest.setManifest(manifest);
+      dxiRequest.setDataFilter(filter);
+
+      List<String> ids = provider.getIdentifiers(exchange, dxiRequest);
+      
+    
+      if (ids != null)
       {
-        DxiRequest dxiRequest = new DxiRequest();
-        dxiRequest.setManifest(manifest);
-        dxiRequest.setDataFilter(filter);
-  
-        List<String> ids = provider.getIdentifiers(exchange, dxiRequest);
-  
-        if (ids != null)
+        DataTransferIndexList dtiList = new DataTransferIndexList();
+        dtis.setDataTransferIndexList(dtiList);
+
+        for (String id : ids)
         {
-          DataTransferIndexList dtiList = new DataTransferIndexList();
-          dtis.setDataTransferIndexList(dtiList);
-  
-          for (String id : ids)
+          for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
           {
-            for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
-            {
-              if (dti.getInternalIdentifier().equals(id))
-              {              
-                dtiList.getItems().add(dti);
-                break;
-              }
-              else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN))
+            if (!dtiList.getItems().contains(dti) && dti.getIdentifier().equalsIgnoreCase(id))
+            {              
+              dtiList.getItems().add(dti);
+              break;
+            } else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN))
               {
                 String[] internalIds = dti.getInternalIdentifier().split(Constants.CHANGE_TOKEN);
                 
@@ -607,24 +631,44 @@ public class ExchangeDataModel extends DataModel
                   break;
                 }
               }
-            }
           }
         }
       }
-
-      if (transferTypeExpressions.size() > 0)
-      {
-        applyTransferTypeFilterToDtis(dtis, transferTypeExpressions);
       }
-    }
-    catch (Exception ex)
+  
+      List<DataTransferIndex> indices = dtis.getDataTransferIndexList().getItems();
+      if (uiFilter != null)
+      {
+        if (uiFilter.getExpressions() != null)
+        {
+        for (int i = 0; i < indices.size(); i++)
+        {
+        String transferType = indices.get(i).getTransferType().toString();
+        
+          for (Expression expression : uiFilter.getExpressions().getItems())
+          { 
+        	  if(expression.getPropertyName().equalsIgnoreCase("Transfer Type"))
+        	  {
+        	  String value = expression.getValues().getItems().get(0);
+        	  if (!value.equalsIgnoreCase(transferType))
+	             {
+        		  indices.remove(i--);
+	               break;
+	             }
+        	  }
+	        }
+        	  
+          }
+      
+    
+      }}
+    }catch (Exception ex)
     {
       logger.error("Error getting data transfer indices: " + ex.toString());
     }
 
     return dtis;
   }
-
   protected DataTransferIndices getDtis(Exchange exchange, Manifest manifest, String filter, String sortOrder,
       String sortBy) throws Exception
   {
@@ -888,4 +932,139 @@ public class ExchangeDataModel extends DataModel
 //
 //    return dtoGrid;
 //  }
+
+
+
+public void  newExchangeConfig(Exchange form, String scope, String commodity, String serviceUri) {
+	dprovider.postExchageDefinition(form, scope, commodity);
+}
+public void editExchangeConfig(Exchange form, String scope, String commodity,String oldConfName, String serviceUri) {
+	
+	dprovider.editExchageDefinition(form, scope, commodity, oldConfName);
+}
+public Exchange gettingCommodityConfig(String com, String scope, String name,String serviceUri) {
+
+	return dprovider.gettingCommodityConfig(com, scope, name );
+}
+public void deleteExchangeConfig(String com, String scope, String name,String serviceUri) {
+
+	dprovider.deleteExchangeConfig(com, scope, name );
+}
+public void  newScope(Scope scope, String serviceUri) {
+	dprovider.postNewScope(scope);
+}
+public void  editScope(String scope, String oldScope, String serviceUri) {
+	dprovider.postEditedScope(scope, oldScope);
+}
+public Scope  gettingScope(String scope, String serviceUri) {
+	
+
+	return dprovider.gettingScope(scope);
+}
+public void  deleteScope(String scope, String serviceUri) {
+	
+	dprovider.deleteScope(scope);
+}
+public void  newApplication(Application app, String scope, String serviceUri) {
+	
+
+	dprovider.postApplication(app, scope);
+}
+public void  editApplication(Application app, String oldAppName, String scope) {
+	
+	dprovider.editApplication(app, oldAppName, scope);
+}
+public void  deleteApplication(String app, String scope, String serviceUri) {
+
+
+	dprovider.deleteApplication(app, scope);
+}
+public Application  gettingApplication(String app, String scope, String serviceUri) {
+
+return dprovider.gettingApplication(app, scope);
+}
+public void  newGraph( org.iringtools.directory.Graph graph , String scope, String appname, String serviceUri) {
+	
+	dprovider.postGraph(graph, scope, appname);
+}
+public void  editGraph( org.iringtools.directory.Graph graph , String scope, String appname, String oldGraphName, String serviceUri) {
+	
+	dprovider.editGraph(graph, scope, appname, oldGraphName);
+}
+public void  deleteGraph(String graph , String scope, String appname, String serviceUri) {
+
+	dprovider.deleteGraph(graph, scope, appname);
+}
+public org.iringtools.directory.Graph  gettingGraph(String graph , String scope, String appname, String serviceUri){
+	
+	
+	return dprovider.gettingGraph(graph, scope, appname);
+}
+public void  newCommodity(Commodity com, String scope, String serviceUri) {
+
+	dprovider.postCommodity(com, scope);
+}
+public void  editCommodity(Commodity com, String scope, String oldCommName, String serviceUri) {
+
+	dprovider.editCommodity(com, scope, oldCommName);
+}
+public void  deleteCommodity(String com, String scope, String serviceUri) {
+	
+
+	dprovider.deleteCommodity(com, scope);
+}
+public Commodity gettingCommodity(String com, String scope, String serviceUri) {
+
+	return dprovider.gettingCommodity(com, scope);
+}
+
+public String testTargetUri(String targetUri) throws IOException {
+	URL u = new URL ( targetUri);
+	HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
+	huc.setRequestMethod ("GET");  //OR  huc.setRequestMethod ("HEAD"); 
+	huc.connect () ; 
+	int code = huc.getResponseCode() ;
+	System.out.println(code);
+	if(code == 200)
+	{
+		return ("connected successfully");
+	}else{
+		return("could not connect to the specified URl");
+	}
+}
+
+public String testSourceUri(String sourceUri) throws IOException {
+	URL u = new URL (sourceUri);
+	HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
+	huc.setRequestMethod ("GET");  //OR  huc.setRequestMethod ("HEAD"); 
+	huc.connect () ; 
+	int code = huc.getResponseCode() ;
+	System.out.println(code);
+	if(code == 200)
+	{
+		return ("connected successfully");
+	}else{
+		return("could not connect to the specified URl");
+	}
+}
+
+public void saveDataFilterExpression(Expressions ex, String commName,
+		String scope, String name, OrderExpressions Oe) {
+	
+	dprovider.postDataFilterExpressions(scope, name, commName, ex, Oe);
+	 Exchange exchange = null;
+	 String exchangeKey = EXCHANGE_PREFIX + "." + scope + "." + name;	
+     String fullDtiKey = DTI_PREFIX + "." + scope + "." + name;
+     for (String key : session.keySet())
+         if (key.startsWith(fullDtiKey))
+           session.remove(key);
+
+     System.out.println(session);
+     exchange = getExchangeFromDirectory(scope, name);
+     session.put(exchangeKey, exchange); 
+}
+
+public DataFilter gettingDataFilter(String commName, String scope, String name) {
+	return dprovider.gettingDataFilter(commName, scope, name );
+}
 }
