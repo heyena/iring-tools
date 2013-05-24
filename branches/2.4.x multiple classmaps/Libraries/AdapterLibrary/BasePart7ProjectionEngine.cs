@@ -860,9 +860,19 @@ namespace org.iringtools.adapter.projection
       string className = propertyNameParts[0];
       string templateName = propertyNameParts[1];
       string roleName = propertyNameParts[2];
+      int classIndex = 0;
+
+      if (className.Contains("-"))
+      {
+          string[] temp = className.Split('-');
+          className = temp[0];
+          classIndex = Convert.ToInt32(temp[1]);
+      }
+      
+        
 
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
-        cm => Utility.TitleCase(cm.classMap.name).ToUpper() == className.ToUpper());
+        cm => Utility.TitleCase(cm.classMap.name).ToUpper() == className.ToUpper() && cm.classMap.index == classIndex);
 
       List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
       TemplateMap templateMap = templateMaps.Find(tm => tm.name == templateName);

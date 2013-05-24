@@ -1,5 +1,6 @@
 package org.iringtools.library.exchange;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 
@@ -334,9 +335,10 @@ public class DifferencingProvider
         {
         	ClassTemplates classTemplates = classTemplatesList.get(j);
         	String classId = classTemplates.getClazz().getId();
-          ClassObject targetClassObject = getClassObject(targetClassObjectList, classId);
-          ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId);
-          ClassTemplates manifestClassObject = getClassTemplates(manifest, classId);          
+        	BigInteger classIndex = classTemplates.getClazz().getIndex();
+          ClassObject targetClassObject = getClassObject(targetClassObjectList, classId,classIndex);
+          ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId,classIndex);
+          ClassTemplates manifestClassObject = getClassTemplates(manifest, classId,classIndex);          
           
           if (sourceClassObject != null && targetClassObject != null)
           {
@@ -524,24 +526,42 @@ public class DifferencingProvider
     return sourceDtos;
   }
 
-  private ClassObject getClassObject(List<ClassObject> classObjects, String classId)
+  private ClassObject getClassObject(List<ClassObject> classObjects, String classId, BigInteger classIndex)
   {
+	int paramIndex = 0;
+	int index = 0;
+	
+	if (classIndex != null)
+		paramIndex =classIndex.intValue();
+	
     for (ClassObject classObject : classObjects)
     {
-      if (classObject.getClassId().equals(classId))
+      if (classObject.getIndex() != null)
+    	  index = classObject.getIndex().intValue();
+    	
+      if (classObject.getClassId().equals(classId) && index == paramIndex )
         return classObject;
     }
 
     return null;
   }
   
-  private ClassTemplates getClassTemplates(Manifest manifest, String classId)
+  private ClassTemplates getClassTemplates(Manifest manifest, String classId, BigInteger classIndex)
   {
+	int paramIndex = 0;
+	int index = 0;
+		
+	if (classIndex != null)
+		paramIndex =classIndex.intValue();
+	  
   	for (Graph graph : manifest.getGraphs().getItems())
   	{
 	    for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
 	    {
-	      if (classTemplates.getClazz().getId().equals(classId))
+	      if (classTemplates.getClazz().getIndex() != null)
+	         index = classTemplates.getClazz().getIndex().intValue();
+	    	
+	      if (classTemplates.getClazz().getId().equals(classId) && index == paramIndex)
 	        return classTemplates;
 	    }
   	}

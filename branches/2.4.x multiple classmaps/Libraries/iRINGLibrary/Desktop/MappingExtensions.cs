@@ -110,8 +110,49 @@ namespace org.iringtools.mapping
         templateMaps.Clear();
         graphMap.classTemplateMaps.Remove(classTemplateMap);
       }
+      
+        RearrangeClassMapIndex(graphMap, classId);
     }
 
+    public static void RearrangeClassMapIndex(this GraphMap graphMap, string classId)
+    {
+        
+        IList<ClassMap> classMaps = (from ctm in graphMap.classTemplateMaps
+                                    where ctm.classMap.id == classId
+                                    select ctm.classMap).ToList();
+        int startIndex = -1;
+        
+        foreach (ClassMap cm in classMaps)
+        {
+            SetNewIndexOfClass(graphMap, classId, cm.index, startIndex);
+            startIndex--;
+        }
+
+        startIndex = 0;
+        foreach (ClassMap cm in classMaps)
+        {
+            SetNewIndexOfClass(graphMap, classId,  cm.index,startIndex);
+            startIndex++;
+        }
+
+        
+        
+    }
+
+    private static void SetNewIndexOfClass(GraphMap graphMap, string classId, int oldIndex, int newIndex)
+    {
+        foreach (ClassTemplateMap ctm in graphMap.classTemplateMaps)
+        {
+            if (ctm.classMap.id == classId && ctm.classMap.index == oldIndex)
+                ctm.classMap.index = newIndex;
+
+            foreach (TemplateMap tm in ctm.templateMaps)
+                foreach (RoleMap rm in tm.roleMaps)
+                    if (rm.classMap != null && rm.classMap.id == classId && rm.classMap.index == oldIndex)
+                        rm.classMap.index = newIndex;
+
+        }
+    }
     //public static ClassTemplateMap GetClassTemplateMap(this GraphMap graphMap, string classId)
     //{
     //  foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
@@ -195,6 +236,20 @@ namespace org.iringtools.mapping
 
       if (classTemplateMap.classMap != null)
         classTemplateMap.templateMaps.Add(templateMap);
+    }
+
+    public static void DeleteTemplateMap(this GraphMap graphMap,string parentClassId,int  parentClassIndex,int templateMapIndex)
+    {
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
+        TemplateMap tm = ctm.templateMaps[templateMapIndex];
+
+        foreach(RoleMap rm in tm.roleMaps)
+        {
+            DeleteRoleMap(graphMap, tm, rm.id);
+        }
+
+        ctm.templateMaps.RemoveAt(templateMapIndex);
+     
     }
 
     //public static void DeleteTemplateMap(this GraphMap graphMap, string classId, TemplateMap templateMap)
@@ -359,6 +414,7 @@ namespace org.iringtools.mapping
             identifierKeyMaps = manifestClass.keys.CloneIdentifiers(),
             identifierDelimiter = classMap.identifierDelimiter,
             identifiers = new Identifiers(),
+            index  = classMap.index
         };
 
         //TODO: Resolve identifiers based on the manifestIdentifiers.
@@ -367,7 +423,7 @@ namespace org.iringtools.mapping
         {
           foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
           {
-            if (classTemplateMap.classMap.id == key.classId)
+              if (classTemplateMap.classMap.id == key.classId && classTemplateMap.classMap.index == manifestClass.index)
             {
               foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
               {

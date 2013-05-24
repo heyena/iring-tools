@@ -234,6 +234,8 @@ namespace org.iringtools.dxfr.manifest
 
     private Keys identifiersField;
 
+    private int indexField;
+
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
     public string id
     {
@@ -272,6 +274,21 @@ namespace org.iringtools.dxfr.manifest
             this.identifiersField = value;
         }
     }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+    public int index
+    {
+        get
+        {
+            return this.indexField;
+        }
+        set
+        {
+            this.indexField = value;
+        }
+    }
+
+
   }
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "templates", Namespace = "http://www.iringtools.org/dxfr/manifest", ItemName = "template")]

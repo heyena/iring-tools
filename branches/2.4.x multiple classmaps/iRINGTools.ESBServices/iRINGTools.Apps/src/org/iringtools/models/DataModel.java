@@ -3,6 +3,7 @@ package org.iringtools.models;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +57,8 @@ import org.iringtools.utility.JaxbUtils;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.grid.RelatedClass;
+
+import sun.security.util.BigInt;
 
 public class DataModel
 {
@@ -427,6 +430,7 @@ public class DataModel
       throws DataModelException
   {
     String className = IOUtils.toCamelCase(classObject.getName());
+    BigInteger classIndex = classObject.getIndex();
 
     for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
     {
@@ -478,8 +482,13 @@ public class DataModel
           // any gap
           // (because class/template do not exist, e.g. due to null
           // class identifier)
-          String dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
-
+          
+          String dataIndex; 
+          if(classIndex != null && classIndex.intValue() != 0)
+        	  dataIndex = className+ '-'+classIndex.toString() + '.' + templateObject.getName() + '.' + roleObject.getName();
+          else
+        	  dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
+        	  
           if (rowData.size() == fields.size())
           {
             for (int i = 0; i < fields.size(); i++)
@@ -759,7 +768,7 @@ public class DataModel
       if (startClassId == null || startClassId.length() == 0)
       {
         ClassTemplates classTemplates = classTemplatesItems.get(0);
-        createFields(fields, graph, classTemplates);
+        createFields(fields, graph, classTemplates,null);
       }
       else
       {
@@ -767,7 +776,7 @@ public class DataModel
         {
           if (classTempates.getClazz().getId().equalsIgnoreCase(startClassId))
           {
-            createFields(fields, graph, classTempates);
+            createFields(fields, graph, classTempates,classTempates.getClazz().getIndex());
             break;
           }
         }
@@ -777,7 +786,7 @@ public class DataModel
     return fields;
   }
 
-  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates)
+  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates, BigInteger classIndex)
   {
     if (classTemplates != null && classTemplates.getTemplates() != null)
     {
@@ -799,11 +808,19 @@ public class DataModel
               || (cardinality != null && cardinality == Cardinality.SELF))
           {
             String dataType = role.getDataType();
-            String fieldName = className + '.' + template.getName() + "." + role.getName();
-            Field field = new Field();
 
-            field.setName(fieldName);
+            Field field = new Field();
+            
+            String fieldName;
+
+            if(classIndex != null && classIndex.intValue() != 0)
+            	fieldName = className + '-'+ classIndex.toString()+ '.' + template.getName() + "." + role.getName();
+            else
+            	fieldName = className + '.' + template.getName() + "." + role.getName();
+            
+            field.setName(fieldName); 
             field.setDataIndex(fieldName);
+           
             field.setWidth(MIN_FIELD_WIDTH);
 
             // adjust field width
@@ -838,8 +855,10 @@ public class DataModel
           else if (role.getClazz() != null && (cardinality == null || cardinality == Cardinality.ONE_TO_ONE))
           {
             String classId = role.getClazz().getId();
+            BigInteger clsIndex = role.getClazz().getIndex();
+            
             ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId);
-            createFields(fields, graph, relatedClassTemplates);
+            createFields(fields, graph, relatedClassTemplates,clsIndex);
           }
         }
       }

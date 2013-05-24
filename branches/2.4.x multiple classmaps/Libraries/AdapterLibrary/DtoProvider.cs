@@ -285,6 +285,7 @@ namespace org.iringtools.adapter
               id = classMap.id,
               name = classMap.name,
               keys = keys,
+              index = classMap.index
             };
             manifestClassTemplates.@class = manifestClass;
 
@@ -369,6 +370,7 @@ namespace org.iringtools.adapter
                   {
                     id = roleMap.classMap.id,
                     name = roleMap.classMap.name,
+                    index = roleMap.classMap.index
                   };
                 }
               }
@@ -1331,7 +1333,7 @@ namespace org.iringtools.adapter
         {
           ClassMap mappingClass = mappingClassTemplatesMap.classMap;
 
-          if (mappingClass.id == manifestClass.id)
+          if (mappingClass.id == manifestClass.id && mappingClass.index == manifestClass.index)
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
             break;
@@ -1366,7 +1368,7 @@ namespace org.iringtools.adapter
       // get manifest templates from the manifest class
       foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
       {
-        if (manifestClassTemplates.@class.id == manifestClass.id)
+          if (manifestClassTemplates.@class.id == manifestClass.id && manifestClassTemplates.@class.index == manifestClass.index)
         {
           manifestTemplates = manifestClassTemplates.templates;
           break;
@@ -1381,7 +1383,7 @@ namespace org.iringtools.adapter
           ClassMap localMappingClass = pair.classMap;
           List<TemplateMap> mappingTemplates = pair.templateMaps;
 
-          if (localMappingClass.id == manifestClass.id)
+          if (localMappingClass.id == manifestClass.id && localMappingClass.index == manifestClass.index)
           {
             ClassMap crossedClass = localMappingClass.CrossClassMap(mappingGraph, manifestClass);
             TemplateMaps crossedTemplates = new TemplateMaps();
@@ -1463,7 +1465,7 @@ namespace org.iringtools.adapter
                   {
                     foreach (RoleMap mappingRole in crossedTemplate.roleMaps)
                     {
-                      if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id)
+                        if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id && mappingRole.classMap.index == manifestRole.@class.index)
                       {
                         Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dataDictionary, _fixedIdentifierBoundary);
 
@@ -1480,7 +1482,7 @@ namespace org.iringtools.adapter
                         Class childManifestClass = manifestRole.@class;
                         foreach (ClassTemplates anyClassTemplates in manifestGraph.classTemplatesList)
                         {
-                          if (manifestRole.@class.id == anyClassTemplates.@class.id)
+                            if (manifestRole.@class.id == anyClassTemplates.@class.id && manifestRole.@class.index == anyClassTemplates.@class.index)
                           {
                             childManifestClass = anyClassTemplates.@class;
                           }

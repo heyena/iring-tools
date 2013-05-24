@@ -172,7 +172,7 @@ namespace org.iringtools.adapter.projection
             {
               dataObject = CreateDataObject(_graphMap.dataObjectName, dataObjectIndex);
 
-              DataTransferObject dto = dataTransferObjects.DataTransferObjectList[dataObjectIndex];
+              DataTransferObject dto = _dataTransferObjects.DataTransferObjectList[dataObjectIndex];
               if (dto.content != null)
               {
                 IContentObject contentObject = new GenericContentObject()
@@ -531,7 +531,8 @@ namespace org.iringtools.adapter.projection
           {
             classId = classMap.id,
             name = className,
-            identifier = classIdentifier
+            identifier = classIdentifier,
+            index = classMap.index
           };
 
           if (dto.classObjects.Count == 0)
@@ -855,7 +856,7 @@ namespace org.iringtools.adapter.projection
     {
       ClassMap classMap = classTemplateMap.classMap;
       List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-      List<ClassObject> classObjects = GetClassObjects(dataObjectIndex, classMap.id);
+      List<ClassObject> classObjects = GetClassObjects(dataObjectIndex, classMap.id,classMap.index);
 
       for (int classObjectIndex = 0; classObjectIndex < classObjects.Count; classObjectIndex++)
       {
@@ -978,14 +979,14 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private List<ClassObject> GetClassObjects(int dataObjectIndex, string classId)
+    private List<ClassObject> GetClassObjects(int dataObjectIndex, string classId,int index)
     {
       List<ClassObject> classObjects = new List<ClassObject>();
       DataTransferObject dto = _dataTransferObjects.DataTransferObjectList[dataObjectIndex];
 
       foreach (ClassObject classObject in dto.classObjects)
       {
-        if (classObject.classId == classId)
+        if (classObject.classId == classId && classObject.index == index)
         {
           classObjects.Add(classObject);
         }

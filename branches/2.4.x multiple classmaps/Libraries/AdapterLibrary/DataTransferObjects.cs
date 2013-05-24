@@ -125,7 +125,10 @@ namespace org.iringtools.adapter
 
     [DataMember(Order = 4)]
     public TransferType transferType { get; set; }
-
+    
+    [DataMember(Order = 5)]
+    public int index { get; set; }
+      
     public TemplateObject GetTemplateObject(TemplateMap templateMap)
     {
       TemplateObject theTemplateObject = null;

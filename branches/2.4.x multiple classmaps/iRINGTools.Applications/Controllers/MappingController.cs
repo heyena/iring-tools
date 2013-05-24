@@ -1040,8 +1040,11 @@ namespace org.iringtools.web.controllers
 
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(parentNode);
-        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
-        ctm.templateMaps.RemoveAt(index);
+        //ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
+        //TemplateMap tm = ctm.templateMaps[index];
+        //ctm.templateMaps.RemoveAt(index);
+        graphMap.DeleteTemplateMap(parentClassId, parentClassIndex, index);
+       
       }
       catch (Exception ex)
       {
