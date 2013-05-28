@@ -52,6 +52,22 @@ namespace org.iringtools.adapter.datalayer.test
       Assert.AreEqual(response.Level, StatusLevel.Success);
     }
 
+
+    //[Test]
+    //public void TestDocumentForFolder()
+    //{
+    //    List<string> identifiers = new List<string>();
+
+    //    identifiers.Clear();
+    //    identifiers.Add("DTP_ENG2");
+    //    DataTable dt = _dataLayer.GetDocumentsForFolder(217, identifiers);
+    //    Assert.Greater(dt.Rows.Count, 0);
+    //    //Assert.AreEqual(response.Level, StatusLevel.Success);
+    //}
+
+
+   
+
     [Test]
     public void TestGet()
     {
@@ -89,6 +105,9 @@ namespace org.iringtools.adapter.datalayer.test
         IList<string> identifiers = new List<string>();
         identifiers.Add("4a44297f-3456-4e70-a073-ae0a3e92dae0");
         IList<IDataObject> dataObject = _dataLayer.Get(_objectType, identifiers);
+        identifiers.Clear();
+        identifiers.Add("212"); 
+        IList<IDataObject> dataObject1 = _dataLayer.Get("Documents", identifiers);
 
         
         Assert.AreEqual(dataObject.Count, 1);
