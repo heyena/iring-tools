@@ -915,27 +915,27 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
-        else
-        {
-          foreach (RoleMap roleMap in templateMap.roleMaps)
-          {
-            if (roleMap.type == RoleType.DataProperty || roleMap.type == RoleType.ObjectProperty ||
-              roleMap.type == RoleType.Property)
-            {
-              string[] propertyPath = roleMap.propertyName.Split('.');
-              string propertyName = propertyPath[propertyPath.Length - 1];
+        //else
+        //{
+        //  foreach (RoleMap roleMap in templateMap.roleMaps)
+        //  {
+        //    if (roleMap.type == RoleType.DataProperty || roleMap.type == RoleType.ObjectProperty ||
+        //      roleMap.type == RoleType.Property)
+        //    {
+        //      string[] propertyPath = roleMap.propertyName.Split('.');
+        //      string propertyName = propertyPath[propertyPath.Length - 1];
 
-              if (propertyPath.Length > 2)  // related property
-              {
-                SetRelatedRecords(dataObjectIndex, classObjectIndex, roleMap.propertyName, null);
-              }
-              else
-              {
-                _dataRecords[dataObjectIndex][propertyName] = null;
-              }
-            }
-          }
-        }
+        //      if (propertyPath.Length > 2)  // related property
+        //      {
+        //        SetRelatedRecords(dataObjectIndex, classObjectIndex, roleMap.propertyName, null);
+        //      }
+        //      else
+        //      {
+        //        _dataRecords[dataObjectIndex][propertyName] = null;
+        //      }
+        //    }
+        //  }
+        //}
       }
     }
 
