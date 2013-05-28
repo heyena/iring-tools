@@ -27,7 +27,6 @@ Ext.define('AM.store.DataGridStore', {
       autoLoad: false,
       model: 'AM.model.DynamicModel',
       remoteFilter: true,
-      remoteSort: true,
       storeId: 'DataGridStore',
       pageSize: 25,
       proxy: {
@@ -47,8 +46,7 @@ Ext.define('AM.store.DataGridStore', {
         url: 'GridManager/Pages',
         reader: {
           type: 'json',
-          root: 'data',
-          totalProperty: 'totalCount'
+          root: 'data'
         }
       }
     }, cfg)]);

@@ -367,10 +367,10 @@
             },
             "codeClass": null,
             "userConfig": {
-                "layout|anchor": "100%",
                 "height": 600,
                 "minHeight": null,
-                "store": null
+                "store": null,
+                "layout|anchor": "100%"
             },
             "designerId": "f00a5ee1-8345-4ae4-aa3e-4c7aab9e980e",
             "masterInstanceId": "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c"

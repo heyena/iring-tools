@@ -6,6 +6,8 @@
     },
     "codeClass": null,
     "userConfig": {
+        "id": null,
+        "itemId": null,
         "designer|userClassName": "Main",
         "designer|initialView": true,
         "layout": "border"
@@ -37,11 +39,34 @@
             },
             "codeClass": null,
             "userConfig": {
+                "id": "directoryTreeID",
+                "itemId": null,
                 "designer|displayName": "DirectoryPanel",
                 "layout|region": "west"
             },
             "designerId": "e3f227e1-f4db-4dbb-867c-c60142c24231",
-            "masterInstanceId": "6bc9213f-3a48-425f-9010-d4a1b6e19a83"
+            "masterInstanceId": "6bc9213f-3a48-425f-9010-d4a1b6e19a83",
+            "cn": [
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "fn": "onPanelAfterRender",
+                        "implHandler": [
+                            "Ext.getBody().on(\"contextmenu\", Ext.emptyFn, null, {\r",
+                            "            preventDefault: true\r",
+                            "        });"
+                        ],
+                        "name": "afterrender",
+                        "scope": "me"
+                    },
+                    "designerId": "32d79fcf-6e98-4640-8fc6-8ba04064022e"
+                }
+            ]
         },
         {
             "type": "linkedinstance",

@@ -263,7 +263,8 @@ namespace iRINGTools.Web.Models
                       string fieldName = dataProp.propertyName;
                       column.dataIndex = fieldName;
                       column.text = fieldName;
-                      
+                      column.filterable = true;
+                      column.sortable = true;
                       field.name = fieldName;
                       field.type = ToExtJsType(dataProp.dataType);
 

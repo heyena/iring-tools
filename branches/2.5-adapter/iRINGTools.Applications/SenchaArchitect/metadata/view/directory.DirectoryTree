@@ -7,12 +7,13 @@
     "codeClass": null,
     "userConfig": {
         "stateEvents": [
-            "itemcollapse",
+            "temcollapse",
             "itemexpand"
         ],
         "stateId": "directory-treestate",
         "stateful": true,
         "height": null,
+        "loader": null,
         "width": null,
         "designer|userClassName": "directory.DirectoryTree",
         "designer|userAlias": "directorytree",
@@ -29,8 +30,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "stateId": null,
-                "designer|userClassName": "MyTreeView"
+                "stateId": null
             },
             "designerId": "f6615855-8fc8-4677-8215-c2af677ac7df",
             "cn": [
@@ -43,7 +43,6 @@
                     "codeClass": "Ext.tree.plugin.TreeViewDragDrop",
                     "userConfig": {
                         "dragField": "text",
-                        "designer|userClassName": "MyTreeDragDropPlugin",
                         "ddGroup": "propertyGroup",
                         "dragGroup": "propertyGroup",
                         "dragText": "{0}",
@@ -73,8 +72,7 @@
             "codeClass": null,
             "userConfig": {
                 "dock": "top",
-                "container|padding": 4,
-                "designer|userClassName": "MyToolbar4"
+                "container|padding": 4
             },
             "designerId": "d6c514dc-06dc-4f44-a592-77d3c55ffc8d",
             "cn": [
@@ -86,9 +84,8 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
                         "scope": null,
-                        "designer|userClassName": "MyButton1",
+                        "layout|flex": null,
                         "icon": null,
                         "iconCls": "am-view-refresh",
                         "text": "Reload Tree"
@@ -110,7 +107,6 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "designer|userClassName": "handler",
                                 "fn": "handler",
                                 "designer|params": [
                                     "button",
@@ -134,9 +130,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getState",
                 "fn": "getState",
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "var nodes = [], state = me.callParent();\r",
                     "me.getRootNode().eachChild(function (child) {\r",
@@ -168,15 +164,15 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "applyState",
                 "fn": "applyState",
                 "designer|params": [
                     "state"
                 ],
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "var nodes = state.expandedNodes || [],\r",
-                    "len = nodes.length;\r",
+                    "  len = nodes.length;\r",
                     "me.collapseAll();\r",
                     "Ext.each(nodes, function (path) {\r",
                     "  me.expandPath(path, 'text');\r",
@@ -194,7 +190,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onClick",
                 "fn": "onClick",
                 "implHandler": [
                     "var me = this;\r",
@@ -220,31 +215,46 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "onReload",
                 "fn": "onReload",
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "var node = me.getSelectedNode();\r",
+                    "var nodeInternalId = node.internalId;\r",
+                    "var dataRecord = node.data.record;\r",
                     "var store = me.store;\r",
                     "var path;\r",
                     "var panel = me.up();\r",
-                    "//panel.body.mask('Loading', 'x-mask-loading');\r",
+                    "var state = me.getState();\r",
+                    "var dirNode;\r",
                     "if (!node)\r",
-                    "node = me.getRootNode();    \r",
+                    "node = me.getRootNode(); \r",
                     "if (node) {\r",
-                    "      path = node.getPath('text');\r",
-                    "      store.load(node);\r",
-                    "      //if(node.isExpanded())\r",
-                    "      \t//node.collapse();\r",
-                    "    }\r",
-                    "    if(path) {\r",
-                    "      me.expandPath(path, 'text');\r",
-                    "      me.getSelectionModel().select(node);\r",
-                    "    }\r",
-                    " //panel.body.unmask();\r",
-                    "\r",
-                    "\r",
-                    ""
+                    "   store.load({\r",
+                    "       callback: function (records, options, success) {\r",
+                    "           var nodes = state.expandedNodes || [],\r",
+                    "           len = nodes.length;\r",
+                    "           me.collapseAll();\r",
+                    "           Ext.each(nodes, function (path) {\r",
+                    "             me.expandPath(path, 'text');\r",
+                    "             //dirNode = store.getNodeById(nodeInternalId);\r",
+                    "           });\r",
+                    "       \r",
+                    "       }\r",
+                    "     \t\r",
+                    "     });\r",
+                    "   store.on('beforeload', function (store, action) {\r",
+                    "     dirNode = store.getNodeById(nodeInternalId);\r",
+                    "     if(dirNode!=undefined){\r",
+                    "       if(dirNode.data.record.dbInfo == undefined)\r",
+                    "       \t\tdirNode.data.record.dbInfo = dataRecord.dbInfo;\r",
+                    "       if(dirNode.data.record.dbDict == undefined)\r",
+                    "      \t\tdirNode.data.record.dbDict = dataRecord.dbDict;\r",
+                    "     }\r",
+                    "     \r",
+                    "     \r",
+                    "    }, me);\r",
+                    "}"
                 ]
             },
             "designerId": "3f0c4b56-94b4-4ff2-b544-8280aa254637"
@@ -257,7 +267,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|userClassName": "getSelectedNode",
                 "fn": "getSelectedNode",
                 "implHandler": [
                     "var me = this;\r",

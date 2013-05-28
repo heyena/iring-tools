@@ -15,6 +15,14 @@ namespace org.iringtools.library
     [DefaultValue(false)]
     public bool groupable { get; set; }
 
+    [DataMember(Name = "filterable")]
+    [DefaultValue(true)]
+    public bool filterable { get; set; }
+
+    [DataMember(Name = "sortable")]
+    [DefaultValue(true)]
+    public bool sortable { get; set; }
+
     [DataMember(Name = "hidden")]
     [DefaultValue(false)]
     public bool hidden { get; set; }

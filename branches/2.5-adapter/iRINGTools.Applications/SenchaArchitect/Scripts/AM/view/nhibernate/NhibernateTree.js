@@ -88,17 +88,89 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
   },
 
   onReload: function() {
-
-    var me = this;
+    /*var me = this;
     var selection = me.getSelectionModel();
     var store = me.store;
     var node = selection.getSelection()[0];
 
     if(node){
-      store.load(node);
-      node.expand();
+    store.load(node);
+    node.expand();
     }
+    */
 
+
+    var me = this;
+    var dirTree = Ext.getCmp('directoryTreeID').items.items[0];
+    var treeStore = dirTree.getStore();
+    var dirNode = treeStore.getNodeById(me.dirNode);
+    var context = dirNode.parentNode.data.text;
+    var endpoint = dirNode.data.record.Name;
+    var baseUrl = dirNode.data.record.BaseUrl;
+    //var tree = me;
+    //tree.dirNode = dirNode.internalId;
+    var treeStore = me.getStore();
+    var treeProxy = treeStore.getProxy();
+
+
+    //var me = this;
+    var dbDict, dbInfo;
+    Ext.Ajax.request({
+      url: 'AdapterManager/DBDictionary',//'NHibernate/DBDictionary',
+      method: 'POST',
+      timeout: 6000000,
+      params: {
+        scope: context,
+        app: endpoint,
+        baseUrl: baseUrl
+      },
+      success: function (response, request) {
+        dbDict = Ext.JSON.decode(response.responseText);
+        if(dbDict.ConnectionString !== null && dbDict.ConnectionString !=undefined ) {
+          var base64 = AM.view.nhibernate.Utility;
+          dbDict.ConnectionString = base64.decode(dbDict.ConnectionString);
+          if(dbDict) {
+            var cstr = dbDict.ConnectionString;
+            if(cstr) {
+              dirNode.data.record.dbDict = dbDict;
+              dbInfo = me.getConnStrParts(cstr, dirNode);//me.getConnStringParts(cstr, dirNode);
+              var selectTableNames = me.setTableNames(dbDict);
+
+              treeStore.on('beforeload', function (store, action) {
+                var params = treeProxy.extraParams;
+                params.dbProvider = dbDict.Provider;
+                params.dbServer = dbInfo.dbServer;
+                params.dbInstance = dbInfo.dbInstance;
+                params.dbName = dbInfo.dbName;
+                params.dbSchema = dbDict.SchemaName;
+                params.dbPassword = dbInfo.dbPassword;
+                params.dbUserName = dbInfo.dbUserName;
+                params.portNumber = dbInfo.portNumber;
+                params.tableNames = selectTableNames;
+                params.serName = dbInfo.serName;
+                params.scope = context;
+                params.app = endpoint;
+                params.baseUrl = baseUrl;
+              }, me);
+
+
+              treeStore.load({
+                callback: function (records, options, success) {
+                  var rootNode = treeStore.getRootNode();
+                  me.reloadTree(rootNode, dbDict);
+
+                }
+              });
+
+              me.getTableNames(context, endpoint, baseUrl, dirNode);
+            }
+          }
+        }
+      },
+      failure: function (response, request) {
+        //var dataObjPanel = content.items.map[contextName + '.' + endpoint + '.-nh-config'];;
+      }
+    });
 
   },
 
@@ -106,6 +178,310 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
     var me = this;
     var selection = me.getSelectionModel().getSelection();
     return selection[0];
+  },
+
+  getConnStrParts: function(connString, dirNode) {
+
+    var me = this;
+    var dsValue, serName;
+    var connStrParts = connString.split(';');
+    var dbDict = dirNode.data.record.dbDict;
+    var provider = dbDict.Provider.toUpperCase();
+
+    if (dirNode.data.record.dbInfo === undefined) {
+      dirNode.data.record.dbInfo = {};
+    }
+
+    if (!dirNode.data.record.dbInfo.dbUserName)
+    dirNode.data.record.dbInfo.dbName = dbDict.SchemaName;
+
+    for (var i = 0; i < connStrParts.length; i++) {
+      var pair = connStrParts[i].split('=');
+      switch (pair[0].toUpperCase()) {
+        case 'DATA SOURCE':
+        if (provider.indexOf('MSSQL') > -1) {
+          dsValue = pair[1].split('\\');
+          dirNode.data.record.dbInfo.dbServer = (dsValue[0].toLowerCase() == '.' ? 'localhost' : dsValue[0]);
+          dirNode.data.record.dbInfo.dbInstance = dsValue[1];
+          dirNode.data.record.dbInfo.portNumber = 1433;
+          dirNode.data.record.dbInfo.serName = '';
+        }
+        else if (provider.indexOf('MYSQL') > -1) {
+          dirNode.data.record.dbInfo.dbServer = (pair[1].toLowerCase() == '.' ? 'localhost' : pair[1]);
+          dirNode.data.record.dbInfo.portNumber = 3306;
+        }
+        else if (provider.indexOf('ORACLE') > -1) {
+          var dsStr = connStrParts[i].substring(12, connStrParts[i].length);
+          dsValue = dsStr.split('=');
+          for (var j = 0; j < dsValue.length; j++) {
+            dsValue[j] = dsValue[j].substring(dsValue[j].indexOf('(') + 1, dsValue[j].length);
+            switch (dsValue[j].toUpperCase()) {
+              case 'HOST':
+              var server = dsValue[j + 1];
+              var port = dsValue[j + 2];
+              var index = server.indexOf(')');
+              server = server.substring(0, index);
+              dirNode.data.record.dbInfo.portNumber = port.substring(0, 4);
+              dirNode.data.record.dbInfo.dbServer = (server.toLowerCase() == '.' ? 'localhost' : server);
+              break;
+              case 'SERVICE_NAME':
+              serName = dsValue[j + 1];
+              index = sername.indexOf(')');
+              dirNode.data.record.dbInfo.dbInstance = serName.substring(0, index);
+              dirNode.data.record.dbInfo.serName = 'SERVICE_NAME';
+              break;
+              case 'SID':
+              serName = dsValue[j + 1];
+              index = sername.indexOf(')');
+              dirNode.data.record.dbInfo.dbInstance = serName.substring(0, index);
+              dirNode.data.record.dbInfo.serName = 'SID';
+              break;
+            }
+          }
+        }
+        break;
+        case 'INITIAL CATALOG':
+        dirNode.data.record.dbInfo.dbName = pair[1];
+        break;
+        case 'USER ID':
+        dirNode.data.record.dbInfo.dbUserName = pair[1];
+        break;
+        case 'PASSWORD':
+        dirNode.data.record.dbInfo.dbPassword = pair[1];
+        break;
+      }
+    }
+    return dirNode.data.record.dbInfo;
+  },
+
+  getTableNames: function(context, endpoint, baseUrl, dirNode) {
+
+    var me = this;
+    var dbInfo = dirNode.data.record.dbInfo;
+    var dbDict = dirNode.data.record.dbDict;
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/TableNames',
+      method: 'POST',
+      timeout: 6000000,
+      params: {
+        scope: context,
+        app: endpoint,
+        dbProvider: dbDict.Provider,
+        dbServer: dbInfo.dbServer,
+        dbInstance: dbInfo.dbInstance,
+        dbName: dbInfo.dbName,
+        dbSchema: dbDict.SchemaName,
+        dbUserName: dbInfo.dbUserName,
+        dbPassword: dbInfo.dbPassword,
+        portNumber: dbInfo.portNumber,
+        serName: dbInfo.serName,
+        baseUrl: baseUrl
+      },
+      success: function (response, request) {
+        dirNode.data.record.dbInfo.dbTableNames = Ext.JSON.decode(response.responseText);
+      },
+      failure: function (f, a) {
+        if (a.response)
+        showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+      }
+    });
+  },
+
+  reloadTree: function(rootNode, dbDict) {
+
+    var me = this;
+    var relationTypeStr = ['OneToOne', 'OneToMany'];
+
+    // sync data object tree with data dictionary
+    for (var i = 0; i < rootNode.childNodes.length; i++) {
+      var dataObjectNode = rootNode.childNodes[i];
+      for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
+        var dataObject = dbDict.dataObjects[ijk];		  
+
+        if (dataObjectNode.data.text.toUpperCase() != dataObject.tableName.toUpperCase())
+        continue;
+
+        // sync data object
+        dataObjectNode.raw.properties.objectNamespace = dataObject.objectNamespace;
+        dataObjectNode.raw.properties.objectName = dataObject.objectName;
+        dataObjectNode.raw.properties.keyDelimiter = dataObject.keyDelimeter;
+        dataObjectNode.data.text = dataObject.objectName;
+
+        if (dataObject.objectName.toLowerCase() == dataObjectNode.data.text.toLowerCase()) {
+          var shownProperty = new Array();	
+          var keysNode = dataObjectNode.childNodes[0];//dataObjectNode.attributes.children[0];
+          var propertiesNode = dataObjectNode.childNodes[1];//dataObjectNode.attributes.children[1];
+          var relationshipsNode = dataObjectNode.childNodes[2];//dataObjectNode.attributes.children[2];
+          utilsObj.availableDataProperties = propertiesNode.data.children;
+          var selectedItems = [];
+          var availableItems = [];
+          var myFlag;
+          // sync data properties
+          for (var j = 0; j < propertiesNode.data.children.length; j++) {
+            myFlag = true;
+            for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
+              if (propertiesNode.data.children[j].text.toLowerCase() == dataObject.dataProperties[jj].columnName.toLowerCase()) {
+
+                /*if (!me.shown(shownProperty, propertiesNode.data.children[j].text.toLowerCase())) {
+                shownProperty.push(propertiesNode.data.children[j].text.toLowerCase());
+                propertiesNode.data.children[j].hidden = true;
+                }*/
+
+                propertiesNode.data.children[j].text = dataObject.dataProperties[jj].propertyName;
+                propertiesNode.data.children[j].properties.propertyName = dataObject.dataProperties[jj].propertyName;
+                propertiesNode.data.children[j].properties.isHidden = dataObject.dataProperties[jj].isHidden;
+                selectedItems.push(propertiesNode.data.children[j]);
+                myFlag = false;
+              }
+            }
+            if(myFlag){
+              availableItems.push(propertiesNode.data.children[j]);
+              //propertiesNode.data.children.splice(j, 1);
+              //propertiesNode.removeChild(propertiesNode.data.children[j], false);
+            }
+          }
+          //propertiesNode.removeAll();
+          /*for(p = 0;p<dataObject.keyProperties.length;p++){
+          for(q = 0;q<selectedItems.length;q++){
+          if(dataObject.keyProperties[p].keyPropertyName == selectedItems[q].text)
+          selectedItems.splice(selectedItems[q],1);
+          break;
+          }
+          }*/
+          for(m =0;m<availableItems.length;m++){
+            for(n = 0;n<propertiesNode.childNodes.length;n++){
+              if(propertiesNode.childNodes[n].data.text == availableItems[m].text)
+              propertiesNode.removeChild(propertiesNode.childNodes[n]);
+            }
+          }
+          for(jj =0;jj<dataObject.keyProperties.length;jj++){
+            for(kk = 0;kk<propertiesNode.childNodes.length;kk++){
+              if(propertiesNode.childNodes[kk].data.text == dataObject.keyProperties[jj].keyPropertyName)
+              propertiesNode.removeChild(propertiesNode.childNodes[kk]);
+            }
+          }
+
+          // sync key properties
+          for (var ij = 0; ij < dataObject.keyProperties.length; ij++) {
+            for (var k = 0; k < keysNode.data.children.length; k++) {
+              for (var ikk = 0; ikk < dataObject.dataProperties.length; ikk++) {
+                if (dataObject.keyProperties[ij].keyPropertyName.toLowerCase() == dataObject.dataProperties[ikk].propertyName.toLowerCase()) {
+                  if (keysNode.data.children[k].text.toLowerCase() == dataObject.dataProperties[ikk].columnName.toLowerCase()) {
+                    keysNode.data.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
+                    //keysNode.data.children[k].properties.propertyName = dataObject.keyProperties[ij].keyPropertyName;
+                    keysNode.data.children[k].property.propertyName = dataObject.keyProperties[ij].keyPropertyName; 
+                    keysNode.data.children[k].property.isHidden = dataObject.keyProperties[ij].isHidden;
+                    ij++;
+                    break;
+                  }
+                }
+              }
+              break;
+            }
+            if (ij < dataObject.keyProperties.length) {
+              for (var ijj = 0; ijj < propertiesNode.data.children.length; ijj++) {
+                var nodeText = dataObject.keyProperties[ij].keyPropertyName;
+                if (propertiesNode.data.children[ijj].text.toLowerCase() == nodeText.toLowerCase()) {
+                  var properties = propertiesNode.data.children[ijj].properties;
+                  properties.propertyName = nodeText;
+                  //properties.keyType = 'assigned';
+                  //properties.nullable = false;
+
+                  /*newKeyNode = new Ext.tree.TreeNode({
+                  text: nodeText,
+                  type: "keyProperty",
+                  leaf: true,
+                  iconCls: 'treeKey',
+                  hidden: false,
+                  properties: properties
+                  });*/
+                  newKeyNode = {
+                    text: nodeText,
+                    type: "keyProperty",
+                    leaf: true,
+                    iconCls: 'treeKey',
+                    hidden: false,
+                    property: properties,
+                    properties:properties
+                  };
+                  newKeyNode.iconCls = 'treeKey';
+                  propertiesNode.data.children.splice(ijj, 1);
+                  ijj--;
+
+                  if (newKeyNode)
+                  keysNode.appendChild(newKeyNode);
+                  //keysNode.data.children.push(newKeyNode);
+
+                  break;
+                }
+              }
+            }
+          }
+          var nodeToDelete = [];  
+          if(keysNode.childNodes.length > dataObject.keyProperties.length){
+            for(var z = 0;z<keysNode.childNodes.length;z++){
+              var availFlag = true;
+              for(var x = 0; x< dataObject.keyProperties.length;x++){
+                if(keysNode.childNodes[z].data.text == dataObject.keyProperties[x].keyPropertyName){
+                  availFlag = false;
+                }
+              }
+              if(availFlag)
+              nodeToDelete.push(keysNode.childNodes[z]);
+              //keysNode.childNodes.splice(z, 1);
+            }
+            for(var s = 0;s<nodeToDelete.length;s++){
+              keysNode.childNodes.splice(s, 1);
+              s--;
+              nodeToDelete.length = nodeToDelete.length-1;
+            }
+          }
+
+          // sync relationships
+          /*for (var kj = 0; kj < dataObject.dataRelationships.length; kj++) {
+          var newNode = new Ext.tree.TreeNode({
+          text: dataObject.dataRelationships[kj].relationshipName,
+          type: 'relationship',
+          leaf: true,
+          iconCls: 'treeRelation',
+          relatedObjMap: [],
+          objectName: dataObjectNode.text,
+          relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
+          relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
+          relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
+          propertyMap: []
+          });
+          var mapArray = new Array();
+          for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {
+          var mapItem = new Array();
+          mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;
+          mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;
+          mapArray.push(mapItem);
+          }
+          newNode.iconCls = 'treeRelation';
+          newNode.attributes.propertyMap = mapArray;
+          relationshipsNode.expanded = true;
+          relationshipsNode.children.push(newNode);
+          }*/
+        }
+      }
+      ijk++;
+    }
+
+    if (rootNode.childNodes.length == 1)
+    if (rootNode.childNodes[0].text == "")
+    rootNode.removeChild(rootNode.childNodes[0], true);
+  },
+
+  setTableNames: function(dbDict) {
+    var selectTableNames = [];
+
+    for (var i = 0; i < dbDict.dataObjects.length; i++) {
+      var tableName = (dbDict.dataObjects[i].tableName ? dbDict.dataObjects[i].tableName : dbDict.dataObjects[i]);
+      selectTableNames.push(tableName);
+    }
+    return selectTableNames;
   }
 
 });

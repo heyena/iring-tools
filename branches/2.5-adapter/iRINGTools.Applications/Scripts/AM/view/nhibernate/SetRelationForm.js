@@ -119,8 +119,8 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         },
         {
           xtype: 'relationPropertyGrid',
-          anchor: '100%',
-          height: 600
+          height: 600,
+          anchor: '100%'
         }
       ],
       dockedItems: [

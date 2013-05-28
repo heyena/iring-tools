@@ -8,10 +8,10 @@
     "userConfig": {
         "rul": null,
         "url": null,
+        "timeout": null,
         "autoLoad": false,
         "model": "DynamicModel",
         "remoteFilter": true,
-        "remoteSort": true,
         "storeId": "DataGridStore",
         "designer|userClassName": "DataGridStore",
         "pageSize": 25
@@ -27,6 +27,11 @@
             "group": "(Custom Properties)",
             "name": "url",
             "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "timeout",
+            "type": "string"
         }
     ],
     "cn": [
@@ -39,17 +44,19 @@
             "codeClass": null,
             "userConfig": {
                 "actionMethods": [
-                    "{\"read\":\"POST\"}"
+                    "{\r",
+                    "          read: 'POST'\r",
+                    "        }"
                 ],
                 "extraParams": [
                     "{\r",
-                    "  scope: null,\r",
-                    "  start: 0,\r",
-                    "  limit: 25,\r",
-                    "  app: null,\r",
-                    "  graph: null,\r",
-                    "  baseUrl: null\r",
-                    "}"
+                    "          scope: null,\r",
+                    "          start: 0,\r",
+                    "          limit: 25,\r",
+                    "          app: null,\r",
+                    "          graph: null,\r",
+                    "          baseUrl: null\r",
+                    "        }"
                 ],
                 "timeout": 60000,
                 "url": "GridManager/Pages"
@@ -74,8 +81,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "root": "data",
-                        "totalProperty": "totalCount"
+                        "root": "data"
                     },
                     "designerId": "4a6ff91d-8e1f-432d-9a5b-71b74a522c98"
                 }

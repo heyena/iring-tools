@@ -886,10 +886,11 @@ Ext.define('AM.controller.NHibernate', {
   },
 
   onConfignhibernate: function() {
+
     var me = this;
-    var dirTree = me.getDirTree(),
-      dirNode = dirTree.getSelectedNode(),
-      content = me.getMainContent();
+    var dirTree = me.getDirTree();
+    dirNode = dirTree.getSelectedNode();
+    content = me.getMainContent();
 
     var dbDict, dbInfo, tree;
 
@@ -942,12 +943,19 @@ Ext.define('AM.controller.NHibernate', {
               }, me);
 
 
-              treeStore.on('load', function (treeLoader, node) {            
-                var rootNode = treeStore.getRootNode();
-                me.reloadTree(rootNode, dbDict);
-              }, me);
+              /* treeStore.on('afterload', function (treeLoader, node) { 
+              var rootNode = treeStore.getRootNode();
+              me.reloadTree(rootNode, dbDict);
+              }, me);*/
 
-              treeStore.load();
+              //treeStore.load();
+              treeStore.load({
+                callback: function (records, options, success) {
+                  var rootNode = treeStore.getRootNode();
+                  me.reloadTree(rootNode, dbDict);
+
+                }
+              });
 
               me.getTableNames(context, endpoint, baseUrl, dirNode);
             }
@@ -1157,9 +1165,10 @@ Ext.define('AM.controller.NHibernate', {
     var dataTree = nhibernatePanel.down('nhibernatetree');
     var dirNode = me.getDirNode(dataTree.dirNode);
     var selected = [];
-    var dict = dirNode.data.record.dbDict.dataObjects;
+    var dict = dataTree.getStore().tree.root.childNodes;//dirNode.data.record.dbDict.dataObjects;
     Ext.each(dict, function(table) {
-      selected.push(table.tableName);
+      //selected.push(table.data.tableName);
+      selected.push(table.data.text);
     });
 
     var tables = dirNode.data.record.dbInfo.dbTableNames.items; 
@@ -1370,6 +1379,7 @@ Ext.define('AM.controller.NHibernate', {
     form.getForm().findField('objectName').setValue(treeNode.raw.properties.objectName);
     form.getForm().findField('keyDelimiter').setValue(keyDelimiter);
 
+    panel = nhibernatePanel.down('#nhibernateContent');
     panel.removeAll();
 
     panel.add(form);
@@ -1600,7 +1610,6 @@ Ext.define('AM.controller.NHibernate', {
     var dataTree = nhibernatePanel.down('nhibernatetree');
     var dataNode = dataTree.getSelectedNode();
     var dirNode = me.getDirNode(dataTree.dirNode);
-
     var context =dirNode.parentNode.data.text;//dirNode.data.record.context;
     var endpoint = dirNode.data.record.Name;//dirNode.data.record.endpoint;
     var baseUrl = dirNode.data.record.baseUrl;
@@ -1662,15 +1671,26 @@ Ext.define('AM.controller.NHibernate', {
     if(selectItems){
       utilsObj.deletedKeyProperties = [];
       var records = [];
-      Ext.each(selectItems, function(item) {
-        var record = grid.getStore().findRecord('text', item);
-        if(record) {
-          records.push(record);
-          utilsObj.deletedKeyProperties.push(record);
-          itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(record);
-        } 
+      /*Ext.each(selectItems, function(item) {
+      var record = grid.getStore().findRecord('text', item);
+      if(record) {
+      records.push(record);
+      utilsObj.deletedKeyProperties.push(record);
+      itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(record);
+      } 
 
-      });
+      });*/
+      for(var jj=0;jj<selectItems.length;jj++){
+        for(var  kk = 0;kk<grid.getStore().data.length;kk++){
+          if(selectItems[jj] == grid.getStore().data.items[kk].data.text){
+            //records.push(record);
+            utilsObj.deletedKeyProperties.push(grid.getStore().data.items[kk]);
+            itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
+            break;
+          }
+        }     
+      }
+
       itemSelecter.items.items[2].items.items[0].items.items[2].getStore().add(utilsObj.deletedKeyProperties);
     }
 
@@ -1694,7 +1714,6 @@ Ext.define('AM.controller.NHibernate', {
     var dataTree = nhibernatePanel.down('nhibernatetree');
     var dataNode = dataTree.getSelectedNode();
     var dirNode = me.getDirNode(dataTree.dirNode);
-
     var context = dirNode.data.record.context;
     var endpoint = dirNode.data.record.endpoint;
     var baseUrl = dirNode.data.record.baseUrl;
@@ -1723,6 +1742,12 @@ Ext.define('AM.controller.NHibernate', {
         }
       }
       if (!found) {
+        var flag = true;
+        for(var k = 0;k<propertiesNode.parentNode.childNodes[0].childNodes.length;k++){
+          if(propertiesNode.parentNode.childNodes[0].childNodes[k].data.text == itemName)
+          flag = false;
+        }
+        if(flag)
         availProperties.push([itemName, itemName]);
       }
     }
@@ -1800,6 +1825,22 @@ Ext.define('AM.controller.NHibernate', {
     var dirTree = me.getDirTree();
     var treeStore = dirTree.getStore();
     return treeStore.getNodeById(nodeInternalId);
+    //Returning slectd Node of dirTree
+
+    /*var rootChilds = treeStore.tree.root.childNodes;
+    if(rootChilds.length>0){
+    for(var i=0;i<rootChilds.length;i++){
+    if(rootChilds[i].data.text = 'RijTest'){
+    var appChild = rootChilds[i];
+    if(appChild.childNodes.length>0){
+    for(var j=0;j<appChild.childNodes.length;j++){
+    if(appChild.childNodes[j].data.text = 'RijTest222')
+    return appChild.childNodes[j];
+    }
+    }
+    }
+    }
+    }*/
   },
 
   showDataPropertyForm: function(nhibernatePanel) {
@@ -2356,6 +2397,25 @@ Ext.define('AM.controller.NHibernate', {
                   break;
                 }
               }
+            }
+          }
+          var nodeToDelete = [];  
+          if(keysNode.childNodes.length > dataObject.keyProperties.length){
+            for(var z = 0;z<keysNode.childNodes.length;z++){
+              var availFlag = true;
+              for(var x = 0; x< dataObject.keyProperties.length;x++){
+                if(keysNode.childNodes[z].data.text == dataObject.keyProperties[x].keyPropertyName){
+                  availFlag = false;
+                }
+              }
+              if(availFlag)
+              nodeToDelete.push(keysNode.childNodes[z]);
+              //keysNode.childNodes.splice(z, 1);
+            }
+            for(var s = 0;s<nodeToDelete.length;s++){
+              keysNode.childNodes.splice(s, 1);
+              s--;
+              nodeToDelete.length = nodeToDelete.length-1;
             }
           }
 

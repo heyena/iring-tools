@@ -25,7 +25,6 @@ Ext.ux.Utils = function(src) {
 	this.availableDataProperties = [];
 	this.deletedDataProperties = [];
 	this.deletedKeyProperties = [];
-	
 
 };
 Ext.ux.Utils.prototype = {

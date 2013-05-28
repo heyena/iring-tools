@@ -67,6 +67,7 @@ Ext.define('AM.view.search.SearchToolbar', {
         },
         {
           xtype: 'combobox',
+          hidden: true,
           itemId: 'searchLimitCombo',
           width: 90,
           fieldLabel: 'Limit',

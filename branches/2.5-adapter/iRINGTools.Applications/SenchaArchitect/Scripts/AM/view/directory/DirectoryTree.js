@@ -26,7 +26,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
     Ext.applyIf(me, {
       stateEvents: [
-        'itemcollapse',
+        'temcollapse',
         'itemexpand'
       ],
       viewConfig: {
@@ -84,6 +84,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
   },
 
   getState: function() {
+
     var me = this;
     var nodes = [], state = me.callParent();
     me.getRootNode().eachChild(function (child) {
@@ -106,6 +107,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
   },
 
   applyState: function(state) {
+
     var me = this;
     var nodes = state.expandedNodes || [],
       len = nodes.length;
@@ -117,28 +119,44 @@ Ext.define('AM.view.directory.DirectoryTree', {
   },
 
   onReload: function() {
+
     var me = this;
     var node = me.getSelectedNode();
+    var nodeInternalId = node.internalId;
+    var dataRecord = node.data.record;
     var store = me.store;
     var path;
     var panel = me.up();
-    //panel.body.mask('Loading', 'x-mask-loading');
+    var state = me.getState();
+    var dirNode;
     if (!node)
-    node = me.getRootNode();    
+    node = me.getRootNode(); 
     if (node) {
-      path = node.getPath('text');
-      store.load(node);
-      //if(node.isExpanded())
-      //node.collapse();
+      store.load({
+        callback: function (records, options, success) {
+          var nodes = state.expandedNodes || [],
+            len = nodes.length;
+          me.collapseAll();
+          Ext.each(nodes, function (path) {
+            me.expandPath(path, 'text');
+            //dirNode = store.getNodeById(nodeInternalId);
+          });
+
+        }
+
+      });
+      store.on('beforeload', function (store, action) {
+        dirNode = store.getNodeById(nodeInternalId);
+        if(dirNode!=undefined){
+          if(dirNode.data.record.dbInfo == undefined)
+          dirNode.data.record.dbInfo = dataRecord.dbInfo;
+          if(dirNode.data.record.dbDict == undefined)
+          dirNode.data.record.dbDict = dataRecord.dbDict;
+        }
+
+
+      }, me);
     }
-    if(path) {
-      me.expandPath(path, 'text');
-      me.getSelectionModel().select(node);
-    }
-    //panel.body.unmask();
-
-
-
   },
 
   getSelectedNode: function() {

@@ -38,7 +38,14 @@ Ext.define('AM.view.Main', {
         },
         {
           xtype: 'directorypanel',
-          region: 'west'
+          id: 'directoryTreeID',
+          region: 'west',
+          listeners: {
+            afterrender: {
+              fn: me.onPanelAfterRender,
+              scope: me
+            }
+          }
         },
         {
           xtype: 'centerpanel',
@@ -48,6 +55,12 @@ Ext.define('AM.view.Main', {
     });
 
     me.callParent(arguments);
+  },
+
+  onPanelAfterRender: function(component, eOpts) {
+    Ext.getBody().on("contextmenu", Ext.emptyFn, null, {
+      preventDefault: true
+    });
   }
 
 });

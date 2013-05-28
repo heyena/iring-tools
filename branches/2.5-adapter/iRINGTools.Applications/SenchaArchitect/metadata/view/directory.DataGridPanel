@@ -6,21 +6,30 @@
     },
     "codeClass": null,
     "userConfig": {
+        "dockedItems": null,
         "height": null,
         "width": null,
         "designer|userClassName": "directory.DataGridPanel",
         "designer|userAlias": "dynamicgrid",
         "requires": [
-            "AM.store.DataGridStore"
-        ],
-        "uses": [
+            "AM.store.DataGridStore",
             "Ext.ux.grid.FiltersFeature"
         ],
         "closable": true,
         "title": null,
         "store": "DataGridStore"
     },
+    "configAlternates": {
+        "dockedItems": "object"
+    },
     "designerId": "fa0cc7c0-9539-4b11-858b-bfefff02b36c",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "dockedItems",
+            "type": "string"
+        }
+    ],
     "cn": [
         {
             "type": "Ext.grid.column.Column",
@@ -60,7 +69,6 @@
                 ],
                 "implHandler": [
                     "var me = this;\r",
-                    "\r",
                     "store.on({\r",
                     "  metachange: {\r",
                     "    fn: function(store, meta, e) {\r",
@@ -106,8 +114,8 @@
                     "config"
                 ],
                 "implHandler": [
-                    "var me = this,\r",
-                    "  storeId = Ext.data.IdGenerator.get(\"uuid\").generate();\r",
+                    "//var me = this,\r",
+                    " /* storeId = Ext.data.IdGenerator.get(\"uuid\").generate();\r",
                     "\r",
                     "config.store = Ext.create('AM.store.DataGridStore', {\r",
                     "  storeId: \"DataGrid\" + storeId,\r",
@@ -117,18 +125,18 @@
                     "      scope: me\r",
                     "    }\r",
                     "  }\r",
-                    "});\r",
+                    "});*/\r",
                     "\r",
-                    "config.dockedItems = [\r",
+                    "/*config.dockedItems = [\r",
                     "{\r",
                     "  xtype: 'pagingtoolbar',\r",
                     "  dock: 'bottom',\r",
                     "  displayInfo: true,\r",
                     "  store: config.store,\r",
                     "  plugins: [Ext.create('Ext.ux.plugin.GridPageSizer', { options: [25, 50, 100, 200] })]\r",
-                    "}];\r",
+                    "}];*/\r",
                     "\r",
-                    "var filters = {\r",
+                    "/*var filters = {\r",
                     "  ftype: 'filters',\r",
                     "  local: false,\r",
                     "  buildQuery: function (filters) {\r",
@@ -156,11 +164,11 @@
                     "    }\r",
                     "    return { filter: Ext.encode(processed_filters) };\r",
                     "  }\r",
-                    "};\r",
+                    "};*/\r",
                     "\r",
-                    "config.iconCls = 'tabsData';\r",
-                    "config.features = [filters];\r",
-                    "return config;"
+                    "//config.iconCls = 'tabsData';\r",
+                    "//config.features = [filters];\r",
+                    "//return config;"
                 ]
             },
             "designerId": "0cdcb92f-49da-47cc-b2f3-2ea0cfc734d9"

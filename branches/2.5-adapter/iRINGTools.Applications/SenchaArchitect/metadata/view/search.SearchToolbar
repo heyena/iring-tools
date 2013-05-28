@@ -142,6 +142,7 @@
             "codeClass": null,
             "userConfig": {
                 "layout|flex": null,
+                "hidden": true,
                 "itemId": "searchLimitCombo",
                 "width": 90,
                 "fieldLabel": "Limit",
