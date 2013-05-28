@@ -319,7 +319,7 @@ namespace org.iringtools.services
 
     [Description("Deletes a data transfer object by id.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
-    public void DeletetDataTransferObject(string scope, string app, string graph, string id)
+    public void DeleteDataTransferObject(string scope, string app, string graph, string id)
     {
       try
       {

@@ -376,7 +376,8 @@ namespace iRINGTools.Web.Models
       {
         ScopeProject scope = new ScopeProject()
         {
-          Name = newName,
+          Name = name,
+          DisplayName = newName,
           Description = newDescription
         };
 
