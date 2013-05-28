@@ -29,7 +29,7 @@ namespace iRINGTools.Web.Helpers
       iconCls = string.Empty;
     }
 
-		public Dictionary<string, string> property {get; set;} 
+    public Dictionary<string, string> property { get; set; }
     public string id { get; set; }
     public string identifier { get; set; }
     public string text { get; set; }

@@ -67,7 +67,7 @@ namespace org.iringtools.web.controllers
                     type = "ScopeNode",
                     iconCls = "scope",
                     id = scope.Name,
-                    text = scope.Name,
+                    text = scope.DisplayName ?? scope.Name,
                     expanded = false,
                     leaf = false,
                     children = null,
@@ -86,7 +86,6 @@ namespace org.iringtools.web.controllers
           case "ScopeNode":
             {
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
               ScopeProject scope = _repository.GetScope(form["node"]);
 
               foreach (ScopeApplication application in scope.Applications)
@@ -101,7 +100,7 @@ namespace org.iringtools.web.controllers
                     type = "ApplicationNode",
                     iconCls = "applications",
                     id = scope.Name + "/" + application.Name,
-                    text = application.Name,
+                    text = application.DisplayName ?? application.Name,
                     expanded = false,
                     leaf = false,
                     children = null,
@@ -589,7 +588,7 @@ namespace org.iringtools.web.controllers
 
       ScopeApplication application = new ScopeApplication()
       {
-        Name = form["Name"],
+        DisplayName = form["Name"],
         Description = form["Description"],
         Assembly = form["assembly"],
         Configuration = configuration

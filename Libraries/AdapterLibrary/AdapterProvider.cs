@@ -266,7 +266,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response UpdateScope(string scopeName, ScopeProject scope)
+    public Response UpdateScope(string oldScopeName, ScopeProject scope)
     {
       Response response = new Response();
       Status status = new Status();
@@ -275,7 +275,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        ScopeProject sc = _scopes.Find(x => x.Name.ToLower() == scopeName.ToLower());
+        ScopeProject sc = _scopes.Find(x => x.Name.ToLower() == oldScopeName.ToLower());
 
         if (sc == null)
         {
@@ -284,33 +284,35 @@ namespace org.iringtools.adapter
         }
         else
         {
-          //
-          // add new scope and move applications in the existing scope to the new one
-          //
-          AddScope(scope);
+          sc.DisplayName = scope.DisplayName;
 
-          if (sc.Applications != null)
-          {
-            foreach (ScopeApplication app in sc.Applications)
-            {
-              //
-              // copy database dictionary
-              //
-              string path = _settings["AppDataPath"];
-              string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, app.Name);
+          ////
+          //// add new scope and move applications in the existing scope to the new one
+          ////
+          //AddScope(scope);
 
-              if (File.Exists(currDictionaryPath))
-              {
-                string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scope.Name, app.Name);
-                File.Copy(currDictionaryPath, updatedDictionaryPath);
-              }
+          //if (sc.Applications != null)
+          //{
+          //  foreach (ScopeApplication app in sc.Applications)
+          //  {
+          //    //
+          //    // copy database dictionary
+          //    //
+          //    string path = _settings["AppDataPath"];
+          //    string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, oldScopeName, app.Name);
 
-              AddApplication(scope.Name, app);
-            }
-          }
+          //    if (File.Exists(currDictionaryPath))
+          //    {
+          //      string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scope.Name, app.Name);
+          //      File.Copy(currDictionaryPath, updatedDictionaryPath);
+          //    }
 
-          // delete old scope
-          DeleteScope(scopeName);
+          //    AddApplication(scope.Name, app);
+          //  }
+          //}
+
+          //// delete old scope
+          //DeleteScope(oldScopeName);
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
@@ -534,7 +536,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response UpdateApplication(string scopeName, string appName, ScopeApplication updatedApp)
+    public Response UpdateApplication(string scopeName, string oldAppName, ScopeApplication updatedApp)
     {
       Response response = new Response();
       Status status = new Status();
@@ -551,38 +553,40 @@ namespace org.iringtools.adapter
           throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
         }
 
-        ScopeApplication application = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name.ToLower() == appName.ToLower());
+        ScopeApplication application = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name.ToLower() == oldAppName.ToLower());
 
         if (application != null)  // application exists, delete and re-create it
         {
-          bool Ischanged = IsApplicationDataChanged(updatedApp, application); // Check whether actual change has been made or not.
+          //bool Ischanged = IsApplicationDataChanged(updatedApp, application); // Check whether actual change has been made or not.
 
-          if (!Ischanged)  // If nothing changed, don't perform any other operation.
-          {
-            status.Messages.Add("Application [{0}.{1}] unchanged.");
-            return response;
-          }
+          //if (!Ischanged)  // If nothing changed, don't perform any other operation.
+          //{
+          //  status.Messages.Add("Application [{0}.{1}] unchanged.");
+          //  return response;
+          //}
 
-          //else ===================
-          //
-          // copy database dictionary
-          //
-          string path = _settings["AppDataPath"];
-          string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, appName);
+          ////else ===================
+          ////
+          //// copy database dictionary
+          ////
+          //string path = _settings["AppDataPath"];
+          //string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, oldAppName);
 
-          if (File.Exists(currDictionaryPath))
-          {
-            string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Name);
-            if (currDictionaryPath.ToLower() != updatedDictionaryPath.ToLower())
-              File.Copy(currDictionaryPath, updatedDictionaryPath);
-          }
+          //if (File.Exists(currDictionaryPath))
+          //{
+          //  string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Name);
+          //  if (currDictionaryPath.ToLower() != updatedDictionaryPath.ToLower())
+          //    File.Copy(currDictionaryPath, updatedDictionaryPath);
+          //}
 
-          DeleteApplication(scopeName, appName);
-          AddApplication(scopeName, updatedApp);
+          //DeleteApplication(scopeName, oldAppName);
+          //AddApplication(scopeName, updatedApp);
+
+          application.DisplayName = updatedApp.DisplayName;
         }
         else  // application does not exist, stop processing
         {
-          throw new Exception(String.Format("Application [{0}.{1}] not found.", scopeName, appName));
+          throw new Exception(String.Format("Application [{0}.{1}] not found.", scopeName, oldAppName));
         }
 
         Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);

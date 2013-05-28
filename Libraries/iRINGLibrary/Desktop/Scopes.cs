@@ -45,6 +45,9 @@ namespace org.iringtools.library
     /// <returns>A strongly type List of ScopeApplication objects</returns>
     [DataMember(Name = "applications", Order = 2)]
     public ScopeApplications Applications { get; set; }
+
+    [DataMember(Name = "displayName", Order = 3, EmitDefaultValue = false)]
+    public string DisplayName { get; set; }
   }
 
   [DataContract(Name = "application", Namespace = "http://www.iringtools.org/library")]
@@ -72,6 +75,9 @@ namespace org.iringtools.library
     public string Assembly { get; set; }
 
     [DataMember(Name = "configuration", Order = 3, EmitDefaultValue = false)]
-    public Configuration Configuration { get; set; }  
+    public Configuration Configuration { get; set; }
+
+    [DataMember(Name = "displayName", Order = 4, EmitDefaultValue = false)]
+    public string DisplayName { get; set; }
   }
 }
