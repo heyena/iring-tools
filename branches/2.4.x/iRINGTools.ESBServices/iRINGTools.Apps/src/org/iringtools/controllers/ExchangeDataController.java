@@ -1088,7 +1088,6 @@ public class ExchangeDataController extends BaseController
 	public void setResult(String result) {
 		this.result = result;
 	}
-
 	
 	public String[] getOpenGroup() {
 		return openGroup;
@@ -1182,45 +1181,23 @@ public class ExchangeDataController extends BaseController
 		return pageDtoGrid;
 	}
 
-	public void setPageDtoGrid(Grid pageDtoGrid) {
-		this.pageDtoGrid = pageDtoGrid;
-	}
-
 	public Grid getPageRelatedItemGrid() {
 		return pageRelatedItemGrid;
-	}
-
-	public void setPageRelatedItemGrid(Grid pageRelatedItemGrid) {
-		this.pageRelatedItemGrid = pageRelatedItemGrid;
 	}
 
 	public String getxResultsGrid() {
 		return xResultsGrid;
 	}
 
-	public void setxResultsGrid(String xResultsGrid) {
-		this.xResultsGrid = xResultsGrid;
-	}
-
-	public Grid getxHistoryGrid() {
+	public Grid getXHistoryGrid() {
 		return xHistoryGrid;
-	}
-
-	public void setxHistoryGrid(Grid xHistoryGrid) {
-		this.xHistoryGrid = xHistoryGrid;
 	}
 
 	public Grid getPageXHistoryGrid() {
 		return pageXHistoryGrid;
 	}
 
-	public void setPageXHistoryGrid(Grid pageXHistoryGrid) {
-		this.pageXHistoryGrid = pageXHistoryGrid;
-	}
-
-	public void setSummaryGrid(Map<String, String> summaryGrid) {
-		this.summaryGrid = summaryGrid;
-	}
-
-
+	public Map<String, String> getSummaryGrid() {
+    return summaryGrid;
+  }
 }

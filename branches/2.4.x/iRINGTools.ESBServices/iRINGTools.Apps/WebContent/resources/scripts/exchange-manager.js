@@ -1169,16 +1169,6 @@ function newexchangeConfig()
 		
 		    items: [
 	                {
-	                    xtype: 'label',
-	                    formBind: true,
-	                    height: 35,
-	                    html: '<font size = 2><b><u>Config Details:- </b></u></font><br>',
-	                    minHeight: 30,
-	                    padding: 0,
-	                    width: 47,
-	                    text: 'Config Details:-'
-	                },
-	                {
 	                    xtype: 'textfield',
 	                    anchor: '90%',
 	                    padding: 0,
@@ -1484,8 +1474,8 @@ function editCommodity()
 	         alert("Error fetching data to fill form");
 	     }
 	 });
-
 }
+
 function editGraph()
 {
 	var centerPanel = Ext.getCmp('content-pane');
@@ -1494,7 +1484,6 @@ function editGraph()
 	var scope = node.parentNode.parentNode.parentNode.text;
 	var graphValue = node.text;
 	var appNameValue = node.parentNode.text;
-
 
 	var view = Ext.getCmp('newGraphWin');
 	view.setTitle("Edit Graph");
@@ -1540,7 +1529,7 @@ function newGraph()
                 {
                     xtype: 'textfield',
                     anchor: '95%',
-                    fieldLabel: 'description',
+                    fieldLabel: 'Description',
                     name: 'description'
                 },
                 {
@@ -1637,7 +1626,7 @@ function buildApplicationSubMenu ()
                     handler: function() {
                     	 deleteApp();
                     },
-                    text: 'Delete Application\''
+                    text: 'Delete Application'
                 },
                 {
                     xtype: 'menuitem',

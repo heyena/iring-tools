@@ -14,11 +14,11 @@
 
   <package name="exchange-manager" extends="json-default">
     <global-results>
-      <result name="error">errors/500.jsp</result>
+      <result name="exception">/exception.jsp</result>
     </global-results>
-
+    
     <global-exception-mappings>
-      <exception-mapping exception="java.lang.Exception" result="error" />
+      <exception-mapping exception="java.lang.Exception" result="exception" />
     </global-exception-mappings>
 
     <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
@@ -31,12 +31,63 @@
       <result name="success" type="json"/>
     </action>
 
+    <!-- app data -->
+    <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
+      <result type="json">
+        <param name="root">summaryGrid</param>
+      </result>
+    </action>
+    
+    <!-- content -->
+    <action name="content" class="org.iringtools.controllers.AppDataController" method="getContent">
+      <result name="success" type="stream">
+        <param name="inputName">contentStream</param>
+        <param name="bufferSize">4096</param>
+      </result>
+    </action>
+    <!-- related app data -->
+    <action name="radata" class="org.iringtools.controllers.AppDataController" method="getPageRelatedItems">
+      <result type="json">
+        <param name="root">pageRelatedItemGrid</param>
+      </result>
+    </action>
+    <!-- exchange data -->
+    <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDtos">
+      <result type="json">
+        <param name="root">pageDtoGrid</param>
+      </result>
+    </action>
+    <!-- related exchange data -->
+    <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
+      <result type="json">
+        <param name="root">pageRelatedItemGrid</param>
+      </result>
+    </action>
+    <!-- exchange submission -->
+    <action name="xsubmit" class="org.iringtools.controllers.ExchangeDataController" method="submitExchange">
+      <result type="json">
+        <param name="root">xResultsGrid</param>
+      </result>
+    </action>
     <!-- summary data -->
     <action name="sdata" class="org.iringtools.controllers.ExchangeDataController" method="getSummary">
       <result type="json">
         <param name="root">summaryGrid</param>
       </result>
     </action>
+    <!-- exchange logs -->
+    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXHistory">
+      <result type="json">
+        <param name="root">xHistoryGrid</param>
+      </result>
+    </action>
+    <!-- exchange logs pagination -->
+    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXHistory">
+      <result type="json">
+        <param name="root">pageXHistoryGrid</param>
+      </result>
+    </action>
+        
     <!-- New Exchange Configuration -->
      <action name="newExchange" class="org.iringtools.controllers.ExchangeDataController" method="newExchangeConfig">
       <result type="json">
@@ -168,47 +219,7 @@
         <param name="root">form</param>
       </result>
     </action>  --> 
-    
-    <!-- app data -->
-    <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
-      <result type="json">
-        <param name="root">pageDtoGrid</param>
-      </result>
-    </action>
-    <action name="radata" class="org.iringtools.controllers.AppDataController" method="getPageRelatedItems">
-      <result type="json">
-        <param name="root">pageRelatedItemGrid</param>
-      </result>
-    </action>
-
-    <!-- exchange data -->
-    <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDtos">
-      <result type="json">
-        <param name="root">pageDtoGrid</param>
-      </result>
-    </action>
-    <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
-      <result type="json">
-        <param name="root">pageRelatedItemGrid</param>
-      </result>
-    </action>
-    <action name="xsubmit" class="org.iringtools.controllers.ExchangeDataController" method="submitExchange">
-      <result type="json">
-        <param name="root">xResultsGrid</param>
-      </result>
-    </action>
-    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXLogs">
-      <result type="json">
-        <param name="root">xLogsGrid</param>
-      </result>
-    </action>
-    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXLogs">
-      <result type="json">
-        <param name="root">pageXLogsGrid</param>
-      </result>
-    </action>
   </package>
-
 
   <package name="federation-manager" extends="json-default">
     <action name="refdata" class="org.iringtools.controllers.RefDataController" method="searchPage">
