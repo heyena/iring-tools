@@ -589,6 +589,7 @@ namespace org.iringtools.web.controllers
       ScopeApplication application = new ScopeApplication()
       {
         DisplayName = form["Name"],
+        Name = form["Name"],
         Description = form["Description"],
         Assembly = form["assembly"],
         Configuration = configuration
