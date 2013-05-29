@@ -206,7 +206,7 @@ Ext.onReady(function () {
       url: 'directory/deletescope',
       method: 'POST',
       params: {
-        'nodeid': node.attributes.record.name
+        'nodeid': node.attributes.record.Name
       },
       success: function (o) {
         directoryPanel.onReload(node);
@@ -243,8 +243,8 @@ Ext.onReady(function () {
     var dataLayerValue = node.attributes.record.DataLayer;
     var parentNode = node.parentNode;
     var assembly = node.attributes.record.Assembly;
-    var application = node.attributes.record.name;
-    var scope = parentNode.attributes.record.name;
+    var application = node.attributes.record.Name;
+    var scope = parentNode.attributes.record.Name;
     var datalayer = node.attributes.record.DataLayer;
 
     if (dataLayerValue == 'SpreadsheetDatalayer') {
@@ -380,8 +380,8 @@ Ext.onReady(function () {
     newTab.on('save', function (panel) {
       win.close();
       var dataLayerValue = node.attributes.record.DataLayer;
-      var application = node.attributes.record.name;
-      var scope = node.parentNode.attributes.record.name;
+      var application = node.attributes.record.Name;
+      var scope = node.parentNode.attributes.record.Name;
 
       if (dataLayerValue == 'SpreadsheetDataLayer') {
         var configTab = contentPanel.items.map[scope + '.' + application + '.-nh-config'];
@@ -615,7 +615,7 @@ Ext.onReady(function () {
       url: 'facade/refreshFacade',
       method: 'POST',
       params: {
-        scope: node.attributes.record.name
+        scope: node.attributes.record.Name
       },
       success: function (o) {
         directoryPanel.onReload(node);
