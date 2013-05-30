@@ -19,11 +19,9 @@
       Include="$(BinDir)\*.dll;
                $(BinDir)\*.exe;
 			   $(MoreDlls)\*.dll;"
-      Exclude="$(BinDir)\iRINGLibrary.dll;
-               $(BinDir)\log4net.dll;
+      Exclude="$(BinDir)\log4net.dll;
                $(BinDir)\Ninject.dll;
-               $(BinDir)\StaticDust.Configuration.dll;
-               $(BinDir)\UtilityLibrary.dll">
+               $(BinDir)\StaticDust.Configuration.dll">
     </BinFiles>
 
     <ConfFiles Include="$(ConfDir)\*"> </ConfFiles>
