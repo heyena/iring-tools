@@ -34,7 +34,7 @@
     <!-- app data -->
     <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
       <result type="json">
-        <param name="root">summaryGrid</param>
+        <param name="root">pageDtoGrid</param>
       </result>
     </action>
     
