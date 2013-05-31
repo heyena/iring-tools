@@ -65,9 +65,9 @@ Ext.define('AM.view.nhibernate.DataObjectForm', {
           xtype: 'textfield',
           anchor: '100%',
           saveDelay: 160,
-          fieldLabel: 'Key Delimiter',
+          fieldLabel: 'Key Delimeter',
           labelWidth: 160,
-          name: 'keyDelimiter',
+          name: 'keyDelimeter',
           allowBlank: false
         },
         {

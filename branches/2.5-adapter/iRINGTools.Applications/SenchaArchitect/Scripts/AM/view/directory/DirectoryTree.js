@@ -140,6 +140,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
           Ext.each(nodes, function (path) {
             me.expandPath(path, 'text');
             //dirNode = store.getNodeById(nodeInternalId);
+            //console.log(dirNode);
           });
 
         }
@@ -148,10 +149,13 @@ Ext.define('AM.view.directory.DirectoryTree', {
       store.on('beforeload', function (store, action) {
         dirNode = store.getNodeById(nodeInternalId);
         if(dirNode!=undefined){
-          if(dirNode.data.record.dbInfo == undefined)
-          dirNode.data.record.dbInfo = dataRecord.dbInfo;
-          if(dirNode.data.record.dbDict == undefined)
-          dirNode.data.record.dbDict = dataRecord.dbDict;
+          if(dirNode.data.record!=undefined){
+            if(dirNode.data.record.dbInfo == undefined)
+            dirNode.data.record.dbInfo = dataRecord.dbInfo;
+            if(dirNode.data.record.dbDict == undefined)
+            dirNode.data.record.dbDict = dataRecord.dbDict;
+          }
+
         }
 
 

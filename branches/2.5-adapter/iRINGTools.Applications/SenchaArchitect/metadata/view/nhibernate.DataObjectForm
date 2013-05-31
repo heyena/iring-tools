@@ -101,9 +101,9 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "saveDelay": 160,
-                "fieldLabel": "Key Delimiter",
+                "fieldLabel": "Key Delimeter",
                 "labelWidth": 160,
-                "name": "keyDelimiter",
+                "name": "keyDelimeter",
                 "allowBlank": false
             },
             "designerId": "bb4f3230-5ff6-4fc6-bfbe-3c56799f5f73"

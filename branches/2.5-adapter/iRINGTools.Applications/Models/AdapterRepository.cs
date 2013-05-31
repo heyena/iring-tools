@@ -692,7 +692,7 @@ namespace iRINGTools.Web.Models
               {
                 {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
                 {"objectName", dataObject.objectName},
-                {"keyDelimiter", dataObject.keyDelimeter}
+                {"keyDelimiter", dataObject.keyDelimeter},
               }
         };
 

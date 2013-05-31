@@ -107,13 +107,11 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
     var context = dirNode.parentNode.data.text;
     var endpoint = dirNode.data.record.Name;
     var baseUrl = dirNode.data.record.BaseUrl;
-    //var tree = me;
-    //tree.dirNode = dirNode.internalId;
     var treeStore = me.getStore();
     var treeProxy = treeStore.getProxy();
-
-
-    //var me = this;
+    var content = me.up().up();//me.getMainContent();
+    content.body.mask('Loading...', 'x-mask-loading');
+    //var nhPanel = button.up('nhibernatepanel');
     var dbDict, dbInfo;
     Ext.Ajax.request({
       url: 'AdapterManager/DBDictionary',//'NHibernate/DBDictionary',
@@ -158,6 +156,8 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                 callback: function (records, options, success) {
                   var rootNode = treeStore.getRootNode();
                   me.reloadTree(rootNode, dbDict);
+                  me.up().items.items[2].removeAll();    
+                  content.body.unmask();
 
                 }
               });
@@ -327,6 +327,10 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                 shownProperty.push(propertiesNode.data.children[j].text.toLowerCase());
                 propertiesNode.data.children[j].hidden = true;
                 }*/
+                propertiesNode.childNodes[j].data.text = dataObject.dataProperties[jj].propertyName;
+                propertiesNode.childNodes[j].data.property.propertyName = dataObject.dataProperties[jj].propertyName;
+                propertiesNode.childNodes[j].data.property.isHidden = dataObject.dataProperties[jj].isHidden;
+
 
                 propertiesNode.data.children[j].text = dataObject.dataProperties[jj].propertyName;
                 propertiesNode.data.children[j].properties.propertyName = dataObject.dataProperties[jj].propertyName;
