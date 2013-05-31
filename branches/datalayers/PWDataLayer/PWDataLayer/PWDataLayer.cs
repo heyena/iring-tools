@@ -496,7 +496,7 @@ namespace org.iringtools.adapter.datalayer
       
       try
       {
-          DataTable dtglobal = new DataTable();
+          DataTable dtglobal;
           
           if (tableName.ToUpper() == "FOLDERS")
           {
@@ -543,6 +543,7 @@ namespace org.iringtools.adapter.datalayer
               }
               return dtObject;
           }
+          dtglobal = new DataTable();
           return dtglobal;
       }
       catch (Exception e)
