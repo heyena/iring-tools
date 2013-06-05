@@ -99,7 +99,7 @@ namespace org.iringtools.adapter.datalayer
                     {
                         DataObject dataObject = new DataObject()
                         {
-                            hasContent = false,
+                            hasContent = true,
                             objectName = itemName.Replace(" ", string.Empty),
                             tableName = itemName,
                             dataProperties = GetGenericProperties()
@@ -134,7 +134,7 @@ namespace org.iringtools.adapter.datalayer
                 }
 
                 DataObject subFolderDataObject = new DataObject();
-                subFolderDataObject.hasContent = true;
+                
                 subFolderDataObject.objectName = "SubFolders";
                 subFolderDataObject.tableName = "SubFolders";
 
@@ -481,6 +481,31 @@ namespace org.iringtools.adapter.datalayer
 
         }
 
+        private DataTable getDatatable(string tableName, string whereClause, long start, long limit)
+        {
+            DataTable dtglobal = new DataTable();
+            if (tableName.ToUpper() == "FOLDERS")
+            {
+                dtglobal = GetFolders();
+
+            }
+            else if (tableName.ToUpper() == "SUBFOLDERS")
+            {
+                DataTable dtSubFolders = GetSubFolders(whereClause);
+                return dtSubFolders;
+            }
+            else if (tableName.ToUpper() == "DOCUMENTS")
+            {
+                DataTable dtDocument = new DataTable();
+                return dtDocument;
+            }
+            else if (tableName.ToUpper() == "DTP_ENG2")
+            {
+
+                dtglobal = GetObjectDTP();
+            }
+            return dtglobal;
+        }
 
         /// <summary>
         /// This method used to create datatable with records on the bases of this GetCount method works.
@@ -495,44 +520,20 @@ namespace org.iringtools.adapter.datalayer
 
             try
             {
-                DataTable dtglobal = new DataTable();
-
-                if (tableName.ToUpper() == "FOLDERS")
-                {
-                    dtglobal = GetFolders();
-
-                }
-                else if (tableName.ToUpper() == "SUBFOLDERS")
-                {
-                    DataTable dtSubFolders = GetSubFolders(whereClause);
-                    return dtSubFolders;
-                }
-                else if (tableName.ToUpper() == "DOCUMENTS")
-                {
-                    DataTable dtDocument = new DataTable();
-                    return dtDocument;
-                }
-                else if (tableName.ToUpper() == "DTP_ENG2")
-                {
-
-                    dtglobal = GetObjectDTP();
-
-                }
+                DataTable dtglobal = this.getDatatable(tableName, whereClause, start, limit);
+              
 
                 if (whereClause != string.Empty)
                 {
                     dtglobal.DefaultView.RowFilter = whereClause != null ? whereClause.Replace("WHERE", "").Replace("UPPER", "") : "";
                     _iFoldrCount = dtglobal.DefaultView.ToTable().Rows.Count;
                     return dtglobal.DefaultView.ToTable();
-
                 }
                 IEnumerable<System.Data.DataRow> query = from d in dtglobal.AsEnumerable().Skip((int)(start)).Take((int)limit) select d; //For Paging            
                 if (query != null && query.Count() > 0)
                 {
                     return query.CopyToDataTable();
                 }
-
-
                 return dtglobal;
             }
             catch (Exception e)
@@ -566,6 +567,72 @@ namespace org.iringtools.adapter.datalayer
             }
         }
 
+        private DataTable getObjects(string objectType, IList<string> identifiers)
+        {
+            DataTable dtGlobl = new DataTable();
+            List<string> _identifiers = new List<string>();
+            if (objectType.ToUpper() == "FOLDERS")
+            {
+
+                iParentFolder = Convert.ToInt32(identifiers[0]);
+                dtGlobl = GetFolders();
+                string[] strArray = identifiers.ToArray<string>();
+               // dtGlobl.DefaultView.RowFilter = "ID = " + "'" + strArray[0] + "'";
+                _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
+
+            }
+
+            else if (objectType.ToUpper() == "SUBFOLDERS")
+            {
+
+                dtGlobl = GetSubFolders("from identifier");
+                dtGlobl.DefaultView.RowFilter = "ID = " + "'" + identifiers[0] + "'";
+                _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
+
+
+                //return dtGlobl;
+            }
+
+
+            else if (objectType.ToUpper() == "DOCUMENTS")
+            {
+
+
+                _identifiers.Add(identifiers[0]);
+                dtGlobl = GetDocumentsForFolder(iParentFolder, _identifiers);
+                _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
+
+
+
+                //return dtGlobl;
+
+
+            }
+            else if (objectType.ToUpper() == "DTP_ENG2")
+            {
+                DatabaseDictionary dictionary1 = GetDatabaseDictionary();
+                DataObject objDef1 = dictionary1.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+                List<string> listAttributes = new List<string>();
+                List<string> docGuids = identifiers.ToList();
+
+                foreach (DataProperty prop in objDef1.dataProperties)
+                {
+                    listAttributes.Add(prop.columnName);
+                }
+
+                Login();
+
+                dtGlobl = GetDocumentMetadata(docGuids, listAttributes);
+                //return dtGlobl;
+            }
+
+           dtGlobl = dtGlobl.Select("id='"+identifiers[0]+"'").CopyToDataTable();
+
+
+
+            return dtGlobl;
+        }
+
         public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
         {
             try
@@ -579,176 +646,77 @@ namespace org.iringtools.adapter.datalayer
                 List<string> _identifiers = new List<string>();
                 List<string> docGuids = identifiers.ToList();
                 List<string> listAttributes = new List<string>();
-                DataTable dtGlobl;
-                if (objectType.ToUpper() == "FOLDERS")
+                DataTable dtGlobl = new DataTable();
+
+                dtGlobl = this.getObjects(objectType, identifiers);
+                
+                bool includeContent = _settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString()) && objDef1.hasContent;
+
+                foreach (DataRow row in dtGlobl.Rows)
                 {
+                    IDataObject dataObject = ToDataObject(row, objDef1);
 
-                    iParentFolder = Convert.ToInt32(identifiers[0]);
-                    dtGlobl = GetFolders();
-                    string[] strArray = identifiers.ToArray<string>();
-                    dtGlobl.DefaultView.RowFilter = "ID = " + "'" + strArray[0] + "'";
-                    _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
-                    if (_iFoldrCount == 0)
+                    if (includeContent)
                     {
+                        IContentObject contentObject = new GenericContentObject(dataObject);
+                        contentObject.ObjectType = objectType;
 
+                        string id = row["DocumentGUID"].ToString();
+                        string tempFoder = "c:\\temp\\projectwise\\";
 
-                        IDataObject dataObject11 = ToDataObject(null, objDef1);
-                        dataObjects1.Add(dataObject11);
-                        return dataObjects1;
-                    }
+                        FileStream stream = GetProjectWiseFile(id, tempFoder);
 
-                    DataRow dr = dtGlobl.DefaultView.ToTable().Rows[0];
-
-                    IDataObject dataObject = ToDataObject(dr, objDef1);
-
-
-                    dataObjects1.Add(dataObject);
-
-                    return dataObjects1;
-
-                }
-
-                else if (objectType.ToUpper() == "SUBFOLDERS")
-                {
-
-                    dtGlobl = GetSubFolders("from identifier");
-                    dtGlobl.DefaultView.RowFilter = "ID = " + "'" + identifiers[0] + "'";
-                    _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
-
-                    if (_iFoldrCount == 0)
-                    {
-
-                        //_settings["HasContentExpression"] = null;
-                        IDataObject dataObject11 = ToDataObject(null, objDef1);
-                        dataObjects1.Add(dataObject11);
-                        return dataObjects1;
-                    }
-
-                    DataRow dr = dtGlobl.DefaultView.ToTable().Rows[0];
-                    IDataObject dataObject = ToDataObject(dr, objDef1);
-
-
-                    dataObjects1.Add(dataObject);
-
-                    return dataObjects1;
-                }
-
-
-                else if (objectType.ToUpper() == "DOCUMENTS")
-                {
-
-
-
-                    _identifiers.Add(identifiers[0]);
-                    dtGlobl = GetDocumentsForFolder(iParentFolder, _identifiers);
-                    _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
-
-                    if (_iFoldrCount == 0)
-                    {
-
-                        IDataObject dataObject11 = ToDataObject(null, objDef1);
-                        dataObjects1.Add(dataObject11);
-                        return dataObjects1;
-                    }
-
-                    DataRow dr = dtGlobl.DefaultView.ToTable().Rows[0];
-                    // _settings["HasContentExpression"] = null;
-                    IDataObject dataObject = ToDataObject(dr, objDef1);
-
-
-                    dataObjects1.Add(dataObject);
-
-                    return dataObjects1;
-
-
-                }
-                else if (objectType.ToUpper() == "DTP_ENG2")
-                {
-
-
-                    foreach (DataProperty prop in objDef1.dataProperties)
-                    {
-                        listAttributes.Add(prop.columnName);
-                    }
-
-                    Login();
-
-                    dtGlobl = GetDocumentMetadata(docGuids, listAttributes);
-
-                    if (dtGlobl == null)
-                    {
-                        throw new Exception("Objects not found.");
-                    }
-
-                    //IList<IDataObject> dataObjects = new List<IDataObject>();
-                    bool includeContent = _settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString());
-
-                    foreach (DataRow row in dtGlobl.Rows)
-                    {
-                        IDataObject dataObject = ToDataObject(row, objDef1);
-
-                        if (includeContent)
+                        if (stream != null)
                         {
-                            IContentObject contentObject = new GenericContentObject(dataObject);
-                            contentObject.ObjectType = objectType;
-
-
-                            //string id = _sDocumentGUID;
-                            string id = row["DocumentGUID"].ToString();
-                            string tempFoder = "c:\\temp\\projectwise\\";
-
-                            FileStream stream = GetProjectWiseFile(id, tempFoder);
-
-                            if (stream != null)
+                            try
                             {
-                                try
+
+                                string format = _sFileFormat;
+
+                                string docName = stream.Name.ToLower();
+                                int extIndex = docName.LastIndexOf('.');
+
+                                if (extIndex >= 0)
                                 {
-
-                                    string format = _sFileFormat;
-
-                                    string docName = stream.Name.ToLower();
-                                    int extIndex = docName.LastIndexOf('.');
-
-                                    if (extIndex >= 0)
-                                    {
-                                        format = docName.Substring(extIndex);
-                                    }
-
-                                    string contentType = MimeTypes.Dictionary[format];
-
-                                    MemoryStream outStream = new MemoryStream();
-                                    stream.CopyTo(outStream);
-                                    outStream.Position = 0;
-                                    stream.Close();
-                                    contentObject.Content = outStream;
+                                    format = docName.Substring(extIndex);
                                 }
-                                catch (Exception ex)
-                                {
-                                    _logger.Error("Error getting content type: " + ex.ToString());
-                                    throw ex;
-                                }
-                                finally
-                                {
-                                    stream.Close();
-                                }
+
+                                string contentType = MimeTypes.Dictionary[format];
+
+                                MemoryStream outStream = new MemoryStream();
+                                stream.CopyTo(outStream);
+                                outStream.Position = 0;
+                                stream.Close();
+                                contentObject.Content = outStream;
                             }
+                            catch (Exception ex)
+                            {
+                                _logger.Error("Error getting content type: " + ex.ToString());
+                                throw ex;
+                            }
+                            finally
+                            {
+                                stream.Close();
+                            }
+                        }
 
-                            dataObjects1.Add(contentObject);
-                        }
-                        else
-                        {
-                            dataObjects1.Add(dataObject);
-                        }
+                        dataObjects1.Add(contentObject);
                     }
-
-                    return dataObjects1;
+                    else
+                    {
+                        dataObjects1.Add(dataObject);
+                    }
                 }
+
+                if (dataObjects1.Count == 0)
+                {
+                    ToDataObjects(dtGlobl, objectType);
+                }
+
+                return dataObjects1;
+                
                 IList<IDataObject> dataObjectsGlbl = new List<IDataObject>();
                 return dataObjectsGlbl;
-
-
-
-
             }
             catch (Exception e)
             {
