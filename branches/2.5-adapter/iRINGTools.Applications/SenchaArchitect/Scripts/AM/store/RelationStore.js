@@ -17,14 +17,14 @@ Ext.define('AM.store.RelationStore', {
   extend: 'Ext.data.Store',
 
   requires: [
-    'AM.model.MultiSelect'
+    'AM.model.RelationModel'
   ],
 
   constructor: function(cfg) {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
-      model: 'AM.model.MultiSelect',
+      model: 'AM.model.RelationModel',
       storeId: 'relationstore'
     }, cfg)]);
   }

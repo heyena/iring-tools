@@ -908,6 +908,14 @@
                 "Scripts/AM/store/RelationStore.js"
             ],
             "className": "RelationStore"
+        },
+        "55c83466-e46b-45be-9395-235cd0c2081c": {
+            "paths": [
+                "metadata/model/RelationModel",
+                "Scripts/AM/model/override/RelationModel.js",
+                "Scripts/AM/model/RelationModel.js"
+            ],
+            "className": "RelationModel"
         }
     },
     "viewOrderMap": {
@@ -1027,7 +1035,8 @@
             "9ae7501d-87ae-45df-b8ea-8be32d84274d",
             "975a262c-12eb-4d94-a784-080c158bd614",
             "0ec68326-37b6-4aa6-96d1-dc41d4a1a50c",
-            "ea0e3b6e-3144-45fa-9b7e-fe85e7feb98c"
+            "ea0e3b6e-3144-45fa-9b7e-fe85e7feb98c",
+            "55c83466-e46b-45be-9395-235cd0c2081c"
         ],
         "resource": [
             "72503647-4c8b-4e49-9fc2-bc85f975b901",

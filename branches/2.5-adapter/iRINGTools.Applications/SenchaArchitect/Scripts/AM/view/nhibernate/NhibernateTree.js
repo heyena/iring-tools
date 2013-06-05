@@ -443,31 +443,48 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
           }
 
           // sync relationships
-          /*for (var kj = 0; kj < dataObject.dataRelationships.length; kj++) {
-          var newNode = new Ext.tree.TreeNode({
-          text: dataObject.dataRelationships[kj].relationshipName,
-          type: 'relationship',
-          leaf: true,
-          iconCls: 'treeRelation',
-          relatedObjMap: [],
-          objectName: dataObjectNode.text,
-          relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
-          relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
-          relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
-          propertyMap: []
-          });
-          var mapArray = new Array();
-          for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {
-          var mapItem = new Array();
-          mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;
-          mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;
-          mapArray.push(mapItem);
+          for (var kj = 0; kj < dataObject.dataRelationships.length; kj++) {
+            /*var newNode = new Ext.tree.TreeNode({
+            text: dataObject.dataRelationships[kj].relationshipName,
+            type: 'relationship',
+            leaf: true,
+            iconCls: 'treeRelation',
+            relatedObjMap: [],
+            objectName: dataObjectNode.text,
+            relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
+            relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
+            relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
+            propertyMap: []
+            });
+            */
+            var newNode = {
+              text: dataObject.dataRelationships[kj].relationshipName,
+              type: 'relationship',
+              leaf: true,
+              iconCls: 'treeRelation',
+              relatedObjMap: [],
+              objectName: dataObjectNode.data.text,
+              relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
+              relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
+              relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
+              propertyMap: []
+            };
+            var mapArray = new Array();
+            for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {
+              var mapItem = new Array();
+              mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;
+              mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;
+              mapArray.push(mapItem);
+            }
+            newNode.iconCls = 'treeRelation';
+            //newNode.attributes.propertyMap = mapArray;
+            newNode.propertyMap = mapArray;  
+            relationshipsNode.expanded = true;
+            //relationshipsNode.children.push(newNode);
+            relationshipsNode.appendChild(newNode);
+            //relationshipsNode.data.children.push(newNode);
+
           }
-          newNode.iconCls = 'treeRelation';
-          newNode.attributes.propertyMap = mapArray;
-          relationshipsNode.expanded = true;
-          relationshipsNode.children.push(newNode);
-          }*/
         }
       }
       ijk++;

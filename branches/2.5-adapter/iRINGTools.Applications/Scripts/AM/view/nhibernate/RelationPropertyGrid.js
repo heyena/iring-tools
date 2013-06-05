@@ -61,13 +61,13 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
       columns: [
         {
           xtype: 'gridcolumn',
-          dataIndex: 'value',
+          dataIndex: 'property',
           text: 'Property',
           flex: 1
         },
         {
           xtype: 'gridcolumn',
-          dataIndex: 'text',
+          dataIndex: 'relatedProperty',
           text: 'Related Property',
           flex: 1
         }
@@ -101,10 +101,12 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
     var propertyName = propertyCmb.getValue().replace(/^\s*/, "").replace(/\s*$/, "");
     var mapProperty = mapPropertyCmb.getValue().replace(/^\s*/, "").replace(/\s*$/, "");
 
-    //var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};
-    var mapRecord = {'value': propertyName, 'text': mapProperty};
-    var propertErr = store.find('value', propertyName);
-    var mapErr = store.find('text', mapProperty);
+    var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};
+    //var mapRecord = {'value': propertyName, 'text': mapProperty};
+    //var propertErr = store.find('value', propertyName);
+    var propertErr = store.find('property', propertyName);
+    //var mapErr = store.find('text', mapProperty);
+    var mapErr = store.find('relatedProperty', mapProperty);
 
     if (propertErr != -1) {
       message = 'Property [' + propertyName + '] already in a mapping!';

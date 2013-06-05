@@ -6,7 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
-        "model": "MultiSelect",
+        "model": "RelationModel",
         "storeId": "relationstore",
         "designer|userClassName": "RelationStore",
         "designer|userAlias": null

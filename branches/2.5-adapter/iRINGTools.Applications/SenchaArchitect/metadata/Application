@@ -6,6 +6,9 @@
     },
     "codeClass": null,
     "userConfig": {
+        "models": [
+            "RelationModel"
+        ],
         "stores": [
             "RelationStore"
         ],

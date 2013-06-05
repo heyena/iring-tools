@@ -35,12 +35,15 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         {
           xtype: 'label',
           cls: 'x-form-item',
+          height: 14,
+          margin: '5 0 0 10',
           style: 'font-weight:bold;',
           text: 'Configure Relationship'
         },
         {
           xtype: 'textfield',
           anchor: '100%',
+          margin: '5 0 0 10',
           fieldLabel: 'Relationship Name',
           labelWidth: 160,
           name: 'relationshipName',
@@ -50,6 +53,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         {
           xtype: 'textfield',
           anchor: '100%',
+          margin: '5 0 0 10',
           fieldLabel: 'Object Name',
           labelWidth: 160,
           name: 'objectName',
@@ -60,6 +64,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           xtype: 'combobox',
           anchor: '100%',
           itemId: 'relatedObjectCmb',
+          margin: '5 0 0 10',
           fieldLabel: 'Related Object Name',
           labelWidth: 160,
           name: 'relatedObjectName',
@@ -77,6 +82,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           xtype: 'combobox',
           anchor: '100%',
           itemId: 'relationType',
+          margin: '5 0 0 10',
           fieldLabel: 'Relation Type',
           labelWidth: 160,
           name: 'relationType',
@@ -97,7 +103,8 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           xtype: 'combobox',
           anchor: '100%',
           itemId: 'propertyNameCmb',
-          fieldLabel: 'Property Name',
+          margin: '5 0 0 10',
+          fieldLabel: 'Related Property Name',
           labelWidth: 160,
           name: 'propertyName',
           queryMode: 'local',
@@ -112,6 +119,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           xtype: 'combobox',
           anchor: '100%',
           itemId: 'mapPropertyNameCmb',
+          margin: '5 0 0 10',
           fieldLabel: 'Mapping Property',
           labelWidth: 160,
           name: 'mapPropertyName',
@@ -196,6 +204,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
   },
 
   onPropertyMapClick: function(button, e, eOpts) {
+    //alert('Hi...');
     var me = this;
     var form = button.up('setrelationform');
     var grid = form.down('relationPropertyGrid');

@@ -166,7 +166,7 @@ Ext.define('AM.controller.NHibernate', {
         var error = 'SUCCESS = FALSE';
         var index = rtext.toUpperCase().indexOf(error);
         if (index == -1) {
-          showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
+          //showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
           var navpanel = me.getDirTree();
           navpanel.onReload();
           content.body.unmask();
@@ -284,25 +284,32 @@ Ext.define('AM.controller.NHibernate', {
     var treeNode = tree.getSelectedNode();
     var dObject;
     Ext.each(dbDict.dataObjects, function (dataObject) {
-      if(dataObject.objectName == treeNode.data.property.objectName)
+      //if(dataObject.objectName == treeNode.data.property.objectName)
+      if(dataObject.objectName == treeNode.raw.properties.objectName)
       dObject = dataObject;
     });
 
-    if (treeNode.data.property) {
-      form.getForm().findField('objectName').setValue(treeNode.data.record.Name);
+    /*if (treeNode.data.property) {
+    form.getForm().findField('objectName').setValue(treeNode.data.record.Name);
+    form.getForm().findField('objectNamespace').setValue(dObject.objectNamespace);
+    form.getForm().findField('keyDelimiter').setValue(dObject.keyDelimeter);
+    form.getForm().findField('description').setValue(dObject.description);
+    }*/
+
+    if (dObject) {
+      form.getForm().findField('objectName').setValue(dObject.objectName);
       form.getForm().findField('objectNamespace').setValue(dObject.objectNamespace);
-      form.getForm().findField('keyDelimiter').setValue(dObject.keyDelimeter);
+      form.getForm().findField('keyDelimeter').setValue(dObject.keyDelimeter);
       form.getForm().findField('description').setValue(dObject.description);
     }
-
 
     var nameField = form.getForm().findField('objectName');
     var objectName = nameField.getValue();
 
-    if (nameField.validate()) {
-      treeNode.data.property.objectName = objectName;
-      treeNode.set('text', objectName);
-    }
+    /*if (nameField.validate()) {
+    treeNode.data.property.objectName = objectName;
+    treeNode.set('text', objectName);
+    }*/
 
   },
 
@@ -1038,7 +1045,7 @@ Ext.define('AM.controller.NHibernate', {
       panel = Ext.widget('nhibernatepanel', {
         'title': title
       });  
-      content.add(panel);
+      //content.add(panel);
 
       tree = panel.down('nhibernatetree');
 
@@ -1106,7 +1113,8 @@ Ext.define('AM.controller.NHibernate', {
 
         }
       });
-
+      content.add(panel);
+      content.setActiveTab(panel);
     }
     me.getDataTypes();
     content.setActiveTab(panel);
@@ -1573,7 +1581,7 @@ Ext.define('AM.controller.NHibernate', {
 
   showSetRelationForm: function(nhibernatepanel) {
     var me = this;
-    var  panel = nhibernatepanel.down('#nhibernateContent');
+    var panel = nhibernatepanel.down('#nhibernateContent');
     var dataTree = nhibernatepanel.down('nhibernatetree');
     var dataNode = dataTree.getSelectedNode();
     var dirNode = me.getDirNode(dataTree.dirNode);
@@ -1606,6 +1614,25 @@ Ext.define('AM.controller.NHibernate', {
         // relatedObjects.push([child.data.text, child.data.text, child.data.property.tableName]);
       }
     });
+
+    var relatedObjectName = relationFolderNode.childNodes[0].raw.relatedObjectName;
+    var relatedObject;
+    rootNode.eachChild(function(child) {
+      if(child.data.text == relatedObjectName) {
+        relatedObject = child; 
+      }
+    });
+    var relatedObjectPropertyNodes = [];
+    if(relatedObject!=undefined && relatedObject.childNodes[0]!=undefined && relatedObject.childNodes[1]!=undefined){
+      relatedObject.childNodes[0].eachChild(function(child) {
+        relatedObjectPropertyNodes.push([child.data.text, child.data.text, child.data.property.columnName]);
+      });
+      relatedObject.childNodes[1].eachChild(function(child) {
+        relatedObjectPropertyNodes.push([child.data.text, child.data.text, child.data.property.columnName]);
+      });
+
+    }
+
 
     var keysNode = dataObjectNode.childNodes[0];
     var propertiesNode = dataObjectNode.childNodes[1];
@@ -1643,6 +1670,14 @@ Ext.define('AM.controller.NHibernate', {
 
     relatedObjectCombo.valueField = 'value';
 
+    var mapPropertyNameCmb = form.down('#mapPropertyNameCmb');
+    mapPropertyNameCmb.store = Ext.create('Ext.data.SimpleStore', {
+      fields: ['value', 'text', 'name'],
+      autoLoad: true,
+      data: relatedObjectPropertyNodes
+    });
+    mapPropertyNameCmb.valueField = 'text';
+
     form.endpoint = endpoint;
     form.contextName = contextName;
     form.rootNode = rootNode;
@@ -1655,18 +1690,31 @@ Ext.define('AM.controller.NHibernate', {
         data = relation.data;
         else
         data = relation.raw;
-
+        var pMap;
         if(data.propertyMap) {
-          var pMap = data.propertyMap[0];
-          var record = [{
-            'property':  pMap.dataPropertyName,
-            'relatedProperty': pMap.relatedPropertyName
-          }];
-          var exist = gridStore.find('property', pMap.dataPropertyName);
-          if(exist == -1)
-          gridStore.add(record);
+          gridStore.removeAll();
+          for(var i=0;i<data.propertyMap.length;i++){
+            pMap = data.propertyMap[i];
+            if(pMap){
 
-        }
+              var record = [{
+                'property':  pMap.dataPropertyName,
+                'relatedProperty': pMap.relatedPropertyName
+              }];
+              var exist = gridStore.find('property', pMap.dataPropertyName);
+              if(exist == -1)
+              gridStore.add(record);
+
+            }//else
+            //gridStore.removeAll();
+          }
+
+          //var pMap = data.propertyMap[0];
+
+
+        }else
+        gridStore.removeAll();
+
         form.getForm().findField('relationType').setValue(data.relationshipType);
         form.getForm().findField('relatedObjectName').setValue(data.relatedObjectName);
       }
@@ -2584,31 +2632,48 @@ Ext.define('AM.controller.NHibernate', {
           }
 
           // sync relationships
-          /*for (var kj = 0; kj < dataObject.dataRelationships.length; kj++) {
-          var newNode = new Ext.tree.TreeNode({
-          text: dataObject.dataRelationships[kj].relationshipName,
-          type: 'relationship',
-          leaf: true,
-          iconCls: 'treeRelation',
-          relatedObjMap: [],
-          objectName: dataObjectNode.text,
-          relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
-          relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
-          relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
-          propertyMap: []
-          });
-          var mapArray = new Array();
-          for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {
-          var mapItem = new Array();
-          mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;
-          mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;
-          mapArray.push(mapItem);
+          for (var kj = 0; kj < dataObject.dataRelationships.length; kj++) {
+            /*var newNode = new Ext.tree.TreeNode({
+            text: dataObject.dataRelationships[kj].relationshipName,
+            type: 'relationship',
+            leaf: true,
+            iconCls: 'treeRelation',
+            relatedObjMap: [],
+            objectName: dataObjectNode.text,
+            relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
+            relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
+            relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
+            propertyMap: []
+            });
+            */
+            var newNode = {
+              text: dataObject.dataRelationships[kj].relationshipName,
+              type: 'relationship',
+              leaf: true,
+              iconCls: 'treeRelation',
+              relatedObjMap: [],
+              objectName: dataObjectNode.data.text,
+              relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
+              relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
+              relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
+              propertyMap: []
+            };
+            var mapArray = new Array();
+            for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {
+              var mapItem = new Array();
+              mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;
+              mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;
+              mapArray.push(mapItem);
+            }
+            newNode.iconCls = 'treeRelation';
+            //newNode.attributes.propertyMap = mapArray;
+            newNode.propertyMap = mapArray;  
+            relationshipsNode.expanded = true;
+            //relationshipsNode.children.push(newNode);
+            relationshipsNode.appendChild(newNode);
+            //relationshipsNode.data.children.push(newNode);
+
           }
-          newNode.iconCls = 'treeRelation';
-          newNode.attributes.propertyMap = mapArray;
-          relationshipsNode.expanded = true;
-          relationshipsNode.children.push(newNode);
-          }*/
         }
       }
       ijk++;
