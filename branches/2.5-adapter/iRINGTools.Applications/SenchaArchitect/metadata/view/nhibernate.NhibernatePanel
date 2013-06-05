@@ -42,14 +42,12 @@
             },
             "codeClass": null,
             "userConfig": {
-                "height": null,
-                "minWidth": 260,
-                "width": 300,
-                "layout|flex": null,
                 "layout|floatable": false,
-                "layout|region": "center"
+                "layout|region": "center",
+                "minWidth": 260,
+                "width": 300
             },
-            "designerId": "4cd3060f-2f7c-4e42-923d-3255343fab45",
+            "designerId": "93b3422e-3cc5-4487-ab2e-02d38b0a2ba3",
             "masterInstanceId": "c72f1844-42ae-497d-ac17-9b294bfd2e8c"
         },
         {

@@ -300,7 +300,6 @@
                             "userConfig": {
                                 "fn": "onPropertyMapClick",
                                 "implHandler": [
-                                    "//alert('Hi...');\r",
                                     "var me = this;\r",
                                     "var form = button.up('setrelationform');\r",
                                     "var grid = form.down('relationPropertyGrid');\r",

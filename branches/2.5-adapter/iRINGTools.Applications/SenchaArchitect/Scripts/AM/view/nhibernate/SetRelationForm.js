@@ -204,7 +204,6 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
   },
 
   onPropertyMapClick: function(button, e, eOpts) {
-    //alert('Hi...');
     var me = this;
     var form = button.up('setrelationform');
     var grid = form.down('relationPropertyGrid');

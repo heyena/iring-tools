@@ -17,6 +17,10 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.relationPropertyGrid',
 
+  requires: [
+    'AM.view.override.nhibernate.RelationPropertyGrid'
+  ],
+
   itemId: 'relationPropertyGrid',
   store: 'RelationStore',
 

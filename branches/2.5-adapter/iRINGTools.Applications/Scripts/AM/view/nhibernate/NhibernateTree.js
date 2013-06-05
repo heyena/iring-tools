@@ -17,6 +17,10 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.nhibernatetree',
 
+  requires: [
+    'AM.view.override.nhibernate.NhibernateTree'
+  ],
+
   dirNode: '',
   selectedTables: '',
   bodyStyle: 'padding:0.5px 0px 1px 1px',

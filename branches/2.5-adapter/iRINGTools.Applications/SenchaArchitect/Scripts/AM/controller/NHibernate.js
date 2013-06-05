@@ -1114,7 +1114,8 @@ Ext.define('AM.controller.NHibernate', {
         }
       });
       content.add(panel);
-      content.setActiveTab(panel);
+      //var myTab = content.add(panel);
+      //content.setActiveTab(myTab);
     }
     me.getDataTypes();
     content.setActiveTab(panel);

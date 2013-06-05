@@ -1069,8 +1069,9 @@
                     "\r",
                     "    }\r",
                     "  });\r",
-                    "  content.add(panel);\r",
-                    "  content.setActiveTab(panel);\r",
+                    "  \tcontent.add(panel);\r",
+                    "  \t\t//var myTab = content.add(panel);\r",
+                    "      //content.setActiveTab(myTab);\r",
                     "}\r",
                     "me.getDataTypes();\r",
                     "content.setActiveTab(panel);"
