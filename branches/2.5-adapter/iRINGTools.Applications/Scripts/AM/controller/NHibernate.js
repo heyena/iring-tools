@@ -218,6 +218,7 @@ Ext.define('AM.controller.NHibernate', {
         continue;
 
         dataObject.objectName = objNam;
+        //alert('in loop..desc..'+form.getForm().findField('description').getValue());
         dataObject.description = form.getForm().findField('description').getValue();
         dataObject.keyDelimeter = form.getForm().findField('keyDelimeter').getValue();
       }
@@ -250,12 +251,12 @@ Ext.define('AM.controller.NHibernate', {
           for (var k = 0; k < relChildenNodes.length; k++) {
             var relationNode = relChildenNodes[k];
 
-            if (relationNode.text === '')
+            if (relationNode.data.text === '')//if (relationNode.text === '')
             continue;
 
-            if (relationNode.data)
-            var relationNodeAttr = relationNode.data
-
+            //if (relationNode.data)
+            //var relationNodeAttr = relationNode.data
+            var relationNodeAttr = relationNode.raw;
             var relObjNam = relationNodeAttr.relatedObjectName;
             if (relObjNam.toLowerCase() != objNam.toLowerCase() && relObjNam.toLowerCase() == oldObjNam.toLowerCase())
             relationNodeAttr.relatedObjectName = objNam;
@@ -1521,7 +1522,9 @@ Ext.define('AM.controller.NHibernate', {
       if (treeNode.data.text.toUpperCase() != dataObject.objectName.toUpperCase())
       continue;
       description = dataObject.description;
+      //description = treeNode.raw.properties.description;
       keyDelimeter = dataObject.keyDelimeter;
+      //keyDelimeter = treeNode.raw.properties.keyDelimiter; 
     }
     /*if (treeNode.raw.properties.keyDelimiter === 'null' || 
     !treeNode.raw.properties.keyDelimiter || treeNode.raw.properties.keyDelimiter === undefined) {
@@ -2093,9 +2096,14 @@ Ext.define('AM.controller.NHibernate', {
 
     var keyName;
     for (var i = 0; i < rootNode.childNodes.length; i++) {
-      var folder = me.getFolderFromChildNode(rootNode.childNodes[i]);
+      var folder = me.getFolderFromChildNode(rootNode.childNodes[i],dbDict.dataObjects[i]);
       treeProperty.dataObjects.push(folder);
     }
+
+    /*for (var i = 0; i < dbDict.dataObjects.length; i++) {
+    var folder = me.getFolderFromChildNode(dbDict.dataObjects[i]);
+    treeProperty.dataObjects.push(folder);
+    }*/
 
     dbDict.ConnectionString = treeProperty.connectionString;
     dbDict.SchemaName = treeProperty.schemaName;
@@ -2180,19 +2188,21 @@ Ext.define('AM.controller.NHibernate', {
     return treeProperty;
   },
 
-  getFolderFromChildNode: function(folderNode) {
+  getFolderFromChildNode: function(folderNode, dbDictNode) {
     var me = this;
     var folderNodeProp = folderNode.data.property;
     var folder = {};
     var keyName = '';
 
-    folder.tableName = folderNode.data.text;//folderNodeProp.tableName;
-    folder.objectNamespace = folderNode.raw.properties.objectNamespace;//folderNodeProp.objectNamespace;
-    folder.objectName = folderNode.raw.properties.objectName;//folderNodeProp.objectName;
-    folder.description = folderNode.raw.properties.description;//'';//folderNodeProp.description;
-    folder.keyDelimeter = folderNode.raw.properties.keyDelimeter;
-    if (folderNode.raw.properties.keyDelimeter && folderNode.raw.properties.keyDelimeter != 'null')
-    folderNode.raw.properties.keyDelimeter = folderNode.raw.properties.keyDelimeter;    
+    folder.tableName = dbDictNode.tableName;//folderNode.data.text;//folderNodeProp.tableName;
+    folder.objectNamespace = dbDictNode.objectNamespace;//folderNode.raw.properties.objectNamespace;//folderNodeProp.objectNamespace;
+    folder.objectName = dbDictNode.objectName;//folderNode.raw.properties.objectName;//folderNodeProp.objectName;
+    folder.description = dbDictNode.description;//folderNode.raw.properties.description;//'';//folderNodeProp.description;
+
+    //if (folderNode.raw.properties.keyDelimeter && folderNode.raw.properties.keyDelimeter != 'null')
+    //folderNode.raw.properties.keyDelimeter = folderNode.raw.properties.keyDelimeter;    
+    if(dbDictNode.keyDelimeter && dbDictNode.keyDelimeter!= null)
+    folder.keyDelimeter = dbDictNode.keyDelimeter;//folderNode.raw.properties.keyDelimeter;
     else
     folder.keyDelimeter = '_';
 
@@ -2305,7 +2315,8 @@ Ext.define('AM.controller.NHibernate', {
           if (found || relationNode.data.text === '')
           continue;
 
-          relationNodeAttr = relationNode.data;
+          //relationNodeAttr = relationNode.data;
+          relationNodeAttr = relationNode.raw;
           var relation = {};
           relation.propertyMaps = [];
 

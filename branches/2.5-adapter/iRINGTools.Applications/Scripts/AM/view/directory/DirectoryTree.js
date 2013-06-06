@@ -123,15 +123,49 @@ Ext.define('AM.view.directory.DirectoryTree', {
     var me = this;
     var node = me.getSelectedNode();
     var nodeInternalId = node.internalId;
+    var context = node.parentNode.data.text;
+    var endpoint= node.data.record.Name;
+    var baseUrl = node.data.record.BaseUrl;
     var dataRecord = node.data.record;
     var store = me.store;
     var path;
     var panel = me.up();
     var state = me.getState();
     var dirNode;
+    me.body.mask('Loading...', 'x-mask-loading');
     if (!node)
     node = me.getRootNode(); 
     if (node) {
+
+      Ext.Ajax.request({
+        url: 'AdapterManager/DBDictionary',//'NHibernate/DBDictionary',
+        method: 'POST',
+        timeout: 6000000,
+        params: {
+          scope: context,
+          app: endpoint,
+          baseUrl: baseUrl
+        },
+        success: function (response, request) {
+          dbDict = Ext.JSON.decode(response.responseText);
+          if(dbDict) {
+            var cstr = dbDict.ConnectionString;
+            if(cstr) {
+              var nhibernateTreeObject = Ext.widget('nhibernatetree');
+              //node.data.record.dbDict = dbDict;
+              //dbInfo = me.getConnStrParts(cstr, node);//me.getConnStringParts(cstr, dirNode);
+              //var selectTableNames = me.setTableNames(dbDict);
+              dbInfo = nhibernateTreeObject.getConnStrParts(cstr, node);
+            }
+          }
+        },
+        failure: function (response, request) {
+          //var dataObjPanel = content.items.map[contextName + '.' + endpoint + '.-nh-config'];;
+        }
+      });
+
+
+
       store.load({
         callback: function (records, options, success) {
           var nodes = state.expandedNodes || [],
@@ -142,18 +176,34 @@ Ext.define('AM.view.directory.DirectoryTree', {
             //dirNode = store.getNodeById(nodeInternalId);
             //console.log(dirNode);
           });
-
+          me.body.unmask();
         }
 
       });
       store.on('beforeload', function (store, action) {
+        //alert('beforeload...');
+        dirNode = store.getNodeById(nodeInternalId);
+        if(dirNode!=undefined){
+          if(dirNode.data.record!=undefined){
+            //if(dirNode.data.record.dbInfo == undefined)
+            //dirNode.data.record.dbInfo = dbInfo;//dataRecord.dbInfo;
+            //if(dirNode.data.record.dbDict == undefined)
+            //dirNode.data.record.dbDict = dbDict;//dataRecord.dbDict;
+          }
+
+        }
+
+
+      }, me);
+      store.on('load', function (store, action) {
+        //alert('afterload...');
         dirNode = store.getNodeById(nodeInternalId);
         if(dirNode!=undefined){
           if(dirNode.data.record!=undefined){
             if(dirNode.data.record.dbInfo == undefined)
-            dirNode.data.record.dbInfo = dataRecord.dbInfo;
+            dirNode.data.record.dbInfo = dbInfo;//dataRecord.dbInfo;
             if(dirNode.data.record.dbDict == undefined)
-            dirNode.data.record.dbDict = dataRecord.dbDict;
+            dirNode.data.record.dbDict = dbDict;//dataRecord.dbDict;
           }
 
         }
