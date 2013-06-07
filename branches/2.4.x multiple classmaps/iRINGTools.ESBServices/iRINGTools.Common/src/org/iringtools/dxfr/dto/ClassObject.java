@@ -1,7 +1,6 @@
 
 package org.iringtools.dxfr.dto;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,7 +23,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element ref="{http://www.iringtools.org/dxfr/dto}templateObjects" minOccurs="0"/>
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType" minOccurs="0"/>
- *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
+ *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="path" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,7 +40,8 @@ import javax.xml.bind.annotation.XmlType;
     "identifier",
     "templateObjects",
     "transferType",
-    "index"
+    "index",
+    "path"
 })
 @XmlRootElement(name = "classObject")
 public class ClassObject {
@@ -53,7 +54,9 @@ public class ClassObject {
     protected String identifier;
     protected TemplateObjects templateObjects;
     protected TransferType transferType;
-    protected BigInteger index;
+    protected Integer index;
+    @XmlElement(required = true)
+    protected String path;
 
     /**
      * Gets the value of the classId property.
@@ -180,10 +183,10 @@ public class ClassObject {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getIndex() {
+    public Integer getIndex() {
         return index;
     }
 
@@ -192,11 +195,35 @@ public class ClassObject {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setIndex(BigInteger value) {
+    public void setIndex(Integer value) {
         this.index = value;
+    }
+
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPath(String value) {
+        this.path = value;
     }
 
 }

@@ -128,6 +128,10 @@ namespace org.iringtools.adapter
     
     [DataMember(Order = 5)]
     public int index { get; set; }
+
+    [DataMember(Order = 6)]
+    public string path { get; set; }
+
       
     public TemplateObject GetTemplateObject(TemplateMap templateMap)
     {

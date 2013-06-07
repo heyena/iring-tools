@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="roles" type="{http://www.iringtools.org/dxfr/manifest}Roles"/>
  *         &lt;element name="transferOption" type="{http://www.iringtools.org/dxfr/manifest}TransferOption"/>
+ *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +35,8 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "name",
     "roles",
-    "transferOption"
+    "transferOption",
+    "index"
 })
 public class Template {
 
@@ -46,6 +48,7 @@ public class Template {
     protected Roles roles;
     @XmlElement(required = true, defaultValue = "Desired")
     protected TransferOption transferOption;
+    protected int index;
 
     /**
      * Gets the value of the id property.
@@ -141,6 +144,22 @@ public class Template {
      */
     public void setTransferOption(TransferOption value) {
         this.transferOption = value;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * Sets the value of the index property.
+     * 
+     */
+    public void setIndex(int value) {
+        this.index = value;
     }
 
 }

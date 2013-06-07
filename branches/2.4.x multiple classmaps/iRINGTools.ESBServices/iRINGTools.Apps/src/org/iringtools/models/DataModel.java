@@ -430,7 +430,7 @@ public class DataModel
       throws DataModelException
   {
     String className = IOUtils.toCamelCase(classObject.getName());
-    BigInteger classIndex = classObject.getIndex();
+    int classIndex = classObject.getIndex();
 
     for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
     {
@@ -484,8 +484,8 @@ public class DataModel
           // class identifier)
           
           String dataIndex; 
-          if(classIndex != null && classIndex.intValue() != 0)
-        	  dataIndex = className+ '-'+classIndex.toString() + '.' + templateObject.getName() + '.' + roleObject.getName();
+          if(classIndex != 0)
+        	  dataIndex = className+ '-'+classIndex + '.' + templateObject.getName() + '.' + roleObject.getName();
           else
         	  dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
         	  
@@ -768,7 +768,7 @@ public class DataModel
       if (startClassId == null || startClassId.length() == 0)
       {
         ClassTemplates classTemplates = classTemplatesItems.get(0);
-        createFields(fields, graph, classTemplates,null);
+        createFields(fields, graph, classTemplates,0);
       }
       else
       {
@@ -786,7 +786,7 @@ public class DataModel
     return fields;
   }
 
-  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates, BigInteger classIndex)
+  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates, int classIndex)
   {
     if (classTemplates != null && classTemplates.getTemplates() != null)
     {
@@ -813,8 +813,8 @@ public class DataModel
             
             String fieldName;
 
-            if(classIndex != null && classIndex.intValue() != 0)
-            	fieldName = className + '-'+ classIndex.toString()+ '.' + template.getName() + "." + role.getName();
+            if(classIndex != 0)
+            	fieldName = className + '-'+ classIndex+ '.' + template.getName() + "." + role.getName();
             else
             	fieldName = className + '.' + template.getName() + "." + role.getName();
             
@@ -855,7 +855,7 @@ public class DataModel
           else if (role.getClazz() != null && (cardinality == null || cardinality == Cardinality.ONE_TO_ONE))
           {
             String classId = role.getClazz().getId();
-            BigInteger clsIndex = role.getClazz().getIndex();
+            int clsIndex = role.getClazz().getIndex();
             
             ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId);
             createFields(fields, graph, relatedClassTemplates,clsIndex);

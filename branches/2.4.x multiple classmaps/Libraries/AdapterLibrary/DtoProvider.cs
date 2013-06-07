@@ -285,7 +285,8 @@ namespace org.iringtools.adapter
               id = classMap.id,
               name = classMap.name,
               keys = keys,
-              index = classMap.index
+              index = classMap.index,
+              path  = classMap.path
             };
             manifestClassTemplates.@class = manifestClass;
 
@@ -350,7 +351,7 @@ namespace org.iringtools.adapter
                     if (dataProp == null)
                     {
                       throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
-                    }
+                   } 
 
                     manifestRole.dataLength = dataProp.dataLength;
 
@@ -370,7 +371,8 @@ namespace org.iringtools.adapter
                   {
                     id = roleMap.classMap.id,
                     name = roleMap.classMap.name,
-                    index = roleMap.classMap.index
+                    index = roleMap.classMap.index,
+                    path = roleMap.classMap.path
                   };
                 }
               }
@@ -1333,7 +1335,7 @@ namespace org.iringtools.adapter
         {
           ClassMap mappingClass = mappingClassTemplatesMap.classMap;
 
-          if (mappingClass.id == manifestClass.id && mappingClass.index == manifestClass.index)
+          if (mappingClass.id == manifestClass.id && (String.IsNullOrWhiteSpace(mappingClass.path) ? String.IsNullOrWhiteSpace(manifestClass.path) : mappingClass.path == manifestClass.path))
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
             break;
@@ -1368,7 +1370,7 @@ namespace org.iringtools.adapter
       // get manifest templates from the manifest class
       foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
       {
-          if (manifestClassTemplates.@class.id == manifestClass.id && manifestClassTemplates.@class.index == manifestClass.index)
+         if (manifestClassTemplates.@class.id == manifestClass.id && (String.IsNullOrWhiteSpace(manifestClassTemplates.@class.path) ? String.IsNullOrWhiteSpace(manifestClass.path) : manifestClassTemplates.@class.path == manifestClass.path))
         {
           manifestTemplates = manifestClassTemplates.templates;
           break;
@@ -1383,7 +1385,7 @@ namespace org.iringtools.adapter
           ClassMap localMappingClass = pair.classMap;
           List<TemplateMap> mappingTemplates = pair.templateMaps;
 
-          if (localMappingClass.id == manifestClass.id && localMappingClass.index == manifestClass.index)
+          if (localMappingClass.id == manifestClass.id && (String.IsNullOrWhiteSpace(localMappingClass.path) ? String.IsNullOrWhiteSpace(manifestClass.path) : localMappingClass.path == manifestClass.path))
           {
             ClassMap crossedClass = localMappingClass.CrossClassMap(mappingGraph, manifestClass);
             TemplateMaps crossedTemplates = new TemplateMaps();
@@ -1465,7 +1467,7 @@ namespace org.iringtools.adapter
                   {
                     foreach (RoleMap mappingRole in crossedTemplate.roleMaps)
                     {
-                        if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id && mappingRole.classMap.index == manifestRole.@class.index)
+                        if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id && (String.IsNullOrWhiteSpace(mappingRole.classMap.path) ? String.IsNullOrWhiteSpace(manifestRole.@class.path) : mappingRole.classMap.path == manifestRole.@class.path))
                       {
                         Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dataDictionary, _fixedIdentifierBoundary);
 
@@ -1482,7 +1484,7 @@ namespace org.iringtools.adapter
                         Class childManifestClass = manifestRole.@class;
                         foreach (ClassTemplates anyClassTemplates in manifestGraph.classTemplatesList)
                         {
-                            if (manifestRole.@class.id == anyClassTemplates.@class.id && manifestRole.@class.index == anyClassTemplates.@class.index)
+                            if (manifestRole.@class.id == anyClassTemplates.@class.id && (String.IsNullOrWhiteSpace(manifestRole.@class.path) ? String.IsNullOrWhiteSpace(anyClassTemplates.@class.path) : manifestRole.@class.path == anyClassTemplates.@class.path))
                           {
                             childManifestClass = anyClassTemplates.@class;
                           }

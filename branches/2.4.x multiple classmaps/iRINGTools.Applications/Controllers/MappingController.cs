@@ -117,7 +117,8 @@ namespace org.iringtools.web.controllers
                 identifiers = new Identifiers()
               };
               
-              classMap.index = graphMap.GetClassMapMaxIndex(classMap.id) + 1; 
+              classMap.index = graphMap.GetClassMapMaxIndex(classMap.id) + 1;
+              classMap.path = graphMap.BuildClassPath(ctm.classMap, templateMap, role);
 
               classMap.identifiers.AddRange(identifier.Split(','));
               graphMap.AddClassMap(role, classMap);
@@ -769,7 +770,8 @@ namespace org.iringtools.web.controllers
               name = className,
               id = qn ? qName : classId,
               identifierDelimiter = delimiter,
-              identifiers = new Identifiers()             
+              identifiers = new Identifiers(),
+              path = ""
             };
 
           if (identifier.Contains(','))
@@ -785,8 +787,9 @@ namespace org.iringtools.web.controllers
           {
             classMap.identifiers.Add(identifier);
           }
-
+           
           graphMap.AddClassMap(null, classMap);
+          
           mapping.graphMaps.Add(graphMap);
           nodes.Add(CreateGraphNode(context, graphMap, classMap));
         }

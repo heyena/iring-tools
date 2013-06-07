@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element ref="{http://www.iringtools.org/dxfr/dto}roleObjects" minOccurs="0"/>
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType" minOccurs="0"/>
+ *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +36,8 @@ import javax.xml.bind.annotation.XmlType;
     "templateId",
     "name",
     "roleObjects",
-    "transferType"
+    "transferType",
+    "index"
 })
 @XmlRootElement(name = "templateObject")
 public class TemplateObject {
@@ -46,6 +48,7 @@ public class TemplateObject {
     protected String name;
     protected RoleObjects roleObjects;
     protected TransferType transferType;
+    protected Integer index;
 
     /**
      * Gets the value of the templateId property.
@@ -141,6 +144,30 @@ public class TemplateObject {
      */
     public void setTransferType(TransferType value) {
         this.transferType = value;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getIndex() {
+        return index;
+    }
+
+    /**
+     * Sets the value of the index property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setIndex(Integer value) {
+        this.index = value;
     }
 
 }

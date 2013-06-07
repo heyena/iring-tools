@@ -236,6 +236,8 @@ namespace org.iringtools.dxfr.manifest
 
     private int indexField;
 
+    private string pathField;
+
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
     public string id
     {
@@ -287,7 +289,19 @@ namespace org.iringtools.dxfr.manifest
             this.indexField = value;
         }
     }
-
+    
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    public string path
+    {
+        get
+        {
+            return this.pathField;
+        }
+        set
+        {
+            this.pathField = value;
+        }
+    }
 
   }
 
@@ -306,6 +320,8 @@ namespace org.iringtools.dxfr.manifest
     private org.iringtools.dxfr.manifest.Roles rolesField;
 
     private TransferOption transferOptionField;
+
+    private int indexField;
 
     public Template()
     {
@@ -362,6 +378,19 @@ namespace org.iringtools.dxfr.manifest
       {
         this.transferOptionField = value;
       }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    public int index
+    {
+        get
+        {
+            return this.indexField;
+        }
+        set
+        {
+            this.indexField = value;
+        }
     }
   }
 
@@ -815,6 +844,8 @@ namespace org.iringtools.mapping
 
     private int indexField;
 
+    private string pathField;
+
     public ClassMap()
     {
       identifiers = new Identifiers();
@@ -910,6 +941,19 @@ namespace org.iringtools.mapping
             this.indexField = value;
         }
     }
+    
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 7)]
+    public string path
+    {
+        get
+        {
+            return this.pathField;
+        }
+        set
+        {
+            this.pathField = value;
+        }
+    }
 
 
   }
@@ -939,6 +983,8 @@ namespace org.iringtools.mapping
     private string nameField;
 
     private org.iringtools.mapping.RoleMaps roleMapsField;
+
+    private int indexField;
 
     public TemplateMap()
     {
@@ -995,6 +1041,19 @@ namespace org.iringtools.mapping
       {
         this.roleMapsField = value;
       }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    public int index
+    {
+        get
+        {
+            return this.indexField;
+        }
+        set
+        {
+            this.indexField = value;
+        }
     }
   }
 

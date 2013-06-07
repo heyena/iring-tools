@@ -1,7 +1,6 @@
 
 package org.iringtools.dxfr.manifest;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -21,7 +20,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="keys" type="{http://www.iringtools.org/dxfr/manifest}Keys"/>
- *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}integer"/>
+ *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="path" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "name",
     "keys",
-    "index"
+    "index",
+    "path"
 })
 public class Class {
 
@@ -45,8 +46,9 @@ public class Class {
     protected String name;
     @XmlElement(required = true)
     protected Keys keys;
+    protected int index;
     @XmlElement(required = true)
-    protected BigInteger index;
+    protected String path;
 
     /**
      * Gets the value of the id property.
@@ -123,25 +125,41 @@ public class Class {
     /**
      * Gets the value of the index property.
      * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
      */
-    public BigInteger getIndex() {
+    public int getIndex() {
         return index;
     }
 
     /**
      * Sets the value of the index property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
+     */
+    public void setIndex(int value) {
+        this.index = value;
+    }
+
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
      *     
      */
-    public void setIndex(BigInteger value) {
-        this.index = value;
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPath(String value) {
+        this.path = value;
     }
 
 }
