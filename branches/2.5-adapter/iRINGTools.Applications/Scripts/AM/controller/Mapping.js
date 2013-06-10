@@ -185,20 +185,20 @@ Ext.define('AM.controller.Mapping', {
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
     var content = me.getMainContent(),
-      context = node.data.property.context,
-      endpoint = node.data.property.endpoint,
+      context = node.parentNode.parentNode.parentNode.data.text;//node.data.property.context,
+      endpoint = node.parentNode.parentNode.data.text//node.data.property.endpoint,
       // baseUrl = node.data.property.baseUrl,
-      graphName = node.data.text,
-      title = 'GraphMap - ' + context + "." + endpoint + '.' + node.data.text;
+      graphName = node.internalId;//node.data.text;
+    title = 'GraphMap - ' + context + "." + endpoint + '.' + node.data.text;
 
-
+    var templateTypes = ['Qualification', 'Definition'];
     var mapPanel = content.down('mappingpanel[title='+title+']');
     if(!mapPanel) {
       mapPanel = Ext.widget('mappingpanel', {
         'title': title, 
         'contextName': context,
         //'baseUrl': baseUrl, 
-        'graphName': graphName,
+        'graph': graphName,
         'endpoint': endpoint
       });
       var mapProp = mapPanel.down('propertypanel');
@@ -211,7 +211,9 @@ Ext.define('AM.controller.Mapping', {
         params.contextName = context;
         params.endpoint = endpoint;
         //params.baseUrl = baseUrl;
-        params.graphName = graphName;
+        params.id = node.parentNode.parentNode.internalId;
+        params.tempNode = node.parentNode.parentNode.internalId;
+        params.graph = graphName;
       }, me);
 
       mapTree.on('beforeitemexpand', function () {
@@ -243,7 +245,30 @@ Ext.define('AM.controller.Mapping', {
             mapProp.setSource(arr);
           }
           else {
-            mapProp.setSource(obj.record);
+            //mapProp.setSource(obj.record);
+
+            for (var propName in obj.record) {
+              if (propName != 'dataLength') {
+                var propValue = obj.record.type;//obj.record[propName];
+
+                if (propName == 'type') {
+                  //if (node.attributes.type == 'TemplateMapNode') {
+                  if(propValue!='Qualification' && propValue!='Definition')  
+                  propValue = templateTypes[propValue];
+                  // }
+                  //else if (node.attributes.type == 'RoleMapNode') {
+                  // propValue = roleTypes[propValue];
+                  //}
+                }
+                //else if (propName == 'identifiers') {
+                //propName = 'identifier';
+                // propValue = propValue.join();
+                //}
+
+                obj.record.type = propValue;
+                mapProp.setSource(obj.record);
+              }
+            }
           }
         }
 

@@ -555,7 +555,10 @@ Ext.define('AM.controller.Directory', {
       var valueListMapMenu = Ext.widget('valuelistmapmenu');
       valueListMapMenu.showAt(e.getXY());
     } else if (obj.type === "GraphsNode") {
+      scopForExport = node.parentNode.parentNode.data.text;
+      appForExport = node.parentNode.data.text;  
       var graphsMenu = Ext.widget('graphsmenu');
+      graphsMenu.items.items[1].href = '/mapping/export/'+ scopForExport+'/'+appForExport;
       graphsMenu.showAt(e.getXY());
     } else if (obj.type === "GraphNode") {
       var graphMenu = Ext.widget('graphmenu');
@@ -590,6 +593,9 @@ Ext.define('AM.controller.Directory', {
   },
 
   init: function(application) {
+    scopForExport = null;
+    appForExport = null;
+
     this.control({
       "gridpanel": {
         metachange: this.handleMetachange

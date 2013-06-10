@@ -40,9 +40,10 @@ Ext.define('AM.store.MappingStore', {
           type: 'MappingNode',
           id: null,
           range: null,
-          graphName: null,
+          graph: null,
           contextName: null,
-          endpoint: null
+          endpoint: null,
+          tempNode: null
         },
         timeout: 600000,
         url: 'mapping/getnode',

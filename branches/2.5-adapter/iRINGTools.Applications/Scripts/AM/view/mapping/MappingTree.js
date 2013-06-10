@@ -99,11 +99,13 @@ Ext.define('AM.view.mapping.MappingTree', {
   },
 
   onBeforeNodeDrop: function(node, data, overModel, dropPosition, dropHandler, eOpts) {
+
     var me = this;
     var pan = me.up('mappingpanel');
     me.getParentClass(overModel);
     var nodetype, thistype, icn, txt, templateId, rec, parentId, context;
-    var graphName = pan.graphName;
+    var graphName = pan.graph;//pan.graphName;
+    var modelType = data.records[0].data.type;
     if (overModel.data.type == 'RoleMapNode') {
       reference = data.records[0].data.record.Uri;
       label = data.records[0].data.record.Label;
@@ -125,6 +127,7 @@ Ext.define('AM.view.mapping.MappingTree', {
           roleId: roleId,
           roleName: roleName,
           contextName: pan.contextName,
+          //ctx: pan.contextName,
           endpoint: pan.endpoint,
           index: index,
           graphName: graphName,
@@ -140,7 +143,7 @@ Ext.define('AM.view.mapping.MappingTree', {
         }
       });
     }
-    if (data.records[0].data.type == 'TemplateNode') {
+    if(modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
       ntype = overModel.data.type;
       parentid = overModel.data.identifier;
       thistype = data.records[0].data.type;
@@ -148,14 +151,15 @@ Ext.define('AM.view.mapping.MappingTree', {
       txt = data.records[0].data.record.Label;
       templateId = data.records[0].data.identifier;
       rec = data.records[0].data.record;
-      //context = overModel.data.id + '/' + txt;
+      context = overModel.data.id + '/' + txt;
       lf = false;
       me.getEl().mask('Loading...');
       Ext.Ajax.request({
         url: 'mapping/addtemplatemap',
         method: 'POST',
         params: {
-          contextName: pan.contextName,
+          //contextName: pan.contexName,
+          ctx: context,//overModel.internalId,
           endpoint: pan.endpoint,
           baseUrl: pan.baseUrl,
           nodetype: thistype,
@@ -165,8 +169,9 @@ Ext.define('AM.view.mapping.MappingTree', {
           graphName: graphName
         },
         success: function (result, request) {
-          me.getEl().unmask();
+
           me.onReload();
+          me.getEl().unmask();
           return false;
         },
         failure: function (result, request) {
@@ -199,6 +204,7 @@ Ext.define('AM.view.mapping.MappingTree', {
   },
 
   onBeforeLoad: function(store, operation, eOpts) {
+
     store.proxy.extraParams.type = operation.node.data.type;
     if (store.proxy.extraParams !== undefined) {
       store.proxy.extraParams.id = operation.node.data.id;
@@ -240,28 +246,43 @@ Ext.define('AM.view.mapping.MappingTree', {
 
   onReload: function() {
     var me = this;
-    var graphName = me.up('mappingpanel').graphName;
+    var graphFullName = me.up('mappingpanel').graph;//me.up('mappingpanel').graphName;
+    var graphNameArr = graphFullName.split('/');
+    var graphName = graphNameArr[graphNameArr.length-1];
     var path, graphNode;
     var node = me.getSelectedNode();
+    if (!node)
+    node = me.getRootNode(); 
     var store = me.store;
     var root = me.getRootNode();
     root.eachChild(function(child) {
       if(child.data.text == graphName)
       graphNode = child;
     });
-
+    var state = me.getState();
     if (node) {
-      path = node.getPath('text');
+      /*path = node.getPath('text');
       store.load(node);
       if(node.isExpanded())
-      node.collapse();
+      node.collapse();*/
+      store.load({
+        callback: function (records, options, success) {
+          var nodes = state.expandedNodes || [],
+            len = nodes.length;
+          me.collapseAll();
+          Ext.each(nodes, function (path) {
+            //me.expandPath(path, 'text');
+
+          });
+        }
+
+      });
     }
 
-    if(path) {
-      // alert(path);
-      me.expandPath(path, 'text');
-      me.getSelectionModel().select(node);
-    }
+    /*if(path) {
+    me.expandPath(path, 'text');
+    me.getSelectionModel().select(node);
+    }*/
   },
 
   onSave: function() {

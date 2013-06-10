@@ -9,8 +9,9 @@
         "context": null,
         "endpoint": "",
         "baseUrl": "",
-        "graphName": "",
         "contextName": "",
+        "graph": "",
+        "root": null,
         "height": null,
         "width": null,
         "designer|userClassName": "mapping.MappingPanel",
@@ -39,12 +40,17 @@
         },
         {
             "group": "(Custom Properties)",
-            "name": "graphName",
+            "name": "contextName",
             "type": "string"
         },
         {
             "group": "(Custom Properties)",
-            "name": "contextName",
+            "name": "graph",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "root",
             "type": "string"
         }
     ],
@@ -108,6 +114,24 @@
                 "scope": "me"
             },
             "designerId": "eb93a835-40e5-4b3f-b4ab-4f1c21583b7c"
+        },
+        {
+            "type": "processcfgfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "processMappingMappingPanel",
+                "designer|params": [
+                    "config"
+                ],
+                "implHandler": [
+                    ""
+                ]
+            },
+            "designerId": "b34b5617-a1e2-4613-be93-84b87861fa1d"
         }
     ]
 }

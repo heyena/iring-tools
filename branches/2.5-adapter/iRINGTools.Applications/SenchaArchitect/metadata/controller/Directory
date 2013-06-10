@@ -773,7 +773,10 @@
                     "  var valueListMapMenu = Ext.widget('valuelistmapmenu');\r",
                     "  valueListMapMenu.showAt(e.getXY());\r",
                     "} else if (obj.type === \"GraphsNode\") {\r",
+                    "  scopForExport = node.parentNode.parentNode.data.text;\r",
+                    "  appForExport = node.parentNode.data.text;  \r",
                     "  var graphsMenu = Ext.widget('graphsmenu');\r",
+                    "  graphsMenu.items.items[1].href = '/mapping/export/'+ scopForExport+'/'+appForExport;\r",
                     "  graphsMenu.showAt(e.getXY());\r",
                     "} else if (obj.type === \"GraphNode\") {\r",
                     "  var graphMenu = Ext.widget('graphmenu');\r",
@@ -842,6 +845,25 @@
                 "designer|controlQuery": "directorytree"
             },
             "designerId": "594cc20e-323f-4d31-a263-e3ccd4514c7e"
+        },
+        {
+            "type": "fixedfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "init",
+                "designer|params": [
+                    "application"
+                ],
+                "implHandler": [
+                    "scopForExport = null;\r",
+                    "appForExport = null;"
+                ]
+            },
+            "designerId": "03aa7a1f-045e-41ad-aedd-ff6383bd81dc"
         }
     ]
 }

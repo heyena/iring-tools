@@ -252,7 +252,12 @@ namespace org.iringtools.web.controllers
       GraphMap graphMap = null;
       ClassMap graphClassMap = null;
       string format = String.Empty;
-      string context = form["node"];
+      string context;
+      //string context = form["node"];
+      if (form["tempNode"]!=null && form["tempNode"]!="" )
+          context = form["tempNode"];
+      else
+          context = form["node"];
       string[] formgraph = form["graph"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
       string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
       string scope = variables[0];

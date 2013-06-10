@@ -24,8 +24,8 @@ Ext.define('AM.view.mapping.MappingPanel', {
 
   endpoint: '',
   baseUrl: '',
-  graphName: '',
   contextName: '',
+  graph: '',
   layout: {
     type: 'border'
   },
@@ -57,7 +57,12 @@ Ext.define('AM.view.mapping.MappingPanel', {
       }
     });
 
+    me.processMappingMappingPanel(me);
     me.callParent(arguments);
+  },
+
+  processMappingMappingPanel: function(config) {
+
   },
 
   onPanelBeforeClose: function(panel, eOpts) {
