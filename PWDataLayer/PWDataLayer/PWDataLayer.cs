@@ -521,7 +521,8 @@ namespace org.iringtools.adapter.datalayer
             try
             {
                 DataTable dtglobal = this.getDatatable(tableName, whereClause, start, limit);
-              
+                if (tableName.ToUpper() == "SUBFOLDERS" || tableName.ToUpper() == "DOCUMENTS")
+                    return dtglobal;
 
                 if (whereClause != string.Empty)
                 {
