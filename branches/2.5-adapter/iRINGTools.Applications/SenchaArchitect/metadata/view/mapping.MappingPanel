@@ -96,7 +96,7 @@
             "userConfig": {
                 "fn": "onPanelBeforeClose",
                 "implHandler": [
-                    "var me = this;\r",
+                    "/*var me = this;\r",
                     "var tree = me.down('mappingtree');\r",
                     "Ext.Msg.show({\r",
                     "  title: 'Close Mapping?',\r",
@@ -108,7 +108,7 @@
                     "    }\r",
                     "  }\r",
                     "});\r",
-                    ""
+                    "*/"
                 ],
                 "name": "beforeclose",
                 "scope": "me"

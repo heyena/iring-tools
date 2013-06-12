@@ -52,22 +52,27 @@ Ext.define('AM.controller.Mapping', {
   ],
 
   onDeleteTemplateMap: function(item, e, eOpts) {
+
     var me = this;
     var content = me.getMainContent();
     var dirTree = me.getDirTree();
     var panel = content.down('mappingpanel');
     var tree = content.down('mappingtree'),
       node = tree.getSelectedNode();
-
+    var nodeId = node.data.id.split('/');
+    var text = nodeId[nodeId.length-1];
+    var mapingNode = node.data.parentId+'/'+text;
     me.getParentClass(node);
     Ext.Ajax.request({
       url: 'mapping/deleteTemplateMap',
       method: 'POST',
       params: {
-        contextName: panel.contextName,
-        endpoint: panel.endpoint,
+        //contextName: panel.contextName,
+        //endpoint: panel.endpoint,
+        scope: panel.contextName,
+        application: panel.endpoint,
         baseUrl: panel.baseUrl,
-        mappingNode: node.data.id,
+        mappingNode: mapingNode,//node.data.id,
         parentIdentifier: me.parentClass,
         identifier: node.data.identifier,
         index: node.parentNode.indexOf(node)
@@ -232,7 +237,7 @@ Ext.define('AM.controller.Mapping', {
         if (obj.property && obj.property !== "" && obj.property.length) {
           mapProp.setSource(obj.property);
         } else {
-          if (obj.record.type  && !obj.record.roleMaps) {
+          if (obj.record.type>=0  && !obj.record.roleMaps) {
             var arrStr = '';
             for (var i in obj.record) {
               if (i != 'type' && obj.record[i] !== null && obj.record[i] !== '') {
@@ -240,7 +245,8 @@ Ext.define('AM.controller.Mapping', {
               }
             }
             var type = me.getObjectType(obj.record.type);
-            arrStr += 'typeDescription=' + type;
+            //arrStr += 'typeDescription=' + type;
+            arrStr += 'type=' + type;
             var arr = Ext.Object.fromQueryString(arrStr);
             mapProp.setSource(arr);
           }
@@ -249,22 +255,13 @@ Ext.define('AM.controller.Mapping', {
 
             for (var propName in obj.record) {
               if (propName != 'dataLength') {
-                var propValue = obj.record.type;//obj.record[propName];
+                var propValue = obj.record.type;
 
                 if (propName == 'type') {
-                  //if (node.attributes.type == 'TemplateMapNode') {
                   if(propValue!='Qualification' && propValue!='Definition')  
                   propValue = templateTypes[propValue];
-                  // }
-                  //else if (node.attributes.type == 'RoleMapNode') {
-                  // propValue = roleTypes[propValue];
-                  //}
-                }
-                //else if (propName == 'identifiers') {
-                //propName = 'identifier';
-                // propValue = propValue.join();
-                //}
 
+                }
                 obj.record.type = propValue;
                 mapProp.setSource(obj.record);
               }
@@ -284,8 +281,10 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree'),
-      node = tree.getSelectedNode();
+    var tree = mapPanel.down('mappingtree');
+    var graph  = mapPanel.graph.split('/');
+    graph = graph[graph.length-1];
+    node = tree.getSelectedNode();
 
     me.getParentClass(node);
 
@@ -307,11 +306,13 @@ Ext.define('AM.controller.Mapping', {
     }, me);
 
     var formRecord = {
-      'contextName': mapPanel.contextName,
-      'endpoint': mapPanel.endpoint,
-      'baseUrl': mapPanel.baseUrl,
-      'graphName': mapPanel.graphName,
-      'index': index
+      'scope': mapPanel.contextName,
+      'app': mapPanel.endpoint,
+      //'baseUrl': mapPanel.baseUrl,
+      'graph': graph,//mapPanel.graph,
+      'templateIndex': index,
+      'roleName': node.data.text,
+      'parentClassId': node.parentNode.parentNode.data.identifier
     };
 
     var form = win.down('form');
@@ -322,20 +323,23 @@ Ext.define('AM.controller.Mapping', {
   },
 
   mapProperty: function(item, e, eOpts) {
+
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree'),
-      node = tree.getSelectedNode(),
+    var tree = mapPanel.down('mappingtree');
+    node = tree.getSelectedNode();
+    var mappingNode  = node.parentNode.data.parentId+'/'+node.data.record.name;
 
-      win = Ext.widget('propertymapwindow', {
-        'classId': node.parentNode.parentNode.data.identifier,
-        'mappingNode': node
-      });
+    win = Ext.widget('propertymapwindow', {
+      'classId': node.parentNode.parentNode.data.identifier,
+      'mappingNode': node
+    });
     var roleName = getLastXString(node.data.id, 1);
     var index = node.parentNode.parentNode.indexOf(node.parentNode);
-    win.on('Save', function () {
+    win.on('save', function () {
       win.close();
+      alert('going to reload after save...');
       tree.store.load();
       if (node.get('expanded') === false)
       node.expand();
@@ -345,9 +349,11 @@ Ext.define('AM.controller.Mapping', {
       'contextName': mapPanel.contextName,
       'endpoint': mapPanel.endpoint,
       'baseUrl': mapPanel.baseUrl,
-      'graphName': mapPanel.graphName,
+      'graphName': mapPanel.graph,
       'index': index,
-      'roleName': roleName
+      'roleName': roleName,
+      'mappingNode':mappingNode,
+      'classId':node.parentNode.parentNode.data.identifier
     };
 
     var form = win.down('form');
@@ -363,27 +369,34 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree'),
-      node = tree.getSelectedNode(),
-      parentNode = node.parentNode;
+    var tree = mapPanel.down('mappingtree');
+    node = tree.getSelectedNode();
+    parentNode = node.parentNode;
+    var tempId = node.parentNode.data.parentId;
+    var contextParts = tempId.split('/');
 
     Ext.Ajax.request({
       url: 'mapping/makereference',
       method: 'POST',
       params: {
-        contextName: mapPanel.contextName,
-        endpoint: mapPanel.endpoint,
-        baseUrl: mapPanel.baseUrl,
-        graphName: mapPanel.graphName,
+        scope: contextParts[0],//mapPanel.contextName,
+        app: contextParts[1],//mapPanel.endpoint,
+        graph: contextParts[2],//mapPanel.graphName,
         roleName: getLastXString(node.data.id, 1),
         classId: parentNode.parentNode.data.identifier,
-        index: parentNode.parentNode.indexOf(parentNode)
+        //roleId:,
+        //refClassId:,
+        //refClassLabel:,
+        //index: parentNode.parentNode.indexOf(parentNode)
+        templateIndex: parentNode.parentNode.indexOf(parentNode),
       },
       success: function () {
         tree.onReload();
       },
       failure: function () { }
     });
+
+
   },
 
   onEditOrNewValueMap: function(item, e, eOpts) {
@@ -509,6 +522,7 @@ Ext.define('AM.controller.Mapping', {
 
   onMapValueList: function(item, e, eOpts) {
     var me = this;
+    var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
       node = tree.getSelectedNode();
@@ -638,16 +652,21 @@ Ext.define('AM.controller.Mapping', {
     var tree = mapPanel.down('mappingtree'),
       node = tree.getSelectedNode(), 
       parentNode = node.parentNode;
-
+    var tempId = node.parentNode.data.parentId;
+    var nodeId = node.data.id.split('/');
+    var text = nodeId[nodeId.length-1];
+    var mapingNode = tempId+'/'+text;
     Ext.Ajax.request({
       url: 'mapping/makePossessor',
       method: 'POST',
       params: {
-        contextName: mapPanel.contextName,
-        endpoint: mapPanel.endpoint,
-        baseUrl: mapPanel.baseUrl,
-        graphName: mapPanel.graphName,
-        roleName: getLastXString(node.data.id, 1),
+        //contextName: mapPanel.contextName,
+        //endpoint: mapPanel.endpoint,
+        //baseUrl: mapPanel.baseUrl,
+        //graphName: mapPanel.graphName,
+        // roleName: getLastXString(node.data.id, 1),
+        mappingNode : mapingNode,
+        node: node,
         classId: parentNode.parentNode.data.identifier,
         index: parentNode.parentNode.indexOf(parentNode)
       },
@@ -710,16 +729,18 @@ Ext.define('AM.controller.Mapping', {
   getObjectType: function(type) {
     switch (type) {
       case 0:
-      return 'Property';
+      return 'Unknown';
       case 1:
-      return 'Possessor';
+      return 'Property';
       case 2:
-      return 'Reference';
+      return 'Possessor';
       case 3:
-      return 'FixedValue';
+      return 'Reference';
       case 4:
-      return 'DataProperty';
+      return 'FixedValue';
       case 5:
+      return 'DataProperty';
+      case 6:
       return 'ObjectProperty';
     }
   },

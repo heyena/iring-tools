@@ -6,12 +6,15 @@
     },
     "codeClass": null,
     "userConfig": {
-        "height": 180,
-        "width": 430,
+        "height": 280,
+        "width": 440,
         "designer|userClassName": "mapping.ClassMapWindow",
         "designer|userAlias": "classmapwindow",
+        "resizable": [
+            "false"
+        ],
         "layout": "fit",
-        "title": "Add new ClassMap to RoleMap"
+        "title": "Add/Edit ClassMap"
     },
     "designerId": "e9ec1c30-2f52-4e60-abb8-a39f46463919",
     "cn": [

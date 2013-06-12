@@ -875,6 +875,8 @@ namespace org.iringtools.web.controllers
         string graphName = mappingCtx[2];
 
         string classId = form["classId"];
+        string[] classCtx = classId.Split(',');
+        classId = classCtx[0];
         string roleName = mappingCtx[mappingCtx.Length - 1];
         int index = Convert.ToInt16(form["index"]);
         Mapping mapping = GetMapping(scope, application);

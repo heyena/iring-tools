@@ -218,9 +218,21 @@ Ext.define('AM.view.directory.GraphMapForm', {
           if(me.getForm().findField('identifier').getValue()!='Drop property node(s) here.'){
 
             var existingIdentifier =  me.getForm().findField('identifier').getValue();
-            if(existingIdentifier!='')
-            key = existingIdentifier+','+ key;
-            else
+            if(existingIdentifier!=''){
+              var tempObjName = existingIdentifier.split('.')[0];
+              if (object != tempObjName) {
+                var message = 'Properties must root from the same data object as graph!';
+                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                return false;
+              }
+
+              if(existingIdentifier.indexOf(key)!= -1) {
+                var message = 'Duplicate properties are not allowed!';
+                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                return false;
+              }
+              key = existingIdentifier+','+ key;
+            }else
             key = key;
             me.getForm().findField('identifier').setValue(key);
           }else{

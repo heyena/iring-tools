@@ -40,11 +40,11 @@ Ext.define('AM.view.mapping.ClassMapForm', {
           items: [
             {
               xtype: 'hiddenfield',
-              name: 'graphName'
+              name: 'graph'
             },
             {
               xtype: 'hiddenfield',
-              name: 'index'
+              name: 'templateIndex'
             },
             {
               xtype: 'hiddenfield',
@@ -68,11 +68,11 @@ Ext.define('AM.view.mapping.ClassMapForm', {
             },
             {
               xtype: 'hiddenfield',
-              name: 'endpoint'
+              name: 'app'
             },
             {
               xtype: 'hiddenfield',
-              name: 'contextName'
+              name: 'scope'
             },
             {
               xtype: 'hiddenfield',
@@ -80,31 +80,59 @@ Ext.define('AM.view.mapping.ClassMapForm', {
             },
             {
               xtype: 'hiddenfield',
-              name: 'classID'
+              name: 'classId'
             },
             {
               xtype: 'hiddenfield',
-              name: 'classLabel'
+              name: 'className'
             },
             {
               xtype: 'hiddenfield',
               name: 'objectName'
+            },
+            {
+              xtype: 'hiddenfield',
+              name: 'identifier'
             }
           ]
         },
         {
+          xtype: 'label',
+          margin: '10 0 0 0',
+          text: 'Identifier Delimiter (required for composite identifier):'
+        },
+        {
+          xtype: 'textfield',
+          margin: '5 0 15 25',
+          width: 100,
+          name: 'delimiter',
+          value: '_'
+        },
+        {
+          xtype: 'label',
+          margin: '10 0 0 0',
+          text: 'Identifier:'
+        },
+        {
           xtype: 'container',
           anchor: '100%',
-          html: 'Drop a Property Node here.',
+          html: 'Drop a Property Node(s) here.',
           itemId: 'cmpcontainer',
+          margin: '5 0 15 25',
           style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
           styleHtmlContent: true
+        },
+        {
+          xtype: 'label',
+          margin: '10 0 0 0',
+          text: 'Class:'
         },
         {
           xtype: 'container',
           anchor: '100%',
           html: 'Drop a Class Node here.',
           itemId: 'cmccontainer',
+          margin: '5 0 15 25',
           style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
           styleHtmlContent: true
         }
@@ -123,6 +151,13 @@ Ext.define('AM.view.mapping.ClassMapForm', {
                 me.onSave();
               },
               text: 'Ok'
+            },
+            {
+              xtype: 'button',
+              handler: function(button, event) {
+                me.onResetButtonClick();
+              },
+              text: 'Reset'
             },
             {
               xtype: 'button',
@@ -164,10 +199,39 @@ Ext.define('AM.view.mapping.ClassMapForm', {
           return false;
         }
         else {
-          me.getForm().findField('objectName').setValue(data.records[0].data.id);
+
+          var ident = getLastXString(data.records[0].data.id, 1);
+          var object = getLastXString(data.records[0].data.id, 2);
+          var key = object+'.'+ident;//key1+'.'+key2;
+          if(me.getForm().findField('identifier').getValue()!='Drop property node(s) here.'){
+
+            var existingIdentifier =  me.getForm().findField('identifier').getValue();
+            var objectName = me.getForm().findField('objectName').getValue();
+
+            if(existingIdentifier!=''){
+              var tempObjName = existingIdentifier.split('.')[0];
+              if (object != tempObjName) {
+                var message = 'Properties must root from the same data object as graph!';
+                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                return false;
+              }
+
+              if(existingIdentifier.indexOf(key)!= -1) {
+                var message = 'Duplicate properties are not allowed!';
+                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                return false;
+              }
+              key = existingIdentifier+','+ key;
+            }else
+            key = key;
+            me.getForm().findField('identifier').setValue(key);
+          }else{
+            me.getForm().findField('identifier').setValue(key);
+          }
+          me.getForm().findField('objectName').setValue(object);//(data.records[0].data.id);
           me.getForm().findField('relation').setValue(data.records[0].data.property.Related);
-          var msg = 'Property: ' + data.records[0].data.id.split('/')[data.records[0].data.id.split('/').length - 1];
-          pcont.update(msg);
+          //var msg = 'Property: ' + data.records[0].data.id.split('/')[data.records[0].data.id.split('/').length - 1];
+          pcont.update(key);
           return true;
         }
       },
@@ -203,8 +267,8 @@ Ext.define('AM.view.mapping.ClassMapForm', {
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
           return false;
         }
-        me.getForm().findField('classLabel').setValue(data.records[0].data.record.Label);
-        me.getForm().findField('classUrl').setValue(data.records[0].data.record.Uri);
+        me.getForm().findField('className').setValue(data.records[0].data.record.Label);
+        me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
         var msg = 'Class Label: ' + data.records[0].data.record.Label;
         ccont.update(msg);
         return true;
@@ -224,10 +288,10 @@ Ext.define('AM.view.mapping.ClassMapForm', {
     var message;
     if(me.getForm().isValid()) {
       me.submit({
-        waitMsg: 'Saving Data...',
+        //waitMsg: 'Saving Data...',
         success: function (f, a) {
 
-          me.fireEvent('Save', me);
+          //me.fireEvent('Save', me);
         },
         failure: function (f, a) {
           message = 'Failed to Add ClassMap to RoleMap';
@@ -241,6 +305,15 @@ Ext.define('AM.view.mapping.ClassMapForm', {
 
 
 
+  },
+
+  onResetButtonClick: function() {
+
+    var me = this;
+    var win = me.up('window');
+    me.getForm().findField('objectName').setValue('');
+    me.getForm().findField('identifier').setValue('Drop property node(s) here.');
+    me.down('#cmpcontainer').update('Drop property node(s) here.');
   }
 
 });

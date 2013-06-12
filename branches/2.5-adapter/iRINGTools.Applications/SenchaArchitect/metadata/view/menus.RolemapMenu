@@ -22,7 +22,7 @@
             "userConfig": {
                 "action": "addclassmap",
                 "icon": "Content/img/16x16/document-new.png",
-                "text": "Add ClassMap"
+                "text": "Add/Edit ClassMap"
             },
             "designerId": "f104c717-7bc6-46a1-a57a-9ee6a833ddbd",
             "customConfigs": [

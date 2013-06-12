@@ -66,19 +66,19 @@ Ext.define('AM.view.mapping.MappingPanel', {
   },
 
   onPanelBeforeClose: function(panel, eOpts) {
-    var me = this;
+    /*var me = this;
     var tree = me.down('mappingtree');
     Ext.Msg.show({
-      title: 'Close Mapping?',
-      msg: 'Do you want to save changes to ' + me.title,
-      buttons: Ext.Msg.YESNO,
-      fn: function (response) {
-        if(response === 'yes') {
-          tree.onSave();
-        }
-      }
+    title: 'Close Mapping?',
+    msg: 'Do you want to save changes to ' + me.title,
+    buttons: Ext.Msg.YESNO,
+    fn: function (response) {
+    if(response === 'yes') {
+    tree.onSave();
+    }
+    }
     });
-
+    */
   }
 
 });

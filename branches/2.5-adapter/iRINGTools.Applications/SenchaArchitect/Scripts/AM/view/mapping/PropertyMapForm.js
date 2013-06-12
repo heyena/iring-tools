@@ -95,6 +95,14 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
         },
         {
           xtype: 'hiddenfield',
+          name: 'classId'
+        },
+        {
+          xtype: 'hiddenfield',
+          name: 'mappingNode'
+        },
+        {
+          xtype: 'hiddenfield',
           name: 'baseUrl'
         },
         {
@@ -136,13 +144,17 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
           return false;
         }
         else {
-          me.getForm().findField('propertyName').setValue(data.records[0].data.record.Name);
+          //me.getForm().findField('propertyName').setValue(data.records[0].data.record.Name);
+          var propertyArr = data.records[0].data.id.split('/');
+          var propertyName = propertyArr[propertyArr.length-2]+'.'+propertyArr[propertyArr.length-1];
+          me.getForm().findField('propertyName').setValue(propertyName);
+
           if (data.records[0].parentNode !== undefined && 
           data.records[0].parentNode.data.record !== undefined && 
           data.records[0].parentNode.data.type != 'DataObjectNode')
           me.getForm().findField('relatedObject').setValue(data.records[0].parentNode.data.record.Name);
 
-          var msg = 'Property: ' + data.records[0].data.record.Name;
+          var msg = 'Property: ' + propertyName.bold();//data.records[0].data.record.Name;
           pcont.update(msg);
           return true;
         }
@@ -168,10 +180,27 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
     var message;
     if(me.getForm().isValid()) {
       me.submit({
-        waitMsg: 'Saving Data...',
+        //waitMsg: 'Saving Data...',
         success: function (f, a) {
+          me.fireEvent('save', me);
+          /*var window = me.up();
+          var mappingTree = Ext.widget('mappingtree');
+          var store = mappingTree.getStore();
+          var node = mappingTree.getSelectedNode();
+          if(!node)
+          node = mappingTree.getRootNode();
 
-          me.fireEvent('Save', me);
+          if (node) {
+          store.load({
+          callback: function (records, options, success) {
+          alert('Rij Loaded...');
+          if(node.isExpanded())
+          node.collapse();
+          }
+
+          });
+          }
+          window.close();*/
         },
         failure: function (f, a) {
           message = 'Failed to map property';

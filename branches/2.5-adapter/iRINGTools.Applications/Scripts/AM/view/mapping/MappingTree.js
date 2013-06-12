@@ -292,8 +292,10 @@ Ext.define('AM.view.mapping.MappingTree', {
       url: 'mapping/updateMapping',
       method: 'POST',
       params: {
-        contextName: mapPanel.context,
-        endpoint: mapPanel.endpoint,
+        //contextName: mapPanel.context,
+        //endpoint: mapPanel.endpoint,
+        scope: mapPanel.contextName,
+        application: mapPanel.endpoint,
         baseUrl: mapPanel.baseUrl
       },
       success: function (result, request) {

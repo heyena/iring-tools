@@ -28,7 +28,7 @@ Ext.define('AM.view.menus.RolemapMenu', {
           xtype: 'menuitem',
           action: 'addclassmap',
           icon: 'Content/img/16x16/document-new.png',
-          text: 'Add ClassMap'
+          text: 'Add/Edit ClassMap'
         },
         {
           xtype: 'menuitem',

@@ -21,12 +21,13 @@ Ext.define('AM.view.mapping.ClassMapWindow', {
     'AM.view.mapping.ClassMapForm'
   ],
 
-  height: 180,
-  width: 430,
+  height: 280,
+  width: 440,
+  resizable: false,
   layout: {
     type: 'fit'
   },
-  title: 'Add new ClassMap to RoleMap',
+  title: 'Add/Edit ClassMap',
 
   initComponent: function() {
     var me = this;
