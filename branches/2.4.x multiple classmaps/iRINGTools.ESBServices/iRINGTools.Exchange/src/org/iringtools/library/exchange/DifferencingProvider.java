@@ -341,9 +341,7 @@ public class DifferencingProvider
           ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId,classPath);
           ClassTemplates manifestClassObject = getClassTemplates(manifest, classId,classPath); 
           
-          //Change source class index accordingly target class index
-         // sourceClassObject.setIndex(targetClassObject.getIndex());
-          
+                 
           if (sourceClassObject != null && targetClassObject != null)
           {
             // assure target and source identifier are still the same
@@ -536,7 +534,7 @@ public class DifferencingProvider
 	  
     for (ClassObject classObject : classObjects)
     {
-      flag = classObject.getPath() == null ? classPath == null : classObject.getPath().equals(classPath);
+      flag = (classObject.getPath() == null || classObject.getPath().length()==0)  ? (classPath == null || classPath.length()==0) : classObject.getPath().equals(classPath);
       if (classObject.getClassId().equals(classId) &&  flag )
         return classObject;
     }
@@ -551,7 +549,7 @@ public class DifferencingProvider
   	{
 	    for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
 	    {
-	      flag = (classTemplates.getClazz().getPath() == null ? classPath == null : classTemplates.getClazz().getPath().equals(classPath));
+	      flag = (classTemplates.getClazz().getPath() == null ||classTemplates.getClazz().getPath().length()==0 ) ? (classPath == null || classPath.length()==0) : classTemplates.getClazz().getPath().equals(classPath);
 	      if (classTemplates.getClazz().getId().equals(classId) && flag)
 	        return classTemplates;
 	    }
