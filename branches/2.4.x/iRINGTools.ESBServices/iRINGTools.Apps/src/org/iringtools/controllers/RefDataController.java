@@ -104,6 +104,8 @@ public class RefDataController extends BaseController implements ServletRequestA
     case TEMPLATENODE:
       tree = refdata.getRole(httpRequest.getParameter("id"));
       break;
+    default: // TODO maybe this should raise an unimplemented exception? 
+      break;
     }
 
     return Action.SUCCESS;
