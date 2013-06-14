@@ -472,8 +472,18 @@ public class ExchangeTask implements Runnable
       // sort by date
       Collections.sort(exchangeLogs);
 
+      int maxHistoriesToKeep;
+      try
+      {
+    	  maxHistoriesToKeep = Integer.valueOf((String) settings.get("exchangeHistory"));
+      }
+      catch (Exception e)
+      {
+    	  maxHistoriesToKeep = 10;
+      }
+      
       // remove old logs
-      while (exchangeLogs.size() > Integer.valueOf((String) settings.get("exchangeHistory")))
+      while (exchangeLogs.size() > maxHistoriesToKeep)
       {
         final String filePrefix = (exchangeLogs.get(0).replace(".xml", ""));
 
