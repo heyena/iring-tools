@@ -1,6 +1,6 @@
 package org.iringtools.library.directory;
 
-import java.util.Collections;
+//import java.util.Collections;  // comment out unused import
 import java.util.List;
 import java.util.Map;
 
@@ -15,13 +15,13 @@ import org.iringtools.directory.DataExchanges;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Scope;
-import org.iringtools.utility.AppDataComparator;
-import org.iringtools.utility.CommodityComparator;
-import org.iringtools.utility.ExchangeComparator;
-import org.iringtools.utility.GraphComparator;
+//import org.iringtools.utility.AppDataComparator; // comment out unused import
+//import org.iringtools.utility.CommodityComparator; // comment out unused import
+//import org.iringtools.utility.ExchangeComparator; // comment out unused import
+//import org.iringtools.utility.GraphComparator; // comment out unused import
 import org.iringtools.utility.IOUtils;
 import org.iringtools.utility.JaxbUtils;
-import org.iringtools.utility.ScopeComparator;
+//import org.iringtools.utility.ScopeComparator; // comment out unused import
 
 public class DirectoryProvider
 {
