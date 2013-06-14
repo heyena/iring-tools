@@ -24,11 +24,6 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
   initComponent: function() {
     var me = this;
 
-    me.addEvents(
-      'reset',
-      'save'
-    );
-
     me.initialConfig = Ext.apply({
       method: 'POST',
       url: 'mapping/mapproperty'
@@ -177,30 +172,13 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
 
   onSave: function() {
     var me = this;
+    var win = me.up('window');
     var message;
     if(me.getForm().isValid()) {
       me.submit({
-        //waitMsg: 'Saving Data...',
+        waitMsg: 'Saving Data...',
         success: function (f, a) {
-          me.fireEvent('save', me);
-          /*var window = me.up();
-          var mappingTree = Ext.widget('mappingtree');
-          var store = mappingTree.getStore();
-          var node = mappingTree.getSelectedNode();
-          if(!node)
-          node = mappingTree.getRootNode();
-
-          if (node) {
-          store.load({
-          callback: function (records, options, success) {
-          alert('Rij Loaded...');
-          if(node.isExpanded())
-          node.collapse();
-          }
-
-          });
-          }
-          window.close();*/
+          win.fireEvent('save', me);
         },
         failure: function (f, a) {
           message = 'Failed to map property';

@@ -87,7 +87,7 @@ namespace org.iringtools.web.controllers
         int templateIndex = int.Parse(form["templateIndex"]);
         string roleName = form["roleName"];
         string identifier = form["identifier"];
-        string delimiter = form["delimiter"];
+        string delimiter = form["delimeter"];//form["delimiter"];
         string className = form["className"];
         string classId = form["classId"];
 

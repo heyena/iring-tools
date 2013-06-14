@@ -42,6 +42,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "changeclassmap",
+                "hidden": true,
                 "text": "Change ClassMap"
             },
             "designerId": "fbab6d75-8169-4b42-b6c1-25794de14bc7",

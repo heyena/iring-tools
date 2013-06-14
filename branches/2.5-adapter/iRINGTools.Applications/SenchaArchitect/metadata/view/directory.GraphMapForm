@@ -533,7 +533,7 @@
                     "// var classlabel = 'Drop a class node here.';\r",
                     "\r",
                     "ccon.update(classlabel);\r",
-                    "ccon.update(classlabel);"
+                    "//ccon.update(classlabel);"
                 ]
             },
             "designerId": "3a3ab38d-0954-4ffa-bd64-58155b0bb4c7"
@@ -575,7 +575,9 @@
                     "  return;\r",
                     "}\r",
                     "me.getForm().submit({\r",
+                    "  waitMsg: 'Saving Data...',\r",
                     "  success: function (f, a) {\r",
+                    "    \r",
                     "    win.fireEvent('save', me);\r",
                     "  },\r",
                     "  failure: function (f, a) {\r",

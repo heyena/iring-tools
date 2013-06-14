@@ -62,6 +62,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "makereference",
+                "hidden": true,
                 "text": "Make Reference"
             },
             "designerId": "928f718c-d20a-4160-b03c-dbfa2703e41f",

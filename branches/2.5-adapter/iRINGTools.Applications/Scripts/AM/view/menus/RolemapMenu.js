@@ -38,6 +38,7 @@ Ext.define('AM.view.menus.RolemapMenu', {
         {
           xtype: 'menuitem',
           action: 'makereference',
+          hidden: true,
           text: 'Make Reference'
         },
         {

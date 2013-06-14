@@ -33,7 +33,7 @@ Ext.define('AM.view.mapping.MapValueListForm', {
       items: [
         {
           xtype: 'hiddenfield',
-          name: 'valueListName'
+          name: 'objectNames'
         },
         {
           xtype: 'hiddenfield',
@@ -86,7 +86,7 @@ Ext.define('AM.view.mapping.MapValueListForm', {
         {
           xtype: 'container',
           anchor: '100%',
-          html: 'Drop a Class Node here.',
+          html: 'Drop a ValueList Node here.',
           itemId: 'mvlfccontainer',
           style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
           styleHtmlContent: true
@@ -134,27 +134,34 @@ Ext.define('AM.view.mapping.MapValueListForm', {
     var ccont = me.down('#mvlfccontainer');
 
     var propertydd = new Ext.dd.DropTarget(pcont.getEl(), {
+      scope: me,
       ddGroup: 'propertyGroup',
-      notifyEnter: function (dd, e, data) {
-        if (data.records[0].data.type != 'DataPropertyNode')
-        return me.dropNotAllowed;
+      copy: false,
+      overClass: 'over',
+      notifyEnter: function(dd, e, data) {
+        if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+        return this.dropNotAllowed;
         else
-        return me.dropAllowed;
+        return this.dropAllowed;
       },
-      notifyOver: function (dd, e, data) {
-        if (data.records[0].data.type != 'DataPropertyNode')
-        return me.dropNotAllowed;
+
+      notifyOver: function(dragSource, event, data){
+        if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+        return this.dropNotAllowed;
         else
-        return me.dropAllowed;
+        return this.dropAllowed;
       },
       notifyDrop: function (dd, e, data) {
-        if (data.records[0].data.type != 'DataPropertyNode') {
+        if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {
           return false;
         }
         else {
-          me.getForm().findField('propertyName').setValue(data.records[0].data.property.Name);
+          var ident = getLastXString(data.records[0].data.id, 1);
+          var object = getLastXString(data.records[0].data.id, 2);
+          var propertyName = object+'.'+ident;
+          me.getForm().findField('propertyName').setValue(propertyName);
           me.getForm().findField('relatedObject').setValue(data.records[0].data.record.Ralated);
-          var msg = 'Property: ' + data.records[0].data.record.Name;
+          var msg = 'Property: ' + propertyName.bold();//data.records[0].data.record.Name.bold();
           pcont.update(msg);
           return true;
         }
@@ -164,25 +171,29 @@ Ext.define('AM.view.mapping.MapValueListForm', {
     var classdd = new Ext.dd.DropTarget(ccont.getEl(), {
       ddGroup: 'propertyGroup',
       notifyEnter: function (dd, e, data) {
-        if (data.records[0].data.type != 'ValueListNode')
-        return me.dropNotAllowed;
+
+        if (data.records[0].data.type!= 'ValueListNode')
+        return this.dropNotAllowed;
         else
-        return me.dropAllowed;
+        return this.dropAllowed;
       },
       notifyOver: function (dd, e, data) {
+
         if (data.records[0].data.type != 'ValueListNode')
-        return me.dropNotAllowed;
+        return this.dropNotAllowed;
         else
-        return me.dropAllowed;
+        return this.dropAllowed;
       },
       notifyDrop: function (classdd, e, data) {
-        if (data.records[0].data.type != 'ValueListNode') {
+
+        if (data.records[0].data.type!= 'ValueListNode') {
           var message = 'Please slect a ValueList Node...';
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
           return false;
         }
-        me.getForm().findField('valueListName').setValue(data.records[0].data.record.record.name);
-        var msg = 'Value List: ' + data.records[0].data.record.record.name ;
+        //me.getForm().findField('valueListName').setValue(data.records[0].data.record.name);
+        me.getForm().findField('objectNames').setValue(data.records[0].data.id);
+        var msg = 'Value List: ' + data.records[0].data.record.name.bold() ;
         ccont.update(msg);
         return true;
 

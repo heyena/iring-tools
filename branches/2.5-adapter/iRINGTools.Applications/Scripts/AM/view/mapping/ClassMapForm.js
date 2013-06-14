@@ -105,8 +105,9 @@ Ext.define('AM.view.mapping.ClassMapForm', {
           xtype: 'textfield',
           margin: '5 0 15 25',
           width: 100,
-          name: 'delimiter',
-          value: '_'
+          name: 'delimeter',
+          value: '_',
+          allowBlank: false
         },
         {
           xtype: 'label',
@@ -269,7 +270,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         }
         me.getForm().findField('className').setValue(data.records[0].data.record.Label);
         me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
-        var msg = 'Class Label: ' + data.records[0].data.record.Label;
+        var msg = data.records[0].data.record.Label;//'Class Label: ' + data.records[0].data.record.Label;
         ccont.update(msg);
         return true;
       }
@@ -285,15 +286,24 @@ Ext.define('AM.view.mapping.ClassMapForm', {
 
   onSave: function() {
     var me = this;
+    var win = me.up('window');
+    var form = me.getForm();
     var message;
+    if (form.findField('identifier').getValue() == 'Drop property node(s) here.' ||
+    form.findField('objectName').getValue() == '' ||
+    form.findField('className').getValue() == 'Drop a class node here.') {
+      message = 'Required fields can not be blank!';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      return;
+    }
+
     if(me.getForm().isValid()) {
       me.submit({
-        //waitMsg: 'Saving Data...',
-        success: function (f, a) {
-
-          //me.fireEvent('Save', me);
+        waitMsg: 'Saving Data...',
+        success: function (result, request) {
+          win.fireEvent('save', me);
         },
-        failure: function (f, a) {
+        failure: function (result, request) {
           message = 'Failed to Add ClassMap to RoleMap';
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
@@ -302,7 +312,6 @@ Ext.define('AM.view.mapping.ClassMapForm', {
       message = 'Form is not complete. Cannot save record.';
       showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
     }
-
 
 
   },
@@ -314,6 +323,43 @@ Ext.define('AM.view.mapping.ClassMapForm', {
     me.getForm().findField('objectName').setValue('');
     me.getForm().findField('identifier').setValue('Drop property node(s) here.');
     me.down('#cmpcontainer').update('Drop property node(s) here.');
+  },
+
+  updateDDContainers: function(record) {
+    var me = this;
+    var pcon = me.down('#cmpcontainer');
+    var ccon = me.down('#cmccontainer');
+    var identifier = 'Drop property node(s) here.';
+    var classlabel = 'Drop a class node here.';
+    var delimeter = '_';
+    if (record != null && record.classMap != null) {
+      identifier =  record.classMap.identifiers[0];
+      if(record.classMap.identifiers.length>1){
+        for(var i=1;i<record.classMap.identifiers.length;i++){
+          identifier = identifier+','+record.classMap.identifiers[i];
+        }
+      }
+      //identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];
+      //identifier = record.classTemplateMaps[0].classMap.identifiers[0];
+      classlabel = record.classMap.name;
+      if(record.classMap.identifierDelimiter!=null)
+      delimeter = record.classMap.identifierDelimiter;
+    }
+    //if(record!=null)
+    //identifier = 'Identifier: ' + identifier;
+
+    pcon.update(identifier);
+    ccon.update(classlabel);
+    me.getForm().findField('identifier').setValue(identifier);
+    me.getForm().findField('className').setValue(classlabel);
+    me.getForm().findField('delimeter').setValue(delimeter);
+    //if(record!=null)
+    //var classlabel = 'Class Label: ' + label;
+    // else
+    // var classlabel = 'Drop a class node here.';
+
+
+    //ccon.update(classlabel);
   }
 
 });

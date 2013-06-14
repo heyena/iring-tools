@@ -326,6 +326,7 @@
                     "  return;\r",
                     "}\r",
                     "form.submit({\r",
+                    "  waitMsg: 'Saving Data...',\r",
                     "  success: function (f, a) {\r",
                     "    win.fireEvent('save', me);\r",
                     "  },\r",

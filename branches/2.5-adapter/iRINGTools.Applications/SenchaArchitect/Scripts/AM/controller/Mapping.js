@@ -37,7 +37,9 @@ Ext.define('AM.controller.Mapping', {
     'mapping.ValueListMapForm',
     'mapping.ValueListWindow',
     'mapping.MappingPanel',
-    'mapping.ValueListForm'
+    'mapping.ValueListForm',
+    'mapping.MapValueListWindow',
+    'mapping.MapValueListForm'
   ],
 
   refs: [
@@ -285,6 +287,11 @@ Ext.define('AM.controller.Mapping', {
     var graph  = mapPanel.graph.split('/');
     graph = graph[graph.length-1];
     node = tree.getSelectedNode();
+    record = node.data.record;
+    var roleName = node.data.text;
+    if(roleName.indexOf('unmapped')!=-1){
+      roleName = roleName.split('[')[0];
+    } 
 
     me.getParentClass(node);
 
@@ -294,7 +301,7 @@ Ext.define('AM.controller.Mapping', {
       formid: 'propertytarget-' + mapPanel.contextName + '-' + mapPanel.endpoint
     });
 
-    win.on('Save', function () {
+    win.on('save', function () {
       win.close();
       tree.onReload();
       if (node.get('expanded') === false)
@@ -311,12 +318,13 @@ Ext.define('AM.controller.Mapping', {
       //'baseUrl': mapPanel.baseUrl,
       'graph': graph,//mapPanel.graph,
       'templateIndex': index,
-      'roleName': node.data.text,
+      'roleName': roleName,//node.data.text,
       'parentClassId': node.parentNode.parentNode.data.identifier
     };
 
     var form = win.down('form');
     form.getForm().setValues(formRecord);
+    form.updateDDContainers(record);
 
     win.show();
 
@@ -337,13 +345,6 @@ Ext.define('AM.controller.Mapping', {
     });
     var roleName = getLastXString(node.data.id, 1);
     var index = node.parentNode.parentNode.indexOf(node.parentNode);
-    win.on('save', function () {
-      win.close();
-      alert('going to reload after save...');
-      tree.store.load();
-      if (node.get('expanded') === false)
-      node.expand();
-    }, me);
 
     var formRecord = {
       'contextName': mapPanel.contextName,
@@ -358,7 +359,12 @@ Ext.define('AM.controller.Mapping', {
 
     var form = win.down('form');
     form.getForm().setValues(formRecord);
-
+    win.on('save', function () {
+      win.close();
+      tree.store.load();
+      if (node.get('expanded') === false)
+      node.expand();
+    }, me);
     win.on('Cancel', function () {
       win.close();
     }, me);
@@ -498,19 +504,24 @@ Ext.define('AM.controller.Mapping', {
     var mapPanel = content.down('mappingpanel');
     var tree = mapPanel.down('mappingtree'),
       node = tree.getSelectedNode();
+    var parentId = node.parentNode.parentNode.data.id;
+    var idArr = node.data.id.split('/');
+    var mappingNode = parentId+'/'+idArr[idArr.length-2]+'/'+idArr[idArr.length-1];
+
 
     me.getParentClass(node);
     Ext.Ajax.request({
       url: 'mapping/resetmapping',
       method: 'POST',
       params: {
-        contextName: mapPanel.contextName,
-        endpoint: mapPanel.endpoint,
-        baseUrl: mapPanel.baseUrl,
+        //contextName: mapPanel.contextName,
+        //endpoint: mapPanel.endpoint,
+        //baseUrl: mapPanel.baseUrl,
+        //graphName: mapPanel.graphName,
+        mappingNode:mappingNode,
         roleId: node.data.record.id,
         templateId: node.parentNode.data.record.id,
         parentClassId: node.parentNode.parentNode.data.identifier,
-        graphName: mapPanel.graphName,
         index: node.parentNode.parentNode.indexOf(node.parentNode)
       },
       success: function () {
@@ -521,6 +532,7 @@ Ext.define('AM.controller.Mapping', {
   },
 
   onMapValueList: function(item, e, eOpts) {
+
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
@@ -528,18 +540,21 @@ Ext.define('AM.controller.Mapping', {
       node = tree.getSelectedNode();
 
     me.getParentClass(node);
-
-    var win = Ext.widget('valuelistwindow');
-
+    var parentId = node.parentNode.parentNode.data.id;
+    var idArr = node.data.id.split('/');
+    var mappingNode = parentId+'/'+idArr[idArr.length-2]+'/'+idArr[idArr.length-1];
+    //var win = Ext.widget('valuelistwindow');
+    var win = Ext.widget('mapvaluelistwindow');
     var formRecord = {
-      'mappingNode': node,
+      'mappingNode': mappingNode,//node,
       'index': node.parentNode.parentNode.indexOf(node.parentNode),
       'classId': me.parentClass,
-      'graphName': mapPanel.graphName,
-      'roleName': node.data.record.name,
-      'contextName': mapPanel.contextName,
-      'endpoint': mapPanel.endpoint,
-      'baseUrl': mapPanel.baseUrl
+
+      //'graphName': mapPanel.graphName,
+      //'roleName': node.data.record.name,
+      //'contextName': mapPanel.contextName,
+      //'endpoint': mapPanel.endpoint,
+      //'baseUrl': mapPanel.baseUrl
     };
 
     var form = win.down('form');
@@ -726,6 +741,38 @@ Ext.define('AM.controller.Mapping', {
     });
   },
 
+  onDeleteClassMap: function(item, e, eOpts) {
+    var me = this;
+    var content = me.getMainContent();
+    var mapPanel = content.down('mappingpanel');
+    var tree = mapPanel.down('mappingtree');
+    node = tree.getSelectedNode();
+    var mappingNode = node.parentNode.parentNode.parentNode.data.id;
+    var tempId = node.data.id.split('/');
+    tempId = tempId[tempId.length-1];
+    mappingNode = mappingNode+'/'+tempId;
+    var index = node.parentNode.parentNode.parentNode.indexOf(node.parentNode.parentNode);
+
+    Ext.Ajax.request({
+      url: 'mapping/deleteclassmap',
+      method: 'POST',
+      params: {
+        mappingNode: mappingNode,//node.data.id,
+        classId: node.data.identifier,
+        parentClass: node.parentNode.parentNode.parentNode.data.identifier,
+        parentTemplate: node.parentNode.parentNode.data.record.id,
+        parentRole: node.parentNode.data.record.id,
+        index: index
+      },
+      success: function (result, request) {
+        tree.onReload();
+        //Ext.Msg.show({ title: 'Success', msg: 'Deleted Class Map from Mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+
+      },
+      failure: function (result, request) { }
+    })
+  },
+
   getObjectType: function(type) {
     switch (type) {
       case 0:
@@ -805,6 +852,9 @@ Ext.define('AM.controller.Mapping', {
       },
       "menuitem[action=deletevaluelist]": {
         click: this.onDeleteValueList
+      },
+      " menuitem[action=deleteclassmap]": {
+        click: this.onDeleteClassMap
       }
     });
   }

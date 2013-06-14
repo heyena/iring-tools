@@ -312,7 +312,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
     // var classlabel = 'Drop a class node here.';
 
     ccon.update(classlabel);
-    ccon.update(classlabel);
+    //ccon.update(classlabel);
   },
 
   onReset: function() {
@@ -332,7 +332,9 @@ Ext.define('AM.view.directory.GraphMapForm', {
       return;
     }
     me.getForm().submit({
+      waitMsg: 'Saving Data...',
       success: function (f, a) {
+
         win.fireEvent('save', me);
       },
       failure: function (f, a) {

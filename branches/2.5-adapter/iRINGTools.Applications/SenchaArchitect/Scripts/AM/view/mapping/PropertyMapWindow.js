@@ -31,6 +31,11 @@ Ext.define('AM.view.mapping.PropertyMapWindow', {
   initComponent: function() {
     var me = this;
 
+    me.addEvents(
+      'save',
+      'reset'
+    );
+
     Ext.applyIf(me, {
       items: [
         {

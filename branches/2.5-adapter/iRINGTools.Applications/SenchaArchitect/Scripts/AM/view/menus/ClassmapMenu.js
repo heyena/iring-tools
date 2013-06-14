@@ -33,6 +33,7 @@ Ext.define('AM.view.menus.ClassmapMenu', {
         {
           xtype: 'menuitem',
           action: 'changeclassmap',
+          hidden: true,
           text: 'Change ClassMap'
         }
       ]

@@ -350,30 +350,13 @@
                 "fn": "onSave",
                 "implHandler": [
                     "var me = this;\r",
+                    "var win = me.up('window');\r",
                     "var message;\r",
                     "if(me.getForm().isValid()) {\r",
                     "  me.submit({\r",
-                    "    //waitMsg: 'Saving Data...',\r",
+                    "    waitMsg: 'Saving Data...',\r",
                     "    success: function (f, a) {\r",
-                    "      me.fireEvent('save', me);\r",
-                    "      /*var window = me.up();\r",
-                    "      var mappingTree = Ext.widget('mappingtree');\r",
-                    "      var store = mappingTree.getStore();\r",
-                    "      var node = mappingTree.getSelectedNode();\r",
-                    "      if(!node)\r",
-                    "        node = mappingTree.getRootNode();\r",
-                    "      \r",
-                    "      if (node) {\r",
-                    "          store.load({\r",
-                    "            callback: function (records, options, success) {\r",
-                    "              alert('Rij Loaded...');\r",
-                    "              if(node.isExpanded())\r",
-                    " \t\t\t\t\t\t\t\t node.collapse();\r",
-                    "            }\r",
-                    "            \r",
-                    "          });\r",
-                    "\t\t\t}\r",
-                    "      window.close();*/\r",
+                    "      win.fireEvent('save', me);\r",
                     "    },\r",
                     "    failure: function (f, a) {\r",
                     "      message = 'Failed to map property';\r",
@@ -387,18 +370,6 @@
                 ]
             },
             "designerId": "97d8429e-c878-4838-b853-d758eb9f7613"
-        },
-        {
-            "type": "customevent",
-            "reference": {
-                "name": "customEvents",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "name": "reset"
-            },
-            "designerId": "0b536f77-cc5f-4f20-a426-658ab41c0b75"
         },
         {
             "type": "Ext.container.Container",
@@ -428,18 +399,6 @@
                     "type": "string"
                 }
             ]
-        },
-        {
-            "type": "customevent",
-            "reference": {
-                "name": "customEvents",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "name": "save"
-            },
-            "designerId": "d057978c-43f5-46b0-8eb0-d98bde1bc99d"
         }
     ]
 }
