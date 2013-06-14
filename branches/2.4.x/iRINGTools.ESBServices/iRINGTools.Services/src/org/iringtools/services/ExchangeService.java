@@ -278,12 +278,13 @@ public class ExchangeService extends AbstractService {
 			}
 
 			// are there any items left to exchange ?
-			if (actionDtiListItems.size() == 0) {
-				ExchangeResponse xRes = new ExchangeResponse();
-				xRes.setLevel(Level.WARNING);
-				xRes.setSummary("No items to exchange.");
-				return Response.ok().entity(xRes).build();
-			}
+			// This optimization has been commented out because we want the "history" of the exchange created, even if there is nothing to do
+			//if (actionDtiListItems.size() == 0) {
+			//	ExchangeResponse xRes = new ExchangeResponse();
+			//	xRes.setLevel(Level.WARNING);
+			//	xRes.setSummary("No items to exchange.");
+			//	return Response.ok().entity(xRes).build();
+			//}
 
 			exchangeRequest.setManifest(manifest);
 			exchangeRequest.setDataTransferIndices(actionDtis);
