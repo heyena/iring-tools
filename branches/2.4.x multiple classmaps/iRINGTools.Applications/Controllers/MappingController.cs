@@ -923,7 +923,54 @@ namespace org.iringtools.web.controllers
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
+  
+    public JsonResult MapConstant(FormCollection form)
+    {
+        try
+        {
+            string mappingNode = form["mappingNode"];
+            string constantValue = form["constantValue"];
+            string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+            string scope = mappingCtx[0];
+            string application = mappingCtx[1];
+            string graphName = mappingCtx[2];
 
+            string classId = form["classId"];
+            int classIndex = Convert.ToInt16(form["classIndex"]);
+
+            string roleName = mappingCtx[mappingCtx.Length - 1];
+            int index = Convert.ToInt16(form["index"]);
+            Mapping mapping = GetMapping(scope, application);
+            GraphMap graphMap = mapping.FindGraphMap(graphName);
+            ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId, classIndex);
+
+            if (ctMap != null)
+            {
+                TemplateMap tMap = ctMap.templateMaps[index];
+                RoleMap rMap = tMap.roleMaps.Find(r => r.name.Equals(roleName));
+
+                if (!string.IsNullOrEmpty(rMap.dataType) && rMap.dataType.StartsWith("xsd"))
+                {
+                    rMap.propertyName = null;
+                    rMap.type = RoleType.FixedValue;
+                    rMap.value = constantValue;
+                    rMap.valueListName = null;
+                }
+                else
+                {
+                    throw new Exception("Invalid constant map.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.ToString();
+            _logger.Error(msg);
+            return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+        }
+
+        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
     public JsonResult MakeReference(FormCollection form)
     {
       try
