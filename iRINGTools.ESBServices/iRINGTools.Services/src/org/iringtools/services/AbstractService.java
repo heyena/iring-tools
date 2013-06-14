@@ -45,7 +45,12 @@ public abstract class AbstractService
      * PREPARE COMMON SETTINGS
      */
     settings.put("baseDirectory", servletContext.getRealPath("/"));
-    settings.put("basePath", servletContext.getRealPath("/"));
+    
+    // Now that ExchangeManager is a "pure" application rather than a service the directory.xml and exchange response files will be relative to /Apps
+    String directoryBasePath = servletContext.getInitParameter("directoryBasePath");
+    if (directoryBasePath == null || directoryBasePath.equals(""))
+    	directoryBasePath = servletContext.getRealPath("/");
+    settings.put("basePath", directoryBasePath);
 
     String directoryServiceUri = servletContext.getInitParameter("directoryServiceUri");
     if (directoryServiceUri == null || directoryServiceUri.equals(""))
