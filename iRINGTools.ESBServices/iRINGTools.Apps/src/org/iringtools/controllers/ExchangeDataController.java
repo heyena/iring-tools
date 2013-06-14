@@ -224,12 +224,13 @@ public class ExchangeDataController extends BaseController
 
 	// deleting scope
 	public String deleteScope() {
-		try {
-			  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-		} catch (Exception e) {
-			 e.printStackTrace();
-			return ERROR;
-		}
+		// This code does not do anything (apart from instantiate an unused exchangeDataModel) ??
+		//try {
+		//	  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+		//} catch (Exception e) {
+		//	 e.printStackTrace();
+		//	return ERROR;
+		//}
 
 		return SUCCESS;
 	}
@@ -555,7 +556,9 @@ public class ExchangeDataController extends BaseController
 				if (i < propSize) {
 					propName = propertyName[i];
 				}
-				if ((propName != null) || (propName.equalsIgnoreCase(""))) {
+				
+				// if ((propName != null) || (propName.equalsIgnoreCase(""))) { <-- this logic is faulty, presumably meant to avoid missing propName ? 
+				if ((propName != null) && (!propName.equalsIgnoreCase(""))) {
 					ex.setOpenGroupCount(openInt);
 					ex.setCloseGroupCount(closeInt);
 					ex.setIsCaseSensitive(false);
