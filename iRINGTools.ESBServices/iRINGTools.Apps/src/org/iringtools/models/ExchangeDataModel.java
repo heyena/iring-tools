@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
-import org.iringtools.controllers.DirectoryController;
+//import org.iringtools.controllers.DirectoryController; // comment out unused import
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.data.filter.Expression;
 import org.iringtools.data.filter.Expressions;
