@@ -36,6 +36,7 @@ using org.iringtools.library;
 
 namespace org.iringtools.legacy
 {
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public class Mapping
   {
@@ -115,7 +116,8 @@ namespace org.iringtools.legacy
       return null;
     }    
   }
-
+  
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public class GraphMap
   {
@@ -269,7 +271,8 @@ namespace org.iringtools.legacy
       }
     }
   }
-
+  
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public class ClassMap
   {
@@ -307,6 +310,7 @@ namespace org.iringtools.legacy
     public string identifierValue { get; set; }
   }
 
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public class TemplateMap
   {
@@ -366,6 +370,7 @@ namespace org.iringtools.legacy
     }
   }
 
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public class RoleMap
   {
@@ -419,7 +424,8 @@ namespace org.iringtools.legacy
       }
     }
   }
-
+  
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public enum RoleType
   {
@@ -443,6 +449,7 @@ namespace org.iringtools.legacy
     ObjectProperty,
   }
 
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public enum TemplateType
   {
@@ -453,6 +460,7 @@ namespace org.iringtools.legacy
     Definition
   }
 
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public class ValueList 
   {
@@ -467,7 +475,8 @@ namespace org.iringtools.legacy
     [DataMember(EmitDefaultValue = false, Order = 1)]
     public List<ValueMap> valueMaps { get; set; }
   }
-
+  
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public class ValueMap
   {
@@ -477,7 +486,8 @@ namespace org.iringtools.legacy
     [DataMember(EmitDefaultValue = false, Order = 1)]
     public string uri { get; set; }
   }
-
+  
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public class ClassificationTemplate
   {
@@ -488,9 +498,11 @@ namespace org.iringtools.legacy
     public TemplateMap TemplateMap { get; set; }
   }
 
+  [Serializable]
   [CollectionDataContract(ItemName = "templateId")]
   public class TemplateIds : List<string> { }
-
+      
+  [Serializable]
   [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/org.iringtools.library")]
   public enum ClassificationStyle
   {

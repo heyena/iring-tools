@@ -28,9 +28,11 @@ using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace org.iringtools.library
 {
+  [Serializable]
   [DataContract(Name = "dataDictionary", Namespace = "http://www.iringtools.org/library")]
   public class DataDictionary
   {
@@ -91,7 +93,8 @@ namespace org.iringtools.library
       return dataObject;
     }
   }
-
+  
+  [Serializable]
   [DataContract(Name = "dataObject", Namespace = "http://www.iringtools.org/library")]
   public class DataObject
   {
@@ -205,6 +208,7 @@ namespace org.iringtools.library
 
   }
 
+  [Serializable]
   [DataContract(Name = "dataProperty", Namespace = "http://www.iringtools.org/library")]
   public class DataProperty
   {
@@ -254,6 +258,7 @@ namespace org.iringtools.library
     public bool isVirtual { get; set; }
   }
 
+  [Serializable]
   [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]
   public class KeyProperty
   {
@@ -273,7 +278,7 @@ namespace org.iringtools.library
     //[EnumMember]
     //ManyToMany
   }
-
+    [Serializable]
   [DataContract(Name = "propertyMap", Namespace = "http://www.iringtools.org/library")]
   public class PropertyMap
   {
@@ -283,7 +288,8 @@ namespace org.iringtools.library
     [DataMember(IsRequired = true)]
     public string relatedPropertyName { get; set; }
   }
-
+  
+  [Serializable]
   [DataContract(Name = "dataRelationship", Namespace = "http://www.iringtools.org/library")]
   public class DataRelationship
   {
@@ -357,6 +363,7 @@ namespace org.iringtools.library
     @Date
   }
 
+  [Serializable]
   [DataContract(Namespace = "http://www.iringtools.org/library")]
   public class PicklistObject
   {

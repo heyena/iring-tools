@@ -36,6 +36,7 @@ using org.iringtools.utility;
 
 namespace org.iringtools.library
 {
+    [Serializable]
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "dataFilter")]
   public class DataFilter
   {

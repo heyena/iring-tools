@@ -31,6 +31,7 @@ using System.ComponentModel;
 
 namespace org.iringtools.library
 {
+  [Serializable]
   [DataContract(Name = "databaseDictionary", Namespace = "http://www.iringtools.org/library")]
   public class DatabaseDictionary : DataDictionary
   {

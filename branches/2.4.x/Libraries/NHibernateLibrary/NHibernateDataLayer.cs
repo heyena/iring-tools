@@ -11,6 +11,7 @@ using org.iringtools.library;
 using org.iringtools.nhibernate;
 using org.iringtools.utility;
 using Ninject.Extensions.Xml;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -60,6 +61,12 @@ namespace org.iringtools.adapter.datalayer
         _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
         _dataDictionary = (DataDictionary)_dbDictionary;
       }
+      else if (utility.Utility.isLdapConfigured && utility.Utility.FileExistInRepository<DatabaseDictionary>(_dbDictionaryPath))
+      {
+          _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
+          _dataDictionary = (DataDictionary)_dbDictionary;      
+      }
+      
 
       string relativePath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml",
         _settings["AppDataPath"],
@@ -81,7 +88,23 @@ namespace org.iringtools.adapter.datalayer
         relativePath
       );
 
-      _kernel.Load(_authorizationBindingPath);
+      //_kernel.Load(_authorizationBindingPath);
+      if (File.Exists(_authorizationBindingPath))
+      {
+          _kernel.Load(_authorizationBindingPath);
+      }
+      else if (utility.Utility.isLdapConfigured && utility.Utility.FileExistInRepository<XElementClone>(_authorizationBindingPath))
+      {
+          XElement bindingConfig = Utility.GetxElementObject(_authorizationBindingPath);
+          string fileName = Path.GetFileName(_authorizationBindingPath);
+          string tempPath = Path.GetTempPath() + fileName;
+          bindingConfig.Save(tempPath);
+          _kernel.Load(tempPath);
+      }
+      else
+      {
+          _logger.Error("Authourization Binding configuration not found.");
+      }
     }
 
     #region public methods

@@ -514,6 +514,7 @@ namespace org.iringtools.mapping
   using System.Runtime.Serialization;
   using System.Collections.Generic;
   using org.iringtools.library;
+    using System;
 
   [System.Runtime.Serialization.DataContractAttribute(Name = "roleType", Namespace = "http://www.iringtools.org/mapping")]
   public enum RoleType
@@ -540,6 +541,7 @@ namespace org.iringtools.mapping
     ObjectProperty,
   }
 
+  [Serializable]
   [System.Runtime.Serialization.DataContractAttribute(Name = "mapping", Namespace = "http://www.iringtools.org/mapping")]
   public partial class Mapping
   {
@@ -607,18 +609,21 @@ namespace org.iringtools.mapping
       }
       return graph;
     }
-  }  
-
+  }
+  
+  [Serializable]
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "graphMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "graphMap")]
   public class GraphMaps : System.Collections.Generic.List<org.iringtools.mapping.GraphMap>
   {    
   }
-
+  
+  [Serializable]
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueListMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueListMap")]
   public class ValueListMaps : System.Collections.Generic.List<org.iringtools.mapping.ValueListMap>
   {
   }
 
+  [Serializable]
   [System.Runtime.Serialization.DataContractAttribute(Name = "graphMap", Namespace = "http://www.iringtools.org/mapping")]
   public partial class GraphMap
   {
@@ -687,12 +692,14 @@ namespace org.iringtools.mapping
       }
     }
   }
-
+      
+  [Serializable]
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "classTemplateMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "classTemplateMap")]
   public class ClassTemplateMaps : System.Collections.Generic.List<org.iringtools.mapping.ClassTemplateMap>
   {
   }
 
+  [Serializable]
   [System.Runtime.Serialization.DataContractAttribute(Name = "classTemplateMap", Namespace = "http://www.iringtools.org/mapping")]
   public partial class ClassTemplateMap
   {
@@ -1118,6 +1125,7 @@ namespace org.iringtools.mapping
     }
   }
 
+  [Serializable]
   [System.Runtime.Serialization.DataContractAttribute(Name = "valueListMap", Namespace = "http://www.iringtools.org/mapping")]
   public partial class ValueListMap
   {
@@ -1156,7 +1164,8 @@ namespace org.iringtools.mapping
       }
     }
   }
-
+  
+  [Serializable]
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueMap")]
   public class ValueMaps : System.Collections.Generic.List<org.iringtools.mapping.ValueMap>
   {

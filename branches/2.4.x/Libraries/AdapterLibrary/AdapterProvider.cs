@@ -206,6 +206,13 @@ namespace org.iringtools.adapter
           arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
           arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
         }
+        
+        if (_settings["LdapConfiguration"].ToLower() == "true")
+        {
+            utility.Utility.isLdapConfigured = true;  
+            utility.Utility.InitializeConfigurationRepository(new Type[] { typeof(DataDictionary), typeof(DatabaseDictionary)
+                                                                           ,typeof(XElementClone) ,typeof(AuthorizedUsers) ,typeof(Mapping)});            
+        }
       }
       catch (Exception e)
       {
@@ -443,10 +450,11 @@ namespace org.iringtools.adapter
                 Utility.Write<AuthorizedUsers>(authorizedUsers, authorizationPath, true);
               }
 
-              authorizationBinding.Save(String.Format("{0}AuthorizationBindingConfiguration.{1}.{2}.xml",
-                  _settings["AppDataPath"], scope.Name, application.Name));
+              //authorizationBinding.Save(String.Format("{0}AuthorizationBindingConfiguration.{1}.{2}.xml",
+              //   _settings["AppDataPath"], scope.Name, application.Name));
+              utility.Utility.SavexElementObject(authorizationBinding, String.Format("{0}AuthorizationBindingConfiguration.{1}.{2}.xml",
+                    _settings["AppDataPath"], scope.Name, application.Name));
             }
-
             break;
           }
 
@@ -462,8 +470,10 @@ namespace org.iringtools.adapter
             )
           );
 
-          summaryBinding.Save(String.Format("{0}SummaryBindingConfiguration.{1}.{2}.xml",
-              _settings["AppDataPath"], scope.Name, application.Name));
+          //summaryBinding.Save(String.Format("{0}SummaryBindingConfiguration.{1}.{2}.xml",
+          //   _settings["AppDataPath"], scope.Name, application.Name));
+          utility.Utility.SavexElementObject(summaryBinding, String.Format("{0}SummaryBindingConfiguration.{1}.{2}.xml",
+           _settings["AppDataPath"], scope.Name, application.Name));
 
           //
           // update data layer binding
@@ -479,8 +489,10 @@ namespace org.iringtools.adapter
               )
             );
 
-            dataLayerBinding.Save(String.Format("{0}BindingConfiguration.{1}.{2}.xml",
-                _settings["AppDataPath"], scope.Name, application.Name));
+            //dataLayerBinding.Save(String.Format("{0}BindingConfiguration.{1}.{2}.xml",
+            //    _settings["AppDataPath"], scope.Name, application.Name));
+            utility.Utility.SavexElementObject(dataLayerBinding, String.Format("{0}BindingConfiguration.{1}.{2}.xml",
+             _settings["AppDataPath"], scope.Name, application.Name));
           }
 
           //
@@ -700,30 +712,35 @@ namespace org.iringtools.adapter
       {
         File.Delete(authorizationPath);
       }
+      utility.Utility.DeleteFileFromRepository<AuthorizedUsers>(authorizationPath);
 
       string authorizationBindingPath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml", path, context);
       if (File.Exists(authorizationBindingPath))
       {
         File.Delete(authorizationBindingPath);
       }
+      utility.Utility.DeleteFileFromRepository<XElementClone>(authorizationBindingPath);
 
       string bindingConfigurationPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
       if (File.Exists(bindingConfigurationPath))
       {
         File.Delete(bindingConfigurationPath);
       }
+      utility.Utility.DeleteFileFromRepository<XElementClone>(bindingConfigurationPath);
 
       string databaseDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", path, context);
       if (File.Exists(databaseDictionaryPath))
       {
         File.Delete(databaseDictionaryPath);
       }
+      utility.Utility.DeleteFileFromRepository<DatabaseDictionary>(databaseDictionaryPath);
 
       string dataDictionaryPath = String.Format("{0}DataDictionary.{1}.xml", path, context);
       if (File.Exists(dataDictionaryPath))
       {
         File.Delete(dataDictionaryPath);
       }
+      utility.Utility.DeleteFileFromRepository<DataDictionary>(dataDictionaryPath);
 
       string nhConfigPath = String.Format("{0}nh-configuration.{1}.xml", path, context);
       if (File.Exists(nhConfigPath))
@@ -742,6 +759,7 @@ namespace org.iringtools.adapter
       {
         File.Delete(summaryBindingConfigurationPath);
       }
+      utility.Utility.DeleteFileFromRepository<XElementClone>(summaryBindingConfigurationPath);
 
       string summaryConfigPath = String.Format("{0}SummaryConfig.{1}.xml", path, context);
       if (File.Exists(summaryConfigPath))
@@ -888,7 +906,8 @@ namespace org.iringtools.adapter
         string path = _settings["AppDataPath"];
         string context = scope.Name + "." + application.Name;
         string bindingPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
-        XElement binding = XElement.Load(bindingPath);
+        //XElement binding = XElement.Load(bindingPath);
+        XElement binding = utility.Utility.GetxElementObject(bindingPath);
 
         if (binding.Element("bind").Attribute("to").Value.Contains(typeof(NHibernateDataLayer).Name))
         {
@@ -938,8 +957,8 @@ namespace org.iringtools.adapter
       try
       {
         InitializeScope(projectName, applicationName);
-
-        binding = XElement.Load(_settings["BindingConfigurationPath"]);
+        binding = utility.Utility.GetxElementObject(_settings["BindingConfigurationPath"]);
+        //binding = XElement.Load(_settings["BindingConfigurationPath"]);
       }
       catch (Exception ex)
       {
@@ -3998,9 +4017,17 @@ namespace org.iringtools.adapter
           {
             _kernel.Load(bindingConfigurationPath);
           }
+          else if (utility.Utility.isLdapConfigured && utility.Utility.FileExistInRepository<XElementClone>(bindingConfigurationPath))
+          {
+              XElement bindingConfig = Utility.GetxElementObject(bindingConfigurationPath);
+              string fileName = Path.GetFileName(bindingConfigurationPath);
+              string tempPath = Path.GetTempPath() + fileName;
+              bindingConfig.Save(tempPath);
+              _kernel.Load(tempPath);
+          }
           else
           {
-            _logger.Error("Binding configuration not found.");
+              _logger.Error("Binding configuration not found.");
           }
 
           string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);
@@ -4177,35 +4204,37 @@ namespace org.iringtools.adapter
     {
       if (!_isDataLayerInitialized)
       {
-        try
-        {
-          string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
-                 _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
-
-          if ((_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true) && File.Exists(path))
+          try
           {
-             _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
-          }
-          else
-          {
-            _dataDictionary = _dataLayer.GetDictionary();
+              string path = string.Format("{0}DataDictionary.{1}.{2}.xml",
+                     _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
 
-            if (_dataDictionary != null)
-            {
-              if (_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true) // only create cache if settings indicate we will use it
+              bool isFileinLDAP = utility.Utility.FileExistInRepository<DataDictionary>(path);
+              if (((_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true) && File.Exists(path))
+                  || isFileinLDAP )
               {
-                utility.Utility.Write<DataDictionary>(_dataDictionary, path, true);
+                  _dataDictionary = utility.Utility.Read<DataDictionary>(path, true);
               }
-            }
-          }        
+              else
+              {
+                  _dataDictionary = _dataLayer.GetDictionary();
 
-          _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
-        }
-        catch (Exception ex)
-        {
-          _logger.Error(string.Format("Error initializing data dictionary: {0}" + ex));
-          throw ex;
-        }
+                  if (_dataDictionary != null)
+                  {
+                      if (_settings["UseDictionaryCache"] == null || bool.Parse(_settings["UseDictionaryCache"].ToString()) == true) // only create cache if settings indicate we will use it
+                      {
+                          utility.Utility.Write<DataDictionary>(_dataDictionary, path, true);
+                      }
+                  }
+              }
+
+              _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
+          }
+          catch (Exception ex)
+          {
+              _logger.Error(string.Format("Error initializing data dictionary: {0}" + ex));
+              throw ex;
+          }
       }
     }
 
