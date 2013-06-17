@@ -589,12 +589,17 @@ Ext.define('AM.controller.Directory', {
 
   onShowDataGridd: function(dataview, record, item, index, e, eOpts) {
     var me = this;
+    if(record.data.type == 'GraphNode')
+    me.application.fireEvent('opengraphmap', me);    
+    //me.onShowGrap(item, e, eOpts);
+    else
     me.onShowDataGrid(item, e, eOpts);
   },
 
   init: function(application) {
     scopForExport = null;
     appForExport = null;
+
 
     this.control({
       "gridpanel": {
@@ -638,6 +643,17 @@ Ext.define('AM.controller.Directory', {
         click: this.onAppDataRefreshClick
       }
     });
+  },
+
+  onShowGrap: function(items, e, eOpts) {
+    alert('onShowGrap...');
+    var me = this;
+    var tree = this.getDirTree();
+    var node = tree.getSelectedNode();
+    content = me.getMainContent();
+    contextName = node.parentNode.parentNode.parentNode.data.property.Name;
+    endpointName = node.parentNode.parentNode.data.property.Name;
+    var graph = node.data.text;
   }
 
 });

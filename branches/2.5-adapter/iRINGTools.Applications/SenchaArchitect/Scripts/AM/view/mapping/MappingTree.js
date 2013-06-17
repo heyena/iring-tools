@@ -91,7 +91,6 @@ Ext.define('AM.view.mapping.MappingTree', {
 
   processMappingTree: function(config) {
     var storeId = Ext.data.IdGenerator.get("uuid").generate();
-
     config.store = Ext.create('AM.store.MappingStore', {
       storeId: "Mapping_" + storeId
     }); 
@@ -267,13 +266,14 @@ Ext.define('AM.view.mapping.MappingTree', {
       node.collapse();*/
       store.load({
         callback: function (records, options, success) {
-          var nodes = state.expandedNodes || [],
-            len = nodes.length;
+          /*var nodes = state.expandedNodes || [],
+          len = nodes.length;
           me.collapseAll();
           Ext.each(nodes, function (path) {
-            //me.expandPath(path, 'text');
+          me.expandPath(path, 'text');
 
-          });
+          });*/
+          //me.applyState(state);
         }
 
       });

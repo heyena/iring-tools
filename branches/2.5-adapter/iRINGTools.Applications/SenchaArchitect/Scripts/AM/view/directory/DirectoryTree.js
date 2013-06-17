@@ -122,8 +122,14 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
     var me = this;
     var node = me.getSelectedNode();
+    if (!node)
+    node = me.getRootNode(); 
+
     var nodeInternalId = node.internalId;
-    var context = node.parentNode.data.text;
+    var context;
+    if (node.parentNode) // 17th June
+    context = node.parentNode.data.text;
+
     var endpoint= node.data.record.Name;
     var baseUrl = node.data.record.BaseUrl;
     var dataRecord = node.data.record;
@@ -133,8 +139,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
     var state = me.getState();
     var dirNode;
     me.body.mask('Loading...', 'x-mask-loading');
-    if (!node)
-    node = me.getRootNode(); 
+    dbInfo = null; //17th June
     if (node) {
 
       Ext.Ajax.request({
@@ -197,6 +202,9 @@ Ext.define('AM.view.directory.DirectoryTree', {
       }, me);
       store.on('load', function (store, action) {
         //alert('afterload...');
+        if(dbInfo == null) // 17th June
+        dbInfo = dataRecord.dbInfo;
+
         dirNode = store.getNodeById(nodeInternalId);
         if(dirNode!=undefined){
           if(dirNode.data.record!=undefined){

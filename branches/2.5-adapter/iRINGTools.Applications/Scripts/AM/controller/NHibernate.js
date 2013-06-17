@@ -1498,9 +1498,11 @@ Ext.define('AM.controller.NHibernate', {
     var me = this, 
     form = me.getDataObjectForm();
     var keyDelimeter;
-    var description;
+    var description
     var dataTree = nhibernatePanel.down('nhibernatetree');
     var treeNode = dataTree.getSelectedNode();
+    description = treeNode.raw.properties.description ;
+    keyDelimeter = treeNode.raw.properties.keyDelimeter;
     //var tree = panel.down('nhibernatetree');
     //var treeNode = tree.getSelectedNode();
     var dirNode = me.getDirNode(dataTree.dirNode);
@@ -2193,18 +2195,32 @@ Ext.define('AM.controller.NHibernate', {
     var folderNodeProp = folderNode.data.property;
     var folder = {};
     var keyName = '';
+    if(dbDictNode){
+      folder.tableName = dbDictNode.tableName;//folderNode.data.text;//folderNodeProp.tableName;
+      folder.objectNamespace = dbDictNode.objectNamespace;//folderNode.raw.properties.objectNamespace;//folderNodeProp.objectNamespace;
+      folder.objectName = dbDictNode.objectName;//folderNode.raw.properties.objectName;//folderNodeProp.objectName;
+      folder.description = dbDictNode.description;//folderNode.raw.properties.description;//'';//folderNodeProp.description;
+      if(dbDictNode.keyDelimeter && dbDictNode.keyDelimeter!= null)
+      folder.keyDelimeter = dbDictNode.keyDelimeter;//folderNode.raw.properties.keyDelimeter;
+      else
+      folder.keyDelimeter = '_';
+    }
+    else{
+      folder.tableName = folderNode.data.text;
+      folder.objectNamespace = folderNode.raw.properties.objectNamespace;//folderNodeProp.objectNamespace;
+      folder.objectName = folderNode.raw.properties.objectName;//folderNodeProp.objectName;
+      folder.description = folderNode.raw.properties.description;//'';//folderNodeProp.description;
 
-    folder.tableName = dbDictNode.tableName;//folderNode.data.text;//folderNodeProp.tableName;
-    folder.objectNamespace = dbDictNode.objectNamespace;//folderNode.raw.properties.objectNamespace;//folderNodeProp.objectNamespace;
-    folder.objectName = dbDictNode.objectName;//folderNode.raw.properties.objectName;//folderNodeProp.objectName;
-    folder.description = dbDictNode.description;//folderNode.raw.properties.description;//'';//folderNodeProp.description;
+      if (folderNode.raw.properties.keyDelimeter && folderNode.raw.properties.keyDelimeter != 'null')
+      folder.keyDelimeter = folderNode.raw.properties.keyDelimeter;
+      //folderNode.raw.properties.keyDelimeter = folderNode.raw.properties.keyDelimeter;  
+      else
+      folder.keyDelimeter = '_';
+    }
 
-    //if (folderNode.raw.properties.keyDelimeter && folderNode.raw.properties.keyDelimeter != 'null')
-    //folderNode.raw.properties.keyDelimeter = folderNode.raw.properties.keyDelimeter;    
-    if(dbDictNode.keyDelimeter && dbDictNode.keyDelimeter!= null)
-    folder.keyDelimeter = dbDictNode.keyDelimeter;//folderNode.raw.properties.keyDelimeter;
-    else
-    folder.keyDelimeter = '_';
+
+
+
 
     folder.keyProperties = [];
     folder.dataProperties = [];

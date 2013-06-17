@@ -837,7 +837,11 @@
                 "fn": "onShowDataGridd",
                 "implHandler": [
                     "var me = this;\r",
-                    "me.onShowDataGrid(item, e, eOpts);"
+                    "if(record.data.type == 'GraphNode')\r",
+                    "   me.application.fireEvent('opengraphmap', me);    \r",
+                    "  //me.onShowGrap(item, e, eOpts);\r",
+                    "  else\r",
+                    "\t\t\tme.onShowDataGrid(item, e, eOpts);"
                 ],
                 "name": "itemdblclick",
                 "scope": "me",
@@ -860,10 +864,38 @@
                 ],
                 "implHandler": [
                     "scopForExport = null;\r",
-                    "appForExport = null;"
+                    "appForExport = null;\r",
+                    ""
                 ]
             },
             "designerId": "03aa7a1f-045e-41ad-aedd-ff6383bd81dc"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onShowGrap",
+                "designer|params": [
+                    "items",
+                    "e",
+                    "eOpts"
+                ],
+                "implHandler": [
+                    "alert('onShowGrap...');\r",
+                    "var me = this;\r",
+                    "var tree = this.getDirTree();\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "content = me.getMainContent();\r",
+                    "contextName = node.parentNode.parentNode.parentNode.data.property.Name;\r",
+                    "endpointName = node.parentNode.parentNode.data.property.Name;\r",
+                    "var graph = node.data.text;"
+                ]
+            },
+            "designerId": "5080a228-4978-4d56-8ac2-a4523c085a00"
         }
     ]
 }

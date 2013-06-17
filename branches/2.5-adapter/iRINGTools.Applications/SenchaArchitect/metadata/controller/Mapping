@@ -306,6 +306,7 @@
             "userConfig": {
                 "fn": "openGraphMap",
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "var tree = me.getDirTree();\r",
                     "var node = tree.getSelectedNode();\r",
@@ -772,7 +773,7 @@
                     "  'mappingNode': mappingNode,//node,\r",
                     "  'index': node.parentNode.parentNode.indexOf(node.parentNode),\r",
                     "  'classId': me.parentClass,\r",
-                    "  \r",
+                    "\r",
                     "  //'graphName': mapPanel.graphName,\r",
                     "  //'roleName': node.data.record.name,\r",
                     "  //'contextName': mapPanel.contextName,\r",
@@ -917,9 +918,9 @@
                     "var me = this;\r",
                     "var content = me.getMainContent();\r",
                     "var mapPanel = content.down('mappingpanel');\r",
-                    "var tree = mapPanel.down('mappingtree'),\r",
-                    "node = tree.getSelectedNode(), \r",
-                    "parentNode = node.parentNode;\r",
+                    "var tree = mapPanel.down('mappingtree');\r",
+                    "  node = tree.getSelectedNode();\r",
+                    "  parentNode = node.parentNode;\r",
                     "var tempId = node.parentNode.data.parentId;\r",
                     "var nodeId = node.data.id.split('/');\r",
                     "var text = nodeId[nodeId.length-1];\r",
@@ -932,7 +933,7 @@
                     "    //endpoint: mapPanel.endpoint,\r",
                     "    //baseUrl: mapPanel.baseUrl,\r",
                     "    //graphName: mapPanel.graphName,\r",
-                    "   // roleName: getLastXString(node.data.id, 1),\r",
+                    "    // roleName: getLastXString(node.data.id, 1),\r",
                     "    mappingNode : mapingNode,\r",
                     "    node: node,\r",
                     "    classId: parentNode.parentNode.data.identifier,\r",
@@ -1043,7 +1044,8 @@
                     "application"
                 ],
                 "implHandler": [
-                    ""
+                    "var me = this;\r",
+                    "me.application.addEvents('opengraphmap');"
                 ]
             },
             "designerId": "e95395ff-66ac-4951-8c8f-c9dc64371802"
@@ -1083,8 +1085,8 @@
                     "  success: function (result, request) {\r",
                     "    tree.onReload();\r",
                     "    //Ext.Msg.show({ title: 'Success', msg: 'Deleted Class Map from Mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });\r",
-                    "  \r",
-                    "    },\r",
+                    "\r",
+                    "  },\r",
                     "  failure: function (result, request) { }\r",
                     "})"
                 ],
@@ -1094,6 +1096,24 @@
                 "designer|controlQuery": " menuitem[action=deleteclassmap]"
             },
             "designerId": "59983854-6b14-49e9-989d-57421161f6f0"
+        },
+        {
+            "type": "applicationaction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onOpenGraphMap",
+                "implHandler": [
+                    "var me = this;\r",
+                    "me.openGraphMap();"
+                ],
+                "name": "opengraphmap",
+                "scope": "this"
+            },
+            "designerId": "58d630cb-f970-4e32-85b6-a87c984a7a7b"
         }
     ]
 }

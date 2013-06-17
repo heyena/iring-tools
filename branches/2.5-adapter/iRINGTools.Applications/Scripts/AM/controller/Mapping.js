@@ -188,6 +188,7 @@ Ext.define('AM.controller.Mapping', {
   },
 
   openGraphMap: function(item, e, eOpts) {
+
     var me = this;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
@@ -664,9 +665,9 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree'),
-      node = tree.getSelectedNode(), 
-      parentNode = node.parentNode;
+    var tree = mapPanel.down('mappingtree');
+    node = tree.getSelectedNode();
+    parentNode = node.parentNode;
     var tempId = node.parentNode.data.parentId;
     var nodeId = node.data.id.split('/');
     var text = nodeId[nodeId.length-1];
@@ -810,6 +811,9 @@ Ext.define('AM.controller.Mapping', {
   },
 
   init: function(application) {
+    var me = this;
+    me.application.addEvents('opengraphmap');
+
     this.control({
       "menuitem[action=templatemapdelete]": {
         click: this.onDeleteTemplateMap
@@ -857,6 +861,18 @@ Ext.define('AM.controller.Mapping', {
         click: this.onDeleteClassMap
       }
     });
+
+    application.on({
+      opengraphmap: {
+        fn: this.onOpenGraphMap,
+        scope: this
+      }
+    });
+  },
+
+  onOpenGraphMap: function() {
+    var me = this;
+    me.openGraphMap();
   }
 
 });
