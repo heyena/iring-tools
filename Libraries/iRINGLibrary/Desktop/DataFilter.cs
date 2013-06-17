@@ -76,10 +76,19 @@ namespace org.iringtools.library
 
     public string ToSqlWhereClause(DatabaseDictionary dbDictionary, string tableName, string objectAlias)
     {
-      _provider = dbDictionary.Provider;
-      DataObject dataObject = null;
+      DataObject dataObject = dbDictionary.dataObjects.Find(x => x.tableName.ToUpper() == tableName.ToUpper());
 
-      dataObject = dbDictionary.dataObjects.Find(x => x.tableName.ToUpper() == tableName.ToUpper());
+      return ToSqlWhereClause(dbDictionary.Provider, dataObject, objectAlias);
+    }
+
+    public string ToSqlWhereClause(string provider, DataObject dataObject)
+    {
+      return ToSqlWhereClause(provider, dataObject, string.Empty);
+    }
+
+    public string ToSqlWhereClause(string provider, DataObject dataObject, string objectAlias)
+    {
+      _provider = provider;
 
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;
