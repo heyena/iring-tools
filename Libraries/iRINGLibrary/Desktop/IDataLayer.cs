@@ -111,6 +111,7 @@ namespace org.iringtools.library
     Response PostRelatedObjects(string parentObjectType, string parentObjectId,string relatedObjectType, IList<IDataObject> childdataObjects);
   }
 
+  [Serializable]
   [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
   public class AuthorizedUsers : List<string> { }
 }
