@@ -24,7 +24,8 @@ namespace org.iringtools.adapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataLayerGateway));
 
-    private const string SEPARATOR = ", ";
+    private const string NO_CACHE_ERROR = "Lightweight data layer requires cache to be built prior to this operation.";
+    private const string PROP_SEPARATOR = ", ";
     private const string CACHE_ID_PREFIX = "c";
 
     private AdapterSettings _settings;
@@ -339,7 +340,7 @@ namespace org.iringtools.adapter
           if (filter == null) filter = new DataFilter();
           string whereClause = filter.ToSqlWhereClause("SQLServer", cacheObjectType);
 
-          string query = string.Format("SELECT * FROM {0} {1}", cacheObjectType.tableName, whereClause);
+          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cacheObjectType.tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
           count = dt.Rows.Count;
@@ -347,6 +348,10 @@ namespace org.iringtools.adapter
         else if (_dataLayer != null)
         {
           return _dataLayer.GetCount(objectType.objectName, filter);
+        }
+        else
+        {
+          throw new Exception(NO_CACHE_ERROR);
         }
       }
       catch (Exception e)
@@ -360,7 +365,7 @@ namespace org.iringtools.adapter
 
     public List<IDataObject> Get(DataObject objectType, DataFilter filter, int start, int limit)
     {
-      List<IDataObject> dataObjects = null;
+      List<IDataObject> dataObjects = new List<IDataObject>();
 
       try
       {
@@ -389,11 +394,15 @@ namespace org.iringtools.adapter
               cacheObjectType.tableName, whereClause, start + 1, start + limit, orderByClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          return BaseLightweightDataLayer.ToDataObjects(objectType, dt);
+          dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
         }
         else if (_dataLayer != null)
         {
-          return _dataLayer.Get(objectType.objectName, filter, limit, start).ToList();
+          dataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start).ToList();
+        }
+        else
+        {
+          throw new Exception(NO_CACHE_ERROR);
         }
       }
       catch (Exception e)
@@ -426,7 +435,11 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
-          return _dataLayer.Get(objectType.objectName, identifiers).ToList();
+          dataObjects = _dataLayer.Get(objectType.objectName, identifiers).ToList();
+        }
+        else
+        {
+          throw new Exception(NO_CACHE_ERROR);
         }
       }
       catch (Exception e)
@@ -440,7 +453,7 @@ namespace org.iringtools.adapter
 
     public List<string> GetIdentifiers(DataObject objectType, DataFilter filter)
     {
-      List<string> identifiers = null;
+      List<string> identifiers = new List<string>();
 
       try
       {
@@ -454,14 +467,18 @@ namespace org.iringtools.adapter
           if (filter == null) filter = new DataFilter();
           string whereClause = filter.ToSqlWhereClause("SQLServer", cacheObjectType);
 
-          string query = string.Format("SELECT * FROM {0} {1}", cacheObjectType.tableName, whereClause);
+          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cacheObjectType.tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
           identifiers = BaseLightweightDataLayer.FormIdentifiers(cacheObjectType, dt);
         }
         else if (_dataLayer != null)
         {
-          return _dataLayer.GetIdentifiers(objectType.objectName, filter).ToList();
+          identifiers = _dataLayer.GetIdentifiers(objectType.objectName, filter).ToList();
+        }
+        else
+        {
+          throw new Exception(NO_CACHE_ERROR);
         }
       }
       catch (Exception e)
@@ -492,6 +509,10 @@ namespace org.iringtools.adapter
           cacheObjectType = Utility.CloneDataContractObject<DataObject>(objectType);
           cacheObjectType.tableName = cacheId + "_" + cacheObjectType.objectName;
           hasCache = true;
+        }
+        else if (_lwDataLayer != null)
+        {
+          throw new Exception(NO_CACHE_ERROR);
         }
 
         //
@@ -715,10 +736,10 @@ namespace org.iringtools.adapter
         string dataType = ToSQLType(prop.dataType);
         string nullable = prop.isNullable ? "NULL" : "NOT NULL";
 
-        tableBuilder.AppendFormat("{0} {1} {2}{3}", columnName, dataType, nullable, SEPARATOR);
+        tableBuilder.AppendFormat("{0} {1} {2}{3}", columnName, dataType, nullable, PROP_SEPARATOR);
       }
 
-      tableBuilder.Remove(tableBuilder.Length - SEPARATOR.Length, SEPARATOR.Length);
+      tableBuilder.Remove(tableBuilder.Length - PROP_SEPARATOR.Length, PROP_SEPARATOR.Length);
       tableBuilder.Append(")");
 
       try

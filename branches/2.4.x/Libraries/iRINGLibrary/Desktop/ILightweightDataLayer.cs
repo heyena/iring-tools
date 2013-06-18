@@ -83,6 +83,7 @@ namespace org.iringtools.library
   public abstract class BaseLightweightDataLayer : ILightweightDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseLightweightDataLayer));
+    public const string SELECT_SQL_TPL = "SELECT * FROM {0} {1}";
     public const string INSERT_SQL_TPL = "INSERT INTO {0} ({1}) VALUES ({2})";
     public const string UPDATE_SQL_TPL = "UPDATE {0} SET {1} {2}";
     public const string DELETE_SQL_TPL = "DELETE FROM {0} {1}";
