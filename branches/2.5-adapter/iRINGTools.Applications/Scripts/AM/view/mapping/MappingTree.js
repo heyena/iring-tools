@@ -17,6 +17,10 @@ Ext.define('AM.view.mapping.MappingTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.mappingtree',
 
+  requires: [
+    'AM.view.override.mapping.MappingTree'
+  ],
+
   stateful: true,
   border: true,
   store: 'MappingStore',
@@ -90,11 +94,13 @@ Ext.define('AM.view.mapping.MappingTree', {
   },
 
   processMappingTree: function(config) {
-    var storeId = Ext.data.IdGenerator.get("uuid").generate();
-    config.store = Ext.create('AM.store.MappingStore', {
-      storeId: "Mapping_" + storeId
-    }); 
-    return config;
+    //var storeId = Ext.data.IdGenerator.get("uuid").generate();
+    //config.store = Ext.create('AM.store.MappingStore', {
+    //storeId: "Mapping_" + storeId
+    //}); 
+    //return config;
+
+
   },
 
   onBeforeNodeDrop: function(node, data, overModel, dropPosition, dropHandler, eOpts) {
@@ -248,22 +254,45 @@ Ext.define('AM.view.mapping.MappingTree', {
     var graphFullName = me.up('mappingpanel').graph;//me.up('mappingpanel').graphName;
     var graphNameArr = graphFullName.split('/');
     var graphName = graphNameArr[graphNameArr.length-1];
-    var path, graphNode;
+    var path, graphNode, context, endpoint, id;
     var node = me.getSelectedNode();
-    if (!node)
-    node = me.getRootNode(); 
+    if (!node){
+      node = me.getRootNode(); 
+      //context = node.firstChild.data.id.split('/')[0];
+      //endpoint = node.firstChild.data.id.split('/')[1];
+      //id = node.firstChild.data.id;
+    }else{
+
+      //context = node.data.id.split('/')[0];
+      //endpoint = node.data.id.split('/')[1];
+      //id = node.data.id;
+    }
+
+
     var store = me.store;
-    var root = me.getRootNode();
+    var params = store.getProxy().extraParams;
+    /*var root = me.getRootNode();
     root.eachChild(function(child) {
-      if(child.data.text == graphName)
-      graphNode = child;
-    });
+    if(child.data.text == graphName)
+    graphNode = child;
+    });*/
     var state = me.getState();
     if (node) {
       /*path = node.getPath('text');
       store.load(node);
       if(node.isExpanded())
-      node.collapse();*/
+      node.collapse();
+      */
+      store.on('beforeload', function (store, operation, eopts) {
+
+        //params.contextName = context;
+        //params.endpoint = endpoint;
+        //params.id = id;
+        //params.tempNode = id;
+        params.graph = graphName;
+      }, me);
+
+
       store.load({
         callback: function (records, options, success) {
           /*var nodes = state.expandedNodes || [],

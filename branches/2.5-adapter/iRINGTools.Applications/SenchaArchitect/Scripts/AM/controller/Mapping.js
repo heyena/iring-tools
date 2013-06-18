@@ -59,8 +59,9 @@ Ext.define('AM.controller.Mapping', {
     var content = me.getMainContent();
     var dirTree = me.getDirTree();
     var panel = content.down('mappingpanel');
-    var tree = content.down('mappingtree'),
-      node = tree.getSelectedNode();
+    //var tree = content.down('mappingtree'),
+    var tree = content.getActiveTab().items.items[0];
+    node = tree.getSelectedNode();
     var nodeId = node.data.id.split('/');
     var text = nodeId[nodeId.length-1];
     var mapingNode = node.data.parentId+'/'+text;
@@ -212,16 +213,17 @@ Ext.define('AM.controller.Mapping', {
       var mapProp = mapPanel.down('propertypanel');
 
       var mapTree = mapPanel.down('mappingtree');
+      //mapTree.id = 'mappingtree-'+node.data.text;
       var treeStore = mapTree.getStore();
       var params = treeStore.getProxy().extraParams;
 
       treeStore.on('beforeload', function (store, operation, eopts) {
-        params.contextName = context;
-        params.endpoint = endpoint;
+        //params.contextName = context;
+        // params.endpoint = endpoint;
         //params.baseUrl = baseUrl;
         params.id = node.parentNode.parentNode.internalId;
         params.tempNode = node.parentNode.parentNode.internalId;
-        params.graph = graphName;
+        params.graph = node.internalId;//graphName;
       }, me);
 
       mapTree.on('beforeitemexpand', function () {
@@ -284,7 +286,8 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree');
+    //var tree = mapPanel.down('mappingtree');
+    var tree = content.getActiveTab().items.items[0];
     var graph  = mapPanel.graph.split('/');
     graph = graph[graph.length-1];
     node = tree.getSelectedNode();
@@ -336,7 +339,8 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree');
+    //var tree = mapPanel.down('mappingtree');
+    var tree = content.getActiveTab().items.items[0];
     node = tree.getSelectedNode();
     var mappingNode  = node.parentNode.data.parentId+'/'+node.data.record.name;
 
@@ -348,10 +352,10 @@ Ext.define('AM.controller.Mapping', {
     var index = node.parentNode.parentNode.indexOf(node.parentNode);
 
     var formRecord = {
-      'contextName': mapPanel.contextName,
-      'endpoint': mapPanel.endpoint,
-      'baseUrl': mapPanel.baseUrl,
-      'graphName': mapPanel.graph,
+      'contextName': content.getActiveTab().graph.split('/')[0],//mapPanel.contextName,
+      'endpoint': content.getActiveTab().graph.split('/')[1],//mapPanel.endpoint,
+      //'baseUrl': mapPanel.baseUrl,
+      'graphName': content.getActiveTab().graph,//mapPanel.graph,
       'index': index,
       'roleName': roleName,
       'mappingNode':mappingNode,
@@ -376,7 +380,8 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree');
+    //var tree = mapPanel.down('mappingtree');
+    var tree = content.getActiveTab().items.items[0];
     node = tree.getSelectedNode();
     parentNode = node.parentNode;
     var tempId = node.parentNode.data.parentId;
@@ -503,8 +508,9 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree'),
-      node = tree.getSelectedNode();
+    //var tree = mapPanel.down('mappingtree'),
+    var tree = content.getActiveTab().items.items[0];
+    node = tree.getSelectedNode();
     var parentId = node.parentNode.parentNode.data.id;
     var idArr = node.data.id.split('/');
     var mappingNode = parentId+'/'+idArr[idArr.length-2]+'/'+idArr[idArr.length-1];
@@ -537,9 +543,9 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree'),
-      node = tree.getSelectedNode();
-
+    //var tree = mapPanel.down('mappingtree'),
+    var tree = content.getActiveTab().items.items[0];
+    node = tree.getSelectedNode();
     me.getParentClass(node);
     var parentId = node.parentNode.parentNode.data.id;
     var idArr = node.data.id.split('/');
@@ -665,7 +671,8 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree');
+    //var tree = mapPanel.down('mappingtree');
+    var tree = content.getActiveTab().items.items[0];
     node = tree.getSelectedNode();
     parentNode = node.parentNode;
     var tempId = node.parentNode.data.parentId;
@@ -746,7 +753,8 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var content = me.getMainContent();
     var mapPanel = content.down('mappingpanel');
-    var tree = mapPanel.down('mappingtree');
+    //var tree = mapPanel.down('mappingtree');
+    var tree = content.getActiveTab().items.items[0];
     node = tree.getSelectedNode();
     var mappingNode = node.parentNode.parentNode.parentNode.data.id;
     var tempId = node.data.id.split('/');
