@@ -15,10 +15,13 @@ import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.TransferType;
+import org.iringtools.dxfr.dto.ClassObject;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjectList;
 import org.iringtools.dxfr.dto.DataTransferObjects;
+import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.Manifest;
+import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.library.RequestStatus;
 import org.iringtools.library.State;
@@ -158,7 +161,29 @@ public class DtoTask implements Runnable
 
     if (sourceDtoTask != null)
     {
-      sourceDtos = sourceDtoTask.getDataTransferObjects();
+    	sourceDtos = sourceDtoTask.getDataTransferObjects();
+    	
+     //Change index of classes in dto accordingly graph
+    	Graph graph = sourceManifest.getGraphs().getItems().get(0);
+    	
+    	 for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
+    	 {
+    		   String path = classTemplates.getClazz().getPath();
+    		   String id = classTemplates.getClazz().getId();
+    		   int index = classTemplates.getClazz().getIndex();
+    		 for (DataTransferObject dataTransferObject : sourceDtos.getDataTransferObjectList().getItems())
+    		 {
+    			 for(ClassObject classObject : dataTransferObject.getClassObjects().getItems())
+    			 	if( classObject.getClassId().equals(id) && (classObject.getPath()==null? path==null:classObject.getPath().equals(path)))
+    			 	{
+    			 		classObject.setIndex(index);
+    			 	}
+    		 }
+    	      
+    	 }
+    //End	
+    	
+      
 
       if (sourceDtos != null)
       {

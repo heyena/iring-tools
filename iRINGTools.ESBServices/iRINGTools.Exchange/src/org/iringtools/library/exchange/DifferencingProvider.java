@@ -334,10 +334,13 @@ public class DifferencingProvider
         {
         	ClassTemplates classTemplates = classTemplatesList.get(j);
         	String classId = classTemplates.getClazz().getId();
-          ClassObject targetClassObject = getClassObject(targetClassObjectList, classId);
-          ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId);
-          ClassTemplates manifestClassObject = getClassTemplates(manifest, classId);          
+        	//int classIndex = classTemplates.getClazz().getIndex();
+        	String classPath = classTemplates.getClazz().getPath();
+          ClassObject targetClassObject = getClassObject(targetClassObjectList, classId,classPath);
+          ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId,classPath);
+          ClassTemplates manifestClassObject = getClassTemplates(manifest, classId,classPath); 
           
+                 
           if (sourceClassObject != null && targetClassObject != null)
           {
             // assure target and source identifier are still the same
@@ -524,24 +527,29 @@ public class DifferencingProvider
     return sourceDtos;
   }
 
-  private ClassObject getClassObject(List<ClassObject> classObjects, String classId)
+  private ClassObject getClassObject(List<ClassObject> classObjects, String classId, String classPath)
   {
+	boolean flag = false;
+	  
     for (ClassObject classObject : classObjects)
     {
-      if (classObject.getClassId().equals(classId))
+      flag = (classObject.getPath() == null || classObject.getPath().length()==0)  ? (classPath == null || classPath.length()==0) : classObject.getPath().equals(classPath);
+      if (classObject.getClassId().equals(classId) &&  flag )
         return classObject;
     }
-
     return null;
   }
   
-  private ClassTemplates getClassTemplates(Manifest manifest, String classId)
+  private ClassTemplates getClassTemplates(Manifest manifest, String classId, String classPath)
   {
+	boolean flag = false;
+	
   	for (Graph graph : manifest.getGraphs().getItems())
   	{
 	    for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
 	    {
-	      if (classTemplates.getClazz().getId().equals(classId))
+	      flag = (classTemplates.getClazz().getPath() == null ||classTemplates.getClazz().getPath().length()==0 ) ? (classPath == null || classPath.length()==0) : classTemplates.getClazz().getPath().equals(classPath);
+	      if (classTemplates.getClazz().getId().equals(classId) && flag)
 	        return classTemplates;
 	    }
   	}

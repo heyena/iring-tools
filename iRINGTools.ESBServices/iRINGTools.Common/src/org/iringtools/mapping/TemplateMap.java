@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element ref="{http://www.iringtools.org/mapping}roleMaps"/>
+ *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +36,8 @@ import javax.xml.bind.annotation.XmlType;
     "type",
     "id",
     "name",
-    "roleMaps"
+    "roleMaps",
+    "index"
 })
 @XmlRootElement(name = "templateMap")
 public class TemplateMap {
@@ -48,6 +50,7 @@ public class TemplateMap {
     protected String name;
     @XmlElement(required = true)
     protected RoleMaps roleMaps;
+    protected int index;
 
     /**
      * Gets the value of the type property.
@@ -143,6 +146,22 @@ public class TemplateMap {
      */
     public void setRoleMaps(RoleMaps value) {
         this.roleMaps = value;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * Sets the value of the index property.
+     * 
+     */
+    public void setIndex(int value) {
+        this.index = value;
     }
 
 }

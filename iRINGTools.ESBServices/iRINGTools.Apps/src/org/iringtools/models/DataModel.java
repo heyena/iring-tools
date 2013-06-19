@@ -427,6 +427,7 @@ public class DataModel
       throws DataModelException
   {
     String className = IOUtils.toCamelCase(classObject.getName());
+    String classPath = classObject.getPath();
 
     for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
     {
@@ -478,8 +479,13 @@ public class DataModel
           // any gap
           // (because class/template do not exist, e.g. due to null
           // class identifier)
-          String dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
-
+          
+          String dataIndex; 
+          if(classPath != null && classPath.trim().length() != 0)
+        	  dataIndex = className+ '$'+classPath + '.' + templateObject.getName() + '.' + roleObject.getName();
+          else
+        	  dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
+        	  
           if (rowData.size() == fields.size())
           {
             for (int i = 0; i < fields.size(); i++)
@@ -759,7 +765,7 @@ public class DataModel
       if (startClassId == null || startClassId.length() == 0)
       {
         ClassTemplates classTemplates = classTemplatesItems.get(0);
-        createFields(fields, graph, classTemplates);
+        createFields(fields, graph, classTemplates,null,0);
       }
       else
       {
@@ -767,7 +773,7 @@ public class DataModel
         {
           if (classTempates.getClazz().getId().equalsIgnoreCase(startClassId))
           {
-            createFields(fields, graph, classTempates);
+            createFields(fields, graph, classTempates,classTempates.getClazz().getPath(),classTempates.getClazz().getIndex());
             break;
           }
         }
@@ -777,7 +783,7 @@ public class DataModel
     return fields;
   }
 
-  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates)
+  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates, String classPath,int classIndex)
   {
     if (classTemplates != null && classTemplates.getTemplates() != null)
     {
@@ -799,11 +805,25 @@ public class DataModel
               || (cardinality != null && cardinality == Cardinality.SELF))
           {
             String dataType = role.getDataType();
-            String fieldName = className + '.' + template.getName() + "." + role.getName();
-            Field field = new Field();
 
-            field.setName(fieldName);
-            field.setDataIndex(fieldName);
+            Field field = new Field();
+            
+            String fieldName;
+            String fieldDataIndex;
+
+            if(classIndex != 0 )
+            	fieldName = className + '-'+ classIndex+ "." + template.getName() + "." + role.getName();
+            else
+            	fieldName = className + '.' + template.getName() + "." + role.getName();
+            
+            if(classPath != null && classPath.trim().length()!=0)
+            	fieldDataIndex = className + '$'+ classPath+ "." + template.getName() + "." + role.getName();
+            else
+            	fieldDataIndex = className + '.' + template.getName() + "." + role.getName();
+            
+            field.setName(fieldName); 
+            field.setDataIndex(fieldDataIndex);
+           
             field.setWidth(MIN_FIELD_WIDTH);
 
             // adjust field width
@@ -838,8 +858,11 @@ public class DataModel
           else if (role.getClazz() != null && (cardinality == null || cardinality == Cardinality.ONE_TO_ONE))
           {
             String classId = role.getClazz().getId();
-            ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId);
-            createFields(fields, graph, relatedClassTemplates);
+            String clsPath = role.getClazz().getPath();
+            int clsIndex = role.getClazz().getIndex();
+            
+            ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId,clsPath);
+            createFields(fields, graph, relatedClassTemplates,clsPath,clsIndex);
           }
         }
       }
@@ -857,11 +880,15 @@ public class DataModel
     return false;
   }
   
-  private ClassTemplates getClassTemplates(Graph graph, String classId)
+  private ClassTemplates getClassTemplates(Graph graph, String classId,String classPath)
   {
+	 boolean flag = false;
+	  
     for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
     {
-      if (classTemplates.getClazz().getId().equals(classId))
+      flag = (classTemplates.getClazz().getPath() == null ? classPath == null : classTemplates.getClazz().getPath().equals(classPath));
+      
+      if (classTemplates.getClazz().getId().equals(classId) && flag)
         return classTemplates;
     }
 

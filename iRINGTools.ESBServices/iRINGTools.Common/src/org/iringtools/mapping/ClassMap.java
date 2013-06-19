@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="identifierDelimiter" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element ref="{http://www.iringtools.org/mapping}identifiers"/>
  *         &lt;element name="identifierValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="index" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="path" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,7 +39,9 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "identifierDelimiter",
     "identifiers",
-    "identifierValue"
+    "identifierValue",
+    "index",
+    "path"
 })
 @XmlRootElement(name = "classMap")
 public class ClassMap {
@@ -52,6 +56,9 @@ public class ClassMap {
     protected Identifiers identifiers;
     @XmlElement(required = true)
     protected String identifierValue;
+    protected int index;
+    @XmlElement(required = true)
+    protected String path;
 
     /**
      * Gets the value of the id property.
@@ -171,6 +178,46 @@ public class ClassMap {
      */
     public void setIdentifierValue(String value) {
         this.identifierValue = value;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * Sets the value of the index property.
+     * 
+     */
+    public void setIndex(int value) {
+        this.index = value;
+    }
+
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPath(String value) {
+        this.path = value;
     }
 
 }
