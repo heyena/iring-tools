@@ -207,7 +207,7 @@ namespace org.iringtools.adapter
           arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
         }
         
-        if (_settings["LdapConfiguration"].ToLower() == "true")
+        if (_settings["LdapConfiguration"] != null &&_settings["LdapConfiguration"].ToLower() == "true")
         {
             utility.Utility.isLdapConfigured = true;  
             utility.Utility.InitializeConfigurationRepository(new Type[] { typeof(DataDictionary), typeof(DatabaseDictionary)
