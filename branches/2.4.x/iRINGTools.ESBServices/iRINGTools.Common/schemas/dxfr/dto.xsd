@@ -81,6 +81,8 @@
     <xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1" />
     <xs:element ref="templateObjects" minOccurs="0" maxOccurs="1" />
     <xs:element name="transferType" type="TransferType" minOccurs="0" maxOccurs="1" />
+    <xs:element name="index" type="xs:int" minOccurs="0" maxOccurs="1" />
+    <xs:element name="path" type="xs:string" minOccurs="1" maxOccurs="1" />
    </xs:sequence>
   </xs:complexType>
  </xs:element>
@@ -106,6 +108,7 @@
     <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
     <xs:element ref="roleObjects" minOccurs="0" maxOccurs="1" />
     <xs:element name="transferType" type="TransferType" minOccurs="0" maxOccurs="1" />
+    <xs:element name="index" type="xs:int" minOccurs="0" maxOccurs="1" />
    </xs:sequence>
   </xs:complexType>
  </xs:element>

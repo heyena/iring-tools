@@ -860,9 +860,19 @@ namespace org.iringtools.adapter.projection
       string className = propertyNameParts[0];
       string templateName = propertyNameParts[1];
       string roleName = propertyNameParts[2];
+      string classPath = String.Empty;
+
+      if (className.Contains("$"))
+      {
+          string[] temp = className.Split('$');
+          className = temp[0];
+          classPath = temp[1];
+      }
+      
+        
 
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
-        cm => cm.classMap.name.Replace(" ", "").ToLower() == className.Replace(" ", "").ToLower());
+        cm => cm.classMap.name.Replace(" ", "").ToLower() == className.Replace(" ", "").ToLower() && (String.IsNullOrWhiteSpace(cm.classMap.path) ? String.IsNullOrWhiteSpace(classPath) : cm.classMap.path == classPath));
 
       if (classTemplateMap == null)
         throw new Exception("Classmap [" + className + "] not found.");

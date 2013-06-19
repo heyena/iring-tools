@@ -59,6 +59,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         type: null,
         id: null,
         range: null,
+                index: null,
         graph: this.directoryPanel.getSelectedNode().attributes.id
       },
       url: this.navigationUrl
@@ -66,6 +67,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     this.treeLoader.on("beforeload", function (treeLoader, node) {
       treeLoader.baseParams.type = node.attributes.type;
+            treeLoader.baseParams.index = node.attributes.index;
       if (node.attributes.record != undefined) {
         treeLoader.baseParams.id = node.attributes.record.id;
       }
@@ -236,6 +238,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             scope: this
           },
           {
+               text: 'Map Literal',
+               handler: this.onMapConstant,
+               //icon: '',
+               scope: this
+           },
+          {
             text: 'Reset Mapping',
             handler: this.onResetMapping,
             //icon: '',
@@ -318,6 +326,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
          || n.parentNode.attributes.type == 'GraphMapNode')
          && n.parentNode.attributes.identifier != undefined) {
         this.parentClass = n.parentNode.attributes.identifier;
+                this.parentClassIndex = n.parentNode.attributes.index;
         return this.parentClass;
       }
       else {
@@ -330,13 +339,14 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     e.target.expand();
 
     this.getParentClass(e.target);
-    var nodetype, thistype, icn, txt, templateId, rec, parentId, context;
+        var nodetype, thistype, icn, txt, templateId, rec, parentId, context, classMapIndex;
 
     if (e.target.attributes.type == 'RoleMapNode') {
       var that = this;
       var targetNode = e.target.attributes;
       var contextParts = targetNode.id.split('/');
       var classId = e.target.parentNode.parentNode.attributes.identifier;
+            var classIndex = e.target.parentNode.parentNode.attributes.index;
       var templateIndex = e.target.parentNode.parentNode.indexOf(e.target.parentNode);
 
       if (targetNode.record.dataType.indexOf('xsd') != 0) {
@@ -354,7 +364,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             roleId: e.target.attributes.record.id,
             roleName: e.target.attributes.record.name,
             refClassId: e.dropNode.attributes.record.Uri,
-            refClassLabel: e.dropNode.attributes.record.Label
+                        refClassLabel: e.dropNode.attributes.record.Label,
+                        classIndex: classIndex
           },
           success: function (result, request) {
             e.tree.getEl().unmask();
@@ -374,6 +385,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     else if (e.data.node.attributes.type == 'TemplateNode') {
       ntype = e.target.attributes.type;
       parentid = e.target.attributes.identifier;
+            classMapIndex = e.target.attributes.index;
       thistype = e.data.node.attributes.type;
       icn = 'Content/img/template-map.png';
       txt = e.data.node.attributes.record.Label;
@@ -390,6 +402,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           nodetype: thistype,
           parentType: ntype,
           parentId: parentid,
+                    classMapIndex: classMapIndex,
           id: templateId,
           ctx: context
         },
@@ -443,7 +456,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         mappingNode: node.id,
         parentIdentifier: that.parentClass,
         identifier: node.attributes.identifier,
-        index: index
+                index: index,
+                parentClassIndex: that.parentClassIndex
       },
       success: function (result, request) {
         that.onReload();
@@ -467,7 +481,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         roleId: node.attributes.record.id,
         templateId: node.parentNode.attributes.record.id,
         parentClassId: node.parentNode.parentNode.attributes.identifier,
-        index: index
+                index: index,
+                parentClassIndex: node.parentNode.parentNode.attributes.index
       },
       success: function (result, request) {
         that.onReload();
@@ -475,6 +490,44 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       failure: function (result, request) { }
     })
+    },
+
+    onMapConstant: function (node) {
+        
+        var mapnode = this.mappingPanel.getSelectionModel().getSelectedNode();
+        var formid = 'propertytarget-' + this.scope.Name + '-' + this.application.Name;
+        var form = new Ext.form.FormPanel({
+            id: formid,
+            layout: 'form',
+            method: 'POST',
+            border: false,
+            frame: false,
+            bbar: [
+                { xtype: 'tbfill' },
+                { text: 'Ok', scope: this, handler: this.onSubmitConstantValue },
+                { text: 'Cancel', scope: this, handler: this.onClose }
+            ],
+            items: [
+                { fieldLabel: 'Constant Value', name: 'constantValue', xtype: 'textfield', width: 230, value: name, allowBlank: false }
+             ]
+
+        });
+
+
+
+        var win = new Ext.Window({
+            closable: true,
+            modal: false,
+            layout: 'form',
+            title: 'Map Constant to RoleMap',
+            items: form,
+            // height: 120,
+            width: 430,
+            plain: true,
+            scope: this
+        });
+
+        win.show();
 
   },
 
@@ -559,7 +612,48 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     win.show();
 
-  },
+    },
+
+    onSubmitConstantValue: function (btn, e) {
+        var that = this;
+        var form = btn.findParentByType('form');
+        var win = btn.findParentByType('window');
+        var constantValue = form.getForm().findField('constantValue').getValue();
+        var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+        var index = node.parentNode.parentNode.indexOf(node.parentNode);
+
+        if (form.getForm().isValid())
+            Ext.Ajax.request({
+                url: 'mapping/mapconstant',
+                method: 'POST',
+                params: {
+                    constantValue: constantValue,
+                    mappingNode: node.attributes.id,
+                    classId: node.parentNode.parentNode.attributes.identifier,
+                    index: index,
+                    classIndex: node.parentNode.parentNode.attributes.index
+                },
+                success: function (result, request) {
+                    win.close();
+
+                    var error = 'success = False';
+                    var index = result.responseText.indexOf(error);
+
+                    if (index != -1) {
+                        var msg = result.responseText.substring(index + error.length + 2);
+                        showDialog(500, 240, 'Mapping Error', msg.substring(0, msg.length - 1), Ext.Msg.OK, null);
+                    }
+                    else {
+                        that.onReload();
+                    }
+                },
+                failure: function (result, request) {
+                    //Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map Property to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+                    var message = 'Failed to Map Constant to RoleMap';
+                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                }
+            })
+    },
 
   onSubmitPropertyMap: function (btn, e) {
     var that = this;
@@ -581,7 +675,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           mappingNode: node.attributes.id,
           classId: node.parentNode.parentNode.attributes.identifier,
           relatedObject: related,
-          index: index
+                    index: index,
+                    classIndex: node.parentNode.parentNode.attributes.index
         },
         success: function (result, request) {
           win.close();
@@ -737,7 +832,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           objectNames: objectname,
           mappingNode: node.attributes.id,
           classId: node.parentNode.parentNode.attributes.identifier,
-          index: index
+                    index: index,
+                    classIndex: node.parentNode.parentNode.attributes.index
         },
         success: function (result, request) {
           var rtext = result.responseText;
@@ -775,7 +871,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         mappingNode: node.attributes.id,
         classId: node.parentNode.parentNode.attributes.identifier,
         node: node,
-        index: index
+                index: index,
+                classIndex: node.parentNode.parentNode.attributes.index
       },
       success: function (result, request) {
         that.onReload();
@@ -817,7 +914,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         parentClass: node.parentNode.parentNode.parentNode.attributes.identifier,
         parentTemplate: node.parentNode.parentNode.attributes.record.id,
         parentRole: node.parentNode.attributes.record.id,
-        index: index
+                index: index,
+                parentClassIndex: node.parentNode.parentNode.parentNode.attributes.index
       },
       success: function (result, request) {
         that.onReload();

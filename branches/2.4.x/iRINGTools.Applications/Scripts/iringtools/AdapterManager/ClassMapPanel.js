@@ -24,6 +24,7 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
     var delimiter = '';
     var className = this.classPrompt;
     var classId = '';
+        var parentClassIndex = '';
 
     this.bbar = this.buildToolbar();
 
@@ -35,6 +36,7 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
       delimiter = rootClass.identifierDelimiter;
       objectName = rootClassRecord.dataObjectName;
       parentClassId = parentClassNode.attributes.identifier;
+            parentClassIndex = parentClassNode.attributes.index;
       templateIndex = parentClassNode.indexOf(this.node.parentNode);
       roleName = this.node.attributes.record.name;
     }
@@ -82,7 +84,8 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
         { name: 'objectName', xtype: 'hidden', value: objectName },
         { name: 'parentClassId', xtype: 'hidden', value: parentClassId },
         { name: 'templateIndex', xtype: 'hidden', value: templateIndex },
-        { name: 'roleName', xtype: 'hidden', value: roleName }
+        { name: 'roleName', xtype: 'hidden', value: roleName },
+        { name: 'parentClassIndex', xtype: 'hidden', value: parentClassIndex }
       ]
     });
 
@@ -114,8 +117,7 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
         },
         notifyDrop: function (propertydd, e, data) {
           if (data.node.attributes.type == 'DataPropertyNode' ||
-              data.node.attributes.type == 'KeyDataPropertyNode')
-          {
+              data.node.attributes.type == 'KeyDataPropertyNode') {
             var currIdentifier = thisform.getForm().findField('identifier').getValue();
 
             if (currIdentifier == '' || currIdentifier == thisform.ownerCt.identifierPrompt) {

@@ -399,7 +399,7 @@ namespace org.iringtools.adapter.projection
         {
           XElement roleElement = new XElement(_appNamespace + classRole.name);
 
-          ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+          ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id, classRole.classMap.index);
           bool refClassHasRelatedProperty;
           List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
 

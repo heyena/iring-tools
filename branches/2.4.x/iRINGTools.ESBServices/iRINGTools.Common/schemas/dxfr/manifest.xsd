@@ -58,6 +58,8 @@
       <xs:element name="id" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="keys" type="Keys" /> 
+      <xs:element name="index" type="xs:int" />
+      <xs:element name="path" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   
@@ -99,6 +101,7 @@
       <xs:element name="name" type="xs:string" />
       <xs:element name="roles" type="Roles" />
       <xs:element name="transferOption" type="TransferOption" default="Desired" />
+      <xs:element name="index" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
 
