@@ -473,14 +473,15 @@ namespace org.iringtools.utility
           HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
           Stream responseStream = response.GetResponseStream();
           error = Utility.SerializeFromStream(responseStream);
+          error = error.Remove(error.IndexOf("<html>"));
         }
         else
         {
-          error = e.ToString();
+          error = e.Message;
         }
 
         string uri = _baseUri + relativeUri;
-        throw new Exception("Error with HTTP GET from URI [" + uri + "]. " + error);
+        throw new Exception("Error getting data from URL [" + uri + "]. " + error);
       }
     }
 

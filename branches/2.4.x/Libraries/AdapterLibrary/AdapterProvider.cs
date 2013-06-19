@@ -5098,6 +5098,7 @@ namespace org.iringtools.adapter
       }
     }
 
+    #region cache related methods
     public Response RefreshCache(string scope, string app, bool updateDictionary)
     {
       try
@@ -5129,6 +5130,39 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
+
+    public Response ImportCache(string scope, string app, string baseUri, bool updateDictionary)
+    {
+      try
+      {
+        Initialize(scope, app);
+        DataLayerGateway gateway = new DataLayerGateway(_kernel);
+        Response response = gateway.ImportCache(baseUri, updateDictionary);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error refreshing cache for {0}.{1}: {2}", scope, app, ex.Message);
+        throw ex;
+      }
+    }
+
+    public Response ImportCache(string scope, string app, string objectType, string url, bool updateDictionary)
+    {
+      try
+      {
+        Initialize(scope, app);
+        DataLayerGateway gateway = new DataLayerGateway(_kernel);
+        Response response = gateway.ImportCache(objectType, url, updateDictionary);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error refreshing cache for {0}.{1}: {2}", scope, app, ex.Message);
+        throw ex;
+      }
+    }
+    #endregion
 
     public Response RefreshDataObject(string projectName, string applicationName, string objectType, DataFilter dataFilter)
     {

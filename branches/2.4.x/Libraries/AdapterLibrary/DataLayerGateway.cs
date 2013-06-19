@@ -207,45 +207,13 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response ImportCache(DataDictionary dictionary, string baseUri)
+    protected Response RefreshCache(DataObject objectType)
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
 
       try
       {
-        foreach (DataObject objectType in dictionary.dataObjects)
-        {
-          Response objectTypeRefresh = ImportCache(objectType, baseUri + "/" + objectType.objectName + ".dat");
-          response.Append(objectTypeRefresh);
-        }
-      }
-      catch (Exception e)
-      {
-        _logger.Error("Error importing cache from " + baseUri + ": " + e.Message);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
-      }
-
-      return response;
-    }
-
-    public Response ImportCache(DataObject objectType, string url)
-    {
-      Response response = new Response();
-      response.Level = StatusLevel.Success;
-
-      try
-      {
-        WebHttpClient client = new WebHttpClient(url);
-        Stream stream = client.GetStream(string.Empty);
-        List<SerializableDataObject> dataObjects = BaseLightweightDataLayer.ReadDataObjects(stream);
-
-        if (dataObjects != null)
-        {
-          dataObjects = new List<SerializableDataObject>();
-        }
-
         string cacheId = CheckCache();
 
         if (!string.IsNullOrEmpty(cacheId))
@@ -258,6 +226,9 @@ namespace org.iringtools.adapter
           CreateCacheEntry();
         }
 
+        //
+        // create new cache table
+        //
         CreateCacheTable(cacheId, objectType);
 
         Status status = new Status()
@@ -276,34 +247,229 @@ namespace org.iringtools.adapter
         string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
         DataTable table = DBManager.Instance.ExecuteQuery(_connStr, tableSQL);
 
-        foreach (SerializableDataObject dataObj in dataObjects)
+        if (_lwDataLayer != null)
         {
-          DataRow newRow = table.NewRow();
+          IList<SerializableDataObject> dataObjects = _lwDataLayer.Get(objectType);
 
-          foreach (var pair in dataObj.Properties)
+          if (dataObjects != null && dataObjects.Count > 0)
           {
-            newRow[pair.Key] = pair.Value;
+            foreach (SerializableDataObject dataObj in dataObjects)
+            {
+              DataRow newRow = table.NewRow();
+
+              foreach (var pair in dataObj.Properties)
+              {
+                newRow[pair.Key] = pair.Value;
+              }
+
+              table.Rows.Add(newRow);
+            }
+
+            SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
+            bulkCopy.DestinationTableName = tableName;
+            bulkCopy.WriteToServer(table);
+            status.Messages.Add("Cache data populated successfully.");
+          }
+        }
+        else if (_dataLayer != null)
+        {
+          long objCount = _dataLayer.GetCount(objectType.objectName, null);
+          int start = 0;
+          int page = 5;
+          long limit = 0;
+
+          while (start < objCount)
+          {
+            limit = (start + page < objCount) ? page : start + page - objCount;
+            IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
+
+            if (dataObjects != null && dataObjects.Count > 0)
+            {
+              foreach (IDataObject dataObj in dataObjects)
+              {
+                DataRow newRow = table.NewRow();
+
+                foreach (DataProperty prop in objectType.dataProperties)
+                {
+                  newRow[prop.propertyName] = dataObj.GetPropertyValue(prop.propertyName);
+                }
+
+                table.Rows.Add(newRow);
+              }
+            }
+
+            start += page;
           }
 
-          table.Rows.Add(newRow);
+          SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
+          bulkCopy.DestinationTableName = tableName;
+          bulkCopy.WriteToServer(table);
+          status.Messages.Add("Cache data populated successfully.");
         }
 
-        SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
-        bulkCopy.DestinationTableName = tableName;
-        bulkCopy.WriteToServer(table);
-        status.Messages.Add("Cache data populated successfully.");
-
         SetCacheState(cacheId, CacheState.Ready);
-
-        response.Messages.Add(
-          string.Format("Cache {0}.{1}.{2} imported successfully.",
-            _scope, _app, objectType.objectName));
       }
       catch (Exception e)
       {
-        _logger.Error("Error importing cache data from URL [" + url + "]: " + e.Message);
+        _logger.Error("Error refreshing cache for object type " + objectType.objectName + ": " + e.Message);
         response.Level = StatusLevel.Error;
         response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    public Response ImportCache(string baseUri, bool updateDictionary)
+    {
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
+      try
+      {
+        DataDictionary dictionary = GetDictionary(updateDictionary);
+
+        foreach (DataObject objectType in dictionary.dataObjects)
+        {
+          string url = baseUri + "/" + objectType.objectName + ".dat";
+          Response objectTypeRefresh = ImportCache(objectType, url);
+          response.Append(objectTypeRefresh);
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error importing cache from " + baseUri + ": " + e.Message);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    public Response ImportCache(string objectType, string url, bool updateDictionary)
+    {
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
+      try
+      {
+        DataDictionary dictionary = GetDictionary(updateDictionary, objectType);
+        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType);
+
+        if (dataObject == null)
+        {
+          throw new Exception("Object type " + objectType + " not found.");
+        }
+
+        Response objectTypeImport = ImportCache(dataObject, url);
+        response.Append(objectTypeImport);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error importing cache: " + e.Message);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    protected Response ImportCache(DataObject objectType, string url)
+    {
+      string cacheId = string.Empty;
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
+      try
+      {
+        cacheId = CheckCache();
+
+        if (!url.ToLower().EndsWith(".dat"))
+        {
+          if (!url.EndsWith("/"))
+          {
+            url += "/";
+          }
+
+          url += objectType.objectName + ".dat";
+        }
+
+        WebHttpClient client = new WebHttpClient(url);
+        Stream stream = client.GetStream(string.Empty);
+        List<SerializableDataObject> dataObjects = BaseLightweightDataLayer.ReadDataObjects(stream);
+
+        if (!string.IsNullOrEmpty(cacheId))
+        {
+          SetCacheState(cacheId, CacheState.Busy);
+          DeleteCacheTable(cacheId, objectType);
+        }
+        else
+        {
+          CreateCacheEntry();
+        }
+
+        CreateCacheTable(cacheId, objectType);
+
+        Status status = new Status()
+        {
+          Identifier = objectType.tableName,
+          Level = StatusLevel.Success,
+        };
+
+        //
+        // populate cache data
+        //
+        string tableName = cacheId + "_" + objectType.objectName;
+        string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
+        DataTable table = DBManager.Instance.ExecuteQuery(_connStr, tableSQL);
+
+        if (dataObjects == null || dataObjects.Count == 0)
+        {
+          status.Level = StatusLevel.Warning;
+          status.Messages.Add("Cached data is empty.");
+        }
+        else
+        {
+          foreach (SerializableDataObject dataObj in dataObjects)
+          {
+            if (dataObj.Type != null && dataObj.Type.ToLower() == objectType.objectName.ToLower())
+            {
+              DataRow newRow = table.NewRow();
+
+              foreach (var pair in dataObj.Properties)
+              {
+                newRow[pair.Key] = pair.Value;
+              }
+
+              table.Rows.Add(newRow);
+            }
+            else
+            {
+              status.Level = StatusLevel.Error;
+              status.Messages.Add("Cached data object is invalid.");
+              break;
+            }
+          }
+        }
+
+        if (status.Level == StatusLevel.Success)
+        {
+          SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
+          bulkCopy.DestinationTableName = tableName;
+          bulkCopy.WriteToServer(table);
+          status.Messages.Add("Cached data imported successfully.");
+        }
+
+        response.Append(status);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error importing cached data from URL [" + url + "]: " + e.Message);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+      finally
+      {
+        SetCacheState(cacheId, CacheState.Ready);
       }
 
       return response;
@@ -644,122 +810,6 @@ namespace org.iringtools.adapter
       }
 
       return contents;
-    }
-
-    protected Response RefreshCache(DataObject objectType)
-    {
-      Response response = new Response();
-      response.Level = StatusLevel.Success;
-
-      try
-      {
-        string cacheId = CheckCache();
-
-        if (!string.IsNullOrEmpty(cacheId))
-        {
-          SetCacheState(cacheId, CacheState.Busy);
-          DeleteCacheTable(cacheId, objectType);
-        }
-        else
-        {
-          CreateCacheEntry();
-        }
-
-        //
-        // create new cache table
-        //
-        CreateCacheTable(cacheId, objectType);
-
-        Status status = new Status()
-        {
-          Identifier = objectType.tableName,
-          Level = StatusLevel.Success,
-          Messages = new Messages() { "Cache table " + objectType.tableName + " created successfully." }
-        };
-
-        response.Append(status);
-
-        //
-        // populate cache data
-        //
-        string tableName = cacheId + "_" + objectType.objectName;
-        string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
-        DataTable table = DBManager.Instance.ExecuteQuery(_connStr, tableSQL);
-
-        if (_lwDataLayer != null)
-        {
-          IList<SerializableDataObject> dataObjects = _lwDataLayer.Get(objectType);
-
-          if (dataObjects != null && dataObjects.Count > 0)
-          {
-            foreach (SerializableDataObject dataObj in dataObjects)
-            {
-              DataRow newRow = table.NewRow();
-
-              foreach (var pair in dataObj.Properties)
-              {
-                newRow[pair.Key] = pair.Value;
-              }
-
-              table.Rows.Add(newRow);
-            }
-
-            SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
-            bulkCopy.DestinationTableName = tableName;
-            bulkCopy.WriteToServer(table);
-            status.Messages.Add("Cache data populated successfully.");
-          }
-        }
-        else if (_dataLayer != null)
-        {
-          long objCount = _dataLayer.GetCount(objectType.objectName, null);
-          int start = 0;
-          int page = 5;
-          long limit = 0;
-
-          while (start < objCount)
-          {
-            limit = (start + page < objCount) ? page : start + page - objCount;
-            IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
-
-            if (dataObjects != null && dataObjects.Count > 0)
-            {
-              foreach (IDataObject dataObj in dataObjects)
-              {
-                DataRow newRow = table.NewRow();
-
-                foreach (DataProperty prop in objectType.dataProperties)
-                {
-                  newRow[prop.propertyName] = dataObj.GetPropertyValue(prop.propertyName);
-                }
-
-                table.Rows.Add(newRow);
-              }
-            }
-
-            start += page;
-          }
-
-          SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
-          bulkCopy.DestinationTableName = tableName;
-          bulkCopy.WriteToServer(table);
-          status.Messages.Add("Cache data populated successfully.");
-        }
-
-        SetCacheState(cacheId, CacheState.Ready);
-
-        response.Messages.Add(
-          string.Format("Cache {0}.{1}.{2} refreshed successfully.",
-            _scope, _app, objectType.objectName));
-      }
-      catch (Exception e)
-      {
-        _logger.Error("Error refreshing cache for object type " + objectType.objectName + ": " + e.Message);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
-      }
-
-      return response;
     }
 
     protected string CheckCache()
