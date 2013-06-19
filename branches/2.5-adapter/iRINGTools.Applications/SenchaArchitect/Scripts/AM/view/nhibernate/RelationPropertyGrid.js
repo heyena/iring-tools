@@ -126,8 +126,9 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
       return;
     }
 
-
+    utilsObj.relationGridStore = null;
     store.add(mapRecord);
+    utilsObj.relationGridStore = store;
   },
 
   onRemoveClick: function(button, e, eOpts) {
@@ -139,6 +140,7 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
 
     if (grid.getSelectionModel().hasSelection()) {
       store.remove(selectedRec);
+      utilsObj.relationGridStore = store;
     }
     else {
       if (store.data.items.length < 1)

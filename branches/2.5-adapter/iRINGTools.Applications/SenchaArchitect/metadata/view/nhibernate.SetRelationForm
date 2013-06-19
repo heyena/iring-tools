@@ -11,6 +11,7 @@
         "contextName": "",
         "node": "",
         "height": null,
+        "id": null,
         "width": null,
         "designer|userClassName": "nhibernate.SetRelationForm",
         "designer|userAlias": "setrelationform",

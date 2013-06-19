@@ -90,10 +90,6 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
         },
         {
           xtype: 'hiddenfield',
-          name: 'classId'
-        },
-        {
-          xtype: 'hiddenfield',
           name: 'mappingNode'
         },
         {

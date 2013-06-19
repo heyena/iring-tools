@@ -1031,7 +1031,7 @@ Ext.define('AM.controller.NHibernate', {
     var dirTree = me.getDirTree();
     dirNode = dirTree.getSelectedNode();
     content = me.getMainContent();
-
+    utilsObj.relationGridStore = null;
     var dbDict, dbInfo, tree;
 
     var context = dirNode.parentNode.data.text;//dirNode.data.record.ContextName;
@@ -1654,9 +1654,12 @@ Ext.define('AM.controller.NHibernate', {
 
 
     var form = me.getSetRelationForm();
-
     var grid = form.down('relationPropertyGrid');
-    var gridStore = grid.getStore();
+    var gridStore;
+    //if(utilsObj.relationGridStore!=undefined)
+    // gridStore = utilsObj.relationGridStore;
+    //else
+    gridStore = grid.getStore();
 
     var propertyNameCmb = form.down('#propertyNameCmb');
     propertyNameCmb.store =  Ext.create('Ext.data.SimpleStore', {
@@ -1725,6 +1728,19 @@ Ext.define('AM.controller.NHibernate', {
         form.getForm().findField('relatedObjectName').setValue(data.relatedObjectName);
       }
     });
+
+    if(utilsObj.relationGridStore!=undefined){
+      for(var i=0; i<utilsObj.relationGridStore.data.length;i++){
+        var record = [{
+          'property': utilsObj.relationGridStore.data.items[i].data.property,
+          'relatedProperty': utilsObj.relationGridStore.data.items[i].data.relatedProperty
+        }];
+        var exist = gridStore.find('property', utilsObj.relationGridStore.data.items[i].data.property);
+        if(exist == -1)
+        gridStore.add(record);
+
+      }
+    }
 
     form.getForm().findField('relationshipName').setValue(relationName);
     form.getForm().findField('objectName').setValue(thisObj);
@@ -2323,7 +2339,7 @@ Ext.define('AM.controller.NHibernate', {
           var relationNode = relChildenNodes[k];
           var found = false;
           for (var ik = 0; ik < folder.dataRelationships.length; ik++)
-          if (relationNode.text.toLowerCase() == folder.dataRelationships[ik].relationshipName.toLowerCase()) {
+          if (relationNode.data.text.toLowerCase() == folder.dataRelationships[ik].relationshipName.toLowerCase()) {
             found = true;
             break;
           }
@@ -2335,9 +2351,13 @@ Ext.define('AM.controller.NHibernate', {
           relationNodeAttr = relationNode.raw;
           var relation = {};
           relation.propertyMaps = [];
-
-          for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
-            var propertyPairNode = relationNodeAttr.propertyMap[m];
+          var pMap;
+          if(relationNode.data.propertyMap!=undefined)
+          pMap = relationNode.data.propertyMap;
+          else
+          pMap = relationNodeAttr.propertyMap;
+          for (var m = 0; m < pMap.length; m++) {
+            var propertyPairNode = pMap[m];
             var propertyPair = {};
 
             propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;

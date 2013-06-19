@@ -342,7 +342,8 @@ Ext.define('AM.controller.Mapping', {
     //var tree = mapPanel.down('mappingtree');
     var tree = content.getActiveTab().items.items[0];
     node = tree.getSelectedNode();
-    var mappingNode  = node.parentNode.data.parentId+'/'+node.data.record.name;
+    var id = node.parentNode.data.id.split('/');
+    var mappingNode  = node.parentNode.data.parentId+'/'+id[id.length-1]+'/'+node.data.record.name;
 
     win = Ext.widget('propertymapwindow', {
       'classId': node.parentNode.parentNode.data.identifier,
@@ -352,12 +353,12 @@ Ext.define('AM.controller.Mapping', {
     var index = node.parentNode.parentNode.indexOf(node.parentNode);
 
     var formRecord = {
-      'contextName': content.getActiveTab().graph.split('/')[0],//mapPanel.contextName,
-      'endpoint': content.getActiveTab().graph.split('/')[1],//mapPanel.endpoint,
+      //'contextName': content.getActiveTab().graph.split('/')[0],//mapPanel.contextName,
+      //'endpoint': content.getActiveTab().graph.split('/')[1],//mapPanel.endpoint,
       //'baseUrl': mapPanel.baseUrl,
-      'graphName': content.getActiveTab().graph,//mapPanel.graph,
+      //'graphName': content.getActiveTab().graph,//mapPanel.graph,
       'index': index,
-      'roleName': roleName,
+      //'roleName': roleName,
       'mappingNode':mappingNode,
       'classId':node.parentNode.parentNode.data.identifier
     };

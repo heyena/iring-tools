@@ -233,20 +233,6 @@
             "userConfig": {
                 "layout|anchor": null,
                 "fieldLabel": null,
-                "name": "classId"
-            },
-            "designerId": "d61bb07c-3638-4798-aba3-4a146aff7898"
-        },
-        {
-            "type": "Ext.form.field.Hidden",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
-                "fieldLabel": null,
                 "name": "mappingNode"
             },
             "designerId": "cf9e3788-d4d5-407c-beb9-c63f0af6aa67"
@@ -297,7 +283,7 @@
                     "      var propertyArr = data.records[0].data.id.split('/');\r",
                     "      var propertyName = propertyArr[propertyArr.length-2]+'.'+propertyArr[propertyArr.length-1];\r",
                     "      me.getForm().findField('propertyName').setValue(propertyName);\r",
-                    "      \r",
+                    "\r",
                     "      if (data.records[0].parentNode !== undefined && \r",
                     "      data.records[0].parentNode.data.record !== undefined && \r",
                     "      data.records[0].parentNode.data.type != 'DataObjectNode')\r",

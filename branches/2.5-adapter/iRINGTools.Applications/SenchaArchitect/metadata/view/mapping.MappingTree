@@ -152,7 +152,7 @@
                                     "      graphName: graphName\r",
                                     "    },\r",
                                     "    success: function (result, request) {\r",
-                                    "      \r",
+                                    "\r",
                                     "      me.onReload();\r",
                                     "      me.getEl().unmask();\r",
                                     "      return false;\r",
@@ -474,17 +474,21 @@
                     "n"
                 ],
                 "implHandler": [
-                    "if (n.parentNode !== null && n.parentNode !== undefined) {\r",
-                    "  if ((n.parentNode.data.type == 'ClassMapNode' || \r",
-                    "  n.parentNode.data.type == 'GraphMapNode') && \r",
-                    "  n.parentNode.data.identifier !== undefined) {\r",
-                    "    this.parentClass = n.parentNode.data.identifier;\r",
-                    "    return this.parentClass;\r",
+                    "if(n!=undefined)\r",
+                    "{\r",
+                    "\tif (n.parentNode !== null && n.parentNode !== undefined) {\r",
+                    "    if ((n.parentNode.data.type == 'ClassMapNode' || \r",
+                    "    n.parentNode.data.type == 'GraphMapNode') && \r",
+                    "    n.parentNode.data.identifier !== undefined) {\r",
+                    "      this.parentClass = n.parentNode.data.identifier;\r",
+                    "      return this.parentClass;\r",
+                    "    }\r",
+                    "    else {\r",
+                    "      this.getParentClass(n.parentNode);\r",
+                    "    }\r",
                     "  }\r",
-                    "  else {\r",
-                    "    this.getParentClass(n.parentNode);\r",
-                    "  }\r",
-                    "}"
+                    "}\r",
+                    ""
                 ]
             },
             "designerId": "797ba171-8f6e-4f14-92ac-a2e8956cf122"

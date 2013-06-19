@@ -337,17 +337,21 @@ Ext.define('AM.view.mapping.MappingTree', {
   },
 
   getParentClass: function(n) {
-    if (n.parentNode !== null && n.parentNode !== undefined) {
-      if ((n.parentNode.data.type == 'ClassMapNode' || 
-      n.parentNode.data.type == 'GraphMapNode') && 
-      n.parentNode.data.identifier !== undefined) {
-        this.parentClass = n.parentNode.data.identifier;
-        return this.parentClass;
-      }
-      else {
-        this.getParentClass(n.parentNode);
+    if(n!=undefined)
+    {
+      if (n.parentNode !== null && n.parentNode !== undefined) {
+        if ((n.parentNode.data.type == 'ClassMapNode' || 
+        n.parentNode.data.type == 'GraphMapNode') && 
+        n.parentNode.data.identifier !== undefined) {
+          this.parentClass = n.parentNode.data.identifier;
+          return this.parentClass;
+        }
+        else {
+          this.getParentClass(n.parentNode);
+        }
       }
     }
+
   },
 
   getSelectedNode: function() {
