@@ -64,9 +64,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string error = "Error executing query [" + query + "]: " + ex.Message;
-        _logger.Error(error);
-        throw new Exception(error);
+        _logger.Error("Error executing query [" + query + "]: " + ex.Message);
+        throw ex;
       }
       finally
       {
@@ -93,9 +92,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string error = "Error executing command [" + command + "]: " + ex.Message;
-        _logger.Error(error);
-        throw new Exception(error);
+        _logger.Error("Error executing command [" + command + "]: " + ex.Message);
+        throw ex;
       }
       finally
       {
@@ -143,9 +141,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string error = "Error excuting update: " + ex.Message;
-        _logger.Error(error);
-        throw new Exception(error);
+        _logger.Error("Error excuting update: " + ex.Message);
+        throw ex;
       }
       finally
       {
@@ -164,9 +161,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        string error = "Error getting database version: " + ex.Message;
-        _logger.Error(error);
-        throw new Exception(error);
+        _logger.Error("Error getting database version: " + ex.Message);
+        throw ex;
       }
       finally
       {
