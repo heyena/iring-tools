@@ -29,20 +29,28 @@ namespace org.iringtools.adapter
     private const string CACHE_ID_PREFIX = "c";
 
     private AdapterSettings _settings;
-    private string _context;
+    private string _scope;
     private string _app;
     private string _connStr;
     private IDataLayer _dataLayer;
     private ILightweightDataLayer _lwDataLayer;
 
-    public DataLayerGateway(IKernel kernel, string context, string app)
+    public DataLayerGateway(IKernel kernel)
     {
       _settings = kernel.Get<AdapterSettings>();
-      _context = context;
-      _app = app;
-      _connStr = _settings["iRINGCacheConnStr"].ToString();
+      _scope = _settings["ProjectName"];
+      _app = _settings["ApplicationName"];
+      _connStr = _settings["iRINGCacheConnStr"];
 
-      string dlBindingPath = _settings["AppDataPath"] + "\\binding." + _context + "." + _app + ".xml";
+      //
+      // Ninject requires fully qualified path
+      //
+      string relativePath = string.Format("{0}BindingConfiguration.{1}.{2}.xml", _settings["AppDataPath"], _scope, _app);
+      string dlBindingPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+
       XElement dlBinding = XElement.Load(dlBindingPath);
 
       kernel.Load(dlBindingPath);
@@ -58,7 +66,47 @@ namespace org.iringtools.adapter
       }
     }
 
-    public DataDictionary GetDictionary(bool refresh, DataObject objectType, out DataFilter filter)
+    public DataDictionary GetDictionary()
+    {
+      try
+      {
+        return GetDictionary(false);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting data dictionary: " + e);
+        throw e;
+      }
+    }
+
+    public DataDictionary GetDictionary(bool refresh)
+    {
+      try
+      {
+        return GetDictionary(refresh, null);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting data dictionary: " + e);
+        throw e;
+      }
+    }
+
+    public DataDictionary GetDictionary(bool refresh, string objectType)
+    {
+      try
+      {
+        DataFilter filter = null;
+        return GetDictionary(refresh, objectType, out filter);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting data dictionary: " + e);
+        throw e;
+      }
+    }
+
+    public DataDictionary GetDictionary(bool refresh, string objectType, out DataFilter filter)
     {
       DataDictionary dictionary = null;
       filter = null;
@@ -71,6 +119,29 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
+          if (refresh)
+          {
+            if (!string.IsNullOrEmpty(objectType))
+            {
+              Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
+
+              if (response.Level != StatusLevel.Success)
+              {
+                throw new Exception("Error refreshing dictionary for object type " + 
+                  objectType + ": " + response.Messages);
+              }
+            }
+            else
+            {
+              Response response = ((IDataLayer2)_dataLayer).RefreshAll();
+
+              if (response.Level != StatusLevel.Success)
+              {
+                throw new Exception("Error refreshing dictionary: " + response.Messages);
+              }
+            }
+          }
+
           dictionary = _dataLayer.GetDictionary();
         }
       }
@@ -83,13 +154,15 @@ namespace org.iringtools.adapter
       return dictionary;
     }
 
-    public Response RefreshCache(DataDictionary dictionary)
+    public Response RefreshCache(bool updateDictionary)
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
 
       try
       {
+        DataDictionary dictionary = GetDictionary(updateDictionary);
+
         foreach (DataObject objectType in dictionary.dataObjects)
         {
           Response objectTypeRefresh = RefreshCache(objectType);
@@ -98,125 +171,37 @@ namespace org.iringtools.adapter
       }
       catch (Exception e)
       {
-        _logger.Error(e);
+        _logger.Error("Error refreshing cache: " + e.Message);
         response.Level = StatusLevel.Error;
-        response.Messages.Add(e.ToString());
+        response.Messages.Add(e.Message);
       }
 
       return response;
     }
 
-    public Response RefreshCache(DataObject objectType)
+    public Response RefreshCache(bool updateDictionary, string objectType)
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
 
       try
       {
-        string cacheId = CheckCache();
+        DataDictionary dictionary = GetDictionary(updateDictionary, objectType);
+        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType);
 
-        if (!string.IsNullOrEmpty(cacheId))
+        if (dataObject == null)
         {
-          SetCacheState(cacheId, CacheState.Busy);
-          DeleteCacheTable(cacheId, objectType);
-        }
-        else
-        {
-          CreateCacheEntry();
+          throw new Exception("Object type " + objectType + " not found.");
         }
 
-        //
-        // create new cache table
-        //
-        CreateCacheTable(cacheId, objectType);
-
-        Status status = new Status()
-        {
-          Identifier = objectType.tableName,
-          Level = StatusLevel.Success,
-          Messages = new Messages() { "Cache table " + objectType.tableName + " created successfully." }
-        };
-
-        response.Append(status);
-
-        //
-        // populate cache data
-        //
-        string tableName = cacheId + "_" + objectType.objectName;
-        string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
-        DataTable table = DBManager.Instance.ExecuteQuery(_connStr, tableSQL);
-
-        if (_lwDataLayer != null)
-        {
-          IList<SerializableDataObject> dataObjects = _lwDataLayer.Get(objectType);
-
-          if (dataObjects != null && dataObjects.Count > 0)
-          {
-            foreach (SerializableDataObject dataObj in dataObjects)
-            {
-              DataRow newRow = table.NewRow();
-
-              foreach (var pair in dataObj.Properties)
-              {
-                newRow[pair.Key] = pair.Value;
-              }
-
-              table.Rows.Add(newRow);
-            }
-
-            SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
-            bulkCopy.DestinationTableName = tableName;
-            bulkCopy.WriteToServer(table);
-            status.Messages.Add("Cache data populated successfully.");
-          }
-        }
-        else if (_dataLayer != null)
-        {
-          long objCount = _dataLayer.GetCount(objectType.objectName, null);
-          int start = 0;
-          int page = 5;
-          long limit = 0;
-
-          while (start < objCount)
-          {
-            limit = (start + page < objCount) ? page : start + page - objCount;
-            IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
-
-            if (dataObjects != null && dataObjects.Count > 0)
-            {
-              foreach (IDataObject dataObj in dataObjects)
-              {
-                DataRow newRow = table.NewRow();
-
-                foreach (DataProperty prop in objectType.dataProperties)
-                {
-                  newRow[prop.propertyName] = dataObj.GetPropertyValue(prop.propertyName);
-                }
-
-                table.Rows.Add(newRow);
-              }
-            }
-
-            start += page;
-          }
-
-          SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
-          bulkCopy.DestinationTableName = tableName;
-          bulkCopy.WriteToServer(table);
-          status.Messages.Add("Cache data populated successfully.");
-        }
-
-        SetCacheState(cacheId, CacheState.Ready);
-
-        response.Messages.Add(
-          string.Format("Cache {0}.{1}.{2} refreshed successfully.",
-            _context, _app, objectType.objectName));
+        Response objectTypeRefresh = RefreshCache(dataObject);
+        response.Append(objectTypeRefresh);
       }
       catch (Exception e)
       {
-        _logger.Error(e);
+        _logger.Error("Error refreshing cache: " + e.Message);
         response.Level = StatusLevel.Error;
-        response.Messages.Add(e.ToString());
+        response.Messages.Add(e.Message);
       }
 
       return response;
@@ -237,9 +222,9 @@ namespace org.iringtools.adapter
       }
       catch (Exception e)
       {
-        _logger.Error(e);
+        _logger.Error("Error importing cache from " + baseUri + ": " + e.Message);
         response.Level = StatusLevel.Error;
-        response.Messages.Add(e.ToString());
+        response.Messages.Add(e.Message);
       }
 
       return response;
@@ -312,7 +297,7 @@ namespace org.iringtools.adapter
 
         response.Messages.Add(
           string.Format("Cache {0}.{1}.{2} imported successfully.",
-            _context, _app, objectType.objectName));
+            _scope, _app, objectType.objectName));
       }
       catch (Exception e)
       {
@@ -661,9 +646,125 @@ namespace org.iringtools.adapter
       return contents;
     }
 
+    protected Response RefreshCache(DataObject objectType)
+    {
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
+      try
+      {
+        string cacheId = CheckCache();
+
+        if (!string.IsNullOrEmpty(cacheId))
+        {
+          SetCacheState(cacheId, CacheState.Busy);
+          DeleteCacheTable(cacheId, objectType);
+        }
+        else
+        {
+          CreateCacheEntry();
+        }
+
+        //
+        // create new cache table
+        //
+        CreateCacheTable(cacheId, objectType);
+
+        Status status = new Status()
+        {
+          Identifier = objectType.tableName,
+          Level = StatusLevel.Success,
+          Messages = new Messages() { "Cache table " + objectType.tableName + " created successfully." }
+        };
+
+        response.Append(status);
+
+        //
+        // populate cache data
+        //
+        string tableName = cacheId + "_" + objectType.objectName;
+        string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
+        DataTable table = DBManager.Instance.ExecuteQuery(_connStr, tableSQL);
+
+        if (_lwDataLayer != null)
+        {
+          IList<SerializableDataObject> dataObjects = _lwDataLayer.Get(objectType);
+
+          if (dataObjects != null && dataObjects.Count > 0)
+          {
+            foreach (SerializableDataObject dataObj in dataObjects)
+            {
+              DataRow newRow = table.NewRow();
+
+              foreach (var pair in dataObj.Properties)
+              {
+                newRow[pair.Key] = pair.Value;
+              }
+
+              table.Rows.Add(newRow);
+            }
+
+            SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
+            bulkCopy.DestinationTableName = tableName;
+            bulkCopy.WriteToServer(table);
+            status.Messages.Add("Cache data populated successfully.");
+          }
+        }
+        else if (_dataLayer != null)
+        {
+          long objCount = _dataLayer.GetCount(objectType.objectName, null);
+          int start = 0;
+          int page = 5;
+          long limit = 0;
+
+          while (start < objCount)
+          {
+            limit = (start + page < objCount) ? page : start + page - objCount;
+            IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
+
+            if (dataObjects != null && dataObjects.Count > 0)
+            {
+              foreach (IDataObject dataObj in dataObjects)
+              {
+                DataRow newRow = table.NewRow();
+
+                foreach (DataProperty prop in objectType.dataProperties)
+                {
+                  newRow[prop.propertyName] = dataObj.GetPropertyValue(prop.propertyName);
+                }
+
+                table.Rows.Add(newRow);
+              }
+            }
+
+            start += page;
+          }
+
+          SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
+          bulkCopy.DestinationTableName = tableName;
+          bulkCopy.WriteToServer(table);
+          status.Messages.Add("Cache data populated successfully.");
+        }
+
+        SetCacheState(cacheId, CacheState.Ready);
+
+        response.Messages.Add(
+          string.Format("Cache {0}.{1}.{2} refreshed successfully.",
+            _scope, _app, objectType.objectName));
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error refreshing cache for object type " + objectType.objectName + ": " + e.Message);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
     protected string CheckCache()
     {
-      string checkCacheSQL = string.Format("SELECT * FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _context, _app);
+      string checkCacheSQL = string.Format("SELECT * FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _scope, _app);
       DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, checkCacheSQL);
 
       if (dt.Rows.Count > 0)
@@ -686,7 +787,7 @@ namespace org.iringtools.adapter
     {
       string setCacheStateSQL = string.Format(
         "UPDATE Caches SET State = '{2}' WHERE Context = '{0}' AND Application = '{1}'",
-          _context, _app, state.ToString());
+          _scope, _app, state.ToString());
       bool success = DBManager.Instance.ExecuteNonQuery(_connStr, setCacheStateSQL);
 
       if (!success)
@@ -715,7 +816,7 @@ namespace org.iringtools.adapter
       string cacheId = CACHE_ID_PREFIX + Guid.NewGuid().ToString("N").Remove(0, 1);
 
       string createCacheSQL = string.Format(@"INSERT INTO Caches (CacheId, Context, Application, Timestamp, State)
-          VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", cacheId, _context, _app, DateTime.Now.ToUniversalTime(), CacheState.Busy.ToString());
+          VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", cacheId, _scope, _app, DateTime.Now.ToUniversalTime(), CacheState.Busy.ToString());
 
       bool success = DBManager.Instance.ExecuteNonQuery(_connStr, createCacheSQL);
       if (!success)

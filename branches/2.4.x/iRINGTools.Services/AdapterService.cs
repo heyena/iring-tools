@@ -552,6 +552,40 @@ namespace org.iringtools.services
     }
     #endregion
 
+    [Description("Creates/refreshes application cache.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/cache?updatedictionary={updateDictionary}")]
+    public void RefreshCache(string scope, string app, bool updateDictionary)
+    {
+      Response response = _adapterProvider.RefreshCache(scope, app, updateDictionary);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    [Description("Creates/refreshes application cache.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{objectType}/cache?updatedictionary={updateDictionary}")]
+    public void RefreshObjectTypeCache(string scope, string app, string objectType, bool updateDictionary)
+    {
+      Response response = _adapterProvider.RefreshCache(scope, app, objectType, updateDictionary);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    private void FormatOutgoingMessage<T>(T graph, bool useDataContractSerializer)
+    {
+      string reqContentType = WebOperationContext.Current.IncomingRequest.ContentType;
+      
+      if (reqContentType != null && reqContentType.ToLower() == "application/json")
+      {
+        string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
+        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+        HttpContext.Current.Response.Write(json);
+      }
+      else
+      {
+        string xml = Utility.Serialize<T>(graph, useDataContractSerializer);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xml);
+      }
+    }
+
     private Response PrepareErrorResponse(Exception ex)
     {
       Response response = new Response

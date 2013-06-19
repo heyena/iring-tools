@@ -94,16 +94,6 @@ namespace org.iringtools.adapter
     private static ConcurrentDictionary<string, RequestStatus> _requests =
       new ConcurrentDictionary<string, RequestStatus>();
 
-    private static string QueueNewRequest()
-    {
-      var id = Guid.NewGuid().ToString("N");
-      _requests[id] = new RequestStatus()
-      {
-        State = State.InProgress
-      };
-      return id;
-    }
-
     [Inject]
     public AdapterProvider(NameValueCollection settings)
     {
@@ -135,7 +125,7 @@ namespace org.iringtools.adapter
         #region initialize webHttpClient for converting old mapping
         string proxyHost = _settings["ProxyHost"];
         string proxyPort = _settings["ProxyPort"];
-        string rdsUri = _settings["ReferenceDataServiceUri"];
+        string rdsUri = _settings["RefDataServiceUri"];
 
         if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
@@ -154,34 +144,12 @@ namespace org.iringtools.adapter
         if (File.Exists(scopesPath))
         {
           _scopes = Utility.Read<ScopeProjects>(scopesPath);
-
-          // Sorting Scopes     
-          _scopes.Sort(new ScopeComparer());
-
-          foreach (ScopeProject proj in _scopes)
-          {
-            // Sorting Scopes      
-            proj.Applications.Sort(new ApplicationComparer());
-
-            foreach (ScopeApplication app in proj.Applications)
-            {
-              string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], proj.Name, app.Name);
-
-              if (File.Exists(configPath))
-              {
-                Configuration config = Utility.Read<Configuration>(configPath, false);
-                app.Configuration = config;
-              }
-            }
-          }
-          Utility.Write<ScopeProjects>(_scopes, scopesPath);
         }
         else
         {
           _scopes = new ScopeProjects();
           Utility.Write<ScopeProjects>(_scopes, scopesPath);
         }
-
 
         string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
@@ -209,9 +177,14 @@ namespace org.iringtools.adapter
         
         if (_settings["LdapConfiguration"] != null &&_settings["LdapConfiguration"].ToLower() == "true")
         {
-            utility.Utility.isLdapConfigured = true;  
-            utility.Utility.InitializeConfigurationRepository(new Type[] { typeof(DataDictionary), typeof(DatabaseDictionary)
-                                                                           ,typeof(XElementClone) ,typeof(AuthorizedUsers) ,typeof(Mapping)});            
+          utility.Utility.isLdapConfigured = true;  
+          utility.Utility.InitializeConfigurationRepository(new Type[] { 
+            typeof(DataDictionary), 
+            typeof(DatabaseDictionary),
+            typeof(XElementClone),
+            typeof(AuthorizedUsers),
+            typeof(Mapping)
+          });
         }
       }
       catch (Exception e)
@@ -242,9 +215,6 @@ namespace org.iringtools.adapter
     public Response AddScope(ScopeProject scope)
     {
       Response response = new Response();
-      Status status = new Status();
-
-      response.StatusList.Add(status);
 
       try
       {
@@ -252,22 +222,40 @@ namespace org.iringtools.adapter
 
         if (sc == null)
         {
-          _scopes.Add(scope);
+          _scopes.Add(scope);   
+          _scopes.Sort(new ScopeComparer());
+
+          foreach (ScopeProject proj in _scopes)
+          {
+            proj.Applications.Sort(new ApplicationComparer());
+
+            //foreach (ScopeApplication app in proj.Applications)
+            //{
+            //  string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], proj.Name, app.Name);
+
+            //  if (File.Exists(configPath))
+            //  {
+            //    Configuration config = Utility.Read<Configuration>(configPath, false);
+            //    app.Configuration = config;
+            //  }
+            //}
+          }
+
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-          status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
+          response.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
         }
         else
         {
-          status.Level = StatusLevel.Error;
-          status.Messages.Add(String.Format("Scope [{0}] already exists.", scope.Name));
+          response.Level = StatusLevel.Error;
+          response.Messages.Add(String.Format("Scope [{0}] already exists.", scope.Name));
         }
       }
       catch (Exception ex)
       {
         _logger.Error(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
 
-        status.Level = StatusLevel.Error;
-        status.Messages.Add(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
       }
 
       return response;
@@ -3944,64 +3932,76 @@ namespace org.iringtools.adapter
 
       return response;
     }
-
     #endregion
 
     #region private methods
+    private void Initialize(string projectName, string applicationName)
+    {
+      //
+      // load app settings
+      //
+      string scopeSettingsPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
+
+      if (File.Exists(scopeSettingsPath))
+      {
+        AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
+        _settings.AppendSettings(scopeSettings);
+      }
+
+      if (projectName.ToLower() != "all")
+      {
+        string appSettingsPath = String.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName);
+
+        if (File.Exists(appSettingsPath))
+        {
+          AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
+          _settings.AppendSettings(appSettings);
+        }
+      }
+
+      _settings["ProjectName"] = projectName;
+      _settings["ApplicationName"] = applicationName;
+
+      //
+      // determine whether scope is real or implied to set
+      //
+      string scope = string.Format("{0}.{1}", projectName, applicationName);
+      bool scopeFound = false;
+
+      foreach (ScopeProject project in _scopes)
+      {
+        if (project.Name.ToUpper() == projectName.ToUpper())
+        {
+          foreach (ScopeApplication application in project.Applications)
+          {
+            if (application.Name.ToUpper() == applicationName.ToUpper())
+            {
+              _application = application;
+              scopeFound = true;
+              break;
+            }
+          }
+          break;
+        }
+      }
+
+      if (!scopeFound)
+      {
+        scope = String.Format("all.{0}", applicationName);
+      }
+
+      _settings["Scope"] = scope;
+    }
+
     private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
     {
       try
       {
-        string scope = String.Format("{0}.{1}", projectName, applicationName);
+        string scope = string.Format("{0}.{1}", projectName, applicationName);
 
         if (!_isScopeInitialized)
         {
-          _settings["ProjectName"] = projectName;
-          _settings["ApplicationName"] = applicationName;
-
-          string scopeSettingsPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
-
-          if (File.Exists(scopeSettingsPath))
-          {
-            AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
-            _settings.AppendSettings(scopeSettings);
-          }
-
-          if (projectName.ToLower() != "all")
-          {
-            string appSettingsPath = String.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName);
-
-            if (File.Exists(appSettingsPath))
-            {
-              AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
-              _settings.AppendSettings(appSettings);
-            }
-          }
-
-          //scope stuff
-
-          bool isScopeValid = false;
-          foreach (ScopeProject project in _scopes)
-          {
-            if (project.Name.ToUpper() == projectName.ToUpper())
-            {
-              foreach (ScopeApplication application in project.Applications)
-              {
-                if (application.Name.ToUpper() == applicationName.ToUpper())
-                {
-                  _application = application;
-                  isScopeValid = true;
-                  break;
-                }
-              }
-            }
-          }
-
-          if (!isScopeValid)
-            scope = String.Format("all.{0}", applicationName);
-          //throw new Exception(String.Format("Invalid scope [{0}].", scope));
-
-          _settings["Scope"] = scope;
+          Initialize(projectName, applicationName);
 
           string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
 
@@ -5098,6 +5098,38 @@ namespace org.iringtools.adapter
       }
     }
 
+    public Response RefreshCache(string scope, string app, bool updateDictionary)
+    {
+      try
+      {
+        Initialize(scope, app);
+        DataLayerGateway gateway = new DataLayerGateway(_kernel);
+        Response response = gateway.RefreshCache(updateDictionary);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error refreshing cache for {0}.{1}: {2}", scope, app, ex.Message);
+        throw ex;
+      }
+    }
+
+    public Response RefreshCache(string scope, string app, string objectType, bool updateDictionary)
+    {
+      try
+      {
+        Initialize(scope, app);
+        DataLayerGateway gateway = new DataLayerGateway(_kernel);
+        Response response = gateway.RefreshCache(updateDictionary, objectType);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error refreshing cache for {0}.{1}: {2}", scope, app, ex.Message);
+        throw ex;
+      }
+    }
+
     public Response RefreshDataObject(string projectName, string applicationName, string objectType, DataFilter dataFilter)
     {
       try
@@ -5112,6 +5144,41 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error refreshing data object [{0}]: {1}", objectType, ex));
         throw ex;
       }
+    }
+
+    public DocumentBytes GetResourceData(string scope, string app)
+    {
+      DocumentBytes documentBytes = new DocumentBytes();
+      string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
+      string[] filePaths = Directory.GetFiles(searchPath, "SpreadsheetData." + scope + "." + app + ".xlsx");
+      string _FileName = filePaths[0];
+
+      byte[] _Buffer = null;
+
+      if (_FileName.Length > 0)
+      {
+        System.IO.FileStream _FileStream = new System.IO.FileStream(_FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+        System.IO.BinaryReader _BinaryReader = new System.IO.BinaryReader(_FileStream);
+        long _TotalBytes = new System.IO.FileInfo(_FileName).Length;
+        _Buffer = _BinaryReader.ReadBytes((Int32)_TotalBytes);
+      }
+      documentBytes.Content = _Buffer;
+      documentBytes.DocumentPath = searchPath;
+      return documentBytes;
+    }
+
+    public byte[] GetResourceDataBytes(string scope, string app)
+    {
+      string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
+      string[] filePaths = Directory.GetFiles(searchPath, scope + "." + app + ".*.mdb");
+
+      if (filePaths.Length > 0)
+      {
+        string _FileName = filePaths[0];
+        return System.IO.File.ReadAllBytes(_FileName);
+      }
+      else
+        return null;
     }
 
     public IList<Object> GetSummary(String projectName, String applicationName)
@@ -5344,39 +5411,14 @@ namespace org.iringtools.adapter
       return dataObjects;
     }
 
-    public DocumentBytes GetResourceData(string scope, string app)
+    private static string QueueNewRequest()
     {
-      DocumentBytes documentBytes = new DocumentBytes();
-      string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
-      string[] filePaths = Directory.GetFiles(searchPath, "SpreadsheetData." + scope + "." + app + ".xlsx");
-      string _FileName = filePaths[0];
-
-      byte[] _Buffer = null;
-
-      if (_FileName.Length > 0)
+      var id = Guid.NewGuid().ToString("N");
+      _requests[id] = new RequestStatus()
       {
-        System.IO.FileStream _FileStream = new System.IO.FileStream(_FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-        System.IO.BinaryReader _BinaryReader = new System.IO.BinaryReader(_FileStream);
-        long _TotalBytes = new System.IO.FileInfo(_FileName).Length;
-        _Buffer = _BinaryReader.ReadBytes((Int32)_TotalBytes);
-      }
-      documentBytes.Content = _Buffer;
-      documentBytes.DocumentPath = searchPath;
-      return documentBytes;
-    }
-
-    public byte[] GetResourceDataBytes(string scope, string app)
-    {
-      string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
-      string[] filePaths = Directory.GetFiles(searchPath, scope + "." + app + ".*.mdb");
-
-      if (filePaths.Length > 0)
-      {
-        string _FileName = filePaths[0];
-        return System.IO.File.ReadAllBytes(_FileName);
-      }
-      else
-        return null;
+        State = State.InProgress
+      };
+      return id;
     }
   }
 

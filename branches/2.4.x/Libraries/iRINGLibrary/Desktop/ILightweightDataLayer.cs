@@ -56,7 +56,7 @@ namespace org.iringtools.library
     /// <param name="objectType">refresh a specific object type or all if null</param>
     /// <param name="dataFilter">any filter to apply to data objects if any</param>
     /// <returns>objects schema</returns>
-    DataDictionary Dictionary(bool refresh, DataObject objectType, out DataFilter dataFilter);
+    DataDictionary Dictionary(bool refresh, string objectType, out DataFilter dataFilter);
 
     /// <summary>
     /// Gets all data records for a given object type
@@ -88,7 +88,7 @@ namespace org.iringtools.library
     public const string UPDATE_SQL_TPL = "UPDATE {0} SET {1} {2}";
     public const string DELETE_SQL_TPL = "DELETE FROM {0} {1}";
 
-    public abstract DataDictionary Dictionary(bool refresh, DataObject objectType, out DataFilter dataFilter);
+    public abstract DataDictionary Dictionary(bool refresh, string objectType, out DataFilter dataFilter);
 
     public abstract List<SerializableDataObject> Get(DataObject objectType);
 
