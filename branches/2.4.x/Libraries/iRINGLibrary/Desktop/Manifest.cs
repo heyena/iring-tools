@@ -236,7 +236,7 @@ namespace org.iringtools.dxfr.manifest
 
     private int indexField;
     private string pathField;
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 0)]
     public string id
     {
       get
@@ -249,7 +249,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 1)]
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 1)]
     public string name
     {
       get
@@ -262,7 +262,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 2)]
     public Keys keys
     {
         get
@@ -274,7 +274,7 @@ namespace org.iringtools.dxfr.manifest
             this.identifiersField = value;
         }
     }
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 3)]
     public int index
     {
         get
@@ -286,7 +286,7 @@ namespace org.iringtools.dxfr.manifest
             this.indexField = value;
         }
     }
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 4)]
     public string path
     {
         get

@@ -1,6 +1,7 @@
 
 package org.iringtools.mapping;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,8 +35,11 @@ import javax.xml.bind.annotation.XmlType;
     "items"
 })
 @XmlRootElement(name = "identifiers")
-public class Identifiers {
+public class Identifiers
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(name = "identifier", required = true)
     protected List<String> items;
 

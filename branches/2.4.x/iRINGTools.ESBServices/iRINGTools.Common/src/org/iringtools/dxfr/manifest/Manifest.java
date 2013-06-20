@@ -1,6 +1,7 @@
 
 package org.iringtools.dxfr.manifest;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,18 +11,18 @@ import org.iringtools.mapping.ValueListMaps;
 
 
 /**
- * <p>Java class for Manifest complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Manifest">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="graphs" type="{http://www.iringtools.org/dxfr/manifest}Graphs"/>
- *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="valueListMaps" type="{http://www.iringtools.org/mapping}ValueListMaps"/>
+ *         &lt;element ref="{http://www.iringtools.org/dxfr/manifest}graphs"/>
+ *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element ref="{http://www.iringtools.org/mapping}valueListMaps" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,19 +32,21 @@ import org.iringtools.mapping.ValueListMaps;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Manifest", propOrder = {
+@XmlType(name = "", propOrder = {
     "graphs",
     "version",
     "valueListMaps"
 })
 @XmlRootElement(name = "manifest")
-public class Manifest {
+public class Manifest
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected Graphs graphs;
-    @XmlElement(required = true)
     protected String version;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.iringtools.org/mapping")
     protected ValueListMaps valueListMaps;
 
     /**

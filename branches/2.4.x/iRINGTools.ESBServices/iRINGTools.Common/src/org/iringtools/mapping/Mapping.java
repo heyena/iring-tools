@@ -1,6 +1,7 @@
 
 package org.iringtools.mapping;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -19,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.iringtools.org/mapping}graphMaps"/>
- *         &lt;element name="valueListMaps" type="{http://www.iringtools.org/mapping}ValueListMaps"/>
+ *         &lt;element ref="{http://www.iringtools.org/mapping}valueListMaps"/>
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -36,8 +37,11 @@ import javax.xml.bind.annotation.XmlType;
     "version"
 })
 @XmlRootElement(name = "mapping")
-public class Mapping {
+public class Mapping
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected GraphMaps graphMaps;
     @XmlElement(required = true)

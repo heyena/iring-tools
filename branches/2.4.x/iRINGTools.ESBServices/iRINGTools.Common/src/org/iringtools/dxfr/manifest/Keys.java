@@ -1,25 +1,27 @@
 
 package org.iringtools.dxfr.manifest;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Keys complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Keys">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="key" type="{http://www.iringtools.org/dxfr/manifest}Key" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.iringtools.org/dxfr/manifest}key" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,11 +31,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Keys", namespace = "http://www.iringtools.org/dxfr/manifest", propOrder = {
+@XmlType(name = "", propOrder = {
     "items"
 })
-public class Keys {
+@XmlRootElement(name = "keys")
+public class Keys
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(name = "key", required = true)
     protected List<Key> items;
 

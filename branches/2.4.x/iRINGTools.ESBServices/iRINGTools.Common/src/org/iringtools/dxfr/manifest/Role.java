@@ -1,20 +1,22 @@
 
 package org.iringtools.dxfr.manifest;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.iringtools.mapping.RoleType;
 
 
 /**
- * <p>Java class for Role complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Role">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -23,7 +25,7 @@ import org.iringtools.mapping.RoleType;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="dataType" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="class" type="{http://www.iringtools.org/dxfr/manifest}Class"/>
+ *         &lt;element ref="{http://www.iringtools.org/dxfr/manifest}class"/>
  *         &lt;element name="cardinality" type="{http://www.iringtools.org/dxfr/manifest}Cardinality" minOccurs="0"/>
  *         &lt;element name="dataLength" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
@@ -35,7 +37,7 @@ import org.iringtools.mapping.RoleType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Role", propOrder = {
+@XmlType(name = "", propOrder = {
     "type",
     "id",
     "name",
@@ -45,8 +47,12 @@ import org.iringtools.mapping.RoleType;
     "cardinality",
     "dataLength"
 })
-public class Role {
+@XmlRootElement(name = "role")
+public class Role
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected RoleType type;
     @XmlElement(required = true)

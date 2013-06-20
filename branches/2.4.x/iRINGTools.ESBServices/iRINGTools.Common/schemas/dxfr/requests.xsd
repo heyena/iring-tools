@@ -29,14 +29,14 @@
   
     <xs:complexType name="DxiRequest">
     <xs:sequence>      
-      <xs:element name="manifest" type="mnf:Manifest" />
+      <xs:element ref="mnf:manifest" />
       <xs:element ref="dtf:dataFilter" />
     </xs:sequence>
   </xs:complexType>  
 
   <xs:complexType name="DxoRequest">
     <xs:sequence>
-      <xs:element name="manifest" type="mnf:Manifest" />
+      <xs:element ref="mnf:manifest" />
       <xs:element name="dataTransferIndices" type="dti:DataTransferIndices" />
     </xs:sequence>
   </xs:complexType>
@@ -58,13 +58,13 @@
       <xs:element name="targetScopeName" type="xs:string" />
       <xs:element name="targetAppName" type="xs:string" />
       <xs:element ref="dto:dataTransferObjects" maxOccurs="2" />
-      <xs:element name="manifest" type="mnf:Manifest" />
+      <xs:element ref="mnf:manifest" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ExchangeRequest">
     <xs:sequence>
-      <xs:element name="manifest" type="mnf:Manifest" />
+      <xs:element ref="mnf:manifest" />
       <xs:element name="dataTransferIndices" type="dti:DataTransferIndices" />
       <xs:element name="reviewed" type="xs:boolean" />
     </xs:sequence>
