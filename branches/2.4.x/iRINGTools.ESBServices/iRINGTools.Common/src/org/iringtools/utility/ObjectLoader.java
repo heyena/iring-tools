@@ -116,7 +116,7 @@ public final class ObjectLoader
         
         @SuppressWarnings("unchecked")
         Class<T> cls = (Class<T>) clr.loadClass(className);
-        clr.close(); // resolve resource leakage warning 
+        //clr.close(); // resolve resource leakage warning - HL: not available in java 6 
         
         return cls;
       }
