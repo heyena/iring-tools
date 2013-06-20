@@ -39,8 +39,8 @@ namespace org.iringtools.adapter
     public DataLayerGateway(IKernel kernel)
     {
       _settings = kernel.Get<AdapterSettings>();
-      _scope = _settings["ProjectName"];
-      _app = _settings["ApplicationName"];
+      _scope = _settings["ProjectName"].ToLower();
+      _app = _settings["ApplicationName"].ToLower();
       _connStr = _settings["iRINGCacheConnStr"];
 
       //
@@ -52,9 +52,21 @@ namespace org.iringtools.adapter
         relativePath
       );
 
-      XElement dlBinding = XElement.Load(dlBindingPath);
+      XElement dlBinding = null;
 
-      kernel.Load(dlBindingPath);
+      if (File.Exists(dlBindingPath))
+      {
+        dlBinding = XElement.Load(dlBindingPath);
+        kernel.Load(dlBindingPath);
+      }
+      else if (utility.Utility.isLdapConfigured && utility.Utility.FileExistInRepository<XElementClone>(dlBindingPath))
+      {
+        XElement bindingConfig = Utility.GetxElementObject(dlBindingPath);
+        string fileName = Path.GetFileName(dlBindingPath);
+        string tempPath = Path.GetTempPath() + fileName;
+        bindingConfig.Save(tempPath);
+        kernel.Load(tempPath);
+      }
 
       if (dlBinding.Element("bind").Attribute("service").Value.Replace(" ", "").ToLower()
         == (typeof(IDataLayer).FullName + "," + typeof(IDataLayer).Assembly.GetName().Name).ToLower())
@@ -627,13 +639,12 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          DataObject cacheObjectType = Utility.CloneDataContractObject<DataObject>(objectType);
-          cacheObjectType.tableName = GetCacheTableName(cacheId, objectType.objectName);
+          string tableName = GetCacheTableName(cacheId, objectType.objectName);
 
           if (filter == null) filter = new DataFilter();
-          string whereClause = filter.ToSqlWhereClause("SQLServer", cacheObjectType);
+          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
 
-          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cacheObjectType.tableName, whereClause);
+          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
           count = dt.Rows.Count;
@@ -666,11 +677,10 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          DataObject cacheObjectType = Utility.CloneDataContractObject<DataObject>(objectType);
-          cacheObjectType.tableName = GetCacheTableName(cacheId, objectType.objectName);
+          string tableName = GetCacheTableName(cacheId, objectType.objectName);
 
           if (filter == null) filter = new DataFilter();
-          string whereClause = filter.ToSqlWhereClause("SQLServer", cacheObjectType);
+          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
 
           int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
           string orderByClause = "ORDER BY current_timestamp";
@@ -684,7 +694,7 @@ namespace org.iringtools.adapter
           string query = string.Format(@"
               SELECT * FROM (SELECT row_number() OVER ({4}) as __rn, * 
               FROM {0} {1}) as __query WHERE __rn between {2} and {3}",
-              cacheObjectType.tableName, whereClause, start + 1, start + limit, orderByClause);
+              tableName, whereClause, start + 1, start + limit, orderByClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
           dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
@@ -717,14 +727,13 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          DataObject cacheObjectType = Utility.CloneDataContractObject<DataObject>(objectType);
-          cacheObjectType.tableName = GetCacheTableName(cacheId, objectType.objectName);
+          string tableName = GetCacheTableName(cacheId, objectType.objectName);
 
           string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, identifiers);
-          string query = "SELECT * FROM " + cacheObjectType.tableName + whereClause;
+          string query = "SELECT * FROM " + tableName + whereClause;
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          dataObjects = BaseLightweightDataLayer.ToDataObjects(cacheObjectType, dt);
+          dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
         }
         else if (_dataLayer != null)
         {
@@ -754,16 +763,15 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          DataObject cacheObjectType = Utility.CloneDataContractObject<DataObject>(objectType);
-          cacheObjectType.tableName = GetCacheTableName(cacheId, objectType.objectName);
+          string tableName = GetCacheTableName(cacheId, objectType.objectName);
 
           if (filter == null) filter = new DataFilter();
-          string whereClause = filter.ToSqlWhereClause("SQLServer", cacheObjectType);
+          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
 
-          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cacheObjectType.tableName, whereClause);
+          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          identifiers = BaseLightweightDataLayer.FormIdentifiers(cacheObjectType, dt);
+          identifiers = BaseLightweightDataLayer.FormIdentifiers(objectType, dt);
         }
         else if (_dataLayer != null)
         {
@@ -783,6 +791,40 @@ namespace org.iringtools.adapter
       return identifiers;
     }
 
+    public List<IDataObject> Create(DataObject objectType, List<string> identifiers)
+    {
+      List<IDataObject> dataObjects = new List<IDataObject>();
+
+      try
+      {
+        if (identifiers == null || identifiers.Count == 0)
+        {
+          IDataObject dataObject = new SerializableDataObject() { Type = objectType.objectName };
+          dataObjects.Add(dataObject);
+        }
+        else
+        {
+          foreach (string identifier in identifiers)
+          {
+            IDataObject dataObject = new SerializableDataObject() 
+            { 
+              Id = identifier,
+              Type = objectType.objectName 
+            };
+
+            dataObjects.Add(dataObject);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting data objects for type [" + objectType.objectName + "]: " + e.Message);
+        throw e;
+      }
+
+      return dataObjects;
+    }
+
     //
     // handles add, change, and delete
     //
@@ -794,13 +836,12 @@ namespace org.iringtools.adapter
       try
       {
         string cacheId = CheckCache();
-        DataObject cacheObjectType = null;
+        string tableName = string.Empty;
         bool hasCache = false;
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          cacheObjectType = Utility.CloneDataContractObject<DataObject>(objectType);
-          cacheObjectType.tableName = GetCacheTableName(cacheId, objectType.objectName);
+          tableName = GetCacheTableName(cacheId, objectType.objectName);
           hasCache = true;
         }
         else if (_lwDataLayer != null)
@@ -824,7 +865,7 @@ namespace org.iringtools.adapter
           {
             foreach (SerializableDataObject sdo in dataObjects)
             {
-              idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(cacheObjectType, sdo);
+              idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
             }
 
             DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
@@ -839,7 +880,7 @@ namespace org.iringtools.adapter
 
                 if (sdo != null)
                 {
-                  idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(cacheObjectType, sdo);
+                  idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
                 }
                 else
                 {
@@ -888,7 +929,7 @@ namespace org.iringtools.adapter
           {
             foreach (SerializableDataObject sdo in dataObjects)
             {
-              idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(cacheObjectType, sdo);
+              idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
             }
 
             DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
@@ -903,7 +944,7 @@ namespace org.iringtools.adapter
 
                 if (sdo != null)
                 {
-                  idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(cacheObjectType, sdo);
+                  idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
                 }
                 else
                 {

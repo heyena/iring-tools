@@ -96,7 +96,7 @@ namespace org.iringtools.library
 
     public abstract List<IContentObject> GetContents(DataObject objectType, Dictionary<string, string> idFormats);
 
-    public static string CreateUpdateSQL(DataObject objectType, SerializableDataObject dataObject)
+    public static string CreateUpdateSQL(string tableName, DataObject objectType, SerializableDataObject dataObject)
     {
       switch (dataObject.State)
       {
@@ -120,7 +120,7 @@ namespace org.iringtools.library
               }
             }
 
-            string insertSQL = string.Format(INSERT_SQL_TPL, objectType.tableName, colsBuilder.Remove(0, 1), valsBuilder.Remove(0, 1));
+            string insertSQL = string.Format(INSERT_SQL_TPL, tableName, colsBuilder.Remove(0, 1), valsBuilder.Remove(0, 1));
             return insertSQL;
           }
         case ObjectState.Update:
