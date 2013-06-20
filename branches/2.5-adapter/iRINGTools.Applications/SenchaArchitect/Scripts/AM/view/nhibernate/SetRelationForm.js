@@ -153,7 +153,13 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
             {
               xtype: 'button',
               iconCls: 'am-edit-clear',
-              text: 'Reset'
+              text: 'Reset',
+              listeners: {
+                click: {
+                  fn: me.onRelationReset,
+                  scope: me
+                }
+              }
             }
           ]
         }
@@ -235,6 +241,42 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         node.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
       });
     }
+  },
+
+  onRelationReset: function(button, e, eOpts) {
+    var me = this;
+    var form = button.up('setrelationform');
+    var grid = form.down('relationPropertyGrid');
+    var store = grid.getStore();
+    var node = form.node;
+
+    form.getForm().findField('relatedObjectName').setValue('');  
+    form.getForm().findField('relationType').setValue(node.firstChild.raw.relationshipType);
+    form.getForm().findField('mapPropertyName').setValue('');
+    form.getForm().findField('propertyName').setValue('');
+    store.removeAll();
+
+    for(var i=0;i<utilsObj.relationGridStore.length;i++){
+      pMap = utilsObj.relationGridStore[i];
+      if(pMap){
+
+        var record = [{
+          'property':  pMap.dataPropertyName,
+          'relatedProperty': pMap.relatedPropertyName
+        }];
+        var exist = store.find('property', pMap.dataPropertyName);
+        if(exist == -1)
+        store.add(record);
+
+      }
+    }
+    node.firstChild.raw.propertyMap = [];
+    store.each(function(record) {
+      node.firstChild.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+      if(node.firstChild.data.propertyMap!=undefined) 
+      node.firstChild.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+
+    });
   }
 
 });

@@ -364,7 +364,58 @@
                         "iconCls": "am-edit-clear",
                         "text": "Reset"
                     },
-                    "designerId": "208c904a-4ad4-4850-8ca7-d7f437add06b"
+                    "designerId": "208c904a-4ad4-4850-8ca7-d7f437add06b",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onRelationReset",
+                                "implHandler": [
+                                    "var me = this;\r",
+                                    "var form = button.up('setrelationform');\r",
+                                    "var grid = form.down('relationPropertyGrid');\r",
+                                    "var store = grid.getStore();\r",
+                                    "var node = form.node;\r",
+                                    "\r",
+                                    "form.getForm().findField('relatedObjectName').setValue('');  \r",
+                                    "form.getForm().findField('relationType').setValue(node.firstChild.raw.relationshipType);\r",
+                                    "form.getForm().findField('mapPropertyName').setValue('');\r",
+                                    "form.getForm().findField('propertyName').setValue('');\r",
+                                    "store.removeAll();\r",
+                                    "\r",
+                                    "for(var i=0;i<utilsObj.relationGridStore.length;i++){\r",
+                                    "  pMap = utilsObj.relationGridStore[i];\r",
+                                    "  if(pMap){\r",
+                                    "    \r",
+                                    "    var record = [{\r",
+                                    "      'property':  pMap.dataPropertyName,\r",
+                                    "      'relatedProperty': pMap.relatedPropertyName\r",
+                                    "    }];\r",
+                                    "    var exist = store.find('property', pMap.dataPropertyName);\r",
+                                    "    if(exist == -1)\r",
+                                    "      store.add(record);\r",
+                                    "    \r",
+                                    "  }\r",
+                                    "}\r",
+                                    "node.firstChild.raw.propertyMap = [];\r",
+                                    "store.each(function(record) {\r",
+                                    "  node.firstChild.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});\r",
+                                    "  if(node.firstChild.data.propertyMap!=undefined) \r",
+                                    "    node.firstChild.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});\r",
+                                    "  \r",
+                                    "});"
+                                ],
+                                "name": "click",
+                                "scope": "me"
+                            },
+                            "designerId": "d6787a34-5b9b-4999-9f20-b13ae45ef126"
+                        }
+                    ]
                 }
             ]
         },

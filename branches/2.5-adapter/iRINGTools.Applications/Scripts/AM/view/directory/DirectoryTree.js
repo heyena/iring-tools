@@ -118,7 +118,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
     me.callParent(arguments);
   },
 
-  onReload: function() {
+  onReload: function(content) {
 
     var me = this;
     var node = me.getSelectedNode();
@@ -182,6 +182,8 @@ Ext.define('AM.view.directory.DirectoryTree', {
             //console.log(dirNode);
           });
           me.body.unmask();
+          if(content!=undefined)
+          content.body.unmask();
         }
 
       });

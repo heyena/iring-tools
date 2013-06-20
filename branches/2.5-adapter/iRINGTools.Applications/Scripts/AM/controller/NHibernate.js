@@ -133,7 +133,7 @@ Ext.define('AM.controller.NHibernate', {
   onSaveDbObjectTree: function(button, e, eOpts) {
     var me = this;
     var content = this.getMainContent();
-    content.body.mask('Loading...', 'x-mask-loading');
+    content.body.mask();
     var nhPanel = button.up('nhibernatepanel');
 
     var dbObjectsTree = nhPanel.down('nhibernatetree');
@@ -168,8 +168,8 @@ Ext.define('AM.controller.NHibernate', {
         if (index == -1) {
           //showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
           var navpanel = me.getDirTree();
-          navpanel.onReload();
-          content.body.unmask();
+          navpanel.onReload(content);
+          //content.body.unmask();
         }
         else {
           var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
@@ -1031,7 +1031,8 @@ Ext.define('AM.controller.NHibernate', {
     var dirTree = me.getDirTree();
     dirNode = dirTree.getSelectedNode();
     content = me.getMainContent();
-    utilsObj.relationGridStore = null;
+    //utilsObj.abc = [];
+    //utilsObj.relationGridDeletedRec =[];
     var dbDict, dbInfo, tree;
 
     var context = dirNode.parentNode.data.text;//dirNode.data.record.ContextName;
@@ -1729,22 +1730,44 @@ Ext.define('AM.controller.NHibernate', {
       }
     });
 
-    if(utilsObj.relationGridStore!=undefined){
-      for(var i=0; i<utilsObj.relationGridStore.data.length;i++){
-        var record = [{
-          'property': utilsObj.relationGridStore.data.items[i].data.property,
-          'relatedProperty': utilsObj.relationGridStore.data.items[i].data.relatedProperty
-        }];
-        var exist = gridStore.find('property', utilsObj.relationGridStore.data.items[i].data.property);
-        if(exist == -1)
-        gridStore.add(record);
+    /*if(utilsObj.relationGridStore!=undefined){
+    for(var i=0; i<utilsObj.relationGridStore.data.length;i++){
+    var record = [{
+    'property': utilsObj.relationGridStore.data.items[i].data.property,
+    'relatedProperty': utilsObj.relationGridStore.data.items[i].data.relatedProperty
+    }];
+    var exist = gridStore.find('property', utilsObj.relationGridStore.data.items[i].data.property);
+    if(exist == -1)
+    gridStore.add(record);
 
-      }
     }
+    }*/
+    /*if(utilsObj.relationGridDeletedRec!=undefined){
+    for(var j=0; j<utilsObj.relationGridDeletedRec.length;j++){
+    var record = [{
+    'property': utilsObj.relationGridDeletedRec[j].data.property,
+    'relatedProperty': utilsObj.relationGridDeletedRec[j].data.relatedProperty
+    }];
+    var exist = gridStore.find('property', utilsObj.relationGridDeletedRec[j].data.property);
+    if(exist != -1)
+    gridStore.removeAt(exist);
+
+    }
+    }*/
 
     form.getForm().findField('relationshipName').setValue(relationName);
     form.getForm().findField('objectName').setValue(thisObj);
-
+    if(utilsObj.parentNode!=null && utilsObj.parentNode!=dataNode.parentNode.parentNode.data.text){
+      utilsObj.relationGridStore = [];
+      utilsObj.parentNode = dataNode.parentNode.parentNode.data.text;
+    }
+    if(utilsObj.relationGridStore.length == 0){
+      utilsObj.parentNode = dataNode.parentNode.parentNode.data.text;
+      gridStore.each(function(record) {
+        utilsObj.relationGridStore.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+      });
+    }
+    console.log(utilsObj.relationGridStore);
     panel.removeAll();
     panel.add(form);
     panel.doLayout();

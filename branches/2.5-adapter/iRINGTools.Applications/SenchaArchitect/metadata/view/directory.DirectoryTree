@@ -216,6 +216,9 @@
             "codeClass": null,
             "userConfig": {
                 "fn": "onReload",
+                "designer|params": [
+                    "content"
+                ],
                 "implHandler": [
                     "\r",
                     "var me = this;\r",
@@ -280,6 +283,8 @@
                     "        //console.log(dirNode);\r",
                     "      });\r",
                     "      me.body.unmask();\r",
+                    "      if(content!=undefined)\r",
+                    "      \t content.body.unmask();\r",
                     "    }\r",
                     "\r",
                     "  });\r",

@@ -25,6 +25,8 @@ Ext.ux.Utils = function(src) {
 	this.availableDataProperties = [];
 	this.deletedDataProperties = [];
 	this.deletedKeyProperties = [];
+	this.relationGridStore = [];
+	//this.relationGridDeletedRec = [];
 
 };
 Ext.ux.Utils.prototype = {

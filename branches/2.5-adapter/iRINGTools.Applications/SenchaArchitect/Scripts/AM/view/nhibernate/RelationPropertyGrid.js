@@ -107,6 +107,7 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
 
     var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};
     //var mapRecord = {'value': propertyName, 'text': mapProperty};
+    var mapRecordForNode = {'dataPropertyName': propertyName, 'relatedPropertyName': mapProperty};
     //var propertErr = store.find('value', propertyName);
     var propertErr = store.find('property', propertyName);
     //var mapErr = store.find('text', mapProperty);
@@ -126,21 +127,38 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
       return;
     }
 
-    utilsObj.relationGridStore = null;
+    //utilsObj.relationGridStore = null;
     store.add(mapRecord);
-    utilsObj.relationGridStore = store;
+    if(treeNode.firstChild.raw.propertyMap!=undefined){
+      treeNode.firstChild.raw.propertyMap.push(mapRecordForNode);
+      if(treeNode.firstChild.data.propertyMap!=undefined) 
+      treeNode.firstChild.data.propertyMap.push(mapRecordForNode);
+    }
+    else{
+      treeNode.firstChild.data.propertyMap = [];
+      treeNode.firstChild.raw.propertyMap = [];
+      store.each(function(record) {
+        treeNode.firstChild.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+        treeNode.firstChild.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+      });
+    }
+    //utilsObj.relationGridStore = store;
   },
 
   onRemoveClick: function(button, e, eOpts) {
     var me = this;
     var form = button.up('setrelationform');
+    var treeNode = form.node;
     var grid = form.down('relationPropertyGrid');
     var selectedRec = grid.getSelectionModel().selected.items[0];
     var store = grid.getStore();
-
+    var tempPropertyMap = [];
     if (grid.getSelectionModel().hasSelection()) {
       store.remove(selectedRec);
-      utilsObj.relationGridStore = store;
+      store.each(function(record) {
+        tempPropertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+      });
+      treeNode.firstChild.raw.propertyMap = tempPropertyMap;
     }
     else {
       if (store.data.items.length < 1)
