@@ -5162,6 +5162,38 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
+
+    public Response DeleteCache(string scope, string app)
+    {
+      try
+      {
+        Initialize(scope, app);
+        DataLayerGateway gateway = new DataLayerGateway(_kernel);
+        Response response = gateway.DeleteCache();
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error deleting cache for {0}.{1}: {2}", scope, app, ex.Message);
+        throw ex;
+      }
+    }
+
+    public Response DeleteCache(string scope, string app, string objectType)
+    {
+      try
+      {
+        Initialize(scope, app);
+        DataLayerGateway gateway = new DataLayerGateway(_kernel);
+        Response response = gateway.DeleteCache(objectType);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error deleting cache for {0}.{1}: {2}", scope, app, ex.Message);
+        throw ex;
+      }
+    }
     #endregion
 
     public Response RefreshDataObject(string projectName, string applicationName, string objectType, DataFilter dataFilter)

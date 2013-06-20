@@ -569,7 +569,7 @@ namespace org.iringtools.services
       FormatOutgoingMessage<Response>(response, true);
     }
 
-    [Description("Imports application cache. Cache files are base URI followed by <object type>.dat is required. ")]
+    [Description("Imports application cache. Cache files are baseUri followed by <object type>.dat is required.")]
     [WebGet(UriTemplate = "/{scope}/{app}/cache/import?baseuri={baseUri}&updatedictionary={updateDictionary}")]
     public void ImportCache(string scope, string app, string baseUri, bool updateDictionary)
     {
@@ -582,6 +582,22 @@ namespace org.iringtools.services
     public void ImportObjectTypeCache(string scope, string app, string objectType, string url, bool updateDictionary)
     {
       Response response = _adapterProvider.ImportCache(scope, app, objectType, url, updateDictionary);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    [Description("Deletes application cache.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/cache/delete")]
+    public void DeleteCache(string scope, string app)
+    {
+      Response response = _adapterProvider.DeleteCache(scope, app);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    [Description("Deletes application cache for specific object type.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{objectType}/cache/delete")]
+    public void DeleteObjectTypeCache(string scope, string app, string objectType)
+    {
+      Response response = _adapterProvider.DeleteCache(scope, app, objectType);
       FormatOutgoingMessage<Response>(response, true);
     }
     #endregion
