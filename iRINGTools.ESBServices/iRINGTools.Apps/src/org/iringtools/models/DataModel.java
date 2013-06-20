@@ -861,8 +861,8 @@ public class DataModel
             String clsPath = role.getClazz().getPath();
             int clsIndex = role.getClazz().getIndex();
             
-            ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId,clsPath);
-            createFields(fields, graph, relatedClassTemplates,clsPath,clsIndex);
+            ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId, clsPath);
+            createFields(fields, graph, relatedClassTemplates, clsPath, clsIndex);
           }
         }
       }

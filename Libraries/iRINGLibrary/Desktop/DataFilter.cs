@@ -161,12 +161,6 @@ namespace org.iringtools.library
 
     public void AppendFilter(DataFilter filter)
     {
-      if (Expressions == null)
-        Expressions = new List<Expression>();
-
-      if (OrderExpressions == null)
-        OrderExpressions = new List<OrderExpression>();      
-
       if (filter != null)
       {
         DataFilter clonedFilter = Utility.CloneDataContractObject<DataFilter>(filter);
@@ -178,15 +172,38 @@ namespace org.iringtools.library
           clonedFilter.Expressions[0].OpenGroupCount++;
           clonedFilter.Expressions[maxIndex].CloseGroupCount++;
 
+          if (Expressions == null)
+          {
+            Expressions = new List<Expression>();
+          }
+
           Expressions.AddRange(clonedFilter.Expressions);
         }
 
         if (clonedFilter.OrderExpressions != null && clonedFilter.OrderExpressions.Count > 0)
         {
+          if (OrderExpressions == null)
+          {
+            OrderExpressions = new List<OrderExpression>();
+          }
+
           foreach (OrderExpression orderExpression in clonedFilter.OrderExpressions)
           {
             if (!DuplicateOrderExpression(orderExpression))
               OrderExpressions.Add(orderExpression);
+          }
+        }
+
+        if (clonedFilter.RollupExpressions != null && clonedFilter.RollupExpressions.Count > 0)
+        {
+          if (RollupExpressions == null)
+          {
+            RollupExpressions = new List<RollupExpression>();
+          }
+
+          foreach (RollupExpression rollupExpression in clonedFilter.RollupExpressions)
+          {
+            RollupExpressions.Add(rollupExpression);
           }
         }
       }    
@@ -198,15 +215,11 @@ namespace org.iringtools.library
       {
         if (item.PropertyName.ToLower() == orderExpression.PropertyName.ToLower())
         {  
-          if(item.SortOrder == orderExpression.SortOrder)
+          if (item.SortOrder == orderExpression.SortOrder)
             return true;
-          //else 
-          //{
-          //  item.SortOrder = orderExpression.SortOrder;
-          //  return true;
-          //}
         }
       }
+
       return false;
     }
 

@@ -1,6 +1,7 @@
 
 package org.iringtools.mapping;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -40,8 +41,11 @@ import javax.xml.bind.annotation.XmlType;
     "index"
 })
 @XmlRootElement(name = "templateMap")
-public class TemplateMap {
+public class TemplateMap
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected TemplateType type;
     @XmlElement(required = true)
