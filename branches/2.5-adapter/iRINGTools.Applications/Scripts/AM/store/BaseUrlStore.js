@@ -33,7 +33,7 @@ Ext.define('AM.store.BaseUrlStore', {
           
         },
         timeout: 600000,
-        url: 'directory/endpointBaseUrl',
+        url: '',
         reader: {
           type: 'json',
           root: 'items'

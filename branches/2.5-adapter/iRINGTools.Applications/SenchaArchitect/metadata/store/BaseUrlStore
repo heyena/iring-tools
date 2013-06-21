@@ -25,7 +25,7 @@
                     "{}"
                 ],
                 "timeout": 600000,
-                "url": "directory/endpointBaseUrl"
+                "url": ""
             },
             "designerId": "427de431-211b-4a76-9d50-03efe068dfa8",
             "cn": [

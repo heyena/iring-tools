@@ -269,7 +269,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
           return false;
         }
         me.getForm().findField('className').setValue(data.records[0].data.record.Label);
-        me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
+        //me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
         var msg = data.records[0].data.record.Label;//'Class Label: ' + data.records[0].data.record.Label;
         ccont.update(msg);
         return true;
@@ -290,7 +290,6 @@ Ext.define('AM.view.mapping.ClassMapForm', {
     var form = me.getForm();
     var message;
     if (form.findField('identifier').getValue() == 'Drop property node(s) here.' ||
-    form.findField('objectName').getValue() == '' ||
     form.findField('className').getValue() == 'Drop a class node here.') {
       message = 'Required fields can not be blank!';
       showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);

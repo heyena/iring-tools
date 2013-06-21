@@ -109,7 +109,8 @@ Ext.define('AM.view.mapping.MappingTree', {
     var pan = me.up('mappingpanel');
     me.getParentClass(overModel);
     var nodetype, thistype, icn, txt, templateId, rec, parentId, context;
-    var graphName = pan.graph;//pan.graphName;
+    var tempArr = pan.graph.split('/');//pan.graphName;
+    var graphName = tempArr[tempArr.length-1];
     var modelType = data.records[0].data.type;
     if (overModel.data.type == 'RoleMapNode') {
       reference = data.records[0].data.record.Uri;
@@ -121,25 +122,27 @@ Ext.define('AM.view.mapping.MappingTree', {
       parentId = me.parentClass;
       f = false;
       var index = overModel.parentNode.parentNode.indexOf(overModel.parentNode);
-      this.getEl().mask('Loading...');
+      me.getEl().mask('Loading...');
+      //this.getEl().mask('Loading...');
       Ext.Ajax.request({
-        url: 'mapping/mapreference',
+        url: 'mapping/makereference',//'mapping/mapreference',
         method: 'POST',
         params: {
-          reference: reference,
+          refClassId: reference,
           classId: parentId,
-          label: label,
+          refClassLabel: label,
           roleId: roleId,
           roleName: roleName,
-          contextName: pan.contextName,
+          scope: pan.contextName,
           //ctx: pan.contextName,
-          endpoint: pan.endpoint,
-          index: index,
-          graphName: graphName,
-          baseUrl: pan.baseUrl
+          app: pan.endpoint,
+          templateIndex: index,
+          graph: graphName
+          //baseUrl: pan.baseUrl
         },
         success: function (result, request) {
-          tree.getEl().unmask();
+          me.getEl().unmask();
+          //this.getEl().unmask();
           me.onReload();
         },
         failure: function (result, request) {

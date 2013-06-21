@@ -36,7 +36,7 @@ Ext.define('AM.store.ContextStore', {
           
         },
         timeout: 600000,
-        url: 'directory/folderContext',
+        url: '',
         reader: {
           type: 'json',
           root: 'items'
