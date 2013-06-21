@@ -36,7 +36,7 @@ Ext.define('AM.store.ContextStore', {
           
         },
         timeout: 600000,
-        url: '',
+        url: 'spreadsheet/getnode',
         reader: {
           type: 'json',
           root: 'items'

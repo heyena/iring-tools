@@ -141,35 +141,34 @@ Ext.define('AM.view.directory.DirectoryTree', {
     me.body.mask('Loading...', 'x-mask-loading');
     dbInfo = null; //17th June
     if (node) {
-
-      Ext.Ajax.request({
-        url: 'AdapterManager/DBDictionary',//'NHibernate/DBDictionary',
-        method: 'POST',
-        timeout: 6000000,
-        params: {
-          scope: context,
-          app: endpoint,
-          baseUrl: baseUrl
-        },
-        success: function (response, request) {
-          dbDict = Ext.JSON.decode(response.responseText);
-          if(dbDict) {
-            var cstr = dbDict.ConnectionString;
-            if(cstr) {
-              var nhibernateTreeObject = Ext.widget('nhibernatetree');
-              //node.data.record.dbDict = dbDict;
-              //dbInfo = me.getConnStrParts(cstr, node);//me.getConnStringParts(cstr, dirNode);
-              //var selectTableNames = me.setTableNames(dbDict);
-              dbInfo = nhibernateTreeObject.getConnStrParts(cstr, node);
+      if(context!=undefined && endpoint!=undefined){
+        Ext.Ajax.request({
+          url: 'AdapterManager/DBDictionary',//'NHibernate/DBDictionary',
+          method: 'POST',
+          timeout: 6000000,
+          params: {
+            scope: context,
+            app: endpoint,
+            baseUrl: baseUrl
+          },
+          success: function (response, request) {
+            dbDict = Ext.JSON.decode(response.responseText);
+            if(dbDict) {
+              var cstr = dbDict.ConnectionString;
+              if(cstr) {
+                var nhibernateTreeObject = Ext.widget('nhibernatetree');
+                //node.data.record.dbDict = dbDict;
+                //dbInfo = me.getConnStrParts(cstr, node);//me.getConnStringParts(cstr, dirNode);
+                //var selectTableNames = me.setTableNames(dbDict);
+                dbInfo = nhibernateTreeObject.getConnStrParts(cstr, node);
+              }
             }
+          },
+          failure: function (response, request) {
+            //var dataObjPanel = content.items.map[contextName + '.' + endpoint + '.-nh-config'];;
           }
-        },
-        failure: function (response, request) {
-          //var dataObjPanel = content.items.map[contextName + '.' + endpoint + '.-nh-config'];;
-        }
-      });
-
-
+        });
+      }
 
       store.load({
         callback: function (records, options, success) {
