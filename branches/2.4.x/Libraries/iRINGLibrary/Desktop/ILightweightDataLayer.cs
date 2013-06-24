@@ -6,6 +6,7 @@ using System.Data;
 using log4net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using org.iringtools.adapter;
 
 namespace org.iringtools.library
 {
@@ -87,6 +88,13 @@ namespace org.iringtools.library
     public const string INSERT_SQL_TPL = "INSERT INTO {0} ({1}) VALUES ({2})";
     public const string UPDATE_SQL_TPL = "UPDATE {0} SET {1} {2}";
     public const string DELETE_SQL_TPL = "DELETE FROM {0} {1}";
+
+    protected AdapterSettings _settings;
+
+    public BaseLightweightDataLayer(AdapterSettings settings)
+    {
+        _settings = settings;
+    }
 
     public abstract DataDictionary Dictionary(bool refresh, string objectType, out DataFilter dataFilter);
 
