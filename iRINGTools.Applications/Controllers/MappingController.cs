@@ -951,6 +951,9 @@ namespace org.iringtools.web.controllers
 
                 if (!string.IsNullOrEmpty(rMap.dataType) && rMap.dataType.StartsWith("xsd"))
                 {
+                   if(!Utility.ValidateValueWithXsdType(rMap.dataType,constantValue))
+                     throw new Exception("Invalid Data type of literal");
+                    
                     rMap.propertyName = null;
                     rMap.type = RoleType.FixedValue;
                     rMap.value = constantValue;

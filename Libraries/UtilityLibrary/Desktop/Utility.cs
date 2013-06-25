@@ -1356,6 +1356,55 @@ namespace org.iringtools.utility
       }
     }
 
+    public static bool ValidateValueWithXsdType(string xsdType, string value)
+    {
+      string type = (xsdType.ToLower().StartsWith("xsd:")) ? xsdType.Substring(4) : xsdType;
+
+      //TODO need more improvement in datetime format handling
+      switch (type.ToLower())
+      {
+        case "boolean": { bool temp; return Boolean.TryParse(value, out temp); }
+        case "byte": { byte temp; return Byte.TryParse(value, out temp); }
+        case "char": { Char temp; return Char.TryParse(value, out temp); }
+        case "character": { Char temp; return Char.TryParse(value, out temp); }
+        case "decimal": { Decimal temp; return Decimal.TryParse(value, out temp); }
+        case "double": { Double temp; return Double.TryParse(value, out temp); }
+        case "float": { Single temp; return Single.TryParse(value, out temp); }
+        case "int": { Int32 temp; return Int32.TryParse(value, out temp); }
+        case "integer": { Int32 temp; return Int32.TryParse(value, out temp); }
+        case "long": { Int64 temp; return Int64.TryParse(value, out temp); }
+        case "short": { Int16 temp; return Int16.TryParse(value, out temp); }
+        case "time":
+        case "date":
+        case "datetime":
+        case "duration":
+        case "gday":
+        case "gmonth":
+        case "gmonthday":
+        case "gyear":
+        case "gyearmonth":
+          { DateTime temp; return DateTime.TryParse(value, out temp); }
+        case "string": 
+        case "entities":
+        case "entity":
+        case "id":
+        case "idref":
+        case "idrefs":
+        case "language":
+        case "name":
+        case "ncname":
+        case "nmtoken":
+        case "nmtokens":
+        case "normalizedstring":
+        case "qname":
+        case "token":
+            { return true; }
+        case "anyURI":
+            { return true; }
+        default: { return false; }
+      }
+    }
+
     public static string SqlTypeToCSharpType(string sqlType)
     {
       switch (sqlType.ToLower())
