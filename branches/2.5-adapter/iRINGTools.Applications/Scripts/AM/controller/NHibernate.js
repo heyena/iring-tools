@@ -1885,7 +1885,9 @@ Ext.define('AM.controller.NHibernate', {
         }
       }
       if (!found) {
-        availKeys.push([itemName, itemName]);
+        if(selectItems.indexOf(itemName) == -1){
+          availKeys.push([itemName, itemName]);
+        }
       }
     }
     var availableItem = me.getAvailableItems(dataNode);

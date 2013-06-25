@@ -212,10 +212,21 @@ Ext.define('AM.view.mapping.MappingTree', {
   },
 
   onBeforeLoad: function(store, operation, eOpts) {
+    //alert('onBeforeLoad of tree.....');
+
+    var tempIdArr = operation.node.data.id.split('/');
+    var tempId = tempIdArr[tempIdArr.length-1];
+    var tempNode;
+    if(store.tree.root.firstChild!=undefined)		
+    tempNode = store.tree.root.firstChild.data.id+'/'+tempId;
+
+
 
     store.proxy.extraParams.type = operation.node.data.type;
     if (store.proxy.extraParams !== undefined) {
-      store.proxy.extraParams.id = operation.node.data.id;
+      //store.proxy.extraParams.id = operation.node.data.id;
+      store.proxy.extraParams.id = operation.node.data.identifier;
+      store.proxy.extraParams.tempNode = tempNode;
     }
   },
 
@@ -287,7 +298,7 @@ Ext.define('AM.view.mapping.MappingTree', {
       node.collapse();
       */
       store.on('beforeload', function (store, operation, eopts) {
-
+        //alert('before load of mapping tree..');
         //params.contextName = context;
         //params.endpoint = endpoint;
         //params.id = id;
@@ -309,6 +320,7 @@ Ext.define('AM.view.mapping.MappingTree', {
         }
 
       });
+
     }
 
     /*if(path) {

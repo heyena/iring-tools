@@ -218,11 +218,19 @@ Ext.define('AM.controller.Mapping', {
       var params = treeStore.getProxy().extraParams;
 
       treeStore.on('beforeload', function (store, operation, eopts) {
-        //params.contextName = context;
-        // params.endpoint = endpoint;
-        //params.baseUrl = baseUrl;
-        params.id = node.parentNode.parentNode.internalId;
-        params.tempNode = node.parentNode.parentNode.internalId;
+
+        var tempIdArr = operation.node.data.id.split('/');
+        var tempId = tempIdArr[tempIdArr.length-1];
+        var tempNode;
+        if(store.tree.root.firstChild!=undefined)		
+        tempNode = store.tree.root.firstChild.data.id+'/'+tempId;
+        else
+        tempNode = node.parentNode.parentNode.internalId;
+
+        params.tempNode = tempNode;
+        params.id = operation.node.data.identifier;
+        //params.id = node.parentNode.parentNode.internalId;
+        //params.tempNode = node.parentNode.parentNode.internalId;
         params.graph = node.internalId;//graphName;
       }, me);
 

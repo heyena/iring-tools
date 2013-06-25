@@ -158,7 +158,7 @@ namespace org.iringtools.web.controllers
         string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
-        string graph = dataObjectVars[2];
+        string graph = form["graphName"];//dataObjectVars[2];
         string context = string.Format("{0}/{1}", scope, application);
 
         ClassTemplateMap selectedCtm = null;

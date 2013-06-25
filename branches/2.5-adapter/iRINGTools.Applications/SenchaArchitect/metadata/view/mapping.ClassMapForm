@@ -656,7 +656,7 @@
                     "      return false;\r",
                     "    }\r",
                     "    me.getForm().findField('className').setValue(data.records[0].data.record.Label);\r",
-                    "    //me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);\r",
+                    "    me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);\r",
                     "    var msg = data.records[0].data.record.Label;//'Class Label: ' + data.records[0].data.record.Label;\r",
                     "    ccont.update(msg);\r",
                     "    return true;\r",

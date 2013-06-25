@@ -127,11 +127,15 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
     var nodeInternalId = node.internalId;
     var context;
-    if (node.parentNode) // 17th June
-    context = node.parentNode.data.text;
+    var endpoint;
+    var baseUrl;
+    if (node.parentNode){ // 17th June
+      context = node.parentNode.data.text;
+      if(node.parentNode.parentNode!=null)  
+      endpoint= node.parentNode.parentNode.data.text;
+      //baseUrl = node.data.record.BaseUrl;
+    }
 
-    var endpoint= node.data.record.Name;
-    var baseUrl = node.data.record.BaseUrl;
     var dataRecord = node.data.record;
     var store = me.store;
     var path;
@@ -203,7 +207,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
       }, me);
       store.on('load', function (store, action) {
         //alert('afterload...');
-        if(dbInfo == null) // 17th June
+        if(dbInfo == null && dataRecord!=undefined) // 17th June
         dbInfo = dataRecord.dbInfo;
 
         dirNode = store.getNodeById(nodeInternalId);
