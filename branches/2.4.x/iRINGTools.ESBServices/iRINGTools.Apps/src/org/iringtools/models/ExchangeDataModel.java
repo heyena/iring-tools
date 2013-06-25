@@ -243,8 +243,11 @@ public class ExchangeDataModel extends DataModel
     {
       String error = "Error during exchange: " + ex.getMessage();
       logger.error(error);
+      String resultSummary = error.replaceAll("(<html)[^&]*(</html>)", "");
+      String romoveDoc =   resultSummary.replaceAll("(<!DOCTYPE)[^&]*(>)", "");
+    
 
-      xRes.setSummary(error);
+      xRes.setSummary(romoveDoc.replaceAll("\\r\\n", ""));
       xRes.setLevel(Level.ERROR);
     }
 
@@ -335,7 +338,11 @@ public class ExchangeDataModel extends DataModel
         row.add(format(endTime));
         row.add(xr.getSenderScope() + "." + xr.getSenderApp() + "." + xr.getSenderGraph());
         row.add(xr.getReceiverScope() + "." + xr.getReceiverApp() + "." + xr.getReceiverGraph());
-        row.add(xr.getSummary());
+        String summary = xr.getSummary();
+     //   String resultSummary = summary.replaceAll("\\<.*?\\>", "");
+        String resultSummary = summary.replaceAll("(<html)[^&]*(</html>)", "");
+        String romoveDoc =   resultSummary.replaceAll("(<!DOCTYPE)[^&]*(>)", "");
+        row.add(romoveDoc.replaceAll("\\r\\n", ""));
 
         data.add(row);
       }
