@@ -343,21 +343,15 @@ namespace org.iringtools.adapter.projection
                     roleMap.type == RoleType.ObjectProperty ||
                     roleMap.type == RoleType.FixedValue)
                 {
-                  if (String.IsNullOrEmpty(roleMap.propertyName))
+                  
+                  if (String.IsNullOrEmpty(roleMap.propertyName) && roleMap.type != RoleType.FixedValue )
                   {
                     throw new Exception("No data property mapped to role [" + classTemplateMap.classMap.name + "." + templateMap.name + "." + roleMap.name + "]");
                   }
 
-                  string[] propertyParts = roleMap.propertyName.Split('.');
-                  string propertyName = propertyParts[propertyParts.Length - 1];
-
-                  int lastDotPos = roleMap.propertyName.LastIndexOf('.');
-                  string objectPath = roleMap.propertyName.Substring(0, lastDotPos);
-
-                  if (propertyParts.Length == 2)  // direct property
+                  if (roleMap.type == RoleType.FixedValue) // if it is mapped with literal
                   {
-                    string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-                    string keyValue = propertyValue;
+                    string propertyValue = roleMap.value;
                     propertyValue = ParsePropertyValue(roleMap, propertyValue);
 
                     if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
@@ -365,34 +359,20 @@ namespace org.iringtools.adapter.projection
                       isTemplateValid = false;
                       break;
                     }
-                    
-                    if (propertyName == sortIndex)
-                    {
-                      dti.SortIndex = propertyValue;
 
-                      if (sortType == null)
-                      {
-                        sortType = Utility.XsdTypeToCSharpType(roleMap.dataType);
-                      }
-                    }
-
-                    tempPropertyValues.Append(propertyValue);              
+                    tempPropertyValues.Append(propertyValue);
                   }
-                  else  // related property
+                  else // if it is mapped with property
                   {
-                    string key = objectPath + "." + dataObjectIndex;
-                    List<IDataObject> relatedObjects = null;
+                    string[] propertyParts = roleMap.propertyName.Split('.');
+                    string propertyName = propertyParts[propertyParts.Length - 1];
 
-                    if (!_relatedObjectsCache.TryGetValue(key, out relatedObjects))
-                    {
-                      relatedObjects = GetRelatedObjects(roleMap.propertyName, dataObject);
-                      _relatedObjectsCache.Add(key, relatedObjects);
-                    }
+                    int lastDotPos = roleMap.propertyName.LastIndexOf('.');
+                    string objectPath = roleMap.propertyName.Substring(0, lastDotPos);
 
-                    if (hasRelatedProperty)  // reference class identifier has related property
+                    if (propertyParts.Length == 2)  // direct property
                     {
-                      IDataObject relatedObject = relatedObjects[classIdentifierIndex];
-                      string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+                      string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
                       string keyValue = propertyValue;
                       propertyValue = ParsePropertyValue(roleMap, propertyValue);
 
@@ -401,13 +381,33 @@ namespace org.iringtools.adapter.projection
                         isTemplateValid = false;
                         break;
                       }
-                      
+
+                      if (propertyName == sortIndex)
+                      {
+                        dti.SortIndex = propertyValue;
+
+                        if (sortType == null)
+                        {
+                          sortType = Utility.XsdTypeToCSharpType(roleMap.dataType);
+                        }
+                      }
+
                       tempPropertyValues.Append(propertyValue);
                     }
-                    else  // related property is property map
+                    else  // related property
                     {
-                      foreach (IDataObject relatedObject in relatedObjects)
+                      string key = objectPath + "." + dataObjectIndex;
+                      List<IDataObject> relatedObjects = null;
+
+                      if (!_relatedObjectsCache.TryGetValue(key, out relatedObjects))
                       {
+                        relatedObjects = GetRelatedObjects(roleMap.propertyName, dataObject);
+                        _relatedObjectsCache.Add(key, relatedObjects);
+                      }
+
+                      if (hasRelatedProperty)  // reference class identifier has related property
+                      {
+                        IDataObject relatedObject = relatedObjects[classIdentifierIndex];
                         string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
                         string keyValue = propertyValue;
                         propertyValue = ParsePropertyValue(roleMap, propertyValue);
@@ -417,11 +417,28 @@ namespace org.iringtools.adapter.projection
                           isTemplateValid = false;
                           break;
                         }
-                        
+
                         tempPropertyValues.Append(propertyValue);
                       }
+                      else  // related property is property map
+                      {
+                        foreach (IDataObject relatedObject in relatedObjects)
+                        {
+                          string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+                          string keyValue = propertyValue;
+                          propertyValue = ParsePropertyValue(roleMap, propertyValue);
 
-                      if (!isTemplateValid) break;
+                          if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
+                          {
+                            isTemplateValid = false;
+                            break;
+                          }
+
+                          tempPropertyValues.Append(propertyValue);
+                        }
+
+                        if (!isTemplateValid) break;
+                      }
                     }
                   }
                 }
@@ -573,6 +590,8 @@ namespace org.iringtools.adapter.projection
       IDataObject dataObject = _dataObjects[dataObjectIndex];
       List<RoleMap> propertyRoles = new List<RoleMap>();
       List<RoleMap> classRoles = new List<RoleMap>();
+      List<RoleMap> fixedValueRoles = new List<RoleMap>();
+
       Dictionary<RoleMap, RoleObject> roleObjectMaps = new Dictionary<RoleMap, RoleObject>();
 
       TemplateObject baseTemplateObject = new TemplateObject
@@ -600,6 +619,7 @@ namespace org.iringtools.adapter.projection
             roleObject.dataType = roleMap.dataType;
             roleObject.value = roleMap.value;
             baseTemplateObject.roleObjects.Add(roleObject);
+            fixedValueRoles.Add(roleMap);
             break;
 
           case RoleType.Reference:
@@ -801,6 +821,11 @@ namespace org.iringtools.adapter.projection
           classObject.templateObjects.Add(baseTemplateObject);
         }
       }
+      else if (fixedValueRoles.Count > 0) // if Template has role with only fixed value
+      {
+        TemplateObject templateObject = Utility.CloneDataContractObject<TemplateObject>(baseTemplateObject);
+        classObject.templateObjects.Add(templateObject);
+      }
     }
 
     private string ParsePropertyValue(RoleMap propertyRole, string propertyValue)
@@ -943,6 +968,11 @@ namespace org.iringtools.adapter.projection
 
     private void ProcessInboundPropertyRole(int dataObjectIndex, int classObjectIndex, RoleMap roleMap, TemplateObject templateObject)
     {
+      if (roleMap.type == RoleType.FixedValue)
+      {
+        return;
+      }
+
       string[] propertyPath = roleMap.propertyName.Split('.');
       string propertyName = propertyPath[propertyPath.Length - 1];
       List<string> values = new List<string>();

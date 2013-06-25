@@ -508,7 +508,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                 { text: 'Cancel', scope: this, handler: this.onClose }
             ],
             items: [
-                { fieldLabel: 'Constant Value', name: 'constantValue', xtype: 'textfield', width: 230, value: name, allowBlank: false }
+                { fieldLabel: 'Value', name: 'constantValue', xtype: 'textfield', width: 230, value: name, allowBlank: false }
              ]
 
         });
@@ -519,7 +519,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             closable: true,
             modal: false,
             layout: 'form',
-            title: 'Map Constant to RoleMap',
+            title: 'Map Literal to RoleMap',
             items: form,
             // height: 120,
             width: 430,
