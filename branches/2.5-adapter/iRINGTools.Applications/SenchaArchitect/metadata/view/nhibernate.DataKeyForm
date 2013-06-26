@@ -144,22 +144,6 @@
             "designerId": "c42d7945-900a-449c-ab3b-d1cc04c8c09f"
         },
         {
-            "type": "Ext.form.field.Checkbox",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": "100%",
-                "hidden": true,
-                "fieldLabel": "Show on Index",
-                "name": "showOnIndex",
-                "boxLabel": null
-            },
-            "designerId": "fc3d9668-3868-449d-81cf-5680c28cb484"
-        },
-        {
             "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
@@ -174,6 +158,22 @@
                 "readOnly": true
             },
             "designerId": "e46585b0-be13-458c-8fe8-4ac21ef32c62"
+        },
+        {
+            "type": "Ext.form.field.Checkbox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "hidden": true,
+                "fieldLabel": "Show on Index",
+                "name": "showOnIndex",
+                "boxLabel": null
+            },
+            "designerId": "fc3d9668-3868-449d-81cf-5680c28cb484"
         },
         {
             "type": "Ext.form.field.Text",
@@ -200,9 +200,8 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "hidden": true,
                 "fieldLabel": "Hidden",
-                "name": "hidden",
+                "name": "isHidden",
                 "boxLabel": null
             },
             "designerId": "31006f48-f4c9-44a1-af96-1b8ce78455b7"
@@ -216,9 +215,10 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
+                "hidden": true,
                 "fieldLabel": "Hidden",
                 "labelWidth": 160,
-                "name": "hidden",
+                "name": "isHidden",
                 "readOnly": true
             },
             "designerId": "b24a11ec-8e56-4574-a3a6-a4f45dabb030"

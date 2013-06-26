@@ -661,7 +661,7 @@ Ext.define('AM.controller.NHibernate', {
     var tree = panel.down('nhibernatetree');
     var node = tree.getSelectedNode();
     var propertyNameField = form.getForm().findField('propertyName');
-    propertyNameField.setValue(node.data.record.Name);
+    propertyNameField.setValue(node.data.property.propertyName);
     var propertyName = propertyNameField.getValue();
 
     if (propertyNameField.validate()) {
@@ -681,9 +681,11 @@ Ext.define('AM.controller.NHibernate', {
     var tree = panel.down('nhibernatetree');
     var node = tree.getSelectedNode();
     var propertyNameField = form.getForm().findField('propertyName');
+    var isHidden = form.getForm().findField('isHidden').getValue();
     var propertyName = propertyNameField.getValue();
     if (propertyNameField.validate()) {
       node.data.property.propertyName = propertyName;
+      node.data.property.isHidden = isHidden;
       //node.data.property.columnName = propertyName;
       node.set('text', propertyName);
     }

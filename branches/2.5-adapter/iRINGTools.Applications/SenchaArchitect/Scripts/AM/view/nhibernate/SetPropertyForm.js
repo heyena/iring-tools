@@ -84,20 +84,20 @@ Ext.define('AM.view.nhibernate.SetPropertyForm', {
           readOnly: true
         },
         {
-          xtype: 'checkboxfield',
-          anchor: '100%',
-          hidden: true,
-          fieldLabel: 'Show On Index',
-          labelWidth: 160,
-          name: 'showOnIndex'
-        },
-        {
           xtype: 'textfield',
           anchor: '100%',
           fieldLabel: 'Show On Index',
           labelWidth: 160,
           name: 'showOnIndex',
           readOnly: true
+        },
+        {
+          xtype: 'checkboxfield',
+          anchor: '100%',
+          hidden: true,
+          fieldLabel: 'Show On Index',
+          labelWidth: 160,
+          name: 'showOnIndex'
         },
         {
           xtype: 'textfield',
@@ -110,17 +110,18 @@ Ext.define('AM.view.nhibernate.SetPropertyForm', {
         {
           xtype: 'checkboxfield',
           anchor: '100%',
-          hidden: true,
           fieldLabel: 'Hidden',
           labelWidth: 160,
-          name: 'hidden'
+          name: 'isHidden'
         },
         {
           xtype: 'textfield',
           anchor: '100%',
+          hidden: true,
           fieldLabel: 'Hidden',
           labelWidth: 160,
-          name: 'hidden'
+          name: 'isHidden',
+          readOnly: true
         }
       ],
       dockedItems: [

@@ -88,19 +88,19 @@ Ext.define('AM.view.nhibernate.DataKeyForm', {
           readOnly: true
         },
         {
-          xtype: 'checkboxfield',
-          anchor: '100%',
-          hidden: true,
-          fieldLabel: 'Show on Index',
-          name: 'showOnIndex'
-        },
-        {
           xtype: 'textfield',
           anchor: '100%',
           fieldLabel: 'Show on Index',
           labelWidth: 160,
           name: 'showOnIndex',
           readOnly: true
+        },
+        {
+          xtype: 'checkboxfield',
+          anchor: '100%',
+          hidden: true,
+          fieldLabel: 'Show on Index',
+          name: 'showOnIndex'
         },
         {
           xtype: 'textfield',
@@ -113,16 +113,16 @@ Ext.define('AM.view.nhibernate.DataKeyForm', {
         {
           xtype: 'checkboxfield',
           anchor: '100%',
-          hidden: true,
           fieldLabel: 'Hidden',
-          name: 'hidden'
+          name: 'isHidden'
         },
         {
           xtype: 'textfield',
           anchor: '100%',
+          hidden: true,
           fieldLabel: 'Hidden',
           labelWidth: 160,
-          name: 'hidden',
+          name: 'isHidden',
           readOnly: true
         },
         {
