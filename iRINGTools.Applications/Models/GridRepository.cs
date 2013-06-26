@@ -211,6 +211,7 @@ namespace iRINGTools.Web.Models
                 field.dataIndex = fieldName;
                 field.name = fieldName;
                 field.filterable = true;
+                field.sortable = true;
 
                 int fieldWidth = fieldName.Count() * 6;
 

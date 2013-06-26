@@ -243,11 +243,11 @@ public class ExchangeDataModel extends DataModel
     {
       String error = "Error during exchange: " + ex.getMessage();
       logger.error(error);
-      String resultSummary = error.replaceAll("(<html)[^&]*(</html>)", "");
-      String romoveDoc =   resultSummary.replaceAll("(<!DOCTYPE)[^&]*(>)", "");
-    
-
-      xRes.setSummary(romoveDoc.replaceAll("\\r\\n", ""));
+      
+      String noHtmlError = error.replaceAll("(<html)[^&]*(</html>)", "");
+      String noDocTypeError = noHtmlError.replaceAll("(<!DOCTYPE)[^&]*(>)", "");    
+      xRes.setSummary(noDocTypeError.replaceAll("\\r\\n", ""));
+      
       xRes.setLevel(Level.ERROR);
     }
 

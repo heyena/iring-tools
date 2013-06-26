@@ -418,7 +418,8 @@ namespace org.iringtools.adapter
         else
         {
           _logger.Debug("Running single-threaded mode.");
-          List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          List<IDataObject> tmpDataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          List<IDataObject> dataObjects = ProcessRollups(_graphMap.dataObjectName, tmpDataObjects, filter);
 
           _logger.Debug("Transforming into DTI");
           dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
@@ -431,6 +432,274 @@ namespace org.iringtools.adapter
       }
 
       return dataTransferIndices;
+    }
+
+/*
+ * Sample filter with rollups:
+ * 
+<?xml version="1.0" encoding="utf-8"?>
+<dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter">
+  <rollupExpressions>
+    <rollupExpression>
+      <groupBy>ID</groupBy>
+      <rollups>
+        <rollup>
+          <propertyName>NOMDIAMETER</propertyName>
+          <type>Max</type>
+        </rollup>
+        <rollup>
+          <propertyName>AREA</propertyName>
+          <type>First</type>
+        </rollup>
+      </rollups>
+    </rollupExpression>
+    <rollupExpression>
+      <groupBy>AREA</groupBy>
+      <rollups>
+        <rollup>
+          <propertyName>NOMDIAMETER</propertyName>
+          <type>Sum</type>
+        </rollup>
+      </rollups>
+    </rollupExpression>
+  </rollupExpressions>
+</dataFilter>
+ */
+    private List<IDataObject> ProcessRollups(string objectType, List<IDataObject> dataObjects, DataFilter filter)
+    {
+      if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
+      {
+        DataObject objDef = _dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        
+        foreach (RollupExpression rollupExpr in filter.RollupExpressions)
+        {
+          DataProperty groupByProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollupExpr.GroupBy.ToLower());
+          
+          // sort data objects by groupBy property value
+          for (int i = 1; i < dataObjects.Count - 1; i++)
+          {
+            bool swapped = false;
+
+            for (int j = i; j < dataObjects.Count; j++)
+            {
+              string v1 = Convert.ToString(dataObjects[j-1].GetPropertyValue(groupByProp.propertyName));
+              string v2 = Convert.ToString(dataObjects[j].GetPropertyValue(groupByProp.propertyName));
+
+              if (string.Compare(v2, v1) < 0)
+              {
+                IDataObject obj = dataObjects[j];
+                dataObjects[j] = dataObjects[j - 1];
+                dataObjects[j - 1] = obj;
+
+                swapped = true;
+              }
+            }
+
+            if (!swapped) break;
+          }
+
+          // collect group indices
+          List<int> groupIndices = new List<int>();
+          string prevPropValue = null;
+
+          for (int i = 0; i < dataObjects.Count; i++)
+          {
+            string propValue = Convert.ToString(dataObjects[i].GetPropertyValue(groupByProp.propertyName));
+
+            if (prevPropValue == null)
+            {
+              prevPropValue = propValue;
+              groupIndices.Add(0);
+            }
+            else if (propValue != prevPropValue)
+            {
+              groupIndices.Add(i);
+              prevPropValue = propValue;
+            }
+          }
+
+          groupIndices.Add(dataObjects.Count - 1);
+
+          // apply rollups to each group
+          IDataObject[] rollupDataObjects = new IDataObject[groupIndices.Count - 1];
+
+          foreach (Rollup rollup in rollupExpr.Rollups)
+          {
+            DataProperty rollupProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollup.PropertyName.ToLower());
+
+            for (int j = 0; j < groupIndices.Count - 1; j++)
+            {
+              // initialize rollup data object and default to RollupType.First
+              if (rollupDataObjects[j] == null)
+              {
+                rollupDataObjects[j] = dataObjects[groupIndices[j]];
+              }
+
+              switch (rollup.Type)
+              {
+                case RollupType.Null:
+                  {
+                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                    break;
+                  }
+                case RollupType.Max:
+                  {
+                    object maxValue = null;
+
+                    if (IsNumeric(rollupProp))
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (maxValue == null || Convert.ToDecimal(Convert.ToString(value)) > (Decimal)maxValue)
+                        {
+                          maxValue = Convert.ToDecimal(Convert.ToString(value));
+                        }
+                      }
+                    }
+                    else if (rollupProp.dataType == DataType.DateTime)
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        DateTime value = (DateTime)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (maxValue == null || DateTime.Compare(value, (DateTime)maxValue) > 0)
+                        {
+                          maxValue = value;
+                        }
+                      }
+                    }
+                    else if (rollupProp.dataType == DataType.Boolean)
+                    {
+                      maxValue = true;
+                    }
+                    else
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        string value = (string)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (maxValue == null || string.Compare(value, (string)maxValue) > 0)
+                        {
+                          maxValue = value;
+                        }
+                      }
+                    }
+
+                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, maxValue);
+                    break;
+                  }
+                case RollupType.Min:
+                  {
+                    object minValue = null;
+
+                    if (IsNumeric(rollupProp))
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (minValue == null || Convert.ToDecimal(Convert.ToString(value)) < (Decimal)minValue)
+                        {
+                          minValue = Convert.ToDecimal(Convert.ToString(value));
+                        }
+                      }
+                    }
+                    else if (rollupProp.dataType == DataType.DateTime)
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        DateTime value = (DateTime)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (minValue == null || DateTime.Compare(value, (DateTime)minValue) < 0)
+                        {
+                          minValue = value;
+                        }
+                      }
+                    }
+                    else if (rollupProp.dataType == DataType.Boolean)
+                    {
+                      minValue = false;
+                    }
+                    else
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        string value = (string)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (minValue == null || string.Compare(value, (string)minValue) < 0)
+                        {
+                          minValue = value;
+                        }
+                      }
+                    }
+
+                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, minValue);
+                    break;
+                  }
+                case RollupType.Sum:
+                  {
+                    if (IsNumeric(rollupProp))
+                    {
+                      decimal sum = 0;
+
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+                        sum += Convert.ToDecimal(Convert.ToString(value));
+                      }
+
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, sum);
+                    }
+                    else
+                    {
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                    }
+
+                    break;
+                  }
+                case RollupType.Average:
+                  {
+                    if (IsNumeric(rollupProp))
+                    {
+                      decimal sum = 0;
+
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+                        sum += Convert.ToDecimal(Convert.ToString(value));
+                      }
+
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, sum / (groupIndices[j + 1] - groupIndices[j]));
+                    }
+                    else
+                    {
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                    }
+
+                    break;
+                  }
+              }
+            }
+          }
+
+          dataObjects = rollupDataObjects.ToList();
+        }        
+      }
+
+      return dataObjects;
+    }
+
+    private bool IsNumeric(DataProperty dataProperty)
+    {
+      return (dataProperty.dataType == DataType.Byte ||
+          dataProperty.dataType == DataType.Decimal ||
+          dataProperty.dataType == DataType.Double ||
+          dataProperty.dataType == DataType.Int16 ||
+          dataProperty.dataType == DataType.Int32 ||
+          dataProperty.dataType == DataType.Int64 ||
+          dataProperty.dataType == DataType.Single);
     }
     
     public string AsyncGetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest)
@@ -580,7 +849,9 @@ namespace org.iringtools.adapter
         else
         {
           _logger.Debug("Running single-threaded DTIs.");            
-          List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          List<IDataObject> tmpDataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          List<IDataObject> dataObjects = ProcessRollups(_graphMap.dataObjectName, tmpDataObjects, filter);
+
           dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
         }
 
