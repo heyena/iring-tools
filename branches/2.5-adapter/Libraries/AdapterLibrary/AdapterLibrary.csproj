@@ -8,7 +8,7 @@
     <ProjectGuid>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AdapterLibrary</RootNamespace>
+    <RootNamespace>org.iringtools.adapter</RootNamespace>
     <AssemblyName>AdapterLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -131,6 +131,8 @@
     <Compile Include="BasePart7ProjectionEngine.cs" />
     <Compile Include="BaseProvider.cs" />
     <Compile Include="ContentObject.cs" />
+    <Compile Include="DataLayerGateway.cs" />
+    <Compile Include="DBManager.cs" />
     <Compile Include="DtiTask.cs" />
     <Compile Include="InboundDtoTask.cs" />
     <Compile Include="OutboundDtoTask.cs" />

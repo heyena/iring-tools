@@ -89,7 +89,6 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Activation" />
@@ -158,6 +157,7 @@
     <Content Include="SPARQL\TemplateExactSearch.txt" />
     <Content Include="SPARQL\TemplateGetProperties.txt" />
     <Content Include="SPARQL\TemplateTypes.txt" />
+    <None Include="App_Data\config.ttl" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -240,7 +240,7 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>56799</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:65432/</IISUrl>
+          <IISUrl>http://localhost:54321/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
