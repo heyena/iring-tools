@@ -245,6 +245,7 @@
                     "var dirNode;\r",
                     "me.body.mask('Loading...', 'x-mask-loading');\r",
                     "dbInfo = null; //17th June\r",
+                    "dbDict = null;\r",
                     "if (node) {\r",
                     "  if(context!=undefined && endpoint!=undefined){\r",
                     "    Ext.Ajax.request({\r",

@@ -1025,6 +1025,28 @@ Ext.define('AM.controller.NHibernate', {
     //grid.selectItems(selectTableNamesSingle);
   },
 
+  onResetConnectionForm: function(button, e, eOpts) {
+
+    var me = this;
+    var form = button.up('connectionstringform');
+    var panel = form.up('nhibernatepanel');
+    var tree = panel.down('nhibernatetree');
+    var dirNode = me.getDirNode(tree.dirNode);
+    var dbInfo = dirNode.data.record.dbInfo;
+    var dbDict = dirNode.data.record.dbDict;
+
+    if(dbInfo && dbDict){
+      form.getForm().findField('dbProvider').setValue(dbDict.Provider);
+      form.getForm().findField('dbServer').setValue(dbInfo.dbServer);
+      form.getForm().findField('dbInstance').setValue(dbInfo.dbInstance);
+      form.getForm().findField('dbName').setValue(dbInfo.dbName);
+      form.getForm().findField('dbUserName').setValue(dbInfo.dbUserName);
+      form.getForm().findField('dbPassword').setValue(dbInfo.dbPassword);
+      form.getForm().findField('dbSchema').setValue(dbDict.SchemaName);
+    }
+
+  },
+
   onConfignhibernate: function() {
 
     var me = this;
@@ -1178,6 +1200,9 @@ Ext.define('AM.controller.NHibernate', {
       },
       "selectpropertiesform button[action=resetselectproperties] ": {
         click: this.onResetSelectPropertiesForm
+      },
+      " button[action=resetconnectionform]": {
+        click: this.onResetConnectionForm
       }
     });
 

@@ -643,13 +643,13 @@
                     "  for(var jj=0;jj<selectKeys.length;jj++){\r",
                     "    for(var  kk = 0;kk<grid.getStore().data.length;kk++){\r",
                     "      if(selectKeys[jj] == grid.getStore().data.items[kk].data.text){\r",
-                    "      \t records.push(grid.getStore().data.items[kk]);\r",
-                    "     \t\t itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);\r",
-                    "      \t break;\r",
+                    "        records.push(grid.getStore().data.items[kk]);\r",
+                    "        itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);\r",
+                    "        break;\r",
                     "      }\r",
                     "    }     \r",
                     "  }\r",
-                    "  \r",
+                    "\r",
                     "  itemSelecter.items.items[2].items.items[0].items.items[2].getStore().add(records);\r",
                     "}\r",
                     "\r",
@@ -3118,7 +3118,7 @@
                     "for (var i = 0; i < rootNode.childNodes.length; i++) {\r",
                     "  //if (rootNode.childNodes[i].data.property.tableName.toLowerCase() == availTableName[j][0].toLowerCase()) {\r",
                     "  if (rootNode.childNodes[i].raw.properties.objectName.toLowerCase() == availTableName[j][0].toLowerCase()) {\r",
-                    "  \tfound = true;\r",
+                    "    found = true;\r",
                     "    availTableName.splice(j, 1);\r",
                     "    j--;\r",
                     "    break;\r",
@@ -3137,13 +3137,13 @@
                     "  for(var jj=0;jj<selectTableNamesSingle.length;jj++){\r",
                     "    for(var  kk = 0;kk<grid.getStore().data.length;kk++){\r",
                     "      if(selectTableNamesSingle[jj] == grid.getStore().data.items[kk].data.text){\r",
-                    "      \t records.push(grid.getStore().data.items[kk]);\r",
-                    "     \t\t itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);\r",
-                    "      \t break;\r",
+                    "        records.push(grid.getStore().data.items[kk]);\r",
+                    "        itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);\r",
+                    "        break;\r",
                     "      }\r",
                     "    }     \r",
                     "  }\r",
-                    "  \r",
+                    "\r",
                     "  itemSelecter.items.items[2].items.items[0].items.items[2].getStore().add(records);\r",
                     "}\r",
                     "\r",
@@ -3499,6 +3499,43 @@
                 "designer|controlQuery": "selectpropertiesform button[action=resetselectproperties] "
             },
             "designerId": "274f89b8-b37c-437f-a90b-6baec3d21c56"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onResetConnectionForm",
+                "implHandler": [
+                    "   \r",
+                    "var me = this;\r",
+                    "var form = button.up('connectionstringform');\r",
+                    "var panel = form.up('nhibernatepanel');\r",
+                    "var tree = panel.down('nhibernatetree');\r",
+                    "var dirNode = me.getDirNode(tree.dirNode);\r",
+                    "var dbInfo = dirNode.data.record.dbInfo;\r",
+                    "var dbDict = dirNode.data.record.dbDict;\r",
+                    "\r",
+                    "if(dbInfo && dbDict){\r",
+                    "\tform.getForm().findField('dbProvider').setValue(dbDict.Provider);\r",
+                    "  form.getForm().findField('dbServer').setValue(dbInfo.dbServer);\r",
+                    "  form.getForm().findField('dbInstance').setValue(dbInfo.dbInstance);\r",
+                    "  form.getForm().findField('dbName').setValue(dbInfo.dbName);\r",
+                    "  form.getForm().findField('dbUserName').setValue(dbInfo.dbUserName);\r",
+                    "  form.getForm().findField('dbPassword').setValue(dbInfo.dbPassword);\r",
+                    "  form.getForm().findField('dbSchema').setValue(dbDict.SchemaName);\r",
+                    "}\r",
+                    ""
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.button.Button",
+                "designer|controlQuery": " button[action=resetconnectionform]"
+            },
+            "designerId": "4b1e3c3c-0707-43b1-b8ae-d6ac177626e5"
         }
     ]
 }

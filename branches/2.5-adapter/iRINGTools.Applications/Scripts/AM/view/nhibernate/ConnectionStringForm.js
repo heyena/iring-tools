@@ -207,6 +207,7 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
             },
             {
               xtype: 'button',
+              action: 'resetconnectionform',
               iconCls: 'am-edit-clear',
               text: 'Reset',
               tooltip: 'Reset to the latest applied changes'

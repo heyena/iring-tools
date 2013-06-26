@@ -483,6 +483,7 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
+                        "action": "resetconnectionform",
                         "icon": null,
                         "iconCls": "am-edit-clear",
                         "text": "Reset",
@@ -490,7 +491,14 @@
                             "Reset to the latest applied changes"
                         ]
                     },
-                    "designerId": "c07b140b-4391-45f6-bf57-145a0e921c0c"
+                    "designerId": "c07b140b-4391-45f6-bf57-145a0e921c0c",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
                 }
             ]
         },

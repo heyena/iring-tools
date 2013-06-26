@@ -144,6 +144,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
     var dirNode;
     me.body.mask('Loading...', 'x-mask-loading');
     dbInfo = null; //17th June
+    dbDict = null;
     if (node) {
       if(context!=undefined && endpoint!=undefined){
         Ext.Ajax.request({
