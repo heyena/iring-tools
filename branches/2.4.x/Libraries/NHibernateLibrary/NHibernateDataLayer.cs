@@ -59,15 +59,15 @@ namespace org.iringtools.adapter.datalayer
       if (File.Exists(_dbDictionaryPath))
       {
         _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
-        _dataDictionary = (DataDictionary)_dbDictionary;
       }
       else if (utility.Utility.isLdapConfigured && utility.Utility.FileExistInRepository<DatabaseDictionary>(_dbDictionaryPath))
       {
-          _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
-          _dataDictionary = (DataDictionary)_dbDictionary;      
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
       }
-      
 
+      _dataDictionary = new DataDictionary();
+      _dataDictionary.dataObjects = _dbDictionary.dataObjects;
+      
       string relativePath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml",
         _settings["AppDataPath"],
         _settings["Scope"]

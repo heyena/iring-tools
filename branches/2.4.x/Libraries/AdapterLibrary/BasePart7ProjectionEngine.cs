@@ -868,8 +868,6 @@ namespace org.iringtools.adapter.projection
           className = temp[0];
           classPath = temp[1];
       }
-      
-        
 
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
         cm => cm.classMap.name.Replace(" ", "").ToLower() == className.Replace(" ", "").ToLower() && (String.IsNullOrWhiteSpace(cm.classMap.path) ? String.IsNullOrWhiteSpace(classPath) : cm.classMap.path == classPath));

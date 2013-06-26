@@ -251,15 +251,8 @@ namespace org.iringtools.services
                     DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
                     XDocument xDocument = null;
 
-                    if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
-                    {
-                        xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
-                    }
-                    else
-                    {
-                        xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
-                    }
-
+                    xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
+                    
                     _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
                 }
             }

@@ -27,7 +27,7 @@ public class DirectoryController extends BaseController
   {
     try
     {      
-      Iterator<Entry<String, Object>> iterator = settings.entrySet().iterator();
+      Iterator<Entry<String, Object>> iterator = session.entrySet().iterator();
       
       while (iterator.hasNext()) 
       {
