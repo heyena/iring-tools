@@ -13,6 +13,7 @@ namespace org.iringtools.web.controllers
   public abstract class BaseController : Controller
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseController));
+    private const string AUTH_USER = "AuthenticatedUser";
 
     protected string _authenticatedUser;
     protected IDictionary<string, string> _authHeaders;
@@ -31,18 +32,28 @@ namespace org.iringtools.web.controllers
           Type authNProviderType = Type.GetType(authNProviderName);
           if (authNProviderType == null)
           {
-            Send401Error("Unable to load authentication provider.");
+            SendError(401, "Unable to load authentication provider.");
+          }
+
+          // only send 408 error when the request is ajax and authenticated user is unknown
+          if (System.Web.HttpContext.Current.Request.Headers["X-Requested-With"] == "XMLHttpRequest" &&
+              SessionState.Get(System.Web.HttpContext.Current.Session.SessionID, AUTH_USER) == null)
+          {
+            SendError(408, "Session timed out.");
+            return;
           }
 
           IAuthentication authNProvider = (IAuthentication)Activator.CreateInstance(authNProviderType);
           _authenticatedUser = authNProvider.Authenticate(System.Web.HttpContext.Current.Session);
+
+          SessionState.Set(System.Web.HttpContext.Current.Session.SessionID, AUTH_USER, _authenticatedUser);
 
           if (System.Web.HttpContext.Current.Response.IsRequestBeingRedirected)
             return;
 
           if (string.IsNullOrEmpty(_authenticatedUser))
           {
-            Send401Error("Authentication failed.");
+            SendError(401, "Authentication failed.");
           }
 
           //
@@ -56,7 +67,7 @@ namespace org.iringtools.web.controllers
 
             if (authZProviderType == null)
             {
-              Send401Error("Unable to load authorization provider.");
+              SendError(401, "Unable to load authorization provider.");
             }
 
             IAuthorization authZProvider = (IAuthorization)Activator.CreateInstance(authZProviderType);
@@ -64,7 +75,7 @@ namespace org.iringtools.web.controllers
 
             if (!authorized)
             {
-              Send401Error("User [" + _authenticatedUser + "] not authorized.");
+              SendError(401, "User [" + _authenticatedUser + "] not authorized.");
             }
           }
 
@@ -81,7 +92,7 @@ namespace org.iringtools.web.controllers
 
               if (headersProviderType == null)
               {
-                Send401Error("Unable to load auth header provider.");
+                SendError(401, "Unable to load auth header provider.");
               }
 
               IAuthHeaders headersProvider = (IAuthHeaders)Activator.CreateInstance(headersProviderType);
@@ -98,15 +109,19 @@ namespace org.iringtools.web.controllers
       catch (Exception e)
       {
         _logger.Error("Authentication error: " + e.Message + ": " + e.StackTrace.ToString());
-        Send401Error(e.ToString());
+        SendError(401, e.ToString());
       }
     }
 
-    protected void Send401Error(string error)
+    protected void SendError(int code, string error)
     {
-      System.Web.HttpContext.Current.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-      System.Web.HttpContext.Current.Response.Write(error);
-      System.Web.HttpContext.Current.Response.End();
+      System.Web.HttpContext.Current.Response.StatusCode = code;
+
+      if (!string.IsNullOrEmpty(error))
+      {
+        System.Web.HttpContext.Current.Response.Write(error);
+        System.Web.HttpContext.Current.Response.End();
+      }
     }
   }
 }

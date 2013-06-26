@@ -46,12 +46,16 @@ namespace iRINGTools.Web
     protected void Session_End(object sender, EventArgs e)
     {
       SessionState.End(Session.SessionID);
+      Session.Abandon();
     }
 
     protected void Application_End(object sender, EventArgs e)
     {
-      if (System.Web.HttpContext.Current.Session != null)
+      if (System.Web.HttpContext.Current != null &&
+        System.Web.HttpContext.Current.Session != null)
+      {
         System.Web.HttpContext.Current.Session.Clear();
+      }
     }
   }
 }

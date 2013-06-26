@@ -376,7 +376,8 @@ namespace iRINGTools.Web.Models
       {
         ScopeProject scope = new ScopeProject()
         {
-          Name = newName,
+          Name = name,
+          DisplayName = newName,
           Description = newDescription
         };
 
@@ -692,7 +693,7 @@ namespace iRINGTools.Web.Models
               {
                 {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
                 {"objectName", dataObject.objectName},
-                {"keyDelimiter", dataObject.keyDelimeter},
+                {"keyDelimiter", dataObject.keyDelimeter}
               }
         };
 

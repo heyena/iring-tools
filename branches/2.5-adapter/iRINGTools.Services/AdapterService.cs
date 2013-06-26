@@ -552,6 +552,74 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region Caching related services
+    [Description("Creates/refreshes application cache.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/cache/refresh?updatedictionary={updateDictionary}")]
+    public void RefreshCache(string scope, string app, bool updateDictionary)
+    {
+      Response response = _adapterProvider.RefreshCache(scope, app, updateDictionary);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    [Description("Creates/refreshes application cache for specific object type.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{objectType}/cache/refresh?updatedictionary={updateDictionary}")]
+    public void RefreshObjectTypeCache(string scope, string app, string objectType, bool updateDictionary)
+    {
+      Response response = _adapterProvider.RefreshCache(scope, app, objectType, updateDictionary);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    [Description("Imports application cache. Cache files are baseUri followed by <object type>.dat is required.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/cache/import?baseuri={baseUri}&updatedictionary={updateDictionary}")]
+    public void ImportCache(string scope, string app, string baseUri, bool updateDictionary)
+    {
+      Response response = _adapterProvider.ImportCache(scope, app, baseUri, updateDictionary);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    [Description("Imports application cache for specific object type. Cache file URL is required.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{objectType}/cache/import?url={url}&updatedictionary={updateDictionary}")]
+    public void ImportObjectTypeCache(string scope, string app, string objectType, string url, bool updateDictionary)
+    {
+      Response response = _adapterProvider.ImportCache(scope, app, objectType, url, updateDictionary);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    [Description("Deletes application cache.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/cache/delete")]
+    public void DeleteCache(string scope, string app)
+    {
+      Response response = _adapterProvider.DeleteCache(scope, app);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+
+    [Description("Deletes application cache for specific object type.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{objectType}/cache/delete")]
+    public void DeleteObjectTypeCache(string scope, string app, string objectType)
+    {
+      Response response = _adapterProvider.DeleteCache(scope, app, objectType);
+      FormatOutgoingMessage<Response>(response, true);
+    }
+    #endregion
+
+    private void FormatOutgoingMessage<T>(T graph, bool useDataContractSerializer)
+    {
+      string reqContentType = WebOperationContext.Current.IncomingRequest.ContentType;
+      
+      if (reqContentType != null && reqContentType.ToLower() == "application/json")
+      {
+        string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
+        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+        HttpContext.Current.Response.Write(json);
+      }
+      else
+      {
+        string xml = Utility.Serialize<T>(graph, useDataContractSerializer);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xml);
+      }
+    }
+
     private Response PrepareErrorResponse(Exception ex)
     {
       Response response = new Response

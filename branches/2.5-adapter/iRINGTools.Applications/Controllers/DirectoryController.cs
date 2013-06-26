@@ -67,7 +67,7 @@ namespace org.iringtools.web.controllers
                     type = "ScopeNode",
                     iconCls = "scope",
                     id = scope.Name,
-                    text = scope.Name,
+                    text = scope.DisplayName ?? scope.Name,
                     expanded = false,
                     leaf = false,
                     children = null,
@@ -86,7 +86,6 @@ namespace org.iringtools.web.controllers
           case "ScopeNode":
             {
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
               ScopeProject scope = _repository.GetScope(form["node"]);
 
               foreach (ScopeApplication application in scope.Applications)
@@ -99,9 +98,9 @@ namespace org.iringtools.web.controllers
                   {
                     nodeType = "async",
                     type = "ApplicationNode",
-                    iconCls = "application",
+                    iconCls = "applications",
                     id = scope.Name + "/" + application.Name,
-                    text = application.Name,
+                    text = application.DisplayName ?? application.Name,
                     expanded = false,
                     leaf = false,
                     children = null,
@@ -183,13 +182,14 @@ namespace org.iringtools.web.controllers
               Mapping mapping = GetMapping(scopeName, applicationName);
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
               foreach (ValueListMap valueList in mapping.valueListMaps)
               {
                 JsonTreeNode node = new JsonTreeNode
                 {
                   nodeType = "async",
                   type = "ValueListNode",
-                  iconCls = "valuemap",
+                  iconCls = "treeValuelist",
                   id = context + "/ValueList/" + valueList.name,
                   text = valueList.name,
                   expanded = false,
@@ -242,7 +242,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "ListMapNode",
-                  iconCls = "valuelistmap",
+                  iconCls = "treeValue",
                   id = context + "/ValueMap/" + valueMap.internalValue,
                   text = classLabel + " [" + valueMap.internalValue + "]",
                   expanded = false,
@@ -537,13 +537,13 @@ namespace org.iringtools.web.controllers
     {
       string success = String.Empty;
 
-      if (form["state"]=="new")//if (String.IsNullOrEmpty(form["scope"]))
+      if (String.IsNullOrEmpty(form["scope"]))
       {
-          success = _repository.AddScope(form["scope"], form["description"]);
+        success = _repository.AddScope(form["name"], form["description"]);
       }
       else
       {
-          success = _repository.UpdateScope(form["contextName"], form["scope"], form["description"]);
+        success = _repository.UpdateScope(form["scope"], form["name"], form["description"]);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -588,6 +588,7 @@ namespace org.iringtools.web.controllers
 
       ScopeApplication application = new ScopeApplication()
       {
+        DisplayName = form["Name"],
         Name = form["Name"],
         Description = form["Description"],
         Assembly = form["assembly"],

@@ -1,12 +1,22 @@
 ﻿using System;
+using System.Text;
+using System.IO;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Net;
 using System.Configuration;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 
 using org.iringtools.library;
+using org.iringtools.utility;
+using org.iringtools.mapping;
 using DocumentFormat.OpenXml.Packaging;
 using log4net;
 
@@ -52,7 +62,7 @@ namespace org.iringtools.adapter.datalayer
 
     public SpreadsheetController(ISpreadsheetRepository repository)
     {
-      var settings = ConfigurationManager.AppSettings;
+      NameValueCollection settings = ConfigurationManager.AppSettings;
       _settings = new ServiceSettings();
       _settings.AppendSettings(settings);
       _repository = repository;
@@ -70,20 +80,20 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        var datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer";
-        var savedFileName = string.Empty;
+        string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer";
+        string savedFileName = string.Empty;
 
-        var files = Request.Files;
+        HttpFileCollectionBase files = Request.Files;
 
         foreach (string file in files)
         {
-          var hpf = files[file] as HttpPostedFileBase;
+          HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
           if (hpf.ContentLength == 0)
             continue;
-          var fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], form["context"], form["endpoint"]);
+          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], form["Scope"], form["Application"]);
 
 
-          var configuration = new SpreadsheetConfiguration()
+          SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {
             Location = fileLocation
           };
@@ -94,7 +104,7 @@ namespace org.iringtools.adapter.datalayer
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
             hpf.InputStream.Flush();
             hpf.InputStream.Position = 0;
-            _repository.Configure(form["context"], form["endpoint"], datalayer, configuration, hpf.InputStream);
+            _repository.Configure(form["Scope"], form["Application"], datalayer, configuration, hpf.InputStream);
           }
           else
           {
@@ -102,7 +112,7 @@ namespace org.iringtools.adapter.datalayer
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
           }
 
-          SetConfiguration(form["context"], form["endpoint"], configuration);
+          SetConfiguration(form["Scope"], form["Application"], configuration);
 
           //break;
         }
@@ -127,7 +137,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {        
-        var bytes = _repository.getExcelFile(scope, application);
+        byte[] bytes = _repository.getExcelFile(scope, application);
         return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", string.Format("SpreadsheetData.{0}.{1}.xlsx", scope, application));
       }
       catch (Exception ioEx)
@@ -139,7 +149,7 @@ namespace org.iringtools.adapter.datalayer
 
     private SpreadsheetConfiguration GetConfiguration(string context, string endpoint)
     {
-      var key = string.Format(_keyFormat, context, endpoint);
+      string key = string.Format(_keyFormat, context, endpoint);
 
 
       if (Session[key] == null)
@@ -152,57 +162,61 @@ namespace org.iringtools.adapter.datalayer
 
     public ActionResult UpdateConfiguration(FormCollection form)
     {
-      var configuration = GetConfiguration(form["context"], form["endpoint"]);
-      if (configuration == null)
+      SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
+      if (configuration != null)
       {
-        return Json(new {success = false}, JsonRequestBehavior.AllowGet);
-      }
-      else
-      {
-        foreach (var workSheet in configuration.Tables)
+        foreach (SpreadsheetTable workSheet in configuration.Tables)
         {
           if (workSheet.Name == form["Name"])
             workSheet.Label = form["Label"];
-          if (workSheet.Columns == null) continue;
-          foreach (var column in workSheet.Columns.Where(column => column.Name == form["Name"]))
+          if (workSheet.Columns != null)
           {
-            column.Label = form["Label"];
+            foreach (SpreadsheetColumn column in workSheet.Columns)
+            {
+              if (column.Name == form["Name"])
+                column.Label = form["Label"];
+            }
           }
         }
-        _repository.Configure(form["context"], form["endpoint"], form["datalayer"], configuration, null);
-        return Json(new {success = true}, JsonRequestBehavior.AllowGet);
+        _repository.Configure(form["context"], form["endpoint"], form["datalayer"], configuration,null);
+        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
       }
-    }
+      else
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
 
+    }
     private void SetConfiguration(string context, string endpoint, SpreadsheetConfiguration configuration)
     {
-      var key = string.Format(_keyFormat, context, endpoint);
+      string key = string.Format(_keyFormat, context, endpoint);
 
       Session[key] = configuration;
     }
 
     public JsonResult GetNode(FormCollection form)
     {
-      var nodes = new List<JsonTreeNode>();
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
       if (_repository != null)
       {
-        var configuration = GetConfiguration(form["context"], form["endpoint"]);
+        SpreadsheetConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
 
         if (configuration != null)
         {
+
           switch (form["type"])
           {
             case "ExcelWorkbookNode":
               {
-                var worksheets = configuration.Tables;
+                List<SpreadsheetTable> worksheets = configuration.Tables;
 
                 if (worksheets != null)
                 {
-                  foreach (var worksheet in worksheets)
+                  foreach (SpreadsheetTable worksheet in worksheets)
                   {
-                    var columnNodes = new List<JsonTreeNode>();
-                    var keyIdentifierNode = new JsonTreeNode()
+                    List<JsonTreeNode> columnNodes = new List<JsonTreeNode>();
+                    JsonTreeNode keyIdentifierNode = new JsonTreeNode()
                     {
                       text = "Identifier",
                       type = "Identifier",
@@ -211,7 +225,7 @@ namespace org.iringtools.adapter.datalayer
                       children = new List<JsonTreeNode>()
                     };
 
-                    var dataPropertiesNode = new JsonTreeNode()
+                    JsonTreeNode dataPropertiesNode = new JsonTreeNode()
                     {
                       text = "Columns",
                       type = "columns",
@@ -220,7 +234,7 @@ namespace org.iringtools.adapter.datalayer
                       children = new List<JsonTreeNode>()
                     };
 
-                    var dataObjectNode = new JsonTreeNode()
+                    JsonTreeNode dataObjectNode = new JsonTreeNode()
                     {
                       nodeType = "async",
                       type = "ExcelWorksheetNode",
@@ -238,12 +252,13 @@ namespace org.iringtools.adapter.datalayer
 
                     columnNodes.Add(dataPropertiesNode);
 
-                    if (worksheet.Columns == null) continue;
-                    foreach (var column in worksheet.Columns)
+                    if (worksheet.Columns != null)
                     {
-                      if (column.Name.ToUpper() == worksheet.Identifier.ToUpper())
+                      foreach (SpreadsheetColumn column in worksheet.Columns)
                       {
-                        var keyNode = new JsonTreeNode
+                        if (column.Name.ToUpper() == worksheet.Identifier.ToUpper())
+                        {
+                          JsonTreeNode keyNode = new JsonTreeNode
                           {
                             nodeType = "async",
                             type = "ExcelColumnNode",
@@ -254,19 +269,19 @@ namespace org.iringtools.adapter.datalayer
                             leaf = true,
                             children = null,
                             record = new
-                              {
-                                Datatype = column.DataType.ToString(),
-                                Index = column.ColumnIdx,
-                                Label = column.Label,
-                                Name = column.Name
-                              }
+                            {
+                              Datatype = column.DataType.ToString(),
+                              Index = column.ColumnIdx,
+                              Label = column.Label.ToString(),
+                              Name = column.Name.ToString()
+                            }
                           };
-                        keyIdentifierNode.children.Add(keyNode);
-                      }
-                      else
-                      {
+                          keyIdentifierNode.children.Add(keyNode);
+                        }
+                        else
+                        {
 
-                        var columnNode = new JsonTreeNode
+                          JsonTreeNode columnNode = new JsonTreeNode
                           {
                             nodeType = "async",
                             type = "ExcelColumnNode",
@@ -278,18 +293,19 @@ namespace org.iringtools.adapter.datalayer
                             children = null,
                             // record = column
                             record = new
-                              {
-                                Datatype = column.DataType.ToString(),
-                                Index = column.ColumnIdx,
-                                Label = column.Label.ToString(),
-                                Name = column.Name.ToString()
-                              }
+                            {
+                              Datatype = column.DataType.ToString(),
+                              Index = column.ColumnIdx,
+                              Label = column.Label.ToString(),
+                              Name = column.Name.ToString()
+                            }
                           };
 
-                        dataPropertiesNode.children.Add(columnNode);
+                          dataPropertiesNode.children.Add(columnNode);
+                        }
                       }
+                      nodes.Add(dataObjectNode);
                     }
-                    nodes.Add(dataObjectNode);
                   }
                 }
 
@@ -304,47 +320,53 @@ namespace org.iringtools.adapter.datalayer
 
     public JsonResult Configure(FormCollection form)
     {
-      var configuration = GetConfiguration(form["context"], form["endpoint"]);
+      SpreadsheetConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
 
       if (configuration != null)
       {
-        _repository.Configure(form["context"], form["endpoint"], form["DataLayer"], configuration, null);
+        _repository.Configure(form["Scope"], form["Application"], form["DataLayer"], configuration, null);
         return new JsonResult() //(6)
             {
                 ContentType = "text/html",
                 Data = new { success = true }
             };
         }
-
-      return new JsonResult() //(6)
-        {
-          ContentType = "text/html",
-          Data = new { success = false }
-        };
+      
+      else
+      {
+          return new JsonResult() //(6)
+          {
+              ContentType = "text/html",
+              Data = new { success = false }
+          };
+      }
     }
 
     public JsonResult GetWorksheets(FormCollection form)
     {
-      var container = new JsonContainer<List<WorksheetPart>>
-        {items = _repository.GetWorksheets(GetConfiguration(form["context"], form["endpoint"])), success = true};
+      JsonContainer<List<WorksheetPart>> container = new JsonContainer<List<WorksheetPart>>();
+      container.items = _repository.GetWorksheets(GetConfiguration(form["Scope"], form["Application"]));
+      container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult GetColumns(FormCollection form)
     {
-      var container = new JsonContainer<List<SpreadsheetColumn>>
-        {
-          items = _repository.GetColumns(GetConfiguration(form["context"], form["endpoint"]), form["worksheet"]),
-          success = true
-        };
+      JsonContainer<List<SpreadsheetColumn>> container = new JsonContainer<List<SpreadsheetColumn>>();
+      container.items = _repository.GetColumns(GetConfiguration(form["Scope"], form["Application"]), form["worksheet"]);
+      container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
     private Response PrepareErrorResponse(Exception ex)
     {
-      var response = new Response {Level = StatusLevel.Error, Messages = new Messages {ex.Message, ex.StackTrace}};
+      Response response = new Response();
+      response.Level = StatusLevel.Error;
+      response.Messages = new Messages();
+      response.Messages.Add(ex.Message);
+      response.Messages.Add(ex.StackTrace);
       return response;
     }
 

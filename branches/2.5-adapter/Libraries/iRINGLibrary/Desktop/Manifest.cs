@@ -234,7 +234,9 @@ namespace org.iringtools.dxfr.manifest
 
     private Keys identifiersField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
+    private int indexField;
+    private string pathField;
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 0)]
     public string id
     {
       get
@@ -247,7 +249,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 1)]
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 1)]
     public string name
     {
       get
@@ -260,7 +262,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 2)]
     public Keys keys
     {
         get
@@ -270,6 +272,30 @@ namespace org.iringtools.dxfr.manifest
         set
         {
             this.identifiersField = value;
+        }
+    }
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 3)]
+    public int index
+    {
+        get
+        {
+            return this.indexField;
+        }
+        set
+        {
+            this.indexField = value;
+        }
+    }
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 4)]
+    public string path
+    {
+        get
+        {
+            return this.pathField;
+        }
+        set
+        {
+            this.pathField = value;
         }
     }
   }
@@ -289,6 +315,7 @@ namespace org.iringtools.dxfr.manifest
     private org.iringtools.dxfr.manifest.Roles rolesField;
 
     private TransferOption transferOptionField;
+    private int indexField;
 
     public Template()
     {
@@ -344,6 +371,18 @@ namespace org.iringtools.dxfr.manifest
       set
       {
         this.transferOptionField = value;
+      }
+    }
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    public int index
+    {
+        get
+        {
+            return this.indexField;
+        }
+        set
+        {
+            this.indexField = value;
       }
     }
   }
@@ -514,6 +553,7 @@ namespace org.iringtools.mapping
   using System.Runtime.Serialization;
   using System.Collections.Generic;
   using org.iringtools.library;
+    using System;
 
   [System.Runtime.Serialization.DataContractAttribute(Name = "roleType", Namespace = "http://www.iringtools.org/mapping")]
   public enum RoleType
@@ -540,6 +580,7 @@ namespace org.iringtools.mapping
     ObjectProperty,
   }
 
+  [Serializable]
   [System.Runtime.Serialization.DataContractAttribute(Name = "mapping", Namespace = "http://www.iringtools.org/mapping")]
   public partial class Mapping
   {
@@ -607,18 +648,21 @@ namespace org.iringtools.mapping
       }
       return graph;
     }
-  }  
-
+  }
+  
+  [Serializable]
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "graphMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "graphMap")]
   public class GraphMaps : System.Collections.Generic.List<org.iringtools.mapping.GraphMap>
   {    
   }
-
+  
+  [Serializable]
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueListMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueListMap")]
   public class ValueListMaps : System.Collections.Generic.List<org.iringtools.mapping.ValueListMap>
   {
   }
 
+  [Serializable]
   [System.Runtime.Serialization.DataContractAttribute(Name = "graphMap", Namespace = "http://www.iringtools.org/mapping")]
   public partial class GraphMap
   {
@@ -687,12 +731,14 @@ namespace org.iringtools.mapping
       }
     }
   }
-
+      
+  [Serializable]
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "classTemplateMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "classTemplateMap")]
   public class ClassTemplateMaps : System.Collections.Generic.List<org.iringtools.mapping.ClassTemplateMap>
   {
   }
 
+  [Serializable]
   [System.Runtime.Serialization.DataContractAttribute(Name = "classTemplateMap", Namespace = "http://www.iringtools.org/mapping")]
   public partial class ClassTemplateMap
   {
@@ -796,6 +842,10 @@ namespace org.iringtools.mapping
 
     private string identifierValueField;
 
+    private int indexField;
+
+    private string pathField;
+
     public ClassMap()
     {
       identifiers = new Identifiers();
@@ -878,6 +928,32 @@ namespace org.iringtools.mapping
         this.identifierValueField = value;
       }
     }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 6)]
+    public int index
+    {
+        get
+        {
+            return this.indexField;
+        }
+        set
+        {
+            this.indexField = value;
+        }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 7)]
+    public string path
+    {
+        get
+        {
+            return this.pathField;
+        }
+        set
+        {
+            this.pathField = value;
+        }
+    }
   }
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "templateMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "templateMap")]
@@ -905,6 +981,7 @@ namespace org.iringtools.mapping
     private string nameField;
 
     private org.iringtools.mapping.RoleMaps roleMapsField;
+    private int indexField;
 
     public TemplateMap()
     {
@@ -960,6 +1037,18 @@ namespace org.iringtools.mapping
       set
       {
         this.roleMapsField = value;
+      }
+    }
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    public int index
+    {
+        get
+        {
+            return this.indexField;
+        }
+        set
+        {
+            this.indexField = value;
       }
     }
   }
@@ -1118,6 +1207,7 @@ namespace org.iringtools.mapping
     }
   }
 
+  [Serializable]
   [System.Runtime.Serialization.DataContractAttribute(Name = "valueListMap", Namespace = "http://www.iringtools.org/mapping")]
   public partial class ValueListMap
   {
@@ -1156,7 +1246,8 @@ namespace org.iringtools.mapping
       }
     }
   }
-
+  
+  [Serializable]
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueMap")]
   public class ValueMaps : System.Collections.Generic.List<org.iringtools.mapping.ValueMap>
   {

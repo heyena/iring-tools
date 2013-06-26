@@ -48,6 +48,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Ionic.Zip;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+
 
 namespace org.iringtools.utility
 {
@@ -73,6 +75,8 @@ namespace org.iringtools.utility
 
   public static class Utility
   {
+    public static bool isLdapConfigured = false;
+
     public static R Transform<T, R>(object graph, string stylesheetUri)
     {
       return Transform<T, R>((T)graph, stylesheetUri, null, true);
@@ -420,25 +424,34 @@ namespace org.iringtools.utility
       XmlDictionaryWriter writer = null;
       try
       {
-        stream = new FileStream(path, FileMode.Create, FileAccess.Write);
-        writer = XmlDictionaryWriter.CreateTextWriter(stream);
+          if (isLdapConfigured && ConfigurationRepository.configTypes.Contains(typeof(T)))
+          {
+              bool result = false;
+              Stream binaryStream = Utility.SerializeToBinaryStream<T>(graph);
+              result = ConfigurationRepository.SaveFile<T>(binaryStream, path);
+              if (result) 
+                  return;
+          }
+
+          stream = new FileStream(path, FileMode.Create, FileAccess.Write);
+          writer = XmlDictionaryWriter.CreateTextWriter(stream);
 
 
-        if (useDataContractSerializer)
-        {
-          DataContractSerializer serializer = new DataContractSerializer(typeof(T));
-          serializer.WriteObject(writer, graph);
-        }
-        else
-        {
-          XmlSerializer serializer = new XmlSerializer(typeof(T));
-          serializer.Serialize(writer, graph, namespaces);
-        }
+          if (useDataContractSerializer)
+          {
+              DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+              serializer.WriteObject(writer, graph);
+          }
+          else
+          {
+              XmlSerializer serializer = new XmlSerializer(typeof(T));
+              serializer.Serialize(writer, graph, namespaces);
+          }
 
       }
       catch (Exception exception)
       {
-        throw new Exception("Error writing [" + typeof(T).Name + "] to " + path + ".", exception);
+          throw new Exception("Error writing [" + typeof(T).Name + "] to " + path + ".", exception);
       }
       finally
       {
@@ -553,6 +566,20 @@ namespace org.iringtools.utility
 
       try
       {
+          if (isLdapConfigured && ConfigurationRepository.configTypes.Contains(typeof(T)))
+          {
+              Stream binaryStream = ConfigurationRepository.GetFile<T>(path);
+
+              if (binaryStream == null && typeof(T).Name == "XElementClone")
+                  return default(T);
+
+              if (binaryStream != null) 
+              {
+                  graph = DeserializeBinaryStream<T>(binaryStream);
+                  return graph;
+              }//else check the local disk. 
+          }
+
         stream = new FileStream(path, FileMode.Open, FileAccess.Read);
         reader = XmlDictionaryReader.CreateTextReader(stream, new XmlDictionaryReaderQuotas { MaxStringContentLength = int.MaxValue });
 
@@ -565,6 +592,12 @@ namespace org.iringtools.utility
         {
           XmlSerializer serializer = new XmlSerializer(typeof(T));
           graph = (T)serializer.Deserialize(reader);
+        }
+        
+        //If the file is on disk but the LDAP is configuried then move the files in LDAP consecutively.
+        if (isLdapConfigured && ConfigurationRepository.configTypes.Contains(typeof(T)))
+        {
+            Write<T>(graph, path);
         }
 
         return graph;
@@ -757,6 +790,36 @@ namespace org.iringtools.utility
             throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
         }
 
+    }
+
+    public static T DeserializeBinaryStream<T>(Stream stream)
+    {
+        try
+        {
+            BinaryFormatter bFormatter = new BinaryFormatter();
+            T obj = (T)bFormatter.Deserialize(stream);
+            return obj;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error deserializing [" + typeof(T).Name + "].", exception);
+        }
+    }
+
+    public static Stream SerializeToBinaryStream<T>(T obj)
+    {
+        try
+        {
+            BinaryFormatter bformatter = new BinaryFormatter();
+            System.IO.Stream stream = new System.IO.MemoryStream();
+            bformatter.Serialize(stream, (T)obj);
+
+            return stream;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error Serializing [" + typeof(T).Name + "].", exception);
+        }
     }
 
     public static MemoryStream SerializeToStreamJSON<T>(T graph, bool useDataContractSerializer)
@@ -1293,6 +1356,55 @@ namespace org.iringtools.utility
       }
     }
 
+    public static bool ValidateValueWithXsdType(string xsdType, string value)
+    {
+      string type = (xsdType.ToLower().StartsWith("xsd:")) ? xsdType.Substring(4) : xsdType;
+
+      //TODO need more improvement in datetime format handling
+      switch (type.ToLower())
+      {
+        case "boolean": { bool temp; return Boolean.TryParse(value, out temp); }
+        case "byte": { byte temp; return Byte.TryParse(value, out temp); }
+        case "char": { Char temp; return Char.TryParse(value, out temp); }
+        case "character": { Char temp; return Char.TryParse(value, out temp); }
+        case "decimal": { Decimal temp; return Decimal.TryParse(value, out temp); }
+        case "double": { Double temp; return Double.TryParse(value, out temp); }
+        case "float": { Single temp; return Single.TryParse(value, out temp); }
+        case "int": { Int32 temp; return Int32.TryParse(value, out temp); }
+        case "integer": { Int32 temp; return Int32.TryParse(value, out temp); }
+        case "long": { Int64 temp; return Int64.TryParse(value, out temp); }
+        case "short": { Int16 temp; return Int16.TryParse(value, out temp); }
+        case "time":
+        case "date":
+        case "datetime":
+        case "duration":
+        case "gday":
+        case "gmonth":
+        case "gmonthday":
+        case "gyear":
+        case "gyearmonth":
+          { DateTime temp; return DateTime.TryParse(value, out temp); }
+        case "string": 
+        case "entities":
+        case "entity":
+        case "id":
+        case "idref":
+        case "idrefs":
+        case "language":
+        case "name":
+        case "ncname":
+        case "nmtoken":
+        case "nmtokens":
+        case "normalizedstring":
+        case "qname":
+        case "token":
+            { return true; }
+        case "anyURI":
+            { return true; }
+        default: { return false; }
+      }
+    }
+
     public static string SqlTypeToCSharpType(string sqlType)
     {
       switch (sqlType.ToLower())
@@ -1719,5 +1831,101 @@ namespace org.iringtools.dynamic
         return null;
       }
     }
+
+    public static bool FileExistInRepository<T>(string path)
+    {
+        try
+        {
+            bool result = false;
+            if (isLdapConfigured && ConfigurationRepository.configTypes.Contains(typeof(T)))
+            {
+                result = ConfigurationRepository.FileExists(path);
+            }
+            return result;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error in verifying LDAP repository for [" + typeof(T).Name + "].", exception);
+        }
+    }
+
+    public static void DeleteFileFromRepository<T>(string path)
+    {
+        try
+        {
+            if (isLdapConfigured && ConfigurationRepository.configTypes.Contains(typeof(T)))
+            {
+                ConfigurationRepository.DeleteEntry(path);
+            }
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error in verifying LDAP repository for [" + typeof(T).Name + "].", exception);
+        }
+    }
+
+      /// <summary>
+      /// It will save an xElement object to a file on the specified path.
+      /// </summary>
+    public static void SavexElementObject(XElement xElement, string path)
+    {
+        if (isLdapConfigured && ConfigurationRepository.configTypes.Contains(typeof(XElementClone)))
+        {
+            XElementClone objSerializedXElement = GetxElementCloneObject(xElement, path);
+            Write(objSerializedXElement, path);
+            return;
+        }
+        xElement.Save(path);
+    }
+
+    public static XElement GetxElementObject(string path)
+    {
+        XElement xelement;
+        if (isLdapConfigured && ConfigurationRepository.configTypes.Contains(typeof(XElementClone)))
+        {
+            XElementClone objSerializedXElement = Read<XElementClone>(path);
+            if (objSerializedXElement != null)
+            {
+                xelement = GetxElementFromCloneObject(objSerializedXElement);
+                return xelement;
+            }
+        }
+
+        xelement = XElement.Load(path);
+        //If the file is on disk but the LDAP is configuried then move the files in LDAP consecutively.
+        if (xelement != null && isLdapConfigured && ConfigurationRepository.configTypes.Contains(typeof(XElementClone)))
+        {
+            SavexElementObject(xelement, path);
+        }
+        return xelement;
+    }
+
+    /// <summary>
+    /// Since xElement is non-serializable so we have to clone it in other class.
+    /// </summary>
+    public static XElementClone GetxElementCloneObject(XElement xelement, string fileName) 
+    {
+             XElementClone objxElementAlias = new XElementClone();
+             objxElementAlias.fileName = fileName;
+             objxElementAlias.data = xelement;
+             objxElementAlias.xElementContent = objxElementAlias.data.ToString();
+             return objxElementAlias;		 
+    }
+
+    public static XElement GetxElementFromCloneObject(XElementClone xelementAlias)
+    {
+        xelementAlias.data = XElement.Parse(xelementAlias.xElementContent);
+        return xelementAlias.data;
+    }
+
+    public static void InitializeConfigurationRepository(Type[] types)
+    {
+        if (ConfigurationRepository.configTypes.Count == 0)
+        {
+            ConfigurationRepository.GetAppSettings();
+            ConfigurationRepository.configTypes.AddRange(types);
+        }
+    }
+
   }
 }

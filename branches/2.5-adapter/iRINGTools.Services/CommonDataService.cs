@@ -51,665 +51,665 @@ using net.java.dev.wadl;
 
 namespace org.iringtools.services
 {
-  public class CommonDataService
-  {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(CommonDataService));
-    private AdapterProvider _adapterProvider = null;
-
-    public CommonDataService()
+    public class CommonDataService
     {
-      _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
-    }
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(CommonDataService));
+        private AdapterProvider _adapterProvider = null;
 
-    public void GetVersion(string format)
-    {
-      format = MapContentType(format);
-
-      VersionInfo version = _adapterProvider.GetVersion();
-
-      _adapterProvider.FormatOutgoingMessage<VersionInfo>(version, format, true);
-    }
-
-    public void GetContexts(string app, string format)
-    {
-      format = MapContentType(format);
-
-      Contexts contexts = _adapterProvider.GetContexts(app);
-
-      _adapterProvider.FormatOutgoingMessage<Contexts>(contexts, format, true);
-    }
-
-    public void GetAllWADL(string app)
-    {
-      WADLApplication wadl = _adapterProvider.GetWADL("all", app);
-
-      _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
-    }
-
-    public void GetAppWADL(string app)
-    {
-      WADLApplication wadl = _adapterProvider.GetWADL("app", app);
-
-      _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
-    }
-
-    public void GetScopeWADL(string app, string project)
-    {
-      WADLApplication wadl = _adapterProvider.GetWADL(project, app);
-
-      _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
-    }
-
-    public void GetDictionary(string project, string app, string format)
-    {
-      try
-      {
-        format = MapContentType(format);
-
-        if (IsAsync())
+        public CommonDataService()
         {
-          string statusUrl = _adapterProvider.AsyncGetDictionary(project, app);
-          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
-          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+            _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
         }
-        else
+
+        public void GetVersion(string format)
         {
-          DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
-          _adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
+            format = MapContentType(format);
+
+            VersionInfo version = _adapterProvider.GetVersion();
+
+            _adapterProvider.FormatOutgoingMessage<VersionInfo>(version, format, true);
         }
-      }
-      catch (Exception ex)
-      {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(ex.Message);
-      }
-    }
 
-    public void GetDictionaryGraph(string project, string app, string resource, string format)
-    {
-      format = MapContentType(format);
-
-      DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
-
-      DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == resource.ToLower());
-
-      if (dataObject == null)
-        throw new FileNotFoundException();
-      //ExceptionHandler(new FileNotFoundException());
-
-      _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
-    }
-
-    public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-      try
-      {
-        NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-        bool fullIndex = false;
-        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-          fullIndex = true;
-
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
-        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    //[Description("Gets the Header of the specified project, application and resource.")]
-    //[WebInvoke(Method="HEAD", UriTemplate = "/{app}/{project}/{resource}")]
-    //public void GetHeader(string project, string app, string resource)
-    //{
-    //    try
-    //    {
-    //        //...
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        ExceptionHandler(ex);
-    //    }
-    //}
-
-    //[Description("Gets an XML or JSON projection of a single item in the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
-    //[WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
-
-    public void GetItem(string project, string app, string resource, string id, string format)
-    {
-      try
-      {
-        object content = _adapterProvider.GetDataProjection(project, app, resource, String.Empty, id, ref format, false);
-        _adapterProvider.FormatOutgoingMessage(content, format);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    public void GetPicklists(string project, string app, string format)
-    {
-      format = MapContentType(format);
-      try
-      {
-        IList<PicklistObject> objs = _adapterProvider.GetPicklists(project, app, format);
-        if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
-          _adapterProvider.FormatOutgoingMessage<IList<PicklistObject>>(objs, format, true);
-        else
-          _adapterProvider.FormatOutgoingMessage<IList<PicklistObject>>(objs, format, false);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    public void GetPicklist(string project, string app, string name, string format, int start, int limit)
-    {
-      format = MapContentType(format);
-      try
-      {
-        Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
-
-        XElement xml = obj.ToXElement<Picklists>();
-
-        if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
-          _adapterProvider.FormatOutgoingMessage(xml, format);
-        else
-          _adapterProvider.FormatOutgoingMessage(xml, format);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    public void GetWithFilter(string project, string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
-    {
-      try
-      {
-        format = MapContentType(format);
-
-        bool fullIndex = false;
-
-        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-          fullIndex = true;
-
-        if (IsAsync())
+        public void GetContexts(string app, string format)
         {
-          DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
-          string statusUrl = _adapterProvider.AsyncGetWithFilter(project, app, resource, format,
-            start, limit, fullIndex, filter);
-          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
-          WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+            format = MapContentType(format);
+
+            Contexts contexts = _adapterProvider.GetContexts(app);
+
+            _adapterProvider.FormatOutgoingMessage<Contexts>(contexts, format, true);
         }
-        else
+
+        public void GetAllWADL(string app)
         {
-          DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
-          XDocument xDocument = null;
+            WADLApplication wadl = _adapterProvider.GetWADL("all", app);
 
-          if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
-          {
-            xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
-          }
-          else
-          {
-            xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
-          }
-
-          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+            _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
         }
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
 
-    public void GetSearch(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-      try
-      {
-        NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-        bool fullIndex = false;
-        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-          fullIndex = true;
-
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
-        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
-    public void GetIndividual(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-      try
-      {
-        if (format != null)
+        public void GetAppWADL(string app)
         {
-          format = format.ToLower();
+            WADLApplication wadl = _adapterProvider.GetWADL("app", app);
 
-          // if format is one of the part 7 formats
-          if (format == "rdf" || format == "dto" || format == "p7xml")
-          {
-            // id is clazz, related is individual
-            object content = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, false);
-            _adapterProvider.FormatOutgoingMessage(content, format);
-          }
+            _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
         }
-        else
+
+        public void GetScopeWADL(string app, string project)
         {
-          NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+            WADLApplication wadl = _adapterProvider.GetWADL(project, app);
 
-          bool fullIndex = false;
-          if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-            fullIndex = true;
-
-          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
-          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+            _adapterProvider.FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
         }
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
 
-    public void GetRelatedItem(string project, string app, string resource, string id, string related, string relatedId, string format)
-    {
-      try
-      {
-        if (format != null)
+        public void GetDictionary(string project, string app, string format)
         {
-          format = format.ToLower();
+            try
+            {
+                format = MapContentType(format);
 
-          // if format is one of the part 7 formats
-          if (format == "rdf" || format == "dto" || format == "p7xml")
-          {
-            throw new Exception("Not supported.");
-          }
+                if (IsAsync())
+                {
+                    string statusUrl = _adapterProvider.AsyncGetDictionary(project, app);
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+                    WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+                }
+                else
+                {
+                    DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+                    _adapterProvider.FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                HttpContext.Current.Response.ContentType = "text/plain";
+                HttpContext.Current.Response.Write(ex.Message);
+            }
         }
-        else
+
+        public void GetDictionaryGraph(string project, string app, string resource, string format)
         {
-          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, relatedId, ref format);
-          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+            format = MapContentType(format);
+
+            DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+
+            DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == resource.ToLower());
+
+            if (dataObject == null)
+                throw new FileNotFoundException();
+            //ExceptionHandler(new FileNotFoundException());
+
+            _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
         }
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
 
-    public void UpdateList(string project, string app, string resource, string format, Stream stream)
-    {
-      format = MapContentType(format);
-
-      if (format == "raw")
-      {
-        throw new Exception("");
-      }
-      else
-      {
-        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
-
-        Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
-
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-      }
-    }
-
-    public void UpdateRelatedList(string project, string app, string resource, string parentid, string relatedResource, string format, Stream stream)
-    {
-      format = MapContentType(format);
-
-      if (format == "raw")
-      {
-        throw new Exception("");
-      }
-      else
-      {
-        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
-
-        Response response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedResource, format, new XDocument(xElement));
-
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-      }
-    }
-
-    public void UpdateItem(string project, string app, string resource, string id, string format, Stream stream)
-    {
-      _logger.Debug("I'm in!");
-
-      format = MapContentType(format);
-
-      Response response = new Response();
-
-      if (format == "raw")
-      {
-        response = _adapterProvider.PostContent(project, app, resource, format, id, stream);
-      }
-      else if (format == "json")
-      {
-        DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
-
-        if (dataItems != null && dataItems.items.Count > 0)
+        public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
         {
-          dataItems.items[0].id = id;
-          XElement xElement = dataItems.ToXElement();
-          response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
+            try
+            {
+                NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+                bool fullIndex = false;
+                if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+                    fullIndex = true;
+
+                XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+                _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-      }
-      else
-      {
-        DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
 
-        dataItems.items[0].id = id;
+        //[Description("Gets the Header of the specified project, application and resource.")]
+        //[WebInvoke(Method="HEAD", UriTemplate = "/{app}/{project}/{resource}")]
+        //public void GetHeader(string project, string app, string resource)
+        //{
+        //    try
+        //    {
+        //        //...
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ExceptionHandler(ex);
+        //    }
+        //}
 
-        _logger.Debug("Deserialized!");
+        //[Description("Gets an XML or JSON projection of a single item in the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+        //[WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
 
-        response = _adapterProvider.Post(project, app, resource, format, dataItems);
-      }
-
-      PrepareResponse(ref response);
-
-      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-    }
-
-    public void UpdateRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format, Stream stream)
-    {
-      _logger.Debug("I'm in!");
-
-      format = MapContentType(format);
-
-      Response response = new Response();
-
-      if (format == "raw")
-      {
-        response = _adapterProvider.PostContent(project, app, resource, format, id, stream);
-      }
-      else if (format == "json")
-      {
-        DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
-
-        if (dataItems != null && dataItems.items.Count > 0)
+        public void GetItem(string project, string app, string resource, string id, string format)
         {
-          dataItems.items[0].id = id;
-          XElement xElement = dataItems.ToXElement();
-          response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedresource, format, new XDocument(xElement));
+            try
+            {
+                object content = _adapterProvider.GetDataProjection(project, app, resource, String.Empty, id, ref format, false);
+                _adapterProvider.FormatOutgoingMessage(content, format);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-      }
-      else
-      {
-        DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
 
-        dataItems.items[0].id = id;
-
-        _logger.Debug("Deserialized!");
-
-        response = _adapterProvider.Post(project, app, resource, format, dataItems);
-      }
-
-      PrepareResponse(ref response);
-
-      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-    }
-
-    private void PrepareResponse(ref Response response)
-    {
-      switch (response.Level)
-      {
-        case StatusLevel.Error:
-          response.StatusCode = HttpStatusCode.InternalServerError;
-          break;
-        default:
-          response.StatusCode = HttpStatusCode.OK;
-          break;
-      }
-
-      foreach (Status status in response.StatusList)
-      {
-        foreach (string msg in status.Messages)
+        public void GetPicklists(string project, string app, string format)
         {
-          response.StatusText += msg;
+            format = MapContentType(format);
+            try
+            {
+                IList<PicklistObject> objs = _adapterProvider.GetPicklists(project, app, format);
+                if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
+                    _adapterProvider.FormatOutgoingMessage<IList<PicklistObject>>(objs, format, true);
+                else
+                    _adapterProvider.FormatOutgoingMessage<IList<PicklistObject>>(objs, format, false);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-      }
-    }
 
-    public void CreateItem(string project, string app, string resource, string format, Stream stream)
-    {
-      format = MapContentType(format);
-
-      if (format == "raw")
-      {
-        throw new Exception("");
-      }
-      else
-      {
-        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
-
-        Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
-
-        PrepareResponse(ref response);
-
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-      }
-    }
-
-    public void CreateRelatedItem(string project, string app, string resource, string format, string parentid, string relatedresource, Stream stream)
-    {
-      format = MapContentType(format);
-
-      if (format == "raw")
-      {
-        throw new Exception("");
-      }
-      else
-      {
-        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
-
-        Response response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedresource, format, new XDocument(xElement));
-
-        PrepareResponse(ref response);
-
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-      }
-    }
-
-    public void DeleteItem(string project, string app, string resource, string id, string format)
-    {
-      try
-      {
-
-        format = MapContentType(format);
-
-        Response response = _adapterProvider.DeleteIndividual(project, app, resource, id, format);
-
-        PrepareResponse(ref response);
-
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    public void DeleteRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format)
-    {
-      try
-      {
-
-        format = MapContentType(format);
-
-        Response response = _adapterProvider.DeleteRelated(project, app, resource, parentid, relatedresource, id, format);
-
-        PrepareResponse(ref response);
-
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    public void GetSummary(string project, string app)
-    {
-      try
-      {
-        IList<Object> objects = _adapterProvider.GetSummary(project, app);
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-        String json = serializer.Serialize(objects);
-
-        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-        HttpContext.Current.Response.Write(json);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-
-    #region Async request queue
-    public void GetRequestStatus(string id)
-    {
-      RequestStatus status = null;
-
-      try
-      {
-        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        status = _adapterProvider.GetRequestStatus(id);
-
-        if (status.State == State.NotFound)
+        public void GetPicklist(string project, string app, string name, string format, int start, int limit)
         {
-          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+            format = MapContentType(format);
+            try
+            {
+                Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
+
+                XElement xml = obj.ToXElement<Picklists>();
+
+                if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
+                    _adapterProvider.FormatOutgoingMessage(xml, format);
+                else
+                    _adapterProvider.FormatOutgoingMessage(xml, format);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-      }
-      catch (Exception ex)
-      {
-        status = new RequestStatus()
+
+        public void GetWithFilter(string project, string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
         {
-          State = State.Error,
-          Message = ex.Message
-        };
-      }
+            try
+            {
+                format = MapContentType(format);
 
-      _adapterProvider.FormatOutgoingMessage<RequestStatus>(status, "xml", true);
-    }
-    #endregion
+                bool fullIndex = false;
 
-    #region "All" Methods
-    public void GetDictionaryAll(string app, string format)
-    {
-      GetDictionary("all", app, format);
-    }
+                if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+                    fullIndex = true;
 
-    public void GetListAll(string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-      GetList("all", app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
-    }
+                if (IsAsync())
+                {
+                    DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
+                    string statusUrl = _adapterProvider.AsyncGetWithFilter(project, app, resource, format,
+                      start, limit, fullIndex, filter);
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+                    WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+                }
+                else
+                {
+                    DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
+                    XDocument xDocument = null;
 
-    public void GetItemAll(string app, string resource, string id, string format)
-    {
-      GetItem("all", app, resource, id, format);
-    }
+                    if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
+                    {
+                        xDocument = _adapterProvider.GetDataProjectionWithRollups(project, app, resource, filter, ref format, start, limit, fullIndex);
+                    }
+                    else
+                    {
+                        xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
+                    }
 
-    public void GetWithFilterAll(string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
-    {
-      GetWithFilter("all", app, resource, format, start, limit, indexStyle, stream);
-    }
-
-    public void GetIndividualAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-      GetIndividual("all", app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
-    }
-
-    public void GetRelatedItemAll(string app, string resource, string id, string related, string relatedId, string format)
-    {
-      GetRelatedItem("all", app, resource, id, related, relatedId, format);
-    }
-
-    public void UpdateListAll(string app, string resource, string format, Stream stream)
-    {
-      UpdateList("all", app, resource, format, stream);
-    }
-
-    public void UpdateItemAll(string app, string resource, string id, string format, Stream stream)
-    {
-      UpdateItem("all", app, resource, id, format, stream);
-    }
-
-    public void CreateItemAll(string app, string resource, string format, Stream stream)
-    {
-      CreateItem("all", app, resource, format, stream);
-    }
-
-    public void DeleteItemAll(string app, string resource, string id, string format)
-    {
-      DeleteItem("all", app, resource, id, format);
-    }
-    #endregion
-
-    #region Private Methods
-    private string MapContentType(string format)
-    {
-      IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
-
-      string contentType = request.ContentType;
-
-      // if it's a known format then return it
-      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("json") ||
-        format.ToLower().Contains("dto") || format.ToLower().Contains("rdf")))
-      {
-        return format;
-      }
-
-      // default to json, but honor the contentType of the request if it has one.
-      format = "json";
-
-      if (contentType != null)
-      {
-        if (contentType.ToLower().Contains("application/xml"))
-        {
-          format = "xml";
+                    _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-        else if (contentType.ToLower().Contains("json"))
+
+        public void GetSearch(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
         {
-          format = "json";
+            try
+            {
+                NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+                bool fullIndex = false;
+                if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+                    fullIndex = true;
+
+                XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
+                _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-        else
+
+        //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
+        public void GetIndividual(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
         {
-          format = "raw";
+            try
+            {
+                if (format != null)
+                {
+                    format = format.ToLower();
+
+                    // if format is one of the part 7 formats
+                    if (format == "rdf" || format == "dto" || format == "p7xml")
+                    {
+                        // id is clazz, related is individual
+                        object content = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, false);
+                        _adapterProvider.FormatOutgoingMessage(content, format);
+                    }
+                    else
+                    {
+                        NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+                        bool fullIndex = false;
+                        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+                            fullIndex = true;
+
+                        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+                        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-      }
 
-      return format;
+        public void GetRelatedItem(string project, string app, string resource, string id, string related, string relatedId, string format)
+        {
+            try
+            {
+                if (format != null)
+                {
+                    format = format.ToLower();
+
+                    // if format is one of the part 7 formats
+                    if (format == "rdf" || format == "dto" || format == "p7xml")
+                    {
+                        throw new Exception("Not supported.");
+                    }
+                }
+                else
+                {
+                    XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, relatedId, ref format);
+                    _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void UpdateList(string project, string app, string resource, string format, Stream stream)
+        {
+            format = MapContentType(format);
+
+            if (format == "raw")
+            {
+                throw new Exception("");
+            }
+            else
+            {
+                XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+                Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
+
+                _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+            }
+        }
+
+        public void UpdateRelatedList(string project, string app, string resource, string parentid, string relatedResource, string format, Stream stream)
+        {
+            format = MapContentType(format);
+
+            if (format == "raw")
+            {
+                throw new Exception("");
+            }
+            else
+            {
+                XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+                Response response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedResource, format, new XDocument(xElement));
+
+                _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+            }
+        }
+
+        public void UpdateItem(string project, string app, string resource, string id, string format, Stream stream)
+        {
+            _logger.Debug("I'm in!");
+
+            format = MapContentType(format);
+
+            Response response = new Response();
+
+            if (format == "raw")
+            {
+                response = _adapterProvider.PostContent(project, app, resource, format, id, stream);
+            }
+            else if (format == "json")
+            {
+                DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
+
+                if (dataItems != null && dataItems.items.Count > 0)
+                {
+                    dataItems.items[0].id = id;
+                    XElement xElement = dataItems.ToXElement();
+                    response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
+                }
+            }
+            else
+            {
+                DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
+
+                dataItems.items[0].id = id;
+
+                _logger.Debug("Deserialized!");
+
+                response = _adapterProvider.Post(project, app, resource, format, dataItems);
+            }
+
+            PrepareResponse(ref response);
+
+            _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        public void UpdateRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format, Stream stream)
+        {
+            _logger.Debug("I'm in!");
+
+            format = MapContentType(format);
+
+            Response response = new Response();
+
+            if (format == "raw")
+            {
+                response = _adapterProvider.PostContent(project, app, resource, format, id, stream);
+            }
+            else if (format == "json")
+            {
+                DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
+
+                if (dataItems != null && dataItems.items.Count > 0)
+                {
+                    dataItems.items[0].id = id;
+                    XElement xElement = dataItems.ToXElement();
+                    response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedresource, format, new XDocument(xElement));
+                }
+            }
+            else
+            {
+                DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
+
+                dataItems.items[0].id = id;
+
+                _logger.Debug("Deserialized!");
+
+                response = _adapterProvider.Post(project, app, resource, format, dataItems);
+            }
+
+            PrepareResponse(ref response);
+
+            _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        private void PrepareResponse(ref Response response)
+        {
+            switch (response.Level)
+            {
+                case StatusLevel.Error:
+                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    break;
+                default:
+                    response.StatusCode = HttpStatusCode.OK;
+                    break;
+            }
+
+            foreach (Status status in response.StatusList)
+            {
+                foreach (string msg in status.Messages)
+                {
+                    response.StatusText += msg;
+                }
+            }
+        }
+
+        public void CreateItem(string project, string app, string resource, string format, Stream stream)
+        {
+            format = MapContentType(format);
+
+            if (format == "raw")
+            {
+                throw new Exception("");
+            }
+            else
+            {
+                XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+                Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
+
+                PrepareResponse(ref response);
+
+                _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+            }
+        }
+
+        public void CreateRelatedItem(string project, string app, string resource, string format, string parentid, string relatedresource, Stream stream)
+        {
+            format = MapContentType(format);
+
+            if (format == "raw")
+            {
+                throw new Exception("");
+            }
+            else
+            {
+                XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+                Response response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedresource, format, new XDocument(xElement));
+
+                PrepareResponse(ref response);
+
+                _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+            }
+        }
+
+        public void DeleteItem(string project, string app, string resource, string id, string format)
+        {
+            try
+            {
+
+                format = MapContentType(format);
+
+                Response response = _adapterProvider.DeleteIndividual(project, app, resource, id, format);
+
+                PrepareResponse(ref response);
+
+                _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void DeleteRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format)
+        {
+            try
+            {
+
+                format = MapContentType(format);
+
+                Response response = _adapterProvider.DeleteRelated(project, app, resource, parentid, relatedresource, id, format);
+
+                PrepareResponse(ref response);
+
+                _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void GetSummary(string project, string app)
+        {
+            try
+            {
+                IList<Object> objects = _adapterProvider.GetSummary(project, app);
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                String json = serializer.Serialize(objects);
+
+                HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+                HttpContext.Current.Response.Write(json);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        #region Async request queue
+        public void GetRequestStatus(string id)
+        {
+            RequestStatus status = null;
+
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                status = _adapterProvider.GetRequestStatus(id);
+
+                if (status.State == State.NotFound)
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+                }
+            }
+            catch (Exception ex)
+            {
+                status = new RequestStatus()
+                {
+                    State = State.Error,
+                    Message = ex.Message
+                };
+            }
+
+            _adapterProvider.FormatOutgoingMessage<RequestStatus>(status, "xml", true);
+        }
+        #endregion
+
+        #region "All" Methods
+        public void GetDictionaryAll(string app, string format)
+        {
+            GetDictionary("all", app, format);
+        }
+
+        public void GetListAll(string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+        {
+            GetList("all", app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
+        }
+
+        public void GetItemAll(string app, string resource, string id, string format)
+        {
+            GetItem("all", app, resource, id, format);
+        }
+
+        public void GetWithFilterAll(string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
+        {
+            GetWithFilter("all", app, resource, format, start, limit, indexStyle, stream);
+        }
+
+        public void GetIndividualAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+        {
+            GetIndividual("all", app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
+        }
+
+        public void GetRelatedItemAll(string app, string resource, string id, string related, string relatedId, string format)
+        {
+            GetRelatedItem("all", app, resource, id, related, relatedId, format);
+        }
+
+        public void UpdateListAll(string app, string resource, string format, Stream stream)
+        {
+            UpdateList("all", app, resource, format, stream);
+        }
+
+        public void UpdateItemAll(string app, string resource, string id, string format, Stream stream)
+        {
+            UpdateItem("all", app, resource, id, format, stream);
+        }
+
+        public void CreateItemAll(string app, string resource, string format, Stream stream)
+        {
+            CreateItem("all", app, resource, format, stream);
+        }
+
+        public void DeleteItemAll(string app, string resource, string id, string format)
+        {
+            DeleteItem("all", app, resource, id, format);
+        }
+        #endregion
+
+        #region Private Methods
+        private string MapContentType(string format)
+        {
+            IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
+
+            string contentType = request.ContentType;
+
+            // if it's a known format then return it
+            if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("json") ||
+              format.ToLower().Contains("dto") || format.ToLower().Contains("rdf")))
+            {
+                return format;
+            }
+
+            // default to json, but honor the contentType of the request if it has one.
+            format = "json";
+
+            if (contentType != null)
+            {
+                if (contentType.ToLower().Contains("application/xml"))
+                {
+                    format = "xml";
+                }
+                else if (contentType.ToLower().Contains("json"))
+                {
+                    format = "json";
+                }
+                else
+                {
+                    format = "raw";
+                }
+            }
+
+            return format;
+        }
+
+        private bool IsAsync()
+        {
+            bool async = false;
+            string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
+
+            if (asyncHeader != null && asyncHeader.ToLower() == "true")
+            {
+                async = true;
+            }
+
+            return async;
+        }
+        #endregion
     }
-
-    private bool IsAsync()
-    {
-      bool async = false;
-      string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
-
-      if (asyncHeader != null && asyncHeader.ToLower() == "true")
-      {
-        async = true;
-      }
-
-      return async;
-    }
-    #endregion
-  }
 }
