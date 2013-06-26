@@ -537,13 +537,13 @@ namespace org.iringtools.web.controllers
     {
       string success = String.Empty;
 
-      if (String.IsNullOrEmpty(form["scope"]))
+      if (form["state"]=="new")//if (String.IsNullOrEmpty(form["scope"]))
       {
-        success = _repository.AddScope(form["name"], form["description"]);
+          success = _repository.AddScope(form["scope"], form["description"]);
       }
       else
       {
-        success = _repository.UpdateScope(form["scope"], form["name"], form["description"]);
+          success = _repository.UpdateScope(form["contextName"], form["scope"], form["description"]);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
