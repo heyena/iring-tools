@@ -311,7 +311,7 @@ public class ExchangeDataController extends BaseController
 			Graph graph = new Graph();
 			graph.setName(name);
 			graph.setDescription(description);
-			graph.setCommodity(commName);
+		//	graph.setCommodity(commName);
 			if ((oldGraphName == null) || (oldGraphName.equals(""))) {
 				exchangeDataModel.newGraph(graph, scope, appName,
 						exchangeServiceUri);

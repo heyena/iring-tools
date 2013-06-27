@@ -1001,7 +1001,7 @@ var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
 	    title: 'Delete Application',
-	    msg: '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ appName + ' Application ?' + '</textarea>',
+	    msg: '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ appName + ' application?' + '</textarea>',
 	    buttons: Ext.MessageBox.YESNO,
 	    modal: true,
 	    //  icon: Ext.Msg.QUESTION,
@@ -1043,7 +1043,7 @@ function deleteGraph(node, event)
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
 	    title: 'Delete Graph',
-	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ name + ' Graph ?' + '</textarea>',
+	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ name + ' graph?' + '</textarea>',
 	    buttons: Ext.MessageBox.YESNO,
 	    modal: true,
 	    //icon: Ext.Msg.QUESTION,
@@ -1111,7 +1111,7 @@ var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
 	    title: 'Delete Commodity',
-	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ commName + ' Commodity ?' + '</textarea>',
+	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ commName + ' commodity?' + '</textarea>',
 	    buttons: Ext.MessageBox.YESNO,
 	    modal: true,
 	    //icon: Ext.Msg.QUESTION,
@@ -1154,7 +1154,7 @@ function deleteConfig()
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
 	    title: 'Delete Exchange Definition',
-	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ '"' +exchangeConfigName+'"' + ' Exchange ?' + '</textarea>',
+	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ '"' +exchangeConfigName+'"' + ' exchange?' + '</textarea>',
 	    buttons: Ext.MessageBox.YESNO,
 	    modal: true,
 	    //icon: Ext.Msg.QUESTION,
@@ -1195,7 +1195,7 @@ function buildNewExchangeMenu ()
                     var view = Ext.getCmp('newExchangeConfigWin');
                     view.show();
                 },
-                text: 'New Exchange Configuration'
+                text: 'New Exchange Definition'
             },
         {
             xtype: 'menuitem',
@@ -1219,14 +1219,16 @@ function newexchangeConfig()
 {
 	var newExchConfig= new Ext.FormPanel({
 		 id:'newExchConfig',
-		 height: 596,
-		    width: 584,
-		    bodyPadding: 10,
-		    layout:'form',
+		 frame: true,
+		    height: 468,
+		    width: 526,
+		    bodyPadding: 15,
+		  //  layout:'form',
 		    frame: true,
-		    bodyStyle:'padding:5px 5px 0',
-		    labelwidth: 75,
-		
+		  //  bodyStyle: '\'background-color:#FFFFFF;',
+		    bodyStyle:'padding:10px 5px 0',
+		    labelWidth: 150,
+				
 		    items: [
 	                {
 	                    xtype: 'textfield',
@@ -1245,79 +1247,89 @@ function newexchangeConfig()
 	                },
 	                {
 	                    xtype: 'fieldset',
-	                    height: 212,
-	                    width: 553,
+	                    height: 175,
+	                    width: 488,
 	                    title: 'Source Config',
 	                    items: [
 	                        {
 	                            xtype: 'textfield',
-	                            anchor: '90%',
+	                            anchor: '95%',
 	                            fieldLabel: 'Source Uri',
-	                            labelWidth: 125,
+	                            labelWidth: 150,
 	                            name: 'sourceUri'
 	                        },
 	                        {
 	                            xtype: 'textfield',
-	                            anchor: '90%',
+	                            anchor: '95%',
 	                            fieldLabel: 'Source Scope Name',
-	                            labelWidth: 125,
+	                            labelWidth: 150,
 	                            name: 'sourceScopeName'
 	                        },
 	                        {
 	                            xtype: 'textfield',
-	                            anchor: '90%',
+	                            anchor: '95%',
 	                            fieldLabel: 'Source App Name',
-	                            labelWidth: 125,
+	                            labelWidth: 150,
 	                            name: 'sourceAppName'
 	                        },
 	                        {
 	                            xtype: 'textfield',
-	                            anchor: '90%',
+	                            anchor: '95%',
 	                            fieldLabel: 'Source Graph Name',
-	                            labelWidth: 125,
+	                            labelWidth: 150,
 	                            name: 'sourceGraphName'
 	                        },
-	                     
-	                    ],
-	                    buttons: [{
+	                        /*   {
+	                            xtype: 'button',
+	                            handler: function(button, event) {
+	                            	   SourceUri();
+	                            },
+	                            anchor: '20%',
+	                            height: 22,
+	                            margin: '10 -350 0 350',
+	                            text: 'Test'
+	                        },*/
+	                          ],
+	                 buttons: [{
 	                    	 text: 'Test',
 	                    	   handler: function(button, event) {
 	                    		   SourceUri();
 
-	                            }	                            
+	                            },
+	                            height: 22,
+	                            anchor: '20%',
 	                           }]
 	                },
 	                {
 	                    xtype: 'fieldset',
-	                    height: 220,
-	                    margin: '',
-	                    width: 537,
+	                    height: 175,
+	                    width: 487,
 	                    title: 'Target Config',
 	                    items: [
 	                        {
 	                            xtype: 'textfield',
-	                            anchor: '90%',
+	                            anchor: '95%',
 	                            fieldLabel: 'Target Uri',
 	                            labelWidth: 125,
 	                            name: 'targetUri'
 	                        },
 	                        {
 	                            xtype: 'textfield',
-	                            anchor: '90%',
+	                            anchor: '95%',
 	                            fieldLabel: 'Target Scope Name',
 	                            labelWidth: 125,
 	                            name: 'targetScopeName'
 	                        },
 	                        {
 	                            xtype: 'textfield',
-	                            anchor: '90%',
+	                            anchor: '95%',
 	                            fieldLabel: 'Target App Name',
 	                            labelWidth: 125,
 	                            name: 'targetAppName'
 	                        },
 	                        {
 	                            xtype: 'textfield',
-	                            anchor: '90%',
+	                            anchor: '95%',
 	                            fieldLabel: 'Target Graph Name',
 	                            labelWidth: 125,
 	                            name: 'targetGraphName'
@@ -1367,13 +1379,12 @@ function newexchangeConfig()
 	        });
 	var newExchangeConfigWin = new Ext.Window({
 		id:'newExchangeConfigWin',
-		  height: 515,
-		    width: 568,
 	    layout: {
 	        type: 'fit'
 	    },
-	    title: 'New Exchange Configration',
+	    title: 'New Exchange Definition',
 	    modal: true,
+	    resizable: false,
 	    items:[newExchConfig]
 	            
 	        });
@@ -1390,16 +1401,27 @@ function newexchangeConfig()
 		var app = form.findField('sourceAppName').getValue();
 		var sourceUri = source+"/"+scope+"/"+app+"/manifest";
 		console.log("1 is " + sourceUri);
+		var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 		Ext.Ajax.request({
 		    url : 'SourcetestUri?' + '&sourceUri =' + sourceUri,
 		    method: 'POST',
 		    timeout : 86400000, // 24 hours
 		    success : function(response, request) {
 		        var result = Ext.decode(response.responseText);
-		        alert(result);
+		       
+		        Ext.Msg.show({
+		            title: 'Result ',
+		            msg:  '<textarea '+style + ' readonly="yes">' + result + '</textarea>',
+		            buttons: Ext.MessageBox.OK
+		            });
+		       
 		    },
 		    failure : function(response, request) {
-		        alert("failed to connect to the specified Url");
+		    	  Ext.Msg.show({
+			            title: 'Result ',
+			            msg:  '<textarea '+style + ' readonly="yes">' +"failed to connect to the specified Url" + '</textarea>',
+			            buttons: Ext.MessageBox.OK
+			            });
 		    }
 		});
 	}
@@ -1413,16 +1435,27 @@ function newexchangeConfig()
 		var app = form.findField('targetAppName').getValue();
 		var targetUri =target+"/"+scope+"/"+app+"/manifest";
 		console.log("1 is " + targetUri);
+	    var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 		Ext.Ajax.request({
 		    url : 'testTargetUrl?' + '&targetUri =' + targetUri,
 		    method: 'POST',
 		    timeout : 86400000, // 24 hours
 		    success : function(response, request) {
 		        var result = Ext.decode(response.responseText);
-		        alert(result);
+		     
+		        Ext.Msg.show({
+		            title: 'Result ',
+		            msg:  '<textarea '+style + ' readonly="yes">' + result + '</textarea>',
+		            buttons: Ext.MessageBox.OK
+		            });
 		    },
 		    failure : function(response, request) {
-		        alert("failed to connect to the specified Url");
+		//        alert("failed to connect to the specified Url");
+		        Ext.Msg.show({
+		            title: 'Result ',
+		            msg:  '<textarea '+style + ' readonly="yes">' +"failed to connect to the specified Url" + '</textarea>',
+		            buttons: Ext.MessageBox.OK
+		            });
 		    }
 		});
 		
@@ -1556,7 +1589,7 @@ function editGraph()
 	    timeout : 86400000, // 24 hours
 	    success : function(response, request) {
 	        var graph = Ext.decode(response.responseText);
-	        form.setValues({name : graph.name, description : graph.description,  CommName : graph.commodity, oldAppName : appNameValue, oldScope :scope, oldGraphName : graphValue});   
+	        form.setValues({name : graph.name, description : graph.description, oldAppName : appNameValue, oldScope :scope, oldGraphName : graphValue,  /*CommName : graph.commodity*/ });   
 	        centerPanel.getEl().unmask();
 	        view.show();
 	    },
@@ -1572,9 +1605,9 @@ function newGraph()
 {
 	var newGraphForm= new Ext.FormPanel({
 	id: 'newGraphForm',
-	 height: 120,
-	    width: 400,
-	    bodyPadding: 10,
+	  height: 100,
+	    width: 417,
+	    bodyPadding: 15,
 	    layout:'form',
 	    frame: true,
 	    bodyStyle:'padding:5px 5px 0',
@@ -1592,12 +1625,12 @@ function newGraph()
                     fieldLabel: 'Description',
                     name: 'description'
                 },
-                {
+           /*     {
                     xtype: 'textfield',
                     anchor: '95%',
                     fieldLabel: 'Commodity',
                     name: 'CommName'
-                },
+                },*/
                 {
                     xtype: 'hidden',
                     anchor: '100%',
@@ -1633,8 +1666,7 @@ function newGraph()
 	
 	var newGraphWin = new Ext.Window({
 		id:'newGraphWin',
-	    height: 120,
-	    width: 400,
+		 resizable: false,
 	    layout: {
 	        type: 'fit'
 	    },
@@ -1743,20 +1775,20 @@ function buildCommoditySubMenu ()
         	   newexchangeConfig();
         	   editExchangeConfig();
          },
-         text: 'Edit Exchange Configuration'
+         text: 'Edit Exchange Definition'
      },
      {
          xtype: 'menuitem',
          handler: function() {
         	 deleteConfig();
          },
-         text: 'Delete Exchange Configuration'
-     },
+         text: 'Delete Exchange Definition'
+     }, /*
      {
          xtype: 'menuitem',
          action: 'dataFiltersMenuItem',
          text: 'Apply Data Filters'
-     }  /*,
+     } ,
    {
          xtype: 'menuitem',
          action: 'exchangereviewandacceptance',
@@ -1792,7 +1824,7 @@ function editExchangeConfig()
 	 var commConfigName = node.text;
 
 	 var view = Ext.getCmp('newExchangeConfigWin');
-	 view.setTitle("Edit Exchange Configaration");
+	 view.setTitle("Edit Exchange Definition");
 	 var obj = Ext.getCmp('newExchConfig');
 	 var formdata =  obj.getForm();
 
@@ -1824,7 +1856,7 @@ function deleteScope(node, event)
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
 	    title: 'Delete Scope',
-	    msg: '<textarea '+style + ' readonly="yes">'+ 'Are you sure to delete ' +scope   + ' context ?'+ '</textarea>',
+	    msg: '<textarea '+style + ' readonly="yes">'+ 'Are you sure to delete ' +scope   + ' context?'+ '</textarea>',
 	    buttons: Ext.MessageBox.YESNO,
 	    animEl: 'elId',
 	    //   icon: Ext.Msg.QUESTION,
@@ -1893,9 +1925,10 @@ function newScope()
 {
 	var newScopeForm = new Ext.FormPanel({
 		 id: 'newScopeForm',
-		 height: 120,
-		    width: 400,
-		    bodyPadding: 10,
+		 height: 83,
+		    width: 358,
+		    bodyBorder: false,
+		    bodyPadding: 15,
 		    layout:'form',
 		    frame: true,
 		    bodyStyle:'padding:5px 5px 0',
@@ -1930,8 +1963,7 @@ function newScope()
                     });
 	var newScopeWin = new Ext.Window({
 		id:'newScopeWin',
-	    height: 120,
-	    width: 400,
+	    resizible: false,
 	    layout: {
 	        type: 'fit'
 	    },
@@ -1970,9 +2002,9 @@ var node = directoryTree.getSelectionModel().getSelectedNode();
 function newCommodity()
 {  var newCommForm = new Ext.FormPanel({
 	id: 'newCommForm',
-    height: 94,
-    width: 400,
-    bodyPadding: 10,
+	height: 83,
+    width: 359,
+    bodyPadding: 15,
     layout:'form',
     frame: true,
     bodyStyle:'padding:5px 5px 0',
@@ -2001,8 +2033,7 @@ buttons: [{
 
 var newCommWin = new Ext.Window({
 	id:'newCommWin',
-    height: 152,
-    width: 400,
+	resizable: false,
     layout: {
         type: 'fit'
     },
@@ -2040,9 +2071,11 @@ function saveComm(node,button, event){
 function newApp()
 {  var newAppForm = new Ext.FormPanel({
 	  id: 'newAppForm',
-	    height: 120,
-	    width: 400,
-	    bodyPadding: 10,
+	  height: 127,
+	    width: 417,
+	    resizable: false,
+	    bodyBorder: false,
+	    bodyPadding: 15,
 	    layout:'form',
 	    frame: true,
 	    bodyStyle:'padding:5px 5px 0',
@@ -2103,9 +2136,7 @@ function newApp()
 
 var newAppWin = new Ext.Window({
 	id:'newAppWin',
-
-	    height: 120,
-	    width: 400,
+	 resizable: false,
 	    layout: {
 	        type: 'fit'
 	    },
