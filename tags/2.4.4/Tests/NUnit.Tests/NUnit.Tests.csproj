@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9E46E6C4-6EBA-443D-BC20-7AD213D52BCF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NUnit.Tests</RootNamespace>
+    <AssemblyName>NUnit.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.ByteCode.Castle">
+      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Xml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.5.9.10348, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\Nunit\framework\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdapterTest.cs" />
+    <Compile Include="App_Code\Model.12345_000.ABC.cs" />
+    <Compile Include="BaseTest.cs" />
+    <Compile Include="UtilityTest.cs" />
+    <Compile Include="DataTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DxfrTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NHibernateTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReferenceDataTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XmlTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql">
+      <Link>SQL\ABC.Data.Complete.sql</Link>
+    </Content>
+    <Content Include="..\..\iRINGTools.Services\App_Data\ABC.Tables.sql">
+      <Link>SQL\ABC.Tables.sql</Link>
+    </Content>
+    <Content Include="App_Data\Authorization.12345_000.ABC.xml" />
+    <Content Include="App_Data\AuthorizationBindingConfiguration.12345_000.ABC.xml" />
+    <Content Include="App_Data\BindingConfiguration.12345_000.ABC.xml" />
+    <Content Include="App_Data\BindingConfiguration.Adapter.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_Data\ClassificationTemplate.xml" />
+    <Content Include="App_Data\config.xml" />
+    <Content Include="App_Data\DatabaseDictionary.12345_000.ABC.xml" />
+    <Content Include="App_Data\DataDictionary.12345_000.ABC.xml" />
+    <Content Include="App_Data\Mapping.12345_000.ABC.xml" />
+    <Content Include="App_Data\nh-configuration.12345_000.ABC.xml" />
+    <Content Include="App_Data\nh-mapping.12345_000.ABC.xml" />
+    <Content Include="App_Data\Queries.xml">
+      <SubType>
+      </SubType>
+    </Content>
+    <Content Include="App_Data\Scopes.xml" />
+    <Content Include="App_Data\SummaryBindingConfiguration.12345_000.ABC.xml" />
+    <Content Include="App_Data\SummaryConfig.12345_000.ABC.xml" />
+    <Content Include="SPARQL\ClassRelations.txt" />
+    <Content Include="SPARQL\ContainsSearch.txt" />
+    <Content Include="SPARQL\ContainsSearchJORD.txt" />
+    <Content Include="SPARQL\ExactSearchJORD.txt" />
+    <Content Include="SPARQL\GetClass.txt" />
+    <Content Include="SPARQL\GetClassification.txt" />
+    <Content Include="SPARQL\GetClassificationJORD.txt" />
+    <Content Include="SPARQL\GetClassJORD.txt" />
+    <Content Include="SPARQL\GetClassTemplates.txt" />
+    <Content Include="SPARQL\GetInstances.txt" />
+    <Content Include="SPARQL\GetLabel.txt" />
+    <Content Include="SPARQL\GetLabelRdlEquivalent.txt" />
+    <Content Include="SPARQL\GetPart8Classification.txt" />
+    <Content Include="SPARQL\GetProperties.txt" />
+    <Content Include="SPARQL\GetRangeRestriction.txt" />
+    <Content Include="SPARQL\GetReferenceRestriction.txt" />
+    <Content Include="SPARQL\GetRelatedTemplates.txt" />
+    <Content Include="SPARQL\GetRoleData.txt" />
+    <Content Include="SPARQL\GetRoleInfo.txt" />
+    <Content Include="SPARQL\GetRoles.txt" />
+    <Content Include="SPARQL\GetStatus.txt" />
+    <Content Include="SPARQL\GetSubClass.txt" />
+    <Content Include="SPARQL\GetSubClassJORD.txt" />
+    <Content Include="SPARQL\GetSubClassOf.txt" />
+    <Content Include="SPARQL\GetSubClassOfInverse.txt" />
+    <Content Include="SPARQL\GetSubClassSandbox.txt" />
+    <Content Include="SPARQL\GetSuperClass.txt" />
+    <Content Include="SPARQL\GetSuperClassJORD.txt" />
+    <Content Include="SPARQL\GetSuperClassSandbox.txt" />
+    <Content Include="SPARQL\getTemplate.txt" />
+    <Content Include="SPARQL\getTemplateClassification.txt" />
+    <Content Include="SPARQL\GetTemplateQualificationJORD.txt" />
+    <Content Include="SPARQL\GetTemplateQualificationPart8.txt" />
+    <Content Include="SPARQL\getTemplateRoleRestriction.txt" />
+    <Content Include="SPARQL\getTemplateRoles.txt" />
+    <Content Include="SPARQL\getTemplateSpecialization.txt" />
+    <Content Include="SPARQL\GetValueRestriction.txt" />
+    <Content Include="SPARQL\part8containssearch.txt" />
+    <Content Include="SPARQL\part8getclass.txt" />
+    <Content Include="SPARQL\PostPart8Template_1.txt" />
+    <Content Include="SPARQL\PostPart8Template_2.txt" />
+    <Content Include="SPARQL\PostPart8Template_3.txt" />
+    <Content Include="SPARQL\PostPart8Template_4.txt" />
+    <Content Include="SPARQL\PostPart8Template_5_1.txt" />
+    <Content Include="SPARQL\PostPart8Template_5_2.txt" />
+    <Content Include="SPARQL\SandboxContainsSearch.txt" />
+    <Content Include="SPARQL\SandboxExactSearch.txt" />
+    <Content Include="SPARQL\SandboxTemplateContainsSearch.txt" />
+    <Content Include="SPARQL\SandboxTemplateExactSearch.txt" />
+    <Content Include="SPARQL\TemplateContainsSearch.txt" />
+    <Content Include="SPARQL\TemplateExactSearch.txt" />
+    <Content Include="SPARQL\TemplateGetProperties.txt" />
+    <Content Include="SPARQL\TemplateTypes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\AdapterLibrary\AdapterLibrary.csproj">
+      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
+      <Name>AdapterLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\NHibernateExtension\NHibernateExtension.csproj">
+      <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
+      <Name>NHibernateExtension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
+      <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
+      <Name>NHibernateLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
+      <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
+      <Name>ReferenceDataLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
+      <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
+      <Name>SpreadsheetDatalayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary.Desktop</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>if not exist "$(ProjectDir)\app.config" copy "$(ProjectDir)\app_Default.config" "$(ProjectDir)\app.config"</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
