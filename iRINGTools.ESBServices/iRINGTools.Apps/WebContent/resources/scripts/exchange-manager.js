@@ -994,45 +994,88 @@ function buildNewCommodityMenu ()
 function deleteApp(node, event)
 {
 	
-//var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
 	var appName = node.text;
 	var scope = node.parentNode.parentNode.text;
 
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
-	    //  title: 'Choose',
-	    msg: 'Are you sure to delete '+ appName + ' Application ?',
-	    buttons: Ext.MessageBox.YESNOCANCEL,
+	    title: 'Delete Application',
+	    msg: '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ appName + ' Application ?' + '</textarea>',
+	    buttons: Ext.MessageBox.YESNO,
 	    modal: true,
+	    //  icon: Ext.Msg.QUESTION,
 	    // buttons: Ext.MessageBox.OKCANCEL,
 	    //inputField: new IMS.form.DateField(),
 	    fn: function(buttonId, text) {
 	        //  if (buttonId == 'ok')
 	        if(buttonId == 'yes'){
-
+	        	var contentPanel = Ext.getCmp('content-pane');
+	              contentPanel.getEl().mask("Loading...", "x-mask-loading");
 	            Ext.Ajax.request({
 	                url : 'deleteApplication?'+'&scope =' + scope +'&appName =' + appName,
 	                method: 'POST',
 	                timeout : 86400000, // 24 hours
 	                success : function(response, request) {
-	        //          Ext.Msg.alert('"'+ appName + '"' +'  Application is deleted');
-	                   refresh();
+	                     contentPanel.getEl().unmask();
+	                     refresh();
 	                },
 	                failure : function(response, request) {
-	                    Ext.Msg.alert('Delete Failed');
-	                } });  
+	     contentPanel.getEl().unmask();
+	    Ext.Msg.show({
+	        title: 'Delete Application failed ',
+	        msg:  '<textarea '+style + ' readonly="yes">' +  'Error: '+ response.reponseText  + '</textarea>',
+	        buttons: Ext.MessageBox.OKCANCEL
+	        });
+	}   });  
 	            }
 	        }
-	    });
+	    });	
 }
 
 function deleteGraph(node, event)
 {
-//var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+    var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
 	var name = node.text;
 	var appName = node.parentNode.text;
 	var scope = node.parentNode.parentNode.parentNode.text;
-
+	
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
+	    title: 'Delete Graph',
+	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ name + ' Graph ?' + '</textarea>',
+	    buttons: Ext.MessageBox.YESNO,
+	    modal: true,
+	    //icon: Ext.Msg.QUESTION,
+	    // buttons: Ext.MessageBox.OKCANCEL,
+	    //inputField: new IMS.form.DateField(),
+	    fn: function(buttonId, text) {
+	        //  if (buttonId == 'ok')
+	        if(buttonId == 'yes'){
+	        	   var contentPanel = Ext.getCmp('content-pane');
+	              contentPanel.getEl().mask("Loading...", "x-mask-loading");
+	            Ext.Ajax.request({
+	                url : 'deleteGraph?'+ '&name ='+ name +'&scope =' + scope +'&appName =' + appName,
+	                method: 'POST',
+	                timeout : 86400000, // 24 hours
+	                success : function(response, request) {
+	                    //     Ext.Msg.alert('"'+ name + '"' +'  Graph is deleted');
+	                contentPanel.getEl().unmask();
+	                refresh();
+	                },
+	                failure : function(response, request) {
+	     contentPanel.getEl().unmask();
+	    Ext.Msg.show({
+	        title: 'Delete Graph failed ',
+	        msg:  '<textarea '+style + ' readonly="yes">' +  'Error: '+ response.reponseText  + '</textarea>',
+	        buttons: Ext.MessageBox.OKCANCEL
+	        });
+	}   });  
+	            }
+	        }
+	    });
+
+/*	Ext.Msg.show({
 	    //  title: 'Choose',
 	    msg: 'Are you sure to delete '+ name + ' Graph ?',
 	    buttons: Ext.MessageBox.YESNOCANCEL,
@@ -1056,37 +1099,45 @@ function deleteGraph(node, event)
 	                } });  
 	            }
 	        }
-	    });
+	    });*/
 }
 
 function deleteCommodity(node, event)
 {
-//var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
 	var commName = node.text;
 	var scope = node.parentNode.parentNode.text;
 
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
-	    //  title: 'Choose',
-	    msg: 'Are you sure to delete '+ commName + ' Commodity ?',
-	    buttons: Ext.MessageBox.YESNOCANCEL,
+	    title: 'Delete Commodity',
+	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ commName + ' Commodity ?' + '</textarea>',
+	    buttons: Ext.MessageBox.YESNO,
 	    modal: true,
+	    //icon: Ext.Msg.QUESTION,
 	    // buttons: Ext.MessageBox.OKCANCEL,
 	    //inputField: new IMS.form.DateField(),
 	    fn: function(buttonId, text) {
 	        //  if (buttonId == 'ok')
 	        if(buttonId == 'yes'){
-
+	        	var contentPanel = Ext.getCmp('content-pane');
+	              contentPanel.getEl().mask("Loading...", "x-mask-loading");
 	            Ext.Ajax.request({
 	                url : 'deleteCommodity?'+ '&commName =' + commName +'&scope =' + scope ,
 	                method: 'POST',
 	                timeout : 86400000, // 24 hours
 	                success : function(response, request) {
-	            //      Ext.Msg.alert('"'+ commName + '"' +'  Commodity is deleted');
+	                  contentPanel.getEl().unmask();
 	                  refresh();
 	                },
 	                failure : function(response, request) {
-	                    Ext.Msg.alert('Delete Failed');
-	                } });  
+	     contentPanel.getEl().unmask();
+	    Ext.Msg.show({
+	        title: 'Delete Commodity failed ',
+	        msg:  '<textarea '+style + ' readonly="yes">' +  'Error: '+ response.reponseText  + '</textarea>',
+	        buttons: Ext.MessageBox.OKCANCEL
+	        });
+	}   });  
 	            }
 	        }
 	    });
@@ -1098,29 +1149,38 @@ function deleteConfig()
 	var exchangeConfigName = node.text;
 	var commName = node.parentNode.text;
 	var scope = node.parentNode.parentNode.parentNode.text;
+	var xid =  node.attributes.properties['Id'];
 
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
-	    //   title: 'Choose',
-	    msg: 'Are you sure to delete '+ '"' +exchangeConfigName+'"' + ' Exchange ?',
-	    buttons: Ext.MessageBox.YESNOCANCEL,
+	    title: 'Delete Exchange Definition',
+	    msg:  '<textarea '+style + ' readonly="yes">'+'Are you sure to delete '+ '"' +exchangeConfigName+'"' + ' Exchange ?' + '</textarea>',
+	    buttons: Ext.MessageBox.YESNO,
 	    modal: true,
+	    //icon: Ext.Msg.QUESTION,
 	    // buttons: Ext.MessageBox.OKCANCEL,
 	    //inputField: new IMS.form.DateField(),
 	    fn: function(buttonId, text) {
 	        //  if (buttonId == 'ok')
 	        if(buttonId == 'yes'){
-
+	        	var contentPanel = Ext.getCmp('content-pane');
+	              contentPanel.getEl().mask("Loading...", "x-mask-loading");
 	            Ext.Ajax.request({
-	                url : 'deleteExchangeConfig?'+'&scope =' + scope +'&commName =' + commName +'&name =' +exchangeConfigName,
+	                url : 'deleteExchangeConfig?'+'&scope =' + scope +'&commName =' + commName +'&name =' +exchangeConfigName +'&xid =' +xid,
 	                method: 'POST',
 	                timeout : 86400000, // 24 hours
 	                success : function(response, request) {
-	  //                Ext.Msg.alert('"'+ exchangeConfigName + '"' +' Exchange is deleted');
+	                   contentPanel.getEl().unmask();
 	                   refresh();
 	                },
-	                failure : function(response, request) {
-	                    Ext.Msg.alert('Delete Failed');
-	                } });  
+	                 failure : function(response, request) {
+	     contentPanel.getEl().unmask();
+	    Ext.Msg.show({
+	        title: 'Delete Exchange Definition failed ',
+	        msg:  '<textarea '+style + ' readonly="yes">' +  'Error: '+ response.reponseText  + '</textarea>',
+	        buttons: Ext.MessageBox.OKCANCEL
+	        });
+	}   });  
 	            }
 	        }
 	    });
@@ -1755,34 +1815,47 @@ function editExchangeConfig()
 
 }
 
-function deleteScope()
+function deleteScope(node, event)
 {
 	var me = this;
-	 var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
 	var scope = node.text;
 
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
-	    //   title: 'Choose',
-	    msg: 'Are you sure to delete '+ scope + ' context ?',
-	    buttons: Ext.MessageBox.YESNOCANCEL,
-	    modal: true,
-	    // buttons: Ext.MessageBox.OKCANCEL,
+	    title: 'Delete Scope',
+	    msg: '<textarea '+style + ' readonly="yes">'+ 'Are you sure to delete ' +scope   + ' context ?'+ '</textarea>',
+	    buttons: Ext.MessageBox.YESNO,
+	    animEl: 'elId',
+	    //   icon: Ext.Msg.QUESTION,
+	    //  modal: true,
+	    // width:1000,
+	    //  height:800,
+	    // multiline: 200,
+	    // buttons:  Ext.Msg.YESNOCANCEL,
 	    //inputField: new IMS.form.DateField(),
 	    fn: function(buttonId, text) {
-	        //  if (buttonId == 'ok')
+	        // if (buttonId == 'ok'){
 	        if(buttonId == 'yes'){
-
+	        	var contentPanel = Ext.getCmp('content-pane');
+	              contentPanel.getEl().mask("Loading...", "x-mask-loading");
 	            Ext.Ajax.request({
 	                url : 'deleteScope?'+'&scope =' + scope,
 	                method: 'POST',
 	                timeout : 86400000, // 24 hours
 	                success : function(response, request) {
-	           //       Ext.Msg.alert('"'+ scope + '"' +' Context is deleted');
-	                refresh();
+	                   contentPanel.getEl().unmask();
+	                    //  Ext.Msg.alert('"'+ scope + '"' +' Context is deleted');
+	                   refresh();
 	                },
-	                failure : function(response, request) {
-	                    Ext.Msg.alert('Delete Failed');
-	                } });  
+	               failure : function(response, request) {
+	     contentPanel.getEl().unmask();
+	    Ext.Msg.show({
+	        title: 'Delete Scope failed ',
+	        msg:  '<textarea '+style + ' readonly="yes">' +  'Error: '+ response.reponseText  + '</textarea>',
+	        buttons: Ext.MessageBox.OKCANCEL
+	        });
+	}   });  
 	            }
 	        }
 	    });

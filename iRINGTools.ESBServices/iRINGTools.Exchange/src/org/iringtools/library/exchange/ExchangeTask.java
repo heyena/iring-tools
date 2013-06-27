@@ -443,7 +443,7 @@ public class ExchangeTask implements Runnable
       }
       else if (xRes.getLevel() == Level.SUCCESS)
       {
-        String message = "Exchange completed succesfully.";
+        String message = "Exchange completed successfully.";
         StringBuilder summary = new StringBuilder(xRes.getSummary());
         xRes.setSummary(summary.append(message).toString());
       }

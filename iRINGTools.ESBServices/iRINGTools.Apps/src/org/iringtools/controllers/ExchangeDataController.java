@@ -224,13 +224,13 @@ public class ExchangeDataController extends BaseController
 
 	// deleting scope
 	public String deleteScope() {
-		// This code does not do anything (apart from instantiate an unused exchangeDataModel) ??
-		//try {
-		//	  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-		//} catch (Exception e) {
-		//	 e.printStackTrace();
-		//	return ERROR;
-		//}
+		try {
+			  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+			  exchangeDataModel.deleteScope(scope, exchangeServiceUri);	
+			  } catch (Exception e) {
+			 e.printStackTrace();
+			return ERROR;
+		}
 
 		return SUCCESS;
 	}
