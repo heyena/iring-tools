@@ -12,11 +12,11 @@ namespace NUnit.Tests
     public void ResetDatabase()
     {
       ResetDatabase(
-        @"..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql",
+        @"..\..\iRINGTools.Services\App_Data\SQL\ABC.Data.Complete.sql",
         @".\App_Data\nh-configuration.12345_000.ABC.xml");
 
       ResetDatabase(
-        @"..\..\iRINGTools.Services\App_Data\DEF.Data.Small.sql",
+        @"..\..\iRINGTools.Services\App_Data\SQL\DEF.Data.Small.sql",
         @".\App_Data\nh-configuration.12345_000.DEF.xml");
     }
 

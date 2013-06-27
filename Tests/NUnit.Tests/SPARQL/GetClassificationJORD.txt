@@ -4,7 +4,8 @@ PREFIX rds: <http://posccaesar.org/rdl/>
 PREFIX rdl: <http://rdl.rdlfacade.org/data#> 
 SELECT ?uri ?label  ?rdsuri
 {
-  rdl:param1  rds:rdsWipEquivalent ?c .
+  BIND (rdl:param1 as ?uri)
+  ?uri  rds:rdsWipEquivalent ?c .
   ?s dm:hasClassified ?c  . 
   ?s dm:hasClassifier ?rdsuri . 
   OPTIONAL { ?uri rds:rdsWipEquivalent ?rdsuri . }

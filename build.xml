@@ -2,7 +2,7 @@
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
-    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs;</AssemblyInfoFile>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
     <Major>2</Major>
     <Minor>4</Minor>
     <Build>0</Build>
@@ -12,7 +12,7 @@
   <PropertyGroup>
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
-	<NUnit-ToolPath>$(MSBuildProjectDirectory)\ExternalBinaries\Nunit</NUnit-ToolPath>
+    <NUnit-ToolPath>$(MSBuildProjectDirectory)\ExternalBinaries\Nunit</NUnit-ToolPath>
     <ServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Services</ServicesDir>
     <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
     <LandingPageDir>$(MSBuildProjectDirectory)\iRINGTools.Landing</LandingPageDir>
@@ -46,6 +46,7 @@
                $(ServicesDir)\Templates\**;
                $(ServicesDir)\Transforms\**;
                $(ServicesDir)\obj\**;
+               $(ServicesDir)\*.sln;
                $(ServicesDir)\*.suo;
                $(ServicesDir)\*.cs;
                $(ServicesDir)\*.csproj;
@@ -72,7 +73,9 @@
 
     <AppsDeployment
       Include="$(ApplicationsDir)\**"
-      Exclude="$(ApplicationsDir)\bin\*.pdb;
+      Exclude="$(ApplicationsDir)\Controllers\**;
+               $(ApplicationsDir)\Models\**;               
+               $(ApplicationsDir)\bin\*.pdb;
                $(ApplicationsDir)\obj\**;
                $(ApplicationsDir)\Properties\**;
                $(ApplicationsDir)\*.suo;
@@ -91,25 +94,24 @@
     </AppsDeployment>
 
     <UtilitiesDeployment
-      Include="Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll;
-               Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
-               Utilities\ConfigurationTool\bin\Debug\ConfigurationTool.exe;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.dll;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.xml;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\HtmlAgilityPack.dll;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\RDFImportExport.exe;
+      Include="Utilities\EncryptCredentials\bin\release\*.exe;
+               Utilities\EncryptCredentials\bin\release\*.dll;
+               Utilities\ConfigurationTool\bin\release\*.exe;
+               Utilities\ConfigurationTool\bin\release\*.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\release\*.exe;
+               Utilities\RDFImportExport\RDFImportExport\bin\release\*.dll;
                Utilities\RDFImportExport\RDFImportExport\RDFImportExport_Default.config;
-               Utilities\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
+               Utilities\QMXFGenerator\bin\release\*.exe;
+               Utilities\QMXFGenerator\bin\release\*.dll;
                Utilities\QMXFGenerator\QMXFGenerator_Default.config;
                Utilities\QMXFGenerator\InformationModel.xlsx;
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
                Utilities\QMXFTransforms\*.xsl;
-               Utilities\FacadeExchange\bin\Debug\FacadeExchange.exe;
-               Utilities\FacadeExchange\App_Default.config;
-               Utilities\FacadeExchange\bin\Debug\*.dll;
-               Utilities\FacadeExchange\bin\Debug\*.xml;">
+               Utilities\FacadeExchange\bin\release\*.exe;
+               Utilities\FacadeExchange\bin\release\*.dll;
+               Utilities\FacadeExchange\bin\release\*.xml;
+               Utilities\FacadeExchange\App_Default.config;">
     </UtilitiesDeployment>
   </ItemGroup>
 
@@ -176,6 +178,7 @@
     <Copy SourceFiles="@(ServicesDeployment)"
           DestinationFiles="@(ServicesDeployment ->'$(ServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\Web_Default.config $(ServicesDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Federation_Default.xml $(ServicesDeploymentDir)\App_Data\Federation.xml" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
@@ -203,8 +206,7 @@
   </Target>
 
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
-
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
-
+  
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>

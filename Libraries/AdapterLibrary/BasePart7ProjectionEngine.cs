@@ -466,7 +466,7 @@ namespace org.iringtools.adapter.projection
 
       if (objProp == null)
       {
-        throw new Exception("Object property [" + pair.Key + "] not found.");
+        _logger.Error("Object property [" + pair.Key + "] not found.");
       }
 
       try
@@ -507,6 +507,26 @@ namespace org.iringtools.adapter.projection
       }
     }
 
+    protected void SetAppCode(IDataObject dataObject)
+    {
+      string senderContext = _settings["SenderProjectName"];
+      string senderApp = _settings["SenderApplicationName"];
+      string appCodeProperty = _settings["AppCodeProperty"];
+      string includeAppCodeContext = _settings["IncludeAppCodeContext"];
+
+      if (appCodeProperty != null && senderApp != null)
+      {
+        if (includeAppCodeContext != null && includeAppCodeContext.ToLower() == "true" && senderContext != null)
+        {
+          dataObject.SetPropertyValue(appCodeProperty, senderContext + "." + senderApp);
+        }
+        else
+        {
+          dataObject.SetPropertyValue(appCodeProperty, senderApp);
+        }
+      }
+    }
+
     // turn data record into data object
     protected IDataObject CreateDataObject(string objectType, int objectIndex)
     {
@@ -534,61 +554,100 @@ namespace org.iringtools.adapter.projection
         }
       }
 
-      // key property not mapped, create filter to get data object
-      if (identifier == String.Empty)
+      if (identifier == string.Empty)
       {
-        DataFilter filter = new DataFilter()
-        {
-          Expressions = new List<Expression>()
-        };
+        throw new Exception("Key property not mapped.");
+      }
 
-        foreach (var pair in dataRecord)
-        {
-          Expression expression = new Expression()
-          {
-            Values = new Values()
-          };
+      // key property not mapped, create filter to get data object
+      //if (identifier == String.Empty)
+      //{
+      //  DataFilter filter = new DataFilter()
+      //  {
+      //    Expressions = new List<Expression>()
+      //  };
 
-          if (filter.Expressions.Count > 0)
-          {
-            expression.LogicalOperator = LogicalOperator.And;
-          }
+      //  foreach (var pair in dataRecord)
+      //  {
+      //    Expression expression = new Expression()
+      //    {
+      //      Values = new Values()
+      //    };
 
-          expression.PropertyName = pair.Key;
-          expression.Values.Add(pair.Value);
-          filter.Expressions.Add(expression);
-        }
+      //    if (filter.Expressions.Count > 0)
+      //    {
+      //      expression.LogicalOperator = LogicalOperator.And;
+      //    }
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, 0, 0);
+      //    expression.PropertyName = pair.Key;
+      //    expression.Values.Add(pair.Value);
+      //    filter.Expressions.Add(expression);
+      //  }
+
+        //IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, 0, 0);
+
+        //if (dataObjects == null || dataObjects.Count == 0)
+        //{
+        //  // only create data object if key property (properties) is (are) unassigned (auto generated)
+        //  if (!ContainsAssignedKey(objDef))
+        //  {
+        //    IDataObject dataObject = _dataLayer.Create(objectType, null).First();
+        //    SetAppCode(dataObject);
+
+        //    if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
+        //    {
+        //      ((GenericDataObject)dataObject).ObjectType = objectType;
+        //    }
+        //    else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+        //    {
+        //      ((GenericContentObject)dataObject).ObjectType = objectType;
+        //    }
+
+        //    foreach (var pair in dataRecord)
+        //    {
+        //      SetPropertyValue(objDef, pair, dataObject);
+        //    }
+
+        //    return dataObject;
+        //  }
+        //  else
+        //  {
+        //    _logger.Error("Data object not found and can not be created because it contains assigned key and the key is not mapped.");
+        //    return null;  // return null here and let data layer create proper error status later
+        //  }
+        //}
+        //else if (dataObjects.Count == 1)
+
+        IList<IDataObject> dataObjects = _dataLayer.Create(objectType, new List<string> { identifier });
 
         if (dataObjects == null || dataObjects.Count == 0)
         {
-          // only create data object if key property (properties) is (are) unassigned (auto generated)
-          if (!ContainsAssignedKey(objDef))
-          {
-            IDataObject dataObject = _dataLayer.Create(objectType, null).First();
+          //IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
 
-            if (dataObject.GetType() == typeof(GenericDataObject))
-            {
-              ((GenericDataObject)dataObject).ObjectType = objectType;
-            }
+          //if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
+          //{
+          //  ((GenericDataObject)dataObject).ObjectType = objectType;
+          //}
+          //else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+          //{
+          //  ((GenericContentObject)dataObject).ObjectType = objectType;
+          //}
 
-            foreach (var pair in dataRecord)
-            {
-              SetPropertyValue(objDef, pair, dataObject);
-            }
+          //SetAppCode(dataObject);
 
-            return dataObject;
-          }
-          else
-          {
-            _logger.Error("Data object not found and can not be created because it contains assigned key and the key is not mapped.");
-            return null;  // return null here and let data layer create proper error status later
-          }
+          //foreach (var pair in dataRecord)
+          //{
+          //  SetPropertyValue(objDef, pair, dataObject);
+          //}
+
+          //return dataObject;
+
+          throw new Exception("Data layer failed to create data object for identifier: " + identifier);
         }
         else if (dataObjects.Count == 1)
         {
           IDataObject dataObject = dataObjects[0];
+          SetAppCode(dataObject);
 
           foreach (var pair in dataRecord)
           {
@@ -602,23 +661,29 @@ namespace org.iringtools.adapter.projection
           _logger.Error("Data object has duplicates.");
           return null;  // return null here and let data layer create proper error status later
         }
-      }
-      else  // key property is mapped, expect only one data object created/retrieved from data layer
-      {
-        IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
+      //}
+      //else  // key property is mapped, expect only one data object created/retrieved from data layer
+      //{
+      //  IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
 
-        if (dataObject.GetType() == typeof(GenericDataObject))
-        {
-          ((GenericDataObject)dataObject).ObjectType = objectType;
-        }
+      //  if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
+      //  {
+      //    ((GenericDataObject)dataObject).ObjectType = objectType;
+      //  }
+      //  else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+      //  {
+      //    ((GenericContentObject)dataObject).ObjectType = objectType;
+      //  }
 
-        foreach (var pair in dataRecord)
-        {
-          SetPropertyValue(objDef, pair, dataObject);
-        }
+      //  SetAppCode(dataObject);
 
-        return dataObject;
-      }
+      //  foreach (var pair in dataRecord)
+      //  {
+      //    SetPropertyValue(objDef, pair, dataObject);
+      //  }
+
+      //  return dataObject;
+      //}
     }
 
     protected List<IDataObject> GetValueObjects(string propertyMap, int dataObjectIndex)
@@ -735,19 +800,28 @@ namespace org.iringtools.adapter.projection
         }
       }
 
+      if (classIdentifiers == null)
+        return new List<string>();
+
       return classIdentifiers.ToList<string>();
     }
 
-    //get real property name
-    public void ProjectDataFilter(DataDictionary dictionary, ref DataFilter filter, string graph)
+    public void ProjectDataFilter(DataObject dataObject, ref DataFilter filter, string graph)
+    {
+      GraphMap graphMap = _mapping.FindGraphMap(graph);
+      ProjectDataFilter(dataObject, ref filter, graphMap);
+    }
+
+    // get real property name
+    public void ProjectDataFilter(DataObject dataObject, ref DataFilter filter, GraphMap graphMap)
     {
       try
       {
         if (filter != null && (filter.Expressions != null || filter.OrderExpressions != null))
         {
-          _graphMap = _mapping.FindGraphMap(graph);
+          _graphMap = graphMap;
 
-          DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+          DataObject _dataObject = dataObject;
 
           if (filter.Expressions != null)
           {
@@ -786,14 +860,24 @@ namespace org.iringtools.adapter.projection
       string className = propertyNameParts[0];
       string templateName = propertyNameParts[1];
       string roleName = propertyNameParts[2];
+      string classPath = String.Empty;
+
+      if (className.Contains("$"))
+      {
+          string[] temp = className.Split('$');
+          className = temp[0];
+          classPath = temp[1];
+      }
 
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
-        cm => Utility.TitleCase(cm.classMap.name).ToUpper() == className.ToUpper());
+        cm => cm.classMap.name.Replace(" ", "").ToLower() == className.Replace(" ", "").ToLower() && (String.IsNullOrWhiteSpace(cm.classMap.path) ? String.IsNullOrWhiteSpace(classPath) : cm.classMap.path == classPath));
+
+      if (classTemplateMap == null)
+        throw new Exception("Classmap [" + className + "] not found.");
 
       List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-      TemplateMap templateMap = templateMaps.Find(tm => tm.name == templateName);
-
-      RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name == roleName);
+      TemplateMap templateMap = templateMaps.Find(tm => tm.name.ToLower() == templateName.ToLower());
+      RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name.ToLower() == roleName.ToLower());
 
       switch (roleMap.type)
       {

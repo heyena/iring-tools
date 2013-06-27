@@ -55,6 +55,12 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "version", Order = 3, EmitDefaultValue = false)]
     public string Version { get; set; }
+
+    [DataMember(Name = "senderScopeName", Order = 4, EmitDefaultValue = false)]
+    public string SenderScopeName { get; set; }
+
+    [DataMember(Name = "senderAppName", Order = 5, EmitDefaultValue = false)]
+    public string SenderAppName { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "dataTransferObject")]
@@ -65,14 +71,23 @@ namespace org.iringtools.adapter
       classObjects = new List<ClassObject>();
     }
 
-    [DataMember(Order = 0)]
+    [DataMember(Order = 0, Name = "identifier")]
     public string identifier { get; set; }
 
-    [DataMember(Order = 1)]
+    [DataMember(Order = 1, Name = "classObjects")]
     public List<ClassObject> classObjects { get; set; }
 
-    [DataMember(Order = 2, EmitDefaultValue = false)]
+    [DataMember(Order = 2, Name = "transferType")]
     public TransferType transferType { get; set; }
+
+    [DataMember(Order = 3, Name = "hasContent", EmitDefaultValue = false)]
+    public bool hasContent { get; set; }
+
+    [DataMember(Order = 4, Name = "duplicateCount", EmitDefaultValue = false)]
+    public int duplicateCount { get; set; }
+
+    [DataMember(Order = 5, Name = "content", EmitDefaultValue = false)]
+    public byte[] content { get; set; }
 
     public ClassObject GetClassObject(string classId)
     {
@@ -108,9 +123,16 @@ namespace org.iringtools.adapter
     [DataMember(Order = 3)]
     public List<TemplateObject> templateObjects { get; set; }
 
-    [DataMember(Order = 4, EmitDefaultValue = false)]
+    [DataMember(Order = 4)]
     public TransferType transferType { get; set; }
+    
+    [DataMember(Order = 5)]
+    public int index { get; set; }
 
+    [DataMember(Order = 6)]
+    public string path { get; set; }
+
+      
     public TemplateObject GetTemplateObject(TemplateMap templateMap)
     {
       TemplateObject theTemplateObject = null;
@@ -167,7 +189,7 @@ namespace org.iringtools.adapter
     [DataMember(Order = 2)]
     public List<RoleObject> roleObjects { get; set; }
 
-    [DataMember(Order = 3, EmitDefaultValue = false)]
+    [DataMember(Order = 3)]
     public TransferType transferType { get; set; }
   }
 

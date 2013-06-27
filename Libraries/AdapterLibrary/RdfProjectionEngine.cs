@@ -554,7 +554,7 @@ namespace org.iringtools.adapter.projection
               baseTemplateElement.Add(roleElement);              
             }
 
-            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id,classRole.classMap.index);
 
             if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
             {
@@ -598,7 +598,7 @@ namespace org.iringtools.adapter.projection
               }
             }
 
-            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id, classRole.classMap.index);
 
             if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
             {
@@ -661,11 +661,16 @@ namespace org.iringtools.adapter.projection
 
     private string GetReferenceRoleValue(RoleMap referenceRole)
     {
-      string value = referenceRole.value;
+      string value = referenceRole.dataType;
 
-      if (!String.IsNullOrEmpty(referenceRole.valueListName))
-        value = _mapping.ResolveValueList(referenceRole.valueListName, value);
+      if (string.IsNullOrEmpty(value))
+      {
+        value = referenceRole.value;  // for backward compatibility
+      }
 
+      if (string.IsNullOrEmpty(value) || (!value.StartsWith(RDL_PREFIX) && !value.StartsWith(RDL_NS.NamespaceName)))
+        throw new Exception("Role map [" + referenceRole.name + "] has invalid class reference.");
+ 
       return value.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
     }
     #endregion
@@ -709,7 +714,7 @@ namespace org.iringtools.adapter.projection
         ProcessInboundClassIdentifiers(dataObjectIndex, classMap, classInstanceIndex, identifierValue);
       }
 
-      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.id);
+      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.id,classMap.index);
 
       if (classTemplateMap != null)
       {
