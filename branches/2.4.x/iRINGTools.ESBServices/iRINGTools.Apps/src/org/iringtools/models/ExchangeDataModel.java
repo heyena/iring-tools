@@ -141,6 +141,9 @@ public class ExchangeDataModel extends DataModel
   @SuppressWarnings("unchecked")
   public Map<String, String> getPreSummaryGrid(String serviceUri, String scope, String xId) throws Exception
   {
+    this.scope = scope;
+    this.xId = xId;
+
     // retrieve last filter
     String exchangeKey = EXCHANGE_PREFIX + "." + scope + "." + xId;
     String filter = (String) session.get(exchangeKey + ".filter");

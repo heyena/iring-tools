@@ -341,7 +341,7 @@ function loadPageDto(type, action, context, label) {
             }, {
               id : 'tb-dup',
               xtype : 'button',
-              tooltip : 'Show Pre-Exchange Summary Data',
+              tooltip : 'Show Exchange Summary Data',
               icon : 'resources/images/16x16/file-table.png',
               handler : function() {
                 var contentPanel = Ext.getCmp('content-pane');
@@ -357,7 +357,7 @@ function loadPageDto(type, action, context, label) {
                     var summary = Ext.decode(response.responseText);
                     
                     var win = new Ext.Window({
-                      title : 'Pre-Exchange Summary',
+                      title : 'Exchange Summary',
                       closable : true,
                       resizable : false,                      
                       modal : true,
