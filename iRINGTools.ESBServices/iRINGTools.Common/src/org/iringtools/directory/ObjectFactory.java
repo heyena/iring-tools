@@ -30,14 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graph }
-     * 
-     */
-    public Graph createGraph() {
-        return new Graph();
-    }
-
-    /**
      * Create an instance of {@link ApplicationData }
      * 
      */
@@ -46,19 +38,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Directory }
+     * Create an instance of {@link Exchange }
      * 
      */
-    public Directory createDirectory() {
-        return new Directory();
-    }
-
-    /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
+    public Exchange createExchange() {
+        return new Exchange();
     }
 
     /**
@@ -78,6 +62,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Graph }
+     * 
+     */
+    public Graph createGraph() {
+        return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link Directory }
+     * 
+     */
+    public Directory createDirectory() {
+        return new Directory();
+    }
+
+    /**
      * Create an instance of {@link Application }
      * 
      */
@@ -86,11 +86,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Exchange }
+     * Create an instance of {@link Commodity }
      * 
      */
-    public Exchange createExchange() {
-        return new Exchange();
+    public Commodity createCommodity() {
+        return new Commodity();
     }
 
 }
