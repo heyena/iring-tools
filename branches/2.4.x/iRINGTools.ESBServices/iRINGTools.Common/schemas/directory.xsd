@@ -49,7 +49,7 @@
    <xs:sequence>
     <xs:element name="name" type="xs:string" />
     <xs:element name="description" type="xs:string" />
-    <xs:element name="commodity" type="xs:string" />
+    <xs:element name="commodity" type="xs:string" minOccurs="0"/>
    </xs:sequence>
   </xs:complexType>
  </xs:element>
