@@ -135,8 +135,17 @@ public class DirectoryProvider
 							{ 
 							 
 							List<Exchange> exchangeList = commodity.getExchange();
-						//	  int i = exchangeList.size();
+							  int maxid = 0;
 						//	  exchange.setId(Integer.toString(i));
+							for (Exchange exchangefile : exchangeList) {
+								String sid = exchangefile.getId();
+								int id = Integer.parseInt(sid);
+								if (id > maxid)
+								{
+									maxid =  id;
+								}
+							} 
+							exchange.setId(Integer.toString(maxid + 1));
 							  exchangeList.add(exchange);
 							  System.out.println(".....");
 						/*	for (Exchange exchangeDirectory : exchangeList) {

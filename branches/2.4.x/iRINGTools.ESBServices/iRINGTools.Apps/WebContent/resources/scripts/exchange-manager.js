@@ -1436,12 +1436,12 @@ function saveExchangeConfig()
 	var form = obj.getValues(true);
 	var scope = node.parentNode.parentNode.text;
 	var commodity = node.text;
-	//var xid = node.attributes.properties['Id'];
+	var xid = node.attributes.properties['Id'];
 
 
 	Ext.Ajax.request({
 	    //url : 'newExchange?form=' + form,
-	    url : 'newExchange?' + form +'&scope ='+ scope + '&commodity ='+ commodity,
+	    url : 'newExchange?' + form +'&scope ='+ scope + '&commodity ='+ commodity + '&xid =' + xid,
 	    method: 'POST',
 	    timeout : 86400000, // 24 hours
 	    success : function(response, request) {
