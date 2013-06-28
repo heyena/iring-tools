@@ -235,12 +235,12 @@ public class ExchangeDataController extends BaseController
 		return SUCCESS;
 	}
 
-	// getting Scope
-	public String gettingScope() {
+	// get Scope
+	public String getScopeInfo() {
 		try {
 			  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
 
-			newScopeAdd = exchangeDataModel.gettingScope(scope,
+			newScopeAdd = exchangeDataModel.getScopeInfo(scope,
 					exchangeServiceUri);
 			// newScopeAdd = scope;
 		} catch (Exception e) {
@@ -290,11 +290,11 @@ public class ExchangeDataController extends BaseController
 		return SUCCESS;
 	}
 
-	// getting Application
-	public String gettingApplication() {
+	// get Application
+	public String getApplicationInfo() {
 		try {
 			  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-			application = exchangeDataModel.gettingApplication(appName, scope,
+			application = exchangeDataModel.getApplicationInfo(appName, scope,
 					exchangeServiceUri);
 		} catch (Exception e) {
 			 e.printStackTrace();
@@ -342,10 +342,10 @@ public class ExchangeDataController extends BaseController
 		return SUCCESS;
 	}
 
-	public String gettingGraph() {
+	public String getGraphInfo() {
 		try {
 			  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-			graph = exchangeDataModel.gettingGraph(name, scope, appName,
+			graph = exchangeDataModel.getGraphInfo(name, scope, appName,
 					exchangeServiceUri);
 		} catch (Exception e) {
 			 e.printStackTrace();
@@ -394,10 +394,10 @@ public class ExchangeDataController extends BaseController
 		return SUCCESS;
 	}
 
-	public String gettingCommodity() {
+	public String getCommodityInfo() {
 		try {
 			  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-			comDetails = exchangeDataModel.gettingCommodity(commName, scope,
+			comDetails = exchangeDataModel.getCommodityInfo(commName, scope,
 					exchangeServiceUri);
 		} catch (Exception e) {
 			 e.printStackTrace();
@@ -439,10 +439,10 @@ public class ExchangeDataController extends BaseController
 		return SUCCESS;
 	}
 
-	public String gettingCommodityConfig() {
+	public String getCommodityConfigInfo() {
 		try {
 			  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-			form = exchangeDataModel.gettingCommodityConfig(commName, scope,
+			form = exchangeDataModel.getCommodityConfigInfo(commName, scope,
 					name, exchangeServiceUri);
 		} catch (Exception e) {
 			 e.printStackTrace();
@@ -613,7 +613,7 @@ public class ExchangeDataController extends BaseController
 	public String getDataFilterEdit() {
 		try {
 			 ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session); 
-			DataFilter dataFilter = exchangeDataModel.gettingDataFilter(
+			DataFilter dataFilter = exchangeDataModel.getDataFilter(
 					commName, scope, name);
 			if (dataFilter != null) {
 				Expressions ex = dataFilter.getExpressions();
@@ -675,7 +675,7 @@ public class ExchangeDataController extends BaseController
 	public String getDataFilterEditOE()  {
 		try {
 			 ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session); 
-			DataFilter dataFilter = exchangeDataModel.gettingDataFilter(
+			DataFilter dataFilter = exchangeDataModel.getDataFilter(
 					commName, scope, name);
 			if (dataFilter != null) {
 				OrderExpressions oex = dataFilter.getOrderExpressions();

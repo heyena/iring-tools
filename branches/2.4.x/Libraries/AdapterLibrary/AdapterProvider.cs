@@ -225,22 +225,6 @@ namespace org.iringtools.adapter
           _scopes.Add(scope);   
           _scopes.Sort(new ScopeComparer());
 
-          foreach (ScopeProject proj in _scopes)
-          {
-            proj.Applications.Sort(new ApplicationComparer());
-
-            //foreach (ScopeApplication app in proj.Applications)
-            //{
-            //  string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], proj.Name, app.Name);
-
-            //  if (File.Exists(configPath))
-            //  {
-            //    Configuration config = Utility.Read<Configuration>(configPath, false);
-            //    app.Configuration = config;
-            //  }
-            //}
-          }
-
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           response.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
         }
@@ -280,34 +264,7 @@ namespace org.iringtools.adapter
         else
         {
           sc.DisplayName = scope.DisplayName;
-
-          ////
-          //// add new scope and move applications in the existing scope to the new one
-          ////
-          //AddScope(scope);
-
-          //if (sc.Applications != null)
-          //{
-          //  foreach (ScopeApplication app in sc.Applications)
-          //  {
-          //    //
-          //    // copy database dictionary
-          //    //
-          //    string path = _settings["AppDataPath"];
-          //    string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, oldScopeName, app.Name);
-
-          //    if (File.Exists(currDictionaryPath))
-          //    {
-          //      string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scope.Name, app.Name);
-          //      File.Copy(currDictionaryPath, updatedDictionaryPath);
-          //    }
-
-          //    AddApplication(scope.Name, app);
-          //  }
-          //}
-
-          //// delete old scope
-          //DeleteScope(oldScopeName);
+          _scopes.Sort(new ScopeComparer());
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
@@ -514,6 +471,8 @@ namespace org.iringtools.adapter
         if (sa == null)
         {
             scope.Applications.Add(application);
+            scope.Applications.Sort(new ApplicationComparer());
+
             Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
 
             response.Append(Generate(scope.Name, application.Name));
@@ -557,37 +516,14 @@ namespace org.iringtools.adapter
 
         if (application != null)  // application exists, delete and re-create it
         {
-          //bool Ischanged = IsApplicationDataChanged(updatedApp, application); // Check whether actual change has been made or not.
-
-          //if (!Ischanged)  // If nothing changed, don't perform any other operation.
-          //{
-          //  status.Messages.Add("Application [{0}.{1}] unchanged.");
-          //  return response;
-          //}
-
-          ////else ===================
-          ////
-          //// copy database dictionary
-          ////
-          //string path = _settings["AppDataPath"];
-          //string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, oldAppName);
-
-          //if (File.Exists(currDictionaryPath))
-          //{
-          //  string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Name);
-          //  if (currDictionaryPath.ToLower() != updatedDictionaryPath.ToLower())
-          //    File.Copy(currDictionaryPath, updatedDictionaryPath);
-          //}
-
-          //DeleteApplication(scopeName, oldAppName);
-          //AddApplication(scopeName, updatedApp);
-
           application.DisplayName = updatedApp.DisplayName;
         }
         else  // application does not exist, stop processing
         {
           throw new Exception(String.Format("Application [{0}.{1}] not found.", scopeName, oldAppName));
         }
+
+        scope.Applications.Sort(new ApplicationComparer());
 
         Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
         status.Messages.Add("Application [{0}.{1}] updated successfully.");
@@ -5195,12 +5131,20 @@ namespace org.iringtools.adapter
   {
     public int Compare(ScopeProject left, ScopeProject right)
     {
-      // compare strings
+      string leftName = left.Name;
+      if (left.DisplayName != null && left.DisplayName.Length > 0)
       {
-        string leftValue = left.Name.ToString();
-        string rightValue = right.Name.ToString();
-        return string.Compare(leftValue, rightValue);
+        leftName = left.DisplayName;
       }
+
+      string rightName = right.Name;
+      if (right.DisplayName != null && right.DisplayName.Length > 0)
+      {
+        rightName = right.DisplayName;
+      }
+
+      // compare strings
+      return string.Compare(leftName, rightName);
     }
   }
 
@@ -5208,12 +5152,20 @@ namespace org.iringtools.adapter
   {
     public int Compare(ScopeApplication left, ScopeApplication right)
     {
-      // compare strings
+      string leftName = left.Name;
+      if (left.DisplayName != null && left.DisplayName.Length > 0)
       {
-        string leftValue = left.Name.ToString();
-        string rightValue = right.Name.ToString();
-        return string.Compare(leftValue, rightValue);
+        leftName = left.DisplayName;
       }
+
+      string rightName = right.Name;
+      if (right.DisplayName != null && right.DisplayName.Length > 0)
+      {
+        rightName = right.DisplayName;
+      }
+
+      // compare strings
+      return string.Compare(leftName, rightName);
     }
   }
 

@@ -1,6 +1,7 @@
 package org.iringtools.library.directory;
 
 //import java.util.Collections;  // comment out unused import
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -15,12 +16,17 @@ import org.iringtools.directory.DataExchanges;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Scope;
+import org.iringtools.utility.AppDataComparator;
+import org.iringtools.utility.CommodityComparator;
+import org.iringtools.utility.ExchangeComparator;
+import org.iringtools.utility.GraphComparator;
 //import org.iringtools.utility.AppDataComparator; // comment out unused import
 //import org.iringtools.utility.CommodityComparator; // comment out unused import
 //import org.iringtools.utility.ExchangeComparator; // comment out unused import
 //import org.iringtools.utility.GraphComparator; // comment out unused import
 import org.iringtools.utility.IOUtils;
 import org.iringtools.utility.JaxbUtils;
+import org.iringtools.utility.ScopeComparator;
 
 //import org.iringtools.utility.ScopeComparator; // comment out unused import
 
@@ -134,11 +140,13 @@ public class DirectoryProvider {
 								 * for (Exchange exchangeDirectory :
 								 * exchangeList) { i++; }
 								 */
-
+								ExchangeComparator exchangeDefSort = new ExchangeComparator();
+								Collections.sort(exchangeList, exchangeDefSort);
 							}
 						}
 					}
 				}
+				
 				JaxbUtils.write(directory, path, false);
 			}
 		} catch (Exception e) {
@@ -202,7 +210,8 @@ public class DirectoryProvider {
 									}
 
 								}
-
+								ExchangeComparator exchangeDefSort = new ExchangeComparator();
+								Collections.sort(exchangeList, exchangeDefSort);
 							}
 						}
 					}
@@ -217,7 +226,7 @@ public class DirectoryProvider {
 		// return Response.ok().entity(exchange).build();
 	}
 
-	public Exchange gettingCommodityConfig(String comm, String scope,
+	public Exchange getCommodityConfigInfo(String comm, String scope,
 			String name) {
 
 		path = settings.get("basePath").toString()
@@ -296,7 +305,8 @@ public class DirectoryProvider {
 									}
 
 								}
-
+								ExchangeComparator exchangeDefSort = new ExchangeComparator();
+								Collections.sort(exchangeList, exchangeDefSort);
 							}
 						}
 					}
@@ -312,7 +322,7 @@ public class DirectoryProvider {
 		return null;
 	}
 
-	public DataFilter gettingDataFilter(String commName, String scope,
+	public DataFilter getDataFilter(String commName, String scope,
 			String name) {
 		path = settings.get("basePath").toString()
 				.concat("WEB-INF/data/directory.xml");
@@ -436,6 +446,8 @@ public class DirectoryProvider {
 					}
 				}
 				directorytList.add(scope);
+				ScopeComparator scopeSort = new ScopeComparator();
+				Collections.sort(directorytList, scopeSort);
 
 				JaxbUtils.write(directory, path, false);
 			}
@@ -462,6 +474,8 @@ public class DirectoryProvider {
 						break;
 					}
 				}
+				ScopeComparator scopeSort = new ScopeComparator();
+				Collections.sort(directorytList, scopeSort);
 				JaxbUtils.write(directory, path, false);
 			}
 		} catch (Exception e) {
@@ -486,6 +500,8 @@ public class DirectoryProvider {
 						break;
 					}
 				}
+				ScopeComparator scopeSort = new ScopeComparator();
+				Collections.sort(directorytList, scopeSort);
 				JaxbUtils.write(directory, path, false);
 			}
 		} catch (Exception e) {
@@ -495,7 +511,7 @@ public class DirectoryProvider {
 		}
 	}
 
-	public Scope gettingScope(String scopeName) {
+	public Scope getScopeInfo(String scopeName) {
 		path = settings.get("basePath").toString()
 				.concat("WEB-INF/data/directory.xml");
 		try {
@@ -543,6 +559,8 @@ public class DirectoryProvider {
 								}
 							}
 							appData.add(app);
+							AppDataComparator applicationSort = new AppDataComparator();
+							Collections.sort(appData, applicationSort);
 							JaxbUtils.write(directory, path, false);
 						}
 					}
@@ -580,6 +598,8 @@ public class DirectoryProvider {
 									break;
 								}
 							}
+							AppDataComparator applicationSort = new AppDataComparator();
+							Collections.sort(appData, applicationSort);
 							JaxbUtils.write(directory, path, false);
 						}
 					}
@@ -617,10 +637,13 @@ public class DirectoryProvider {
 									applicatio.setBaseUri(app.getBaseUri());
 									applicatio.setDescription(app
 											.getDescription());
-									JaxbUtils.write(directory, path, false);
+									
 									break;
 								}
 							}
+							AppDataComparator applicationSort = new AppDataComparator();
+							Collections.sort(appData, applicationSort);
+							JaxbUtils.write(directory, path, false);
 
 						}
 					}
@@ -633,7 +656,7 @@ public class DirectoryProvider {
 		}
 	}
 
-	public Application gettingApplication(String app, String scope) {
+	public Application getApplicationInfo(String app, String scope) {
 		path = settings.get("basePath").toString()
 				.concat("WEB-INF/data/directory.xml");
 		try {
@@ -699,6 +722,8 @@ public class DirectoryProvider {
 
 								}
 								graf.add(graph);
+								GraphComparator graphSort = new GraphComparator();
+								Collections.sort(graf, graphSort);
 							}
 						}
 						JaxbUtils.write(directory, path, false);
@@ -743,6 +768,8 @@ public class DirectoryProvider {
 									}
 
 								}
+								GraphComparator graphSort = new GraphComparator();
+								Collections.sort(graf, graphSort);
 							}
 						}
 						JaxbUtils.write(directory, path, false);
@@ -787,10 +814,13 @@ public class DirectoryProvider {
 												.getDescription());
 							/*			graphfile.setCommodity(graph
 												.getCommodity()); */
-										JaxbUtils.write(directory, path, false);
+										
 										break;
 									}
 								}
+								GraphComparator graphSort = new GraphComparator();
+								Collections.sort(graf, graphSort);
+								JaxbUtils.write(directory, path, false);
 							}
 						}
 
@@ -804,7 +834,7 @@ public class DirectoryProvider {
 		}
 	}
 
-	public org.iringtools.directory.Graph gettingGraph(String graph,
+	public org.iringtools.directory.Graph getGraphInfo(String graph,
 			String scope, String appName) {
 		path = settings.get("basePath").toString()
 				.concat("WEB-INF/data/directory.xml");
@@ -872,6 +902,8 @@ public class DirectoryProvider {
 						}
 
 						commodityList.add(comm);
+						CommodityComparator commoditySort = new CommodityComparator();
+						Collections.sort(commodityList, commoditySort);
 						JaxbUtils.write(directory, path, false);
 					}
 				}
@@ -907,7 +939,8 @@ public class DirectoryProvider {
 								break;
 							}
 						}
-
+						CommodityComparator commoditySort = new CommodityComparator();
+						Collections.sort(commodityList, commoditySort);
 						JaxbUtils.write(directory, path, false);
 					}
 				}
@@ -919,7 +952,7 @@ public class DirectoryProvider {
 		}
 	}
 
-	public Commodity gettingCommodity(String comm, String scope) {
+	public Commodity getCommodityInfo(String comm, String scope) {
 		path = settings.get("basePath").toString()
 				.concat("WEB-INF/data/directory.xml");
 		try {
@@ -975,10 +1008,13 @@ public class DirectoryProvider {
 							if (commodity.getName().equalsIgnoreCase(
 									oldCommName)) {
 								commodity.setName(comm.getName());
-								JaxbUtils.write(directory, path, false);
+								
 								break;
 							}
 						}
+						CommodityComparator commoditySort = new CommodityComparator();
+						Collections.sort(commodityList, commoditySort);
+						JaxbUtils.write(directory, path, false);
 					}
 				}
 			}

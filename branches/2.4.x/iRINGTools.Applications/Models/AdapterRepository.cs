@@ -260,6 +260,16 @@ namespace iRINGTools.Web.Models
         throw ex;
       }
 
+      if (dictionary != null && dictionary.dataObjects != null)
+      {
+        dictionary.dataObjects.Sort(new DataObjectComparer());
+
+        foreach (DataObject dataObject in dictionary.dataObjects)
+        {
+          dataObject.dataProperties.Sort(new DataPropertyComparer());
+        }
+      }
+
       return dictionary;
     }
 
