@@ -952,9 +952,9 @@ public void editExchangeConfig(Exchange form, String scope, String commodity,Str
 	
 	dprovider.editExchageDefinition(form, scope, commodity, oldConfName);
 }
-public Exchange gettingCommodityConfig(String com, String scope, String name,String serviceUri) {
+public Exchange getCommodityConfigInfo(String com, String scope, String name,String serviceUri) {
 
-	return dprovider.gettingCommodityConfig(com, scope, name );
+	return dprovider.getCommodityConfigInfo(com, scope, name );
 }
 public void deleteExchangeConfig(String com, String scope, String name,String serviceUri) {
 
@@ -966,10 +966,10 @@ public void  newScope(Scope scope, String serviceUri) {
 public void  editScope(String scope, String oldScope, String serviceUri) {
 	dprovider.postEditedScope(scope, oldScope);
 }
-public Scope  gettingScope(String scope, String serviceUri) {
+public Scope  getScopeInfo(String scope, String serviceUri) {
 	
 
-	return dprovider.gettingScope(scope);
+	return dprovider.getScopeInfo(scope);
 }
 public void  deleteScope(String scope, String serviceUri) {
 	
@@ -989,9 +989,9 @@ public void  deleteApplication(String app, String scope, String serviceUri) {
 
 	dprovider.deleteApplication(app, scope);
 }
-public Application  gettingApplication(String app, String scope, String serviceUri) {
+public Application  getApplicationInfo(String app, String scope, String serviceUri) {
 
-return dprovider.gettingApplication(app, scope);
+return dprovider.getApplicationInfo(app, scope);
 }
 public void  newGraph( org.iringtools.directory.Graph graph , String scope, String appname, String serviceUri) {
 	
@@ -1005,10 +1005,10 @@ public void  deleteGraph(String graph , String scope, String appname, String ser
 
 	dprovider.deleteGraph(graph, scope, appname);
 }
-public org.iringtools.directory.Graph  gettingGraph(String graph , String scope, String appname, String serviceUri){
+public org.iringtools.directory.Graph  getGraphInfo(String graph , String scope, String appname, String serviceUri){
 	
 	
-	return dprovider.gettingGraph(graph, scope, appname);
+	return dprovider.getGraphInfo(graph, scope, appname);
 }
 public void  newCommodity(Commodity com, String scope, String serviceUri) {
 
@@ -1023,9 +1023,9 @@ public void  deleteCommodity(String com, String scope, String serviceUri) {
 
 	dprovider.deleteCommodity(com, scope);
 }
-public Commodity gettingCommodity(String com, String scope, String serviceUri) {
+public Commodity getCommodityInfo(String com, String scope, String serviceUri) {
 
-	return dprovider.gettingCommodity(com, scope);
+	return dprovider.getCommodityInfo(com, scope);
 }
 
 public String testTargetUri(String targetUri) throws IOException {
@@ -1074,7 +1074,7 @@ public void saveDataFilterExpression(Expressions ex, String commName,
      session.put(exchangeKey, exchange); 
 }
 
-public DataFilter gettingDataFilter(String commName, String scope, String name) {
-	return dprovider.gettingDataFilter(commName, scope, name );
+public DataFilter getDataFilter(String commName, String scope, String name) {
+	return dprovider.getDataFilter(commName, scope, name );
 }
 }

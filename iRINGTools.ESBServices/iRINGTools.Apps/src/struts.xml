@@ -119,7 +119,7 @@
       </result>
     </action>
     <!-- Get Scope -->
-     <action name="getScope" class="org.iringtools.controllers.ExchangeDataController" method="gettingScope">
+     <action name="getScope" class="org.iringtools.controllers.ExchangeDataController" method="getScopeInfo">
       <result type="json">
         <param name="root">newScopeAdd</param>
       </result>
@@ -137,13 +137,13 @@
       </result>
           </action>
       <!-- Get Application -->
-     <action name="getApplication" class="org.iringtools.controllers.ExchangeDataController" method="gettingApplication">
+     <action name="getApplication" class="org.iringtools.controllers.ExchangeDataController" method="getApplicationInfo">
       <result type="json">
         <param name="root">application</param>
       </result>
        </action>
  <!-- Get Graph -->
-     <action name="getGraph" class="org.iringtools.controllers.ExchangeDataController" method="gettingGraph">
+     <action name="getGraph" class="org.iringtools.controllers.ExchangeDataController" method="getGraphInfo">
       <result type="json">
         <param name="root">graph</param>
       </result>
@@ -161,13 +161,13 @@
       </result>
     </action>
     <!-- Get Graph -->
-     <action name="getComm" class="org.iringtools.controllers.ExchangeDataController" method="gettingCommodity">
+     <action name="getComm" class="org.iringtools.controllers.ExchangeDataController" method="getCommodityInfo">
       <result type="json">
         <param name="root">comDetails</param>
       </result>
        </action>
         <!-- Get Exchange config -->
-     <action name="getExchange" class="org.iringtools.controllers.ExchangeDataController" method="gettingCommodityConfig">
+     <action name="getExchange" class="org.iringtools.controllers.ExchangeDataController" method="getCommodityConfigInfo">
       <result type="json">
         <param name="root">form</param>
       </result>
