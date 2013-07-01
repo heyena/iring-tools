@@ -28,7 +28,9 @@ Ext.application({
     'AM.view.Main',
     'AM.view.menus.ScopeMenu',
     'AM.view.menus.AppDataRefreshMenu',
-    'AM.view.nhibernate.MultiSelectComponentGrid'
+    'AM.view.nhibernate.MultiSelectComponentGrid',
+    'AM.view.mapping.LiteralForm',
+    'AM.view.mapping.LiteralWindow'
   ],
   models: [
     'RelationModel'
@@ -40,7 +42,10 @@ Ext.application({
     'Main',
     'menus.ScopeMenu',
     'menus.AppDataRefreshMenu',
-    'nhibernate.MultiSelectComponentGrid'
+    'nhibernate.MultiSelectComponentGrid',
+    'mapping.LiteralForm',
+    'MyToolbar29',
+    'mapping.LiteralWindow'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

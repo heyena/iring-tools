@@ -26,8 +26,8 @@ Ext.define('AM.view.override.directory.DataGridPanel', {
     
     var filters = {
       ftype: 'filters',
-      local: true,
-	  autoReload: true,
+      local: false,
+	    autoReload: false,
       buildQuery: function (filters) {
         var processed_filters = [];
 

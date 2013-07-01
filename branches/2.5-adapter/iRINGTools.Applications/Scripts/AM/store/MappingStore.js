@@ -40,6 +40,7 @@ Ext.define('AM.store.MappingStore', {
           type: 'MappingNode',
           id: null,
           range: null,
+          index: null,
           graph: null,
           contextName: null,
           endpoint: null,

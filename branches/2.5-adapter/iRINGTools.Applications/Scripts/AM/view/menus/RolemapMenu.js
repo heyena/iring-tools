@@ -53,6 +53,11 @@ Ext.define('AM.view.menus.RolemapMenu', {
         },
         {
           xtype: 'menuitem',
+          action: 'mapliteral',
+          text: 'Map Literal'
+        },
+        {
+          xtype: 'menuitem',
           action: 'resetmapping',
           text: 'Reset Mapping'
         }

@@ -482,8 +482,8 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
                         "action": "resetconnectionform",
+                        "layout|flex": null,
                         "icon": null,
                         "iconCls": "am-edit-clear",
                         "text": "Reset",

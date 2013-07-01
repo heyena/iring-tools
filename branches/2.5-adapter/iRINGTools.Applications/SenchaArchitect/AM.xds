@@ -3,7 +3,7 @@
     "settings": {
         "urlPrefix": "http://localhost:52277/",
         "spacesToIndent": 2,
-        "exportPath": "C:/Adapter-2.5/iRINGTools.Applications",
+        "exportPath": "C:/Adapter-2.5-Merged/iRINGTools.Applications",
         "sdkPath": "",
         "lineEnding": "CRLF",
         "genTimestamps": false,
@@ -916,6 +916,22 @@
                 "Scripts/AM/model/RelationModel.js"
             ],
             "className": "RelationModel"
+        },
+        "bc637baa-a3fd-4d38-b427-e9c1098119ce": {
+            "paths": [
+                "metadata/view/mapping.LiteralForm",
+                "Scripts/AM/view/override/mapping/LiteralForm.js",
+                "Scripts/AM/view/mapping/LiteralForm.js"
+            ],
+            "className": "mapping.LiteralForm"
+        },
+        "bb8382aa-382a-45f1-b826-b4b5884cb6ae": {
+            "paths": [
+                "metadata/view/mapping.LiteralWindow",
+                "Scripts/AM/view/override/mapping/LiteralWindow.js",
+                "Scripts/AM/view/mapping/LiteralWindow.js"
+            ],
+            "className": "mapping.LiteralWindow"
         }
     },
     "viewOrderMap": {
@@ -992,7 +1008,9 @@
             "ee4b18be-7210-4e88-9a5c-50e9ca131349",
             "17fb1af5-2569-49f4-927f-dd778c03c1a1",
             "0649446d-cfb0-4646-8081-ce7bd59c7cd6",
-            "55e4d2fa-9ebe-4466-b024-6d81829b1584"
+            "55e4d2fa-9ebe-4466-b024-6d81829b1584",
+            "bc637baa-a3fd-4d38-b427-e9c1098119ce",
+            "bb8382aa-382a-45f1-b826-b4b5884cb6ae"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

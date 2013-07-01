@@ -1355,8 +1355,8 @@ Ext.define('AM.controller.NHibernate', {
       grid.getStore().data.items[i].data.text = tables[i];
       grid.getStore().data.items[i].data.value = tables[i];
     }
-    itemSelecter.items.items[2].bindStore(grid.getStore());
 
+    itemSelecter.items.items[2].bindStore(grid.getStore());
     buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);
     buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);
     buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);

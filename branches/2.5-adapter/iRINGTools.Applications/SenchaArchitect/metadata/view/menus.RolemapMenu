@@ -122,6 +122,26 @@
             },
             "codeClass": null,
             "userConfig": {
+                "action": "mapliteral",
+                "text": "Map Literal"
+            },
+            "designerId": "4fc1d4e0-5840-467d-8861-1d31cb6622a4",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
                 "action": "resetmapping",
                 "text": "Reset Mapping"
             },

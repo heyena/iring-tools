@@ -21,6 +21,7 @@ Ext.define('AM.view.mapping.MappingTree', {
     'AM.view.override.mapping.MappingTree'
   ],
 
+  stateId: 'mapping-treestate',
   stateful: true,
   border: true,
   store: 'MappingStore',
@@ -108,11 +109,12 @@ Ext.define('AM.view.mapping.MappingTree', {
     var me = this;
     var pan = me.up('mappingpanel');
     me.getParentClass(overModel);
-    var nodetype, thistype, icn, txt, templateId, rec, parentId, context;
+    var nodetype, thistype, icn, txt, templateId, rec, parentId, context, classMapIndex;
     var tempArr = pan.graph.split('/');//pan.graphName;
     var graphName = tempArr[tempArr.length-1];
     var modelType = data.records[0].data.type;
     if (overModel.data.type == 'RoleMapNode') {
+
       reference = data.records[0].data.record.Uri;
       label = data.records[0].data.record.Label;
       roleId = overModel.data.record.id;
@@ -121,6 +123,7 @@ Ext.define('AM.view.mapping.MappingTree', {
       txt = data.records[0].data.record.Label;
       parentId = me.parentClass;
       f = false;
+      var classIndex = me.index;
       var index = overModel.parentNode.parentNode.indexOf(overModel.parentNode);
       me.getEl().mask('Loading...');
       //this.getEl().mask('Loading...');
@@ -137,7 +140,8 @@ Ext.define('AM.view.mapping.MappingTree', {
           //ctx: pan.contextName,
           app: pan.endpoint,
           templateIndex: index,
-          graph: graphName
+          graph: graphName,
+          classIndex: classIndex
           //baseUrl: pan.baseUrl
         },
         success: function (result, request) {
@@ -154,6 +158,7 @@ Ext.define('AM.view.mapping.MappingTree', {
     if(modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
       ntype = overModel.data.type;
       parentid = overModel.data.identifier;
+      classMapIndex = data.records[0].data.index;
       thistype = data.records[0].data.type;
       icn = 'Content/img/template-map.png';
       txt = data.records[0].data.record.Label;
@@ -173,6 +178,7 @@ Ext.define('AM.view.mapping.MappingTree', {
           nodetype: thistype,
           parentType: ntype,
           parentId: parentid,
+          classMapIndex: classMapIndex,
           id: templateId,
           graphName: graphName
         },
@@ -212,21 +218,27 @@ Ext.define('AM.view.mapping.MappingTree', {
   },
 
   onBeforeLoad: function(store, operation, eOpts) {
-    //alert('onBeforeLoad of tree.....');
+    //alert('onBeforeLoad of tree.....'+operation.node.data.type);
 
-    var tempIdArr = operation.node.data.id.split('/');
+    /*var tempIdArr = operation.node.data.id.split('/');
     var tempId = tempIdArr[tempIdArr.length-1];
     var tempNode;
     if(store.tree.root.firstChild!=undefined)		
     tempNode = store.tree.root.firstChild.data.id+'/'+tempId;
-
+    */
 
 
     store.proxy.extraParams.type = operation.node.data.type;
+    store.proxy.extraParams.index = operation.node.data.index;
     if (store.proxy.extraParams !== undefined) {
-      //store.proxy.extraParams.id = operation.node.data.id;
+      store.proxy.extraParams.id = operation.node.data.id;
+
+      //if(operation.node.data.type == 'ClassMapNode')
+      //store.proxy.extraParams.index = operation.node.data.index;
+      /*
       store.proxy.extraParams.id = operation.node.data.identifier;
       store.proxy.extraParams.tempNode = tempNode;
+      */
     }
   },
 
@@ -359,6 +371,7 @@ Ext.define('AM.view.mapping.MappingTree', {
         n.parentNode.data.type == 'GraphMapNode') && 
         n.parentNode.data.identifier !== undefined) {
           this.parentClass = n.parentNode.data.identifier;
+          this.parentClassIndex = n.parentNode.data.index;
           return this.parentClass;
         }
         else {

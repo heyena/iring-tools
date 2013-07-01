@@ -23,23 +23,35 @@ initComponent: function() {
    });
 
     Ext.applyIf(me, {
-    items: [
-        {
-            xtype: 'itemselector',
-            name: 'itemselector',
-            anchor: '100%',
-            fieldLabel: 'ItemSelector',
-            imagePath: '../ux/images/',
-            store: ds,
-            displayField: 'text',
-            valueField: 'value',
-            value: ['3', '4', '6'],
-
-            allowBlank: false,
-            // minSelections: 2,
-            // maxSelections: 3,
-            msgTarget: 'side'
-        }
+     items: [
+                {
+                  xtype: 'label',
+                  text: 'Available Namespaces',
+                  style:'font-weight:bold;font-size:11px;color:#888888;'
+                  //margin: '0 0 0 10'
+                },
+                {
+                  xtype: 'label',
+                  text: 'Selected Namespaces',
+                  margin: '0 0 0 110',
+                  style:'font-weight:bold;font-size:11px;color:#888888;'
+                },
+              {
+                  xtype: 'itemselector',
+                  name: 'itemselector',
+                  anchor: '100%',
+                  //fieldLabel: 'ItemSelector',
+                  //imagePath: '../ux/images/',
+                  store: ds,
+            			height:356,
+                  //displayField: 'text',
+                  //valueField: 'value',
+                  //value: ['3', '4', '6'],
+                  allowBlank: false,
+                  // minSelections: 2,
+                  // maxSelections: 3,
+                  msgTarget: 'side'
+              }
       ]
     });
 

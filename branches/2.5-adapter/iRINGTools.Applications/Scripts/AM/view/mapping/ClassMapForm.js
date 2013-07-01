@@ -52,6 +52,10 @@ Ext.define('AM.view.mapping.ClassMapForm', {
             },
             {
               xtype: 'hiddenfield',
+              name: 'parentClassIndex'
+            },
+            {
+              xtype: 'hiddenfield',
               name: 'roleName'
             },
             {

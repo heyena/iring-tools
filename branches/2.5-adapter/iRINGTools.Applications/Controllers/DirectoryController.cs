@@ -98,7 +98,7 @@ namespace org.iringtools.web.controllers
                   {
                     nodeType = "async",
                     type = "ApplicationNode",
-                    iconCls = "applications",
+                    iconCls = "application",
                     id = scope.Name + "/" + application.Name,
                     text = application.DisplayName ?? application.Name,
                     expanded = false,
@@ -189,7 +189,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "ValueListNode",
-                  iconCls = "treeValuelist",
+                  iconCls = "valuemap",
                   id = context + "/ValueList/" + valueList.name,
                   text = valueList.name,
                   expanded = false,
@@ -242,7 +242,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "ListMapNode",
-                  iconCls = "treeValue",
+                  iconCls = "valuelistmap",
                   id = context + "/ValueMap/" + valueMap.internalValue,
                   text = classLabel + " [" + valueMap.internalValue + "]",
                   expanded = false,

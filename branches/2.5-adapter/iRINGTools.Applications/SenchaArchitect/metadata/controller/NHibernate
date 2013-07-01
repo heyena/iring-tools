@@ -1414,8 +1414,8 @@
                     "  grid.getStore().data.items[i].data.text = tables[i];\r",
                     "  grid.getStore().data.items[i].data.value = tables[i];\r",
                     "}\r",
-                    "itemSelecter.items.items[2].bindStore(grid.getStore());\r",
                     "\r",
+                    "itemSelecter.items.items[2].bindStore(grid.getStore());\r",
                     "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);\r",
                     "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);\r",
                     "buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);\r",
@@ -3512,7 +3512,7 @@
             "userConfig": {
                 "fn": "onResetConnectionForm",
                 "implHandler": [
-                    "   \r",
+                    "\r",
                     "var me = this;\r",
                     "var form = button.up('connectionstringform');\r",
                     "var panel = form.up('nhibernatepanel');\r",
@@ -3522,7 +3522,7 @@
                     "var dbDict = dirNode.data.record.dbDict;\r",
                     "\r",
                     "if(dbInfo && dbDict){\r",
-                    "\tform.getForm().findField('dbProvider').setValue(dbDict.Provider);\r",
+                    "  form.getForm().findField('dbProvider').setValue(dbDict.Provider);\r",
                     "  form.getForm().findField('dbServer').setValue(dbInfo.dbServer);\r",
                     "  form.getForm().findField('dbInstance').setValue(dbInfo.dbInstance);\r",
                     "  form.getForm().findField('dbName').setValue(dbInfo.dbName);\r",

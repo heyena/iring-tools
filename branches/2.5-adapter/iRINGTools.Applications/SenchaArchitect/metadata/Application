@@ -16,7 +16,10 @@
             "Main",
             "menus.ScopeMenu",
             "menus.AppDataRefreshMenu",
-            "nhibernate.MultiSelectComponentGrid"
+            "nhibernate.MultiSelectComponentGrid",
+            "mapping.LiteralForm",
+            "MyToolbar29",
+            "mapping.LiteralWindow"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

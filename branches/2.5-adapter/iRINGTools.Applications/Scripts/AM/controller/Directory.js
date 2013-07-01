@@ -187,6 +187,7 @@ Ext.define('AM.controller.Directory', {
       //if (!node.isExpanded())
       // node.expand();
       //tree.expandPath(node.getPath(), 'text');
+
     }, me);
 
     win.on('cancel', function () {
@@ -386,7 +387,7 @@ Ext.define('AM.controller.Directory', {
   onRegenerateAll: function(item, e, eOpts) {
     var me = this;
     Ext.Ajax.request({
-      url: 'directory/RegenAll',
+      url:'AdapterManager/RegenAll', //'directory/RegenAll',
       method: 'GET',
       success: function (result, request) {
         var responseObj = Ext.decode(result.responseText);
@@ -487,8 +488,9 @@ Ext.define('AM.controller.Directory', {
       url: 'facade/refreshFacade',
       method: 'POST',
       params: {
-        contextName: node.data.id,
-        baseUrl: node.data.property.baseUrl
+        //contextName: node.data.id,
+        scope:node.data.id,
+        //baseUrl: node.data.property.baseUrl
       },
       success: function (o) {
         tree.onReload();
@@ -579,12 +581,23 @@ Ext.define('AM.controller.Directory', {
 
     if (!node)
     node = me.getRootNode();
+    var state = tree.getState();
+    //var path = node.getPath('text');
+    //store.load(node);
+    tree.body.mask('Loading...', 'x-mask-loading');
+    store.load({
+      callback: function (records, options, success) {
+        var nodes = state.expandedNodes || [],
+          len = nodes.length;
+        tree.collapseAll();
+        Ext.each(nodes, function (path) {
+          tree.expandPath(path, 'text');
+        });
+        tree.body.unmask();
+      }
 
-    var path = node.getPath('text');
-    store.load(node);
+    });
 
-    //if(node.isExpanded())
-    //node.collapse();
   },
 
   onShowDataGridd: function(dataview, record, item, index, e, eOpts) {

@@ -105,6 +105,20 @@
                     "userConfig": {
                         "layout|anchor": null,
                         "fieldLabel": null,
+                        "name": "parentClassIndex"
+                    },
+                    "designerId": "37bcf845-6d8c-4a6e-860f-13025f330d56"
+                },
+                {
+                    "type": "Ext.form.field.Hidden",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|anchor": null,
+                        "fieldLabel": null,
                         "name": "roleName"
                     },
                     "designerId": "b28a6acf-8495-497d-83ba-4f825d8414c9"
