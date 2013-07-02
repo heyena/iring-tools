@@ -43,6 +43,19 @@
             "codeClass": null,
             "userConfig": {
                 "fieldLabel": null,
+                "name": "classIndex"
+            },
+            "designerId": "5ea07d52-c1e8-4946-8acb-e10aab2c782f"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fieldLabel": null,
                 "name": "relatedObject"
             },
             "designerId": "6895e05b-ad3d-4bb4-b5e7-bf85942f7d4a"

@@ -135,6 +135,20 @@
             "userConfig": {
                 "layout|anchor": null,
                 "fieldLabel": null,
+                "name": "classIndex"
+            },
+            "designerId": "b6658556-7bf2-4f39-95c8-6cb3d79a30d2"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
                 "name": "graphName"
             },
             "designerId": "c16d8fe8-0a60-4dfc-8942-20947cbe53a1"

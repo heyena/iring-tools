@@ -161,8 +161,8 @@ namespace org.iringtools.web.controllers
         if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
 
         string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = dataObjectVars[0];
-        string application = dataObjectVars[1];
+        string scope = form["contextName"];//dataObjectVars[0];
+        string application = form["endpoint"];//dataObjectVars[1];
         string graph = form["graphName"];//dataObjectVars[2];
         string context = string.Format("{0}/{1}", scope, application);
 
@@ -258,14 +258,14 @@ namespace org.iringtools.web.controllers
       ClassMap graphClassMap = null;
       string format = String.Empty;
       string context;
-      if (form["tempNode"]!=null && form["tempNode"]!="" )
-          context = form["tempNode"];
-      else
-          context = form["node"];
+      //if (form["tempNode"]!=null && form["tempNode"]!="" )
+          //context = form["tempNode"];
+      //else
+      context = form["node"];
       string[] formgraph = form["graph"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
       string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-      string scope = variables[0];
-      string application = variables[1];
+      string scope = form["context"];//= variables[0];
+      string application = form["endpoint"]; //= variables[1];
       string graphName = formgraph[formgraph.Count() - 1];
       string key = string.Format(_keyFormat, scope, application);
 
@@ -519,9 +519,9 @@ namespace org.iringtools.web.controllers
         string mappingNode = form["mappingNode"];
 
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = dataObjectVars[0];
-        string application = dataObjectVars[1];
-        string graph = dataObjectVars[2];
+        string scope = form["contextName"];//dataObjectVars[0];
+        string application = form["endpoint"];//dataObjectVars[1];
+        string graph = form["graph"];//dataObjectVars[2];
         string classId = form["classId"];
         string parentClassId = form["parentClass"];
         string parentTemplateId = form["parentTemplate"];
@@ -561,9 +561,9 @@ namespace org.iringtools.web.controllers
         int parentClassIndex = Convert.ToInt32(form["parentClassIndex"]);
         string mappingNode = form["mappingNode"];
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = dataObjectVars[0];
-        string application = dataObjectVars[1];
-        string graphName = dataObjectVars[2];
+        string scope = form["contextName"];//dataObjectVars[0];
+        string application = form["endpoint"];//dataObjectVars[1];
+        string graphName = form["graphName"];//dataObjectVars[2];
 
         int index = Convert.ToInt32(form["index"]);
         
@@ -617,9 +617,9 @@ namespace org.iringtools.web.controllers
         int classIndex = Convert.ToInt32(form["classIndex"]);
 
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = dataObjectVars[0];
-        string application = dataObjectVars[1];
-        string graphName = dataObjectVars[2];
+        string scope = form["contextName"];//dataObjectVars[0];
+        string application = form["endpoint"];//dataObjectVars[1];
+        string graphName = form["graph"];//dataObjectVars[2];
 
         string classId = form["classId"];
         string roleName = dataObjectVars[dataObjectVars.Length - 1];
@@ -888,9 +888,9 @@ namespace org.iringtools.web.controllers
         string mappingNode = form["mappingNode"];
         string propertyName = form["propertyName"];
         string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = mappingCtx[0];
-        string application = mappingCtx[1];
-        string graphName = mappingCtx[2];
+        string scope = form["contextName"];//mappingCtx[0];
+        string application = form["endpoint"];//mappingCtx[1];
+        string graphName = form["graphName"];//mappingCtx[2];
 
         string classId = form["classId"];
         string[] classCtx = classId.Split(',');
@@ -936,9 +936,9 @@ namespace org.iringtools.web.controllers
             string mappingNode = form["mappingNode"];
             string constantValue = form["constantValue"];
             string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-            string scope = mappingCtx[0];
-            string application = mappingCtx[1];
-            string graphName = mappingCtx[2];
+            string scope = form["contextName"];//mappingCtx[0];
+            string application = form["endpoint"];//mappingCtx[1];
+            string graphName = form["graph"];//mappingCtx[2];
 
             string classId = form["classId"];
             int classIndex = Convert.ToInt16(form["classIndex"]);
@@ -1040,13 +1040,12 @@ namespace org.iringtools.web.controllers
         string objectNames = form["objectNames"];
         string[] propertyCtx = objectNames.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = propertyCtx[0];
         string classId = form["classId"];
-        
+        string scope = form["contextName"];//propertyCtx[0];
+        string application = form["endpoint"];//propertyCtx[1];
+        string graphName = form["graphName"];//mappingCtx[2];
         int classIndex = Convert.ToInt16(form["classIndex"]);
 
-        string application = propertyCtx[1];
-        string graphName = mappingCtx[2];
 
         string roleName = mappingCtx[mappingCtx.Length - 1];
         string valueListName = propertyCtx[propertyCtx.Length - 1];
@@ -1090,7 +1089,7 @@ namespace org.iringtools.web.controllers
       {
         string scope = form["scope"];
         string application = form["application"];
-        string parentNode = form["mappingNode"].Split('/')[2];
+        string parentNode = form["mappingNode"].Split('/')[1];//form["mappingNode"].Split('/')[2];
         string templateId = form["identifier"];
         string parentClassId = form["parentIdentifier"];
         int parentClassIndex = Convert.ToInt32(form["parentClassIndex"]);

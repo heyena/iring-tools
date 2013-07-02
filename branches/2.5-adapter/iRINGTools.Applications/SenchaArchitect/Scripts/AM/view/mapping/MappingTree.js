@@ -158,7 +158,7 @@ Ext.define('AM.view.mapping.MappingTree', {
     if(modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
       ntype = overModel.data.type;
       parentid = overModel.data.identifier;
-      classMapIndex = data.records[0].data.index;
+      classMapIndex = overModel.data.record.index;//data.records[0].data.index;
       thistype = data.records[0].data.type;
       icn = 'Content/img/template-map.png';
       txt = data.records[0].data.record.Label;
@@ -174,6 +174,7 @@ Ext.define('AM.view.mapping.MappingTree', {
           //contextName: pan.contexName,
           ctx: context,//overModel.internalId,
           endpoint: pan.endpoint,
+          contextName:pan.contextName,
           baseUrl: pan.baseUrl,
           nodetype: thistype,
           parentType: ntype,
@@ -229,9 +230,9 @@ Ext.define('AM.view.mapping.MappingTree', {
 
 
     store.proxy.extraParams.type = operation.node.data.type;
-    store.proxy.extraParams.index = operation.node.data.index;
+    store.proxy.extraParams.index = operation.node.data.record.index;//operation.node.data.index;
     if (store.proxy.extraParams !== undefined) {
-      store.proxy.extraParams.id = operation.node.data.id;
+      store.proxy.extraParams.id = operation.node.data.record.id;
 
       //if(operation.node.data.type == 'ClassMapNode')
       //store.proxy.extraParams.index = operation.node.data.index;

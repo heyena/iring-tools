@@ -37,6 +37,10 @@ Ext.define('AM.view.mapping.MapValueListForm', {
         },
         {
           xtype: 'hiddenfield',
+          name: 'classIndex'
+        },
+        {
+          xtype: 'hiddenfield',
           name: 'relatedObject'
         },
         {

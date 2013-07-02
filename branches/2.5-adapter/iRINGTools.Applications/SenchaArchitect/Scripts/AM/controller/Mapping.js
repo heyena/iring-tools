@@ -222,7 +222,7 @@ Ext.define('AM.controller.Mapping', {
 
       treeStore.on('beforeload', function (store, operation, eopts) {
 
-        var tempIdArr = operation.node.data.id.split('/');
+        /*var tempIdArr = operation.node.data.id.split('/');
         var tempId = tempIdArr[tempIdArr.length-1];
         var tempNode;
         if(store.tree.root.firstChild!=undefined)		
@@ -230,11 +230,13 @@ Ext.define('AM.controller.Mapping', {
         else
         tempNode = node.parentNode.parentNode.internalId;
 
-        params.tempNode = tempNode;
+        params.tempNode = tempNode;*/
         params.id = operation.node.data.identifier;
         //params.id = node.parentNode.parentNode.internalId;
         //params.tempNode = node.parentNode.parentNode.internalId;
         params.graph = node.internalId;//graphName;
+        params.context = context;
+        params.endpoint = endpoint;
       }, me);
 
       mapTree.on('beforeitemexpand', function () {
@@ -357,7 +359,8 @@ Ext.define('AM.controller.Mapping', {
     node = tree.getSelectedNode();
     var id = node.parentNode.data.id.split('/');
     var mappingNode  = node.parentNode.data.parentId+'/'+id[id.length-1]+'/'+node.data.record.name;
-
+    var graphArr = mapPanel.graph.split('/');
+    var graph = graphArr[graphArr.length-1];
     win = Ext.widget('propertymapwindow', {
       'classId': node.parentNode.parentNode.data.identifier,
       'mappingNode': node
@@ -366,15 +369,13 @@ Ext.define('AM.controller.Mapping', {
     var index = node.parentNode.parentNode.indexOf(node.parentNode);
 
     var formRecord = {
-      //'contextName': content.getActiveTab().graph.split('/')[0],//mapPanel.contextName,
-      //'endpoint': content.getActiveTab().graph.split('/')[1],//mapPanel.endpoint,
-      //'baseUrl': mapPanel.baseUrl,
-      //'graphName': content.getActiveTab().graph,//mapPanel.graph,
+      'contextName': mapPanel.contextName,
+      'endpoint': mapPanel.endpoint,
+      'graphName': graph,
       'index': index,
-      //'roleName': roleName,
       'mappingNode':mappingNode,
       'classId':node.parentNode.parentNode.data.identifier,
-      'classIndex': node.parentNode.parentNode.data.index
+      'classIndex': node.parentNode.parentNode.data.record.index//node.parentNode.parentNode.data.index
     };
 
     var form = win.down('form');
@@ -529,23 +530,24 @@ Ext.define('AM.controller.Mapping', {
     var parentId = node.parentNode.parentNode.data.id;
     var idArr = node.data.id.split('/');
     var mappingNode = parentId+'/'+idArr[idArr.length-2]+'/'+idArr[idArr.length-1];
-
+    var graphArr = mapPanel.graph.split('/');
+    var graph = graphArr[graphArr.length-1];
 
     me.getParentClass(node);
     Ext.Ajax.request({
       url: 'mapping/resetmapping',
       method: 'POST',
       params: {
-        //contextName: mapPanel.contextName,
-        //endpoint: mapPanel.endpoint,
+        contextName: mapPanel.contextName,
+        endpoint: mapPanel.endpoint,
         //baseUrl: mapPanel.baseUrl,
-        //graphName: mapPanel.graphName,
+        graphName: graph,
         mappingNode:mappingNode,
         roleId: node.data.record.id,
         templateId: node.parentNode.data.record.id,
         parentClassId: node.parentNode.parentNode.data.identifier,
         index: node.parentNode.parentNode.indexOf(node.parentNode),
-        parentClassIndex: node.parentNode.parentNode.data.index
+        parentClassIndex: node.parentNode.parentNode.data.record.index//node.parentNode.parentNode.data.index
       },
       success: function () {
         tree.onReload();
@@ -568,15 +570,17 @@ Ext.define('AM.controller.Mapping', {
     var mappingNode = parentId+'/'+idArr[idArr.length-2]+'/'+idArr[idArr.length-1];
     //var win = Ext.widget('valuelistwindow');
     var win = Ext.widget('mapvaluelistwindow');
+    var graphArr = mapPanel.graph.split('/');
+    var graph = graphArr[graphArr.length-1];
     var formRecord = {
       'mappingNode': mappingNode,//node,
       'index': node.parentNode.parentNode.indexOf(node.parentNode),
       'classId': me.parentClass,
-      'classIndex': node.parentNode.parentNode.data.index
-      //'graphName': mapPanel.graphName,
+      'classIndex': node.parentNode.parentNode.data.record.index,//node.parentNode.parentNode.data.index
+      'graphName': graph,
       //'roleName': node.data.record.name,
-      //'contextName': mapPanel.contextName,
-      //'endpoint': mapPanel.endpoint,
+      'contextName': mapPanel.contextName,
+      'endpoint': mapPanel.endpoint,
       //'baseUrl': mapPanel.baseUrl
     };
 
@@ -695,6 +699,8 @@ Ext.define('AM.controller.Mapping', {
     var nodeId = node.data.id.split('/');
     var text = nodeId[nodeId.length-1];
     var mapingNode = tempId+'/'+text;
+    var graphArr = mapPanel.graph.split('/');
+    var graph = graphArr[graphArr.length-1];
     Ext.Ajax.request({
       url: 'mapping/makePossessor',
       method: 'POST',
@@ -706,9 +712,12 @@ Ext.define('AM.controller.Mapping', {
         // roleName: getLastXString(node.data.id, 1),
         mappingNode : mapingNode,
         node: node,
+        endpoint: mapPanel.endpoint,
+        contextName: mapPanel.contextName,
+        graph: graph,
         classId: parentNode.parentNode.data.identifier,
         index: parentNode.parentNode.indexOf(parentNode),
-        classIndex: node.parentNode.parentNode.data.index
+        classIndex: node.parentNode.parentNode.data.record.index//node.parentNode.parentNode.data.index
       },
       success: function () {
         tree.onReload();
@@ -778,7 +787,8 @@ Ext.define('AM.controller.Mapping', {
     tempId = tempId[tempId.length-1];
     mappingNode = mappingNode+'/'+tempId;
     var index = node.parentNode.parentNode.parentNode.indexOf(node.parentNode.parentNode);
-
+    var graphArr = mapPanel.graph.split('/');
+    var graph = graphArr[graphArr.length-1];
     Ext.Ajax.request({
       url: 'mapping/deleteclassmap',
       method: 'POST',
@@ -789,7 +799,10 @@ Ext.define('AM.controller.Mapping', {
         parentTemplate: node.parentNode.parentNode.data.record.id,
         parentRole: node.parentNode.data.record.id,
         index: index,
-        parentClassIndex: node.parentNode.parentNode.parentNode.data.index
+        parentClassIndex: node.parentNode.parentNode.parentNode.data.index,
+        contextName: mapPanel.contextName,
+        endpoint: mapPanel.endpoint,
+        graph: graph
       },
       success: function (result, request) {
         tree.onReload();
@@ -815,13 +828,17 @@ Ext.define('AM.controller.Mapping', {
     var form = win.down('form');
     var constantValue = form.getForm().findField('constantValue').getValue();
     var index = node.parentNode.parentNode.indexOf(node.parentNode);
-
+    var graphArr = mapPanel.graph.split('/');
+    var graph = graphArr[graphArr.length-1];
     var formRecord = {
       constantValue: constantValue,
       mappingNode: node.data.id,
       classId: node.parentNode.parentNode.data.identifier,
       index: index,
-      classIndex: node.parentNode.parentNode.data.index
+      endpoint: mapPanel.endpoint,
+      contextName: mapPanel.contextName,
+      graph: graph,
+      classIndex: node.parentNode.parentNode.data.record.index//node.parentNode.parentNode.data.index
     };
 
 

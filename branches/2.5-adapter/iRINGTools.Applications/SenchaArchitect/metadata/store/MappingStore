@@ -28,7 +28,7 @@
                     "{\"read\":\"POST\"}"
                 ],
                 "extraParams": [
-                    "{type: 'MappingNode',id: null,range: null,index:null,graph: null, contextName: null,endpoint: null,tempNode:null}"
+                    "{type: 'MappingNode',id: null,range: null,index:null,graph: null, contextName: null,endpoint: null}"
                 ],
                 "timeout": 600000,
                 "url": "mapping/getnode"

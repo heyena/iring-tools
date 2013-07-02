@@ -42,7 +42,19 @@ Ext.define('AM.view.mapping.LiteralForm', {
         },
         {
           xtype: 'hiddenfield',
+          name: 'contextName'
+        },
+        {
+          xtype: 'hiddenfield',
           name: 'mappingNode'
+        },
+        {
+          xtype: 'hiddenfield',
+          name: 'endpoint'
+        },
+        {
+          xtype: 'hiddenfield',
+          name: 'graph'
         },
         {
           xtype: 'hiddenfield',
