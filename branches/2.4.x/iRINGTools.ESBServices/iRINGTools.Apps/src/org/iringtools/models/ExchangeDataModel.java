@@ -14,10 +14,10 @@ import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
-//import org.iringtools.controllers.DirectoryController; // comment out unused import
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.data.filter.Expression;
 import org.iringtools.data.filter.Expressions;
+import org.iringtools.data.filter.LogicalOperator;
 import org.iringtools.data.filter.OrderExpression;
 import org.iringtools.data.filter.OrderExpressions;
 import org.iringtools.data.filter.RelationalOperator;
@@ -434,6 +434,9 @@ public class ExchangeDataModel extends DataModel
           }
           else
           {
+            if (expressions.getItems().size() > 0 && expression.getLogicalOperator() == null)
+              expression.setLogicalOperator(LogicalOperator.AND);
+            
             expressions.getItems().add(expression);
           }
         }
@@ -463,6 +466,9 @@ public class ExchangeDataModel extends DataModel
           }
           else if (!expressions.getItems().contains(expression))
           {
+            if (expressions.getItems().size() > 0 && expression.getLogicalOperator() == null)
+              expression.setLogicalOperator(LogicalOperator.AND);
+            
             expressions.getItems().add(expression);
           }
         }
@@ -573,7 +579,6 @@ public class ExchangeDataModel extends DataModel
       dxiRequest.setManifest(manifest);
       dxiRequest.setDataFilter(filter);
 
-     // exchange.setDataFilter(null);
       dtis = provider.getDataTransferIndices(exchange, dxiRequest);
 
       if (transferTypeExpressions.size() > 0)
