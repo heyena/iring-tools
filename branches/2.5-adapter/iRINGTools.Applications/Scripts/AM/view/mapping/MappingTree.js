@@ -158,7 +158,11 @@ Ext.define('AM.view.mapping.MappingTree', {
     if(modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
       ntype = overModel.data.type;
       parentid = overModel.data.identifier;
+      if(overModel.data.record.index != undefined)
       classMapIndex = overModel.data.record.index;//data.records[0].data.index;
+      else
+      classMapIndex = overModel.data.index;//data.records[0].data.index;
+
       thistype = data.records[0].data.type;
       icn = 'Content/img/template-map.png';
       txt = data.records[0].data.record.Label;
