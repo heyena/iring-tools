@@ -167,17 +167,17 @@ public class ExchangeProvider
   public DataTransferIndices getDataTransferIndices(Exchange exchange, DxiRequest dxiRequest) throws Exception
   {
     DataTransferIndices dtis = null;
-    
+
     try
     {
       ExecutorService executor = Executors.newSingleThreadExecutor();
-  
+
       DtiTask dtiTask = new DtiTask(settings, exchange, dxiRequest, null);
       executor.execute(dtiTask);
       executor.shutdown();
-  
+
       executor.awaitTermination(60, TimeUnit.MINUTES);
-      
+
       if (dtiTask.getError() == null)
       {
         dtis = dtiTask.getDataTransferIndices();
@@ -189,12 +189,12 @@ public class ExchangeProvider
     }
     catch (Exception e)
     {
-      throw new Exception(e.getMessage());      
+      throw new Exception(e.getMessage());
     }
-    
+
     return dtis;
   }
-  
+
   public List<String> getIdentifiers(Exchange exchange, DxiRequest dxiRequest) throws Exception
   {
     ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -206,12 +206,12 @@ public class ExchangeProvider
     executor.awaitTermination(60, TimeUnit.MINUTES);
 
     List<String> ids = idTask.getIdentifiers();
-    
+
     //
     // remove duplicate ids but retain id orders to honor sorting
     //
     List<String> uniqueIds = new ArrayList<String>();
-    
+
     for (String id : ids)
     {
       if (!uniqueIds.contains(id))
@@ -219,11 +219,11 @@ public class ExchangeProvider
         uniqueIds.add(id);
       }
     }
-    
+
     return uniqueIds;
   }
-  
-  public DataTransferObjects getDataTransferObjects(Exchange exchange, Manifest manifest, 
+
+  public DataTransferObjects getDataTransferObjects(Exchange exchange, Manifest manifest,
       List<DataTransferIndex> dtiList) throws Exception
   {
     ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -246,8 +246,7 @@ public class ExchangeProvider
     return dtos;
   }
 
-  public ExchangeResponse submitExchange(boolean async, String scope, String id, Exchange exchange, 
-      ExchangeRequest xReq)
+  public ExchangeResponse submitExchange(boolean async, String scope, String id, Exchange exchange, ExchangeRequest xReq)
   {
     logger.debug("Processing data exchange [" + scope + "." + id + "]...");
 
@@ -258,7 +257,7 @@ public class ExchangeProvider
       requestStatus.setState(State.IN_PROGRESS);
       requests.put(requestId, requestStatus);
 
-      ExecutorService executor = Executors.newSingleThreadExecutor(); 
+      ExecutorService executor = Executors.newSingleThreadExecutor();
       ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
       executor.execute(exchangeTask);
       executor.shutdown();
@@ -286,12 +285,12 @@ public class ExchangeProvider
       return exchangeResponse;
     }
   }
-  
+
   public History getExchangeHistory(String scope, String id) throws Exception
   {
     return getExchangeHistory(scope, id, 0);
   }
-  
+
   public History getExchangeHistory(String scope, String id, int limit) throws Exception
   {
     History history = new History();
@@ -303,11 +302,11 @@ public class ExchangeProvider
     try
     {
       File file = new File(path);
-      
+
       if (file.exists())
-      {      
+      {
         List<String> exchangeLogs = IOUtils.getFiles(path);
-        
+
         // filter out pool logs
         for (int i = 0; i < exchangeLogs.size(); i++)
         {
@@ -316,7 +315,7 @@ public class ExchangeProvider
             exchangeLogs.remove(i--);
           }
         }
-        
+
         // show most recent first
         Collections.sort(exchangeLogs);
 
@@ -328,10 +327,10 @@ public class ExchangeProvider
           // so if there were 10 logs and we only wanted the most recent one we'd want to loop while i >= 9
           actualLimit = (limit > exchangeLogs.size() ? 0 : exchangeLogs.size() - limit);
         }
-  
+
         for (int i = exchangeLogs.size() - 1; i >= actualLimit; i--)
         {
-          ExchangeResponse response = JaxbUtils.read(ExchangeResponse.class, path + "/" + exchangeLogs.get(i));          
+          ExchangeResponse response = JaxbUtils.read(ExchangeResponse.class, path + "/" + exchangeLogs.get(i));
           responses.add(response);
         }
       }
@@ -350,39 +349,47 @@ public class ExchangeProvider
     return history;
   }
 
-  public Response getExchangeResponse(String scope, String id, String timestamp, int start, int limit)
-      throws Exception
+  public Response getExchangeResponse(String scope, String id, String timestamp, int start, int limit) throws Exception
   {
     String path = settings.get("basePath") + "/WEB-INF/exchanges/" + scope + "/" + id;
-    String exchangeFile = path + "/" + timestamp + Constants.XITEM_PREFIX + (start+1) + "-" + (start+limit) + ".xml";
+    String exchangeFile = path + "/" + timestamp + Constants.XITEM_PREFIX + (start + 1) + "-" + (start + limit)
+        + ".xml";
 
     return JaxbUtils.read(Response.class, exchangeFile);
   }
-  
-  public RequestStatus getRequestStatus(String id) {
-	  RequestStatus requestStatus = null;
 
-	  try {
-		  if (requests.containsKey(id)) {
-			  requestStatus = requests.get(id);
-		  } else {
-			  requestStatus = new RequestStatus();
-			  requestStatus.setState(State.NOT_FOUND);
-			  requestStatus.setMessage("Request [" + id + "] not found.");
-		  }
+  public RequestStatus getRequestStatus(String id)
+  {
+    RequestStatus requestStatus = null;
 
-		  if (requestStatus.getState() == State.COMPLETED) {
-			  requests.remove(id);
-		  }
-	  } catch (Exception e) {
-		  requestStatus.setState(State.ERROR);
-		  requestStatus.setMessage(e.getMessage());
-		  requests.remove(id);
-	  }
+    try
+    {
+      if (requests.containsKey(id))
+      {
+        requestStatus = requests.get(id);
+      }
+      else
+      {
+        requestStatus = new RequestStatus();
+        requestStatus.setState(State.NOT_FOUND);
+        requestStatus.setMessage("Request [" + id + "] not found.");
+      }
 
-	  return requestStatus;
+      if (requestStatus.getState() == State.COMPLETED)
+      {
+        requests.remove(id);
+      }
+    }
+    catch (Exception e)
+    {
+      requestStatus.setState(State.ERROR);
+      requestStatus.setMessage(e.getMessage());
+      requests.remove(id);
+    }
+
+    return requestStatus;
   }
-  
+
   private Graph getGraph(Manifest manifest, String graphName)
   {
     for (Graph graph : manifest.getGraphs().getItems())
