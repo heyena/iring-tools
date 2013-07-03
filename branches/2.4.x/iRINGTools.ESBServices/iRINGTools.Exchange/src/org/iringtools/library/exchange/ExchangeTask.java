@@ -275,7 +275,7 @@ public class ExchangeTask implements Runnable
   			        if (poolDtiItem.getTransferType() == TransferType.DELETE)
   			        {
   			          DataTransferObject deletedDto = new DataTransferObject();
-  			          deletedDto.setIdentifier(poolDtiItem.getIdentifier());
+  			          deletedDto.setIdentifier(poolDtiItem.getInternalIdentifier());
   			          deletedDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
   			          poolDtoListItems.add(deletedDto);
   			        }
