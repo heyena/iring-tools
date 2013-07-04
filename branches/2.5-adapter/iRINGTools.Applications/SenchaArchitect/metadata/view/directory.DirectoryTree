@@ -283,8 +283,6 @@
                     "      me.collapseAll();\r",
                     "      Ext.each(nodes, function (path) {\r",
                     "        me.expandPath(path, 'text');\r",
-                    "        //dirNode = store.getNodeById(nodeInternalId);\r",
-                    "        //console.log(dirNode);\r",
                     "      });\r",
                     "      me.body.unmask();\r",
                     "      if(content!=undefined)\r",

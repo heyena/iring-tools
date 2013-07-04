@@ -244,6 +244,7 @@ Ext.define('AM.controller.Mapping', {
       }, me);
 
       mapTree.on('load', function () {
+        //alert('load in Mapping controler..');
         content.getEl().unmask();
       }, me);
       mapTree.on('itemexpand', function () {
@@ -337,7 +338,7 @@ Ext.define('AM.controller.Mapping', {
       'templateIndex': index,
       'roleName': roleName,//node.data.text,
       'parentClassId': node.parentNode.parentNode.data.identifier,
-      'parentClassIndex': node.parentNode.parentNode.data.index
+      'parentClassIndex': node.parentNode.parentNode.data.identifierIndex
 
     };
 
@@ -375,7 +376,7 @@ Ext.define('AM.controller.Mapping', {
       'index': index,
       'mappingNode':mappingNode,
       'classId':node.parentNode.parentNode.data.identifier,
-      'classIndex': node.parentNode.parentNode.data.record.index//node.parentNode.parentNode.data.index
+      'classIndex': node.parentNode.parentNode.data.identifierIndex
     };
 
     var form = win.down('form');
@@ -412,6 +413,7 @@ Ext.define('AM.controller.Mapping', {
         graph: contextParts[2],//mapPanel.graphName,
         roleName: getLastXString(node.data.id, 1),
         classId: parentNode.parentNode.data.identifier,
+        classIndex:parentNode.parentNode.data.identifierIndex,
         //roleId:,
         //refClassId:,
         //refClassLabel:,
@@ -547,7 +549,7 @@ Ext.define('AM.controller.Mapping', {
         templateId: node.parentNode.data.record.id,
         parentClassId: node.parentNode.parentNode.data.identifier,
         index: node.parentNode.parentNode.indexOf(node.parentNode),
-        parentClassIndex: node.parentNode.parentNode.data.record.index//node.parentNode.parentNode.data.index
+        parentClassIndex: node.parentNode.parentNode.data.identifierIndex
       },
       success: function () {
         tree.onReload();
@@ -576,7 +578,7 @@ Ext.define('AM.controller.Mapping', {
       'mappingNode': mappingNode,//node,
       'index': node.parentNode.parentNode.indexOf(node.parentNode),
       'classId': me.parentClass,
-      'classIndex': node.parentNode.parentNode.data.record.index,//node.parentNode.parentNode.data.index
+      'classIndex': me.parentClassIndex,
       'graphName': graph,
       //'roleName': node.data.record.name,
       'contextName': mapPanel.contextName,
@@ -701,6 +703,7 @@ Ext.define('AM.controller.Mapping', {
     var mapingNode = tempId+'/'+text;
     var graphArr = mapPanel.graph.split('/');
     var graph = graphArr[graphArr.length-1];
+
     Ext.Ajax.request({
       url: 'mapping/makePossessor',
       method: 'POST',
@@ -717,7 +720,7 @@ Ext.define('AM.controller.Mapping', {
         graph: graph,
         classId: parentNode.parentNode.data.identifier,
         index: parentNode.parentNode.indexOf(parentNode),
-        classIndex: node.parentNode.parentNode.data.record.index//node.parentNode.parentNode.data.index
+        classIndex: parentNode.parentNode.data.identifierIndex
       },
       success: function () {
         tree.onReload();
@@ -799,7 +802,7 @@ Ext.define('AM.controller.Mapping', {
         parentTemplate: node.parentNode.parentNode.data.record.id,
         parentRole: node.parentNode.data.record.id,
         index: index,
-        parentClassIndex: node.parentNode.parentNode.parentNode.data.index,
+        parentClassIndex: node.parentNode.parentNode.parentNode.data.identifierIndex,
         contextName: mapPanel.contextName,
         endpoint: mapPanel.endpoint,
         graph: graph
@@ -838,7 +841,7 @@ Ext.define('AM.controller.Mapping', {
       endpoint: mapPanel.endpoint,
       contextName: mapPanel.contextName,
       graph: graph,
-      classIndex: node.parentNode.parentNode.data.record.index//node.parentNode.parentNode.data.index
+      classIndex: node.parentNode.parentNode.data.identifierIndex
     };
 
 
@@ -886,7 +889,7 @@ Ext.define('AM.controller.Mapping', {
       n.parentNode.data.type == 'GraphMapNode') && 
       n.parentNode.data.identifier !== undefined) {
         me.parentClass = n.parentNode.data.identifier;
-        me.parentClassIndex = n.parentNode.data.index;
+        me.parentClassIndex = n.parentNode.data.identifierIndex;
         return me.parentClass;
       }
       else {

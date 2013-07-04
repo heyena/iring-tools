@@ -182,8 +182,6 @@ Ext.define('AM.view.directory.DirectoryTree', {
           me.collapseAll();
           Ext.each(nodes, function (path) {
             me.expandPath(path, 'text');
-            //dirNode = store.getNodeById(nodeInternalId);
-            //console.log(dirNode);
           });
           me.body.unmask();
           if(content!=undefined)

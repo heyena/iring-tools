@@ -54,6 +54,18 @@
             },
             "codeClass": null,
             "userConfig": {
+                "name": "identifierIndex"
+            },
+            "designerId": "23f3672d-1f4e-4724-be0f-e819aecaf98f"
+        },
+        {
+            "type": "Ext.data.Field",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
                 "name": "text"
             },
             "designerId": "a3e1d5a0-54b4-4c27-830e-34b5fc033eaa"

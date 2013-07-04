@@ -27,6 +27,9 @@ Ext.define('AM.model.MappingModel', {
       name: 'identifier'
     },
     {
+      name: 'identifierIndex'
+    },
+    {
       name: 'text'
     },
     {

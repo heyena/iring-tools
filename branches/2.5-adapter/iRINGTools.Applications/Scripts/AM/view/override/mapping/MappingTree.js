@@ -15,5 +15,4 @@ Ext.define('AM.view.override.mapping.MappingTree', {
   me.callOverridden(arguments);
   
   }
-  
 });

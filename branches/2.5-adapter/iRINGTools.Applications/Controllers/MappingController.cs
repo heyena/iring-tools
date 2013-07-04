@@ -623,7 +623,7 @@ namespace org.iringtools.web.controllers
 
         string classId = form["classId"];
         string roleName = dataObjectVars[dataObjectVars.Length - 1];
-        string context = string.Format("{0}/{1}/{2}/{3}", scope, application, dataObjectVars[2], dataObjectVars[dataObjectVars.Count() - 2]);
+        string context = string.Format("{0}/{1}/{2}/{3}", scope, application, graphName, dataObjectVars[dataObjectVars.Count() - 2]);
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, classIndex);
@@ -668,7 +668,7 @@ namespace org.iringtools.web.controllers
         leaf = false,
         children = null,
         record = graph,
-        index = classMap.index
+        identifierIndex = classMap.index
       };
 
       return graphNode;
@@ -688,7 +688,7 @@ namespace org.iringtools.web.controllers
         leaf = false,
         children = null,
         record = classMap,
-        index = classMap.index
+        identifierIndex = classMap.index
       };
 
       return classNode;

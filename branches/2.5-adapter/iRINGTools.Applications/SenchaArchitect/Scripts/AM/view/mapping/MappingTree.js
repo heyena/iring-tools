@@ -123,7 +123,7 @@ Ext.define('AM.view.mapping.MappingTree', {
       txt = data.records[0].data.record.Label;
       parentId = me.parentClass;
       f = false;
-      var classIndex = me.index;
+      var classIndex = me.parentClassIndex;
       var index = overModel.parentNode.parentNode.indexOf(overModel.parentNode);
       me.getEl().mask('Loading...');
       //this.getEl().mask('Loading...');
@@ -158,11 +158,7 @@ Ext.define('AM.view.mapping.MappingTree', {
     if(modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
       ntype = overModel.data.type;
       parentid = overModel.data.identifier;
-      if(overModel.data.record.index != undefined)
-      classMapIndex = overModel.data.record.index;//data.records[0].data.index;
-      else
-      classMapIndex = overModel.data.index;//data.records[0].data.index;
-
+      classMapIndex = overModel.data.identifierIndex;
       thistype = data.records[0].data.type;
       icn = 'Content/img/template-map.png';
       txt = data.records[0].data.record.Label;
@@ -175,10 +171,9 @@ Ext.define('AM.view.mapping.MappingTree', {
         url: 'mapping/addtemplatemap',
         method: 'POST',
         params: {
-          //contextName: pan.contexName,
+          contextName: pan.contextName,
           ctx: context,//overModel.internalId,
           endpoint: pan.endpoint,
-          contextName:pan.contextName,
           baseUrl: pan.baseUrl,
           nodetype: thistype,
           parentType: ntype,
@@ -232,14 +227,14 @@ Ext.define('AM.view.mapping.MappingTree', {
     tempNode = store.tree.root.firstChild.data.id+'/'+tempId;
     */
 
-
+    //alert('this is beforeload...');
     store.proxy.extraParams.type = operation.node.data.type;
-    store.proxy.extraParams.index = operation.node.data.record.index;//operation.node.data.index;
+    store.proxy.extraParams.index = operation.node.data.index;
     if (store.proxy.extraParams !== undefined) {
-      store.proxy.extraParams.id = operation.node.data.record.id;
+      store.proxy.extraParams.id = operation.node.data.id;
 
-      //if(operation.node.data.type == 'ClassMapNode')
-      //store.proxy.extraParams.index = operation.node.data.index;
+      if(operation.node.data.type == 'ClassMapNode')
+      store.proxy.extraParams.index = operation.node.data.identifierIndex;
       /*
       store.proxy.extraParams.id = operation.node.data.identifier;
       store.proxy.extraParams.tempNode = tempNode;
@@ -261,21 +256,23 @@ Ext.define('AM.view.mapping.MappingTree', {
   getState: function() {
     var me = this;
     var nodes = [], state = me.callParent();
+    var idArray = [];
     me.getRootNode().eachChild(function (child) {
       // function to store state of tree recursively 
-      var storeTreeState = function (node, expandedNodes) {
+      var storeTreeState = function (node, expandedNodes,idArray) {
         if (node.isExpanded() && node.childNodes.length > 0) {
           expandedNodes.push(node.getPath('text'));
-
+          idArray.push(node.data.id);
           node.eachChild(function (child) {
-            storeTreeState(child, expandedNodes);
+            storeTreeState(child, expandedNodes,idArray);
           });
         }
       };
-      storeTreeState(child, nodes);
+      storeTreeState(child, nodes,idArray);
     });
     Ext.apply(state, {
-      expandedNodes: nodes
+      expandedNodes: nodes,
+      idArray: idArray
     });
     return state;
   },
@@ -322,18 +319,23 @@ Ext.define('AM.view.mapping.MappingTree', {
         //params.tempNode = id;
         params.graph = graphName;
       }, me);
-
-
       store.load({
         callback: function (records, options, success) {
-          /*var nodes = state.expandedNodes || [],
-          len = nodes.length;
-          me.collapseAll();
-          Ext.each(nodes, function (path) {
-          me.expandPath(path, 'text');
+          //alert('this is load...');
+          //var nodes = state.expandedNodes || [];
+          /*me.expandPath('/Root/Equip', 'text');
+          me.expandPath('/Root/Equip/IdentificationByTag', 'text');
+          me.expandPath('/Root/Equip/IdentificationByTag/valIdentifier', 'text');
+          me.expandPath('/Root/Equip/IdentificationByTag/valIdentifier/DESCRIPTION (RETIRED)', 'text');
+          me.expandPath('/Root/Equip/IdentificationByTag/valIdentifier/DESCRIPTION (RETIRED)/Description', 'text');
+          */
 
+          /*me.collapseAll();
+          Ext.each(nodes, function (path) {
+
+          me.expandPath(path, 'text');
           });*/
-          //me.applyState(state);
+          // me.applyState(state);
         }
 
       });
@@ -376,7 +378,7 @@ Ext.define('AM.view.mapping.MappingTree', {
         n.parentNode.data.type == 'GraphMapNode') && 
         n.parentNode.data.identifier !== undefined) {
           this.parentClass = n.parentNode.data.identifier;
-          this.parentClassIndex = n.parentNode.data.index;
+          this.parentClassIndex = n.parentNode.data.identifierIndex;
           return this.parentClass;
         }
         else {
