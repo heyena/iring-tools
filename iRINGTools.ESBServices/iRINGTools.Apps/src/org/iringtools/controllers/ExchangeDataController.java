@@ -221,7 +221,8 @@ public class ExchangeDataController extends BaseController
 			try {
 			
 				// ArrayList<List<String>
-					
+			if(name.equalsIgnoreCase("Transfer Type"))
+			{
 				relationOperator =   new ArrayList<List<String>>();
 				List<String> equal = new ArrayList<String>();				
 				equal.add("0");
@@ -231,6 +232,17 @@ public class ExchangeDataController extends BaseController
 				notEqual.add("1");
 				notEqual.add("NotEqualTo");
 				relationOperator.add(notEqual);
+				
+			}else{
+				relationOperator =   new ArrayList<List<String>>();
+				List<String> equal = new ArrayList<String>();				
+				equal.add("0");
+				equal.add("EqualTo");
+				relationOperator.add(equal);
+				List<String> notEqual = new ArrayList<String>();
+				notEqual.add("1");
+				notEqual.add("NotEqualTo");
+				relationOperator.add(notEqual);	
 				List<String> greaterthen = new ArrayList<String>();
 				greaterthen.add("2");
 				greaterthen.add("GreaterThan");
@@ -239,7 +251,7 @@ public class ExchangeDataController extends BaseController
 				lessthen.add("3");
 				lessthen.add("LessThan");
 				relationOperator.add(lessthen);
-				
+			}
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new Exception(e.getMessage());
