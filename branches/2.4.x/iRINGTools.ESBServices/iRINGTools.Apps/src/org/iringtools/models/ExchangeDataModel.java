@@ -4,6 +4,7 @@ package org.iringtools.models;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -1064,22 +1065,78 @@ public String testSourceUri(String sourceUri) throws IOException {
 }
 
 public void saveDataFilterExpression(Expressions ex, String commName,
-		String scope, String name, OrderExpressions Oe) {
+		String scope, String xid, OrderExpressions Oe) {
 	
-	dprovider.postDataFilterExpressions(scope, name, commName, ex, Oe);
+	dprovider.postDataFilterExpressions(scope, xid, commName, ex, Oe);
 	 Exchange exchange = null;
-	 String exchangeKey = EXCHANGE_PREFIX + "." + scope + "." + name;	
-     String fullDtiKey = DTI_PREFIX + "." + scope + "." + name;
+	 String exchangeKey = EXCHANGE_PREFIX + "." + scope + "." + xid;	
+     String fullDtiKey = DTI_PREFIX + "." + scope + "." + xid;
      for (String key : session.keySet())
          if (key.startsWith(fullDtiKey))
            session.remove(key);
 
      System.out.println(session);
-     exchange = getExchangeFromDirectory(scope, name);
+     exchange = getExchangeFromDirectory(scope, xid);
      session.put(exchangeKey, exchange); 
 }
 
-public DataFilter getDataFilter(String commName, String scope, String name) {
-	return dprovider.getDataFilter(commName, scope, name );
+public DataFilter getDataFilter(String commName, String scope, String xid) {
+	return dprovider.getDataFilter(commName, scope, xid );
+}
+public List<List<String>> getColumns(String exchangeServiceUri, String scope, String xid, String sort)
+		throws Exception {
+	this.scope = scope;
+	this.xId = xid;
+
+	Exchange exchange = getExchange(scope, xId);
+	Manifest manifest = getCrossedManifest(exchange, scope, xId);
+
+	Graph graph = manifest.getGraphs().getItems().get(0);
+	String relativePath = "/" + scope + "/" + xId;
+	List<Field> fields = getFields(relativePath, graph, null);
+	List<List<String>> columnnameList = new ArrayList<List<String>>();
+
+	for(Field field:fields)
+	{	List<String> names = new ArrayList<String>();
+	if(sort.equalsIgnoreCase("true"))
+	{
+	if(field.getName()!= "Status" && field.getName() != "Content" && field.getName() != "Info"  && field.getName() != "Transfer Type")
+	{
+		names.add(field.getName());
+		names.add(field.getName());
+		columnnameList.add(names);
+	}
+	}else{
+		if(field.getName()!= "Status" && field.getName() != "Content" && field.getName() != "Info")
+		{
+			names.add(field.getName());
+			names.add(field.getName());
+			columnnameList.add(names);
+		}
+	}
+	}
+	return columnnameList;
+}
+public String testUri(String sourceUri) // throws IOException
+{
+	try {
+		URL u = new URL(sourceUri);
+		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+		huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
+		huc.connect();
+		int code = huc.getResponseCode();
+		System.out.println(code);
+		if (code == 200) {
+			return ("connected successfully");
+		} else {
+			return ("could not connect to the specified URl");
+		}
+	} catch (UnknownHostException e) {
+		e.printStackTrace();
+		return ("UnknownHostException : Invalid URl.");
+	} catch (Exception e) {
+		e.printStackTrace();
+		return ("Exception : Invalid URl");
+	}
 }
 }

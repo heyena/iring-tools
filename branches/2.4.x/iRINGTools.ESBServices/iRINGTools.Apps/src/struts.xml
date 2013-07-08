@@ -178,6 +178,14 @@
         <param name="root">form</param>
       </result>
        </action>
+       
+         <!-- Testing baseURI-->
+      <action name="BasetestUri" class="org.iringtools.controllers.ExchangeDataController" method="testBaseUri">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+       </action>
+       
          <!-- Testing SourceURI-->
        <action name="SourcetestUri" class="org.iringtools.controllers.ExchangeDataController" method="testSourceUri">
       <result type="json">
@@ -190,7 +198,35 @@
         <param name="root">result</param>
       </result>
        </action>
+       
+        <!-- get grid columns names-->
+      <action name="getColumnNames" class="org.iringtools.controllers.ExchangeDataController" method="getColumns">
+      <result type="json">
+        <param name="root">columnNames</param>
+      </result>
+       </action>
+       
+          <!-- get relational operators-->
+      <action name="getRelational" class="org.iringtools.controllers.ExchangeDataController" method="getRelationalOperator">
+      <result type="json">
+        <param name="root">relationOperator</param>
+      </result>
+       </action>
+       
+         <!-- get logical operators-->
+      <action name="getLogical" class="org.iringtools.controllers.ExchangeDataController" method="getLogicalOpr">
+      <result type="json">
+        <param name="root">logicalOperator</param>
+      </result>
+       </action>
    
+     <!-- sort Experssion-->
+       <action name="getSortOrder" class="org.iringtools.controllers.ExchangeDataController" method="getSortOrd">
+      <result type="json">
+        <param name="root">sortOrderList</param>
+      </result>
+       </action>
+       
          <!-- Data Filters Expressions-->
        <action name="dataFilter" class="org.iringtools.controllers.ExchangeDataController" method="dataFilterExpressions">
       <result type="json">
@@ -198,6 +234,7 @@
       </result>
        </action> 
        
+              
    <!--      <action name="dataFilterOrderExpress" class="org.iringtools.controllers.ExchangeDataController" method="dataFilterOrderExpression">
       <result type="json">
         <param name="root">result</param>

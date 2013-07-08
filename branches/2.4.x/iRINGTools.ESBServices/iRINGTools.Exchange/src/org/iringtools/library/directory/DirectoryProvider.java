@@ -323,7 +323,7 @@ public class DirectoryProvider {
 	}
 
 	public DataFilter getDataFilter(String commName, String scope,
-			String name) {
+			String xid) {
 		path = settings.get("basePath").toString()
 				.concat("WEB-INF/data/directory.xml");
 		try {
@@ -347,8 +347,8 @@ public class DirectoryProvider {
 								List<Exchange> exchangeList = commodity
 										.getExchange();
 								for (Exchange exchange : exchangeList) {
-									if (exchange.getName().equalsIgnoreCase(
-											name)) {
+									if (exchange.getId().equalsIgnoreCase(
+											xid)) {
 										return exchange.getDataFilter();
 									}
 
@@ -362,7 +362,7 @@ public class DirectoryProvider {
 			}
 		} catch (Exception e) {
 			String message = "Error getting Data Filter of [" + scope + "."
-					+ name + "]: " + e;
+					+ xid + "]: " + e;
 			logger.error(message);
 		}
 		// return Response.ok().entity(exchange).build();
@@ -370,7 +370,7 @@ public class DirectoryProvider {
 	}
 
 	public synchronized void postDataFilterExpressions(String scope,
-			String name, String commName, Expressions mex, OrderExpressions mOe) {
+			String xid, String commName, Expressions mex, OrderExpressions mOe) {
 		path = settings.get("basePath").toString()
 				.concat("WEB-INF/data/directory.xml");
 		try {
@@ -394,8 +394,8 @@ public class DirectoryProvider {
 								List<Exchange> exchangeList = commodity
 										.getExchange();
 								for (Exchange exchange : exchangeList) {
-									if (exchange.getName().equalsIgnoreCase(
-											name)) {
+									if (exchange.getId().equalsIgnoreCase(
+											xid)) {
 										DataFilter df = exchange
 												.getDataFilter();
 										if (df == null) {
@@ -425,7 +425,7 @@ public class DirectoryProvider {
 			}
 		} catch (Exception e) {
 			String message = "Error posting Data Filter of [" + scope + "."
-					+ name + "]: " + e;
+					+ xid + "]: " + e;
 			logger.error(message);
 		}
 		// return Response.ok().entity(exchange).build();
@@ -459,7 +459,8 @@ public class DirectoryProvider {
 		return scope;
 	}
 
-	public void postEditedScope(String newScope, String oldScope) {
+	public void postEditedScope(String newScope, String oldScope
+			) {
 
 		path = settings.get("basePath").toString()
 				.concat("WEB-INF/data/directory.xml");
@@ -471,6 +472,7 @@ public class DirectoryProvider {
 					String scopefile = scopefromfile.getName();
 					if (oldScope.equalsIgnoreCase(scopefile)) {
 						scopefromfile.setName(newScope);
+              //  scopefromfile.setDescription(description);
 						break;
 					}
 				}

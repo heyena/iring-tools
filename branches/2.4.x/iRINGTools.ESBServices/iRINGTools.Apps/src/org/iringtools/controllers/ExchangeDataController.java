@@ -24,6 +24,7 @@ import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
+import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 
 public class ExchangeDataController extends BaseController
@@ -73,6 +74,10 @@ public class ExchangeDataController extends BaseController
 	private String xlabel;
 	private String xtime;
 	private int itemCount;
+	private List<List<String>> columnNames;
+	private List<List<String>> relationOperator;
+	private List<List<String>> logicalOperator;
+	private List<List<String>> sortOrderList;
 	private HttpServletRequest httpRequest = null;  
   
   public ExchangeDataController() throws Exception
@@ -196,6 +201,98 @@ public class ExchangeDataController extends BaseController
        
     return SUCCESS;
   }
+  
+  public String getColumns() throws Exception {
+		try {
+			ExchangeDataModel exchangeDataModel = new ExchangeDataModel(
+					settings, session);
+			// ArrayList<List<String>
+			columnNames = exchangeDataModel.getColumns(exchangeServiceUri, scope,
+					xid,sort);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e.getMessage());
+		}
+
+		return SUCCESS;
+	}
+	
+	  public String getRelationalOperator() throws Exception {
+			try {
+			
+				// ArrayList<List<String>
+					
+				relationOperator =   new ArrayList<List<String>>();
+				List<String> equal = new ArrayList<String>();				
+				equal.add("0");
+				equal.add("EqualTo");
+				relationOperator.add(equal);
+				List<String> notEqual = new ArrayList<String>();
+				notEqual.add("1");
+				notEqual.add("NotEqualTo");
+				relationOperator.add(notEqual);
+				List<String> greaterthen = new ArrayList<String>();
+				greaterthen.add("2");
+				greaterthen.add("GreaterThan");
+				relationOperator.add(greaterthen);
+				List<String> lessthen = new ArrayList<String>();
+				lessthen.add("3");
+				lessthen.add("LessThan");
+				relationOperator.add(lessthen);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new Exception(e.getMessage());
+			}
+
+			return SUCCESS;
+		}
+	  
+	  public String getLogicalOpr() throws Exception {
+			try {
+			
+				// ArrayList<List<String>
+					
+				logicalOperator =   new ArrayList<List<String>>();
+				List<String> andopr = new ArrayList<String>();				
+				andopr.add("0");
+				andopr.add("AND");
+				logicalOperator.add(andopr);
+				List<String> orOpr = new ArrayList<String>();
+				orOpr.add("1");
+				orOpr.add("OR");
+				logicalOperator.add(orOpr);
+							
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new Exception(e.getMessage());
+			}
+
+			return SUCCESS;
+		}
+	  
+	  public String getSortOrd() throws Exception {
+			try {
+			
+				// ArrayList<List<String>
+					
+				sortOrderList =   new ArrayList<List<String>>();
+				List<String> asc = new ArrayList<String>();				
+				asc.add("0");
+				asc.add("Asc");
+				sortOrderList.add(asc);
+				List<String> desc = new ArrayList<String>();
+				desc.add("1");
+				desc.add("Desc");
+				sortOrderList.add(desc);
+							
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new Exception(e.getMessage());
+			}
+
+			return SUCCESS;
+		}
 
 	// Adding new Scope
 	public String newScope() {
@@ -464,6 +561,23 @@ public class ExchangeDataController extends BaseController
 
 		return SUCCESS;
 	}
+	
+	public String testBaseUri() {
+		try {
+			ExchangeDataModel exchangeDataModel = new ExchangeDataModel(
+					settings, session);
+
+			int len = sourceUri.length();
+			int corlen = len - 5;
+			String baseUri = sourceUri.substring(0, corlen);
+			result = exchangeDataModel.testUri(baseUri);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERROR;
+		}
+
+		return SUCCESS;
+	}
 
 	public String testSourceUri() {
 		try {
@@ -508,6 +622,11 @@ public class ExchangeDataController extends BaseController
 				int logsize = logicalOper.length;
 				if (i < logsize) {
 					if ((logicalOper[i] != null) || (logicalOper[i] != "")) {
+						if (logicalOper[i].equalsIgnoreCase("AND")) {
+							logvalue = LogicalOperator.AND;
+						} else if (logicalOper[i].equalsIgnoreCase("OR")) {
+							logvalue = LogicalOperator.OR;
+						}
 						if (logicalOper[i].equalsIgnoreCase("0")) {
 							logvalue = LogicalOperator.AND;
 						} else if (logicalOper[i].equalsIgnoreCase("1")) {
@@ -519,6 +638,16 @@ public class ExchangeDataController extends BaseController
 				if (i < relsize) {
 					if ((relationalOper[i] != null)
 							|| (relationalOper[i] != "")) {
+						if (relationalOper[i].equalsIgnoreCase("EqualTo")) {
+							reValue = RelationalOperator.EQUAL_TO;
+						} else if (relationalOper[i].equalsIgnoreCase("NotEqualTo")) {
+							reValue = RelationalOperator.NOT_EQUAL_TO;
+						} else if (relationalOper[i].equalsIgnoreCase("GreaterThan")) {
+							reValue = RelationalOperator.GREATER_THAN;
+						}
+						if (relationalOper[i].equalsIgnoreCase("LessThan")) {
+							reValue = RelationalOperator.LESSER_THAN;
+						}
 						if (relationalOper[i].equalsIgnoreCase("0")) {
 							reValue = RelationalOperator.EQUAL_TO;
 						} else if (relationalOper[i].equalsIgnoreCase("1")) {
@@ -578,6 +707,13 @@ public class ExchangeDataController extends BaseController
 				int sortSize = sortOrder.length;
 				SortOrder order = null;
 				if (i < sortSize) {
+					if ((sortOrder[i].equalsIgnoreCase("Asc"))
+							|| (sortOrder[i].equalsIgnoreCase("Asc"))) {
+						order = SortOrder.ASC;
+					} else if ((sortOrder[i].equalsIgnoreCase("Desc"))
+							|| (sortOrder[i].equalsIgnoreCase("Desc"))) {
+						order = SortOrder.DESC;
+					}
 					if ((sortOrder[i].equalsIgnoreCase("0"))
 							|| (sortOrder[i].equalsIgnoreCase("Asc"))) {
 						order = SortOrder.ASC;
@@ -601,7 +737,7 @@ public class ExchangeDataController extends BaseController
 			}
 			System.out.println("---");
 			exchangeDataModel.saveDataFilterExpression(mexp, commName, scope,
-					name, mOex);
+					xid, mOex);
 		} catch (Exception e) {
 			 e.printStackTrace();
 			return ERROR;
@@ -614,7 +750,7 @@ public class ExchangeDataController extends BaseController
 		try {
 			 ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session); 
 			DataFilter dataFilter = exchangeDataModel.getDataFilter(
-					commName, scope, name);
+					commName, scope, xid);
 			if (dataFilter != null) {
 				Expressions ex = dataFilter.getExpressions();
 				List<Expression> exs = ex.getItems();
@@ -629,24 +765,30 @@ public class ExchangeDataController extends BaseController
 						if (e.getRelationalOperator().equals(
 								RelationalOperator.EQUAL_TO)) {
 							rel = "0";
+						//	rel = "EqualTo";
 						} else if (e.getRelationalOperator().equals(
 								RelationalOperator.NOT_EQUAL_TO)) {
 							rel = "1";
+						//	rel = "NotEqualTo";
 						} else if (e.getRelationalOperator().equals(
 								RelationalOperator.GREATER_THAN)) {
 							rel = "2";
+						//	rel = "GreaterThan";
 						} else if (e.getRelationalOperator().equals(
 								RelationalOperator.LESSER_THAN)) {
 							rel = "3";
+							//rel = "LessThan";
 						}
 					}
 					String log = null;
 					if (e.getLogicalOperator() != null) {
 						if (e.getLogicalOperator().equals(LogicalOperator.AND)) {
-							log = "0";
+						log = "0";
+						//	log="AND";
 						} else if (e.getLogicalOperator().equals(
 								LogicalOperator.OR)) {
 							log = "1";
+					//	log = "OR";
 						}
 					}
 
@@ -657,7 +799,7 @@ public class ExchangeDataController extends BaseController
 
 					dataF.add(new Integer(e.getOpenGroupCount()).toString());
 					dataF.add(log);
-					dataF.add(rel);
+			    	dataF.add(rel);
 					dataF.add(e.getPropertyName());
 					dataF.add(val);
 					dataF.add(new Integer(e.getCloseGroupCount()).toString());
@@ -676,7 +818,7 @@ public class ExchangeDataController extends BaseController
 		try {
 			 ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session); 
 			DataFilter dataFilter = exchangeDataModel.getDataFilter(
-					commName, scope, name);
+					commName, scope, xid);
 			if (dataFilter != null) {
 				OrderExpressions oex = dataFilter.getOrderExpressions();
 				List<OrderExpression> oexs = oex.getItems();
@@ -1203,4 +1345,37 @@ public class ExchangeDataController extends BaseController
 	public Map<String, String> getSummaryGrid() {
     return summaryGrid;
   }
+
+	public List<List<String>> getColumnNames() {
+		return columnNames;
+	}
+
+	public void setColumnNames(List<List<String>> columnNames) {
+		this.columnNames = columnNames;
+	}
+
+	public List<List<String>> getRelationOperator() {
+		return relationOperator;
+	}
+
+	public void setRelationOperator(List<List<String>> relationOperator) {
+		this.relationOperator = relationOperator;
+	}
+
+	public List<List<String>> getLogicalOperator() {
+		return logicalOperator;
+	}
+
+	public void setLogicalOperator(List<List<String>> logicalOperator) {
+		this.logicalOperator = logicalOperator;
+	}
+
+	public List<List<String>> getSortOrderList() {
+		return sortOrderList;
+	}
+
+	public void setSortOrderList(List<List<String>> sortOrderList) {
+		this.sortOrderList = sortOrderList;
+	}
+	
 }
