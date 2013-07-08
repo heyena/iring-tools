@@ -2515,6 +2515,23 @@ function editDataFilter() {
 					}
 					Ext.getCmp('openCount_' + (i + 1)).setValue(open);
 					Ext.getCmp('propertyName_' + (i + 1)).setValue(prop);
+					 var columnName =	Ext.getCmp('propertyName_'+ (i + 1)).getValue();
+                     RelationalStore = new Ext.data.ArrayStore({
+							autoDestroy: true,
+							autoLoad:true,
+							url : 'getRelational?'+'&name='+columnName,
+						     fields: [ {
+						            name: 'name'
+						        },
+						        {
+						            name: 'value'
+						        }],
+						       
+						    });
+                     RelationalStore.on('load', function (store, records, options) {			 
+                 	}, this);
+                     Ext.getCmp('relationalOperator_'+ (i + 1)).bindStore(RelationalStore);
+                    	
 				    Ext.getCmp('relationalOperator_' + (i + 1)).setValue(relValue);
 				//	Ext.getCmp('relationalOperator_'+ (i + 1)).select(rel, true);
 					Ext.getCmp('value_' + (i + 1)).setValue(value);
@@ -2619,7 +2636,7 @@ function applyDataFilter(url) {
 	var RelationalStore = new Ext.data.ArrayStore({
 		autoDestroy: true,
 		autoLoad:true,
-		url : 'getRelational',
+		url : 'getRelational?'+'&name='+"allOpr",
 	     fields: [ {
 	            name: 'name'
 	        },
@@ -2628,6 +2645,8 @@ function applyDataFilter(url) {
 	        }],
 	       
 	    });
+	RelationalStore.on('load', function (store, records, options) {			 
+	}, this);
 	
 	var LogicalStore = new Ext.data.ArrayStore({
 		autoDestroy: true,
@@ -2792,7 +2811,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 												var RelationalStore = new Ext.data.ArrayStore({
 													autoDestroy: true,
 													autoLoad:true,
-													url : 'getRelational',
+													url : 'getRelational?'+'&name='+"allOpr",
 												     fields: [ {
 												            name: 'name'
 												        },
@@ -2843,8 +2862,31 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																            lazyRender: true,
 																            store: ColumnNameStore,
 																            displayField: 'name',										  
-																            //   valueField: 'value',
+																            listeners:{
+													                            scope:this,
+													                            select : function(){
+													                            var columnName =	Ext.getCmp('propertyName_'+rowCount).getValue();
+													                             RelationalStore = new Ext.data.ArrayStore({
+																						autoDestroy: true,
+																						autoLoad:true,
+																						url : 'getRelational?'+'&name='+columnName,
+																					     fields: [ {
+																					            name: 'name'
+																					        },
+																					        {
+																					            name: 'value'
+																					        }],
+																					       
+																					    });
+													                             RelationalStore.on('load', function (store, records, options) {			 
+													                         	}, this);
+													                             Ext.getCmp('relationalOperator_'+rowCount).bindStore(RelationalStore);
+													                            
+																            }
+																            }
+																         //   valueField: 'value',
 																		},
+																		
 																		{
 																			xtype : 'combo',
 																			id : 'relationalOperator_'+rowCount,
@@ -2865,7 +2907,8 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																            typeAhead: true,
 																            triggerAction: 'all',
 																            lazyRender: true,																            
-																            displayField: 'value',		
+																            displayField: 'value',	
+																           
 																		},
 																		{
 																			xtype : 'textfield',
@@ -3123,11 +3166,26 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 										            displayField: 'name',
 										            listeners:{
 							                            scope:this,
-							                            beforerender: function(){
-							                            	Ext.getCmp('propertyName_1').bindStore(ColumnNameStore);
-							                            }
-										            }
-										         //   valueField: 'value',
+							                            select: function(){
+							                            var columnName =	Ext.getCmp('propertyName_1').getValue();
+							                             RelationalStore = new Ext.data.ArrayStore({
+																autoDestroy: true,
+																autoLoad:true,
+																url : 'getRelational?'+'&name='+columnName,
+															     fields: [ {
+															            name: 'name'
+															        },
+															        {
+															            name: 'value'
+															        }],
+															       
+															    });
+							                             RelationalStore.on('load', function (store, records, options) {			 
+								                         	}, this);
+							                             Ext.getCmp('relationalOperator_1').bindStore(RelationalStore);
+							                            	
+							                            }												
+										            }										         //   valueField: 'value',
 												},
 												{
 													xtype : 'combo',
@@ -3150,6 +3208,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 										            triggerAction: 'all',
 										            lazyRender: true,																            
 										            displayField: 'value',	
+										          
 												},
 												{
 													xtype : 'textfield',
