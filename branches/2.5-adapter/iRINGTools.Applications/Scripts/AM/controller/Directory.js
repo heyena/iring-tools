@@ -609,6 +609,40 @@ Ext.define('AM.controller.Directory', {
     me.onShowDataGrid(item, e, eOpts);
   },
 
+  onTextfieldBlur: function(component, e, eOpts) {
+
+    if(component.dataIndex!=undefined){
+      var me = this;
+      var gridPanel  = me.getMainContent().activeTab;
+      var gridStore = gridPanel.getStore();
+      var gridProxy = gridStore.getProxy();
+      gridStore.currentPage = 1;
+      gridProxy.on('exception', function (proxy, response, operation) {
+        //centerPanel.getEl().unmask();
+        gridPanel.destroy();
+        var rtext = response.responseText;
+        if(rtext!=undefined){
+          var error = 'SUCCESS = FALSE';
+          var index = rtext.toUpperCase().indexOf(error);
+          msg = rtext;
+          showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
+
+        }
+
+      }, me);
+      gridStore.load({
+        callback: function (records, response) 
+        {                                     
+          if(records!=undefined && records[0]!=undefined && records[0].store.proxy.reader.metaData) {
+            gridPanel.reconfigure(gridStore,  records[0].store.proxy.reader.metaData.columns);
+          }
+
+        }
+      });
+
+    }
+  },
+
   init: function(application) {
     scopForExport = null;
     appForExport = null;
@@ -654,6 +688,9 @@ Ext.define('AM.controller.Directory', {
       },
       "menuitem[action=refreshdata]": {
         click: this.onAppDataRefreshClick
+      },
+      "textfield": {
+        blur: this.onTextfieldBlur
       }
     });
   },

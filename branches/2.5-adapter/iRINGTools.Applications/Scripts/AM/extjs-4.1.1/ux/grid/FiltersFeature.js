@@ -110,7 +110,8 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
      * Set this to false to prevent the datastore from being reloaded if there
      * are changes to the filters.  See <code>{@link #updateBuffer}</code>.
      */
-    autoReload : true,
+  //  autoReload : true,
+    autoReload : false,
     /**
      * @cfg {Boolean} encode
      * Specify true for {@link #buildQuery} to use Ext.util.JSON.encode to
@@ -161,7 +162,8 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
      * @cfg {Number} updateBuffer
      * Number of milliseconds to defer store updates since the last filter change.
      */
-    updateBuffer : 500,
+    updateBuffercheck : 10000,
+    updateBufferuncheck : 500,
 
     // doesn't handle grid body events
     hasFeatureEvent: false,
@@ -459,6 +461,7 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
     /** @private */
     onCheckChange : function (item, value) {
         this.getMenuFilter().setActive(value);
+      
     },
 
     /** @private */
@@ -480,10 +483,18 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
             if (filter == me.getMenuFilter()) {
                 me.menuItem.setChecked(filter.active, false);
             }
-
+            me.autoReload = true;
             if ((me.autoReload || me.local) && !me.applyingState) {
-                me.deferredUpdate.delay(me.updateBuffer);
+            	if(filter.active){
+            	me.autoReload = false;
+             //   me.deferredUpdate.delay(me.updateBuffercheck);
+            	}
+            	else{
+            		me.autoReload = true;
+            		 me.deferredUpdate.delay(me.updateBufferuncheck);
+            	}
             }
+           
             me.updateColumnHeadings();
 
             if (!me.applyingState) {

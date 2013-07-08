@@ -189,14 +189,19 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
     var me = this;
     var dsValue, serName;
     var connStrParts = connString.split(';');
-    var dbDict = dirNode.data.record.dbDict;
-    var provider = dbDict.Provider.toUpperCase();
+    var dbDict ;
+    var provider
+    if(dirNode.data.record && dirNode.data.record.dbDict){
+      dbDict = dirNode.data.record.dbDict;
+      provider = dbDict.Provider.toUpperCase();
+    }
 
-    if (dirNode.data.record.dbInfo === undefined) {
+
+    if (dirNode.data.record && dirNode.data.record.dbInfo === undefined) {
       dirNode.data.record.dbInfo = {};
     }
 
-    if (!dirNode.data.record.dbInfo.dbUserName)
+    if (dirNode.data.record && dirNode.data.record.dbInfo && dbDict && !dirNode.data.record.dbInfo.dbUserName)
     dirNode.data.record.dbInfo.dbName = dbDict.SchemaName;
 
     for (var i = 0; i < connStrParts.length; i++) {
@@ -255,7 +260,10 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
         break;
       }
     }
+    if(dirNode.data.record)
     return dirNode.data.record.dbInfo;
+    else
+    return {};
   },
 
   getTableNames: function(context, endpoint, baseUrl, dirNode) {

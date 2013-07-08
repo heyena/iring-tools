@@ -644,9 +644,17 @@ Ext.define('AM.controller.NHibernate', {
     var node = tree.getSelectedNode();
     var propertyNameField = form.getForm().findField('propertyName');
     var propertyName = propertyNameField.getValue();
-
+    var isHidden = form.getForm().findField('isHidden').getValue();
     if (propertyNameField.validate()) {
       node.data.property.propertyName = propertyName;
+      node.data.property.isHidden = isHidden;
+      node.data.property.nullable = form.getForm().findField('isNullable').getValue();
+      node.data.property.showOnIndex = form.getForm().findField('showOnIndex').getValue();
+      node.raw.properties.propertyName = propertyName;
+      node.raw.properties.isHidden = isHidden;
+      node.raw.properties.nullable = form.getForm().findField('isNullable').getValue();
+      node.raw.properties.showOnIndex = form.getForm().findField('showOnIndex').getValue();
+
       node.set('text', propertyName);
     }
     else {
@@ -686,7 +694,13 @@ Ext.define('AM.controller.NHibernate', {
     if (propertyNameField.validate()) {
       node.data.property.propertyName = propertyName;
       node.data.property.isHidden = isHidden;
-      //node.data.property.columnName = propertyName;
+      node.data.property.nullable = form.getForm().findField('isNullable').getValue();
+      node.data.property.showOnIndex = form.getForm().findField('showOnIndex').getValue();
+      node.raw.properties.propertyName = propertyName;
+      node.raw.properties.isHidden = isHidden;
+      node.raw.properties.nullable = form.getForm().findField('isNullable').getValue();
+      node.raw.properties.showOnIndex = form.getForm().findField('showOnIndex').getValue();
+
       node.set('text', propertyName);
     }
     else {
@@ -2092,7 +2106,20 @@ Ext.define('AM.controller.NHibernate', {
     var treeNode = nhibernatePanel.treeNode;
 
     form.setActiveRecord(treeNode.data.property);
+    var property = treeNode.data.property;
+    if (property.showOnIndex.toString().toLowerCase() == 'true') {
+      form.getForm().findField('showOnIndex').setValue(true);
+    }
+    else {
+      form.getForm().findField('showOnIndex').setValue(false);
+    }
 
+    if (property.nullable.toString().toLowerCase() == 'true') {
+      form.getForm().findField('isNullable').setValue(true);
+    }
+    else {
+      form.getForm().findField('isNullable').setValue(false);
+    }
     panel = nhibernatePanel.down('#nhibernateContent');
 
     panel.removeAll();
@@ -2136,6 +2163,20 @@ Ext.define('AM.controller.NHibernate', {
     var treeNode = nhibernatePanel.treeNode;
 
     form.setActiveRecord(treeNode.data.property);
+    var property = treeNode.data.property;
+    if (property.showOnIndex.toString().toLowerCase() == 'true') {
+      form.getForm().findField('showOnIndex').setValue(true);
+    }
+    else {
+      form.getForm().findField('showOnIndex').setValue(false);
+    }
+
+    if (property.nullable.toString().toLowerCase() == 'true') {
+      form.getForm().findField('isNullable').setValue(true);
+    }
+    else {
+      form.getForm().findField('isNullable').setValue(false);
+    }
 
     panel = nhibernatePanel.down('#nhibernateContent');
 
@@ -2341,8 +2382,12 @@ Ext.define('AM.controller.NHibernate', {
           tagProps.isNullable = keyNodeProf.nullable.toString().toLowerCase();
           else
           tagProps.isNullable = 'false';
-
+          if (keyNodeProf.isHidden)
+          tagProps.isHidden = keyNodeProf.isHidden.toString().toLowerCase();
+          else
           tagProps.isHidden = 'false';
+
+          //tagProps.isHidden = 'false';
 
           if (!keyNodeProf.keyType)
           tagProps.keyType = 1;
@@ -2478,7 +2523,7 @@ Ext.define('AM.controller.NHibernate', {
       else
       props.showOnIndex = 'false';
 
-      props.isHidden = ifHidden;
+      props.isHidden = propertyNode.raw.properties.isHidden.toString().toLowerCase();//ifHidden;
       props.numberOfDecimals = propertyNode.raw.properties.numberOfDecimals;
       folder.dataProperties.push(props);
     }

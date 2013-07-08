@@ -26,7 +26,7 @@ Ext.define('AM.store.DataGridStore', {
     me.callParent([Ext.apply({
       autoLoad: false,
       model: 'AM.model.DynamicModel',
-      remoteFilter: true,
+      remoteSort: true,
       storeId: 'DataGridStore',
       pageSize: 25,
       proxy: {

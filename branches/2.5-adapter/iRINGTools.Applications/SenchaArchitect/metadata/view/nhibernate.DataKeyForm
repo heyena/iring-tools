@@ -111,22 +111,6 @@
             "designerId": "2bfba4b8-ed6b-4eab-9f6b-c0c1c6a016e4"
         },
         {
-            "type": "Ext.form.field.Text",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": "100%",
-                "fieldLabel": "Nullable",
-                "labelWidth": 160,
-                "name": "nullable",
-                "readOnly": true
-            },
-            "designerId": "b983e87b-21f2-4901-aefc-c976b399da94"
-        },
-        {
             "type": "Ext.form.field.Checkbox",
             "reference": {
                 "name": "items",
@@ -135,31 +119,14 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "hidden": true,
                 "fieldLabel": "Nullable",
-                "name": "nullable",
+                "name": "isNullable",
                 "readOnly": true,
                 "boxLabel": null
             },
             "designerId": "c42d7945-900a-449c-ab3b-d1cc04c8c09f"
         },
         {
-            "type": "Ext.form.field.Text",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": "100%",
-                "fieldLabel": "Show on Index",
-                "labelWidth": 160,
-                "name": "showOnIndex",
-                "readOnly": true
-            },
-            "designerId": "e46585b0-be13-458c-8fe8-4ac21ef32c62"
-        },
-        {
             "type": "Ext.form.field.Checkbox",
             "reference": {
                 "name": "items",
@@ -168,7 +135,6 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "hidden": true,
                 "fieldLabel": "Show on Index",
                 "name": "showOnIndex",
                 "boxLabel": null
@@ -216,22 +182,6 @@
             "userConfig": {
                 "layout|anchor": "100%",
                 "hidden": true,
-                "fieldLabel": "Hidden",
-                "labelWidth": 160,
-                "name": "isHidden",
-                "readOnly": true
-            },
-            "designerId": "b24a11ec-8e56-4574-a3a6-a4f45dabb030"
-        },
-        {
-            "type": "Ext.form.field.Text",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": "100%",
                 "fieldLabel": "Key Type",
                 "labelWidth": 160,
                 "name": "keyType",

@@ -819,17 +819,17 @@
                     "//store.load(node);\r",
                     "tree.body.mask('Loading...', 'x-mask-loading');\r",
                     "store.load({\r",
-                    "    callback: function (records, options, success) {\r",
-                    "      var nodes = state.expandedNodes || [],\r",
+                    "  callback: function (records, options, success) {\r",
+                    "    var nodes = state.expandedNodes || [],\r",
                     "      len = nodes.length;\r",
-                    "      tree.collapseAll();\r",
-                    "      Ext.each(nodes, function (path) {\r",
-                    "        tree.expandPath(path, 'text');\r",
-                    "      });\r",
-                    "       tree.body.unmask();\r",
-                    "    }\r",
+                    "    tree.collapseAll();\r",
+                    "    Ext.each(nodes, function (path) {\r",
+                    "      tree.expandPath(path, 'text');\r",
+                    "    });\r",
+                    "    tree.body.unmask();\r",
+                    "  }\r",
                     "\r",
-                    "  });\r",
+                    "});\r",
                     ""
                 ],
                 "name": "click",
@@ -909,6 +909,55 @@
                 ]
             },
             "designerId": "5080a228-4978-4d56-8ac2-a4523c085a00"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onTextfieldBlur",
+                "implHandler": [
+                    "\r",
+                    "if(component.dataIndex!=undefined){\r",
+                    "  var me = this;\r",
+                    "  var gridPanel  = me.getMainContent().activeTab;\r",
+                    "  var gridStore = gridPanel.getStore();\r",
+                    "  var gridProxy = gridStore.getProxy();\r",
+                    "  gridStore.currentPage = 1;\r",
+                    "  gridProxy.on('exception', function (proxy, response, operation) {\r",
+                    "    //centerPanel.getEl().unmask();\r",
+                    "    gridPanel.destroy();\r",
+                    "    var rtext = response.responseText;\r",
+                    "    if(rtext!=undefined){\r",
+                    "      var error = 'SUCCESS = FALSE';\r",
+                    "      var index = rtext.toUpperCase().indexOf(error);\r",
+                    "      msg = rtext;\r",
+                    "      showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);\r",
+                    "      \r",
+                    "    }\r",
+                    "    \r",
+                    "  }, me);\r",
+                    "  gridStore.load({\r",
+                    "    callback: function (records, response) \r",
+                    "    {                                     \r",
+                    "      if(records!=undefined && records[0]!=undefined && records[0].store.proxy.reader.metaData) {\r",
+                    "        gridPanel.reconfigure(gridStore,  records[0].store.proxy.reader.metaData.columns);\r",
+                    "      }\r",
+                    "      \r",
+                    "    }\r",
+                    "  });\r",
+                    "  \r",
+                    "}"
+                ],
+                "name": "blur",
+                "scope": "me",
+                "designer|targetType": "Ext.form.field.Text",
+                "designer|controlQuery": "textfield"
+            },
+            "designerId": "c9a5f019-4a7d-4008-8ee0-399b2fe492bf"
         }
     ]
 }
