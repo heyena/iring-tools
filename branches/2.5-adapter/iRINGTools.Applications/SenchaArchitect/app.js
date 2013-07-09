@@ -30,7 +30,9 @@ Ext.application({
     'AM.view.menus.AppDataRefreshMenu',
     'AM.view.nhibernate.MultiSelectComponentGrid',
     'AM.view.mapping.LiteralForm',
-    'AM.view.mapping.LiteralWindow'
+    'AM.view.mapping.LiteralWindow',
+    'AM.view.directory.FileUpoadForm',
+    'AM.view.directory.FileUploadWindow'
   ],
   models: [
     'RelationModel'
@@ -45,7 +47,9 @@ Ext.application({
     'nhibernate.MultiSelectComponentGrid',
     'mapping.LiteralForm',
     'MyToolbar29',
-    'mapping.LiteralWindow'
+    'mapping.LiteralWindow',
+    'directory.FileUpoadForm',
+    'directory.FileUploadWindow'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

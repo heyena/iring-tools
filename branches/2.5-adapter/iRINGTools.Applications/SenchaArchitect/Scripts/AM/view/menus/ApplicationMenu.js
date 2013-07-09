@@ -45,6 +45,11 @@ Ext.define('AM.view.menus.ApplicationMenu', {
           action: 'configureendpoint',
           icon: 'Content/img/16x16/preferences-system.png',
           text: 'Open Configuration'
+        },
+        {
+          xtype: 'menuitem',
+          action: 'fileupload',
+          text: 'Upload File'
         }
       ]
     });

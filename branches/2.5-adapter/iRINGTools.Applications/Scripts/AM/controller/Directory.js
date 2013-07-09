@@ -58,7 +58,9 @@ Ext.define('AM.controller.Directory', {
     'menus.RolemapMenu',
     'menus.ClassmapMenu',
     'menus.ValueListMapMenu',
-    'menus.AppDataRefreshMenu'
+    'menus.AppDataRefreshMenu',
+    'directory.FileUpoadForm',
+    'directory.FileUploadWindow'
   ],
 
   refs: [
@@ -643,6 +645,33 @@ Ext.define('AM.controller.Directory', {
     }
   },
 
+  onFileUpload: function(item, e, eOpts) {
+
+    var me = this;
+    var win = Ext.widget('fileuploadwindow');
+    var form = win.down('form');
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode();
+
+    var formRecord = {
+      scope: node.parentNode.data.text,
+      application: node.data.text 
+    };
+
+
+    form.getForm().setValues(formRecord);
+
+    win.on('Save', function () {
+      win.destroy();
+    }, me);
+
+    win.on('reset', function () {
+      win.destroy();
+    }, me);
+
+    win.show();
+  },
+
   init: function(application) {
     scopForExport = null;
     appForExport = null;
@@ -691,6 +720,9 @@ Ext.define('AM.controller.Directory', {
       },
       "textfield": {
         blur: this.onTextfieldBlur
+      },
+      "menuitem[action=fileupload]": {
+        click: this.onFileUpload
       }
     });
   },

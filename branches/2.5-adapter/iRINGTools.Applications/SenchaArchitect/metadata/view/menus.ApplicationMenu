@@ -85,6 +85,27 @@
                     "type": "string"
                 }
             ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "fileupload",
+                "icon": null,
+                "text": "Upload File"
+            },
+            "designerId": "66be8e28-458b-4bc9-b122-ae2e3683fb09",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
         }
     ]
 }

@@ -932,6 +932,22 @@
                 "Scripts/AM/view/mapping/LiteralWindow.js"
             ],
             "className": "mapping.LiteralWindow"
+        },
+        "10e81d90-8b94-4aa5-9dcd-98525d8deb1f": {
+            "paths": [
+                "metadata/view/directory.FileUpoadForm",
+                "Scripts/AM/view/override/directory/FileUpoadForm.js",
+                "Scripts/AM/view/directory/FileUpoadForm.js"
+            ],
+            "className": "directory.FileUpoadForm"
+        },
+        "18eb1a6e-206c-40d2-89c8-7aeb77e0f9d1": {
+            "paths": [
+                "metadata/view/directory.FileUploadWindow",
+                "Scripts/AM/view/override/directory/FileUploadWindow.js",
+                "Scripts/AM/view/directory/FileUploadWindow.js"
+            ],
+            "className": "directory.FileUploadWindow"
         }
     },
     "viewOrderMap": {
@@ -1010,7 +1026,9 @@
             "0649446d-cfb0-4646-8081-ce7bd59c7cd6",
             "55e4d2fa-9ebe-4466-b024-6d81829b1584",
             "bc637baa-a3fd-4d38-b427-e9c1098119ce",
-            "bb8382aa-382a-45f1-b826-b4b5884cb6ae"
+            "bb8382aa-382a-45f1-b826-b4b5884cb6ae",
+            "10e81d90-8b94-4aa5-9dcd-98525d8deb1f",
+            "18eb1a6e-206c-40d2-89c8-7aeb77e0f9d1"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

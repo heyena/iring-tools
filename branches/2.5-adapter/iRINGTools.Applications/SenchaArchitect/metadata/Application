@@ -19,7 +19,9 @@
             "nhibernate.MultiSelectComponentGrid",
             "mapping.LiteralForm",
             "MyToolbar29",
-            "mapping.LiteralWindow"
+            "mapping.LiteralWindow",
+            "directory.FileUpoadForm",
+            "directory.FileUploadWindow"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

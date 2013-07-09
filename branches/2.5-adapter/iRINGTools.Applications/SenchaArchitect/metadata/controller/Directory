@@ -48,7 +48,9 @@
             "menus.RolemapMenu",
             "menus.ClassmapMenu",
             "menus.ValueListMapMenu",
-            "menus.AppDataRefreshMenu"
+            "menus.AppDataRefreshMenu",
+            "directory.FileUpoadForm",
+            "directory.FileUploadWindow"
         ],
         "designer|userClassName": "Directory"
     },
@@ -958,6 +960,48 @@
                 "designer|controlQuery": "textfield"
             },
             "designerId": "c9a5f019-4a7d-4008-8ee0-399b2fe492bf"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onFileUpload",
+                "implHandler": [
+                    "\r",
+                    "var me = this;\r",
+                    "var win = Ext.widget('fileuploadwindow');\r",
+                    "var form = win.down('form');\r",
+                    "var tree = me.getDirTree();\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "\r",
+                    "var formRecord = {\r",
+                    "  scope: node.parentNode.data.text,\r",
+                    "  application: node.data.text \r",
+                    "};\r",
+                    "\r",
+                    "\r",
+                    "form.getForm().setValues(formRecord);\r",
+                    "\r",
+                    "win.on('Save', function () {\r",
+                    "  win.destroy();\r",
+                    "}, me);\r",
+                    "\r",
+                    "win.on('reset', function () {\r",
+                    "  win.destroy();\r",
+                    "}, me);\r",
+                    "\r",
+                    "win.show();"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=fileupload]"
+            },
+            "designerId": "d2ae41dd-5842-4769-ac3b-8b813cc54666"
         }
     ]
 }
