@@ -100,12 +100,12 @@ Ext.define('AM.view.directory.FileUpoadForm', {
           win.fireEvent('save', me);
         },
         failure: function (result, request) {
-          message = 'Failed to Map Constant to RoleMap';
+          message = 'Failed to upload file.';
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
       });
     } else {
-      message = 'Form is not complete. Cannot save record.';
+      message = 'Form is not complete. Cannot upload file.';
       showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
     }
 
