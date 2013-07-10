@@ -237,8 +237,37 @@ Ext.onReady(function () {
   directoryPanel.on('editgraphname', function (npanel, node) {
     contentPanel.removeAll(true);
   }, this);
+ directoryPanel.on('upload', function (npanel, node) {
+	  var newTab = new AdapterManager.FileUpload({
+		  id: 'tab-' + node.id,
+		  record: node,
+		  url: 'spreadsheet/upload'
+      });
+    newTab.on('save', function (panel) {
+      win.close();
+    }, this);
 
-  directoryPanel.on('configure', function (npanel, node) {
+    newTab.on('Cancel', function (panel) {
+      win.close();
+    }, this);
+
+    var win = new Ext.Window({
+      closable: true,
+      id: 'newwin-' + node.id,
+      modal: false,
+      layout: 'fit',
+      title: 'File Upload',
+      //iconCls: 'tabsScope',
+      height: 80,
+      width: 300,
+      plain: true,
+      items: newTab
+    });
+    win.show();
+	
+}, this);
+
+ directoryPanel.on('configure', function (npanel, node) {
   
     var dataLayerValue = node.attributes.record.DataLayer;
     var parentNode = node.parentNode;
