@@ -685,6 +685,16 @@ namespace org.iringtools.services
         response.StatusCode = HttpStatusCode.InternalServerError;
       }
 
+      if (response.Messages != null)
+      {
+        foreach (string msg in response.Messages)
+        {
+          response.StatusText += msg;
+        }
+
+        response.Messages.Clear();
+      }
+
       foreach (Status status in response.StatusList)
       {
         foreach (string msg in status.Messages)
