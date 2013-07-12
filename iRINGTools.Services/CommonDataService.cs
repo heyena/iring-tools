@@ -257,28 +257,25 @@ namespace org.iringtools.services
     {
       try
       {
-        if (format != null)
+        format = MapContentType(format);
+
+        // if format is one of the part 7 formats
+        if (format == "rdf" || format == "dto" || format == "p7xml")
         {
-          format = format.ToLower();
+          // id is clazz, related is individual
+          object content = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, false);
+          _adapterProvider.FormatOutgoingMessage(content, format);
+        }
+        else
+        {
+          NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-          // if format is one of the part 7 formats
-          if (format == "rdf" || format == "dto" || format == "p7xml")
-          {
-            // id is clazz, related is individual
-            object content = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, false);
-            _adapterProvider.FormatOutgoingMessage(content, format);
-          }
-          else
-          {
-            NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+          bool fullIndex = false;
+          if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+            fullIndex = true;
 
-            bool fullIndex = false;
-            if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-              fullIndex = true;
-
-            XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
-            _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
-          }
+          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
         }
       }
       catch (Exception ex)
@@ -291,15 +288,12 @@ namespace org.iringtools.services
     {
       try
       {
-        if (format != null)
-        {
-          format = format.ToLower();
+        format = MapContentType(format);
 
-          // if format is one of the part 7 formats
-          if (format == "rdf" || format == "dto" || format == "p7xml")
-          {
-            throw new Exception("Not supported.");
-          }
+        // if format is one of the part 7 formats
+        if (format == "rdf" || format == "dto" || format == "p7xml")
+        {
+          throw new Exception("Not supported.");
         }
         else
         {
