@@ -76,11 +76,10 @@ namespace org.iringtools.adapter.projection
     protected ClassificationTemplate _classificationConfig;
 
     protected AdapterSettings _settings = null;
-    protected IDataLayer2 _dataLayer = null;
-    protected Mapping _mapping = null;
     protected DataDictionary _dictionary = null;
+    protected Mapping _mapping = null;
     protected GraphMap _graphMap = null;
-    protected IList<IDataObject> _dataObjects = null;
+    protected List<IDataObject> _dataObjects = null;
     protected Dictionary<string, string>[] _dataRecords = null;
     protected List<string> _relatedObjectPaths = null;
     protected string _fixedIdentifierBoundary = "#";
@@ -104,15 +103,14 @@ namespace org.iringtools.adapter.projection
     public int Limit { get; set; }
     public string BaseURI { get; set; }
 
-    public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
+    public BasePart7ProjectionEngine(AdapterSettings settings, DataDictionary dictionary, Mapping mapping)
     {
       _dataObjects = new List<IDataObject>();
       _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
 
       _settings = settings;
-      _dataLayer = dataLayer;
+      _dictionary = dictionary;
       _mapping = mapping;
-      _dictionary = _dataLayer.GetDictionary();
 
       if (!String.IsNullOrEmpty(_settings["fixedIdentifierBoundary"]))
       {
@@ -151,9 +149,9 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
-    public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier);
-    public abstract IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);
+    public abstract XDocument ToXml(string graphName, ref List<IDataObject> dataObjects);
+    public abstract XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, string className, string classIdentifier);
+    public abstract List<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);
 
     //propertyPath = "Instrument.LineItems.Tag";
     protected List<IDataObject> GetRelatedObjects(string propertyPath, IDataObject dataObject)
@@ -178,13 +176,18 @@ namespace org.iringtools.adapter.projection
           {
             List<IDataObject> relatedObjects = new List<IDataObject>();
 
-            foreach (IDataObject relatedObj in _dataLayer.GetRelatedObjects(parentObj, objectPath[i]))
-            {
-              if (!relatedObjects.Contains(relatedObj))
-              {
-                relatedObjects.Add(relatedObj);
-              }
-            }
+            //
+            //TODO: process related objects
+            //
+            //List<IDataObject> relatedObjects = _dataLayerGateway.Get(parentObj, objectPath[i]);
+
+            //foreach (IDataObject relatedObj in relatedObjects)
+            //{
+            //  if (!relatedObjects.Contains(relatedObj))
+            //  {
+            //    relatedObjects.Add(relatedObj);
+            //  }
+            //}
 
             parentObjects = relatedObjects;
           }
@@ -382,7 +385,12 @@ namespace org.iringtools.adapter.projection
 
     protected void AddRelatedObject(string relatedObjectType, string relatedObjectIdentifier, Dictionary<string, string> relatedRecord)
     {
-      IDataObject relatedObject = _dataLayer.Create(relatedObjectType, new List<string> { relatedObjectIdentifier }).First();
+      //TODO: set state
+      IDataObject relatedObject = new SerializableDataObject()
+      {
+        Type = relatedObjectType,
+        Id = relatedObjectIdentifier
+      };
 
       if (relatedObject.GetType() == typeof(GenericDataObject))
       {
@@ -399,25 +407,39 @@ namespace org.iringtools.adapter.projection
 
     protected void ProcessInboundClassIdentifiers(int dataObjectIndex, ClassMap classMap, int classObjectIndex, string identifierValue)
     {
-      string[] identifierValueParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
-          ? identifierValue.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
-          : new string[] { identifierValue };
-
-      for (int identifierPartIndex = 0; identifierPartIndex < identifierValueParts.Length; identifierPartIndex++)
+      if (classMap.identifiers.Count == 1)
       {
-        string identifierPartName = classMap.identifiers[identifierPartIndex];
-        string identifierPartValue = identifierValueParts[identifierPartIndex];
-
-        if (identifierPartName.StartsWith(_fixedIdentifierBoundary) && identifierPartName.EndsWith(_fixedIdentifierBoundary))
-          continue;
-
-        if (identifierPartName.Split('.').Length > 2)  // related property
+        if (classMap.identifiers[0].Split('.').Length > 2)  // related property
         {
-          SetRelatedRecords(dataObjectIndex, classObjectIndex, identifierPartName, new List<string> { identifierPartValue });
+          SetRelatedRecords(dataObjectIndex, classObjectIndex, classMap.identifiers[0], new List<string> { identifierValue });
         }
         else  // direct property
         {
-          _dataRecords[dataObjectIndex][identifierPartName.Substring(identifierPartName.LastIndexOf('.') + 1)] = identifierPartValue;
+          _dataRecords[dataObjectIndex][classMap.identifiers[0].Substring(classMap.identifiers[0].LastIndexOf('.') + 1)] = identifierValue;
+        }
+      }
+      else if (classMap.identifiers.Count > 1)
+      {
+        string[] identifierValueParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
+            ? identifierValue.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+            : new string[] { identifierValue };
+
+        for (int identifierPartIndex = 0; identifierPartIndex < identifierValueParts.Length; identifierPartIndex++)
+        {
+          string identifierPartName = classMap.identifiers[identifierPartIndex];
+          string identifierPartValue = identifierValueParts[identifierPartIndex];
+
+          if (identifierPartName.StartsWith(_fixedIdentifierBoundary) && identifierPartName.EndsWith(_fixedIdentifierBoundary))
+            continue;
+
+          if (identifierPartName.Split('.').Length > 2)  // related property
+          {
+            SetRelatedRecords(dataObjectIndex, classObjectIndex, identifierPartName, new List<string> { identifierPartValue });
+          }
+          else  // direct property
+          {
+            _dataRecords[dataObjectIndex][identifierPartName.Substring(identifierPartName.LastIndexOf('.') + 1)] = identifierPartValue;
+          }
         }
       }
     }
@@ -527,7 +549,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    // turn data record into data object
+    // create data object from data record
     protected IDataObject CreateDataObject(string objectType, int objectIndex)
     {
       Dictionary<string, string> dataRecord = _dataRecords[objectIndex];
@@ -559,131 +581,20 @@ namespace org.iringtools.adapter.projection
         throw new Exception("Key property not mapped.");
       }
 
-      // key property not mapped, create filter to get data object
-      //if (identifier == String.Empty)
-      //{
-      //  DataFilter filter = new DataFilter()
-      //  {
-      //    Expressions = new List<Expression>()
-      //  };
+      SerializableDataObject dataObject = new SerializableDataObject()
+      {
+        Type = objDef.objectName,
+        Id = identifier
+      };
 
-      //  foreach (var pair in dataRecord)
-      //  {
-      //    Expression expression = new Expression()
-      //    {
-      //      Values = new Values()
-      //    };
+      SetAppCode(dataObject);
 
-      //    if (filter.Expressions.Count > 0)
-      //    {
-      //      expression.LogicalOperator = LogicalOperator.And;
-      //    }
+      foreach (var pair in dataRecord)
+      {
+        SetPropertyValue(objDef, pair, dataObject);
+      }
 
-      //    expression.PropertyName = pair.Key;
-      //    expression.Values.Add(pair.Value);
-      //    filter.Expressions.Add(expression);
-      //  }
-
-        //IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, 0, 0);
-
-        //if (dataObjects == null || dataObjects.Count == 0)
-        //{
-        //  // only create data object if key property (properties) is (are) unassigned (auto generated)
-        //  if (!ContainsAssignedKey(objDef))
-        //  {
-        //    IDataObject dataObject = _dataLayer.Create(objectType, null).First();
-        //    SetAppCode(dataObject);
-
-        //    if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
-        //    {
-        //      ((GenericDataObject)dataObject).ObjectType = objectType;
-        //    }
-        //    else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
-        //    {
-        //      ((GenericContentObject)dataObject).ObjectType = objectType;
-        //    }
-
-        //    foreach (var pair in dataRecord)
-        //    {
-        //      SetPropertyValue(objDef, pair, dataObject);
-        //    }
-
-        //    return dataObject;
-        //  }
-        //  else
-        //  {
-        //    _logger.Error("Data object not found and can not be created because it contains assigned key and the key is not mapped.");
-        //    return null;  // return null here and let data layer create proper error status later
-        //  }
-        //}
-        //else if (dataObjects.Count == 1)
-
-        IList<IDataObject> dataObjects = _dataLayer.Create(objectType, new List<string> { identifier });
-
-        if (dataObjects == null || dataObjects.Count == 0)
-        {
-          //IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
-
-          //if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
-          //{
-          //  ((GenericDataObject)dataObject).ObjectType = objectType;
-          //}
-          //else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
-          //{
-          //  ((GenericContentObject)dataObject).ObjectType = objectType;
-          //}
-
-          //SetAppCode(dataObject);
-
-          //foreach (var pair in dataRecord)
-          //{
-          //  SetPropertyValue(objDef, pair, dataObject);
-          //}
-
-          //return dataObject;
-
-          throw new Exception("Data layer failed to create data object for identifier: " + identifier);
-        }
-        else if (dataObjects.Count == 1)
-        {
-          IDataObject dataObject = dataObjects[0];
-          SetAppCode(dataObject);
-
-          foreach (var pair in dataRecord)
-          {
-            SetPropertyValue(objDef, pair, dataObject);
-          }
-
-          return dataObject;
-        }
-        else
-        {
-          _logger.Error("Data object has duplicates.");
-          return null;  // return null here and let data layer create proper error status later
-        }
-      //}
-      //else  // key property is mapped, expect only one data object created/retrieved from data layer
-      //{
-      //  IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
-
-      //  if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
-      //  {
-      //    ((GenericDataObject)dataObject).ObjectType = objectType;
-      //  }
-      //  else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
-      //  {
-      //    ((GenericContentObject)dataObject).ObjectType = objectType;
-      //  }
-
-      //  SetAppCode(dataObject);
-
-      //  foreach (var pair in dataRecord)
-      //  {
-      //    SetPropertyValue(objDef, pair, dataObject);
-      //  }
-
-      //  return dataObject;
-      //}
+      return dataObject;
     }
 
     protected List<IDataObject> GetValueObjects(string propertyMap, int dataObjectIndex)

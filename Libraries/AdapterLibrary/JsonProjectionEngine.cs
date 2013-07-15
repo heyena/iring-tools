@@ -18,17 +18,17 @@ namespace org.iringtools.adapter.projection
   public class JsonProjectionEngine : BaseDataProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(JsonProjectionEngine));
-    private DataDictionary _dictionary = null;
-    string[] arrSpecialcharlist;
-    string[] arrSpecialcharValue;
+    private string[] arrSpecialcharlist;
+    private string[] arrSpecialcharValue;
+    private DataDictionary _dictionary;
 
     [Inject]
-    public JsonProjectionEngine(AdapterSettings settings, DataDictionary dictionary, IDataLayer2 dataLayer)
+    public JsonProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
       : base(settings)
     {
       _settings = settings;
       _dictionary = dictionary;
-      _dataLayer = dataLayer;
+
       if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
       {
         arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
@@ -36,11 +36,10 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects)
     {
       try
       {
-
         string app = _settings["ApplicationName"].ToLower();
         string proj = _settings["ProjectName"].ToLower();
 
@@ -173,7 +172,8 @@ namespace org.iringtools.adapter.projection
 
                   if (validateLinks)
                   {
-                    relObjCount = _dataLayer.GetRelatedCount(dataObj, dataRelationship.relatedObjectName);
+                    //TODO:
+                    //relObjCount = _dataLayer.GetRelatedCount(dataObj, dataRelationship.relatedObjectName);
                   }
 
                   // only add link for related object that has data
@@ -191,7 +191,6 @@ namespace org.iringtools.adapter.projection
                     dataItem.links.Add(relLink);
                   }
                 }
-
               }
 
               dataItems.items.Add(dataItem);
@@ -219,19 +218,19 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
+    public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, string className, string classIdentifier)
     {
       return ToXml(graphName, ref dataObjects);
     }
 
-    public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
+    public override List<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
     {
       try
       {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
-        DataObject objectDefinition = FindGraphDataObject(graphName);
+        List<IDataObject> dataObjects = new List<IDataObject>();
+        DataObject objectType = FindGraphDataObject(graphName);
 
-        if (objectDefinition != null)
+        if (objectType != null)
         {
           DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
 
@@ -243,9 +242,9 @@ namespace org.iringtools.adapter.projection
             }
             else // if id doesn't exist, make it from key properties.
             {
-              if (objectDefinition.keyProperties.Count == 1)
+              if (objectType.keyProperties.Count == 1)
               {
-                string keyProp = objectDefinition.keyProperties[0].keyPropertyName;
+                string keyProp = objectType.keyProperties[0].keyPropertyName;
                 object id = dataItem.properties[keyProp];
 
                 if (id == null || id.ToString() == string.Empty)
@@ -259,19 +258,19 @@ namespace org.iringtools.adapter.projection
               {
                 StringBuilder builder = new StringBuilder();
 
-                foreach (KeyProperty keyProp in objectDefinition.keyProperties)
+                foreach (KeyProperty keyProp in objectType.keyProperties)
                 {
-                  string propName = objectDefinition.keyProperties[0].keyPropertyName;
+                  string propName = objectType.keyProperties[0].keyPropertyName;
                   object propValue = dataItem.properties[propName];
 
                   // it is acceptable to have some key property values to be null but not all
                   if (propValue == null)
                     propValue = string.Empty;
 
-                  builder.Append(objectDefinition.keyDelimeter + propValue);
+                  builder.Append(objectType.keyDelimeter + propValue);
                 }
 
-                builder.Remove(0, objectDefinition.keyDelimeter.Length);
+                builder.Remove(0, objectType.keyDelimeter.Length);
 
                 if (builder.Length == 0)
                 {
@@ -282,27 +281,24 @@ namespace org.iringtools.adapter.projection
               }
             }
 
-            IDataObject dataObject = _dataLayer.Create(graphName, new List<string> {dataItem.id})[0];
-
-            if (dataObject == null)
-            {
-              throw new Exception("Data Layer failed to create data object of type: " + objectDefinition.objectName);
-            }
-
+            SerializableDataObject dataObject = new SerializableDataObject();
+            dataObject.Type = objectType.objectName;
+            dataObject.Id = dataItem.id;
+            
             //
             // set key properties from id
             //
-            if (objectDefinition.keyProperties.Count == 1)
+            if (objectType.keyProperties.Count == 1)
             {
-              dataObject.SetPropertyValue(objectDefinition.keyProperties[0].keyPropertyName, dataItem.id);
+              dataObject.SetPropertyValue(objectType.keyProperties[0].keyPropertyName, dataItem.id);
             }
-            else if (objectDefinition.keyProperties.Count > 1)
+            else if (objectType.keyProperties.Count > 1)
             {
-              string[] idParts = dataItem.id.Split(new string[] { objectDefinition.keyDelimeter }, StringSplitOptions.None);
+              string[] idParts = dataItem.id.Split(new string[] { objectType.keyDelimeter }, StringSplitOptions.None);
 
-              for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+              for (int i = 0; i < objectType.keyProperties.Count; i++)
               {
-                string keyProp = objectDefinition.keyProperties[i].keyPropertyName;
+                string keyProp = objectType.keyProperties[i].keyPropertyName;
                 string keyValue = idParts[i];
 
                 dataObject.SetPropertyValue(keyProp, keyValue);

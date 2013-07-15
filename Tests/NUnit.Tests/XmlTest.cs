@@ -47,7 +47,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       object response =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetItem(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"], _settings["ClassName"],
           _settings["Identifier"],
@@ -81,7 +81,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -115,7 +115,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -149,7 +149,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -182,7 +182,7 @@ namespace NUnit.Tests
       for (int i = 5; i < total; i += 5)
       {
         xDocument =
-         _adapterProvider.GetDataProjection(
+         _adapterProvider.GetList(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
            ref format,
@@ -218,7 +218,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -251,7 +251,7 @@ namespace NUnit.Tests
       for (int i = 5; i < total; i += 5)
       {
         xDocument =
-         _adapterProvider.GetDataProjection(
+         _adapterProvider.GetList(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
            ref format,
@@ -291,7 +291,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -329,7 +329,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -365,7 +365,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -401,7 +401,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -439,7 +439,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -472,7 +472,7 @@ namespace NUnit.Tests
       for (int i = 5; i < total; i += 5)
       {
         xDocument =
-         _adapterProvider.GetDataProjection(
+         _adapterProvider.GetList(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
            ref format,
@@ -512,7 +512,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetList(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           ref format,
@@ -545,7 +545,7 @@ namespace NUnit.Tests
       for (int i = 5; i < total; i += 5)
       {
         xDocument =
-         _adapterProvider.GetDataProjection(
+         _adapterProvider.GetList(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
            ref format,
@@ -595,7 +595,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetWithFilter(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           filter, ref format,
@@ -642,7 +642,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetWithFilter(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           filter, ref format,
@@ -697,7 +697,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetWithFilter(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           filter, ref format,
@@ -733,7 +733,7 @@ namespace NUnit.Tests
         filter.OrderExpressions.Add(orderExpression);
 
         xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetWithFilter(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           filter, ref format,
@@ -790,7 +790,7 @@ namespace NUnit.Tests
       string format = "P7Xml";
 
       XDocument xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetWithFilter(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           filter, ref format,
@@ -826,7 +826,7 @@ namespace NUnit.Tests
         filter.OrderExpressions.Add(orderExpression);
 
         xDocument =
-        _adapterProvider.GetDataProjection(
+        _adapterProvider.GetWithFilter(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
           filter, ref format,

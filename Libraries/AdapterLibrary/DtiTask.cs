@@ -17,19 +17,22 @@ namespace org.iringtools.adapter
 
     private ManualResetEvent _doneEvent;
     private DtoProjectionEngine _projectionLayer;
-    private IDataLayer _dataLayer;
+    private DataLayerGateway _dataLayerGateway;
+    private DataDictionary _dictionary;
     private GraphMap _graphMap;
     private DataFilter _filter;
     private int _pageSize;
     private int _startIndex;
     private DataTransferIndices _dataTransferIndices;
 
-    public DtiTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, IDataLayer dataLayer, 
-      GraphMap graphMap, DataFilter filter, int pageSize, int startIndex)
+    //TODO:
+    public DtiTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, DataLayerGateway dataLayerGateway, 
+      DataDictionary dictionary, GraphMap graphMap, DataFilter filter, int pageSize, int startIndex)
     {
       _doneEvent = doneEvent;
       _projectionLayer = projectionLayer;
-      _dataLayer = dataLayer;
+      _dataLayerGateway = dataLayerGateway;
+      _dictionary = dictionary;
       _graphMap = graphMap;
       _filter = Utility.CloneDataContractObject<DataFilter>(filter);
       _pageSize = pageSize;
@@ -41,7 +44,9 @@ namespace org.iringtools.adapter
       _logger.Debug(string.Format("Starting worker process for getting paged data {0}-{1}.", _startIndex, _startIndex + _pageSize));
         
       int threadIndex = (int)threadContext;
-      IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, _filter, _pageSize, _startIndex);
+      DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
+
+      List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, _filter, _startIndex, _pageSize);
 
       _logger.Debug(string.Format("Worker process for getting paged data {0}-{1} received {2} data objects", _startIndex, _startIndex + _pageSize, dataObjects.Count));
 

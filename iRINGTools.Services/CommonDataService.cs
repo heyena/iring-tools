@@ -1,4 +1,33 @@
-﻿using System.ComponentModel;
+﻿// Copyright (c) 2010, iringtools.org //////////////////////////////////////////
+// All rights reserved.
+//------------------------------------------------------------------------------
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the ids-adi.org nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//------------------------------------------------------------------------------
+// THIS SOFTWARE IS PROVIDED BY ids-adi.org ''AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL ids-adi.org BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////////////////////////////////////////////////////////////////////////////////
+
+//These are the CommonServices for AdapterDataServices and DataServices.
+//Common functionality for both are added here.
+
+using System.ComponentModel;
 using System.Configuration;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
@@ -24,7 +53,6 @@ namespace org.iringtools.services
 {
   public class CommonDataService
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(CommonDataService));
     private AdapterProvider _adapterProvider = null;
 
     public CommonDataService()
@@ -97,17 +125,16 @@ namespace org.iringtools.services
       }
     }
 
-    public void GetDictionaryGraph(string project, string app, string resource, string format)
+    public void GetObjectType(string project, string app, string objectType, string format)
     {
       format = MapContentType(format);
 
       DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
 
-      DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == resource.ToLower());
+      DataObject dataObject = dictionary.dataObjects.Find(o => o.objectName.ToLower() == objectType.ToLower());
 
       if (dataObject == null)
         throw new FileNotFoundException();
-      //ExceptionHandler(new FileNotFoundException());
 
       _adapterProvider.FormatOutgoingMessage<DataObject>(dataObject, format, true);
     }
@@ -122,7 +149,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+        XDocument xDocument = _adapterProvider.GetList(project, app, resource, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
         _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -131,28 +158,11 @@ namespace org.iringtools.services
       }
     }
 
-    //[Description("Gets the Header of the specified project, application and resource.")]
-    //[WebInvoke(Method="HEAD", UriTemplate = "/{app}/{project}/{resource}")]
-    //public void GetHeader(string project, string app, string resource)
-    //{
-    //    try
-    //    {
-    //        //...
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        ExceptionHandler(ex);
-    //    }
-    //}
-
-    //[Description("Gets an XML or JSON projection of a single item in the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
-    //[WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
-
     public void GetItem(string project, string app, string resource, string id, string format)
     {
       try
       {
-        object content = _adapterProvider.GetDataProjection(project, app, resource, String.Empty, id, ref format, false);
+        object content = _adapterProvider.GetItem(project, app, resource, String.Empty, id, ref format, false);
         _adapterProvider.FormatOutgoingMessage(content, format);
       }
       catch (Exception ex)
@@ -180,22 +190,22 @@ namespace org.iringtools.services
 
     public void GetPicklist(string project, string app, string name, string format, int start, int limit)
     {
-      format = MapContentType(format);
-      try
-      {
-        Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
+        format = MapContentType(format);
+        try
+        {
+            Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
 
-        XElement xml = obj.ToXElement<Picklists>();
+            XElement xml = obj.ToXElement<Picklists>();
 
-        if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
-          _adapterProvider.FormatOutgoingMessage(xml, format);
-        else
-          _adapterProvider.FormatOutgoingMessage(xml, format);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
+            if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
+                _adapterProvider.FormatOutgoingMessage(xml, format);
+            else
+                _adapterProvider.FormatOutgoingMessage(xml, format);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public void GetWithFilter(string project, string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
@@ -222,7 +232,7 @@ namespace org.iringtools.services
           DataFilter filter = _adapterProvider.FormatIncomingMessage<DataFilter>(stream, format, true);
           XDocument xDocument = null;
 
-          xDocument = _adapterProvider.GetDataProjection(project, app, resource, filter, ref format, start, limit, fullIndex);
+          xDocument = _adapterProvider.GetWithFilter(project, app, resource, filter, ref format, start, limit, fullIndex);
 
           _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
         }
@@ -233,7 +243,7 @@ namespace org.iringtools.services
       }
     }
 
-    public void GetSearch(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    public void Search(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       try
       {
@@ -243,7 +253,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
+        XDocument xDocument = _adapterProvider.Search(project, app, resource, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
         _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -253,17 +263,17 @@ namespace org.iringtools.services
     }
 
     //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
-    public void GetIndividual(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    public void GetRelatedList(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       try
       {
         format = MapContentType(format);
 
         // if format is one of the part 7 formats
-        if (format == "rdf" || format == "dto" || format == "p7xml")
+        if (format == "rdf" || format == "dto")
         {
           // id is clazz, related is individual
-          object content = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, false);
+          object content = _adapterProvider.GetItem(project, app, resource, id, related, ref format, false);
           _adapterProvider.FormatOutgoingMessage(content, format);
         }
         else
@@ -274,7 +284,7 @@ namespace org.iringtools.services
           if (indexStyle != null && indexStyle.ToUpper() == "FULL")
             fullIndex = true;
 
-          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+          XDocument xDocument = _adapterProvider.GetRelatedList(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
           _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
         }
       }
@@ -291,13 +301,13 @@ namespace org.iringtools.services
         format = MapContentType(format);
 
         // if format is one of the part 7 formats
-        if (format == "rdf" || format == "dto" || format == "p7xml")
+        if (format == "rdf" || format == "dto")
         {
           throw new Exception("Not supported.");
         }
         else
         {
-          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, relatedId, ref format);
+          XDocument xDocument = _adapterProvider.GetRelatedItem(project, app, resource, id, related, relatedId, ref format);
           _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
         }
       }
@@ -309,38 +319,59 @@ namespace org.iringtools.services
 
     public void UpdateList(string project, string app, string resource, string format, Stream stream)
     {
-      format = MapContentType(format);
+      Response response = new Response();
 
-      if (format == "raw")
+      try
       {
-        throw new Exception("");
+        format = MapContentType(format);
+
+        if (format == "raw")
+        {
+          throw new Exception("");
+        }
+        else
+        {
+          XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+          response = _adapterProvider.Update(project, app, resource, format, new XDocument(xElement));
+        }
       }
-      else
+      catch (Exception e)
       {
-        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
-
-        Response response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
-
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
       }
+
+      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
     }
 
     public void UpdateRelatedList(string project, string app, string resource, string parentid, string relatedResource, string format, Stream stream)
     {
-      format = MapContentType(format);
+      Response response = new Response();
 
-      if (format == "raw")
+      try
       {
-        throw new Exception("");
+        format = MapContentType(format);
+
+        if (format == "raw")
+        {
+          throw new Exception("");
+        }
+        else
+        {
+          XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
+
+          response = _adapterProvider.UpdateRelated(project, app, resource, parentid, relatedResource, format, new XDocument(xElement));
+
+        }
       }
-      else
+      catch (Exception e)
       {
-        XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
-
-        Response response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedResource, format, new XDocument(xElement));
-
-        _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
       }
+        
+      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
     }
 
     public void UpdateItem(string project, string app, string resource, string id, string format, Stream stream)
@@ -363,7 +394,7 @@ namespace org.iringtools.services
           {
             dataItems.items[0].id = id;
             XElement xElement = dataItems.ToXElement();
-            response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
+            response = _adapterProvider.Update(project, app, resource, format, new XDocument(xElement));
           }
           else
           {
@@ -373,10 +404,9 @@ namespace org.iringtools.services
         else
         {
           DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
-
           dataItems.items[0].id = id;
 
-          response = _adapterProvider.Post(project, app, resource, format, dataItems);
+          response = _adapterProvider.Update(project, app, resource, format, dataItems);
         }
       }
       catch (Exception e)
@@ -409,7 +439,7 @@ namespace org.iringtools.services
           {
             dataItems.items[0].id = id;
             XElement xElement = dataItems.ToXElement();
-            response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedresource, format, new XDocument(xElement));
+            response = _adapterProvider.UpdateRelated(project, app, resource, parentid, relatedresource, format, new XDocument(xElement));
           }
           else
           {
@@ -419,12 +449,10 @@ namespace org.iringtools.services
         else
         {
           DataItems dataItems = _adapterProvider.FormatIncomingMessage(stream);
-
           dataItems.items[0].id = id;
 
-          response = _adapterProvider.Post(project, app, resource, format, dataItems);
+          response = _adapterProvider.Update(project, app, resource, format, dataItems);
         }
-
       }
       catch (Exception e)
       {
@@ -434,6 +462,34 @@ namespace org.iringtools.services
 
       PrepareResponse(ref response);
       _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+    }
+
+    private void PrepareResponse(ref Response response)
+    {
+      if (response.Level == StatusLevel.Success)
+      {
+        response.StatusCode = HttpStatusCode.OK;
+      }
+      else
+      {
+        response.StatusCode = HttpStatusCode.InternalServerError;
+      }
+      
+      if (response.Messages != null)
+      {
+        foreach (string msg in response.Messages)
+        {
+          response.StatusText += msg;
+        }
+      }
+
+      foreach (Status status in response.StatusList)
+      {
+        foreach (string msg in status.Messages)
+        {
+          response.StatusText += msg;
+        }
+      }
     }
 
     public void CreateItem(string project, string app, string resource, string format, Stream stream)
@@ -452,7 +508,7 @@ namespace org.iringtools.services
         {
           XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
-          response = _adapterProvider.Post(project, app, resource, format, new XDocument(xElement));
+          response = _adapterProvider.Create(project, app, resource, format, new XDocument(xElement));
         }
       }
       catch (Exception e)
@@ -465,7 +521,7 @@ namespace org.iringtools.services
       _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
     }
 
-    public void CreateRelatedItem(string project, string app, string resource, string format, string parentid, string relatedresource, Stream stream)
+    public void CreateRelatedItem(string project, string app, string resource, string format, string parentid, string relatedResource, Stream stream)
     {
       Response response = new Response();
 
@@ -481,7 +537,7 @@ namespace org.iringtools.services
         {
           XElement xElement = _adapterProvider.FormatIncomingMessage(stream, format);
 
-          response = _adapterProvider.PostRelated(project, app, resource, parentid, relatedresource, format, new XDocument(xElement));
+          response = _adapterProvider.UpdateRelated(project, app, resource, parentid, relatedResource, format, new XDocument(xElement));
         }
       }
       catch (Exception e)
@@ -497,17 +553,18 @@ namespace org.iringtools.services
     public void DeleteItem(string project, string app, string resource, string id, string format)
     {
       Response response = new Response();
-
+      
       try
       {
         format = MapContentType(format);
 
-        response = _adapterProvider.DeleteIndividual(project, app, resource, id, format);
+        response = _adapterProvider.DeleteItem(project, app, resource, id, format);
+
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
         response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
+        response.Messages.Add(ex.Message);
       }
 
       PrepareResponse(ref response);
@@ -524,33 +581,15 @@ namespace org.iringtools.services
 
         response = _adapterProvider.DeleteRelated(project, app, resource, parentid, relatedresource, id, format);
       }
-      catch (Exception e)
-      {
-        response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
-      }
-
-      PrepareResponse(ref response);
-      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
-    }
-
-    public void GetSummary(string project, string app)
-    {
-      try
-      {
-        IList<Object> objects = _adapterProvider.GetSummary(project, app);
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-        String json = serializer.Serialize(objects);
-
-        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-        HttpContext.Current.Response.Write(json);
-      }
       catch (Exception ex)
       {
-        throw ex;
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(ex.Message);
       }
-    }
 
+      PrepareResponse(ref response);      
+      _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+    }
 
     #region Async request queue
     public void GetRequestStatus(string id)
@@ -601,9 +640,9 @@ namespace org.iringtools.services
       GetWithFilter("all", app, resource, format, start, limit, indexStyle, stream);
     }
 
-    public void GetIndividualAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    public void GetRelatedListAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
-      GetIndividual("all", app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
+      GetRelatedList("all", app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
     }
 
     public void GetRelatedItemAll(string app, string resource, string id, string related, string relatedId, string format)
@@ -666,36 +705,6 @@ namespace org.iringtools.services
       }
 
       return format;
-    }
-
-    private void PrepareResponse(ref Response response)
-    {
-      if (response.Level == StatusLevel.Success)
-      {
-        response.StatusCode = HttpStatusCode.OK;
-      }
-      else
-      {
-        response.StatusCode = HttpStatusCode.InternalServerError;
-      }
-
-      if (response.Messages != null)
-      {
-        foreach (string msg in response.Messages)
-        {
-          response.StatusText += msg;
-        }
-
-        response.Messages.Clear();
-      }
-
-      foreach (Status status in response.StatusList)
-      {
-        foreach (string msg in status.Messages)
-        {
-          response.StatusText += msg;
-        }
-      }
     }
 
     private bool IsAsync()

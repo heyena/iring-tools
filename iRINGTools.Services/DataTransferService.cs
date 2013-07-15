@@ -317,23 +317,6 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Deletes a data transfer object by id.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
-    public void DeleteDataTransferObject(string scope, string app, string graph, string id)
-    {
-      try
-      {
-        Response response = _dtoProvider.DeleteDataTransferObject(scope, app, graph, id);
-
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
-      }
-      catch (Exception ex)
-      {
-        ExceptionHander(ex);
-      }
-    }
-
     [Description("Gets content objects by ids and formats in JSON format.")]
     [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/{graph}/content?filter={filter}")]
     public void GetContents(string scope, string app, string graph, string filter)
@@ -367,24 +350,25 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Posts list of content objects as stream to service.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/content")]
-    public void PostContents(string scope, string app, string graph, Stream stream)
-    {
-      try
-      {
-        MemoryStream ms = stream.ToMemoryStream();
-        ContentObjects contentObjects = Utility.DeserializeFromStream<ContentObjects>(ms);
+    //TODO:
+    //[Description("Posts list of content objects as stream to service.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/content")]
+    //public void PostContents(string scope, string app, string graph, Stream stream)
+    //{
+    //  try
+    //  {
+    //    MemoryStream ms = stream.ToMemoryStream();
+    //    ContentObjects contentObjects = Utility.DeserializeFromStream<ContentObjects>(ms);
 
-        Response response = _dtoProvider.PostContents(scope, app, graph, contentObjects);
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.Serialize<Response>(response, true));
-      }
-      catch (Exception ex)
-      {
-        ExceptionHander(ex);
-      }
-    }
+    //    Response response = _dtoProvider.PostContents(scope, app, graph, contentObjects);
+    //    HttpContext.Current.Response.ContentType = "application/xml";
+    //    HttpContext.Current.Response.Write(Utility.Serialize<Response>(response, true));
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    ExceptionHander(ex);
+    //  }
+    //}
 
     [Description("Gets status of a asynchronous request.")]
     [WebGet(UriTemplate = "/requests/{id}")]

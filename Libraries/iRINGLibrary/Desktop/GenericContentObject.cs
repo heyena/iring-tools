@@ -11,8 +11,12 @@ namespace org.iringtools.library
 
     public GenericContentObject(IDataObject dataObject)
     {
-      if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
+      if (typeof(SerializableDataObject).IsAssignableFrom(dataObject.GetType()))
+        _dictionary = ((SerializableDataObject)dataObject).Dictionary;
+      else if (typeof(GenericDataObject).IsAssignableFrom(dataObject.GetType()))
         _dictionary = ((GenericDataObject)dataObject).Dictionary;
+      else if (typeof(GenericContentObject).IsAssignableFrom(dataObject.GetType()))
+        _dictionary = ((GenericContentObject)dataObject).Dictionary;
     }
 
     [IgnoreDataMember]

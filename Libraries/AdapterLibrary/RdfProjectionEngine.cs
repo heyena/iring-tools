@@ -30,13 +30,13 @@ namespace org.iringtools.adapter.projection
     private XElement _rdfXml;
 
     [Inject]
-    public RdfProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping) 
-      : base(settings, dataLayer, mapping)
+    public RdfProjectionEngine(AdapterSettings settings, DataDictionary dictionary, Mapping mapping) 
+      : base(settings, dictionary, mapping)
     {
       _individualsCache = new Dictionary<string, List<string>>();
     }
 
-    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects)
     {
       XDocument rdfDoc = null;
 
@@ -76,7 +76,7 @@ namespace org.iringtools.adapter.projection
       return rdfDoc;
     }
 
-    public override XDocument ToXml(string graphName,  ref IList<IDataObject> dataObjects, string className, string classIdentifier)
+    public override XDocument ToXml(string graphName,  ref List<IDataObject> dataObjects, string className, string classIdentifier)
     {
       XDocument rdfDoc = null;
 
@@ -115,7 +115,7 @@ namespace org.iringtools.adapter.projection
       return rdfDoc;
     }
 
-    public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument)
+    public override List<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument)
     {
       _dataObjects = null;
 

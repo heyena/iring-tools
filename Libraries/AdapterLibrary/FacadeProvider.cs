@@ -50,120 +50,15 @@ namespace org.iringtools.facade
   public class FacadeProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(FacadeProvider));
-    private IKernel _kernel = null;
-    private AdapterSettings _settings = null;
-    private IIdentityLayer _identityLayer = null;
-    private IDictionary _keyRing = null;
     private IDataLayer2 _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
-    private ScopeProjects _scopes = null;
-    private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    private IList<IDataObject> _dataObjects = new List<IDataObject>();
+    private List<IDataObject> _dataObjects = new List<IDataObject>();
     private IProjectionLayer _projectionEngine = null;
-    
-    private bool _isScopeInitialized = false;
-    private bool _isDataLayerInitialized = false;
 
     [Inject]
-    public FacadeProvider(NameValueCollection settings)
-    {
-      var ninjectSettings = new NinjectSettings { LoadExtensions = false };
-      _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
-
-      _kernel.Load(new XmlExtensionModule());
-      _settings = _kernel.Get<AdapterSettings>();
-      _settings.AppendSettings(settings);
-
-      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
-      #region initialize webHttpClient for converting old mapping
-      string proxyHost = _settings["ProxyHost"];
-      string proxyPort = _settings["ProxyPort"];
-      string rdsUri = _settings["ReferenceDataServiceUri"];
-
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
-      {
-        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-        _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
-      }
-      else
-      {
-        _webHttpClient = new WebHttpClient(rdsUri);
-      }
-      #endregion
-
-      if (ServiceSecurityContext.Current != null)
-      {
-        IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
-        _settings["UserName"] = identity.Name;
-      }
-
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-      _settings["ScopesPath"] = scopesPath;
-
-      if (File.Exists(scopesPath))
-      {
-        _scopes = Utility.Read<ScopeProjects>(scopesPath);
-      }
-      else
-      {
-        _scopes = new ScopeProjects();
-        Utility.Write<ScopeProjects>(_scopes, scopesPath);
-      }
-
-      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
-      string bindingConfigurationPath = Path.Combine(
-        _settings["BaseDirectoryPath"],
-        relativePath
-      );
-
-      _kernel.Load(bindingConfigurationPath);
-      InitializeIdentity();
-    }
-
-    private void InitializeIdentity()
-    {
-      try
-      {
-        _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
-        _keyRing = _identityLayer.GetKeyRing();
-        _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
-
-        _settings.AppendKeyRing(_keyRing);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error initializing identity: {0}", ex));
-        throw new Exception(string.Format("Error initializing identity: {0})", ex));
-      }
-    }
-
-    private void InitializeDataLayer()
-    {
-      try
-      {
-        if (!_isDataLayerInitialized)
-        {
-          _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
-
-          if (_dataLayer == null)
-          {
-            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
-          }
-
-          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
-
-          _isDataLayerInitialized = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
-      }
-    }
-
+    public FacadeProvider(NameValueCollection settings) : base(settings) {}
+    
     public Response Delete(string scope, string app, string graph)
     {
       Response response = new Response();
@@ -190,103 +85,6 @@ namespace org.iringtools.facade
 
       response.Append(status);
       return response;
-    }
-
-    private void InitializeScope(string projectName, string applicationName)
-    {
-      try
-      {
-        if (!_isScopeInitialized)
-        {
-          bool isScopeValid = false;
-          foreach (ScopeProject project in _scopes)
-          {
-            if (project.Name.ToUpper() == projectName.ToUpper())
-            {
-              foreach (ScopeApplication application in project.Applications)
-              {
-                if (application.Name.ToUpper() == applicationName.ToUpper())
-                {
-                  isScopeValid = true;
-                }
-              }
-            }
-          }
-
-          string scope = String.Format("{0}.{1}", projectName, applicationName);
-
-          if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
-
-          _settings["ProjectName"] = projectName;
-          _settings["ApplicationName"] = applicationName;
-          _settings["Scope"] =  scope;
-
-          string appSettingsPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope);
-
-          if (File.Exists(appSettingsPath))
-          {
-            AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
-            _settings.AppendSettings(appSettings);
-          }
-
-          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
-
-          //Ninject Extension requires fully qualified path.
-          string bindingConfigurationPath = Path.Combine(
-            _settings["BaseDirectoryPath"],
-            relativePath
-          );
-
-          _settings["BindingConfigurationPath"] = bindingConfigurationPath;
-
-          if (!File.Exists(bindingConfigurationPath))
-          {
-            XElement binding = new XElement("module",
-              new XAttribute("name", _settings["Scope"]),
-              new XElement("bind",
-                new XAttribute("name", "DataLayer"),
-                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-                new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
-              )
-            );
-
-            binding.Save(bindingConfigurationPath);
-          }
-
-          _kernel.Load(bindingConfigurationPath);
-
-          string mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
-
-          if (File.Exists(mappingPath))
-          {
-            try
-            {
-              _mapping = Utility.Read<mapping.Mapping>(mappingPath);
-            }
-            catch (Exception legacyEx)
-            {
-              _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
-              Status status = new Status();
-
-              _mapping = LoadMapping(mappingPath, ref status);
-              _logger.Info(status.ToString());
-            }
-          }
-          else
-          {
-            _mapping = new mapping.Mapping();
-            Utility.Write<mapping.Mapping>(_mapping, mappingPath);
-          }
-
-          _kernel.Bind<mapping.Mapping>().ToConstant(_mapping);
-          _isScopeInitialized = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
-      }
     }
 
     public Response Pull(string scope, string app, string graph, Request request)
@@ -497,16 +295,19 @@ namespace org.iringtools.facade
       return response;
     }
 
-    private void LoadDataObjectSet(string graphName, IList<string> identifiers)
+    private void LoadDataObjectSet(string graphName, List<string> identifiers)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
 
       _dataObjects.Clear();
 
+      DataObject objectType = _dictionary.dataObjects.Find(
+        x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
+
       if (identifiers != null)
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        _dataObjects = _dataLayerGateway.Get(objectType, identifiers);
       else
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
+        _dataObjects = _dataLayerGateway.Get(objectType, null);
     }
 
     public Response DeleteAll(string projectName, string applicationName)
