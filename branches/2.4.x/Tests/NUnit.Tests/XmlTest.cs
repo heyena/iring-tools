@@ -19,9 +19,14 @@ namespace NUnit.Tests
     public XmlTest()
     {
       _settings = new AdapterSettings();
-      _settings.AppendSettings(ConfigurationManager.AppSettings);
 
-     // _settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
+      _baseDirectory = Directory.GetCurrentDirectory();
+      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
+      _settings["BaseDirectoryPath"] = _baseDirectory;
+      Directory.SetCurrentDirectory(_baseDirectory);
+
+      _settings.AppendSettings(new StaticDust.Configuration.AppSettingsReader("App.config"));
+
       _settings["ProjectName"] = "12345_000";
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
@@ -29,10 +34,6 @@ namespace NUnit.Tests
       _settings["Identifier"] = "90002-RV";
       _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
       _settings["GraphBaseUri"] = "http://www.example.com/"; 
-      _baseDirectory = Directory.GetCurrentDirectory();
-      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
-      _settings["BaseDirectoryPath"] = _baseDirectory;
-      Directory.SetCurrentDirectory(_baseDirectory);
 
       _adapterProvider = new AdapterProvider(_settings);
 
@@ -44,7 +45,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       object response =
         _adapterProvider.GetItem(
@@ -78,7 +79,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -112,7 +113,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -146,7 +147,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -215,7 +216,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -288,7 +289,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -326,7 +327,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -362,7 +363,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -398,7 +399,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -436,7 +437,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -509,7 +510,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
       
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetList(
@@ -592,7 +593,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetWithFilter(
@@ -620,7 +621,7 @@ namespace NUnit.Tests
       }
     }
 
-    [Test]
+    //[Test]
     public void GetDataFilterFull()
     {
       DataFilter filter = new DataFilter();
@@ -639,7 +640,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetWithFilter(
@@ -694,7 +695,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetWithFilter(
@@ -787,7 +788,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "P7Xml";
+      string format = "p7xml";
 
       XDocument xDocument =
         _adapterProvider.GetWithFilter(

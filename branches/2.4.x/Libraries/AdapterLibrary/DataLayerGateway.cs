@@ -39,7 +39,7 @@ namespace org.iringtools.adapter
       _app = _settings["ApplicationName"].ToLower();
 
       _connStr = _settings["iRINGCacheConnStr"];
-      if (IsBase64Encoded(_connStr))
+      if (_connStr != null && IsBase64Encoded(_connStr))
       {
         _connStr = EncryptionUtility.Decrypt(_connStr);
       }

@@ -15,6 +15,8 @@
                 <roleId>tpl:R22674749688</roleId>
               </key>
             </keys>
+            <index>0</index>
+            <path i:nil="true" />
           </class>
           <templates>
             <template>
@@ -40,7 +42,7 @@
                   <dataLength>100</dataLength>
                 </role>
               </roles>
-              <transferOption>Required</transferOption>
+              <transferOption>Desired</transferOption>
             </template>
             <template>
               <id>tpl:R41248767846</id>
@@ -65,6 +67,9 @@
                   <class>
                     <id>rdl:R49658319833</id>
                     <name>PLANT AREA</name>
+                    <keys i:nil="true" />
+                    <index>0</index>
+                    <path i:nil="true" />
                   </class>
                   <cardinality>OneToOne</cardinality>
                 </role>
@@ -94,6 +99,9 @@
                   <class>
                     <id>rdl:R99486931975</id>
                     <name>P AND I DIAGRAM</name>
+                    <keys i:nil="true" />
+                    <index>0</index>
+                    <path i:nil="true" />
                   </class>
                   <cardinality>OneToOne</cardinality>
                 </role>
@@ -145,6 +153,8 @@
                 <roleId>tpl:R22674749688</roleId>
               </key>
             </keys>
+            <index>0</index>
+            <path i:nil="true" />
           </class>
           <templates>
             <template>
@@ -185,6 +195,8 @@
                 <roleId>tpl:R22674749688</roleId>
               </key>
             </keys>
+            <index>0</index>
+            <path i:nil="true" />
           </class>
           <templates>
             <template>
