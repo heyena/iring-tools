@@ -20,21 +20,4 @@ namespace org.iringtools.library
     [DataMember(IsRequired = false, Order = 2)]
     public int valueColumnIndex { get; set; }
   }
-
-//  [DataContract(Namespace = "http://www.iringtools.org/data", Name = "DataItem")]
-//  public class PicklistItem : DataItem
-//  {
-//    public PicklistItem() : base()
-//    {
-//      properties = new Dictionary<string, string>();
-//    }
-//}
-  //public class PicklistColumn
-  //{
-  //  [DataMember(IsRequired = true, Order = 0)]
-  //  public string columnName { get; set; }
-
-  //  [DataMember(IsRequired = true, Order = 1)]
-  //  public string columnValue { get; set; }
-  //}
 }

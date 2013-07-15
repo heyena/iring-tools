@@ -16,18 +16,21 @@ namespace org.iringtools.adapter
   {
     private ManualResetEvent _doneEvent;
     private DtoProjectionEngine _projectionLayer;
-    private IDataLayer _dataLayer;
+    private DataLayerGateway _dataLayerGateway;
     private GraphMap _graphMap;
+    private DataObject _dataObject;
     private List<string> _identifiers;
     private DataTransferObjects _dataTransferObjects;
 
-    public OutboundDtoTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, IDataLayer dataLayer,
-      GraphMap graphMap, List<string> identifiers)
+    //TODO: pass in data objects
+    public OutboundDtoTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, DataLayerGateway dataLayerGateway,
+      GraphMap graphMap, DataObject dataObject, List<string> identifiers)
     {
       _doneEvent = doneEvent;
       _projectionLayer = projectionLayer;
-      _dataLayer = dataLayer;
+      _dataLayerGateway = dataLayerGateway;
       _graphMap = graphMap;
+      _dataObject = dataObject;
       _identifiers = identifiers;
     }
 
@@ -37,7 +40,7 @@ namespace org.iringtools.adapter
 
       if (_identifiers != null && _identifiers.Count > 0)
       {
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, _identifiers);
+        List<IDataObject> dataObjects = _dataLayerGateway.Get(_dataObject, _identifiers);
 
         if (dataObjects != null)
         {

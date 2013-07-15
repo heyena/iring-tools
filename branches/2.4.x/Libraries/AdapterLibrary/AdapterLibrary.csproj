@@ -129,7 +129,9 @@
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
-    <Compile Include="BaseProvider.cs" />
+    <Compile Include="BaseProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ContentObject.cs" />
     <Compile Include="DataLayerGateway.cs" />
     <Compile Include="DBManager.cs" />
@@ -138,10 +140,8 @@
     <Compile Include="OutboundDtoTask.cs" />
     <Compile Include="DataItemSerializer.cs" />
     <Compile Include="JsonProjectionEngine.cs" />
-    <Compile Include="HtmlProjectionEngine.cs" />
     <Compile Include="DxiRequest.cs" />
     <Compile Include="DxoRequest.cs" />
-    <Compile Include="DataProjectionEngine.cs" />
     <Compile Include="DtoProvider.cs" />
     <Compile Include="DataTransferIndices.cs" />
     <Compile Include="DataTransferObjects.cs" />
@@ -157,7 +157,6 @@
     <Compile Include="..\..\AssemblyInfo.cs" />
     <Compile Include="RdfProjectionEngine.cs" />
     <Compile Include="WindowsIdentityProvider.cs" />
-    <Compile Include="XmlProjectionEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">

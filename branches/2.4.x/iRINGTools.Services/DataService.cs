@@ -66,62 +66,62 @@ namespace org.iringtools.services
       _commonService.GetVersion(format);
     }
 
-    [Description("Gets object definitions of an application.")]
+    [Description("Gets contexts of an application.")]
     [WebGet(UriTemplate = "/{app}/contexts?format={format}")]
     public void GetContexts(string app, string format)
     {
-        _commonService.GetContexts(app, format);
+      _commonService.GetContexts(app, format);
     }
 
     [Description("Gets the wadl for an all endpoint.")]
     [WebGet(UriTemplate = "/all/{app}?wadl")]
     public void GetAllWADL(string app)
     {
-        _commonService.GetAllWADL(app);
+      _commonService.GetAllWADL(app);
     }
 
     [Description("Gets the wadl for an application.")]
     [WebGet(UriTemplate = "/{app}?wadl")]
     public void GetAppWADL(string app)
     {
-        _commonService.GetAppWADL(app);
+      _commonService.GetAppWADL(app);
     }
 
     [Description("Gets the wadl for an endpoint.")]
     [WebGet(UriTemplate = "/{app}/{project}?wadl")]
     public void GetScopeWADL(string app, string project)
     {
-        _commonService.GetScopeWADL(app, project);
+      _commonService.GetScopeWADL(app, project);
     }
 
-    [Description("Gets object definitions of an application.")]
+    [Description("Gets data dictionary. Valid formats are XML, JSON.")]
     [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
     public void GetDictionary(string project, string app, string format)
     {
       _commonService.GetDictionary(project, app, format);
     }
 
-    [Description("Gets specified object definition of an application.")]
-    [WebGet(UriTemplate = "/{app}/{project}/dictionary/{resource}?format={format}")]
-    public void GetDictionaryGraph(string project, string app, string resource, string format)
+    [Description("Gets a specific object definition from data dictionary. Valid formats are XML, JSON.")]
+    [WebGet(UriTemplate = "/{app}/{project}/dictionary/{objectType}?format={format}")]
+    public void GetObjectType(string project, string app, string objectType, string format)
     {
-        try
-        {
-            _commonService.GetDictionaryGraph(project, app, resource, format);
-        }
-        catch (Exception ex)
-        {
-            ExceptionHandler(ex);
-        }
+      try
+      {
+        _commonService.GetObjectType(project, app, objectType, format);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
     }
 
-    [Description("Gets an XML or JSON projection of the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [Description("Gets resource items. Valid format are JSON. Valid formats are JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       try
       {
-          _commonService.GetList(project, app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
+        _commonService.GetList(project, app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
       }
       catch (Exception ex)
       {
@@ -129,27 +129,13 @@ namespace org.iringtools.services
       }
     }
 
-    //[Description("Gets the Header of the specified project, application and resource.")]
-    //[WebInvoke(Method="HEAD", UriTemplate = "/{app}/{project}/{resource}")]
-    //public void GetHeader(string project, string app, string resource)
-    //{
-    //    try
-    //    {
-    //        //...
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        ExceptionHandler(ex);
-    //    }
-    //}
-
-    [Description("Gets an XML or JSON projection of a single item in the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [Description("Gets a specific resource item. Valid formats are JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
     public void GetItem(string project, string app, string resource, string id, string format)
     {
       try
       {
-          _commonService.GetItem(project, app, resource, id, format);
+        _commonService.GetItem(project, app, resource, id, format);
       }
       catch (Exception ex)
       {
@@ -157,17 +143,17 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets an XML or JSON of Picklists in the specified project, application in the format specified. Valid formats include json, xml")]
+    [Description("Gets picklist items.")]
     [WebGet(UriTemplate = "/{app}/{project}/picklists?format={format}")]
     public void GetPicklists(string project, string app, string format)
     {
       try
       {
-          _commonService.GetPicklists(project, app, format);
+        _commonService.GetPicklists(project, app, format);
       }
       catch (Exception ex)
       {
-          ExceptionHandler(ex);
+        ExceptionHandler(ex);
       }
     }
 
@@ -177,7 +163,7 @@ namespace org.iringtools.services
     {
       try
       {
-          _commonService.GetPicklist(project, app, name, format, start, limit);
+        _commonService.GetPicklist(project, app, name, format, start, limit);
       }
       catch (Exception ex)
       {
@@ -185,7 +171,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets an XML or JSON projection of a filtered set in the specified project, application and resource in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [Description("Gets resource items with filter.  Valid formats are JSON, DTO, RDF.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
     public void GetWithFilter(string project, string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
     {
@@ -195,32 +181,17 @@ namespace org.iringtools.services
       }
       catch (Exception ex)
       {
-        ExceptionHandler(ex,format);
+        ExceptionHandler(ex, format);
       }
     }
 
-    [Description("Gets an XML projection of the specified scope and resource in the format (xml, dto, rdf ...) specified.")]
+    [Description("Gets an XML projection of the specified scope and resource in the format (json, dto, rdf) specified.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}/search?q={query}&format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void GetSearch(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-        try
-        {
-            _commonService.GetSearch(project, app, resource, query, format, start, limit, sortOrder, sortBy, indexStyle);
-        }
-        catch (Exception ex)
-        {
-            ExceptionHandler(ex);
-        }
-    }
-
-    //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
-    [Description("Gets an individual if it is part 7 (/{app}/{project}/{resource}/{clazz}/{id}?format={p7format}) or related items of an individual otherwise.")]
-    [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void GetIndividual(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    public void Search(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       try
       {
-        _commonService.GetIndividual(project, app, resource, id, related, format, start, limit, sortOrder, sortBy, indexStyle);
+        _commonService.Search(project, app, resource, query, format, start, limit, sortOrder, sortBy, indexStyle);
       }
       catch (Exception ex)
       {
@@ -228,7 +199,22 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets individual of a related item.")]
+    //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
+    [Description("Gets related resource items. Valid formats are JSON, DTO, RDF.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetRelatedList(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    {
+      try
+      {
+        _commonService.GetRelatedList(project, app, resource, id, related, format, start, limit, sortOrder, sortBy, indexStyle);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
+    [Description("Gets a specific related resource item. Valid formats are JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}/{relatedId}?format={format}")]
     public void GetRelatedItem(string project, string app, string resource, string id, string related, string relatedId, string format)
     {
@@ -242,55 +228,55 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [Description("Updates resource item(s). Valid format is JSON.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}?format={format}")]
     public void UpdateList(string project, string app, string resource, string format, Stream stream)
     {
       _commonService.UpdateList(project, app, resource, format, stream);
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [Description("Updates related resource item(s). Valid format is JSON.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedResource}?format={format}")]
     public void UpdateRelatedList(string project, string app, string resource, string parentid, string relatedResource, string format, Stream stream)
     {
-       _commonService.UpdateRelatedList(project, app, resource, parentid, relatedResource, format, stream);
+      _commonService.UpdateRelatedList(project, app, resource, parentid, relatedResource, format, stream);
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [Description("Updates resource item(s). Valid format is JSON.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
     public void UpdateItem(string project, string app, string resource, string id, string format, Stream stream)
     {
       _commonService.UpdateItem(project, app, resource, id, format, stream);
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [Description("Updates related resource item(s). Valid format is JSON.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedresource}/{id}?format={format}")]
     public void UpdateRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format, Stream stream)
     {
-        _commonService.UpdateRelatedItem(project, app, resource, parentid, relatedresource, id, format, stream);
+      _commonService.UpdateRelatedItem(project, app, resource, parentid, relatedresource, id, format, stream);
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [Description("Creates new resource item(s). Valid format is JSON.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}?format={format}")]
     public void CreateItem(string project, string app, string resource, string format, Stream stream)
     {
-        _commonService.CreateItem(project, app, resource, format, stream);
+      _commonService.CreateItem(project, app, resource, format, stream);
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedresource}?format={format}")]
-    public void CreateRelatedItem(string project, string app, string resource, string format, string parentid, string relatedresource, Stream stream)
+    [Description("Creates new related resource item(s). Valid format is JSON.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedResource}?format={format}")]
+    public void CreateRelatedItem(string project, string app, string resource, string format, string parentid, string relatedResource, Stream stream)
     {
-        _commonService.CreateRelatedItem(project, app, resource, format, parentid, relatedresource, stream);
+      _commonService.CreateRelatedItem(project, app, resource, format, parentid, relatedResource, stream);
     }
 
-    [Description("Deletes a resource in the specified application.")]
+    [Description("Deletes a resource item. Valid format is JSON.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
     public void DeleteItem(string project, string app, string resource, string id, string format)
     {
       try
       {
-          _commonService.DeleteItem(project, app, resource, id, format);
+        _commonService.DeleteItem(project, app, resource, id, format);
       }
       catch (Exception ex)
       {
@@ -302,23 +288,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedresource}/{id}?format={format}")]
     public void DeleteRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format)
     {
-        try
-        {
-            _commonService.DeleteRelatedItem(project, app, resource, parentid, relatedresource, id, format);
-        }
-        catch (Exception ex)
-        {
-            ExceptionHandler(ex);
-        }
-    }
-
-    [Description("Get summary of an application based on configuration.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{app}/{project}/summary")]
-    public void GetSummary(string project, string app)
-    {
       try
       {
-          _commonService.GetSummary(project, app);
+        _commonService.DeleteRelatedItem(project, app, resource, parentid, relatedresource, id, format);
       }
       catch (Exception ex)
       {
@@ -326,13 +298,12 @@ namespace org.iringtools.services
       }
     }
 
-
     #region Async request queue
     [Description("Gets status of a asynchronous request.")]
     [WebGet(UriTemplate = "/requests/{id}")]
     public void GetRequestStatus(string id)
     {
-        _commonService.GetRequestStatus(id);
+      _commonService.GetRequestStatus(id);
     }
     #endregion
 
@@ -341,66 +312,66 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/all/{app}/dictionary?format={format}")]
     public void GetDictionaryAll(string app, string format)
     {
-        _commonService.GetDictionaryAll(app, format);
+      _commonService.GetDictionaryAll(app, format);
     }
 
-    [Description("Gets an XML or JSON projection of the specified application and resource in the format specified.")]
+    [Description("Gets resource items. Valid formats are JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/all/{app}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void GetListAll(string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
-        _commonService.GetListAll(app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
+      _commonService.GetListAll(app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
     }
 
-    [Description("Gets an XML or JSON projection of a single item in the specified application and resource in the format specified.")]
+    [Description("Gets a specific resource item. Valid formats are JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
     public void GetItemAll(string app, string resource, string id, string format)
     {
-        _commonService.GetItemAll(app, resource, id, format);
+      _commonService.GetItemAll(app, resource, id, format);
     }
 
-    [Description("Gets an XML projection of the specified scope and resource in the format (xml, dto, rdf ...) specified.")]
+    [Description("Gets resource items with filter. Valid formats are JSON, DTO, RDF.")]
     [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{resource}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
     public void GetWithFilterAll(string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
     {
-     _commonService.GetWithFilterAll(app, resource, format, start, limit, indexStyle, stream);
+      _commonService.GetWithFilterAll(app, resource, format, start, limit, indexStyle, stream);
     }
 
-    [Description("Gets an XML projection of the specified scope, resource and id in the format (xml, dto, rdf ...) specified.")]
+    [Description("Gets related resource items. Valid formats are JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/all/{app}/{resource}/{clazz}/{id}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void GetIndividualAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    public void GetRelatedListAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
-        _commonService.GetIndividualAll(app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
+      _commonService.GetRelatedListAll(app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
     }
 
-    [Description("Gets individual of a related item.")]
+    [Description("Gets a specific related resource item. Valid formats are JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/all/{app}/{resource}/{id}/{related}/{relatedId}?format={format}")]
     public void GetRelatedItemAll(string app, string resource, string id, string related, string relatedId, string format)
     {
-        _commonService.GetRelatedItemAll(app, resource, id, related, relatedId, format);
+      _commonService.GetRelatedItemAll(app, resource, id, related, relatedId, format);
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [Description("Updates resource items. Valid format is JSON.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{resource}?format={format}")]
     public void UpdateListAll(string app, string resource, string format, Stream stream)
     {
-        _commonService.UpdateListAll(app, resource, format, stream);
+      _commonService.UpdateListAll(app, resource, format, stream);
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [Description("Updates specific resource item. Valid format is JSON.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
     public void UpdateItemAll(string app, string resource, string id, string format, Stream stream)
     {
       _commonService.UpdateItemAll(app, resource, id, format, stream);
     }
 
-    [Description("Updates the specified scope and resource with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [Description("Creates resource items. Valid format is JSON.")]
     [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{resource}?format={format}")]
     public void CreateItemAll(string app, string resource, string format, Stream stream)
     {
-        _commonService.CreateItemAll(app, resource, format, stream);
+      _commonService.CreateItemAll(app, resource, format, stream);
     }
 
-    [Description("Deletes a resource in the specified application.")]
+    [Description("Deletes a resource item. Valid format is JSON.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
     public void DeleteItemAll(string app, string resource, string id, string format)
     {
@@ -409,7 +380,7 @@ namespace org.iringtools.services
     #endregion
 
     #region Private Methods
-    private void ExceptionHandler(Exception ex, string format ="json")
+    private void ExceptionHandler(Exception ex, string format = "json")
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
 
@@ -421,13 +392,13 @@ namespace org.iringtools.services
       {
         context.StatusCode = HttpStatusCode.Unauthorized;
       }
-      else if (ex is WebFaultException)        
+      else if (ex is WebFaultException)
       {
         context.StatusCode = HttpStatusCode.OK;
         Response response = new Response();
         response.StatusCode = ((WebFaultException)ex).StatusCode;
         response.DateTimeStamp = DateTime.Now;
-        response.StatusText =Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
+        response.StatusText = Convert.ToString(((WebFaultException)ex).Data["StatusText"]);
         response.Messages = new Messages() { ((WebFaultException)ex).Message, response.StatusText };
         FormatOutgoingMessage<Response>(response, format, false);
         return;
@@ -443,20 +414,20 @@ namespace org.iringtools.services
 
     private void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
     {
-        if (format.ToUpper() == "JSON")
-        {
-            string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
+      if (format.ToUpper() == "JSON")
+      {
+        string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
 
-            HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-            HttpContext.Current.Response.Write(json);
-        }
-        else
-        {
-            string xml = Utility.Serialize<T>(graph, useDataContractSerializer);
+        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+        HttpContext.Current.Response.Write(json);
+      }
+      else
+      {
+        string xml = Utility.Serialize<T>(graph, useDataContractSerializer);
 
-            HttpContext.Current.Response.ContentType = "application/xml";
-            HttpContext.Current.Response.Write(xml);
-        }
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xml);
+      }
     }
     #endregion
   }

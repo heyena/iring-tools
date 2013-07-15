@@ -316,18 +316,18 @@ public class ExchangeTask implements Runnable
                 HttpUtils.addHttpHeaders(settings, httpClient);
                       
   		          logger.debug("Requesting source DTOs from [" + sourceDtoUrl + "]: ");
-        
-                //TODO: handle asynchronous for content DTO also
-                if (!isAsync() || hasContent)
+  		          
+  		          String dtoUrl = hasContent ?  sourceDtoUrl + "?includeContent=true" : sourceDtoUrl;
+  		          
+                if (!isAsync())
   			        {
                   httpClient.setAsync(false);
-                  String dtoContentURL = sourceDtoUrl + "?includeContent=true";
-                  sourceDtos = httpClient.post(DataTransferObjects.class, dtoContentURL, sourceDtosRequest);
+                  sourceDtos = httpClient.post(DataTransferObjects.class, dtoUrl, sourceDtosRequest);
   			        }
   			        else
   			        {
                   httpClient.setAsync(true);
-                  String statusURL = httpClient.post(String.class, sourceDtoUrl, sourceDtosRequest);
+                  String statusURL = httpClient.post(String.class, dtoUrl, sourceDtosRequest);
                   sourceDtos = waitForRequestCompletion(DataTransferObjects.class, exchange.getSourceUri() + statusURL);
   			        }
                 			
@@ -344,11 +344,22 @@ public class ExchangeTask implements Runnable
   			      }
   			
   			      //
-  			      // add add/change DTOs to pool
+  			      // add and set status for each added/changed DTO in exchange pool
   			      //
   			      if (sourceDtos != null && sourceDtos.getDataTransferObjectList() != null)
   			      {
-  			        poolDtoListItems.addAll(sourceDtos.getDataTransferObjectList().getItems());
+  			        for (DataTransferIndex dti : sourceDtiItems)
+  			        {
+  			          for (DataTransferObject dto : sourceDtos.getDataTransferObjectList().getItems())
+  			          {
+  			            if (dti.getIdentifier().equalsIgnoreCase(dto.getIdentifier()))
+  			            {
+  			              dto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
+  			              poolDtoListItems.add(dto);
+  			              break;
+  			            }
+  			          }
+  			        }
   			      }
   			
   			      //

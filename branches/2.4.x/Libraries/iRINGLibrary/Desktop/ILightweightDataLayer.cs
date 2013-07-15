@@ -15,12 +15,12 @@ namespace org.iringtools.library
   [Serializable]
   public class SerializableDataObject : IDataObject
   {
-    protected IDictionary<string, object> _properties = new Dictionary<string, object>();
+    protected IDictionary<string, object> _dictionary = new Dictionary<string, object>();
 
-    public IDictionary<string, object> Properties {
+    public IDictionary<string, object> Dictionary {
       get
       {
-        return _properties;
+        return _dictionary;
       }
     }
 
@@ -32,17 +32,19 @@ namespace org.iringtools.library
 
     public bool HasContent { get; set; }
 
+    public Stream Content { get; set; }
+
     public object GetPropertyValue(string propertyName)
     {
-      if (_properties.ContainsKey(propertyName))
-        return _properties[propertyName];
+      if (_dictionary.ContainsKey(propertyName))
+        return _dictionary[propertyName];
 
       return null;
     }
 
     public void SetPropertyValue(string propertyName, object propertyValue)
     {
-      _properties[propertyName] = propertyValue;
+      _dictionary[propertyName] = propertyValue;
     }
 
     public IDictionary<string, IList<IDataObject>> RelatedObjects { get; set; }
@@ -85,11 +87,13 @@ namespace org.iringtools.library
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseLightweightDataLayer));
     public const string SELECT_SQL_TPL = "SELECT * FROM {0} {1}";
+    public const string SELECT_COUNT_SQL_TPL = "SELECT COUNT(*) FROM {0} {1}";
     public const string INSERT_SQL_TPL = "INSERT INTO {0} ({1}) VALUES ({2})";
     public const string UPDATE_SQL_TPL = "UPDATE {0} SET {1} {2}";
     public const string DELETE_SQL_TPL = "DELETE FROM {0} {1}";
+    public const string HAS_CONTENT = "_hasContent_";
 
-    protected AdapterSettings _settings;
+    protected static AdapterSettings _settings;
 
     public BaseLightweightDataLayer(AdapterSettings settings)
     {
@@ -113,7 +117,7 @@ namespace org.iringtools.library
             StringBuilder colsBuilder = new StringBuilder();
             StringBuilder valsBuilder = new StringBuilder();
 
-            foreach (var prop in dataObject.Properties)
+            foreach (var prop in dataObject.Dictionary)
             {
               DataProperty dataProp = objectType.dataProperties.Find(x => x.propertyName == prop.Key);
               colsBuilder.Append("," + prop.Key);
@@ -128,6 +132,12 @@ namespace org.iringtools.library
               }
             }
 
+            if (dataObject.HasContent != null)
+            {
+              colsBuilder.Append("," + HAS_CONTENT);
+              valsBuilder.Append("," + "'" + dataObject.HasContent + "'");
+            }
+
             string insertSQL = string.Format(INSERT_SQL_TPL, tableName, colsBuilder.Remove(0, 1), valsBuilder.Remove(0, 1));
             return insertSQL;
           }
@@ -136,7 +146,7 @@ namespace org.iringtools.library
             StringBuilder builder = new StringBuilder();
             string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, dataObject.Id);
 
-            foreach (var prop in dataObject.Properties)
+            foreach (var prop in dataObject.Dictionary)
             {
               DataProperty dataProp = objectType.dataProperties.Find(x => x.propertyName == prop.Key);
 
@@ -150,13 +160,18 @@ namespace org.iringtools.library
               }
             }
 
-            string updateSQL = string.Format(UPDATE_SQL_TPL, objectType.tableName, builder.Remove(0, 1), whereClause);
+            if (dataObject.HasContent != null)
+            {
+              builder.Append("," + HAS_CONTENT + "='" + dataObject.HasContent + "'");
+            }
+
+            string updateSQL = string.Format(UPDATE_SQL_TPL, tableName, builder.Remove(0, 1), whereClause);
             return updateSQL;
           }
         case ObjectState.Delete:
           {
             string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, dataObject.Id);
-            string deleteSQL = string.Format(DELETE_SQL_TPL, objectType.tableName, whereClause);
+            string deleteSQL = string.Format(DELETE_SQL_TPL, tableName, whereClause);
             return deleteSQL;
           }
       }
@@ -333,13 +348,13 @@ namespace org.iringtools.library
 
     public static IDataObject ToDataObject(DataObject objectType, DataRow row)
     {
-      IDataObject dataObject = null;
+      GenericDataObject dataObject = null;
 
       if (row != null)
       {
         try
         {
-          dataObject = new GenericDataObject() { ObjectType = objectType.objectName };
+          dataObject = new GenericDataObject() { ObjectType = objectType.objectName };          
         }
         catch (Exception ex)
         {
@@ -353,11 +368,11 @@ namespace org.iringtools.library
           {
             try
             {
-              if (objectProperty.columnName != null)
+              if (objectProperty.propertyName != null)
               {
-                if (row.Table.Columns.Contains(objectProperty.columnName))
+                if (row.Table.Columns.Contains(objectProperty.propertyName))
                 {
-                  object value = row[objectProperty.columnName];
+                  object value = row[objectProperty.propertyName];
 
                   if (value.GetType() == typeof(System.DBNull))
                   {
@@ -389,6 +404,11 @@ namespace org.iringtools.library
         {
           dataObject.SetPropertyValue(objectProperty.propertyName, null);
         }
+      }
+
+      if (row[HAS_CONTENT] != DBNull.Value && Convert.ToBoolean(row[HAS_CONTENT]))
+      {
+        dataObject.HasContent = true;
       }
 
       return dataObject;

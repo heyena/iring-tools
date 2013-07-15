@@ -1,34 +1,315 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Net;
+using System.ServiceModel.Web;
 using System.Xml.Linq;
+using log4net;
+using Ninject;
+using Ninject.Extensions.Xml;
+using org.ids_adi.qmxf;
+using org.iringtools.adapter.identity;
 using org.iringtools.library;
-using org.iringtools.legacy;
 using org.iringtools.mapping;
 using org.iringtools.utility;
-using log4net;
-using org.ids_adi.qmxf;
+using StaticDust.Configuration;
 
 namespace org.iringtools.adapter
 {
-  //TODO: move common methods from derived provider classes here
-  public class BaseProvider
+  public abstract class BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseProvider));
 
+    protected IKernel _kernel = null;
+    protected AdapterSettings _settings = null;
+    protected ScopeProjects _scopes = null;
+    protected ScopeApplication _application = null;
+    protected DataLayerGateway _dataLayerGateway = null;
+    protected DataDictionary _dictionary = null;
+    protected mapping.Mapping _mapping = null;
+    protected bool _isScopeInitialized = false;
+    protected bool _isDataLayerInitialized = false;
+    protected static ConcurrentDictionary<string, RequestStatus> _requests =
+     new ConcurrentDictionary<string, RequestStatus>();
+
     protected Dictionary<string, KeyValuePair<string, Dictionary<string, string>>> _qmxfTemplateResultCache = null;
     protected WebHttpClient _webHttpClient = null;  // for old mapping conversion
-        
-    #region Convert mapping
-    public mapping.Mapping LoadMapping(string path, ref Status status)
+
+    public BaseProvider(NameValueCollection settings)
+    {
+      var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
+      _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
+
+      _kernel.Load(new XmlExtensionModule());
+      _settings = _kernel.Get<AdapterSettings>();
+      _settings.AppendSettings(settings);
+
+      // Capture request headers
+      if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest != null &&
+        WebOperationContext.Current.IncomingRequest.Headers != null)
+      {
+        foreach (string headerName in WebOperationContext.Current.IncomingRequest.Headers.AllKeys)
+        {
+          _settings["http-header-" + headerName] = WebOperationContext.Current.IncomingRequest.Headers[headerName];
+        }
+      }
+
+      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+      #region initialize webHttpClient for converting old mapping
+      string proxyHost = _settings["ProxyHost"];
+      string proxyPort = _settings["ProxyPort"];
+      string rdsUri = _settings["RefDataServiceUri"];
+
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      {
+        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+        _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
+      }
+      else
+      {
+        _webHttpClient = new WebHttpClient(rdsUri);
+      }
+      #endregion
+
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+      _settings["ScopesPath"] = scopesPath;
+
+      if (File.Exists(scopesPath))
+      {
+        _scopes = Utility.Read<ScopeProjects>(scopesPath);
+      }
+      else
+      {
+        _scopes = new ScopeProjects();
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
+      }
+
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
+
+      // Ninject Extension requires fully qualified path.
+      string adapterBindingPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+
+      _kernel.Load(adapterBindingPath);
+      
+      InitializeIdentity();
+    }
+
+    protected void InitializeDataLayer()
+    {
+      InitializeDataLayer(true);
+    }
+
+    protected void InitializeDataLayer(bool setDictionary)
+    {
+      try
+      {
+        if (!_isDataLayerInitialized)
+        {
+          _logger.Debug("Initializing data layer...");
+
+          if (_settings["DumpSettings"] == "True")
+          {
+            Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
+
+            foreach (string key in _settings.AllKeys)
+            {
+              settingsDictionary.Add(key, _settings[key]);
+            }
+
+            Utility.Write<Dictionary<string, string>>(settingsDictionary, @"AdapterSettings.xml");
+          }
+
+          _dataLayerGateway = new DataLayerGateway(_kernel);
+
+          if (setDictionary)
+          {
+            _dictionary = _dataLayerGateway.GetDictionary();
+            _kernel.Bind<DataDictionary>().ToConstant(_dictionary);
+          }
+
+          _isDataLayerInitialized = true;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing application: {0}", ex));
+        throw ex;
+      }
+    }
+
+    protected void InitializeIdentity()
+    {
+      try
+      {
+        IIdentityLayer identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
+
+        IDictionary keyRing = identityLayer.GetKeyRing();
+        _kernel.Bind<IDictionary>().ToConstant(keyRing).Named("KeyRing");
+
+        _settings.AppendKeyRing(keyRing);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing identity: {0}", ex));
+        throw ex;
+      }
+    }
+
+    protected void Impersonate()
+    {
+      if (_settings["AllowImpersonation"] != null &&
+        bool.Parse(_settings["AllowImpersonation"].ToString()))
+      {
+        if (_settings["ImpersonatedUser"] != null)
+        {
+          _settings["UserName"] = _settings["ImpersonatedUser"];
+        }
+
+        if (_settings["ImpersonatedUserDomain"] != null)
+        {
+          _settings["DomainName"] = _settings["ImpersonatedUserDomain"];
+        }
+      }
+    }
+
+    private void ProcessSettings(string projectName, string applicationName)
+    {
+      // Load app settings
+      string scopeSettingsPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
+
+      if (File.Exists(scopeSettingsPath))
+      {
+        AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
+        _settings.AppendSettings(scopeSettings);
+      }
+
+      if (projectName.ToLower() != "all")
+      {
+        string appSettingsPath = String.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName);
+
+        if (File.Exists(appSettingsPath))
+        {
+          AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
+          _settings.AppendSettings(appSettings);
+        }
+      }
+
+      _settings["ProjectName"] = projectName;
+      _settings["ApplicationName"] = applicationName;
+
+      // Determine whether scope is real or implied (ALL)
+      string scope = string.Format("{0}.{1}", projectName, applicationName);
+      bool scopeFound = false;
+
+      foreach (ScopeProject project in _scopes)
+      {
+        if (project.Name.ToUpper() == projectName.ToUpper())
+        {
+          foreach (ScopeApplication application in project.Applications)
+          {
+            if (application.Name.ToUpper() == applicationName.ToUpper())
+            {
+              _application = application;
+              scopeFound = true;
+              break;
+            }
+          }
+
+          break;
+        }
+      }
+
+      if (!scopeFound)
+      {
+        scope = String.Format("all.{0}", applicationName);
+      }
+
+      _settings["Scope"] = scope;
+
+      string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
+
+      // Ninject Extension requires fully qualified path.
+      string dataLayerBindingPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+
+      _settings["BindingConfigurationPath"] = dataLayerBindingPath;
+
+      string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);
+      _settings["DBDictionaryPath"] = dbDictionaryPath;
+    }
+
+    protected void InitializeScope(string projectName, string applicationName)
+    {
+      InitializeScope(projectName, applicationName, true);
+    }
+
+    protected void InitializeScope(string projectName, string applicationName, bool loadMapping)
+    {
+      try
+      {
+        string scope = string.Format("{0}.{1}", projectName, applicationName);
+
+        if (!_isScopeInitialized)
+        {
+          ProcessSettings(projectName, applicationName);
+
+          if (loadMapping)
+          {
+            string mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
+
+            if (File.Exists(mappingPath))
+            {
+              try
+              {
+                _mapping = Utility.Read<mapping.Mapping>(mappingPath);
+              }
+              catch (Exception legacyEx)
+              {
+                _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
+                Status status = new Status();
+
+                _mapping = LoadMapping(mappingPath, ref status);
+                _logger.Info(status.ToString());
+              }
+            }
+            else
+            {
+              _mapping = new mapping.Mapping();
+              Utility.Write<mapping.Mapping>(_mapping, mappingPath);
+            }
+
+            _kernel.Bind<mapping.Mapping>().ToConstant(_mapping);
+          }
+
+          _isScopeInitialized = true;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing scope: {0}", ex));
+        throw ex;
+      }
+    }
+
+    #region Convert old mapping
+    protected mapping.Mapping LoadMapping(string path, ref Status status)
     {
       XElement mappingXml = Utility.ReadXml(path);
 
       return LoadMapping(path, mappingXml, ref status);
     }
 
-    public mapping.Mapping LoadMapping(string path, XElement mappingXml, ref Status status)
+    protected mapping.Mapping LoadMapping(string path, XElement mappingXml, ref Status status)
     {
       mapping.Mapping mapping = null;
 
@@ -60,7 +341,9 @@ namespace org.iringtools.adapter
 
         if (mapping != null)
         {
-          // write new mapping to disk
+          //
+          // Write new mapping to disk
+          //
           Utility.Write<mapping.Mapping>(mapping, path, true);
           status.Messages.Add("Legacy mapping has been converted sucessfully.");
         }
@@ -163,7 +446,7 @@ namespace org.iringtools.adapter
         }
         catch (Exception)
         {
-          continue; // class role not found, skip this template
+          continue;  // Class role not found, skip this template
         }
 
         IEnumerable<XElement> roleMaps = templateMap.Element("RoleMaps").Elements("RoleMap");
@@ -437,6 +720,49 @@ namespace org.iringtools.adapter
         }
       }
     }
-    #endregion Convert mapping
+    #endregion Convert old mapping
+
+    protected static string NewQueueRequest()
+    {
+      var id = Guid.NewGuid().ToString("N");
+      _requests[id] = new RequestStatus()
+      {
+        State = State.InProgress
+      };
+      return id;
+    }
+
+    public RequestStatus GetRequestStatus(string id)
+    {
+      try
+      {
+        RequestStatus status = null;
+
+        if (_requests.ContainsKey(id))
+        {
+          status = _requests[id];
+        }
+        else
+        {
+          status = new RequestStatus()
+          {
+            State = State.NotFound,
+            Message = "Request [" + id + "] not found."
+          };
+        }
+
+        if (status.State == State.Completed)
+        {
+          _requests.TryRemove(id, out status);
+        }
+
+        return status;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error getting request status: {0}", ex));
+        throw ex;
+      }
+    }
   }
 }

@@ -130,29 +130,6 @@ namespace org.iringtools.services
     }
 
     #endregion
-
-    #region Config methods
-    [Description("Configure the selected data layer in the service.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/configure")]
-    public Response Configure(String scope, String app)
-    {
-      try
-      {
-        return _adapterProvider.Configure(scope, app, HttpContext.Current.Request);
-      }
-      catch (Exception ex)
-      {
-        return PrepareErrorResponse(ex);
-      }
-    }
-
-    [Description("Get configuration for a selected data layer in the service.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/configuration")]
-    public XElement GetConfiguration(String scope, String app)
-    {
-      return _adapterProvider.GetConfiguration(scope, app);
-    }
-    #endregion Config methods
     #endregion
 
     #region Private Resources
@@ -404,7 +381,7 @@ namespace org.iringtools.services
     }
     #endregion
 
-    //TODO: pending on testing, do not delete
+    //TODO
     #region data layers managment
     //[Description("Adds/updates a dataLayer to/in adapter.")]
     //[WebInvoke(Method = "POST", UriTemplate = "/datalayers")]
@@ -457,7 +434,7 @@ namespace org.iringtools.services
     #region RefreshDataObjects
     [Description("Resets all data objects state in data layer.")]
     [WebGet(UriTemplate = "/{scope}/{app}/refresh")]
-    public void RefreshDataObjects(string scope, string app)
+    public void RefreshAll(string scope, string app)
     {
       try
       {
@@ -469,7 +446,7 @@ namespace org.iringtools.services
         }
         else
         {
-          Response response = _adapterProvider.RefreshDataObjects(scope, app);
+          Response response = _adapterProvider.RefreshAll(scope, app);
           _adapterProvider.FormatOutgoingMessage<Response>(response, "xml", true);
         }
       }
@@ -499,27 +476,6 @@ namespace org.iringtools.services
         return PrepareErrorResponse(ex);
       }
     }
-    #endregion
-
-    #region RefreshDataObject with filter
-    [Description("Resets a data object state in data layer.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{objectType}/refresh")]
-    public Response RefreshDataObjectWithFilter(string scope, string app, string objectType, DataFilter dataFilter)
-    {
-      try
-      {
-        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-        context.ContentType = "application/xml";
-
-        return _adapterProvider.RefreshDataObject(scope, app, objectType, dataFilter);
-      }
-      catch (Exception ex)
-      {
-        return PrepareErrorResponse(ex);
-      }
-    }
-
-    //[WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/binding")]
     #endregion
 
     #region Async request queue

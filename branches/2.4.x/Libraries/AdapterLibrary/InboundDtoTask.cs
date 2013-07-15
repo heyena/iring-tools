@@ -14,17 +14,19 @@ namespace org.iringtools.adapter
   {
     private ManualResetEvent _doneEvent;
     private DtoProjectionEngine _projectionLayer;
-    private IDataLayer _dataLayer;
+    private DataLayerGateway _dataLayerGateway;
     private GraphMap _graphMap;
+    private DataObject _objectType;
     private DataTransferObjects _dataTransferObjects;
     private Response _response;
 
-    public DataTransferObjectsTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, IDataLayer dataLayer,
-      GraphMap graphMap, DataTransferObjects dataTransferObjects)
+    public DataTransferObjectsTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, DataLayerGateway dataLayerGateway,
+      GraphMap graphMap, DataObject objectType, DataTransferObjects dataTransferObjects)
     {
       _doneEvent = doneEvent;
       _projectionLayer = projectionLayer;
-      _dataLayer = dataLayer;
+      _dataLayerGateway = dataLayerGateway;
+      _objectType = objectType;
       _graphMap = graphMap;
       _dataTransferObjects = dataTransferObjects;
     }
@@ -35,11 +37,11 @@ namespace org.iringtools.adapter
 
       if (_dataTransferObjects != null)
       {
-        IList<IDataObject> dataObjects = _projectionLayer.ToDataObjects(_graphMap, ref _dataTransferObjects);
-
+        List<IDataObject> dataObjects = _projectionLayer.ToDataObjects(_graphMap, ref _dataTransferObjects);
+        
         if (dataObjects != null)
         {
-          _response = _dataLayer.Post(dataObjects);
+          _response = _dataLayerGateway.Update(_objectType, dataObjects);
         }
       }
 
