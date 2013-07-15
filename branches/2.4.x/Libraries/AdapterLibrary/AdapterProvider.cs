@@ -517,6 +517,7 @@ namespace org.iringtools.adapter
         if (application != null)  // application exists, delete and re-create it
         {
           application.DisplayName = updatedApp.DisplayName;
+          application.Configuration.AppSettings = updatedApp.Configuration.AppSettings;
         }
         else  // application does not exist, stop processing
         {
