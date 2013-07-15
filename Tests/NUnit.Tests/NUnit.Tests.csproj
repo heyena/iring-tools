@@ -88,7 +88,6 @@
     <Compile Include="ReferenceDataTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XmlTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql">

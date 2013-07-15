@@ -876,12 +876,12 @@ namespace org.iringtools.adapter
 
           if (identifiers.Count > 0)
           {
-            if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
-            {
-              dataTransferObjects = MultiGetDataTransferObjects(dataObject, identifiers);
-            }
-            else
-            {
+            //if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
+            //{
+            //  dataTransferObjects = MultiGetDataTransferObjects(dataObject, identifiers);
+            //}
+            //else
+            //{
               List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
               DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
               XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
@@ -890,7 +890,7 @@ namespace org.iringtools.adapter
               {
                 dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
               }
-            }
+            //}
           }
         }
         catch (Exception ex)

@@ -22,7 +22,6 @@ namespace org.iringtools.adapter
     private List<string> _identifiers;
     private DataTransferObjects _dataTransferObjects;
 
-    //TODO: pass in data objects
     public OutboundDtoTask(ManualResetEvent doneEvent, DtoProjectionEngine projectionLayer, DataLayerGateway dataLayerGateway,
       GraphMap graphMap, DataObject dataObject, List<string> identifiers)
     {
