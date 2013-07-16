@@ -318,7 +318,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 	  {
         text: 'Upload File',
         handler: this.onFileUpload,
-        //icon: 'Content/img/16x16/preferences-system.png',
+        icon: 'Content/img/16x16/document-down.png',
+        scope: this
+      },
+	  {
+        text: 'Download File',
+        handler: this.onFileDownload,
+        icon: 'Content/img/16x16/document-up.png',
         scope: this
       }
     ]
@@ -483,6 +489,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onFileUpload: function(){
 		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
 		this.fireEvent('upload', this, node);
+  },
+  onFileDownload: function(){
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('download', this, node);
   },
   showContextMenu: function (node, event) {
 
