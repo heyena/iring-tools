@@ -69,7 +69,7 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
         dataType = dataType.toLowerCase();
         
       if (dataType == 'date') {
-        renderer = Ext.util.Format.dateRenderer('mm/dd/YYYY');
+        renderer = Ext.util.Format.dateRenderer('Y-m-d');
       }
       else if (dataType != 'string') {
         if (dataType == 'double' || dataType == 'float' || dataType == 'decimal') {

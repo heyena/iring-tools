@@ -288,6 +288,9 @@ namespace iRINGTools.Web.Models
           case org.iringtools.library.DataType.Decimal:
             return "float";
 
+          case org.iringtools.library.DataType.Date:
+            return "date";
+
           default:
             return "auto";
         }

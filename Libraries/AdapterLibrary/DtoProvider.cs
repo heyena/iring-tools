@@ -262,6 +262,13 @@ namespace org.iringtools.adapter
                     }
 
                     manifestRole.dataLength = dataProp.dataLength;
+                    if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                    {
+                        if (dataProp.dataType == DataType.Date)
+                            manifestRole.dataType = "xsd:date";
+                        else if (dataProp.dataType == DataType.DateTime)
+                            manifestRole.dataType = "xsd:dateTime";
+                    }
 
                     if (dataObj.isKeyProperty(propertyName))
                     {

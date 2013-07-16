@@ -135,6 +135,15 @@ public class ExchangeProvider
                 {
                   targetRoles.remove(k--);
                 }
+                else
+                {
+                	if(targetRoles.get(k).getDataType().equalsIgnoreCase("xsd:dateTime") && 
+                		sourceRole.getDataType().equalsIgnoreCase("xsd:date"))
+                	{
+                		targetRoles.get(k).setDataType("xsd:date");
+                	}
+                }
+                
               }
             }
           }
