@@ -1521,7 +1521,8 @@ function SourceUri() {
 	var source = form.findField('sourceUri').getValue();
 	var scope = form.findField('sourceScopeName').getValue();
 	var app = form.findField('sourceAppName').getValue();
-	var sourceUri = source + "/" + scope + "/" + app + "/manifest";
+	var graph= form.findField('sourceGraphName').getValue();
+	var sourceUri = source + "/" + scope + "/" + app+ "/" + graph + "/manifest";
 	console.log("1 is " + sourceUri);
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
 			+ 'px;border:1px solid #aaa;overflow:auto"';
@@ -1592,7 +1593,8 @@ function TargetUri() {
 	var target = form.findField('targetUri').getValue();
 	var scope = form.findField('targetScopeName').getValue();
 	var app = form.findField('targetAppName').getValue();
-	var targetUri = target + "/" + scope + "/" + app + "/manifest";
+	var graph= form.findField('targetGraphName').getValue();
+	var targetUri = target + "/" + scope + "/" + app + "/" +graph+"/manifest";
 	console.log("1 is " + targetUri);
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
 			+ 'px;border:1px solid #aaa;overflow:auto"';
