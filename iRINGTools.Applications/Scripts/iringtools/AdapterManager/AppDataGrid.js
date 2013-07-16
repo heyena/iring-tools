@@ -1,6 +1,6 @@
 ﻿Ext.ns('AdapterManager');
 
-function loadAppPageDto(scope, app, graph) {
+function loadAppData(scope, app, graph) {
 	var tab = Ext.getCmp('content-panel').getItem('tab-' + scope + '.' + app + '.' + graph);
 
   if (tab != null) {

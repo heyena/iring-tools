@@ -1043,9 +1043,9 @@ public String testTargetUri(String targetUri) throws IOException {
 	System.out.println(code);
 	if(code == 200)
 	{
-		return ("Connected Successfully!");
+		return ("Connected successfully!");
 	}else{
-		return("could not connect to the specified URl");
+		return("Connection to URL failed.");
 	}
 }
 
@@ -1058,9 +1058,9 @@ public String testSourceUri(String sourceUri) throws IOException {
 	System.out.println(code);
 	if(code == 200)
 	{
-		return ("Connected Successfully!");
+		return ("Connected successfully!");
 	}else{
-		return("could not connect to the specified URl");
+		return("Connection to URL failed.");
 	}
 }
 

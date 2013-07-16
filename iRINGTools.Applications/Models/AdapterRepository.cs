@@ -547,6 +547,88 @@ namespace iRINGTools.Web.Models
       }
     }
 
+    public Response RefreshCache(string scope, string application)
+    {
+      Response response = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        string isAsync = _settings["Async"];
+        string url = string.Format("/{0}/{1}/cache/refresh?format=xml", scope, application);
+
+        if (isAsync != null && isAsync.ToLower() == "true")
+        {
+          client.Async = true;
+          string statusUrl = client.Get<string>(url);
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);
+        }
+        else
+        {
+          response = client.Get<Response>(url, true);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+
+        response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
+      }
+
+      return response;
+    }
+
+    public Response RefreshCache(string scope, string application, string dataObjectName)
+    {
+      Response response = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        string isAsync = _settings["Async"];
+        string url = string.Format("/{0}/{1}/{2}/cache/refresh?format=xml", scope, application, dataObjectName);
+
+        if (isAsync != null && isAsync.ToLower() == "true")
+        {
+          client.Async = true;
+          string statusUrl = client.Get<string>(url);
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);
+        }
+        else
+        {
+          response = client.Get<Response>(url, true);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+
+        response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
+      }
+
+      return response;
+    }
+
     #region NHibernate Configuration Wizard support methods
     public DataProviders GetDBProviders()
     {

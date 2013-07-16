@@ -522,11 +522,11 @@ directoryPanel.on('download', function (npanel, node) {
 
   }, this);
 
-  directoryPanel.on('LoadPageDto', function (npanel, node) {
+  directoryPanel.on('LoadAppData', function (npanel, node) {
     var scope = node.parentNode.parentNode.parentNode.attributes.record.Name
     var app = node.parentNode.parentNode.attributes.record.Name;
     var graph = node.text;
-    loadAppPageDto(scope, app, graph);
+    loadAppData(scope, app, graph);
   }, this);
 
   directoryPanel.on('OpenGraphMap', function (npanel, node) {
