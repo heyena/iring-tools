@@ -1121,24 +1121,31 @@ namespace org.iringtools.adapter
 
     protected string CheckCache(bool validateState)
     {
-      string checkCacheSQL = string.Format("SELECT * FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _scope, _app);
-      DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, checkCacheSQL);
-
-      if (dt.Rows.Count > 0)
+      try
       {
-        DataRow row = dt.Rows[0];
+        string checkCacheSQL = string.Format("SELECT * FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _scope, _app);
+        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, checkCacheSQL);
 
-        if (validateState)
+        if (dt.Rows.Count > 0)
         {
-          CacheState cacheState = (CacheState)Enum.Parse(typeof(CacheState), row["State"].ToString());
+          DataRow row = dt.Rows[0];
 
-          if (cacheState != CacheState.Ready)
+          if (validateState)
           {
-            throw new Exception("Operation can't be done at this time. Other activity to this cache is underway.");
-          }
-        }
+            CacheState cacheState = (CacheState)Enum.Parse(typeof(CacheState), row["State"].ToString());
 
-        return row["CacheId"].ToString();
+            if (cacheState != CacheState.Ready)
+            {
+              throw new Exception("Operation can't be done at this time. Other activity to this cache is underway.");
+            }
+          }
+
+          return row["CacheId"].ToString();
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.Message);
       }
 
       return string.Empty;
