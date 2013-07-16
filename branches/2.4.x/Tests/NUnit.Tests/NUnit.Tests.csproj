@@ -71,7 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdapterTest.cs" />
+    <!--<Compile Include="AdapterTest.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
     <Compile Include="BaseTest.cs" />
     <Compile Include="DataTest.cs">
@@ -79,7 +79,7 @@
     </Compile>
     <Compile Include="DxfrTest.cs">
       <SubType>Code</SubType>
-    </Compile>
+    </Compile>-->
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceDataTests.cs">
       <SubType>Code</SubType>
