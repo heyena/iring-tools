@@ -352,8 +352,14 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildAppDataMenu: function () {
     return [
             {
-              text: 'Open Grid',
-              handler: this.onLoadPageDto,
+              text: 'View Application Data',
+              handler: this.onLoadAppData,
+              icon: 'Content/img/16x16/document-properties.png',
+              scope: this
+            },
+            {
+              text: 'Refresh Object Cache',
+              handler: this.onRefreshObjectCache,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
             }
@@ -363,8 +369,14 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildDataObjectsMenu: function () {
     return [
             {
-              text: 'Refresh',
+              text: 'Refresh Data Dictionary',
               handler: this.onRefreshDataObjects,
+              icon: 'Content/img/16x16/document-properties.png',
+              scope: this
+            },
+            {
+              text: 'Refresh Application Cache',
+              handler: this.onRefreshCache,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
             }
@@ -692,9 +704,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.fireEvent('EditApplication', this, node);
   },
 
-  onLoadPageDto: function (btn, ev) {
+  onLoadAppData: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    this.fireEvent('LoadPageDto', this, node);
+    this.fireEvent('LoadAppData', this, node);
   },
 
   onRefreshDataObjects: function (btn, ev) {
@@ -708,6 +720,47 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     catch (err) {
       showDialog(400, 100, 'Refresh Error', err.Message, Ext.Msg.OK, null);
     }
+  },
+
+  onRefreshCache: function (btn, ev) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/RefreshCache',
+      method: 'POST',
+      timeout: 28800000,  // 8 hours
+      params: {
+        'nodeid': node.attributes.id
+      },
+      success: function (result, request) {
+        showDialog(450, 100, 'Refresh Cache Result', 'Application cache refreshed successfully.', Ext.Msg.OK, null);
+      },
+      failure: function (result, request) {
+        var msg = result.responseText;
+        showDialog(500, 240, 'Refresh Cache Error', msg, Ext.Msg.OK, null);
+      }
+    })
+  },
+
+  onRefreshObjectCache: function (btn, ev) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/RefreshObjectCache',
+      method: 'POST',
+      timeout: 3600000,  // 1 hour
+      params: {
+        'nodeid': node.attributes.id,
+        'objectType': node.text
+      },
+      success: function (result, request) {
+        showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
+      },
+      failure: function (result, request) {
+        var msg = result.responseText;
+        showDialog(500, 240, 'Refresh Object Cache Error', msg, Ext.Msg.OK, null);
+      }
+    })
   },
 
   onDeleteScope: function (btn, ev) {
@@ -818,7 +871,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       this.fireEvent('OpenGraphMap', this, node);
     }
     else if (node.attributes.type == 'DataObjectNode') {
-      this.fireEvent('LoadPageDto', this, node);
+      this.fireEvent('LoadAppData', this, node);
     }
   },
 

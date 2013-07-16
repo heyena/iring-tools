@@ -219,7 +219,7 @@ namespace org.iringtools.adapter
       try
       {
         DataDictionary dictionary = GetDictionary(updateDictionary, objectType);
-        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType);
+        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
         if (dataObject == null)
         {
