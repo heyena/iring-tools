@@ -35,20 +35,7 @@ namespace NUnit.Tests
       _settings.AppendSettings((ServiceSettings)adapterSettings);
       _settings["BaseDirectoryPath"] = _baseDirectory;      
       _refdataProvider = new ReferenceDataProvider(_settings);
-    }
-
-    
-    //public ReferenceDataTests()
-    //{
-    //  _settings = new ReferenceDataSettings();
-    //  _settings.AppendSettings(ConfigurationManager.AppSettings);
-    //  _baseDirectory = Directory.GetCurrentDirectory();
-    //  _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
-    //  _settings["BaseDirectoryPath"] = _baseDirectory;
-    //  Directory.SetCurrentDirectory(_baseDirectory);
-    //  _refdataProvider = new ReferenceDataProvider(_settings);
-    //}
-     
+    }   
 
     //[Test]
     public void GetFederation()
