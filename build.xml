@@ -142,7 +142,7 @@
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
   </Target>
    
-  <Target Name="PrepareBuild">
+  <Target Name="PrepareBuild" DependsOnTargets="Version">
     <Message Text="Preparing build ..." />
     <Exec Condition="!Exists('$(ServicesDir)\Web.config')" 
           Command="Copy $(ServicesDir)\Web_Default.config $(ServicesDir)\Web.config" />
@@ -160,7 +160,7 @@
           Command="Copy $(RDFImportExportDir)\RDFImportExport_Default.config $(RDFImportExportDir)\App.config" />
   </Target>
 
-  <Target Name="CoreBuild" DependsOnTargets="Version">
+  <Target Name="CoreBuild">
     <Message Text="Performing MSBuild ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>

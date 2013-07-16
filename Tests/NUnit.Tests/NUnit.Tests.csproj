@@ -71,6 +71,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Code\Model.12345_000.ABC.cs" />
+    <Compile Include="App_Code\Model.12345_000.DEF.cs" />
     <Compile Include="AdapterTest.cs" />
     <Compile Include="BaseTest.cs" />
     <Compile Include="DxfrTest.cs" />
