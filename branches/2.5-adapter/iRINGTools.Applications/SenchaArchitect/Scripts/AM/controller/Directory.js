@@ -21,13 +21,15 @@ Ext.define('AM.controller.Directory', {
     'BaseUrlModel',
     'DataLayerModel',
     'ContextModel',
-    'DynamicModel'
+    'DynamicModel',
+    'FileDownloadModel'
   ],
   stores: [
     'DirectoryTreeStore',
     'ContextStore',
     'BaseUrlStore',
-    'DataLayerStore'
+    'DataLayerStore',
+    'FileDownloadStore'
   ],
   views: [
     'common.PropertyPanel',
@@ -60,7 +62,9 @@ Ext.define('AM.controller.Directory', {
     'menus.ValueListMapMenu',
     'menus.AppDataRefreshMenu',
     'directory.FileUpoadForm',
-    'directory.FileUploadWindow'
+    'directory.FileUploadWindow',
+    'directory.DownloadGrid',
+    'directory.FileDownloadWindow'
   ],
 
   refs: [
@@ -284,7 +288,8 @@ Ext.define('AM.controller.Directory', {
       id: 'newwin-' + node.data.id, 
       title: wintitle, 
       iconCls: 'tabsApplication',
-      node: node
+      node: node,
+      modal:true
     };
 
     var win = Ext.widget('applicationwindow', conf);
@@ -672,10 +677,78 @@ Ext.define('AM.controller.Directory', {
     win.show();
   },
 
+  onFileDownload: function(item, e, eOpts) {
+    var me = this;
+    var win = Ext.widget('filedownloadwindow');
+    var form = win.down('form');
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode();
+
+    var formRecord = {
+      scope: node.parentNode.data.text,
+      application: node.data.text 
+    };
+
+
+    /*form.getForm().setValues(formRecord);
+
+    win.on('Save', function () {
+    win.destroy();
+    }, me);
+
+    win.on('reset', function () {
+    win.destroy();
+    }, me);
+    */
+    win.show();
+  },
+
+  onAddSettings: function(button, e, eOpts) {
+    var me = this;
+    var nameID;
+    var valueID;
+    var myFieldSet = Ext.getCmp('settingfieldset');
+    if(myFieldSet.items.items.length>=1){
+      var nameID = 'key'+(myFieldSet.items.items.length+1);
+      var valueID = 'value'+(myFieldSet.items.items.length+1);
+    }else{
+      var nameID = 'key1';
+      var valueID = 'value1';
+    }
+    var abc = me.addSettings("", "", nameID, valueID);
+    myFieldSet.add(abc);
+    myFieldSet.doLayout();
+    myFieldSet.items.items[myFieldSet.items.length-1].items.items[0].allowBlank = false;
+
+  },
+
+  onApplicationFormAfterRender: function(component, eOpts) {
+    var key = '';
+    var value = '';
+    var me = this;
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode();
+    if (node.data.record != null) {
+      if(node.data.record.Configuration!=null){
+        if (node.data.record.Configuration.AppSettings != null) {
+          if(node.data.record.Configuration.AppSettings.Settings!=null){
+            for(var i=0;i<node.data.record.Configuration.AppSettings.Settings.length;i++){
+              key = node.data.record.Configuration.AppSettings.Settings[i].Key;
+              value = node.data.record.Configuration.AppSettings.Settings[i].Value;
+              var newSetting = me.addSettings(key,value, ('key'+i), ('value'+i));
+              newSetting[0].items[0].allowBlank = false;
+              component.items.map['settingfieldset'].add(newSetting);
+            }
+          }
+        }
+      }
+    }
+  },
+
   init: function(application) {
     scopForExport = null;
     appForExport = null;
-
+    Ext.QuickTips.init();
 
     this.control({
       "gridpanel": {
@@ -723,6 +796,15 @@ Ext.define('AM.controller.Directory', {
       },
       "menuitem[action=fileupload]": {
         click: this.onFileUpload
+      },
+      "menuitem[action=filedownload]": {
+        click: this.onFileDownload
+      },
+      "button[action = addsettings]": {
+        click: this.onAddSettings
+      },
+      "form": {
+        afterrender: this.onApplicationFormAfterRender
       }
     });
   },
@@ -736,6 +818,57 @@ Ext.define('AM.controller.Directory', {
     contextName = node.parentNode.parentNode.parentNode.data.property.Name;
     endpointName = node.parentNode.parentNode.data.property.Name;
     var graph = node.data.text;
+  },
+
+  addSettings: function(key, value, nameID, valueID) {
+    return[ {
+      xtype: 'container',
+      margin:'10 20 0 96',
+      //bodyStyle: 'padding:10px 20px 0 70px',
+      layout:'column',
+      items: [
+      {
+        xtype: 'textfield',
+        name:nameID,
+        value:key,
+        columnWidth:'0.30',
+        //width:164,
+        allowBlank: true
+      },
+      {
+        xtype: 'textarea',
+        name:valueID,
+        value:value,
+        columnWidth:'0.60',
+        grow : false,
+        //width:270,  // height: 50,
+        margin:'0 0 0 3',
+        //margin:'0 0 0 3'
+      },
+      {
+        xtype: 'button',
+        //flex: 1,
+        text: 'Delete',
+        columnWidth:'0.10',
+        margin:'0 0 0 3',
+        //width:48,
+        //margin:'0 0 0 3',
+        //action:'DeleteMe',
+        //icon :'../../ux/css/images/right2.gif',//'remove-button',
+        //columnWidth: 0.10,
+        //style: 'margin:0 0 0 49;',
+        //style: 'float: right;',
+        tooltip: 'Click to Delete settings',
+        handler : function (){
+          this.findParentByType('container').destroy();
+
+        }
+      }
+
+      ]
+    }
+
+    ]
   }
 
 });

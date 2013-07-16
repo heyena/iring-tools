@@ -8,8 +8,9 @@
     "userConfig": {
         "node": "",
         "border": false,
-        "height": 230,
-        "width": 460,
+        "height": 434,
+        "minHeight": 200,
+        "width": 733,
         "designer|userClassName": "directory.ApplicationWindow",
         "designer|userAlias": "applicationwindow",
         "layout": "fit",

@@ -948,6 +948,38 @@
                 "Scripts/AM/view/directory/FileUploadWindow.js"
             ],
             "className": "directory.FileUploadWindow"
+        },
+        "891a8b6b-bd32-4cc1-860b-f08fe769b0d3": {
+            "paths": [
+                "metadata/view/directory.DownloadGrid",
+                "Scripts/AM/view/override/directory/DownloadGrid.js",
+                "Scripts/AM/view/directory/DownloadGrid.js"
+            ],
+            "className": "directory.DownloadGrid"
+        },
+        "70726d51-c369-4512-84e0-e1a1ee5e410a": {
+            "paths": [
+                "metadata/view/directory.FileDownloadWindow",
+                "Scripts/AM/view/override/directory/FileDownloadWindow.js",
+                "Scripts/AM/view/directory/FileDownloadWindow.js"
+            ],
+            "className": "directory.FileDownloadWindow"
+        },
+        "c47bb7fc-c622-4f9d-83ae-be96ead2c751": {
+            "paths": [
+                "metadata/store/FileDownloadStore",
+                "Scripts/AM/store/override/FileDownloadStore.js",
+                "Scripts/AM/store/FileDownloadStore.js"
+            ],
+            "className": "FileDownloadStore"
+        },
+        "842afcd6-cf5a-4490-87bc-b828d4b9fb21": {
+            "paths": [
+                "metadata/model/FileDownloadModel",
+                "Scripts/AM/model/override/FileDownloadModel.js",
+                "Scripts/AM/model/FileDownloadModel.js"
+            ],
+            "className": "FileDownloadModel"
         }
     },
     "viewOrderMap": {
@@ -1028,7 +1060,9 @@
             "bc637baa-a3fd-4d38-b427-e9c1098119ce",
             "bb8382aa-382a-45f1-b826-b4b5884cb6ae",
             "10e81d90-8b94-4aa5-9dcd-98525d8deb1f",
-            "18eb1a6e-206c-40d2-89c8-7aeb77e0f9d1"
+            "18eb1a6e-206c-40d2-89c8-7aeb77e0f9d1",
+            "891a8b6b-bd32-4cc1-860b-f08fe769b0d3",
+            "70726d51-c369-4512-84e0-e1a1ee5e410a"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",
@@ -1047,7 +1081,8 @@
             "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd",
             "b93d62e3-52fe-4c8d-af23-be3ef7516ff4",
             "19274de1-0fa9-4687-ba97-fd4f4a1cea68",
-            "cc442d03-be71-4c6c-bb48-90f2a756b8ba"
+            "cc442d03-be71-4c6c-bb48-90f2a756b8ba",
+            "c47bb7fc-c622-4f9d-83ae-be96ead2c751"
         ],
         "controller": [
             "06f88f22-c6f5-473b-a55b-a40aae8ad3b2",
@@ -1072,7 +1107,8 @@
             "975a262c-12eb-4d94-a784-080c158bd614",
             "0ec68326-37b6-4aa6-96d1-dc41d4a1a50c",
             "ea0e3b6e-3144-45fa-9b7e-fe85e7feb98c",
-            "55c83466-e46b-45be-9395-235cd0c2081c"
+            "55c83466-e46b-45be-9395-235cd0c2081c",
+            "842afcd6-cf5a-4490-87bc-b828d4b9fb21"
         ],
         "resource": [
             "72503647-4c8b-4e49-9fc2-bc85f975b901",

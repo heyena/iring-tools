@@ -1113,7 +1113,8 @@
                 ],
                 "implHandler": [
                     "var me = this;\r",
-                    "me.application.addEvents('confignhibernate');"
+                    "me.application.addEvents('confignhibernate');\r",
+                    "Ext.QuickTips.init();"
                 ]
             },
             "designerId": "abaf4912-6a1c-4fd1-9541-74c897fa76df"

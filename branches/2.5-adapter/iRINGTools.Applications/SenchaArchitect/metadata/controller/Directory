@@ -11,13 +11,15 @@
             "BaseUrlModel",
             "DataLayerModel",
             "ContextModel",
-            "DynamicModel"
+            "DynamicModel",
+            "FileDownloadModel"
         ],
         "stores": [
             "DirectoryTreeStore",
             "ContextStore",
             "BaseUrlStore",
-            "DataLayerStore"
+            "DataLayerStore",
+            "FileDownloadStore"
         ],
         "views": [
             "common.PropertyPanel",
@@ -50,7 +52,9 @@
             "menus.ValueListMapMenu",
             "menus.AppDataRefreshMenu",
             "directory.FileUpoadForm",
-            "directory.FileUploadWindow"
+            "directory.FileUploadWindow",
+            "directory.DownloadGrid",
+            "directory.FileDownloadWindow"
         ],
         "designer|userClassName": "Directory"
     },
@@ -233,7 +237,7 @@
                     "  //if (!node.isExpanded())\r",
                     "  // node.expand();\r",
                     "  //tree.expandPath(node.getPath(), 'text');\r",
-                    "  \r",
+                    "\r",
                     "}, me);\r",
                     "\r",
                     "win.on('cancel', function () {\r",
@@ -358,7 +362,8 @@
                     "  id: 'newwin-' + node.data.id, \r",
                     "  title: wintitle, \r",
                     "  iconCls: 'tabsApplication',\r",
-                    "  node: node\r",
+                    "  node: node,\r",
+                    "  modal:true\r",
                     "};\r",
                     "\r",
                     "var win = Ext.widget('applicationwindow', conf);\r",
@@ -880,7 +885,7 @@
                 "implHandler": [
                     "scopForExport = null;\r",
                     "appForExport = null;\r",
-                    ""
+                    "Ext.QuickTips.init();"
                 ]
             },
             "designerId": "03aa7a1f-045e-41ad-aedd-ff6383bd81dc"
@@ -1002,6 +1007,187 @@
                 "designer|controlQuery": "menuitem[action=fileupload]"
             },
             "designerId": "d2ae41dd-5842-4769-ac3b-8b813cc54666"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onFileDownload",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var win = Ext.widget('filedownloadwindow');\r",
+                    "var form = win.down('form');\r",
+                    "var tree = me.getDirTree();\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "\r",
+                    "var formRecord = {\r",
+                    "  scope: node.parentNode.data.text,\r",
+                    "  application: node.data.text \r",
+                    "};\r",
+                    "\r",
+                    "\r",
+                    "/*form.getForm().setValues(formRecord);\r",
+                    "\r",
+                    "win.on('Save', function () {\r",
+                    "win.destroy();\r",
+                    "}, me);\r",
+                    "\r",
+                    "win.on('reset', function () {\r",
+                    "win.destroy();\r",
+                    "}, me);\r",
+                    "*/\r",
+                    "win.show();"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=filedownload]"
+            },
+            "designerId": "a85515fb-2ef5-4ffa-851f-e0e5853c879b"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onAddSettings",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var nameID;\r",
+                    "var valueID;\r",
+                    "var myFieldSet = Ext.getCmp('settingfieldset');\r",
+                    "if(myFieldSet.items.items.length>=1){\r",
+                    "  var nameID = 'key'+(myFieldSet.items.items.length+1);\r",
+                    "  var valueID = 'value'+(myFieldSet.items.items.length+1);\r",
+                    "}else{\r",
+                    "  var nameID = 'key1';\r",
+                    "  var valueID = 'value1';\r",
+                    "}\r",
+                    "var abc = me.addSettings(\"\", \"\", nameID, valueID);\r",
+                    "myFieldSet.add(abc);\r",
+                    "myFieldSet.doLayout();\r",
+                    "myFieldSet.items.items[myFieldSet.items.length-1].items.items[0].allowBlank = false;\r",
+                    ""
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.button.Button",
+                "designer|controlQuery": "button[action = addsettings]"
+            },
+            "designerId": "b1a24025-c518-4779-88c0-ee487b96ed50"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "addSettings",
+                "designer|params": [
+                    "key",
+                    "value",
+                    "nameID",
+                    "valueID"
+                ],
+                "implHandler": [
+                    "return[ {\r",
+                    "\t\t\t\t\t\t\t  xtype: 'container',\r",
+                    "\t\t\t\t\t\t\t  margin:'10 20 0 96',\r",
+                    "\t\t\t\t\t\t\t  //bodyStyle: 'padding:10px 20px 0 70px',\r",
+                    "\t\t\t\t\t\t\t  layout:'column',\r",
+                    "\t\t\t\t\t\t\t  items: [\r",
+                    "                         {\r",
+                    "                           xtype: 'textfield',\r",
+                    "                           name:nameID,\r",
+                    "                           value:key,\r",
+                    "                           columnWidth:'0.30',\r",
+                    "                           //width:164,\r",
+                    "                           allowBlank: true\r",
+                    "                          },\r",
+                    "                          {\r",
+                    "                            xtype: 'textarea',\r",
+                    "                            name:valueID,\r",
+                    "                            value:value,\r",
+                    "                            columnWidth:'0.60',\r",
+                    "                            grow : false,\r",
+                    "                            //width:270,  // height: 50,\r",
+                    "                            margin:'0 0 0 3',\r",
+                    "                            //margin:'0 0 0 3'\r",
+                    "                                       },\r",
+                    "                          {\r",
+                    "                            xtype: 'button',\r",
+                    "                            //flex: 1,\r",
+                    "                            text: 'Delete',\r",
+                    "                            columnWidth:'0.10',\r",
+                    "                            margin:'0 0 0 3',\r",
+                    "                            //width:48,\r",
+                    "                            //margin:'0 0 0 3',\r",
+                    "                            //action:'DeleteMe',\r",
+                    "                            //icon :'../../ux/css/images/right2.gif',//'remove-button',\r",
+                    "                            //columnWidth: 0.10,\r",
+                    "                            //style: 'margin:0 0 0 49;',\r",
+                    "                            //style: 'float: right;',\r",
+                    "                            tooltip: 'Click to Delete settings',\r",
+                    "                            handler : function (){\r",
+                    "                                 this.findParentByType('container').destroy();\r",
+                    "                                \r",
+                    "                            }\r",
+                    "                           }\r",
+                    "\t\t\t\t\t\t\t     \r",
+                    "\t\t\t\t\t\t\t  ]\r",
+                    "\t\t\t\t\t\t}\r",
+                    "\t                         \r",
+                    "\t   ]"
+                ]
+            },
+            "designerId": "2b123a88-5420-4bca-b78c-c3a96d882879"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onApplicationFormAfterRender",
+                "implHandler": [
+                    "var key = '';\r",
+                    "var value = '';\r",
+                    "var me = this;\r",
+                    "var tree = me.getDirTree();\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "if (node.data.record != null) {\r",
+                    "\t     if(node.data.record.Configuration!=null){\r",
+                    "\t       if (node.data.record.Configuration.AppSettings != null) {\r",
+                    "\t\t      if(node.data.record.Configuration.AppSettings.Settings!=null){\r",
+                    "\t\t\t        for(var i=0;i<node.data.record.Configuration.AppSettings.Settings.length;i++){\r",
+                    "\t\t\t\t\t\t      key = node.data.record.Configuration.AppSettings.Settings[i].Key;\r",
+                    "\t\t\t\t\t\t      value = node.data.record.Configuration.AppSettings.Settings[i].Value;\r",
+                    "                  var newSetting = me.addSettings(key,value, ('key'+i), ('value'+i));\r",
+                    "                  newSetting[0].items[0].allowBlank = false;\r",
+                    "                  component.items.map['settingfieldset'].add(newSetting);\r",
+                    "\t\t\t  }\r",
+                    "\t\t\t }\r",
+                    "\t\t  }\r",
+                    "\t   }\r",
+                    "\t  }"
+                ],
+                "name": "afterrender",
+                "scope": "me",
+                "designer|targetType": "directory.ApplicationForm",
+                "designer|controlQuery": "form"
+            },
+            "designerId": "6ec7c09e-ed7e-414b-b47e-bd07b8c2f64a"
         }
     ]
 }

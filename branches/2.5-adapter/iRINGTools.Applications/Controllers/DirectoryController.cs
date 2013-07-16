@@ -563,7 +563,8 @@ namespace org.iringtools.web.controllers
 
       for (int i = 0; i < form.AllKeys.Length; i++)
       {
-          if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val")
+          //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val")
+          if (form.GetKey(i).Contains("key"))
           {
               //if (configuration.AppSettings == null)
               //{

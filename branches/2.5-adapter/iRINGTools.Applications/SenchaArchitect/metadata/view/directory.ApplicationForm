@@ -146,25 +146,26 @@
                     "var dlCombo = me.down('combo');\r",
                     "\r",
                     "var state = me.getForm().findField('state').getValue();\r",
-                    "me.getForm().submit({\r",
+                    "if(me.getForm().isValid()){\r",
+                    "  me.getForm().submit({\r",
                     "  waitMsg: 'Saving Data...',\r",
                     "  success: function (response, request) {\r",
                     "\r",
                     "    win.fireEvent('save', me);\r",
                     "  },\r",
                     "  failure: function (response, request) {\r",
-                    "    var rtext = request.result;\r",
-                    "    if (rtext.toUpperCase().indexOf('FALSE') > 0) {\r",
-                    "    var ind = rtext.indexOf('}');\r",
-                    "    var len = rtext.length - ind - 1;\r",
-                    "    var msg = rtext.substring(ind + 1, rtext.length - 1);\r",
-                    "    showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);\r",
+                    "     var message = 'Error saving changes!';\r",
+                    "     showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
                     "    return;\r",
                     "  }\r",
-                    "  var message = 'Error saving changes!';\r",
-                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "});\r",
+                    "}else\r",
+                    "{\r",
+                    "\t\t\tvar message = 'Please fill the required data';\r",
+                    "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "      return;\r",
                     "}\r",
-                    "});"
+                    ""
                 ]
             },
             "designerId": "a394ae97-1a06-435d-aaeb-4f8276426129"
@@ -280,8 +281,10 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "margin": null,
                 "fieldLabel": "Name",
-                "name": "name"
+                "name": "name",
+                "allowBlank": false
             },
             "designerId": "5e270425-4108-41d2-95f4-cb0c3292a47c"
         },
@@ -294,6 +297,7 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "margin": null,
                 "fieldLabel": "Description",
                 "name": "description"
             },
@@ -310,6 +314,7 @@
                 "layout|anchor": null,
                 "disabled": true,
                 "hidden": true,
+                "margin": null,
                 "fieldLabel": "Context Name",
                 "name": "context"
             },
@@ -327,6 +332,125 @@
             },
             "designerId": "eebfb9f9-0d2a-4775-9fda-c6aa962e1aa5",
             "masterInstanceId": "89827f86-cc75-4149-b7e4-3defbfcb6ebd"
+        },
+        {
+            "type": "Ext.container.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "container|align": "stretch",
+                "margin": null,
+                "layout": "hbox"
+            },
+            "designerId": "26441c3d-7e7a-4093-a1df-64347ae8da24",
+            "cn": [
+                {
+                    "type": "Ext.form.Label",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": 1,
+                        "style": [
+                            "{\r",
+                            "  font: 'normal 12px tahoma, arial, helvetica, sans-serif;'\r",
+                            "  \r",
+                            "}"
+                        ],
+                        "text": "Settings:"
+                    },
+                    "designerId": "541e8771-b421-4063-8886-62649be9c2f9"
+                },
+                {
+                    "type": "Ext.form.Label",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": 1,
+                        "margin": null,
+                        "style": [
+                            "{\r",
+                            "  font: 'normal 12px tahoma, arial, helvetica, sans-serif;'\r",
+                            "  \r",
+                            "}"
+                        ],
+                        "text": "Name"
+                    },
+                    "designerId": "a656c117-7024-4937-9a60-f7623023259c"
+                },
+                {
+                    "type": "Ext.form.Label",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": 1.5,
+                        "margin": null,
+                        "style": [
+                            "\r",
+                            "{\r",
+                            "  font: 'normal 12px tahoma, arial, helvetica, sans-serif;'\r",
+                            "  \r",
+                            "}"
+                        ],
+                        "text": "Value"
+                    },
+                    "designerId": "b7eeaf05-b02f-4185-8a90-a07b18f12291"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "action": "addsettings",
+                        "margin": null,
+                        "width": 50,
+                        "text": "Add",
+                        "tooltip": [
+                            "Click to Add settings"
+                        ]
+                    },
+                    "designerId": "e33d72f5-1c6f-4f02-aeae-22d03a575a12",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Ext.form.FieldSet",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "border": false,
+                "height": 200,
+                "id": "settingfieldset",
+                "margin": null,
+                "autoScroll": true,
+                "title": null
+            },
+            "designerId": "49b57d2d-3333-42b7-bf5e-4f703d8a3d21"
         }
     ]
 }

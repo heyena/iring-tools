@@ -6,6 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
+        "width": null,
         "designer|userClassName": "directory.DataLayerCombo",
         "designer|userAlias": "datalayercombo",
         "fieldLabel": "Data Layer",

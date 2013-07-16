@@ -65,7 +65,8 @@
                 ],
                 "implHandler": [
                     "var me = this;\r",
-                    "me.application.addEvents('configspreadsheet');"
+                    "me.application.addEvents('configspreadsheet');\r",
+                    "Ext.QuickTips.init();"
                 ]
             },
             "designerId": "186cf54d-efbf-4a14-a6ec-f22f16780c98"

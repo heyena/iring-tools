@@ -94,7 +94,8 @@ Ext.define('AM.view.directory.ApplicationForm', {
         {
           xtype: 'textfield',
           fieldLabel: 'Name',
-          name: 'name'
+          name: 'name',
+          allowBlank: false
         },
         {
           xtype: 'textareafield',
@@ -110,6 +111,53 @@ Ext.define('AM.view.directory.ApplicationForm', {
         },
         {
           xtype: 'datalayercombo'
+        },
+        {
+          xtype: 'container',
+          layout: {
+            align: 'stretch',
+            type: 'hbox'
+          },
+          items: [
+            {
+              xtype: 'label',
+              flex: 1,
+              style: {
+                font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
+              },
+              text: 'Settings:'
+            },
+            {
+              xtype: 'label',
+              flex: 1,
+              style: {
+                font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
+              },
+              text: 'Name'
+            },
+            {
+              xtype: 'label',
+              flex: 1.5,
+              style: {
+                font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
+              },
+              text: 'Value'
+            },
+            {
+              xtype: 'button',
+              action: 'addsettings',
+              width: 50,
+              text: 'Add',
+              tooltip: 'Click to Add settings'
+            }
+          ]
+        },
+        {
+          xtype: 'fieldset',
+          border: false,
+          height: 200,
+          id: 'settingfieldset',
+          autoScroll: true
         }
       ]
     });
@@ -125,25 +173,26 @@ Ext.define('AM.view.directory.ApplicationForm', {
     var dlCombo = me.down('combo');
 
     var state = me.getForm().findField('state').getValue();
-    me.getForm().submit({
-      waitMsg: 'Saving Data...',
-      success: function (response, request) {
+    if(me.getForm().isValid()){
+      me.getForm().submit({
+        waitMsg: 'Saving Data...',
+        success: function (response, request) {
 
-        win.fireEvent('save', me);
-      },
-      failure: function (response, request) {
-        var rtext = request.result;
-        if (rtext.toUpperCase().indexOf('FALSE') > 0) {
-        var ind = rtext.indexOf('}');
-        var len = rtext.length - ind - 1;
-        var msg = rtext.substring(ind + 1, rtext.length - 1);
-        showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
-        return;
-      }
-      var message = 'Error saving changes!';
+          win.fireEvent('save', me);
+        },
+        failure: function (response, request) {
+          var message = 'Error saving changes!';
+          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          return;
+        }
+      });
+    }else
+    {
+      var message = 'Please fill the required data';
       showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      return;
     }
-  });
+
   },
 
   onReset: function() {

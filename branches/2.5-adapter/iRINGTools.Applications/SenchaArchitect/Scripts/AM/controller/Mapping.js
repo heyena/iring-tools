@@ -903,6 +903,7 @@ Ext.define('AM.controller.Mapping', {
   init: function(application) {
     var me = this;
     me.application.addEvents('opengraphmap');
+    Ext.QuickTips.init();
 
     this.control({
       "menuitem[action=templatemapdelete]": {

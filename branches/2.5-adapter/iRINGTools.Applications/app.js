@@ -32,13 +32,16 @@ Ext.application({
     'AM.view.mapping.LiteralForm',
     'AM.view.mapping.LiteralWindow',
     'AM.view.directory.FileUpoadForm',
-    'AM.view.directory.FileUploadWindow'
+    'AM.view.directory.FileUploadWindow',
+    'AM.view.directory.DownloadGrid'
   ],
   models: [
-    'RelationModel'
+    'RelationModel',
+    'FileDownloadModel'
   ],
   stores: [
-    'RelationStore'
+    'RelationStore',
+    'FileDownloadStore'
   ],
   views: [
     'Main',
@@ -49,7 +52,9 @@ Ext.application({
     'MyToolbar29',
     'mapping.LiteralWindow',
     'directory.FileUpoadForm',
-    'directory.FileUploadWindow'
+    'directory.FileUploadWindow',
+    'directory.DownloadGrid',
+    'directory.DownloadWindow'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

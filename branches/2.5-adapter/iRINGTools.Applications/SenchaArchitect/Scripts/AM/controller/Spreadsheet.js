@@ -118,6 +118,7 @@ Ext.define('AM.controller.Spreadsheet', {
   init: function(application) {
     var me = this;
     me.application.addEvents('configspreadsheet');
+    Ext.QuickTips.init();
 
     this.control({
       "button[action=openuploadform]": {

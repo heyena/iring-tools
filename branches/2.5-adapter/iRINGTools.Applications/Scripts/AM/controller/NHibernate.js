@@ -1164,6 +1164,7 @@ Ext.define('AM.controller.NHibernate', {
   init: function(application) {
     var me = this;
     me.application.addEvents('confignhibernate');
+    Ext.QuickTips.init();
 
     this.control({
       "nhibernatepanel button[action=savedbobjectstree]": {

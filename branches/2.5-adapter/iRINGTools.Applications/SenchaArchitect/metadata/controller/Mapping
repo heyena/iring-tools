@@ -1082,7 +1082,8 @@
                 ],
                 "implHandler": [
                     "var me = this;\r",
-                    "me.application.addEvents('opengraphmap');"
+                    "me.application.addEvents('opengraphmap');\r",
+                    "Ext.QuickTips.init();"
                 ]
             },
             "designerId": "e95395ff-66ac-4951-8c8f-c9dc64371802"

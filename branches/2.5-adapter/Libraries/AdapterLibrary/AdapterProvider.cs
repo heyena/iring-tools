@@ -583,6 +583,7 @@ namespace org.iringtools.adapter
           //AddApplication(scopeName, updatedApp);
 
           application.DisplayName = updatedApp.DisplayName;
+          application.Configuration.AppSettings = updatedApp.Configuration.AppSettings;
         }
         else  // application does not exist, stop processing
         {

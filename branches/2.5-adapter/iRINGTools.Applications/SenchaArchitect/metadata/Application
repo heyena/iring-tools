@@ -7,10 +7,12 @@
     "codeClass": null,
     "userConfig": {
         "models": [
-            "RelationModel"
+            "RelationModel",
+            "FileDownloadModel"
         ],
         "stores": [
-            "RelationStore"
+            "RelationStore",
+            "FileDownloadStore"
         ],
         "views": [
             "Main",
@@ -21,7 +23,9 @@
             "MyToolbar29",
             "mapping.LiteralWindow",
             "directory.FileUpoadForm",
-            "directory.FileUploadWindow"
+            "directory.FileUploadWindow",
+            "directory.DownloadGrid",
+            "directory.DownloadWindow"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,
