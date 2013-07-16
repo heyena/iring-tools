@@ -20,9 +20,7 @@
     <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
     <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGenerator</QMXFGeneratorDir>
     <FacadeExchangeDir>$(UtilitiesDir)\FacadeExchange</FacadeExchangeDir>
-    <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
-    <AdapterServiceTestsDir>$(UnitTestsDir)\AdapterService.Tests</AdapterServiceTestsDir>
-    <RefDataServiceTestsDir>$(UnitTestsDir)\ReferenceDataService.Tests</RefDataServiceTestsDir>    
+    <UnitTestsDir>$(MSBuildProjectDirectory)\Tests\NUnit.Tests</UnitTestsDir>  
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
     <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
@@ -140,6 +138,7 @@
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+    <Exec Command="RmDir /S /Q $(UnitTestsDir)\Bin" />
   </Target>
    
   <Target Name="PrepareBuild" DependsOnTargets="Version">
