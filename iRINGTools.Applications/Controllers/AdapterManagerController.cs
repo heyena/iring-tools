@@ -215,6 +215,21 @@ namespace org.iringtools.web.controllers
       return Json(response, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult ImportCache(FormCollection form)
+    {
+      string context = form["nodeid"];
+      string cacheURI = form["cacheURI"];
+      string[] names = context.Split('/');
+      string scope = names[0];
+      string application = names[1];
+
+      _repository.Session = Session;
+
+      Response response = _repository.ImportCache(scope, application, cacheURI);
+
+      return Json(response, JsonRequestBehavior.AllowGet);
+    }
+
     public class DBProvider
     {
       public string Provider { get; set; }

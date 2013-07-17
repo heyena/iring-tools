@@ -316,17 +316,17 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         scope: this
       },
 	  {
-        text: 'Upload File',
-        handler: this.onFileUpload,
-        icon: 'Content/img/16x16/document-down.png',
-        scope: this
-      },
+	    text: 'Upload File',
+	    handler: this.onFileUpload,
+	    icon: 'Content/img/16x16/document-down.png',
+	    scope: this
+	  },
 	  {
-        text: 'Download File',
-        handler: this.onFileDownload,
-        icon: 'Content/img/16x16/document-up.png',
-        scope: this
-      }
+	    text: 'Download File',
+	    handler: this.onFileDownload,
+	    icon: 'Content/img/16x16/document-up.png',
+	    scope: this
+	  }
     ]
   },
 
@@ -369,14 +369,20 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildDataObjectsMenu: function () {
     return [
             {
-              text: 'Refresh Data Dictionary',
+              text: 'Refresh Dictionary',
               handler: this.onRefreshDataObjects,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
             },
             {
-              text: 'Refresh Application Cache',
+              text: 'Refresh Cache',
               handler: this.onRefreshCache,
+              icon: 'Content/img/16x16/document-properties.png',
+              scope: this
+            },
+            {
+              text: 'Import Cache',
+              handler: this.onImportCache,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
             }
@@ -498,13 +504,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('configure', this, node);
   },
-  onFileUpload: function(){
-		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-		this.fireEvent('upload', this, node);
+  onFileUpload: function () {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    this.fireEvent('upload', this, node);
   },
-  onFileDownload: function(){
-		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-		this.fireEvent('download', this, node);
+  onFileDownload: function () {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    this.fireEvent('download', this, node);
   },
   showContextMenu: function (node, event) {
 
@@ -733,13 +739,63 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         'nodeid': node.attributes.id
       },
       success: function (result, request) {
-        showDialog(450, 100, 'Refresh Cache Result', 'Application cache refreshed successfully.', Ext.Msg.OK, null);
+        showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
       },
       failure: function (result, request) {
         var msg = result.responseText;
         showDialog(500, 240, 'Refresh Cache Error', msg, Ext.Msg.OK, null);
       }
     })
+  },
+
+  onImportCache: function (btn, ev) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+
+    var importCacheForm = new Ext.FormPanel({
+      url: 'AdapterManager/ImportCache',
+      method: 'POST',
+      frame: false,
+      border: false,
+      width: 480,
+      height: 60,
+      bodyStyle: 'padding:20px 5px 20px 5px',
+      items: [
+        { fieldLabel: 'Cache URI', name: 'cacheUri', xtype: 'textfield', width: 360, allowBlank: false },
+        { name: 'nodeid', xtype: 'hidden', value: node.attributes.id }
+      ]
+    });
+
+    var win = new Ext.Window({
+      title: 'Import Cache',
+      layout: 'fit',
+      modal: true,
+      closable: true,
+      resizable: false,
+      items: [importCacheForm],
+      buttons: [{
+        text: 'Submit',
+        handler: function () {
+          importCacheForm.getForm().submit({
+            success: function (f, a) {
+              showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
+              win.close();
+            },
+            failure: function (f, a) {
+              var msg = a.response.responseText;
+              showDialog(500, 240, 'Import Cache Result', msg, Ext.Msg.OK, null);
+              win.close();
+            }
+          });
+        }
+      }, {
+        text: 'Close',
+        handler: function () {
+          win.close();
+        }
+      }]
+    });
+
+    win.show(this);
   },
 
   onRefreshObjectCache: function (btn, ev) {
