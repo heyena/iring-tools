@@ -629,6 +629,47 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
+    public Response ImportCache(string scope, string application, string cacheUri)
+    {
+      Response response = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        string isAsync = _settings["Async"];
+        string url = string.Format("/{0}/{1}/cache/import?baseUri={2}", scope, application, cacheUri);
+
+        if (isAsync != null && isAsync.ToLower() == "true")
+        {
+          client.Async = true;
+          string statusUrl = client.Get<string>(url);
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);
+        }
+        else
+        {
+          response = client.Get<Response>(url, true);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+
+        response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
+      }
+
+      return response;
+    }
+
     #region NHibernate Configuration Wizard support methods
     public DataProviders GetDBProviders()
     {
