@@ -137,13 +137,14 @@ public class ExchangeProvider
                 }
                 else
                 {
-                	if(targetRoles.get(k).getDataType().equalsIgnoreCase("xsd:dateTime") && 
-                		sourceRole.getDataType().equalsIgnoreCase("xsd:date"))
+                	if(targetRoles.get(k).getDataType() != null &&
+                	    sourceRole.getDataType() != null &&
+                	    targetRoles.get(k).getDataType().equalsIgnoreCase("xsd:dateTime") && 
+                		  sourceRole.getDataType().equalsIgnoreCase("xsd:date"))
                 	{
                 		targetRoles.get(k).setDataType("xsd:date");
                 	}
-                }
-                
+                }                
               }
             }
           }
