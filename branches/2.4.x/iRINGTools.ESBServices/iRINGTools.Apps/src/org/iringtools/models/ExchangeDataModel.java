@@ -1127,16 +1127,16 @@ public String testUri(String sourceUri) // throws IOException
 		int code = huc.getResponseCode();
 		System.out.println(code);
 		if (code == 200) {
-			return ("connected successfully");
+			return ("Connected successfully!");
 		} else {
-			return ("could not connect to the specified URl");
+			return ("Connection to URL failed.");
 		}
 	} catch (UnknownHostException e) {
 		e.printStackTrace();
-		return ("UnknownHostException : Invalid URl.");
+		return ("UnknownHostException : Invalid URL.");
 	} catch (Exception e) {
 		e.printStackTrace();
-		return ("Exception : Invalid URl");
+		return ("Exception : Invalid URL.");
 	}
 }
 }
