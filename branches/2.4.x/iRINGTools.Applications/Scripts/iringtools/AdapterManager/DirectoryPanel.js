@@ -762,8 +762,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       method: 'POST',
       frame: false,
       border: false,
-      width: 480,
-      height: 60,
       bodyStyle: 'padding:20px 5px 20px 5px',
       items: [
         { fieldLabel: 'Cache URI', name: 'cacheUri', xtype: 'textfield', width: 360, allowBlank: false },
@@ -773,7 +771,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     var win = new Ext.Window({
       title: 'Import Cache',
-      layout: 'fit',
+      width: 500,
       modal: true,
       closable: true,
       resizable: false,
