@@ -358,7 +358,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
               scope: this
             },
             {
-              text: 'Refresh Object Cache',
+              text: 'Refresh Cache',
               handler: this.onRefreshObjectCache,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
@@ -383,6 +383,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             {
               text: 'Import Cache',
               handler: this.onImportCache,
+              icon: 'Content/img/16x16/document-properties.png',
+              scope: this
+            },
+            {
+              text: 'Delete Cache',
+              handler: this.onDeleteCache,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
             }
@@ -815,6 +821,26 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       failure: function (result, request) {
         var msg = result.responseText;
         showDialog(500, 240, 'Refresh Object Cache Error', msg, Ext.Msg.OK, null);
+      }
+    })
+  },
+
+  onDeleteCache: function (btn, ev) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    
+    Ext.Ajax.request({
+      url: 'AdapterManager/DeleteCache',
+      method: 'POST',
+      timeout: 120000,  // 2 minutes
+      params: {
+        'nodeid': node.attributes.id
+      },
+      success: function (result, request) {
+        showDialog(450, 100, 'Delete Cache Result', 'Cache deleted successfully.', Ext.Msg.OK, null);
+      },
+      failure: function (result, request) {
+        var msg = result.responseText;
+        showDialog(500, 240, 'Delete Cache Error', msg, Ext.Msg.OK, null);
       }
     })
   },
