@@ -129,7 +129,7 @@ namespace iRINGTools.Web.Models
             // sort data objects & properties
             if (dataDict != null && dataDict.dataObjects.Count > 0)
             {
-              dataDict.dataObjects.Sort(new DataObjectsComparer());
+              dataDict.dataObjects.Sort(new DataObjectComparer());
 
               foreach (DataObject dataObject in dataDict.dataObjects)
               {
