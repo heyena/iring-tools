@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using log4net;
 using Ninject;
 using org.iringtools.library;
-using System.IO;
-using System.Xml.Linq;
 using org.iringtools.utility;
-using System.Data;
-using log4net;
-using System.Data.SqlClient;
-using System.Net;
-using System.Web;
-using System.Text.RegularExpressions;
 
 namespace org.iringtools.adapter
 {
-  public enum CacheState { Dirty, Busy, Ready }
-
   //
   // this class determines the appropriate data layer (cache, actual, or both) to call
   //
@@ -41,7 +37,12 @@ namespace org.iringtools.adapter
       _settings = kernel.Get<AdapterSettings>();
       _scope = _settings["ProjectName"].ToLower();
       _app = _settings["ApplicationName"].ToLower();
+
       _connStr = _settings["iRINGCacheConnStr"];
+      if (_connStr != null && IsBase64Encoded(_connStr))
+      {
+        _connStr = EncryptionUtility.Decrypt(_connStr);
+      }
 
       //
       // Ninject requires fully qualified path
@@ -218,7 +219,7 @@ namespace org.iringtools.adapter
       try
       {
         DataDictionary dictionary = GetDictionary(updateDictionary, objectType);
-        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType);
+        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
         if (dataObject == null)
         {
@@ -292,9 +293,14 @@ namespace org.iringtools.adapter
             {
               DataRow newRow = table.NewRow();
 
-              foreach (var pair in dataObj.Properties)
+              foreach (var pair in dataObj.Dictionary)
               {
                 newRow[pair.Key] = pair.Value;
+              }
+
+              if (dataObj.HasContent)
+              {
+                newRow[BaseLightweightDataLayer.HAS_CONTENT] = true;
               }
 
               table.Rows.Add(newRow);
@@ -308,9 +314,16 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
+          int page = 100;
+          string cachePage = Convert.ToString(_settings["CachePage"]);
+
+          if (!string.IsNullOrEmpty(cachePage))
+          {
+            page = int.Parse(cachePage);
+          }
+
           long objCount = _dataLayer.GetCount(objectType.objectName, null);
           int start = 0;
-          int page = 5;
           long limit = 0;
 
           while (start < objCount)
@@ -326,7 +339,19 @@ namespace org.iringtools.adapter
 
                 foreach (DataProperty prop in objectType.dataProperties)
                 {
-                  newRow[prop.propertyName] = dataObj.GetPropertyValue(prop.propertyName);
+                  object value = dataObj.GetPropertyValue(prop.propertyName);
+
+                  if (value == null)
+                  {
+                    value = DBNull.Value;
+                  }
+
+                  newRow[prop.propertyName] = value;
+                }
+
+                if (typeof(GenericDataObject).IsAssignableFrom(dataObj.GetType()))
+                {
+                  newRow[BaseLightweightDataLayer.HAS_CONTENT] = ((GenericDataObject)dataObj).HasContent;
                 }
 
                 table.Rows.Add(newRow);
@@ -491,7 +516,7 @@ namespace org.iringtools.adapter
             {
               DataRow newRow = table.NewRow();
 
-              foreach (var pair in dataObj.Properties)
+              foreach (var pair in dataObj.Dictionary)
               {
                 newRow[pair.Key] = pair.Value;
               }
@@ -534,7 +559,7 @@ namespace org.iringtools.adapter
       
       try
       {
-        string cacheId = CheckCache();
+        string cacheId = CheckCache(false);
 
         if (!string.IsNullOrEmpty(cacheId))
         {
@@ -644,10 +669,21 @@ namespace org.iringtools.adapter
           if (filter == null) filter = new DataFilter();
           string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
 
-          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, tableName, whereClause);
+          int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
+
+          if (orderByIndex != -1)
+          {
+            whereClause = whereClause.Remove(orderByIndex);
+          }
+
+          string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          count = dt.Rows.Count;
+
+          if (dt != null && dt.Rows.Count > 0)
+          {
+            count = long.Parse(Convert.ToString(dt.Rows[0][0]));
+          }
         }
         else if (_dataLayer != null)
         {
@@ -680,6 +716,8 @@ namespace org.iringtools.adapter
           string tableName = GetCacheTableName(cacheId, objectType.objectName);
 
           if (filter == null) filter = new DataFilter();
+          filter.AppendFilter(objectType.dataFilter);
+
           string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
 
           int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
@@ -693,7 +731,7 @@ namespace org.iringtools.adapter
 
           string query = string.Format(@"
               SELECT * FROM (SELECT row_number() OVER ({4}) as __rn, * 
-              FROM {0} {1}) as __query WHERE __rn between {2} and {3}",
+              FROM {0} {1}) as __t WHERE __rn between {2} and {3}",
               tableName, whereClause, start + 1, start + limit, orderByClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
@@ -766,6 +804,8 @@ namespace org.iringtools.adapter
           string tableName = GetCacheTableName(cacheId, objectType.objectName);
 
           if (filter == null) filter = new DataFilter();
+          filter.AppendFilter(objectType.dataFilter);
+
           string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
 
           string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, tableName, whereClause);
@@ -825,10 +865,7 @@ namespace org.iringtools.adapter
       return dataObjects;
     }
 
-    //
-    // handles add, change, and delete
-    //
-    public Response Update(DataObject objectType, List<SerializableDataObject> dataObjects)
+    public Response Update(DataObject objectType, List<IDataObject> dataObjects)
     {
       Dictionary<string, string> idSQLMap = new Dictionary<string, string>();
       Response response = new Response();
@@ -854,7 +891,14 @@ namespace org.iringtools.adapter
         //        
         if (_lwDataLayer != null)
         {
-          response = _lwDataLayer.Update(objectType, dataObjects);
+          List<SerializableDataObject> sdos = new List<SerializableDataObject>();
+
+          foreach (IDataObject dataObject in dataObjects)
+          {
+            sdos.Add((SerializableDataObject)dataObject);
+          }
+
+          response = _lwDataLayer.Update(objectType, sdos);
 
           //
           // if overall status is success, then we can assume that 
@@ -876,7 +920,16 @@ namespace org.iringtools.adapter
             {
               if (status.Level == StatusLevel.Success)
               {
-                SerializableDataObject sdo = dataObjects.Find(x => x.Id == status.Identifier);
+                SerializableDataObject sdo = null;
+
+                foreach (IDataObject dataObject in dataObjects)
+                {
+                  if (((SerializableDataObject)dataObject).Id.ToLower() == status.Identifier.ToLower())
+                  {
+                    sdo = (SerializableDataObject)dataObject;
+                    break;
+                  }
+                }
 
                 if (sdo != null)
                 {
@@ -921,41 +974,71 @@ namespace org.iringtools.adapter
 
           if (updatedDataObjects.Count > 0)
           {
-            Response updateResponse = _dataLayer.Post(updatedDataObjects);
+            // 
+            // convert serializable data objects to IDataObjects
+            //
+            IList<IDataObject> idataObjects = new List<IDataObject>();
+
+            foreach (SerializableDataObject sdo in updatedDataObjects)
+            {
+              IDataObject idataObject = _dataLayer.Create(objectType.objectName, new List<string>() {sdo.Id}).First();
+              
+              // copy properies
+              foreach (var pair in sdo.Dictionary)
+              {
+                idataObject.SetPropertyValue(pair.Key, pair.Value);
+              }
+
+              idataObjects.Add(idataObject);
+            }
+
+            Response updateResponse = _dataLayer.Post(idataObjects);
             response.Append(updateResponse);
           }
 
-          if (hasCache && response.Level == StatusLevel.Success)
+          if (hasCache)
           {
-            foreach (SerializableDataObject sdo in dataObjects)
+            if (response.Level == StatusLevel.Success)
             {
-              idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
-            }
-
-            DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
-          }
-          else
-          {
-            foreach (Status status in response.StatusList)
-            {
-              if (status.Level == StatusLevel.Success)
+              foreach (SerializableDataObject sdo in dataObjects)
               {
-                SerializableDataObject sdo = dataObjects.Find(x => x.Id == status.Identifier);
+                idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
+              }
 
-                if (sdo != null)
+              DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+            }
+            else
+            {
+              foreach (Status status in response.StatusList)
+              {
+                if (status.Level == StatusLevel.Success)
                 {
-                  idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
-                }
-                else
-                {
-                  status.Messages.Add(
-                    string.Format("Object id is out of sync. It should be {0} instead of {1}.",
-                      sdo.Id, status.Identifier));
+                  SerializableDataObject sdo = null;
+
+                  foreach (IDataObject dataObject in dataObjects)
+                  {
+                    if (((SerializableDataObject)dataObject).Id.ToLower() == status.Identifier.ToLower())
+                    {
+                      sdo = (SerializableDataObject)dataObject;
+                      break;
+                    }
+                  }
+
+                  if (sdo != null)
+                  {
+                    idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
+                  }
+                  else
+                  {
+                    status.Messages.Add(
+                      string.Format("Object id is out of sync. It should be {0} instead of {1}.",
+                        sdo.Id, status.Identifier));
+                  }
                 }
               }
-            }
 
-            DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+              DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+            }
           }
         }
       }
@@ -995,6 +1078,36 @@ namespace org.iringtools.adapter
       return contents;
     }
 
+    public Picklists GetPicklist(string picklistName, int start, int limit)
+    {
+      if (_dataLayer == null)
+      {
+        throw new Exception("Data layer does not support picklists.");
+      }
+
+      return ((IDataLayer2)_dataLayer).GetPicklist(picklistName, start, limit);
+    }
+
+    public List<IDataObject> Search(string objectType, string query, DataFilter filter, int start, int limit)
+    {
+      if (_dataLayer == null)
+      {
+        throw new Exception("Data layer does not support search.");
+      }
+
+      return ((IDataLayer2)_dataLayer).Search(objectType, query, filter, start, limit).ToList();
+    }
+
+    public long SearchCount(string objectType, string query, DataFilter filter)
+    {
+      if (_dataLayer == null)
+      {
+        throw new Exception("Data layer does not support search.");
+      }
+
+      return ((IDataLayer2)_dataLayer).GetSearchCount(objectType, query, filter);
+    }
+
     protected string GetCacheTableName(string cacheId, string objectType)
     {
       string safeObjectType = Regex.Replace(objectType, "[^0-9a-zA-Z]+", "");
@@ -1003,20 +1116,36 @@ namespace org.iringtools.adapter
 
     protected string CheckCache()
     {
-      string checkCacheSQL = string.Format("SELECT * FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _scope, _app);
-      DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, checkCacheSQL);
+      return CheckCache(true);
+    }
 
-      if (dt.Rows.Count > 0)
+    protected string CheckCache(bool validateState)
+    {
+      try
       {
-        DataRow row = dt.Rows[0];
-        CacheState cacheState = (CacheState)Enum.Parse(typeof(CacheState), row["State"].ToString());
+        string checkCacheSQL = string.Format("SELECT * FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _scope, _app);
+        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, checkCacheSQL);
 
-        if (cacheState != CacheState.Ready)
+        if (dt.Rows.Count > 0)
         {
-          throw new Exception("Operation can't be done at this time. Other activity to this cache is underway.");
-        }
+          DataRow row = dt.Rows[0];
 
-        return row["CacheId"].ToString();
+          if (validateState)
+          {
+            CacheState cacheState = (CacheState)Enum.Parse(typeof(CacheState), row["State"].ToString());
+
+            if (cacheState != CacheState.Ready)
+            {
+              throw new Exception("Operation can't be done at this time. Other activity to this cache is underway.");
+            }
+          }
+
+          return row["CacheId"].ToString();
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.Message);
       }
 
       return string.Empty;
@@ -1093,7 +1222,7 @@ namespace org.iringtools.adapter
         tableBuilder.AppendFormat("{0} {1} {2}{3}", columnName, dataType, nullable, PROP_SEPARATOR);
       }
 
-      tableBuilder.Remove(tableBuilder.Length - PROP_SEPARATOR.Length, PROP_SEPARATOR.Length);
+      tableBuilder.AppendFormat("[_hasContent_] bit NULL");
       tableBuilder.Append(")");
 
       try
@@ -1104,6 +1233,12 @@ namespace org.iringtools.adapter
       {
         throw new Exception("Error creating cache table [" + tableName + "]. " + e);
       }
+    }
+
+    protected bool IsBase64Encoded(string text)
+    {
+      string pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
+      return Regex.IsMatch(text, pattern);
     }
 
     protected string ToSQLType(DataType dataType)
@@ -1144,4 +1279,6 @@ namespace org.iringtools.adapter
       }
     }
   }
+
+  public enum CacheState { Dirty, Busy, Ready }
 }

@@ -51,6 +51,13 @@
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Bechtel.TEAMWorks.Common">
+      <HintPath>..\..\svncorp-dmz\iringtools_datalayers\TW_Datalayer\TWDataLayer\bin\Debug\Bechtel.TEAMWorks.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Bechtel.TEAMWorks.Services, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Bechtel.TEAMWorks.Services.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
@@ -100,6 +107,10 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="TWDataLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\svncorp-dmz\iringtools_datalayers\TW_Datalayer\TWDataLayer\bin\Debug\TWDataLayer.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BindingConfiguration.Adapter.xml">

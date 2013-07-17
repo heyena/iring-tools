@@ -419,6 +419,8 @@ namespace iRINGTools.Web.Models
           case org.iringtools.library.DataType.Double:
           case org.iringtools.library.DataType.Decimal:
             return "float";
+          case org.iringtools.library.DataType.Date:
+            return "date";
 
           default:
             return "auto";
@@ -525,7 +527,7 @@ namespace iRINGTools.Web.Models
       }
     }
 
-    public class DataObjectsComparer : IComparer<DataObject>
+    public class DataObjectComparer : IComparer<DataObject>
     {
       public int Compare(DataObject left, DataObject right)
       {

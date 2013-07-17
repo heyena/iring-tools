@@ -119,12 +119,12 @@ namespace org.iringtools.library
     [System.Obsolete("Instead Use GetRelatedObjects with filter")]
     public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex)
     {
-      return null;
+      throw new NotImplementedException();
     }
 
     public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, DataFilter filter, int pageSize, int startIndex)
     {
-        return null;
+      throw new NotImplementedException();
     }
 
     public virtual IList<IContentObject> GetContents(string objectType, IDictionary<string, string> idFormats)

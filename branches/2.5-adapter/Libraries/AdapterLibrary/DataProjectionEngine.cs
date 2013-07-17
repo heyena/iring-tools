@@ -13,17 +13,18 @@ namespace org.iringtools.adapter.projection
   public class DataProjectionEngine : BaseDataProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataProjectionEngine));
-    private DataDictionary _dictionary = null;
+    //private DataDictionary _dictionary = null;
     private XNamespace _graphNamespace = null;
     private string _graphName = String.Empty;
     string[] arrSpecialcharlist;
     string[] arrSpecialcharValue;
 
     [Inject]
-    public DataProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, DataDictionary dictionary) : base(settings)
+    public DataProjectionEngine(AdapterSettings settings) : base(settings)
     {
-      _dataLayer = dataLayer;
-      _dictionary = dictionary;
+      //_dataLayer = dataLayer;
+      //_dictionary = dictionary;
+
       if (settings["SpCharList"] != null && settings["SpCharValue"] != null)
       {
           arrSpecialcharlist = settings["SpCharList"].ToString().Split(',');
@@ -106,7 +107,9 @@ namespace org.iringtools.adapter.projection
 
           foreach (XElement objEl in objEls)
           {
-            IDataObject dataObject = _dataLayer.Create(objectDefinition.objectName, null)[0];
+            //IDataObject dataObject = _dataLayer.Create(objectDefinition.objectName, null)[0];
+            SerializableDataObject dataObject = new SerializableDataObject();
+            dataObject.Type = objectDefinition.objectName;
 
             if (objectDefinition.hasContent)
             {
@@ -187,8 +190,6 @@ namespace org.iringtools.adapter.projection
       foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
       {
         XElement relationshipElement = new XElement(_graphNamespace + Utility.TitleCase(dataRelationship.relationshipName));
-        IList<IDataObject> relatedObjects = _dataLayer.GetRelatedObjects(_dataObjects[dataObjectIndex], dataRelationship.relatedObjectName);
-
         parentElement.Add(relationshipElement);
       }
     }
@@ -239,7 +240,9 @@ namespace org.iringtools.adapter.projection
 
     public DataObject FindGraphDataObject(string dataObjectName)
     {
-      foreach (DataObject dataObject in _dictionary.dataObjects)
+      DataDictionary dictionary = _dataLayerGateway.GetDictionary();
+
+      foreach (DataObject dataObject in dictionary.dataObjects)
       {
         if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
         {

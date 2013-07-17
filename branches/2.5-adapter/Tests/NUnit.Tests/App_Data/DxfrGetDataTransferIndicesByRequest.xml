@@ -1,33 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfdataTransferIndex xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dti">
   <dataTransferIndex>
-    <identifier>90003-SC</identifier>
-    <transferType>Sync</transferType>
-    <internalIdentifier>90003-SC</internalIdentifier>
-  </dataTransferIndex>
-  <dataTransferIndex>
     <identifier>90005-RV</identifier>
     <transferType>Sync</transferType>
-    <internalIdentifier>90005-RV</internalIdentifier>
+    <internalIdentifier></internalIdentifier>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90010-O</identifier>
     <transferType>Sync</transferType>
-    <internalIdentifier>90010-O</internalIdentifier>
+    <internalIdentifier></internalIdentifier>
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90010-O</identifier>
+    <transferType>Sync</transferType>
+    <internalIdentifier></internalIdentifier>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90011-O</identifier>
     <transferType>Sync</transferType>
-    <internalIdentifier>90011-O</internalIdentifier>
+    <internalIdentifier></internalIdentifier>
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90011-O</identifier>
+    <transferType>Sync</transferType>
+    <internalIdentifier></internalIdentifier>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90014-RV</identifier>
     <transferType>Sync</transferType>
-    <internalIdentifier>90014-RV</internalIdentifier>
+    <internalIdentifier></internalIdentifier>
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90014-RV</identifier>
+    <transferType>Sync</transferType>
+    <internalIdentifier></internalIdentifier>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90058-O</identifier>
     <transferType>Sync</transferType>
-    <internalIdentifier>90058-O</internalIdentifier>
+    <internalIdentifier></internalIdentifier>
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90058-O</identifier>
+    <transferType>Sync</transferType>
+    <internalIdentifier></internalIdentifier>
   </dataTransferIndex>
 </ArrayOfdataTransferIndex>

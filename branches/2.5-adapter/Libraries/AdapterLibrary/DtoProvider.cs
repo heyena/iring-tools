@@ -60,103 +60,11 @@ namespace org.iringtools.adapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProvider));
 
-    private IKernel _kernel = null;
-    private AdapterSettings _settings = null;
-    private ScopeProjects _scopes = null;
-    private IDataLayer2 _dataLayer = null;
-    private DataDictionary _dataDictionary = null;
-    private Mapping _mapping = null;
-    private IIdentityLayer _identityLayer = null;
-    private IDictionary _keyRing = null;
     private GraphMap _graphMap = null;
-    private bool _isScopeInitialized = false;
-    private bool _isDataLayerInitialized = false;
     protected string _fixedIdentifierBoundary = "#";
-    private static ConcurrentDictionary<string, RequestStatus> _requests = 
-      new ConcurrentDictionary<string, RequestStatus>();
-
-    private static string QueueNewRequest()
-    {
-      var id = Guid.NewGuid().ToString("N");
-      _requests[id] = new RequestStatus()
-      {
-        State = State.InProgress
-      };
-      return id;
-    }
-
+    
     [Inject]
-    public DtoProvider(NameValueCollection settings)
-    {
-      var ninjectSettings = new NinjectSettings { LoadExtensions = false };
-      _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
-
-      _kernel.Load(new XmlExtensionModule());
-      _settings = _kernel.Get<AdapterSettings>();
-      _settings.AppendSettings(settings);
-
-      // capture request headers
-      if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest != null &&
-        WebOperationContext.Current.IncomingRequest.Headers != null)
-      {
-        foreach (string headerName in WebOperationContext.Current.IncomingRequest.Headers.AllKeys)
-        {
-          _settings["http-header-" + headerName] = WebOperationContext.Current.IncomingRequest.Headers[headerName];
-        }
-      }
-
-      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
-      #region initialize webHttpClient for converting old mapping
-      string proxyHost = _settings["ProxyHost"];
-      string proxyPort = _settings["ProxyPort"];
-      string rdsUri = _settings["ReferenceDataServiceUri"];
-
-      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
-      {
-        WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-        _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
-      }
-      else
-      {
-        _webHttpClient = new WebHttpClient(rdsUri);
-      }
-      #endregion
-
-      if (!String.IsNullOrEmpty(_settings["fixedIdentifierBoundary"]))
-      {
-        _fixedIdentifierBoundary = _settings["fixedIdentifierBoundary"];
-      }
-
-      if (ServiceSecurityContext.Current != null)
-      {
-        IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
-        _settings["UserName"] = identity.Name;
-      }
-
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-      _settings["ScopesPath"] = scopesPath;
-
-      if (File.Exists(scopesPath))
-      {
-        _scopes = Utility.Read<ScopeProjects>(scopesPath);
-      }
-      else
-      {
-        _scopes = new ScopeProjects();
-        Utility.Write<ScopeProjects>(_scopes, scopesPath);
-      }
-
-      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
-
-      string bindingConfigurationPath = Path.Combine(
-        _settings["BaseDirectoryPath"],
-        relativePath
-      );
-
-      _kernel.Load(bindingConfigurationPath);
-      InitializeIdentity();
-    }
+    public DtoProvider(NameValueCollection settings) : base(settings) {}
 
     public VersionInfo GetVersion()
     {
@@ -218,7 +126,7 @@ namespace org.iringtools.adapter
         InitializeScope(scope, app);
         InitializeDataLayer();
 
-        DataDictionary dataDictionary = _dataLayer.GetDictionary();
+        DataDictionary dataDictionary = _dataLayerGateway.GetDictionary();
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
@@ -354,6 +262,13 @@ namespace org.iringtools.adapter
                     }
 
                     manifestRole.dataLength = dataProp.dataLength;
+                    if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                    {
+                        if (dataProp.dataType == DataType.Date)
+                            manifestRole.dataType = "xsd:date";
+                        else if (dataProp.dataType == DataType.DateTime)
+                            manifestRole.dataType = "xsd:dateTime";
+                    }
 
                     if (dataObj.isKeyProperty(propertyName))
                     {
@@ -364,7 +279,7 @@ namespace org.iringtools.adapter
 
                 if (roleMap.classMap != null)
                 {
-                  Cardinality cardinality = graphMap.GetCardinality(roleMap, _dataDictionary, _fixedIdentifierBoundary);
+                  Cardinality cardinality = graphMap.GetCardinality(roleMap, _dictionary, _fixedIdentifierBoundary);
                   manifestRole.cardinality = cardinality;
 
                   manifestRole.@class = new Class
@@ -406,6 +321,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         BuildCrossGraphMap(manifest, graph);
+        DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         DataFilter filter = GetPresetFilters(dtoProjectionEngine);
@@ -418,7 +334,8 @@ namespace org.iringtools.adapter
         else
         {
           _logger.Debug("Running single-threaded mode.");
-          List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          List<IDataObject> tmpDataObjects = PageDataObjects(dataObject, filter);
+          List<IDataObject> dataObjects = ProcessRollups(dataObject, tmpDataObjects, filter);
 
           _logger.Debug("Transforming into DTI");
           dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
@@ -432,12 +349,278 @@ namespace org.iringtools.adapter
 
       return dataTransferIndices;
     }
+
+/*
+ * Sample filter with rollups:
+ * 
+<?xml version="1.0" encoding="utf-8"?>
+<dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter">
+  <rollupExpressions>
+    <rollupExpression>
+      <groupBy>ID</groupBy>
+      <rollups>
+        <rollup>
+          <propertyName>NOMDIAMETER</propertyName>
+          <type>Max</type>
+        </rollup>
+        <rollup>
+          <propertyName>AREA</propertyName>
+          <type>First</type>
+        </rollup>
+      </rollups>
+    </rollupExpression>
+    <rollupExpression>
+      <groupBy>AREA</groupBy>
+      <rollups>
+        <rollup>
+          <propertyName>NOMDIAMETER</propertyName>
+          <type>Sum</type>
+        </rollup>
+      </rollups>
+    </rollupExpression>
+  </rollupExpressions>
+</dataFilter>
+ */
+    private List<IDataObject> ProcessRollups(DataObject objDef, List<IDataObject> dataObjects, DataFilter filter)
+    {
+      if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
+      {
+        foreach (RollupExpression rollupExpr in filter.RollupExpressions)
+        {
+          DataProperty groupByProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollupExpr.GroupBy.ToLower());
+          
+          // sort data objects by groupBy property value
+          for (int i = 1; i < dataObjects.Count - 1; i++)
+          {
+            bool swapped = false;
+
+            for (int j = i; j < dataObjects.Count; j++)
+            {
+              string v1 = Convert.ToString(dataObjects[j-1].GetPropertyValue(groupByProp.propertyName));
+              string v2 = Convert.ToString(dataObjects[j].GetPropertyValue(groupByProp.propertyName));
+
+              if (string.Compare(v2, v1) < 0)
+              {
+                IDataObject obj = dataObjects[j];
+                dataObjects[j] = dataObjects[j - 1];
+                dataObjects[j - 1] = obj;
+
+                swapped = true;
+              }
+            }
+
+            if (!swapped) break;
+          }
+
+          // collect group indices
+          List<int> groupIndices = new List<int>();
+          string prevPropValue = null;
+
+          for (int i = 0; i < dataObjects.Count; i++)
+          {
+            string propValue = Convert.ToString(dataObjects[i].GetPropertyValue(groupByProp.propertyName));
+
+            if (prevPropValue == null)
+            {
+              prevPropValue = propValue;
+              groupIndices.Add(0);
+            }
+            else if (propValue != prevPropValue)
+            {
+              groupIndices.Add(i);
+              prevPropValue = propValue;
+            }
+          }
+
+          groupIndices.Add(dataObjects.Count - 1);
+
+          // apply rollups to each group
+          IDataObject[] rollupDataObjects = new IDataObject[groupIndices.Count - 1];
+
+          foreach (Rollup rollup in rollupExpr.Rollups)
+          {
+            DataProperty rollupProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollup.PropertyName.ToLower());
+
+            for (int j = 0; j < groupIndices.Count - 1; j++)
+            {
+              // initialize rollup data object and default to RollupType.First
+              if (rollupDataObjects[j] == null)
+              {
+                rollupDataObjects[j] = dataObjects[groupIndices[j]];
+              }
+
+              switch (rollup.Type)
+              {
+                case RollupType.Null:
+                  {
+                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                    break;
+                  }
+                case RollupType.Max:
+                  {
+                    object maxValue = null;
+
+                    if (IsNumeric(rollupProp))
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (maxValue == null || Convert.ToDecimal(Convert.ToString(value)) > (Decimal)maxValue)
+                        {
+                          maxValue = Convert.ToDecimal(Convert.ToString(value));
+                        }
+                      }
+                    }
+                    else if (rollupProp.dataType == DataType.DateTime)
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        DateTime value = (DateTime)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (maxValue == null || DateTime.Compare(value, (DateTime)maxValue) > 0)
+                        {
+                          maxValue = value;
+                        }
+                      }
+                    }
+                    else if (rollupProp.dataType == DataType.Boolean)
+                    {
+                      maxValue = true;
+                    }
+                    else
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        string value = (string)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (maxValue == null || string.Compare(value, (string)maxValue) > 0)
+                        {
+                          maxValue = value;
+                        }
+                      }
+                    }
+
+                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, maxValue);
+                    break;
+                  }
+                case RollupType.Min:
+                  {
+                    object minValue = null;
+
+                    if (IsNumeric(rollupProp))
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (minValue == null || Convert.ToDecimal(Convert.ToString(value)) < (Decimal)minValue)
+                        {
+                          minValue = Convert.ToDecimal(Convert.ToString(value));
+                        }
+                      }
+                    }
+                    else if (rollupProp.dataType == DataType.DateTime)
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        DateTime value = (DateTime)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (minValue == null || DateTime.Compare(value, (DateTime)minValue) < 0)
+                        {
+                          minValue = value;
+                        }
+                      }
+                    }
+                    else if (rollupProp.dataType == DataType.Boolean)
+                    {
+                      minValue = false;
+                    }
+                    else
+                    {
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        string value = (string)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+
+                        if (minValue == null || string.Compare(value, (string)minValue) < 0)
+                        {
+                          minValue = value;
+                        }
+                      }
+                    }
+
+                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, minValue);
+                    break;
+                  }
+                case RollupType.Sum:
+                  {
+                    if (IsNumeric(rollupProp))
+                    {
+                      decimal sum = 0;
+
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+                        sum += Convert.ToDecimal(Convert.ToString(value));
+                      }
+
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, sum);
+                    }
+                    else
+                    {
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                    }
+
+                    break;
+                  }
+                case RollupType.Average:
+                  {
+                    if (IsNumeric(rollupProp))
+                    {
+                      decimal sum = 0;
+
+                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      {
+                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+                        sum += Convert.ToDecimal(Convert.ToString(value));
+                      }
+
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, sum / (groupIndices[j + 1] - groupIndices[j]));
+                    }
+                    else
+                    {
+                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                    }
+
+                    break;
+                  }
+              }
+            }
+          }
+
+          dataObjects = rollupDataObjects.ToList();
+        }        
+      }
+
+      return dataObjects;
+    }
+
+    private bool IsNumeric(DataProperty dataProperty)
+    {
+      return (dataProperty.dataType == DataType.Byte ||
+          dataProperty.dataType == DataType.Decimal ||
+          dataProperty.dataType == DataType.Double ||
+          dataProperty.dataType == DataType.Int16 ||
+          dataProperty.dataType == DataType.Int32 ||
+          dataProperty.dataType == DataType.Int64 ||
+          dataProperty.dataType == DataType.Single);
+    }
     
     public string AsyncGetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest)
     {
       try
       {
-        var id = QueueNewRequest();
+        var id = NewQueueRequest();
         Task task = Task.Factory.StartNew(() => DoGetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, dxiRequest, id));
         return "/requests/" + id;
       }
@@ -476,7 +659,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        var id = QueueNewRequest();
+        var id = NewQueueRequest();
         Task task = Task.Factory.StartNew(() => DoGetInternalIdentifiers(scope, app, graph, dxiRequest, id));
         return "/requests/" + id;
       }
@@ -524,12 +707,12 @@ namespace org.iringtools.adapter
 
         DataFilter filter = dxiRequest.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+        DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);
         filter.AppendFilter(GetPresetFilters(dtoProjectionEngine));
 
-        IList<string> identifierList = _dataLayer.GetIdentifiers(_graphMap.dataObjectName, filter);
+        List<string> identifierList = _dataLayerGateway.GetIdentifiers(dataObject, filter);
         if (identifierList != null)
         {
           identifiers.AddRange(identifierList.ToList<string>());
@@ -557,7 +740,7 @@ namespace org.iringtools.adapter
 
         DataFilter filter = dxiRequest.DataFilter;
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+        DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
         
         dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);        
         filter.AppendFilter(GetPresetFilters(dtoProjectionEngine));
@@ -579,8 +762,10 @@ namespace org.iringtools.adapter
         }
         else
         {
-          _logger.Debug("Running single-threaded DTIs.");            
-          List<IDataObject> dataObjects = PageDataObjects(_graphMap.dataObjectName, filter);
+          _logger.Debug("Running single-threaded DTIs.");
+          List<IDataObject> tmpDataObjects = PageDataObjects(dataObject, filter);
+          List<IDataObject> dataObjects = ProcessRollups(dataObject, tmpDataObjects, filter);
+
           dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
         }
 
@@ -602,7 +787,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        InitializeScope(scope, app);
+        InitializeScope(scope, app); 
         InitializeDataLayer();
 
         _graphMap = _mapping.FindGraphMap(graph);
@@ -612,7 +797,7 @@ namespace org.iringtools.adapter
         }
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+        DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         if (filter != null)
         {
@@ -624,12 +809,12 @@ namespace org.iringtools.adapter
           filter = GetPresetFilters(dtoProjectionEngine);
         }
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, limit, start);
+        List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, filter, start, limit);
 
         if (dataObjects != null && dataObjects.Count > 0)
         {
           dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
-          dataTransferIndices.TotalCount = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+          dataTransferIndices.TotalCount = _dataLayerGateway.GetCount(dataObject, filter);
         }
 
         return dataTransferIndices;
@@ -652,9 +837,10 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         _graphMap = _mapping.FindGraphMap(graph);
+        DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
 
-        IList<string> identifiers = new List<string> { id };
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        List<string> identifiers = new List<string> { id };
+        List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
@@ -685,6 +871,7 @@ namespace org.iringtools.adapter
           InitializeDataLayer();
 
           _graphMap = _mapping.FindGraphMap(graph);
+          DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
 
           List<DataTransferIndex> dataTrasferIndexList = dataTransferIndices.DataTransferIndexList;
           List<string> identifiers = new List<string>();
@@ -696,13 +883,13 @@ namespace org.iringtools.adapter
 
           if (identifiers.Count > 0)
           {
-            if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
-            {
-              dataTransferObjects = MultiGetDataTransferObjects(identifiers);
-            }
-            else
-            {
-              IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+            //if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
+            //{
+            //  dataTransferObjects = MultiGetDataTransferObjects(dataObject, identifiers);
+            //}
+            //else
+            //{
+              List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
               DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
               XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
 
@@ -710,7 +897,7 @@ namespace org.iringtools.adapter
               {
                 dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
               }
-            }
+            //}
           }
         }
         catch (Exception ex)
@@ -727,7 +914,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        var id = QueueNewRequest();
+        var id = NewQueueRequest();
         Task task = Task.Factory.StartNew(() => DoGetDataTransferObjects(scope, app, graph, dxoRequest, id, includeContent));
         return "/requests/" + id;
       }
@@ -775,44 +962,36 @@ namespace org.iringtools.adapter
           InitializeScope(scope, app);
           InitializeDataLayer();
 
-          BuildCrossGraphMap(dxoRequest.Manifest, graph);
-
+          BuildCrossGraphMap(dxoRequest.Manifest, graph); 
+          DataObject objectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
+          
           List<DataTransferIndex> dataTrasferIndexList = dxoRequest.DataTransferIndices.DataTransferIndexList;
-          IDictionary<string, string> idFormats = new Dictionary<string, string>();
-          bool hasContent = false;
-
+          
+          Dictionary<string, string> idFormats = new Dictionary<string, string>();
           foreach (DataTransferIndex dti in dataTrasferIndexList)
           {
-            if (dti.HasContent)
-            {
-              hasContent = true;
-            }
-
             idFormats[dti.InternalIdentifier] = string.Empty;
           }
 
-          if (idFormats.Count > 0)
+          List<IDataObject> dataObjects = null;
+
+          if (includeContent)
           {
-            if (_settings["MultiGetDTOs"] != null && bool.Parse(_settings["MultiGetDTOs"]))
+            List<IContentObject> contentObjects = _dataLayerGateway.GetContents(objectType, idFormats);
+            dataObjects = new List<IDataObject>();
+
+            foreach (IContentObject contentObject in contentObjects)
             {
-              //TODO: handle content in multithreaded mode
-              dtos = MultiGetDataTransferObjects(idFormats.Keys.ToList<string>());
-            }
-            else
-            {
-              _logger.Debug("Single threaded get DTOs.");
-
-              if (hasContent)
-              {
-                _settings["IncludeContent"] = includeContent.ToString();
-              }
-
-              IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, idFormats.Keys.ToList<string>());
-              DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-
-              dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
+              dataObjects.Add((IDataObject)contentObject);
             }
           }
+          else
+          {
+            dataObjects = _dataLayerGateway.Get(objectType, idFormats.Keys.ToList());
+          }
+          
+          DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
         }
         catch (Exception ex)
         {
@@ -828,7 +1007,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        var id = QueueNewRequest();
+        var id = NewQueueRequest();
         Task task = Task.Factory.StartNew(() => DoPostDataTransferObjects(scope, app, graph, dtos, id));
         return "/requests/" + id;
       }
@@ -894,37 +1073,45 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graph);
 
-        // extract deleted identifiers from data transfer objects
-        List<string> deletedIdentifiers = new List<string>();
+        DataObject objectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
         List<DataTransferObject> dataTransferObjectList = dataTransferObjects.DataTransferObjectList;
 
+        // extract deleted identifiers from data transfer objects
+        List<IDataObject> deletedDataObjects = new List<IDataObject>();
+        
         for (int i = 0; i < dataTransferObjectList.Count; i++)
         {
           if (dataTransferObjectList[i].transferType == TransferType.Delete)
           {
-            deletedIdentifiers.Add(dataTransferObjectList[i].identifier);
+            deletedDataObjects.Add(new SerializableDataObject()
+            {
+              Id = dataTransferObjectList[i].identifier,
+              Type = objectType.objectName,
+              State = ObjectState.Delete
+            });
+
             dataTransferObjectList.RemoveAt(i--);
           }
         }
 
-        // call data layer to delete data objects
-        if (deletedIdentifiers.Count > 0)
+        if (deletedDataObjects.Count > 0)
         {
-          response.Append(_dataLayer.Delete(_graphMap.dataObjectName, deletedIdentifiers));
+          response.Append(_dataLayerGateway.Update(objectType, deletedDataObjects));
         }
 
         if (dataTransferObjectList.Count > 0)
         {
           if (_settings["MultiPostDTOs"] != null && bool.Parse(_settings["MultiPostDTOs"]))
           {
-            response.Append(MultiPostDataTransferObjects(dataTransferObjects));
+            response.Append(MultiPostDataTransferObjects(_dataLayerGateway, objectType, dataTransferObjects));
           }
           else
           {
             _logger.Debug("Single threaded post DTOs.");
             DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-            IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap, ref dataTransferObjects);
-            Response postResponse = _dataLayer.Post(dataObjects);
+            List<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap, ref dataTransferObjects);
+
+            Response postResponse = _dataLayerGateway.Update(objectType, dataObjects);
             response.Append(postResponse);
           }
         }
@@ -954,220 +1141,13 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response DeleteDataTransferObject(string scope, string app, string graph, string id)
-    {
-      Response response = new Response();
-
-      try
-      {
-        InitializeScope(scope, app);
-        InitializeDataLayer();
-
-        _graphMap = _mapping.FindGraphMap(graph);
-
-        IList<string> identifiers = new List<string> { id };
-        response.Append(_dataLayer.Delete(_graphMap.dataObjectName, identifiers));
-      }
-      catch (Exception ex)
-      {
-        string message = "Error deleting data transfer object: " + ex;
-
-        response.Level = StatusLevel.Error;
-        response.StatusList.Add(
-          new Status()
-          {
-            Messages = new Messages { message }
-          }
-        );
-
-        _logger.Error(message);
-      }
-
-      return response;
-    }
-
-    public RequestStatus GetRequestStatus(string id)
-    {
-      try
-      {
-        RequestStatus status = null;
-
-        if (_requests.ContainsKey(id))
-        {
-          status = _requests[id];
-        }
-        else
-        {
-          status = new RequestStatus()
-          {
-            State = State.NotFound,
-            Message = "Request [" + id + "] not found."
-          };
-        }
-
-        if (status.State == State.Completed)
-        {
-          _requests.TryRemove(id, out status);
-        }
-
-        return status;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error getting request status: {0}", ex));
-        throw ex;
-      }
-    }
-
-    private void InitializeScope(string projectName, string applicationName)
-    {
-      try
-      {
-        if (!_isScopeInitialized)
-        {
-          bool isScopeValid = false;
-          foreach (ScopeProject project in _scopes)
-          {
-            if (project.Name.ToUpper() == projectName.ToUpper())
-            {
-              foreach (ScopeApplication application in project.Applications)
-              {
-                if (application.Name.ToUpper() == applicationName.ToUpper())
-                {
-                  isScopeValid = true;
-                }
-              }
-            }
-          }
-
-          string scope = String.Format("{0}.{1}", projectName, applicationName);
-
-          if (!isScopeValid) throw new Exception(string.Format("Scope [{0}] not found.", scope));
-
-          _settings["ProjectName"] = projectName;
-          _settings["ApplicationName"] = applicationName;
-          _settings["Scope"] = scope;
-
-          string appSettingsPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope);
-
-          if (File.Exists(appSettingsPath))
-          {
-            AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
-            _settings.AppendSettings(appSettings);
-          }
-
-          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
-
-          //Ninject Extension requires fully qualified path.
-          string bindingConfigurationPath = Path.Combine(
-            _settings["BaseDirectoryPath"],
-            relativePath
-          );
-
-          _settings["BindingConfigurationPath"] = bindingConfigurationPath;
-
-          if (!File.Exists(bindingConfigurationPath))
-          {
-            XElement binding = new XElement("module",
-              new XAttribute("name", _settings["Scope"]),
-              new XElement("bind",
-                new XAttribute("name", "DataLayer"),
-                new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
-                new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
-              )
-            );
-
-            binding.Save(bindingConfigurationPath);
-          }
-
-          _kernel.Load(bindingConfigurationPath);
-
-          string mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
-
-          if (File.Exists(mappingPath))
-          {
-            try
-            {
-              _mapping = Utility.Read<Mapping>(mappingPath);
-            }
-            catch (Exception legacyEx)
-            {
-              _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
-              Status status = new Status();
-
-              _mapping = LoadMapping(mappingPath, ref status);
-              _logger.Info(status.ToString());
-            }
-          }
-          else
-          {
-            _mapping = new mapping.Mapping();
-            Utility.Write<mapping.Mapping>(_mapping, mappingPath);
-          }
-
-          _kernel.Bind<Mapping>().ToConstant(_mapping);
-          _isScopeInitialized = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error initializing scope: {0}", ex));
-        throw ex;
-      }
-    }
-
-    private void InitializeDataLayer()
-    {
-      try
-      {
-        if (!_isDataLayerInitialized)
-        {
-          _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
-
-          if (_dataLayer == null)
-          {
-            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
-          }
-
-          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer).InThreadScope();
-
-          _dataDictionary = _dataLayer.GetDictionary();
-          _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
-
-          _isDataLayerInitialized = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error initializing datalayer: {0}",  ex));
-        throw ex;
-      }
-    }
-
-    private void InitializeIdentity()
-    {
-      try
-      {
-        _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
-        _keyRing = _identityLayer.GetKeyRing();
-        _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
-
-        _settings.AppendKeyRing(_keyRing);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error initializing identity: {0}", ex));
-        throw ex;
-      }
-    }
-
     public ContentObjects GetContents(string scope, string app, string graph, string filter)
     {
       try
       {
         ContentObjects contentObjects = new ContentObjects();
 
-        IDictionary<string, string> idFormats = (IDictionary<string, string>)
+        Dictionary<string, string> idFormats = (Dictionary<string, string>)
           JsonConvert.DeserializeObject<Dictionary<string, string>>(filter);
 
         InitializeScope(scope, app);
@@ -1179,15 +1159,15 @@ namespace org.iringtools.adapter
           throw new Exception("Graph [" + graph + "] not found.");
         }
 
-        DataObject objDef = _dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == graphMap.dataObjectName.ToLower());
-        if (objDef == null)
+        DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == graphMap.dataObjectName.ToLower());
+        if (dataObject == null)
         {
           throw new Exception("Data object [" + graphMap.dataObjectName + "] not found.");
         }
+
+        List<IContentObject> iContentObjects = _dataLayerGateway.GetContents(dataObject, idFormats);
         
-        IList<IContentObject> iContentObjects = _dataLayer.GetContents(graphMap.dataObjectName, idFormats);
-        
-        #region marshall iContentObjects into contentObjects
+        #region marshall iContentObjects to contentObjects
         foreach (IContentObject iContentObject in iContentObjects)
         {
           ContentObject contentObject = new ContentObject()
@@ -1200,7 +1180,7 @@ namespace org.iringtools.adapter
             URL = iContentObject.URL
           };
            
-	        foreach (DataProperty prop in objDef.dataProperties)
+	        foreach (DataProperty prop in dataObject.dataProperties)
 	        {
 	          object value = iContentObject.GetPropertyValue(prop.propertyName);
 	          if (value != null)
@@ -1246,8 +1226,11 @@ namespace org.iringtools.adapter
           throw new Exception("Graph [" + graph + "] not found.");
         }
 
-        IDictionary<string, string> idFormats = new Dictionary<string, string>() { {id, format} };
-        IList<IContentObject> iContentObjects = _dataLayer.GetContents(graphMap.dataObjectName, idFormats);
+        DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
+        
+        Dictionary<string, string> idFormats = new Dictionary<string, string>() { {id, format} };
+
+        List<IContentObject> iContentObjects = _dataLayerGateway.GetContents(dataObject, idFormats);
 
         if (iContentObjects == null || iContentObjects.Count == 0)
           throw new Exception("Content object [" + id + "] not found.");
@@ -1261,51 +1244,54 @@ namespace org.iringtools.adapter
       }
     }
 
-    public Response PostContents(string scope, string app, string graph, ContentObjects contentObjects)
-    {
-      try
-      {
-        IList<IDataObject> iDataObjects = new List<IDataObject>();
+    //TODO:
+    //public Response PostContents(string scope, string app, string graph, ContentObjects contentObjects)
+    //{
+    //  try
+    //  {
+    //    InitializeScope(scope, app);
+    //    Impersonate();
+    //    InitializeDataLayer();
 
-        InitializeScope(scope, app);
-        InitializeDataLayer();
+    //    IList<IDataObject> iDataObjects = new List<IDataObject>();
 
-        GraphMap graphMap = _mapping.FindGraphMap(graph);
-        if (graph == null)
-        {
-          throw new Exception("Graph [" + graph + "] not found.");
-        } 
+    //    GraphMap graphMap = _mapping.FindGraphMap(graph);
+    //    if (graph == null)
+    //    {
+    //      throw new Exception("Graph [" + graph + "] not found.");
+    //    } 
         
-        #region marshall contentObjects into iContentObjects
-        foreach (ContentObject contentObject in contentObjects)
-        {
-          IContentObject iContentObject = new GenericContentObject();
-          iContentObject.Identifier = contentObject.Identifier;
-          iContentObject.ContentType = contentObject.MimeType;
-          iContentObject.Content = iContentObject.Content.ToMemoryStream();
+    //    #region marshall contentObjects into iContentObjects
+    //    foreach (ContentObject contentObject in contentObjects)
+    //    {
+    //      IContentObject iContentObject = new GenericContentObject();
+    //      iContentObject.Identifier = contentObject.Identifier;
+    //      iContentObject.ContentType = contentObject.MimeType;
+    //      iContentObject.Content = iContentObject.Content.ToMemoryStream();
 
-          IContentObject dataObject = new GenericContentObject()
-          {
-            ObjectType = graphMap.dataObjectName
-          };
+    //      IContentObject dataObject = new GenericContentObject()
+    //      {
+    //        ObjectType = graphMap.dataObjectName
+    //      };
 
-          foreach (Attribute attr in contentObject.Attributes)
-          {
-            dataObject.SetPropertyValue(attr.Name, attr.Value);
-          }
-          contentObjects.Add(contentObject);
-        }
-        #endregion
+    //      foreach (Attribute attr in contentObject.Attributes)
+    //      {
+    //        dataObject.SetPropertyValue(attr.Name, attr.Value);
+    //      }
+    //      contentObjects.Add(contentObject);
+    //    }
+    //    #endregion
 
-        Response response = _dataLayer.Post(iDataObjects);
-        return response;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error posting content objects: " + ex.ToString());
-        throw ex;
-      }
-    }
+    //    //TODO:
+    //    //Response response = _dataLayerGateway.Post(iDataObjects);
+    //    //return response;
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error("Error posting content objects: " + ex.ToString());
+    //    throw ex;
+    //  }
+    //}
 
     // build cross _graphmap from manifest graph and mapping graph
     private void BuildCrossGraphMap(Manifest manifest, string graph)
@@ -1348,12 +1334,12 @@ namespace org.iringtools.adapter
     {
       DataFilter dataFilter = new DataFilter();
       
-      if (_dataDictionary == null)
+      if (_dictionary == null)
       {
-        _dataDictionary = _dataLayer.GetDictionary();
+        _dictionary = _dataLayerGateway.GetDictionary();
       }
 
-      DataObject dataObject = _dataDictionary.GetDataObject(_graphMap.dataObjectName);
+      DataObject dataObject = _dictionary.GetDataObject(_graphMap.dataObjectName);
       DataFilter graphFilter = _graphMap.dataFilter;
 
       dtoProjection.ProjectDataFilter(dataObject, ref graphFilter, _graphMap);
@@ -1469,7 +1455,7 @@ namespace org.iringtools.adapter
                     {
                         if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id && (String.IsNullOrWhiteSpace(mappingRole.classMap.path) ? String.IsNullOrWhiteSpace(manifestRole.@class.path) : mappingRole.classMap.path == manifestRole.@class.path))
                       {
-                        Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dataDictionary, _fixedIdentifierBoundary);
+                        Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dictionary, _fixedIdentifierBoundary);
 
                         // get crossed role map and set its cardinality
                         foreach (RoleMap crossedRoleMap in crossedTemplate.roleMaps)
@@ -1521,20 +1507,20 @@ namespace org.iringtools.adapter
       return clonedTemplateMap;
     }
 
-    private List<IDataObject> PageDataObjects(string objectType, DataFilter filter)
+    private List<IDataObject> PageDataObjects(DataObject objectType, DataFilter filter)
     {
       List<IDataObject> dataObjects = new List<IDataObject>();
 
       int pageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"]))
         ? 250 : int.Parse(_settings["DefaultPageSize"]);
 
-      long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+      long count = _dataLayerGateway.GetCount(objectType, filter);
 
       for (int offset = 0; offset < count; offset = offset + pageSize)
       {
         _logger.Debug(string.Format("Getting paged data {0}-{1}.", offset, offset + pageSize));
 
-        dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, pageSize, offset));
+        dataObjects.AddRange(_dataLayerGateway.Get(objectType, filter, offset, pageSize));
 
         _logger.Debug(string.Format("Paged data {0}-{1} completed.", offset, offset + pageSize));
       }
@@ -1545,7 +1531,9 @@ namespace org.iringtools.adapter
     private DataTransferIndices MultiGetDataTransferIndices(DataFilter filter)
     {
       DataTransferIndices dataTransferIndices = new DataTransferIndices();
-      long total = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+      DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
+
+      long total = _dataLayerGateway.GetCount(dataObject, filter);
       int maxThreads = int.Parse(_settings["MaxThreads"]);
 
       if (total > 0)
@@ -1567,8 +1555,8 @@ namespace org.iringtools.adapter
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           ManualResetEvent doneEvent = new ManualResetEvent(false);
 
-          DtiTask dtiTask = new DtiTask(doneEvent, projectionLayer, _dataLayer, _graphMap,
-            filter, pageSize, offset);
+          DtiTask dtiTask = new DtiTask(doneEvent, projectionLayer, _dataLayerGateway, _dictionary,
+            _graphMap, filter, pageSize, offset);
 
           doneEvents.Add(doneEvent);
           dtiTasks.Add(dtiTask);
@@ -1602,7 +1590,7 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-    private DataTransferObjects MultiGetDataTransferObjects(List<string> identifiers)
+    private DataTransferObjects MultiGetDataTransferObjects(DataObject dataObject, List<string> identifiers)
     {
       DataTransferObjects dataTransferObjects = new DataTransferObjects();
 
@@ -1626,7 +1614,7 @@ namespace org.iringtools.adapter
         List<string> pageIdentifiers = identifiers.GetRange(offset, pageSize);
         DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         ManualResetEvent doneEvent = new ManualResetEvent(false);
-        OutboundDtoTask dtoTask = new OutboundDtoTask(doneEvent, projectionLayer, _dataLayer, _graphMap, pageIdentifiers);
+        OutboundDtoTask dtoTask = new OutboundDtoTask(doneEvent, projectionLayer, _dataLayerGateway, _graphMap, dataObject, pageIdentifiers);
         ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);
 
         doneEvents.Add(doneEvent);
@@ -1653,7 +1641,8 @@ namespace org.iringtools.adapter
       return dataTransferObjects;
     }
 
-    private Response MultiPostDataTransferObjects(DataTransferObjects dataTransferObjects)
+    private Response MultiPostDataTransferObjects(DataLayerGateway dataLayerGateway, 
+      DataObject objectType, DataTransferObjects dataTransferObjects)
     {
       Response response = new Response();
 
@@ -1681,7 +1670,7 @@ namespace org.iringtools.adapter
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           IDataLayer dataLayer = _kernel.Get<IDataLayer>();
           ManualResetEvent doneEvent = new ManualResetEvent(false);
-          DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvent, projectionLayer, dataLayer, _graphMap, dtos);
+          DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvent, projectionLayer, dataLayerGateway, _graphMap, objectType, dtos);
           ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);
           
           doneEvents.Add(doneEvent);

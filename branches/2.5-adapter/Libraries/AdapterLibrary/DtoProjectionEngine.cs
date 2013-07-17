@@ -19,10 +19,10 @@ namespace org.iringtools.adapter.projection
     private DataTransferObjects _dataTransferObjects;
 
     [Inject]
-    public DtoProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
-      : base(settings, dataLayer, mapping) { }
+    public DtoProjectionEngine(AdapterSettings settings, DataDictionary dictionary, Mapping mapping)
+      : base(settings, dictionary, mapping) { }
 
-    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects)
     {
       XDocument dtoDoc = null;
 
@@ -40,7 +40,7 @@ namespace org.iringtools.adapter.projection
       return dtoDoc;
     }
 
-    public XDocument ToXml(GraphMap graphMap, ref IList<IDataObject> dataObjects)
+    public XDocument ToXml(GraphMap graphMap, ref List<IDataObject> dataObjects)
     {
       XDocument dtoDoc = null;
 
@@ -67,7 +67,7 @@ namespace org.iringtools.adapter.projection
       return dtoDoc;
     }
 
-    public DataTransferObjects BuildDataTransferObjects(GraphMap graphMap, ref IList<IDataObject> dataObjects)
+    public DataTransferObjects BuildDataTransferObjects(GraphMap graphMap, ref List<IDataObject> dataObjects)
     {
       _graphMap = graphMap;
       _dataObjects = dataObjects;
@@ -75,7 +75,7 @@ namespace org.iringtools.adapter.projection
       return BuildDataTransferObjects();
     }
 
-    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
+    public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, string className, string classIdentifier)
     {
       XDocument dtoDoc = null;
 
@@ -93,7 +93,7 @@ namespace org.iringtools.adapter.projection
       return dtoDoc;
     }
 
-    public XDocument ToXml(GraphMap graphMap, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
+    public XDocument ToXml(GraphMap graphMap, ref List<IDataObject> dataObjects, string className, string classIdentifier)
     {
       XDocument dtoDoc = null;
 
@@ -119,9 +119,9 @@ namespace org.iringtools.adapter.projection
       return dtoDoc;
     }
 
-    public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument)
+    public override List<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument)
     {
-      IList<IDataObject> dataObjects = null;
+      List<IDataObject> dataObjects = null;
 
       if (xDocument != null)
       {
@@ -141,7 +141,7 @@ namespace org.iringtools.adapter.projection
       return dataObjects;
     }
 
-    public IList<IDataObject> ToDataObjects(GraphMap graphMap, ref DataTransferObjects dataTransferObjects)
+    public List<IDataObject> ToDataObjects(GraphMap graphMap, ref DataTransferObjects dataTransferObjects)
     {
       _graphMap = graphMap;
       _dataTransferObjects = dataTransferObjects;
@@ -163,6 +163,8 @@ namespace org.iringtools.adapter.projection
 
           for (int dataObjectIndex = 0; dataObjectIndex < objectCount; dataObjectIndex++)
           {
+            DataTransferObject dto = _dataTransferObjects.DataTransferObjectList[dataObjectIndex];
+
             _dataRecords[dataObjectIndex] = new Dictionary<string, string>();
             _relatedRecordsMaps[dataObjectIndex] = new Dictionary<string, List<Dictionary<string, string>>>();
 
@@ -172,21 +174,22 @@ namespace org.iringtools.adapter.projection
             {
               dataObject = CreateDataObject(_graphMap.dataObjectName, dataObjectIndex);
 
-              DataTransferObject dto = _dataTransferObjects.DataTransferObjectList[dataObjectIndex];
+              if (dto.transferType == TransferType.Add)
+              {
+                ((SerializableDataObject)dataObject).State = ObjectState.Create;
+              }
+              else if (dto.transferType == TransferType.Change)
+              {
+                ((SerializableDataObject)dataObject).State = ObjectState.Update;
+              }
+
               if (dto.content != null)
               {
-                IContentObject contentObject = new GenericContentObject()
-                {
-                   Content = new MemoryStream(dto.content),
-                   ObjectType = _graphMap.dataObjectName
-                };
+                ((SerializableDataObject)dataObject).HasContent = true;
+                ((SerializableDataObject)dataObject).Content = new MemoryStream(dto.content);
+              }
 
-                _dataObjects.Add(contentObject);
-              }
-              else
-              {
-                _dataObjects.Add(dataObject);
-              }
+              _dataObjects.Add(dataObject);
             }
             catch (Exception e)
             {
@@ -218,7 +221,7 @@ namespace org.iringtools.adapter.projection
       return _dataObjects;
     }
 
-    public DataTransferIndices GetDataTransferIndices(GraphMap graphMap, IList<IDataObject> dataObjects, string sortIndex)
+    public DataTransferIndices GetDataTransferIndices(GraphMap graphMap, List<IDataObject> dataObjects, string sortIndex)
     {
       DataTransferIndices dtis = new DataTransferIndices();
 
@@ -265,11 +268,11 @@ namespace org.iringtools.adapter.projection
               string values = propertyValues.ToString();
               dti.HashValue = Utility.MD5Hash(values);
 
-              if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericDataObject)))
+              if (typeof(GenericDataObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
               {
                 dti.HasContent = ((GenericDataObject)(_dataObjects[dataObjectIndex])).HasContent;
               } 
-              else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(IContentObject)))
+              else if (typeof(IContentObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
               {
                 dti.HasContent = ((GenericContentObject)(_dataObjects[dataObjectIndex])).HasContent;
               }
@@ -485,19 +488,15 @@ namespace org.iringtools.adapter.projection
         {
           DataTransferObject dto = new DataTransferObject();
 
-          if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(GenericDataObject)))
-          {
-            dto.hasContent = ((GenericDataObject)_dataObjects[dataObjectIndex]).HasContent;
-          }
-          else if (_dataObjects[dataObjectIndex].GetType().IsAssignableFrom(typeof(IContentObject)))
+          if (typeof(IContentObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
           {
             GenericContentObject contentObject = (GenericContentObject)_dataObjects[dataObjectIndex];
-            dto.hasContent = contentObject.HasContent;
-
-            if (_settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString()))
-            {
-              dto.content = contentObject.Content.ToMemoryStream().ToArray();
-            }
+            dto.hasContent = (contentObject.Content != null);
+            dto.content = contentObject.Content.ToMemoryStream().ToArray();
+          }
+          else if (typeof(GenericDataObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
+          {
+            dto.hasContent = ((GenericDataObject)_dataObjects[dataObjectIndex]).HasContent;
           }
 
           dataTransferObjects.DataTransferObjectList.Add(dto);

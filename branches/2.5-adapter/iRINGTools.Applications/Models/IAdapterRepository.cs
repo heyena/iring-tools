@@ -43,6 +43,9 @@ namespace iRINGTools.Web.Models
     Response Refresh(string scope, string application);
 
     Response Refresh(string scope, string application, string dataObjectName);
+    Response RefreshCache(string scope, string application);
+    Response RefreshCache(string scope, string application, string dataObjectName);
+    Response ImportCache(string scope, string application, string cacheUri);
     
     Response UpdateDataLayer(MemoryStream dataLayerStream);
   }

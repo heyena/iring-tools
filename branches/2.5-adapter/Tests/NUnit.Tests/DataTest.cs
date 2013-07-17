@@ -20,20 +20,19 @@ namespace NUnit.Tests
     public DataTest()
     {
       _settings = new AdapterSettings();
-      _settings.AppendSettings(ConfigurationManager.AppSettings);
 
-      //_settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
+      _baseDirectory = Directory.GetCurrentDirectory();
+      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
+      _settings["BaseDirectoryPath"] = _baseDirectory;
+      Directory.SetCurrentDirectory(_baseDirectory);
+
+      _settings.AppendSettings(new StaticDust.Configuration.AppSettingsReader("App.config"));
       _settings["ProjectName"] = "12345_000";
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
       _settings["Identifier"] = "90002-RV";
       _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
       _settings["ClassName"] = "PIPINGNETWORKSYSTEM";
-
-      _baseDirectory = Directory.GetCurrentDirectory();
-      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
-      _settings["BaseDirectoryPath"] = _baseDirectory;
-      Directory.SetCurrentDirectory(_baseDirectory);
       _settings["GraphBaseUri"] = "http://www.example.com/";
 
       _adapterProvider = new AdapterProvider(_settings);

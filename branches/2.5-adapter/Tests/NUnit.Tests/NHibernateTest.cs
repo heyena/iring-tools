@@ -20,18 +20,18 @@ namespace NUnit.Tests
     public NHibernateTest()
     {
       _settings = new AdapterSettings();
-      _settings.AppendSettings(ConfigurationManager.AppSettings);
-
-      //_settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
-      _settings["ProjectName"] = "12345_000";
-      _settings["ApplicationName"] = "ABC";
-      _settings["SchemaObjectName"] = "LINES";
-      _settings["ExecutingAssemblyName"] = "NUnit.Tests";
 
       _baseDirectory = Directory.GetCurrentDirectory();
       _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
       _settings["BaseDirectoryPath"] = _baseDirectory;
       Directory.SetCurrentDirectory(_baseDirectory);
+
+      _settings.AppendSettings(new StaticDust.Configuration.AppSettingsReader("App.config"));
+
+      _settings["ProjectName"] = "12345_000";
+      _settings["ApplicationName"] = "ABC";
+      _settings["SchemaObjectName"] = "LINES";
+      _settings["ExecutingAssemblyName"] = "NUnit.Tests";
 
       _hibernateProvider = new NHibernateProvider(_settings);
     }
@@ -80,7 +80,7 @@ namespace NUnit.Tests
       Assert.AreNotEqual(0, schemaObjectSchema.dataProperties.Count);
     }
 
-    [Test]
+    //[Test]
     public void PostDictionary()
     {
       string dictionaryPath = String.Format(
@@ -117,7 +117,7 @@ namespace NUnit.Tests
       Assert.AreNotEqual(0, response.StatusList.Count);
     }
 
-    [Test]
+    //[Test]
     public void Generate()
     {
       Response response = _hibernateProvider.Generate(
