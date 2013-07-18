@@ -644,8 +644,8 @@ namespace org.iringtools.services
       string contentType = request.ContentType;
 
       // if it's a known format then return it
-      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("json") ||
-        format.ToLower().Contains("dto") || format.ToLower().Contains("rdf")))
+      if (format != null && (format.ToLower() == "raw" || format.ToLower() == "dto" || format.ToLower() == "rdf" ||
+        format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
       {
         return format;
       }
