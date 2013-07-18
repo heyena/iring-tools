@@ -1,0 +1,9 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT ?uri ?label ?R
+{ 
+  ?uri rdfs:label ?label .
+  OPTIONAL {?R  owl:sameAs ?uri .}
+  FILTER (isLiteral(?label) && regex(str(?label),'^param1$','i'))
+} 
+ORDER BY ?label
