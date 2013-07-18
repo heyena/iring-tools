@@ -1427,7 +1427,7 @@ function newexchangeConfig() {
 
 				},
 				height : 22,
-				anchor : '20%'
+				anchor : '20%',
 			} ]
 		}, {
 			xtype : 'fieldset',
@@ -1759,7 +1759,7 @@ function editGraph() {
 				description : graph.description,
 				oldAppName : appNameValue,
 				oldScope : scope,
-				oldGraphName : graphValue /* CommName : graph.commodity */
+				oldGraphName : graphValue, /* CommName : graph.commodity */
 			});
 			centerPanel.getEl().unmask();
 			view.show();
@@ -2206,7 +2206,19 @@ function newCommodity() {
 			anchor : '100%',
 			fieldLabel : 'Commodity Name',
 			name : 'commName'
-		} ],
+		},
+		{
+            xtype: 'hidden',
+            anchor: '100%',
+            fieldLabel: 'Label',
+            name: 'oldCommName'
+        },
+        {
+            xtype: 'hidden',
+            anchor: '100%',
+            fieldLabel: 'Label',
+            name: 'oldScope'
+        }],
 		buttons : [ {
 			text : 'Save',
 			handler : function(node, button, event) {
@@ -2242,7 +2254,7 @@ function saveComm(node, button, event) {
 	var directoryTree = Ext.getCmp('directory-tree');
 	var node = directoryTree.getSelectionModel().getSelectedNode();
 	// r node = directoryTree.getSelectedNode();
-	var scope = node.parentNode.text;
+	var scope = node.parentNode.parentNode.text;
 
 	Ext.Ajax.request({
 		url : 'newComm?' + form + '&scope=' + scope,
@@ -2261,7 +2273,7 @@ function saveComm(node, button, event) {
 function newApp() {
 	var newAppForm = new Ext.FormPanel({
 		id : 'newAppForm',
-		height : 127,
+		height : 147,
 		width : 417,
 		resizable : false,
 		bodyBorder : false,
@@ -2332,7 +2344,7 @@ function newApp() {
                     xtype: 'textfield',
                     anchor: '70%',
                     margins: '0 0 50 18',
-                    width: 174,
+                    width: 206,
                     fieldLabel : 'BaseUrl',
         			name : 'baseUri',
                     labelWidth: 70,
@@ -2527,7 +2539,7 @@ function editDataFilter() {
 						        },
 						        {
 						            name: 'value'
-						        }]
+						        }],
 						       
 						    });
                      RelationalStore.on('load', function (store, records, options) {			 
@@ -2644,7 +2656,7 @@ function applyDataFilter(url) {
 	        },
 	        {
 	            name: 'value'
-	        }]
+	        }],
 	       
 	    });
 	RelationalStore.on('load', function (store, records, options) {			 
@@ -2659,7 +2671,7 @@ function applyDataFilter(url) {
 	        },
 	        {
 	            name: 'value'
-	        }]
+	        }],
 	       
 	    });
     
@@ -2672,7 +2684,7 @@ function applyDataFilter(url) {
 	        },
 	        {
 	            name: 'value'
-	        }]
+	        }],
 	       
 	    });
 var	sortColumnNames = url + '&sort='+ "true";
@@ -2801,7 +2813,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 															        {
 															            name: 'value'
 															        }
-															    ]
+															    ],
 												
 												});
 
@@ -2819,7 +2831,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 												        },
 												        {
 												            name: 'value'
-												        }]
+												        }],
 												       
 												    });
 												
@@ -2833,7 +2845,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 												        },
 												        {
 												            name: 'value'
-												        }]
+												        }],
 												       
 												    });
 														var newrow = {
@@ -2850,7 +2862,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																			id : 'openCount_'+rowCount,
 																			width : 50,
 																			flex: 1.3 ,											      
-																			name : 'openGroupCount_'+rowCount
+																			name : 'openGroupCount_'+rowCount,
 																		},											
 																		{
 																			xtype : 'combo',												
@@ -2877,7 +2889,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																					        },
 																					        {
 																					            name: 'value'
-																					        }]
+																					        }],
 																					       
 																					    });
 													                             RelationalStore.on('load', function (store, records, options) {			 
@@ -2909,7 +2921,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																            typeAhead: true,
 																            triggerAction: 'all',
 																            lazyRender: true,																            
-																            displayField: 'value'	
+																            displayField: 'value',	
 																           
 																		},
 																		{
@@ -2917,7 +2929,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																			id : 'value_'+rowCount,
 																			width : 90,
 																			name : 'value_'+rowCount,
-																			flex : 1
+																			flex : 1,
 																			//margins : '5',
 																		},
 																		{
@@ -2934,14 +2946,14 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																            typeAhead: true,
 																            triggerAction: 'all',
 																            lazyRender: true,																            
-																            displayField: 'value'		
+																            displayField: 'value',		
 																		},
 																		{
 																			xtype : 'textfield',
 																			id : 'closeGroup_'+rowCount,
 																			flex : 1.3,													
 																			width : 50,
-																			name : 'closeGroupCount_'+rowCount
+																			name : 'closeGroupCount_'+rowCount,
 																		},
 																		{
 																			xtype : 'button',
@@ -3108,7 +3120,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																			id : 'delete_'+rowCount,
 																			// text:'Delete',
 																			margins : '0, 20,0,0',
-																			icon : 'resources/images/16x16/delete-icon.png'
+																			icon : 'resources/images/16x16/delete-icon.png',
 																			} ]
 																		
 																		}
@@ -3179,7 +3191,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 															        },
 															        {
 															            name: 'value'
-															        }]
+															        }],
 															       
 															    });
 							                             RelationalStore.on('load', function (store, records, options) {			 
@@ -3209,7 +3221,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 										            typeAhead: true,
 										            triggerAction: 'all',
 										            lazyRender: true,																            
-										            displayField: 'value'	
+										            displayField: 'value',	
 										          
 												},
 												{
@@ -3217,7 +3229,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 													id : 'value_1',
 													width : 90,
 													name : 'value_1',
-													flex : 1
+													flex : 1,
 													//margins : '5',
 												},
 												{
@@ -3234,7 +3246,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 										            typeAhead: true,
 										            triggerAction: 'all',
 										            lazyRender: true,																            
-										            displayField: 'value'
+										            displayField: 'value',
 												},
 												{
 													xtype : 'textfield',
@@ -3484,7 +3496,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																	        {
 																	            name: 'value'
 																	        }
-																	    ]
+																	    ],
 														
 														});
 														
@@ -3502,7 +3514,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 														        },
 														        {
 														            name: 'value'
-														        }]
+														        }],
 														       
 														    });
 													
@@ -3532,7 +3544,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
     triggerAction: 'all',
     lazyRender: true,
     store: ColumnNameStoreOE,
-    displayField: 'name'										  
+    displayField: 'name',										  
     //   valueField: 'value',
 }, /* {
     xtype: 'textfield',   
@@ -3557,7 +3569,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 															            typeAhead: true,
 															            triggerAction: 'all',
 															            lazyRender: true,																            
-															            displayField: 'value'	
+															            displayField: 'value',	
 																	},
 																{
 																		xtype : 'button',
@@ -3674,7 +3686,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
     triggerAction: 'all',
     lazyRender: true,
     store: ColumnNameStoreOE,
-    displayField: 'name'										  
+    displayField: 'name',										  
     //   valueField: 'value',
 },/* {
     xtype: 'textfield',
@@ -3697,7 +3709,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 										            typeAhead: true,
 										            triggerAction: 'all',
 										            lazyRender: true,																            
-										            displayField: 'value'	
+										            displayField: 'value',	
 												},
 												{
 													xtype : 'button',
@@ -3853,8 +3865,14 @@ function saveDataFilter() {
 			}
 		*/
 		
-		
+		var value = Ext.getCmp('value_' + i).getValue();
+		if(value != 'null' && value !='' && value != 'Null' && value != 'NULL')
+			{
 		arrValue[i] = Ext.getCmp('value_' + i).getValue();
+			}else
+				{
+				arrValue[i] = '';				
+				}
 		arrLogOper[i] = Ext.getCmp('logicalOperator_' + i).getValue();
 	/*	if(log == "0")
 		{
@@ -4172,10 +4190,10 @@ Ext
 											var exchangeId = properties['Id'];
 											var context = '?scope=' + scope
 													+ '&xid=' + exchangeId;
-
+											var label = '('+ scope +')' + node.text;
 											node.reviewed = true;
 											loadPageDto('exchange', 'xdata',
-													context, node.text);
+													context, label);
 										}
 									}
 								} catch (err) {
