@@ -3866,7 +3866,7 @@ function saveDataFilter() {
 		*/
 		
 		var value = Ext.getCmp('value_' + i).getValue();
-		if(value != 'null' && value !='' && value != 'Null' && value != 'NULL')
+		if(value !='')
 			{
 		arrValue[i] = Ext.getCmp('value_' + i).getValue();
 			}else
