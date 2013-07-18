@@ -20,6 +20,7 @@ namespace org.iringtools.adapter.projection
     protected static readonly string XSD_PREFIX = "xsd:";
 
     protected AdapterSettings _settings = null;
+    protected DataDictionary _dictionary;
     protected IList<IDataObject> _dataObjects = null;
     protected Properties _uriMaps;
 

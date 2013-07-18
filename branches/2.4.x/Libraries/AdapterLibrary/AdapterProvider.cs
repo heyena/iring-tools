@@ -3450,6 +3450,7 @@ namespace org.iringtools.adapter
         string[] expectedFormats = { 
               "rdf", 
               "dto",
+              "xml",
               "json"
             };
 
