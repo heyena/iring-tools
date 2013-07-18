@@ -20,13 +20,11 @@ namespace org.iringtools.adapter.projection
     private static readonly ILog _logger = LogManager.GetLogger(typeof(JsonProjectionEngine));
     private string[] arrSpecialcharlist;
     private string[] arrSpecialcharValue;
-    private DataDictionary _dictionary;
 
     [Inject]
     public JsonProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
       : base(settings)
     {
-      _settings = settings;
       _dictionary = dictionary;
 
       if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
