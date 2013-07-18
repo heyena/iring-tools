@@ -175,7 +175,7 @@ namespace org.iringtools.adapter
         dataItem.hasContent = true;
       }
 
-      if (dictionary.Keys.Contains(_contentFieldName))
+      if (dictionary.Keys.Contains(_contentFieldName) && dictionary[_contentFieldName] != null)
       {
         dataItem.content = dictionary[_contentFieldName].ToString();
       }
