@@ -237,7 +237,7 @@ Ext.onReady(function () {
   directoryPanel.on('editgraphname', function (npanel, node) {
     contentPanel.removeAll(true);
   }, this);
- directoryPanel.on('upload', function (npanel, node) {
+ /*directoryPanel.on('upload', function (npanel, node) {
 	  var newTab = new AdapterManager.FileUpload({
 		  id: 'tab-' + node.id,
 		  record: node,
@@ -265,7 +265,8 @@ Ext.onReady(function () {
     });
     win.show();
 	
-}, this);
+}, this);*/
+/*
 directoryPanel.on('download', function (npanel, node) {
 	  var newTab = new AdapterManager.FileDownloadGrid({
 		  id: 'tab-' + node.id,
@@ -294,7 +295,7 @@ directoryPanel.on('download', function (npanel, node) {
     });
     win.show();
 	
-}, this);
+}, this);*/
 
  directoryPanel.on('configure', function (npanel, node) {
   
