@@ -1,0 +1,91 @@
+{
+    "type": "jsonstore",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "rul": null,
+        "url": null,
+        "timeout": null,
+        "autoLoad": false,
+        "model": "DynamicModel",
+        "remoteSort": true,
+        "storeId": "DataGridStore",
+        "designer|userClassName": "DataGridStore",
+        "pageSize": 25
+    },
+    "designerId": "bd0c2146-a07f-405b-85d7-72edd111ce14",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "rul",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "url",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "timeout",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "Ext.data.proxy.Ajax",
+            "reference": {
+                "name": "proxy",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "actionMethods": [
+                    "{\r",
+                    "          read: 'POST'\r",
+                    "        }"
+                ],
+                "extraParams": [
+                    "{\r",
+                    "          scope: null,\r",
+                    "          start: 0,\r",
+                    "          limit: 25,\r",
+                    "          app: null,\r",
+                    "          graph: null,\r",
+                    "          baseUrl: null\r",
+                    "        }"
+                ],
+                "timeout": 60000,
+                "url": "GridManager/Pages"
+            },
+            "configAlternates": {
+                "actionMethods": "object"
+            },
+            "designerId": "7ae9aae5-0ada-44d6-80fe-9d6379708b4a",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "actionMethods",
+                    "type": "string"
+                }
+            ],
+            "cn": [
+                {
+                    "type": "Ext.data.reader.Json",
+                    "reference": {
+                        "name": "reader",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "root": "data"
+                    },
+                    "designerId": "4a6ff91d-8e1f-432d-9a5b-71b74a522c98"
+                }
+            ]
+        }
+    ]
+}

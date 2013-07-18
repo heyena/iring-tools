@@ -1,0 +1,300 @@
+{
+    "type": "Ext.form.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "node": "",
+        "height": 250,
+        "width": 400,
+        "designer|userClassName": "directory.ScopeForm",
+        "designer|userAlias": "scopeform",
+        "defaults": [
+            "{anchor: '100%', msgTarget: 'side'}"
+        ],
+        "bodyPadding": 10,
+        "bodyStyle": [
+            "padding:10px 5px 0"
+        ],
+        "title": null,
+        "url": "directory/Scope"
+    },
+    "designerId": "354a52a2-af56-440e-a28d-e03f1135a5e9",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "node",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "bottom"
+            },
+            "designerId": "17de2cb0-9bcc-4e4b-b173-2373210be668",
+            "cn": [
+                {
+                    "type": "Ext.toolbar.Fill",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null
+                    },
+                    "designerId": "f1121f3f-5e1e-4b03-a999-758c3d927005"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Ok"
+                    },
+                    "designerId": "ea25992e-a1a2-4184-97fb-7452985c8d71",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "me.onSave();"
+                                ]
+                            },
+                            "designerId": "9fd1a8eb-b99f-4898-b8f7-3191a5ccb697"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Cancel"
+                    },
+                    "designerId": "ac83820c-3cd6-4bbd-8e98-6eea6a2892e8",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "me.onReset();"
+                                ]
+                            },
+                            "designerId": "7ea24255-6088-4e0d-af6b-bd5278b9b1bd"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onSave",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var win = me.up('window');\r",
+                    "var form = me.getForm();\r",
+                    "var folderName = form.findField('scope').getValue();\r",
+                    "var state = form.findField('state').getValue();\r",
+                    "var contextNameField = form.findField('contextName');\r",
+                    "\r",
+                    "var context = form.findField('contextCombo').getValue();\r",
+                    "\r",
+                    "//contextNameField.setValue(context);\r",
+                    "node.eachChild(function(n) {\r",
+                    "  if(n.data.text == folderName) {\r",
+                    "    if(state == 'new') {\r",
+                    "      showDialog(400, 100, 'Warning', 'The name \\\"' + folderName + '\\\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);\r",
+                    "      return;\r",
+                    "    }\r",
+                    "  }\r",
+                    "});\r",
+                    "\r",
+                    "if(form.isValid()) {\r",
+                    "  form.submit({\r",
+                    "    waitMsg: 'Saving Data...',\r",
+                    "    success: function (response, request) {\r",
+                    "      win.fireEvent('save', me);\r",
+                    "    },\r",
+                    "    failure: function (response, request) {\r",
+                    "      if (response.items!=undefined && response.items[3].value !== undefined) {\r",
+                    "        var rtext = response.items[3].value;\r",
+                    "        showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);\r",
+                    "        return;\r",
+                    "      }\r",
+                    "      var message = 'Error saving changes!';\r",
+                    "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "    }\r",
+                    "  });\r",
+                    "} else {\r",
+                    "  showDialog(400, 100, 'Warning', 'Please complete all required fields...', Ext.Msg.OK, null);\r",
+                    "  return;\r",
+                    "}"
+                ]
+            },
+            "designerId": "37f9bb95-dc76-4634-aae9-7f243d589f62"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onReset",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var win = me.up('window');\r",
+                    "win.fireEvent('cancel', me);\r",
+                    "\r",
+                    ""
+                ]
+            },
+            "designerId": "7e2f1024-97a2-477f-9fba-23d19ba8270e"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "path"
+            },
+            "designerId": "1d5f2d7e-9ba3-4251-85b6-e5b690586719"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "state"
+            },
+            "designerId": "28375050-6d64-4be6-9d07-b42ccc547f34"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "oldContext"
+            },
+            "designerId": "45623dc5-9751-4f7f-befb-fb6594f5726a"
+        },
+        {
+            "type": "Ext.form.field.Text",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": "Name",
+                "name": "scope",
+                "value": null,
+                "allowBlank": false
+            },
+            "designerId": "50e2271b-c35b-4359-9f38-3b3eb854d6af"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "itemId": "contextname",
+                "fieldLabel": null,
+                "name": "contextName"
+            },
+            "designerId": "4d7dacf2-c6f5-473b-8e2f-78e2450a3058"
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "hidden": true
+            },
+            "designerId": "075ebdd5-bfff-484a-bbc1-3d578d3c2c57",
+            "masterInstanceId": "3f6306a7-11d6-4ef2-894e-dbea2ac88a90"
+        },
+        {
+            "type": "Ext.form.field.TextArea",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": "Description",
+                "name": "description"
+            },
+            "designerId": "9ef16378-a5b3-4867-ade6-cfbb89267fe0"
+        }
+    ]
+}

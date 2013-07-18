@@ -1,0 +1,15 @@
+{
+    "type": "jsonstore",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "model": "RelationModel",
+        "storeId": "relationstore",
+        "designer|userClassName": "RelationStore",
+        "designer|userAlias": null
+    },
+    "designerId": "cc442d03-be71-4c6c-bb48-90f2a756b8ba"
+}

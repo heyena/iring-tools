@@ -1,0 +1,229 @@
+{
+    "type": "Ext.grid.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": null,
+        "itemId": "relationPropertyGrid",
+        "width": null,
+        "designer|userClassName": "nhibernate.RelationPropertyGrid",
+        "designer|userAlias": "relationPropertyGrid",
+        "title": null,
+        "store": "RelationStore"
+    },
+    "designerId": "9ef4132f-28fd-4a87-abdb-e8b4c54c5a6c",
+    "cn": [
+        {
+            "type": "Ext.grid.View",
+            "reference": {
+                "name": "viewConfig",
+                "type": "object"
+            },
+            "codeClass": null,
+            "designerId": "a90adf2a-10ae-4abd-8cc1-3ce2759974e7"
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top"
+            },
+            "designerId": "a3c7b4ad-a009-4d74-8473-5ff64f02dd8f",
+            "cn": [
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "iconCls": "am-list-add",
+                        "text": "Add"
+                    },
+                    "designerId": "8eae4ff3-48be-4c8b-8de9-ab99d262e742",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onAddClick",
+                                "implHandler": [
+                                    "var me = this;\r",
+                                    "\r",
+                                    "var form = button.up('setrelationform');\r",
+                                    "\r",
+                                    "var treeNode = form.node;\r",
+                                    "var propertyCmb = form.down('#propertyNameCmb');\r",
+                                    "var mapPropertyCmb = form.down('#mapPropertyNameCmb');\r",
+                                    "\r",
+                                    "var message;\r",
+                                    "\r",
+                                    "if (!propertyCmb.getValue() || !mapPropertyCmb.getValue()) {\r",
+                                    "  message = 'Please select a property name and a mapping property.';\r",
+                                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                                    "  message = undefined;\r",
+                                    "  return;\r",
+                                    "}\r",
+                                    "\r",
+                                    "var grid = form.down('relationPropertyGrid');\r",
+                                    "var store = grid.getStore();\r",
+                                    "\r",
+                                    "var propertyName = propertyCmb.getValue().replace(/^\\s*/, \"\").replace(/\\s*$/, \"\");\r",
+                                    "var mapProperty = mapPropertyCmb.getValue().replace(/^\\s*/, \"\").replace(/\\s*$/, \"\");\r",
+                                    "\r",
+                                    "var mapRecord = {'property': propertyName, 'relatedProperty': mapProperty};\r",
+                                    "//var mapRecord = {'value': propertyName, 'text': mapProperty};\r",
+                                    "var mapRecordForNode = {'dataPropertyName': propertyName, 'relatedPropertyName': mapProperty};\r",
+                                    "//var propertErr = store.find('value', propertyName);\r",
+                                    "var propertErr = store.find('property', propertyName);\r",
+                                    "//var mapErr = store.find('text', mapProperty);\r",
+                                    "var mapErr = store.find('relatedProperty', mapProperty);\r",
+                                    "\r",
+                                    "if (propertErr != -1) {\r",
+                                    "  message = 'Property [' + propertyName + '] already in a mapping!';\r",
+                                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                                    "  message = undefined;\r",
+                                    "  return; \r",
+                                    "}\r",
+                                    "\r",
+                                    "if (mapErr != -1) {\r",
+                                    "  message = 'Related Property [' + mapProperty + '] already in a mapping!';\r",
+                                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                                    "  message = undefined;\r",
+                                    "  return;\r",
+                                    "}\r",
+                                    "\r",
+                                    "//utilsObj.relationGridStore = null;\r",
+                                    "store.add(mapRecord);\r",
+                                    "if(treeNode.firstChild.raw.propertyMap!=undefined){\r",
+                                    "\t treeNode.firstChild.raw.propertyMap.push(mapRecordForNode);\r",
+                                    "   if(treeNode.firstChild.data.propertyMap!=undefined) \r",
+                                    "  \ttreeNode.firstChild.data.propertyMap.push(mapRecordForNode);\r",
+                                    "}\r",
+                                    "else{\r",
+                                    " \t\t\ttreeNode.firstChild.data.propertyMap = [];\r",
+                                    "  \t  treeNode.firstChild.raw.propertyMap = [];\r",
+                                    "      store.each(function(record) {\r",
+                                    "        treeNode.firstChild.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});\r",
+                                    "        treeNode.firstChild.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});\r",
+                                    "      });\r",
+                                    "}\r",
+                                    "//utilsObj.relationGridStore = store;"
+                                ],
+                                "name": "click",
+                                "scope": "me"
+                            },
+                            "designerId": "850e73b4-fff6-4a5b-a732-f82211e32553"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.toolbar.Spacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "width": 4
+                    },
+                    "designerId": "a05088ee-309a-4005-bd9a-0c59b430b940"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "iconCls": "am-list-remove",
+                        "text": "Remove"
+                    },
+                    "designerId": "c3bacd8b-625f-4f4d-bad6-5fe67dfaa9f6",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onRemoveClick",
+                                "implHandler": [
+                                    "var me = this;\r",
+                                    "var form = button.up('setrelationform');\r",
+                                    "var treeNode = form.node;\r",
+                                    "var grid = form.down('relationPropertyGrid');\r",
+                                    "var selectedRec = grid.getSelectionModel().selected.items[0];\r",
+                                    "var store = grid.getStore();\r",
+                                    "var tempPropertyMap = [];\r",
+                                    "if (grid.getSelectionModel().hasSelection()) {\r",
+                                    "    store.remove(selectedRec);\r",
+                                    "    store.each(function(record) {\r",
+                                    "      tempPropertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});\r",
+                                    "    });\r",
+                                    "    treeNode.firstChild.raw.propertyMap = tempPropertyMap;\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "  if (store.data.items.length < 1)\r",
+                                    "  showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);\r",
+                                    "  else\r",
+                                    "  showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);\r",
+                                    "}"
+                                ],
+                                "name": "click",
+                                "scope": "me"
+                            },
+                            "designerId": "9378cb0f-fc39-4349-bc0e-aacc3b4669cd"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Ext.grid.column.Column",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dataIndex": "property",
+                "text": "Property",
+                "flex": 1
+            },
+            "designerId": "2d144cf2-6f60-4572-bfac-a2cea951f6c3"
+        },
+        {
+            "type": "Ext.grid.column.Column",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dataIndex": "relatedProperty",
+                "text": "Related Property",
+                "flex": 1
+            },
+            "designerId": "bf15cfe6-d61c-4fcb-85f0-c9cf175d97b3"
+        }
+    ]
+}

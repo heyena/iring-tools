@@ -1,0 +1,56 @@
+{
+    "type": "Ext.window.Window",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": 280,
+        "width": 440,
+        "designer|userClassName": "mapping.ClassMapWindow",
+        "designer|userAlias": "classmapwindow",
+        "resizable": [
+            "false"
+        ],
+        "layout": "fit",
+        "title": "Add/Edit ClassMap"
+    },
+    "designerId": "e9ec1c30-2f52-4e60-abb8-a39f46463919",
+    "cn": [
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "10adad42-a6a4-42cc-8655-7841cfa15b57",
+            "masterInstanceId": "53fd65a8-de84-4832-8c1a-247338700860"
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "save"
+            },
+            "designerId": "7ab837cf-aaa2-4eca-9b89-e8c48251989c"
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "reset"
+            },
+            "designerId": "58614a1b-9bb4-4211-a5a8-8827102eeccc"
+        }
+    ]
+}

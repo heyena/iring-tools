@@ -1,0 +1,147 @@
+{
+    "type": "Ext.form.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": null,
+        "width": 300,
+        "designer|userClassName": "nhibernate.SelectDataKeysForm",
+        "designer|userAlias": "selectdatakeysform",
+        "layout": "auto",
+        "bodyPadding": null,
+        "bodyStyle": [
+            "background:#eee;padding:10px 10px 0px 10px"
+        ],
+        "title": null
+    },
+    "designerId": "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
+    "cn": [
+        {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "style": [
+                    "font-weight:bold;"
+                ],
+                "text": "Select Keys"
+            },
+            "designerId": "2eee59d5-d216-4274-92c3-7c012acfce44"
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "container|padding": 4
+            },
+            "designerId": "97a8deea-c724-4706-adbd-a7fd3e4cd6aa",
+            "cn": [
+                {
+                    "type": "Ext.toolbar.Spacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "width": 4
+                    },
+                    "designerId": "76c9aa5a-d8af-4b09-80c9-cdca1c7d8591"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "saveselectkeys",
+                        "layout|flex": null,
+                        "iconCls": "am-apply",
+                        "text": "Apply"
+                    },
+                    "designerId": "f9817153-1248-43df-9eb7-287a228eb891",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.toolbar.Spacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "width": 4
+                    },
+                    "designerId": "7e786d86-b75d-45a0-8fea-6f4f8a42f6be"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "resetselectkeys",
+                        "layout|flex": null,
+                        "iconCls": "am-edit-clear",
+                        "text": "Reset"
+                    },
+                    "designerId": "724accbb-c56a-4777-825e-65be57d0132b",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "hidden": true,
+                "itemId": "multiSelectDataKeys"
+            },
+            "designerId": "3a4abf9c-20b0-40dc-a9ba-ea4250196ba5",
+            "masterInstanceId": "806180c3-0c42-425f-b6f1-5b85a7b5017b"
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "d5a879ce-2866-40df-9d10-8dad2a582084",
+            "masterInstanceId": "55e4d2fa-9ebe-4466-b024-6d81829b1584"
+        }
+    ]
+}

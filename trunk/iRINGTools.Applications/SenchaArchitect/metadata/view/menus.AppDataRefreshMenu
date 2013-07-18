@@ -1,0 +1,37 @@
+{
+    "type": "Ext.menu.Menu",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "width": null,
+        "designer|userClassName": "menus.AppDataRefreshMenu",
+        "designer|userAlias": "appdatarefreshmenu"
+    },
+    "designerId": "0649446d-cfb0-4646-8081-ce7bd59c7cd6",
+    "cn": [
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "refreshdata",
+                "icon": "Content/img/16x16/document-properties.png",
+                "text": "Refresh"
+            },
+            "designerId": "5fd26a1f-7fb5-44b1-8aa9-8c2d9622cf03",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        }
+    ]
+}
