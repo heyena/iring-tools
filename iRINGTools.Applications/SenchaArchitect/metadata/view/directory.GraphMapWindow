@@ -1,0 +1,38 @@
+{
+    "type": "Ext.window.Window",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "border": false,
+        "height": null,
+        "width": null,
+        "designer|userClassName": "directory.GraphMapWindow",
+        "designer|userAlias": "graphmapwindow",
+        "resizable": false,
+        "layout": "anchor",
+        "title": null
+    },
+    "configAlternates": {
+        "border": "boolean",
+        "resizable": "boolean"
+    },
+    "designerId": "154512ba-4b82-4d9e-aa03-fbacbe79da52",
+    "cn": [
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%"
+            },
+            "designerId": "89ab57f8-944a-4e6c-a8e7-b5151850e654",
+            "masterInstanceId": "282350c9-5e2f-409a-a866-f63237e0a174"
+        }
+    ]
+}

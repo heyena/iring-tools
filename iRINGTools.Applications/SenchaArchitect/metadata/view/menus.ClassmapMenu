@@ -1,0 +1,58 @@
+{
+    "type": "Ext.menu.Menu",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "width": 130,
+        "designer|userClassName": "menus.ClassmapMenu",
+        "designer|userAlias": "classmapmenu"
+    },
+    "designerId": "2f81f74f-e932-492b-97a3-24ea87dc1d41",
+    "cn": [
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "deleteclassmap",
+                "icon": "Content/img/16x16/edit-delete.png",
+                "text": "Delete ClassMap"
+            },
+            "designerId": "03b60b98-fd00-464e-822f-1539458fe101",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "changeclassmap",
+                "hidden": true,
+                "text": "Change ClassMap"
+            },
+            "designerId": "fbab6d75-8169-4b42-b6c1-25794de14bc7",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        }
+    ]
+}

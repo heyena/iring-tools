@@ -1,0 +1,28 @@
+{
+    "type": "Ext.tab.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "split": true,
+        "border": true,
+        "height": null,
+        "width": null,
+        "designer|userClassName": "common.ContentPanel",
+        "designer|userAlias": "contentpanel",
+        "header": null
+    },
+    "configAlternates": {
+        "border": "boolean"
+    },
+    "designerId": "91c55eab-5eda-4bef-81cb-f2088b20b160",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "split",
+            "type": "boolean"
+        }
+    ]
+}

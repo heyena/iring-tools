@@ -1,0 +1,109 @@
+{
+    "type": "Ext.menu.Menu",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "width": 130,
+        "designer|userClassName": "menus.RootAdminScopesMenu",
+        "designer|userAlias": "rootadminscopesmenu"
+    },
+    "designerId": "8b388d0f-baa1-4e91-b5ea-366c58f6e09c",
+    "cn": [
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "neweditscope",
+                "icon": "Content/img/16x16/document-new.png",
+                "text": "New Folder"
+            },
+            "designerId": "21f193ea-1033-454f-9248-7d3fe360753d",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Separator",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "c7d732de-24cf-4e96-8a47-e26a2e2662c1"
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "newdatalayer",
+                "icon": "Content/img/16x16/document-new.png",
+                "text": "New Data Layer"
+            },
+            "designerId": "88183b40-ec8f-4a8c-b1a1-119d74996eb1",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "editdatalayer",
+                "icon": "Content/img/16x16/document-properties.png",
+                "text": "Edit Data Layer"
+            },
+            "designerId": "c32942a4-1652-4067-8f14-bd9b1e91c97c",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "deletedatalayer",
+                "icon": "Content/img/16x16/edit-delete.png",
+                "text": "Delete Data Layer"
+            },
+            "designerId": "4ba3a5cf-6a1b-49bb-bd37-d4fda6f54734",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,132 @@
+{
+    "type": "Ext.menu.Menu",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "minWidth": null,
+        "width": 140,
+        "designer|userClassName": "menus.ApplicationMenu",
+        "designer|userAlias": "applicationmenu"
+    },
+    "designerId": "053fa732-8da3-4a99-b955-917bc25f4cbe",
+    "cn": [
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "neweditendpoint",
+                "itemId": "editendpoint",
+                "icon": "Content/img/16x16/document-properties.png",
+                "text": "Edit Application"
+            },
+            "designerId": "4d50d77d-fa94-4fa9-94d9-2572c0e30878",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "deleteendpoint",
+                "icon": "Content/img/16x16/edit-delete.png",
+                "text": "Delete Application"
+            },
+            "designerId": "99e248d5-4d9a-47b9-b343-9443ed9217e3",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Separator",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "f7bd238d-8ec3-4390-b0ab-a45d9676ee7c"
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "configureendpoint",
+                "icon": "Content/img/16x16/preferences-system.png",
+                "text": "Open Configuration"
+            },
+            "designerId": "3e838626-e784-4a3a-ac70-51b020504467",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "fileupload",
+                "icon": "Content/img/16x16/document-down.png",
+                "text": "Upload File"
+            },
+            "designerId": "66be8e28-458b-4bc9-b122-ae2e3683fb09",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "filedownload",
+                "icon": "Content/img/16x16/document-up.png",
+                "text": "Download File"
+            },
+            "designerId": "20baac83-4813-4b23-90ed-e86b52b27313",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        }
+    ]
+}

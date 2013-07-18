@@ -1,0 +1,59 @@
+{
+    "type": "Ext.window.Window",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "datalayer": "",
+        "context": "",
+        "baseUrl": "",
+        "endpoint": "",
+        "border": false,
+        "height": 130,
+        "width": 420,
+        "designer|userClassName": "spreadsheet.SourceWindow",
+        "designer|userAlias": "spreadsheetsourcewindow",
+        "layout": "fit",
+        "title": null
+    },
+    "configAlternates": {
+        "border": "boolean"
+    },
+    "designerId": "4c4e87b7-3959-4971-a156-c456b3462eb5",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "datalayer",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "context",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "baseUrl",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "endpoint",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "9727128e-c5ed-4ac6-80b9-0f4d915b5807",
+            "masterInstanceId": "4b8f1077-8bf1-48bd-a264-cc9b6d607fd6"
+        }
+    ]
+}

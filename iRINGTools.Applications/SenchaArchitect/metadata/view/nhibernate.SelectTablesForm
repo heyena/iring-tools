@@ -1,0 +1,198 @@
+{
+    "type": "Ext.form.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "dirNode": "",
+        "border": null,
+        "frame": true,
+        "height": null,
+        "padding": null,
+        "width": null,
+        "designer|userClassName": "nhibernate.SelectTablesForm",
+        "designer|userAlias": "selecttablesform",
+        "autoScroll": true,
+        "bodyBorder": null,
+        "bodyPadding": null,
+        "bodyStyle": [
+            "background:#eee;padding:10px 10px 0px 10px"
+        ],
+        "title": null
+    },
+    "configAlternates": {
+        "border": "boolean"
+    },
+    "designerId": "05fae04d-5364-4b78-98b9-ee7f6b53db35",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "dirNode",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "Ext.form.Label",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "labelStyle": null,
+                "margin": null,
+                "padding": null,
+                "style": [
+                    "font-weight:bold;"
+                ],
+                "text": "Select Tables"
+            },
+            "designerId": "ea8417a3-2258-4042-9ba4-3229979a4b44",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "labelStyle",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "container|padding": 4
+            },
+            "designerId": "e779d4b1-634a-4a69-84b7-c87450211e57",
+            "cn": [
+                {
+                    "type": "Ext.toolbar.Spacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "width": 4
+                    },
+                    "designerId": "4cdd8c9c-836d-4fd2-91b8-e9576063f711"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "applyobjects",
+                        "layout|flex": null,
+                        "icon": null,
+                        "iconCls": "am-apply",
+                        "text": "Apply"
+                    },
+                    "designerId": "1899cc11-47d7-4b50-aa53-ad61f9b5f01b",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.toolbar.Spacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "width": 4
+                    },
+                    "designerId": "9f9298ae-495e-4c42-a762-6fc826d563d3"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "resetobjects",
+                        "layout|flex": null,
+                        "icon": null,
+                        "iconCls": "am-edit-clear",
+                        "text": "Reset"
+                    },
+                    "designerId": "422ded33-7aef-47a5-97f0-9b24a500ec68",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "hidden": true,
+                "itemId": "tablesSelectionGrid",
+                "minHeight": 200,
+                "title": null
+            },
+            "designerId": "8e09f020-8cb8-4d42-b93e-75414c32a7e0",
+            "masterInstanceId": "806180c3-0c42-425f-b6f1-5b85a7b5017b"
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "minHeight": null
+            },
+            "designerId": "946d9e3b-44d0-4e2c-a8c6-c92d93f6d361",
+            "masterInstanceId": "55e4d2fa-9ebe-4466-b024-6d81829b1584"
+        },
+        {
+            "type": "Ext.form.field.Checkbox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fieldLabel": "Enable Summary:",
+                "labelWidth": 150,
+                "name": "enableSummary",
+                "value": [
+                    "off"
+                ],
+                "boxLabel": null,
+                "inputValue": "off"
+            },
+            "designerId": "a28b81f3-4b5e-4856-894d-cadba9b88a8a"
+        }
+    ]
+}
