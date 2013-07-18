@@ -411,35 +411,13 @@ namespace org.iringtools.adapter
 
         ScopeApplication application = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name.ToLower() == oldAppName.ToLower());
 
-        if (application != null)  // application exists, delete and re-create it
+        if (application != null)
         {
-          //bool Ischanged = IsApplicationDataChanged(updatedApp, application); // Check whether actual change has been made or not.
-
-          //if (!Ischanged)  // If nothing changed, don't perform any other operation.
-          //{
-          //  status.Messages.Add("Application [{0}.{1}] unchanged.");
-          //  return response;
-          //}
-
-          ////else ===================
-          ////
-          //// copy database dictionary
-          ////
-          //string path = _settings["AppDataPath"];
-          //string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, oldAppName);
-
-          //if (File.Exists(currDictionaryPath))
-          //{
-          //  string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Name);
-          //  if (currDictionaryPath.ToLower() != updatedDictionaryPath.ToLower())
-          //    File.Copy(currDictionaryPath, updatedDictionaryPath);
-          //}
-
-          //DeleteApplication(scopeName, oldAppName);
-          //AddApplication(scopeName, updatedApp);
-
           application.DisplayName = updatedApp.DisplayName;
           application.Configuration.AppSettings = updatedApp.Configuration.AppSettings;
+
+          string appConfigPath = string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], scope.Name, application.Name);
+          Utility.Write<Configuration>(application.Configuration, appConfigPath, false);
         }
         else  // application does not exist, stop processing
         {
@@ -458,38 +436,6 @@ namespace org.iringtools.adapter
       }
 
       return response;
-    }
-
-    private static bool IsApplicationDataChanged(ScopeApplication updatedApp, ScopeApplication oldApp)
-    {
-      bool Ischanged = false;
-      try
-      {
-        if (oldApp.Name != updatedApp.Name || oldApp.Description != updatedApp.Description || oldApp.Assembly != updatedApp.Assembly)
-        {
-          Ischanged = true;
-        }
-        else if (oldApp.Configuration.AppSettings.Settings.Count != updatedApp.Configuration.AppSettings.Settings.Count)
-        {
-          Ischanged = true;
-        }
-        else
-        {
-          for (int i = 0; i < updatedApp.Configuration.AppSettings.Settings.Count; i++)
-          {
-            if (updatedApp.Configuration.AppSettings.Settings[i].Value != oldApp.Configuration.AppSettings.Settings[i].Value)
-            {
-              Ischanged = true;
-              break;
-            }
-          }
-        }
-      }
-      catch
-      {
-        Ischanged = true;
-      }
-      return Ischanged;
     }
 
     public Response DeleteApplication(string scopeName, string appName)
@@ -544,6 +490,38 @@ namespace org.iringtools.adapter
       }
 
       return response;
+    }
+
+    private static bool IsApplicationDataChanged(ScopeApplication updatedApp, ScopeApplication oldApp)
+    {
+      bool Ischanged = false;
+      try
+      {
+        if (oldApp.Name != updatedApp.Name || oldApp.Description != updatedApp.Description || oldApp.Assembly != updatedApp.Assembly)
+        {
+          Ischanged = true;
+        }
+        else if (oldApp.Configuration.AppSettings.Settings.Count != updatedApp.Configuration.AppSettings.Settings.Count)
+        {
+          Ischanged = true;
+        }
+        else
+        {
+          for (int i = 0; i < updatedApp.Configuration.AppSettings.Settings.Count; i++)
+          {
+            if (updatedApp.Configuration.AppSettings.Settings[i].Value != oldApp.Configuration.AppSettings.Settings[i].Value)
+            {
+              Ischanged = true;
+              break;
+            }
+          }
+        }
+      }
+      catch
+      {
+        Ischanged = true;
+      }
+      return Ischanged;
     }
 
     // delete all application artifacts except for its mapping
@@ -803,13 +781,13 @@ namespace org.iringtools.adapter
       {
         InitializeScope(project, application);
         binding = utility.Utility.GetxElementObject(_settings["BindingConfigurationPath"]);
-        //binding = XElement.Load(_settings["BindingConfigurationPath"]);
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
         throw ex;
       }
+
       return binding;
     }
 
