@@ -24,7 +24,6 @@ import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
-import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 
 public class ExchangeDataController extends BaseController
