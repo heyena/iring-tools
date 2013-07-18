@@ -42,6 +42,11 @@ namespace org.iringtools.library
 
     [DataMember(Name = "hasContent", Order = 3, EmitDefaultValue = false)]
     public bool hasContent { get; set; }
+
+    [DataMember(Name = "content", Order = 4, EmitDefaultValue = false)]
+    public string content { get; set; }
+
+
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data", Name = "link")]
