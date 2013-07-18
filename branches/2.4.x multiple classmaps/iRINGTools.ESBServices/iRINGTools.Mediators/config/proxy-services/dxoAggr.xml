@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<proxy xmlns="http://ws.apache.org/ns/synapse" name="dxoAggr" transports="https http" startOnLoad="true" trace="disable">
-	<target inSequence="conf:/repository/synapse/sequences/dxoAggrIn" outSequence="conf:/repository/synapse/sequences/dxoAggrOut" />
-</proxy>
