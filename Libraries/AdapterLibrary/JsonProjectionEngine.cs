@@ -81,7 +81,22 @@ namespace org.iringtools.adapter.projection
 
               if (dataObj is GenericDataObject)
               {
-                dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
+                  dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
+              }
+
+              bool isContentObject = false;
+              if (dataObj is IContentObject)
+              {
+                  dataItem.hasContent = true;
+                  isContentObject = true;
+              }
+
+              if (isContentObject)
+              {
+                  MemoryStream stream = ((IContentObject)dataObj).Content.ToMemoryStream();
+                  byte[] data = stream.ToArray();
+                  string base64Content = Convert.ToBase64String(data);
+                  dataItem.content = base64Content;
               }
 
               foreach (KeyProperty keyProperty in dataObject.keyProperties)
@@ -282,7 +297,17 @@ namespace org.iringtools.adapter.projection
             SerializableDataObject dataObject = new SerializableDataObject();
             dataObject.Type = objectType.objectName;
             dataObject.Id = dataItem.id;
-            
+
+            if (objectType.hasContent)
+            {
+                string base64Content = dataItem.content;
+
+                if (!String.IsNullOrEmpty(base64Content))
+                {
+                    dataObject.Content = base64Content.ToMemoryStream();
+                }
+            }
+
             //
             // set key properties from id
             //
