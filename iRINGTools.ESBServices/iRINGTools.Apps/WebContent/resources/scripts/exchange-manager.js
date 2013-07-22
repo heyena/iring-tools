@@ -2875,7 +2875,8 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 																            triggerAction: 'all',
 																            lazyRender: true,
 																            store: ColumnNameStore,
-																            displayField: 'name',										  
+																            displayField: 'name',
+																            listWidth: 400,
 																            listeners:{
 													                            scope:this,
 													                            select : function(){
@@ -3177,7 +3178,8 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 										            lazyRender: true,
 										            //mode: 'remote',
 										            store: ColumnNameStore,
-										            displayField: 'name',
+										            displayField: 'name',										            
+										            listWidth: 400,
 										            listeners:{
 							                            scope:this,
 							                            select: function(){
@@ -3544,6 +3546,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
     triggerAction: 'all',
     lazyRender: true,
     store: ColumnNameStoreOE,
+    listWidth: 400,
     displayField: 'name'										  
     //   valueField: 'value',
 }, /* {
@@ -3686,6 +3689,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
     triggerAction: 'all',
     lazyRender: true,
     store: ColumnNameStoreOE,
+    listWidth: 400,
     displayField: 'name'										  
     //   valueField: 'value',
 },/* {
