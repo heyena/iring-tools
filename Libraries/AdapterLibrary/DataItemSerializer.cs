@@ -181,6 +181,7 @@ namespace org.iringtools.adapter
       if (dictionary.Keys.Contains(_contentFieldName) && dictionary[_contentFieldName] != null)
       {
         dataItem.content = dictionary[_contentFieldName].ToString();
+        dataItem.hasContent = true;
       }
 
       foreach (var pair in dictionary)

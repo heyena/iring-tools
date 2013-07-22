@@ -305,6 +305,7 @@ namespace org.iringtools.adapter.projection
                 if (!String.IsNullOrEmpty(base64Content))
                 {
                     dataObject.Content = base64Content.ToMemoryStream();
+                    dataObject.HasContent = true;
                 }
             }
 
