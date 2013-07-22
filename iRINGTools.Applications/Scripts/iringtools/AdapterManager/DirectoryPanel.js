@@ -314,7 +314,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         handler: this.onConfigure,
         icon: 'Content/img/16x16/preferences-system.png',
         scope: this
-      },
+      }
 	  /*{
 	    text: 'Upload File',
 	    handler: this.onFileUpload,
