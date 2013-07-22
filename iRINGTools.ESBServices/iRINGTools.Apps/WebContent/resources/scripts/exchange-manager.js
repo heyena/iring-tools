@@ -3569,7 +3569,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 															            typeAhead: true,
 															            triggerAction: 'all',
 															            lazyRender: true,																            
-															            displayField: 'value',	
+															            displayField: 'value'
 																	},
 																{
 																		xtype : 'button',
@@ -3686,7 +3686,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
     triggerAction: 'all',
     lazyRender: true,
     store: ColumnNameStoreOE,
-    displayField: 'name',										  
+    displayField: 'name'										  
     //   valueField: 'value',
 },/* {
     xtype: 'textfield',
@@ -3709,7 +3709,7 @@ ColumnNameStoreOE.on('load', function (store, records, options) {
 										            typeAhead: true,
 										            triggerAction: 'all',
 										            lazyRender: true,																            
-										            displayField: 'value',	
+										            displayField: 'value'	
 												},
 												{
 													xtype : 'button',
