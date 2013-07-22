@@ -141,7 +141,10 @@ namespace org.iringtools.adapter
 
         if (dataItem.hasContent)
         {
-            result[_contentFieldName] = dataItem.content;
+            if (dataItem.content != null && dataItem.content.Length > 0)
+            {
+                result[_contentFieldName] = dataItem.content;
+            }
         }
 
         foreach (var property in dataItem.properties)
