@@ -989,8 +989,16 @@ namespace org.iringtools.adapter
                 idataObject.SetPropertyValue(pair.Key, pair.Value);
               }
 
+              //support content? or is this just legacy?
+              if (sdo.HasContent)
+              {
+                  ((IContentObject)idataObject).Content = sdo.Content;
+              }
+
               idataObjects.Add(idataObject);
             }
+
+            
 
             Response updateResponse = _dataLayer.Post(idataObjects);
             response.Append(updateResponse);
