@@ -68,7 +68,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.dataObjectsMenu.add(this.buildDataObjectsMenu());
 
     this.spAppMenu = new Ext.menu.Menu();
-    this.spAppMenu.add(this.buildRefreshCacingMenu());
     this.spAppMenu.add(this.buildAppDataMenu());
 
     this.appDataMenu = new Ext.menu.Menu();
@@ -315,37 +314,18 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         icon: 'Content/img/16x16/preferences-system.png',
         scope: this
       }
-	  /*{
-	    text: 'Upload File',
-	    handler: this.onFileUpload,
-	    icon: 'Content/img/16x16/document-down.png',
-	    scope: this
-	  },
-	  {
-	    text: 'Download File',
-	    handler: this.onFileDownload,
-	    icon: 'Content/img/16x16/document-up.png',
-	    scope: this
-	  }*/
-    ]
-  },
-
-  buildRefreshCacingMenu: function () {
-    return [
-      {
-        text: 'Refresh All DataObjects',
-        handler: this.onRefresh,
-        icon: 'Content/img/16x16/preferences-system.png',
-        tooltip: 'It may take about 30 minutes to create/refresh caching tables.',
-        scope: this
-      },
-      {
-        text: 'Refresh One DataObject',
-        handler: this.onRefreshOne,
-        icon: 'Content/img/16x16/preferences-system.png',
-        tooltip: 'It may take about 30 minutes to create/refresh caching tables.',
-        scope: this
-      }
+    /*{
+    text: 'Upload File',
+    handler: this.onFileUpload,
+    icon: 'Content/img/16x16/document-down.png',
+    scope: this
+    },
+    {
+    text: 'Download File',
+    handler: this.onFileDownload,
+    icon: 'Content/img/16x16/document-up.png',
+    scope: this
+    }*/
     ]
   },
 
@@ -370,7 +350,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     return [
             {
               text: 'Refresh Dictionary',
-              handler: this.onRefreshDataObjects,
+              handler: this.onRefreshDictionary,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
             },
@@ -511,12 +491,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.fireEvent('configure', this, node);
   },
   /*onFileUpload: function () {
-    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    this.fireEvent('upload', this, node);
+  var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+  this.fireEvent('upload', this, node);
   },
   onFileDownload: function () {
-    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    this.fireEvent('download', this, node);
+  var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+  this.fireEvent('download', this, node);
   },*/
   showContextMenu: function (node, event) {
 
@@ -721,7 +701,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.fireEvent('LoadAppData', this, node);
   },
 
-  onRefreshDataObjects: function (btn, ev) {
+  onRefreshDictionary: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
 
     try {
@@ -744,12 +724,18 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       params: {
         'nodeid': node.attributes.id
       },
-      success: function (result, request) {
-        showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+      success: function (response, request) {
+        var responseObj = Ext.decode(response.responseText);
+
+        if (responseObj.Level == 0) {
+          showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        }
       },
-      failure: function (result, request) {
-        var msg = result.responseText;
-        showDialog(500, 240, 'Refresh Cache Error', msg, Ext.Msg.OK, null);
+      failure: function (response, request) {
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
       }
     })
   },
@@ -780,14 +766,18 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         text: 'Submit',
         handler: function () {
           importCacheForm.getForm().submit({
-            success: function (f, a) {
-              showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
-              win.close();
+            success: function (response, request) {
+              var responseObj = Ext.decode(response.responseText);
+
+              if (responseObj.Level == 0) {
+                showDialog(450, 100, 'Import Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+              }
+              else {
+                showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+              }
             },
-            failure: function (f, a) {
-              var msg = a.response.responseText;
-              showDialog(500, 240, 'Import Cache Result', msg, Ext.Msg.OK, null);
-              win.close();
+            failure: function (response, request) {
+              showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
             }
           });
         }
@@ -813,19 +803,25 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         'nodeid': node.attributes.id,
         'objectType': node.text
       },
-      success: function (result, request) {
-        showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
+      success: function (response, request) {
+        var responseObj = Ext.decode(response.responseText);
+
+        if (responseObj.Level == 0) {
+          showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        }
       },
-      failure: function (result, request) {
-        var msg = result.responseText;
-        showDialog(500, 240, 'Refresh Object Cache Error', msg, Ext.Msg.OK, null);
+      failure: function (response, request) {
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
       }
     })
   },
 
   onDeleteCache: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    
+
     Ext.Ajax.request({
       url: 'AdapterManager/DeleteCache',
       method: 'POST',
@@ -833,12 +829,18 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       params: {
         'nodeid': node.attributes.id
       },
-      success: function (result, request) {
-        showDialog(450, 100, 'Delete Cache Result', 'Cache deleted successfully.', Ext.Msg.OK, null);
+      success: function (response, request) {
+        var responseObj = Ext.decode(response.responseText);
+
+        if (responseObj.Level == 0) {
+          showDialog(450, 100, 'Delete Cache Result', 'Cache deleted successfully.', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        }
       },
-      failure: function (result, request) {
-        var msg = result.responseText;
-        showDialog(500, 240, 'Delete Cache Error', msg, Ext.Msg.OK, null);
+      failure: function (response, request) {
+        showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
       }
     })
   },
@@ -869,59 +871,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     });
   },
 
-  onRefreshOne: function (btn, ev) {
-    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    var panel = this.directoryPanel;
-    panel.body.mask('Loading', 'x-mask-loading');
-
-    Ext.Ajax.request({
-      url: 'AdapterManager/Refresh',
-      method: 'POST',
-      params: {
-        'nodeid': node.attributes.id,
-        'type': 'one'
-      },
-      success: function (result, request) {
-        this.directoryPanel.root.reload();
-        showDialog(450, 100, 'Refreshing/creating caching tables Result', 'Caching tables are refreshed/created successfully.', Ext.Msg.OK, null);
-        panel.body.unmask();
-      },
-      failure: function (result, request) {
-        var msg = result.responseText;
-        showDialog(500, 240, 'Error in refreshing/creating caching tables', msg, Ext.Msg.OK, null);
-        panel.body.unmask();
-      }
-    })
-  },
-
-  onRefresh: function (btn, ev) {
-    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    var panel = this.directoryPanel;
-    panel.body.mask('Loading', 'x-mask-loading');
-
-    Ext.Ajax.request({
-      url: 'AdapterManager/Refresh',
-      method: 'POST',
-      params: {
-        'nodeid': node.attributes.id,
-        'type': 'all'
-      },
-      success: function (result, request) {
-        this.directoryPanel.root.reload();
-        showDialog(450, 100, 'Refreshing/creating caching tables Result', 'Caching tables are refreshed/created successfully.', Ext.Msg.OK, null);
-        panel.body.unmask();
-      },
-      failure: function (result, request) {
-        var msg = result.responseText;
-        showDialog(500, 240, 'Error in refreshing/creating caching tables', msg, Ext.Msg.OK, null);
-        panel.body.unmask();
-      }
-    })
-  },
-
-
   onReloadNode: function (node) {
-    //Ext.state.Manager.clear('AdapterManager');
     this.directoryPanel.root.reload();
   },
 
