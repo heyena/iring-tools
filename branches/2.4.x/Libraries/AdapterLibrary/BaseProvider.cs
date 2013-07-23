@@ -82,6 +82,22 @@ namespace org.iringtools.adapter
       if (File.Exists(scopesPath))
       {
         _scopes = Utility.Read<ScopeProjects>(scopesPath);
+
+        bool needToUpdate = false;
+
+        foreach (ScopeProject scope in _scopes)
+        {
+          if (string.IsNullOrEmpty(scope.DisplayName))
+          {
+            needToUpdate = true;
+            scope.DisplayName = scope.Name;
+          }
+        }
+
+        if (needToUpdate)
+        {
+          Utility.Write<ScopeProjects>(_scopes, scopesPath);
+        }
       }
       else
       {

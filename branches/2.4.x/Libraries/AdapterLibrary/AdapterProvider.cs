@@ -111,6 +111,9 @@ namespace org.iringtools.adapter
 
         if (sc == null)
         {
+          if (string.IsNullOrEmpty(scope.DisplayName))
+            scope.DisplayName = scope.Name;
+
           _scopes.Add(scope);
           _scopes.Sort(new ScopeComparer());
 

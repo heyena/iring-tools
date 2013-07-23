@@ -67,7 +67,7 @@ namespace org.iringtools.web.controllers
                     type = "ScopeNode",
                     iconCls = "scope",
                     id = scope.Name,
-                    text = scope.DisplayName ?? scope.Name,
+                    text = scope.DisplayName,
                     expanded = false,
                     leaf = false,
                     children = null,
@@ -76,6 +76,7 @@ namespace org.iringtools.web.controllers
 
                   node.property = new Dictionary<string, string>();
                   node.property.Add("Name", scope.Name);
+                  node.property.Add("Display Name", scope.DisplayName);
                   node.property.Add("Description", scope.Description);
                   nodes.Add(node);
                 }
@@ -537,13 +538,13 @@ namespace org.iringtools.web.controllers
     {
       string success = String.Empty;
 
-      if (String.IsNullOrEmpty(form["scope"]))
+      if (string.IsNullOrEmpty(form["name"]))
       {
-        success = _repository.AddScope(form["name"], form["description"]);
+        success = _repository.AddScope(form["displayName"], form["description"]);
       }
       else
       {
-        success = _repository.UpdateScope(form["scope"], form["name"], form["description"]);
+        success = _repository.UpdateScope(form["name"], form["displayName"], form["description"]);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
