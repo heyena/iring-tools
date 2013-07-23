@@ -2332,6 +2332,7 @@ namespace org.iringtools.adapter
       {
         InitializeScope(project, application);
         InitializeDataLayer();
+        _dataObjDef = _dictionary.GetDataObject(resource);
 
         AddURIsInSettingCollection(project, application, resource);
 
