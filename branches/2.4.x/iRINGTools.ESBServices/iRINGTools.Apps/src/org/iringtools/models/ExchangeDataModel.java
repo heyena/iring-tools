@@ -1,6 +1,5 @@
 package org.iringtools.models;
 
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -52,9 +51,9 @@ public class ExchangeDataModel extends DataModel
 
   public ExchangeDataModel(Map<String, Object> settings, Map<String, Object> session)
   {
-	  super(DataMode.EXCHANGE, settings, session);
-	    provider = new ExchangeProvider(settings);
-	    dprovider = new DirectoryProvider(settings);
+    super(DataMode.EXCHANGE, settings, session);
+    provider = new ExchangeProvider(settings);
+    dprovider = new DirectoryProvider(settings);
   }
 
   public Grid getDtoGrid(String serviceUri, String scope, String xId, String filter, String sortBy, String sortOrder,
@@ -93,7 +92,7 @@ public class ExchangeDataModel extends DataModel
       // send a page of DTIs to get DTOs
       //
       DataTransferObjects dtos = provider.getDataTransferObjects(exchange, manifest, pageDtis);
-      
+
       //
       // remove duplicate DTOs if any to show only one representative DTO
       //
@@ -102,7 +101,7 @@ public class ExchangeDataModel extends DataModel
         if (dtiList.size() < dtos.getDataTransferObjectList().getItems().size())
         {
           List<DataTransferObject> dtoList = dtos.getDataTransferObjectList().getItems();
-          
+
           for (DataTransferIndex dti : dtiList)
           {
             if (dti.getDuplicateCount() != null && dti.getDuplicateCount() > 1)
@@ -111,7 +110,7 @@ public class ExchangeDataModel extends DataModel
               {
                 if (dti.getIdentifier().equalsIgnoreCase(dtoList.get(i).getIdentifier()))
                 {
-                  // found one, search and remove the rest                  
+                  // found one, search and remove the rest
                   for (int j = i; j < dtoList.size(); j++)
                   {
                     if (dti.getIdentifier().equalsIgnoreCase(dtoList.get(j).getIdentifier()))
@@ -119,14 +118,14 @@ public class ExchangeDataModel extends DataModel
                       dtoList.remove(j--);
                     }
                   }
-                  
+
                   break;
                 }
               }
             }
           }
         }
-  
+
         String dtiRelativePath = "/" + scope + "/" + xId;
         dtoGrid = createDtoGrid(serviceUri, dtiRelativePath, manifest, graph, dtos);
         dtoGrid.setTotal(dtiList.size());
@@ -150,10 +149,10 @@ public class ExchangeDataModel extends DataModel
     String filter = (String) session.get(exchangeKey + ".filter");
     String sortOrder = (String) session.get(exchangeKey + ".sortOrder");
     String sortBy = (String) session.get(exchangeKey + ".sortBy");
-    
-    String preSummaryKey = PRE_SUMMARY_PREFIX + "." + scope + "." + xId + "." + filter;    
+
+    String preSummaryKey = PRE_SUMMARY_PREFIX + "." + scope + "." + xId + "." + filter;
     Map<String, String> data = null;
-    
+
     if (session.containsKey(preSummaryKey))
     {
       data = (Map<String, String>) session.get(preSummaryKey);
@@ -161,16 +160,16 @@ public class ExchangeDataModel extends DataModel
     else
     {
       data = new HashMap<String, String>();
-  
+
       Exchange exchange = getExchange(scope, xId);
-      Manifest manifest = getCrossedManifest(exchange, scope, xId);    
-      
+      Manifest manifest = getCrossedManifest(exchange, scope, xId);
+
       DataTransferIndices dtis = getDtis(exchange, manifest, filter, sortOrder, sortBy);
-  
+
       if (dtis != null && dtis.getDataTransferIndexList() != null)
       {
         int adds = 0, changes = 0, deletes = 0, syncs = 0;
-  
+
         for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
         {
           switch (dti.getTransferType())
@@ -178,21 +177,21 @@ public class ExchangeDataModel extends DataModel
           case ADD:
             adds++;
             break;
-  
+
           case CHANGE:
             changes++;
             break;
-  
+
           case DELETE:
             deletes++;
             break;
-  
+
           case SYNC:
             syncs++;
             break;
           }
         }
-  
+
         data.put("SenderApplication", exchange.getSourceScope() + "." + exchange.getSourceApp());
         data.put("SenderGraph", exchange.getSourceGraph());
         data.put("SenderURI", exchange.getSourceUri());
@@ -205,7 +204,7 @@ public class ExchangeDataModel extends DataModel
         data.put("DeletingCount", String.valueOf(deletes));
         data.put("SynchronizingCount", String.valueOf(syncs));
         data.put("PoolSize", String.valueOf(exchange.getPoolSize()));
-        
+
         session.put(preSummaryKey, data);
       }
     }
@@ -247,11 +246,11 @@ public class ExchangeDataModel extends DataModel
     {
       String error = "Error during exchange: " + ex.getMessage();
       logger.error(error);
-      
+
       String noHtmlError = error.replaceAll("(<html)[^&]*(</html>)", "");
-      String noDocTypeError = noHtmlError.replaceAll("(<!DOCTYPE)[^&]*(>)", "");    
+      String noDocTypeError = noHtmlError.replaceAll("(<!DOCTYPE)[^&]*(>)", "");
       xRes.setSummary(noDocTypeError.replaceAll("\\r\\n", ""));
-      
+
       xRes.setLevel(Level.ERROR);
     }
 
@@ -343,9 +342,9 @@ public class ExchangeDataModel extends DataModel
         row.add(xr.getSenderScope() + "." + xr.getSenderApp() + "." + xr.getSenderGraph());
         row.add(xr.getReceiverScope() + "." + xr.getReceiverApp() + "." + xr.getReceiverGraph());
         String summary = xr.getSummary();
-     //   String resultSummary = summary.replaceAll("\\<.*?\\>", "");
+        // String resultSummary = summary.replaceAll("\\<.*?\\>", "");
         String resultSummary = summary.replaceAll("(<html)[^&]*(</html>)", "");
-        String romoveDoc =   resultSummary.replaceAll("(<!DOCTYPE)[^&]*(>)", "");
+        String romoveDoc = resultSummary.replaceAll("(<!DOCTYPE)[^&]*(>)", "");
         row.add(romoveDoc.replaceAll("\\r\\n", ""));
 
         data.add(row);
@@ -437,7 +436,7 @@ public class ExchangeDataModel extends DataModel
           {
             if (expressions.getItems().size() > 0 && expression.getLogicalOperator() == null)
               expression.setLogicalOperator(LogicalOperator.AND);
-            
+
             expressions.getItems().add(expression);
           }
         }
@@ -469,7 +468,7 @@ public class ExchangeDataModel extends DataModel
           {
             if (expressions.getItems().size() > 0 && expression.getLogicalOperator() == null)
               expression.setLogicalOperator(LogicalOperator.AND);
-            
+
             expressions.getItems().add(expression);
           }
         }
@@ -490,9 +489,9 @@ public class ExchangeDataModel extends DataModel
     return dataFilter;
   }
 
-  protected  void applyTransferTypeFilterToDtis(DataTransferIndices dtis, List<Expression> transferTypeExpressions)
+  protected void applyTransferTypeFilterToDtis(DataTransferIndices dtis, List<Expression> transferTypeExpressions)
   {
-   if (transferTypeExpressions != null && transferTypeExpressions.size() > 0 && dtis != null
+    if (transferTypeExpressions != null && transferTypeExpressions.size() > 0 && dtis != null
         && dtis.getDataTransferIndexList() != null && dtis.getDataTransferIndexList().getItems().size() > 0)
     {
       List<DataTransferIndex> indices = dtis.getDataTransferIndexList().getItems();
@@ -505,23 +504,23 @@ public class ExchangeDataModel extends DataModel
         // NOTE: only accept OR logical operators
         for (Expression expression : transferTypeExpressions)
         {
-        	String value = expression.getValues().getItems().get(0);
-        	if(expression.getRelationalOperator() == RelationalOperator.EQUAL_TO)
-        	{
-          if (value.equalsIgnoreCase(transferType.toString()))
+          String value = expression.getValues().getItems().get(0);
+          if (expression.getRelationalOperator() == RelationalOperator.EQUAL_TO)
           {
-            found = true;
-            break;
+            if (value.equalsIgnoreCase(transferType.toString()))
+            {
+              found = true;
+              break;
+            }
           }
-        	}
-        	if(expression.getRelationalOperator() == RelationalOperator.NOT_EQUAL_TO)
-        	{
-        		 if (!value.equalsIgnoreCase(transferType.toString()))
-                 {
-                   found = true;
-                   break;
-                 }
-               	}
+          if (expression.getRelationalOperator() == RelationalOperator.NOT_EQUAL_TO)
+          {
+            if (!value.equalsIgnoreCase(transferType.toString()))
+            {
+              found = true;
+              break;
+            }
+          }
         }
 
         if (!found)
@@ -529,8 +528,8 @@ public class ExchangeDataModel extends DataModel
           indices.remove(i--);
         }
       }
-		}
     }
+  }
 
   protected DataFilter separateTransferTypeExpressions(DataFilter inFilter, List<Expression> transferTypeExpressions)
   {
@@ -584,7 +583,7 @@ public class ExchangeDataModel extends DataModel
 
       if (transferTypeExpressions.size() > 0)
       {
-    	  applyTransferTypeFilterToDtis(dtis, transferTypeExpressions);
+        applyTransferTypeFilterToDtis(dtis, transferTypeExpressions);
       }
     }
     catch (Exception ex)
@@ -611,80 +610,83 @@ public class ExchangeDataModel extends DataModel
       //
       // if filter contains only transfer type expression(s), then no need to fetch data but use the full DTIs
       //
-      if (filter == null || (filter.getExpressions().getItems().size() == 0 && 
-          filter.getOrderExpressions().getItems().size() == 0))
+      if (filter == null
+          || (filter.getExpressions().getItems().size() == 0 && filter.getOrderExpressions().getItems().size() == 0))
       {
         dtis = getFullDtis(exchange, manifest);
       }
-      else{
-      DxiRequest dxiRequest = new DxiRequest();
-      dxiRequest.setManifest(manifest);
-      dxiRequest.setDataFilter(filter);
-
-      List<String> ids = provider.getIdentifiers(exchange, dxiRequest);
-      
-    
-      if (ids != null)
+      else
       {
-        DataTransferIndexList dtiList = new DataTransferIndexList();
-        dtis.setDataTransferIndexList(dtiList);
+        DxiRequest dxiRequest = new DxiRequest();
+        dxiRequest.setManifest(manifest);
+        dxiRequest.setDataFilter(filter);
 
-        for (String id : ids)
+        List<String> ids = provider.getIdentifiers(exchange, dxiRequest);
+
+        if (ids != null)
         {
-          for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
+          DataTransferIndexList dtiList = new DataTransferIndexList();
+          dtis.setDataTransferIndexList(dtiList);
+
+          for (String id : ids)
           {
-            if (!dtiList.getItems().contains(dti) && dti.getIdentifier().equalsIgnoreCase(id))
-            {              
-              dtiList.getItems().add(dti);
-              break;
-            } else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN))
+            for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
+            {
+              if (!dtiList.getItems().contains(dti) && dti.getIdentifier().equalsIgnoreCase(id))
+              {
+                dtiList.getItems().add(dti);
+                break;
+              }
+              else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN))
               {
                 String[] internalIds = dti.getInternalIdentifier().split(Constants.CHANGE_TOKEN);
-                
+
                 if (id.equals(internalIds[0]) || id.equals(internalIds[1]))
                 {
                   dtiList.getItems().add(dti);
                   break;
                 }
               }
+            }
           }
         }
       }
-      }
-  
+
       List<DataTransferIndex> indices = dtis.getDataTransferIndexList().getItems();
       if (uiFilter != null)
       {
         if (uiFilter.getExpressions() != null)
         {
-        for (int i = 0; i < indices.size(); i++)
-        {
-        String transferType = indices.get(i).getTransferType().toString();
-        
-          for (Expression expression : uiFilter.getExpressions().getItems())
-          { 
-        	  if(expression.getPropertyName().equalsIgnoreCase("Transfer Type"))
-        	  {
-        	  String value = expression.getValues().getItems().get(0);
-        	  if (!value.equalsIgnoreCase(transferType))
-	             {
-        		  indices.remove(i--);
-	               break;
-	             }
-        	  }
-	        }
-        	  
+          for (int i = 0; i < indices.size(); i++)
+          {
+            String transferType = indices.get(i).getTransferType().toString();
+
+            for (Expression expression : uiFilter.getExpressions().getItems())
+            {
+              if (expression.getPropertyName().equalsIgnoreCase("Transfer Type"))
+              {
+                String value = expression.getValues().getItems().get(0);
+                if (!value.equalsIgnoreCase(transferType))
+                {
+                  indices.remove(i--);
+                  break;
+                }
+              }
+            }
+
           }
-      
-    
-      }}
-    }catch (Exception ex)
+
+        }
+      }
+    }
+    catch (Exception ex)
     {
       logger.error("Error getting data transfer indices: " + ex.toString());
     }
 
     return dtis;
   }
+
   protected DataTransferIndices getDtis(Exchange exchange, Manifest manifest, String filter, String sortOrder,
       String sortBy) throws Exception
   {
@@ -775,368 +777,413 @@ public class ExchangeDataModel extends DataModel
     return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);
   }
 
-  //TODO: complete implementation
-//  public Grid getRelatedDtoGrid(String serviceUri, String scope, String xId, String dtoIdentifier, String classId,
-//      String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
-//      throws DataModelException
-//  {
-//    this.scope = scope;
-//    this.xId = xId;
-//
-//    String dtiRelativePath = "/" + scope + "/exchanges/" + xId;
-//    String dtoRelativePath = dtiRelativePath + "/page";
-//    String manifestRelativePath = dtiRelativePath + "/manifest";
-//
-//    Grid pageDtoGrid = null;
-//    Manifest manifest = getManifest(serviceUri, manifestRelativePath);
-//    Graph graph = manifest.getGraphs().getItems().get(0);
-//
-//    if (graph != null)
-//    {
-//      DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath,
-//          dtoIdentifier, filter, sortBy, sortOrder, start, limit);
-//
-//      pageDtoGrid = getRelatedItemGrid(dtiRelativePath, manifest, graph, dtos, classId, classIdentifier);
-//    }
-//
-//    return pageDtoGrid;
-//  }
-  
+  // TODO: complete implementation
+  // public Grid getRelatedDtoGrid(String serviceUri, String scope, String xId, String dtoIdentifier, String classId,
+  // String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
+  // throws DataModelException
+  // {
+  // this.scope = scope;
+  // this.xId = xId;
+  //
+  // String dtiRelativePath = "/" + scope + "/exchanges/" + xId;
+  // String dtoRelativePath = dtiRelativePath + "/page";
+  // String manifestRelativePath = dtiRelativePath + "/manifest";
+  //
+  // Grid pageDtoGrid = null;
+  // Manifest manifest = getManifest(serviceUri, manifestRelativePath);
+  // Graph graph = manifest.getGraphs().getItems().get(0);
+  //
+  // if (graph != null)
+  // {
+  // DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath,
+  // dtoIdentifier, filter, sortBy, sortOrder, start, limit);
+  //
+  // pageDtoGrid = getRelatedItemGrid(dtiRelativePath, manifest, graph, dtos, classId, classIdentifier);
+  // }
+  //
+  // return pageDtoGrid;
+  // }
+
   // TODO: apply start and limit and complete code
-//  protected DataTransferObjects getRelatedItems(String serviceUri, String manifestRelativePath, String dtiRelativePath,
-//      String dtoRelativePath, String dtoIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
-//      throws DataModelException
-//  {
-//    DataTransferObjects relatedDtos = new DataTransferObjects();
-//    DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
-//    List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
-//
-//    for (DataTransferIndex dti : dtiList)
-//    {
-//      if (dti.getIdentifier().equals(dtoIdentifier))
-//      {
-//        DataTransferIndices requestDtis = new DataTransferIndices();
-//        DataTransferIndexList dtiRequestList = new DataTransferIndexList();
-//        requestDtis.setDataTransferIndexList(dtiRequestList);
-//        dtiRequestList.getItems().add(dti);
-//
-//        DxoRequest dxoRequest = new DxoRequest();
-//        dxoRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
-//        dxoRequest.setDataTransferIndices(requestDtis);
-//
-//        try
-//        {
-//          HttpClient httpClient = new HttpClient(serviceUri);
-//          HttpUtils.addHttpHeaders(settings, httpClient);
-//
-//          if (isAsync)
-//          {
-//            httpClient.setAsync(true);
-//            String statusUrl = httpClient.post(String.class, dtoRelativePath, dxoRequest);
-//
-//            try
-//            {
-//              relatedDtos = waitForRequestCompletion(DataTransferObjects.class, serviceUri + statusUrl);
-//            }
-//            catch (Exception ex)
-//            {
-//              throw new DataModelException(ex.getMessage());
-//            }
-//          }
-//          else
-//          {
-//            relatedDtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
-//          }
-//
-//          // apply filter
-//          if (relatedDtos != null)
-//          {
-//            List<DataTransferObject> dtoList = relatedDtos.getDataTransferObjectList().getItems();
-//
-//            if (dtoList.size() > 0 && filter != null && filter.length() > 0)
-//            {
-//              DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
-//              List<Expression> expressions = dataFilter.getExpressions().getItems();
-//
-//              for (Expression expression : expressions)
-//              {
-//                for (DataTransferObject dto : dtoList)
-//                {
-//                  List<ClassObject> classObjects = dto.getClassObjects().getItems();
-//                  dto.getClassObjects().setItems(getFilteredClasses(expression, classObjects));
-//                }
-//              }
-//            }
-//          }
-//        }
-//        catch (HttpClientException e)
-//        {
-//          logger.error(e.getMessage());
-//          throw new DataModelException(e.getMessage());
-//        }
-//      }
-//    }
-//
-//    return relatedDtos;
-//  }
-//
-//  //TODO: complete code
-//  protected Grid getRelatedItemGrid(String fieldsContext, Manifest manifest, Graph graph, DataTransferObjects dtos,
-//      String classId, String classIdentifier) throws DataModelException
-//  {
-//    Grid dtoGrid = new Grid();
-//
-//    List<Field> fields = getFields(fieldsContext, graph, classId);
-//    dtoGrid.setFields(fields);
-//
-//    List<List<String>> gridData = new ArrayList<List<String>>();
-//    dtoGrid.setData(gridData);
-//
-//    List<DataTransferObject> dtoList = dtos.getDataTransferObjectList().getItems();
-//
-//    for (int dtoIndex = 0; dtoIndex < dtoList.size(); dtoIndex++)
-//    {
-//      DataTransferObject dto = dtoList.get(dtoIndex);
-//      List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
-//
-//      if (dto.getClassObjects().getItems().size() > 0)
-//      {
-//        for (ClassObject classObject : dto.getClassObjects().getItems())
-//        {
-//          if (classObject.getClassId().equalsIgnoreCase(classId)) // &&
-//          // classObject.getIdentifier().equalsIgnoreCase(classIdentifier))
-//          {
-//            dtoGrid.setIdentifier(classObject.getClassId());
-//            dtoGrid.setDescription(classObject.getName());
-//
-//            List<String> rowData = new ArrayList<String>();
-//
-//            // create a place holder for info field
-//            rowData.add("");
-//
-//            if (dataMode == DataMode.EXCHANGE)
-//            {
-//              String transferType = dto.getTransferType().toString();
-//              rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-//            }
-//
-//            processClassObject(manifest, graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
-//
-//            String relatedClassesJson;
-//
-//            try
-//            {
-//              relatedClassesJson = JSONUtil.serialize(relatedClasses);
-//            }
-//            catch (JSONException e)
-//            {
-//              relatedClassesJson = "[]";
-//            }
-//
-//            // update info field
-//            rowData.set(
-//                0,
-//                "<input type=\"image\" src=\"resources/images/info-small.png\" "
-//                    + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\",\""
-//                    + classObject.getIdentifier() + "\"," + relatedClassesJson + ")'>");
-//
-//            gridData.add(rowData);
-//          }
-//        }
-//      }
-//    }
-//
-//    return dtoGrid;
-//  }
+  // protected DataTransferObjects getRelatedItems(String serviceUri, String manifestRelativePath, String
+  // dtiRelativePath,
+  // String dtoRelativePath, String dtoIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
+  // throws DataModelException
+  // {
+  // DataTransferObjects relatedDtos = new DataTransferObjects();
+  // DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
+  // List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
+  //
+  // for (DataTransferIndex dti : dtiList)
+  // {
+  // if (dti.getIdentifier().equals(dtoIdentifier))
+  // {
+  // DataTransferIndices requestDtis = new DataTransferIndices();
+  // DataTransferIndexList dtiRequestList = new DataTransferIndexList();
+  // requestDtis.setDataTransferIndexList(dtiRequestList);
+  // dtiRequestList.getItems().add(dti);
+  //
+  // DxoRequest dxoRequest = new DxoRequest();
+  // dxoRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
+  // dxoRequest.setDataTransferIndices(requestDtis);
+  //
+  // try
+  // {
+  // HttpClient httpClient = new HttpClient(serviceUri);
+  // HttpUtils.addHttpHeaders(settings, httpClient);
+  //
+  // if (isAsync)
+  // {
+  // httpClient.setAsync(true);
+  // String statusUrl = httpClient.post(String.class, dtoRelativePath, dxoRequest);
+  //
+  // try
+  // {
+  // relatedDtos = waitForRequestCompletion(DataTransferObjects.class, serviceUri + statusUrl);
+  // }
+  // catch (Exception ex)
+  // {
+  // throw new DataModelException(ex.getMessage());
+  // }
+  // }
+  // else
+  // {
+  // relatedDtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
+  // }
+  //
+  // // apply filter
+  // if (relatedDtos != null)
+  // {
+  // List<DataTransferObject> dtoList = relatedDtos.getDataTransferObjectList().getItems();
+  //
+  // if (dtoList.size() > 0 && filter != null && filter.length() > 0)
+  // {
+  // DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
+  // List<Expression> expressions = dataFilter.getExpressions().getItems();
+  //
+  // for (Expression expression : expressions)
+  // {
+  // for (DataTransferObject dto : dtoList)
+  // {
+  // List<ClassObject> classObjects = dto.getClassObjects().getItems();
+  // dto.getClassObjects().setItems(getFilteredClasses(expression, classObjects));
+  // }
+  // }
+  // }
+  // }
+  // }
+  // catch (HttpClientException e)
+  // {
+  // logger.error(e.getMessage());
+  // throw new DataModelException(e.getMessage());
+  // }
+  // }
+  // }
+  //
+  // return relatedDtos;
+  // }
+  //
+  // //TODO: complete code
+  // protected Grid getRelatedItemGrid(String fieldsContext, Manifest manifest, Graph graph, DataTransferObjects dtos,
+  // String classId, String classIdentifier) throws DataModelException
+  // {
+  // Grid dtoGrid = new Grid();
+  //
+  // List<Field> fields = getFields(fieldsContext, graph, classId);
+  // dtoGrid.setFields(fields);
+  //
+  // List<List<String>> gridData = new ArrayList<List<String>>();
+  // dtoGrid.setData(gridData);
+  //
+  // List<DataTransferObject> dtoList = dtos.getDataTransferObjectList().getItems();
+  //
+  // for (int dtoIndex = 0; dtoIndex < dtoList.size(); dtoIndex++)
+  // {
+  // DataTransferObject dto = dtoList.get(dtoIndex);
+  // List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
+  //
+  // if (dto.getClassObjects().getItems().size() > 0)
+  // {
+  // for (ClassObject classObject : dto.getClassObjects().getItems())
+  // {
+  // if (classObject.getClassId().equalsIgnoreCase(classId)) // &&
+  // // classObject.getIdentifier().equalsIgnoreCase(classIdentifier))
+  // {
+  // dtoGrid.setIdentifier(classObject.getClassId());
+  // dtoGrid.setDescription(classObject.getName());
+  //
+  // List<String> rowData = new ArrayList<String>();
+  //
+  // // create a place holder for info field
+  // rowData.add("");
+  //
+  // if (dataMode == DataMode.EXCHANGE)
+  // {
+  // String transferType = dto.getTransferType().toString();
+  // rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
+  // }
+  //
+  // processClassObject(manifest, graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
+  //
+  // String relatedClassesJson;
+  //
+  // try
+  // {
+  // relatedClassesJson = JSONUtil.serialize(relatedClasses);
+  // }
+  // catch (JSONException e)
+  // {
+  // relatedClassesJson = "[]";
+  // }
+  //
+  // // update info field
+  // rowData.set(
+  // 0,
+  // "<input type=\"image\" src=\"resources/images/info-small.png\" "
+  // + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\",\""
+  // + classObject.getIdentifier() + "\"," + relatedClassesJson + ")'>");
+  //
+  // gridData.add(rowData);
+  // }
+  // }
+  // }
+  // }
+  //
+  // return dtoGrid;
+  // }
 
+  public void newExchangeConfig(Exchange form, String scope, String commodity, String serviceUri)
+  {
+    dprovider.postExchangeDefinition(form, scope, commodity);
+  }
 
+  public void editExchangeConfig(Exchange form, String scope, String commodity, String oldConfName, String serviceUri)
+  {
 
-public void  newExchangeConfig(Exchange form, String scope, String commodity, String serviceUri) {
-	dprovider.postExchageDefinition(form, scope, commodity);
-}
-public void editExchangeConfig(Exchange form, String scope, String commodity,String oldConfName, String serviceUri) {
-	
-	dprovider.editExchageDefinition(form, scope, commodity, oldConfName);
-}
-public Exchange getCommodityConfigInfo(String com, String scope, String name,String serviceUri) {
+    dprovider.editExchangeDefinition(form, scope, commodity, oldConfName);
+  }
 
-	return dprovider.getCommodityConfigInfo(com, scope, name );
-}
-public void deleteExchangeConfig(String com, String scope, String name,String serviceUri) {
+  public Exchange getCommodityConfigInfo(String com, String scope, String name, String serviceUri)
+  {
 
-	dprovider.deleteExchangeConfig(com, scope, name );
-}
-public void  newScope(Scope scope, String serviceUri) {
-	dprovider.postNewScope(scope);
-}
-public void  editScope(String scope, String oldScope, String serviceUri) {
-	dprovider.postEditedScope(scope, oldScope);
-}
-public Scope  getScopeInfo(String scope, String serviceUri) {
-	
+    return dprovider.getCommodityConfigInfo(com, scope, name);
+  }
 
-	return dprovider.getScopeInfo(scope);
-}
-public void  deleteScope(String scope, String serviceUri) {
-	
-	dprovider.deleteScope(scope);
-}
-public void  newApplication(Application app, String scope, String serviceUri) {
-	
+  public void deleteExchangeConfig(String com, String scope, String name, String serviceUri)
+  {
 
-	dprovider.postApplication(app, scope);
-}
-public void  editApplication(Application app, String oldAppName, String scope) {
-	
-	dprovider.editApplication(app, oldAppName, scope);
-}
-public void  deleteApplication(String app, String scope, String serviceUri) {
+    dprovider.deleteExchangeConfig(com, scope, name);
+  }
 
+  public void newScope(Scope scope, String serviceUri)
+  {
+    dprovider.postNewScope(scope);
+  }
 
-	dprovider.deleteApplication(app, scope);
-}
-public Application  getApplicationInfo(String app, String scope, String serviceUri) {
+  public void editScope(String scope, String oldScope, String serviceUri)
+  {
+    dprovider.postEditedScope(scope, oldScope);
+  }
 
-return dprovider.getApplicationInfo(app, scope);
-}
-public void  newGraph( org.iringtools.directory.Graph graph , String scope, String appname, String serviceUri) {
-	
-	dprovider.postGraph(graph, scope, appname);
-}
-public void  editGraph( org.iringtools.directory.Graph graph , String scope, String appname, String oldGraphName, String serviceUri) {
-	
-	dprovider.editGraph(graph, scope, appname, oldGraphName);
-}
-public void  deleteGraph(String graph , String scope, String appname, String serviceUri) {
+  public Scope getScopeInfo(String scope, String serviceUri)
+  {
+    return dprovider.getScopeInfo(scope);
+  }
 
-	dprovider.deleteGraph(graph, scope, appname);
-}
-public org.iringtools.directory.Graph  getGraphInfo(String graph , String scope, String appname, String serviceUri){
-	
-	
-	return dprovider.getGraphInfo(graph, scope, appname);
-}
-public void  newCommodity(Commodity com, String scope, String serviceUri) {
+  public void deleteScope(String scope, String serviceUri)
+  {
+    dprovider.deleteScope(scope);
+  }
 
-	dprovider.postCommodity(com, scope);
-}
-public void  editCommodity(Commodity com, String scope, String oldCommName, String serviceUri) {
+  public void newApplication(Application app, String scope, String serviceUri)
+  {
+    dprovider.postApplication(app, scope);
+  }
 
-	dprovider.editCommodity(com, scope, oldCommName);
-}
-public void  deleteCommodity(String com, String scope, String serviceUri) {
-	
+  public void editApplication(Application app, String oldAppName, String scope)
+  {
+    dprovider.editApplication(app, oldAppName, scope);
+  }
 
-	dprovider.deleteCommodity(com, scope);
-}
-public Commodity getCommodityInfo(String com, String scope, String serviceUri) {
+  public void deleteApplication(String app, String scope, String serviceUri)
+  {
+    dprovider.deleteApplication(app, scope);
+  }
 
-	return dprovider.getCommodityInfo(com, scope);
-}
+  public Application getApplicationInfo(String app, String scope, String serviceUri)
+  {
 
-public String testTargetUri(String targetUri) throws IOException {
-	URL u = new URL ( targetUri);
-	HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
-	huc.setRequestMethod ("GET");  //OR  huc.setRequestMethod ("HEAD"); 
-	huc.connect () ; 
-	int code = huc.getResponseCode() ;
-	System.out.println(code);
-	if(code == 200)
-	{
-		return ("Connected successfully!");
-	}else{
-		return("Connection to URL failed.");
-	}
-}
+    return dprovider.getApplicationInfo(app, scope);
+  }
 
-public String testSourceUri(String sourceUri) throws IOException {
-	URL u = new URL (sourceUri);
-	HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
-	huc.setRequestMethod ("GET");  //OR  huc.setRequestMethod ("HEAD"); 
-	huc.connect () ; 
-	int code = huc.getResponseCode() ;
-	System.out.println(code);
-	if(code == 200)
-	{
-		return ("Connected successfully!");
-	}else{
-		return("Connection to URL failed.");
-	}
-}
+  public void newGraph(org.iringtools.directory.Graph graph, String scope, String appname, String serviceUri)
+  {
+    dprovider.postGraph(graph, scope, appname);
+  }
 
-public void saveDataFilterExpression(Expressions ex, String commName,
-		String scope, String xid, OrderExpressions Oe) {
-	
-	dprovider.postDataFilterExpressions(scope, xid, commName, ex, Oe);
-	 Exchange exchange = null;
-	 String exchangeKey = EXCHANGE_PREFIX + "." + scope + "." + xid;	
-     String fullDtiKey = DTI_PREFIX + "." + scope + "." + xid;
-     for (String key : session.keySet())
-         if (key.startsWith(fullDtiKey))
-           session.remove(key);
+  public void editGraph(org.iringtools.directory.Graph graph, String scope, String appname, String oldGraphName,
+      String serviceUri)
+  {
+    dprovider.editGraph(graph, scope, appname, oldGraphName);
+  }
 
-     System.out.println(session);
-     exchange = getExchangeFromDirectory(scope, xid);
-     session.put(exchangeKey, exchange); 
-}
+  public void deleteGraph(String graph, String scope, String appname, String serviceUri)
+  {
 
-public DataFilter getDataFilter(String commName, String scope, String xid) {
-	return dprovider.getDataFilter(commName, scope, xid );
-}
-public List<List<String>> getColumns(String exchangeServiceUri, String scope, String xid, String sort)
-		throws Exception {
-	this.scope = scope;
-	this.xId = xid;
+    dprovider.deleteGraph(graph, scope, appname);
+  }
 
-	Exchange exchange = getExchange(scope, xId);
-	Manifest manifest = getCrossedManifest(exchange, scope, xId);
+  public org.iringtools.directory.Graph getGraphInfo(String graph, String scope, String appname, String serviceUri)
+  {
+    return dprovider.getGraphInfo(graph, scope, appname);
+  }
 
-	Graph graph = manifest.getGraphs().getItems().get(0);
-	String relativePath = "/" + scope + "/" + xId;
-	List<Field> fields = getFields(relativePath, graph, null);
-	List<List<String>> columnnameList = new ArrayList<List<String>>();
+  public void newCommodity(Commodity com, String scope, String serviceUri)
+  {
+    dprovider.postCommodity(com, scope);
+  }
 
-	for(Field field:fields)
-	{	List<String> names = new ArrayList<String>();
-	if(sort.equalsIgnoreCase("true"))
-	{
-	if(field.getName()!= "Status" && field.getName() != "Content" && field.getName() != "Info"  && field.getName() != "Transfer Type")
-	{
-		names.add(field.getName());
-		names.add(field.getName());
-		columnnameList.add(names);
-	}
-	}else{
-		if(field.getName()!= "Status" && field.getName() != "Content" && field.getName() != "Info")
-		{
-			names.add(field.getName());
-			names.add(field.getName());
-			columnnameList.add(names);
-		}
-	}
-	}
-	return columnnameList;
-}
-public String testUri(String sourceUri) // throws IOException
-{
-	try {
-		URL u = new URL(sourceUri);
-		HttpURLConnection huc = (HttpURLConnection) u.openConnection();
-		huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
-		huc.connect();
-		int code = huc.getResponseCode();
-		System.out.println(code);
-		if (code == 200) {
-			return ("Connected successfully!");
-		} else {
-			return ("Connection to URL failed.");
-		}
-	} catch (UnknownHostException e) {
-		e.printStackTrace();
-		return ("UnknownHostException : Invalid URL.");
-	} catch (Exception e) {
-		e.printStackTrace();
-		return ("Exception : Invalid URL.");
-	}
-}
+  public void editCommodity(Commodity com, String scope, String oldCommName, String serviceUri)
+  {
+    dprovider.editCommodity(com, scope, oldCommName);
+  }
+
+  public void deleteCommodity(String com, String scope, String serviceUri)
+  {
+    dprovider.deleteCommodity(com, scope);
+  }
+
+  public Commodity getCommodityInfo(String com, String scope, String serviceUri)
+  {
+    return dprovider.getCommodityInfo(com, scope);
+  }
+
+  public String testTargetUri(String targetUri) throws IOException
+  {
+    URL u = new URL(targetUri);
+    HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+    huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
+    huc.connect();
+    int code = huc.getResponseCode();
+    System.out.println(code);
+    
+    if (code == 200)
+    {
+      return ("Connected successfully!");
+    }
+    else
+    {
+      return ("Connection to URL failed.");
+    }
+  }
+
+  public String testSourceUri(String sourceUri) throws IOException
+  {
+    URL u = new URL(sourceUri);
+    HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+    huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
+    huc.connect();
+    int code = huc.getResponseCode();
+    System.out.println(code);
+    
+    if (code == 200)
+    {
+      return ("Connected successfully!");
+    }
+    else
+    {
+      return ("Connection to URL failed.");
+    }
+  }
+
+  public void saveDataFilterExpression(Expressions ex, String commName, String scope, String xid, OrderExpressions Oe)
+  {
+    dprovider.postDataFilterExpressions(scope, xid, commName, ex, Oe);
+    Exchange exchange = null;
+    String exchangeKey = EXCHANGE_PREFIX + "." + scope + "." + xid;
+    String fullDtiKey = DTI_PREFIX + "." + scope + "." + xid;
+    for (String key : session.keySet())
+      if (key.startsWith(fullDtiKey))
+        session.remove(key);
+
+    System.out.println(session);
+    exchange = getExchangeFromDirectory(scope, xid);
+    session.put(exchangeKey, exchange);
+  }
+
+  public DataFilter getDataFilter(String commName, String scope, String xid)
+  {
+    return dprovider.getDataFilter(commName, scope, xid);
+  }
+
+  public List<List<String>> getColumns(String exchangeServiceUri, String scope, String xid, String sort)
+      throws Exception
+  {
+    this.scope = scope;
+    this.xId = xid;
+
+    Exchange exchange = getExchange(scope, xId);
+    Manifest manifest = getCrossedManifest(exchange, scope, xId);
+
+    Graph graph = manifest.getGraphs().getItems().get(0);
+    String relativePath = "/" + scope + "/" + xId;
+    List<Field> fields = getFields(relativePath, graph, null);
+    List<List<String>> columnnameList = new ArrayList<List<String>>();
+
+    for (Field field : fields)
+    {
+      List<String> names = new ArrayList<String>();
+      if (sort.equalsIgnoreCase("true"))
+      {
+        if (field.getName() != "Status" && field.getName() != "Content" && field.getName() != "Info"
+            && field.getName() != "Transfer Type")
+        {
+          names.add(field.getName());
+          names.add(field.getName());
+          columnnameList.add(names);
+        }
+      }
+      else
+      {
+        if (field.getName() != "Status" && field.getName() != "Content" && field.getName() != "Info")
+        {
+          names.add(field.getName());
+          names.add(field.getName());
+          columnnameList.add(names);
+        }
+      }
+    }
+    return columnnameList;
+  }
+
+  public String testUri(String sourceUri) // throws IOException
+  {
+    try
+    {
+      URL u = new URL(sourceUri);
+      HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+      huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
+      huc.connect();
+      int code = huc.getResponseCode();
+      System.out.println(code);
+      if (code == 200)
+      {
+        return ("Connected successfully!");
+      }
+      else
+      {
+        return ("Connection to URL failed.");
+      }
+    }
+    catch (UnknownHostException e)
+    {
+      e.printStackTrace();
+      return ("UnknownHostException : Invalid URL.");
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      return ("Exception : Invalid URL.");
+    }
+  }
 }
