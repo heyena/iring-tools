@@ -192,9 +192,7 @@ namespace org.iringtools.web.controllers
       string[] names = context.Split('/');
       string scope = names[0];
       string application = names[1];
-
-      _repository.Session = Session;
-
+      
       Response response = _repository.RefreshCache(scope, application);
 
       return Json(response, JsonRequestBehavior.AllowGet);
@@ -207,8 +205,6 @@ namespace org.iringtools.web.controllers
       string[] names = context.Split('/');
       string scope = names[0];
       string application = names[1];
-
-      _repository.Session = Session;
 
       Response response = _repository.RefreshCache(scope, application, objectType);
 
@@ -223,9 +219,20 @@ namespace org.iringtools.web.controllers
       string scope = names[0];
       string application = names[1];
 
-      _repository.Session = Session;
-
       Response response = _repository.ImportCache(scope, application, cacheURI);
+
+      return Json(response, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteCache(FormCollection form)
+    {
+      string context = form["nodeid"];
+      string cacheURI = form["cacheURI"];
+      string[] names = context.Split('/');
+      string scope = names[0];
+      string application = names[1];
+
+      Response response = _repository.DeleteCache(scope, application);
 
       return Json(response, JsonRequestBehavior.AllowGet);
     }

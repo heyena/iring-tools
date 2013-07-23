@@ -132,7 +132,7 @@ namespace org.iringtools.adapter
           if (setDictionary)
           {
             _dictionary = _dataLayerGateway.GetDictionary();
-            _kernel.Bind<DataDictionary>().ToConstant(_dictionary);
+            _kernel.Rebind<DataDictionary>().ToConstant(_dictionary);
           }
 
           _isDataLayerInitialized = true;
@@ -202,9 +202,6 @@ namespace org.iringtools.adapter
         }
       }
 
-      _settings["ProjectName"] = projectName;
-      _settings["ApplicationName"] = applicationName;
-
       // Determine whether scope is real or implied (ALL)
       string scope = string.Format("{0}.{1}", projectName, applicationName);
       bool scopeFound = false;
@@ -257,6 +254,9 @@ namespace org.iringtools.adapter
     {
       try
       {
+        _settings["ProjectName"] = projectName;
+        _settings["ApplicationName"] = applicationName;
+
         string scope = string.Format("{0}.{1}", projectName, applicationName);
 
         if (!_isScopeInitialized)

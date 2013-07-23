@@ -13,17 +13,17 @@ namespace org.iringtools.adapter.projection
   public class DataProjectionEngine : BaseDataProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataProjectionEngine));
-    //private DataDictionary _dictionary = null;
-    private XNamespace _graphNamespace = null;
-    private string _graphName = String.Empty;
-    string[] arrSpecialcharlist;
-    string[] arrSpecialcharValue;
+
+    private XNamespace _objectNamespace = null;
+    private string _objectType = String.Empty;
+
+    private string[] arrSpecialcharlist;
+    private string[] arrSpecialcharValue;
 
     [Inject]
-    public DataProjectionEngine(AdapterSettings settings) : base(settings)
+    public DataProjectionEngine(AdapterSettings settings, DataDictionary dictionary) : base(settings)
     {
-      //_dataLayer = dataLayer;
-      //_dictionary = dictionary;
+      _dictionary = dictionary;
 
       if (settings["SpCharList"] != null && settings["SpCharValue"] != null)
       {
@@ -32,7 +32,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XDocument ToXml(string objectType, ref List<IDataObject> dataObjects)
     {
       XElement xElement = null;
 
@@ -43,18 +43,18 @@ namespace org.iringtools.adapter.projection
         string app = _settings["ApplicationName"];
         string appBaseUri = Utility.FormEndpointBaseURI(_uriMaps, baseUri, project, app);
 
-        _graphName = graphName;
-        _graphNamespace = appBaseUri + graphName + "/";        
+        _objectType = objectType;
+        _objectNamespace = appBaseUri + objectType + "/";        
         _dataObjects = dataObjects;
 
         if (_dataObjects != null && (_dataObjects.Count == 1 || FullIndex))
         {
-          xElement = new XElement(_graphNamespace + Utility.TitleCase(graphName) + "List");
-          DataObject dataObject = FindGraphDataObject(graphName);
+          xElement = new XElement(_objectNamespace + Utility.TitleCase(objectType) + "List");
+          DataObject dataObject = FindGraphDataObject(objectType);
 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            XElement rowElement = new XElement(_graphNamespace + Utility.TitleCase(dataObject.objectName));
+            XElement rowElement = new XElement(_objectNamespace + Utility.TitleCase(dataObject.objectName));
             CreateHierarchicalXml(rowElement, dataObject, i);
             xElement.Add(rowElement);
           }
@@ -62,16 +62,16 @@ namespace org.iringtools.adapter.projection
 
         if (_dataObjects != null && (_dataObjects.Count > 1 && !FullIndex))
         {
-          xElement = new XElement(_graphNamespace + Utility.TitleCase(graphName) + "List");
+          xElement = new XElement(_objectNamespace + Utility.TitleCase(objectType) + "List");
 
           XAttribute total = new XAttribute("total", this.Count);
           xElement.Add(total);
 
-          DataObject dataObject = FindGraphDataObject(graphName);
+          DataObject dataObject = FindGraphDataObject(objectType);
 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            XElement rowElement = new XElement(_graphNamespace + Utility.TitleCase(dataObject.objectName));
+            XElement rowElement = new XElement(_objectNamespace + Utility.TitleCase(dataObject.objectName));
             CreateIndexXml(rowElement, dataObject, i);
             xElement.Add(rowElement);
           }
@@ -85,17 +85,17 @@ namespace org.iringtools.adapter.projection
       return new XDocument(xElement);
     }
 
-    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
+    public override XDocument ToXml(string objectType, ref List<IDataObject> dataObjects, string className, string classIdentifier)
     {
-      return ToXml(graphName, ref dataObjects);
+      return ToXml(objectType, ref dataObjects);
     }
 
-    public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
+    public override List<IDataObject> ToDataObjects(string objectType, ref XDocument xml)
     {
       try
       {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
-        DataObject objectDefinition = FindGraphDataObject(graphName);
+        List<IDataObject> dataObjects = new List<IDataObject>();
+        DataObject objectDefinition = FindGraphDataObject(objectType);
 
         if (objectDefinition != null)
         {
@@ -107,7 +107,6 @@ namespace org.iringtools.adapter.projection
 
           foreach (XElement objEl in objEls)
           {
-            //IDataObject dataObject = _dataLayer.Create(objectDefinition.objectName, null)[0];
             SerializableDataObject dataObject = new SerializableDataObject();
             dataObject.Type = objectDefinition.objectName;
 
@@ -180,7 +179,7 @@ namespace org.iringtools.adapter.projection
               value = valueStr;
             }
 
-            XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName));
+            XElement propertyElement = new XElement(_objectNamespace + Utility.TitleCase(dataProperty.propertyName));
             propertyElement.Value = value.ToString();
             parentElement.Add(propertyElement);
           }
@@ -189,14 +188,14 @@ namespace org.iringtools.adapter.projection
 
       foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
       {
-        XElement relationshipElement = new XElement(_graphNamespace + Utility.TitleCase(dataRelationship.relationshipName));
+        XElement relationshipElement = new XElement(_objectNamespace + Utility.TitleCase(dataRelationship.relationshipName));
         parentElement.Add(relationshipElement);
       }
     }
 
     private void CreateIndexXml(XElement parentElement, DataObject dataObject, int dataObjectIndex)
     {
-      string uri = _graphNamespace.ToString();
+      string uri = _objectNamespace.ToString();
 
       if (!uri.EndsWith("/"))
         uri += "/";
@@ -211,7 +210,7 @@ namespace org.iringtools.adapter.projection
         if (value != null)
         {
           value = Utility.ConvertSpecialCharOutbound(value.ToString(), arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
-          XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName), value);
+          XElement propertyElement = new XElement(_objectNamespace + Utility.TitleCase(dataProperty.propertyName), value);
           parentElement.Add(propertyElement);
           keyCounter++;
 
@@ -229,7 +228,7 @@ namespace org.iringtools.adapter.projection
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(indexProperty.propertyName), value);
+          XElement propertyElement = new XElement(_objectNamespace + Utility.TitleCase(indexProperty.propertyName), value);
           parentElement.Add(propertyElement);
         }
       }
@@ -238,19 +237,17 @@ namespace org.iringtools.adapter.projection
       parentElement.Add(uriAttribute);
     }
 
-    public DataObject FindGraphDataObject(string dataObjectName)
+    public DataObject FindGraphDataObject(string objectType)
     {
-      DataDictionary dictionary = _dataLayerGateway.GetDictionary();
-
-      foreach (DataObject dataObject in dictionary.dataObjects)
+      foreach (DataObject dataObject in _dictionary.dataObjects)
       {
-        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
+        if (dataObject.objectName.ToLower() == objectType.ToLower())
         {
           return dataObject;
         }
       }
 
-      throw new Exception("DataObject [" + dataObjectName + "] does not exist.");
+      throw new Exception("Object type [" + objectType + "] not found.");
     }
     #endregion
   }
