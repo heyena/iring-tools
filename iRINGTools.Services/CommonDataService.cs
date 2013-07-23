@@ -1,53 +1,16 @@
-﻿// Copyright (c) 2010, iringtools.org //////////////////////////////////////////
-// All rights reserved.
-//------------------------------------------------------------------------------
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the ids-adi.org nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//------------------------------------------------------------------------------
-// THIS SOFTWARE IS PROVIDED BY ids-adi.org ''AS IS'' AND ANY
-// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL ids-adi.org BE LIABLE FOR ANY
-// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-////////////////////////////////////////////////////////////////////////////////
-
-//These are the CommonServices for AdapterDataServices and DataServices.
-//Common functionality for both are added here.
-
-using System.ComponentModel;
-using System.Configuration;
-using System.ServiceModel;
-using System.ServiceModel.Activation;
-using System.ServiceModel.Web;
-using System.Xml.Linq;
-using log4net;
-using org.iringtools.library;
-using org.iringtools.utility;
-using org.iringtools.adapter;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
-using System;
+using System.Configuration;
 using System.IO;
 using System.Net;
-using System.Web.Script.Serialization;
+using System.ServiceModel.Web;
 using System.Web;
-using System.ServiceModel.Channels;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Collections.Generic;
+using System.Xml.Linq;
 using net.java.dev.wadl;
+using org.iringtools.adapter;
+using org.iringtools.library;
+using org.iringtools.utility;
 
 namespace org.iringtools.services
 {
@@ -62,7 +25,7 @@ namespace org.iringtools.services
 
     public void GetVersion(string format)
     {
-      format = MapContentType(format);
+      format = MapContentType(null, null, format);
 
       VersionInfo version = _adapterProvider.GetVersion();
 
@@ -71,7 +34,7 @@ namespace org.iringtools.services
 
     public void GetContexts(string app, string format)
     {
-      format = MapContentType(format);
+      format = MapContentType(null, null, format);
 
       Contexts contexts = _adapterProvider.GetContexts(app);
 
@@ -103,7 +66,7 @@ namespace org.iringtools.services
     {
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         if (IsAsync())
         {
@@ -127,7 +90,7 @@ namespace org.iringtools.services
 
     public void GetObjectType(string project, string app, string objectType, string format)
     {
-      format = MapContentType(format);
+      format = MapContentType(project, app, format);
 
       DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
 
@@ -162,6 +125,7 @@ namespace org.iringtools.services
     {
       try
       {
+        format = MapContentType(project, app, format);
         object content = _adapterProvider.GetItem(project, app, resource, String.Empty, id, ref format, false);
         _adapterProvider.FormatOutgoingMessage(content, format);
       }
@@ -173,10 +137,12 @@ namespace org.iringtools.services
 
     public void GetPicklists(string project, string app, string format)
     {
-      format = MapContentType(format);
       try
       {
+        format = MapContentType(project, app, format);
+
         IList<PicklistObject> objs = _adapterProvider.GetPicklists(project, app, format);
+
         if (format.ToLower() == "xml") //there is Directory in Picklists, have to use DataContractSerializer
           _adapterProvider.FormatOutgoingMessage<IList<PicklistObject>>(objs, format, true);
         else
@@ -190,7 +156,7 @@ namespace org.iringtools.services
 
     public void GetPicklist(string project, string app, string name, string format, int start, int limit)
     {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
         try
         {
             Picklists obj = _adapterProvider.GetPicklist(project, app, name, format, start, limit);
@@ -212,7 +178,7 @@ namespace org.iringtools.services
     {
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         bool fullIndex = false;
 
@@ -267,7 +233,7 @@ namespace org.iringtools.services
     {
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         // if format is one of the part 7 formats
         if (format == "rdf" || format == "dto")
@@ -298,7 +264,7 @@ namespace org.iringtools.services
     {
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         // if format is one of the part 7 formats
         if (format == "rdf" || format == "dto")
@@ -323,7 +289,7 @@ namespace org.iringtools.services
 
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         if (format == "raw")
         {
@@ -351,7 +317,7 @@ namespace org.iringtools.services
 
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         if (format == "raw")
         {
@@ -380,7 +346,7 @@ namespace org.iringtools.services
 
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         if (format == "raw")
         {
@@ -425,7 +391,7 @@ namespace org.iringtools.services
 
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         if (format == "raw")
         {
@@ -498,7 +464,7 @@ namespace org.iringtools.services
 
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         if (format == "raw")
         {
@@ -527,7 +493,7 @@ namespace org.iringtools.services
 
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         if (format == "raw")
         {
@@ -556,7 +522,7 @@ namespace org.iringtools.services
       
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         response = _adapterProvider.DeleteItem(project, app, resource, id, format);
 
@@ -577,7 +543,7 @@ namespace org.iringtools.services
 
       try
       {
-        format = MapContentType(format);
+        format = MapContentType(project, app, format);
 
         response = _adapterProvider.DeleteRelated(project, app, resource, parentid, relatedresource, id, format);
       }
@@ -672,21 +638,42 @@ namespace org.iringtools.services
     #endregion
 
     #region Private Methods
-    private string MapContentType(string format)
+    private string MapContentType(string project, string app, string format)
     {
       IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
-
       string contentType = request.ContentType;
 
       // if it's a known format then return it
-      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("json") ||
-        format.ToLower().Contains("dto") || format.ToLower().Contains("rdf")))
+      if (format != null && (format.ToLower() == "raw" || format.ToLower() == "dto" || format.ToLower() == "rdf" ||
+        format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
       {
         return format;
       }
 
-      // default to json, but honor the contentType of the request if it has one.
-      format = "json";
+      // otherwise determine the appropriate format
+      if (!string.IsNullOrEmpty(project) && !string.IsNullOrEmpty(app))
+      {
+        string basePath = AppDomain.CurrentDomain.BaseDirectory;
+        string appConfigPath = string.Format(@"{0}\{1}\{2}.{3}.config", basePath, "App_Data", project, app);
+
+        if (File.Exists(appConfigPath))
+        {
+          StaticDust.Configuration.AppSettingsReader appConfig =
+            new StaticDust.Configuration.AppSettingsReader(appConfigPath);
+
+          string defaultFormat = Convert.ToString(appConfig["DefaultFormat"]);
+
+          if (!string.IsNullOrEmpty(defaultFormat))
+          {
+            format = defaultFormat.ToLower();
+          }
+        }
+      }
+
+      if (string.IsNullOrEmpty(format))
+      {
+        format = "json";
+      }
 
       if (contentType != null)
       {

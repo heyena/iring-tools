@@ -16,9 +16,10 @@ namespace org.iringtools.adapter
     {
       Bind<AdapterSettings>().ToSelf().InSingletonScope();
       Bind<ISemanticLayer>().To<dotNetRDFEngine>().Named("dotNetRDF");
-      Bind<IProjectionLayer>().To<RdfProjectionEngine>().Named("rdf");
-      Bind<IProjectionLayer>().To<DtoProjectionEngine>().Named("dto");
+      Bind<IProjectionLayer>().To<DataProjectionEngine>().Named("xml");
       Bind<IProjectionLayer>().To<JsonProjectionEngine>().Named("json");
+      Bind<IProjectionLayer>().To<DtoProjectionEngine>().Named("dto");
+      Bind<IProjectionLayer>().To<RdfProjectionEngine>().Named("rdf");
     }
   }
 }

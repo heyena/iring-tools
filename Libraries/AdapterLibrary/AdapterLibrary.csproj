@@ -134,6 +134,7 @@
     </Compile>
     <Compile Include="ContentObject.cs" />
     <Compile Include="DataLayerGateway.cs" />
+    <Compile Include="DataProjectionEngine.cs" />
     <Compile Include="DBManager.cs" />
     <Compile Include="DtiTask.cs" />
     <Compile Include="InboundDtoTask.cs" />

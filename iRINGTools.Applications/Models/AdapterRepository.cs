@@ -555,7 +555,7 @@ namespace iRINGTools.Web.Models
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
         string isAsync = _settings["Async"];
-        string url = string.Format("/{0}/{1}/cache/refresh?format=xml", scope, application);
+        string url = string.Format("/{0}/{1}/cache/refresh", scope, application);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {
@@ -596,7 +596,7 @@ namespace iRINGTools.Web.Models
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
         string isAsync = _settings["Async"];
-        string url = string.Format("/{0}/{1}/{2}/cache/refresh?format=xml", scope, application, dataObjectName);
+        string url = string.Format("/{0}/{1}/{2}/cache/refresh", scope, application, dataObjectName);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {
@@ -638,6 +638,47 @@ namespace iRINGTools.Web.Models
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
         string isAsync = _settings["Async"];
         string url = string.Format("/{0}/{1}/cache/import?baseUri={2}", scope, application, cacheUri);
+
+        if (isAsync != null && isAsync.ToLower() == "true")
+        {
+          client.Async = true;
+          string statusUrl = client.Get<string>(url);
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);
+        }
+        else
+        {
+          response = client.Get<Response>(url, true);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+
+        response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
+      }
+
+      return response;
+    }
+
+    public Response DeleteCache(string scope, string application)
+    {
+      Response response = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        string isAsync = _settings["Async"];
+        string url = string.Format("/{0}/{1}/cache/delete", scope, application);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {

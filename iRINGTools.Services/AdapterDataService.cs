@@ -116,7 +116,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets resource items. Valid format are JSON. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets resource items. Valid format are JSON. Valid formats are XML, JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
@@ -130,7 +130,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets a specific resource item. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets a specific resource item. Valid formats are XML, JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
     public void GetItem(string project, string app, string resource, string id, string format)
     {
@@ -172,7 +172,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets resource items with filter.  Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets resource items with filter.  Valid formats are XML, JSON, DTO, RDF.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
     public void GetWithFilter(string project, string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
     {
@@ -201,7 +201,7 @@ namespace org.iringtools.services
     }
 
     //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
-    [Description("Gets related resource items. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets related resource items. Valid formats are XML, JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void GetRelatedList(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
@@ -215,7 +215,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets a specific related resource item. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets a specific related resource item. Valid formats are XML, JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}/{relatedId}?format={format}")]
     public void GetRelatedItem(string project, string app, string resource, string id, string related, string relatedId, string format)
     {
@@ -316,35 +316,35 @@ namespace org.iringtools.services
       _commonService.GetDictionaryAll(app, format);
     }
 
-    [Description("Gets resource items. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets resource items. Valid formats are XML, JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/all/{app}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void GetListAll(string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       _commonService.GetListAll(app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
     }
 
-    [Description("Gets a specific resource item. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets a specific resource item. Valid formats are XML, JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
     public void GetItemAll(string app, string resource, string id, string format)
     {
       _commonService.GetItemAll(app, resource, id, format);
     }
 
-    [Description("Gets resource items with filter. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets resource items with filter. Valid formats are XML, JSON, DTO, RDF.")]
     [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{resource}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
     public void GetWithFilterAll(string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
     {
       _commonService.GetWithFilterAll(app, resource, format, start, limit, indexStyle, stream);
     }
 
-    [Description("Gets related resource items. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets related resource items. Valid formats are XML, JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/all/{app}/{resource}/{clazz}/{id}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void GetRelatedListAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       _commonService.GetRelatedListAll(app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
     }
 
-    [Description("Gets a specific related resource item. Valid formats are JSON, DTO, RDF.")]
+    [Description("Gets a specific related resource item. Valid formats are XML, JSON, DTO, RDF.")]
     [WebGet(UriTemplate = "/all/{app}/{resource}/{id}/{related}/{relatedId}?format={format}")]
     public void GetRelatedItemAll(string app, string resource, string id, string related, string relatedId, string format)
     {

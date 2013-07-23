@@ -108,6 +108,8 @@ namespace org.iringtools.adapter
     private string _idFieldName = "_ID_";
     private string _linksFieldName = "_LINKS_";
     private string _hasContentFieldName = "_HAS_CONTENT_";
+    private string _contentFieldName = "_CONTENT_";
+    private string _contentTypeFieldName = "_CONTENT_TYPE_";
     private bool _displayLinks = false;
 
     public DataItemConverter(string idFieldName, string linksFieldName, bool displayLinks)
@@ -138,6 +140,14 @@ namespace org.iringtools.adapter
         if (result.Keys.Contains(_hasContentFieldName)) 
           result[_hasContentFieldName] = dataItem.hasContent;
 
+        //if (dataItem.hasContent)
+        //{
+        //    if (dataItem.content != null && dataItem.content.Length > 0)
+        //    {
+        //        result[_contentFieldName] = dataItem.content;
+        //    }
+        //}
+
         foreach (var property in dataItem.properties)
         {
           object value = property.Value;
@@ -167,6 +177,20 @@ namespace org.iringtools.adapter
       if (dictionary.Keys.Contains(_hasContentFieldName) && bool.Parse(dictionary[_hasContentFieldName].ToString()))
       {
         dataItem.hasContent = true;
+      }
+
+      if (dictionary.Keys.Contains(_contentFieldName))
+      {
+          if (dictionary[_contentFieldName] != null && dictionary[_contentTypeFieldName] != null)
+          {
+              dataItem.content = dictionary[_contentFieldName].ToString();
+              dataItem.contentType = dictionary[_contentTypeFieldName].ToString();
+              dataItem.hasContent = true;
+          }
+          else
+          {
+              throw new Exception("Invalid content posted, ensure _CONTENT_ and _CONTENT_TYPE_ are used together.");
+          }
       }
 
       foreach (var pair in dictionary)

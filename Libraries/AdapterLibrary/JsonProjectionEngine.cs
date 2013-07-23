@@ -20,13 +20,11 @@ namespace org.iringtools.adapter.projection
     private static readonly ILog _logger = LogManager.GetLogger(typeof(JsonProjectionEngine));
     private string[] arrSpecialcharlist;
     private string[] arrSpecialcharValue;
-    private DataDictionary _dictionary;
 
     [Inject]
     public JsonProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
       : base(settings)
     {
-      _settings = settings;
       _dictionary = dictionary;
 
       if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
@@ -83,7 +81,22 @@ namespace org.iringtools.adapter.projection
 
               if (dataObj is GenericDataObject)
               {
-                dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
+                  dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
+              }
+
+              bool isContentObject = false;
+              if (dataObj is IContentObject)
+              {
+                  dataItem.hasContent = true;
+                  isContentObject = true;
+              }
+
+              if (isContentObject)
+              {
+                  MemoryStream stream = ((IContentObject)dataObj).Content.ToMemoryStream();
+                  byte[] data = stream.ToArray();
+                  string base64Content = Convert.ToBase64String(data);
+                  dataItem.content = base64Content;
               }
 
               foreach (KeyProperty keyProperty in dataObject.keyProperties)
@@ -284,7 +297,20 @@ namespace org.iringtools.adapter.projection
             SerializableDataObject dataObject = new SerializableDataObject();
             dataObject.Type = objectType.objectName;
             dataObject.Id = dataItem.id;
-            
+
+            if (objectType.hasContent)
+            {
+                string base64Content = dataItem.content;
+
+                if (!String.IsNullOrEmpty(base64Content))
+                {
+                    dataObject.Content = base64Content.ToMemoryStream();
+                    dataObject.Content.Position = 0;
+                    dataObject.HasContent = true;
+                    dataObject.ContentType = dataItem.contentType;
+                }
+            }
+
             //
             // set key properties from id
             //
