@@ -993,6 +993,7 @@ namespace org.iringtools.adapter
               if (sdo.HasContent)
               {
                   ((IContentObject)idataObject).Content = sdo.Content;
+                  ((IContentObject)idataObject).ContentType = sdo.ContentType;
               }
 
               idataObjects.Add(idataObject);
