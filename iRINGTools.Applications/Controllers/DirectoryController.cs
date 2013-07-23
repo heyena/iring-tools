@@ -101,13 +101,14 @@ namespace org.iringtools.web.controllers
                     type = "ApplicationNode",
                     iconCls = "applications",
                     id = scope.Name + "/" + application.Name,
-                    text = application.DisplayName ?? application.Name,
+                    text = application.DisplayName,
                     expanded = false,
                     leaf = false,
                     children = null,
                     record = new
                     {
                       Name = application.Name,
+                      DisplayName = application.DisplayName,
                       Description = application.Description,
                       DataLayer = dataLayer.Name,
                       Assembly = dataLayer.Assembly,
@@ -117,6 +118,7 @@ namespace org.iringtools.web.controllers
 
                   node.property = new Dictionary<string, string>();
                   node.property.Add("Name", application.Name);
+                  node.property.Add("Display Name", application.DisplayName);
                   node.property.Add("Description", application.Description);
                   node.property.Add("Data Layer", dataLayer.Name);
                   nodes.Add(node);
