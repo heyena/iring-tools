@@ -89,8 +89,17 @@ namespace org.iringtools.adapter
         {
           if (string.IsNullOrEmpty(scope.DisplayName))
           {
-            needToUpdate = true;
             scope.DisplayName = scope.Name;
+            needToUpdate = true;
+          }
+
+          foreach (ScopeApplication app in scope.Applications)
+          {
+            if (string.IsNullOrEmpty(app.DisplayName))
+            {
+              app.DisplayName = app.Name;
+              needToUpdate = true;
+            }
           }
         }
 
