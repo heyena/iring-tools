@@ -4583,8 +4583,8 @@ namespace org.iringtools.adapter
     {
       // compare strings
       {
-        string leftValue = left.DisplayName;
-        string rightValue = right.DisplayName;
+        string leftValue = left.DisplayName.ToLower();
+        string rightValue = right.DisplayName.ToLower();
         return string.Compare(leftValue, rightValue);
       }
     }
@@ -4596,8 +4596,8 @@ namespace org.iringtools.adapter
     {
       // compare strings
       {
-        string leftValue = left.DisplayName;
-        string rightValue = right.DisplayName;
+        string leftValue = left.DisplayName.ToLower();
+        string rightValue = right.DisplayName.ToLower();
         return string.Compare(leftValue, rightValue);
       }
     }
