@@ -34,6 +34,8 @@ namespace org.iringtools.library
 
     public Stream Content { get; set; }
 
+    public string ContentType { get; set; }
+
     public object GetPropertyValue(string propertyName)
     {
       if (_dictionary.ContainsKey(propertyName))
