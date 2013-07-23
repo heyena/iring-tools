@@ -129,8 +129,6 @@ Ext.onReady(function () {
       url: 'directory/scope'
     });
 
-
-
     newTab.on('save', function (panel) {
       win.close();
       directoryPanel.onReload(node);
@@ -143,22 +141,19 @@ Ext.onReady(function () {
     }, this);
 
     var win = new Ext.Window({
-      closable: true,
       id: 'newwin-' + node.id,
-      modal: false,
-      layout: 'fit',
       title: 'Add Scope',
       iconCls: 'tabsScope',
-      height: 180,
-      width: 430,
-      plain: true,
+      height: 190,
+      width: 440,
+      closable: true,
+      modal: true,
+      resizable: false,
       items: newTab
     });
 
     win.show();
-
     newTab.form.getForm().findField('Name').clearInvalid();
-
   }, this);
 
 
@@ -183,25 +178,22 @@ Ext.onReady(function () {
     }, this);
 
     var win = new Ext.Window({
-      closable: true,
       id: 'editwin-' + node.id,
-      modal: false,
-      layout: 'fit',
       title: 'Edit Scope \"' + node.text + '\"',
       iconCls: 'tabsScope',
-      height: 342,
-      width: 843,
-      plain: true,
+      height: 190,
+      width: 440,
+      closable: true,
+      modal: true,
+      resizable: false,
       items: newTab
     });
 
     win.show();
-
   }, this);
 
 
   directoryPanel.on('deletescope', function (npanel, node) {
-
     Ext.Ajax.request({
       url: 'directory/deletescope',
       method: 'POST',

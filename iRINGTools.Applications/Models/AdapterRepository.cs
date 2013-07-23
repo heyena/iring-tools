@@ -378,7 +378,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string UpdateScope(string name, string newName, string newDescription)
+    public string UpdateScope(string name, string displayName, string newDescription)
     {
       string obj = null;
 
@@ -387,7 +387,7 @@ namespace iRINGTools.Web.Models
         ScopeProject scope = new ScopeProject()
         {
           Name = name,
-          DisplayName = newName,
+          DisplayName = displayName,
           Description = newDescription
         };
 
