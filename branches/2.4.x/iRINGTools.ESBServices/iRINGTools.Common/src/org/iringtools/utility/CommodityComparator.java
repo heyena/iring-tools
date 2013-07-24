@@ -5,12 +5,17 @@ import org.iringtools.directory.Commodity;
 
 public class CommodityComparator implements Comparator<Commodity>
 {
-  
   @Override
-  public int compare(Commodity leftScope, Commodity rightScope)
-  {  
-	  String p1Name = leftScope.getName();  
-		 String p2Name = rightScope.getName();
-	    return p1Name.compareTo(p2Name);
+  public int compare(Commodity left, Commodity right)
+  {
+    String leftParam = left.getName();    
+    if (leftParam != null) 
+      leftParam = leftParam.toLowerCase();
+    
+    String rightParam = right.getName();
+    if (rightParam != null)
+      rightParam = rightParam.toLowerCase();
+    
+    return leftParam.compareTo(rightParam);
   }
 }

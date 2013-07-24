@@ -4,14 +4,18 @@ import java.util.Comparator;
 import org.iringtools.directory.Scope;
 
 public class ScopeComparator implements Comparator<Scope>
-{
-  
+{  
   @Override
-  public int compare(Scope leftScope, Scope rightScope)
+  public int compare(Scope left, Scope right)
   {  
-   
-	 String p1Name = leftScope.getName();  
-	 String p2Name = rightScope.getName();
-    return p1Name.compareTo(p2Name);
+    String leftParam = left.getName();    
+    if (leftParam != null) 
+      leftParam = leftParam.toLowerCase();
+    
+    String rightParam = right.getName();
+    if (rightParam != null)
+      rightParam = rightParam.toLowerCase();
+    
+    return leftParam.compareTo(rightParam);
   }
 }

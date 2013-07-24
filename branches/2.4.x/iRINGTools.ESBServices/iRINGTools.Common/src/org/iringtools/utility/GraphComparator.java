@@ -5,13 +5,18 @@ import java.util.Comparator;
 import org.iringtools.directory.Graph;
 
 public class GraphComparator implements Comparator<Graph>
-{
-  
+{  
   @Override
-  public int compare(Graph leftScope, Graph rightScope)
+  public int compare(Graph left, Graph right)
   {  
-	  String p1Name = leftScope.getName();  
-		 String p2Name = rightScope.getName();
-	    return p1Name.compareTo(p2Name);
+    String leftParam = left.getName();    
+    if (leftParam != null) 
+      leftParam = leftParam.toLowerCase();
+    
+    String rightParam = right.getName();
+    if (rightParam != null)
+      rightParam = rightParam.toLowerCase();
+    
+    return leftParam.compareTo(rightParam);
   }
 }
