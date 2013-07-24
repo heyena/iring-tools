@@ -124,45 +124,103 @@ namespace org.iringtools.adapter
     {
       DataDictionary dictionary = null;
       filter = null;
+      DataFilter externalFilter = null;
 
       try
       {
-        if (_lwDataLayer != null)
-        {
-          dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
-        }
-        else if (_dataLayer != null)
-        {
-          if (refresh)
+          if (objectType != null)         //get the external filter file and append into the existing one ...
           {
-            if (!string.IsNullOrEmpty(objectType))
-            {
-              Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
-
-              if (response.Level != StatusLevel.Success)
+              DirectoryInfo appDataDir = new DirectoryInfo(_settings["BaseDirectoryPath"] + _settings["AppDataPath"]);
+              string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.xml", _settings["ProjectName"], _settings["ApplicationName"], objectType);
+              FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
+              foreach (FileInfo file in filterFiles)
               {
-                throw new Exception("Error refreshing dictionary for object type " + 
-                  objectType + ": " + response.Messages);
+                  externalFilter = Utility.Read<DataFilter>(file.FullName);
+                  if (filter == null)
+                      filter = externalFilter;
+                  else
+                      filter.AppendFilter(externalFilter);
+                  break;
               }
-            }
-            else
-            {
-              Response response = ((IDataLayer2)_dataLayer).RefreshAll();
-
-              if (response.Level != StatusLevel.Success)
-              {
-                throw new Exception("Error refreshing dictionary: " + response.Messages);
-              }
-            }
           }
 
-          dictionary = _dataLayer.GetDictionary();
-        }
+          if (_lwDataLayer != null)
+          {
+              dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
+          }
+          else if (_dataLayer != null)
+          {
+              if (refresh)
+              {
+                  if (!string.IsNullOrEmpty(objectType))
+                  {
+                      Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
+
+                      if (response.Level != StatusLevel.Success)
+                      {
+                          throw new Exception("Error refreshing dictionary for object type " +
+                            objectType + ": " + response.Messages);
+                      }
+                  }
+                  else
+                  {
+                      Response response = ((IDataLayer2)_dataLayer).RefreshAll();
+
+                      if (response.Level != StatusLevel.Success)
+                      {
+                          throw new Exception("Error refreshing dictionary: " + response.Messages);
+                      }
+                  }
+              }
+
+              dictionary = _dataLayer.GetDictionary();
+          }
+          // Injecting the external filter in to the dictionary.
+          if (dictionary != null)
+          {
+              if (objectType != null)
+              {
+                  var obj = (from dataObjects in dictionary.dataObjects
+                             where dataObjects.objectName == objectType
+                             select dataObjects).First();
+                  if (externalFilter != null)
+                  {
+                      if (obj.dataFilter == null)
+                          obj.dataFilter = externalFilter;
+                      else
+                          obj.dataFilter.AppendFilter(externalFilter);
+                  }
+              }
+              else
+              {
+                  //If objectType is not specified then pick all filter files for that scope and inject it into the dictionary.
+                  DirectoryInfo appDataDir = new DirectoryInfo(_settings["BaseDirectoryPath"] + _settings["AppDataPath"]);
+                  string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.xml", _settings["ProjectName"], _settings["ApplicationName"], "*");
+                  FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
+                  foreach (FileInfo file in filterFiles)
+                  {
+                      string fileName = Path.GetFileNameWithoutExtension(file.Name);
+                      string objectName = fileName.Substring(fileName.LastIndexOf('.') + 1);
+
+                      var obj = (from dataObjects in dictionary.dataObjects
+                                 where dataObjects.objectName == objectName
+                                 select dataObjects).First();
+
+                      if (obj != null)
+                      {
+                          if (obj.dataFilter == null)
+                              obj.dataFilter = Utility.Read<DataFilter>(file.FullName);
+                          else
+                              obj.dataFilter.AppendFilter(Utility.Read<DataFilter>(file.FullName));
+                      }
+                  }
+              }
+          }
       }
       catch (Exception e)
       {
-        _logger.Error("Error getting data dictionary: " + e);
-        throw e;
+          _logger.Error("Error getting data dictionary: " + e);
+          throw e;
       }
 
       return dictionary;
