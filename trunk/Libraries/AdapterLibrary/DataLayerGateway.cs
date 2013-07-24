@@ -124,9 +124,25 @@ namespace org.iringtools.adapter
     {
       DataDictionary dictionary = null;
       filter = null;
+      DataFilter externalFilter = null;
 
       try
       {
+          if (objectType != null)         //get the external filter file and append into the existing one ...
+          {
+              DirectoryInfo appDataDir = new DirectoryInfo(_settings["BaseDirectoryPath"] + _settings["AppDataPath"]);
+              string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.xml", _settings["ProjectName"], _settings["ApplicationName"], objectType);
+              FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
+              foreach (FileInfo file in filterFiles)
+              {
+                  externalFilter = Utility.Read<DataFilter>(file.FullName);
+                  if (filter == null)
+                      filter = externalFilter;
+                  else
+                      filter.AppendFilter(externalFilter);
+                  break;
+              }
+          }
         if (_lwDataLayer != null)
         {
           dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
@@ -157,6 +173,43 @@ namespace org.iringtools.adapter
           }
 
           dictionary = _dataLayer.GetDictionary();
+          }
+          if (dictionary != null)
+          {
+              if (objectType != null)
+              {
+                  var obj = (from dataObjects in dictionary.dataObjects
+                             where dataObjects.objectName == objectType
+                             select dataObjects).First();
+                  if (externalFilter != null)
+                  {
+                      if (obj.dataFilter == null)
+                          obj.dataFilter = externalFilter;
+                      else
+                          obj.dataFilter.AppendFilter(externalFilter);
+                  }
+              }
+              else
+              {
+                  DirectoryInfo appDataDir = new DirectoryInfo(_settings["BaseDirectoryPath"] + _settings["AppDataPath"]);
+                  string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.later.xml", _settings["ProjectName"], _settings["ApplicationName"], "*");
+                  FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
+                  foreach (FileInfo file in filterFiles)
+                  {
+                      string fileName = Path.GetFileNameWithoutExtension(file.Name);
+                      string objectName = fileName.Substring(fileName.LastIndexOf('.') + 1);
+                      var obj = (from dataObjects in dictionary.dataObjects
+                                 where dataObjects.objectName == objectName
+                                 select dataObjects).First();
+                      if (obj != null)
+                      {
+                          if (obj.dataFilter == null)
+                              obj.dataFilter = Utility.Read<DataFilter>(file.FullName);
+                          else
+                              obj.dataFilter.AppendFilter(Utility.Read<DataFilter>(file.FullName));
+                      }
+                  }
+              }
         }
       }
       catch (Exception e)
@@ -1104,7 +1157,7 @@ namespace org.iringtools.adapter
         throw new Exception("Data layer does not support search.");
       }
 
-      return ((IDataLayer2)_dataLayer).Search(objectType, query, filter, start, limit).ToList();
+      return ((IDataLayer2)_dataLayer).Search(objectType, query, filter, limit, start).ToList();
     }
 
     public long SearchCount(string objectType, string query, DataFilter filter)
