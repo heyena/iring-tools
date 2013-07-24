@@ -111,6 +111,9 @@ namespace org.iringtools.adapter
 
         if (sc == null)
         {
+          if (string.IsNullOrEmpty(scope.DisplayName))
+            scope.DisplayName = scope.Name;
+
           _scopes.Add(scope);
           _scopes.Sort(new ScopeComparer());
 
@@ -158,6 +161,7 @@ namespace org.iringtools.adapter
         else
         {
           sc.DisplayName = scope.DisplayName;
+          _scopes.Sort(new ScopeComparer());
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
@@ -369,7 +373,12 @@ namespace org.iringtools.adapter
 
         if (sa == null)
         {
+          if (string.IsNullOrEmpty(application.DisplayName))
+            application.DisplayName = application.Name;
+
           scope.Applications.Add(application);
+          scope.Applications.Sort(new ApplicationComparer());
+
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
 
           response.Append(Generate(scope.Name, application.Name));
@@ -415,6 +424,8 @@ namespace org.iringtools.adapter
         {
           application.DisplayName = updatedApp.DisplayName;
           application.Configuration.AppSettings = updatedApp.Configuration.AppSettings;
+
+          scope.Applications.Sort(new ApplicationComparer());
 
           string appConfigPath = string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], scope.Name, application.Name);
           Utility.Write<Configuration>(application.Configuration, appConfigPath, false);
@@ -492,39 +503,40 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    private static bool IsApplicationDataChanged(ScopeApplication updatedApp, ScopeApplication oldApp)
-    {
-      bool Ischanged = false;
-      try
-      {
-        if (oldApp.Name != updatedApp.Name || oldApp.Description != updatedApp.Description || oldApp.Assembly != updatedApp.Assembly)
-        {
-          Ischanged = true;
-        }
-        else if (oldApp.Configuration.AppSettings.Settings.Count != updatedApp.Configuration.AppSettings.Settings.Count)
-        {
-          Ischanged = true;
-        }
-        else
-        {
-          for (int i = 0; i < updatedApp.Configuration.AppSettings.Settings.Count; i++)
-          {
-            if (updatedApp.Configuration.AppSettings.Settings[i].Value != oldApp.Configuration.AppSettings.Settings[i].Value)
-            {
-              Ischanged = true;
-              break;
-            }
-          }
-        }
-      }
-      catch
-      {
-        Ischanged = true;
-      }
-      return Ischanged;
-    }
+    //private static bool IsApplicationDataChanged(ScopeApplication updatedApp, ScopeApplication oldApp)
+    //{
+    //  bool Ischanged = false;
+    //  try
+    //  {
+    //    if (oldApp.Name != updatedApp.Name || oldApp.Description != updatedApp.Description || oldApp.Assembly != updatedApp.Assembly)
+    //    {
+    //      Ischanged = true;
+    //    }
+    //    else if (oldApp.Configuration.AppSettings.Settings.Count != updatedApp.Configuration.AppSettings.Settings.Count)
+    //    {
+    //      Ischanged = true;
+    //    }
+    //    else
+    //    {
+    //      for (int i = 0; i < updatedApp.Configuration.AppSettings.Settings.Count; i++)
+    //      {
+    //        if (updatedApp.Configuration.AppSettings.Settings[i].Value != oldApp.Configuration.AppSettings.Settings[i].Value)
+    //        {
+    //          Ischanged = true;
+    //          break;
+    //        }
+    //      }
+    //    }
+    //  }
+    //  catch
+    //  {
+    //    Ischanged = true;
+    //  }
+    //  return Ischanged;
+    //}
 
     // delete all application artifacts except for its mapping
+    
     private void DeleteApplicationArtifacts(string scopeName, string appName)
     {
       string path = _settings["AppDataPath"];
@@ -4571,8 +4583,8 @@ namespace org.iringtools.adapter
     {
       // compare strings
       {
-        string leftValue = left.Name.ToString();
-        string rightValue = right.Name.ToString();
+        string leftValue = left.DisplayName.ToLower();
+        string rightValue = right.DisplayName.ToLower();
         return string.Compare(leftValue, rightValue);
       }
     }
@@ -4584,8 +4596,8 @@ namespace org.iringtools.adapter
     {
       // compare strings
       {
-        string leftValue = left.Name.ToString();
-        string rightValue = right.Name.ToString();
+        string leftValue = left.DisplayName.ToLower();
+        string rightValue = right.DisplayName.ToLower();
         return string.Compare(leftValue, rightValue);
       }
     }
