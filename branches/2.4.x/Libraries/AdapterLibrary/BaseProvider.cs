@@ -313,7 +313,7 @@ namespace org.iringtools.adapter
               Utility.Write<mapping.Mapping>(_mapping, mappingPath);
             }
 
-            _kernel.Bind<mapping.Mapping>().ToConstant(_mapping);
+            _kernel.Bind<mapping.Mapping>().ToConstant(_mapping).InThreadScope();
           }
 
           _isScopeInitialized = true;

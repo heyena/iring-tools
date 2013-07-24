@@ -349,27 +349,7 @@ namespace org.iringtools.services
         ExceptionHander(ex);
       }
     }
-
-    //TODO:
-    //[Description("Posts list of content objects as stream to service.")]
-    //[WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/content")]
-    //public void PostContents(string scope, string app, string graph, Stream stream)
-    //{
-    //  try
-    //  {
-    //    MemoryStream ms = stream.ToMemoryStream();
-    //    ContentObjects contentObjects = Utility.DeserializeFromStream<ContentObjects>(ms);
-
-    //    Response response = _dtoProvider.PostContents(scope, app, graph, contentObjects);
-    //    HttpContext.Current.Response.ContentType = "application/xml";
-    //    HttpContext.Current.Response.Write(Utility.Serialize<Response>(response, true));
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    ExceptionHander(ex);
-    //  }
-    //}
-
+    
     [Description("Gets status of a asynchronous request.")]
     [WebGet(UriTemplate = "/requests/{id}")]
     public void GetRequestStatus(string id)

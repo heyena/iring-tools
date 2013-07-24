@@ -758,7 +758,9 @@ namespace org.iringtools.adapter.projection
       }
       catch (Exception ex)
       {
-        throw new Exception("Error while projecting a DataFilter for use with DataLayer.", ex);
+        string error = "Error while projecting a DataFilter: " + ex.Message;
+        _logger.Error(error);
+        throw new Exception(error);
       }
     }
 
