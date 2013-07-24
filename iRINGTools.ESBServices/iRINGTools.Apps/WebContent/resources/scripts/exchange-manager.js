@@ -1177,7 +1177,8 @@ function newExchangeConfig() {
     bodyStyle: 'padding:15px 15px 5px 15px',
     labelWidth: 100,
     defaults: {
-      width: 390
+      width: 390,
+      allowBlank: false
     },
     defaultType: 'textfield',
     items: [{
@@ -1185,12 +1186,14 @@ function newExchangeConfig() {
       name: 'name'
     }, {
       fieldLabel: 'Description',
-      name: 'description'
+      name: 'description',
+      allowBlank: true
     }, {
       xtype: 'fieldset',
       anchor: '100%',
       defaults: {
-        width: 360
+        width: 360,
+        allowBlank: false
       },
       defaultType: 'textfield',
       title: 'Source Config',
@@ -1218,7 +1221,8 @@ function newExchangeConfig() {
       anchor: '100%',
       title: 'Target Config',
       defaults: {
-        width: 360
+        width: 360,
+        allowBlank: false
       },
       defaultType: 'textfield',
       items: [{
@@ -1989,7 +1993,8 @@ function newApp() {
     bodyStyle: 'padding:15px',
     labelwidth: 75,
     defaults: {
-      width: 300
+      width: 300,
+      allowBlank: false
     },
     defaultType: 'textfield',
     items: [{
@@ -1997,7 +2002,8 @@ function newApp() {
       name: 'appName'
     }, {
       fieldLabel: 'Description',
-      name: 'appDesc'
+      name: 'appDesc',
+      allowBlank: true
     }, {
       fieldLabel: 'Scope',
       name: 'appScope',
@@ -2017,8 +2023,8 @@ function newApp() {
         xtype: 'textfield',
         fieldLabel: 'BaseUrl',
         width: 245,
-        name: 'baseUri',
         allowBlank: false,
+        name: 'baseUri',
         regex: /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
         regexText: 'Invalid URL Format (eg: http://localhost/services/dxfr)',
         vtypeText: 'Invalid URL Format (eg: http://localhost/services/dxfr)'
