@@ -42,7 +42,7 @@ Ext.define('AM.store.DataGridStore', {
           graph: null,
           baseUrl: null
         },
-        timeout: 60000,
+        timeout: 1000000,
         url: 'GridManager/Pages',
         reader: {
           type: 'json',

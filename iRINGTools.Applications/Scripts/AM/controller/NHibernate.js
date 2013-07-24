@@ -671,7 +671,8 @@ Ext.define('AM.controller.NHibernate', {
     var propertyNameField = form.getForm().findField('propertyName');
     propertyNameField.setValue(node.data.property.propertyName);
     var propertyName = propertyNameField.getValue();
-
+    form.getForm().findField('isHidden').setValue(node.data.property.isHidden);
+    form.getForm().findField('showOnIndex').setValue(node.data.property.showOnIndex);
     if (propertyNameField.validate()) {
       node.data.property.propertyName = propertyName;
       node.set('text', propertyName);
@@ -717,6 +718,8 @@ Ext.define('AM.controller.NHibernate', {
     var node = tree.getSelectedNode();
     var propertyNameField = form.getForm().findField('propertyName');
     propertyNameField.setValue(node.data.property.columnName);
+    form.getForm().findField('isHidden').setValue(node.data.property.isHidden);
+    form.getForm().findField('showOnIndex').setValue(node.data.property.showOnIndex);
     var propertyName = propertyNameField.getValue();
     if (propertyNameField.validate()) {
       node.data.property.propertyName = propertyName;
@@ -1026,8 +1029,20 @@ Ext.define('AM.controller.NHibernate', {
             break;
           }
         }
-        if(flag)
-        records.push(dataNode.data.children[jj]);
+        if(flag){
+          var tempflag = true;
+          for(var ll = 0;ll<rootNode.childNodes.length;ll++){
+            if(rootNode.childNodes[ll].data.text == dataNode.parentNode.data.text){
+              for(var zz = 0; zz<rootNode.childNodes[ll].childNodes[0].childNodes.length;zz++){
+                if(rootNode.childNodes[ll].childNodes[0].childNodes[zz].data.text == dataNode.data.children[jj].text)
+                tempflag = false;
+              }
+            }
+          }
+          if(tempflag)
+          records.push(dataNode.data.children[jj]);
+        }
+
 
       }
       itemSelecter.items.items[2].items.items[0].items.items[0].getStore().removeAll();
@@ -1768,7 +1783,7 @@ Ext.define('AM.controller.NHibernate', {
         gridStore.removeAll();
 
         form.getForm().findField('relationType').setValue(data.relationshipType);
-        form.getForm().findField('relatedObjectName').setValue(data.relatedObjectName);
+        //form.getForm().findField('relatedObjectName').setValue(data.relatedObjectName);
       }
     });
 

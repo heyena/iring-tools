@@ -58,7 +58,7 @@
                     "          baseUrl: null\r",
                     "        }"
                 ],
-                "timeout": 60000,
+                "timeout": 1000000,
                 "url": "GridManager/Pages"
             },
             "configAlternates": {

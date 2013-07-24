@@ -21,7 +21,6 @@ Ext.define('AM.view.directory.FileUploadWindow', {
     'AM.view.directory.FileUpoadForm'
   ],
 
-  height: 132,
   width: 417,
   layout: {
     type: 'fit'

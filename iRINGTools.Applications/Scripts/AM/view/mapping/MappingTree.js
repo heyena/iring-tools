@@ -169,6 +169,7 @@ Ext.define('AM.view.mapping.MappingTree', {
       me.getEl().mask('Loading...');
       Ext.Ajax.request({
         url: 'mapping/addtemplatemap',
+        timeout: 600000,
         method: 'POST',
         params: {
           contextName: pan.contextName,
@@ -183,20 +184,24 @@ Ext.define('AM.view.mapping.MappingTree', {
           graphName: graphName
         },
         success: function (result, request) {
-
+          //alert('success...');
           me.onReload();
           me.getEl().unmask();
           return false;
         },
         failure: function (result, request) {
+          //alert('failure..');
+          //me.onReload();
+          //me.getEl().unmask();
           return false;
+
         }
       });
     }
     else {
       return false;
     }
-    return false;
+    //return false;
 
   },
 

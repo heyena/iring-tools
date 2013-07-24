@@ -1,0 +1,212 @@
+{
+    "type": "Ext.form.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": 128,
+        "width": 503,
+        "designer|userClassName": "directory.FileUpoadForm",
+        "designer|userAlias": "fileuploadform",
+        "bodyPadding": 10,
+        "frameHeader": false,
+        "header": false,
+        "title": null,
+        "method": "post",
+        "url": "spreadsheet/upload"
+    },
+    "designerId": "10e81d90-8b94-4aa5-9dcd-98525d8deb1f",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "buttons",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "Ext.form.field.File",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "fieldLabel": "File",
+                "labelWidth": 40,
+                "name": "filePath",
+                "emptyText": "Select a File"
+            },
+            "designerId": "02ebd8f0-b7d6-4115-9925-1d8867988b58"
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "bottom",
+                "container|pack": "end",
+                "height": 26,
+                "width": 503
+            },
+            "designerId": "59112e7d-f94b-4e28-ac91-7257c7b1fbe1",
+            "cn": [
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Upload File"
+                    },
+                    "designerId": "087e4f9c-bc11-484f-b484-d88a68735c6d",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "me.onFileUpload();"
+                                ]
+                            },
+                            "designerId": "af5f97f4-933c-4084-9ec2-9d1b43a36070"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Cancel"
+                    },
+                    "designerId": "cc213909-de37-41e8-84c1-6c93d79d11dc",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "me.onCancel();"
+                                ]
+                            },
+                            "designerId": "bd80a857-0f78-4ee8-8497-b653b9a9fdf3"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "fieldLabel": null,
+                "name": "scope"
+            },
+            "designerId": "949a3f72-b0f6-419e-8bab-8c28335a6a67"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "fieldLabel": null,
+                "name": "application"
+            },
+            "designerId": "f350fe53-a229-4ecb-ae3e-7efcc158ad97"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onFileUpload",
+                "implHandler": [
+                    "\r",
+                    "var me = this;\r",
+                    "var win = me.up('window');\r",
+                    "var form = me.getForm();\r",
+                    "var message;\r",
+                    "if(me.getForm().isValid()) {\r",
+                    "  me.submit({\r",
+                    "    waitMsg: 'Uploading file...',\r",
+                    "    success: function (result, request) {\r",
+                    "      win.fireEvent('save', me);\r",
+                    "    },\r",
+                    "    failure: function (result, request) {\r",
+                    "      message = 'Failed to upload file.';\r",
+                    "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "    }\r",
+                    "  });\r",
+                    "} else {\r",
+                    "  message = 'Form is not complete. Cannot upload file.';\r",
+                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   \r",
+                    "}\r",
+                    ""
+                ]
+            },
+            "designerId": "0fa23c6c-f564-45f6-9ed1-0664fef5ae91"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onCancel",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var win = me.up('window');\r",
+                    "me.getForm().reset();\r",
+                    "win.destroy();"
+                ]
+            },
+            "designerId": "71b799ba-e5f9-444f-bc52-b5f1e101f3a6"
+        }
+    ]
+}

@@ -415,8 +415,8 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "layout|flex": null,
                         "action": "addsettings",
+                        "layout|flex": null,
                         "margin": null,
                         "width": 50,
                         "text": "Add",
