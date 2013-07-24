@@ -73,20 +73,19 @@ namespace org.iringtools.library
     {
       if (response != null)
       {
+        if (Level < response.Level)
+          Level = response.Level;
+
+        foreach (string message in response.Messages)
+        {
+          this.Messages.Add(message);
+        }
+
         if (response.StatusList.Count > 0)
         {
           foreach (Status status in response.StatusList)
           {
             Append(status);
-          }
-        }
-        else
-        {
-          this.Level = response.Level;
-
-          foreach (string message in response.Messages)
-          {
-            this.Messages.Add(message);
           }
         }
       }

@@ -297,19 +297,20 @@ namespace org.iringtools.adapter
 
         Response objectTypeRefresh = RefreshCache(cacheId, dataObject);
         response.Append(objectTypeRefresh);
+        return response;
       }
       catch (Exception e)
       {
-        _logger.Error("Error refreshing cache: " + e.Message);
+        string error = "Error refreshing cache for [" + objectType + "]: " + e.Message;
+        _logger.Error(error);
         response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
+        response.Messages.Add(error);
+        return response;
       }
       finally
       {
         SetCacheState(cacheId, CacheState.Ready);
       }
-
-      return response;
     }
 
     protected Response RefreshCache(string cacheId, DataObject objectType)
@@ -424,15 +425,17 @@ namespace org.iringtools.adapter
           bulkCopy.WriteToServer(table);
           status.Messages.Add("Cache data populated successfully.");
         }
+
+        return response;
       }
       catch (Exception e)
       {
-        _logger.Error("Error refreshing cache for object type " + objectType.objectName + ": " + e.Message);
+        string error = "Error refreshing cache for object type " + objectType.objectName + ": " + e.Message;
+        _logger.Error(error);
         response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
+        response.Messages.Add(error);
+        return response;
       }
-
-      return response;
     }
 
     public Response ImportCache(string baseUri, bool updateDictionary)
