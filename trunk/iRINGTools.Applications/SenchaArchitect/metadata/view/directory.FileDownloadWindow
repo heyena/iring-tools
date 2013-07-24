@@ -1,0 +1,78 @@
+{
+    "type": "Ext.window.Window",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": 342,
+        "width": 843,
+        "designer|userClassName": "directory.FileDownloadWindow",
+        "designer|userAlias": "filedownloadwindow",
+        "layout": "fit",
+        "title": "Download File"
+    },
+    "designerId": "70726d51-c369-4512-84e0-e1a1ee5e410a",
+    "cn": [
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "35b26a4e-f5ae-4827-ba9b-846292d40051",
+            "masterInstanceId": "891a8b6b-bd32-4cc1-860b-f08fe769b0d3"
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "bottom",
+                "container|pack": "end"
+            },
+            "designerId": "b5e22fcd-f228-4ae2-a842-cdf70c2aa9d3",
+            "cn": [
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Cancel"
+                    },
+                    "designerId": "77ae790d-39be-46f1-bdff-55cb3774cc18",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "button.up().up().close();"
+                                ]
+                            },
+                            "designerId": "4dfe73b6-f4cf-4b95-aab5-fb3bf8355db2"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

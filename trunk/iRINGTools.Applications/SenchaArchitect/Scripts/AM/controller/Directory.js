@@ -589,17 +589,22 @@ Ext.define('AM.controller.Directory', {
     if (!node)
     node = me.getRootNode();
     var state = tree.getState();
+    var nodeState = '/Scopes/'+node.internalId;
     //var path = node.getPath('text');
     //store.load(node);
     tree.body.mask('Loading...', 'x-mask-loading');
+    //store.load(node);
+    //store.load({
+    //});
     store.load({
+      node:node,
       callback: function (records, options, success) {
-        var nodes = state.expandedNodes || [],
-          len = nodes.length;
-        tree.collapseAll();
-        Ext.each(nodes, function (path) {
-          tree.expandPath(path, 'text');
-        });
+        //var nodes = state.expandedNodes || [],
+        //len = nodes.length;
+        //tree.collapseAll();
+        //Ext.each(nodes, function (path) {
+        //tree.expandPath('/Scopes/test/ABC/Data Objects', 'text');
+        //});
         tree.body.unmask();
       }
 
@@ -737,6 +742,7 @@ Ext.define('AM.controller.Directory', {
               value = node.data.record.Configuration.AppSettings.Settings[i].Value;
               var newSetting = me.addSettings(key,value, ('key'+i), ('value'+i));
               newSetting[0].items[0].allowBlank = false;
+              if(component.items.map['settingfieldset'])
               component.items.map['settingfieldset'].add(newSetting);
             }
           }

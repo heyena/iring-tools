@@ -187,6 +187,12 @@ namespace iRINGTools.Web.Models
         try
         {
           string format = "json";
+          if (sort != null) {
+              string[] sortArr = sort.Split('\"');
+              sort = sortArr[3];
+              dir = sortArr[7];
+          
+          }
           DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
           string dataItemsJson = string.Empty;
