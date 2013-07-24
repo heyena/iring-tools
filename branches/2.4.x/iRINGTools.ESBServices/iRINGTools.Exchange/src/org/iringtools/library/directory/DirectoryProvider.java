@@ -56,46 +56,43 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
-          {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
 
-            for (Commodity commodity : commodityList)
+          for (Commodity commodity : commodityList)
+          {
+            if (name.equalsIgnoreCase(commodity.getName()))
             {
-              if (name.equalsIgnoreCase(commodity.getName()))
+              List<Exchange> exchangeList = commodity.getExchange();
+              int maxid = 0;
+              
+              for (Exchange exchangefile : exchangeList)
               {
-                List<Exchange> exchangeList = commodity.getExchange();
-                int maxid = 0;
-                
-                for (Exchange exchangefile : exchangeList)
+                String sid = exchangefile.getId();
+                int id = Integer.parseInt(sid);
+                if (id > maxid)
                 {
-                  String sid = exchangefile.getId();
-                  int id = Integer.parseInt(sid);
-                  if (id > maxid)
-                  {
-                    maxid = id;
-                  }
+                  maxid = id;
                 }
-                exchange.setId(Integer.toString(maxid + 1));
-                exchangeList.add(exchange);
-                
-                ExchangeComparator exchangeDefSort = new ExchangeComparator();
-                Collections.sort(exchangeList, exchangeDefSort);
               }
+              exchange.setId(Integer.toString(maxid + 1));
+              exchangeList.add(exchange);
+              
+              ExchangeComparator exchangeDefSort = new ExchangeComparator();
+              Collections.sort(exchangeList, exchangeDefSort);
             }
           }
         }
-
-        JaxbUtils.write(directory, path, false);
       }
+
+      JaxbUtils.write(directory, path, false);
     }
     catch (Exception e)
     {
@@ -110,50 +107,48 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
+
+          for (Commodity commodity : commodityList)
           {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
-
-            for (Commodity commodity : commodityList)
+            if (name.equalsIgnoreCase(commodity.getName()))
             {
-              if (name.equalsIgnoreCase(commodity.getName()))
+
+              List<Exchange> exchangeList = commodity.getExchange();
+              for (Exchange exchangefile : exchangeList)
               {
-
-                List<Exchange> exchangeList = commodity.getExchange();
-                for (Exchange exchangefile : exchangeList)
+                if (exchangefile.getName().equalsIgnoreCase(oldConfigName))
                 {
-                  if (exchangefile.getName().equalsIgnoreCase(oldConfigName))
-                  {
 
-                    exchangefile.setName(exchange.getName());
-                    exchangefile.setDescription(exchange.getDescription());
-                    exchangefile.setSourceUri(exchange.getSourceUri());
-                    exchangefile.setSourceScope(exchange.getSourceScope());
-                    exchangefile.setSourceApp(exchange.getSourceApp());
-                    exchangefile.setSourceGraph(exchange.getSourceGraph());
-                    exchangefile.setTargetUri(exchange.getTargetUri());
-                    exchangefile.setTargetScope(exchange.getTargetScope());
-                    exchangefile.setTargetApp(exchange.getTargetApp());
-                    exchangefile.setTargetGraph(exchange.getTargetGraph());
-                  }
-
+                  exchangefile.setName(exchange.getName());
+                  exchangefile.setDescription(exchange.getDescription());
+                  exchangefile.setSourceUri(exchange.getSourceUri());
+                  exchangefile.setSourceScope(exchange.getSourceScope());
+                  exchangefile.setSourceApp(exchange.getSourceApp());
+                  exchangefile.setSourceGraph(exchange.getSourceGraph());
+                  exchangefile.setTargetUri(exchange.getTargetUri());
+                  exchangefile.setTargetScope(exchange.getTargetScope());
+                  exchangefile.setTargetApp(exchange.getTargetApp());
+                  exchangefile.setTargetGraph(exchange.getTargetGraph());
                 }
-                ExchangeComparator exchangeDefSort = new ExchangeComparator();
-                Collections.sort(exchangeList, exchangeDefSort);
+
               }
+              ExchangeComparator exchangeDefSort = new ExchangeComparator();
+              Collections.sort(exchangeList, exchangeDefSort);
             }
           }
         }
-        JaxbUtils.write(directory, path, false);
       }
+      
+      JaxbUtils.write(directory, path, false);
     }
     catch (Exception e)
     {
@@ -166,39 +161,37 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
+
+          for (Commodity commodity : commodityList)
           {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
-
-            for (Commodity commodity : commodityList)
+            if (comm.equalsIgnoreCase(commodity.getName()))
             {
-              if (comm.equalsIgnoreCase(commodity.getName()))
+
+              List<Exchange> exchangeList = commodity.getExchange();
+              for (Exchange exchange : exchangeList)
               {
-
-                List<Exchange> exchangeList = commodity.getExchange();
-                for (Exchange exchange : exchangeList)
+                if (exchange.getName().equalsIgnoreCase(name))
                 {
-                  if (exchange.getName().equalsIgnoreCase(name))
-                  {
-                    return exchange;
-                  }
-
+                  return exchange;
                 }
 
               }
+
             }
           }
         }
-        JaxbUtils.write(directory, path, false);
       }
+      
+      JaxbUtils.write(directory, path, false);
     }
     catch (Exception e)
     {
@@ -213,41 +206,39 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
+
+          for (Commodity commodity : commodityList)
           {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
-
-            for (Commodity commodity : commodityList)
+            if (comm.equalsIgnoreCase(commodity.getName()))
             {
-              if (comm.equalsIgnoreCase(commodity.getName()))
+
+              List<Exchange> exchangeList = commodity.getExchange();
+              for (Exchange exchange : exchangeList)
               {
-
-                List<Exchange> exchangeList = commodity.getExchange();
-                for (Exchange exchange : exchangeList)
+                if (exchange.getName().equalsIgnoreCase(name))
                 {
-                  if (exchange.getName().equalsIgnoreCase(name))
-                  {
-                    exchangeList.remove(exchange);
-                    break;
-                  }
-
+                  exchangeList.remove(exchange);
+                  break;
                 }
-                ExchangeComparator exchangeDefSort = new ExchangeComparator();
-                Collections.sort(exchangeList, exchangeDefSort);
+
               }
+              ExchangeComparator exchangeDefSort = new ExchangeComparator();
+              Collections.sort(exchangeList, exchangeDefSort);
             }
           }
         }
-        JaxbUtils.write(directory, path, false);
       }
+      
+      JaxbUtils.write(directory, path, false);
     }
     catch (Exception e)
     {
@@ -262,39 +253,37 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
+
+          for (Commodity commodity : commodityList)
           {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
-
-            for (Commodity commodity : commodityList)
+            if (commName.equalsIgnoreCase(commodity.getName()))
             {
-              if (commName.equalsIgnoreCase(commodity.getName()))
+
+              List<Exchange> exchangeList = commodity.getExchange();
+              for (Exchange exchange : exchangeList)
               {
-
-                List<Exchange> exchangeList = commodity.getExchange();
-                for (Exchange exchange : exchangeList)
+                if (exchange.getId().equalsIgnoreCase(xid))
                 {
-                  if (exchange.getId().equalsIgnoreCase(xid))
-                  {
-                    return exchange.getDataFilter();
-                  }
-
+                  return exchange.getDataFilter();
                 }
 
               }
+
             }
           }
         }
-        JaxbUtils.write(directory, path, false);
       }
+      
+      JaxbUtils.write(directory, path, false);
     }
     catch (Exception e)
     {
@@ -310,54 +299,51 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
-          {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
 
-            for (Commodity commodity : commodityList)
+          for (Commodity commodity : commodityList)
+          {
+            if (commName.equalsIgnoreCase(commodity.getName()))
             {
-              if (commName.equalsIgnoreCase(commodity.getName()))
+              List<Exchange> exchangeList = commodity.getExchange();
+              for (Exchange exchange : exchangeList)
               {
-                List<Exchange> exchangeList = commodity.getExchange();
-                for (Exchange exchange : exchangeList)
+                if (exchange.getId().equalsIgnoreCase(xid))
                 {
-                  if (exchange.getId().equalsIgnoreCase(xid))
+                  DataFilter df = exchange.getDataFilter();
+                  if (df == null)
                   {
-                    DataFilter df = exchange.getDataFilter();
-                    if (df == null)
-                    {
-                      df = new DataFilter();
-                      df.setExpressions(null);
-                      df.setOrderExpressions(null);
-                    }
-                    exchange.setDataFilter(df);
-                    if (mex != null)
-                    {
-                      df.setExpressions(null);
-                      df.setExpressions(mex);
-                    }
-                    if (mOe != null)
-                    {
-                      df.setOrderExpressions(null);
-                      df.setOrderExpressions(mOe);
-                    }
+                    df = new DataFilter();
+                    df.setExpressions(null);
+                    df.setOrderExpressions(null);
+                  }
+                  exchange.setDataFilter(df);
+                  if (mex != null)
+                  {
+                    df.setExpressions(null);
+                    df.setExpressions(mex);
+                  }
+                  if (mOe != null)
+                  {
+                    df.setOrderExpressions(null);
+                    df.setOrderExpressions(mOe);
                   }
                 }
-
               }
             }
           }
         }
-        JaxbUtils.write(directory, path, false);
       }
+      
+      JaxbUtils.write(directory, path, false);
     }
     catch (Exception e)
     {
@@ -370,24 +356,21 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+      for (Scope scopefromfile : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-        for (Scope scopefromfile : scopes)
+        String scopeName = scopefromfile.getName();
+        if (scopeName.equalsIgnoreCase(scope.getName()))
         {
-          String scopeName = scopefromfile.getName();
-          if (scopeName.equalsIgnoreCase(scope.getName()))
-          {
-            return scope;
-          }
+          return scope;
         }
-        scopes.add(scope);
-        ScopeComparator scopeSort = new ScopeComparator();
-        Collections.sort(scopes, scopeSort);
-
-        JaxbUtils.write(directory, path, false);
       }
+      scopes.add(scope);
+      ScopeComparator scopeSort = new ScopeComparator();
+      Collections.sort(scopes, scopeSort);
+
+      JaxbUtils.write(directory, path, false);              
     }
     catch (Exception e)
     {
@@ -401,23 +384,23 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+      
+      for (Scope scope : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-        for (Scope scope : scopes)
+        String scopefile = scope.getName();
+        if (oldScope.equalsIgnoreCase(scopefile))
         {
-          String scopefile = scope.getName();
-          if (oldScope.equalsIgnoreCase(scopefile))
-          {
-            scope.setName(newScope);
-            break;
-          }
+          scope.setName(newScope);
+          break;
         }
-        ScopeComparator scopeSort = new ScopeComparator();
-        Collections.sort(scopes, scopeSort);
-        JaxbUtils.write(directory, path, false);
       }
+      
+      ScopeComparator scopeSort = new ScopeComparator();
+      Collections.sort(scopes, scopeSort);
+      
+      JaxbUtils.write(directory, path, false);  
     }
     catch (Exception e)
     {
@@ -431,23 +414,22 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+      
+      for (Scope scopefromfile : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-        for (Scope scopefromfile : scopes)
+        String scope = scopefromfile.getName();
+        if (scopeName.equalsIgnoreCase(scope))
         {
-          String scope = scopefromfile.getName();
-          if (scopeName.equalsIgnoreCase(scope))
-          {
-            scopes.remove(scopefromfile);
-            break;
-          }
+          scopes.remove(scopefromfile);
+          break;
         }
-        ScopeComparator scopeSort = new ScopeComparator();
-        Collections.sort(scopes, scopeSort);
-        JaxbUtils.write(directory, path, false);
       }
+      
+      ScopeComparator scopeSort = new ScopeComparator();
+      Collections.sort(scopes, scopeSort);
+      JaxbUtils.write(directory, path, false);
     }
     catch (Exception e)
     {
@@ -460,26 +442,26 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+      
+      for (Scope scopefromfile : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-        for (Scope scopefromfile : scopes)
+        String scope = scopefromfile.getName();
+        if (scopeName.equalsIgnoreCase(scope))
         {
-          String scope = scopefromfile.getName();
-          if (scopeName.equalsIgnoreCase(scope))
-          {
-            return scopefromfile;
-          }
+          return scopefromfile;
         }
-        JaxbUtils.write(directory, path, false);
       }
+      
+      JaxbUtils.write(directory, path, false);
     }
     catch (Exception e)
     {
       String message = "Error posting new Scope of [" + scopeName + "." + "]: " + e;
       logger.error(message);
     }
+    
     return null;
   }
 
@@ -487,31 +469,28 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
-      {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
 
-        for (Scope s : scopes)
+      for (Scope s : scopes)
+      {
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          ApplicationData applicationData = s.getApplicationData();
+          if (applicationData != null)
           {
-            ApplicationData applicationData = s.getApplicationData();
-            if (applicationData != null)
+            List<Application> appData = applicationData.getApplication();
+            for (Application applicatio : appData)
             {
-              List<Application> appData = applicationData.getApplication();
-              for (Application applicatio : appData)
+              if (applicatio.getName().equalsIgnoreCase(app.getName()))
               {
-                if (applicatio.getName().equalsIgnoreCase(app.getName()))
-                {
-                  return app;
-                }
+                return app;
               }
-              appData.add(app);
-              AppDataComparator applicationSort = new AppDataComparator();
-              Collections.sort(appData, applicationSort);
-              JaxbUtils.write(directory, path, false);
             }
+            appData.add(app);
+            AppDataComparator applicationSort = new AppDataComparator();
+            Collections.sort(appData, applicationSort);
+            JaxbUtils.write(directory, path, false);
           }
         }
       }
@@ -521,6 +500,7 @@ public class DirectoryProvider
       String message = "Error posting Application of [" + scope + "." + "]: " + e;
       logger.error(message);
     }
+    
     return app;
   }
 
@@ -528,34 +508,31 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
-      {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
 
-        for (Scope s : scopes)
+      for (Scope s : scopes)
+      {
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          ApplicationData applicationData = s.getApplicationData();
+          if (applicationData != null)
           {
-            ApplicationData applicationData = s.getApplicationData();
-            if (applicationData != null)
+            List<Application> appData = applicationData.getApplication();
+            for (Application applicatio : appData)
             {
-              List<Application> appData = applicationData.getApplication();
-              for (Application applicatio : appData)
+              if (applicatio.getName().equalsIgnoreCase(app))
               {
-                if (applicatio.getName().equalsIgnoreCase(app))
-                {
-                  appData.remove(applicatio);
-                  break;
-                }
+                appData.remove(applicatio);
+                break;
               }
-              AppDataComparator applicationSort = new AppDataComparator();
-              Collections.sort(appData, applicationSort);
-              JaxbUtils.write(directory, path, false);
             }
+            AppDataComparator applicationSort = new AppDataComparator();
+            Collections.sort(appData, applicationSort);
+            JaxbUtils.write(directory, path, false);
           }
         }
-      }
+      } 
     }
     catch (Exception e)
     {
@@ -568,42 +545,44 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          ApplicationData applicationData = s.getApplicationData();
+          
+          if (applicationData != null)
           {
-            ApplicationData applicationData = s.getApplicationData();
-            if (applicationData != null)
+            List<Application> applications = applicationData.getApplication();
+            
+            for (Application application : applications)
             {
-              List<Application> appData = applicationData.getApplication();
-              for (Application applicatio : appData)
+              if (application.getName().equalsIgnoreCase(oldAppName))
               {
-                if (applicatio.getName().equalsIgnoreCase(oldAppName))
-                {
-                  applicatio.setName(app.getName());
-                  applicatio.setBaseUri(app.getBaseUri());
-                  applicatio.setDescription(app.getDescription());
+                application.setName(app.getName());
+                application.setBaseUri(app.getBaseUri());
+                application.setContext(app.getContext());
+                application.setDescription(app.getDescription());
 
-                  break;
-                }
+                break;
               }
-              AppDataComparator applicationSort = new AppDataComparator();
-              Collections.sort(appData, applicationSort);
-              JaxbUtils.write(directory, path, false);
-
             }
+            
+            AppDataComparator applicationSort = new AppDataComparator();
+            Collections.sort(applications, applicationSort);
+            JaxbUtils.write(directory, path, false);
           }
+          
+          break;
         }
       }
     }
     catch (Exception e)
     {
-      String message = "Error posting Application of [" + scope + "." + "]: " + e;
+      String message = "Error updating application [" + app.getName() + "." + "]: " + e;
       logger.error(message);
     }
   }
@@ -612,25 +591,27 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
-      {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
 
-        for (Scope s : scopes)
+      for (Scope s : scopes)
+      {
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          ApplicationData applicationData = s.getApplicationData();
+          
+          if (applicationData != null)
           {
-            ApplicationData applicationData = s.getApplicationData();
-            if (applicationData != null)
+            List<Application> applications = applicationData.getApplication();
+            
+            for (Application application : applications)
             {
-              List<Application> appData = applicationData.getApplication();
-              for (Application applicatio : appData)
+              if (application.getName().equalsIgnoreCase(app))
               {
-                if (applicatio.getName().equalsIgnoreCase(app))
-                {
-                  return applicatio;
-                }
+                if (application.getContext() == null || application.getContext().length() == 0)
+                  application.setContext(s.getName());
+                
+                return application;
               }
             }
           }
@@ -639,9 +620,10 @@ public class DirectoryProvider
     }
     catch (Exception e)
     {
-      String message = "Error posting Application of [" + scope + "." + "]: " + e;
+      String message = "Error adding application of [" + scope + "." + "]: " + e;
       logger.error(message);
     }
+    
     return null;
   }
 
@@ -649,38 +631,36 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          ApplicationData applicationData = s.getApplicationData();
+          List<Application> appData = applicationData.getApplication();
+
+          for (Application application : appData)
           {
-            ApplicationData applicationData = s.getApplicationData();
-            List<Application> appData = applicationData.getApplication();
-
-            for (Application application : appData)
+            if (appName.equalsIgnoreCase(application.getName()))
             {
-              if (appName.equalsIgnoreCase(application.getName()))
+              List<org.iringtools.directory.Graph> graf = application.getGraph();
+              for (org.iringtools.directory.Graph graphfile : graf)
               {
-                List<org.iringtools.directory.Graph> graf = application.getGraph();
-                for (org.iringtools.directory.Graph graphfile : graf)
+                if (graphfile.getName().equalsIgnoreCase(graph.getName()))
                 {
-                  if (graphfile.getName().equalsIgnoreCase(graph.getName()))
-                  {
-                    return graph;
-                  }
-
+                  return graph;
                 }
-                graf.add(graph);
-                GraphComparator graphSort = new GraphComparator();
-                Collections.sort(graf, graphSort);
+
               }
+              graf.add(graph);
+              GraphComparator graphSort = new GraphComparator();
+              Collections.sort(graf, graphSort);
             }
-            JaxbUtils.write(directory, path, false);
           }
+          
+          JaxbUtils.write(directory, path, false);
         }
       }
     }
@@ -696,38 +676,36 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          ApplicationData applicationData = s.getApplicationData();
+          List<Application> appData = applicationData.getApplication();
+
+          for (Application application : appData)
           {
-            ApplicationData applicationData = s.getApplicationData();
-            List<Application> appData = applicationData.getApplication();
-
-            for (Application application : appData)
+            if (appName.equalsIgnoreCase(application.getName()))
             {
-              if (appName.equalsIgnoreCase(application.getName()))
+              List<org.iringtools.directory.Graph> graf = application.getGraph();
+              for (org.iringtools.directory.Graph graphfile : graf)
               {
-                List<org.iringtools.directory.Graph> graf = application.getGraph();
-                for (org.iringtools.directory.Graph graphfile : graf)
+                if (graphfile.getName().equalsIgnoreCase(graph))
                 {
-                  if (graphfile.getName().equalsIgnoreCase(graph))
-                  {
-                    graf.remove(graphfile);
-                    break;
-                  }
-
+                  graf.remove(graphfile);
+                  break;
                 }
-                GraphComparator graphSort = new GraphComparator();
-                Collections.sort(graf, graphSort);
+
               }
+              GraphComparator graphSort = new GraphComparator();
+              Collections.sort(graf, graphSort);
             }
-            JaxbUtils.write(directory, path, false);
           }
+          
+          JaxbUtils.write(directory, path, false);
         }
       }
     }
@@ -742,42 +720,38 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          ApplicationData applicationData = s.getApplicationData();
+          List<Application> appData = applicationData.getApplication();
+
+          for (Application application : appData)
           {
-            ApplicationData applicationData = s.getApplicationData();
-            List<Application> appData = applicationData.getApplication();
-
-            for (Application application : appData)
+            if (appName.equalsIgnoreCase(application.getName()))
             {
-              if (appName.equalsIgnoreCase(application.getName()))
+              List<org.iringtools.directory.Graph> graf = application.getGraph();
+              for (org.iringtools.directory.Graph graphfile : graf)
               {
-                List<org.iringtools.directory.Graph> graf = application.getGraph();
-                for (org.iringtools.directory.Graph graphfile : graf)
+                if (graphfile.getName().equalsIgnoreCase(oldGraphName))
                 {
-                  if (graphfile.getName().equalsIgnoreCase(oldGraphName))
-                  {
-                    graphfile.setName(graph.getName());
-                    graphfile.setDescription(graph.getDescription());
-                    /*
-                     * graphfile.setCommodity(graph .getCommodity());
-                     */
+                  graphfile.setName(graph.getName());
+                  graphfile.setDescription(graph.getDescription());
+                  /*
+                   * graphfile.setCommodity(graph .getCommodity());
+                   */
 
-                    break;
-                  }
+                  break;
                 }
-                GraphComparator graphSort = new GraphComparator();
-                Collections.sort(graf, graphSort);
-                JaxbUtils.write(directory, path, false);
               }
+              GraphComparator graphSort = new GraphComparator();
+              Collections.sort(graf, graphSort);
+              JaxbUtils.write(directory, path, false);
             }
-
           }
         }
       }
@@ -793,31 +767,28 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          ApplicationData applicationData = s.getApplicationData();
+          List<Application> appData = applicationData.getApplication();
+
+          for (Application application : appData)
           {
-            ApplicationData applicationData = s.getApplicationData();
-            List<Application> appData = applicationData.getApplication();
-
-            for (Application application : appData)
+            if (appName.equalsIgnoreCase(application.getName()))
             {
-              if (appName.equalsIgnoreCase(application.getName()))
+              List<org.iringtools.directory.Graph> graf = application.getGraph();
+              for (org.iringtools.directory.Graph graphfile : graf)
               {
-                List<org.iringtools.directory.Graph> graf = application.getGraph();
-                for (org.iringtools.directory.Graph graphfile : graf)
+                if (graphfile.getName().equalsIgnoreCase(graph))
                 {
-                  if (graphfile.getName().equalsIgnoreCase(graph))
-                  {
-                    return graphfile;
-                  }
-
+                  return graphfile;
                 }
+
               }
             }
           }
@@ -836,30 +807,27 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
+          for (Commodity commodity : commodityList)
           {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
-            for (Commodity commodity : commodityList)
+            if (commodity.getName().equalsIgnoreCase(comm.getName()))
             {
-              if (commodity.getName().equalsIgnoreCase(comm.getName()))
-              {
-                return comm;
-              }
+              return comm;
             }
-
-            commodityList.add(comm);
-            CommodityComparator commoditySort = new CommodityComparator();
-            Collections.sort(commodityList, commoditySort);
-            JaxbUtils.write(directory, path, false);
           }
+
+          commodityList.add(comm);
+          CommodityComparator commoditySort = new CommodityComparator();
+          Collections.sort(commodityList, commoditySort);
+          JaxbUtils.write(directory, path, false);
         }
       }
     }
@@ -868,6 +836,7 @@ public class DirectoryProvider
       String message = "Error posting Commodity of [" + scope + "." + "]: " + e;
       logger.error(message);
     }
+    
     return comm;
   }
 
@@ -875,29 +844,26 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
-      {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
 
-        for (Scope s : scopes)
+      for (Scope s : scopes)
+      {
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
+          for (Commodity commodity : commodityList)
           {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
-            for (Commodity commodity : commodityList)
+            if (commodity.getName().equalsIgnoreCase(comm))
             {
-              if (commodity.getName().equalsIgnoreCase(comm))
-              {
-                commodityList.remove(commodity);
-                break;
-              }
+              commodityList.remove(commodity);
+              break;
             }
-            CommodityComparator commoditySort = new CommodityComparator();
-            Collections.sort(commodityList, commoditySort);
-            JaxbUtils.write(directory, path, false);
           }
+          CommodityComparator commoditySort = new CommodityComparator();
+          Collections.sort(commodityList, commoditySort);
+          JaxbUtils.write(directory, path, false);
         }
       }
     }
@@ -912,27 +878,24 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
+          for (Commodity commodity : commodityList)
           {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
-            for (Commodity commodity : commodityList)
+            if (commodity.getName().equalsIgnoreCase(comm))
             {
-              if (commodity.getName().equalsIgnoreCase(comm))
-              {
-                return commodity;
-              }
+              return commodity;
             }
-
-            JaxbUtils.write(directory, path, false);
           }
+
+          JaxbUtils.write(directory, path, false);
         }
       }
     }
@@ -948,30 +911,27 @@ public class DirectoryProvider
   {
     try
     {
-      if (IOUtils.fileExists(path))
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+
+      for (Scope s : scopes)
       {
-        Directory directory = JaxbUtils.read(Directory.class, path);
-        List<Scope> scopes = directory.getScope();
-
-        for (Scope s : scopes)
+        if (scope.equalsIgnoreCase(s.getName()))
         {
-          if (scope.equalsIgnoreCase(s.getName()))
+          DataExchanges exchangeData = s.getDataExchanges();
+          List<Commodity> commodityList = exchangeData.getCommodity();
+          for (Commodity commodity : commodityList)
           {
-            DataExchanges exchangeData = s.getDataExchanges();
-            List<Commodity> commodityList = exchangeData.getCommodity();
-            for (Commodity commodity : commodityList)
+            if (commodity.getName().equalsIgnoreCase(oldCommName))
             {
-              if (commodity.getName().equalsIgnoreCase(oldCommName))
-              {
-                commodity.setName(comm.getName());
+              commodity.setName(comm.getName());
 
-                break;
-              }
+              break;
             }
-            CommodityComparator commoditySort = new CommodityComparator();
-            Collections.sort(commodityList, commoditySort);
-            JaxbUtils.write(directory, path, false);
           }
+          CommodityComparator commoditySort = new CommodityComparator();
+          Collections.sort(commodityList, commoditySort);
+          JaxbUtils.write(directory, path, false);
         }
       }
     }

@@ -44,8 +44,7 @@ function createGridStore(container, url) {
   var store = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
       url: url,
-      timeout: 86400000
-    // 24 hours
+      timeout: 1800000  // 30 min
     }),
     reader: new Ext.data.DynamicGridReader({}),
     remoteSort: true,
@@ -928,7 +927,7 @@ function onTreeItemContextMenu(node, e) {
           e.stopEvent();
         } else if ((obj.parentNode.parentNode.text === 'Application Data')) {
           graphSubMenu.showAt([ x, y ]);
-          e.stopEvent()
+          e.stopEvent();
 
         } else if ((obj.text === 'Data Exchanges')) {
           newCommoditymenu.showAt([ x, y ]);
@@ -958,7 +957,7 @@ function buildEditDeleteSubMenu() {
       deleteScope(node, event);
     },
     text: 'Delete Scope'
-  }]
+  }];
 }
 
 function buildNewCommodityMenu() {
@@ -968,15 +967,13 @@ function buildNewCommodityMenu() {
 
       newCommodity(node, event);
       var view = Ext.getCmp('newCommWin');
-      // var view = Ext.widget('editDir');
       view.show();
     },
     text: 'New Commodity'
-  }]
+  }];
 }
 
 function deleteApp(node, event) {
-
   var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
   var appName = node.text;
   var scope = node.parentNode.parentNode.text;
@@ -999,7 +996,7 @@ function deleteApp(node, event) {
         Ext.Ajax.request({
           url: 'deleteApplication?' + '&scope =' + scope + '&appName =' + appName,
           method: 'POST',
-          timeout: 86400000, // 24 hours
+          timeout: 120000,
           success: function(response, request) {
             contentPanel.getEl().unmask();
             refresh();
@@ -1041,9 +1038,8 @@ function deleteGraph(node, event) {
         Ext.Ajax.request({
           url: 'deleteGraph?' + '&name =' + name + '&scope =' + scope + '&appName =' + appName,
           method: 'POST',
-          timeout: 86400000, // 24 hours
+          timeout: 120000,
           success: function(response, request) {
-            // Ext.Msg.alert('"'+ name + '"' +' Graph is deleted');
             contentPanel.getEl().unmask();
             refresh();
           },
@@ -1059,19 +1055,6 @@ function deleteGraph(node, event) {
       }
     }
   });
-
-  /*
-   * Ext.Msg.show({ // title: 'Choose', msg: 'Are you sure to delete '+ name + '
-   * Graph ?', buttons: Ext.MessageBox.YESNOCANCEL, modal: true, // buttons:
-   * Ext.MessageBox.OKCANCEL, //inputField: new IMS.form.DateField(), fn:
-   * function(buttonId, text) { // if (buttonId == 'ok') if(buttonId == 'yes'){
-   * 
-   * Ext.Ajax.request({ url: 'deleteGraph?'+ '&name ='+ name +'&scope =' + scope
-   * +'&appName =' + appName, method: 'POST', timeout: 86400000, // 24 hours
-   * success: function(response, request) { // Ext.Msg.alert('"'+ name + '"' +'
-   * Graph is deleted'); refresh(); }, failure: function(response, request) {
-   * Ext.Msg.alert('Delete Failed'); } }); } } });
-   */
 }
 
 function deleteCommodity(node, event) {
@@ -1097,7 +1080,7 @@ function deleteCommodity(node, event) {
         Ext.Ajax.request({
           url: 'deleteCommodity?' + '&commName =' + commName + '&scope =' + scope,
           method: 'POST',
-          timeout: 86400000, // 24 hours
+          timeout: 120000,
           success: function(response, request) {
             contentPanel.getEl().unmask();
             refresh();
@@ -1142,7 +1125,7 @@ function deleteConfig() {
           url: 'deleteExchangeConfig?' + '&scope =' + scope + '&commName =' + commName + '&name ='
               + exchangeConfigName + '&xid =' + xid,
           method: 'POST',
-          timeout: 86400000, // 24 hours
+          timeout: 120000,
           success: function(response, request) {
             contentPanel.getEl().unmask();
             refresh();
@@ -1310,7 +1293,7 @@ function SourceUri() {
   Ext.Ajax.request({
     url: 'SourcetestUri?' + '&sourceUri =' + sourceUri,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       var result = Ext.decode(response.responseText);
 
@@ -1335,13 +1318,12 @@ function testBaseUri() {
   var obj = Ext.getCmp('newAppForm');
   var form = obj.getForm();
 
-  // console.log("form ! and..."+form.findField('id').getValue());
   var baseUri = form.findField('baseUri').getValue();
   var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60 + 'px;border:1px solid #aaa;overflow:auto"';
   Ext.Ajax.request({
     url: 'BasetestUri?' + '&sourceUri =' + baseUri,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       var result = Ext.decode(response.responseText);
 
@@ -1375,7 +1357,7 @@ function TargetUri() {
   Ext.Ajax.request({
     url: 'testTargetUrl?' + '&targetUri =' + targetUri,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       var result = Ext.decode(response.responseText);
 
@@ -1406,10 +1388,9 @@ function saveExchangeConfig() {
   var xid = node.attributes.properties['Id'];
 
   Ext.Ajax.request({
-    // url: 'newExchange?form=' + form,
     url: 'newExchange?' + form + '&scope =' + scope + '&commodity =' + commodity + '&xid =' + xid,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       refresh();
     },
@@ -1430,7 +1411,7 @@ function buildNewScopeMenu() {
       view.show();
     },
     text: 'New Scope'
-  }
+  };
 }
 
 function buildNewApplicationMenu() {
@@ -1442,7 +1423,7 @@ function buildNewApplicationMenu() {
       view.show();
     },
     text: 'New Application'
-  }
+  };
 }
 
 function buildGraphSubMenu() {
@@ -1459,7 +1440,7 @@ function buildGraphSubMenu() {
       deleteGraph();
     },
     text: 'Delete Graph'
-  }]
+  }];
 }
 
 function editCommodity() {
@@ -1473,17 +1454,12 @@ function editCommodity() {
   view.setTitle("Edit Commodity");
   var obj = Ext.getCmp('newCommForm');
   var form = obj.getForm();
-  // form.setValues({scope: scopevalue, oldScope: scopevalue});
-  // form.setValues({scope: scopevalue});
 
   Ext.Ajax.request({
     url: 'getComm?' + '&scope =' + scope + '&commName =' + commNameValue,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
-      // alert("saved successfuly");
-      // var application =
-      // obj.getForm().setValues(Ext.JSON.decode(response.data));
       var comDetails = Ext.decode(response.responseText);
       form.setValues({
         commName: comDetails.name,
@@ -1516,7 +1492,7 @@ function editGraph() {
   Ext.Ajax.request({
     url: 'getGraph?' + '&scope =' + scope + '&appName =' + appNameValue + '&name =' + graphValue,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       var graph = Ext.decode(response.responseText);
       form.setValues({
@@ -1620,10 +1596,8 @@ function saveGraph() {
   Ext.Ajax.request({
     url: 'newGraph?' + form + '&scope =' + scope + '&appName =' + appName,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
-      // lert("saved successfuly");
-
       refresh();
     },
     failure: function(response, request) {
@@ -1651,11 +1625,10 @@ function buildApplicationSubMenu() {
     handler: function() {
       newGraph();
       var view = Ext.getCmp('newGraphWin');
-      // var view = Ext.widget('editDir');
       view.show();
     },
     text: 'Add New Graph'
-  }]
+  }];
 }
 
 function editApplication() {
@@ -1670,21 +1643,17 @@ function editApplication() {
   view.setTitle("Edit Application");
   var obj = Ext.getCmp('newAppForm');
   var form = obj.getForm();
-  // form.setValues({scope: scopevalue, oldScope: scopevalue});
-  // form.setValues({scope: scopevalue});
 
   Ext.Ajax.request({
     url: 'getApplication?' + '&scope =' + scope + '&appName =' + appNameValue,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
-      // alert("saved successfuly");
-      // var application =
-      // obj.getForm().setValues(Ext.JSON.decode(response.data));
       var application = Ext.decode(response.responseText);
       form.setValues({
         appName: application.name,
         appDesc: application.description,
+        appScope: application.context,
         baseUri: application.baseUri,
         oldAppName: appNameValue,
         oldScope: scope
@@ -1698,6 +1667,7 @@ function editApplication() {
     }
   });
 }
+
 function buildCommoditySubMenu() {
   return [{
     xtype: 'menuitem',
@@ -1728,18 +1698,8 @@ function buildCommoditySubMenu() {
       view.show();
       editDataFilter();
     },
-    // action: 'dataFiltersMenuItem',
     text: 'Apply Data Filters'
-  } /*
-     * , { xtype: 'menuitem', action: 'exchangereviewandacceptance', text:
-     * 'Review and Acceptance' }, { xtype: 'menuitem', action: 'exchange', icon:
-     * 'resources/images/16x16/exchange-send.png', text: 'Execute Exchange' }, {
-     * xtype: 'menuitem', action: 'exchangeHistory', icon:
-     * 'resources/images/16x16/history.png', text: 'Show History' }, { xtype:
-     * 'menuitem', action: 'exchangeSummary', icon:
-     * 'resources/images/16x16/file-table.png', text: 'Show Summary' }
-     */
-  ]
+  }];
 }
 
 function editExchangeConfig() {
@@ -1756,15 +1716,14 @@ function editExchangeConfig() {
   var formdata = obj.getForm();
 
   Ext.Ajax.request({
-    url: 'getExchange', // +'&scope ='+ scope + '&commName ='+ commodity
-    // +'&name =' + commConfigName,
+    url: 'getExchange',
     params: {
       scope: scope,
       commName: commodity,
       name: commConfigName
     },
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       var form = Ext.decode(response.responseText);
       formdata.setValues({
@@ -1819,7 +1778,7 @@ function deleteScope(node, event) {
         Ext.Ajax.request({
           url: 'deleteScope?' + '&scope =' + scope,
           method: 'POST',
-          timeout: 86400000, // 24 hours
+          timeout: 120000,
           success: function(response, request) {
             contentPanel.getEl().unmask();
             // Ext.Msg.alert('"'+ scope + '"' +' Context is
@@ -1854,7 +1813,7 @@ function editDeleteScope() {
   Ext.Ajax.request({
     url: 'getScope?' + '&scope =' + scopevalue,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       // alert("saved successfuly");
       var newScopeAdd = Ext.decode(response.responseText);
@@ -1876,22 +1835,18 @@ function editDeleteScope() {
 function newScope() {
   var newScopeForm = new Ext.FormPanel({
     id: 'newScopeForm',
-    height: 83,
-    width: 358,
-    bodyBorder: false,
-    bodyPadding: 15,
+    border: false,
     layout: 'form',
-    frame: true,
-    bodyStyle: 'padding:5px 5px 0',
+    frame: false,
+    bodyStyle: 'padding:15px',
     labelwidth: 75,
     items: [{
       xtype: 'textfield',
-      anchor: '95%',
       fieldLabel: 'Scope Name',
+      width: 240,
       name: 'scope'
     }, {
       xtype: 'hidden',
-      anchor: '100%',
       fieldLabel: 'Label',
       name: 'oldScope'
     }],
@@ -1901,7 +1856,6 @@ function newScope() {
         saveScope(node, button, event);
         newScopeWin.close();
       }
-    // margin: 10,
     }, {
       text: 'Cancel',
       handler: function(button, event) {
@@ -1916,6 +1870,8 @@ function newScope() {
     layout: {
       type: 'fit'
     },
+    height: 83,
+    width: 358,
     title: 'New Scope',
     modal: true,
     items: [ newScopeForm ]
@@ -1935,7 +1891,7 @@ function saveScope(node, button, event) {
   Ext.Ajax.request({
     url: 'newScope?' + form,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       // alert("saved successfuly");
       // newScopeWin.close();
@@ -2012,7 +1968,7 @@ function saveComm(node, button, event) {
   Ext.Ajax.request({
     url: 'newComm?' + form + '&scope=' + scope,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       refresh();
     },
@@ -2121,10 +2077,8 @@ function saveApp(node, button, event) {
   Ext.Ajax.request({
     url: 'newApplication?' + form + '&scope =' + scope,
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
-      // alert("saved successfuly");
-
       refresh();
     },
     failure: function(response, request) {
@@ -2165,18 +2119,10 @@ function editDataFilter() {
       xid: xid
     },
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       var dfList = Ext.decode(response.responseText);
       if (dfList !== null) {
-        // formdata.setValues({name: form.name,description:
-        // form.description, sourceUri: form.sourceUri, sourceScopeName
-        //: form.sourceScope, sourceAppName: form.sourceApp,
-        // sourceGraphName: form.sourceGraph , targetUri
-        //:form.targetUri, targetScopeName: form.targetScope,
-        // targetAppName: form.targetApp, targetGraphName:
-        // form.targetGraph, oldConfigName: commConfigName, oldCommName
-        //: commodity, oldScope:scope});
         for ( var i = 0; i < dfList.length; i++) {
           console.log("dfList.length is " + dfList.length);
           console.log("dfList[i][3] is " + dfList[i][3]);
@@ -2252,16 +2198,10 @@ function editDataFilter() {
       xid: xid
     },
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       var dfList = Ext.decode(response.responseText);
-      // formdata.setValues({name: form.name,description:
-      // form.description, sourceUri: form.sourceUri, sourceScopeName:
-      // form.sourceScope, sourceAppName: form.sourceApp, sourceGraphName
-      //: form.sourceGraph , targetUri:form.targetUri, targetScopeName:
-      // form.targetScope, targetAppName: form.targetApp, targetGraphName
-      //: form.targetGraph, oldConfigName: commConfigName, oldCommName:
-      // commodity, oldScope:scope});
+      
       if (dfList !== null) {
         for ( var i = 0; i < dfList.length; i++) {
 
@@ -2664,8 +2604,7 @@ function applyDataFilter(url) {
                 margins: '0, 20,0,0',
                 icon: 'resources/images/16x16/delete-icon.png'
               }]
-
-            }
+            };
 
             fieldSet.add(newrow);
 
@@ -3037,7 +2976,7 @@ function applyDataFilter(url) {
                 // margin: 10,
                 icon: 'resources/images/16x16/delete-icon.png'
               }]
-            }
+            };
 
             fieldSet.add(newrow);
             fieldSet.doLayout();
@@ -3270,7 +3209,7 @@ function saveDataFilter() {
       xid: xid
     },
     method: 'POST',
-    timeout: 86400000, // 24 hours
+    timeout: 120000,
     success: function(response, request) {
       // alert("saved successfuly");
       Ext.Ajax.request({

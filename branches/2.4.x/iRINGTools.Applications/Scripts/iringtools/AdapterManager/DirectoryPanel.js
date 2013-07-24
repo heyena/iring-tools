@@ -731,11 +731,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
           showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
         }
         else {
-          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
       },
       failure: function (response, request) {
-        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
       }
     })
   },
@@ -773,11 +773,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
                 showDialog(450, 100, 'Import Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
               }
               else {
-                showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+                showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
               }
             },
             failure: function (response, request) {
-              showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+              showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
             }
           });
         }
@@ -810,11 +810,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
           showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
         }
         else {
-          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
       },
       failure: function (response, request) {
-        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
       }
     })
   },
@@ -836,11 +836,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
           showDialog(450, 100, 'Delete Cache Result', 'Cache deleted successfully.', Ext.Msg.OK, null);
         }
         else {
-          showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+          showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
       },
       failure: function (response, request) {
-        showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
       }
     })
   },
