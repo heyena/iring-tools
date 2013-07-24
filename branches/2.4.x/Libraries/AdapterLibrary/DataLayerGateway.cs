@@ -195,7 +195,7 @@ namespace org.iringtools.adapter
               {
                   //If objectType is not specified then pick all filter files for that scope and inject it into the dictionary.
                   DirectoryInfo appDataDir = new DirectoryInfo(_settings["BaseDirectoryPath"] + _settings["AppDataPath"]);
-                  string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.xml", _settings["ProjectName"], _settings["ApplicationName"], "*");
+                  string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.later.xml", _settings["ProjectName"], _settings["ApplicationName"], "*");
                   FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
                   foreach (FileInfo file in filterFiles)
                   {
@@ -1162,7 +1162,7 @@ namespace org.iringtools.adapter
         throw new Exception("Data layer does not support search.");
       }
 
-      return ((IDataLayer2)_dataLayer).Search(objectType, query, filter, start, limit).ToList();
+      return ((IDataLayer2)_dataLayer).Search(objectType, query, filter, limit, start).ToList();
     }
 
     public long SearchCount(string objectType, string query, DataFilter filter)
