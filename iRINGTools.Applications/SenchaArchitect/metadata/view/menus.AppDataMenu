@@ -6,7 +6,8 @@
     },
     "codeClass": null,
     "userConfig": {
-        "width": 130,
+        "height": 65,
+        "width": 164,
         "designer|userClassName": "menus.AppDataMenu",
         "designer|userAlias": "appdatamenu"
     },
@@ -22,9 +23,30 @@
             "userConfig": {
                 "action": "showdata",
                 "icon": "Content/img/16x16/document-properties.png",
-                "text": "Open Grid"
+                "text": "View Application Data"
             },
             "designerId": "9708ce33-2748-4615-9805-e0e043d1c5ca",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "refreshdataobjectcache",
+                "icon": "Content/img/16x16/document-properties.png",
+                "text": "Refresh Cache"
+            },
+            "designerId": "7480dc64-47ec-42ec-9f73-b3df99d4f26f",
             "customConfigs": [
                 {
                     "group": "(Custom Properties)",

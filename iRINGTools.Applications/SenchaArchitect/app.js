@@ -33,7 +33,9 @@ Ext.application({
     'AM.view.mapping.LiteralWindow',
     'AM.view.directory.FileUpoadForm',
     'AM.view.directory.FileUploadWindow',
-    'AM.view.directory.DownloadGrid'
+    'AM.view.directory.DownloadGrid',
+    'AM.view.directory.ImportCacheForm',
+    'AM.view.directory.ImportCacheWindow'
   ],
   models: [
     'RelationModel',
@@ -54,7 +56,9 @@ Ext.application({
     'directory.FileUpoadForm',
     'directory.FileUploadWindow',
     'directory.DownloadGrid',
-    'directory.DownloadWindow'
+    'directory.DownloadWindow',
+    'directory.ImportCacheForm',
+    'directory.ImportCacheWindow'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

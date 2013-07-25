@@ -17,7 +17,8 @@ Ext.define('AM.view.menus.AppDataMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.appdatamenu',
 
-  width: 130,
+  height: 65,
+  width: 164,
 
   initComponent: function() {
     var me = this;
@@ -28,7 +29,13 @@ Ext.define('AM.view.menus.AppDataMenu', {
           xtype: 'menuitem',
           action: 'showdata',
           icon: 'Content/img/16x16/document-properties.png',
-          text: 'Open Grid'
+          text: 'View Application Data'
+        },
+        {
+          xtype: 'menuitem',
+          action: 'refreshdataobjectcache',
+          icon: 'Content/img/16x16/document-properties.png',
+          text: 'Refresh Cache'
         }
       ]
     });

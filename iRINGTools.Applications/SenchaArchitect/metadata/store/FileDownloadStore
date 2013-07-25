@@ -1,0 +1,23 @@
+{
+    "type": "jsonstore",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "model": "FileDownloadModel",
+        "storeId": "FileDownloadStore",
+        "designer|userClassName": "FileDownloadStore",
+        "designer|userAlias": "filedownloadstore",
+        "data": [
+            "[\r",
+            "  {file: 'Text/MNO',},\r",
+            "  {file: 'Text/MNO',},\r",
+            "  {file: 'Text/MNO',},\r",
+            "  {file: 'Text/MNO',}\r",
+            " ]"
+        ]
+    },
+    "designerId": "c47bb7fc-c622-4f9d-83ae-be96ead2c751"
+}
