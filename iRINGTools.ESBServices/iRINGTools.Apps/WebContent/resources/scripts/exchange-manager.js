@@ -1275,7 +1275,7 @@ function newExchangeConfig() {
     id: 'newExchangeConfigWin',
     title: 'New Exchange Definition',
     width: 540,
-    height: 524,
+    height: 516,
     modal: true,
     resizable: false,
     items: [ newExchConfig ]
@@ -2064,8 +2064,8 @@ function newApp() {
     id: 'newAppWin',
     title: 'New Application',
     width: 455,
-    height: 190,
-    resizable: true,
+    height: 200,
+    resizable: false,
     closable: true,
     modal: true,
     items: [ newAppForm ]
