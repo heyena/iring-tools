@@ -64,7 +64,9 @@ Ext.define('AM.controller.Directory', {
     'directory.FileUpoadForm',
     'directory.FileUploadWindow',
     'directory.DownloadGrid',
-    'directory.FileDownloadWindow'
+    'directory.FileDownloadWindow',
+    'directory.ImportCacheForm',
+    'directory.ImportCacheWindow'
   ],
 
   refs: [
@@ -751,6 +753,118 @@ Ext.define('AM.controller.Directory', {
     }
   },
 
+  onRefreshDataObjectCache: function(item, e, eOpts) {
+    var me = this;
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode(); 
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/RefreshObjectCache',
+      method: 'POST',
+      timeout: 3600000,  // 1 hour
+      params: {
+        'nodeid': node.data.id,//node.attributes.id,
+        'objectType': node.data.text//node.text
+      },
+      success: function (response, request) {
+        var responseObj = Ext.decode(response.responseText);
+
+        if (responseObj.Level == 0) {
+          showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        }
+      },
+      failure: function (response, request) {
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+      }
+    })
+
+  },
+
+  onRefreshCache: function(item, e, eOpts) {
+
+    var me = this;
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode(); 
+    Ext.Ajax.request({
+      url: 'AdapterManager/RefreshCache',
+      method: 'POST',
+      timeout: 28800000,  // 8 hours
+      params: {
+        'nodeid': node.data.id//node.attributes.id
+      },
+      success: function (response, request) {
+        var responseObj = Ext.decode(response.responseText);
+
+        if (responseObj.Level == 0) {
+          showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        }
+      },
+      failure: function (response, request) {
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+      }
+    })
+  },
+
+  onImportCache: function(item, e, eOpts) {
+
+    var me = this;
+    var win = Ext.widget('importcachewindow');
+    var form = win.down('form');
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode();
+
+    var formRecord = {
+      nodeid: node.data.id 
+    };
+
+
+    form.getForm().setValues(formRecord);
+
+    win.on('Save', function () {
+      win.destroy();
+    }, me);
+
+    win.on('reset', function () {
+      win.destroy();
+    }, me);
+
+    win.show();
+  },
+
+  onDeleteCache: function(item, e, eOpts) {
+
+    var me = this;
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode(); 
+    Ext.Ajax.request({
+      url: 'AdapterManager/DeleteCache',
+      method: 'POST',
+      timeout: 120000,  // 2 minutes
+      params: {
+        'nodeid': node.data.id//node.attributes.id
+      },
+      success: function (response, request) {
+        var responseObj = Ext.decode(response.responseText);
+
+        if (responseObj.Level == 0) {
+          showDialog(450, 100, 'Delete Cache Result', 'Cache deleted successfully.', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        }
+      },
+      failure: function (response, request) {
+        showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+      }
+    })
+  },
+
   init: function(application) {
     scopForExport = null;
     appForExport = null;
@@ -811,6 +925,18 @@ Ext.define('AM.controller.Directory', {
       },
       "form": {
         afterrender: this.onApplicationFormAfterRender
+      },
+      "menuitem[action=refreshdataobjectcache]": {
+        click: this.onRefreshDataObjectCache
+      },
+      "menuitem[action=refreshcache]": {
+        click: this.onRefreshCache
+      },
+      "menuitem[action=importcache]": {
+        click: this.onImportCache
+      },
+      "menuitem[action = deletcache]": {
+        click: this.onDeleteCache
       }
     });
   },

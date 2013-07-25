@@ -54,7 +54,9 @@
             "directory.FileUpoadForm",
             "directory.FileUploadWindow",
             "directory.DownloadGrid",
-            "directory.FileDownloadWindow"
+            "directory.FileDownloadWindow",
+            "directory.ImportCacheForm",
+            "directory.ImportCacheWindow"
         ],
         "designer|userClassName": "Directory"
     },
@@ -1181,7 +1183,7 @@
                     "          var newSetting = me.addSettings(key,value, ('key'+i), ('value'+i));\r",
                     "          newSetting[0].items[0].allowBlank = false;\r",
                     "          if(component.items.map['settingfieldset'])\r",
-                    "          \tcomponent.items.map['settingfieldset'].add(newSetting);\r",
+                    "          component.items.map['settingfieldset'].add(newSetting);\r",
                     "        }\r",
                     "      }\r",
                     "    }\r",
@@ -1194,6 +1196,178 @@
                 "designer|controlQuery": "form"
             },
             "designerId": "6ec7c09e-ed7e-414b-b47e-bd07b8c2f64a"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onRefreshDataObjectCache",
+                "implHandler": [
+                    "    var me = this;\r",
+                    "    var tree = me.getDirTree();\r",
+                    "    var node = tree.getSelectedNode(); \r",
+                    "\r",
+                    "    Ext.Ajax.request({\r",
+                    "      url: 'AdapterManager/RefreshObjectCache',\r",
+                    "      method: 'POST',\r",
+                    "      timeout: 3600000,  // 1 hour\r",
+                    "      params: {\r",
+                    "        'nodeid': node.data.id,//node.attributes.id,\r",
+                    "        'objectType': node.data.text//node.text\r",
+                    "      },\r",
+                    "      success: function (response, request) {\r",
+                    "        var responseObj = Ext.decode(response.responseText);\r",
+                    "\r",
+                    "        if (responseObj.Level == 0) {\r",
+                    "          showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);\r",
+                    "        }\r",
+                    "        else {\r",
+                    "          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);\r",
+                    "        }\r",
+                    "      },\r",
+                    "      failure: function (response, request) {\r",
+                    "        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);\r",
+                    "      }\r",
+                    "    })\r",
+                    ""
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=refreshdataobjectcache]"
+            },
+            "designerId": "5ffb4f71-6c11-471b-ac80-a3be745cc55e"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onRefreshCache",
+                "implHandler": [
+                    "    \r",
+                    "    var me = this;\r",
+                    "    var tree = me.getDirTree();\r",
+                    "    var node = tree.getSelectedNode(); \r",
+                    "    Ext.Ajax.request({\r",
+                    "      url: 'AdapterManager/RefreshCache',\r",
+                    "      method: 'POST',\r",
+                    "      timeout: 28800000,  // 8 hours\r",
+                    "      params: {\r",
+                    "        'nodeid': node.data.id//node.attributes.id\r",
+                    "      },\r",
+                    "      success: function (response, request) {\r",
+                    "        var responseObj = Ext.decode(response.responseText);\r",
+                    "\r",
+                    "        if (responseObj.Level == 0) {\r",
+                    "          showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);\r",
+                    "        }\r",
+                    "        else {\r",
+                    "          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);\r",
+                    "        }\r",
+                    "      },\r",
+                    "      failure: function (response, request) {\r",
+                    "        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);\r",
+                    "      }\r",
+                    "    })"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=refreshcache]"
+            },
+            "designerId": "0fabcfc6-47df-412c-8458-30b4d41a0a5b"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onImportCache",
+                "implHandler": [
+                    "\r",
+                    "var me = this;\r",
+                    "var win = Ext.widget('importcachewindow');\r",
+                    "var form = win.down('form');\r",
+                    "var tree = me.getDirTree();\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "\r",
+                    "var formRecord = {\r",
+                    "  nodeid: node.data.id \r",
+                    "};\r",
+                    "\r",
+                    "\r",
+                    "form.getForm().setValues(formRecord);\r",
+                    "\r",
+                    "win.on('Save', function () {\r",
+                    "  win.destroy();\r",
+                    "}, me);\r",
+                    "\r",
+                    "win.on('reset', function () {\r",
+                    "  win.destroy();\r",
+                    "}, me);\r",
+                    "\r",
+                    "win.show();"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=importcache]"
+            },
+            "designerId": "e3cfd022-b643-493c-b3eb-a091d55c4332"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onDeleteCache",
+                "implHandler": [
+                    "\r",
+                    "    var me = this;\r",
+                    "    var tree = me.getDirTree();\r",
+                    "    var node = tree.getSelectedNode(); \r",
+                    "    Ext.Ajax.request({\r",
+                    "      url: 'AdapterManager/DeleteCache',\r",
+                    "      method: 'POST',\r",
+                    "      timeout: 120000,  // 2 minutes\r",
+                    "      params: {\r",
+                    "        'nodeid': node.data.id//node.attributes.id\r",
+                    "      },\r",
+                    "      success: function (response, request) {\r",
+                    "        var responseObj = Ext.decode(response.responseText);\r",
+                    "\r",
+                    "        if (responseObj.Level == 0) {\r",
+                    "          showDialog(450, 100, 'Delete Cache Result', 'Cache deleted successfully.', Ext.Msg.OK, null);\r",
+                    "        }\r",
+                    "        else {\r",
+                    "          showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);\r",
+                    "        }\r",
+                    "      },\r",
+                    "      failure: function (response, request) {\r",
+                    "        showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);\r",
+                    "      }\r",
+                    "    })"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action = deletcache]"
+            },
+            "designerId": "836521ab-d6e7-43e5-9959-d8ef31aed428"
         }
     ]
 }

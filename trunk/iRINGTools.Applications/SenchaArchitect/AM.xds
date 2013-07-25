@@ -980,6 +980,22 @@
                 "Scripts/AM/model/FileDownloadModel.js"
             ],
             "className": "FileDownloadModel"
+        },
+        "f30f4a0c-cd5b-40ff-9f77-c8f20a5f51bd": {
+            "paths": [
+                "metadata/view/directory.ImportCacheForm",
+                "Scripts/AM/view/override/directory/ImportCacheForm.js",
+                "Scripts/AM/view/directory/ImportCacheForm.js"
+            ],
+            "className": "directory.ImportCacheForm"
+        },
+        "2a0051e3-0005-471d-bb11-7167a82113ae": {
+            "paths": [
+                "metadata/view/directory.ImportCacheWindow",
+                "Scripts/AM/view/override/directory/ImportCacheWindow.js",
+                "Scripts/AM/view/directory/ImportCacheWindow.js"
+            ],
+            "className": "directory.ImportCacheWindow"
         }
     },
     "viewOrderMap": {
@@ -1062,7 +1078,9 @@
             "10e81d90-8b94-4aa5-9dcd-98525d8deb1f",
             "18eb1a6e-206c-40d2-89c8-7aeb77e0f9d1",
             "891a8b6b-bd32-4cc1-860b-f08fe769b0d3",
-            "70726d51-c369-4512-84e0-e1a1ee5e410a"
+            "70726d51-c369-4512-84e0-e1a1ee5e410a",
+            "f30f4a0c-cd5b-40ff-9f77-c8f20a5f51bd",
+            "2a0051e3-0005-471d-bb11-7167a82113ae"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

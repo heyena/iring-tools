@@ -26,7 +26,25 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
           xtype: 'menuitem',
           action: 'refreshdata',
           icon: 'Content/img/16x16/document-properties.png',
-          text: 'Refresh'
+          text: 'Refresh Dictionary'
+        },
+        {
+          xtype: 'menuitem',
+          action: 'refreshcache',
+          icon: 'Content/img/16x16/document-properties.png',
+          text: 'Refresh Cache'
+        },
+        {
+          xtype: 'menuitem',
+          action: 'importcache',
+          icon: 'Content/img/16x16/document-properties.png',
+          text: 'Import Cache'
+        },
+        {
+          xtype: 'menuitem',
+          action: 'deletcache',
+          icon: 'Content/img/16x16/document-properties.png',
+          text: 'Delet Cache'
         }
       ]
     });

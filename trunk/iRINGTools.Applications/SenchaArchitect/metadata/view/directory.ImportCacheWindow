@@ -6,22 +6,15 @@
     },
     "codeClass": null,
     "userConfig": {
-        "border": false,
-        "height": 200,
-        "width": 460,
-        "designer|userClassName": "directory.ScopeWindow",
-        "designer|userAlias": "scopewindow",
+        "height": 119,
+        "width": 482,
+        "designer|userClassName": "directory.ImportCacheWindow",
+        "designer|userAlias": "importcachewindow",
         "layout": "fit",
-        "bodyPadding": 1,
-        "iconCls": "tabsScope",
-        "title": null,
+        "title": "Import Cache",
         "modal": true
     },
-    "configAlternates": {
-        "border": "boolean",
-        "bodyPadding": "number"
-    },
-    "designerId": "90c99fcb-05cd-42f8-a3df-8a16712e5601",
+    "designerId": "2a0051e3-0005-471d-bb11-7167a82113ae",
     "cn": [
         {
             "type": "linkedinstance",
@@ -30,8 +23,8 @@
                 "type": "array"
             },
             "codeClass": null,
-            "designerId": "e17e2ec1-59e1-409f-b953-f01cb465332c",
-            "masterInstanceId": "354a52a2-af56-440e-a28d-e03f1135a5e9"
+            "designerId": "b8e776d6-412c-40ef-8e41-2c2feabb1db5",
+            "masterInstanceId": "f30f4a0c-cd5b-40ff-9f77-c8f20a5f51bd"
         },
         {
             "type": "customevent",
@@ -43,7 +36,7 @@
             "userConfig": {
                 "name": "save"
             },
-            "designerId": "f9c21027-ad90-437d-8ec0-ae52a418f43a"
+            "designerId": "d1fba61a-4316-4a7b-bd0e-8e2b5e899410"
         },
         {
             "type": "customevent",
@@ -55,7 +48,7 @@
             "userConfig": {
                 "name": "reset"
             },
-            "designerId": "c7cddc92-3e3f-4a1d-a9d0-01d2e93599e1"
+            "designerId": "884725a7-e947-4976-a4e2-fdf40ccff3fb"
         }
     ]
 }

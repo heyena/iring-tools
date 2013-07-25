@@ -1,0 +1,37 @@
+{
+    "type": "Ext.data.Model",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "FileDownloadModel",
+        "designer|userAlias": "filedownloadmodel"
+    },
+    "configAlternates": {
+        "data": "array"
+    },
+    "designerId": "842afcd6-cf5a-4490-87bc-b828d4b9fb21",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "data",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "Ext.data.Field",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "file"
+            },
+            "designerId": "b54786ad-db7c-405e-8257-d06f86b2dbd9"
+        }
+    ]
+}
