@@ -143,37 +143,39 @@ namespace org.iringtools.adapter
                   break;
               }
           }
-        if (_lwDataLayer != null)
-        {
-          dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
-        }
-        else if (_dataLayer != null)
-        {
-          if (refresh)
+
+          if (_lwDataLayer != null)
           {
-            if (!string.IsNullOrEmpty(objectType))
-            {
-              Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
-
-              if (response.Level != StatusLevel.Success)
-              {
-                throw new Exception("Error refreshing dictionary for object type " + 
-                  objectType + ": " + response.Messages);
-              }
-            }
-            else
-            {
-              Response response = ((IDataLayer2)_dataLayer).RefreshAll();
-
-              if (response.Level != StatusLevel.Success)
-              {
-                throw new Exception("Error refreshing dictionary: " + response.Messages);
-              }
-            }
+              dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
           }
+          else if (_dataLayer != null)
+          {
+              if (refresh)
+              {
+                  if (!string.IsNullOrEmpty(objectType))
+                  {
+                      Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
 
-          dictionary = _dataLayer.GetDictionary();
+                      if (response.Level != StatusLevel.Success)
+                      {
+                          throw new Exception("Error refreshing dictionary for object type " +
+                            objectType + ": " + response.Messages);
+                      }
+                  }
+                  else
+                  {
+                      Response response = ((IDataLayer2)_dataLayer).RefreshAll();
+
+                      if (response.Level != StatusLevel.Success)
+                      {
+                          throw new Exception("Error refreshing dictionary: " + response.Messages);
+                      }
+                  }
+              }
+
+              dictionary = _dataLayer.GetDictionary();
           }
+          // Injecting the external filter in to the dictionary.
           if (dictionary != null)
           {
               if (objectType != null)
@@ -191,6 +193,7 @@ namespace org.iringtools.adapter
               }
               else
               {
+                  //If objectType is not specified then pick all filter files for that scope and inject it into the dictionary.
                   DirectoryInfo appDataDir = new DirectoryInfo(_settings["BaseDirectoryPath"] + _settings["AppDataPath"]);
                   string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.later.xml", _settings["ProjectName"], _settings["ApplicationName"], "*");
                   FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
@@ -198,9 +201,11 @@ namespace org.iringtools.adapter
                   {
                       string fileName = Path.GetFileNameWithoutExtension(file.Name);
                       string objectName = fileName.Substring(fileName.LastIndexOf('.') + 1);
+
                       var obj = (from dataObjects in dictionary.dataObjects
                                  where dataObjects.objectName == objectName
                                  select dataObjects).First();
+
                       if (obj != null)
                       {
                           if (obj.dataFilter == null)
@@ -210,12 +215,12 @@ namespace org.iringtools.adapter
                       }
                   }
               }
-        }
+          }
       }
       catch (Exception e)
       {
-        _logger.Error("Error getting data dictionary: " + e);
-        throw e;
+          _logger.Error("Error getting data dictionary: " + e);
+          throw e;
       }
 
       return dictionary;
@@ -292,19 +297,20 @@ namespace org.iringtools.adapter
 
         Response objectTypeRefresh = RefreshCache(cacheId, dataObject);
         response.Append(objectTypeRefresh);
+        return response;
       }
       catch (Exception e)
       {
-        _logger.Error("Error refreshing cache: " + e.Message);
+        string error = "Error refreshing cache for [" + objectType + "]: " + e.Message;
+        _logger.Error(error);
         response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
+        response.Messages.Add(error);
+        return response;
       }
       finally
       {
         SetCacheState(cacheId, CacheState.Ready);
       }
-
-      return response;
     }
 
     protected Response RefreshCache(string cacheId, DataObject objectType)
@@ -419,15 +425,17 @@ namespace org.iringtools.adapter
           bulkCopy.WriteToServer(table);
           status.Messages.Add("Cache data populated successfully.");
         }
+
+        return response;
       }
       catch (Exception e)
       {
-        _logger.Error("Error refreshing cache for object type " + objectType.objectName + ": " + e.Message);
+        string error = "Error refreshing cache for object type " + objectType.objectName + ": " + e.Message;
+        _logger.Error(error);
         response.Level = StatusLevel.Error;
-        response.Messages.Add(e.Message);
+        response.Messages.Add(error);
+        return response;
       }
-
-      return response;
     }
 
     public Response ImportCache(string baseUri, bool updateDictionary)
