@@ -1,58 +1,20 @@
-﻿// Copyright (c) 2009, ids-adi.org /////////////////////////////////////////////
-// All rights reserved.
-//------------------------------------------------------------------------------
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the ids-adi.org nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//------------------------------------------------------------------------------
-// THIS SOFTWARE IS PROVIDED BY ids-adi.org ''AS IS'' AND ANY
-// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL ids-adi.org BE LIABLE FOR ANY
-// DIRECT, INDIRECT, INCIDENTAL, SPECIAL + exEMPLARY, OR CONSEQUENTIAL DAMAGES
-// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-////////////////////////////////////////////////////////////////////////////////
-
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Xml;
+using System.ServiceModel.Web;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using log4net;
-using Ninject;
-using Ninject.Extensions.Xml;
-using org.ids_adi.qmxf;
-using org.iringtools.library;
-using org.iringtools.utility;
-using StaticDust.Configuration;
-using org.iringtools.adapter.projection;
-using System.ServiceModel;
-using System.Security.Principal;
-using System.Text;
-using org.iringtools.mapping;
-using org.iringtools.dxfr.manifest;
-using org.iringtools.adapter.identity;
 using Microsoft.ServiceModel.Web;
-using System.Threading;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using System.ServiceModel.Web;
 using Newtonsoft.Json;
+using Ninject;
+using org.iringtools.adapter.projection;
+using org.iringtools.dxfr.manifest;
+using org.iringtools.library;
+using org.iringtools.mapping;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter
 {
@@ -60,7 +22,7 @@ namespace org.iringtools.adapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProvider));
 
-    private GraphMap _graphMap = null;
+    protected GraphMap _graphMap;
     protected string _fixedIdentifierBoundary = "#";
     
     [Inject]
@@ -320,11 +282,13 @@ namespace org.iringtools.adapter
         InitializeScope(scope, app);
         InitializeDataLayer();
 
-        BuildCrossGraphMap(manifest, graph);
-        DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
-
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+
+        _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
         DataFilter filter = GetPresetFilters(dtoProjectionEngine);
+
+        BuildCrossGraphMap(manifest, graph);
+        DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         if (_settings["MultiGetDTIs"] == null || bool.Parse(_settings["MultiGetDTIs"]))
         {
@@ -703,14 +667,18 @@ namespace org.iringtools.adapter
         InitializeScope(scope, app);
         InitializeDataLayer();
 
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+
+        _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
+        DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
+
         BuildCrossGraphMap(dxiRequest.Manifest, graph);
 
         DataFilter filter = dxiRequest.DataFilter;
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);
-        filter.AppendFilter(GetPresetFilters(dtoProjectionEngine));
+        filter.AppendFilter(presetFilter);
 
         List<string> identifierList = _dataLayerGateway.GetIdentifiers(dataObject, filter);
         if (identifierList != null)
@@ -736,14 +704,18 @@ namespace org.iringtools.adapter
         InitializeScope(scope, app);
         InitializeDataLayer();
 
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+
+        _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
+        DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
+
         BuildCrossGraphMap(dxiRequest.Manifest, graph);
 
         DataFilter filter = dxiRequest.DataFilter;
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
         
         dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);        
-        filter.AppendFilter(GetPresetFilters(dtoProjectionEngine));
+        filter.AppendFilter(presetFilter);
 
         // get sort index
         string sortIndex = String.Empty;
@@ -1243,55 +1215,6 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
-
-    //TODO:
-    //public Response PostContents(string scope, string app, string graph, ContentObjects contentObjects)
-    //{
-    //  try
-    //  {
-    //    InitializeScope(scope, app);
-    //    Impersonate();
-    //    InitializeDataLayer();
-
-    //    IList<IDataObject> iDataObjects = new List<IDataObject>();
-
-    //    GraphMap graphMap = _mapping.FindGraphMap(graph);
-    //    if (graph == null)
-    //    {
-    //      throw new Exception("Graph [" + graph + "] not found.");
-    //    } 
-        
-    //    #region marshall contentObjects into iContentObjects
-    //    foreach (ContentObject contentObject in contentObjects)
-    //    {
-    //      IContentObject iContentObject = new GenericContentObject();
-    //      iContentObject.Identifier = contentObject.Identifier;
-    //      iContentObject.ContentType = contentObject.MimeType;
-    //      iContentObject.Content = iContentObject.Content.ToMemoryStream();
-
-    //      IContentObject dataObject = new GenericContentObject()
-    //      {
-    //        ObjectType = graphMap.dataObjectName
-    //      };
-
-    //      foreach (Attribute attr in contentObject.Attributes)
-    //      {
-    //        dataObject.SetPropertyValue(attr.Name, attr.Value);
-    //      }
-    //      contentObjects.Add(contentObject);
-    //    }
-    //    #endregion
-
-    //    //TODO:
-    //    //Response response = _dataLayerGateway.Post(iDataObjects);
-    //    //return response;
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    _logger.Error("Error posting content objects: " + ex.ToString());
-    //    throw ex;
-    //  }
-    //}
 
     // build cross _graphmap from manifest graph and mapping graph
     private void BuildCrossGraphMap(Manifest manifest, string graph)

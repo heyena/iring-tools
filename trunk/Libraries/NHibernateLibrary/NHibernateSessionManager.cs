@@ -7,7 +7,6 @@ using log4net;
 using NHibernate;
 using NHibernate.Cfg;
 using org.iringtools.utility;
-using Microsoft.SqlServer.Management.Smo.Wmi;
 
 namespace org.iringtools.nhibernate
 {
@@ -17,8 +16,8 @@ namespace org.iringtools.nhibernate
     private static volatile NHibernateSessionManager _instance;
     private static object _lockObj = new Object();
     private static volatile Dictionary<string, ISessionFactory> _sessionFactories;
-    
-    private NHibernateSessionManager() {}
+
+    private NHibernateSessionManager() { }
 
     public static NHibernateSessionManager Instance
     {
@@ -63,22 +62,6 @@ namespace org.iringtools.nhibernate
       }
     }
 
-    private string getProcessedConnectionString(string connStr)
-    {
-      string mssqlInstanceName = "";
-      ManagedComputer mc = new ManagedComputer();
-      if (mc.ServerInstances.Count == 1)
-        mssqlInstanceName = mc.ServerInstances[0].Name;
-
-      if (mssqlInstanceName == "")
-        mssqlInstanceName = "SQLEXPRESS";
-
-      string[] parts = connStr.Split(';');
-      parts[0] = parts[0] + mssqlInstanceName;
-
-      return parts[0] + ";" + parts[1] + ";" + parts[2] + ";" + parts[3];
-    }
-
     private void InitSessionFactory(string path, string context)
     {
       try
@@ -87,7 +70,6 @@ namespace org.iringtools.nhibernate
         {
           string cfgPath = string.Format("{0}nh-configuration.{1}.xml", path, context);
           string mappingPath = string.Format("{0}nh-mapping.{1}.xml", path, context);
-          string connStr = "";
 
           if (File.Exists(cfgPath) && File.Exists(mappingPath))
           {
@@ -95,9 +77,7 @@ namespace org.iringtools.nhibernate
             cfg.Configure(cfgPath);
 
             string connStrProp = "connection.connection_string";
-            string dialectPro = "dialect";
-            ISessionFactory sessionFactory = null;
-            connStr = cfg.Properties[connStrProp];
+            string connStr = cfg.Properties[connStrProp];
 
             if (connStr.ToUpper().Contains("DATA SOURCE"))
             {
@@ -114,23 +94,7 @@ namespace org.iringtools.nhibernate
               cfg.Properties[connStrProp] = EncryptionUtility.Decrypt(connStr);
             }
 
-            Configuration ctfConfiguration = cfg.AddFile(mappingPath);
-
-            try
-            {
-              sessionFactory = ctfConfiguration.BuildSessionFactory();
-            }
-            catch (Exception e)
-            {
-              if (cfg.Properties[dialectPro].ToLower().Contains("mssql"))
-              {
-                cfg.Properties[connStrProp] = getProcessedConnectionString(connStr);
-                sessionFactory = ctfConfiguration.BuildSessionFactory();
-              }
-              else
-                throw e;
-            }
-
+            ISessionFactory sessionFactory = cfg.AddFile(mappingPath).BuildSessionFactory();
             string factoryKey = context.ToLower();
             _sessionFactories[factoryKey] = sessionFactory;
           }
