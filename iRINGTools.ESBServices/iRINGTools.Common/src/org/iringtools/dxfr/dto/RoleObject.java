@@ -1,6 +1,7 @@
 
 package org.iringtools.dxfr.dto;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -52,8 +53,11 @@ import javax.xml.bind.annotation.XmlType;
     "oldValues"
 })
 @XmlRootElement(name = "roleObject")
-public class RoleObject {
+public class RoleObject
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     protected RoleType type;
     @XmlElement(required = true)
     protected String roleId;

@@ -1,6 +1,7 @@
 
 package org.iringtools.dxfr.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,8 +33,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "RoleValues", propOrder = {
     "items"
 })
-public class RoleValues {
+public class RoleValues
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(name = "value", required = true)
     protected List<String> items;
 
