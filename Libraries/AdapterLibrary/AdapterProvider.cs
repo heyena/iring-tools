@@ -3029,6 +3029,48 @@ namespace org.iringtools.adapter
         {
           dataObjects = _projectionEngine.ToDataObjects(_dataObjDef.objectName, ref xml);
           SetObjectState(action, dataObjects);
+
+          // throw exception if all key properties are not provided
+          if (action != PostAction.Create)
+          {
+            for (int i = 0; i < dataObjects.Count; i++)
+            {
+              IDataObject dataObject = dataObjects[i];
+
+              if (_dataObjDef.keyProperties.Count == 1)
+              {
+                string keyProp = _dataObjDef.keyProperties[0].keyPropertyName;
+                object propValue = dataObject.GetPropertyValue(keyProp);
+                if (propValue == null)
+                {
+                  //TODO: remove object from list and add error in payload
+                  throw new Exception("Value of key property: " + keyProp + " cannot be null.");
+                }
+              }
+              else if (_dataObjDef.keyProperties.Count > 1)
+              {
+                bool isKeyPropertiesHaveValues = false;
+                foreach (KeyProperty keyProp in _dataObjDef.keyProperties)
+                {
+                  object propValue = dataObject.GetPropertyValue(keyProp.keyPropertyName);
+
+                  // it is acceptable to have some key property values to be null but not all
+                  if (propValue != null)
+                  {
+                    isKeyPropertiesHaveValues = true;
+                    break;
+                  }
+                }
+
+                if (!isKeyPropertiesHaveValues)
+                {
+                  //TODO: remove object from list and add error in payload
+                  throw new Exception("Value of key property must for atleat one key property.");
+                }
+
+              }
+            }
+          }
         }
 
         response = _dataLayerGateway.Update(_dataObjDef, dataObjects);
