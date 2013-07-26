@@ -216,6 +216,8 @@ namespace org.iringtools.adapter
                   }
               }
           }
+
+        
       }
       catch (Exception e)
       {
@@ -1042,7 +1044,17 @@ namespace org.iringtools.adapter
 
             foreach (SerializableDataObject sdo in updatedDataObjects)
             {
-              IDataObject idataObject = _dataLayer.Create(objectType.objectName, new List<string>() {sdo.Id}).First();
+              IDataObject idataObject = null;
+
+              if (string.IsNullOrEmpty(sdo.Id))
+              {
+                idataObject = _dataLayer.Create(objectType.objectName, null).First();
+              }
+              else
+              {
+                idataObject = _dataLayer.Create(objectType.objectName, new List<string>() { sdo.Id }).First();                
+              }
+              
               
               // copy properies
               foreach (var pair in sdo.Dictionary)
