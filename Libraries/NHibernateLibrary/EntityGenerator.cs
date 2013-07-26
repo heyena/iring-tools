@@ -274,14 +274,12 @@ namespace org.iringtools.nhibernate
           DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
           string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
-          if (i == 0)
+          if (i > 0)
           {
-            _dataObjectWriter.WriteLine("_idString += {0}.ToString();", keyName);
+            _dataObjectWriter.WriteLine("_idString += \"{0}\";", dataObject.keyDelimeter);
           }
-          else
-          {
-            _dataObjectWriter.WriteLine("_idString += \"{0}\" + {1}.ToString();", dataObject.keyDelimeter, keyName);
-          }
+
+          _dataObjectWriter.WriteLine("_idString += Convert.ToString({0});", keyName);
         }
 
         _dataObjectWriter.WriteLine("return _idString;");

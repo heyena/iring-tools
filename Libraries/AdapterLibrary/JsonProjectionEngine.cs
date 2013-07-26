@@ -106,6 +106,7 @@ namespace org.iringtools.adapter.projection
                 if (dataProperty != null)
                 {
                   object value = dataObj.GetPropertyValue(keyProperty.keyPropertyName);
+
                   if (value != null)
                   {
                     if (dataProperty.dataType == DataType.Char ||
@@ -123,14 +124,18 @@ namespace org.iringtools.adapter.projection
 
                       value = valueStr;
                     }
-
-                    if (!string.IsNullOrEmpty(dataItem.id))
-                    {
-                      dataItem.id += dataObject.keyDelimeter;
-                    }
-
-                    dataItem.id += value;
                   }
+                  else
+                  {
+                    value = string.Empty;
+                  }
+
+                  if (!string.IsNullOrEmpty(dataItem.id))
+                  {
+                    dataItem.id += dataObject.keyDelimeter;
+                  }
+
+                  dataItem.id += value;
                 }
               }
 
