@@ -15,18 +15,19 @@
 
 Ext.define('AM.view.directory.FileDownloadWindow', {
   extend: 'Ext.window.Window',
-  alias: 'widget.filedownloadwindow',
+  alias: 'widget.filedownloadwindows',
 
   requires: [
-    'AM.view.directory.DownloadGrid'
+    'AM.view.directory.DownloadForm'
   ],
 
-  height: 342,
-  width: 843,
+  height: 362,
+  width: 820,
   layout: {
     type: 'fit'
   },
   title: 'Download File',
+  modal: true,
 
   initComponent: function() {
     var me = this;
@@ -34,7 +35,7 @@ Ext.define('AM.view.directory.FileDownloadWindow', {
     Ext.applyIf(me, {
       items: [
         {
-          xtype: 'downloadgrid'
+          xtype: 'downloadform'
         }
       ],
       dockedItems: [

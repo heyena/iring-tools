@@ -17,8 +17,6 @@ Ext.define('AM.view.directory.DownloadGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.downloadgrid',
 
-  height: 250,
-  width: 400,
   store: 'FileDownloadStore',
 
   initComponent: function() {
@@ -33,19 +31,22 @@ Ext.define('AM.view.directory.DownloadGrid', {
           flex: 1
         },
         {
-          xtype: 'actioncolumn',
-          width: 40,
-          align: 'center',
-          menuDisabled: true,
-          items: [
-            {
-              handler: function(view, rowIndex, colIndex, item, e, record, row) {
-                alert(record.data.file);
-              },
-              icon: 'Content/img/16x16/document-down.png',
-              tooltip: 'Download File'
+          xtype: 'gridcolumn',
+          renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+            var scope ;
+            var application ;
+            if(this.up().items!=undefined){
+              scope = this.up().items.map['scopeId'].value;
+              application =this.up().items.map['applicationId'].value; 
             }
-          ]
+            return "<a style='color: #0276FD' href='/mapping/export?scope='" + scope + '&application=' + application +'&file=' + record.data.file +" target='" + "_blank" + "'> Download</a>";
+
+            //return "<a style='color: #0276FD' href='/File/Export?scope='" + scope + '&application=' + application +'&file=' + record.data.File +'target='" + "'_blank" + '"'> Download</a>;
+
+          },
+          width: 70,
+          dataIndex: 'Download',
+          menuDisabled: true
         }
       ]
     });

@@ -27,7 +27,8 @@
             "directory.DownloadGrid",
             "directory.DownloadWindow",
             "directory.ImportCacheForm",
-            "directory.ImportCacheWindow"
+            "directory.ImportCacheWindow",
+            "directory.DownloadForm"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

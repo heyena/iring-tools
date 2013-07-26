@@ -44,7 +44,7 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
           xtype: 'menuitem',
           action: 'deletcache',
           icon: 'Content/img/16x16/document-properties.png',
-          text: 'Delet Cache'
+          text: 'Delete Cache'
         }
       ]
     });

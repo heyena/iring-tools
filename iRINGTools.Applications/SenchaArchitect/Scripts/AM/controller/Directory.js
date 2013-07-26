@@ -66,7 +66,8 @@ Ext.define('AM.controller.Directory', {
     'directory.DownloadGrid',
     'directory.FileDownloadWindow',
     'directory.ImportCacheForm',
-    'directory.ImportCacheWindow'
+    'directory.ImportCacheWindow',
+    'directory.DownloadForm'
   ],
 
   refs: [
@@ -686,19 +687,21 @@ Ext.define('AM.controller.Directory', {
 
   onFileDownload: function(item, e, eOpts) {
     var me = this;
-    var win = Ext.widget('filedownloadwindow');
-    var form = win.down('form');
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
+    var win = Ext.widget('filedownloadwindows');
 
+    //win.scope = node.parentNode.data.text;
+    //win.application = node.data.text ;
+    var form = win.down('downloadform');
     var formRecord = {
       scope: node.parentNode.data.text,
       application: node.data.text 
     };
 
 
-    /*form.getForm().setValues(formRecord);
-
+    form.getForm().setValues(formRecord);
+    /*
     win.on('Save', function () {
     win.destroy();
     }, me);

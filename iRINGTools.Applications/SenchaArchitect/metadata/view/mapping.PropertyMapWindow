@@ -37,8 +37,8 @@
             },
             "codeClass": null,
             "userConfig": {
-                "designer|displayName": "PropertyMapForm",
-                "initComponent": null
+                "initComponent": null,
+                "designer|displayName": "PropertyMapForm"
             },
             "designerId": "001f96e1-ae57-4938-b430-bbb310279b2c",
             "customConfigs": [

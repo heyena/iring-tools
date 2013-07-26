@@ -11,7 +11,8 @@
         "designer|userClassName": "directory.FileUploadWindow",
         "designer|userAlias": "fileuploadwindow",
         "layout": "fit",
-        "title": "File Upload"
+        "title": "File Upload",
+        "modal": true
     },
     "designerId": "18eb1a6e-206c-40d2-89c8-7aeb77e0f9d1",
     "cn": [
