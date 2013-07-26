@@ -41,6 +41,7 @@ Ext.define('AM.view.directory.FileUpoadForm', {
           fieldLabel: 'File',
           labelWidth: 40,
           name: 'filePath',
+          allowBlank: false,
           emptyText: 'Select a File'
         },
         {
@@ -105,7 +106,7 @@ Ext.define('AM.view.directory.FileUpoadForm', {
         }
       });
     } else {
-      message = 'Form is not complete. Cannot upload file.';
+      message = 'Please Select a file to upload.';
       showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
     }
 

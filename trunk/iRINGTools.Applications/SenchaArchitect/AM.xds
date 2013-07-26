@@ -996,6 +996,14 @@
                 "Scripts/AM/view/directory/ImportCacheWindow.js"
             ],
             "className": "directory.ImportCacheWindow"
+        },
+        "432c1ae6-f4e2-40e7-a3e6-5a7f25c5079b": {
+            "paths": [
+                "metadata/view/directory.DownloadForm",
+                "Scripts/AM/view/override/directory/DownloadForm.js",
+                "Scripts/AM/view/directory/DownloadForm.js"
+            ],
+            "className": "directory.DownloadForm"
         }
     },
     "viewOrderMap": {
@@ -1080,7 +1088,8 @@
             "891a8b6b-bd32-4cc1-860b-f08fe769b0d3",
             "70726d51-c369-4512-84e0-e1a1ee5e410a",
             "f30f4a0c-cd5b-40ff-9f77-c8f20a5f51bd",
-            "2a0051e3-0005-471d-bb11-7167a82113ae"
+            "2a0051e3-0005-471d-bb11-7167a82113ae",
+            "432c1ae6-f4e2-40e7-a3e6-5a7f25c5079b"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",

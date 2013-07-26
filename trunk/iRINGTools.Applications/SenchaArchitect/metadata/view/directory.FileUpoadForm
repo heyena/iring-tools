@@ -38,6 +38,7 @@
                 "fieldLabel": "File",
                 "labelWidth": 40,
                 "name": "filePath",
+                "allowBlank": false,
                 "emptyText": "Select a File"
             },
             "designerId": "02ebd8f0-b7d6-4115-9925-1d8867988b58"
@@ -182,7 +183,7 @@
                     "    }\r",
                     "  });\r",
                     "} else {\r",
-                    "  message = 'Form is not complete. Cannot upload file.';\r",
+                    "  message = 'Please Select a file to upload.';\r",
                     "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   \r",
                     "}\r",
                     ""

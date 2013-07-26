@@ -26,6 +26,7 @@ Ext.define('AM.view.directory.FileUploadWindow', {
     type: 'fit'
   },
   title: 'File Upload',
+  modal: true,
 
   initComponent: function() {
     var me = this;

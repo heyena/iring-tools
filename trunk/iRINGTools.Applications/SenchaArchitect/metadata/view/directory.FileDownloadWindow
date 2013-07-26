@@ -6,14 +6,29 @@
     },
     "codeClass": null,
     "userConfig": {
-        "height": 342,
-        "width": 843,
+        "application": null,
+        "scope": null,
+        "height": 362,
+        "width": 820,
         "designer|userClassName": "directory.FileDownloadWindow",
-        "designer|userAlias": "filedownloadwindow",
+        "designer|userAlias": "filedownloadwindows",
         "layout": "fit",
-        "title": "Download File"
+        "title": "Download File",
+        "modal": true
     },
     "designerId": "70726d51-c369-4512-84e0-e1a1ee5e410a",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "application",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "scope",
+            "type": "string"
+        }
+    ],
     "cn": [
         {
             "type": "linkedinstance",
@@ -22,8 +37,8 @@
                 "type": "array"
             },
             "codeClass": null,
-            "designerId": "35b26a4e-f5ae-4827-ba9b-846292d40051",
-            "masterInstanceId": "891a8b6b-bd32-4cc1-860b-f08fe769b0d3"
+            "designerId": "c26a9f32-6110-4a03-9b7d-2434080f99ed",
+            "masterInstanceId": "432c1ae6-f4e2-40e7-a3e6-5a7f25c5079b"
         },
         {
             "type": "Ext.toolbar.Toolbar",
