@@ -380,7 +380,7 @@ public class DirectoryProvider
     return scope;
   }
 
-  public void postEditedScope(String newScope, String oldScope)
+  public void postEditedScope(String newScopeName, String oldScopeName)
   {
     try
     {
@@ -389,10 +389,25 @@ public class DirectoryProvider
       
       for (Scope scope : scopes)
       {
-        String scopefile = scope.getName();
-        if (oldScope.equalsIgnoreCase(scopefile))
+        String scopeName = scope.getName();
+        
+        if (oldScopeName.equalsIgnoreCase(scopeName))
         {
-          scope.setName(newScope);
+          scope.setName(newScopeName);
+          
+          ApplicationData applicationData = scope.getApplicationData();
+          
+          if (applicationData != null)
+          {
+            List<Application> applications = applicationData.getApplication();
+            
+            for (Application application : applications)
+            {
+              if (application.getContext() == null || application.getContext().length() == 0)
+                application.setContext(scopeName);
+            }
+          }
+          
           break;
         }
       }
@@ -404,7 +419,7 @@ public class DirectoryProvider
     }
     catch (Exception e)
     {
-      String message = "Error editing Scope of [" + newScope + "." + "]: " + e;
+      String message = "Error editing Scope of [" + newScopeName + "." + "]: " + e;
       logger.error(message);
     }
 
