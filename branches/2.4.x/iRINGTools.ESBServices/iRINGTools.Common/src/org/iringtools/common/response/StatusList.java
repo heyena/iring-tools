@@ -1,25 +1,27 @@
 
 package org.iringtools.common.response;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for StatusList complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="StatusList">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="status" type="{http://www.iringtools.org/common/response}Status" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.iringtools.org/common/response}status" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,11 +31,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StatusList", propOrder = {
+@XmlType(name = "", propOrder = {
     "items"
 })
-public class StatusList {
+@XmlRootElement(name = "statusList")
+public class StatusList
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(name = "status", required = true)
     protected List<Status> items;
 

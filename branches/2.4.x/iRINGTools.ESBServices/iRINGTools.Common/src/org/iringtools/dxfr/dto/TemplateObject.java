@@ -1,6 +1,7 @@
 
 package org.iringtools.dxfr.dto;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -40,8 +41,11 @@ import javax.xml.bind.annotation.XmlType;
     "index"
 })
 @XmlRootElement(name = "templateObject")
-public class TemplateObject {
+public class TemplateObject
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected String templateId;
     @XmlElement(required = true)

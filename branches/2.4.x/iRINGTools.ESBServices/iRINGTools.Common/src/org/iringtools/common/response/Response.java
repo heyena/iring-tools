@@ -1,6 +1,7 @@
 
 package org.iringtools.common.response;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,19 +12,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java class for Response complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Response">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="level" type="{http://www.iringtools.org/common/response}Level"/>
  *         &lt;element name="dateTimeStamp" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="statusList" type="{http://www.iringtools.org/common/response}StatusList"/>
- *         &lt;element name="messages" type="{http://www.iringtools.org/common/response}Messages"/>
+ *         &lt;element ref="{http://www.iringtools.org/common/response}statusList"/>
+ *         &lt;element ref="{http://www.iringtools.org/common/response}messages"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,15 +34,18 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Response", propOrder = {
+@XmlType(name = "", propOrder = {
     "level",
     "dateTimeStamp",
     "statusList",
     "messages"
 })
 @XmlRootElement(name = "response")
-public class Response {
+public class Response
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected Level level;
     @XmlElement(required = true)

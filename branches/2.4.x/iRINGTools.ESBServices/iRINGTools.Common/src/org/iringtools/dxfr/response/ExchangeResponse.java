@@ -1,10 +1,10 @@
 
 package org.iringtools.dxfr.response;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -70,9 +70,11 @@ import org.iringtools.common.response.Level;
     "poolSize",
     "summary"
 })
-@XmlRootElement(name = "exchangeResponse")
-public class ExchangeResponse {
+public class ExchangeResponse
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected String exchangeId;
     @XmlElement(required = true)

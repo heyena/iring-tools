@@ -1,6 +1,7 @@
 
 package org.iringtools.dxfr.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,8 +35,11 @@ import javax.xml.bind.annotation.XmlType;
     "items"
 })
 @XmlRootElement(name = "dataTransferObjectList")
-public class DataTransferObjectList {
+public class DataTransferObjectList
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(name = "dataTransferObject", required = true)
     protected List<DataTransferObject> items;
 

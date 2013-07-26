@@ -1,26 +1,28 @@
 
 package org.iringtools.common.response;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Status complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Status">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="level" type="{http://www.iringtools.org/common/response}Level"/>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="results" type="{http://www.iringtools.org/common/response}Results"/>
- *         &lt;element name="messages" type="{http://www.iringtools.org/common/response}Messages"/>
+ *         &lt;element ref="{http://www.iringtools.org/common/response}results"/>
+ *         &lt;element ref="{http://www.iringtools.org/common/response}messages"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,14 +32,18 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Status", propOrder = {
+@XmlType(name = "", propOrder = {
     "level",
     "identifier",
     "results",
     "messages"
 })
-public class Status {
+@XmlRootElement(name = "status")
+public class Status
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected Level level;
     @XmlElement(required = true)
