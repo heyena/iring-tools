@@ -626,6 +626,7 @@ namespace org.iringtools.adapter.projection
             {
               roleObject.relatedClassId = roleMap.classMap.id;
               roleObject.relatedClassName = roleMap.classMap.name;
+              roleObject.classPath = roleMap.classMap.path;
               classRoles.Add(roleMap);
               roleObjectMaps.Add(roleMap, roleObject);
             }
