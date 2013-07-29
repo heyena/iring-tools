@@ -1066,14 +1066,109 @@ Ext.define('AM.controller.NHibernate', {
     var dbInfo = dirNode.data.record.dbInfo;
     var dbDict = dirNode.data.record.dbDict;
 
-    if(dbInfo && dbDict){
-      form.getForm().findField('dbProvider').setValue(dbDict.Provider);
-      form.getForm().findField('dbServer').setValue(dbInfo.dbServer);
-      form.getForm().findField('dbInstance').setValue(dbInfo.dbInstance);
-      form.getForm().findField('dbName').setValue(dbInfo.dbName);
-      form.getForm().findField('dbUserName').setValue(dbInfo.dbUserName);
-      form.getForm().findField('dbPassword').setValue(dbInfo.dbPassword);
-      form.getForm().findField('dbSchema').setValue(dbDict.SchemaName);
+    /*if(dbInfo && dbDict){
+    form.getForm().findField('dbProvider').setValue(dbDict.Provider);
+    form.getForm().findField('dbServer').setValue(dbInfo.dbServer);
+    form.getForm().findField('dbInstance').setValue(dbInfo.dbInstance);
+    form.getForm().findField('dbName').setValue(dbInfo.dbName);
+    form.getForm().findField('dbUserName').setValue(dbInfo.dbUserName);
+    form.getForm().findField('dbPassword').setValue(dbInfo.dbPassword);
+    form.getForm().findField('dbSchema').setValue(dbDict.SchemaName);
+    }
+    */
+
+    var dsConfigForm = button.up('connectionstringform').getForm();//dsConfigPane.getForm();
+    var Provider = null;
+
+    if (dbDict.Provider)
+    Provider = dbDict.Provider.toUpperCase();
+
+    var dbName = dsConfigForm.findField('dbName');
+    var portNumber = dsConfigForm.findField('portNumber');
+    var host = dsConfigForm.findField('host');
+    var dbServer = dsConfigForm.findField('dbServer');
+    var dbInstance = dsConfigForm.findField('dbInstance');
+    //var serviceName = dsConfigPane.items.items[10];
+    var serviceName = dsConfigForm.findField('field_serviceName');
+    var sid = dsConfigForm.findField('field_sid');
+    var radioGroup = button.up('connectionstringform').query('#radioGroup')[0];
+    var dbSchema = dsConfigForm.findField('dbSchema');
+    var userName = dsConfigForm.findField('dbUserName');
+    var password = dsConfigForm.findField('dbPassword');
+    var dbProvider = dsConfigForm.findField('dbProvider');
+
+    if (dbInfo) {
+      if (Provider) {
+        if (Provider.indexOf('ORACLE') > -1) {
+          dbName.hide();
+          dbServer.hide();
+          dbInstance.hide();
+
+          dbServer.setValue(dbInfo.dbServer);
+          dbInstance.setValue(dbInfo.dbInstance);
+          dbName.setValue(dbInfo.dbName);
+
+          userName.setValue(dbInfo.dbUserName);
+          password.setValue(dbInfo.dbPassword);
+          dbProvider.setValue(dbDict.Provider);
+          dbSchema.setValue(dbDict.SchemaName);
+
+          host.setValue(dbInfo.dbServer);
+          host.show();
+
+          //sid.show();
+          //radioGroup.show();
+
+          serviceName.show();
+          creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
+
+          portNumber.setValue(dbInfo.portNumber);
+          portNumber.show();
+        }
+        else if (Provider.indexOf('MSSQL') > -1) {
+          portNumber.hide();
+          host.hide();
+          serviceName.hide();
+          //sid.hide();
+          //radioGroup.hide();
+
+          dbServer.setValue(dbInfo.dbServer);
+          dbServer.show();
+          dbInstance.setValue(dbInfo.dbInstance);
+          dbInstance.show();
+          dbName.setValue(dbInfo.dbName);
+          dbName.show();
+          dbProvider.setValue(dbDict.Provider);
+          host.setValue(dbInfo.dbServer);
+          portNumber.setValue(dbInfo.portNumber);
+          userName.setValue(dbInfo.dbUserName);
+          password.setValue(dbInfo.dbPassword);
+          dbSchema.setValue(dbDict.SchemaName);
+        }
+      }
+    }
+    else {
+      //new application setting default value
+      dbServer.setValue('localhost');
+      dbServer.show();
+      dbInstance.setValue('default');
+      dbInstance.show();
+      dbSchema.setValue('dbo');
+      portNumber.setValue('1433');
+      portNumber.hide();
+
+      dbName.setValue('');
+      dbName.clearInvalid();
+      dbName.show();
+      userName.setValue('');
+      password.setValue('');
+      dbProvider.setValue('MsSql2008');
+      host.setValue('');
+      host.hide();
+      serviceName.hide();
+
+      userName.clearInvalid();
+      password.clearInvalid();
     }
 
   },
