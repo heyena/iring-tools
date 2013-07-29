@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="hasValueMap" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="values" type="{http://www.iringtools.org/dxfr/dto}RoleValues" minOccurs="0"/>
  *         &lt;element name="oldValues" type="{http://www.iringtools.org/dxfr/dto}RoleValues" minOccurs="0"/>
+ *         &lt;element name="classPath" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -50,7 +51,8 @@ import javax.xml.bind.annotation.XmlType;
     "relatedClassName",
     "hasValueMap",
     "values",
-    "oldValues"
+    "oldValues",
+    "classPath"
 })
 @XmlRootElement(name = "roleObject")
 public class RoleObject
@@ -71,6 +73,7 @@ public class RoleObject
     protected Boolean hasValueMap;
     protected RoleValues values;
     protected RoleValues oldValues;
+    protected String classPath;
 
     /**
      * Gets the value of the type property.
@@ -335,6 +338,30 @@ public class RoleObject
      */
     public void setOldValues(RoleValues value) {
         this.oldValues = value;
+    }
+
+    /**
+     * Gets the value of the classPath property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getClassPath() {
+        return classPath;
+    }
+
+    /**
+     * Sets the value of the classPath property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setClassPath(String value) {
+        this.classPath = value;
     }
 
 }

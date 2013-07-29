@@ -141,6 +141,7 @@
     <xs:element name="hasValueMap" type="xs:boolean" minOccurs="0" maxOccurs="1" />
     <xs:element name="values" type="RoleValues" minOccurs="0" maxOccurs="1" />
     <xs:element name="oldValues" type="RoleValues" minOccurs="0" maxOccurs="1" />
+    <xs:element name="classPath" type="xs:string" minOccurs="0" maxOccurs="1" />
    </xs:sequence>
   </xs:complexType>
  </xs:element>
