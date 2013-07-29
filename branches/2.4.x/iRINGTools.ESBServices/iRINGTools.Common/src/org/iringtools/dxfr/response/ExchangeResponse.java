@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -12,12 +13,12 @@ import org.iringtools.common.response.Level;
 
 
 /**
- * <p>Java class for ExchangeResponse complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ExchangeResponse">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -49,7 +50,7 @@ import org.iringtools.common.response.Level;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ExchangeResponse", propOrder = {
+@XmlType(name = "", propOrder = {
     "exchangeId",
     "level",
     "startTime",
@@ -70,6 +71,7 @@ import org.iringtools.common.response.Level;
     "poolSize",
     "summary"
 })
+@XmlRootElement(name = "exchangeResponse")
 public class ExchangeResponse
     implements Serializable
 {

@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.iringtools.dxfr.response.ExchangeResponse;
 
 
 /**
@@ -25,7 +24,6 @@ import org.iringtools.dxfr.response.ExchangeResponse;
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="senderScopeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="senderAppName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="summary" type="{http://www.iringtools.org/dxfr/response}ExchangeResponse" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,8 +39,7 @@ import org.iringtools.dxfr.response.ExchangeResponse;
     "dataTransferObjectList",
     "version",
     "senderScopeName",
-    "senderAppName",
-    "summary"
+    "senderAppName"
 })
 @XmlRootElement(name = "dataTransferObjects")
 public class DataTransferObjects
@@ -56,7 +53,6 @@ public class DataTransferObjects
     protected String version;
     protected String senderScopeName;
     protected String senderAppName;
-    protected ExchangeResponse summary;
 
     /**
      * Gets the value of the scopeName property.
@@ -200,30 +196,6 @@ public class DataTransferObjects
      */
     public void setSenderAppName(String value) {
         this.senderAppName = value;
-    }
-
-    /**
-     * Gets the value of the summary property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ExchangeResponse }
-     *     
-     */
-    public ExchangeResponse getSummary() {
-        return summary;
-    }
-
-    /**
-     * Sets the value of the summary property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ExchangeResponse }
-     *     
-     */
-    public void setSummary(ExchangeResponse value) {
-        this.summary = value;
     }
 
 }
