@@ -461,7 +461,8 @@ namespace org.iringtools.mapping
                 name = classMap.name,
                 identifierKeyMaps = manifestClass.keys.CloneIdentifiers(),
                 identifierDelimiter = classMap.identifierDelimiter,
-                identifiers = new Identifiers(),
+                //identifiers = new Identifiers(),
+                identifiers = classMap.identifiers,
                 index = classMap.index,
                 path = classMap.path
             };
