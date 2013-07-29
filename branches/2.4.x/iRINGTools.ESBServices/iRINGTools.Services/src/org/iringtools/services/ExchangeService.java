@@ -144,7 +144,6 @@ public class ExchangeService extends AbstractService {
 			xr.setItemCountDelete(itemCountDelete);
 			xr.setSummary("Page of differences.");
 
-			dtos.setSummary(xr);
 			dtos.setVersion(id);
 			dtos.setSenderAppName(exchange.getSourceApp());
 			dtos.setSenderScopeName(exchange.getSourceScope());
