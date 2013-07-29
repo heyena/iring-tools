@@ -207,6 +207,7 @@
                     "userConfig": {
                         "fn": "onDbUserChange",
                         "implHandler": [
+                            "alert('hi..');\r",
                             "var me = this; \r",
                             "var dbProvider = me.getForm().findField('dbProvider').getValue().toUpperCase();\r",
                             "if (dbProvider.indexOf('ORACLE') > -1) {\r",
@@ -281,6 +282,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
+                        "itemId": "radioGroup",
                         "width": 25,
                         "fieldLabel": null,
                         "columns": [
