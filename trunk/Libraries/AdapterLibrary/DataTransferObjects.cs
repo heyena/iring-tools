@@ -228,6 +228,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Order = 10, EmitDefaultValue = false)]
     public RoleValues oldValues { get; set; }
+
+    [DataMember(Order = 11, EmitDefaultValue = false)]
+    public string classPath { get; set; }
   }
 
   [DataContract]

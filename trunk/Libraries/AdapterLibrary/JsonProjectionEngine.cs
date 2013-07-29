@@ -106,6 +106,7 @@ namespace org.iringtools.adapter.projection
                 if (dataProperty != null)
                 {
                   object value = dataObj.GetPropertyValue(keyProperty.keyPropertyName);
+
                   if (value != null)
                   {
                     if (dataProperty.dataType == DataType.Char ||
@@ -123,14 +124,18 @@ namespace org.iringtools.adapter.projection
 
                       value = valueStr;
                     }
-
-                    if (!string.IsNullOrEmpty(dataItem.id))
-                    {
-                      dataItem.id += dataObject.keyDelimeter;
-                    }
-
-                    dataItem.id += value;
                   }
+                  else
+                  {
+                    value = string.Empty;
+                  }
+
+                  if (!string.IsNullOrEmpty(dataItem.id))
+                  {
+                    dataItem.id += dataObject.keyDelimeter;
+                  }
+
+                  dataItem.id += value;
                 }
               }
 
@@ -258,14 +263,23 @@ namespace org.iringtools.adapter.projection
               if (objectType.keyProperties.Count == 1)
               {
                 string keyProp = objectType.keyProperties[0].keyPropertyName;
-                object id = dataItem.properties[keyProp];
+                //object id = dataItem.properties[keyProp];
 
-                if (id == null || id.ToString() == string.Empty)
+                //if (id == null || id.ToString() == string.Empty)
+                //{
+                //  throw new Exception("Value of key property: " + keyProp + " cannot be null.");
+                //}
+
+                //dataItem.id = id.ToString();
+                if (dataItem.properties.ContainsKey(keyProp))
                 {
-                  throw new Exception("Value of key property: " + keyProp + " cannot be null.");
-                }
+                  object id = dataItem.properties[keyProp];
 
-                dataItem.id = id.ToString();
+                  if (id != null)
+                  {
+                    dataItem.id = id.ToString();
+                  }
+                }
               }
               else
               {
