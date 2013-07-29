@@ -91,9 +91,8 @@ public class DataModel
     relationalOperatorMap.put("lt", RelationalOperator.LESSER_THAN);
     relationalOperatorMap.put("gt", RelationalOperator.GREATER_THAN);
   }
-  
-  protected static ConcurrentMap<String, String> valueMapsCache = 
-      new ConcurrentHashMap<String, String>();
+
+  protected static ConcurrentMap<String, String> valueMapsCache = new ConcurrentHashMap<String, String>();
 
   public static final String APP_PREFIX = "xchmgr";
   public static final String DIRECTORY_KEY = APP_PREFIX + ".directory";
@@ -180,7 +179,7 @@ public class DataModel
 
     return exchange;
   }
-  
+
   protected DataFilter createDataFilter(String filter, String sortBy, String sortOrder) throws DataModelException
   {
     DataFilter dataFilter = new DataFilter();
@@ -258,13 +257,13 @@ public class DataModel
         {
           OrderExpressions orderExpressions = new OrderExpressions();
           dataFilter.setOrderExpressions(orderExpressions);
-  
+
           OrderExpression orderExpression = new OrderExpression();
           orderExpressions.getItems().add(orderExpression);
-  
+
           if (sortBy != null)
             orderExpression.setPropertyName(sortBy);
-  
+
           if (sortOrder != null)
             orderExpression.setSortOrder(SortOrder.valueOf(sortOrder));
         }
@@ -283,7 +282,7 @@ public class DataModel
 
     return dataFilter;
   }
-  
+
   protected Grid createDtoGrid(String serviceUri, String relativePath, Manifest manifest, Graph graph,
       DataTransferObjects dtos) throws DataModelException
   {
@@ -335,31 +334,29 @@ public class DataModel
           {
             String transferType = dto.getTransferType().toString();
             rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-            
-//            rowData.add("<input type=\"image\" src=\"resources/images/" + transferType.toLowerCase()
-//                + ".png\" width=15 heigt=15 " + "  onMouseOver= 'javascript:showMessage(\""
-//                + transferType.toLowerCase() + "\")' " + "onClick='javascript:showChangedItemsInfo()'>");
+
+            // rowData.add("<input type=\"image\" src=\"resources/images/" + transferType.toLowerCase()
+            // + ".png\" width=15 heigt=15 " + "  onMouseOver= 'javascript:showMessage(\""
+            // + transferType.toLowerCase() + "\")' " + "onClick='javascript:showChangedItemsInfo()'>");
           }
 
           if (dataMode == DataMode.EXCHANGE)
           {
-            //rowData.add((dto.getDuplicateCount().toString()));
-            
+            // rowData.add((dto.getDuplicateCount().toString()));
+
             if (dto.getDuplicateCount() == null)
             {
-              rowData.add("<img rc=\"resources/images/warning.png\" width=16 " + 
-                  "title=\"Invalid duplicate count.\">");
+              rowData.add("<img rc=\"resources/images/warning.png\" width=16 " + "title=\"Invalid duplicate count.\">");
             }
             else if (dto.getDuplicateCount() == 1)
             {
-              rowData.add("<img src=\"resources/images/success.png\" width=16 " + 
-                  "title=\"This row is good to exchange.\">");
+              rowData.add("<img src=\"resources/images/success.png\" width=16 "
+                  + "title=\"This row is good to exchange.\">");
             }
             else
             {
-              rowData.add("<img src=\"resources/images/error.png\" width=16 " + 
-                  "title=\"This row can not be exchanged due to [" + 
-                  dto.getDuplicateCount() + "] duplicates.\">");
+              rowData.add("<img src=\"resources/images/error.png\" width=16 "
+                  + "title=\"This row can not be exchanged due to [" + dto.getDuplicateCount() + "] duplicates.\">");
             }
           }
 
@@ -421,7 +418,7 @@ public class DataModel
 
     return dtoGrid;
   }
-  
+
   private void processClassObject(Manifest manifest, Graph graph, DataTransferObject dto, int dtoIndex,
       List<Field> fields, ClassObject classObject, Grid dtoGrid, List<String> rowData, List<RelatedClass> relatedClasses)
       throws DataModelException
@@ -479,13 +476,13 @@ public class DataModel
           // any gap
           // (because class/template do not exist, e.g. due to null
           // class identifier)
-          
-          String dataIndex; 
-          if(classPath != null && classPath.trim().length() != 0)
-        	  dataIndex = className+ '$'+classPath + '.' + templateObject.getName() + '.' + roleObject.getName();
+
+          String dataIndex;
+          if (classPath != null && classPath.trim().length() != 0)
+            dataIndex = className + '$' + classPath + '.' + templateObject.getName() + '.' + roleObject.getName();
           else
-        	  dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
-        	  
+            dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
+
           if (rowData.size() == fields.size())
           {
             for (int i = 0; i < fields.size(); i++)
@@ -573,12 +570,15 @@ public class DataModel
               if (relatedClassObject.getClassId().equals(roleObject.getRelatedClassId())
                   && relatedClassObject.getIdentifier().equals(relatedClassIdentifier))
               {
-            	boolean flag = (relatedClassObject.getPath() == null ||relatedClassObject.getPath().length()==0 ) ? (roleObject.getClassPath() == null || roleObject.getClassPath().length()==0) : relatedClassObject.getPath().equals(roleObject.getClassPath());
-            	if(flag)
-            	{
-            		processClassObject(manifest, graph, dto, dtoIndex, fields, relatedClassObject, dtoGrid, rowData, relatedClasses);
-            		 break;
-            	}               
+                boolean classPathFound = (relatedClassObject.getPath() == null || relatedClassObject.getPath().length() == 0) ? (roleObject
+                    .getClassPath() == null || roleObject.getClassPath().length() == 0) : relatedClassObject.getPath()
+                    .equals(roleObject.getClassPath());
+                
+                if (classPathFound)
+                {
+                  processClassObject(manifest, graph, dto, dtoIndex, fields, relatedClassObject, dtoGrid, rowData, relatedClasses);
+                  break;
+                }
               }
             }
           }
@@ -598,7 +598,7 @@ public class DataModel
       }
     }
   }
-  
+
   private String getMultiRoleValues(Manifest manifest, RoleObject roleObject, List<String> roleValues)
       throws DataModelException
   {
@@ -659,7 +659,7 @@ public class DataModel
 
     return obj;
   }
-  
+
   protected Cardinality getCardinality(Graph graph, String className, String templateName, String roleName,
       String relatedClassName)
   {
@@ -687,7 +687,7 @@ public class DataModel
 
     return null;
   }
-  
+
   @SuppressWarnings("unchecked")
   protected List<Field> getFields(String dtiRelativePath, Graph graph, String startClassId) throws DataModelException
   {
@@ -767,7 +767,7 @@ public class DataModel
       if (startClassId == null || startClassId.length() == 0)
       {
         ClassTemplates classTemplates = classTemplatesItems.get(0);
-        createFields(fields, graph, classTemplates,null,0);
+        createFields(fields, graph, classTemplates, null, 0);
       }
       else
       {
@@ -775,7 +775,8 @@ public class DataModel
         {
           if (classTempates.getClazz().getId().equalsIgnoreCase(startClassId))
           {
-            createFields(fields, graph, classTempates,classTempates.getClazz().getPath(),classTempates.getClazz().getIndex());
+            createFields(fields, graph, classTempates, classTempates.getClazz().getPath(), classTempates.getClazz()
+                .getIndex());
             break;
           }
         }
@@ -785,7 +786,8 @@ public class DataModel
     return fields;
   }
 
-  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates, String classPath,int classIndex)
+  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates, String classPath,
+      int classIndex)
   {
     if (classTemplates != null && classTemplates.getTemplates() != null)
     {
@@ -809,23 +811,23 @@ public class DataModel
             String dataType = role.getDataType();
 
             Field field = new Field();
-            
+
             String fieldName;
             String fieldDataIndex;
 
-            if(classIndex != 0 )
-            	fieldName = className + '-'+ classIndex+ "." + template.getName() + "." + role.getName();
+            if (classIndex != 0)
+              fieldName = className + '-' + classIndex + "." + template.getName() + "." + role.getName();
             else
-            	fieldName = className + '.' + template.getName() + "." + role.getName();
-            
-            if(classPath != null && classPath.trim().length()!=0)
-            	fieldDataIndex = className + '$'+ classPath+ "." + template.getName() + "." + role.getName();
+              fieldName = className + '.' + template.getName() + "." + role.getName();
+
+            if (classPath != null && classPath.trim().length() != 0)
+              fieldDataIndex = className + '$' + classPath + "." + template.getName() + "." + role.getName();
             else
-            	fieldDataIndex = className + '.' + template.getName() + "." + role.getName();
-            
-            field.setName(fieldName); 
+              fieldDataIndex = className + '.' + template.getName() + "." + role.getName();
+
+            field.setName(fieldName);
             field.setDataIndex(fieldDataIndex);
-           
+
             field.setWidth(MIN_FIELD_WIDTH);
 
             // adjust field width
@@ -862,7 +864,7 @@ public class DataModel
             String classId = role.getClazz().getId();
             String clsPath = role.getClazz().getPath();
             int clsIndex = role.getClazz().getIndex();
-            
+
             ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId, clsPath);
             createFields(fields, graph, relatedClassTemplates, clsPath, clsIndex);
           }
@@ -870,7 +872,7 @@ public class DataModel
       }
     }
   }
-  
+
   private boolean relatedClassExists(List<RelatedClass> relatedClasses, String relatedClassName)
   {
     for (RelatedClass relatedClass : relatedClasses)
@@ -881,22 +883,23 @@ public class DataModel
 
     return false;
   }
-  
-  private ClassTemplates getClassTemplates(Graph graph, String classId,String classPath)
+
+  private ClassTemplates getClassTemplates(Graph graph, String classId, String classPath)
   {
-	 boolean flag = false;
-	  
+    boolean flag = false;
+
     for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
     {
-      flag = (classTemplates.getClazz().getPath() == null ? classPath == null : classTemplates.getClazz().getPath().equals(classPath));
-      
+      flag = (classTemplates.getClazz().getPath() == null ? classPath == null : classTemplates.getClazz().getPath()
+          .equals(classPath));
+
       if (classTemplates.getClazz().getId().equals(classId) && flag)
         return classTemplates;
     }
 
     return null;
   }
-  
+
   protected String getValueMapKey(String value, HashMap<String, String> valueMaps)
   {
     for (String key : valueMaps.keySet())
@@ -916,13 +919,13 @@ public class DataModel
     {
       return value;
     }
-    
+
     // find in cache
     if (valueMapsCache.containsKey(value))
     {
       return valueMapsCache.get(value);
     }
-    
+
     //
     // if not found, find in manifest
     //
@@ -939,7 +942,7 @@ public class DataModel
             {
               String valueMap = vm.getLabel();
               valueMapsCache.put(value, valueMap);
-              
+
               return valueMap;
             }
           }
@@ -977,7 +980,7 @@ public class DataModel
 
     return label;
   }
-  
+
   protected Manifest getManifest(String serviceUri, String manifestRelativePath) throws DataModelException
   {
     Manifest manifest = null;
@@ -1022,7 +1025,7 @@ public class DataModel
 
     return null;
   }
-  
+
   // NOTE: the order of the indices in the list needs to retain to honor grid sorting
   protected void collapseDuplicates(DataTransferIndices dtis) throws Exception
   {
@@ -1037,7 +1040,7 @@ public class DataModel
       {
         DataTransferIndex dti = dtiList.get(i);
         int dupes = 1;
-        
+
         for (int j = i + 1; j < dtiList.size(); j++)
         {
           if (dti.getIdentifier().equalsIgnoreCase(dtiList.get(j).getIdentifier()))
@@ -1046,7 +1049,7 @@ public class DataModel
             dtiList.remove(j--);
           }
         }
-        
+
         dti.setDuplicateCount(dupes);
       }
     }

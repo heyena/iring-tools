@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="hasContent" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="duplicateCount" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="content" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="internalIdentifier" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,7 +42,8 @@ import javax.xml.bind.annotation.XmlType;
     "transferType",
     "hasContent",
     "duplicateCount",
-    "content"
+    "content",
+    "internalIdentifier"
 })
 @XmlRootElement(name = "dataTransferObject")
 public class DataTransferObject
@@ -57,6 +59,7 @@ public class DataTransferObject
     protected Integer duplicateCount;
     @XmlInlineBinaryData
     protected byte[] content;
+    protected String internalIdentifier;
 
     /**
      * Gets the value of the identifier property.
@@ -191,6 +194,30 @@ public class DataTransferObject
      */
     public void setContent(byte[] value) {
         this.content = ((byte[]) value);
+    }
+
+    /**
+     * Gets the value of the internalIdentifier property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getInternalIdentifier() {
+        return internalIdentifier;
+    }
+
+    /**
+     * Sets the value of the internalIdentifier property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setInternalIdentifier(String value) {
+        this.internalIdentifier = value;
     }
 
 }
