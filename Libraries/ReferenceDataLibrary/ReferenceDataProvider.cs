@@ -2989,9 +2989,9 @@ namespace org.iringtools.refdata
         _pred = work.CreateUriNode(rdfType);
         _obj = work.CreateUriNode(new Uri(objectId));
         work.Assert(new Triple(_subj, _pred, _obj));
-        //_pred = work.CreateUriNode(rdfType);
-        //_obj = work.CreateUriNode("owl:Class");
-        //work.Assert(new Triple(_subj, _pred, _obj));
+        _pred = work.CreateUriNode(rdfType);
+        _obj = work.CreateUriNode("owl:Class");
+        work.Assert(new Triple(_subj, _pred, _obj));
       }
     }
 
