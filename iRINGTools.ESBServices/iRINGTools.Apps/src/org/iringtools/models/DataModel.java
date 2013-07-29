@@ -573,10 +573,12 @@ public class DataModel
               if (relatedClassObject.getClassId().equals(roleObject.getRelatedClassId())
                   && relatedClassObject.getIdentifier().equals(relatedClassIdentifier))
               {
-                processClassObject(manifest, graph, dto, dtoIndex, fields, relatedClassObject, dtoGrid, rowData,
-                    relatedClasses);
-
-                break;
+            	boolean flag = (relatedClassObject.getPath() == null ||relatedClassObject.getPath().length()==0 ) ? (roleObject.getClassPath() == null || roleObject.getClassPath().length()==0) : relatedClassObject.getPath().equals(roleObject.getClassPath());
+            	if(flag)
+            	{
+            		processClassObject(manifest, graph, dto, dtoIndex, fields, relatedClassObject, dtoGrid, rowData, relatedClasses);
+            		 break;
+            	}               
               }
             }
           }
