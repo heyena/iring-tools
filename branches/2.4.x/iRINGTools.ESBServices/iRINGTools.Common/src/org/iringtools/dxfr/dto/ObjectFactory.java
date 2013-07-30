@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RoleObject }
+     * Create an instance of {@link DataTransferObject }
      * 
      */
-    public RoleObject createRoleObject() {
-        return new RoleObject();
+    public DataTransferObject createDataTransferObject() {
+        return new DataTransferObject();
     }
 
     /**
-     * Create an instance of {@link DataTransferObjectList }
+     * Create an instance of {@link ClassObjects }
      * 
      */
-    public DataTransferObjectList createDataTransferObjectList() {
-        return new DataTransferObjectList();
+    public ClassObjects createClassObjects() {
+        return new ClassObjects();
     }
 
     /**
@@ -70,11 +70,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassObjects }
+     * Create an instance of {@link DataTransferObjects }
      * 
      */
-    public ClassObjects createClassObjects() {
-        return new ClassObjects();
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
     }
 
     /**
@@ -86,27 +86,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RoleObject }
+     * 
+     */
+    public RoleObject createRoleObject() {
+        return new RoleObject();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferObjectList }
+     * 
+     */
+    public DataTransferObjectList createDataTransferObjectList() {
+        return new DataTransferObjectList();
+    }
+
+    /**
      * Create an instance of {@link RoleObjects }
      * 
      */
     public RoleObjects createRoleObjects() {
         return new RoleObjects();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObjects }
-     * 
-     */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObject }
-     * 
-     */
-    public DataTransferObject createDataTransferObject() {
-        return new DataTransferObject();
     }
 
 }

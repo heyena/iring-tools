@@ -52,7 +52,7 @@
 		</taskdef>
 		<xjc destdir="src" extension="true">
 			<schema dir="schemas" includes="**/*.xsd" />
-			<binding dir="schemas" includes="bindings.xml" />
+			<binding dir="schemas" includes="bindings.jxb" />
 			<arg value="-no-header" />
 			<arg value="-Xcollection-setter-injector" />
 			<arg value="-Xbg" />

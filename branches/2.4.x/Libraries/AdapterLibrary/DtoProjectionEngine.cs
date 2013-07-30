@@ -481,12 +481,29 @@ namespace org.iringtools.adapter.projection
       dataTransferObjects.AppName = _settings["ApplicationName"];
 
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
+      string objectName = _graphMap.dataObjectName;
+      DataObject objDef = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectName.ToLower());
+      
+      if (objDef == null)
+      {
+        throw new Exception("Data object [" + objectName + "] not found.");
+      }
 
       if (classTemplateMap != null && classTemplateMap.classMap != null)
       {
         for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
           DataTransferObject dto = new DataTransferObject();
+          StringBuilder internalIdentifier = new StringBuilder();
+
+          foreach (KeyProperty keyProp in objDef.keyProperties)
+          {
+            internalIdentifier.Append(objDef.keyDelimeter);
+            internalIdentifier.Append(_dataObjects[dataObjectIndex].GetPropertyValue(keyProp.keyPropertyName));
+          }
+
+          internalIdentifier.Remove(0, objDef.keyDelimeter.Length);
+          dto.internalIdentifier = internalIdentifier.ToString();
 
           if (typeof(IContentObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
           {
