@@ -89,6 +89,8 @@ namespace org.iringtools.adapter
     [DataMember(Order = 5, Name = "content", EmitDefaultValue = false)]
     public byte[] content { get; set; }
 
+    [DataMember(Order = 6, Name = "internalIdentifier", EmitDefaultValue = false)]
+    public string internalIdentifier { get; set; }
     public ClassObject GetClassObject(string classId)
     {
       foreach (ClassObject classObject in classObjects)

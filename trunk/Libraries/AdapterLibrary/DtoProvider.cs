@@ -863,12 +863,7 @@ namespace org.iringtools.adapter
             //{
               List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
               DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-              XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
-
-              if (dtoDoc != null && dtoDoc.Root != null)
-              {
-                dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
-              }
+              dataTransferObjects = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
             //}
           }
         }
