@@ -507,7 +507,7 @@ public class ExchangeDataController extends BaseController
       }
       else
       {
-        exchangeDataModel.editCommodity(newCommo, scope, oldCommName, exchangeServiceUri);
+        exchangeDataModel.editCommodity(newCommo, oldScope, oldCommName, exchangeServiceUri);
       }
 
     }

@@ -1390,6 +1390,8 @@ function saveExchangeConfig() {
   var scope = node.parentNode.parentNode.text;
   var commodity = node.text;
   var xid = node.attributes.properties['Id'];
+  
+
 
   Ext.Ajax.request({
     url: 'newExchange?' + form + '&scope =' + scope + '&commodity =' + commodity + '&xid =' + xid,
@@ -1402,6 +1404,7 @@ function saveExchangeConfig() {
       alert("save failed");
     }
   });
+
 }
 
 function buildNewScopeMenu() {
@@ -1520,22 +1523,20 @@ function editGraph() {
 
 function newGraph() {
   var newGraphForm = new Ext.FormPanel({
-    id: 'newGraphForm',
-    height: 100,
-    width: 417,
-    bodyPadding: 15,
+    id: 'newGraphForm',   
+    border: false,
     layout: 'form',
-    frame: true,
-    bodyStyle: 'padding:5px 5px 0',
+    frame: false,
+    bodyStyle: 'padding:15px',   
     labelwidth: 75,
     items: [{
       xtype: 'textfield',
-      anchor: '95%',
+      width: 240,
       fieldLabel: 'Graph Name',
       name: 'name'
     }, {
       xtype: 'textfield',
-      anchor: '95%',
+      width: 240,
       fieldLabel: 'Description',
       name: 'description'
     },
@@ -1577,6 +1578,8 @@ function newGraph() {
   var newGraphWin = new Ext.Window({
     id: 'newGraphWin',
     resizable: false,
+    height: 150,
+    width: 417,
     layout: {
       type: 'fit'
     },
@@ -1874,8 +1877,8 @@ function newScope() {
     layout: {
       type: 'fit'
     },
-    height: 83,
-    width: 358,
+    height: 130,
+    width: 400,
     title: 'New Scope',
     modal: true,
     items: [ newScopeForm ]
@@ -1912,26 +1915,23 @@ function saveScope(node, button, event) {
 function newCommodity() {
   var newCommForm = new Ext.FormPanel({
     id: 'newCommForm',
-    height: 83,
-    width: 359,
+    border: false,
     bodyPadding: 15,
     layout: 'form',
-    frame: true,
-    bodyStyle: 'padding:5px 5px 0',
+    frame: false,
+    bodyStyle: 'padding:15px',
     labelwidth: 75,
     items: [{
       xtype: 'textfield',
-      anchor: '100%',
+      width: 240,
       fieldLabel: 'Commodity Name',
       name: 'commName'
     }, {
-      xtype: 'hidden',
-      anchor: '100%',
+      xtype: 'hidden',      
       fieldLabel: 'Label',
       name: 'oldCommName'
     }, {
-      xtype: 'hidden',
-      anchor: '100%',
+      xtype: 'hidden',      
       fieldLabel: 'Label',
       name: 'oldScope'
     }],
@@ -1955,6 +1955,8 @@ function newCommodity() {
     layout: {
       type: 'fit'
     },
+    height: 130,
+    width: 400,
     title: 'New Commodity',
     modal: true,
     items: [ newCommForm ]
@@ -1967,7 +1969,7 @@ function saveComm(node, button, event) {
   var form = obj.getValues(true);
   var directoryTree = Ext.getCmp('directory-tree');
   var node = directoryTree.getSelectionModel().getSelectedNode();
-  var scope = node.parentNode.parentNode.text;
+  var scope = node.parentNode.text;
 
   Ext.Ajax.request({
     url: 'newComm?' + form + '&scope=' + scope,
