@@ -1012,6 +1012,7 @@ public class ExchangeDataModel extends DataModel
 
   public Application getApplicationInfo(String app, String scope, String serviceUri)
   {
+
     return dprovider.getApplicationInfo(app, scope);
   }
 
