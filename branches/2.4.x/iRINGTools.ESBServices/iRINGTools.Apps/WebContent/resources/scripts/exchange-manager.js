@@ -1792,14 +1792,30 @@ function saveGraph() {
 	var node = directoryTree.getSelectionModel().getSelectedNode();
 	var scope = node.parentNode.parentNode.text;
 	var appName = node.text;
+	var graph = obj.findField('name').getValue();
+	var oldapp = obj.findField('oldAppName').getValue();
+	var oldScope = obj.findField('oldScope').getValue();
 
 	Ext.Ajax.request({
 		url : 'newGraph?' + form + '&scope =' + scope + '&appName =' + appName,
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
-			refresh();
-		},
+			var result =Ext.decode(response.responseText);
+			if(result === 'ERROR')
+			{
+				if((oldScope == '')&&(oldapp == ''))
+				{
+					oldScope = scope;
+					oldapp=appName;
+				}
+		var message =  'Graph name '+ '"'+ graph+ '"' +' already exist in scope '+ '["'+ oldScope+'.'+oldapp+ '"]'+'.';
+		
+showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+		
+			}
+		refresh();
+	},		
 		failure : function(response, request) {
 			alert("save failed");
 		}
@@ -2101,17 +2117,22 @@ function saveScope(node, button, event) {
 	var form = obj.getValues(true);
 	var directoryTree = Ext.getCmp('directory-tree');
 	var node = directoryTree.getSelectionModel().getSelectedNode();
-	console.log("1 is " + form); // console.log("2 is " + form1);
+	console.log("1 is " + form); 
+	var scope = obj.findField('scope').getValue();// console.log("2 is " + form1);
 	// newScope();
 	Ext.Ajax.request({
 		url : 'newScope?' + form,
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
-			// alert("saved successfuly");
-			// newScopeWin.close();
-			// Ext.getCmp('newCommForm').close();
-			// newScopeWin.
+			var result =Ext.decode(response.responseText);
+			if(result === 'ERROR')
+				{
+			var message =  'Scope name '+ '"'+ scope+ '"' +' already exist' +'.';
+			+ response.responseText;
+	showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+			
+				}
 			refresh();
 		},
 		failure : function(response, request) {
@@ -2178,12 +2199,21 @@ function saveComm(node, button, event) {
 	var directoryTree = Ext.getCmp('directory-tree');
 	var node = directoryTree.getSelectionModel().getSelectedNode();
 	var scope = node.parentNode.text;
+	var commodity = obj.findField('commName').getValue();
 
 	Ext.Ajax.request({
 		url : 'newComm?' + form + '&scope=' + scope,
-		method : 'POST',
+		//method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
+			var result =Ext.decode(response.responseText);
+			if(result === 'ERROR')
+				{
+			var message =  'Commodity name '+ '"'+ commodity+'"'+' already exist in scope '+ '"'+ scope+ '"'+'.';
+			+ response.responseText;
+	showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+			
+				}
 			refresh();
 		},
 		failure : function(response, request) {
@@ -2297,14 +2327,27 @@ function saveApp(node, button, event) {
 	var directoryTree = Ext.getCmp('directory-tree');
 	var node = directoryTree.getSelectionModel().getSelectedNode();
 	var scope = node.parentNode.text;
+	var application = obj.findField('appName').getValue();
+	var oldScope = obj.findField('oldScope').getValue();
 
 	Ext.Ajax.request({
 		url : 'newApplication?' + form + '&scope =' + scope,
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
-			refresh();
-		},
+			var result =Ext.decode(response.responseText);
+			if(result === 'ERROR')
+			{ if(oldScope == '')
+				{
+				oldScope = scope;
+				}
+		var message =  'Application name '+ '"'+ application+ '"' +' already exist in scope '+ '"'+ oldScope+ '"'+'.';
+		+ response.responseText;
+showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+		
+			}
+		refresh();
+	},		
 		failure : function(response, request) {
 			alert("save failed");
 		}

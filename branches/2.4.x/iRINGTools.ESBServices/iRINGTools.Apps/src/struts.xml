@@ -97,25 +97,25 @@
      <!-- New Scope -->
      <action name="newScope" class="org.iringtools.controllers.ExchangeDataController" method="newScope">
       <result type="json">
-        <param name="root">form</param>
+        <param name="root">response</param>
       </result>
     </action>
        <!-- New Application -->
      <action name="newApplication" class="org.iringtools.controllers.ExchangeDataController" method="newApplication">
       <result type="json">
-        <param name="root">form</param>
+        <param name="root">response</param>
       </result>
     </action>
       <!-- New Graph -->
      <action name="newGraph" class="org.iringtools.controllers.ExchangeDataController" method="newGraph">
       <result type="json">
-        <param name="root">form</param>
+        <param name="root">response</param>
       </result>
     </action>
          <!-- New Commodity -->
      <action name="newComm" class="org.iringtools.controllers.ExchangeDataController" method="newCommodity">
       <result type="json">
-        <param name="root">form</param>
+        <param name="root">response</param>
       </result>
     </action>
     <!-- Get Scope -->
