@@ -45,7 +45,7 @@ public class ExchangeDataController extends BaseController {
 			sourceAppName, sourceGraphName, targetUri, targetScopeName,
 			targetAppName, commName, targetGraphName, hasAlgorithm, appName,
 			appScope, oldAppName, oldConfigName, oldGraphName, oldCommName,
-			appDesc, baseUri;
+			appDesc, baseUri,response;
 	// private String openGroup, propertyName, relationalOper, value,
 	// logicalOper, closeGroup, sortOrder;
 	private String openGroup[], propertyName[], propertyNameOE[],
@@ -318,11 +318,14 @@ public class ExchangeDataController extends BaseController {
 				DataExchanges exchangeData = new DataExchanges();
 				newScopeAdd.setApplicationData(appData);
 				newScopeAdd.setDataExchanges(exchangeData);
-				exchangeDataModel.newScope(newScopeAdd, exchangeServiceUri);
+			ExchangeResponse exres = exchangeDataModel.newScope(newScopeAdd, exchangeServiceUri);
+			response = exres.getSummary();
 			} else {
-				exchangeDataModel
+				ExchangeResponse exres =exchangeDataModel
 						.editScope(scope, oldScope, exchangeServiceUri);
+				response = exres.getSummary();
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ERROR;
@@ -370,10 +373,12 @@ public class ExchangeDataController extends BaseController {
 
 			if ((oldAppName == null) || (oldAppName.equals(""))) {
 				newApp.setGraph(null);
-				exchangeDataModel.newApplication(newApp, scope,
-						exchangeServiceUri);
+				ExchangeResponse exres =exchangeDataModel.newApplication(newApp, scope,
+						exchangeServiceUri);								
+				response = exres.getSummary();
 			} else {
-				exchangeDataModel.editApplication(newApp, oldAppName, oldScope);
+				ExchangeResponse exres =exchangeDataModel.editApplication(newApp, oldAppName, oldScope);
+				response = exres.getSummary();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -420,11 +425,13 @@ public class ExchangeDataController extends BaseController {
 			graph.setDescription(description);
 
 			if ((oldGraphName == null) || (oldGraphName.equals(""))) {
-				exchangeDataModel.newGraph(graph, scope, appName,
-						exchangeServiceUri);
+				ExchangeResponse exres =	exchangeDataModel.newGraph(graph, scope, appName,
+						exchangeServiceUri);						
+				response = exres.getSummary();
 			} else {
-				exchangeDataModel.editGraph(graph, oldScope, oldAppName,
+				ExchangeResponse exres =exchangeDataModel.editGraph(graph, oldScope, oldAppName,
 						oldGraphName, exchangeServiceUri);
+				response = exres.getSummary();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -471,11 +478,14 @@ public class ExchangeDataController extends BaseController {
 
 			if ((oldCommName == null) || (oldCommName.equals(""))) {
 				newCommo.setExchange(null);
-				exchangeDataModel.newCommodity(newCommo, scope,
-						exchangeServiceUri);
+				ExchangeResponse exres =exchangeDataModel.newCommodity(newCommo, scope,
+						exchangeServiceUri);				
+				response = exres.getSummary();
+			
 			} else {
-				exchangeDataModel.editCommodity(newCommo, oldScope,
+				ExchangeResponse exres = exchangeDataModel.editCommodity(newCommo, oldScope,
 						oldCommName, exchangeServiceUri);
+				response = exres.getSummary();
 			}
 
 		} catch (Exception e) {
@@ -784,6 +794,8 @@ public class ExchangeDataController extends BaseController {
 					scope, xid);
 			if (dataFilter != null) {
 				Expressions ex = dataFilter.getExpressions();
+				if(ex != null)
+				{
 				List<Expression> exs = ex.getItems();
 				int size = exs.size();
 				dfList = new ArrayList<List<String>>();
@@ -856,6 +868,7 @@ public class ExchangeDataController extends BaseController {
 					dataF.add(new Integer(e.getCloseGroupCount()).toString());
 					dfList.add(dataF);
 				}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -873,6 +886,8 @@ public class ExchangeDataController extends BaseController {
 					scope, xid);
 			if (dataFilter != null) {
 				OrderExpressions oex = dataFilter.getOrderExpressions();
+				if(oex != null)
+				{
 				List<OrderExpression> oexs = oex.getItems();
 				int size = oexs.size();
 				dfList = new ArrayList<List<String>>();
@@ -892,6 +907,7 @@ public class ExchangeDataController extends BaseController {
 					dataF.add(so);
 					dfList.add(dataF);
 				}
+			}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1411,5 +1427,13 @@ public class ExchangeDataController extends BaseController {
 
 	public void setSortOrderList(List<List<String>> sortOrderList) {
 		this.sortOrderList = sortOrderList;
+	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public void setResponse(String response) {
+		this.response = response;
 	}
 }

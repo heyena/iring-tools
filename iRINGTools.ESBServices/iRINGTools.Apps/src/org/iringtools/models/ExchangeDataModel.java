@@ -975,14 +975,16 @@ public class ExchangeDataModel extends DataModel
     dprovider.deleteExchangeConfig(com, scope, name);
   }
 
-  public void newScope(Scope scope, String serviceUri)
+  public ExchangeResponse newScope(Scope scope, String serviceUri)
   {
-    dprovider.postNewScope(scope);
+	  ExchangeResponse exres =  dprovider.postNewScope(scope);
+	  return exres;
   }
 
-  public void editScope(String scope, String oldScope, String serviceUri)
+  public ExchangeResponse editScope(String scope, String oldScope, String serviceUri)
   {
-    dprovider.postEditedScope(scope, oldScope);
+	  ExchangeResponse exres = dprovider.postEditedScope(scope, oldScope);
+	  return exres;
   }
 
   public Scope getScopeInfo(String scope, String serviceUri)
@@ -995,14 +997,16 @@ public class ExchangeDataModel extends DataModel
     dprovider.deleteScope(scope);
   }
 
-  public void newApplication(Application app, String scope, String serviceUri)
+  public ExchangeResponse newApplication(Application app, String scope, String serviceUri)
   {
-    dprovider.postApplication(app, scope);
+	  ExchangeResponse exres =dprovider.postApplication(app, scope);
+	  return exres;
   }
 
-  public void editApplication(Application app, String oldAppName, String scope)
+  public ExchangeResponse editApplication(Application app, String oldAppName, String scope)
   {
-    dprovider.editApplication(app, oldAppName, scope);
+	  ExchangeResponse exres =dprovider.editApplication(app, oldAppName, scope);
+	  return exres;
   }
 
   public void deleteApplication(String app, String scope, String serviceUri)
@@ -1016,15 +1020,17 @@ public class ExchangeDataModel extends DataModel
     return dprovider.getApplicationInfo(app, scope);
   }
 
-  public void newGraph(org.iringtools.directory.Graph graph, String scope, String appname, String serviceUri)
+  public ExchangeResponse newGraph(org.iringtools.directory.Graph graph, String scope, String appname, String serviceUri)
   {
-    dprovider.postGraph(graph, scope, appname);
+	  ExchangeResponse exres = dprovider.postGraph(graph, scope, appname);
+	  return exres;
   }
 
-  public void editGraph(org.iringtools.directory.Graph graph, String scope, String appname, String oldGraphName,
+  public ExchangeResponse editGraph(org.iringtools.directory.Graph graph, String scope, String appname, String oldGraphName,
       String serviceUri)
   {
-    dprovider.editGraph(graph, scope, appname, oldGraphName);
+	  ExchangeResponse exres = dprovider.editGraph(graph, scope, appname, oldGraphName);
+	  return exres;
   }
 
   public void deleteGraph(String graph, String scope, String appname, String serviceUri)
@@ -1038,14 +1044,16 @@ public class ExchangeDataModel extends DataModel
     return dprovider.getGraphInfo(graph, scope, appname);
   }
 
-  public void newCommodity(Commodity com, String scope, String serviceUri)
+  public ExchangeResponse newCommodity(Commodity com, String scope, String serviceUri)
   {
-    dprovider.postCommodity(com, scope);
+	  ExchangeResponse exRes = dprovider.postCommodity(com, scope);
+	  return exRes;
   }
 
-  public void editCommodity(Commodity com, String scope, String oldCommName, String serviceUri)
+  public ExchangeResponse editCommodity(Commodity com, String scope, String oldCommName, String serviceUri)
   {
-    dprovider.editCommodity(com, scope, oldCommName);
+	  ExchangeResponse exRes =dprovider.editCommodity(com, scope, oldCommName);
+	  return exRes;
   }
 
   public void deleteCommodity(String com, String scope, String serviceUri)
