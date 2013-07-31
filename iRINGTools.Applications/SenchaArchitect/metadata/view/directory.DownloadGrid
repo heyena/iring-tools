@@ -1,0 +1,98 @@
+{
+    "type": "Ext.grid.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "scope": null,
+        "application": null,
+        "height": null,
+        "width": null,
+        "designer|userClassName": "directory.DownloadGrid",
+        "designer|userAlias": "downloadgrid",
+        "title": null,
+        "store": "FileDownloadStore"
+    },
+    "designerId": "891a8b6b-bd32-4cc1-860b-f08fe769b0d3",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "scope",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "application",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "Ext.grid.column.Column",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dataIndex": "file",
+                "text": "File",
+                "flex": 1
+            },
+            "designerId": "8b9433b7-719d-4936-a90d-f1e07da2037e"
+        },
+        {
+            "type": "Ext.grid.column.Column",
+            "reference": {
+                "name": "columns",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "width": 70,
+                "dataIndex": "Download",
+                "menuDisabled": true,
+                "text": null,
+                "flex": null
+            },
+            "designerId": "4663c8b8-62ff-47fd-a08b-37dcb340de56",
+            "cn": [
+                {
+                    "type": "fixedfunction",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "fn": "renderer",
+                        "designer|params": [
+                            "value",
+                            "metaData",
+                            "record",
+                            "rowIndex",
+                            "colIndex",
+                            "store",
+                            "view"
+                        ],
+                        "implHandler": [
+                            "var scope ;\r",
+                            "var application ;\r",
+                            "if(this.up().items!=undefined){\r",
+                            "\t   scope = this.up().items.map['scopeId'].value;\r",
+                            "\t   application =this.up().items.map['applicationId'].value; \r",
+                            "\t}\r",
+                            "return \"<a style='color: #0276FD' href='/mapping/export?scope='\" + scope + '&application=' + application +'&file=' + record.data.file +\" target='\" + \"_blank\" + \"'> Download</a>\";\r",
+                            "\r",
+                            "//return \"<a style='color: #0276FD' href='/File/Export?scope='\" + scope + '&application=' + application +'&file=' + record.data.File +'target='\" + \"'_blank\" + '\"'> Download</a>;\r",
+                            ""
+                        ]
+                    },
+                    "designerId": "3b04417f-d368-4fd0-9350-c02956b777be"
+                }
+            ]
+        }
+    ]
+}

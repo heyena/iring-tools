@@ -1096,7 +1096,7 @@ Ext.define('AM.controller.NHibernate', {
     var userName = dsConfigForm.findField('dbUserName');
     var password = dsConfigForm.findField('dbPassword');
     var dbProvider = dsConfigForm.findField('dbProvider');
-
+    var oraclecontainer = button.up('connectionstringform').down('#oraclecontainer');
     if (dbInfo) {
       if (Provider) {
         if (Provider.indexOf('ORACLE') > -1) {
@@ -1116,6 +1116,7 @@ Ext.define('AM.controller.NHibernate', {
           host.setValue(dbInfo.dbServer);
           host.show();
 
+          oraclecontainer.show();
           //sid.show();
           //radioGroup.show();
 
@@ -1129,6 +1130,8 @@ Ext.define('AM.controller.NHibernate', {
           portNumber.hide();
           host.hide();
           serviceName.hide();
+
+          oraclecontainer.hide();
           //sid.hide();
           //radioGroup.hide();
 
@@ -1167,6 +1170,10 @@ Ext.define('AM.controller.NHibernate', {
       host.hide();
       serviceName.hide();
 
+      oraclecontainer.hide();  
+      //sid.hide();
+      //radioGroup.hide();
+
       userName.clearInvalid();
       password.clearInvalid();
     }
@@ -1202,7 +1209,7 @@ Ext.define('AM.controller.NHibernate', {
       tree.dirNode = dirNode.internalId;
       var treeStore = tree.getStore();
       var treeProxy = treeStore.getProxy();
-
+      content.body.mask('Loading...', 'x-mask-loading');
       dbDict = me.getDbDictionary(context, endpoint, baseUrl, function(dbDict) { 
         if(dbDict.ConnectionString !== null && dbDict.ConnectionString !=undefined ) {
           var base64 = AM.view.nhibernate.Utility;
@@ -1241,6 +1248,7 @@ Ext.define('AM.controller.NHibernate', {
               treeStore.load({
                 callback: function (records, options, success) {
                   var rootNode = treeStore.getRootNode();
+                  content.body.unmask();
                   me.reloadTree(rootNode, dbDict);
 
                 }
@@ -1264,6 +1272,7 @@ Ext.define('AM.controller.NHibernate', {
         }
       });
       content.add(panel);
+      content.body.unmask();
       //var myTab = content.add(panel);
       //content.setActiveTab(myTab);
     }
@@ -1521,13 +1530,11 @@ Ext.define('AM.controller.NHibernate', {
 
   showConnectionStringForm: function(nhibernatePanel) {
     var me = this,
-
       form = me.getConnectionStringForm();
     var dataTree = nhibernatePanel.down('nhibernatetree');
-
     var dirNode = me.getDirNode(dataTree.dirNode);
-
     var dbDict = dirNode.data.record.dbDict;
+    var dbInfo = dirNode.data.record.dbInfo;
     var combo = form.down('#providerCombo');
     combo.on('select', function (combo, record, options) {
       var dbProvider = record[0].data.Provider.toUpperCase();
@@ -1707,7 +1714,6 @@ Ext.define('AM.controller.NHibernate', {
   showRelationsForm: function(nhibernatePanel) {
     var me = this, 
     form = me.getRelationsForm();
-
     var grid = form.down('relationsgrid');
 
     var gridStore = grid.getStore();
@@ -1734,11 +1740,11 @@ Ext.define('AM.controller.NHibernate', {
 
     panel.add(form);
     panel.doLayout();
-
-    Ext.getBody().unmask();
+    //Ext.getBody().unmask();
   },
 
   showSetRelationForm: function(nhibernatepanel) {
+
     var me = this;
     var panel = nhibernatepanel.down('#nhibernateContent');
     var dataTree = nhibernatepanel.down('nhibernatetree');
@@ -1809,9 +1815,6 @@ Ext.define('AM.controller.NHibernate', {
     var form = me.getSetRelationForm();
     var grid = form.down('relationPropertyGrid');
     var gridStore;
-    //if(utilsObj.relationGridStore!=undefined)
-    // gridStore = utilsObj.relationGridStore;
-    //else
     gridStore = grid.getStore();
 
     var propertyNameCmb = form.down('#propertyNameCmb');
@@ -1867,12 +1870,8 @@ Ext.define('AM.controller.NHibernate', {
               if(exist == -1)
               gridStore.add(record);
 
-            }//else
-            //gridStore.removeAll();
+            }
           }
-
-          //var pMap = data.propertyMap[0];
-
 
         }else
         gridStore.removeAll();
@@ -1882,30 +1881,6 @@ Ext.define('AM.controller.NHibernate', {
       }
     });
 
-    /*if(utilsObj.relationGridStore!=undefined){
-    for(var i=0; i<utilsObj.relationGridStore.data.length;i++){
-    var record = [{
-    'property': utilsObj.relationGridStore.data.items[i].data.property,
-    'relatedProperty': utilsObj.relationGridStore.data.items[i].data.relatedProperty
-    }];
-    var exist = gridStore.find('property', utilsObj.relationGridStore.data.items[i].data.property);
-    if(exist == -1)
-    gridStore.add(record);
-
-    }
-    }*/
-    /*if(utilsObj.relationGridDeletedRec!=undefined){
-    for(var j=0; j<utilsObj.relationGridDeletedRec.length;j++){
-    var record = [{
-    'property': utilsObj.relationGridDeletedRec[j].data.property,
-    'relatedProperty': utilsObj.relationGridDeletedRec[j].data.relatedProperty
-    }];
-    var exist = gridStore.find('property', utilsObj.relationGridDeletedRec[j].data.property);
-    if(exist != -1)
-    gridStore.removeAt(exist);
-
-    }
-    }*/
 
     form.getForm().findField('relationshipName').setValue(relationName);
     form.getForm().findField('objectName').setValue(thisObj);
@@ -1919,7 +1894,6 @@ Ext.define('AM.controller.NHibernate', {
         utilsObj.relationGridStore.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
       });
     }
-    console.log(utilsObj.relationGridStore);
     panel.removeAll();
     panel.add(form);
     panel.doLayout();
