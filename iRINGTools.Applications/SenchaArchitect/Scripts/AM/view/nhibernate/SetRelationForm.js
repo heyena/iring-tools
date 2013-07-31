@@ -249,7 +249,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
     var grid = form.down('relationPropertyGrid');
     var store = grid.getStore();
     var node = form.node;
-
+    var relationshipName = form.getForm().findField('relationshipName').getValue();
     form.getForm().findField('relatedObjectName').setValue('');  
     form.getForm().findField('relationType').setValue(node.firstChild.raw.relationshipType);
     form.getForm().findField('mapPropertyName').setValue('');
@@ -270,11 +270,24 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
 
       }
     }
-    node.firstChild.raw.propertyMap = [];
+    /*node.firstChild.raw.propertyMap = [];
     store.each(function(record) {
-      node.firstChild.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
-      if(node.firstChild.data.propertyMap!=undefined) 
-      node.firstChild.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+    node.firstChild.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+    if(node.firstChild.data.propertyMap!=undefined) 
+    node.firstChild.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+
+    });*/
+
+    node.eachChild(function(node) {
+      if(node.data.text == relationshipName){
+        node.raw.propertyMap = [];
+        store.each(function(record) {
+          node.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+          if(node.data.propertyMap!=undefined) 
+          node.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+
+        });
+      }
 
     });
   }
