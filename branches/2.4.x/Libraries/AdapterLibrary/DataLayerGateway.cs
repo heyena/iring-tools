@@ -578,7 +578,12 @@ namespace org.iringtools.adapter
 
               foreach (var pair in dataObj.Dictionary)
               {
-                newRow[pair.Key] = pair.Value;
+                object value = pair.Value;
+                if (value == null)
+                {
+                    value = DBNull.Value;
+                }
+                newRow[pair.Key] = value;
               }
 
               table.Rows.Add(newRow);
