@@ -222,7 +222,6 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
   },
 
   onDbUserChange: function(field, newValue, oldValue, eOpts) {
-    alert('hi..');
     var me = this; 
     var dbProvider = me.getForm().findField('dbProvider').getValue().toUpperCase();
     if (dbProvider.indexOf('ORACLE') > -1) {

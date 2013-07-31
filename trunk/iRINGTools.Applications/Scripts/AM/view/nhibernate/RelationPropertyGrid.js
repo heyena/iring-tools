@@ -85,7 +85,7 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
     var me = this;
 
     var form = button.up('setrelationform');
-
+    var relationshipName = form.getForm().findField('relationshipName').getValue();
     var treeNode = form.node;
     var propertyCmb = form.down('#propertyNameCmb');
     var mapPropertyCmb = form.down('#mapPropertyNameCmb');
@@ -129,25 +129,50 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
 
     //utilsObj.relationGridStore = null;
     store.add(mapRecord);
+    /*if(treeNode.childNodes.length<2){
+
     if(treeNode.firstChild.raw.propertyMap!=undefined){
-      treeNode.firstChild.raw.propertyMap.push(mapRecordForNode);
-      if(treeNode.firstChild.data.propertyMap!=undefined) 
-      treeNode.firstChild.data.propertyMap.push(mapRecordForNode);
+    treeNode.firstChild.raw.propertyMap.push(mapRecordForNode);
+    if(treeNode.firstChild.data.propertyMap!=undefined) 
+    treeNode.firstChild.data.propertyMap.push(mapRecordForNode);
     }
     else{
-      treeNode.firstChild.data.propertyMap = [];
-      treeNode.firstChild.raw.propertyMap = [];
-      store.each(function(record) {
-        treeNode.firstChild.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
-        treeNode.firstChild.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
-      });
+    treeNode.firstChild.data.propertyMap = [];
+    treeNode.firstChild.raw.propertyMap = [];
+    store.each(function(record) {
+    treeNode.firstChild.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+    treeNode.firstChild.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+    });
     }
-    //utilsObj.relationGridStore = store;
+    }else{*/
+
+    treeNode.eachChild(function(node) {
+      if(node.data.text == relationshipName){
+        if(node.data.propertyMap!==undefined){
+          node.data.propertyMap.push(mapRecordForNode);
+          node.raw.propertyMap.push(mapRecordForNode);
+        }else{
+          node.data.propertyMap = [];
+          node.raw.propertyMap = [];
+          store.each(function(record) {
+            node.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+            node.raw.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+          });
+        }
+      }
+
+    });
+    //}
+
+
+
+
   },
 
   onRemoveClick: function(button, e, eOpts) {
     var me = this;
     var form = button.up('setrelationform');
+    var relationshipName = form.getForm().findField('relationshipName').getValue();
     var treeNode = form.node;
     var grid = form.down('relationPropertyGrid');
     var selectedRec = grid.getSelectionModel().selected.items[0];
@@ -158,7 +183,16 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
       store.each(function(record) {
         tempPropertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
       });
-      treeNode.firstChild.raw.propertyMap = tempPropertyMap;
+      //treeNode.firstChild.raw.propertyMap = tempPropertyMap;
+
+      treeNode.eachChild(function(node) {
+        if(node.data.text == relationshipName){
+          node.raw.propertyMap = tempPropertyMap;
+        }
+
+      });
+
+
     }
     else {
       if (store.data.items.length < 1)

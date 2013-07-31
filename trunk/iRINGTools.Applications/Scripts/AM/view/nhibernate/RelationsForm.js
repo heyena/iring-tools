@@ -116,85 +116,146 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
     var me = this;
     var message, newNodeText;
     var relationName = form.getForm().findField("relationName").getValue().replace(/^\s*/, "").replace(/\s*$/, "");
-
     var grid = form.down('relationsgrid');
     var gridStore = grid.getStore();
-
-    var mydata = gridStore.data.items;
-    var rootNode = form.rootNode;
-    var node = form.node;
-    var numberOfRelation = rootNode.childNodes.length - 1;
-
-    if (mydata.length >= numberOfRelation) {
-      if (numberOfRelation === 0) {
-        message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-      }
-      else {
-        message = 'Data object "' +node.parentNode.data.text + '" cannot have more than ' + numberOfRelation + ' relationship';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-      }
-      return;
+    var nHibernetTree = form.up().up().items.items[0];
+    //Making diff store for grid...
+    /*
+    var dataNode = nHibernetTree.getSelectedNode();
+    var relationFolderNode;
+    if(dataNode.data.type =='relationships') {
+    relationFolderNode = dataNode;
+    if(dataNode.firstChild)
+    relationName = dataNode.firstChild.data.text;
+    }
+    else {
+    relationFolderNode = dataNode.parentNode;
+    relationName = dataNode.data.text;
     }
 
-    if (relationName === "") {
-      message = 'Relationship name cannot be blank.';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-      return;
+    relationFolderNode.eachChild(function(relation) {
+    if(relation.data.text == relationName) {
+    var data;
+    if(relation.data.relationshipType)
+    data = relation.data;
+    else
+    data = relation.raw;
+    var pMap;
+    if(data.propertyMap) {
+    gridStore.removeAll();
+    for(var i=0;i<data.propertyMap.length;i++){
+    pMap = data.propertyMap[i];
+    if(pMap){
+
+    var record = [{
+    'property':  pMap.dataPropertyName,
+    'relatedProperty': pMap.relatedPropertyName
+    }];
+    var exist = gridStore.find('property', pMap.dataPropertyName);
+    if(exist == -1)
+    gridStore.add(record);
+
+    }
     }
 
-    gridStore.each(function(relation) {
-      if (relation.data.relationName.toLowerCase() == relationName.toLowerCase()) {
-        message = relationName + ' already exits.';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        return;
-      } 
-    });
+    }else
+    gridStore.removeAll();
+    //form.getForm().findField('relationType').setValue(data.relationshipType);
 
-    gridStore.add({'relationName': relationName});
+  }
+      });
+      */
 
-    var exitNode = false;
+      //*************************
 
-    node.eachChild(function(n) {
+
+
+      var mydata = gridStore.data.items;
+      var rootNode = form.rootNode;
+      var node = form.node;
+      var numberOfRelation = rootNode.childNodes.length - 1;
+
+      if (mydata.length >= numberOfRelation) {
+  if (numberOfRelation === 0) {
+    message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected';
+    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+  }
+  else {
+    message = 'Data object "' +node.parentNode.data.text + '" cannot have more than ' + numberOfRelation + ' relationship';
+    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+  }
+  return;
+      }
+
+      if (relationName === "") {
+  message = 'Relationship name cannot be blank.';
+  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+  return;
+      }
+
+      gridStore.each(function(relation) {
+  if (relation.data.relationName.toLowerCase() == relationName.toLowerCase()) {
+    message = relationName + ' already exits.';
+    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+    return;
+  } 
+      });
+
+      gridStore.add({'relationName': relationName});
+
+      var exitNode = false;
+
+      node.eachChild(function(n) {
+  exitNode = false;
+  gridStore.each(function(record) {
+    newNodeText = record.data.relationName;
+    if (n.data.text.toLowerCase() == newNodeText.toLowerCase()) {
+      exitNode = true;
+    }
+  });
+  if (exitNode === false) {
+    node.childNodes.splice(node.indexOf(n), 1);
+    node.removeChild(n);
+  }
+      });
+
+      var nodeChildren = [];
+      node.eachChild(function(n) {
+  nodeChildren.push(n.data.text);
+      });
+
+      newNodeText = relationName;
+
       exitNode = false;
-      gridStore.each(function(record) {
-        newNodeText = record.data.relationName;
-        if (n.data.text.toLowerCase() == newNodeText.toLowerCase()) {
-          exitNode = true;
-        }
+      node.eachChild(function(n) {
+  if (n.data.text.toLowerCase() == newNodeText.toLowerCase()) {
+    exitNode = true;
+    //break;
+  }
       });
+
+
       if (exitNode === false) {
-        node.childNodes.splice(node.indexOf(n), 1);
-        node.removeChild(n);
+  var newNode = node.appendChild({
+    text: relationName,
+    type: 'relationship',
+    leaf: true,
+    iconCls: 'treeRelation',
+    relatedObjectMap: [],
+    objectName: node.parentNode.text,
+    relatedObjectName: '',
+    relationshipType: 'OneToOne',
+    relationshipTypeIndex: '1'
+  });
+
+  if (node.isExpanded() === false)
+  node.expand();
+
+  nHibernetTree.getView().select(newNode);
+
+  var relationNode = node.findChild('text', relationName);
+  me.fireEvent('createrelation', form, grid, relationName);        
       }
-    });
-
-    var nodeChildren = [];
-    node.eachChild(function(n) {
-      nodeChildren.push(n.data.text);
-    });
-
-    newNodeText = relationName;
-
-    if (exitNode === false) {
-      node.appendChild({
-        text: relationName,
-        type: 'relationship',
-        leaf: true,
-        iconCls: 'treeRelation',
-        relatedObjectMap: [],
-        objectName: node.parentNode.text,
-        relatedObjectName: '',
-        relationshipType: 'OneToOne',
-        relationshipTypeIndex: '1'
-      });
-
-      if (node.isExpanded() === false)
-      node.expand();
-
-      var relationNode = node.findChild('text', relationName);
-      me.fireEvent('createrelation', form, grid, relationName);        
-    }
   }
 
 });

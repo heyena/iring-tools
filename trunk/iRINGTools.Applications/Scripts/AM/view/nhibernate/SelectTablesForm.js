@@ -23,9 +23,13 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
   ],
 
   dirNode: '',
-  frame: true,
+  width: 300,
   autoScroll: true,
+  layout: {
+    type: 'auto'
+  },
   bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  frameHeader: false,
 
   initComponent: function() {
     var me = this;

@@ -8,18 +8,19 @@
     "userConfig": {
         "dirNode": "",
         "border": null,
-        "frame": true,
         "height": null,
         "padding": null,
-        "width": null,
+        "width": 300,
         "designer|userClassName": "nhibernate.SelectTablesForm",
         "designer|userAlias": "selecttablesform",
         "autoScroll": true,
+        "layout": "auto",
         "bodyBorder": null,
         "bodyPadding": null,
         "bodyStyle": [
             "background:#eee;padding:10px 10px 0px 10px"
         ],
+        "frameHeader": false,
         "title": null
     },
     "configAlternates": {
