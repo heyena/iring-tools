@@ -112,6 +112,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
+        format = MapContentType(project, app, format);
         XDocument xDocument = _adapterProvider.GetList(project, app, resource, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
         _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
