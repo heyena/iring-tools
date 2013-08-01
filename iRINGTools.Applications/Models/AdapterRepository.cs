@@ -482,6 +482,8 @@ namespace iRINGTools.Web.Models
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        client.Timeout = 600000;
+
         string isAsync = _settings["Async"];
 
         if (isAsync != null && isAsync.ToLower() == "true")
@@ -521,6 +523,8 @@ namespace iRINGTools.Web.Models
     public Response Refresh(string scope, string application, string dataObjectName)
     {
       WebHttpClient client = CreateWebClient(_adapterServiceUri);
+      client.Timeout = 600000;
+
       Response response = client.Get<Response>(String.Format("/{0}/{1}/{2}/refresh", scope, application, dataObjectName));
       return response;
     }
@@ -554,6 +558,8 @@ namespace iRINGTools.Web.Models
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        client.Timeout = 3600000;
+        
         string isAsync = _settings["Async"];
         string url = string.Format("/{0}/{1}/cache/refresh", scope, application);
 
@@ -595,6 +601,8 @@ namespace iRINGTools.Web.Models
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        client.Timeout = 3600000;
+
         string isAsync = _settings["Async"];
         string url = string.Format("/{0}/{1}/{2}/cache/refresh", scope, application, dataObjectName);
 
@@ -636,6 +644,8 @@ namespace iRINGTools.Web.Models
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        client.Timeout = 3600000;
+
         string isAsync = _settings["Async"];
         string url = string.Format("/{0}/{1}/cache/import?baseUri={2}", scope, application, cacheUri);
 
