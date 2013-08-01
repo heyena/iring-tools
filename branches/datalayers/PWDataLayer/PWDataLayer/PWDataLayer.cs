@@ -95,8 +95,8 @@ namespace org.iringtools.adapter.datalayer
                 {
                     string itemName = item.Key;
 
-                    if (dataObjects == null || dataObjects.Count == 0 || dataObjects.Contains(itemName.Replace(" ", "")))
-                    {
+                    //if (dataObjects == null || dataObjects.Count == 0 || dataObjects.Contains(itemName.Replace(" ", "")))
+                    //{
                         DataObject dataObject = new DataObject()
                         {
                             hasContent = true,
@@ -130,7 +130,7 @@ namespace org.iringtools.adapter.datalayer
             };
 
                         dictionary.dataObjects.Add(dataObject);
-                    }
+                    //}
                 }
 
                 DataObject subFolderDataObject = new DataObject();
