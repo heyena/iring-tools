@@ -189,7 +189,7 @@ namespace org.iringtools.adapter
           }
           else
           {
-            //If objectType is not specified then pick all filter files for that scope and inject it into the dictionary.
+            // if objectType is not specified then pick all filter files for that scope and inject it into the dictionary.
             DirectoryInfo appDataDir = new DirectoryInfo(_dataPath);
             string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.later.xml", _scope, _app, "*");
             FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
@@ -213,8 +213,6 @@ namespace org.iringtools.adapter
             }
           }
         }
-
-
       }
       catch (Exception e)
       {
@@ -1192,10 +1190,10 @@ namespace org.iringtools.adapter
       return ((IDataLayer2)_dataLayer).GetSearchCount(objectType, query, filter);
     }
 
-    protected string GetCacheTableName(string cacheId, string objectType)
+    protected string GetCacheTableName(string cacheId, string objectName)
     {
-      string safeObjectType = Regex.Replace(objectType, "[^0-9a-zA-Z]+", "");
-      return cacheId + "_" + safeObjectType.ToLower();
+      string safeObjectName = Regex.Replace(objectName, "[^0-9a-zA-Z]+", "");
+      return cacheId + "_" + safeObjectName.ToLower();
     }
 
     protected string CheckCache()
