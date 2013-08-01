@@ -235,7 +235,7 @@ namespace org.iringtools.adapter.projection
         {
           ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
           DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
-          string keyDelimiter = dataObject.keyDelimeter ?? "";
+          string keyDelimiter = dataObject.keyDelimeter ?? string.Empty;
 
           List<string> keyPropertyNames = new List<string>();
           foreach (KeyProperty keyProperty in dataObject.keyProperties)
@@ -483,7 +483,8 @@ namespace org.iringtools.adapter.projection
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
       string objectName = _graphMap.dataObjectName;
       DataObject objDef = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectName.ToLower());
-      
+      string keyDelimiter = objDef.keyDelimeter ?? string.Empty;
+
       if (objDef == null)
       {
         throw new Exception("Data object [" + objectName + "] not found.");
@@ -495,14 +496,14 @@ namespace org.iringtools.adapter.projection
         {
           DataTransferObject dto = new DataTransferObject();
           StringBuilder internalIdentifier = new StringBuilder();
-
+          
           foreach (KeyProperty keyProp in objDef.keyProperties)
           {
-            internalIdentifier.Append(objDef.keyDelimeter);
+            internalIdentifier.Append(keyDelimiter);
             internalIdentifier.Append(_dataObjects[dataObjectIndex].GetPropertyValue(keyProp.keyPropertyName));
           }
 
-          internalIdentifier.Remove(0, objDef.keyDelimeter.Length);
+          internalIdentifier.Remove(0, keyDelimiter.Length);
           dto.internalIdentifier = internalIdentifier.ToString();
 
           if (typeof(IContentObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
