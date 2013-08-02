@@ -1004,6 +1004,46 @@
                 "Scripts/AM/view/directory/DownloadForm.js"
             ],
             "className": "directory.DownloadForm"
+        },
+        "eb884bba-d316-4259-9826-ff9b34b55156": {
+            "paths": [
+                "metadata/view/directory.VirtualPropertyForm",
+                "Scripts/AM/view/override/directory/VirtualPropertyForm.js",
+                "Scripts/AM/view/directory/VirtualPropertyForm.js"
+            ],
+            "className": "directory.VirtualPropertyForm"
+        },
+        "6c72cc3e-0884-42cb-9357-d6950bd5974d": {
+            "paths": [
+                "metadata/view/directory.VirtualPropertyGrid",
+                "Scripts/AM/view/override/directory/VirtualPropertyGrid.js",
+                "Scripts/AM/view/directory/VirtualPropertyGrid.js"
+            ],
+            "className": "directory.VirtualPropertyGrid"
+        },
+        "e327045e-74bb-415e-8354-2c964194b52b": {
+            "paths": [
+                "metadata/view/directory.VirtualPropertyWindow",
+                "Scripts/AM/view/override/directory/VirtualPropertyWindow.js",
+                "Scripts/AM/view/directory/VirtualPropertyWindow.js"
+            ],
+            "className": "directory.VirtualPropertyWindow"
+        },
+        "3f98908a-7611-4ab0-8097-0c76ae2ba099": {
+            "paths": [
+                "metadata/store/VirtualPropertyStore",
+                "Scripts/AM/store/override/VirtualPropertyStore.js",
+                "Scripts/AM/store/VirtualPropertyStore.js"
+            ],
+            "className": "VirtualPropertyStore"
+        },
+        "04218b6e-afe8-4f95-a693-5c0d26809f43": {
+            "paths": [
+                "metadata/model/VirtualPropertyModel",
+                "Scripts/AM/model/override/VirtualPropertyModel.js",
+                "Scripts/AM/model/VirtualPropertyModel.js"
+            ],
+            "className": "VirtualPropertyModel"
         }
     },
     "viewOrderMap": {
@@ -1089,7 +1129,10 @@
             "70726d51-c369-4512-84e0-e1a1ee5e410a",
             "f30f4a0c-cd5b-40ff-9f77-c8f20a5f51bd",
             "2a0051e3-0005-471d-bb11-7167a82113ae",
-            "432c1ae6-f4e2-40e7-a3e6-5a7f25c5079b"
+            "432c1ae6-f4e2-40e7-a3e6-5a7f25c5079b",
+            "eb884bba-d316-4259-9826-ff9b34b55156",
+            "6c72cc3e-0884-42cb-9357-d6950bd5974d",
+            "e327045e-74bb-415e-8354-2c964194b52b"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",
@@ -1109,7 +1152,8 @@
             "b93d62e3-52fe-4c8d-af23-be3ef7516ff4",
             "19274de1-0fa9-4687-ba97-fd4f4a1cea68",
             "cc442d03-be71-4c6c-bb48-90f2a756b8ba",
-            "c47bb7fc-c622-4f9d-83ae-be96ead2c751"
+            "c47bb7fc-c622-4f9d-83ae-be96ead2c751",
+            "3f98908a-7611-4ab0-8097-0c76ae2ba099"
         ],
         "controller": [
             "06f88f22-c6f5-473b-a55b-a40aae8ad3b2",
@@ -1135,7 +1179,8 @@
             "0ec68326-37b6-4aa6-96d1-dc41d4a1a50c",
             "ea0e3b6e-3144-45fa-9b7e-fe85e7feb98c",
             "55c83466-e46b-45be-9395-235cd0c2081c",
-            "842afcd6-cf5a-4490-87bc-b828d4b9fb21"
+            "842afcd6-cf5a-4490-87bc-b828d4b9fb21",
+            "04218b6e-afe8-4f95-a693-5c0d26809f43"
         ],
         "resource": [
             "72503647-4c8b-4e49-9fc2-bc85f975b901",

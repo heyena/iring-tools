@@ -12,14 +12,16 @@
             "DataLayerModel",
             "ContextModel",
             "DynamicModel",
-            "FileDownloadModel"
+            "FileDownloadModel",
+            "VirtualPropertyModel"
         ],
         "stores": [
             "DirectoryTreeStore",
             "ContextStore",
             "BaseUrlStore",
             "DataLayerStore",
-            "FileDownloadStore"
+            "FileDownloadStore",
+            "VirtualPropertyStore"
         ],
         "views": [
             "common.PropertyPanel",
@@ -57,7 +59,10 @@
             "directory.FileDownloadWindow",
             "directory.ImportCacheForm",
             "directory.ImportCacheWindow",
-            "directory.DownloadForm"
+            "directory.DownloadForm",
+            "directory.VirtualPropertyForm",
+            "directory.VirtualPropertyGrid",
+            "directory.VirtualPropertyWindow"
         ],
         "designer|userClassName": "Directory"
     },
@@ -1371,6 +1376,61 @@
                 "designer|controlQuery": "menuitem[action = deletcache]"
             },
             "designerId": "836521ab-d6e7-43e5-9959-d8ef31aed428"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onAddVirtualProperty",
+                "implHandler": [
+                    "\r",
+                    "var me = this;\r",
+                    "var win = Ext.widget('virtualpropertywindow');\r",
+                    "var form = win.down('form');\r",
+                    "var grid = form.down('grid');\r",
+                    "var tree = me.getDirTree();\r",
+                    "var node = tree.getSelectedNode();\r",
+                    "var properties = [];\r",
+                    "var formRecord = {\r",
+                    "objectName: node.data.text\r",
+                    "//propertyName:node.data.text\r",
+                    "};\r",
+                    "    var ii=0;\r",
+                    "     node.eachChild(function(child) {\r",
+                    "          properties.push([ii, child.data.text, child.data.property.Name]);\r",
+                    "          ii++;\r",
+                    "        });\r",
+                    "    \r",
+                    "      var mapCombo = grid.down('#propertyNameCmb').getEditor();//form.down('#propertyNameCmb');\r",
+                    "      mapCombo.store = Ext.create('Ext.data.SimpleStore', {\r",
+                    "        fields: ['value', 'text', 'name'],\r",
+                    "        autoLoad: true,\r",
+                    "        data: properties\r",
+                    "      });\r",
+                    "\r",
+                    "\r",
+                    "form.getForm().setValues(formRecord);\r",
+                    "\r",
+                    "win.on('Save', function () {\r",
+                    "  win.destroy();\r",
+                    "}, me);\r",
+                    "\r",
+                    "win.on('reset', function () {\r",
+                    "  win.destroy();\r",
+                    "}, me);\r",
+                    "\r",
+                    "win.show();"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=addvirtualproperty]"
+            },
+            "designerId": "248dcb1b-8d41-4b6d-a2f7-856d5487d487"
         }
     ]
 }
