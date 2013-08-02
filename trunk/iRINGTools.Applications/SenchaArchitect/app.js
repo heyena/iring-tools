@@ -36,15 +36,20 @@ Ext.application({
     'AM.view.directory.DownloadGrid',
     'AM.view.directory.ImportCacheForm',
     'AM.view.directory.ImportCacheWindow',
-    'AM.view.directory.DownloadForm'
+    'AM.view.directory.DownloadForm',
+    'AM.view.directory.VirtualPropertyForm',
+    'AM.view.directory.VirtualPropertyGrid',
+    'AM.view.directory.VirtualPropertyWindow'
   ],
   models: [
     'RelationModel',
-    'FileDownloadModel'
+    'FileDownloadModel',
+    'VirtualPropertyModel'
   ],
   stores: [
     'RelationStore',
-    'FileDownloadStore'
+    'FileDownloadStore',
+    'VirtualPropertyStore'
   ],
   views: [
     'Main',
@@ -60,7 +65,10 @@ Ext.application({
     'directory.DownloadWindow',
     'directory.ImportCacheForm',
     'directory.ImportCacheWindow',
-    'directory.DownloadForm'
+    'directory.DownloadForm',
+    'directory.VirtualPropertyForm',
+    'directory.VirtualPropertyGrid',
+    'directory.VirtualPropertyWindow'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,

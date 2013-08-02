@@ -8,11 +8,13 @@
     "userConfig": {
         "models": [
             "RelationModel",
-            "FileDownloadModel"
+            "FileDownloadModel",
+            "VirtualPropertyModel"
         ],
         "stores": [
             "RelationStore",
-            "FileDownloadStore"
+            "FileDownloadStore",
+            "VirtualPropertyStore"
         ],
         "views": [
             "Main",
@@ -28,7 +30,10 @@
             "directory.DownloadWindow",
             "directory.ImportCacheForm",
             "directory.ImportCacheWindow",
-            "directory.DownloadForm"
+            "directory.DownloadForm",
+            "directory.VirtualPropertyForm",
+            "directory.VirtualPropertyGrid",
+            "directory.VirtualPropertyWindow"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

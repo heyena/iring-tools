@@ -22,14 +22,16 @@ Ext.define('AM.controller.Directory', {
     'DataLayerModel',
     'ContextModel',
     'DynamicModel',
-    'FileDownloadModel'
+    'FileDownloadModel',
+    'VirtualPropertyModel'
   ],
   stores: [
     'DirectoryTreeStore',
     'ContextStore',
     'BaseUrlStore',
     'DataLayerStore',
-    'FileDownloadStore'
+    'FileDownloadStore',
+    'VirtualPropertyStore'
   ],
   views: [
     'common.PropertyPanel',
@@ -67,7 +69,10 @@ Ext.define('AM.controller.Directory', {
     'directory.FileDownloadWindow',
     'directory.ImportCacheForm',
     'directory.ImportCacheWindow',
-    'directory.DownloadForm'
+    'directory.DownloadForm',
+    'directory.VirtualPropertyForm',
+    'directory.VirtualPropertyGrid',
+    'directory.VirtualPropertyWindow'
   ],
 
   refs: [
@@ -868,6 +873,46 @@ Ext.define('AM.controller.Directory', {
     })
   },
 
+  onAddVirtualProperty: function(item, e, eOpts) {
+
+    var me = this;
+    var win = Ext.widget('virtualpropertywindow');
+    var form = win.down('form');
+    var grid = form.down('grid');
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode();
+    var properties = [];
+    var formRecord = {
+      objectName: node.data.text
+      //propertyName:node.data.text
+    };
+    var ii=0;
+    node.eachChild(function(child) {
+      properties.push([ii, child.data.text, child.data.property.Name]);
+      ii++;
+    });
+
+    var mapCombo = grid.down('#propertyNameCmb').getEditor();//form.down('#propertyNameCmb');
+    mapCombo.store = Ext.create('Ext.data.SimpleStore', {
+      fields: ['value', 'text', 'name'],
+      autoLoad: true,
+      data: properties
+    });
+
+
+    form.getForm().setValues(formRecord);
+
+    win.on('Save', function () {
+      win.destroy();
+    }, me);
+
+    win.on('reset', function () {
+      win.destroy();
+    }, me);
+
+    win.show();
+  },
+
   init: function(application) {
     scopForExport = null;
     appForExport = null;
@@ -940,6 +985,9 @@ Ext.define('AM.controller.Directory', {
       },
       "menuitem[action = deletcache]": {
         click: this.onDeleteCache
+      },
+      "menuitem[action=addvirtualproperty]": {
+        click: this.onAddVirtualProperty
       }
     });
   },
