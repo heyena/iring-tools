@@ -736,22 +736,42 @@ namespace org.iringtools.adapter.projection
 
           if (filter.Expressions != null)
           {
-            foreach (Expression expression in filter.Expressions)
+            for (int i = 0; i < filter.Expressions.Count; i++)
             {
-              string[] propertyNameParts = expression.PropertyName.Split('.');
-              Values values = expression.Values;
-              string dataPropertyName = ProjectProperty(propertyNameParts, ref values);
-              expression.PropertyName = dataPropertyName.Substring(dataPropertyName.LastIndexOf('.') + 1);
+              Expression expression = filter.Expressions[i];
+            
+              try
+              {
+                string[] propertyNameParts = expression.PropertyName.Split('.');
+                Values values = expression.Values;
+                string dataPropertyName = ProjectProperty(propertyNameParts, ref values);
+                expression.PropertyName = dataPropertyName.Substring(dataPropertyName.LastIndexOf('.') + 1);
+              }
+              catch (Exception e)
+              {
+                _logger.Error("Error projecting data filter expression [" + expression.ToString() + "]: " + e.Message);
+                filter.Expressions.RemoveAt(i--);
+              }
             }
           }
 
           if (filter.OrderExpressions != null)
           {
-            foreach (OrderExpression orderExpression in filter.OrderExpressions)
+            for (int i = 0; i < filter.OrderExpressions.Count; i++)
             {
-              string[] propertyNameParts = orderExpression.PropertyName.Split('.');
-              string dataPropertyName = ProjectProperty(propertyNameParts);
-              orderExpression.PropertyName = dataPropertyName.Substring(dataPropertyName.LastIndexOf('.') + 1);
+              OrderExpression orderExpression = filter.OrderExpressions[i];
+
+              try
+              {
+                string[] propertyNameParts = orderExpression.PropertyName.Split('.');
+                string dataPropertyName = ProjectProperty(propertyNameParts);
+                orderExpression.PropertyName = dataPropertyName.Substring(dataPropertyName.LastIndexOf('.') + 1);
+              }
+              catch (Exception e)
+              {
+                _logger.Error("Error projecting data filter expression [" + orderExpression.ToString() + "]: " + e.Message);
+                filter.OrderExpressions.RemoveAt(i--);
+              }
             }
           }
         }
