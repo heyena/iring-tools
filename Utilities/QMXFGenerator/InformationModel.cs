@@ -62,7 +62,7 @@
     Type,
     Value,
     Count,
-    Max = 7,
+    Max = 15,
   }
   #endregion
 }
