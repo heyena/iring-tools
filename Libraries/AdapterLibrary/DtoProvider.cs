@@ -1331,7 +1331,8 @@ namespace org.iringtools.adapter
 
                         if (manifestRole.type == RoleType.Property ||
                             manifestRole.type == RoleType.DataProperty ||
-                            manifestRole.type == RoleType.ObjectProperty)
+                            manifestRole.type == RoleType.ObjectProperty ||
+                            manifestRole.type == RoleType.FixedValue)
                         {
                           roleMap.dataLength = manifestRole.dataLength;
                           roleMap.dataType = manifestRole.dataType;

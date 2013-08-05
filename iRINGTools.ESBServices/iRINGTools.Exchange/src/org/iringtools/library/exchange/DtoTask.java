@@ -257,20 +257,14 @@ public class DtoTask implements Runnable
       }
     }
 
-    if (sourceDtos != null && sourceDtos.getDataTransferObjectList() != null
-        && sourceDtos.getDataTransferObjectList().getItems().size() > 0 && targetDtos != null
-        && targetDtos.getDataTransferObjectList() != null
-        && targetDtos.getDataTransferObjectList().getItems().size() > 0)
+    DifferencingProvider df = new DifferencingProvider();
+    DataTransferObjects dxoList = df.diff(manifest, sourceDtos, targetDtos);
+
+    if (dxoList != null)
     {
-      DifferencingProvider df = new DifferencingProvider();
-      DataTransferObjects dxoList = df.diff(manifest, sourceDtos, targetDtos);
-
-      if (dxoList != null)
-      {
-        resultDtoListItems.addAll(dxoList.getDataTransferObjectList().getItems());
-      }
+      resultDtoListItems.addAll(dxoList.getDataTransferObjectList().getItems());
     }
-
+      
     List<DataTransferObject> orderedDtoListItems = sortDtos(resultDtoListItems, dtiList);
     resultDtoList.setItems(orderedDtoListItems);
   }
