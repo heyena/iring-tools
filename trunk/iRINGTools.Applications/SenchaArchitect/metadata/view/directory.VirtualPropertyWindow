@@ -6,13 +6,17 @@
     },
     "codeClass": null,
     "userConfig": {
-        "height": 479,
-        "width": 837,
+        "height": 594,
+        "width": 1092,
         "designer|userClassName": "directory.VirtualPropertyWindow",
         "designer|userAlias": "virtualpropertywindow",
+        "resizable": false,
         "layout": "fit",
         "title": "Add Virtual Property",
         "modal": true
+    },
+    "configAlternates": {
+        "resizable": "boolean"
     },
     "designerId": "e327045e-74bb-415e-8354-2c964194b52b",
     "cn": [

@@ -11,7 +11,7 @@
         "width": null,
         "designer|userClassName": "directory.VirtualPropertyForm",
         "designer|userAlias": "virtualpropertyform",
-        "bodyPadding": 5,
+        "bodyPadding": 3,
         "title": null
     },
     "designerId": "eb884bba-d316-4259-9826-ff9b34b55156",
@@ -103,11 +103,11 @@
             },
             "codeClass": null,
             "userConfig": {
-                "layout|anchor": "100%",
-                "height": 292,
+                "flex": null,
+                "height": 409,
                 "margin": "15 0 0 0",
                 "width": 1074,
-                "flex": null
+                "layout|anchor": "100%"
             },
             "designerId": "179c80b1-2893-4de6-8853-ef1121560cfe",
             "customConfigs": [

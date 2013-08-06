@@ -22,7 +22,7 @@ Ext.define('AM.view.directory.VirtualPropertyForm', {
   ],
 
   itemId: 'virtualPropertyForm',
-  bodyPadding: 5,
+  bodyPadding: 3,
 
   initComponent: function() {
     var me = this;
@@ -68,10 +68,10 @@ Ext.define('AM.view.directory.VirtualPropertyForm', {
         },
         {
           xtype: 'virtualpropertygrid',
-          anchor: '100%',
-          height: 292,
+          height: 409,
           margin: '15 0 0 0',
-          width: 1074
+          width: 1074,
+          anchor: '100%'
         }
       ],
       dockedItems: [

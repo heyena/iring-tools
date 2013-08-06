@@ -6,6 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
+        "layout": null,
         "height": null,
         "itemId": "virtualGrid",
         "width": null,
@@ -48,7 +49,8 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dataIndex": "type",
+                "itemId": "typeCmb",
+                "dataIndex": "propertyType",
                 "text": "Type",
                 "flex": 1
             },
@@ -67,8 +69,8 @@
                             "['Constant',\r",
                             " 'Constant'\r",
                             "],\r",
-                            "['Temporary',\r",
-                            " 'Temporary'\r",
+                            "['Property',\r",
+                            " 'Property'\r",
                             "]\r",
                             "]"
                         ]
@@ -76,7 +78,46 @@
                     "configAlternates": {
                         "store": "array"
                     },
-                    "designerId": "c5310129-d0ea-4860-bd3f-cc54193edf4f"
+                    "designerId": "c5310129-d0ea-4860-bd3f-cc54193edf4f",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onComboboxSelect",
+                                "implHandler": [
+                                    "var me = this;\r",
+                                    "/*\r",
+                                    "var propertyColumn = me.down('#propertyNameCmb');\r",
+                                    "var propertyCmb = propertyColumn.getEditor();\r",
+                                    "var lengthField = me.down('#lengthField');\r",
+                                    "var lengthFieldEditor = lengthField.getEditor();\r",
+                                    "var textField = me.down('#textField');\r",
+                                    "var textFieldEditor = textField.getEditor();\r",
+                                    "\r",
+                                    "if(records[0].data.field1 == 'Constant'){\r",
+                                    "  lengthFieldEditor.setDisabled(true);\r",
+                                    "  propertyCmb.setDisabled(true);\r",
+                                    "  textFieldEditor.setDisabled(false);\r",
+                                    "}else{\r",
+                                    "  lengthFieldEditor.setDisabled(false);\r",
+                                    "  propertyCmb.setDisabled(false);\r",
+                                    "  textFieldEditor.setDisabled(true);\r",
+                                    "}\r",
+                                    "*/\r",
+                                    "\r",
+                                    "me.enableDisableColumn(records[0].data.field1);"
+                                ],
+                                "name": "select",
+                                "scope": "me"
+                            },
+                            "designerId": "f4a0c6f2-f382-4833-8a84-cd2a4ebf93bc"
+                        }
+                    ]
                 }
             ]
         },
@@ -103,7 +144,7 @@
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "itemId": "propertyNameEditorCmb",
+                        "itemId": null,
                         "store": null
                     },
                     "configAlternates": {
@@ -114,14 +155,15 @@
             ]
         },
         {
-            "type": "Ext.grid.column.Number",
+            "type": "Ext.grid.column.Column",
             "reference": {
                 "name": "columns",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "dataIndex": "length",
+                "itemId": "lengthField",
+                "dataIndex": "propertyLength",
                 "text": "Length",
                 "flex": 1
             },
@@ -155,6 +197,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "itemId": "textField",
                 "dataIndex": "valueText",
                 "text": "Text",
                 "flex": 1
@@ -228,6 +271,8 @@
                     "codeClass": null,
                     "userConfig": {
                         "layout|flex": null,
+                        "disabled": true,
+                        "itemId": "removeButton",
                         "iconCls": "am-list-remove",
                         "text": "Remove"
                     },
@@ -257,19 +302,6 @@
             ]
         },
         {
-            "type": "Ext.grid.plugin.RowEditing",
-            "reference": {
-                "name": "plugins",
-                "type": "array"
-            },
-            "codeClass": "Ext.grid.plugin.RowEditing",
-            "userConfig": {
-                "autoCancel": false,
-                "clicksToMoveEditor": 1
-            },
-            "designerId": "bda9ba64-eaa2-444c-92b3-c61713aa111d"
-        },
-        {
             "type": "basicfunction",
             "reference": {
                 "name": "items",
@@ -281,19 +313,16 @@
                 "implHandler": [
                     "var me = this; //me here is grid refrence...\r",
                     "var rowEditing = me.editingPlugin;\r",
-                    "//rowEditing.cancelEdit();\r",
+                    "rowEditing.cancelEdit();\r",
                     "var store = me.getStore();\r",
                     "var sm = me.getSelectionModel();\r",
                     "// Create a model instance\r",
-                    "var r = Ext.create('AM.model.VirtualPropertyModel', {\r",
-                    "  type: '',\r",
-                    "  propertyName: '',\r",
-                    "  length: 0,\r",
-                    "  valueText: ''\r",
+                    "var newRec = Ext.create('AM.model.VirtualPropertyModel', {\r",
                     "});\r",
                     "\r",
-                    "store.insert(0, r);\r",
-                    "rowEditing.startEdit(0, 0);"
+                    "store.insert(0, newRec);\r",
+                    "rowEditing.startEdit(0, 0);\r",
+                    "me.enableDisableColumn('');"
                 ]
             },
             "designerId": "1f617743-c4cd-4b42-9bd0-79e8ab305ede"
@@ -313,14 +342,158 @@
                     "var store = me.getStore();\r",
                     "var sm = me.getSelectionModel();\r",
                     "var rowEditing = me.editingPlugin;\r",
-                    "//rowEditing.cancelEdit();\r",
-                    "store.remove(sm.getSelection());\r",
-                    "if (store.getCount() > 0) {\r",
+                    "rowEditing.cancelEdit();\r",
+                    "\r",
+                    "if (store.getCount() > 0){ \r",
+                    "  store.remove(sm.getSelection());\r",
                     "  sm.select(0);\r",
-                    "}"
+                    "}\r",
+                    "else{\r",
+                    "\tshowDialog(300, 70, 'Warning', \"There are no more records to Remove\", Ext.Msg.OK, null);\r",
+                    "}\r",
+                    "\r",
+                    "\r",
+                    "\r",
+                    "  "
                 ]
             },
             "designerId": "dcc360e1-10a5-4b2b-9ff5-a91423672ab1"
+        },
+        {
+            "type": "Ext.grid.plugin.RowEditing",
+            "reference": {
+                "name": "plugins",
+                "type": "array"
+            },
+            "codeClass": "Ext.grid.plugin.RowEditing",
+            "userConfig": {
+                "autoCancel": false,
+                "clicksToMoveEditor": 1
+            },
+            "designerId": "5572c764-a90b-49e4-80bf-f490e8ed93d3"
+        },
+        {
+            "type": "basiceventbinding",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onVirtualGridCellDblClick",
+                "implHandler": [
+                    "var me = this;\r",
+                    "/*var propertyColumn = me.down('#propertyNameCmb');\r",
+                    "var propertyCmb = propertyColumn.getEditor();\r",
+                    "var lengthField = me.down('#lengthField');\r",
+                    "var lengthFieldEditor = lengthField.getEditor();\r",
+                    "var textField = me.down('#textField');\r",
+                    "var textFieldEditor = textField.getEditor();\r",
+                    "\r",
+                    "\r",
+                    "if(record.data.propertyType == 'Constant'){\r",
+                    "  lengthFieldEditor.setDisabled(true);\r",
+                    "  propertyCmb.setDisabled(true);\r",
+                    "  textFieldEditor.setDisabled(false);\r",
+                    "}else{\r",
+                    "  lengthFieldEditor.setDisabled(false);\r",
+                    "  propertyCmb.setDisabled(false);\r",
+                    "  textFieldEditor.setDisabled(true);\r",
+                    "}\r",
+                    "*/\r",
+                    "me.enableDisableColumn(record.data.propertyType);"
+                ],
+                "name": "celldblclick",
+                "scope": "me"
+            },
+            "designerId": "165e09a2-288e-4977-8cdf-aca4c2a33715"
+        },
+        {
+            "type": "basiceventbinding",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onVirtualGridCellClick",
+                "implHandler": [
+                    "var me = this;\r",
+                    "/*var propertyColumn = me.down('#propertyNameCmb');\r",
+                    "var propertyCmb = propertyColumn.getEditor();\r",
+                    "var lengthField = me.down('#lengthField');\r",
+                    "var lengthFieldEditor = lengthField.getEditor();\r",
+                    "var textField = me.down('#textField');\r",
+                    "var textFieldEditor = textField.getEditor();\r",
+                    "\r",
+                    "\r",
+                    "if(record.data.propertyType == 'Constant'){\r",
+                    "  lengthFieldEditor.setDisabled(true);\r",
+                    "  propertyCmb.setDisabled(true);\r",
+                    "  textFieldEditor.setDisabled(false);\r",
+                    "}else{\r",
+                    "  lengthFieldEditor.setDisabled(false);\r",
+                    "  propertyCmb.setDisabled(false);\r",
+                    "  textFieldEditor.setDisabled(true);\r",
+                    "}*/\r",
+                    "\r",
+                    "var removeButton = me.down('#removeButton');\r",
+                    "removeButton.setDisabled(false);\r",
+                    "me.enableDisableColumn(record.data.propertyType);"
+                ],
+                "name": "cellclick",
+                "scope": "me"
+            },
+            "designerId": "4fdc2e33-ddbb-49b4-9f22-cb85dc9ce2db"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "enableDisableColumn",
+                "designer|params": [
+                    "propertyType"
+                ],
+                "implHandler": [
+                    "//alert('enableDisabledColumn mehtod...');\r",
+                    "var me = this;\r",
+                    "var propertyColumn = me.down('#propertyNameCmb');\r",
+                    "var propertyCmb = propertyColumn.getEditor();\r",
+                    "var lengthField = me.down('#lengthField');\r",
+                    "var lengthFieldEditor = lengthField.getEditor();\r",
+                    "var textField = me.down('#textField');\r",
+                    "var textFieldEditor = textField.getEditor();\r",
+                    "\r",
+                    "if(propertyType == 'Constant'){\r",
+                    "  \r",
+                    "  lengthFieldEditor.setDisabled(true);\r",
+                    "  //lengthFieldEditor.setValue(0)\r",
+                    "  propertyCmb.setDisabled(true);\r",
+                    "  //propertyCmb.setValue(null)\r",
+                    "  textFieldEditor.setDisabled(false);\r",
+                    "  \r",
+                    "}else if(propertyType == 'Property'){\r",
+                    "  \r",
+                    "  lengthFieldEditor.setDisabled(false);\r",
+                    "  propertyCmb.setDisabled(false);\r",
+                    "  textFieldEditor.setDisabled(true);\r",
+                    "  //textFieldEditor.setValue(null);\r",
+                    "  \r",
+                    "}else{\r",
+                    "  \r",
+                    "  lengthFieldEditor.setDisabled(false);\r",
+                    "  propertyCmb.setDisabled(false);\r",
+                    "  textFieldEditor.setDisabled(false);\r",
+                    "\t\r",
+                    "}\r",
+                    ""
+                ]
+            },
+            "designerId": "722d74b6-f5e0-4e59-8986-bcbb00233ca3"
         }
     ]
 }

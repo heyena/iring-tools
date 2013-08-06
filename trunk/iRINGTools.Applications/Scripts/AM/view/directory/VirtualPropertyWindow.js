@@ -21,8 +21,9 @@ Ext.define('AM.view.directory.VirtualPropertyWindow', {
     'AM.view.directory.VirtualPropertyForm'
   ],
 
-  height: 479,
-  width: 837,
+  height: 594,
+  width: 1092,
+  resizable: false,
   layout: {
     type: 'fit'
   },
