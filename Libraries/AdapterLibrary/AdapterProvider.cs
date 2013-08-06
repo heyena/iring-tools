@@ -2324,6 +2324,45 @@ namespace org.iringtools.adapter
       }
     }
 
+    
+    public VirtualProperties GetVirtualProperties(string scope, string app)
+    {
+      try
+      {
+        string path = String.Format("{0}VirtualProperties.{1}.{2}.xml", _settings["AppDataPath"], scope, app);
+        VirtualProperties virtualProperties = Utility.Read<VirtualProperties>(path);
+        return virtualProperties;
+
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error getting Virtual Properties: {0}", ex));
+        throw new Exception(string.Format("Error getting Virtual Properties: {0}", ex));
+      }      
+    }
+
+    public Response PostVirtualProperties(string scope, string app, VirtualProperties virtualProperties)
+    {
+      try
+      {
+        Response response = new Response();
+        Status status = new Status();
+
+        string path = String.Format("{0}VirtualProperties.{1}.{2}.xml", _settings["AppDataPath"], scope, app);
+        Utility.Write<VirtualProperties>(virtualProperties, path, true);
+
+        status.Messages.Add("Virtual Properties saved successfully");
+        return response;
+
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in saving Virtual Properties: {0}", ex));
+        throw new Exception(string.Format("Error in saving Virtual Properties: {0}", ex));
+      } 
+    }
+
+
     private bool IsNumeric(DataProperty dataProperty)
     {
       return (dataProperty.dataType == DataType.Byte ||
@@ -4615,6 +4654,7 @@ namespace org.iringtools.adapter
 
       return dataObjects;
     }
+       
   }
 
   public enum PostAction { Create, Update }

@@ -213,6 +213,30 @@ namespace org.iringtools.adapter
             }
           }
         }
+
+         //injecting Virtual properties
+        if (dictionary != null)
+        {
+          string virtualPropertiesPath = string.Format("{0}VirtualProperties.{1}.{2}.xml",
+                     _dataPath, _scope, _app);
+
+          if (File.Exists(virtualPropertiesPath))
+          {
+            VirtualProperties vps = utility.Utility.Read<VirtualProperties>(virtualPropertiesPath, true);
+
+            foreach (VirtualProperty vp in vps.virtualProperties)
+            {
+              if (dictionary.GetDataObject(vp.objectName) != null)
+              {
+                if (dictionary.GetDataObject(vp.objectName).dataProperties.Where(x => x.propertyName == vp.propertyName).SingleOrDefault() == null)
+                  
+                  dictionary.GetDataObject(vp.objectName).dataProperties.Add(vp);
+              }
+            }
+          }
+        }
+
+
       }
       catch (Exception e)
       {
@@ -386,6 +410,7 @@ namespace org.iringtools.adapter
           {
             limit = (start + page < objCount) ? page : start + page - objCount;
             IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
+            //dataObjects = dataObjects.GetDataObjectsWithVirtualProperties(objectType);
 
             if (dataObjects != null && dataObjects.Count > 0)
             {
@@ -393,7 +418,7 @@ namespace org.iringtools.adapter
               {
                 DataRow newRow = table.NewRow();
 
-                foreach (DataProperty prop in objectType.dataProperties)
+                foreach (DataProperty prop in objectType.dataProperties.Where(x => !x.isVirtual))
                 {
                   object value = dataObj.GetPropertyValue(prop.propertyName);
 
@@ -802,12 +827,13 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
-          dataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start).ToList();
+          dataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start).ToList();          
         }
         else
         {
           throw new Exception(NO_CACHE_ERROR);
         }
+        dataObjects = (List<IDataObject>)dataObjects.GetDataObjectsWithVirtualProperties(objectType);
       }
       catch (Exception e)
       {
@@ -838,12 +864,13 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
-          dataObjects = _dataLayer.Get(objectType.objectName, identifiers).ToList();
+          dataObjects = _dataLayer.Get(objectType.objectName, identifiers).ToList();          
         }
         else
         {
           throw new Exception(NO_CACHE_ERROR);
         }
+        dataObjects = (List<IDataObject>)dataObjects.GetDataObjectsWithVirtualProperties(objectType);
       }
       catch (Exception e)
       {
@@ -1295,7 +1322,7 @@ namespace org.iringtools.adapter
       string tableName = GetCacheTableName(cacheId, objectType.objectName);
       tableBuilder.Append("CREATE TABLE " + tableName + "( ");
 
-      foreach (DataProperty prop in objectType.dataProperties)
+      foreach (DataProperty prop in objectType.dataProperties.Where(x => !x.isVirtual))
       {
         string columnName = "[" + prop.propertyName + "]";
         string dataType = ToSQLType(prop.dataType);

@@ -711,6 +711,30 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
+    public string SaveVirtualProperties(string scope, string application, string tree)
+    {
+      VirtualProperties virtualProperties = Utility.FromJson<VirtualProperties>(tree);
+      string postResult = null;
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        postResult = client.Post<VirtualProperties>(String.Format("/{0}/{1}/virtualProperties", scope, application), virtualProperties, true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in posting VirtualProperties." + ex);
+      }
+      return postResult;
+    }
+
+    public VirtualProperties GetVirtualProperties(string scope, string application)
+    {
+      WebHttpClient client = CreateWebClient(_adapterServiceUri);
+      VirtualProperties virtualProperties = client.Get<VirtualProperties>(String.Format("/{0}/{1}/virtualProperties", scope, application));
+      return virtualProperties;
+    }
+
+    
     #region NHibernate Configuration Wizard support methods
     public DataProviders GetDBProviders()
     {
