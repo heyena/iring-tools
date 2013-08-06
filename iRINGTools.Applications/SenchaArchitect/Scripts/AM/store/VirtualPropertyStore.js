@@ -27,7 +27,7 @@ Ext.define('AM.store.VirtualPropertyStore', {
     me.callParent([Ext.apply({
       autoLoad: true,
       model: 'AM.model.VirtualPropertyModel',
-      storeId: 'MyStore1',
+      storeId: 'virtualPropertyStore',
       proxy: {
         type: 'ajax',
         url: '/scripts/sample.json',

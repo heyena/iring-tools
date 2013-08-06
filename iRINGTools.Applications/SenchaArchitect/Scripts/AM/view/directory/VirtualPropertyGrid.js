@@ -37,7 +37,8 @@ Ext.define('AM.view.directory.VirtualPropertyGrid', {
         },
         {
           xtype: 'gridcolumn',
-          dataIndex: 'type',
+          itemId: 'typeCmb',
+          dataIndex: 'propertyType',
           text: 'Type',
           flex: 1,
           editor: {
@@ -48,10 +49,16 @@ Ext.define('AM.view.directory.VirtualPropertyGrid', {
                 'Constant'
               ],
               [
-                'Temporary',
-                'Temporary'
+                'Property',
+                'Property'
               ]
-            ]
+            ],
+            listeners: {
+              select: {
+                fn: me.onComboboxSelect,
+                scope: me
+              }
+            }
           }
         },
         {
@@ -61,13 +68,13 @@ Ext.define('AM.view.directory.VirtualPropertyGrid', {
           text: 'Property',
           flex: 1,
           editor: {
-            xtype: 'combobox',
-            itemId: 'propertyNameEditorCmb'
+            xtype: 'combobox'
           }
         },
         {
-          xtype: 'numbercolumn',
-          dataIndex: 'length',
+          xtype: 'gridcolumn',
+          itemId: 'lengthField',
+          dataIndex: 'propertyLength',
           text: 'Length',
           flex: 1,
           editor: {
@@ -76,6 +83,7 @@ Ext.define('AM.view.directory.VirtualPropertyGrid', {
         },
         {
           xtype: 'gridcolumn',
+          itemId: 'textField',
           dataIndex: 'valueText',
           text: 'Text',
           flex: 1,
@@ -102,6 +110,8 @@ Ext.define('AM.view.directory.VirtualPropertyGrid', {
               handler: function(button, event) {
                 me.onRemoveRecord();
               },
+              disabled: true,
+              itemId: 'removeButton',
               iconCls: 'am-list-remove',
               text: 'Remove'
             }
@@ -113,28 +123,107 @@ Ext.define('AM.view.directory.VirtualPropertyGrid', {
           autoCancel: false,
           clicksToMoveEditor: 1
         })
-      ]
+      ],
+      listeners: {
+        celldblclick: {
+          fn: me.onVirtualGridCellDblClick,
+          scope: me
+        },
+        cellclick: {
+          fn: me.onVirtualGridCellClick,
+          scope: me
+        }
+      }
     });
 
     me.callParent(arguments);
   },
 
+  onComboboxSelect: function(combo, records, eOpts) {
+    var me = this;
+    /*
+    var propertyColumn = me.down('#propertyNameCmb');
+    var propertyCmb = propertyColumn.getEditor();
+    var lengthField = me.down('#lengthField');
+    var lengthFieldEditor = lengthField.getEditor();
+    var textField = me.down('#textField');
+    var textFieldEditor = textField.getEditor();
+
+    if(records[0].data.field1 == 'Constant'){
+    lengthFieldEditor.setDisabled(true);
+    propertyCmb.setDisabled(true);
+    textFieldEditor.setDisabled(false);
+    }else{
+    lengthFieldEditor.setDisabled(false);
+    propertyCmb.setDisabled(false);
+    textFieldEditor.setDisabled(true);
+    }
+    */
+
+    me.enableDisableColumn(records[0].data.field1);
+  },
+
+  onVirtualGridCellDblClick: function(tableview, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+    var me = this;
+    /*var propertyColumn = me.down('#propertyNameCmb');
+    var propertyCmb = propertyColumn.getEditor();
+    var lengthField = me.down('#lengthField');
+    var lengthFieldEditor = lengthField.getEditor();
+    var textField = me.down('#textField');
+    var textFieldEditor = textField.getEditor();
+
+
+    if(record.data.propertyType == 'Constant'){
+    lengthFieldEditor.setDisabled(true);
+    propertyCmb.setDisabled(true);
+    textFieldEditor.setDisabled(false);
+    }else{
+    lengthFieldEditor.setDisabled(false);
+    propertyCmb.setDisabled(false);
+    textFieldEditor.setDisabled(true);
+    }
+    */
+    me.enableDisableColumn(record.data.propertyType);
+  },
+
+  onVirtualGridCellClick: function(tableview, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+    var me = this;
+    /*var propertyColumn = me.down('#propertyNameCmb');
+    var propertyCmb = propertyColumn.getEditor();
+    var lengthField = me.down('#lengthField');
+    var lengthFieldEditor = lengthField.getEditor();
+    var textField = me.down('#textField');
+    var textFieldEditor = textField.getEditor();
+
+
+    if(record.data.propertyType == 'Constant'){
+    lengthFieldEditor.setDisabled(true);
+    propertyCmb.setDisabled(true);
+    textFieldEditor.setDisabled(false);
+    }else{
+    lengthFieldEditor.setDisabled(false);
+    propertyCmb.setDisabled(false);
+    textFieldEditor.setDisabled(true);
+    }*/
+
+    var removeButton = me.down('#removeButton');
+    removeButton.setDisabled(false);
+    me.enableDisableColumn(record.data.propertyType);
+  },
+
   onAddRecord: function() {
     var me = this; //me here is grid refrence...
     var rowEditing = me.editingPlugin;
-    //rowEditing.cancelEdit();
+    rowEditing.cancelEdit();
     var store = me.getStore();
     var sm = me.getSelectionModel();
     // Create a model instance
-    var r = Ext.create('AM.model.VirtualPropertyModel', {
-      type: '',
-      propertyName: '',
-      length: 0,
-      valueText: ''
+    var newRec = Ext.create('AM.model.VirtualPropertyModel', {
     });
 
-    store.insert(0, r);
+    store.insert(0, newRec);
     rowEditing.startEdit(0, 0);
+    me.enableDisableColumn('');
   },
 
   onRemoveRecord: function() {
@@ -143,11 +232,54 @@ Ext.define('AM.view.directory.VirtualPropertyGrid', {
     var store = me.getStore();
     var sm = me.getSelectionModel();
     var rowEditing = me.editingPlugin;
-    //rowEditing.cancelEdit();
-    store.remove(sm.getSelection());
-    if (store.getCount() > 0) {
+    rowEditing.cancelEdit();
+
+    if (store.getCount() > 0){ 
+      store.remove(sm.getSelection());
       sm.select(0);
     }
+    else{
+      showDialog(300, 70, 'Warning', "There are no more records to Remove", Ext.Msg.OK, null);
+    }
+
+
+
+
+  },
+
+  enableDisableColumn: function(propertyType) {
+    //alert('enableDisabledColumn mehtod...');
+    var me = this;
+    var propertyColumn = me.down('#propertyNameCmb');
+    var propertyCmb = propertyColumn.getEditor();
+    var lengthField = me.down('#lengthField');
+    var lengthFieldEditor = lengthField.getEditor();
+    var textField = me.down('#textField');
+    var textFieldEditor = textField.getEditor();
+
+    if(propertyType == 'Constant'){
+
+      lengthFieldEditor.setDisabled(true);
+      //lengthFieldEditor.setValue(0)
+      propertyCmb.setDisabled(true);
+      //propertyCmb.setValue(null)
+      textFieldEditor.setDisabled(false);
+
+    }else if(propertyType == 'Property'){
+
+      lengthFieldEditor.setDisabled(false);
+      propertyCmb.setDisabled(false);
+      textFieldEditor.setDisabled(true);
+      //textFieldEditor.setValue(null);
+
+    }else{
+
+      lengthFieldEditor.setDisabled(false);
+      propertyCmb.setDisabled(false);
+      textFieldEditor.setDisabled(false);
+
+    }
+
   }
 
 });
