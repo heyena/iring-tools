@@ -559,6 +559,13 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.propertyName);
           _dataObjectWriter.Indent++;
 
+          if (dataProperty.dataType == DataType.Date || dataProperty.dataType == DataType.DateTime)
+          {
+            _dataObjectWriter.WriteLine(
+              string.Format("if (value == null || value.ToString() == string.Empty) {0} = null;", dataProperty.propertyName));
+            _dataObjectWriter.WriteLine("else ");
+          }
+
           bool dataPropertyIsNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
           if (dataPropertyIsNullable)
           {

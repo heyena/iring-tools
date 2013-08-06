@@ -24,9 +24,9 @@ namespace org.iringtools.adapter
 
     protected GraphMap _graphMap;
     protected string _fixedIdentifierBoundary = "#";
-    
+
     [Inject]
-    public DtoProvider(NameValueCollection settings) : base(settings) {}
+    public DtoProvider(NameValueCollection settings) : base(settings) { }
 
     public VersionInfo GetVersion()
     {
@@ -56,7 +56,7 @@ namespace org.iringtools.adapter
             {
               Key key = new Key()
               {
-                classId = classMap.id,
+                classId = classTemplateMap.classMap.id,
                 templateId = templateMap.id,
                 roleId = roleMap.id
               };
@@ -73,7 +73,7 @@ namespace org.iringtools.adapter
 
       throw new Exception(error);
     }
-    
+
     public Manifest GetManifest(string scope, string app, string graph)
     {
       Manifest manifest = new Manifest()
@@ -104,7 +104,7 @@ namespace org.iringtools.adapter
 
             manifest.graphs.Add(manifestGraph);
           }
-          else 
+          else
           {
             continue;
           }
@@ -138,7 +138,7 @@ namespace org.iringtools.adapter
 
             ClassMap classMap = classTemplateMap.classMap;
             List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-            
+
             Keys keys = new Keys();
 
             if (templateMaps.Count > 0)
@@ -156,7 +156,7 @@ namespace org.iringtools.adapter
               name = classMap.name,
               keys = keys,
               index = classMap.index,
-              path  = classMap.path
+              path = classMap.path
             };
             manifestClassTemplates.@class = manifestClass;
 
@@ -226,10 +226,10 @@ namespace org.iringtools.adapter
                     manifestRole.dataLength = dataProp.dataLength;
                     if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
                     {
-                        if (dataProp.dataType == DataType.Date)
-                            manifestRole.dataType = "xsd:date";
-                        else if (dataProp.dataType == DataType.DateTime)
-                            manifestRole.dataType = "xsd:dateTime";
+                      if (dataProp.dataType == DataType.Date)
+                        manifestRole.dataType = "xsd:date";
+                      else if (dataProp.dataType == DataType.DateTime)
+                        manifestRole.dataType = "xsd:dateTime";
                     }
 
                     if (dataObj.isKeyProperty(propertyName))
@@ -314,37 +314,37 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
-/*
- * Sample filter with rollups:
- * 
-<?xml version="1.0" encoding="utf-8"?>
-<dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter">
-  <rollupExpressions>
-    <rollupExpression>
-      <groupBy>ID</groupBy>
-      <rollups>
-        <rollup>
-          <propertyName>NOMDIAMETER</propertyName>
-          <type>Max</type>
-        </rollup>
-        <rollup>
-          <propertyName>AREA</propertyName>
-          <type>First</type>
-        </rollup>
-      </rollups>
-    </rollupExpression>
-    <rollupExpression>
-      <groupBy>AREA</groupBy>
-      <rollups>
-        <rollup>
-          <propertyName>NOMDIAMETER</propertyName>
-          <type>Sum</type>
-        </rollup>
-      </rollups>
-    </rollupExpression>
-  </rollupExpressions>
-</dataFilter>
- */
+    /*
+     * Sample filter with rollups:
+     * 
+    <?xml version="1.0" encoding="utf-8"?>
+    <dataFilter xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/data/filter">
+      <rollupExpressions>
+        <rollupExpression>
+          <groupBy>ID</groupBy>
+          <rollups>
+            <rollup>
+              <propertyName>NOMDIAMETER</propertyName>
+              <type>Max</type>
+            </rollup>
+            <rollup>
+              <propertyName>AREA</propertyName>
+              <type>First</type>
+            </rollup>
+          </rollups>
+        </rollupExpression>
+        <rollupExpression>
+          <groupBy>AREA</groupBy>
+          <rollups>
+            <rollup>
+              <propertyName>NOMDIAMETER</propertyName>
+              <type>Sum</type>
+            </rollup>
+          </rollups>
+        </rollupExpression>
+      </rollupExpressions>
+    </dataFilter>
+     */
     private List<IDataObject> ProcessRollups(DataObject objDef, List<IDataObject> dataObjects, DataFilter filter)
     {
       if (filter != null && filter.RollupExpressions != null && filter.RollupExpressions.Count > 0)
@@ -352,7 +352,7 @@ namespace org.iringtools.adapter
         foreach (RollupExpression rollupExpr in filter.RollupExpressions)
         {
           DataProperty groupByProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollupExpr.GroupBy.ToLower());
-          
+
           // sort data objects by groupBy property value
           for (int i = 1; i < dataObjects.Count - 1; i++)
           {
@@ -360,7 +360,7 @@ namespace org.iringtools.adapter
 
             for (int j = i; j < dataObjects.Count; j++)
             {
-              string v1 = Convert.ToString(dataObjects[j-1].GetPropertyValue(groupByProp.propertyName));
+              string v1 = Convert.ToString(dataObjects[j - 1].GetPropertyValue(groupByProp.propertyName));
               string v2 = Convert.ToString(dataObjects[j].GetPropertyValue(groupByProp.propertyName));
 
               if (string.Compare(v2, v1) < 0)
@@ -563,7 +563,7 @@ namespace org.iringtools.adapter
           }
 
           dataObjects = rollupDataObjects.ToList();
-        }        
+        }
       }
 
       return dataObjects;
@@ -579,7 +579,7 @@ namespace org.iringtools.adapter
           dataProperty.dataType == DataType.Int64 ||
           dataProperty.dataType == DataType.Single);
     }
-    
+
     public string AsyncGetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest dxiRequest)
     {
       try
@@ -614,7 +614,7 @@ namespace org.iringtools.adapter
         {
           _requests[id].Message = ex.Message;
         }
-        
+
         _requests[id].State = State.Error;
       }
     }
@@ -713,8 +713,8 @@ namespace org.iringtools.adapter
 
         DataFilter filter = dxiRequest.DataFilter;
         DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
-        
-        dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);        
+
+        dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);
         filter.AppendFilter(presetFilter);
 
         // get sort index
@@ -759,7 +759,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        InitializeScope(scope, app); 
+        InitializeScope(scope, app);
         InitializeDataLayer();
 
         _graphMap = _mapping.FindGraphMap(graph);
@@ -861,9 +861,9 @@ namespace org.iringtools.adapter
             //}
             //else
             //{
-              List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
-              DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-              dataTransferObjects = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
+            List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
+            DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+            dataTransferObjects = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
             //}
           }
         }
@@ -876,7 +876,7 @@ namespace org.iringtools.adapter
 
       return dataTransferObjects;
     }
-    
+
     public string AsyncGetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest, bool includeContent)
     {
       try
@@ -929,11 +929,11 @@ namespace org.iringtools.adapter
           InitializeScope(scope, app);
           InitializeDataLayer();
 
-          BuildCrossGraphMap(dxoRequest.Manifest, graph); 
+          BuildCrossGraphMap(dxoRequest.Manifest, graph);
           DataObject objectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
-          
+
           List<DataTransferIndex> dataTrasferIndexList = dxoRequest.DataTransferIndices.DataTransferIndexList;
-          
+
           Dictionary<string, string> idFormats = new Dictionary<string, string>();
           foreach (DataTransferIndex dti in dataTrasferIndexList)
           {
@@ -956,7 +956,7 @@ namespace org.iringtools.adapter
           {
             dataObjects = _dataLayerGateway.Get(objectType, idFormats.Keys.ToList());
           }
-          
+
           DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
         }
@@ -1045,7 +1045,7 @@ namespace org.iringtools.adapter
 
         // extract deleted identifiers from data transfer objects
         List<IDataObject> deletedDataObjects = new List<IDataObject>();
-        
+
         for (int i = 0; i < dataTransferObjectList.Count; i++)
         {
           if (dataTransferObjectList[i].transferType == TransferType.Delete)
@@ -1133,7 +1133,7 @@ namespace org.iringtools.adapter
         }
 
         List<IContentObject> iContentObjects = _dataLayerGateway.GetContents(dataObject, idFormats);
-        
+
         #region marshall iContentObjects to contentObjects
         foreach (IContentObject iContentObject in iContentObjects)
         {
@@ -1146,26 +1146,26 @@ namespace org.iringtools.adapter
             HashValue = iContentObject.HashValue,
             URL = iContentObject.URL
           };
-           
-	        foreach (DataProperty prop in dataObject.dataProperties)
-	        {
-	          object value = iContentObject.GetPropertyValue(prop.propertyName);
-	          if (value != null)
-	          {
-	            string valueStr = Convert.ToString(value);
 
-	            if (prop.dataType == DataType.DateTime)
-	              valueStr = Utility.ToXsdDateTime(valueStr);
+          foreach (DataProperty prop in dataObject.dataProperties)
+          {
+            object value = iContentObject.GetPropertyValue(prop.propertyName);
+            if (value != null)
+            {
+              string valueStr = Convert.ToString(value);
 
-	            Attribute attr = new Attribute()
-	            {
-	              Name = prop.propertyName,
-	              Value = valueStr
-	            };
+              if (prop.dataType == DataType.DateTime)
+                valueStr = Utility.ToXsdDateTime(valueStr);
 
-	            contentObject.Attributes.Add(attr);
-	          }
-	        }
+              Attribute attr = new Attribute()
+              {
+                Name = prop.propertyName,
+                Value = valueStr
+              };
+
+              contentObject.Attributes.Add(attr);
+            }
+          }
 
           contentObjects.Add(contentObject);
         }
@@ -1194,8 +1194,8 @@ namespace org.iringtools.adapter
         }
 
         DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
-        
-        Dictionary<string, string> idFormats = new Dictionary<string, string>() { {id, format} };
+
+        Dictionary<string, string> idFormats = new Dictionary<string, string>() { { id, format } };
 
         List<IContentObject> iContentObjects = _dataLayerGateway.GetContents(dataObject, idFormats);
 
@@ -1239,7 +1239,9 @@ namespace org.iringtools.adapter
         {
           ClassMap mappingClass = mappingClassTemplatesMap.classMap;
 
-          if (mappingClass.id == manifestClass.id && (String.IsNullOrWhiteSpace(mappingClass.path) ? String.IsNullOrWhiteSpace(manifestClass.path) : mappingClass.path == manifestClass.path))
+          if (mappingClass.id == manifestClass.id && (String.IsNullOrWhiteSpace(mappingClass.path) 
+            ? String.IsNullOrWhiteSpace(manifestClass.path) 
+            : mappingClass.path == manifestClass.path))
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
             break;
@@ -1251,7 +1253,7 @@ namespace org.iringtools.adapter
     private DataFilter GetPresetFilters(DtoProjectionEngine dtoProjection)
     {
       DataFilter dataFilter = new DataFilter();
-      
+
       if (_dictionary == null)
       {
         _dictionary = _dataLayerGateway.GetDictionary();
@@ -1267,14 +1269,18 @@ namespace org.iringtools.adapter
       return dataFilter;
     }
 
-    private void RecurBuildCrossGraphMap(ref Graph manifestGraph, Class manifestClass, GraphMap mappingGraph, ClassMap mappingClass)
+    private void RecurBuildCrossGraphMap(ref Graph manifestGraph, Class manifestClass, 
+        GraphMap mappingGraph, ClassMap mappingClass)
     {
       List<Template> manifestTemplates = null;
 
       // get manifest templates from the manifest class
       foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
       {
-         if (manifestClassTemplates.@class.id == manifestClass.id && (String.IsNullOrWhiteSpace(manifestClassTemplates.@class.path) ? String.IsNullOrWhiteSpace(manifestClass.path) : manifestClassTemplates.@class.path == manifestClass.path))
+        if (manifestClassTemplates.@class.id == manifestClass.id 
+            && (String.IsNullOrWhiteSpace(manifestClassTemplates.@class.path) 
+          ? String.IsNullOrWhiteSpace(manifestClass.path) 
+          : manifestClassTemplates.@class.path == manifestClass.path))
         {
           manifestTemplates = manifestClassTemplates.templates;
           break;
@@ -1325,7 +1331,8 @@ namespace org.iringtools.adapter
 
                         if (manifestRole.type == RoleType.Property ||
                             manifestRole.type == RoleType.DataProperty ||
-                            manifestRole.type == RoleType.ObjectProperty)
+                            manifestRole.type == RoleType.ObjectProperty ||
+                            manifestRole.type == RoleType.FixedValue)
                         {
                           roleMap.dataLength = manifestRole.dataLength;
                           roleMap.dataType = manifestRole.dataType;
@@ -1371,7 +1378,10 @@ namespace org.iringtools.adapter
                   {
                     foreach (RoleMap mappingRole in crossedTemplate.roleMaps)
                     {
-                        if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id && (String.IsNullOrWhiteSpace(mappingRole.classMap.path) ? String.IsNullOrWhiteSpace(manifestRole.@class.path) : mappingRole.classMap.path == manifestRole.@class.path))
+                      if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id 
+                          && (String.IsNullOrWhiteSpace(mappingRole.classMap.path) 
+                        ? String.IsNullOrWhiteSpace(manifestRole.@class.path) 
+                        : mappingRole.classMap.path == manifestRole.@class.path))
                       {
                         Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dictionary, _fixedIdentifierBoundary);
 
@@ -1388,7 +1398,10 @@ namespace org.iringtools.adapter
                         Class childManifestClass = manifestRole.@class;
                         foreach (ClassTemplates anyClassTemplates in manifestGraph.classTemplatesList)
                         {
-                            if (manifestRole.@class.id == anyClassTemplates.@class.id && (String.IsNullOrWhiteSpace(manifestRole.@class.path) ? String.IsNullOrWhiteSpace(anyClassTemplates.@class.path) : manifestRole.@class.path == anyClassTemplates.@class.path))
+                          if (manifestRole.@class.id == anyClassTemplates.@class.id && 
+                                (String.IsNullOrWhiteSpace(manifestRole.@class.path) 
+                            ? String.IsNullOrWhiteSpace(anyClassTemplates.@class.path) 
+                            : manifestRole.@class.path == anyClassTemplates.@class.path))
                           {
                             childManifestClass = anyClassTemplates.@class;
                           }
@@ -1468,7 +1481,7 @@ namespace org.iringtools.adapter
           int offset = threadCount * itemsPerThread;
           if (offset >= total)
             break;
-          
+
           int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           ManualResetEvent doneEvent = new ManualResetEvent(false);
@@ -1559,7 +1572,7 @@ namespace org.iringtools.adapter
       return dataTransferObjects;
     }
 
-    private Response MultiPostDataTransferObjects(DataLayerGateway dataLayerGateway, 
+    private Response MultiPostDataTransferObjects(DataLayerGateway dataLayerGateway,
       DataObject objectType, DataTransferObjects dataTransferObjects)
     {
       Response response = new Response();
@@ -1572,7 +1585,7 @@ namespace org.iringtools.adapter
         int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
 
         List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
-        List<DataTransferObjectsTask> dtoTasks = new List<DataTransferObjectsTask>();      
+        List<DataTransferObjectsTask> dtoTasks = new List<DataTransferObjectsTask>();
         int threadCount;
 
         for (threadCount = 0; threadCount < numOfThreads; threadCount++)
@@ -1580,7 +1593,7 @@ namespace org.iringtools.adapter
           int offset = threadCount * itemsPerThread;
           if (offset >= total)
             break;
-          
+
           int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
           DataTransferObjects dtos = new DataTransferObjects();
           dtos.DataTransferObjectList = dataTransferObjects.DataTransferObjectList.GetRange(offset, pageSize);
@@ -1590,14 +1603,14 @@ namespace org.iringtools.adapter
           ManualResetEvent doneEvent = new ManualResetEvent(false);
           DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvent, projectionLayer, dataLayerGateway, _graphMap, objectType, dtos);
           ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);
-          
+
           doneEvents.Add(doneEvent);
-          dtoTasks.Add(dtoTask);        
+          dtoTasks.Add(dtoTask);
         }
 
         _logger.Debug("Number of threads [" + threadCount + "].");
         _logger.Debug("Items per thread [" + itemsPerThread + "].");
-        
+
         // wait for all tasks to complete
         WaitHandle.WaitAll(doneEvents.ToArray());
 

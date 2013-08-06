@@ -64,9 +64,9 @@ namespace org.iringtools.utility
     private string _appKey = String.Empty;
     private string _accessToken = String.Empty;
     private string _contentType = String.Empty;
+    private int _timeout = 120000;
 
     private const string NEW_LINE = "\r\n";
-    private const int TIMEOUT = 600000;
     private Encoding encoding = Encoding.UTF8;
 
     public IDictionary<string, string> Headers { get; set; }
@@ -88,6 +88,8 @@ namespace org.iringtools.utility
       : this(baseUri, userName, password, String.Empty)
     {
     }
+
+    public int Timeout { get { return _timeout; } set { _timeout = value; } }
 
     public WebHttpClient(string baseUri, string userName, string password, string domain)
       : this(baseUri)
@@ -360,7 +362,7 @@ namespace org.iringtools.utility
         PrepareHeaders(request);
 
         request.Method = "Get";
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
 
         // allows for validation of SSL conversations
         ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
@@ -439,7 +441,7 @@ namespace org.iringtools.utility
         }
         
         request.Method = "Get";
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
 
         // allows for validation of SSL conversations
         ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
@@ -531,7 +533,7 @@ namespace org.iringtools.utility
         PrepareCredentials(request);
         PrepareHeaders(request);
 
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         request.Method = "POST";
         request.ContentType = "text/xml";
         request.ContentLength = stream.Length;
@@ -588,7 +590,7 @@ namespace org.iringtools.utility
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         request.Method = "POST";
 
         MemoryStream stream = null;
@@ -683,7 +685,7 @@ namespace org.iringtools.utility
         PrepareCredentials(request);
         PrepareHeaders(request);
 
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         request.Method = "POST";
         request.ContentType = "application/x-www-form-urlencoded";
         request.ContentLength = bytes.Length;
@@ -732,7 +734,7 @@ namespace org.iringtools.utility
         PrepareCredentials(request);
         PrepareHeaders(request);
 
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         request.Method = "PUT";
         request.ContentType = _contentType;
         request.ContentLength = bytes.Length;
@@ -780,7 +782,7 @@ namespace org.iringtools.utility
             PrepareCredentials(request);
             PrepareHeaders(request);
 
-            request.Timeout = TIMEOUT;
+            request.Timeout = Timeout;
             request.Method = "PUT";
             request.ContentType = "application/json";
             request.ContentLength = bytes.Length;
@@ -823,7 +825,7 @@ namespace org.iringtools.utility
         PrepareCredentials(request);
         PrepareHeaders(request);
 
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         request.Method = "POST";
         request.ContentType = "application/octet-stream";
         request.ContentLength = bytes.Length;
@@ -880,7 +882,7 @@ namespace org.iringtools.utility
         PrepareCredentials(request);
         PrepareHeaders(request);
 
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         request.Method = "POST";
         request.ContentType = "application/x-www-form-urlencoded";
         request.ContentLength = bytes.Length;
@@ -928,7 +930,7 @@ namespace org.iringtools.utility
             PrepareCredentials(request);
             PrepareHeaders(request);
 
-            request.Timeout = TIMEOUT;
+            request.Timeout = Timeout;
             request.Method = "POST";
             request.ContentType = "application/json";
             request.ContentLength = bytes.Length;
@@ -971,7 +973,7 @@ namespace org.iringtools.utility
         PrepareCredentials(request);
         PrepareHeaders(request);
 
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         request.Method = "PUT";
         request.ContentType = "text/xml";
         request.ContentLength = stream.Length;
@@ -1007,7 +1009,7 @@ namespace org.iringtools.utility
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
         request.ContentType = "multipart/form-data; boundary=" + _boundary;
         request.Method = "POST";
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         MemoryStream stream = new MemoryStream();
         string header = string.Empty;
 
@@ -1070,7 +1072,7 @@ namespace org.iringtools.utility
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
         request.ContentType = "multipart/form-data; boundary=" + _boundary;
         request.Method = "POST";
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         MemoryStream stream = new MemoryStream();
         string header = string.Empty;
 
@@ -1133,7 +1135,7 @@ namespace org.iringtools.utility
         request.ContentType = requestBase.ContentType;
         request.ContentLength = requestBase.ContentLength;
         request.Method = "POST";
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
 
         PrepareCredentials(request);
         PrepareHeaders(request);
@@ -1180,7 +1182,7 @@ namespace org.iringtools.utility
         PrepareCredentials(request);
         PrepareHeaders(request);
 
-        request.Timeout = TIMEOUT;
+        request.Timeout = Timeout;
         request.Method = "POST";
         request.ContentType = "text/xml";
         request.ContentLength = stream.Length;

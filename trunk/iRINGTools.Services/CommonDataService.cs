@@ -106,6 +106,7 @@ namespace org.iringtools.services
     {
       try
       {
+        format = MapContentType(project, app, format);
         NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
         bool fullIndex = false;
