@@ -1460,15 +1460,12 @@ function newExchangeConfig() {
 function SourceUri() {
 	var obj = Ext.getCmp('newExchConfig');
 	var form = obj.getForm();
-
-	// console.log("form ! and..."+form.findField('id').getValue());
 	var source = form.findField('sourceUri').getValue();
 	var scope = form.findField('sourceScopeName').getValue();
 	var app = form.findField('sourceAppName').getValue();
 	var graph = form.findField('sourceGraphName').getValue();
 	var sourceUri = source + "/" + scope + "/" + app + "/" + graph
 			+ "/manifest";
-	console.log("1 is " + sourceUri);
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
@@ -1541,7 +1538,6 @@ function TargetUri() {
 	var graph = form.findField('targetGraphName').getValue();
 	var targetUri = target + "/" + scope + "/" + app + "/" + graph
 			+ "/manifest";
-	console.log("1 is " + targetUri);
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
@@ -2117,8 +2113,8 @@ function saveScope(node, button, event) {
 	var form = obj.getValues(true);
 	var directoryTree = Ext.getCmp('directory-tree');
 	var node = directoryTree.getSelectionModel().getSelectedNode();
-	console.log("1 is " + form); 
-	var scope = obj.findField('scope').getValue();// console.log("2 is " + form1);
+	
+	var scope = obj.findField('scope').getValue();
 	// newScope();
 	Ext.Ajax.request({
 		url : 'newScope?' + form,
@@ -2392,8 +2388,6 @@ function editDataFilter() {
 					var dfList = Ext.decode(response.responseText);
 					if (dfList !== null) {
 						for ( var i = 0; i < dfList.length; i++) {
-							console.log("dfList.length is " + dfList.length);
-							console.log("dfList[i][3] is " + dfList[i][3]);
 							var open = dfList[i][0];
 							var log = dfList[i][1];
 							var rel = dfList[i][2];
@@ -3829,7 +3823,6 @@ function saveDataFilter() {
 	// var container = this.up('fieldset');
 	var config = Ext.apply({}, express.initialConfig.items[1]);
 	var ExpressCount = express.items.length;
-	console.log("2 for Expressions " + ExpressCount);
 	var arrOpen = [];
 	var arrProName = [];
 	var arrRelaOper = [];
@@ -3877,7 +3870,6 @@ function saveDataFilter() {
 	// var container = this.up('fieldset');
 	var config = Ext.apply({}, oExpress.initialConfig.items[1]);
 	var OExpressCount = oExpress.items.length;
-	console.log(" Order Expressions " + OExpressCount);
 
 	var arrSortOrder = [];
 	var arrProNameOE = [];
