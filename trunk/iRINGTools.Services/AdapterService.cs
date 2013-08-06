@@ -558,6 +558,45 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region Virtual Properties related services
+    
+    /// <summary>
+    /// Gets the Virtual Properties for the specified scope and application.
+    /// </summary>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
+    /// <returns>Returns a VirtualProperties object.</returns>
+    [Description("Gets the Virtual Properties for the specified scope and application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/virtualProperties")]
+    public VirtualProperties GetVirtualProperties(string scope, string app)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      VirtualProperties virtualProperties = _adapterProvider.GetVirtualProperties(scope, app);
+      return virtualProperties;
+    }
+
+    /// <summary>
+    /// Save the Virtual properties for the specified scope and application.
+    /// </summary>
+    /// <returns>Returns a Response object.</returns>
+    [Description("Save the Virtual properties for the specified scope and application.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/virtualProperties")]
+    public Response PostVirtualProperties(string scope, string app, VirtualProperties virtualProperties)
+    {
+      try
+      {
+        return _adapterProvider.PostVirtualProperties(scope, app, virtualProperties);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    #endregion
+
     private void FormatOutgoingMessage<T>(T graph, bool useDataContractSerializer)
     {
       string reqContentType = WebOperationContext.Current.IncomingRequest.ContentType;

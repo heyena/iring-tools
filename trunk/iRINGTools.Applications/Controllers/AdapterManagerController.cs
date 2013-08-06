@@ -137,7 +137,7 @@ namespace org.iringtools.web.controllers
       }
     }
 
-		public ActionResult DataType()
+	public ActionResult DataType()
 		{
 			try
 			{
@@ -235,6 +235,48 @@ namespace org.iringtools.web.controllers
       Response response = _repository.DeleteCache(scope, application);
 
       return Json(response, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult SaveVirtualProperties(FormCollection form)
+    {
+      try
+      {
+        string response = string.Empty;
+
+        response = _repository.SaveVirtualProperties(form["scope"], form["app"], form["tree"]);
+
+        if (response != null)
+        {
+          response = response.ToLower();
+          if (response.Contains("error"))
+          {
+            int inds = response.IndexOf("<message>");
+            int inde = response.IndexOf("</message>");
+            string msg = response.Substring(inds + 9, inde - inds - 9);
+            return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+          }
+        }
+        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+        throw e;
+      }
+    }
+
+    public ActionResult VirtualProperties(FormCollection form)
+    {
+      try
+      {
+        VirtualProperties virtualProperties = _repository.GetVirtualProperties(form["scope"], form["app"]);
+        return Json(virtualProperties, JsonRequestBehavior.AllowGet);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+        throw e;
+      }
     }
 
     public class DBProvider
