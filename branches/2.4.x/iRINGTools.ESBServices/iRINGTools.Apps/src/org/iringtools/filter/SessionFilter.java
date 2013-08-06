@@ -38,7 +38,7 @@ public class SessionFilter implements Filter
     if (session != null && session.isNew())
     {
       logger.info("New session: " + session.getId());   
-      logger.info("Referrer: " + request.getHeader("referer"));
+      logger.info("Context path: " + fConfig.getServletContext().getRealPath("/"));
       
       if (reqType != null && reqType.equalsIgnoreCase("XMLHttpRequest"))
         response.sendError(408, "Session timed out.");
