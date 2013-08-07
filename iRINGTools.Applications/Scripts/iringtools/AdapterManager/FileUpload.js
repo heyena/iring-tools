@@ -12,6 +12,7 @@ AdapterManager.FileUpload = Ext.extend(Ext.Panel, {
     from: null,
     record: null,
     url: null,
+    node:null,
 
     /**
     * initComponent
@@ -28,9 +29,9 @@ AdapterManager.FileUpload = Ext.extend(Ext.Panel, {
         var scope = "";
         var application = "";
 
-        if (this.record != null) {
-            scope = this.record.parentNode.text;
-            application = this.record.text;
+        if (this.record != null && this.node != null) {
+            scope = this.node.parentNode.attributes.record.Name;
+            application = this.record.Name;
         }
 	   this.form = new Ext.FormPanel({
             labelWidth: 40, // label settings here cascade unless
