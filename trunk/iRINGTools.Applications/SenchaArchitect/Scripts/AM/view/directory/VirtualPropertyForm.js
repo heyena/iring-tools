@@ -45,16 +45,17 @@ Ext.define('AM.view.directory.VirtualPropertyForm', {
         {
           xtype: 'combobox',
           anchor: '100%',
+          hidden: true,
           fieldLabel: 'Data Type',
           name: 'datatype',
           queryMode: 'local',
           store: [
             [
-              'String',
+              0,
               'String'
             ],
             [
-              'Number',
+              1,
               'Number'
             ]
           ]
@@ -72,6 +73,14 @@ Ext.define('AM.view.directory.VirtualPropertyForm', {
           margin: '15 0 0 0',
           width: 1074,
           anchor: '100%'
+        },
+        {
+          xtype: 'hiddenfield',
+          name: 'app'
+        },
+        {
+          xtype: 'hiddenfield',
+          name: 'scope'
         }
       ],
       dockedItems: [
@@ -85,9 +94,7 @@ Ext.define('AM.view.directory.VirtualPropertyForm', {
           items: [
             {
               xtype: 'button',
-              handler: function(button, event) {
-                me.onSave();
-              },
+              action: 'savevirtualproperties',
               text: 'Save'
             },
             {
@@ -109,10 +116,6 @@ Ext.define('AM.view.directory.VirtualPropertyForm', {
     var me = this;
     var win = me.up('window');
     win.destroy();
-  },
-
-  onSave: function() {
-    alert('going to save..');
   }
 
 });

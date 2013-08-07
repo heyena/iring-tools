@@ -19,16 +19,20 @@ Ext.define('AM.model.VirtualPropertyModel', {
 
   fields: [
     {
-      name: 'propertyType'
+      name: 'propertyType',
+      type: 'string'
     },
     {
-      name: 'propertyName'
+      name: 'propertyName',
+      type: 'string'
     },
     {
-      name: 'propertyLength'
+      name: 'propertyLength',
+      type: 'int'
     },
     {
-      name: 'valueText'
+      name: 'valueText',
+      type: 'string'
     }
   ]
 });

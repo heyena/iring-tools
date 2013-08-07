@@ -1,0 +1,53 @@
+{
+    "type": "Ext.data.Store",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "url": null,
+        "autoLoad": true,
+        "model": "VirtualPropertyModel",
+        "storeId": "virtualPropertyStore",
+        "designer|userClassName": "VirtualPropertyStore",
+        "designer|userAlias": "virtualpropertystore",
+        "data": null
+    },
+    "designerId": "3f98908a-7611-4ab0-8097-0c76ae2ba099",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "url",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "Ext.data.proxy.Ajax",
+            "reference": {
+                "name": "proxy",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "url": "/scripts/sample.json"
+            },
+            "designerId": "205b2759-9232-4eb9-b54f-5f6187beaf22",
+            "cn": [
+                {
+                    "type": "Ext.data.reader.Json",
+                    "reference": {
+                        "name": "reader",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "root": "data"
+                    },
+                    "designerId": "3f175737-2bce-413f-b3fc-80b14b4994aa"
+                }
+            ]
+        }
+    ]
+}

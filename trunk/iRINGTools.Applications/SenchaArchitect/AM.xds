@@ -1044,6 +1044,14 @@
                 "Scripts/AM/model/VirtualPropertyModel.js"
             ],
             "className": "VirtualPropertyModel"
+        },
+        "c2272cb9-059f-4d30-af85-1493ee31f092": {
+            "paths": [
+                "metadata/view/menus.VirtualPropertyMenu",
+                "Scripts/AM/view/override/menus/VirtualPropertyMenu.js",
+                "Scripts/AM/view/menus/VirtualPropertyMenu.js"
+            ],
+            "className": "menus.VirtualPropertyMenu"
         }
     },
     "viewOrderMap": {
@@ -1132,7 +1140,8 @@
             "432c1ae6-f4e2-40e7-a3e6-5a7f25c5079b",
             "eb884bba-d316-4259-9826-ff9b34b55156",
             "6c72cc3e-0884-42cb-9357-d6950bd5974d",
-            "e327045e-74bb-415e-8354-2c964194b52b"
+            "e327045e-74bb-415e-8354-2c964194b52b",
+            "c2272cb9-059f-4d30-af85-1493ee31f092"
         ],
         "store": [
             "0e821c48-d10a-4414-9854-eaa251d9df17",
