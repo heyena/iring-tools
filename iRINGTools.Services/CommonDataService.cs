@@ -107,6 +107,13 @@ namespace org.iringtools.services
       try
       {
         format = MapContentType(project, app, format);
+
+        // get list of contents is not allowed in this service
+        if (format == "raw")
+        {
+          format = "json";
+        }
+
         NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
         bool fullIndex = false;
