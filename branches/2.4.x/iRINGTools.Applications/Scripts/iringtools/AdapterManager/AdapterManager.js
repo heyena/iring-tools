@@ -232,8 +232,9 @@ Ext.onReady(function () {
  directoryPanel.on('upload', function (npanel, node) {
 	  var newTab = new AdapterManager.FileUpload({
 		  id: 'tab-' + node.id,
-		  record: node,
-		  url: 'File/Upload'
+		  record: node.attributes.record,
+		  url: 'File/Upload',
+          node:node
       });
     newTab.on('save', function (panel) {
       win.close();

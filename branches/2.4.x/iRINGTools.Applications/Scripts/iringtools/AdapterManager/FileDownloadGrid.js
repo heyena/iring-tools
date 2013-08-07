@@ -96,7 +96,7 @@ AdapterManager.FileDownloadGrid = Ext.extend(Ext.Panel, {
 							menuDisabled: true,
 							dataIndex: 'Download',
 							tooltip: 'Download file',
-							width: 15,
+							width: 45,
 							align:'center',
 							renderer: function (val, meta, record) {
 								return '<a style="color: #0276FD" href="./File/Export?scope=' + scope + '&application=' + application + '&file=' + record.data.File + ' "target="_blank">' + vall + '</a>';
