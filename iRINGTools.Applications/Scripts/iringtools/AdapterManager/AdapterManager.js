@@ -250,7 +250,7 @@ Ext.onReady(function () {
       layout: 'fit',
       title: 'File Upload',
       //iconCls: 'tabsScope',
-      height: 80,
+      height: 110,
       width: 300,
       plain: true,
       items: newTab
