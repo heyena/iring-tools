@@ -7,6 +7,7 @@ using org.iringtools.utility;
 using org.ids_adi.qmxf;
 using VDS.RDF;
 using System.IO;
+using log4net;
 
 
 namespace MappingMigration
@@ -15,8 +16,12 @@ namespace MappingMigration
 
     internal class Program
     {
+        private static Dictionary<string, QMXF> _templates = new Dictionary<string, QMXF>();
+        private static Dictionary<string, int> _report = new Dictionary<string, int>();
+
         private static string _mappingFolderPath = String.Empty;
         private static string _refdataServiceUri = String.Empty;
+        private static bool _fixErrors = false;
         
         private static string _proxyHost = String.Empty;
         private static string _proxyPort = String.Empty;
@@ -25,6 +30,7 @@ namespace MappingMigration
 
         private static WebHttpClient _refdataClient = null;
         private static NamespaceMapper _nsMap;
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(Program));
 
         static void Main(string[] args)
         {
@@ -32,7 +38,17 @@ namespace MappingMigration
             {
                 if (Initialize(args))
                 {
-                    _refdataClient = new WebHttpClient(_refdataServiceUri);
+                    string encryptedCredetials = System.Configuration.ConfigurationManager.AppSettings["ProxyCredentialToken"];
+                    WebCredentials proxyCredentials = new WebCredentials(encryptedCredetials);
+                    proxyCredentials.Decrypt();
+
+                    string proxyHost = System.Configuration.ConfigurationManager.AppSettings["ProxyHost"];
+                    
+                    int proxyPort = 0;
+                    string proxyPortString = System.Configuration.ConfigurationManager.AppSettings["ProxyPort"];
+                    int.TryParse(proxyPortString, out proxyPort);
+                    
+                    _refdataClient = new WebHttpClient(_refdataServiceUri, proxyCredentials.userName, proxyCredentials.password, proxyCredentials.domain, proxyHost, proxyPort);
                     foreach (var path in Directory.GetFiles(_mappingFolderPath))
                     {
                         string fileName = System.IO.Path.GetFileName(path);
@@ -42,15 +58,28 @@ namespace MappingMigration
 
                         try
                         {
-                            Console.WriteLine("Processing file: {0}\n", fileName);
+                            _logger.InfoFormat("Processing file: {0}", fileName);
+                            Console.WriteLine("\nProcessing file: {0}\n", fileName);
                             ProcessFile(path);
                         }
-                        catch
+                        catch(Exception e)
                         {
-                            Console.WriteLine("Error in processing file: {0}", fileName);
+                            _logger.ErrorFormat("Error in processing file: {0}", fileName);
+                            Console.WriteLine("\nError in processing file: {0}", fileName);
+                            _logger.Error(e.Message);
+                            //Console.WriteLine(e.Message);
+                            _logger.Info(e.StackTrace);
+                            Console.WriteLine("\n Press any key to continue.");
+                            Console.ReadLine();
+                            
                         }
                     }
 
+                    foreach (KeyValuePair<string, int> file in _report)
+                    {
+                        _logger.InfoFormat("File: {0}\t Bad Templates: {1}", file.Key, file.Value);
+                        Console.WriteLine("File: {0}\t Bad Templates: {1}", file.Key, file.Value);
+                    }
                 }
             }
             catch(Exception ex)
@@ -58,7 +87,7 @@ namespace MappingMigration
                 Console.WriteLine("\n {0}",ex.Message);
             }
             Console.WriteLine("\n Press any key to continue.");
-            Console.ReadLine();
+            Console.ReadKey();
         }
 
 
@@ -75,11 +104,23 @@ namespace MappingMigration
 
                 if (id.Length == 2)
                 {
-                    var response = _refdataClient.Get<QMXF>("/templates/" + id[1]);
+                    QMXF response = null;
+
+                    if (!_templates.ContainsKey(id[1].ToString()))
+                    {
+                        response = _refdataClient.Get<QMXF>("/templates/" + id[1]);
+
+                        _templates.Add(id[1].ToString(), response);      
+                    }
+                    else
+                    {
+                        response = _templates[id[1].ToString()];
+                    }
 
                     if (response.templateQualifications.Count > 0)
                     {
-                        Console.WriteLine("Processing template: {0}", templateName);
+                        bool isTemplateLogged = false;
+
                         var roles = template.Element(_ns + "roleMaps").Elements(_ns + "roleMap");
 
                         foreach (var role in roles)
@@ -89,8 +130,8 @@ namespace MappingMigration
                             string newRoleId = String.Empty;
 
                             var roleList = (from i in response.templateQualifications[0].roleQualification
-                                         where i.name.Exists(x => x.value.ToUpper().Trim() == rolename.ToUpper().Trim())
-                                         select i).ToList();
+                                            where i.name.Exists(x => x.value.ToUpper().Trim() == rolename.ToUpper().Trim())
+                                            select i).ToList();
 
                             if (roleList.Count > 0)
                             {
@@ -99,28 +140,68 @@ namespace MappingMigration
 
                                 newRoleId = qId;
 
-                                role.Element(_ns + "id").Value = newRoleId;
-                                Console.WriteLine("\tRole Name: {0}", rolename);
-                                Console.WriteLine("\tRole id:     {0}", roleId);
-                                Console.WriteLine("\tNew Role id: {0}\n", newRoleId);                                
+                                if (newRoleId != roleId)
+                                {
+                                    if (_report.ContainsKey(filePath))
+                                    {
+                                        _report[filePath]++;
+                                    }
+                                    else
+                                    {
+                                        _report.Add(filePath, 1);
+                                    }
+
+                                    if (!isTemplateLogged)
+                                    {
+                                        _logger.InfoFormat("Processing template: {0}", templateName);
+                                        Console.WriteLine("\nProcessing template: {0}", templateName);
+                                        isTemplateLogged = true;
+                                    }
+                                    role.Element(_ns + "id").Value = newRoleId;
+                                    _logger.InfoFormat("Role Name: {0}", rolename);
+                                    _logger.InfoFormat("Role id:     {0}", roleId);
+                                    _logger.InfoFormat("New Role id: {0}", newRoleId);
+
+                                    Console.WriteLine("\tRole Name: {0}", rolename);
+                                    Console.WriteLine("\tRole id:     {0}", roleId);
+                                    Console.WriteLine("\tNew Role id: {0}", newRoleId);
+
+                                }
                             }
                             else
                             {
-                                Console.WriteLine("\tRole not found");
+                                if (!isTemplateLogged)
+                                {
+                                    _logger.InfoFormat("Processing template: {0}", templateName);
+                                    Console.WriteLine("\nProcessing template: {0}", templateName);
+                                    isTemplateLogged = true;
+                                }
+
+                                _logger.InfoFormat("Role not found: {0}", rolename);
+                                Console.WriteLine("\tRole not found: {0}", rolename);
                             }
                         }
                     }
-
+                    else
+                    {
+                        _logger.InfoFormat("Template not found: {0}", templateName);
+                        Console.WriteLine("\tTemplate not found: {0}", templateName);
+                    }
                 }
             }
-            document.Save(filePath);
+
+            if (_fixErrors)
+                document.Save(filePath);
         }
         private static bool Initialize(string[] args)
         {
             try
             {
+                log4net.Config.XmlConfigurator.Configure();
+
                 _mappingFolderPath = System.Configuration.ConfigurationManager.AppSettings["MappingFolderPath"];
                 _refdataServiceUri = System.Configuration.ConfigurationManager.AppSettings["RefdataServiceUri"];
+                Boolean.TryParse(System.Configuration.ConfigurationManager.AppSettings["FixErrors"].ToString(), out _fixErrors);
 
                 _ns = @"http://www.iringtools.org/mapping";
 
