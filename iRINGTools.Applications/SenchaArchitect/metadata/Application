@@ -33,7 +33,8 @@
             "directory.DownloadForm",
             "directory.VirtualPropertyForm",
             "directory.VirtualPropertyGrid",
-            "directory.VirtualPropertyWindow"
+            "directory.VirtualPropertyWindow",
+            "menus.VirtualPropertyMenu"
         ],
         "appFolder": "Scripts/AM",
         "autoCreateViewport": true,

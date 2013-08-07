@@ -39,7 +39,8 @@ Ext.application({
     'AM.view.directory.DownloadForm',
     'AM.view.directory.VirtualPropertyForm',
     'AM.view.directory.VirtualPropertyGrid',
-    'AM.view.directory.VirtualPropertyWindow'
+    'AM.view.directory.VirtualPropertyWindow',
+    'AM.view.menus.VirtualPropertyMenu'
   ],
   models: [
     'RelationModel',
@@ -68,7 +69,8 @@ Ext.application({
     'directory.DownloadForm',
     'directory.VirtualPropertyForm',
     'directory.VirtualPropertyGrid',
-    'directory.VirtualPropertyWindow'
+    'directory.VirtualPropertyWindow',
+    'menus.VirtualPropertyMenu'
   ],
   appFolder: 'Scripts/AM',
   autoCreateViewport: true,
