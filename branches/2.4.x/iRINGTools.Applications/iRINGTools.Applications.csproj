@@ -100,6 +100,7 @@
     <Compile Include="Controllers\AppEditorController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FacadeController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\GridManagerController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -115,7 +116,9 @@
     <Compile Include="Helpers\JsonTreeNode.cs" />
     <Compile Include="Models\AdapterRepository.cs" />
     <Compile Include="Models\FacadeRepository.cs" />
+    <Compile Include="Models\FileRepository.cs" />
     <Compile Include="Models\IFacadeRepository.cs" />
+    <Compile Include="Models\IFileRepository.cs" />
     <Compile Include="Models\IGridRepository.cs" />
     <Compile Include="Models\GridRepository.cs" />
     <Compile Include="Models\IAdapterRepository.cs" />
@@ -4695,6 +4698,8 @@
     <Content Include="Scripts\iringtools\AdapterManager\ClassMapPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DataLayerPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DateFilter.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\FileDownloadGrid.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\FileUpload.js" />
     <Content Include="Scripts\iringtools\AdapterManager\Filter.js" />
     <Content Include="Scripts\iringtools\AdapterManager\GraphPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\GridFilters.js" />

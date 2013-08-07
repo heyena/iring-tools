@@ -58,7 +58,7 @@ AdapterManager.FileUpload = Ext.extend(Ext.Panel, {
 			  xtype: 'hidden',
 			  anchor: '100%',
 			  name: 'scope',
-			  value: scope,
+			  value: scope
             },
             {
 			  xtype: 'hidden',

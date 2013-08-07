@@ -19,38 +19,67 @@ AdapterManager.FileDownloadGrid = Ext.extend(Ext.Panel, {
     * @protected
     */
     initComponent: function () {
-
+		//var scope = 'test';
+		//var application = 'DEF';
+		//var file = 'abc';
+		var vall = 'Download';
+         if (this.record != undefined) {
+            var scope = this.record.id.split('/')[0];
+            var application = this.record.id.split('/')[1];
+            //var file = 'colval.xlsx';
+        }
         this.addEvents({
             close: true,
             save: true,
             reset: true
         });
-			this.grid = new Ext.grid.GridPanel({
-				store:new Ext.data.Store({
+		 rt = Ext.data.Record.create([
+				{name: 'File'}
+				//{name: 'abc'}
+			]);
+			var store = new Ext.data.Store({
+				   autoLoad:true, 
+				   proxy: new Ext.data.HttpProxy({
+					url: 'File/GetFiles',
+					timeout: 1800000  // 30 minutes
+				   }),
+                   baseParams: {	       
+                        'scope': scope,  
+                        'application': application
+                    },
 					autoDestroy: true,
-					//reader: reader,
-					fields: [
-						{name:'file'}
-					],
-					data: [
-								{
-								  file: 'Text/MNO',
-								  
-								},
-								{
-								  file: 'Text/MNO',
-								  
-								},
-								{
-								  file: 'Text/MNO',
-								  
-								},
-								{
-								  file: 'Text/MNO',
-								  
-								}
-						]
-				}),
+					 reader: new Ext.data.JsonReader(
+							{								
+							},
+							rt // recordType
+						)
+					
+					
+				});
+			/*var filters = new Ext.ux.grid.GridFilters({
+				remotesort: true,
+				local: false,
+				encode: true,
+				filters: store.reader.filters
+			});
+
+			var pagingResizer = new Ext.ux.plugin.PagingToolbarResizer({
+				displayText: 'Page Size',
+				options: [25, 50, 100, 200, 500],
+				prependCombo: true
+			});
+			var pagingToolbar = new Ext.MyPagingToolbar({
+				store: store,
+				pageSize: 25,//pageSize,
+				displayInfo: true,
+				autoScroll: true,
+				plugins: [filters, pagingResizer]
+			});*/
+			
+			this.grid = new Ext.grid.GridPanel({
+				store:store,
+				//bbar: pagingToolbar,
+				//plugins: [filters],
 				colModel: new Ext.grid.ColumnModel({
 					defaults: {
 						width: 120,
@@ -59,23 +88,20 @@ AdapterManager.FileDownloadGrid = Ext.extend(Ext.Panel, {
 					columns: [
 						{ 
 							header: 'File',
-							dataIndex: 'file',
+							dataIndex: 'File',
 							flex:1
 						},
-						{
-							xtype: 'actioncolumn',
-							width: 40,
+						 {
+							header: '',
 							menuDisabled: true,
-							items: [
-								{
-									icon   : 'Content/img/16x16/document-down.png',                // Use a URL in the icon config
-									tooltip: 'Download file',
-									handler: function(grid, rowIndex, colIndex) {
-										alert('hi...');
-									}
-								}
-							]
-                        }
+							dataIndex: 'Download',
+							tooltip: 'Download file',
+							width: 15,
+							align:'center',
+							renderer: function (val, meta, record) {
+								return '<a style="color: #0276FD" href="./File/Export?scope=' + scope + '&application=' + application + '&file=' + record.data.File + ' "target="_blank">' + vall + '</a>';
+							}
+						}
 					]
 				}),
 				viewConfig: {
@@ -83,7 +109,7 @@ AdapterManager.FileDownloadGrid = Ext.extend(Ext.Panel, {
 				},
 			sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
 			width: 600,
-			height: 300,
+			height: 300
 			//frame: true,
 			//title: 'Download File',
 			//iconCls: 'icon-grid'
