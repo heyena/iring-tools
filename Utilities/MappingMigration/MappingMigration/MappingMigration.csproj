@@ -52,8 +52,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UtilityLibrary">
-      <HintPath>..\Lib\iring-tools\UtilityLibrary.dll</HintPath>
+    <Reference Include="UtilityLibrary, Version=2.4.0.5309, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libraries\UtilityLibrary\Desktop\bin\Debug\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
