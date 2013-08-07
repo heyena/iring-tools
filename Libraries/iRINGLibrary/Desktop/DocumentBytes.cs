@@ -15,4 +15,12 @@ namespace org.iringtools.library
     public string DocumentPath { get; set; }
 	}
 
+    [DataContract(Name = "Files", Namespace = "http://www.iringtools.org/library")]
+    public class Files
+    {
+
+      [DataMember(Name = "File", IsRequired = true, Order = 1)]
+      public string File { get; set; }
+    }
+
 }

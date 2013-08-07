@@ -229,11 +229,11 @@ Ext.onReady(function () {
   directoryPanel.on('editgraphname', function (npanel, node) {
     contentPanel.removeAll(true);
   }, this);
- /*directoryPanel.on('upload', function (npanel, node) {
+ directoryPanel.on('upload', function (npanel, node) {
 	  var newTab = new AdapterManager.FileUpload({
 		  id: 'tab-' + node.id,
 		  record: node,
-		  url: 'spreadsheet/upload'
+		  url: 'File/Upload'
       });
     newTab.on('save', function (panel) {
       win.close();
@@ -257,13 +257,12 @@ Ext.onReady(function () {
     });
     win.show();
 	
-}, this);*/
-/*
+}, this);
 directoryPanel.on('download', function (npanel, node) {
 	  var newTab = new AdapterManager.FileDownloadGrid({
 		  id: 'tab-' + node.id,
-		  record: node,
-		  url: 'spreadsheet/upload'
+		  record: node
+		  //url: 'spreadsheet/upload'
       });
     newTab.on('save', function (panel) {
       win.close();
@@ -287,7 +286,7 @@ directoryPanel.on('download', function (npanel, node) {
     });
     win.show();
 	
-}, this);*/
+}, this);
 
  directoryPanel.on('configure', function (npanel, node) {
   

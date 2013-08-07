@@ -57,8 +57,8 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/RangeMenu.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ItemSelector.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/MultiSelect.js") %>" type="text/javascript"></script>
-    <!-- <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/FileUpload.js") %>" type="text/javascript"></script> -->
-	<!-- <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/FileDownloadGrid.js") %>" type="text/javascript"></script> -->
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/FileUpload.js") %>" type="text/javascript"></script>
+	<script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/FileDownloadGrid.js") %>" type="text/javascript"></script>
     <!-- page specific -->    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AdapterManager.js") %>" type="text/javascript"></script>    
 </head>
