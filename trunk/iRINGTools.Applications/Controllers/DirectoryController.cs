@@ -352,6 +352,7 @@ namespace org.iringtools.web.controllers
                 node.property.Add("Name", property.propertyName);
                 node.property.Add("Keytype", keytype);
                 node.property.Add("Datatype", datatype);
+                node.properties.Add("isVirtual", property.isVirtual.ToString());
                 nodes.Add(node);
               }
 
