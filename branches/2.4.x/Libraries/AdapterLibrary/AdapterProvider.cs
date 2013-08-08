@@ -4264,6 +4264,12 @@ namespace org.iringtools.adapter
         InitializeDataLayer(false);
 
         Response response = _dataLayerGateway.RefreshCache(updateDictionary);
+
+        if (response.Level == StatusLevel.Success)
+        {
+          UpdateCacheInfo(scope, app);
+        }
+
         return response;
       }
       catch (Exception ex)
@@ -4282,6 +4288,12 @@ namespace org.iringtools.adapter
         InitializeDataLayer(false);
         
         Response response = _dataLayerGateway.RefreshCache(updateDictionary, objectType);
+
+        if (response.Level == StatusLevel.Success)
+        {
+          UpdateCacheInfo(scope, app);
+        }
+
         return response;
       }
       catch (Exception ex)
@@ -4300,6 +4312,12 @@ namespace org.iringtools.adapter
         InitializeDataLayer(false);
         
         Response response = _dataLayerGateway.ImportCache(baseUri, updateDictionary);
+
+        if (response.Level == StatusLevel.Success)
+        {
+          UpdateCacheInfo(scope, app);
+        }
+        
         return response;
       }
       catch (Exception ex)
@@ -4318,6 +4336,12 @@ namespace org.iringtools.adapter
         InitializeDataLayer(false);
         
         Response response = _dataLayerGateway.ImportCache(objectType, url, updateDictionary);
+
+        if (response.Level == StatusLevel.Success)
+        {
+          UpdateCacheInfo(scope, app);
+        }
+
         return response;
       }
       catch (Exception ex)
@@ -4359,6 +4383,15 @@ namespace org.iringtools.adapter
         _logger.ErrorFormat("Error deleting cache for {0}.{1}: {2}", scope, app, ex.Message);
         throw ex;
       }
+    }
+
+    private void UpdateCacheInfo(string scope, string app)
+    {
+      ScopeProject project = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
+      ScopeApplication application = project.Applications.Find(x => x.Name.ToLower() == app.ToLower());
+      application.CacheTimestamp = DateTime.UtcNow;
+
+      Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
     }
     #endregion
 

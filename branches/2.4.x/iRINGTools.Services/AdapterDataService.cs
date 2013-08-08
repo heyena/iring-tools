@@ -409,7 +409,7 @@ namespace org.iringtools.services
 
       if (string.IsNullOrEmpty(statusText))
       {
-        statusText = ex.ToString();
+        statusText = ex.Source + ": " + ex.ToString();
       }
 
       HttpContext.Current.Response.ContentType = "text/html";

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System;
 
 namespace org.iringtools.library
 {
@@ -79,5 +80,8 @@ namespace org.iringtools.library
 
     [DataMember(Name = "displayName", Order = 4, EmitDefaultValue = false)]
     public string DisplayName { get; set; }
+
+    [DataMember(Name = "cacheTimestamp", Order = 5, EmitDefaultValue = false)]
+    public DateTime? CacheTimestamp { get; set; }
   }
 }

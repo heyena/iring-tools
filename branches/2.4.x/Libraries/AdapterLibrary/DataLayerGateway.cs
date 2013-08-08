@@ -803,7 +803,12 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
-          dataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start).ToList();
+          IList<IDataObject> iDataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start);
+
+          if (iDataObjects != null)
+          {
+            dataObjects = iDataObjects.ToList();
+          }
         }
         else
         {

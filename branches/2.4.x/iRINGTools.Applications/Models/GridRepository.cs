@@ -37,15 +37,7 @@ namespace iRINGTools.Web.Models
         try
         {
           this.graph = graph;
-
-          if (start == "0" || start == "1")
-          {
-            GetDataDictionary(scope, app, false);
-          }
-          else
-          {
-            GetDataDictionary(scope, app);
-          }
+          dataDict = GetDictionary(scope, app);
 
           if (response != "")
             return null;
@@ -67,84 +59,7 @@ namespace iRINGTools.Web.Models
 
         return dataGrid;
       }
-
-      private void GetDataDictionary(String scope, String app)
-      {
-        GetDataDictionary(scope, app, false);
-      }
-
-      private void GetDataDictionary(String scope, String app, bool usesCache)
-      {
-        try
-        {
-          string dictKey = string.Format("Dictionary.{0}.{1}", scope, app);
-
-          if (usesCache)
-            dataDict = (DataDictionary)Session[dictKey];
-          else
-            dataDict = null;
-
-          if (dataDict == null)
-          {
-            WebHttpClient client = CreateWebClient(_dataServiceUri);
-            dataDict = client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
-
-            // sort data objects & properties
-            if (dataDict != null && dataDict.dataObjects.Count > 0)
-            {
-              dataDict.dataObjects.Sort(new DataObjectComparer());
-
-              foreach (DataObject dataObject in dataDict.dataObjects)
-              {
-                dataObject.dataProperties.Sort(new DataPropertyComparer());
-
-                // Adding Key elements to TOP of the List.
-                List<String> keyPropertyNames = new List<String>();
-                foreach (KeyProperty keyProperty in dataObject.keyProperties)
-                {
-                  keyPropertyNames.Add(keyProperty.keyPropertyName);
-                }
-                var value = "";
-                for (int i = 0; i < keyPropertyNames.Count; i++)
-                {
-                  value = keyPropertyNames[i];
-                  // removing the property name from the list and adding at TOP
-                  List<DataProperty> DataProperties = dataObject.dataProperties;
-                  DataProperty prop = null;
-
-                  for (int j = 0; j < DataProperties.Count; j++)
-                  {
-                    if (DataProperties[j].propertyName == value)
-                    {
-                      prop = DataProperties[j];
-                      DataProperties.RemoveAt(j);
-                      break;
-
-                    }
-                  }
-
-                  if (prop != null)
-                    DataProperties.Insert(0, prop);
-                }
-              }
-            }
-
-            if (usesCache)
-            {
-              Session[dictKey] = dataDict;
-            }
-          }
-
-          if (dataDict == null || dataDict.dataObjects.Count == 0)
-            response = response + "Data dictionary of [" + app + "] is empty.";
-        }
-        catch (Exception ex)
-        {
-          _logger.Error("Error getting dictionary." + ex);
-          response = response + " " + ex.Message.ToString();
-        }
-      }
-
+      
       private void GetDataItems(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
       {
         try

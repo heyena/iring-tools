@@ -230,7 +230,11 @@ namespace iRINGTools.Web.Models
 
     public DataDictionary GetDictionary(string scopeName, string applicationName)
     {
-      DataDictionary dictionary = null;
+      string dictKey = string.Format("Dictionary.{0}.{1}", scopeName, applicationName);
+      DataDictionary dictionary = (DataDictionary)Session[dictKey];
+
+      if (dictionary != null)
+        return dictionary;
 
       try
       {
@@ -260,6 +264,7 @@ namespace iRINGTools.Web.Models
         throw ex;
       }
 
+      // sort data objects and properties
       if (dictionary != null && dictionary.dataObjects != null)
       {
         dictionary.dataObjects.Sort(new DataObjectComparer());
@@ -267,8 +272,37 @@ namespace iRINGTools.Web.Models
         foreach (DataObject dataObject in dictionary.dataObjects)
         {
           dataObject.dataProperties.Sort(new DataPropertyComparer());
+
+          // move key elements to top of the List.
+          List<String> keyPropertyNames = new List<String>();
+          foreach (KeyProperty keyProperty in dataObject.keyProperties)
+          {
+            keyPropertyNames.Add(keyProperty.keyPropertyName);
+          }
+          var value = "";
+          for (int i = 0; i < keyPropertyNames.Count; i++)
+          {
+            value = keyPropertyNames[i];
+            List<DataProperty> DataProperties = dataObject.dataProperties;
+            DataProperty prop = null;
+
+            for (int j = 0; j < DataProperties.Count; j++)
+            {
+              if (DataProperties[j].propertyName == value)
+              {
+                prop = DataProperties[j];
+                DataProperties.RemoveAt(j);
+                break;
+              }
+            }
+
+            if (prop != null)
+              DataProperties.Insert(0, prop);
+          }
         }
       }
+
+      Session[dictKey] = dictionary;
 
       return dictionary;
     }
