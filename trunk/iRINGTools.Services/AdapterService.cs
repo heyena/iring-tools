@@ -130,6 +130,36 @@ namespace org.iringtools.services
     }
 
     #endregion
+
+    #region Upload/Download Services
+    [Description("Generic Upload Service.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/upload", RequestFormat = WebMessageFormat.Json)]
+    public Response Upload(String scope, String app, Stream filecontent)
+    {
+      try
+      {
+        return _adapterProvider.UploadFile(filecontent, scope + "." + app + "." + Convert.ToString(HttpContext.Current.Request.Headers.GetValues("FileName")[0]));
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    [Description("Generic Download Service.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/File/{fileName}/{extension}")]
+    public DocumentBytes DownloadFile(string scope, string app, string fileName, string extension)
+    {
+      return _adapterProvider.DownLoadFile(scope, app, fileName, extension);
+    }
+
+    [Description("Download List.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/Downloadlist")]
+    public List<Files> getDownloadedList(string scope, string app)
+    {
+      return _adapterProvider.GetDownloadedList(scope, app);
+    }
+    #endregion
     #endregion
 
     #region Private Resources
