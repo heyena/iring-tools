@@ -83,8 +83,13 @@
     </businessCommodity>    
   </businessCommodities>  
   <provider>MsSql2008</provider>
-  <connectionString>Data Source=HOUS01014\sp3d_2011_gbl;Initial Catalog=gbl_mdb;Integrated Security=true</connectionString>
+  <connectionString>Data Source=ndhs01003\SP3D2011_ND;Initial Catalog=SP3DTrain_MDB;Integrated Security=true</connectionString>
+  <!--<connectionString>Data Source= HOUS01014\sp3d_2011_gbl;Initial Catalog=gbl_mdb;Integrated Security=true</connectionString>-->
+  <!--<connectionString>Data Source= housD95000\s3d_2011R1;Initial Catalog=SP3DTrain_MDB;Integrated Security=true</connectionString>-->
   <schemaName>dbo</schemaName>
-  <stagingDataBaseName>SP3DStagingTest</stagingDataBaseName>
-  <siteDataBaseName>gbl_sdb</siteDataBaseName>  
+  <!--<stagingDataBaseName>SP3DStagingTest</stagingDataBaseName>-->
+  <stagingDataBaseName>SP3DTrain_SDB</stagingDataBaseName>
+  <!--<siteDataBaseName>sp3dtrain_SDB</siteDataBaseName>-->
+  <siteDataBaseName>SP3DTrain_SDB</siteDataBaseName>
+  <plantName>QB2_23July</plantName>
 </businessObjectConfiguration>
