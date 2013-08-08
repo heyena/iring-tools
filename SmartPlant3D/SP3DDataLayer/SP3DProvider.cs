@@ -18,12 +18,16 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using Ingr.SP3D.Common.Middle.Services;
 using Ingr.SP3D.Common.Middle;
-using Ingr.SP3D.Structure.Middle;
-using Ingr.SP3D.ReferenceData.Middle;
-using Ingr.SP3D.Systems.Middle;
-using Ingr.SP3D.ReferenceData.Middle.Services;
+//using Ingr.SP3D.Common.Client;
+//using Ingr.SP3D.Common.Client.Services;
+//using Ingr.SP3D.Structure.Middle;
+//using Ingr.SP3D.ReferenceData.Middle;
+//using Ingr.SP3D.Systems.Middle;
+//using Ingr.SP3D.ReferenceData.Middle.Services;
 using NHibernate;
 using Ninject.Extensions.Xml;
+using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace iringtools.sdk.sp3ddatalayer
 {
@@ -49,8 +53,24 @@ namespace iringtools.sdk.sp3ddatalayer
     public Dictionary<string, IList<IDataObject>> _sourceDataObjects = null;
     public List<string> _filtertedKeys = null;
 
+    //public static void main()
+    //{
+    //    AppDomain currentDomain = AppDomain.CurrentDomain;       
+        
+    //    //InstantiateMyType(currentDomain);    // Failed!
+
+    //    currentDomain.AssemblyResolve += new ResolveEventHandler(currentDomain_AssemblyResolve);
+
+    //   // InstantiateMyType(currentDomain);    // OK!
+    //}
+
     public SP3DProvider(AdapterSettings settings)
     {
+       
+        //CommonMiddleLib.Class1 objcl1 = new CommonMiddleLib.Class1();
+        //AppDomain currentDomain = AppDomain.CurrentDomain;
+        //currentDomain.AssemblyResolve += new ResolveEventHandler(currentDomain_AssemblyResolve);
+        
       _settings = settings;
 
       if (_settings["DataLayerPath"] != null)
@@ -60,6 +80,7 @@ namespace iringtools.sdk.sp3ddatalayer
 
       _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
       _settings["BinaryPath"] = @".\Bin\";
+      //_settings["BinaryPath"] = @"C:\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\";
 
       _configurationPath = string.Format("{0}Configuration.{1}.xml", _dataPath, _scope);
       _verifiedConfigurationPath = string.Format("{0}VerifiedConfiguration.{1}.xml", _dataPath, _scope);
@@ -73,8 +94,16 @@ namespace iringtools.sdk.sp3ddatalayer
       readBusinessObjects();
     }
 
+    //public Assembly currentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    //{
+    //    CommonMiddleLib.Class1 objcl1 = new CommonMiddleLib.Class1();
+    //    return objcl1.MyResolveEventHandler(sender, args);
+    //}
+
     public SP3DProvider(AdapterSettings settings, string purpose)
     {
+        //CommonMiddleLib.Class1 objcl1 = new CommonMiddleLib.Class1();
+        //objcl1.MyResolveEventHandler(null, null);
       _settings = new AdapterSettings();
       _settings.AppendSettings(settings);
 
@@ -85,7 +114,8 @@ namespace iringtools.sdk.sp3ddatalayer
 
       _scope = _settings["ProjectName"] + "." + _settings["ApplicationName"];
       _settings["scope"] = _scope;
-      _settings["BinaryPath"] = @".\Bin\Release\";
+     // _settings["BinaryPath"] = @".\Bin\Release\";
+      _settings["BinaryPath"] = @".\Bin\Debug\";
 
 #if DEBUG
       _settings["BinaryPath"] = @".\Bin\Debug\";
@@ -1330,24 +1360,33 @@ namespace iringtools.sdk.sp3ddatalayer
       Site SP3DSite = null;
 
       if (MiddleServiceProvider.SiteMgr.ActiveSite != null)
-        if (MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant != null)
-          return MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant;      
+          if (MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant != null)
+          {
+              //SP3DCatalog = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantCatalog;
+              //SP3DModel = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantModel;
+              //SP3DReport = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantReport;
+              //metadataManagerCatalog = SP3DCatalog.MetadataMgr;
+              //metadataManagerReport = SP3DReport.MetadataMgr;
+              //metadataManagerModel = SP3DModel.MetadataMgr; 
+              return MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant;
+          }
 
-      SP3DSite = MiddleServiceProvider.SiteMgr.ConnectSite(GetDataSource(config.ConnectionString), config.SiteDataBaseName, (config.Provider.ToUpper().Contains("MSSQL") ? SiteManager.eDBProviderTypes.MSSQL : SiteManager.eDBProviderTypes.Oracle), config.SiteDataBaseName + "_SCHEMA");
-      Plant SP3DPlant = null;
+          SP3DSite = MiddleServiceProvider.SiteMgr.ConnectSite(GetDataSource(config.ConnectionString), config.SiteDataBaseName, (config.Provider.ToUpper().Contains("MSSQL") ? SiteManager.eDBProviderTypes.MSSQL : SiteManager.eDBProviderTypes.Oracle), config.SiteDataBaseName + "_SCHEMA");
+          Plant SP3DPlant = null;
 
-      if (SP3DSite != null)
-      {
-        if (SP3DSite.Plants.Count > 0)
-        {
-          if (!string.IsNullOrEmpty(config.PlantName))
-            SP3DPlant = SP3DSite.Plants.FirstOrDefault<Plant>(o => o.Name.ToLower() == config.PlantName.ToLower());
-          else
-            SP3DPlant = (Plant)SP3DSite.Plants[0];
+          if (SP3DSite != null)
+          {
+              if (SP3DSite.Plants.Count > 0)
+              {
+                  if (!string.IsNullOrEmpty(config.PlantName))
+                      SP3DPlant = SP3DSite.Plants.FirstOrDefault<Plant>(o => o.Name.ToLower() == config.PlantName.ToLower());
+                  else
+                      SP3DPlant = (Plant)SP3DSite.Plants[0];
+                     // SP3DPlant = (Plant)SP3DSite.Plants[7];
 
-          MiddleServiceProvider.SiteMgr.ActiveSite.OpenPlant(SP3DPlant);
-        }
-      }
+                  MiddleServiceProvider.SiteMgr.ActiveSite.OpenPlant(SP3DPlant);
+              }
+          }
 
       SP3DCatalog = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantCatalog;
       SP3DModel = MiddleServiceProvider.SiteMgr.ActiveSite.ActivePlant.PlantModel;
@@ -2726,6 +2765,8 @@ namespace iringtools.sdk.sp3ddatalayer
 
       _config = Utility.Read<BusinessObjectConfiguration>(_configurationPath);
     }
+
+    
     # endregion
   }
 }

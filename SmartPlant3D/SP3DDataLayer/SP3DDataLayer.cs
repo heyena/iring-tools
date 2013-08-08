@@ -18,26 +18,92 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using Ingr.SP3D.Common.Middle.Services;
 using Ingr.SP3D.Common.Middle;
-using Ingr.SP3D.Structure.Middle;
-using Ingr.SP3D.ReferenceData.Middle;
-using Ingr.SP3D.Systems.Middle;
-using Ingr.SP3D.ReferenceData.Middle.Services;
+//using Ingr.SP3D.Structure.Middle;
+//using Ingr.SP3D.ReferenceData.Middle;
+//using Ingr.SP3D.Systems.Middle;
+//using Ingr.SP3D.ReferenceData.Middle.Services;
 using NHibernate;
 using Ninject.Extensions.Xml;
+using Microsoft.Win32;
+using System.Reflection;
 
 namespace iringtools.sdk.sp3ddatalayer
 {
+    public class MyType
+    {
+        public MyType()
+        {
+            Console.WriteLine();
+            Console.WriteLine("MyType instantiated!");
+        }
+    }
   public class SP3DDataLayer : BaseDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(SP3DDataLayer));
     private SP3DProvider sp3dProvider = null;
+
+    static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    {
+        Assembly objExecutingAssemblies = Assembly.GetExecutingAssembly();
+        AssemblyName[] arrReferencedAssmbNames = objExecutingAssemblies.GetReferencedAssemblies();
+        //Loop through the array of referenced assembly names.
+        foreach (AssemblyName strAssmbName in arrReferencedAssmbNames)
+        {
+            //Look for the assembly names that have raised the "AssemblyResolve" event.
+            if ((strAssmbName.Name.EndsWith("CommonMiddle") && strAssmbName.FullName.Substring(0, strAssmbName.FullName.IndexOf(",")) == "CommonMiddle"))
+            {
+                //We only have this handler to deal with loading of CommonMiddle. Rest everything we dont bother.
+                //AppDomain.CurrentDomain.AssemblyResolve -= MyResolveEventHandler;
+                //Build the path of the assembly from where it has to be loaded.
+                //Check CurrentUser,LocalMachine, 64bit CurrentUser,LocalMachine
+                const string ProductInstallationKey = "\\Software\\Intergraph\\SP3D\\Installation";
+                const string Wow6432Path = "\\Software\\Wow6432Node\\Intergraph\\SP3D\\Installation";
+                const string InstallDirKey = "INSTALLDIR";
+
+                string sInstallPath = Convert.ToString(Registry.GetValue(Registry.CurrentUser.ToString() + ProductInstallationKey, InstallDirKey, ""));
+                //try Local Machine
+                if (string.IsNullOrEmpty(sInstallPath))
+                {
+                    sInstallPath = Convert.ToString(Registry.GetValue(Registry.LocalMachine.ToString() + ProductInstallationKey, InstallDirKey, ""));
+                }
+                //try 64-bit CurrentUser
+                if (string.IsNullOrEmpty(sInstallPath))
+                {
+                    sInstallPath = Convert.ToString(Registry.GetValue(Registry.CurrentUser.ToString() + Wow6432Path, InstallDirKey, ""));
+                }
+                //try 64-bit LocalMachine
+                if (string.IsNullOrEmpty(sInstallPath))
+                {
+                    sInstallPath = Convert.ToString(Registry.GetValue(Registry.LocalMachine.ToString() + Wow6432Path, InstallDirKey, ""));
+                }
+                if ((!string.IsNullOrEmpty((sInstallPath.Trim()))))
+                {
+                    if ((sInstallPath.EndsWith("\\") == false))
+                        sInstallPath += "\\";
+                    sInstallPath += "Core\\Container\\Bin\\Assemblies\\Release\\";
+                }
+                else
+                {
+                    throw new Exception("Error Reading SmartPlant 3D Installation Directory from Registry !!! Exiting");
+                }
+                //Load the assembly from the specified path and return it.
+                string strTempAssmbPath = sInstallPath + "CommonMiddle" + ".dll";
+                return Assembly.LoadFrom(strTempAssmbPath);
+            }
+        }
+        return null;
+    }
+
     
     [Inject]
-    public SP3DDataLayer(AdapterSettings settings)
+    public  SP3DDataLayer(AdapterSettings settings)
       : base(settings)
     {
-      sp3dProvider = new SP3DProvider(settings);
+       
+        sp3dProvider = new SP3DProvider(settings);
     }
+
+    
 
     public override DataDictionary GetDictionary()
     {

@@ -96,13 +96,9 @@
     <None Include="Log4net.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SP3DDataLayer\SP3DDataLayer.csproj">
-      <Project>{FF781DFB-FA75-4A26-A936-AF2BF38189C8}</Project>
-      <Name>SP3DDataLayer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_Data\Configuration.12345_000.sp3d.xml" />
+    <Content Include="App_Data\Configuration.12345_000.sp3d.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d.equipment.xml" />
     <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d.xml" />
     <Content Include="App_Data\DatabaseDictionary.12345_000.sp3d._Equipment.xml" />
@@ -124,6 +120,12 @@
     <Content Include="App_Data\nh-mapping.posting_12345_000.sp3d.equipment.xml" />
     <Content Include="App_Data\nh-mapping.sp3ddl_12345_000.sp3d.equipment.xml" />
     <Content Include="App_Data\VerifiedConfiguration.12345_000.sp3d.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SP3DDataLayer\SP3DDataLayer.csproj">
+      <Project>{FF781DFB-FA75-4A26-A936-AF2BF38189C8}</Project>
+      <Name>SP3DDataLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

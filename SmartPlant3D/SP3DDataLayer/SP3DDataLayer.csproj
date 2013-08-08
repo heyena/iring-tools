@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -51,13 +51,10 @@
     <Reference Include="Ciloci.Flee">
       <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
-    <Reference Include="CommonMiddle">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\CommonMiddle.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="EquipmentMiddle">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\EquipmentMiddle.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="CommonMiddle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\CommonMiddle.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -83,6 +80,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\MicrosoftSql\Microsoft.SqlServer.SqlWmiManagement.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NHibernate 2.0\bin\net-2.0\NHibernate.dll</HintPath>
@@ -103,26 +103,6 @@
       <HintPath>..\lib\nunit\framework\nunit.framework.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ReferenceDataMiddle">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\ReferenceDataMiddle.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SmartPlantStructureMiddle">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\SmartPlantStructureMiddle.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SP3DCoreDotNetUtils">
-      <HintPath>..\lib\sp3d\SP3DCoreDotNetUtils.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SP3DSMOUtils">
-      <HintPath>..\lib\sp3d\SP3DSMOUtils.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SP3DSMOUtils2K5">
-      <HintPath>..\lib\sp3d\SP3DSMOUtils2K5.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\lib\configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
@@ -134,12 +114,11 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="SystemMiddle">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SmartPlant\3D\Core\Container\Bin\Assemblies\Release\SystemMiddle.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="UtilityLibrary">
       <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="WebActivator">
+      <HintPath>..\packages\WebActivator.1.5.3\lib\net40\WebActivator.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +126,7 @@
     <Compile Include="BusinessObjectConfiguration.cs" />
     <Compile Include="PostRelatedObjectHelp.cs" />
     <Compile Include="NHibernateUtility.cs" />
+    <Compile Include="SP3DAssemblyLoader.cs" />
     <Compile Include="SP3DProvider.cs" />
     <Compile Include="EntityGenerator.cs" />
     <Compile Include="NHibernateSessionManager.cs" />
@@ -155,6 +135,15 @@
     <Compile Include="PostSP3DHelp.cs" />
   </ItemGroup>
   <ItemGroup>
+    <COMReference Include="IMSServerContextSupport">
+      <Guid>{F014778C-823C-11D2-BF63-0060973D47FF}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
     <COMReference Include="stdole">
       <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
       <VersionMajor>2</VersionMajor>
@@ -164,6 +153,9 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
