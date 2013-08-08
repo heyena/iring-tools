@@ -864,6 +864,74 @@ namespace org.iringtools.utility
       }
     }
 
+    /// <summary>
+    ///  calling the service to post the content
+    /// </summary>
+    /// <param name="relativeUri">relative uri of service</param>
+    /// <param name="stream">stream of file</param>
+    /// <param name="filename">file name</param>
+    /// <returns>response</returns>
+    public string PostStreamUpload(string relativeUri, Stream stream, string filename)
+    {
+      try
+      {
+        string uri = _baseUri + relativeUri;
+        _logger.Debug(string.Format("Posting stream to URL [{0}]...", uri));
+
+        System.Net.ServicePointManager.Expect100Continue = false;
+
+        // allows for validation of SSL conversations
+        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+          ValidateRemoteCertificate
+        );
+
+        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
+        request.Method = "POST";
+        request.ContentType = "application/octet-stream";
+        request.KeepAlive = false;
+        request.Timeout = Timeout;
+    
+
+        request.Headers.Add("FileName", filename);
+        Stream serverStream = request.GetRequestStream();
+        stream.Seek(0, SeekOrigin.Begin);
+
+        const int bufferSize = 65536; // 64K
+
+        byte[] buffer = new byte[bufferSize];
+        int bytesRead = 0;
+        while ((bytesRead = stream.Read(buffer, 0, bufferSize)) > 0)
+        {
+          serverStream.Write(buffer, 0, bytesRead);
+        }
+        stream.Close();
+        serverStream.Close();
+
+
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        string responseMessage;
+
+
+        if (response.StatusCode == HttpStatusCode.Accepted)
+        {
+          responseMessage = response.Headers["location"];
+        }
+        else
+        {
+          Stream responseStream = response.GetResponseStream();
+          responseMessage = Utility.SerializeFromStream(responseStream);
+        }
+
+        return responseMessage;
+      }
+      catch (Exception exception)
+      {
+        string uri = _baseUri + relativeUri;
+
+        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+      }
+    }
+
     public string PostMessage(string relativeUri, string requestMessage, bool useDataContractSerializer)
     {
       try

@@ -11,6 +11,7 @@ using log4net;
 using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
+using System.Xml;
 
 namespace org.iringtools.adapter
 {
@@ -410,7 +411,6 @@ namespace org.iringtools.adapter
           {
             limit = (start + page < objCount) ? page : start + page - objCount;
             IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
-            //dataObjects = dataObjects.GetDataObjectsWithVirtualProperties(objectType);
 
             if (dataObjects != null && dataObjects.Count > 0)
             {
@@ -827,7 +827,7 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
-          dataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start).ToList();          
+          dataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start).ToList();
         }
         else
         {
@@ -864,7 +864,7 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
-          dataObjects = _dataLayer.Get(objectType.objectName, identifiers).ToList();          
+          dataObjects = _dataLayer.Get(objectType.objectName, identifiers).ToList();
         }
         else
         {
@@ -1082,14 +1082,32 @@ namespace org.iringtools.adapter
                 idataObject = _dataLayer.Create(objectType.objectName, new List<string>() { sdo.Id }).First();
               }
 
-
               // copy properies
-              foreach (var pair in sdo.Dictionary)
+              for (int i = 0; i < sdo.Dictionary.Keys.Count; i++)
               {
-                idataObject.SetPropertyValue(pair.Key, pair.Value);
+                string key = sdo.Dictionary.Keys.ElementAt(i);
+                object value = sdo.Dictionary[key];
+
+                if (value != null)
+                {
+                  DataProperty prop = objectType.dataProperties.Find(x => x.propertyName.ToLower() == key.ToLower());
+
+                  if (prop.dataType == DataType.Date || prop.dataType == DataType.DateTime)
+                  {
+                    if (value.ToString() != string.Empty)
+                    {
+                      value = XmlConvert.ToDateTime(value.ToString(), XmlDateTimeSerializationMode.Utc);
+                    }
+                    else
+                    {
+                      value = null;
+                    }
+                  }
+                }
+
+                idataObject.SetPropertyValue(key, value);
               }
 
-              //support content? or is this just legacy?
               if (sdo.HasContent)
               {
                 ((IContentObject)idataObject).Content = sdo.Content;
@@ -1098,8 +1116,6 @@ namespace org.iringtools.adapter
 
               idataObjects.Add(idataObject);
             }
-
-
 
             Response updateResponse = _dataLayer.Post(idataObjects);
             response.Append(updateResponse);

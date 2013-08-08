@@ -4436,6 +4436,127 @@ namespace org.iringtools.adapter
         return null;
     }
 
+    /// <summary>
+    /// upload a file to the app folder
+    /// </summary>
+    /// <param name="filecontent">stream of fie</param>
+    /// <param name="fileName">name of the file</param>
+    /// <returns></returns>
+    public Response UploadFile(Stream filecontent, string fileName)
+    {
+
+      Response response = new Response();
+      response.Messages = new Messages();
+
+      string savedFileName = string.Empty;
+
+      savedFileName = Path.Combine(
+             AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"],
+             Path.GetFileName(fileName));
+
+      try
+      {
+        const int bufferSize = 65536; // 64K
+
+        using (FileStream outfile = new FileStream(savedFileName, FileMode.Create))
+        {
+          byte[] buffer = new byte[bufferSize];
+          int bytesRead = filecontent.Read(buffer, 0, bufferSize);
+
+          while (bytesRead > 0)
+          {
+            outfile.Write(buffer, 0, bytesRead);
+            bytesRead = filecontent.Read(buffer, 0, bufferSize);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        response.Messages.Add(String.Format("Failed to Upload Files[{0}]", _settings["Scope"]));
+        response.Messages.Add(ex.Message);
+        response.Level = StatusLevel.Error;
+      }
+      finally
+      {
+        // fileToupload.Close();
+        //fileToupload.Dispose();
+        filecontent.Close();
+      }
+
+      return response;
+    }
+
+    
+    /// <summary>
+    /// It will be used for downloading a single file
+    /// </summary>
+    /// <param name="scope">scope name</param>
+    /// <param name="app">appication name</param>
+    /// <param name="fileName">name of the file</param>
+    /// <param name="extension">extension of the file</param>
+    /// <returns></returns>
+    public DocumentBytes DownLoadFile(string scope, string app, string fileName, string extension)
+    {
+
+      DocumentBytes documentBytes = new DocumentBytes();
+      string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
+      string[] filePaths = Directory.GetFiles(searchPath, scope + "." + app + "." + fileName + "." + extension);
+      string _FileName = filePaths[0];
+
+       if (_FileName.Length > 0)
+      {
+        System.IO.FileStream _FileStream = new System.IO.FileStream(_FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+        
+        byte[] buffer = new byte[32768];
+        using (MemoryStream ms = new MemoryStream())
+        {
+          int read = 1;
+          while (read > 0)
+          {
+            read = _FileStream.Read(buffer, 0, buffer.Length);
+            if (read <= 0)
+              documentBytes.Content = ms.ToArray();
+            ms.Write(buffer, 0, read);
+          }
+        }
+
+
+      }
+      
+      documentBytes.DocumentPath = searchPath;
+      return documentBytes;
+
+    }
+
+    /// <summary>
+    /// list of the files to be downloaded
+    /// </summary>
+    /// <param name="scope"></param>
+    /// <param name="app"></param>
+    /// <returns></returns>
+    public List<Files> GetDownloadedList(string scope, string app)
+    {
+        List<Files> FFile = new List<Files>();
+        string strPattern = scope + "." + app + ".*";
+        string strPatterntoremove = scope + "." + app + ".";
+        string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
+        string[] filePaths = Directory.GetFiles(searchPath, strPattern);       
+
+        foreach (string name in filePaths)
+        {
+            Files _file = new Files();
+            if(name.Contains("\\"))
+            _file.File =name.Substring(name.LastIndexOf("\\") + 1).Remove(0,strPatterntoremove.Length);
+            
+            FFile.Add(_file);
+            //FFile.Add(_file);
+        }
+
+        return FFile;
+    }
+  
+
+
     public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
     {
       if (format.ToUpper() == "JSON")
@@ -4654,7 +4775,6 @@ namespace org.iringtools.adapter
 
       return dataObjects;
     }
-       
   }
 
   public enum PostAction { Create, Update }

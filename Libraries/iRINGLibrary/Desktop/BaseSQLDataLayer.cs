@@ -157,7 +157,10 @@ namespace org.iringtools.library
         string whereClause = string.Empty;
 
         if (filter != null)
+        {
           whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
+          _logger.Debug(whereClause);
+        }
 
         return GetCount(tableName, whereClause);
       }

@@ -112,6 +112,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FacadeController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\GridManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
@@ -134,7 +135,9 @@
     <Compile Include="Helpers\TreeNode.cs" />
     <Compile Include="Models\AdapterRepository.cs" />
     <Compile Include="Models\FacadeRepository.cs" />
+    <Compile Include="Models\FileRepository.cs" />
     <Compile Include="Models\IFacadeRepository.cs" />
+    <Compile Include="Models\IFileRepository.cs" />
     <Compile Include="Models\IGridRepository.cs" />
     <Compile Include="Models\GridRepository.cs" />
     <Compile Include="Models\IAdapterRepository.cs" />
