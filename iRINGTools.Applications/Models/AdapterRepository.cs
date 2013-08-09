@@ -168,7 +168,6 @@ namespace iRINGTools.Web.Models
       }
 
       return obj;
-
     }
 
     public DataLayers GetDataLayers()
@@ -205,27 +204,19 @@ namespace iRINGTools.Web.Models
 
     public ScopeProject GetScope(string scopeName)
     {
-      ScopeProjects scopes = GetScopes();
-
-      return scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
-    }
-
-    public ScopeApplication GetScopeApplication(string scopeName, string applicationName)
-    {
-      ScopeProject scope = GetScope(scopeName);
-
-      ScopeApplication obj = null;
+      ScopeProject scope = null;
 
       try
       {
-        obj = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == applicationName);
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        scope = client.Get<ScopeProject>("/scopes/" + scopeName);
       }
       catch (Exception ex)
       {
         _logger.Error(ex.ToString());
       }
 
-      return obj;
+      return scope;
     }
 
     public DataDictionary GetDictionary(string scopeName, string applicationName)
@@ -377,9 +368,14 @@ namespace iRINGTools.Web.Models
       {
         _logger.Debug("Received data layer binding: " + binding.ToString());
 
+        XElement bindElt = binding.Element("bind");
+        string service = bindElt.Attribute("service").Value; 
+        string impl = bindElt.Attribute("to").Value;
+
         dataLayer = new DataLayer();
-        dataLayer.Assembly = binding.Element("bind").Attribute("to").Value;
-        dataLayer.Name = binding.Element("bind").Attribute("to").Value.Split(',')[1].Trim();
+        dataLayer.Assembly = impl;
+        dataLayer.Name = impl.Split(',')[1].Trim();
+        dataLayer.IsLightweight = service.Contains(typeof(ILightweightDataLayer).Name);
       }
       else
       {
@@ -585,7 +581,7 @@ namespace iRINGTools.Web.Models
       }
     }
 
-    public Response RefreshCache(string scope, string application)
+    public Response SwitchDataMode(string scope, string application, string mode)
     {
       Response response = null;
 
@@ -594,6 +590,49 @@ namespace iRINGTools.Web.Models
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
         client.Timeout = 3600000;
         
+        string isAsync = _settings["Async"];
+        string url = string.Format("/{0}/{1}/data/{2}", scope, application, mode);
+
+        if (isAsync != null && isAsync.ToLower() == "true")
+        {
+          client.Async = true;
+          string statusUrl = client.Get<string>(url);
+
+          if (string.IsNullOrEmpty(statusUrl))
+          {
+            throw new Exception("Asynchronous status URL not found.");
+          }
+
+          response = WaitForRequestCompletion<Response>(_adapterServiceUri, statusUrl);
+        }
+        else
+        {
+          response = client.Get<Response>(url, true);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.Message);
+
+        response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message }
+        };
+      }
+
+      return response;
+    }
+
+    public Response RefreshCache(string scope, string application)
+    {
+      Response response = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        client.Timeout = 3600000;
+
         string isAsync = _settings["Async"];
         string url = string.Format("/{0}/{1}/cache/refresh", scope, application);
 

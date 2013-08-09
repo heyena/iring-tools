@@ -227,7 +227,8 @@ namespace org.iringtools.adapter
         }
       }
 
-      // Determine whether scope is real or implied (ALL)
+      // Determine whether scope is real or implied (ALL).
+      // Also set data mode 
       string scope = string.Format("{0}.{1}", projectName, applicationName);
       bool scopeFound = false;
 
@@ -241,6 +242,7 @@ namespace org.iringtools.adapter
             {
               _application = application;
               scopeFound = true;
+              _settings["DataMode"] = application.DataMode.ToString();
               break;
             }
           }

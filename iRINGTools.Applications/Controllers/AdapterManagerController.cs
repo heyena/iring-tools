@@ -186,6 +186,19 @@ namespace org.iringtools.web.controllers
       return Json(response, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult SwitchDataMode(FormCollection form)
+    {
+      string context = form["nodeid"];
+      string mode = form["mode"];
+      string[] names = context.Split('/');
+      string scope = names[0];
+      string application = names[1];
+
+      Response response = _repository.SwitchDataMode(scope, application, mode);
+
+      return Json(response, JsonRequestBehavior.AllowGet);
+    }
+
     public JsonResult RefreshCache(FormCollection form)
     {
       string context = form["nodeid"];
