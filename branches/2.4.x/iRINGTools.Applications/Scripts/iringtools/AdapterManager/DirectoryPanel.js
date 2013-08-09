@@ -19,7 +19,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   contentPanel: null,
   navigationUrl: null,
   directoryPanel: null,
-  // contextButton: null,
+  contextMenu: null,
   scopesMenu: null,
   scopeMenu: null,
   valueListsMenu: null,
@@ -53,7 +53,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     this.tbar = new Ext.Toolbar();
     this.tbar.add(this.buildToolbar());
-    // this.tbar.add(this.contextButton);
 
     this.scopesMenu = new Ext.menu.Menu();
     this.scopesMenu.add(this.buildScopesMenu());
@@ -63,9 +62,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     this.applicationMenu = new Ext.menu.Menu();
     this.applicationMenu.add(this.buildApplicationMenu());
-
-    this.dataObjectsMenu = new Ext.menu.Menu();
-    this.dataObjectsMenu.add(this.buildDataObjectsMenu());
 
     this.spAppMenu = new Ext.menu.Menu();
     this.spAppMenu.add(this.buildAppDataMenu());
@@ -315,11 +311,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         scope: this
       },
       {
-	    text: 'Upload File',
-	    handler: this.onFileUpload,
-	    icon: 'Content/img/16x16/document-down.png',
-	    scope: this
-	  },
+        text: 'Upload File',
+        handler: this.onFileUpload,
+        icon: 'Content/img/16x16/document-down.png',
+        scope: this
+      },
 	  {
 	    text: 'Download File',
 	    handler: this.onFileDownload,
@@ -336,43 +332,57 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
               handler: this.onLoadAppData,
               icon: 'Content/img/16x16/document-properties.png',
               scope: this
-            },
-            {
-              text: 'Refresh Cache',
-              handler: this.onRefreshObjectCache,
-              icon: 'Content/img/16x16/document-properties.png',
-              scope: this
             }
         ]
   },
 
-  buildDataObjectsMenu: function () {
-    return [
-            {
-              text: 'Refresh Dictionary',
-              handler: this.onRefreshDictionary,
-              icon: 'Content/img/16x16/document-properties.png',
-              scope: this
-            },
-            {
-              text: 'Refresh Cache',
-              handler: this.onRefreshCache,
-              icon: 'Content/img/16x16/document-properties.png',
-              scope: this
-            },
-            {
-              text: 'Import Cache',
-              handler: this.onImportCache,
-              icon: 'Content/img/16x16/document-properties.png',
-              scope: this
-            },
-            {
-              text: 'Delete Cache',
-              handler: this.onDeleteCache,
-              icon: 'Content/img/16x16/document-properties.png',
-              scope: this
-            }
-        ]
+  buildDataObjectsMenu: function (node) {
+    var menu = new Ext.menu.Menu();
+
+    menu.add({
+      text: 'Refresh Dictionary',
+      handler: this.onRefreshDictionary,
+      icon: 'Content/img/refresh_dict.gif',
+      scope: this
+    });
+
+    if (node.attributes.property["Data Mode"] == "Live") {
+      if (node.parentNode.attributes.property["LightweightDataLayer"] == "No") {
+        menu.add({
+          text: 'Switch to Cached-Data Mode',
+          handler: this.onSwitchToCachedDataMode,
+          icon: 'Content/img/switch.png',
+          scope: this
+        });
+      }
+    }
+    else if (node.parentNode.attributes.property["LightweightDataLayer"] == "No") {
+      menu.add({
+        text: 'Switch to Live-Data Mode',
+        handler: this.onSwitchToLiveDataMode,
+        icon: 'Content/img/switch.png',
+        scope: this
+      });
+    }
+
+    if (node.attributes.property["Data Mode"] != "Cache") {
+      menu.add([
+        {
+          text: 'Refresh Cache',
+          handler: this.onRefreshCache,
+          icon: 'Content/img/refresh_cache.gif',
+          scope: this
+        },
+        {
+          text: 'Import Cache',
+          handler: this.onImportCache,
+          icon: 'Content/img/import.jpg',
+          scope: this
+        }
+      ]);
+    }
+
+    return menu;
   },
 
   buildvalueListsMenu: function () {
@@ -493,11 +503,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onFileUpload: function () {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('upload', this, node);
- },
- onFileDownload: function () {
+  },
+  onFileDownload: function () {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('download', this, node);
- },
+  },
   showContextMenu: function (node, event) {
 
     //  if (node.isSelected()) { 
@@ -505,6 +515,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     var y = event.browserEvent.clientY;
 
     var obj = node.attributes;
+    this.directoryPanel.getSelectionModel().select(node);
+    this.onClick(node);
 
     if (obj.type == "ScopesNode") {
       this.scopesMenu.showAt([x, y]);
@@ -532,8 +544,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     } else if (obj.type == "GraphNode") {
       this.graphMenu.showAt([x, y]);
     }
-    this.directoryPanel.getSelectionModel().select(node);
-    this.onClick(node);
     //}
   },
 
@@ -714,13 +724,55 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     }
   },
 
+  onSwitchToLiveDataMode: function (btn, ev) {
+    this.switchDataMode('Live');
+  },
+
+  onSwitchToCachedDataMode: function (btn, ev) {
+    this.switchDataMode('Cache');
+  },
+
+  switchDataMode: function (mode) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    Ext.getCmp('content-panel').getEl().mask('Processing...', 'x-mask-loading');
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/SwitchDataMode',
+      method: 'POST',
+      timeout: 3600000,
+      params: {
+        'nodeid': node.attributes.id,
+        'mode': mode
+      },
+      success: function (response, request) {
+        var responseObj = Ext.decode(response.responseText);
+
+        if (responseObj.Level == 0) {
+          showDialog(450, 100, 'Result', 'Data Mode switched to [' + mode + '].', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+        }
+
+        node.parentNode.reload();
+        Ext.getCmp('content-panel').getEl().unmask();
+      },
+      failure: function (response, request) {
+        showDialog(500, 160, 'Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+        node.parentNode.reload();
+        Ext.getCmp('content-panel').getEl().unmask();
+      }
+    });
+  },
+
   onRefreshCache: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    Ext.getCmp('content-panel').getEl().mask('Processing...', 'x-mask-loading');
 
     Ext.Ajax.request({
       url: 'AdapterManager/RefreshCache',
       method: 'POST',
-      timeout: 28800000,  // 8 hours
+      timeout: 3600000,
       params: {
         'nodeid': node.attributes.id
       },
@@ -733,18 +785,25 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         else {
           showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
+
+        node.parentNode.reload();
+        Ext.getCmp('content-panel').getEl().unmask();
       },
       failure: function (response, request) {
         showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+        node.parentNode.reload();
+        Ext.getCmp('content-panel').getEl().unmask();
       }
-    })
+    });
   },
 
   onImportCache: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    Ext.getCmp('content-panel').getEl().mask('Processing...', 'x-mask-loading');
 
     var importCacheForm = new Ext.FormPanel({
       url: 'AdapterManager/ImportCache',
+      timeout: 3600000,
       method: 'POST',
       frame: false,
       border: false,
@@ -775,9 +834,14 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
               else {
                 showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
               }
+
+              node.parentNode.reload();
+              Ext.getCmp('content-panel').getEl().unmask();
             },
             failure: function (response, request) {
               showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+              node.parentNode.reload();
+              Ext.getCmp('content-panel').getEl().unmask();
             }
           });
         }
@@ -790,33 +854,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     });
 
     win.show(this);
-  },
-
-  onRefreshObjectCache: function (btn, ev) {
-    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-
-    Ext.Ajax.request({
-      url: 'AdapterManager/RefreshObjectCache',
-      method: 'POST',
-      timeout: 3600000,  // 1 hour
-      params: {
-        'nodeid': node.attributes.id,
-        'objectType': node.text
-      },
-      success: function (response, request) {
-        var responseObj = Ext.decode(response.responseText);
-
-        if (responseObj.Level == 0) {
-          showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
-        }
-        else {
-          showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
-        }
-      },
-      failure: function (response, request) {
-        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
-      }
-    })
   },
 
   onDeleteCache: function (btn, ev) {
@@ -909,38 +946,41 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     try {
       var obj = node.attributes;
       this.propertyPanel.setSource(node.attributes.property);
-      if (this.contextButton)
-        this.contextButton.menu.removeAll();
+
+      if (this.contextMenu)
+        this.contextMenu.removeAll();
 
       if (obj.type == "ScopesNode") {
-        this.contextButton.menu.add(this.buildScopesMenu());
+        this.contextMenu.add(this.buildScopesMenu());
       }
       else if (obj.type == "ScopeNode") {
-        this.contextButton.menu.add(this.buildScopeMenu());
+        this.contextMenu.add(this.buildScopeMenu());
       }
       else if (obj.type == "ApplicationNode") {
-        this.contextButton.menu.add(this.buildApplicationMenu());
+        this.contextMenu.add(this.buildApplicationMenu());
       }
       else if (obj.type == "DataObjectsNode") {
-        this.contextButton.menu.add(this.buildDataObjectsMenu());
+        var menu = this.buildDataObjectsMenu(node);
+        this.dataObjectsMenu = menu;
+        this.contextMenu.add(menu);
       }
       else if (obj.type == "DataObjectNode") {
-        this.contextButton.menu.add(this.buildAppDataMenu());
+        this.contextMenu.add(this.buildAppDataMenu());
       }
       else if (obj.type == "ValueListsNode") {
-        this.contextButton.menu.add(this.buildvalueListsMenu());
+        this.contextMenu.add(this.buildvalueListsMenu());
       }
       else if (obj.type == "ValueListNode") {
-        this.contextButton.menu.add(this.buildvalueListMenu());
+        this.contextMenu.add(this.buildvalueListMenu());
       }
       else if (obj.type == "ListMapNode") {
-        this.contextButton.menu.add(this.buildvalueListMapMenu());
+        this.contextMenu.add(this.buildvalueListMapMenu());
       }
       else if (obj.type == "GraphsNode") {
-        this.contextButton.menu.add(this.buildGraphsMenu());
+        this.contextMenu.add(this.buildGraphsMenu());
       }
       else if (obj.type == "GraphNode") {
-        this.contextButton.menu.add(this.buildGraphMenu());
+        this.contextMenu.add(this.buildGraphMenu());
       }
     } catch (e) {
       //  alert(e);

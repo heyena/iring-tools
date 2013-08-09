@@ -724,6 +724,14 @@ namespace org.iringtools.adapter
 
       try
       {
+        if (_settings["DataMode"] == DataMode.Live.ToString())
+        {
+          if (_dataLayer != null)
+          {
+            return _dataLayer.GetCount(objectType.objectName, filter);
+          }
+        }
+
         string cacheId = CheckCache();
 
         if (!string.IsNullOrEmpty(cacheId))
@@ -773,6 +781,21 @@ namespace org.iringtools.adapter
 
       try
       {
+        if (_settings["DataMode"] == DataMode.Live.ToString())
+        {
+          if (_dataLayer != null)
+          {
+            IList<IDataObject> iDataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start);
+
+            if (iDataObjects != null)
+            {
+              dataObjects = iDataObjects.ToList();
+            }
+
+            return dataObjects;
+          }
+        }
+
         string cacheId = CheckCache();
 
         if (!string.IsNullOrEmpty(cacheId))
@@ -830,6 +853,21 @@ namespace org.iringtools.adapter
 
       try
       {
+        if (_settings["DataMode"] == DataMode.Live.ToString())
+        {
+          if (_dataLayer != null)
+          {
+            IList<IDataObject> iDataObjects = _dataLayer.Get(objectType.objectName, identifiers);
+
+            if (iDataObjects != null)
+            {
+              dataObjects = iDataObjects.ToList();
+            }
+
+            return dataObjects;
+          }
+        }
+        
         string cacheId = CheckCache();
 
         if (!string.IsNullOrEmpty(cacheId))
@@ -866,6 +904,21 @@ namespace org.iringtools.adapter
 
       try
       {
+        if (_settings["DataMode"] == DataMode.Live.ToString())
+        {
+          if (_dataLayer != null)
+          {
+            IList<string> iIdentifiers = _dataLayer.GetIdentifiers(objectType.objectName, filter);
+
+            if (iIdentifiers != null)
+            {
+              identifiers = iIdentifiers.ToList();
+            }
+
+            return identifiers;
+          }
+        }
+
         string cacheId = CheckCache();
 
         if (!string.IsNullOrEmpty(cacheId))
@@ -884,7 +937,12 @@ namespace org.iringtools.adapter
         }
         else if (_dataLayer != null)
         {
-          identifiers = _dataLayer.GetIdentifiers(objectType.objectName, filter).ToList();
+          IList<string> iIdentifiers = _dataLayer.GetIdentifiers(objectType.objectName, filter);
+
+          if (iIdentifiers != null)
+          {
+            identifiers = iIdentifiers.ToList();
+          }
         }
         else
         {
