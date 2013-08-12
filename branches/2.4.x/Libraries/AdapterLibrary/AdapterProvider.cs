@@ -3547,6 +3547,10 @@ namespace org.iringtools.adapter
           {
             format = _dataObjDef.defaultListProjectionFormat;
           }
+          else if (!String.IsNullOrEmpty(_settings["DefaultProjectionFormat"]))
+          {
+              format = _settings["DefaultProjectionFormat"];
+          }
           else
           {
             format = "json";
