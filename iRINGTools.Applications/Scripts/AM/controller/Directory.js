@@ -889,6 +889,7 @@ Ext.define('AM.controller.Directory', {
     var win = Ext.widget('virtualpropertywindow');
     var form = win.down('form');
     var grid = form.down('grid');
+    grid.getStore().removeAll();
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
     var properties = [];
@@ -927,6 +928,7 @@ Ext.define('AM.controller.Directory', {
   onSaveVirtualProperties: function(button, e, eOpts) {
     var me = this;
     var form = button.up('form').getForm();
+    var win = button.up('window');
     var objectName = form.findField('objectName').getValue();
     var propertyName = form.findField('propertyName').getValue();
     //var datatype = form.findField('datatype').getValue();
@@ -981,9 +983,11 @@ Ext.define('AM.controller.Directory', {
       },
       success: function (response, request) {
 
-        var msg = 'Saved Successfully...'
-        showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
-
+        //var msg = 'Saved Successfully...'
+        //showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
+        var directoryTree = Ext.widget('directorytree');
+        win.fireEvent('save', me);
+        directoryTree.onReload();
       },
       failure: function (response, request) {
         showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
@@ -993,49 +997,141 @@ Ext.define('AM.controller.Directory', {
   },
 
   onEditVirtualProperty: function(item, e, eOpts) {
-
     var me = this;
     var win = Ext.widget('virtualpropertywindow');
     win.setTitle('Edit Virtual Property');
     var form = win.down('form');
     var grid = form.down('grid');
+    var store = grid.getStore();
+    store.removeAll();
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-    var properties = [];
-    var formRecord = {
-      objectName: node.data.text,
-      scope:node.data.id.split('/')[0],
-      app:node.data.id.split('/')[1]
-    };
-    var ii=0;
-    node.eachChild(function(child) {
-      properties.push([ii, child.data.text, child.data.property.Name]);
-      ii++;
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/VirtualProperties',
+      timeout: 600000,
+      params: {
+        scope: node.data.id.split('/')[0],
+        app: node.data.id.split('/')[1]
+        //tree: Ext.JSON.encode(virtualProperty)
+      },
+      success: function (response, request) {
+        var res = Ext.decode(response.responseText).virtualProperties[0];
+        var properties = [];
+        var formRecord = {
+          objectName: res.objectName,
+          scope:node.data.id.split('/')[0],
+          app:node.data.id.split('/')[1],
+          propertyName:res.propertyName,
+          delimeter:res.delimiter
+        };
+        var ii=0;
+        node.parentNode.eachChild(function(child) {
+          properties.push([ii, child.data.text, child.data.property.Name]);
+          ii++;
+        });
+
+        var mapCombo = grid.down('#propertyNameCmb').getEditor();//form.down('#propertyNameCmb');
+        mapCombo.store = Ext.create('Ext.data.SimpleStore', {
+          fields: ['value', 'text', 'name'],
+          autoLoad: true,
+          data: properties
+        });
+
+        form.getForm().setValues(formRecord);
+        if(res.virtualPropertyValues!=undefined){
+          for(var i=0;i<res.virtualPropertyValues.length;i++){
+            var model = Ext.create('AM.model.VirtualPropertyModel');
+            model.data.propertyLength = res.virtualPropertyValues[i].length;
+            model.data.propertyName = res.virtualPropertyValues[i].propertyName;
+            if(res.virtualPropertyValues[i].type == 0)    
+            model.data.propertyType = 'Constant';
+            else
+            model.data.propertyType = 'Property';
+            model.data.valueText = res.virtualPropertyValues[i].valueText;
+            store.add(model);
+          }
+        }
+
+
+        win.on('Save', function () {
+          win.destroy();
+        }, me);
+
+        win.on('reset', function () {
+          win.destroy();
+        }, me);
+
+        win.show();
+        //var directoryTree = Ext.widget('directorytree');
+        //win.fireEvent('save', me);
+        //directoryTree.onReload();
+      },
+      failure: function (response, request) {
+        showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
+
+      }
     });
 
-    var mapCombo = grid.down('#propertyNameCmb').getEditor();//form.down('#propertyNameCmb');
-    mapCombo.store = Ext.create('Ext.data.SimpleStore', {
-      fields: ['value', 'text', 'name'],
-      autoLoad: true,
-      data: properties
-    });
 
 
-    form.getForm().setValues(formRecord);
 
-    win.on('Save', function () {
-      win.destroy();
-    }, me);
 
-    win.on('reset', function () {
-      win.destroy();
-    }, me);
-
-    win.show();
   },
 
   onDeleteVirtualProperty: function(item, e, eOpts) {
-    alert('going to dele...');
+    var me = this;
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode();
+    var scope = node.data.id.split('/')[0];
+    var app = node.data.id.split('/')[1];
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/VirtualProperties',
+      timeout: 600000,
+      params: {
+        scope: scope,
+        app: app
+        //tree: Ext.JSON.encode(virtualProperty)
+      },
+      success: function (response, request) {
+        var res = Ext.decode(response.responseText);
+
+        for(var i=0;i<res.virtualProperties.length;i++){
+          if(res.virtualProperties[i].propertyName == node.data.text)
+          res.virtualProperties.splice(i,1);
+          break;
+        }
+
+        Ext.Ajax.request({
+          url: 'AdapterManager/SaveVirtualProperties',
+          timeout: 600000,
+          method: 'POST',
+          params: {
+            scope: scope,
+            app: app,
+            tree:Ext.JSON.encode(res)
+          },
+          success: function (response, request) {
+
+            //var msg = 'Saved Successfully...'
+            //showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
+            var directoryTree = Ext.widget('directorytree');
+            directoryTree.onReload();
+          },
+          failure: function (response, request) {
+            showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
+
+          }
+        });
+
+      },
+      failure: function (response, request) {
+        showDialog(400, 100, 'Error', 'An error has occurred while deleting virtual property.', Ext.Msg.OK, null);
+
+      }
+    });
+
   },
 
   init: function(application) {

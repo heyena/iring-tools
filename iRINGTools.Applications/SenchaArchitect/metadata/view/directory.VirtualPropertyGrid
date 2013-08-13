@@ -35,6 +35,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "hidden": true,
                 "width": 40,
                 "align": "left",
                 "text": "Sr. No"

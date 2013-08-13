@@ -31,6 +31,7 @@ Ext.define('AM.view.directory.VirtualPropertyGrid', {
       columns: [
         {
           xtype: 'rownumberer',
+          hidden: true,
           width: 40,
           align: 'left',
           text: 'Sr. No'
