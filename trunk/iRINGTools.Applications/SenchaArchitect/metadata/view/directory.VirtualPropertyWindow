@@ -6,8 +6,8 @@
     },
     "codeClass": null,
     "userConfig": {
-        "height": 594,
-        "width": 1092,
+        "height": 556,
+        "width": 983,
         "designer|userClassName": "directory.VirtualPropertyWindow",
         "designer|userAlias": "virtualpropertywindow",
         "resizable": false,

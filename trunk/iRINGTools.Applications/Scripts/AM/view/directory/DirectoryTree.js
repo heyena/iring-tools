@@ -146,7 +146,9 @@ Ext.define('AM.view.directory.DirectoryTree', {
   var panel = me.up();
   var state = me.getState();
   var dirNode;
+  if(me.body!=undefined)
   me.body.mask('Loading...', 'x-mask-loading');
+
   dbInfo = null; //17th June
   dbDict = null;
   if (node) {
@@ -187,7 +189,11 @@ Ext.define('AM.view.directory.DirectoryTree', {
         Ext.each(nodes, function (path) {
           me.expandPath(path, 'text');
         });
+        //me.body.unmask();
+        if(me.body!=undefined)
         me.body.unmask();
+
+
         if(content!=undefined)
         content.body.unmask();
       }
