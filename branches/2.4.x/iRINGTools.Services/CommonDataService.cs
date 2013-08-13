@@ -106,10 +106,8 @@ namespace org.iringtools.services
     {
       try
       {
-        //format = MapContentType(project, app, format);
-
         // get list of contents is not allowed in this service
-        if (!(format.ToLower() == "dto" || format.ToLower() == "rdf" ||
+        if (string.IsNullOrEmpty(format) || !(format.ToLower() == "dto" || format.ToLower() == "rdf" ||
           format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
         {
           format = "json";
