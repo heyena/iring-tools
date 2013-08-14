@@ -81,6 +81,10 @@ Ext.define('AM.view.directory.VirtualPropertyForm', {
         {
           xtype: 'hiddenfield',
           name: 'scope'
+        },
+        {
+          xtype: 'hiddenfield',
+          name: 'oldPropertyName'
         }
       ],
       dockedItems: [

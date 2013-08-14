@@ -234,6 +234,20 @@
                 "name": "scope"
             },
             "designerId": "0f3af63b-c666-4cbd-8d7f-c3a57e93cba5"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "oldPropertyName"
+            },
+            "designerId": "b35a2737-90a5-4fe3-a6fa-2968fff63ed7"
         }
     ]
 }
