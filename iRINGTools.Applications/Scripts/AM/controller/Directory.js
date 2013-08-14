@@ -931,69 +931,119 @@ Ext.define('AM.controller.Directory', {
     var win = button.up('window');
     var objectName = form.findField('objectName').getValue();
     var propertyName = form.findField('propertyName').getValue();
-    //var datatype = form.findField('datatype').getValue();
     var delimeter = form.findField('delimeter').getValue();
     var scope = form.findField('scope').getValue();
     var app = form.findField('app').getValue();
-
-    var virtualProperty = {};
-    virtualProperty.virtualProperties = [];
-    var folder = {};
-    folder.objectName = objectName;
-    folder.delimiter = delimeter;
-    folder.virtualPropertyValues = [];
-    folder.columnName = propertyName;
-    folder.propertyName = propertyName;
-    folder.dataType = 11;
-    folder.dataLength = 0;
-    folder.isNullable = true;
-    folder.keyType = 1;
-    folder.showOnIndex = false;
-    folder.numberOfDecimals = 0;
-    folder.isReadOnly = false;
-    folder.showOnSearch = false;
-    folder.isHidden = false;
-    folder.description = null;
-    folder.aliasDictionary = null;
-    folder.referenceType = null;
-    folder.isVirtual = true;
-    virtualProperty.virtualProperties.push(folder);
-    var gridStore = button.up('form').down('grid').getStore();
-
-    for(var i=0;i<gridStore.data.length;i++){
-      var virtualPropertyValues = {};
-      if(gridStore.data.items[i].data.propertyType == 'Constant')
-      virtualPropertyValues.type = 0;
-      else
-      virtualPropertyValues.type = 1;
-
-      virtualPropertyValues.valueText = gridStore.data.items[i].data.valueText;
-      virtualPropertyValues.propertyName = gridStore.data.items[i].data.propertyName;
-      virtualPropertyValues.length = gridStore.data.items[i].data.propertyLength;
-      folder.virtualPropertyValues.push(virtualPropertyValues);
-    }
+    var oldPropertyName = form.findField('oldPropertyName').getValue();
+    var properties;
     Ext.Ajax.request({
-      url: 'AdapterManager/SaveVirtualProperties',
+      url: 'AdapterManager/VirtualProperties',
       timeout: 600000,
-      method: 'POST',
       params: {
         scope: scope,
-        app: app,
-        tree: Ext.JSON.encode(virtualProperty)
+        app: app
       },
       success: function (response, request) {
+        var folder = {};
+        var flag = true;
+        var res = Ext.decode(response.responseText);
+        if(res.virtualProperties.length>=1){ //Adding if few properties alrady exist.
+          properties = res;
+          for(var i =0;i<res.virtualProperties.length;i++){
+            if(res.virtualProperties[i].propertyName == oldPropertyName){
+              folder = res.virtualProperties[i];
+              flag = false;
+            }
+          }
 
-        //var msg = 'Saved Successfully...'
-        //showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
-        var directoryTree = Ext.widget('directorytree');
-        win.fireEvent('save', me);
-        directoryTree.onReload();
+        }else{ //Adding new virtual property if existing properties are zero.
+
+          var virtualProperty = {};
+          virtualProperty.virtualProperties = [];
+          properties = virtualProperty;
+
+        }
+
+
+        folder.objectName = objectName;
+        folder.delimiter = delimeter;
+        folder.virtualPropertyValues = [];
+        folder.columnName = propertyName;
+        folder.propertyName = propertyName;
+        folder.dataType = 11;
+        folder.dataLength = 0;
+        folder.isNullable = true;
+        folder.keyType = 1;
+        folder.showOnIndex = false;
+        folder.numberOfDecimals = 0;
+        folder.isReadOnly = false;
+        folder.showOnSearch = false;
+        folder.isHidden = false;
+        folder.description = null;
+        folder.aliasDictionary = null;
+        folder.referenceType = null;
+        folder.isVirtual = true;
+        //virtualProperty.virtualProperties.push(folder);
+        if(flag){
+          var flagForExisting = true;
+          for(var k=0;k<properties.virtualProperties.length;k++){
+            if(properties.virtualProperties[k].propertyName == propertyName)
+            flagForExisting = false;
+          }
+          if(flagForExisting)
+          properties.virtualProperties.push(folder);
+          else{
+            var msg = 'Can not add duplicate property.'
+            showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
+            return false;
+          }
+
+        }			
+
+        var gridStore = button.up('form').down('grid').getStore();
+
+        for(var i=0;i<gridStore.data.length;i++){
+          var virtualPropertyValues = {};
+          if(gridStore.data.items[i].data.propertyType == 'Constant')
+          virtualPropertyValues.type = 0;
+          else
+          virtualPropertyValues.type = 1;
+
+          virtualPropertyValues.valueText = gridStore.data.items[i].data.valueText;
+          virtualPropertyValues.propertyName = gridStore.data.items[i].data.propertyName;
+          virtualPropertyValues.length = gridStore.data.items[i].data.propertyLength;
+          folder.virtualPropertyValues.push(virtualPropertyValues);
+        }
+
+        Ext.Ajax.request({
+          url: 'AdapterManager/SaveVirtualProperties',
+          timeout: 600000,
+          method: 'POST',
+          params: {
+            scope: scope,
+            app: app,
+            tree: Ext.JSON.encode(properties)
+          },
+          success: function (response, request) {
+
+            win.fireEvent('save', me);
+            me.getDirTree().onReload();
+          },
+          failure: function (response, request) {
+            showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
+
+          }
+        });
+
+
       },
       failure: function (response, request) {
-        showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
+        showDialog(400, 100, 'Error', 'An error has occurred while getting virtual property.', Ext.Msg.OK, null);
 
       }
     });
+
+
   },
 
   onEditVirtualProperty: function(item, e, eOpts) {
@@ -1006,7 +1056,7 @@ Ext.define('AM.controller.Directory', {
     store.removeAll();
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-
+    form.getForm().findField('oldPropertyName').setValue(node.data.text);
     Ext.Ajax.request({
       url: 'AdapterManager/VirtualProperties',
       timeout: 600000,
@@ -1016,7 +1066,15 @@ Ext.define('AM.controller.Directory', {
         //tree: Ext.JSON.encode(virtualProperty)
       },
       success: function (response, request) {
-        var res = Ext.decode(response.responseText).virtualProperties[0];
+        var vProperties = Ext.decode(response.responseText).virtualProperties;
+        var res = vProperties[0];
+        for(j=0;j<vProperties.length;j++){
+          if(vProperties[j].propertyName == node.data.text){
+            res = vProperties[j];
+            break;
+          }
+        }
+
         var properties = [];
         var formRecord = {
           objectName: res.objectName,
@@ -1098,9 +1156,10 @@ Ext.define('AM.controller.Directory', {
         var res = Ext.decode(response.responseText);
 
         for(var i=0;i<res.virtualProperties.length;i++){
-          if(res.virtualProperties[i].propertyName == node.data.text)
-          res.virtualProperties.splice(i,1);
-          break;
+          if(res.virtualProperties[i].propertyName == node.data.text){
+            res.virtualProperties.splice(i,1);
+            break;
+          }
         }
 
         Ext.Ajax.request({
@@ -1114,10 +1173,7 @@ Ext.define('AM.controller.Directory', {
           },
           success: function (response, request) {
 
-            //var msg = 'Saved Successfully...'
-            //showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
-            var directoryTree = Ext.widget('directorytree');
-            directoryTree.onReload();
+            me.getDirTree().onReload();
           },
           failure: function (response, request) {
             showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
