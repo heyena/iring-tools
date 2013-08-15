@@ -643,7 +643,21 @@ public class ExchangeDataModel extends DataModel
 
                 if (id.equals(internalIds[0]) || id.equals(internalIds[1]))
                 {
-                  dtiList.getItems().add(dti);
+                  boolean found = false;
+                  for (DataTransferIndex localDti : dtiList.getItems())
+                  {
+                    if (localDti.getHashValue().equals(dti.getHashValue()))
+                    {
+                      found = true;
+                      break;
+                    }
+                  }
+                  
+                  if (!found)
+                  {
+                    dtiList.getItems().add(dti);
+                  }
+                  
                   break;
                 }
               }

@@ -251,11 +251,50 @@ namespace org.iringtools.adapter.projection
             {
               DataTransferIndex dti = new DataTransferIndex();
               StringBuilder internalIdentifier = new StringBuilder();
-              StringBuilder propertyValues = new StringBuilder();
+              Dictionary<string, string> propertyValues = new Dictionary<string, string>();
 
               BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyPropertyNames,
                 propertyValues, sortIndex, ref sortType);
 
+              //
+              // set dti identifier
+              //
+              if (_graphMap.classTemplateMaps.Count > 0)
+              {
+                ClassTemplateMap ctm = _graphMap.classTemplateMaps[0];
+                string delimiter = ctm.classMap.identifierDelimiter ?? string.Empty;
+
+                if (ctm.classMap.identifierKeyMaps != null)
+                {
+                  foreach (KeyMap keyMap in ctm.classMap.identifierKeyMaps)
+                  {
+                    string key = keyMap.classId + keyMap.templateId + keyMap.roleId;
+
+                    if (propertyValues.ContainsKey(key))
+                    {
+                      dti.Identifier += delimiter + propertyValues[key];
+                    }
+                  }
+                }
+                else
+                {
+                  foreach (string identifier in ctm.classMap.identifiers)
+                  {
+                    string property = identifier.Substring(identifier.IndexOf(".") + 1);
+                    string value = Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(property));
+                    dti.Identifier += delimiter + value;
+                  }
+                }
+
+                if (dti.Identifier != null)
+                {
+                  dti.Identifier = dti.Identifier.Remove(0, delimiter.Length);
+                }
+              }
+
+              //
+              // set dti internal identifier
+              //
               foreach (KeyProperty keyProp in dataObject.keyProperties)
               {
                 internalIdentifier.Append(keyDelimiter);
@@ -265,9 +304,19 @@ namespace org.iringtools.adapter.projection
               internalIdentifier.Remove(0, keyDelimiter.Length);
               dti.InternalIdentifier = internalIdentifier.ToString();
 
-              string values = propertyValues.ToString();
-              dti.HashValue = Utility.MD5Hash(values);
+              //
+              // compute hash value
+              //
+              StringBuilder values = new StringBuilder();
+              foreach (var pair in propertyValues)
+              {
+                values.Append(pair.Value);
+              }
+              dti.HashValue = Utility.MD5Hash(values.ToString());
 
+              //
+              // determine HasContent flag
+              //
               if (typeof(GenericDataObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
               {
                 dti.HasContent = ((GenericDataObject)(_dataObjects[dataObjectIndex])).HasContent;
@@ -311,7 +360,7 @@ namespace org.iringtools.adapter.projection
 
     #region data transfer indices helper methods
     private void BuildDataTransferIndex(DataTransferIndex dti, int dataObjectIndex, ClassTemplateMap classTemplateMap,
-      List<string> keyPropertyNames, StringBuilder propertyValues, string sortIndex, ref string sortType)
+      List<string> keyPropertyNames, Dictionary<string, string> propertyValues, string sortIndex, ref string sortType)
     {
       if (classTemplateMap != null && classTemplateMap.classMap != null)
       {
@@ -328,12 +377,6 @@ namespace org.iringtools.adapter.projection
           {
             List<RoleMap> classRoles = new List<RoleMap>();
 
-            // dti identifier is root class identifier
-            if (String.IsNullOrEmpty(dti.Identifier))
-            {
-              dti.Identifier = classIdentifier;
-            }
-
             foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
             {
               StringBuilder tempPropertyValues = new StringBuilder();
@@ -345,8 +388,7 @@ namespace org.iringtools.adapter.projection
                     roleMap.type == RoleType.DataProperty ||
                     roleMap.type == RoleType.ObjectProperty ||
                     roleMap.type == RoleType.FixedValue)
-                {
-                  
+                {                  
                   if (String.IsNullOrEmpty(roleMap.propertyName) && roleMap.type != RoleType.FixedValue )
                   {
                     throw new Exception("No data property mapped to role [" + classTemplateMap.classMap.name + "." + templateMap.name + "." + roleMap.name + "]");
@@ -444,16 +486,17 @@ namespace org.iringtools.adapter.projection
                       }
                     }
                   }
+
+                  if (isTemplateValid)
+                  {
+                    string key = classTemplateMap.classMap.id + templateMap.id + roleMap.id;
+                    propertyValues[key] = tempPropertyValues.ToString();
+                  }
                 }
                 else if (roleMap.type == RoleType.Reference && roleMap.classMap != null)
                 {
                   classRoles.Add(roleMap);
                 }
-              }
-
-              if (isTemplateValid)
-              {
-                propertyValues.Append(tempPropertyValues.ToString());
               }
             }
 
