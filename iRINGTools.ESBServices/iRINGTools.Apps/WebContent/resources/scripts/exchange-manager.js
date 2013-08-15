@@ -1584,15 +1584,6 @@ function saveExchangeConfig() {
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {		
-		    if(oldscope != "")
-			{
-				var context = '?scope=' + oldscope + '&xid=' + xid;
-				Ext.Ajax.request({
-					url : 'reset?dtoContext=' + escape(context.substring(1)),
-					method : 'POST'
-
-				});
-			}
 			refresh();
 		},
 		failure : function(response, request) {
