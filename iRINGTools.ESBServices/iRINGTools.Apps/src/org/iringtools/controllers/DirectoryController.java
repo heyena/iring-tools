@@ -34,7 +34,7 @@ public class DirectoryController extends BaseController
         Entry<String, Object> entry = iterator.next();
         String key = entry.getKey();
         
-        if (key.startsWith(DataModel.APP_PREFIX))
+        if (key.startsWith(DataModel.APP_PREFIX) || key.startsWith(DataModel.EXCHANGE_PREFIX))
         {
           iterator.remove();
         }
