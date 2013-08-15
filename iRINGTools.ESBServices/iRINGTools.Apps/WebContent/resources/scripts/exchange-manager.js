@@ -1576,13 +1576,23 @@ function saveExchangeConfig() {
 	var scope = node.parentNode.parentNode.text;
 	var commodity = node.text;
 	var xid = node.attributes.properties['Id'];
+	var oldscope = obj.findField('oldScope').getValue();
 
 	Ext.Ajax.request({
 		url : 'newExchange?' + form + '&scope =' + scope + '&commodity ='
 				+ commodity + '&xid =' + xid,
 		method : 'POST',
 		timeout : 120000,
-		success : function(response, request) {
+		success : function(response, request) {		
+		    if(oldscope != "")
+			{
+				var context = '?scope=' + oldscope + '&xid=' + xid;
+				Ext.Ajax.request({
+					url : 'reset?dtoContext=' + escape(context.substring(1)),
+					method : 'POST'
+
+				});
+			}
 			refresh();
 		},
 		failure : function(response, request) {
