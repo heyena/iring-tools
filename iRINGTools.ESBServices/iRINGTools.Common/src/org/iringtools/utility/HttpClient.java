@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 public class HttpClient
 {
   private static final Logger logger = Logger.getLogger(HttpClient.class);
-  
+
   private String baseUri;
   private NetworkCredentials networkCredentials = null;
   private Map<String, String> headers = new HashMap<String, String>();
@@ -54,19 +54,19 @@ public class HttpClient
   {
     this(baseUri, null, async);
   }
-  
+
   public HttpClient(String baseUri, NetworkCredentials networkCredentials)
   {
     this(baseUri, networkCredentials, false);
   }
-  
+
   public HttpClient(String baseUri, NetworkCredentials networkCredentials, boolean async)
   {
     setBaseUri(baseUri);
     setNetworkCredentials(networkCredentials);
     setAsync(async);
   }
-  
+
   public void setAsync(boolean value)
   {
     if (value)
@@ -88,53 +88,53 @@ public class HttpClient
     try
     {
       conn = getConnection(GET_METHOD, relativeUri);
-      
-      responseCode = conn.getResponseCode();      
+
+      responseCode = conn.getResponseCode();
       logger.debug("Response Code: " + responseCode);
 
       if (responseCode == HttpURLConnection.HTTP_NO_CONTENT)
         return null;
-      
+
       if (responseCode == HttpURLConnection.HTTP_ACCEPTED)
       {
         String statusURL = conn.getHeaderField("location");
-        return (T)statusURL;
+        return (T) statusURL;
       }
-      
+
       if (responseCode == HttpURLConnection.HTTP_OK)
       {
         InputStream responseStream = conn.getInputStream();
         logger.debug("Content Length: " + conn.getContentLength());
-                
+
         if (conn.getContentLength() == 0)
           return null;
-        
+
         if (responseClass == ByteArrayOutputStream.class)
         {
           ByteArrayOutputStream outStream = IOUtils.toByteArrayOutputStream(responseStream);
           return (T) outStream;
         }
-        
+
         return JaxbUtils.toObject(responseClass, responseStream);
       }
       else
       {
         String error = "Request to URL [" + conn.getURL() + "] failed. ";
-        
+
         try
         {
           InputStream errorStream = conn.getErrorStream();
-          
+
           if (errorStream != null)
           {
             error += IOUtils.toString(errorStream);
-          } 
+          }
         }
         catch (Exception e)
         {
           logger.debug(e.toString());
         }
-        
+
         throw new HttpClientException(responseCode, error);
       }
     }
@@ -161,19 +161,20 @@ public class HttpClient
   {
     return post(responseClass, "", requestEntity);
   }
-  
+
   public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws HttpClientException
   {
-    return post(responseClass, relativeUri, requestEntity, "application/xml");    
+    return post(responseClass, relativeUri, requestEntity, "application/xml");
   }
-  
+
   public <T, R> R post(Class<R> responseClass, T requestEntity, String contentType) throws HttpClientException
   {
-    return post(responseClass, "", requestEntity, contentType);    
+    return post(responseClass, "", requestEntity, contentType);
   }
 
   @SuppressWarnings("unchecked")
-  public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity, String contentType) throws HttpClientException
+  public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity, String contentType)
+      throws HttpClientException
   {
     HttpURLConnection conn = null;
     int responseCode = 0;
@@ -181,22 +182,30 @@ public class HttpClient
     try
     {
       ByteArrayOutputStream requestStream = null;
-      
+
       if (requestEntity.getClass() == ByteArrayOutputStream.class)
       {
         requestStream = (ByteArrayOutputStream) requestEntity;
       }
-      else 
-	  {
-        requestStream = (ByteArrayOutputStream)JaxbUtils.toStream(requestEntity, false);
+      else
+      {
+        requestStream = (ByteArrayOutputStream) JaxbUtils.toStream(requestEntity, false);
       }
       
+      if (requestStream != null)
+      {
+        logger.debug("REQUEST [" + baseUri + relativeUri + "]");
+        logger.debug("-------------------------------------------");
+        logger.debug(requestStream.toString());
+        logger.debug("-------------------------------------------");
+      }
+
       conn = getConnection(POST_METHOD, relativeUri);
       conn.setRequestProperty("Content-Type", contentType);
       conn.setRequestProperty("Content-Length", String.valueOf(requestStream.size()));
-  
+
       DataOutputStream outputStream = new DataOutputStream(conn.getOutputStream());
-      outputStream.write(requestStream.toByteArray());      
+      outputStream.write(requestStream.toByteArray());
       outputStream.flush();
       outputStream.close();
 
@@ -205,47 +214,66 @@ public class HttpClient
 
       if (responseCode == HttpURLConnection.HTTP_NO_CONTENT)
         return null;
-      
+
       if (responseCode == HttpURLConnection.HTTP_ACCEPTED)
       {
         String statusURL = conn.getHeaderField("location");
-        return (R)statusURL;
+        return (R) statusURL;
       }
-      
+
       if (responseCode == HttpURLConnection.HTTP_OK)
       {
-        InputStream responseStream = conn.getInputStream();        
+        InputStream responseStream = conn.getInputStream();
         logger.debug("Content Length: " + conn.getContentLength());
-        
+
         if (conn.getContentLength() == 0)
           return null;
-                
+        
         if (responseClass == ByteArrayOutputStream.class)
         {
           ByteArrayOutputStream outStream = IOUtils.toByteArrayOutputStream(responseStream);
+          
+          if (responseStream != null)
+          {
+            logger.debug("RESPONSE");
+            logger.debug("-------------------------------------------");
+            logger.debug(outStream.toString());
+            logger.debug("-------------------------------------------");
+          }
+
           return (R) outStream;
         }
+
+        R obj = JaxbUtils.toObject(responseClass, responseStream);
         
-        return JaxbUtils.toObject(responseClass, responseStream);
+        if (obj != null)
+        {
+          logger.debug("RESPONSE");
+          logger.debug("-------------------------------------------");
+          logger.debug(JaxbUtils.toXml(obj, false));
+          logger.debug("-------------------------------------------");
+        }
+        
+        return obj;
       }
       else
       {
         String error = "Request to URL [" + conn.getURL() + "] failed. ";
-        
+
         try
         {
           InputStream errorStream = conn.getErrorStream();
-          
+
           if (errorStream != null)
           {
             error += IOUtils.toString(errorStream);
-          } 
+          }
         }
         catch (Exception e)
         {
           logger.debug(e.toString());
         }
-        
+
         throw new HttpClientException(responseCode, error);
       }
     }
@@ -317,7 +345,7 @@ public class HttpClient
       {
         conn.setRequestProperty(pair.getKey(), pair.getValue());
       }
-      
+
       StringBuilder requestEntity = new StringBuilder();
 
       if (formData != null)
@@ -428,43 +456,45 @@ public class HttpClient
 
     URL url = new URL(baseUri + relativeUri);
     logger.debug("Opening URL connection [" + url + "]");
-    
-    HttpURLConnection conn = null; 
-    
+
+    HttpURLConnection conn = null;
+
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
       String proxyHost = System.getProperty("http.proxyHost");
       int proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
-      String proxyUserName = System.getProperty("http.proxyUser");   
-      
+      String proxyUserName = System.getProperty("http.proxyUser");
+
       String proxyDomain = System.getProperty("http.proxyDomain");
       if (proxyUserName != null && proxyDomain != null && proxyDomain.length() > 0)
         proxyUserName = proxyDomain + "\\" + proxyUserName;
-      
+
       final String proxyUser = proxyUserName;
-      final String proxyPassword = System.getProperty("http.proxyPassword"); 
-      
+      final String proxyPassword = System.getProperty("http.proxyPassword");
+
       Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
-      conn = (HttpURLConnection) url.openConnection(proxy); 
-      
+      conn = (HttpURLConnection) url.openConnection(proxy);
+
       if (proxyUser != null && proxyPassword != null)
       {
-        Authenticator.setDefault(new Authenticator() {
-          public PasswordAuthentication getPasswordAuthentication() {
+        Authenticator.setDefault(new Authenticator()
+        {
+          public PasswordAuthentication getPasswordAuthentication()
+          {
             return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
           }
         });
       }
-      
-//      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);      
-//      conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
-      
+
+      // String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);
+      // conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
+
       logger.debug("Connecting thru proxy server [" + proxyHost + "]");
     }
     else
     {
-      conn = (HttpURLConnection) url.openConnection(); 
+      conn = (HttpURLConnection) url.openConnection();
     }
 
     if (networkCredentials != null)
@@ -479,13 +509,13 @@ public class HttpClient
     {
       String key = header.getKey();
       String value = header.getValue();
-      
+
       // ignore accept header
       if (key.toLowerCase().equals("accept"))
       {
         continue;
       }
-      
+
       logger.debug(key + ": " + value);
       conn.setRequestProperty(key, value);
     }
@@ -496,11 +526,10 @@ public class HttpClient
       conn.setDoOutput(true);
       conn.setDoInput(true);
     }
-    
-    /*if (url.getProtocol().equalsIgnoreCase("https"))
-    {
-      ignoreSslErrors(conn);
-    }*/
+
+    /*
+     * if (url.getProtocol().equalsIgnoreCase("https")) { ignoreSslErrors(conn); }
+     */
 
     return conn;
   }
@@ -516,33 +545,33 @@ public class HttpClient
 
     return new String(Base64.encodeBase64(creds.getBytes()));
   }
-  
-  public void ignoreSslErrors(URLConnection connection) 
+
+  public void ignoreSslErrors(URLConnection connection)
   {
     try
     {
-      TrustManager[] trustAllCerts = new TrustManager[] { 
-        new X509TrustManager()
+      TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager()
+      {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType)
+        {}
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType)
+        {}
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers()
         {
-          @Override
-          public void checkClientTrusted(X509Certificate[] chain, String authType){}
-  
-          @Override
-          public void checkServerTrusted(X509Certificate[] chain, String authType){}
-  
-          @Override
-          public X509Certificate[] getAcceptedIssuers()
-          {
-            return null;
-          }
-        } 
-      };
-  
+          return null;
+        }
+      } };
+
       SSLContext sslContext = SSLContext.getInstance("SSL");
       sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-      
-      SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();  
-      ((HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);      
+
+      SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+      ((HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);
 
       System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
     }
