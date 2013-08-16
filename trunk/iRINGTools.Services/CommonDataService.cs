@@ -106,11 +106,9 @@ namespace org.iringtools.services
     {
       try
       {
-        format = MapContentType(project, app, format);
-
         // get list of contents is not allowed in this service
-        if (!(format.ToLower() == "raw" || format.ToLower() == "dto" || format.ToLower() == "rdf" ||
-        format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
+        if (string.IsNullOrEmpty(format) || !(format.ToLower() == "dto" || format.ToLower() == "rdf" ||
+          format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
         {
           format = "json";
         }
@@ -134,7 +132,7 @@ namespace org.iringtools.services
     {
       try
       {
-        format = MapContentType(project, app, format);
+        //format = MapContentType(project, app, format);
         object content = _adapterProvider.GetItem(project, app, resource, String.Empty, id, ref format, false);
         _adapterProvider.FormatOutgoingMessage(content, format);
       }
@@ -659,29 +657,29 @@ namespace org.iringtools.services
         return format;
       }
 
-      // otherwise determine the appropriate format
-      if (!string.IsNullOrEmpty(project) && !string.IsNullOrEmpty(app))
-      {
-        string basePath = AppDomain.CurrentDomain.BaseDirectory;
-        string appConfigPath = string.Format(@"{0}\{1}\{2}.{3}.config", basePath, "App_Data", project, app);
+      //// otherwise determine the appropriate format
+      //if (!string.IsNullOrEmpty(project) && !string.IsNullOrEmpty(app))
+      //{
+      //  string basePath = AppDomain.CurrentDomain.BaseDirectory;
+      //  string appConfigPath = string.Format(@"{0}\{1}\{2}.{3}.config", basePath, "App_Data", project, app);
 
-        if (File.Exists(appConfigPath))
-        {
-          StaticDust.Configuration.AppSettingsReader appConfig =
-            new StaticDust.Configuration.AppSettingsReader(appConfigPath);
+      //  if (File.Exists(appConfigPath))
+      //  {
+      //    StaticDust.Configuration.AppSettingsReader appConfig =
+      //      new StaticDust.Configuration.AppSettingsReader(appConfigPath);
 
-          string defaultFormat = Convert.ToString(appConfig["DefaultFormat"]);
+      //    string defaultFormat = Convert.ToString(appConfig["DefaultFormat"]);
 
-          if (!string.IsNullOrEmpty(defaultFormat))
-          {
-            format = defaultFormat.ToLower();
-          }
-        }
-      }
+      //    if (!string.IsNullOrEmpty(defaultFormat))
+      //    {
+      //      format = defaultFormat.ToLower();
+      //    }
+      //  }
+      //}
 
       if (string.IsNullOrEmpty(format))
       {
-        format = "json";
+          format = "json";
       }
 
       if (contentType != null)

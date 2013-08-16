@@ -88,6 +88,31 @@ namespace org.iringtools.adapter
       return _scopes;
     }
 
+    public ScopeProject GetScope(string scopeName)
+    {
+      foreach (ScopeProject scope in _scopes)
+      {
+        if (scope.Name.ToLower() == scopeName.ToLower())
+        {
+          foreach (ScopeApplication app in scope.Applications)
+          {
+            string bindingConfigPath = 
+              string.Format("{0}BindingConfiguration.{1}.{2}.xml", 
+              _settings["AppDataPath"], scope.Name, app.Name);
+
+            XElement binding = Utility.GetxElementObject(bindingConfigPath);
+
+            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+              app.DataMode = DataMode.CacheOnly;
+          }
+
+          return scope;
+        }
+      }
+
+      return null;
+    }
+
     public VersionInfo GetVersion()
     {
       Version version = this.GetType().Assembly.GetName().Version;
@@ -423,6 +448,7 @@ namespace org.iringtools.adapter
         if (application != null)
         {
           application.DisplayName = updatedApp.DisplayName;
+          application.DataMode = updatedApp.DataMode;
           application.Configuration.AppSettings = updatedApp.Configuration.AppSettings;
 
           scope.Applications.Sort(new ApplicationComparer());
@@ -3560,6 +3586,10 @@ namespace org.iringtools.adapter
           {
             format = _dataObjDef.defaultListProjectionFormat;
           }
+          else if (!String.IsNullOrEmpty(_settings["DefaultProjectionFormat"]))
+          {
+              format = _settings["DefaultProjectionFormat"];
+          }
           else
           {
             format = "json";
@@ -4181,9 +4211,7 @@ namespace org.iringtools.adapter
       try
       {
         Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-        GetDataLayerTypes(ref dataLayers, domainAssemblies, typeof(IDataLayer));
-        GetDataLayerTypes(ref dataLayers, domainAssemblies, typeof(ILightweightDataLayer));
+        GetDataLayerTypes(ref dataLayers, domainAssemblies);
       }
       catch (Exception ex)
       {
@@ -4194,21 +4222,27 @@ namespace org.iringtools.adapter
       return dataLayers;
     }
 
-    private void GetDataLayerTypes(ref DataLayers dataLayers, Assembly[] domainAssemblies, Type dlType)
+    private void GetDataLayerTypes(ref DataLayers dataLayers, Assembly[] domainAssemblies)
     {
       foreach (Assembly asm in domainAssemblies)
       {
         Type[] asmTypes = null;
         try
         {
-          asmTypes = asm.GetTypes().Where(a => a != null && (dlType.IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract))).ToArray();
+          asmTypes = asm.GetTypes().Where(a => a != null && (
+            (typeof(IDataLayer).IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract)) ||
+            (typeof(ILightweightDataLayer).IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract)))
+          ).ToArray();
         }
         catch (ReflectionTypeLoadException e)
         {
           // if we are running the the iRing site under Anonymous authentication with the DefaultApplicationPool Identity we
           // can run into ReflectionPermission issues but as our datalayer assemblies are in our web site's bin folder we
           // should be able to ignore the exceptions and work with the accessibe types loaded in e.Types.
-          asmTypes = e.Types.Where(a => a != null && (dlType.IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract))).ToArray();
+          asmTypes = e.Types.Where(a => a != null && (
+            (typeof(IDataLayer).IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract)) ||
+            (typeof(ILightweightDataLayer).IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract)))
+          ).ToArray();
           _logger.Warn("GetTypes() for " + asm.FullName + " cannot access all types, but datalayer loading is continuing: " + e);
         }
 
@@ -4220,17 +4254,26 @@ namespace org.iringtools.adapter
             foreach (System.Type asmType in asmTypes)
             {
               _logger.Debug("asmType:" + asmType.ToString());
-              if (dlType.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
-              {
-                bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-                string name = asm.FullName.Split(',')[0];
+              
+              bool isLW = typeof(ILightweightDataLayer).IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract);
+              bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+              string name = asm.FullName.Split(',')[0];
 
-                if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
-                {
-                  string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-                  DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-                  dataLayers.Add(dataLayer);
-                }
+              if (name.ToLower() == "NHibernateExtension".ToLower())
+                continue;
+
+              if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
+              {
+                string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+                  
+                DataLayer dataLayer = new DataLayer { 
+                  Assembly = assembly, 
+                  Name = name,
+                  IsLightweight = isLW,
+                  Configurable = configurable 
+                };
+                  
+                dataLayers.Add(dataLayer);
               }
             }
           }
@@ -4294,110 +4337,210 @@ namespace org.iringtools.adapter
     }
 
     #region cache related methods
+    public Response SwitchDataMode(string scope, string app, string mode)
+    {
+      Response response = new Response();
+
+      try
+      {
+        InitializeScope(scope, app, false);
+
+        ScopeProject proj = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
+        ScopeApplication application = proj.Applications.Find(x => x.Name.ToLower() == app.ToLower());
+
+        application.DataMode = (DataMode)Enum.Parse(typeof(DataMode), mode);
+
+        string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
+
+        response.Level = StatusLevel.Success;
+        response.Messages.Add("Data Mode switched successfully.");
+
+        // cache does not exist, create it
+        if (application.DataMode == DataMode.Cache && application.CacheTimestamp == null)
+        {
+          Impersonate();
+          InitializeDataLayer(false);
+
+          Response refreshResponse = _dataLayerGateway.RefreshCache(false);
+
+          if (response.Level == StatusLevel.Success)
+          {
+            UpdateCacheInfo(scope, app);
+          }
+
+          response.Append(refreshResponse);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Debug("Error switching data mode: ", ex);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error switching data mode: " + ex.Message);
+      }
+
+      return response;
+    }
+
     public Response RefreshCache(string scope, string app, bool updateDictionary)
     {
+      Response response = new Response();
+
       try
       {
         InitializeScope(scope, app, false);
         Impersonate();
         InitializeDataLayer(false);
 
-        Response response = _dataLayerGateway.RefreshCache(updateDictionary);
-        return response;
+        response = _dataLayerGateway.RefreshCache(updateDictionary);
+
+        if (response.Level == StatusLevel.Success)
+        {
+          UpdateCacheInfo(scope, app);
+        }
       }
       catch (Exception ex)
       {
-        _logger.ErrorFormat("Error refreshing cache for {0}.{1}: {2}", scope, app, ex.Message);
-        throw ex;
+        _logger.Debug("Error refreshing cache: ", ex);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error refreshing cache: " + ex.Message);
       }
+
+      return response;
     }
 
     public Response RefreshCache(string scope, string app, string objectType, bool updateDictionary)
     {
+      Response response = new Response();
+
       try
       {
         InitializeScope(scope, app, false);
         Impersonate();
         InitializeDataLayer(false);
         
-        Response response = _dataLayerGateway.RefreshCache(updateDictionary, objectType);
-        return response;
+        response = _dataLayerGateway.RefreshCache(updateDictionary, objectType);
+
+        if (response.Level == StatusLevel.Success)
+        {
+          UpdateCacheInfo(scope, app);
+        }
       }
       catch (Exception ex)
       {
-        _logger.ErrorFormat("Error refreshing cache for {0}.{1}: {2}", scope, app, ex.Message);
-        throw ex;
+        _logger.Debug("Error refreshing cache: ", ex);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error refreshing cache: " + ex.Message);
       }
+
+      return response;
     }
 
     public Response ImportCache(string scope, string app, string baseUri, bool updateDictionary)
     {
+      Response response = new Response();
+
       try
       {
         InitializeScope(scope, app, false);
         Impersonate();
         InitializeDataLayer(false);
         
-        Response response = _dataLayerGateway.ImportCache(baseUri, updateDictionary);
-        return response;
+        response = _dataLayerGateway.ImportCache(baseUri, updateDictionary);
+
+        if (response.Level == StatusLevel.Success)
+        {
+          UpdateCacheInfo(scope, app);
+        }
       }
       catch (Exception ex)
       {
-        _logger.ErrorFormat("Error refreshing cache for {0}.{1}: {2}", scope, app, ex.Message);
-        throw ex;
+        _logger.Debug("Error importing cache: ", ex);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error importing cache: " + ex.Message);
       }
+
+      return response;
     }
 
     public Response ImportCache(string scope, string app, string objectType, string url, bool updateDictionary)
     {
+      Response response = new Response();
+
       try
       {
         InitializeScope(scope, app, false);
         Impersonate();
         InitializeDataLayer(false);
         
-        Response response = _dataLayerGateway.ImportCache(objectType, url, updateDictionary);
-        return response;
+        response = _dataLayerGateway.ImportCache(objectType, url, updateDictionary);
+
+        if (response.Level == StatusLevel.Success)
+        {
+          UpdateCacheInfo(scope, app);
+        }
       }
       catch (Exception ex)
       {
-        _logger.ErrorFormat("Error refreshing cache for {0}.{1}: {2}", scope, app, ex.Message);
-        throw ex;
+        _logger.Debug("Error importing cache: ", ex);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error importing cache: " + ex.Message);
       }
+
+      return response;
     }
 
     public Response DeleteCache(string scope, string app)
     {
+      Response response = new Response();
+
       try
       {
         InitializeScope(scope, app, false);
         InitializeDataLayer(false);
         
-        Response response = _dataLayerGateway.DeleteCache();
-        return response;
+        response = _dataLayerGateway.DeleteCache();
       }
       catch (Exception ex)
       {
-        _logger.ErrorFormat("Error deleting cache for {0}.{1}: {2}", scope, app, ex.Message);
-        throw ex;
+        _logger.Debug("Error deleting cache: ", ex);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error deleting cache: " + ex.Message);
       }
+
+      return response;
     }
 
     public Response DeleteCache(string scope, string app, string objectType)
     {
+      Response response = new Response();
+
       try
       {
         InitializeScope(scope, app, false);
         InitializeDataLayer(false);
 
-        Response response = _dataLayerGateway.DeleteCache(objectType);
-        return response;
+        response = _dataLayerGateway.DeleteCache(objectType);
       }
       catch (Exception ex)
       {
-        _logger.ErrorFormat("Error deleting cache for {0}.{1}: {2}", scope, app, ex.Message);
-        throw ex;
+        _logger.Debug("Error deleting cache: ", ex);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error deleting cache: " + ex.Message);
       }
+
+      return response;
+    }
+
+    private void UpdateCacheInfo(string scope, string app)
+    {
+      ScopeProject project = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
+      ScopeApplication application = project.Applications.Find(x => x.Name.ToLower() == app.ToLower());
+
+      application.DataMode = DataMode.Cache;
+      application.CacheTimestamp = DateTime.Now;
+
+      Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
     }
     #endregion
 
