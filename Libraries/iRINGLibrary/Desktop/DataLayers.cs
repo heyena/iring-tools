@@ -25,19 +25,23 @@ namespace org.iringtools.library
     public bool Configurable { get; set; }
 
     [XmlElement]
-    [DataMember(Name = "mainDLL", Order = 4, EmitDefaultValue = false)]
+    [DataMember(Name = "isLightweight", Order = 4, EmitDefaultValue = false)]
+    public bool IsLightweight { get; set; }
+
+    [XmlElement]
+    [DataMember(Name = "mainDLL", Order = 5, EmitDefaultValue = false)]
     public string MainDLL { get; set; }
 
     [XmlElement]
-    [DataMember(Name = "path", Order = 5, EmitDefaultValue = false)]
+    [DataMember(Name = "path", Order = 6, EmitDefaultValue = false)]
     public string Path { get; set; }
 
     [XmlElement]
-    [DataMember(Name = "external", Order = 6, EmitDefaultValue = false)]
+    [DataMember(Name = "external", Order = 7, EmitDefaultValue = false)]
     public bool External { get; set; }
 
     [XmlElement]
-    [DataMember(Name = "package", Order = 7, EmitDefaultValue = false)]
+    [DataMember(Name = "package", Order = 8, EmitDefaultValue = false)]
     public MemoryStream Package { get; set; }
   }
 

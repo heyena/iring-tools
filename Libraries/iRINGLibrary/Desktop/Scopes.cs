@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System;
+using System.Xml.Linq;
 
 namespace org.iringtools.library
 {
@@ -79,5 +81,22 @@ namespace org.iringtools.library
 
     [DataMember(Name = "displayName", Order = 4, EmitDefaultValue = false)]
     public string DisplayName { get; set; }
+
+    [DataMember(Name = "dataMode", Order = 5, EmitDefaultValue = false)]
+    public DataMode DataMode { get; set; }
+
+    [DataMember(Name = "cacheTimestamp", Order = 6, EmitDefaultValue = false)]
+    public DateTime? CacheTimestamp { get; set; }
   }
+
+  [DataContract(Namespace = "http://www.iringtools.org/library")]
+  public enum DataMode 
+  { 
+    [EnumMember]
+    Live, 
+    [EnumMember]
+    Cache,
+    [EnumMember]
+    CacheOnly
+  };
 }
