@@ -27,20 +27,18 @@ public class DirectoryController extends BaseController
   {
     try
     {      
-//      Iterator<Entry<String, Object>> iterator = session.entrySet().iterator();
+      Iterator<Entry<String, Object>> iterator = session.entrySet().iterator();
       
-//      while (iterator.hasNext()) 
-//      {
-//        Entry<String, Object> entry = iterator.next();
-//        String key = entry.getKey();
-//        
-//        if (key.startsWith(DataModel.APP_PREFIX) || key.startsWith(DataModel.EXCHANGE_PREFIX))
-//        {
-//          iterator.remove();
-//        }
-//      }
-    	
-      session.clear();
+      while (iterator.hasNext()) 
+      {
+        Entry<String, Object> entry = iterator.next();
+        String key = entry.getKey();
+        
+        if (key.startsWith(DataModel.APP_PREFIX) || key.startsWith(DataModel.EXCHANGE_PREFIX))
+        {
+          iterator.remove();
+        }
+      }
   
       DirectoryModel directoryModel = new DirectoryModel(settings);   
       Directory directory = directoryModel.getDirectory();
