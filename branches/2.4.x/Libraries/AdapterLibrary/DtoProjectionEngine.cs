@@ -183,7 +183,7 @@ namespace org.iringtools.adapter.projection
                 ((SerializableDataObject)dataObject).State = ObjectState.Update;
               }
 
-              if (dto.content != null)
+              if (dto.content != null && dto.content.Length > 0)
               {
                 ((SerializableDataObject)dataObject).HasContent = true;
                 ((SerializableDataObject)dataObject).Content = new MemoryStream(dto.content);
@@ -552,8 +552,11 @@ namespace org.iringtools.adapter.projection
           if (typeof(IContentObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
           {
             GenericContentObject contentObject = (GenericContentObject)_dataObjects[dataObjectIndex];
-            dto.hasContent = (contentObject.Content != null);
-            dto.content = contentObject.Content.ToMemoryStream().ToArray();
+            if (contentObject.Content != null)
+            {
+              dto.hasContent = (contentObject.Content != null);
+              dto.content = contentObject.Content.ToMemoryStream().ToArray();
+            }
           }
           else if (typeof(GenericDataObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
           {
