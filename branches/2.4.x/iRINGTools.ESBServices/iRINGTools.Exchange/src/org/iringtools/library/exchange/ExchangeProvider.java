@@ -115,7 +115,7 @@ public class ExchangeProvider
             {
               if (targetTemplate.getTransferOption() == TransferOption.REQUIRED)
               {
-                throw new Exception("Required template [" + targetTemplate.getId() + "] not found");
+                throw new Exception("Required template [" + targetTemplate.getName() + "] not found");
               }
               else
               {
