@@ -90,11 +90,10 @@ namespace org.iringtools.adapter.datalayer
                 }
 
                 SortedList<string, SortedList<string, TypeAndLength>> env = GetEnvironments();
-
+                
                 foreach (var item in env)
                 {
                     string itemName = item.Key;
-
                     //if (dataObjects == null || dataObjects.Count == 0 || dataObjects.Contains(itemName.Replace(" ", "")))
                     //{
                         DataObject dataObject = new DataObject()
@@ -362,6 +361,7 @@ namespace org.iringtools.adapter.datalayer
         {
             try
             {
+                return _iFoldrCount;
                 //_logger.Debug(" In GetCount()");
                 if (tableName == "Folders" || tableName == "SubFolders")
                 {
@@ -409,24 +409,25 @@ namespace org.iringtools.adapter.datalayer
         /// </summary>
         /// <param name="whereClause"></param>
         /// <returns></returns>
-        private DataTable GetSubFolders(string whereClause)
+      //  private DataTable GetSubFolders(string whereClause)
+        private DataTable GetSubFolders()
         {
             DataTable dtsubFolderDetails;
             dtsubFolderDetails = GetDataTableSchema("subfolders");
 
             SortedList<int, string> lstSubFolder;
 
-            string[] strFrag = whereClause.Split('=');
-            string ID = strFrag[1];
-            ID = ID.Replace("'", "");
-            if (ID == string.Empty)
-            {
-                return dtsubFolderDetails;
-            }
-            if (whereClause == "from identifier")
+            //string[] strFrag = whereClause.Split('=');
+            //string ID = strFrag[1];
+            //ID = ID.Replace("'", "");
+            //if (ID == string.Empty)
+            //{
+            //    return dtsubFolderDetails;
+            //}
+           // if (whereClause == "from identifier")
                 lstSubFolder = this.GetChildFolders(iParentFolder);
-            else
-                lstSubFolder = this.GetChildFolders(Convert.ToInt32(ID));
+            //else
+            //    lstSubFolder = this.GetChildFolders(Convert.ToInt32(ID));
 
             foreach (var pair in lstSubFolder)
             {
@@ -481,6 +482,51 @@ namespace org.iringtools.adapter.datalayer
 
         }
 
+        private DataTable GetObjectSimple()
+        {
+            string orderBy = string.Empty;
+            string strcolumnname = string.Empty;
+            Login();
+
+            DataTable dt = GetDocumentsForProject(
+            _settings["PW.ProjectType_Simple"],
+            _settings["PW.ProjectProperty_Simple"],
+            _settings["PW.ProjectName_Simple"]);
+
+            return dt;
+
+        }
+
+        private DataTable GetObjectCascade()
+        {
+            string orderBy = string.Empty;
+            string strcolumnname = string.Empty;
+            Login();
+
+            DataTable dt = GetDocumentsForProject(
+            _settings["PW.ProjectType_Cascade"],
+            _settings["PW.ProjectProperty_Cascade"],
+            _settings["PW.ProjectName_Cascade"]);
+
+            return dt;
+
+        }
+
+        private DataTable GetObjectComplex()
+        {
+            string orderBy = string.Empty;
+            string strcolumnname = string.Empty;
+            Login();
+
+            DataTable dt = GetDocumentsForProject(
+            _settings["PW.ProjectType_Complex"],
+            _settings["PW.ProjectProperty_Complex"],
+            _settings["PW.ProjectName_Complex"]);
+
+            return dt;
+
+        }
+
         private DataTable getDatatable(string tableName, string whereClause, long start, long limit)
         {
             DataTable dtglobal = new DataTable();
@@ -489,11 +535,6 @@ namespace org.iringtools.adapter.datalayer
                 dtglobal = GetFolders();
 
             }
-            else if (tableName.ToUpper() == "SUBFOLDERS")
-            {
-                DataTable dtSubFolders = GetSubFolders(whereClause);
-                return dtSubFolders;
-            }
             else if (tableName.ToUpper() == "DOCUMENTS")
             {
                 DataTable dtDocument = new DataTable();
@@ -501,8 +542,19 @@ namespace org.iringtools.adapter.datalayer
             }
             else if (tableName.ToUpper() == "DTP_ENG2")
             {
-
                 dtglobal = GetObjectDTP();
+            }
+            else if (tableName.ToUpper() == "Cascading Attributes".ToUpper())
+            {
+                dtglobal = GetObjectCascade();
+            }
+            else if (tableName.ToUpper() == "Complex".ToUpper())
+            {
+                dtglobal = GetObjectComplex();
+            }
+            else if (tableName.ToUpper() == "Simple".ToUpper())
+            {
+                dtglobal = GetObjectSimple();
             }
             return dtglobal;
         }
@@ -521,13 +573,15 @@ namespace org.iringtools.adapter.datalayer
             try
             {
                 DataTable dtglobal = this.getDatatable(tableName, whereClause, start, limit);
-                if (tableName.ToUpper() == "SUBFOLDERS" || tableName.ToUpper() == "DOCUMENTS")
-                    return dtglobal;
+
+                _iFoldrCount = dtglobal.DefaultView.ToTable().Rows.Count;
+
+                //if (tableName.ToUpper() == "SUBFOLDERS" || tableName.ToUpper() == "DOCUMENTS")
+                //    return dtglobal;
 
                 if (whereClause != string.Empty)
                 {
-                    dtglobal.DefaultView.RowFilter = whereClause != null ? whereClause.Replace("WHERE", "").Replace("UPPER", "") : "";
-                    _iFoldrCount = dtglobal.DefaultView.ToTable().Rows.Count;
+                    dtglobal.DefaultView.RowFilter = whereClause != null ? whereClause.Replace("WHERE", "").Replace("UPPER", "") : "";                    
                     return dtglobal.DefaultView.ToTable();
                 }
                 IEnumerable<System.Data.DataRow> query = from d in dtglobal.AsEnumerable().Skip((int)(start)).Take((int)limit) select d; //For Paging            
@@ -575,23 +629,29 @@ namespace org.iringtools.adapter.datalayer
             if (objectType.ToUpper() == "FOLDERS")
             {
 
+               // iParentFolder = Convert.ToInt32(identifiers[0]);
+               // dtGlobl = GetFolders();
+               // string[] strArray = identifiers.ToArray<string>();
+               //// dtGlobl.DefaultView.RowFilter = "ID = " + "'" + strArray[0] + "'";
+               // _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
                 iParentFolder = Convert.ToInt32(identifiers[0]);
-                dtGlobl = GetFolders();
-                string[] strArray = identifiers.ToArray<string>();
-               // dtGlobl.DefaultView.RowFilter = "ID = " + "'" + strArray[0] + "'";
+                //dtGlobl = GetSubFolders("from identifier");
+                dtGlobl = GetSubFolders();
+              //  dtGlobl.DefaultView.RowFilter = "ID = " + "'" + identifiers[0] + "'";
                 _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
+                return dtGlobl;
 
             }
 
             else if (objectType.ToUpper() == "SUBFOLDERS")
             {
 
-                dtGlobl = GetSubFolders("from identifier");
-                dtGlobl.DefaultView.RowFilter = "ID = " + "'" + identifiers[0] + "'";
-                _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
+                //dtGlobl = GetSubFolders("from identifier");
+                //dtGlobl.DefaultView.RowFilter = "ID = " + "'" + identifiers[0] + "'";
+                //_iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
 
 
-                //return dtGlobl;
+                ////return dtGlobl;
             }
 
 
@@ -650,7 +710,7 @@ namespace org.iringtools.adapter.datalayer
                 List<string> docGuids = identifiers.ToList();
                 List<string> listAttributes = new List<string>();
                 DataTable dtGlobl = new DataTable();
-
+                
                 dtGlobl = this.getObjects(objectType, identifiers);
                 
                 bool includeContent = _settings["IncludeContent"] != null && bool.Parse(_settings["IncludeContent"].ToString()) && objDef1.hasContent;
