@@ -198,6 +198,11 @@ public class DifferencingProvider
         while (++sourceIndex < sourceDtiList.size() && sourceDti.getIdentifier().equalsIgnoreCase(sourceDtiList.get(sourceIndex).getIdentifier()))
         {
           sourceDti.setDuplicateCount(sourceDti.getDuplicateCount() + 1);
+          
+          if (sourceDti.getDuplicateCount() > 1)
+          {
+            sourceDtiList.remove(sourceIndex--);
+          }
         }
       }
       else if (value == 0)  // identifiers match, can be SYNC or CHANGE
@@ -232,10 +237,8 @@ public class DifferencingProvider
           //   while (targetIndex < targetDtiList.size() && targetDti.getIdentifier().equalsIgnoreCase(targetDtiList.get(targetIndex).getIdentifier()))
          {
            resultDti.setDuplicateCount(resultDti.getDuplicateCount() + 1);
-        //  targetIndex++;
-         	
-         }
-       
+           //  targetIndex++;         	
+         }       
       }
       else
       {
@@ -248,7 +251,12 @@ public class DifferencingProvider
         while (++targetIndex < targetDtiList.size() && (targetDti.getIdentifier().equalsIgnoreCase(targetDtiList.get(targetIndex).getIdentifier())))
         {
         	targetDti.setDuplicateCount(targetDti.getDuplicateCount() + 1);
-         }
+        	
+          if (targetDti.getDuplicateCount() > 1)
+          {
+            targetDtiList.remove(targetIndex--);
+          }
+        }
       }
     }
 
@@ -257,10 +265,12 @@ public class DifferencingProvider
       for (int i = sourceIndex; i < sourceDtiList.size(); i++)
       {
         DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(i);
+        
         if(sourceIndex ==  sourceDtiList.size())
         {
       	  break;
         }
+        
         sourceDti.setTransferType(TransferType.ADD);
         sourceDti.setDuplicateCount(1);
         resultDtiListItems.add(sourceDti);  
@@ -269,7 +279,11 @@ public class DifferencingProvider
         while (++sourceIndex < sourceDtiList.size() && sourceDti.getIdentifier().equalsIgnoreCase(sourceDtiList.get(sourceIndex).getIdentifier()))
         {
           sourceDti.setDuplicateCount(sourceDti.getDuplicateCount() + 1);
-         
+          
+          if (sourceDti.getDuplicateCount() > 1)
+          {
+            sourceDtiList.remove(sourceIndex--);
+          }
         }
       }
     }
@@ -277,20 +291,27 @@ public class DifferencingProvider
     {
       for (int i = targetIndex; i < targetDtiList.size(); i++)
       {
-    	  if(targetIndex ==  targetDtiList.size())
-          {
-        	  break;
-          }
+    	  if (targetIndex ==  targetDtiList.size())
+        {
+      	  break;
+        }
+    	  
         DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(i);
         targetDti.setTransferType(TransferType.DELETE);
         targetDti.setHashValue(null);
         targetDti.setDuplicateCount(1);
         resultDtiListItems.add(targetDti);
+        
         // skip target duplicates
         while (++targetIndex < targetDtiList.size() && (targetDti.getIdentifier().equalsIgnoreCase(targetDtiList.get(targetIndex).getIdentifier())))
         {
         	targetDti.setDuplicateCount(targetDti.getDuplicateCount() + 1);
-         }
+        	
+        	if (targetDti.getDuplicateCount() > 1)
+          {
+        	  targetDtiList.remove(targetIndex--);
+          }
+        }
       }
     }
 

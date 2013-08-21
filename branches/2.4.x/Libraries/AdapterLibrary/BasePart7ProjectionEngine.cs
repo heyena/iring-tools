@@ -784,8 +784,6 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    //THIS ASSUMES CLASS IS ONLY USED ONCE
-    //resolve the propertyName expression into data object propertyName
     public string ProjectProperty(string[] propertyNameParts, ref Values values)
     {
       string dataPropertyName = String.Empty;
@@ -819,22 +817,10 @@ namespace org.iringtools.adapter.projection
           _valueListName = null;
           break;
 
-        case RoleType.FixedValue:
-          throw new Exception(String.Format(
-            "Invalid PropertyName Expression in DataFilter.  Fixed Value Role ({0}) is not allowed in the expression.",
-            roleName)
-           );
-
         case RoleType.ObjectProperty:
           dataPropertyName = roleMap.propertyName;
           _valueListName = roleMap.valueListName;
           break;
-
-        case RoleType.Possessor:
-          throw new Exception(String.Format(
-            "Invalid PropertyName Expression in DataFilter.  Possessor Role ({0}) is not allowed in the expression.",
-            roleName)
-          );
 
         case RoleType.Property:
           //if last part...
@@ -872,11 +858,10 @@ namespace org.iringtools.adapter.projection
           }
           break;
 
+        case RoleType.FixedValue:
+        case RoleType.Possessor:
         case RoleType.Reference:
-          throw new Exception(String.Format(
-            "Invalid PropertyName Expression in DataFilter.  Reference Role ({0}) is not allowed in the expression.",
-            roleName)
-          );
+          throw new Exception("Role " + roleName + " can not be projected to property.");
       }
 
       return dataPropertyName;

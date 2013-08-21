@@ -320,7 +320,7 @@ namespace org.iringtools.adapter.projection
               if (typeof(GenericDataObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
               {
                 dti.HasContent = ((GenericDataObject)(_dataObjects[dataObjectIndex])).HasContent;
-              } 
+              }
               else if (typeof(IContentObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
               {
                 dti.HasContent = ((GenericContentObject)(_dataObjects[dataObjectIndex])).HasContent;
@@ -388,8 +388,8 @@ namespace org.iringtools.adapter.projection
                     roleMap.type == RoleType.DataProperty ||
                     roleMap.type == RoleType.ObjectProperty ||
                     roleMap.type == RoleType.FixedValue)
-                {                  
-                  if (String.IsNullOrEmpty(roleMap.propertyName) && roleMap.type != RoleType.FixedValue )
+                {
+                  if (String.IsNullOrEmpty(roleMap.propertyName) && roleMap.type != RoleType.FixedValue)
                   {
                     throw new Exception("No data property mapped to role [" + classTemplateMap.classMap.name + "." + templateMap.name + "." + roleMap.name + "]");
                   }
@@ -502,7 +502,7 @@ namespace org.iringtools.adapter.projection
 
             foreach (RoleMap classRole in classRoles)
             {
-              ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id,classRole.classMap.index);
+              ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id, classRole.classMap.index);
 
               if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
               {
@@ -539,7 +539,7 @@ namespace org.iringtools.adapter.projection
         {
           DataTransferObject dto = new DataTransferObject();
           StringBuilder internalIdentifier = new StringBuilder();
-          
+
           foreach (KeyProperty keyProp in objDef.keyProperties)
           {
             internalIdentifier.Append(keyDelimiter);
@@ -552,9 +552,9 @@ namespace org.iringtools.adapter.projection
           if (typeof(IContentObject).IsAssignableFrom(_dataObjects[dataObjectIndex].GetType()))
           {
             GenericContentObject contentObject = (GenericContentObject)_dataObjects[dataObjectIndex];
-            if (contentObject.Content != null)
+            dto.hasContent = (contentObject.Content != null);
+            if (dto.hasContent)
             {
-              dto.hasContent = (contentObject.Content != null);
               dto.content = contentObject.Content.ToMemoryStream().ToArray();
             }
           }
@@ -709,7 +709,7 @@ namespace org.iringtools.adapter.projection
             break;
         }
       }
-            
+
       if (propertyRoles.Count > 0)  // property template
       {
         bool isTemplateValid = true;  // template is not valid when value list uri is empty
@@ -749,7 +749,7 @@ namespace org.iringtools.adapter.projection
                 isTemplateValid = false;
                 break;
               }
-              else 
+              else
               {
                 roleObject.hasValueMap = true;
               }
@@ -848,7 +848,7 @@ namespace org.iringtools.adapter.projection
           if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
           {
             templateValid = true;
-            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id,classRole.classMap.index);
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id, classRole.classMap.index);
 
             if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
             {
@@ -904,7 +904,7 @@ namespace org.iringtools.adapter.projection
         }
         else if (propertyRole.dataType.ToLower().Contains("date"))
         {
-            value = Utility.ToXsdDate(value);
+          value = Utility.ToXsdDate(value);
         }
         else if (propertyRole.dataType == "xsd:string" &&
           propertyRole.dataLength > 0 && value.Length > propertyRole.dataLength)
@@ -946,7 +946,7 @@ namespace org.iringtools.adapter.projection
     {
       ClassMap classMap = classTemplateMap.classMap;
       List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-      List<ClassObject> classObjects = GetClassObjects(dataObjectIndex, classMap.id,classMap.path);
+      List<ClassObject> classObjects = GetClassObjects(dataObjectIndex, classMap.id, classMap.path);
 
       for (int classObjectIndex = 0; classObjectIndex < classObjects.Count; classObjectIndex++)
       {
@@ -1074,14 +1074,14 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private List<ClassObject> GetClassObjects(int dataObjectIndex, string classId,string path)
+    private List<ClassObject> GetClassObjects(int dataObjectIndex, string classId, string path)
     {
       List<ClassObject> classObjects = new List<ClassObject>();
       DataTransferObject dto = _dataTransferObjects.DataTransferObjectList[dataObjectIndex];
 
       foreach (ClassObject classObject in dto.classObjects)
       {
-          if (classObject.classId == classId && (String.IsNullOrWhiteSpace(classObject.path) ? String.IsNullOrWhiteSpace(path): classObject.path == path))
+        if (classObject.classId == classId && (String.IsNullOrWhiteSpace(classObject.path) ? String.IsNullOrWhiteSpace(path) : classObject.path == path))
         {
           classObjects.Add(classObject);
         }
