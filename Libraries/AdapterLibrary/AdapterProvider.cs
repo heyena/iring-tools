@@ -3091,7 +3091,7 @@ namespace org.iringtools.adapter
                 if (!isKeyPropertiesHaveValues)
                 {
                   //TODO: remove object from list and add error in payload
-                  throw new Exception("Value of key property must for atleat one key property.");
+                  throw new Exception("At leat one key property is required.");
                 }
 
               }

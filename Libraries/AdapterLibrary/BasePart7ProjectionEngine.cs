@@ -576,16 +576,15 @@ namespace org.iringtools.adapter.projection
         }
       }
 
-      if (identifier == string.Empty)
-      {
-        throw new Exception("Key property not mapped.");
-      }
-
       SerializableDataObject dataObject = new SerializableDataObject()
       {
-        Type = objDef.objectName,
-        Id = identifier
+        Type = objDef.objectName
       };
+
+      if (!string.IsNullOrEmpty(identifier))
+      {
+        dataObject.Id = identifier;
+      }
 
       SetAppCode(dataObject);
 
