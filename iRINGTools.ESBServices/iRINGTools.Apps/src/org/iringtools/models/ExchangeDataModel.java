@@ -108,12 +108,12 @@ public class ExchangeDataModel extends DataModel
             {
               for (int i = 0; i < dtoList.size(); i++)
               {
-                if (dti.getIdentifier().equalsIgnoreCase(dtoList.get(i).getIdentifier()))
+                if (dti.getInternalIdentifier().equalsIgnoreCase(dtoList.get(i).getInternalIdentifier()))
                 {
                   // found one, search and remove the rest
                   for (int j = i; j < dtoList.size(); j++)
                   {
-                    if (dti.getIdentifier().equalsIgnoreCase(dtoList.get(j).getIdentifier()))
+                    if (dti.getInternalIdentifier().equalsIgnoreCase(dtoList.get(j).getInternalIdentifier()))
                     {
                       dtoList.remove(j--);
                     }
@@ -632,32 +632,56 @@ public class ExchangeDataModel extends DataModel
           {
             for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
             {
-              if (!dtiList.getItems().contains(dti) && dti.getIdentifier().equalsIgnoreCase(id))
+              if (dti.getInternalIdentifier().equalsIgnoreCase(id))  // handle add, delete, sync
               {
+                //
+                // make sure no duplicates in dtiList
+                //
+//                boolean found = false;
+//                
+//                for (DataTransferIndex existingDti : dtiList.getItems())
+//                {
+//                  if (existingDti.getHashValue().equals(dti.getHashValue()))
+//                  {
+//                    found = true;
+//                    break;
+//                  }
+//                }
+//                
+//                if (!found)
+//                {
+//                  dtiList.getItems().add(dti);
+//                }
+                
                 dtiList.getItems().add(dti);
                 break;
               }
-              else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN))
+              else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN))  // handle change
               {
                 String[] internalIds = dti.getInternalIdentifier().split(Constants.CHANGE_TOKEN);
 
                 if (id.equals(internalIds[0]) || id.equals(internalIds[1]))
                 {
-                  boolean found = false;
-                  for (DataTransferIndex localDti : dtiList.getItems())
-                  {
-                    if (localDti.getHashValue().equals(dti.getHashValue()))
-                    {
-                      found = true;
-                      break;
-                    }
-                  }
+                  //
+                  // make sure no duplicates in dtiList
+                  //
+//                  boolean found = false;
+//                  
+//                  for (DataTransferIndex existingDti : dtiList.getItems())
+//                  {
+//                    if (existingDti.getHashValue().equals(dti.getHashValue()))
+//                    {
+//                      found = true;
+//                      break;
+//                    }
+//                  }
+//                  
+//                  if (!found)
+//                  {
+//                    dtiList.getItems().add(dti);
+//                  }
                   
-                  if (!found)
-                  {
-                    dtiList.getItems().add(dti);
-                  }
-                  
+                  dtiList.getItems().add(dti);
                   break;
                 }
               }
@@ -687,9 +711,7 @@ public class ExchangeDataModel extends DataModel
                 }
               }
             }
-
           }
-
         }
       }
     }

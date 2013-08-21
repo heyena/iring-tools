@@ -190,13 +190,13 @@ public class DtoTask implements Runnable
         for (int i = 0; i < sourceDtoListItems.size(); i++)
         {
           DataTransferObject sourceDto = sourceDtoListItems.get(i);
-          String sourceDtoIdentifier = sourceDto.getIdentifier();
+          String sourceDtoIdentifier = sourceDto.getInternalIdentifier();
 
           if (sourceDto.getClassObjects() != null)
           {
             for (DataTransferIndex sourceDti : sourceDtiItems)
             {
-              if (sourceDtoIdentifier.equalsIgnoreCase(sourceDti.getIdentifier()))
+              if (sourceDtoIdentifier.equalsIgnoreCase(sourceDti.getInternalIdentifier()))
               {
                 TransferType transferOption = sourceDti.getTransferType();
 
@@ -235,13 +235,13 @@ public class DtoTask implements Runnable
         for (int i = 0; i < targetDtoListItems.size(); i++)
         {
           DataTransferObject targetDto = targetDtoListItems.get(i);
-          String targetDtoIdentifier = targetDto.getIdentifier();
+          String targetDtoIdentifier = targetDto.getInternalIdentifier();
 
           if (targetDto.getClassObjects() != null)
           {
             for (DataTransferIndex targetDti : targetDtiItems)
             {
-              if (targetDtoIdentifier.equalsIgnoreCase(targetDti.getIdentifier()))
+              if (targetDtoIdentifier.equalsIgnoreCase(targetDti.getInternalIdentifier()))
               {
                 if (targetDti.getTransferType() == TransferType.DELETE)
                 {
