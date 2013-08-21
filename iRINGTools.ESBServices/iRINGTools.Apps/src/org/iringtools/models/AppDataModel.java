@@ -69,7 +69,7 @@ public class AppDataModel extends DataModel
           if (pageDtis != null && pageDtis.getDataTransferIndexList() != null
               && pageDtis.getDataTransferIndexList().getItems().size() > 0)
           {
-            collapseDuplicates(pageDtis);
+            //collapseDuplicates(pageDtis);
 
             logger.debug("Getting a page of DTOs...");
             String dtoPath = graphPath + "/page";
@@ -113,7 +113,8 @@ public class AppDataModel extends DataModel
     {
       for (DataTransferObject dto : dtos)
       {
-        if (dti.getIdentifier().equalsIgnoreCase(dto.getIdentifier()))
+        if (dti.getIdentifier().equalsIgnoreCase(dto.getIdentifier())
+            && dti.getInternalIdentifier().equalsIgnoreCase(dto.getInternalIdentifier()))
         {
           if (dti.getHasContent() != null)
           {
