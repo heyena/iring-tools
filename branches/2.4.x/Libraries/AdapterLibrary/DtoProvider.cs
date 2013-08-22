@@ -405,9 +405,7 @@ namespace org.iringtools.adapter
             for (int k = 0; k < groups.Count; k++)
             {
               List<int> group = groups[k];
-
-              IDataObject rollupObject = dataObjects[groups[k][0]];
-              rollupObjects.Add(rollupObject);
+              IDataObject rollupObject = dataObjects[group[0]];
 
               switch (rollup.Type)
               {
@@ -419,6 +417,7 @@ namespace org.iringtools.adapter
                 case RollupType.Max:
                   {
                     object max = dataObjects[group[0]].GetPropertyValue(rollupProp.propertyName);
+                    int maxIndex = 0;
 
                     if (IsNumeric(rollupProp))
                     {
@@ -456,6 +455,7 @@ namespace org.iringtools.adapter
                           if ((Decimal)value > (Decimal)max)
                           {
                             max = (Decimal)value;
+                            maxIndex = l;
                           }
                         }
                       }
@@ -471,6 +471,7 @@ namespace org.iringtools.adapter
                         if (value != null && DateTime.Compare(value, (DateTime)max) > 0)
                         {
                           max = value;
+                          maxIndex = l;
                         }
                       }
                     }
@@ -487,16 +488,18 @@ namespace org.iringtools.adapter
                         if (value != null && string.Compare(value, (string)max) > 0)
                         {
                           max = value;
+                          maxIndex = l;
                         }
                       }
                     }
 
-                    rollupObject.SetPropertyValue(rollupProp.propertyName, max);
+                    rollupObject = dataObjects[group[maxIndex]];
                     break;
                   }
                 case RollupType.Min:
                   {
                     object min = dataObjects[group[0]].GetPropertyValue(rollupProp.propertyName);
+                    int minIndex = 0;
 
                     if (IsNumeric(rollupProp))
                     {
@@ -547,6 +550,7 @@ namespace org.iringtools.adapter
                         if (value != null && DateTime.Compare(value, (DateTime)min) < 0)
                         {
                           min = value;
+                          minIndex = l;
                         }
                       }
                     }
@@ -563,11 +567,12 @@ namespace org.iringtools.adapter
                         if (value != null && string.Compare(value, (string)min) < 0)
                         {
                           min = value;
+                          minIndex = l;
                         }
                       }
                     }
 
-                    rollupObject.SetPropertyValue(rollupProp.propertyName, min);
+                    rollupObject = dataObjects[group[minIndex]];
                     break;
                   }
                 case RollupType.Sum:
@@ -631,6 +636,8 @@ namespace org.iringtools.adapter
                     break;
                   }
               }
+
+              rollupObjects.Add(rollupObject);
             }
           }
 
