@@ -37,7 +37,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "dataIndex": "file",
+                "dataIndex": "File",
                 "text": "File",
                 "flex": 1
             },
@@ -78,15 +78,16 @@
                             "view"
                         ],
                         "implHandler": [
-                            "var scope ;\r",
-                            "var application ;\r",
-                            "if(this.up().items!=undefined){\r",
-                            "\t   scope = this.up().items.map['scopeId'].value;\r",
-                            "\t   application =this.up().items.map['applicationId'].value; \r",
-                            "\t}\r",
-                            "return \"<a style='color: #0276FD' href='/mapping/export?scope='\" + scope + '&application=' + application +'&file=' + record.data.file +\" target='\" + \"_blank\" + \"'> Download</a>\";\r",
-                            "\r",
-                            "//return \"<a style='color: #0276FD' href='/File/Export?scope='\" + scope + '&application=' + application +'&file=' + record.data.File +'target='\" + \"'_blank\" + '\"'> Download</a>;\r",
+                            "if(record.data.File!='No Record found to download'){\r",
+                            "    var scope;\r",
+                            "    var application ;\r",
+                            "    var text = 'Download';\r",
+                            "    if(this.up().items!=undefined){\r",
+                            "      scope = this.up().items.map['scopeId'].value;\r",
+                            "      application =this.up().items.map['applicationId'].value; \r",
+                            "    }\r",
+                            "    return '<a style=\"color: #0276FD\" href=\"./File/Export?scope=' + scope + '&application=' + application + '&file=' + record.data.File + ' \"target=\"_blank\">' + text + '</a>';\r",
+                            "}\r",
                             ""
                         ]
                     },

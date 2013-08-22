@@ -25,26 +25,20 @@ Ext.define('AM.store.FileDownloadStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
+      autoLoad: false,
       model: 'AM.model.FileDownloadModel',
       storeId: 'FileDownloadStore',
-      data: [
-        {
-          file: 'Text/MNO',
-          
+      proxy: {
+        type: 'ajax',
+        extraParams: {
+          scope: null,
+          application: null
         },
-        {
-          file: 'Text/MNO',
-          
-        },
-        {
-          file: 'Text/MNO',
-          
-        },
-        {
-          file: 'Text/MNO',
-          
+        url: 'File/GetFiles',
+        reader: {
+          type: 'json'
         }
-      ]
+      }
     }, cfg)]);
   }
 });

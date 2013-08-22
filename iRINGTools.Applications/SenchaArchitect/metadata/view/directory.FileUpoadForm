@@ -15,7 +15,7 @@
         "header": false,
         "title": null,
         "method": "post",
-        "url": "spreadsheet/upload"
+        "url": "File/Upload"
     },
     "designerId": "10e81d90-8b94-4aa5-9dcd-98525d8deb1f",
     "customConfigs": [
