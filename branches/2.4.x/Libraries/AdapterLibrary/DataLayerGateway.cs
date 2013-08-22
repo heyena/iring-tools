@@ -119,27 +119,9 @@ namespace org.iringtools.adapter
     {
       DataDictionary dictionary = null;
       filter = null;
-      DataFilter externalFilter = null;
 
       try
       {
-        if (objectType != null)         //get the external filter file and append into the existing one ...
-        {
-          DirectoryInfo appDataDir = new DirectoryInfo(_dataPath);
-          string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.xml", _scope, _app, objectType);
-          FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
-
-          foreach (FileInfo file in filterFiles)
-          {
-            externalFilter = Utility.Read<DataFilter>(file.FullName);
-            if (filter == null)
-              filter = externalFilter;
-            else
-              filter.AppendFilter(externalFilter);
-            break;
-          }
-        }
-
         if (_lwDataLayer != null)
         {
           dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
@@ -171,46 +153,18 @@ namespace org.iringtools.adapter
 
           dictionary = _dataLayer.GetDictionary();
         }
-        // Injecting the external filter in to the dictionary.
-        if (dictionary != null)
+
+        // injecting external filters to dictionary
+        if (dictionary != null && dictionary.dataObjects != null)
         {
-          if (objectType != null)
+          foreach (DataObject dataObject in dictionary.dataObjects)
           {
-            var obj = (from dataObjects in dictionary.dataObjects
-                       where dataObjects.objectName.ToLower() == objectType.ToLower()
-                       select dataObjects).First();
+            string filterPath = string.Format("{0}Filter.{1}.{2}.{3}.xml", _dataPath, _scope, _app, dataObject.objectName);
 
-            if (externalFilter != null)
+            if (File.Exists(filterPath))
             {
-              if (obj.dataFilter == null)
-                obj.dataFilter = externalFilter;
-              else
-                obj.dataFilter.AppendFilter(externalFilter);
-            }
-          }
-          else
-          {
-            // if objectType is not specified then pick all filter files for that scope and inject it into the dictionary.
-            DirectoryInfo appDataDir = new DirectoryInfo(_dataPath);
-            string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.later.xml", _scope, _app, "*");
-            FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
-
-            foreach (FileInfo file in filterFiles)
-            {
-              string fileName = Path.GetFileNameWithoutExtension(file.Name);
-              string objectName = fileName.Substring(fileName.LastIndexOf('.') + 1);
-
-              var obj = (from dataObjects in dictionary.dataObjects
-                         where dataObjects.objectName.ToLower() == objectName.ToLower()
-                         select dataObjects).First();
-
-              if (obj != null)
-              {
-                if (obj.dataFilter == null)
-                  obj.dataFilter = Utility.Read<DataFilter>(file.FullName);
-                else
-                  obj.dataFilter.AppendFilter(Utility.Read<DataFilter>(file.FullName));
-              }
+              DataFilter dataFilter = Utility.Read<DataFilter>(filterPath);
+              dataObject.dataFilter = dataFilter;
             }
           }
         }
