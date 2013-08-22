@@ -8,8 +8,8 @@
     "userConfig": {
         "application": null,
         "scope": null,
-        "height": 362,
-        "width": 820,
+        "height": 300,
+        "width": 530,
         "designer|userClassName": "directory.FileDownloadWindow",
         "designer|userAlias": "filedownloadwindows",
         "layout": "fit",

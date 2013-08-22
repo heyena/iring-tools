@@ -19,7 +19,7 @@ Ext.define('AM.model.FileDownloadModel', {
 
   fields: [
     {
-      name: 'file'
+      name: 'File'
     }
   ]
 });

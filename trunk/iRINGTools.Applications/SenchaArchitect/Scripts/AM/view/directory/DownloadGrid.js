@@ -26,22 +26,23 @@ Ext.define('AM.view.directory.DownloadGrid', {
       columns: [
         {
           xtype: 'gridcolumn',
-          dataIndex: 'file',
+          dataIndex: 'File',
           text: 'File',
           flex: 1
         },
         {
           xtype: 'gridcolumn',
           renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-            var scope ;
-            var application ;
-            if(this.up().items!=undefined){
-              scope = this.up().items.map['scopeId'].value;
-              application =this.up().items.map['applicationId'].value; 
+            if(record.data.File!='No Record found to download'){
+              var scope;
+              var application ;
+              var text = 'Download';
+              if(this.up().items!=undefined){
+                scope = this.up().items.map['scopeId'].value;
+                application =this.up().items.map['applicationId'].value; 
+              }
+              return '<a style="color: #0276FD" href="./File/Export?scope=' + scope + '&application=' + application + '&file=' + record.data.File + ' "target="_blank">' + text + '</a>';
             }
-            return "<a style='color: #0276FD' href='/mapping/export?scope='" + scope + '&application=' + application +'&file=' + record.data.file +" target='" + "_blank" + "'> Download</a>";
-
-            //return "<a style='color: #0276FD' href='/File/Export?scope='" + scope + '&application=' + application +'&file=' + record.data.File +'target='" + "'_blank" + '"'> Download</a>;
 
           },
           width: 70,

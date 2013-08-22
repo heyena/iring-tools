@@ -23,14 +23,14 @@ Ext.define('AM.view.directory.FileUpoadForm', {
   frameHeader: false,
   header: false,
   method: 'post',
-  url: 'spreadsheet/upload',
+  url: 'File/Upload',
 
   initComponent: function() {
     var me = this;
 
     me.initialConfig = Ext.apply({
       method: 'post',
-      url: 'spreadsheet/upload'
+      url: 'File/Upload'
     }, me.initialConfig);
 
     Ext.applyIf(me, {

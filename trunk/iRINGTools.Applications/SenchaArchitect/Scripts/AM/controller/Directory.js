@@ -705,16 +705,18 @@ Ext.define('AM.controller.Directory', {
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
     var win = Ext.widget('filedownloadwindows');
-
+    var scope = node.parentNode.data.text;
+    var app = node.data.text;
     //win.scope = node.parentNode.data.text;
     //win.application = node.data.text ;
     var form = win.down('downloadform');
     var formRecord = {
-      scope: node.parentNode.data.text,
-      application: node.data.text 
+      scope: scope,//node.parentNode.data.text,
+      application: app 
     };
-
-
+    var grid = form.down('grid');
+    var store = grid.getStore();
+    var storeProxy = store.getProxy();
     form.getForm().setValues(formRecord);
     /*
     win.on('Save', function () {
@@ -725,6 +727,25 @@ Ext.define('AM.controller.Directory', {
     win.destroy();
     }, me);
     */
+    store.on('beforeload', function (store, action) {
+      var params = storeProxy.extraParams;
+      params.scope = scope;
+      params.application = app;
+    }, me);
+
+
+    store.load({
+      callback: function (records, options, success) {
+        if(store.data.length == 0){
+          store.add({'File':'No Record found to download'});
+          grid.reconfigure(store);
+        }
+
+
+
+      }
+    });
+
     win.show();
   },
 

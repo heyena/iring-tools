@@ -1029,7 +1029,7 @@
                     "  tree.dirNode = dirNode.internalId;\r",
                     "  var treeStore = tree.getStore();\r",
                     "  var treeProxy = treeStore.getProxy();\r",
-                    "\tcontent.body.mask('Loading...', 'x-mask-loading');\r",
+                    "  content.body.mask('Loading...', 'x-mask-loading');\r",
                     "  dbDict = me.getDbDictionary(context, endpoint, baseUrl, function(dbDict) { \r",
                     "    if(dbDict.ConnectionString !== null && dbDict.ConnectionString !=undefined ) {\r",
                     "      var base64 = AM.view.nhibernate.Utility;\r",
