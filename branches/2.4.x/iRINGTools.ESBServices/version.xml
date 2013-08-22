@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="version">
-  <property name="version" value="2.4.0" />
+  <property name="version" value="2.5.0" />
   <property name="version.outfile" value="./version" />
 
   <path id="svnant.classpath">
