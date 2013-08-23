@@ -31,8 +31,12 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.TransferType;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
+import org.iringtools.dxfr.manifest.Class;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Manifest;
+import org.iringtools.dxfr.manifest.Template;
+import org.iringtools.dxfr.manifest.ClassTemplates;
+import org.iringtools.dxfr.manifest.Role;
 import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
@@ -42,6 +46,10 @@ import org.iringtools.library.directory.DirectoryProvider;
 import org.iringtools.library.exchange.ExchangeProvider;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
+import org.iringtools.widgets.tree.LeafNode;
+import org.iringtools.widgets.tree.Node;
+import org.iringtools.widgets.tree.Tree;
+import org.iringtools.widgets.tree.TreeNode;
 
 public class ExchangeDataModel extends DataModel
 {
@@ -801,13 +809,229 @@ public class ExchangeDataModel extends DataModel
     }
     else
     {
-      manifest = provider.getCrossedManifest(exchange);
+      manifest =  provider.GetCachedCrossedManifest(exchange);
+      if(manifest == null)
+      {
+    	  manifest = provider.getCrossedManifest(exchange);
+    	  provider.saveCrossedManifest(manifest, exchange);
+      }
       session.put(manifestKey, manifest);
     }
 
     return manifest;
   }
 
+  public Tree getCrossedManifestTree(String scope, String xId) throws Exception
+  {
+	
+	Exchange exchange = getExchange(scope, xId);
+	Manifest manifest = getCrossedManifest(exchange, scope, xId);
+	
+    Tree tree = manifestToTree(manifest);
+    return tree;
+  }
+  
+  public void saveCrossedManifest(String scope, String xId) throws Exception
+  {
+	  Exchange exchange = getExchange(scope, xId);
+	  Manifest manifest = getCrossedManifest(exchange, scope, xId);
+	  provider.saveCrossedManifest(manifest, exchange);
+  }
+  
+   
+  public void resetCrossedManifest(String scope, String xId) throws Exception
+  {
+	    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
+	    session.remove(manifestKey);
+	    deleteCachedCrossManifest(scope, xId);
+  }
+  
+  public void reloadCrossedManifest(String scope, String xId) throws Exception
+  {
+	    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
+	    session.remove(manifestKey);
+  }
+    
+  public Manifest getCachedCrossedManifest(String scope, String xId) throws Exception
+  {
+	  Exchange exchange = getExchange(scope, xId);
+	  Manifest manifest =  provider.GetCachedCrossedManifest(exchange);
+	  return manifest;
+  }
+  
+  public void deleteTemplate(String scope, String xId, String parentClassId,
+		  String parentClassIndex, String parentClassPath, String templateId, String templateIndex) throws Exception
+  {
+	  Exchange exchange = getExchange(scope, xId);
+	  Manifest manifest = getCrossedManifest(exchange, scope, xId);
+	  
+	  Graph graph = manifest.getGraphs().getItems().get(0);
+	  List<ClassTemplates> classTemplateList =  graph.getClassTemplatesList().getItems();
+	  
+	    for(ClassTemplates classTemplate : classTemplateList )
+	    {
+	    	if (classTemplate.getClazz() != null)
+	    	{
+	    		if((classTemplate.getClazz().getPath().equals(parentClassPath)))
+	    		{
+	    			 List<Template> templates =classTemplate.getTemplates().getItems();
+	    	         
+	    			 for (int j = 0; j < templates.size(); j++)
+	    	         {
+	    				Template template = templates.get(j);
+	    				if(template.getId().equals(templateId) && String.valueOf(template.getIndex()).equals(templateIndex) )
+		    		    {
+	    					templates.remove(j--);	    		
+		    		    }
+	    	         }
+	    		}
+	    	}
+	    }
+	  
+  }
+  
+  public void deleteCachedCrossManifest(String scope, String xId) throws Exception
+  {
+	  Exchange exchange = getExchange(scope, xId);
+	  provider.deleteCachedCrossedManifest(exchange);
+  }
+  
+  protected Tree manifestToTree(Manifest manifest) throws Exception
+  {
+	Graph graph = manifest.getGraphs().getItems().get(0);
+	List<Template> templateList =  graph.getClassTemplatesList().getItems().get(0).getTemplates().getItems();
+	  
+	Tree tree = new Tree();
+	
+	List<Node> nodes =  tree.getNodes()	;
+	
+	TreeNode rootClassNode = new TreeNode();
+	
+	nodes.add(rootClassNode);
+	  
+	rootClassNode.setText(graph.getName());
+	rootClassNode.setIconCls("commodity");
+	  
+    List<Node> templateNodes = rootClassNode.getChildren();
+
+    for (Template template : templateList)
+    {
+      TreeNode templateNode = new TreeNode();
+      templateNode.setText(template.getName());
+      templateNode.setIconCls("template");
+      templateNode.setType("TemplateNode");
+      templateNodes.add(templateNode);
+      
+      HashMap<String, String> templateProperties = templateNode.getProperties();
+      templateProperties.put("Id", template.getId());
+      templateProperties.put("Name", template.getName());
+      templateProperties.put("TemplateIndex", String.valueOf(template.getIndex()));
+
+      
+      List<Node> roleNodes = templateNode.getChildren();
+      
+      for (Role role : template.getRoles().getItems())
+      {
+    	  TreeNode roleNode = new TreeNode();
+    	  roleNode.setText(role.getName());
+    	  roleNode.setIconCls("role");
+    	  roleNode.setType("RoleNode");
+    	  roleNodes.add(roleNode); 
+    	  
+          HashMap<String, String> roleProperties = roleNode.getProperties();
+          roleProperties.put("Id", role.getId());
+    	  
+    	  if(role.getClazz() != null)
+    	  {
+    		  List<Node> classNodes = roleNode.getChildren();
+    		  
+    		  TreeNode classNode = new TreeNode();
+    		  classNode.setText(role.getClazz().getName());
+    		  classNode.setIconCls("class");
+    		  classNode.setType("ClassNode");
+    		  classNodes.add(classNode);
+    		  
+    	      HashMap<String, String> classProperties = classNode.getProperties();
+    	      classProperties.put("Id", role.getClazz().getId());
+    	      classProperties.put("Name", role.getClazz().getName());
+    	      classProperties.put("Path", role.getClazz().getPath());
+    	      classProperties.put("ClassIndex", String.valueOf(role.getClazz().getIndex()));
+    		  
+    		  TemplateToTreeNode(role.getClazz(),classNode,graph);
+    	  }
+    	 
+      }
+      
+    }
+   
+    return tree;
+  }
+  
+  private void TemplateToTreeNode(Class parentClass,TreeNode parentClassNode,Graph graph) throws Exception
+  {
+	    List<ClassTemplates> classTemplateList =  graph.getClassTemplatesList().getItems();
+	    for(ClassTemplates classTemplate : classTemplateList )
+	    {
+	    	if (classTemplate.getClazz() != null && parentClass != null)
+	    	{
+	    		if(parentClass.getPath().equals(classTemplate.getClazz().getPath()))
+	    		{
+	    			List<Node> templateNodes = parentClassNode.getChildren();
+	    		    
+	    		    for (Template template : classTemplate.getTemplates().getItems())
+	    		    {
+	    		      TreeNode templateNode = new TreeNode();
+	    		      templateNode.setText(template.getName());
+	    		      templateNode.setIconCls("template");
+	    		      templateNode.setType("TemplateNode");
+	    		      templateNodes.add(templateNode);
+	    		      
+	    		      HashMap<String, String> templateProperties = templateNode.getProperties();
+	    		      templateProperties.put("Id", template.getId());
+	    		      templateProperties.put("Name", template.getName());
+	    		      templateProperties.put("TemplateIndex", String.valueOf(template.getIndex()));
+	    		      
+	    		      List<Node> roleNodes = templateNode.getChildren();
+	    		      
+	    		      for (Role role : template.getRoles().getItems())
+	    		      {
+	    		    	  TreeNode roleNode = new TreeNode();
+	    		    	  roleNode.setText(role.getName());
+	    		    	  roleNode.setIconCls("role");
+	    		    	  roleNode.setType("RoleNode");
+	    		    	  roleNodes.add(roleNode); 
+	    		    	  
+	    		          HashMap<String, String> roleProperties = roleNode.getProperties();
+	    		          roleProperties.put("Id", role.getId());
+	    		    	  
+	    		    	  if(role.getClazz() != null)
+	    		    	  {
+	    		    		  List<Node> classNodes = roleNode.getChildren();
+	    		    		  
+	    		    		  TreeNode classNode = new TreeNode();
+	    		    		  classNode.setText(role.getClazz().getName());
+	    		    		  classNode.setIconCls("class");
+	    		    		  classNode.setType("ClassNode");
+	    		    		  classNodes.add(classNode); 
+	    		    		  
+	    		    	      HashMap<String, String> classProperties = classNode.getProperties();
+	    		    	      classProperties.put("Id", role.getClazz().getId());
+	    		    	      classProperties.put("Name", role.getClazz().getName());
+	    		    	      classProperties.put("Path", role.getClazz().getPath());
+	    		    	      classProperties.put("ClassIndex", String.valueOf(role.getClazz().getIndex()));
+	    		    		  
+	    		    		  TemplateToTreeNode(role.getClazz(),classNode,graph);	    		    		  
+	    		    	  }
+	    		      }
+	    		      
+	    		    }
+	    			
+	    			
+	    		}
+	    	}
+	    }
+  }
+  
   protected String format(GregorianCalendar gcal)
   {
     return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);

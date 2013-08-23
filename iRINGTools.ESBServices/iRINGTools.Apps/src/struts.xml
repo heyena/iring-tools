@@ -57,6 +57,38 @@
         <param name="root">pageDtoGrid</param>
       </result>
     </action>
+    
+    <!-- exchange manifest -->
+    <action name="crossedManifest" class="org.iringtools.controllers.ExchangeDataController" method="getCrossedManifest">
+      <result type="json">
+        <param name="root">crossedManifestTree.nodes</param>
+      </result>
+    </action>    
+  
+     <action name="reloadCrossedManifest" class="org.iringtools.controllers.ExchangeDataController" method="reloadCrossedManifest">
+      <result type="json">
+        <param name="root">response</param>
+      </result>
+    </action>
+    
+     <action name="resetCrossedManifest" class="org.iringtools.controllers.ExchangeDataController" method="resetCrossedManifest">
+      <result type="json">
+        <param name="root">response</param>
+      </result>
+    </action>
+    
+    <action name="saveCrossedManifest" class="org.iringtools.controllers.ExchangeDataController" method="saveCrossedManifest">
+      <result type="json">
+        <param name="root">response</param>
+      </result>
+    </action>
+    
+    <action name="deleteTemplate" class="org.iringtools.controllers.ExchangeDataController" method="deleteTemplateFromManifest">
+      <result type="json">
+        <param name="root">response</param>
+      </result>
+    </action>
+    
     <!-- related exchange data -->
     <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
       <result type="json">

@@ -24,11 +24,14 @@ import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
+
 import org.iringtools.widgets.grid.Grid;
+import org.iringtools.widgets.tree.Tree;
 
 public class ExchangeDataController extends BaseController {
 	private static final long serialVersionUID = 1L;
-
+    
+	private Tree crossedManifestTree;
 	private String xResultsGrid;
 	private Grid xHistoryGrid;
 	private Grid pageXHistoryGrid;
@@ -46,6 +49,10 @@ public class ExchangeDataController extends BaseController {
 			targetAppName, commName, targetGraphName, hasAlgorithm, appName,
 			appScope, oldAppName, oldConfigName, oldGraphName, oldCommName,
 			appDesc, baseUri,response;
+	
+	private String parentClassId,parentClassIndex,parentClassPath,templateId,templateIndex;
+	
+
 	// private String openGroup, propertyName, relationalOper, value,
 	// logicalOper, closeGroup, sortOrder;
 	private String openGroup[], propertyName[], propertyNameOE[],
@@ -917,10 +924,98 @@ public class ExchangeDataController extends BaseController {
 		return SUCCESS;
 	}
 
+	public String getCrossedManifest() throws Exception
+	  {
+	    try
+	    {    
+	    	
+	      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(
+					settings, session);
+	      
+	     crossedManifestTree = exchangeDataModel.getCrossedManifestTree(scope, xid);
+	    }
+	    catch (Exception e)
+	    {
+	      e.printStackTrace();
+	      throw new Exception(e.getMessage());
+	    }
+
+	    return SUCCESS;
+	  }
+	
+	public String resetCrossedManifest() throws Exception
+	{
+		try
+		{    
+		    ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+		    exchangeDataModel.resetCrossedManifest(scope, xid);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		    throw new Exception(e.getMessage());
+		}
+		return SUCCESS;
+	}
+	
+	public String reloadCrossedManifest() throws Exception
+	{
+		try
+		{    
+		    ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+		    exchangeDataModel.reloadCrossedManifest(scope, xid);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		    throw new Exception(e.getMessage());
+		}
+		return SUCCESS;
+	}
+	
+	public String saveCrossedManifest() throws Exception
+	{
+		try
+		{    
+		    ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+		    exchangeDataModel.saveCrossedManifest(scope, xid);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		    throw new Exception(e.getMessage());
+		}
+		return SUCCESS;
+	}
+	
+	public String deleteTemplateFromManifest() throws Exception
+	{
+		try
+		{    //String abc = httpRequest.getParameter(arg0)
+			 ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+			 
+			 exchangeDataModel.deleteTemplate(scope, xid, parentClassId, parentClassIndex, parentClassPath, templateId, templateIndex);
+			 
+			// parentClassId,parentClassIndex,parentClassPath,templateId,templateIndex;
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		    throw new Exception(e.getMessage());
+		}
+		return SUCCESS;
+	}
+	
 	// --------------------------
 	// getter and setter methods
 	// --------------------------
 
+	 public Tree getCrossedManifestTree()
+	  {
+	    return crossedManifestTree;
+	  }
+	 
 	public Exchange getForm() {
 		return form;
 	}
@@ -1435,5 +1530,45 @@ public class ExchangeDataController extends BaseController {
 
 	public void setResponse(String response) {
 		this.response = response;
+	}
+	
+	public String getTemplateIndex() {
+		return templateIndex;
+	}
+
+	public void setTemplateIndex(String templateIndex) {
+		this.templateIndex = templateIndex;
+	}
+
+	public String getParentClassPath() {
+		return parentClassPath;
+	}
+
+	public void setParentClassPath(String parentClassPath) {
+		this.parentClassPath = parentClassPath;
+	}
+
+	public String getParentClassIndex() {
+		return parentClassIndex;
+	}
+
+	public void setParentClassIndex(String parentClassIndex) {
+		this.parentClassIndex = parentClassIndex;
+	}
+
+	public String getParentClassId() {
+		return parentClassId;
+	}
+
+	public void setParentClassId(String parentClassId) {
+		this.parentClassId = parentClassId;
+	}
+
+	public String getTemplateId() {
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		this.templateId = templateId;
 	}
 }
