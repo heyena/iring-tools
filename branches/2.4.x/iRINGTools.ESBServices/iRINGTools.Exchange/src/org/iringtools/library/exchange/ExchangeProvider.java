@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Response;
 import org.iringtools.directory.Exchange;
@@ -40,15 +39,19 @@ public class ExchangeProvider
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
   private static ConcurrentMap<String, RequestStatus> requests = new ConcurrentHashMap<String, RequestStatus>();
   private Map<String, Object> settings;
-
+  private String path;
+  
   public ExchangeProvider(Map<String, Object> settings)
   {
     this.settings = settings;
+    this.path = settings.get("basePath").toString()
+			.concat("WEB-INF/data/");
   }
 
   public Manifest getCrossedManifest(Exchange exchange) throws Exception
   {
-    Manifest crossedManifest = new Manifest();
+				  
+	Manifest crossedManifest = new Manifest();
 
     String sourceManifestUrl = exchange.getSourceUri() + "/" + exchange.getSourceScope() + "/"
         + exchange.getSourceApp() + "/" + exchange.getSourceGraph() + "/manifest";
@@ -170,10 +173,49 @@ public class ExchangeProvider
     }
 
     crossedManifest.setValueListMaps(valueListMaps);
-
+    
     return crossedManifest;
   }
 
+  public Manifest GetCachedCrossedManifest(Exchange exchange) throws Exception
+  {
+	  String filePath = buildManifestFilePath(exchange)  ;
+	    if (IOUtils.fileExists(filePath)) {
+	    	return JaxbUtils.read(Manifest.class, filePath);
+	    }
+	  return null;
+  }
+  
+  
+  public void saveCrossedManifest(Manifest manifest,Exchange exchange) {
+		try {
+			 
+			String filePath = buildManifestFilePath(exchange)  ;
+			    
+			JaxbUtils.write(manifest, filePath, false);
+		} catch (Exception e) {
+			String message = "Error saveing manifest" + e;
+			logger.error(message);
+		}
+	}
+  
+  public void deleteCachedCrossedManifest(Exchange exchange)throws Exception
+  {
+	  String filePath = buildManifestFilePath(exchange)  ;
+	    if (IOUtils.fileExists(filePath)) {
+	    	IOUtils.deleteFile(filePath);
+	    }
+	  
+  }
+  
+  private String buildManifestFilePath(Exchange exchange)
+  {
+	  String filePath = path + "manifest." + exchange.getSourceScope() + "."+exchange.getSourceApp() + "." +exchange.getSourceGraph() ;
+		filePath = filePath +  "." + exchange.getTargetScope() + "."+exchange.getTargetApp() + "." +exchange.getTargetGraph() + ".xml" ; 
+		
+		return filePath;
+  }
+  
   public DataTransferIndices getDataTransferIndices(Exchange exchange, DxiRequest dxiRequest) throws Exception
   {
     DataTransferIndices dtis = null;

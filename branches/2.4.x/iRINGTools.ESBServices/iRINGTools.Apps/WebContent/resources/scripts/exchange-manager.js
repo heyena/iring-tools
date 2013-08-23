@@ -1034,6 +1034,8 @@ function showDialog(width, height, title, message, buttons, callback) {
 	});
 }
 
+
+
 function onTreeItemContextMenu(node, e) {
 	var obj = node;
 	var directoryTree = Ext.getCmp('directory-tree');
@@ -1844,6 +1846,15 @@ function buildApplicationSubMenu() {
 	} ];
 }
 
+function buildManifestMenu(scope, xid) {
+	return [ {
+		xtype : 'menuitem',
+		handler: function () {
+		    deleteTemplate(scope, xid);
+		},
+		text : 'Delete Template'
+	}];
+}
 function editApplication() {
 	var centerPanel = Ext.getCmp('content-pane');
 	centerPanel.getEl().mask("Loading...", "x-mask-loading");
@@ -1919,7 +1930,243 @@ function buildCommoditySubMenu() {
 					editDataFilter();
 				},
 				text : 'Apply Data Filters'
-			} ];
+			},
+			{
+				xtype : 'menuitem',
+				handler : function() {
+					ConfigureManifest();
+				},
+				text : 'Configure Manifest'
+			}];
+}
+
+
+function ConfigureManifest() {
+
+    var node = Ext.getCmp('directory-tree').getSelectionModel()
+	.getSelectedNode();
+    var scope = node.parentNode.parentNode.parentNode.text;
+    var xid = node.attributes.properties['Id'];
+
+   // var label = "MappingTestTabPanel";
+    var label = 'Manifest(' + scope + ')'+ node.text;
+	
+    var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
+
+	if (tab != null) {
+		tab.show();
+	} else {
+		//var contentPane = Ext.getCmp('content-pane');
+    //contentPane.getEl().mask("Loading...", "x-mask-loading");
+    var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+
+		var manifestTreePane = new Ext.tree.TreePanel(
+		{
+		    //id : 'crossedManifest-tree',
+            id: manifestTreePaneId,
+			region : 'center',
+			dataUrl : 'crossedManifest?scope='+ scope + '&xid=' + xid,
+			width : 800,
+			lines : true,
+			autoScroll : true,
+			border : false,
+			animate : true,
+			enableDD : false,
+			containerScroll : true,
+			rootVisible : false,
+			tbar : new Ext.Toolbar(
+					{
+						items : [
+								{
+									//id : 'Reload-manifest-button',
+									xtype : 'button',
+									icon : 'resources/images/16x16/view-refresh.png',
+									text : 'Reload',
+									handler : function() {
+									    reloadManifest(scope, xid);
+									}
+								},
+								{
+									//id : 'Reset-manifest-button',
+									xtype : 'button',
+									icon : 'resources/images/16x16/view-reset.png',
+									text : 'Reset',
+									handler : function() {
+									    resetManifest(scope, xid);
+									}
+								},
+								{
+									//id : 'Save-manifest-button',
+									xtype : 'button',
+									icon : 'resources/images/16x16/view-save.png',
+									text : 'Save',
+									handler : function() {
+									    saveManifest(scope, xid);
+									}
+								}]
+					}),
+			root : {
+				nodeType : 'async',
+				text : 'Mapping',
+				icon : 'resources/images/directory.png'
+			},
+			listeners:{
+				click : function(node, event) {},
+				dblclick : function(node, event) {},
+				contextmenu : function(node, event) {
+				    onCrossedManifestTreeItemContextMenu(node, event, scope,xid);
+				},
+				keydown : function(evnt) {}
+			}
+				
+		});
+		
+
+			if (Ext.getCmp('content-pane').getItem(
+					'tab-' + label) == null) {
+				var mappingTab = new Ext.Panel({
+					id : 'tab-' + label,
+					title : label,
+					//type : type,
+					//context : context,
+					layout : 'border',
+					closable : true,
+					items: [manifestTreePane],
+					listeners : {}
+				});
+
+				Ext.getCmp('content-pane').add(mappingTab).show();
+			}
+		
+
+	}	
+}
+
+function onCrossedManifestTreeItemContextMenu(node, event, scope, xid) {
+    //  if (node.isSelected()) { 
+
+   // var scope = directoryNode.parentNode.parentNode.parentNode.text;
+   // var xid = directoryNode.attributes.properties['Id'];
+
+    var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+    var manifestTree = Ext.getCmp(manifestTreePaneId)
+    //var manifestTree = Ext.getCmp('crossedManifest-tree')
+
+    var x = event.browserEvent.clientX;
+    var y = event.browserEvent.clientY;
+
+    var obj = node.attributes;
+
+   // alert(obj.type);
+    if (obj.type == "TemplateNode") {
+        manifestMenu = new Ext.menu.Menu();
+        manifestMenu.add(this.buildManifestMenu(scope, xid));
+    	manifestMenu.showAt([ x, y ]);
+    	event.stopEvent();
+    }
+ manifestTree.getSelectionModel().select(node);
+
+}
+
+function resetManifest(scope, xid) {
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	Ext.Ajax.request({
+	    url: 'resetCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
+	    method: 'POST',
+	    timeout: 120000,
+	    success: function (response, request) {
+	        var application = Ext.decode(response.responseText);
+	        centerPanel.getEl().unmask();
+	        refreshManifestTree(scope, xid);
+	    },
+	    failure: function (response, request) {
+	        centerPanel.getEl().unmask();
+	        alert("Error in rest manifest");
+	    }
+	});
+}
+
+function reloadManifest(scope, xid) {
+    var centerPanel = Ext.getCmp('content-pane');
+    centerPanel.getEl().mask("Loading...", "x-mask-loading");
+    Ext.Ajax.request({
+        url: 'reloadCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
+        method: 'POST',
+        timeout: 120000,
+        success: function (response, request) {
+            var application = Ext.decode(response.responseText);
+            centerPanel.getEl().unmask();
+            refreshManifestTree(scope, xid);
+        },
+        failure: function (response, request) {
+            centerPanel.getEl().unmask();
+            alert("Error in rest manifest");
+        }
+    });
+}
+
+function saveManifest(scope, xid) {
+    var centerPanel = Ext.getCmp('content-pane');
+    centerPanel.getEl().mask("Loading...", "x-mask-loading");
+    Ext.Ajax.request({
+        url: 'saveCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
+        method: 'POST',
+        timeout: 120000,
+        success: function (response, request) {
+            var application = Ext.decode(response.responseText);
+            centerPanel.getEl().unmask();
+            showDialog(400, 90, 'Success', 'Manifest saved successfully.', Ext.Msg.OK, null);
+        },
+        failure: function (response, request) {
+            centerPanel.getEl().unmask();
+            alert("Error in rest manifest");
+        }
+    });
+}
+
+function deleteTemplate(scope, xid) {
+    var centerPanel = Ext.getCmp('content-pane');
+    centerPanel.getEl().mask("Loading...", "x-mask-loading");
+
+   //var directorynode = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+	
+    //var scope = directorynode.parentNode.parentNode.parentNode.text;
+	//var xid = directorynode.attributes.properties['Id'];
+
+	var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+
+	var node = Ext.getCmp(manifestTreePaneId).getSelectionModel()
+			.getSelectedNode();
+
+	var parentClassId = node.parentNode.attributes.properties['Id'];
+	var parentClassIndex = node.parentNode.attributes.properties['ClassIndex'];
+	var parentClassPath = node.parentNode.attributes.properties['Path'];
+	var templateId = node.attributes.properties['Id'];
+	var templateIndex = node.attributes.properties['TemplateIndex'];
+
+    Ext.Ajax.request({
+        url: 'deleteTemplate?' + '&scope =' + scope + '&xid ='
+				+ xid,
+        method: 'POST',
+        params: {
+            parentClassId: parentClassId,
+            parentClassIndex: parentClassIndex,
+            parentClassPath: parentClassPath,
+            templateId: templateId,
+            templateIndex: templateIndex
+        },
+        timeout: 120000,
+        success: function (response, request) {
+            var application = Ext.decode(response.responseText);
+            centerPanel.getEl().unmask();
+            refreshManifestTree(scope, xid);
+        },
+        failure: function (response, request) {
+            centerPanel.getEl().unmask();
+            alert("Error in deleting template");
+        }
+    });
 }
 
 function editExchangeConfig() {
@@ -3943,8 +4190,20 @@ function refresh() {
 	directoryTree.getLoader().load(directoryTree.root);
 	directoryTree.getRootNode().expand(false);
 }
-Ext
-		.onReady(function() {
+
+function refreshManifestTree(scope, xid) {
+
+    var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+    var manifestTree = Ext.getCmp(manifestTreePaneId);
+   
+    // reload tree
+    manifestTree.getLoader().load(manifestTree.root);
+    manifestTree.getRootNode().expand(false);
+}
+
+
+
+Ext.onReady(function() {
 			Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
 			applicationMenu = new Ext.menu.Menu();
@@ -3971,6 +4230,9 @@ Ext
 			newScopemenu = new Ext.menu.Menu();
 			this.newScopemenu.add(this.buildNewScopeMenu());
 
+//			manifestMenu = new Ext.menu.Menu();
+//			this.manifestMenu.add(this.buildManifestMenu());
+			
 			// exchangeMenu.add(this.buildExchangeMenu());
 			Ext.QuickTips.init();
 			/*

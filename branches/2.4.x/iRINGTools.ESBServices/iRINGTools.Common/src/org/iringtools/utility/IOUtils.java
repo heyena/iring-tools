@@ -179,6 +179,16 @@ public final class IOUtils
     return file.exists();
   }
   
+  public static boolean deleteFile(String filePath)
+  {
+    File file = new File(filePath);
+     if (file.exists())
+     {
+    	 return file.delete();
+     }
+     return false;
+  }
+  
   public static String getStackTrace(Exception e) 
   {
     StringWriter writer = new StringWriter();

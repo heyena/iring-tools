@@ -44,6 +44,19 @@ p {
 	background-image: url(../images/16x16/class-badge.png);
 }
 
+.x-tree-node .role {
+	background-image: url(../images/16x16/role-badge.png);
+}
+
+.x-tree-node .template {
+	background-image: url(../images/16x16/template-badge.png);
+}
+
+.x-tree-node .class {
+	background-image: url(../images/16x16/class-badge.png);
+}
+
+
 .settings {
 	background-image:
 		url(../lib/ext-3.2.1/resources/images/folder_wrench.png);
