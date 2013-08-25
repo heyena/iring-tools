@@ -1290,6 +1290,96 @@ namespace org.iringtools.adapter
       }
     }
 
+    public Response RefreshGraphCache(string scope, string app, string graph)
+    {
+      Response response = new Response();
+
+      try
+      {
+        InitializeScope(scope, app, true);
+
+        if (_mapping == null)
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Mapping for [" + scope + "." + app + ".] not found.");
+          return response;
+        }
+
+        string objectType = null;
+
+        foreach (GraphMap g in _mapping.graphMaps)
+        {
+          if (g.name.ToLower() == graph.ToLower())
+          {
+            objectType = g.dataObjectName;
+            break;
+          }
+        }
+
+        if (objectType == null)
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Graph [" + scope + "." + app + "." + graph + ".] not found.");
+          return response;
+        }
+
+        response = RefreshCache(scope, app, objectType, false);
+      }
+      catch(Exception e)
+      {
+        _logger.Error("Error refreshing cache: ", e);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    public Response ImportGraphCache(string scope, string app, string graph, string baseUri)
+    {
+      Response response = new Response();
+
+      try
+      {
+        InitializeScope(scope, app, true);
+
+        if (_mapping == null)
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Mapping for [" + scope + "." + app + ".] not found.");
+          return response;
+        }
+
+        string objectType = null;
+
+        foreach (GraphMap g in _mapping.graphMaps)
+        {
+          if (g.name.ToLower() == graph.ToLower())
+          {
+            objectType = g.dataObjectName;
+            break;
+          }
+        }
+
+        if (objectType == null)
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Graph [" + scope + "." + app + "." + graph + ".] not found.");
+          return response;
+        }
+
+        response = ImportCache(scope, app, objectType, baseUri, false);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error refreshing cache: ", e);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
     // build cross _graphmap from manifest graph and mapping graph
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {

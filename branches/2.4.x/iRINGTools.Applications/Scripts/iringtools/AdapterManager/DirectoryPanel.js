@@ -311,17 +311,20 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         scope: this
       },
       {
+        xtype: 'menuseparator'
+      },
+      {
         text: 'Upload File',
         handler: this.onFileUpload,
         icon: 'Content/img/16x16/document-down.png',
         scope: this
       },
-	  {
-	    text: 'Download File',
-	    handler: this.onFileDownload,
-	    icon: 'Content/img/16x16/document-up.png',
-	    scope: this
-	  }
+	    {
+	      text: 'Download File',
+	      handler: this.onFileDownload,
+	      icon: 'Content/img/16x16/document-up.png',
+	      scope: this
+	    }
     ]
   },
 

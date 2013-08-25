@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.iringtools.common.response.Messages;
+import org.iringtools.common.response.Response;
+import org.iringtools.common.response.Status;
 import org.iringtools.directory.Directory;
 import org.iringtools.models.DataModel;
 import org.iringtools.models.DirectoryModel; 
@@ -16,6 +19,8 @@ public class DirectoryController extends BaseController
   
   private Tree directoryTree;
   private String dtoContext;
+  private String dxfrUri, scope, app, graph, cacheUri;
+  private Response refreshResult, importResult;
 
   public DirectoryController() throws Exception
   {
@@ -80,5 +85,113 @@ public class DirectoryController extends BaseController
   public void setDtoContext(String dtoContext)
   {
     this.dtoContext = dtoContext;
+  }
+  
+  private void appendMessages(Response response)
+  {
+    if (response.getMessages() == null)
+    {
+      response.setMessages(new Messages());
+    }
+        
+    if (response != null && response.getStatusList() != null)
+    {
+      for (Status status : response.getStatusList().getItems())
+      {
+        if (status.getMessages() != null)
+        {
+          for (String message : status.getMessages().getItems())
+          {
+            response.getMessages().getItems().add(message);
+          }
+        }
+      }
+    }
+  }
+  
+  public String refreshCache()
+  {
+    DirectoryModel directoryModel = new DirectoryModel(settings);   
+    refreshResult = directoryModel.refreshCache(dxfrUri, scope, app, graph);
+    appendMessages(refreshResult);
+    
+    return SUCCESS;
+  }
+  
+  public String importCache()
+  {
+    DirectoryModel directoryModel = new DirectoryModel(settings);   
+    importResult = directoryModel.importCache(dxfrUri, scope, app, graph, cacheUri);
+    appendMessages(importResult);
+    
+    return SUCCESS;
+  }
+  
+  public Response getRefreshResult()
+  {
+    return refreshResult;
+  }
+  
+  public Response getImportResult()
+  {
+    return importResult;
+  }
+  
+  public String getDxfrUri()
+  {
+    return dxfrUri;
+  }
+  
+  public void setDxfrUri(String dxfrUri)
+  {
+    if (!dxfrUri.endsWith("/"))
+    {
+      dxfrUri += "/";
+    }
+    
+    this.dxfrUri = dxfrUri;
+  }
+  
+  public String getScope()
+  {
+    return scope;
+  }
+  
+  public void setScope(String scope)
+  {
+    this.scope = scope;
+  }
+  
+  public String getApp()
+  {
+    return app;
+  }
+  
+  public void setApp(String app)
+  {
+    this.app = app;
+  }
+  
+  public String getGraph()
+  {
+    return graph;
+  }
+  
+  public void setGraph(String graph)
+  {
+    this.graph = graph;
+  }
+  
+  public String getCacheUri()
+  {
+    return cacheUri;
+  }
+  
+  public void setCacheUri(String cacheUri)
+  {
+    if (!cacheUri.endsWith("/"))
+      cacheUri += "/";
+    
+    this.cacheUri = cacheUri;
   }
 }
