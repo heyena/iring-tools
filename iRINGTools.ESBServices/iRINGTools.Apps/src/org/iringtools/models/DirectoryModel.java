@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.iringtools.common.response.Level;
+import org.iringtools.common.response.Response;
 import org.iringtools.directory.Application;
 import org.iringtools.directory.ApplicationData;
 import org.iringtools.directory.Commodity;
@@ -13,6 +15,7 @@ import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.library.directory.DirectoryProvider;
+import org.iringtools.utility.HttpClient;
 import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
@@ -127,4 +130,44 @@ public class DirectoryModel
     
     return tree;
   } 
+  
+  public Response refreshCache(String dxfrUri, String scope, String app, String graph)
+  {
+    Response response = null;
+    
+    try
+    {
+      HttpClient client = new HttpClient(dxfrUri);
+      response = client.get(Response.class, scope + "/" + app + "/" + graph + "/refresh");
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      response = new Response();
+      response.setLevel(Level.ERROR);
+      response.getMessages().getItems().add(e.getMessage());
+    }
+    
+    return response;
+  }
+  
+  public Response importCache(String dxfrUri, String scope, String app, String graph, String cacheUri)
+  {
+    Response response = null;
+    
+    try
+    {
+      HttpClient client = new HttpClient(dxfrUri);
+      response = client.get(Response.class, scope + "/" + app + "/" + graph + "/import?baseUri=" + cacheUri);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      response = new Response();
+      response.setLevel(Level.ERROR);
+      response.getMessages().getItems().add(e.getMessage());
+    }
+    
+    return response;
+  }
 }

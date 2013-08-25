@@ -1625,18 +1625,30 @@ function buildNewApplicationMenu() {
 function buildGraphSubMenu() {
 	return [ {
 		xtype : 'menuitem',
+    text : 'Edit Graph',
 		handler : function() {
 			newGraph();
 			editGraph();
-		},
-		text : 'Edit Graph'
+		}
 	}, {
 		xtype : 'menuitem',
+    text : 'Delete Graph',
 		handler : function(item, event) {
 			deleteGraph();
-		},
-		text : 'Delete Graph'
-	} ];
+		}
+	}, {
+    xtype: 'menuseparator'
+  }, {
+    xtype : 'menuitem',
+    text : 'Refresh Cache',
+    handler: onRefreshCache,
+    scope: this
+  }, {
+    xtype : 'menuitem',
+    text : 'Import Cache',
+    handler : onImportCache,
+    scope: this
+  }];
 }
 
 function editCommodity() {
@@ -1780,7 +1792,6 @@ function newGraph() {
 		items : [ newGraphForm ]
 
 	});
-
 }
 
 function saveGraph() {
@@ -1822,7 +1833,17 @@ showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 }
 
 function buildApplicationSubMenu() {
-	return [ {
+	return [{
+    xtype : 'menuitem',
+    handler : function() {
+      newGraph();
+      var view = Ext.getCmp('newGraphWin');
+      view.show();
+    },
+    text : 'Add Graph'
+  }, {
+    xtype: 'menuseparator'
+  }, {
 		xtype : 'menuitem',
 		handler : function() {
 			newApp();
@@ -1835,15 +1856,104 @@ function buildApplicationSubMenu() {
 			deleteApp();
 		},
 		text : 'Delete Application'
-	}, {
-		xtype : 'menuitem',
-		handler : function() {
-			newGraph();
-			var view = Ext.getCmp('newGraphWin');
-			view.show();
-		},
-		text : 'Add New Graph'
-	} ];
+	}];
+}
+
+function onRefreshCache(btn, ev) {
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+  Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+
+  Ext.Ajax.request({
+    url: 'refreshCache',
+    method: 'POST',
+    timeout: 3600000,
+    params: {
+      'dxfrUri': node.attributes.properties['Base URI'],
+      'scope': node.attributes.properties['Context'],
+      'app': node.parentNode.text,
+      'graph': node.attributes.properties['Name']
+    },
+    success: function (response, request) {
+      Ext.getCmp('content-pane').getEl().unmask();
+      
+      var responseObj = Ext.decode(response.responseText);
+
+      if (responseObj.Level == 'SUCCESS') {
+        showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+      }
+      else {
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
+      }
+    },
+    failure: function (response, request) {
+      Ext.getCmp('content-pane').getEl().unmask();
+      var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
+      showDialog(500, 160, 'Refresh Cache Error', errMsg, Ext.Msg.OK, null);
+    }
+  });
+}
+
+function onImportCache (btn, ev) {
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+ 
+  var importCacheForm = new Ext.FormPanel({
+    url: 'importCache',
+    timeout: 1200000,
+    method: 'POST',
+    frame: false,
+    border: false,
+    bodyStyle: 'padding:20px 5px 20px 5px',
+    items: [
+      { fieldLabel: 'Cache URI', name: 'cacheUri', xtype: 'textfield', width: 360, allowBlank: false },
+      { name: 'dxfrUri', xtype: 'hidden', value: node.attributes.properties['Base URI'] },
+      { name: 'scope', xtype: 'hidden', value: node.attributes.properties['Context'] },
+      { name: 'app', xtype: 'hidden', value: node.parentNode.text },
+      { name: 'graph', xtype: 'hidden', value: node.attributes.properties['Name'] }
+    ]
+  });
+  
+  var win = new Ext.Window({
+    title: 'Import Cache',
+    width: 500,
+    modal: true,
+    closable: true,
+    resizable: false,
+    items: [importCacheForm],
+    buttons: [{
+      text: 'Submit',
+      handler: function () {
+        importCacheForm.getForm().getEl().mask("Processing...", "x-mask-loading");
+        
+        importCacheForm.getForm().submit({
+          success: function (response, request) {  
+            importCacheForm.getForm().getEl().unmask();          
+            var responseObj = Ext.decode(response.responseText);
+
+            if (responseObj.Level == 'SUCCESS') {
+              showDialog(450, 100, 'Import Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+            }
+            else {
+              showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
+            }
+            
+            win.close();
+          },
+          failure: function (response, request) {
+            importCacheForm.getForm().getEl().unmask();  
+            var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
+            showDialog(500, 160, 'Import Cache Error', errMsg, Ext.Msg.OK, null);
+          }
+        });
+      }
+    }, {
+      text: 'Close',
+      handler: function () {
+        win.close();
+      }
+    }]
+  });
+
+  win.show(this);
 }
 
 function buildManifestMenu(scope, xid) {
@@ -1855,6 +1965,7 @@ function buildManifestMenu(scope, xid) {
 		text : 'Delete Template'
 	}];
 }
+
 function editApplication() {
 	var centerPanel = Ext.getCmp('content-pane');
 	centerPanel.getEl().mask("Loading...", "x-mask-loading");
@@ -2049,7 +2160,7 @@ function onCrossedManifestTreeItemContextMenu(node, event, scope, xid) {
    // var xid = directoryNode.attributes.properties['Id'];
 
     var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
-    var manifestTree = Ext.getCmp(manifestTreePaneId)
+    var manifestTree = Ext.getCmp(manifestTreePaneId);
     //var manifestTree = Ext.getCmp('crossedManifest-tree')
 
     var x = event.browserEvent.clientX;

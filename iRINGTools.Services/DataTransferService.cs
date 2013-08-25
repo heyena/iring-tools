@@ -349,7 +349,32 @@ namespace org.iringtools.services
         ExceptionHander(ex);
       }
     }
-    
+
+    [Description("Creates/rebuilds graph data cache.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/refresh")]
+    public void RefreshGraphCache(string scope, string app, string graph)
+    {
+      try
+      {
+        Response response = _dtoProvider.RefreshGraphCache(scope, app, graph);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
+    [Description("Imports graph data cache. Cache files are baseUri followed by <object type>.dat is required.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/import?baseuri={baseUri}")]
+    public void ImportGraphCache(string scope, string app, string graph, string baseUri)
+    {
+      Response response = _dtoProvider.ImportGraphCache(scope, app, graph, baseUri);
+      HttpContext.Current.Response.ContentType = "application/xml";
+      HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+    } 
+        
     [Description("Gets status of a asynchronous request.")]
     [WebGet(UriTemplate = "/requests/{id}")]
     public void GetRequestStatus(string id)

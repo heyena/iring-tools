@@ -31,6 +31,18 @@
       <result name="success" type="json"/>
     </action>
 
+    <action name="refreshCache" class="org.iringtools.controllers.DirectoryController" method="refreshCache">
+      <result type="json">
+        <param name="root">refreshResult</param>
+      </result>
+    </action>
+    
+    <action name="importCache" class="org.iringtools.controllers.DirectoryController" method="importCache">
+      <result type="json">
+        <param name="root">importResult</param>
+      </result>
+    </action>
+    
     <!-- app data -->
     <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
       <result type="json">
