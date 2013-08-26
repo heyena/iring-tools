@@ -104,10 +104,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TWDataLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\svncorp-dmz\iringtools_datalayers\TW_Datalayer\TWDataLayer\bin\Debug\TWDataLayer.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BindingConfiguration.Adapter.xml">
@@ -225,13 +221,13 @@
       <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
       <Name>SpreadsheetDatalayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.csproj">
-      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\NHibernateExtension\NHibernateExtension.csproj">
       <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
       <Name>NHibernateExtension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\WADLLibrary\WADLLibrary.csproj">
       <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>
