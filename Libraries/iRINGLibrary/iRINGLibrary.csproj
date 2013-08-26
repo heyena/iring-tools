@@ -5,13 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</ProjectGuid>
+    <ProjectGuid>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adapter</RootNamespace>
-    <AssemblyName>AdapterLibrary</AssemblyName>
+    <RootNamespace>org.iringtools.library</RootNamespace>
+    <AssemblyName>iRINGLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -42,7 +50,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -59,7 +66,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug\AdapterLibrary.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Debug\iRINGLibrary.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -68,27 +75,11 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF, Version=0.3.0.18547, Culture=neutral, PublicKeyToken=d6907caf9fc97226, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+    <Reference Include="iRINGSecurity">
+      <HintPath>..\..\..\..\..\filez\dev\csharp\iRINGSecurity\iRINGSecurity\bin\Debug\iRINGSecurity.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="log4net">
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ServiceModel.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\Json.NET 4.5\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject">
-      <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject.Extensions.Xml">
-      <HintPath>..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
@@ -98,24 +89,23 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.DirectoryServices.Protocols" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.ServiceModel">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.ServiceModel.Web">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Workflow.Activities">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Workflow.ComponentModel">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -123,67 +113,65 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdapterModule.cs" />
-    <Compile Include="BaseDataProjectionEngine.cs" />
-    <Compile Include="BasePart7ProjectionEngine.cs" />
-    <Compile Include="BaseProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentObject.cs" />
-    <Compile Include="DataLayerGateway.cs" />
-    <Compile Include="DataProjectionEngine.cs" />
-    <Compile Include="DBManager.cs" />
-    <Compile Include="DtiTask.cs" />
-    <Compile Include="InboundDtoTask.cs" />
-    <Compile Include="OutboundDtoTask.cs" />
-    <Compile Include="DataItemSerializer.cs" />
-    <Compile Include="JsonProjectionEngine.cs" />
-    <Compile Include="DxiRequest.cs" />
-    <Compile Include="DxoRequest.cs" />
-    <Compile Include="DtoProvider.cs" />
-    <Compile Include="DataTransferIndices.cs" />
-    <Compile Include="DataTransferObjects.cs" />
-    <Compile Include="dotNetRDFEngine.cs" />
-    <Compile Include="AdapterProvider.cs" />
-    <Compile Include="DtoProjectionEngine.cs" />
-    <Compile Include="FacadeProvider.cs" />
-    <Compile Include="IIdentityLayer.cs" />
-    <Compile Include="IProjectionLayer.cs" />
-    <Compile Include="ISemanticLayer.cs" />
-    <Compile Include="AnonymousIdentityProvider.cs" />
+    <Compile Include="AdapterSettings.cs" />
+    <Compile Include="BaseConfigurableDataLayer.cs" />
+    <Compile Include="BaseDataLayer.cs" />
+    <Compile Include="BaseSQLDataLayer.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="Contexts.cs" />
+    <Compile Include="DataObjectExtensions.cs" />
+    <Compile Include="GenericContentObject.cs" />
+    <Compile Include="DocumentBytes.cs" />
+    <Compile Include="DataItems.cs" />
+    <Compile Include="DataLayerConfig.cs" />
+    <Compile Include="DataLayers.cs" />
+    <Compile Include="Federation.cs" />
+    <Compile Include="Field.cs" />
+    <Compile Include="GenericDataObject.cs" />
+    <Compile Include="Grid.cs" />
+    <Compile Include="IAuthentication.cs" />
+    <Compile Include="IAuthorization.cs" />
+    <Compile Include="IAuthHeaders.cs" />
+    <Compile Include="ILightweightDataLayer.cs" />
+    <Compile Include="Mapping.cs" />
+    <Compile Include="MappingExtensions.cs" />
+    <Compile Include="DataObjects.cs" />
+    <Compile Include="DataProviders.cs" />
+    <Compile Include="DataRelationships.cs" />
+    <Compile Include="MimeTypes.cs" />
+    <Compile Include="Picklists.cs" />
+    <Compile Include="PredicateBuilder.cs" />
+    <Compile Include="DatabaseDictionary.cs" />
+    <Compile Include="DataDictionary.cs" />
+    <Compile Include="DataFilter.cs" />
+    <Compile Include="IAdapter.cs" />
+    <Compile Include="IDataLayer.cs" />
+    <Compile Include="Manifest.cs" />
+    <Compile Include="PushRequest.cs" />
+    <Compile Include="Queries.cs" />
+    <Compile Include="RequestStatus.cs" />
+    <Compile Include="Scopes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />
-    <Compile Include="RdfProjectionEngine.cs" />
-    <Compile Include="WindowsIdentityProvider.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UtilityLibrary\Desktop\UtilityLibrary.csproj">
-      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NHibernateExtension\NHibernateExtension.csproj">
-      <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
-      <Name>NHibernateExtension</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NHibernateLibrary\NHibernateLibrary.csproj">
-      <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
-      <Name>NHibernateLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
-      <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
-      <Name>SpreadsheetDatalayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WADLLibrary\WADLLibrary.csproj">
-      <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>
-      <Name>WADLLibrary</Name>
-    </ProjectReference>
+    <Compile Include="QMXF.cs" />
+    <Compile Include="QXF.cs" />
+    <Compile Include="RefDataEntities.cs" />
+    <Compile Include="Request.cs" />
+    <Compile Include="Response.cs" />
+    <Compile Include="Sencha\ColumnViewModel.cs" />
+    <Compile Include="Sencha\FieldViewModel.cs" />
+    <Compile Include="Sencha\MetaDataViewModel.cs" />
+    <Compile Include="Sencha\ResponseViewModel.cs" />
+    <Compile Include="Sencha\StoreViewModel.cs" />
+    <Compile Include="Sencha\TreeNodeViewModel.cs" />
+    <Compile Include="ServiceClient.cs" />
+    <Compile Include="ServiceSettings.cs" />
+    <Compile Include="SPARQLClient.cs" />
+    <Compile Include="SPARQLQuery.cs" />
+    <Compile Include="SPARQLResults.cs" />
+    <Compile Include="SessionState.cs" />
+    <Compile Include="VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -201,6 +189,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UtilityLibrary\Desktop\UtilityLibrary.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

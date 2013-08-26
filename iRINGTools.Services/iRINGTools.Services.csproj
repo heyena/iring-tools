@@ -51,13 +51,6 @@
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Bechtel.TEAMWorks.Common">
-      <HintPath>..\..\svncorp-dmz\iringtools_datalayers\TW_Datalayer\TWDataLayer\bin\Debug\Bechtel.TEAMWorks.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.Services, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Bechtel.TEAMWorks.Services.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
@@ -216,13 +209,13 @@
       <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
       <Name>AdapterLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
@@ -232,9 +225,9 @@
       <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
       <Name>SpreadsheetDatalayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
+    <ProjectReference Include="..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary.Desktop</Name>
+      <Name>UtilityLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\NHibernateExtension\NHibernateExtension.csproj">
       <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
