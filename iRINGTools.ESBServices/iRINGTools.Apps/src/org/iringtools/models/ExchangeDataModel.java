@@ -812,7 +812,7 @@ public class ExchangeDataModel extends DataModel
       if(manifest == null)
       {
     	  manifest = provider.getCrossedManifest(exchange);
-    	  provider.saveCrossedManifest(manifest, exchange);
+    	  //provider.saveCrossedManifest(manifest, exchange);
       }
       session.put(manifestKey, manifest);
     }
