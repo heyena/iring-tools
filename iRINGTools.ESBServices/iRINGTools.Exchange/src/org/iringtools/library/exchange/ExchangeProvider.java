@@ -177,43 +177,66 @@ public class ExchangeProvider
     return crossedManifest;
   }
 
-  public Manifest GetCachedCrossedManifest(Exchange exchange) throws Exception
+  public Manifest GetCachedCrossedManifest(Exchange exchange)
   {
-	  String filePath = buildManifestFilePath(exchange)  ;
-	    if (IOUtils.fileExists(filePath)) {
-	    	return JaxbUtils.read(Manifest.class, filePath);
-	    }
+	  try
+	  {
+		  String filePath = buildManifestFilePath(exchange)  ;
+		  if (IOUtils.fileExists(filePath)) {
+			  return JaxbUtils.read(Manifest.class, filePath);
+		  }
+	  }catch (Exception e) {
+		  String message = "Error saving manifest" + e;
+		  logger.error(message);
+
+	  }
 	  return null;
   }
   
   
-  public void saveCrossedManifest(Manifest manifest,Exchange exchange) {
-		try {
-			 
-			String filePath = buildManifestFilePath(exchange)  ;
-			    
-			JaxbUtils.write(manifest, filePath, false);
-		} catch (Exception e) {
-			String message = "Error saveing manifest" + e;
-			logger.error(message);
-		}
-	}
+  public void saveCrossedManifest(Manifest manifest,Exchange exchange)throws Exception {
+	  try {
+
+		  String filePath = buildManifestFilePath(exchange)  ;
+
+		  JaxbUtils.write(manifest, filePath, false);
+	  } catch (Exception e) {
+		  String message = "Error saving manifest" + e;
+		  logger.error(message);
+		  throw e;
+	  }
+  }
   
   public void deleteCachedCrossedManifest(Exchange exchange)throws Exception
   {
-	  String filePath = buildManifestFilePath(exchange)  ;
-	    if (IOUtils.fileExists(filePath)) {
-	    	IOUtils.deleteFile(filePath);
-	    }
-	  
+	  try {
+		  String filePath = buildManifestFilePath(exchange)  ;
+		  if (IOUtils.fileExists(filePath)) {
+			  IOUtils.deleteFile(filePath);
+		  }
+	  } catch (Exception e) {
+		  String message = "Error saving manifest" + e.getMessage();
+		  logger.error(message);
+		  throw e;
+
+	  }
+
   }
-  
-  private String buildManifestFilePath(Exchange exchange)
+
+  private String buildManifestFilePath(Exchange exchange)throws Exception
   {
-	  String filePath = path + "manifest." + exchange.getSourceScope() + "."+exchange.getSourceApp() + "." +exchange.getSourceGraph() ;
-		filePath = filePath +  "." + exchange.getTargetScope() + "."+exchange.getTargetApp() + "." +exchange.getTargetGraph() + ".xml" ; 
-		
-		return filePath;
+	  try{
+		  String filePath = path + "manifest." + exchange.getSourceScope() + "."+exchange.getSourceApp() + "." +exchange.getSourceGraph() ;
+		  filePath = filePath +  "." + exchange.getTargetScope() + "."+exchange.getTargetApp() + "." +exchange.getTargetGraph() + ".xml" ; 
+
+		  return filePath;
+	  } catch (Exception e) {
+		  String message = "Error in creating manifest path" + e.getMessage();
+		  logger.error(message);
+		  throw e;
+
+	  }
+
   }
   
   public DataTransferIndices getDataTransferIndices(Exchange exchange, DxiRequest dxiRequest) throws Exception
