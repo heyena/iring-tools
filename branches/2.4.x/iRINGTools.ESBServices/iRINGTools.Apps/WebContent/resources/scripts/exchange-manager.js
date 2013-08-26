@@ -2071,67 +2071,76 @@ function ConfigureManifest() {
     //contentPane.getEl().mask("Loading...", "x-mask-loading");
     var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
 
-		var manifestTreePane = new Ext.tree.TreePanel(
+    var manifestTreePane = new Ext.tree.TreePanel(
 		{
 		    //id : 'crossedManifest-tree',
-            id: manifestTreePaneId,
-			region : 'center',
-			dataUrl : 'crossedManifest?scope='+ scope + '&xid=' + xid,
-			width : 800,
-			lines : true,
-			autoScroll : true,
-			border : false,
-			animate : true,
-			enableDD : false,
-			containerScroll : true,
-			rootVisible : false,
-			tbar : new Ext.Toolbar(
+		    id: manifestTreePaneId,
+		    region: 'center',
+		    dataUrl: 'crossedManifest?scope=' + scope + '&xid=' + xid,
+		    width: 800,
+		    lines: true,
+		    autoScroll: true,
+		    border: false,
+		    animate: true,
+		    enableDD: false,
+		    containerScroll: true,
+		    rootVisible: false,
+		    tbar: new Ext.Toolbar(
 					{
-						items : [
+					    items: [
 								{
-									//id : 'Reload-manifest-button',
-									xtype : 'button',
-									icon : 'resources/images/16x16/view-refresh.png',
-									text : 'Reload',
-									handler : function() {
-									    reloadManifest(scope, xid);
-									}
+								    //id : 'Reload-manifest-button',
+								    xtype: 'button',
+								    icon: 'resources/images/16x16/view-refresh.png',
+								    text: 'Reload',
+								    handler: function () {
+								        reloadManifest(scope, xid);
+								    }
 								},
 								{
-									//id : 'Reset-manifest-button',
-									xtype : 'button',
-									icon : 'resources/images/16x16/view-reset.png',
-									text : 'Reset',
-									handler : function() {
-									    resetManifest(scope, xid);
-									}
+								    //id : 'Reset-manifest-button',
+								    xtype: 'button',
+								    icon: 'resources/images/16x16/reset-icon.png',
+								    text: 'Reset',
+								    handler: function () {
+								        resetManifest(scope, xid);
+								    }
 								},
 								{
-									//id : 'Save-manifest-button',
-									xtype : 'button',
-									icon : 'resources/images/16x16/view-save.png',
-									text : 'Save',
-									handler : function() {
-									    saveManifest(scope, xid);
-									}
+								    //id : 'Save-manifest-button',
+								    xtype: 'button',
+								    icon: 'resources/images/16x16/save-icon.png',
+								    text: 'Save',
+								    handler: function () {
+								        saveManifest(scope, xid);
+								    }
 								}]
 					}),
-			root : {
-				nodeType : 'async',
-				text : 'Mapping',
-				icon : 'resources/images/directory.png'
-			},
-			listeners:{
-				click : function(node, event) {},
-				dblclick : function(node, event) {},
-				contextmenu : function(node, event) {
-				    onCrossedManifestTreeItemContextMenu(node, event, scope,xid);
-				},
-				keydown : function(evnt) {}
-			}
-				
+		    root: {
+		        nodeType: 'async',
+		        text: 'Mapping',
+		        icon: 'resources/images/directory.png'
+		    },
+		    listeners: {
+		        click: function (node, event) { },
+		        dblclick: function (node, event) { },
+		        contextmenu: function (node, event) {
+		            onCrossedManifestTreeItemContextMenu(node, event, scope, xid);
+		        },
+		        keydown: function (evnt) { }
+		    }
+
 		});
-		
+
+		manifestTreePane.loader.on('loadexception', function (treePanel, node, response) {
+		    if (!(response.status == 0 || response.status == 408)) {
+		        //container.getEl().unmask();
+		        var message = 'Request URL: /' + treePanel.dataUrl
+							    + '.\n\nError description: '
+							    + response.responseText;
+		        showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+            }
+		});
 
 			if (Ext.getCmp('content-pane').getItem(
 					'tab-' + label) == null) {
@@ -2193,7 +2202,10 @@ function resetManifest(scope, xid) {
 	    },
 	    failure: function (response, request) {
 	        centerPanel.getEl().unmask();
-	        alert("Error in rest manifest");
+	        var message = 'Error in rest manifest: ' + response.statusText
+          			+ '.\n\nError description: '
+				    + response.responseText;
+	        showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
 	    }
 	});
 }
@@ -2212,7 +2224,10 @@ function reloadManifest(scope, xid) {
         },
         failure: function (response, request) {
             centerPanel.getEl().unmask();
-            alert("Error in rest manifest");
+            var message = 'Error in reload manifest: ' + response.statusText
+          			+ '.\n\nError description: '
+				    + response.responseText;
+            showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
         }
     });
 }
@@ -2231,7 +2246,10 @@ function saveManifest(scope, xid) {
         },
         failure: function (response, request) {
             centerPanel.getEl().unmask();
-            alert("Error in rest manifest");
+            var message = 'Error in save manifest: ' + response.statusText
+          			+ '.\n\nError description: '
+				    + response.responseText;
+            showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
         }
     });
 }
@@ -2275,7 +2293,10 @@ function deleteTemplate(scope, xid) {
         },
         failure: function (response, request) {
             centerPanel.getEl().unmask();
-            alert("Error in deleting template");
+            var message = 'Error in delete template: ' + response.statusText
+          			+ '.\n\nError description: '
+				    + response.responseText;
+            showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
         }
     });
 }
