@@ -48,8 +48,6 @@ namespace org.iringtools.library
     {
       _dictionary[propertyName] = propertyValue;
     }
-
-    public IDictionary<string, IList<IDataObject>> RelatedObjects { get; set; }
   }
 
   public interface ILightweightDataLayer
