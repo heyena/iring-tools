@@ -194,7 +194,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UtilityLibrary\Desktop\UtilityLibrary.csproj">
+    <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary</Name>
     </ProjectReference>

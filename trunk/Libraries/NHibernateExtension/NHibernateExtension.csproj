@@ -80,7 +80,7 @@
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UtilityLibrary\Desktop\UtilityLibrary.csproj">
+    <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary</Name>
     </ProjectReference>
