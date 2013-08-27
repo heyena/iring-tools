@@ -1878,7 +1878,7 @@ function onRefreshCache(btn, ev) {
       
       var responseObj = Ext.decode(response.responseText);
 
-      if (responseObj.Level == 'SUCCESS') {
+      if (responseObj.level == 'SUCCESS') {
         showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
       }
       else {
@@ -1887,8 +1887,21 @@ function onRefreshCache(btn, ev) {
     },
     failure: function (response, request) {
       Ext.getCmp('content-pane').getEl().unmask();
-      var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
-      showDialog(500, 160, 'Refresh Cache Error', errMsg, Ext.Msg.OK, null);
+      
+      if (request.response.status == 200) {
+        var responseObj = Ext.decode(request.response.responseText);
+        
+        if (responseObj.level == 'SUCCESS') {
+          showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
+        }
+      }
+      else {
+        var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
+        showDialog(500, 160, 'Refresh Cache Error', errMsg, Ext.Msg.OK, null);
+      }
     }
   });
 }
@@ -1925,23 +1938,37 @@ function onImportCache (btn, ev) {
         importCacheForm.getForm().getEl().mask("Processing...", "x-mask-loading");
         
         importCacheForm.getForm().submit({
-          success: function (response, request) {  
-            importCacheForm.getForm().getEl().unmask();          
+          success: function (response, request) {              
+            importCacheForm.getForm().getEl().unmask();
+            
             var responseObj = Ext.decode(response.responseText);
 
-            if (responseObj.Level == 'SUCCESS') {
-              showDialog(450, 100, 'Import Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+            if (responseObj.level == 'SUCCESS') {
+              win.close();
+              showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
             }
             else {
               showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
             }
-            
-            win.close();
           },
           failure: function (response, request) {
             importCacheForm.getForm().getEl().unmask();  
-            var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
-            showDialog(500, 160, 'Import Cache Error', errMsg, Ext.Msg.OK, null);
+            
+            if (request.response.status == 200) {
+              var responseObj = Ext.decode(request.response.responseText);
+              
+              if (responseObj.level == 'SUCCESS') {
+                win.close();
+                showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
+              }
+              else {
+                showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
+              }
+            }
+            else {
+              var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
+              showDialog(500, 160, 'Import Cache Error', errMsg, Ext.Msg.OK, null);
+            }
           }
         });
       }
@@ -2041,21 +2068,19 @@ function buildCommoditySubMenu() {
 					editDataFilter();
 				},
 				text : 'Apply Data Filters'
-			},
+			}/*,
 			{
 				xtype : 'menuitem',
 				handler : function() {
 					ConfigureManifest();
 				},
 				text : 'Configure Manifest'
-			}];
+			}*/];
 }
 
 
 function ConfigureManifest() {
-
-    var node = Ext.getCmp('directory-tree').getSelectionModel()
-	.getSelectedNode();
+    var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
     var scope = node.parentNode.parentNode.parentNode.text;
     var xid = node.attributes.properties['Id'];
 
