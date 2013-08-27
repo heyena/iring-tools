@@ -186,6 +186,7 @@ namespace org.iringtools.adapter
         else
         {
           sc.DisplayName = scope.DisplayName;
+          sc.Description = scope.Description;
           _scopes.Sort(new ScopeComparer());
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
@@ -448,6 +449,7 @@ namespace org.iringtools.adapter
         if (application != null)
         {
           application.DisplayName = updatedApp.DisplayName;
+          application.Description = updatedApp.Description;
           application.DataMode = updatedApp.DataMode;
           application.Configuration.AppSettings = updatedApp.Configuration.AppSettings;
 

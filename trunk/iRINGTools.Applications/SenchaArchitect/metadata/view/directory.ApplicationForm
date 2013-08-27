@@ -141,29 +141,33 @@
                 "implHandler": [
                     "var me = this;\r",
                     "var win = me.up('window');\r",
-                    "var endpointName = me.getForm().findField('name').getValue();\r",
+                    "var endpointName = me.getForm().findField('displayName').getValue();\r",
                     "\r",
                     "var dlCombo = me.down('combo');\r",
-                    "\r",
                     "var state = me.getForm().findField('state').getValue();\r",
+                    "\r",
+                    "if(state!='edit')\r",
+                    "  me.getForm().findField('name').setValue(endpointName);\r",
+                    "\r",
                     "if(me.getForm().isValid()){\r",
                     "  me.getForm().submit({\r",
-                    "  waitMsg: 'Saving Data...',\r",
-                    "  success: function (response, request) {\r",
+                    "    waitMsg: 'Saving Data...',\r",
+                    "    success: function (response, request) {\r",
                     "\r",
-                    "    win.fireEvent('save', me);\r",
-                    "  },\r",
-                    "  failure: function (response, request) {\r",
-                    "     var message = 'Error saving changes!';\r",
-                    "     showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
-                    "    return;\r",
-                    "  }\r",
-                    "});\r",
-                    "}else\r",
-                    "{\r",
-                    "\t\t\tvar message = 'Please fill the required data';\r",
+                    "      win.fireEvent('save', me);\r",
+                    "      Ext.ComponentQuery.query('directorytree')[0].onReload();\r",
+                    "    },\r",
+                    "    failure: function (response, request) {\r",
+                    "      var message = 'Error saving changes!';\r",
                     "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
                     "      return;\r",
+                    "    }\r",
+                    "  });\r",
+                    "}else\r",
+                    "{\r",
+                    "  var message = 'Please fill the required data';\r",
+                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "  return;\r",
                     "}\r",
                     ""
                 ]
@@ -252,6 +256,20 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "name"
+            },
+            "designerId": "95737375-b376-4304-a614-4d5da39eeda2"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
                 "itemId": "state",
                 "fieldLabel": null,
                 "name": "state"
@@ -283,7 +301,7 @@
                 "layout|anchor": null,
                 "margin": null,
                 "fieldLabel": "Name",
-                "name": "name",
+                "name": "displayName",
                 "allowBlank": false
             },
             "designerId": "5e270425-4108-41d2-95f4-cb0c3292a47c"

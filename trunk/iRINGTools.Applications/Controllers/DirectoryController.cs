@@ -110,7 +110,8 @@ namespace org.iringtools.web.controllers
                       Description = application.Description,
                       DataLayer = dataLayer.Name,
                       Assembly = dataLayer.Assembly,
-                      Configuration = application.Configuration
+                      Configuration = application.Configuration,
+                      DisplayName = application.DisplayName
                     }
                   };
 
@@ -540,11 +541,11 @@ namespace org.iringtools.web.controllers
 
       if (form["state"]=="new")//if (String.IsNullOrEmpty(form["scope"]))
       {
-          success = _repository.AddScope(form["scope"], form["description"]);
+          success = _repository.AddScope(form["displayName"], form["description"]);
       }
       else
       {
-          success = _repository.UpdateScope(form["contextName"], form["scope"], form["description"]);
+          success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"]);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -590,7 +591,7 @@ namespace org.iringtools.web.controllers
 
       ScopeApplication application = new ScopeApplication()
       {
-        DisplayName = form["Name"],
+        DisplayName = form["displayName"],//form["Name"],
         Name = form["Name"],
         Description = form["Description"],
         Assembly = form["assembly"],

@@ -79,9 +79,13 @@ Ext.define('AM.view.directory.ScopeForm', {
           name: 'oldContext'
         },
         {
+          xtype: 'hiddenfield',
+          name: 'name'
+        },
+        {
           xtype: 'textfield',
           fieldLabel: 'Name',
-          name: 'scope',
+          name: 'displayName',
           allowBlank: false
         },
         {
@@ -108,13 +112,16 @@ Ext.define('AM.view.directory.ScopeForm', {
     var me = this;
     var win = me.up('window');
     var form = me.getForm();
-    var folderName = form.findField('scope').getValue();
+    var folderName = form.findField('displayName').getValue();
     var state = form.findField('state').getValue();
     var contextNameField = form.findField('contextName');
-
+    //form.findField('contextName').setValue(folderName);
     var context = form.findField('contextCombo').getValue();
-
     //contextNameField.setValue(context);
+
+    //if(state == 'new')
+    //form.findField('name').setValue(folderName);
+
     node.eachChild(function(n) {
       if(n.data.text == folderName) {
         if(state == 'new') {
@@ -129,6 +136,7 @@ Ext.define('AM.view.directory.ScopeForm', {
         waitMsg: 'Saving Data...',
         success: function (response, request) {
           win.fireEvent('save', me);
+          Ext.ComponentQuery.query('directorytree')[0].onReload();
         },
         failure: function (response, request) {
           if (response.items!=undefined && response.items[3].value !== undefined) {
