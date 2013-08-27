@@ -639,31 +639,31 @@ public class ExchangeDataModel extends DataModel
           {
             for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
             {
-              if (dti.getInternalIdentifier().equalsIgnoreCase(id))  // handle add, delete, sync
+              if (dti.getInternalIdentifier().equalsIgnoreCase(id)) // handle add, delete, sync
               {
                 //
                 // make sure no duplicates in dtiList
                 //
-//                boolean found = false;
-//                
-//                for (DataTransferIndex existingDti : dtiList.getItems())
-//                {
-//                  if (existingDti.getHashValue().equals(dti.getHashValue()))
-//                  {
-//                    found = true;
-//                    break;
-//                  }
-//                }
-//                
-//                if (!found)
-//                {
-//                  dtiList.getItems().add(dti);
-//                }
-                
+                // boolean found = false;
+                //
+                // for (DataTransferIndex existingDti : dtiList.getItems())
+                // {
+                // if (existingDti.getHashValue().equals(dti.getHashValue()))
+                // {
+                // found = true;
+                // break;
+                // }
+                // }
+                //
+                // if (!found)
+                // {
+                // dtiList.getItems().add(dti);
+                // }
+
                 dtiList.getItems().add(dti);
                 break;
               }
-              else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN))  // handle change
+              else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN)) // handle change
               {
                 String[] internalIds = dti.getInternalIdentifier().split(Constants.CHANGE_TOKEN);
 
@@ -672,22 +672,22 @@ public class ExchangeDataModel extends DataModel
                   //
                   // make sure no duplicates in dtiList
                   //
-//                  boolean found = false;
-//                  
-//                  for (DataTransferIndex existingDti : dtiList.getItems())
-//                  {
-//                    if (existingDti.getHashValue().equals(dti.getHashValue()))
-//                    {
-//                      found = true;
-//                      break;
-//                    }
-//                  }
-//                  
-//                  if (!found)
-//                  {
-//                    dtiList.getItems().add(dti);
-//                  }
-                  
+                  // boolean found = false;
+                  //
+                  // for (DataTransferIndex existingDti : dtiList.getItems())
+                  // {
+                  // if (existingDti.getHashValue().equals(dti.getHashValue()))
+                  // {
+                  // found = true;
+                  // break;
+                  // }
+                  // }
+                  //
+                  // if (!found)
+                  // {
+                  // dtiList.getItems().add(dti);
+                  // }
+
                   dtiList.getItems().add(dti);
                   break;
                 }
@@ -808,11 +808,11 @@ public class ExchangeDataModel extends DataModel
     }
     else
     {
-      manifest =  provider.GetCachedCrossedManifest(exchange);
-      if(manifest == null)
+      manifest = provider.GetCachedCrossedManifest(exchange);
+      if (manifest == null)
       {
-    	  manifest = provider.getCrossedManifest(exchange);
-    	  //provider.saveCrossedManifest(manifest, exchange);
+        manifest = provider.getCrossedManifest(exchange);
+        // provider.saveCrossedManifest(manifest, exchange);
       }
       session.put(manifestKey, manifest);
     }
@@ -822,215 +822,222 @@ public class ExchangeDataModel extends DataModel
 
   public Tree getCrossedManifestTree(String scope, String xId) throws Exception
   {
-	
-	Exchange exchange = getExchange(scope, xId);
-	Manifest manifest = getCrossedManifest(exchange, scope, xId);
-	
+    Exchange exchange = getExchange(scope, xId);
+    Manifest manifest = getCrossedManifest(exchange, scope, xId);
+
     Tree tree = manifestToTree(manifest);
     return tree;
   }
-  
+
   public void saveCrossedManifest(String scope, String xId) throws Exception
   {
-	  Exchange exchange = getExchange(scope, xId);
-	  Manifest manifest = getCrossedManifest(exchange, scope, xId);
-	  provider.saveCrossedManifest(manifest, exchange);
+    Exchange exchange = getExchange(scope, xId);
+    Manifest manifest = getCrossedManifest(exchange, scope, xId);
+    provider.saveCrossedManifest(manifest, exchange);
   }
-  
-   
+
   public void resetCrossedManifest(String scope, String xId) throws Exception
   {
-	    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
-	    session.remove(manifestKey);
-	    deleteCachedCrossManifest(scope, xId);
+    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
+    session.remove(manifestKey);
+    deleteCachedCrossManifest(scope, xId);
   }
-  
+
   public void reloadCrossedManifest(String scope, String xId) throws Exception
   {
-	    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
-	    session.remove(manifestKey);
+    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
+    session.remove(manifestKey);
   }
-    
+
   public Manifest getCachedCrossedManifest(String scope, String xId) throws Exception
   {
-	  Exchange exchange = getExchange(scope, xId);
-	  Manifest manifest =  provider.GetCachedCrossedManifest(exchange);
-	  return manifest;
+    Exchange exchange = getExchange(scope, xId);
+    Manifest manifest = provider.GetCachedCrossedManifest(exchange);
+    return manifest;
   }
-  
-  public void deleteTemplate(String scope, String xId, String parentClassId,
-		  String parentClassIndex, String parentClassPath, String templateId, String templateIndex) throws Exception
+
+  public void deleteTemplate(String scope, String xId, String parentClassId, String parentClassIndex,
+      String parentClassPath, String templateId, String templateIndex) throws Exception
   {
-	  Exchange exchange = getExchange(scope, xId);
-	  Manifest manifest = getCrossedManifest(exchange, scope, xId);
-	  
-	  Graph graph = manifest.getGraphs().getItems().get(0);
-	  List<ClassTemplates> classTemplateList =  graph.getClassTemplatesList().getItems();
-	  
-	    for(ClassTemplates classTemplate : classTemplateList )
-	    {
-	    	if (classTemplate.getClazz() != null)
-	    	{
-	    		if((classTemplate.getClazz().getPath().equals(parentClassPath)))
-	    		{
-	    			 List<Template> templates =classTemplate.getTemplates().getItems();
-	    	         
-	    			 for (int j = 0; j < templates.size(); j++)
-	    	         {
-	    				Template template = templates.get(j);
-	    				if(template.getId().equals(templateId) && String.valueOf(template.getIndex()).equals(templateIndex) )
-		    		    {
-	    					templates.remove(j--);	    		
-		    		    }
-	    	         }
-	    		}
-	    	}
-	    }
-	  
+    Exchange exchange = getExchange(scope, xId);
+    Manifest manifest = getCrossedManifest(exchange, scope, xId);
+
+    Graph graph = manifest.getGraphs().getItems().get(0);
+    List<ClassTemplates> classTemplateList = graph.getClassTemplatesList().getItems();
+
+    for (ClassTemplates classTemplate : classTemplateList)
+    {
+      if (classTemplate.getClazz() != null)
+      {
+        if ((classTemplate.getClazz().getPath().equals(parentClassPath)))
+        {
+          List<Template> templates = classTemplate.getTemplates().getItems();
+
+          for (int j = 0; j < templates.size(); j++)
+          {
+            Template template = templates.get(j);
+            if (template.getId().equals(templateId) && String.valueOf(template.getIndex()).equals(templateIndex))
+            {
+              templates.remove(j--);
+            }
+          }
+        }
+      }
+    }
+
   }
-  
+
   public void deleteCachedCrossManifest(String scope, String xId) throws Exception
   {
-	  Exchange exchange = getExchange(scope, xId);
-	  provider.deleteCachedCrossedManifest(exchange);
+    Exchange exchange = getExchange(scope, xId);
+    provider.deleteCachedCrossedManifest(exchange);
   }
-  
+
   protected Tree manifestToTree(Manifest manifest) throws Exception
   {
-	Graph graph = manifest.getGraphs().getItems().get(0);
-	List<Template> templateList =  graph.getClassTemplatesList().getItems().get(0).getTemplates().getItems();
-	  
-	Tree tree = new Tree();
-	
-	List<Node> nodes =  tree.getNodes()	;
-	
-	TreeNode rootClassNode = new TreeNode();
-	
-	nodes.add(rootClassNode);
-	  
-	rootClassNode.setText(graph.getName());
-	rootClassNode.setIconCls("commodity");
-	  
-    List<Node> templateNodes = rootClassNode.getChildren();
-
-    for (Template template : templateList)
+    Tree tree = new Tree();  
+    
+    try
     {
-      TreeNode templateNode = new TreeNode();
-      templateNode.setText(template.getName());
-      templateNode.setIconCls("template");
-      templateNode.setType("TemplateNode");
-      templateNodes.add(templateNode);
-      
-      HashMap<String, String> templateProperties = templateNode.getProperties();
-      templateProperties.put("Id", template.getId());
-      templateProperties.put("Name", template.getName());
-      templateProperties.put("TemplateIndex", String.valueOf(template.getIndex()));
-
-      
-      List<Node> roleNodes = templateNode.getChildren();
-      
-      for (Role role : template.getRoles().getItems())
+      Graph graph = manifest.getGraphs().getItems().get(0);
+      List<Template> templateList = graph.getClassTemplatesList().getItems().get(0).getTemplates().getItems();
+  
+      List<Node> nodes = tree.getNodes();  
+      TreeNode rootClassNode = new TreeNode();
+  
+      nodes.add(rootClassNode);
+  
+      rootClassNode.setText(graph.getName());
+      rootClassNode.setIconCls("commodity");
+  
+      List<Node> templateNodes = rootClassNode.getChildren();
+  
+      for (Template template : templateList)
       {
-    	  TreeNode roleNode = new TreeNode();
-    	  roleNode.setText(role.getName());
-    	  roleNode.setIconCls("role");
-    	  roleNode.setType("RoleNode");
-    	  roleNodes.add(roleNode); 
-    	  
+        TreeNode templateNode = new TreeNode();
+        templateNode.setText(template.getName());
+        templateNode.setIconCls("template");
+        templateNode.setType("TemplateNode");
+        templateNodes.add(templateNode);
+  
+        HashMap<String, String> templateProperties = templateNode.getProperties();
+        templateProperties.put("Id", template.getId());
+        templateProperties.put("Name", template.getName());
+        templateProperties.put("TemplateIndex", String.valueOf(template.getIndex()));
+  
+        List<Node> roleNodes = templateNode.getChildren();
+  
+        for (Role role : template.getRoles().getItems())
+        {
+          TreeNode roleNode = new TreeNode();
+          roleNode.setText(role.getName());
+          roleNode.setIconCls("role");
+          roleNode.setType("RoleNode");
+          roleNodes.add(roleNode);
+  
           HashMap<String, String> roleProperties = roleNode.getProperties();
           roleProperties.put("Id", role.getId());
-    	  
-    	  if(role.getClazz() != null)
-    	  {
-    		  List<Node> classNodes = roleNode.getChildren();
-    		  
-    		  TreeNode classNode = new TreeNode();
-    		  classNode.setText(role.getClazz().getName());
-    		  classNode.setIconCls("class");
-    		  classNode.setType("ClassNode");
-    		  classNodes.add(classNode);
-    		  
-    	      HashMap<String, String> classProperties = classNode.getProperties();
-    	      classProperties.put("Id", role.getClazz().getId());
-    	      classProperties.put("Name", role.getClazz().getName());
-    	      classProperties.put("Path", role.getClazz().getPath());
-    	      classProperties.put("ClassIndex", String.valueOf(role.getClazz().getIndex()));
-    		  
-    		  TemplateToTreeNode(role.getClazz(),classNode,graph);
-    	  }
-    	 
+  
+          if (role.getClazz() != null)
+          {
+            List<Node> classNodes = roleNode.getChildren();
+  
+            TreeNode classNode = new TreeNode();
+            classNode.setText(role.getClazz().getName());
+            classNode.setIconCls("class");
+            classNode.setType("ClassNode");
+            classNodes.add(classNode);
+  
+            HashMap<String, String> classProperties = classNode.getProperties();
+            classProperties.put("Id", role.getClazz().getId());
+            classProperties.put("Name", role.getClazz().getName());
+            classProperties.put("Path", role.getClazz().getPath());
+            classProperties.put("ClassIndex", String.valueOf(role.getClazz().getIndex()));
+  
+            TemplateToTreeNode(role.getClazz(), classNode, graph);
+          }  
+        }  
       }
-      
     }
-   
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+
     return tree;
   }
-  
-  private void TemplateToTreeNode(Class parentClass,TreeNode parentClassNode,Graph graph) throws Exception
+
+  private void TemplateToTreeNode(Class parentClass, TreeNode parentClassNode, Graph graph) throws Exception
   {
-	    List<ClassTemplates> classTemplateList =  graph.getClassTemplatesList().getItems();
-	    for(ClassTemplates classTemplate : classTemplateList )
-	    {
-	    	if (classTemplate.getClazz() != null && parentClass != null)
-	    	{
-	    		if(parentClass.getPath().equals(classTemplate.getClazz().getPath()))
-	    		{
-	    			List<Node> templateNodes = parentClassNode.getChildren();
-	    		    
-	    		    for (Template template : classTemplate.getTemplates().getItems())
-	    		    {
-	    		      TreeNode templateNode = new TreeNode();
-	    		      templateNode.setText(template.getName());
-	    		      templateNode.setIconCls("template");
-	    		      templateNode.setType("TemplateNode");
-	    		      templateNodes.add(templateNode);
-	    		      
-	    		      HashMap<String, String> templateProperties = templateNode.getProperties();
-	    		      templateProperties.put("Id", template.getId());
-	    		      templateProperties.put("Name", template.getName());
-	    		      templateProperties.put("TemplateIndex", String.valueOf(template.getIndex()));
-	    		      
-	    		      List<Node> roleNodes = templateNode.getChildren();
-	    		      
-	    		      for (Role role : template.getRoles().getItems())
-	    		      {
-	    		    	  TreeNode roleNode = new TreeNode();
-	    		    	  roleNode.setText(role.getName());
-	    		    	  roleNode.setIconCls("role");
-	    		    	  roleNode.setType("RoleNode");
-	    		    	  roleNodes.add(roleNode); 
-	    		    	  
-	    		          HashMap<String, String> roleProperties = roleNode.getProperties();
-	    		          roleProperties.put("Id", role.getId());
-	    		    	  
-	    		    	  if(role.getClazz() != null)
-	    		    	  {
-	    		    		  List<Node> classNodes = roleNode.getChildren();
-	    		    		  
-	    		    		  TreeNode classNode = new TreeNode();
-	    		    		  classNode.setText(role.getClazz().getName());
-	    		    		  classNode.setIconCls("class");
-	    		    		  classNode.setType("ClassNode");
-	    		    		  classNodes.add(classNode); 
-	    		    		  
-	    		    	      HashMap<String, String> classProperties = classNode.getProperties();
-	    		    	      classProperties.put("Id", role.getClazz().getId());
-	    		    	      classProperties.put("Name", role.getClazz().getName());
-	    		    	      classProperties.put("Path", role.getClazz().getPath());
-	    		    	      classProperties.put("ClassIndex", String.valueOf(role.getClazz().getIndex()));
-	    		    		  
-	    		    		  TemplateToTreeNode(role.getClazz(),classNode,graph);	    		    		  
-	    		    	  }
-	    		      }
-	    		      
-	    		    }
-	    			
-	    			
-	    		}
-	    	}
-	    }
-  }
+    try
+    {
+      List<ClassTemplates> classTemplateList = graph.getClassTemplatesList().getItems();
+      for (ClassTemplates classTemplate : classTemplateList)
+      {
+        if (classTemplate.getClazz() != null && parentClass != null)
+        {
+          if (parentClass.getPath().equals(classTemplate.getClazz().getPath()))
+          {
+            List<Node> templateNodes = parentClassNode.getChildren();
   
+            for (Template template : classTemplate.getTemplates().getItems())
+            {
+              TreeNode templateNode = new TreeNode();
+              templateNode.setText(template.getName());
+              templateNode.setIconCls("template");
+              templateNode.setType("TemplateNode");
+              templateNodes.add(templateNode);
+  
+              HashMap<String, String> templateProperties = templateNode.getProperties();
+              templateProperties.put("Id", template.getId());
+              templateProperties.put("Name", template.getName());
+              templateProperties.put("TemplateIndex", String.valueOf(template.getIndex()));
+  
+              List<Node> roleNodes = templateNode.getChildren();
+  
+              for (Role role : template.getRoles().getItems())
+              {
+                TreeNode roleNode = new TreeNode();
+                roleNode.setText(role.getName());
+                roleNode.setIconCls("role");
+                roleNode.setType("RoleNode");
+                roleNodes.add(roleNode);
+  
+                HashMap<String, String> roleProperties = roleNode.getProperties();
+                roleProperties.put("Id", role.getId());
+  
+                if (role.getClazz() != null)
+                {
+                  List<Node> classNodes = roleNode.getChildren();
+  
+                  TreeNode classNode = new TreeNode();
+                  classNode.setText(role.getClazz().getName());
+                  classNode.setIconCls("class");
+                  classNode.setType("ClassNode");
+                  classNodes.add(classNode);
+  
+                  HashMap<String, String> classProperties = classNode.getProperties();
+                  classProperties.put("Id", role.getClazz().getId());
+                  classProperties.put("Name", role.getClazz().getName());
+                  classProperties.put("Path", role.getClazz().getPath());
+                  classProperties.put("ClassIndex", String.valueOf(role.getClazz().getIndex()));
+  
+                  TemplateToTreeNode(role.getClazz(), classNode, graph);
+                }
+              }
+  
+            }
+  
+          }
+        }
+      }
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+  }
+
   protected String format(GregorianCalendar gcal)
   {
     return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);
@@ -1236,14 +1243,14 @@ public class ExchangeDataModel extends DataModel
 
   public ExchangeResponse newScope(Scope scope, String serviceUri)
   {
-	  ExchangeResponse exres =  dprovider.postNewScope(scope);
-	  return exres;
+    ExchangeResponse exres = dprovider.postNewScope(scope);
+    return exres;
   }
 
   public ExchangeResponse editScope(String scope, String oldScope, String serviceUri)
   {
-	  ExchangeResponse exres = dprovider.postEditedScope(scope, oldScope);
-	  return exres;
+    ExchangeResponse exres = dprovider.postEditedScope(scope, oldScope);
+    return exres;
   }
 
   public Scope getScopeInfo(String scope, String serviceUri)
@@ -1258,14 +1265,14 @@ public class ExchangeDataModel extends DataModel
 
   public ExchangeResponse newApplication(Application app, String scope, String serviceUri)
   {
-	  ExchangeResponse exres =dprovider.postApplication(app, scope);
-	  return exres;
+    ExchangeResponse exres = dprovider.postApplication(app, scope);
+    return exres;
   }
 
   public ExchangeResponse editApplication(Application app, String oldAppName, String scope)
   {
-	  ExchangeResponse exres =dprovider.editApplication(app, oldAppName, scope);
-	  return exres;
+    ExchangeResponse exres = dprovider.editApplication(app, oldAppName, scope);
+    return exres;
   }
 
   public void deleteApplication(String app, String scope, String serviceUri)
@@ -1281,15 +1288,15 @@ public class ExchangeDataModel extends DataModel
 
   public ExchangeResponse newGraph(org.iringtools.directory.Graph graph, String scope, String appname, String serviceUri)
   {
-	  ExchangeResponse exres = dprovider.postGraph(graph, scope, appname);
-	  return exres;
+    ExchangeResponse exres = dprovider.postGraph(graph, scope, appname);
+    return exres;
   }
 
-  public ExchangeResponse editGraph(org.iringtools.directory.Graph graph, String scope, String appname, String oldGraphName,
-      String serviceUri)
+  public ExchangeResponse editGraph(org.iringtools.directory.Graph graph, String scope, String appname,
+      String oldGraphName, String serviceUri)
   {
-	  ExchangeResponse exres = dprovider.editGraph(graph, scope, appname, oldGraphName);
-	  return exres;
+    ExchangeResponse exres = dprovider.editGraph(graph, scope, appname, oldGraphName);
+    return exres;
   }
 
   public void deleteGraph(String graph, String scope, String appname, String serviceUri)
@@ -1305,14 +1312,14 @@ public class ExchangeDataModel extends DataModel
 
   public ExchangeResponse newCommodity(Commodity com, String scope, String serviceUri)
   {
-	  ExchangeResponse exRes = dprovider.postCommodity(com, scope);
-	  return exRes;
+    ExchangeResponse exRes = dprovider.postCommodity(com, scope);
+    return exRes;
   }
 
   public ExchangeResponse editCommodity(Commodity com, String scope, String oldCommName, String serviceUri)
   {
-	  ExchangeResponse exRes =dprovider.editCommodity(com, scope, oldCommName);
-	  return exRes;
+    ExchangeResponse exRes = dprovider.editCommodity(com, scope, oldCommName);
+    return exRes;
   }
 
   public void deleteCommodity(String com, String scope, String serviceUri)
@@ -1333,7 +1340,7 @@ public class ExchangeDataModel extends DataModel
     huc.connect();
     int code = huc.getResponseCode();
     System.out.println(code);
-    
+
     if (code == 200)
     {
       return ("Connected successfully!");
@@ -1352,7 +1359,7 @@ public class ExchangeDataModel extends DataModel
     huc.connect();
     int code = huc.getResponseCode();
     System.out.println(code);
-    
+
     if (code == 200)
     {
       return ("Connected successfully!");
