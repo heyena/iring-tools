@@ -137,13 +137,16 @@
                     "var me = this;\r",
                     "var win = me.up('window');\r",
                     "var form = me.getForm();\r",
-                    "var folderName = form.findField('scope').getValue();\r",
+                    "var folderName = form.findField('displayName').getValue();\r",
                     "var state = form.findField('state').getValue();\r",
                     "var contextNameField = form.findField('contextName');\r",
-                    "\r",
+                    "//form.findField('contextName').setValue(folderName);\r",
                     "var context = form.findField('contextCombo').getValue();\r",
-                    "\r",
                     "//contextNameField.setValue(context);\r",
+                    "\r",
+                    "//if(state == 'new')\r",
+                    "  //form.findField('name').setValue(folderName);\r",
+                    "\r",
                     "node.eachChild(function(n) {\r",
                     "  if(n.data.text == folderName) {\r",
                     "    if(state == 'new') {\r",
@@ -158,6 +161,7 @@
                     "    waitMsg: 'Saving Data...',\r",
                     "    success: function (response, request) {\r",
                     "      win.fireEvent('save', me);\r",
+                    "      Ext.ComponentQuery.query('directorytree')[0].onReload();\r",
                     "    },\r",
                     "    failure: function (response, request) {\r",
                     "      if (response.items!=undefined && response.items[3].value !== undefined) {\r",
@@ -239,6 +243,20 @@
             "designerId": "45623dc5-9751-4f7f-befb-fb6594f5726a"
         },
         {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "name"
+            },
+            "designerId": "642047a7-2b7e-4662-b3ef-788bc51d2556"
+        },
+        {
             "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
@@ -248,7 +266,7 @@
             "userConfig": {
                 "layout|anchor": null,
                 "fieldLabel": "Name",
-                "name": "scope",
+                "name": "displayName",
                 "value": null,
                 "allowBlank": false
             },

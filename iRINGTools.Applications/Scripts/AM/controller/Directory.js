@@ -163,7 +163,7 @@ Ext.define('AM.controller.Directory', {
   newOrEditScope: function(item, e, eOpts) {
 
     var me = this;
-    var path, state, context, description, wintitle;
+    var path, state, context, description, wintitle, displayName;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
 
@@ -177,12 +177,14 @@ Ext.define('AM.controller.Directory', {
 
     if(item.itemId == 'editfolder' && node.data.record !== undefined) {
       name = node.data.record.Name;
+      displayName = node.data.record.DisplayName;
       description = node.data.record.Description;
       wintitle = 'Edit Scope \"' + node.data.text + '\"';
       state = 'edit';
 
     } else {
       name = '';
+      //displayName = '';
       state = 'new';
       wintitle = 'Add Scope';
 
@@ -198,10 +200,7 @@ Ext.define('AM.controller.Directory', {
 
     win.on('save', function () {
       win.destroy();
-      me.onAppDataRefreshClick(item, e, eOpts);
-      //if (!node.isExpanded())
-      // node.expand();
-      //tree.expandPath(node.getPath(), 'text');
+      //me.onAppDataRefreshClick(item, e, eOpts);
 
     }, me);
 
@@ -231,7 +230,8 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('state').setValue(state);
     form.getForm().findField('oldContext').setValue(context);
     form.getForm().findField('description').setValue(description);
-    form.getForm().findField('scope').setValue(name);
+    form.getForm().findField('name').setValue(name);
+    form.getForm().findField('displayName').setValue(displayName);
     form.getForm().findField('contextName').setValue(name);
 
     win.show();
@@ -268,13 +268,16 @@ Ext.define('AM.controller.Directory', {
 
   newOrEditEndpoint: function(item, e, eOpts) {
     var me = this;
-    var name, description, datalayer, assembly,application, baseurl, showconfig,endpoint,wintitle, state, path, context;
+    var name,displayName, description, datalayer, assembly,application, baseurl, showconfig,endpoint,wintitle, state, path, context;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
 
     context = node.parentNode.data.text;//node.data.record.ContextName;
     if(item.itemId == 'editendpoint') {
+      //name = node.data.record.Name;
       name = node.data.record.Name;
+      displayName = node.data.record.DisplayName;
+
       description = node.data.record.Description;
       datalayer = node.data.record.DataLayer;
       assembly = node.data.record.Assembly;
@@ -307,10 +310,8 @@ Ext.define('AM.controller.Directory', {
 
     win.on('save', function () { 
       win.close();
-      me.onAppDataRefreshClick(item, e, eOpts);
-      //if (node.isExpanded())
-      //node.collapsed();
-      tree.expandPath(node.getPath(), 'text');
+      //me.onAppDataRefreshClick(item, e, eOpts);
+      //tree.expandPath(node.getPath(), 'text');
     }, me);
 
     win.on('Cancel', function () {
@@ -335,10 +336,13 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('state').setValue(state);
     form.getForm().findField('scope').setValue(context);
     form.getForm().findField('oldAssembly').setValue(assembly);
-    form.getForm().findField('name').setValue(endpoint);
-    //form.getForm().findField('folderName').setValue(endpoint);
+    //form.getForm().findField('name').setValue(endpoint);
+    form.getForm().findField('name').setValue(name);
+    form.getForm().findField('displayName').setValue(displayName);
+
     form.getForm().findField('description').setValue(description);
-    form.getForm().findField('context').setValue(context);
+    //form.getForm().findField('context').setValue(context);
+    form.getForm().findField('context').setValue(name);
     form.getForm().findField('assembly').setValue(assembly);
     form.getForm().findField('application').setValue(application);
 

@@ -84,6 +84,10 @@ Ext.define('AM.view.directory.ApplicationForm', {
         },
         {
           xtype: 'hiddenfield',
+          name: 'name'
+        },
+        {
+          xtype: 'hiddenfield',
           itemId: 'state',
           name: 'state'
         },
@@ -94,7 +98,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
         {
           xtype: 'textfield',
           fieldLabel: 'Name',
-          name: 'name',
+          name: 'displayName',
           allowBlank: false
         },
         {
@@ -168,17 +172,21 @@ Ext.define('AM.view.directory.ApplicationForm', {
   onSave: function() {
     var me = this;
     var win = me.up('window');
-    var endpointName = me.getForm().findField('name').getValue();
+    var endpointName = me.getForm().findField('displayName').getValue();
 
     var dlCombo = me.down('combo');
-
     var state = me.getForm().findField('state').getValue();
+
+    if(state!='edit')
+    me.getForm().findField('name').setValue(endpointName);
+
     if(me.getForm().isValid()){
       me.getForm().submit({
         waitMsg: 'Saving Data...',
         success: function (response, request) {
 
           win.fireEvent('save', me);
+          Ext.ComponentQuery.query('directorytree')[0].onReload();
         },
         failure: function (response, request) {
           var message = 'Error saving changes!';
