@@ -306,7 +306,10 @@ namespace org.iringtools.adapter
 
               foreach (var pair in dataObj.Dictionary)
               {
-                newRow[pair.Key] = pair.Value;
+                if (pair.Value == null)
+                  newRow[pair.Key] = DBNull.Value;
+                else
+                  newRow[pair.Key] = pair.Value;
               }
 
               if (dataObj.HasContent)
