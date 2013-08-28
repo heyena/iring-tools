@@ -48,6 +48,7 @@ import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
+import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.TreeNode;
 
 public class ExchangeDataModel extends DataModel
@@ -869,7 +870,10 @@ public class ExchangeDataModel extends DataModel
     {
       if (classTemplate.getClazz() != null)
       {
-        if ((classTemplate.getClazz().getPath().equals(parentClassPath)))
+        //if ((classTemplate.getClazz().getPath().equals(parentClassPath)))
+    	if (classTemplate.getClazz().getId().equals(parentClassId)
+   				 && (classTemplate.getClazz().getPath() == null ? parentClassPath == null : classTemplate.getClazz().getPath().equals(parentClassPath)))
+   	
         {
           List<Template> templates = classTemplate.getTemplates().getItems();
 
@@ -900,8 +904,9 @@ public class ExchangeDataModel extends DataModel
     try
     {
       Graph graph = manifest.getGraphs().getItems().get(0);
-      List<Template> templateList = graph.getClassTemplatesList().getItems().get(0).getTemplates().getItems();
-  
+      //List<Template> templateList = graph.getClassTemplatesList().getItems().get(0).getTemplates().getItems();
+      Class rootClass = graph.getClassTemplatesList().getItems().get(0).getClazz();
+      
       List<Node> nodes = tree.getNodes();  
       TreeNode rootClassNode = new TreeNode();
   
@@ -909,7 +914,14 @@ public class ExchangeDataModel extends DataModel
   
       rootClassNode.setText(graph.getName());
       rootClassNode.setIconCls("commodity");
+      HashMap<String, String> graphProperties = rootClassNode.getProperties();
+  	  graphProperties.put("Id", rootClass.getId());
+  	  graphProperties.put("Name", rootClass.getName());
+  	  graphProperties.put("Path", rootClass.getPath());
+  	  graphProperties.put("ClassIndex", String.valueOf(rootClass.getIndex()));
   
+  	  TemplateToTreeNode(rootClass, rootClassNode, graph);
+  	  /*
       List<Node> templateNodes = rootClassNode.getChildren();
   
       for (Template template : templateList)
@@ -958,6 +970,7 @@ public class ExchangeDataModel extends DataModel
           }  
         }  
       }
+      */
     }
     catch (Exception e)
     {
@@ -976,7 +989,9 @@ public class ExchangeDataModel extends DataModel
       {
         if (classTemplate.getClazz() != null && parentClass != null)
         {
-          if (parentClass.getPath().equals(classTemplate.getClazz().getPath()))
+         // if (parentClass.getPath().equals(classTemplate.getClazz().getPath()))
+        if (parentClass.getId().equals(classTemplate.getClazz().getId())
+   				 && (parentClass.getPath() == null ? classTemplate.getClazz().getPath() == null : parentClass.getPath().equals(classTemplate.getClazz().getPath())))
           {
             List<Node> templateNodes = parentClassNode.getChildren();
   
@@ -997,19 +1012,20 @@ public class ExchangeDataModel extends DataModel
   
               for (Role role : template.getRoles().getItems())
               {
-                TreeNode roleNode = new TreeNode();
-                roleNode.setText(role.getName());
-                roleNode.setIconCls("role");
-                roleNode.setType("RoleNode");
-                roleNodes.add(roleNode);
-  
-                HashMap<String, String> roleProperties = roleNode.getProperties();
-                roleProperties.put("Id", role.getId());
-  
-                if (role.getClazz() != null)
+            	if (role.getClazz() != null)
                 {
-                  List<Node> classNodes = roleNode.getChildren();
-  
+            	  //add tree node
+	              TreeNode roleNode = new TreeNode();
+	              roleNode.setText(role.getName());
+	              roleNode.setIconCls("role");
+	              roleNode.setType("RoleNode");
+	              roleNodes.add(roleNode);
+	  
+	              HashMap<String, String> roleProperties = roleNode.getProperties();
+	              roleProperties.put("Id", role.getId());
+                  
+	              //add class node
+	              List<Node> classNodes = roleNode.getChildren();
                   TreeNode classNode = new TreeNode();
                   classNode.setText(role.getClazz().getName());
                   classNode.setIconCls("class");
@@ -1024,6 +1040,18 @@ public class ExchangeDataModel extends DataModel
   
                   TemplateToTreeNode(role.getClazz(), classNode, graph);
                 }
+            	else
+            	{
+            	   //add leafnode
+  	              LeafNode roleNode = new LeafNode();
+  	              roleNode.setText(role.getName());
+  	              roleNode.setIconCls("role");
+  	              roleNode.setType("RoleNode");
+  	              roleNodes.add(roleNode);
+  	  
+  	              HashMap<String, String> roleProperties = roleNode.getProperties();
+  	              roleProperties.put("Id", role.getId());
+            	}
               }
   
             }

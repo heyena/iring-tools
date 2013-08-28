@@ -2068,14 +2068,14 @@ function buildCommoditySubMenu() {
 					editDataFilter();
 				},
 				text : 'Apply Data Filters'
-			}/*,
+			},
 			{
 				xtype : 'menuitem',
 				handler : function() {
 					ConfigureManifest();
 				},
 				text : 'Configure Manifest'
-			}*/];
+			}];
 }
 
 
@@ -4360,7 +4360,9 @@ function refreshManifestTree(scope, xid) {
 
 
 
-Ext.onReady(function() {
+Ext.onReady(function () {
+
+            Ext.Ajax.timeout = 180000;
 			Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
 			applicationMenu = new Ext.menu.Menu();
