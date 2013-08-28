@@ -23,6 +23,7 @@ namespace org.iringtools.adapter
   public abstract class BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseProvider));
+    public const string CACHE_CONNSTR = "iRINGCacheConnStr";
 
     protected IKernel _kernel = null;
     protected AdapterSettings _settings = null;
@@ -207,24 +208,28 @@ namespace org.iringtools.adapter
 
     private void ProcessSettings(string projectName, string applicationName)
     {
-      // Load app settings
-      string scopeSettingsPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
+      // Load scope settings
+      string scopeSettingsPath = String.Format("{0}{1}.config", _settings["AppDataPath"], projectName);
 
       if (File.Exists(scopeSettingsPath))
       {
         AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
+
+        if (scopeSettings.Contains(CACHE_CONNSTR))
+          _settings[CACHE_CONNSTR] = scopeSettings[CACHE_CONNSTR].ToString();
+
         _settings.AppendSettings(scopeSettings);
       }
 
-      if (projectName.ToLower() != "all")
+      // Load app settings
+      string appSettingsPath = (projectName.ToLower() != "all")
+        ? string.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName)
+        : string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
+      
+      if (File.Exists(appSettingsPath))
       {
-        string appSettingsPath = String.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName);
-
-        if (File.Exists(appSettingsPath))
-        {
-          AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
-          _settings.AppendSettings(appSettings);
-        }
+        AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
+        _settings.AppendSettings(appSettings);
       }
 
       // Determine whether scope is real or implied (ALL).

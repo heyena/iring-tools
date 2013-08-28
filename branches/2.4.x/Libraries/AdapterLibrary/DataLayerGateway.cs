@@ -41,7 +41,7 @@ namespace org.iringtools.adapter
       _app = _settings["ApplicationName"].ToLower();
       _dataPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"]);
 
-      _connStr = _settings["iRINGCacheConnStr"];
+      _connStr = _settings[BaseProvider.CACHE_CONNSTR];
       if (_connStr != null && IsBase64Encoded(_connStr))
       {
         _connStr = EncryptionUtility.Decrypt(_connStr);
