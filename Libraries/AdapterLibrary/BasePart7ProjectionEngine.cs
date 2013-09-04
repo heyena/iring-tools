@@ -102,6 +102,7 @@ namespace org.iringtools.adapter.projection
     public int Start { get; set; }
     public int Limit { get; set; }
     public string BaseURI { get; set; }
+    public DataLayerGateway dataLayerGateway { get; set; }
 
     public BasePart7ProjectionEngine(AdapterSettings settings, DataDictionary dictionary, Mapping mapping)
     {
@@ -156,45 +157,45 @@ namespace org.iringtools.adapter.projection
     //propertyPath = "Instrument.LineItems.Tag";
     protected List<IDataObject> GetRelatedObjects(string propertyPath, IDataObject dataObject)
     {
-      List<IDataObject> parentObjects = new List<IDataObject>();
+      List<IDataObject> dataObjects = new List<IDataObject>();
       string[] objectPath = propertyPath.Split('.');
 
-      parentObjects.Add(dataObject);
+      dataObjects.Add(dataObject);
 
-      for (int i = 0; i < objectPath.Length - 1; i++)
+      for (int i = 0; i < objectPath.Length - 2; i++)
       {
-        foreach (IDataObject parentObj in parentObjects)
+        foreach (IDataObject parentObject in dataObjects)
         {
-          string objectType = parentObj.GetType().Name;
+          string objectType = parentObject.GetType().Name;
 
           if (objectType == typeof(GenericDataObject).Name)
           {
-            objectType = ((GenericDataObject)parentObj).ObjectType;
+            objectType = ((GenericDataObject)parentObject).ObjectType;
           }
 
-          if (objectType.ToLower() != objectPath[i].ToLower())
+          DataObject parentObjectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+          DataRelationship dataRelationship = parentObjectType.dataRelationships.First(c => c.relationshipName.ToLower() == objectPath[i + 1].ToLower());
+          DataObject relatedObjectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == dataRelationship.relatedObjectName.ToLower());
+
+          DataFilter filter = new DataFilter();
+
+          foreach (PropertyMap propMap in dataRelationship.propertyMaps)
           {
-            List<IDataObject> relatedObjects = new List<IDataObject>();
-
-            //
-            //TODO: process related objects
-            //
-            //List<IDataObject> relatedObjects = _dataLayerGateway.Get(parentObj, objectPath[i]);
-
-            //foreach (IDataObject relatedObj in relatedObjects)
-            //{
-            //  if (!relatedObjects.Contains(relatedObj))
-            //  {
-            //    relatedObjects.Add(relatedObj);
-            //  }
-            //}
-
-            parentObjects = relatedObjects;
+            filter.Expressions.Add(new Expression()
+            {
+              PropertyName = propMap.relatedPropertyName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              LogicalOperator = LogicalOperator.And,
+              Values = new Values() { Convert.ToString(parentObject.GetPropertyValue(propMap.dataPropertyName)) }
+            });
           }
+
+          List<IDataObject> relatedObjects = dataLayerGateway.Get(relatedObjectType, filter, 0, 0);
+          dataObjects = relatedObjects;
         }
       }
 
-      return parentObjects;
+      return dataObjects;
     }
 
     // senario (assume no circular relationships - should be handled by AppEditor): 

@@ -30,8 +30,9 @@ namespace org.iringtools.adapter
       DataDictionary dictionary, GraphMap graphMap, DataFilter filter, int pageSize, int startIndex)
     {
       _doneEvent = doneEvent;
-      _projectionLayer = projectionLayer;
       _dataLayerGateway = dataLayerGateway;
+      _projectionLayer = projectionLayer;
+      _projectionLayer.dataLayerGateway = dataLayerGateway;
       _dictionary = dictionary;
       _graphMap = graphMap;
       _filter = Utility.CloneDataContractObject<DataFilter>(filter);
