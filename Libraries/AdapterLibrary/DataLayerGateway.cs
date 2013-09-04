@@ -693,10 +693,12 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          string tableName = GetCacheTableName(cacheId, objectType.objectName);
+          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
 
           if (filter == null) filter = new DataFilter();
-          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
+          filter.AppendFilter(cachedObjectType.dataFilter);
+
+          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
 
           int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
 
@@ -705,7 +707,7 @@ namespace org.iringtools.adapter
             whereClause = whereClause.Remove(orderByIndex);
           }
 
-          string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, tableName, whereClause);
+          string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, cachedObjectType.tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
 
@@ -757,12 +759,12 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          string tableName = GetCacheTableName(cacheId, objectType.objectName);
+          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
 
           if (filter == null) filter = new DataFilter();
-          filter.AppendFilter(objectType.dataFilter);
+          filter.AppendFilter(cachedObjectType.dataFilter);
 
-          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
+          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
 
           int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
           string orderByClause = "ORDER BY current_timestamp";
@@ -776,10 +778,10 @@ namespace org.iringtools.adapter
           string query = string.Format(@"
               SELECT * FROM (SELECT row_number() OVER ({4}) as __rn, * 
               FROM {0} {1}) as __t WHERE __rn between {2} and {3}",
-              tableName, whereClause, start + 1, start + limit, orderByClause);
+              cachedObjectType.tableName, whereClause, start + 1, start + limit, orderByClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
+          dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);
         }
         else if (_dataLayer != null)
         {
@@ -880,17 +882,17 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          string tableName = GetCacheTableName(cacheId, objectType.objectName);
+          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
 
           if (filter == null) filter = new DataFilter();
-          filter.AppendFilter(objectType.dataFilter);
+          filter.AppendFilter(cachedObjectType.dataFilter);
 
-          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
+          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
 
-          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, tableName, whereClause);
+          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cachedObjectType.tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          identifiers = BaseLightweightDataLayer.FormIdentifiers(objectType, dt);
+          identifiers = BaseLightweightDataLayer.FormIdentifiers(cachedObjectType, dt);
         }
         else if (_dataLayer != null)
         {
@@ -1231,6 +1233,24 @@ namespace org.iringtools.adapter
     {
       string safeObjectName = Regex.Replace(objectName, "[^0-9a-zA-Z]+", "");
       return cacheId + "_" + safeObjectName.ToLower();
+    }
+
+    protected DataObject GetCachedObjectType(string cacheId, DataObject objectType)
+    {
+      DataObject cachedObjectType = Utility.CloneDataContractObject<DataObject>(objectType);
+
+      if (cachedObjectType != null)
+      {
+        string tableName = GetCacheTableName(cacheId, objectType.objectName);
+        cachedObjectType.tableName = tableName;
+
+        foreach (DataProperty prop in cachedObjectType.dataProperties)
+        {
+          prop.columnName = prop.propertyName;
+        }
+      }
+
+      return cachedObjectType;
     }
 
     protected string CheckCache()
