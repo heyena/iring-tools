@@ -776,9 +776,14 @@ namespace org.iringtools.adapter
           }
 
           string query = string.Format(@"
-              SELECT * FROM (SELECT row_number() OVER ({4}) as __rn, * 
-              FROM {0} {1}) as __t WHERE __rn between {2} and {3}",
-              cachedObjectType.tableName, whereClause, start + 1, start + limit, orderByClause);
+              SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * 
+              FROM {0} {1}) as __t",
+              cachedObjectType.tableName, whereClause, orderByClause);
+
+          if (!(start == 0 && limit == 0))
+          {
+            query += string.Format(" WHERE __rn between {0} and {1}", start + 1, start + limit);
+          }
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
           dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);

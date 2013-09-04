@@ -26,8 +26,9 @@ namespace org.iringtools.adapter
       GraphMap graphMap, DataObject dataObject, List<string> identifiers)
     {
       _doneEvent = doneEvent;
-      _projectionLayer = projectionLayer;
       _dataLayerGateway = dataLayerGateway;
+      _projectionLayer = projectionLayer;
+      _projectionLayer.dataLayerGateway = dataLayerGateway;
       _graphMap = graphMap;
       _dataObject = dataObject;
       _identifiers = identifiers;

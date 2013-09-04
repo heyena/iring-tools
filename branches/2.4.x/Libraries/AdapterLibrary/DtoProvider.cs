@@ -848,6 +848,7 @@ namespace org.iringtools.adapter
         }
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
         DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         if (filter != null)
@@ -934,16 +935,17 @@ namespace org.iringtools.adapter
 
           if (identifiers.Count > 0)
           {
-            //if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
-            //{
-            //  dataTransferObjects = MultiGetDataTransferObjects(dataObject, identifiers);
-            //}
-            //else
-            //{
-            List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
-            DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-            dataTransferObjects = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
-            //}
+            if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
+            {
+              dataTransferObjects = MultiGetDataTransferObjects(dataObject, identifiers);
+            }
+            else
+            {
+              List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
+              DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+              dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+              dataTransferObjects = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
+            }
           }
         }
         catch (Exception ex)
@@ -1713,6 +1715,7 @@ namespace org.iringtools.adapter
         int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
         List<string> pageIdentifiers = identifiers.GetRange(offset, pageSize);
         DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        projectionLayer.dataLayerGateway = _dataLayerGateway;
         ManualResetEvent doneEvent = new ManualResetEvent(false);
         OutboundDtoTask dtoTask = new OutboundDtoTask(doneEvent, projectionLayer, _dataLayerGateway, _graphMap, dataObject, pageIdentifiers);
         ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);

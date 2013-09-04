@@ -3579,6 +3579,9 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>("dto");
           _isProjectionPart7 = true;
         }
+
+        if (typeof(BasePart7ProjectionEngine).IsAssignableFrom(_projectionEngine.GetType()))
+          ((BasePart7ProjectionEngine)_projectionEngine).dataLayerGateway = _dataLayerGateway;
       }
       catch (Exception ex)
       {

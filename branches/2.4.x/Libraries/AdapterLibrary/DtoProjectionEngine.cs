@@ -742,9 +742,9 @@ namespace org.iringtools.adapter.projection
               value = propertyValue
             };
 
-            if (!String.IsNullOrEmpty(propertyRole.valueListName))
+            if (!string.IsNullOrEmpty(propertyRole.valueListName))
             {
-              if (String.IsNullOrEmpty(propertyValue))
+              if (string.IsNullOrEmpty(propertyValue))
               {
                 isTemplateValid = false;
                 break;
@@ -795,9 +795,9 @@ namespace org.iringtools.adapter.projection
                 string keyValue = propertyValue;
                 propertyValue = ParsePropertyValue(propertyRole, propertyValue);
 
-                if (!String.IsNullOrEmpty(propertyRole.valueListName))
+                if (!string.IsNullOrEmpty(propertyRole.valueListName))
                 {
-                  if (String.IsNullOrEmpty(propertyValue))
+                  if (string.IsNullOrEmpty(propertyValue))
                   {
                     isTemplateValid = false;
                     break;
@@ -805,9 +805,10 @@ namespace org.iringtools.adapter.projection
                   else
                   {
                     roleObject.hasValueMap = true;
-                    roleObject.values.Add(propertyValue);
                   }
                 }
+
+                roleObject.values.Add(propertyValue);
               }
 
               if (!isTemplateValid) break;

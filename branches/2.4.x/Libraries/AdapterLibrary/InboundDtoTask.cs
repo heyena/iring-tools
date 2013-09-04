@@ -24,8 +24,9 @@ namespace org.iringtools.adapter
       GraphMap graphMap, DataObject objectType, DataTransferObjects dataTransferObjects)
     {
       _doneEvent = doneEvent;
-      _projectionLayer = projectionLayer;
       _dataLayerGateway = dataLayerGateway;
+      _projectionLayer = projectionLayer;
+      _projectionLayer.dataLayerGateway = dataLayerGateway;
       _objectType = objectType;
       _graphMap = graphMap;
       _dataTransferObjects = dataTransferObjects;
