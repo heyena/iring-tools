@@ -147,7 +147,7 @@
                     "var state = me.getForm().findField('state').getValue();\r",
                     "\r",
                     "if(state!='edit')\r",
-                    "  me.getForm().findField('name').setValue(endpointName);\r",
+                    "me.getForm().findField('name').setValue(endpointName);\r",
                     "\r",
                     "if(me.getForm().isValid()){\r",
                     "  me.getForm().submit({\r",

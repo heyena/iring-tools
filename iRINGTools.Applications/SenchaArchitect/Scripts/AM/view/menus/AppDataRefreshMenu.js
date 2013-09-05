@@ -25,19 +25,35 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
         {
           xtype: 'menuitem',
           action: 'refreshdata',
-          icon: 'Content/img/16x16/document-properties.png',
+          icon: 'Content/img/16x16/refresh_dict.gif',
           text: 'Refresh Dictionary'
         },
         {
           xtype: 'menuitem',
+          action: 'switch',
+          hidden: true,
+          itemId: 'switchToCached',
+          icon: 'Content/img/16x16/switch.png',
+          text: 'Switch to Cached-Data Mode'
+        },
+        {
+          xtype: 'menuitem',
+          action: 'switch',
+          hidden: true,
+          itemId: 'switchToLive',
+          icon: 'Content/img/16x16/switch.png',
+          text: 'Switch to Live-Data Mode'
+        },
+        {
+          xtype: 'menuitem',
           action: 'refreshcache',
-          icon: 'Content/img/16x16/document-properties.png',
+          icon: 'Content/img/16x16/refresh_cache.gif',
           text: 'Refresh Cache'
         },
         {
           xtype: 'menuitem',
           action: 'importcache',
-          icon: 'Content/img/16x16/document-properties.png',
+          icon: 'Content/img/16x16/import.jpg',
           text: 'Import Cache'
         },
         {

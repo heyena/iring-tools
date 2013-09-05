@@ -23,7 +23,7 @@
                 "action": "editnewvaluelist",
                 "itemId": "editvaluelist",
                 "icon": "Content/img/16x16/document-properties.png",
-                "text": "Edit ValueList"
+                "text": "Edit Value List"
             },
             "designerId": "a2ed2783-91bb-41d5-9b0b-b34c9d3f212f",
             "customConfigs": [
@@ -44,7 +44,7 @@
             "userConfig": {
                 "action": "deletevaluelist",
                 "icon": "Content/img/16x16/edit-delete.png",
-                "text": "Delete ValueList"
+                "text": "Delete Value List"
             },
             "designerId": "56c3edfd-9dc4-4b55-a99b-e079e0b796ad",
             "customConfigs": [
@@ -74,7 +74,7 @@
             "userConfig": {
                 "action": "editnewvaluemap",
                 "icon": "Content/img/16x16/document-new.png",
-                "text": "New ValueMap"
+                "text": "New Value Map"
             },
             "designerId": "f7095e6e-f384-42f5-85d2-aca2c0208a18",
             "customConfigs": [
