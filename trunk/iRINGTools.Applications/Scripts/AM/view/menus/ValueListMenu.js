@@ -29,13 +29,13 @@ Ext.define('AM.view.menus.ValueListMenu', {
           action: 'editnewvaluelist',
           itemId: 'editvaluelist',
           icon: 'Content/img/16x16/document-properties.png',
-          text: 'Edit ValueList'
+          text: 'Edit Value List'
         },
         {
           xtype: 'menuitem',
           action: 'deletevaluelist',
           icon: 'Content/img/16x16/edit-delete.png',
-          text: 'Delete ValueList'
+          text: 'Delete Value List'
         },
         {
           xtype: 'menuseparator'
@@ -44,7 +44,7 @@ Ext.define('AM.view.menus.ValueListMenu', {
           xtype: 'menuitem',
           action: 'editnewvaluemap',
           icon: 'Content/img/16x16/document-new.png',
-          text: 'New ValueMap'
+          text: 'New Value Map'
         }
       ]
     });
