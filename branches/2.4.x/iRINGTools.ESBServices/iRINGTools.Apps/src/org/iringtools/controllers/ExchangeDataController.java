@@ -1085,6 +1085,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      //exchangeDataModel.resetCrossedManifest(scope, xid);
       exchangeDataModel.resetCrossedManifest(scope, xid);
     }
     catch (Exception e)
@@ -1100,6 +1101,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      //exchangeDataModel.reloadCrossedManifest(scope, xid);
       exchangeDataModel.reloadCrossedManifest(scope, xid);
     }
     catch (Exception e)
@@ -1115,7 +1117,8 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      exchangeDataModel.saveCrossedManifest(scope, xid);
+      //exchangeDataModel.saveCrossedManifest(scope, xid);
+      exchangeDataModel.saveExcludedTemplateList(scope, xid);
     }
     catch (Exception e)
     {
@@ -1131,11 +1134,27 @@ public class ExchangeDataController extends BaseController
     { // String abc = httpRequest.getParameter(arg0)
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
 
-      exchangeDataModel.deleteTemplate(scope, xid, parentClassId, parentClassIndex, parentClassPath, templateId,
+      exchangeDataModel.addTemplateInDeletedList(scope, xid, parentClassId, parentClassIndex, parentClassPath, templateId,
           templateIndex);
 
       // parentClassId,parentClassIndex,parentClassPath,templateId,templateIndex;
 
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      throw new Exception(e.getMessage());
+    }
+    return SUCCESS;
+  }
+  
+  public String includeTemplateInManifest() throws Exception
+  {
+    try
+    { 
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      exchangeDataModel.removeTemplateFromDeletedList(scope, xid, parentClassId, parentClassIndex, parentClassPath, templateId,
+          templateIndex);
     }
     catch (Exception e)
     {

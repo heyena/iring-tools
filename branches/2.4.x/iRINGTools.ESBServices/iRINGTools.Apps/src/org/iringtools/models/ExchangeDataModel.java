@@ -32,11 +32,13 @@ import org.iringtools.dxfr.dti.TransferType;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.manifest.Class;
+import org.iringtools.dxfr.manifest.ClassTemplatesList;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.Role;
+import org.iringtools.dxfr.manifest.Templates;
 import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
@@ -798,6 +800,11 @@ public class ExchangeDataModel extends DataModel
     return exchange;
   }
 
+  protected Manifest getLatestCrossedManifest(Exchange exchange) throws Exception
+  {
+	  return provider.getCrossedManifest(exchange);
+  }
+  
   protected Manifest getCrossedManifest(Exchange exchange, String scope, String xId) throws Exception
   {
     Manifest manifest = null;
@@ -809,102 +816,207 @@ public class ExchangeDataModel extends DataModel
     }
     else
     {
-      manifest = provider.GetCachedCrossedManifest(exchange);
-      if (manifest == null)
-      {
-        manifest = provider.getCrossedManifest(exchange);
-        // provider.saveCrossedManifest(manifest, exchange);
-      }
+      manifest = getLatestCrossedManifest(exchange);
       session.put(manifestKey, manifest);
     }
-
+	ClassTemplatesList deletedTemplateList = getExcludedTemplateList(scope, xId);
+	filterCrossedManifest(manifest,deletedTemplateList);
     return manifest;
   }
 
+  public void saveExcludedTemplateList(String scope, String xId) throws Exception
+  {
+    Exchange exchange = getExchange(scope, xId);
+    ClassTemplatesList deletedTemplateList = getExcludedTemplateList(scope, xId);
+    provider.saveExcludedTemplateList(deletedTemplateList, exchange);
+  }
+ 
+  public void resetCrossedManifest(String scope, String xId) throws Exception
+  {
+	Exchange exchange = getExchange(scope, xId);
+    String filterKey = MANIFEST_FILTER_PREFIX + "." + scope + "." + xId;
+    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
+    session.remove(filterKey);
+    session.remove(manifestKey);
+    provider.deleteExcludedTemplateList(exchange);
+  }
+  
+  public void reloadCrossedManifest(String scope, String xId) throws Exception
+  {
+	String filterKey = MANIFEST_FILTER_PREFIX + "." + scope + "." + xId;
+	String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
+	session.remove(filterKey);
+	session.remove(manifestKey);
+  }
+  
+  public void addTemplateInDeletedList(String scope, String xId, String parentClassId, String parentClassIndex,
+	      String parentClassPath, String templateId, String templateIndex) throws Exception
+  {
+	    List<ClassTemplates> removedTemplateList =  getExcludedTemplateList(scope, xId).getItems();
+	    
+		Exchange exchange = getExchange(scope, xId);
+	    Manifest manifest = getCrossedManifest(exchange, scope, xId);
+
+	    Graph graph = manifest.getGraphs().getItems().get(0);
+	    List<ClassTemplates> classTemplateList = graph.getClassTemplatesList().getItems();
+
+	    for (ClassTemplates classTemplate : classTemplateList)
+	    {
+	      if (classTemplate.getClazz() != null)
+	      {
+	        //if ((classTemplate.getClazz().getPath().equals(parentClassPath)))
+	    	if (classTemplate.getClazz().getId().equals(parentClassId)
+	   				 && (classTemplate.getClazz().getPath() == null ? parentClassPath == null : classTemplate.getClazz().getPath().equals(parentClassPath)))
+	   	
+	        {
+	          List<Template> templates = classTemplate.getTemplates().getItems();
+
+	          for (int j = 0; j < templates.size(); j++)
+	          {
+	            Template template = templates.get(j);
+	            if (template.getId().equals(templateId) && String.valueOf(template.getIndex()).equals(templateIndex))
+	            {
+	            	boolean isClassFound = false;
+	              //templates.remove(j--);
+	            	for(int k=0;k<removedTemplateList.size();k++)
+	            	{
+	            		Class cls =removedTemplateList.get(k).getClazz();  
+	            		if(cls !=null && cls.getId().equals(parentClassId) && (cls.getPath() == null ? parentClassPath == null : cls.getPath().equals(parentClassPath)))
+	            		{
+	            			removedTemplateList.get(k).getTemplates().getItems().add(templates.get(j));
+	            			isClassFound=true;
+	            		}
+	            	}
+	            	
+	            	if(!isClassFound)
+	            	{
+	            		ClassTemplates cts = new ClassTemplates();
+	            		cts.setClazz(classTemplate.getClazz());
+	            		Templates temps = new Templates();
+	            		cts.setTemplates(temps);
+	            		temps.getItems().add(template);
+	            		removedTemplateList.add(cts);
+	            	}	            	
+	            }
+	          }
+	        }
+	      }
+	    }
+	    
+
+	  }
+  
+  public void removeTemplateFromDeletedList(String scope, String xId, String parentClassId, String parentClassIndex,
+	      String parentClassPath, String templateId, String templateIndex) throws Exception
+  {
+	    List<ClassTemplates> deletedTemplateList =  getExcludedTemplateList(scope, xId).getItems();
+	    
+	    for(int i=0;i<deletedTemplateList.size();i++)
+    	{
+    		Class cls =deletedTemplateList.get(i).getClazz();  
+    		if(cls !=null && cls.getId().equals(parentClassId) && (cls.getPath() == null ? parentClassPath == null : cls.getPath().equals(parentClassPath)))
+    		{
+    		   Templates templates = deletedTemplateList.get(i).getTemplates();
+    		   if(templates !=null)
+    		   {
+    			  for(int j=0;j<templates.getItems().size();j++)
+    			  {
+    				 Template tmp = templates.getItems().get(j);
+    				 if(tmp.getId().equals(templateId) && templateIndex.endsWith(String.valueOf(tmp.getIndex()))) 
+    					 templates.getItems().remove(j--);
+    			  }
+    		   }
+    		}
+    	}
+	  }
+  
+  public Manifest filterCrossedManifest(Manifest manifest,ClassTemplatesList deletedTemplateList) throws Exception
+  {
+	  if(deletedTemplateList == null || deletedTemplateList.getItems().isEmpty())
+		  return manifest;
+	  
+	  for (int i = 0; i < deletedTemplateList.getItems().size(); i++)
+	  {
+		  Class cls = deletedTemplateList.getItems().get(i).getClazz();
+		  Templates templatesList = deletedTemplateList.getItems().get(i).getTemplates();
+		  
+		  if(cls == null || templatesList ==null)
+			  continue;
+		  
+		  for(Template template: templatesList.getItems())
+		  {
+			 // Map<String,String> templateIdentifier = filter.get(i);
+			  String parentClassId= cls.getId();
+			  String parentClassPath= cls.getPath();
+			  String templateId =  template.getId();
+			  String templateIndex =  String.valueOf(template.getIndex());
+	
+			  Graph graph = manifest.getGraphs().getItems().get(0);
+			  List<ClassTemplates> classTemplateList = graph.getClassTemplatesList().getItems();
+		
+			  for (ClassTemplates classTemplate : classTemplateList)
+			  {
+			    if (classTemplate.getClazz() != null)
+			    {
+			      //if ((classTemplate.getClazz().getPath().equals(parentClassPath)))
+			      if (classTemplate.getClazz().getId().equals(parentClassId)
+			   		 && (classTemplate.getClazz().getPath() == null ? parentClassPath == null : classTemplate.getClazz().getPath().equals(parentClassPath)))
+			   	  {
+			        List<Template> templates = classTemplate.getTemplates().getItems();
+		            for (int j = 0; j < templates.size(); j++)
+			        {
+			          Template temp = templates.get(j);
+			          if (temp.getId().equals(templateId) && String.valueOf(temp.getIndex()).equals(templateIndex))
+			          {
+			            templates.remove(j--);
+			          }
+			        }
+			      }
+			    }
+			  }
+		  }
+	  }
+	  
+	  return manifest;
+  }
+  
+  private ClassTemplatesList getExcludedTemplateList(String scope, String xId) throws Exception
+  {
+	  ClassTemplatesList filter;
+	  String filterKey =  MANIFEST_FILTER_PREFIX + "." + scope + "." + xId;
+	  
+	  if (session.containsKey(filterKey))
+	    {
+		    filter = (ClassTemplatesList)session.get(filterKey);
+	    }
+	    else
+	    {
+	    	Exchange exchange = getExchange(scope, xId);
+	    	filter = provider.getExcludedTemplateList(exchange);
+	        session.put(filterKey, filter);
+	    }
+	  return filter;
+  }
+  
   public Tree getCrossedManifestTree(String scope, String xId) throws Exception
   {
     Exchange exchange = getExchange(scope, xId);
-    Manifest manifest = getCrossedManifest(exchange, scope, xId);
-
-    Tree tree = manifestToTree(manifest);
+    //Manifest manifest = getCrossedManifest(exchange, scope, xId);
+    Manifest manifest = getLatestCrossedManifest(exchange);
+    
+    ClassTemplatesList deletedTemplateList = getExcludedTemplateList(scope, xId);
+    
+    Tree tree = manifestToTree(manifest,deletedTemplateList);
     return tree;
   }
-
-  public void saveCrossedManifest(String scope, String xId) throws Exception
-  {
-    Exchange exchange = getExchange(scope, xId);
-    Manifest manifest = getCrossedManifest(exchange, scope, xId);
-    provider.saveCrossedManifest(manifest, exchange);
-  }
-
-  public void resetCrossedManifest(String scope, String xId) throws Exception
-  {
-    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
-    session.remove(manifestKey);
-    deleteCachedCrossManifest(scope, xId);
-  }
-
-  public void reloadCrossedManifest(String scope, String xId) throws Exception
-  {
-    String manifestKey = MANIFEST_PREFIX + "." + scope + "." + xId;
-    session.remove(manifestKey);
-  }
-
-  public Manifest getCachedCrossedManifest(String scope, String xId) throws Exception
-  {
-    Exchange exchange = getExchange(scope, xId);
-    Manifest manifest = provider.GetCachedCrossedManifest(exchange);
-    return manifest;
-  }
-
-  public void deleteTemplate(String scope, String xId, String parentClassId, String parentClassIndex,
-      String parentClassPath, String templateId, String templateIndex) throws Exception
-  {
-    Exchange exchange = getExchange(scope, xId);
-    Manifest manifest = getCrossedManifest(exchange, scope, xId);
-
-    Graph graph = manifest.getGraphs().getItems().get(0);
-    List<ClassTemplates> classTemplateList = graph.getClassTemplatesList().getItems();
-
-    for (ClassTemplates classTemplate : classTemplateList)
-    {
-      if (classTemplate.getClazz() != null)
-      {
-        //if ((classTemplate.getClazz().getPath().equals(parentClassPath)))
-    	if (classTemplate.getClazz().getId().equals(parentClassId)
-   				 && (classTemplate.getClazz().getPath() == null ? parentClassPath == null : classTemplate.getClazz().getPath().equals(parentClassPath)))
-   	
-        {
-          List<Template> templates = classTemplate.getTemplates().getItems();
-
-          for (int j = 0; j < templates.size(); j++)
-          {
-            Template template = templates.get(j);
-            if (template.getId().equals(templateId) && String.valueOf(template.getIndex()).equals(templateIndex))
-            {
-              templates.remove(j--);
-            }
-          }
-        }
-      }
-    }
-
-  }
-
-  public void deleteCachedCrossManifest(String scope, String xId) throws Exception
-  {
-    Exchange exchange = getExchange(scope, xId);
-    provider.deleteCachedCrossedManifest(exchange);
-  }
-
-  protected Tree manifestToTree(Manifest manifest) throws Exception
+  
+  protected Tree manifestToTree(Manifest manifest,ClassTemplatesList deletedTemplateList) throws Exception
   {
     Tree tree = new Tree();  
     
     try
     {
       Graph graph = manifest.getGraphs().getItems().get(0);
-      //List<Template> templateList = graph.getClassTemplatesList().getItems().get(0).getTemplates().getItems();
       Class rootClass = graph.getClassTemplatesList().getItems().get(0).getClazz();
       
       List<Node> nodes = tree.getNodes();  
@@ -919,58 +1031,9 @@ public class ExchangeDataModel extends DataModel
   	  graphProperties.put("Name", rootClass.getName());
   	  graphProperties.put("Path", rootClass.getPath());
   	  graphProperties.put("ClassIndex", String.valueOf(rootClass.getIndex()));
+  	  graphProperties.put("IsDeleted", String.valueOf(false));
   
-  	  TemplateToTreeNode(rootClass, rootClassNode, graph);
-  	  /*
-      List<Node> templateNodes = rootClassNode.getChildren();
-  
-      for (Template template : templateList)
-      {
-        TreeNode templateNode = new TreeNode();
-        templateNode.setText(template.getName());
-        templateNode.setIconCls("template");
-        templateNode.setType("TemplateNode");
-        templateNodes.add(templateNode);
-  
-        HashMap<String, String> templateProperties = templateNode.getProperties();
-        templateProperties.put("Id", template.getId());
-        templateProperties.put("Name", template.getName());
-        templateProperties.put("TemplateIndex", String.valueOf(template.getIndex()));
-  
-        List<Node> roleNodes = templateNode.getChildren();
-  
-        for (Role role : template.getRoles().getItems())
-        {
-          TreeNode roleNode = new TreeNode();
-          roleNode.setText(role.getName());
-          roleNode.setIconCls("role");
-          roleNode.setType("RoleNode");
-          roleNodes.add(roleNode);
-  
-          HashMap<String, String> roleProperties = roleNode.getProperties();
-          roleProperties.put("Id", role.getId());
-  
-          if (role.getClazz() != null)
-          {
-            List<Node> classNodes = roleNode.getChildren();
-  
-            TreeNode classNode = new TreeNode();
-            classNode.setText(role.getClazz().getName());
-            classNode.setIconCls("class");
-            classNode.setType("ClassNode");
-            classNodes.add(classNode);
-  
-            HashMap<String, String> classProperties = classNode.getProperties();
-            classProperties.put("Id", role.getClazz().getId());
-            classProperties.put("Name", role.getClazz().getName());
-            classProperties.put("Path", role.getClazz().getPath());
-            classProperties.put("ClassIndex", String.valueOf(role.getClazz().getIndex()));
-  
-            TemplateToTreeNode(role.getClazz(), classNode, graph);
-          }  
-        }  
-      }
-      */
+  	  TemplateToTreeNode(rootClass, rootClassNode, graph,deletedTemplateList,false);
     }
     catch (Exception e)
     {
@@ -980,7 +1043,7 @@ public class ExchangeDataModel extends DataModel
     return tree;
   }
 
-  private void TemplateToTreeNode(Class parentClass, TreeNode parentClassNode, Graph graph) throws Exception
+  private void TemplateToTreeNode(Class parentClass, TreeNode parentClassNode, Graph graph,ClassTemplatesList deletedclsTemplateList,boolean isDeleted) throws Exception
   {
     try
     {
@@ -994,19 +1057,55 @@ public class ExchangeDataModel extends DataModel
    				 && (parentClass.getPath() == null ? classTemplate.getClazz().getPath() == null : parentClass.getPath().equals(classTemplate.getClazz().getPath())))
           {
             List<Node> templateNodes = parentClassNode.getChildren();
-  
+            
             for (Template template : classTemplate.getTemplates().getItems())
             {
+              //check is template deleted or not 	
+              boolean isTemplateDeleted = false;
+              if(isDeleted)
+              {
+            	  isTemplateDeleted = true;
+              }
+              else
+              {
+	              for(ClassTemplates deletedClassTemplates: deletedclsTemplateList.getItems())
+	              {
+	            	  Class cls = deletedClassTemplates.getClazz();
+	            	  if(cls != null && deletedClassTemplates.getTemplates() != null)
+	            	  {
+	            		  if (cls.getId().equals(classTemplate.getClazz().getId()) && 
+	            				  (cls.getPath() == null ? classTemplate.getClazz().getPath() == null : cls.getPath().equals(classTemplate.getClazz().getPath())))
+	            		  {
+			            	  List<Template> deletedTmpList = deletedClassTemplates.getTemplates().getItems();
+			            	  for(Template tmp:deletedTmpList)
+			            	  {
+			            		  if(tmp.getId().equals(template.getId()) && tmp.getIndex() == template.getIndex())
+			            		  {
+			            			  isTemplateDeleted = true;
+			            			  break;
+			            		  }            			  
+			            	  }
+	            		  }
+	            	  }
+	            	  if(isTemplateDeleted)
+	            		  break;
+	              }
+              }
+            	
               TreeNode templateNode = new TreeNode();
               templateNode.setText(template.getName());
-              templateNode.setIconCls("template");
               templateNode.setType("TemplateNode");
+              if(!isTemplateDeleted)
+            	  templateNode.setIconCls("template");
+              else
+            	  templateNode.setIconCls("deletedTemplate");
               templateNodes.add(templateNode);
   
               HashMap<String, String> templateProperties = templateNode.getProperties();
               templateProperties.put("Id", template.getId());
               templateProperties.put("Name", template.getName());
               templateProperties.put("TemplateIndex", String.valueOf(template.getIndex()));
+              templateProperties.put("IsDeleted", String.valueOf(isTemplateDeleted));
   
               List<Node> roleNodes = templateNode.getChildren();
   
@@ -1023,6 +1122,7 @@ public class ExchangeDataModel extends DataModel
 	  
 	              HashMap<String, String> roleProperties = roleNode.getProperties();
 	              roleProperties.put("Id", role.getId());
+	              roleProperties.put("IsDeleted", String.valueOf(isTemplateDeleted));
                   
 	              //add class node
 	              List<Node> classNodes = roleNode.getChildren();
@@ -1037,8 +1137,9 @@ public class ExchangeDataModel extends DataModel
                   classProperties.put("Name", role.getClazz().getName());
                   classProperties.put("Path", role.getClazz().getPath());
                   classProperties.put("ClassIndex", String.valueOf(role.getClazz().getIndex()));
+                  classProperties.put("IsDeleted", String.valueOf(isTemplateDeleted));
   
-                  TemplateToTreeNode(role.getClazz(), classNode, graph);
+                  TemplateToTreeNode(role.getClazz(), classNode, graph,deletedclsTemplateList,isTemplateDeleted);
                 }
             	else
             	{
@@ -1066,6 +1167,7 @@ public class ExchangeDataModel extends DataModel
     }
   }
 
+  
   protected String format(GregorianCalendar gcal)
   {
     return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);
