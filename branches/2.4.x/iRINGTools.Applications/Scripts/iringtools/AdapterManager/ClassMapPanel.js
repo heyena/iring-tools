@@ -24,7 +24,7 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
     var delimiter = '';
     var className = this.classPrompt;
     var classId = '';
-        var parentClassIndex = '';
+    var parentClassIndex = '';
 
     this.bbar = this.buildToolbar();
 
@@ -36,7 +36,7 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
       delimiter = rootClass.identifierDelimiter;
       objectName = rootClassRecord.dataObjectName;
       parentClassId = parentClassNode.attributes.identifier;
-            parentClassIndex = parentClassNode.attributes.index;
+      parentClassIndex = parentClassNode.attributes.index;
       templateIndex = parentClassNode.indexOf(this.node.parentNode);
       roleName = this.node.attributes.record.name;
     }
@@ -49,6 +49,7 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
       formId = '-class-' + scope + '-' + app;
 
       var classMap = this.node.attributes.record.classMap;
+
       if (classMap != null) {
         className = classMap.name;
         classId = classMap.id;
