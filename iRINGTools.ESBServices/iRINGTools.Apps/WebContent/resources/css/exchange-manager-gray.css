@@ -52,6 +52,10 @@ a:active {color: black}
 	background-image: url(../images/16x16/template-badge.png);
 }
 
+.x-tree-node .deletedTemplate {
+	background-image: url(../images/16x16/delete-icon.png);
+}
+
 .x-tree-node .class {
 	background-image: url(../images/16x16/class-badge.png);
 }

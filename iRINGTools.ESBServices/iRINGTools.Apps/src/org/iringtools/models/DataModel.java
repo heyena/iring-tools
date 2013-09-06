@@ -103,6 +103,7 @@ public class DataModel
   public static final String DTI_PREFIX = EXCHANGE_PREFIX + ".dti";
   public static final String PRE_SUMMARY_PREFIX = EXCHANGE_PREFIX + ".presummary";
   public static final String POST_SUMMARY_PREFIX = EXCHANGE_PREFIX + ".postsummary";
+  public static final String MANIFEST_FILTER_PREFIX = EXCHANGE_PREFIX + ".filter";
 
   protected final int MIN_FIELD_WIDTH = 50;
   protected final int MAX_FIELD_WIDTH = 300;

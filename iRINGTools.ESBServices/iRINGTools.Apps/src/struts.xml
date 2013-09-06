@@ -101,6 +101,12 @@
       </result>
     </action>
     
+     <action name="includeTemplate" class="org.iringtools.controllers.ExchangeDataController" method="includeTemplateInManifest">
+      <result type="json">
+        <param name="root">response</param>
+      </result>
+    </action>
+    
     <!-- related exchange data -->
     <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
       <result type="json">

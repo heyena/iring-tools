@@ -1983,14 +1983,25 @@ function onImportCache (btn, ev) {
   win.show(this);
 }
 
-function buildManifestMenu(scope, xid) {
-	return [ {
-		xtype : 'menuitem',
-		handler: function () {
-		    deleteTemplate(scope, xid);
-		},
-		text : 'Delete Template'
-	}];
+function buildManifestMenu(scope, xid,isDeleted) {
+    if (isDeleted === 'false') {
+        return [{
+            xtype: 'menuitem',
+            handler: function () {
+                deleteTemplate(scope, xid);
+            },
+            text: 'Exclude Template'
+        }];
+    }
+    else {
+        return [{
+            xtype: 'menuitem',
+            handler: function () {
+                includeTemplate(scope, xid);
+            },
+            text: 'Include Template'
+        }];
+    }
 }
 
 function editApplication() {
@@ -2201,13 +2212,17 @@ function onCrossedManifestTreeItemContextMenu(node, event, scope, xid) {
     var y = event.browserEvent.clientY;
 
     var obj = node.attributes;
+    var isDeleted = node.attributes.properties['IsDeleted'];
 
    // alert(obj.type);
     if (obj.type == "TemplateNode") {
-        manifestMenu = new Ext.menu.Menu();
-        manifestMenu.add(this.buildManifestMenu(scope, xid));
-    	manifestMenu.showAt([ x, y ]);
-    	event.stopEvent();
+        var isParentDeleted = node.parentNode.attributes.properties['IsDeleted'];
+        if (isParentDeleted == 'false') {
+            manifestMenu = new Ext.menu.Menu();
+            manifestMenu.add(this.buildManifestMenu(scope, xid, isDeleted));
+    	    manifestMenu.showAt([ x, y ]);
+    	    event.stopEvent();
+        }        
     }
  manifestTree.getSelectionModel().select(node);
 
@@ -2325,6 +2340,46 @@ function deleteTemplate(scope, xid) {
         }
     });
 }
+
+function includeTemplate(scope, xid) {
+    var centerPanel = Ext.getCmp('content-pane');
+    centerPanel.getEl().mask("Loading...", "x-mask-loading");
+    var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+    var node = Ext.getCmp(manifestTreePaneId).getSelectionModel().getSelectedNode();
+    
+    var parentClassId = node.parentNode.attributes.properties['Id'];
+    var parentClassIndex = node.parentNode.attributes.properties['ClassIndex'];
+    var parentClassPath = node.parentNode.attributes.properties['Path'];
+    var templateId = node.attributes.properties['Id'];
+    var templateIndex = node.attributes.properties['TemplateIndex'];
+
+    Ext.Ajax.request({
+        url: 'includeTemplate?' + '&scope =' + scope + '&xid ='
+				+ xid,
+        method: 'POST',
+        params: {
+            parentClassId: parentClassId,
+            parentClassIndex: parentClassIndex,
+            parentClassPath: parentClassPath,
+            templateId: templateId,
+            templateIndex: templateIndex
+        },
+        timeout: 120000,
+        success: function (response, request) {
+            var application = Ext.decode(response.responseText);
+            centerPanel.getEl().unmask();
+            refreshManifestTree(scope, xid);
+        },
+        failure: function (response, request) {
+            centerPanel.getEl().unmask();
+            var message = 'Error in include template: ' + response.statusText
+          			+ '.\n\nError description: '
+				    + response.responseText;
+            showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+        }
+    });
+}
+
 
 function editExchangeConfig() {
 	var centerPanel = Ext.getCmp('content-pane');

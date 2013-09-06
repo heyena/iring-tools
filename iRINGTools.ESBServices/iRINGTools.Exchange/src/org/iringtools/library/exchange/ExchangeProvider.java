@@ -18,6 +18,7 @@ import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.manifest.ClassTemplates;
+import org.iringtools.dxfr.manifest.ClassTemplatesList;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Graphs;
 import org.iringtools.dxfr.manifest.Manifest;
@@ -177,29 +178,27 @@ public class ExchangeProvider
     return crossedManifest;
   }
 
-  public Manifest GetCachedCrossedManifest(Exchange exchange)
+  public ClassTemplatesList getExcludedTemplateList(Exchange exchange)
   {
 	  try
 	  {
-		  String filePath = buildManifestFilePath(exchange)  ;
+		  String filePath = buildDeletedTemplateListFilePath(exchange)  ;
 		  if (IOUtils.fileExists(filePath)) {
-			  return JaxbUtils.read(Manifest.class, filePath);
+			  return (ClassTemplatesList)JaxbUtils.read(ClassTemplatesList.class, filePath);
 		  }
 	  }catch (Exception e) {
 		  String message = "Error saving manifest" + e;
 		  logger.error(message);
 
 	  }
-	  return null;
+	  return new ClassTemplatesList();
   }
   
-  
-  public void saveCrossedManifest(Manifest manifest,Exchange exchange)throws Exception {
+ public void saveExcludedTemplateList(ClassTemplatesList classTemplateList,Exchange exchange)throws Exception {
 	  try {
 
-		  String filePath = buildManifestFilePath(exchange)  ;
-
-		  JaxbUtils.write(manifest, filePath, false);
+		  String filePath = buildDeletedTemplateListFilePath(exchange)  ;
+		  JaxbUtils.write(classTemplateList, filePath, false);
 	  } catch (Exception e) {
 		  String message = "Error saving manifest" + e;
 		  logger.error(message);
@@ -207,26 +206,24 @@ public class ExchangeProvider
 	  }
   }
   
-  public void deleteCachedCrossedManifest(Exchange exchange)throws Exception
+ public void deleteExcludedTemplateList(Exchange exchange)throws Exception
   {
 	  try {
-		  String filePath = buildManifestFilePath(exchange)  ;
+		  String filePath = buildDeletedTemplateListFilePath(exchange)  ;
 		  if (IOUtils.fileExists(filePath)) {
 			  IOUtils.deleteFile(filePath);
 		  }
 	  } catch (Exception e) {
-		  String message = "Error saving manifest" + e.getMessage();
+		  String message = "Error in deleting excluded template list" + e.getMessage();
 		  logger.error(message);
 		  throw e;
-
 	  }
-
   }
 
-  private String buildManifestFilePath(Exchange exchange)throws Exception
+  private String buildDeletedTemplateListFilePath(Exchange exchange)throws Exception
   {
 	  try{
-		  String filePath = path + "manifest." + exchange.getSourceScope() + "."+exchange.getSourceApp() + "." +exchange.getSourceGraph() ;
+		  String filePath = path + "templateList." + exchange.getSourceScope() + "."+exchange.getSourceApp() + "." +exchange.getSourceGraph() ;
 		  filePath = filePath +  "." + exchange.getTargetScope() + "."+exchange.getTargetApp() + "." +exchange.getTargetGraph() + ".xml" ; 
 
 		  return filePath;
