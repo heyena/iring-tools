@@ -20,10 +20,14 @@ namespace org.iringtools.adapter.datalayer
     {
         #region Variable Declaratrion
         private static readonly ILog _logger = LogManager.GetLogger(typeof(PWDataLayer));
-        private string _sUserName, _sPassword, _sDatasource, _sFileFormat, _sDocumentGUID;
+        private string _sUserName, _sPassword, _sDatasource, _sFileFormat, _sDocumentGUID, _sDeafultStorage;
         private string _sProject, _sApp, _sDataPath;
         private int _iFoldrCount;
         private int iParentFolderID;
+        string[] _arrApp;
+        string[] _arrDataSources;
+        Hashtable _hshAllEnvironments;
+        int _iFolderID;
         #endregion
 
         #region Constructor
@@ -44,6 +48,9 @@ namespace org.iringtools.adapter.datalayer
             _sDataPath = settings["AppDataPath"];
             _sFileFormat = settings["Format"];
             _sDocumentGUID = settings["DocumentGUID"];
+            _arrApp = _sApp.Split('_');
+            _arrDataSources = _sDatasource.Split(',');
+            _sDeafultStorage = "CHIST95037.becpsn.com:PWISE_SS4_Project14";
         }
 
         #endregion
@@ -54,11 +61,268 @@ namespace org.iringtools.adapter.datalayer
         /// This method used to create dictionary
         /// </summary>
         /// <returns></returns>
+        //public override DatabaseDictionary GetDatabaseDictionary()
+        //{
+
+        //    //_logger.Debug("In Dictionary Creation");
+        //    DatabaseDictionary dbDictionary = null;
+        //    DataDictionary dictionary = new DataDictionary();
+        //    try
+        //    {
+        //        string path = string.Format("{0}DataDictionary.{1}.{2}.xml", _sDataPath, _sProject, _sApp);
+
+        //        if (File.Exists(path))
+        //        {
+        //            dictionary = utility.Utility.Read<DataDictionary>(path, true);
+
+        //            dbDictionary = new DatabaseDictionary()
+        //            {
+        //                dataObjects = dictionary.dataObjects,
+        //                dataVersion = dictionary.dataVersion,
+        //                enableSearch = dictionary.enableSearch,
+        //                enableSummary = dictionary.enableSearch,
+        //                picklists = dictionary.picklists
+        //            };
+
+        //            return dbDictionary;
+        //        }
+        //        Login();
+
+        //        List<string> dataObjects = new List<string>();
+        //        string dataObjectsStr = _settings["PW.DataObjects"];
+
+        //        if (dataObjectsStr != null)
+        //        {
+        //            dataObjects = dataObjectsStr.ToString().Replace(" ", "").Split(',').ToList<string>();
+        //        }
+
+        //        SortedList<string, SortedList<string, TypeAndLength>> env = GetEnvironments();
+                
+        //        foreach (var item in env)
+        //        {
+        //            string itemName = item.Key;
+        //            //if (dataObjects == null || dataObjects.Count == 0 || dataObjects.Contains(itemName.Replace(" ", "")))
+        //            //{
+        //                DataObject dataObject = new DataObject()
+        //                {
+        //                    hasContent = true,
+        //                    objectName = itemName.Replace(" ", string.Empty),
+        //                    tableName = itemName,
+        //                    dataProperties = GetGenericProperties()
+        //                };
+
+        //                foreach (var pair in item.Value)
+        //                {
+
+        //                    string type = (string)pair.Value.DataType;
+
+        //                    DataProperty prop = new DataProperty()
+        //                    {
+        //                        propertyName = pair.Key,
+        //                        columnName = pair.Key,
+        //                        dataType = DataType.String,
+        //                        dataLength = pair.Value.DataLength
+        //                    };
+
+        //                    dataObject.dataProperties.Add(prop);
+        //                }
+
+        //                dataObject.keyProperties = new List<KeyProperty>()
+        //    {
+        //      new KeyProperty()
+        //      {
+        //        keyPropertyName = "DocumentGUID"
+        //      }
+        //    };
+
+        //                dictionary.dataObjects.Add(dataObject);
+        //            //}
+        //        }
+
+        //        DataObject subFolderDataObject = new DataObject();
+                
+        //        subFolderDataObject.objectName = "SubFolders";
+        //        subFolderDataObject.tableName = "SubFolders";
+                  
+
+        //        subFolderDataObject.isRelatedOnly = true;
+
+
+
+        //        DataProperty dpName = new DataProperty();
+        //        dpName.columnName = "Name";
+        //        dpName.propertyName = "Name";
+        //        dpName.dataType = DataType.String;
+        //        dpName.dataLength = 100;
+
+        //        subFolderDataObject.dataProperties.Add(dpName);
+
+        //        DataProperty dpID = new DataProperty();
+        //        dpID.columnName = "ID";
+        //        dpID.propertyName = "ID";
+        //        dpID.dataType = DataType.String;
+        //        dpID.dataLength = 100;
+
+        //        subFolderDataObject.dataProperties.Add(dpID);
+
+
+        //        subFolderDataObject.keyProperties = new List<KeyProperty>()
+        //{
+        //    new KeyProperty()
+        //    {
+        //    keyPropertyName = "ID"
+        //    }
+        //};
+        //        //subFolderDataObject.hasContent = false;
+        //        dictionary.dataObjects.Add(subFolderDataObject);
+
+
+        //        DataObject doc = new DataObject();
+
+        //        doc.objectName = "Documents";
+        //        doc.tableName = "Documents";
+
+        //        doc.isRelatedOnly = true;
+
+
+
+        //        DataProperty dpNameDocuments = new DataProperty();
+        //        dpNameDocuments.columnName = "Name";
+        //        dpNameDocuments.propertyName = "Name";
+        //        dpNameDocuments.dataType = DataType.String;
+        //        dpNameDocuments.dataLength = 100;
+
+        //        doc.dataProperties.Add(dpNameDocuments);
+
+        //        DataProperty dpIDDocuments = new DataProperty();
+        //        dpIDDocuments.columnName = "ID";
+        //        dpIDDocuments.propertyName = "ID";
+        //        dpIDDocuments.dataType = DataType.String;
+        //        dpIDDocuments.dataLength = 100;
+
+        //        doc.dataProperties.Add(dpIDDocuments);
+
+        //        DataProperty dpPathDocuments = new DataProperty();
+        //        dpPathDocuments.columnName = "Path";
+        //        dpPathDocuments.propertyName = "Path";
+        //        dpPathDocuments.dataType = DataType.String;
+        //        dpPathDocuments.dataLength = 1000;
+        //        doc.dataProperties.Add(dpPathDocuments);
+
+        //        doc.keyProperties = new List<KeyProperty>()
+        //    {
+        //      new KeyProperty()
+        //      {
+        //        keyPropertyName = "ID"
+        //      }
+        //    };
+        //        doc.hasContent = false;
+        //        dictionary.dataObjects.Add(doc);
+
+        //        DataObject folderDataObject = new DataObject();
+        //        folderDataObject.objectName = "Folders";
+        //        folderDataObject.tableName = "Folders";
+
+
+        //        DataProperty dpNameFolders = new DataProperty();
+        //        dpNameFolders.columnName = "Name";
+        //        dpNameFolders.propertyName = "Name";
+        //        dpNameFolders.dataType = DataType.String;
+        //        dpNameFolders.dataLength = 100;
+
+        //        folderDataObject.dataProperties.Add(dpNameFolders);
+
+        //        DataProperty dpIDfolder = new DataProperty();
+        //        dpIDfolder.columnName = "ID";
+        //        dpIDfolder.propertyName = "ID";
+        //        dpIDfolder.dataType = DataType.String;
+        //        dpIDfolder.dataLength = 100;
+
+        //        folderDataObject.dataProperties.Add(dpIDfolder);
+
+        //        DataProperty dpPathFolders = new DataProperty();
+        //        dpPathFolders.columnName = "Path";
+        //        dpPathFolders.propertyName = "Path";
+        //        dpPathFolders.dataType = DataType.String;
+        //        dpPathFolders.dataLength = 1000;
+        //        folderDataObject.dataProperties.Add(dpPathFolders);
+
+        //        folderDataObject.keyProperties = new List<KeyProperty>()
+        //    {
+        //      new KeyProperty()
+        //      {
+        //        keyPropertyName = "ID"
+        //      }
+        //    };
+
+        //        DataRelationship dataRelation = new DataRelationship();
+        //        dataRelation.relatedObjectName = "SubFolders";
+        //        dataRelation.relationshipName = "SubFolders";
+
+        //        dataRelation.relationshipType = RelationshipType.OneToMany;
+
+        //        PropertyMap propertyMap = new PropertyMap();
+        //        propertyMap.dataPropertyName = "ID";
+        //        propertyMap.relatedPropertyName = "ID";
+
+        //        dataRelation.propertyMaps.Add(propertyMap);
+
+
+        //        DataRelationship dataRelationDoc = new DataRelationship();
+        //        dataRelationDoc.relatedObjectName = "Documents";
+        //        dataRelationDoc.relationshipName = "Documents";
+
+
+        //        dataRelationDoc.relationshipType = RelationshipType.OneToMany;
+
+        //        PropertyMap propertyMapDoc = new PropertyMap();
+        //        propertyMapDoc.dataPropertyName = "ID";
+        //        propertyMapDoc.relatedPropertyName = "ID";
+
+        //        dataRelationDoc.propertyMaps.Add(propertyMapDoc);
+
+        //        folderDataObject.hasContent = false;
+        //        dictionary.dataObjects.Add(folderDataObject);
+        //        dictionary.dataObjects[3].dataRelationships.Add(dataRelation);
+        //        dictionary.dataObjects[3].dataRelationships.Add(dataRelationDoc);
+
+
+        //        utility.Utility.Write<DataDictionary>(dictionary, path);
+
+        //        dbDictionary = new DatabaseDictionary();
+
+        //        dbDictionary.dataObjects = dictionary.dataObjects;
+        //        dbDictionary.dataVersion = dictionary.dataVersion;
+        //        dbDictionary.enableSearch = dictionary.enableSearch;
+        //        dbDictionary.enableSummary = dictionary.enableSearch;
+        //        dbDictionary.picklists = dictionary.picklists;
+
+
+
+
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.Error(e.Message);
+        //        throw e;
+        //    }
+        //    finally
+        //    {
+        //        Logout();
+        //    }
+
+
+
+        //    return dbDictionary;
+        //}
         public override DatabaseDictionary GetDatabaseDictionary()
         {
 
             //_logger.Debug("In Dictionary Creation");
+            int _iCounter;
             DatabaseDictionary dbDictionary = null;
+            _hshAllEnvironments = new Hashtable();
             DataDictionary dictionary = new DataDictionary();
             try
             {
@@ -79,61 +343,21 @@ namespace org.iringtools.adapter.datalayer
 
                     return dbDictionary;
                 }
-                Login();
 
-                List<string> dataObjects = new List<string>();
-                string dataObjectsStr = _settings["PW.DataObjects"];
 
-                if (dataObjectsStr != null)
-                {
-                    dataObjects = dataObjectsStr.ToString().Replace(" ", "").Split(',').ToList<string>();
-                }
+                //List<string> dataObjects = new List<string>();
+                //string dataObjectsStr = _settings["PW.DataObjects"];
 
-                SortedList<string, SortedList<string, TypeAndLength>> env = GetEnvironments();
+                //if (dataObjectsStr != null)
+                //{
+                //    dataObjects = dataObjectsStr.ToString().Replace(" ", "").Split(',').ToList<string>();
+                //}
+                //To Handle multiple DataSource.
                 
-                foreach (var item in env)
-                {
-                    string itemName = item.Key;
-                    //if (dataObjects == null || dataObjects.Count == 0 || dataObjects.Contains(itemName.Replace(" ", "")))
-                    //{
-                        DataObject dataObject = new DataObject()
-                        {
-                            hasContent = true,
-                            objectName = itemName.Replace(" ", string.Empty),
-                            tableName = itemName,
-                            dataProperties = GetGenericProperties()
-                        };
-
-                        foreach (var pair in item.Value)
-                        {
-
-                            string type = (string)pair.Value.DataType;
-
-                            DataProperty prop = new DataProperty()
-                            {
-                                propertyName = pair.Key,
-                                columnName = pair.Key,
-                                dataType = DataType.String,
-                                dataLength = pair.Value.DataLength
-                            };
-
-                            dataObject.dataProperties.Add(prop);
-                        }
-
-                        dataObject.keyProperties = new List<KeyProperty>()
-            {
-              new KeyProperty()
-              {
-                keyPropertyName = "DocumentGUID"
-              }
-            };
-
-                        dictionary.dataObjects.Add(dataObject);
-                    //}
-                }
-
+                for (_iCounter = 0; _iCounter < _arrDataSources.Length; _iCounter++)
+                    GetDictionaryDetails(dictionary, _iCounter);
                 DataObject subFolderDataObject = new DataObject();
-                
+
                 subFolderDataObject.objectName = "SubFolders";
                 subFolderDataObject.tableName = "SubFolders";
 
@@ -160,13 +384,14 @@ namespace org.iringtools.adapter.datalayer
 
 
                 subFolderDataObject.keyProperties = new List<KeyProperty>()
-        {
-            new KeyProperty()
-            {
-            keyPropertyName = "ID"
-            }
-        };
+                {
+                    new KeyProperty()
+                    {
+                    keyPropertyName = "ID"
+                    }
+                };
                 //subFolderDataObject.hasContent = false;
+                _hshAllEnvironments.Add(subFolderDataObject, _sDeafultStorage);
                 dictionary.dataObjects.Add(subFolderDataObject);
 
 
@@ -176,8 +401,6 @@ namespace org.iringtools.adapter.datalayer
                 doc.tableName = "Documents";
 
                 doc.isRelatedOnly = true;
-
-
 
                 DataProperty dpNameDocuments = new DataProperty();
                 dpNameDocuments.columnName = "Name";
@@ -210,6 +433,7 @@ namespace org.iringtools.adapter.datalayer
               }
             };
                 doc.hasContent = false;
+                _hshAllEnvironments.Add(doc, _sDeafultStorage);
                 dictionary.dataObjects.Add(doc);
 
                 DataObject folderDataObject = new DataObject();
@@ -275,6 +499,7 @@ namespace org.iringtools.adapter.datalayer
                 dataRelationDoc.propertyMaps.Add(propertyMapDoc);
 
                 folderDataObject.hasContent = false;
+                _hshAllEnvironments.Add(folderDataObject, _sDeafultStorage);
                 dictionary.dataObjects.Add(folderDataObject);
                 dictionary.dataObjects[3].dataRelationships.Add(dataRelation);
                 dictionary.dataObjects[3].dataRelationships.Add(dataRelationDoc);
@@ -289,11 +514,6 @@ namespace org.iringtools.adapter.datalayer
                 dbDictionary.enableSearch = dictionary.enableSearch;
                 dbDictionary.enableSummary = dictionary.enableSearch;
                 dbDictionary.picklists = dictionary.picklists;
-
-
-
-
-
             }
             catch (Exception e)
             {
@@ -309,8 +529,75 @@ namespace org.iringtools.adapter.datalayer
 
             return dbDictionary;
         }
-
         #endregion
+
+        private SortedList<string, SortedList<string, TypeAndLength>> GetDictionaryDetails(DataDictionary dictionary, int iCountervalue)
+        {
+
+            _sDatasource = _arrDataSources[iCountervalue];          
+            SortedList<int, string> lstFolder = this.GetTopLevelFolders();
+           
+            foreach (int key in lstFolder.Keys)
+            {
+                if (lstFolder[key].ToString().ToUpper().IndexOf(_arrApp[1].ToString().ToUpper()) != -1)
+                {
+                    _iFolderID = key;
+                    break;                    
+                }
+            }
+
+            Login();
+            //_iFolderID  = lstFolder
+            SortedList<string, SortedList<string, TypeAndLength>> env = GetEnvironments();
+
+           
+
+            foreach (var item in env)
+            {
+                string itemName = item.Key;
+                
+                DataObject dataObject = new DataObject()
+                {
+                    hasContent = true,
+                    objectName = itemName.Replace(" ", string.Empty),
+                    tableName = itemName,
+                    dataProperties = GetGenericProperties()
+                };
+
+                foreach (var pair in item.Value)
+                {
+
+                    string type = (string)pair.Value.DataType;
+
+                    DataProperty prop = new DataProperty()
+                    {
+                        propertyName = pair.Key,
+                        columnName = pair.Key,
+                        dataType = DataType.String,
+                        dataLength = pair.Value.DataLength
+                    };
+
+                    dataObject.dataProperties.Add(prop);
+                }
+
+                dataObject.keyProperties = new List<KeyProperty>()
+            {
+              new KeyProperty()
+              {
+                keyPropertyName = "DocumentGUID"
+              }
+            };
+
+
+                if (!_hshAllEnvironments.ContainsKey(dataObject.objectName))
+                {
+                    _hshAllEnvironments.Add(dataObject.objectName, _sDatasource);
+                    dictionary.dataObjects.Add(dataObject);
+                }
+               
+            }
+            return env;
+        }
 
         #region Public function : RefreshDataTable
         /// <summary>
@@ -369,8 +656,6 @@ namespace org.iringtools.adapter.datalayer
                 }
                 else
                 {
-
-
                     Login();
 
                     DataTable dt = GetDocumentsForProject(
@@ -409,25 +694,13 @@ namespace org.iringtools.adapter.datalayer
         /// </summary>
         /// <param name="whereClause"></param>
         /// <returns></returns>
-      //  private DataTable GetSubFolders(string whereClause)
         private DataTable GetSubFolders()
         {
             DataTable dtsubFolderDetails;
             dtsubFolderDetails = GetDataTableSchema("subfolders");
 
-            SortedList<int, string> lstSubFolder;
-
-            //string[] strFrag = whereClause.Split('=');
-            //string ID = strFrag[1];
-            //ID = ID.Replace("'", "");
-            //if (ID == string.Empty)
-            //{
-            //    return dtsubFolderDetails;
-            //}
-           // if (whereClause == "from identifier")
-                lstSubFolder = this.GetChildFolders(iParentFolder);
-            //else
-            //    lstSubFolder = this.GetChildFolders(Convert.ToInt32(ID));
+            SortedList<int, string> lstSubFolder;          
+            lstSubFolder = this.GetChildFolders(iParentFolder);
 
             foreach (var pair in lstSubFolder)
             {
@@ -436,7 +709,6 @@ namespace org.iringtools.adapter.datalayer
             _iFoldrCount = dtsubFolderDetails.Rows.Count;
             _settings["HasContentExpression"] = null;
             return dtsubFolderDetails;
-
         }
 
         /// <summary>
@@ -467,65 +739,32 @@ namespace org.iringtools.adapter.datalayer
         /// GetObjectDTP
         /// </summary>
         /// <returns></returns>
-        private DataTable GetObjectDTP()
-        {
+        private DataTable GetObject()
+        {           
+            int i;
+            DataTable dt,dt1;
             string orderBy = string.Empty;
             string strcolumnname = string.Empty;
-            Login();
-
-            DataTable dt = GetDocumentsForProject(
-            _settings["PW.ProjectType"],
-            _settings["PW.ProjectProperty"],
-            _settings["PW.ProjectName"]);
+            dt = new DataTable();
+            for (i = 0; i < _arrDataSources.Length; i++)
+            {
+                _sDatasource = _arrDataSources[i];
+                Login();
+                if (i == 0)
+                    dt = GetDocumentsForProject(_arrApp[2], "PROJECT_Project_Number", _arrApp[0]);
+                else
+                {
+                    dt1 = GetDocumentsForProject(_arrApp[2], "PROJECT_Project_Number", _arrApp[0]);
+                    dt.Merge(dt1);
+                    dt1.Clear();
+                }
+            }
 
             return dt;
 
         }
 
-        private DataTable GetObjectSimple()
-        {
-            string orderBy = string.Empty;
-            string strcolumnname = string.Empty;
-            Login();
-
-            DataTable dt = GetDocumentsForProject(
-            _settings["PW.ProjectType_Simple"],
-            _settings["PW.ProjectProperty_Simple"],
-            _settings["PW.ProjectName_Simple"]);
-
-            return dt;
-
-        }
-
-        private DataTable GetObjectCascade()
-        {
-            string orderBy = string.Empty;
-            string strcolumnname = string.Empty;
-            Login();
-
-            DataTable dt = GetDocumentsForProject(
-            _settings["PW.ProjectType_Cascade"],
-            _settings["PW.ProjectProperty_Cascade"],
-            _settings["PW.ProjectName_Cascade"]);
-
-            return dt;
-
-        }
-
-        private DataTable GetObjectComplex()
-        {
-            string orderBy = string.Empty;
-            string strcolumnname = string.Empty;
-            Login();
-
-            DataTable dt = GetDocumentsForProject(
-            _settings["PW.ProjectType_Complex"],
-            _settings["PW.ProjectProperty_Complex"],
-            _settings["PW.ProjectName_Complex"]);
-
-            return dt;
-
-        }
+    
 
         private DataTable getDatatable(string tableName, string whereClause, long start, long limit)
         {
@@ -540,21 +779,9 @@ namespace org.iringtools.adapter.datalayer
                 DataTable dtDocument = new DataTable();
                 return dtDocument;
             }
-            else if (tableName.ToUpper() == "DTP_ENG2")
+            else
             {
-                dtglobal = GetObjectDTP();
-            }
-            else if (tableName.ToUpper() == "Cascading Attributes".ToUpper())
-            {
-                dtglobal = GetObjectCascade();
-            }
-            else if (tableName.ToUpper() == "Complex".ToUpper())
-            {
-                dtglobal = GetObjectComplex();
-            }
-            else if (tableName.ToUpper() == "Simple".ToUpper())
-            {
-                dtglobal = GetObjectSimple();
+                dtglobal = GetObject();
             }
             return dtglobal;
         }
@@ -576,8 +803,7 @@ namespace org.iringtools.adapter.datalayer
 
                 _iFoldrCount = dtglobal.DefaultView.ToTable().Rows.Count;
 
-                //if (tableName.ToUpper() == "SUBFOLDERS" || tableName.ToUpper() == "DOCUMENTS")
-                //    return dtglobal;
+               
 
                 if (whereClause != string.Empty)
                 {
@@ -625,15 +851,12 @@ namespace org.iringtools.adapter.datalayer
         private DataTable getObjects(string objectType, IList<string> identifiers)
         {
             DataTable dtGlobl = new DataTable();
+            int _innercount;
             List<string> _identifiers = new List<string>();
             if (objectType.ToUpper() == "FOLDERS")
             {
 
-               // iParentFolder = Convert.ToInt32(identifiers[0]);
-               // dtGlobl = GetFolders();
-               // string[] strArray = identifiers.ToArray<string>();
-               //// dtGlobl.DefaultView.RowFilter = "ID = " + "'" + strArray[0] + "'";
-               // _iFoldrCount = dtGlobl.DefaultView.ToTable().Rows.Count;
+              
                 iParentFolder = Convert.ToInt32(identifiers[0]);
                 //dtGlobl = GetSubFolders("from identifier");
                 dtGlobl = GetSubFolders();
@@ -669,7 +892,8 @@ namespace org.iringtools.adapter.datalayer
 
 
             }
-            else if (objectType.ToUpper() == "DTP_ENG2")
+            else 
+            //else if (objectType.ToUpper() == "DTP_ENG2")
             {
                 DatabaseDictionary dictionary1 = GetDatabaseDictionary();
                 DataObject objDef1 = dictionary1.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
@@ -680,11 +904,14 @@ namespace org.iringtools.adapter.datalayer
                 {
                     listAttributes.Add(prop.columnName);
                 }
-
-                Login();
+                for (_innercount = 0; _innercount < _arrDataSources.Length; _innercount++)
+                {
+                    _sDatasource = _arrDataSources[_innercount];  
+                    Login();
+                }
 
                 dtGlobl = GetDocumentMetadata(docGuids, listAttributes);
-                dtGlobl = dtGlobl.Select("DocumentGUID='"+identifiers[0]+"'").CopyToDataTable();
+               // dtGlobl = dtGlobl.Select("DocumentGUID='"+identifiers[0]+"'").CopyToDataTable();
                 return dtGlobl;
                 //return dtGlobl;
             }
@@ -744,7 +971,7 @@ namespace org.iringtools.adapter.datalayer
                                     format = docName.Substring(extIndex);
                                 }
 
-                                string contentType = MimeTypes.Dictionary[format];
+                               // string contentType = MimeTypes.Dictionary[format];
 
                                 MemoryStream outStream = new MemoryStream();
                                 stream.CopyTo(outStream);
@@ -1333,7 +1560,10 @@ namespace org.iringtools.adapter.datalayer
 
                 if (!PWWrapper.aaApi_IsConnectionLost())
                 {
-                    int iNumEnvrs = PWWrapper.aaApi_SelectAllEnvs(false);
+                    //int iNumEnvrs = PWWrapper.aaApi_SelectAllEnvs(false);
+
+                    int iNumEnvrs = PWWrapper.aaApi_SelectEnvByProjectId(_iFolderID);
+
 
                     if (iNumEnvrs > 0)
                     {
@@ -1510,7 +1740,7 @@ namespace org.iringtools.adapter.datalayer
             }
             return slColumnDataTypesAndLengths;
         }
-
+        
         unsafe private static SortedList<string, int> GetListOfProjectTypes()
         {
             SortedList<string, int> slListOfProjectTypes = new SortedList<string, int>();
@@ -1857,7 +2087,7 @@ namespace org.iringtools.adapter.datalayer
             slQueryPropVals, false);
 
             DataTable dtReturn = new DataTable("Documents");
-
+            
 
 
             foreach (int iProjectId in slProjects.Keys)
