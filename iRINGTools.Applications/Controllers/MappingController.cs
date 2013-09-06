@@ -82,7 +82,6 @@ namespace org.iringtools.web.controllers
         string scope = form["scope"];
         string app = form["app"];
         string graph = form["graph"];
-        string objectName = form["objectName"];
         string parentClassId = form["parentClassId"];
         int templateIndex = int.Parse(form["templateIndex"]);
         string roleName = form["roleName"];
@@ -444,7 +443,7 @@ namespace org.iringtools.web.controllers
         expanded = false,
         leaf = false,
         children = null,
-        record = graph,
+        record = classMap,
         index = classMap.index
       };
 

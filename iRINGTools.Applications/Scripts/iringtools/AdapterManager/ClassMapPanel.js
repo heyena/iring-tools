@@ -29,12 +29,11 @@ AdapterManager.ClassMapPanel = Ext.extend(Ext.Window, {
     this.bbar = this.buildToolbar();
 
     if (rootClassRecord != null) {
-      var rootClass = rootClassRecord.classTemplateMaps[0].classMap;
       var parentClassNode = this.node.parentNode.parentNode;
 
-      identifier = rootClass.identifiers.join();
-      delimiter = rootClass.identifierDelimiter;
-      objectName = rootClassRecord.dataObjectName;
+      identifier = rootClassRecord.identifiers.join();
+      delimiter = rootClassRecord.identifierDelimiter;
+      objectName = rootClassRecord.identifiers[0].split('.')[0];
       parentClassId = parentClassNode.attributes.identifier;
       parentClassIndex = parentClassNode.attributes.index;
       templateIndex = parentClassNode.indexOf(this.node.parentNode);
