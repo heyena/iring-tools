@@ -4762,7 +4762,6 @@
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\examples\tabs\images\" />
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\test\yui_2.6.0\yui\build\logger\assets\skins\sam\" />
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\test\yui_2.6.0\yui\build\yuitest\assets\skins\sam\" />
-    <Folder Include="Service References\App_Data\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
@@ -4908,9 +4907,6 @@
     <None Include="Scripts\ext-3.3.1\resources\images\yourtheme\window\left-right.psd" />
     <None Include="Scripts\ext-3.3.1\resources\images\yourtheme\window\right-corners.psd" />
     <None Include="Scripts\ext-3.3.1\resources\images\yourtheme\window\top-bottom.psd" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
