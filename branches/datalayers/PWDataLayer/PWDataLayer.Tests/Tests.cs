@@ -25,7 +25,8 @@ namespace org.iringtools.adapter.datalayer.test
       //AdapterSettings adapterSettings;
     public Tests()
     {
-        _objectType = "DTP_ENG2";
+        //_objectType = "DTP_ENG2";
+        _objectType = "Simple";
       string baseDir = Directory.GetCurrentDirectory();
       Directory.SetCurrentDirectory(baseDir.Substring(0, baseDir.LastIndexOf("\\bin")));
 
@@ -42,8 +43,10 @@ namespace org.iringtools.adapter.datalayer.test
       adapterSettings.AppendSettings(twSettings);
 
       _dataLayer = new PWDataLayer(adapterSettings);
+     
       
     }
+   
 
     [Test]
     public void TestDictionary()
@@ -65,7 +68,7 @@ namespace org.iringtools.adapter.datalayer.test
     //    //Assert.AreEqual(response.Level, StatusLevel.Success);
     //}
 
-
+   
    
 
     [Test]
@@ -75,29 +78,32 @@ namespace org.iringtools.adapter.datalayer.test
         identifiers.Add("93");
         IList<IDataObject> dataObject = _dataLayer.Get("Folders", identifiers);
         
-        long count = _dataLayer.GetCount("DTP_ENG2", null);
+        //long count = _dataLayer.GetCount("DTP_ENG2", null);
+        long count = _dataLayer.GetCount("Simple", null);
       Assert.Greater(count, 0);
       DataTable dt = _dataLayer.GetDataTable("Folders", string.Empty, 0, 25);
-      dt = _dataLayer.GetDataTable("DTP_ENG2", string.Empty, 0, 25);
+      //dt = _dataLayer.GetDataTable("DTP_ENG2", string.Empty, 0, 25);
+      dt = _dataLayer.GetDataTable("Simple", string.Empty, 0, 25);
       string docGuid = dt.Rows[0]["DocumentGUID"].ToString();
 
-      dt = _dataLayer.GetDataTable("DTP_ENG2", new List<string> { docGuid });
+      //dt = _dataLayer.GetDataTable("DTP_ENG2", new List<string> { docGuid });
+      dt = _dataLayer.GetDataTable("Simple", new List<string> { docGuid });
       Assert.Greater(dt.Rows.Count, 0);
     }
 
-    [Test]
-    public void TestGetContents()
-    {
-      IDictionary<string, string> idFormats = new Dictionary<string, string>()
-      {
-        {"8bdd1237-7e3f-415b-9e21-ad18b5d64f2b", "doc"},        
-        {"e7ac674a-1a58-46c8-9460-c500e6776573", "pdf"}
-      };
+    //[Test]
+    //public void TestGetContents()
+    //{
+    //  IDictionary<string, string> idFormats = new Dictionary<string, string>()
+    //  {
+    //    {"8bdd1237-7e3f-415b-9e21-ad18b5d64f2b", "doc"},        
+    //    {"e7ac674a-1a58-46c8-9460-c500e6776573", "pdf"}
+    //  };
 
-      IList<IContentObject> contentObjects = _dataLayer.GetContents("DTP_ENG2", idFormats); 
+    //  IList<IContentObject> contentObjects = _dataLayer.GetContents("DTP_ENG2", idFormats); 
 
-      Assert.Greater(contentObjects.Count, 0);
-    }
+    //  Assert.Greater(contentObjects.Count, 0);
+    //}
     [Test]
     public void Test_GetDataTable()
     {
@@ -106,8 +112,8 @@ namespace org.iringtools.adapter.datalayer.test
         identifiers.Add("4a44297f-3456-4e70-a073-ae0a3e92dae0");
         IList<IDataObject> dataObject = _dataLayer.Get(_objectType, identifiers);
         identifiers.Clear();
-        //identifiers.Add("212"); 
-        //IList<IDataObject> dataObject1 = _dataLayer.Get("Documents", identifiers);
+        identifiers.Add("212"); 
+//        IList<IDataObject> dataObject1 = _dataLayer.Get("Documents", identifiers);
 
         
         Assert.AreEqual(dataObject.Count, 1);
