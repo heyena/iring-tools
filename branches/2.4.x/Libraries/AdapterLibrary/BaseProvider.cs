@@ -223,8 +223,8 @@ namespace org.iringtools.adapter
 
       // Load app settings
       string appSettingsPath = (projectName.ToLower() != "all")
-        ? string.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName)
-        : string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
+        ? string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName)
+        : string.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName);
       
       if (File.Exists(appSettingsPath))
       {
