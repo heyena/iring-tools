@@ -145,8 +145,6 @@ namespace org.iringtools.web.controllers
                 classMapNode = CreateClassNode(context, classMap);
               }
 
-              _repository.UpdateMapping(scope, app, mapping);
-
               break;
             }
           }
