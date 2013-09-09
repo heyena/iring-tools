@@ -138,8 +138,14 @@ namespace org.iringtools.web.controllers
                 classMap.identifiers.AddRange(identifier.Split(','));
                 classMap.identifierDelimiter = delimiter;
 
+                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classMap.id, classMap.index);
+                ctm.classMap.identifiers = classMap.identifiers;
+                ctm.classMap.identifierDelimiter = classMap.identifierDelimiter;
+
                 classMapNode = CreateClassNode(context, classMap);
               }
+
+              _repository.UpdateMapping(scope, app, mapping);
 
               break;
             }
