@@ -145,7 +145,7 @@
                     "//contextNameField.setValue(context);\r",
                     "\r",
                     "//if(state == 'new')\r",
-                    "  //form.findField('name').setValue(folderName);\r",
+                    "//form.findField('name').setValue(folderName);\r",
                     "\r",
                     "node.eachChild(function(n) {\r",
                     "  if(n.data.text == folderName) {\r",

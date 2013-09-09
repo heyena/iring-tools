@@ -587,6 +587,21 @@ Ext.define('AM.controller.Directory', {
       graphMenu.showAt(e.getXY());
     }else if (obj.type === "DataObjectsNode") {
       var graphMenu = Ext.widget('appdatarefreshmenu');
+      if (node.data.property["Data Mode"] == "Live") {
+        if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+          graphMenu.items.map['switchToCached'].setVisible(true);
+          graphMenu.items.map['switchToLive'].setVisible(false);
+
+        }
+        graphMenu.items.map['refreshCacheId'].setVisible(true);	
+        graphMenu.items.map['importCacheId'].setVisible(true);	
+      }else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+        graphMenu.items.map['switchToCached'].setVisible(false);
+        graphMenu.items.map['switchToLive'].setVisible(true);
+        graphMenu.items.map['refreshCacheId'].setVisible(false);	
+        graphMenu.items.map['importCacheId'].setVisible(false);	
+      }
+
       graphMenu.showAt(e.getXY());
     }else if(obj.type === "DataPropertyNode"){
       if(obj.property){
@@ -1215,6 +1230,16 @@ Ext.define('AM.controller.Directory', {
 
   },
 
+  onSwitchToCached: function(item, e, eOpts) {
+    var me = this;
+    me.switchDataMode('Cache');
+  },
+
+  onSwitchToLive: function(item, e, eOpts) {
+    var me = this;
+    me.switchDataMode('Live');
+  },
+
   init: function(application) {
     scopForExport = null;
     appForExport = null;
@@ -1299,6 +1324,12 @@ Ext.define('AM.controller.Directory', {
       },
       "menuitem[action=deletevirtualproperty]": {
         click: this.onDeleteVirtualProperty
+      },
+      "menuitem[action=switchToCached]": {
+        click: this.onSwitchToCached
+      },
+      "menuitem[action=switchToLive]": {
+        click: this.onSwitchToLive
       }
     });
   },
@@ -1363,6 +1394,42 @@ Ext.define('AM.controller.Directory', {
     }
 
     ]
+  },
+
+  switchDataMode: function(mode) {
+    var me = this;
+    var tree = me.getDirTree();
+    var node = tree.getSelectedNode();    
+    //var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    //Ext.getCmp('content-panel').getEl().mask('Processing...', 'x-mask-loading');
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/SwitchDataMode',
+      method: 'POST',
+      timeout: 3600000,
+      params: {
+        'nodeid': node.data.id,
+        'mode': mode
+      },
+      success: function (response, request) {
+        var responseObj = Ext.decode(response.responseText);
+
+        if (responseObj.Level == 0) {
+          showDialog(450, 100, 'Result', 'Data Mode switched to [' + mode + '].', Ext.Msg.OK, null);
+        }
+        else {
+          showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+        }
+        tree.onReload();
+        //node.parentNode.reload();
+        //Ext.getCmp('content-panel').getEl().unmask();
+      },
+      failure: function (response, request) {
+        showDialog(500, 160, 'Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+        //node.parentNode.reload();
+        //Ext.getCmp('content-panel').getEl().unmask();
+      }
+    });
   }
 
 });
