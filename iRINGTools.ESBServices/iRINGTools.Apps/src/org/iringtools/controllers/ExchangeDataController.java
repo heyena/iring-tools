@@ -24,6 +24,7 @@ import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
+import org.iringtools.models.Result;
 
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.tree.Tree;
@@ -44,8 +45,8 @@ public class ExchangeDataController extends BaseController
   private String exchangeServiceUri;
   private Exchange form;
   private Scope newScopeAdd;
-
-  private String id, name, description, sourceUri, sourceScopeName, result, sourceAppName, sourceGraphName, targetUri,
+  private Result result;
+  private String id, name, description, sourceUri, sourceScopeName, sourceAppName, sourceGraphName, targetUri,
       targetScopeName, targetAppName, commName, targetGraphName, hasAlgorithm, appName, appScope, oldAppName,
       oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response;
 
@@ -685,7 +686,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      result = exchangeDataModel.testSourceUri(sourceUri);
+      result = exchangeDataModel.testUri(sourceUri);
     }
     catch (Exception e)
     {
@@ -701,7 +702,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      result = exchangeDataModel.testTargetUri(targetUri);
+      result = exchangeDataModel.testUri(targetUri);
     }
     catch (Exception e)
     {
@@ -1618,12 +1619,12 @@ public class ExchangeDataController extends BaseController
     this.oldConfigName = oldConfigName;
   }
 
-  public String getResult()
+  public Result getResult()
   {
     return result;
   }
 
-  public void setResult(String result)
+  public void setResult(Result result)
   {
     this.result = result;
   }

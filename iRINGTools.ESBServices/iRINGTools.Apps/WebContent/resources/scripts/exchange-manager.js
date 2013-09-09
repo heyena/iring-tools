@@ -1468,7 +1468,7 @@ function SourceUri() {
 	var graph = form.findField('sourceGraphName').getValue();
 	var sourceUri = source + "/" + scope + "/" + app + "/" + graph
 			+ "/manifest";
-	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
 		url : 'SourcetestUri?' + '&sourceUri =' + sourceUri,
@@ -1479,7 +1479,7 @@ function SourceUri() {
 
 			Ext.Msg.show({
 				title : 'Result ',
-				msg : '<textarea ' + style + ' readonly="yes">' + result
+				msg : '<textarea ' + style + ' readonly="yes">' + result.message
 						+ '</textarea>',
 				buttons : Ext.MessageBox.OK
 			});
@@ -1502,7 +1502,7 @@ function testBaseUri() {
 	var form = obj.getForm();
 
 	var baseUri = form.findField('baseUri').getValue();
-	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
 		url : 'BasetestUri?' + '&sourceUri =' + baseUri,
@@ -1513,7 +1513,7 @@ function testBaseUri() {
 
 			Ext.Msg.show({
 				title : 'Result ',
-				msg : '<textarea ' + style + ' readonly="yes">' + result
+				msg : '<textarea ' + style + ' readonly="yes">' + result.message
 						+ '</textarea>',
 				buttons : Ext.MessageBox.OK
 			});
@@ -1540,7 +1540,7 @@ function TargetUri() {
 	var graph = form.findField('targetGraphName').getValue();
 	var targetUri = target + "/" + scope + "/" + app + "/" + graph
 			+ "/manifest";
-	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
 		url : 'testTargetUrl?' + '&targetUri =' + targetUri,
@@ -1551,7 +1551,7 @@ function TargetUri() {
 
 			Ext.Msg.show({
 				title : 'Result ',
-				msg : '<textarea ' + style + ' readonly="yes">' + result
+				msg : '<textarea ' + style + ' readonly="yes">' + result.message
 						+ '</textarea>',
 				buttons : Ext.MessageBox.OK
 			});
