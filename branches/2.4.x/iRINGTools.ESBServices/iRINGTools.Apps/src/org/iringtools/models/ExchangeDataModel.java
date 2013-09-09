@@ -46,6 +46,9 @@ import org.iringtools.history.History;
 import org.iringtools.library.exchange.Constants;
 import org.iringtools.library.directory.DirectoryProvider;
 import org.iringtools.library.exchange.ExchangeProvider;
+import org.iringtools.utility.HttpClient;
+import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.tree.Node;
@@ -1462,43 +1465,25 @@ public class ExchangeDataModel extends DataModel
     return dprovider.getCommodityInfo(com, scope);
   }
 
-  public String testTargetUri(String targetUri) throws IOException
-  {
-    URL u = new URL(targetUri);
-    HttpURLConnection huc = (HttpURLConnection) u.openConnection();
-    huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
-    huc.connect();
-    int code = huc.getResponseCode();
-    System.out.println(code);
+  public Result testUri(String Uri) throws IOException {
+		Result result = new Result();
+		try {
+			  HttpClient httpClient = new HttpClient(Uri);
+			    httpClient.setAsync(false);
+			    Manifest  manifest = httpClient.get(Manifest.class);
+			    result.setSuccess(true);
+				result.setMessage("Connected successfully!");
+		}catch (HttpClientException e) {
+			result.setSuccess(false);
+			result.setMessage("Exception : "+ e.getErrorMessage());
+		}catch (Exception e) {
+			result.setSuccess(false);
+			result.setMessage("Exception : Invalid URL.");
+		}
+		return result;
+	}
 
-    if (code == 200)
-    {
-      return ("Connected successfully!");
-    }
-    else
-    {
-      return ("Connection to URL failed.");
-    }
-  }
-
-  public String testSourceUri(String sourceUri) throws IOException
-  {
-    URL u = new URL(sourceUri);
-    HttpURLConnection huc = (HttpURLConnection) u.openConnection();
-    huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
-    huc.connect();
-    int code = huc.getResponseCode();
-    System.out.println(code);
-
-    if (code == 200)
-    {
-      return ("Connected successfully!");
-    }
-    else
-    {
-      return ("Connection to URL failed.");
-    }
-  }
+	
 
   public void saveDataFilterExpression(Expressions ex, String commName, String scope, String xid, OrderExpressions Oe)
   {
@@ -1559,35 +1544,6 @@ public class ExchangeDataModel extends DataModel
     }
     return columnnameList;
   }
-
-  public String testUri(String sourceUri) // throws IOException
-  {
-    try
-    {
-      URL u = new URL(sourceUri);
-      HttpURLConnection huc = (HttpURLConnection) u.openConnection();
-      huc.setRequestMethod("GET"); // OR huc.setRequestMethod ("HEAD");
-      huc.connect();
-      int code = huc.getResponseCode();
-      System.out.println(code);
-      if (code == 200)
-      {
-        return ("Connected successfully!");
-      }
-      else
-      {
-        return ("Connection to URL failed.");
-      }
-    }
-    catch (UnknownHostException e)
-    {
-      e.printStackTrace();
-      return ("UnknownHostException : Invalid URL.");
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      return ("Exception : Invalid URL.");
-    }
-  }
 }
+
+  
