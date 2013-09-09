@@ -119,6 +119,7 @@ namespace org.iringtools.web.controllers
                   node.property.Add("Name", application.Name);
                   node.property.Add("Description", application.Description);
                   node.property.Add("Data Layer", dataLayer.Name);
+                  node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
                   nodes.Add(node);
                 }
               }
@@ -129,6 +130,9 @@ namespace org.iringtools.web.controllers
           case "ApplicationNode":
             {
               string context = form["node"];
+              string[] contextParts = context.Split(new char[] { '/' });
+              string scopeName = contextParts[0];
+              string applicationName = contextParts[1];
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -141,8 +145,26 @@ namespace org.iringtools.web.controllers
                 text = "Data Objects",
                 expanded = false,
                 leaf = false,
-                children = null
+                children = null,
+                property = new Dictionary<string,string>()
               };
+
+              ScopeProject scope = _repository.GetScope(scopeName);
+
+              if (scope != null)
+              {
+                  ScopeApplication application = scope.Applications.Find(x => x.Name.ToLower() == applicationName.ToLower());
+
+                  if (application != null)
+                  {
+                      dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
+
+                      if (application.DataMode == DataMode.Cache)
+                      {
+                          dataObjectsNode.property.Add("Last Cache Update", application.CacheTimestamp.ToString());
+                      }
+                  }
+              }
 
               JsonTreeNode graphsNode = new JsonTreeNode
               {

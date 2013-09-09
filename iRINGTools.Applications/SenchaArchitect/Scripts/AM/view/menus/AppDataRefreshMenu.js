@@ -30,7 +30,7 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
         },
         {
           xtype: 'menuitem',
-          action: 'switch',
+          action: 'switchToCached',
           hidden: true,
           itemId: 'switchToCached',
           icon: 'Content/img/16x16/switch.png',
@@ -38,7 +38,7 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
         },
         {
           xtype: 'menuitem',
-          action: 'switch',
+          action: 'switchToLive',
           hidden: true,
           itemId: 'switchToLive',
           icon: 'Content/img/16x16/switch.png',
@@ -47,12 +47,16 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
         {
           xtype: 'menuitem',
           action: 'refreshcache',
+          hidden: true,
+          itemId: 'refreshCacheId',
           icon: 'Content/img/16x16/refresh_cache.gif',
           text: 'Refresh Cache'
         },
         {
           xtype: 'menuitem',
           action: 'importcache',
+          hidden: true,
+          itemId: 'importCacheId',
           icon: 'Content/img/16x16/import.jpg',
           text: 'Import Cache'
         },

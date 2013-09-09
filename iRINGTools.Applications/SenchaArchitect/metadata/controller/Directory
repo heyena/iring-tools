@@ -245,7 +245,7 @@
                     "win.on('save', function () {\r",
                     "  win.destroy();\r",
                     "  //me.onAppDataRefreshClick(item, e, eOpts);\r",
-                    "  \r",
+                    "\r",
                     "}, me);\r",
                     "\r",
                     "win.on('cancel', function () {\r",
@@ -805,16 +805,31 @@
                     "  graphMenu.showAt(e.getXY());\r",
                     "}else if (obj.type === \"DataObjectsNode\") {\r",
                     "  var graphMenu = Ext.widget('appdatarefreshmenu');\r",
+                    "  if (node.data.property[\"Data Mode\"] == \"Live\") {\r",
+                    "      if (node.parentNode.data.property[\"LightweightDataLayer\"] == \"No\") {\r",
+                    "        \tgraphMenu.items.map['switchToCached'].setVisible(true);\r",
+                    "          graphMenu.items.map['switchToLive'].setVisible(false);\r",
+                    "        \r",
+                    "      }\r",
+                    "    \t\tgraphMenu.items.map['refreshCacheId'].setVisible(true);\t\r",
+                    "        graphMenu.items.map['importCacheId'].setVisible(true);\t\r",
+                    "    }else if (node.parentNode.data.property[\"LightweightDataLayer\"] == \"No\") {\r",
+                    "          graphMenu.items.map['switchToCached'].setVisible(false);\r",
+                    "          graphMenu.items.map['switchToLive'].setVisible(true);\r",
+                    "      \t\tgraphMenu.items.map['refreshCacheId'].setVisible(false);\t\r",
+                    "      \t  graphMenu.items.map['importCacheId'].setVisible(false);\t\r",
+                    "    }\r",
+                    " \r",
                     "  graphMenu.showAt(e.getXY());\r",
                     "}else if(obj.type === \"DataPropertyNode\"){\r",
                     "  if(obj.property){\r",
                     "    if(obj.property.isVirtual=='True'){\r",
-                    "    \tvar virtualpropertymenu = Ext.widget('virtualpropertymenu');\r",
-                    "  \t\tvirtualpropertymenu.showAt(e.getXY());\r",
+                    "      var virtualpropertymenu = Ext.widget('virtualpropertymenu');\r",
+                    "      virtualpropertymenu.showAt(e.getXY());\r",
                     "    }\r",
-                    "  \t\r",
+                    "\r",
                     "  }\r",
-                    "  \r",
+                    "\r",
                     "}\r",
                     ""
                 ],
@@ -1778,6 +1793,96 @@
                 "designer|controlQuery": "menuitem[action=deletevirtualproperty]"
             },
             "designerId": "ba03f465-18e8-432c-b41c-69669bfea836"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onSwitchToCached",
+                "implHandler": [
+                    "  var me = this;\r",
+                    "\tme.switchDataMode('Cache');"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=switchToCached]"
+            },
+            "designerId": "f459164e-9cf4-4b17-9272-8b863f7f8079"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onSwitchToLive",
+                "implHandler": [
+                    "\tvar me = this;\r",
+                    "\tme.switchDataMode('Live');"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=switchToLive]"
+            },
+            "designerId": "f5c06a67-a678-4925-b811-9df10ac65ebe"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "switchDataMode",
+                "designer|params": [
+                    "mode"
+                ],
+                "implHandler": [
+                    "\t\tvar me = this;\r",
+                    "    var tree = me.getDirTree();\r",
+                    "    var node = tree.getSelectedNode();    \r",
+                    "    //var node = this.directoryPanel.getSelectionModel().getSelectedNode();\r",
+                    "   //Ext.getCmp('content-panel').getEl().mask('Processing...', 'x-mask-loading');\r",
+                    "\r",
+                    "    Ext.Ajax.request({\r",
+                    "      url: 'AdapterManager/SwitchDataMode',\r",
+                    "      method: 'POST',\r",
+                    "      timeout: 3600000,\r",
+                    "      params: {\r",
+                    "        'nodeid': node.data.id,\r",
+                    "        'mode': mode\r",
+                    "      },\r",
+                    "      success: function (response, request) {\r",
+                    "        var responseObj = Ext.decode(response.responseText);\r",
+                    "\r",
+                    "        if (responseObj.Level == 0) {\r",
+                    "          showDialog(450, 100, 'Result', 'Data Mode switched to [' + mode + '].', Ext.Msg.OK, null);\r",
+                    "        }\r",
+                    "        else {\r",
+                    "          showDialog(500, 160, 'Result', responseObj.Messages.join('\\n'), Ext.Msg.OK, null);\r",
+                    "        }\r",
+                    "\t\t\t\t\ttree.onReload();\r",
+                    "        //node.parentNode.reload();\r",
+                    "        //Ext.getCmp('content-panel').getEl().unmask();\r",
+                    "      },\r",
+                    "      failure: function (response, request) {\r",
+                    "        showDialog(500, 160, 'Error', responseObj.Messages.join('\\n'), Ext.Msg.OK, null);\r",
+                    "        //node.parentNode.reload();\r",
+                    "        //Ext.getCmp('content-panel').getEl().unmask();\r",
+                    "      }\r",
+                    "    });"
+                ]
+            },
+            "designerId": "b2c42858-d155-4dec-9c4f-e436e6478851"
         }
     ]
 }
