@@ -46,7 +46,10 @@ input.button {
 a {
   color: #3E62A6;
 }
-
+.bg_TreeNodeColor
+{
+    background-color:#FF0000 !important;
+}
 .x-tree-panel .x-grid-row .x-grid-cell-inner .treeClass 
 {
   background-image: url("../img/class.png")  !important;

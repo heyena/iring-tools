@@ -9,6 +9,7 @@
         "contextName": null,
         "endpoint": null,
         "baseUrl": null,
+        "multiSelect": null,
         "stateEvents": [
             "itemcollapse",
             "itemexpand"
@@ -27,10 +28,12 @@
         "collapsible": null,
         "title": null,
         "store": "MappingStore",
-        "rootVisible": false
+        "rootVisible": false,
+        "selType": "rowmodel"
     },
     "configAlternates": {
-        "border": "boolean"
+        "border": "boolean",
+        "multiSelect": "boolean"
     },
     "designerId": "37ca6ad3-7180-4c3d-bcd8-22f9493320a6",
     "customConfigs": [
@@ -47,6 +50,11 @@
         {
             "group": "(Custom Properties)",
             "name": "baseUrl",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "multiSelect",
             "type": "string"
         }
     ],
@@ -351,7 +359,7 @@
                     "  var storeTreeState = function (node, expandedNodes,idArray) {\r",
                     "    if (node.isExpanded() && node.childNodes.length > 0) {\r",
                     "      expandedNodes.push(node.getPath('text'));\r",
-                    "\t\t\tidArray.push(node.data.id);\r",
+                    "      idArray.push(node.data.id);\r",
                     "      node.eachChild(function (child) {\r",
                     "        storeTreeState(child, expandedNodes,idArray);\r",
                     "      });\r",
@@ -572,15 +580,6 @@
             "designerId": "d33a65fb-af75-4cf5-93fe-b8e94ffef6e3"
         },
         {
-            "type": "Ext.selection.RowModel",
-            "reference": {
-                "name": "selModel",
-                "type": "object"
-            },
-            "codeClass": "Ext.selection.RowModel",
-            "designerId": "9a74fcfe-3f6f-4073-b6f8-8efa93d36867"
-        },
-        {
             "type": "processcfgfunction",
             "reference": {
                 "name": "items",
@@ -603,6 +602,18 @@
                 ]
             },
             "designerId": "ea9b7a41-7562-4e41-bdc8-9db2bc94e0f0"
+        },
+        {
+            "type": "Ext.selection.RowModel",
+            "reference": {
+                "name": "selModel",
+                "type": "object"
+            },
+            "codeClass": "Ext.selection.RowModel",
+            "userConfig": {
+                "mode": null
+            },
+            "designerId": "69a0059f-dff7-43fe-8859-52ee79bb6161"
         }
     ]
 }
