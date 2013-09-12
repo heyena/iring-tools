@@ -26,6 +26,7 @@ Ext.define('AM.view.mapping.MappingTree', {
   border: true,
   store: 'MappingStore',
   rootVisible: false,
+  selType: 'rowmodel',
 
   initComponent: function() {
     var me = this;

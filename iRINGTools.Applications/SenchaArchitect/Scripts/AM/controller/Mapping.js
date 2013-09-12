@@ -252,6 +252,43 @@ Ext.define('AM.controller.Mapping', {
       }, me);
 
       mapTree.on('itemclick', function (tablepanel, record, item, index, e) {
+        var tempProperty = 'EQUIPMENT.COMMODITY';
+        var dataObject = tempProperty.split('.')[0];
+        var prop =  tempProperty.split('.')[1];
+        var propArr = ['TAG','COMMODITY','EWP','TAGSTATUS'];
+
+        if(record.data.type == 'TemplateMapNode'){
+          for(var i=0;i<node.parentNode.parentNode.childNodes[0].childNodes.length;i++){
+            if(node.parentNode.parentNode.childNodes[0].childNodes[i].data.text == dataObject){
+              if(node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes.length>0){
+                for(k=0;k<propArr.length;k++){
+                  for(var j=0;j<node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes.length;j++){
+                    if(node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes[j].data.text == propArr[k]){
+                      var myTreeNode = node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes[j];
+                      myTreeNode.set('cls','bg_TreeNodeColor');
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }else{
+          for(var i=0;i<node.parentNode.parentNode.childNodes[0].childNodes.length;i++){
+            if(node.parentNode.parentNode.childNodes[0].childNodes[i].data.text == dataObject){
+              if(node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes.length>0){
+                for(k=0;k<propArr.length;k++){
+                  for(var j=0;j<node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes.length;j++){
+                    if(node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes[j].data.text == propArr[k]){
+                      var myTreeNode = node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes[j];
+                      myTreeNode.set('cls','');
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
         var obj = record.store.getAt(index).data;
         if (obj.property && obj.property !== "" && obj.property.length) {
           mapProp.setSource(obj.property);

@@ -192,11 +192,12 @@
             "userConfig": {
                 "fn": "onClick",
                 "implHandler": [
+                    "\r",
                     "var me = this;\r",
                     "try {\r",
                     "  var obj = record.store.getAt(index);\r",
-                    "  var pan = dataview.up('panel').up('panel'),\r",
-                    "    prop = pan.down('propertygrid');\r",
+                    "  var pan = dataview.up('panel').up('panel');\r",
+                    "  prop = pan.down('propertygrid');\r",
                     "  prop.setSource(obj.data.property);\r",
                     "} catch (e) {\r",
                     "  //  alert(e);\r",
