@@ -102,6 +102,7 @@ namespace org.iringtools.adapter.projection
     public int Start { get; set; }
     public int Limit { get; set; }
     public string BaseURI { get; set; }
+    public DataLayerGateway dataLayerGateway { get; set; }
 
     public BasePart7ProjectionEngine(AdapterSettings settings, DataDictionary dictionary, Mapping mapping)
     {
@@ -156,45 +157,45 @@ namespace org.iringtools.adapter.projection
     //propertyPath = "Instrument.LineItems.Tag";
     protected List<IDataObject> GetRelatedObjects(string propertyPath, IDataObject dataObject)
     {
-      List<IDataObject> parentObjects = new List<IDataObject>();
+      List<IDataObject> dataObjects = new List<IDataObject>();
       string[] objectPath = propertyPath.Split('.');
 
-      parentObjects.Add(dataObject);
+      dataObjects.Add(dataObject);
 
-      for (int i = 0; i < objectPath.Length - 1; i++)
+      for (int i = 0; i < objectPath.Length - 2; i++)
       {
-        foreach (IDataObject parentObj in parentObjects)
+        foreach (IDataObject parentObject in dataObjects)
         {
-          string objectType = parentObj.GetType().Name;
+          string objectType = parentObject.GetType().Name;
 
           if (objectType == typeof(GenericDataObject).Name)
           {
-            objectType = ((GenericDataObject)parentObj).ObjectType;
+            objectType = ((GenericDataObject)parentObject).ObjectType;
           }
 
-          if (objectType.ToLower() != objectPath[i].ToLower())
+          DataObject parentObjectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+          DataRelationship dataRelationship = parentObjectType.dataRelationships.First(c => c.relationshipName.ToLower() == objectPath[i + 1].ToLower());
+          DataObject relatedObjectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == dataRelationship.relatedObjectName.ToLower());
+
+          DataFilter filter = new DataFilter();
+
+          foreach (PropertyMap propMap in dataRelationship.propertyMaps)
           {
-            List<IDataObject> relatedObjects = new List<IDataObject>();
-
-            //
-            //TODO: process related objects
-            //
-            //List<IDataObject> relatedObjects = _dataLayerGateway.Get(parentObj, objectPath[i]);
-
-            //foreach (IDataObject relatedObj in relatedObjects)
-            //{
-            //  if (!relatedObjects.Contains(relatedObj))
-            //  {
-            //    relatedObjects.Add(relatedObj);
-            //  }
-            //}
-
-            parentObjects = relatedObjects;
+            filter.Expressions.Add(new Expression()
+            {
+              PropertyName = propMap.relatedPropertyName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              LogicalOperator = LogicalOperator.And,
+              Values = new Values() { Convert.ToString(parentObject.GetPropertyValue(propMap.dataPropertyName)) }
+            });
           }
+
+          List<IDataObject> relatedObjects = dataLayerGateway.Get(relatedObjectType, filter, 0, 0);
+          dataObjects = relatedObjects;
         }
       }
 
-      return parentObjects;
+      return dataObjects;
     }
 
     // senario (assume no circular relationships - should be handled by AppEditor): 
@@ -576,16 +577,15 @@ namespace org.iringtools.adapter.projection
         }
       }
 
-      if (identifier == string.Empty)
-      {
-        throw new Exception("Key property not mapped.");
-      }
-
       SerializableDataObject dataObject = new SerializableDataObject()
       {
-        Type = objDef.objectName,
-        Id = identifier
+        Type = objDef.objectName
       };
+
+      if (!string.IsNullOrEmpty(identifier))
+      {
+        dataObject.Id = identifier;
+      }
 
       SetAppCode(dataObject);
 
@@ -784,8 +784,6 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    //THIS ASSUMES CLASS IS ONLY USED ONCE
-    //resolve the propertyName expression into data object propertyName
     public string ProjectProperty(string[] propertyNameParts, ref Values values)
     {
       string dataPropertyName = String.Empty;
@@ -819,22 +817,10 @@ namespace org.iringtools.adapter.projection
           _valueListName = null;
           break;
 
-        case RoleType.FixedValue:
-          throw new Exception(String.Format(
-            "Invalid PropertyName Expression in DataFilter.  Fixed Value Role ({0}) is not allowed in the expression.",
-            roleName)
-           );
-
         case RoleType.ObjectProperty:
           dataPropertyName = roleMap.propertyName;
           _valueListName = roleMap.valueListName;
           break;
-
-        case RoleType.Possessor:
-          throw new Exception(String.Format(
-            "Invalid PropertyName Expression in DataFilter.  Possessor Role ({0}) is not allowed in the expression.",
-            roleName)
-          );
 
         case RoleType.Property:
           //if last part...
@@ -872,11 +858,10 @@ namespace org.iringtools.adapter.projection
           }
           break;
 
+        case RoleType.FixedValue:
+        case RoleType.Possessor:
         case RoleType.Reference:
-          throw new Exception(String.Format(
-            "Invalid PropertyName Expression in DataFilter.  Reference Role ({0}) is not allowed in the expression.",
-            roleName)
-          );
+          throw new Exception("Role " + roleName + " can not be projected to property.");
       }
 
       return dataPropertyName;

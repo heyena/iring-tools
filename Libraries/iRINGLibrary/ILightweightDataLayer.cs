@@ -35,6 +35,7 @@ namespace org.iringtools.library
     public Stream Content { get; set; }
 
     public string ContentType { get; set; }
+
     public object GetPropertyValue(string propertyName)
     {
       if (_dictionary.ContainsKey(propertyName))
@@ -47,8 +48,6 @@ namespace org.iringtools.library
     {
       _dictionary[propertyName] = propertyValue;
     }
-
-    public IDictionary<string, IList<IDataObject>> RelatedObjects { get; set; }
   }
 
   public interface ILightweightDataLayer
@@ -94,7 +93,7 @@ namespace org.iringtools.library
     public const string DELETE_SQL_TPL = "DELETE FROM {0} {1}";
     public const string HAS_CONTENT = "_hasContent_";
 
-    protected static AdapterSettings _settings;
+    protected AdapterSettings _settings;
 
     public BaseLightweightDataLayer(AdapterSettings settings)
     {
@@ -133,7 +132,7 @@ namespace org.iringtools.library
               }
             }
 
-            if (dataObject.HasContent != null)
+            if (dataObject.HasContent)
             {
               colsBuilder.Append("," + HAS_CONTENT);
               valsBuilder.Append("," + "'" + dataObject.HasContent + "'");
@@ -161,7 +160,7 @@ namespace org.iringtools.library
               }
             }
 
-            if (dataObject.HasContent != null)
+            if (dataObject.HasContent)
             {
               builder.Append("," + HAS_CONTENT + "='" + dataObject.HasContent + "'");
             }

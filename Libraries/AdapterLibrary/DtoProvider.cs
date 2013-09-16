@@ -314,6 +314,22 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
 
+    private decimal ToDecimal(string fraction)
+    {
+      string[] split = fraction.Split(new char[] { '/' });
+      decimal a, b;
+
+      if (decimal.TryParse(split[0], out a) && decimal.TryParse(split[1], out b))
+      {
+        if (split.Length == 2)
+        {
+          return (decimal)a / b;
+        }
+      }
+
+      return 0;
+    }
+
     /*
      * Sample filter with rollups:
      * 
@@ -351,169 +367,212 @@ namespace org.iringtools.adapter
       {
         foreach (RollupExpression rollupExpr in filter.RollupExpressions)
         {
-          DataProperty groupByProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollupExpr.GroupBy.ToLower());
+          DataProperty groupBy = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollupExpr.GroupBy.ToLower());
 
-          // sort data objects by groupBy property value
-          for (int i = 1; i < dataObjects.Count - 1; i++)
-          {
-            bool swapped = false;
-
-            for (int j = i; j < dataObjects.Count; j++)
-            {
-              string v1 = Convert.ToString(dataObjects[j - 1].GetPropertyValue(groupByProp.propertyName));
-              string v2 = Convert.ToString(dataObjects[j].GetPropertyValue(groupByProp.propertyName));
-
-              if (string.Compare(v2, v1) < 0)
-              {
-                IDataObject obj = dataObjects[j];
-                dataObjects[j] = dataObjects[j - 1];
-                dataObjects[j - 1] = obj;
-
-                swapped = true;
-              }
-            }
-
-            if (!swapped) break;
-          }
-
-          // collect group indices
-          List<int> groupIndices = new List<int>();
-          string prevPropValue = null;
+          // group data object indices by groupBy property values 
+          bool[] processedIndices = new bool[dataObjects.Count];
+          List<List<int>> groups = new List<List<int>>();
 
           for (int i = 0; i < dataObjects.Count; i++)
           {
-            string propValue = Convert.ToString(dataObjects[i].GetPropertyValue(groupByProp.propertyName));
+            if (processedIndices[i])
+              continue;
 
-            if (prevPropValue == null)
+            string value = Convert.ToString(dataObjects[i].GetPropertyValue(groupBy.propertyName));
+            processedIndices[i] = true;
+            List<int> newGroup = new List<int>() { i };
+            groups.Add(newGroup);
+
+            for (int j = i + 1; j < dataObjects.Count; j++)
             {
-              prevPropValue = propValue;
-              groupIndices.Add(0);
-            }
-            else if (propValue != prevPropValue)
-            {
-              groupIndices.Add(i);
-              prevPropValue = propValue;
+              string v = Convert.ToString(dataObjects[j].GetPropertyValue(groupBy.propertyName));
+
+              if (v == value)
+              {
+                processedIndices[j] = true;
+                newGroup.Add(j);
+              }
             }
           }
 
-          groupIndices.Add(dataObjects.Count - 1);
-
           // apply rollups to each group
-          IDataObject[] rollupDataObjects = new IDataObject[groupIndices.Count - 1];
+          List<IDataObject> rollupObjects = new List<IDataObject>();
 
           foreach (Rollup rollup in rollupExpr.Rollups)
           {
             DataProperty rollupProp = objDef.dataProperties.Find(x => x.propertyName.ToLower() == rollup.PropertyName.ToLower());
 
-            for (int j = 0; j < groupIndices.Count - 1; j++)
+            for (int k = 0; k < groups.Count; k++)
             {
-              // initialize rollup data object and default to RollupType.First
-              if (rollupDataObjects[j] == null)
-              {
-                rollupDataObjects[j] = dataObjects[groupIndices[j]];
-              }
+              List<int> group = groups[k];
+              IDataObject rollupObject = dataObjects[group[0]];
 
               switch (rollup.Type)
               {
                 case RollupType.Null:
                   {
-                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                    rollupObject.SetPropertyValue(rollupProp.propertyName, null);
                     break;
                   }
                 case RollupType.Max:
                   {
-                    object maxValue = null;
+                    object max = dataObjects[group[0]].GetPropertyValue(rollupProp.propertyName);
+                    int maxIndex = 0;
 
                     if (IsNumeric(rollupProp))
                     {
-                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      if (max == null)
                       {
-                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
-
-                        if (maxValue == null || Convert.ToDecimal(Convert.ToString(value)) > (Decimal)maxValue)
+                        max = Decimal.Negate(Decimal.MaxValue);
+                      }
+                      else
+                      {
+                        if (max.ToString().Contains("/"))
                         {
-                          maxValue = Convert.ToDecimal(Convert.ToString(value));
+                          max = ToDecimal(max.ToString());
+                        }
+                        else
+                        {
+                          max = Convert.ToDecimal(max);
                         }
                       }
+
+                      for (int l = 1; l < group.Count; l++)
+                      {
+                        object value = dataObjects[group[l]].GetPropertyValue(rollupProp.propertyName);
+
+                        if (value != null)
+                        {
+                          if (value.ToString().Contains("/"))
+                          {
+                            value = ToDecimal(value.ToString());
+                          }
+                          else
+                          {
+                            value = Convert.ToDecimal(value);
+                          }
+
+                          if ((Decimal)value > (Decimal)max)
+                          {
+                            max = (Decimal)value;
+                            maxIndex = l;
+                          }
+                        }
+                      }
+
+                      rollupObject.SetPropertyValue(rollupProp.propertyName, max);
                     }
                     else if (rollupProp.dataType == DataType.DateTime)
                     {
-                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      for (int l = 1; l < group.Count; l++)
                       {
-                        DateTime value = (DateTime)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+                        DateTime value = (DateTime)dataObjects[group[l]].GetPropertyValue(rollupProp.propertyName);
 
-                        if (maxValue == null || DateTime.Compare(value, (DateTime)maxValue) > 0)
+                        if (value != null && DateTime.Compare(value, (DateTime)max) > 0)
                         {
-                          maxValue = value;
+                          max = value;
+                          maxIndex = l;
                         }
                       }
                     }
                     else if (rollupProp.dataType == DataType.Boolean)
                     {
-                      maxValue = true;
+                      max = true;
                     }
                     else
                     {
-                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      for (int l = 1; l < group.Count; l++)
                       {
-                        string value = (string)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+                        string value = (string)dataObjects[group[l]].GetPropertyValue(rollupProp.propertyName);
 
-                        if (maxValue == null || string.Compare(value, (string)maxValue) > 0)
+                        if (value != null && string.Compare(value, (string)max) > 0)
                         {
-                          maxValue = value;
+                          max = value;
+                          maxIndex = l;
                         }
                       }
                     }
 
-                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, maxValue);
+                    rollupObject = dataObjects[group[maxIndex]];
                     break;
                   }
                 case RollupType.Min:
                   {
-                    object minValue = null;
+                    object min = dataObjects[group[0]].GetPropertyValue(rollupProp.propertyName);
+                    int minIndex = 0;
 
                     if (IsNumeric(rollupProp))
                     {
-                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      if (min == null)
                       {
-                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
-
-                        if (minValue == null || Convert.ToDecimal(Convert.ToString(value)) < (Decimal)minValue)
+                        min = Decimal.MaxValue;
+                      }
+                      else
+                      {
+                        if (min.ToString().Contains("/"))
                         {
-                          minValue = Convert.ToDecimal(Convert.ToString(value));
+                          min = ToDecimal(min.ToString());
+                        }
+                        else
+                        {
+                          min = Convert.ToDecimal(min);
+                        }
+                      }
+
+                      for (int l = 1; l < group.Count; l++)
+                      {
+                        object value = dataObjects[group[l]].GetPropertyValue(rollupProp.propertyName);
+
+                        if (value != null)
+                        {
+                          if (value.ToString().Contains("/"))
+                          {
+                            value = ToDecimal(value.ToString());
+                          }
+                          else
+                          {
+                            value = Convert.ToDecimal(value);
+                          }
+
+                          if ((Decimal)value < (Decimal)min)
+                          {
+                            min = (Decimal)value;
+                          }
                         }
                       }
                     }
                     else if (rollupProp.dataType == DataType.DateTime)
                     {
-                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      for (int l = 1; l < group.Count; l++)
                       {
-                        DateTime value = (DateTime)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+                        DateTime value = (DateTime)dataObjects[group[l]].GetPropertyValue(rollupProp.propertyName);
 
-                        if (minValue == null || DateTime.Compare(value, (DateTime)minValue) < 0)
+                        if (value != null && DateTime.Compare(value, (DateTime)min) < 0)
                         {
-                          minValue = value;
+                          min = value;
+                          minIndex = l;
                         }
                       }
                     }
                     else if (rollupProp.dataType == DataType.Boolean)
                     {
-                      minValue = false;
+                      min = false;
                     }
                     else
                     {
-                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      for (int l = 1; l < group.Count; l++)
                       {
-                        string value = (string)dataObjects[k].GetPropertyValue(rollupProp.propertyName);
+                        string value = (string)dataObjects[group[l]].GetPropertyValue(rollupProp.propertyName);
 
-                        if (minValue == null || string.Compare(value, (string)minValue) < 0)
+                        if (value != null && string.Compare(value, (string)min) < 0)
                         {
-                          minValue = value;
+                          min = value;
+                          minIndex = l;
                         }
                       }
                     }
 
-                    rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, minValue);
+                    rollupObject = dataObjects[group[minIndex]];
                     break;
                   }
                 case RollupType.Sum:
@@ -522,17 +581,26 @@ namespace org.iringtools.adapter
                     {
                       decimal sum = 0;
 
-                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      for (int l = 0; l < group.Count; l++)
                       {
-                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
-                        sum += Convert.ToDecimal(Convert.ToString(value));
+                        object value = dataObjects[group[l]].GetPropertyValue(rollupProp.propertyName);
+
+                        if (value != null)
+                        {
+                          if (value.ToString().Contains("/"))
+                          {
+                            value = ToDecimal(value.ToString());
+                          }
+
+                          sum += Convert.ToDecimal(value);
+                        }
                       }
 
-                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, sum);
+                      rollupObject.SetPropertyValue(rollupProp.propertyName, sum);
                     }
                     else
                     {
-                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                      rollupObject.SetPropertyValue(rollupProp.propertyName, null);
                     }
 
                     break;
@@ -543,26 +611,37 @@ namespace org.iringtools.adapter
                     {
                       decimal sum = 0;
 
-                      for (int k = groupIndices[j]; k < groupIndices[j + 1]; k++)
+                      for (int l = 0; l < group.Count; l++)
                       {
-                        object value = dataObjects[k].GetPropertyValue(rollupProp.propertyName);
-                        sum += Convert.ToDecimal(Convert.ToString(value));
+                        object value = dataObjects[group[l]].GetPropertyValue(rollupProp.propertyName);
+
+                        if (value != null)
+                        {
+                          if (value.ToString().Contains("/"))
+                          {
+                            value = ToDecimal(value.ToString());
+                          }
+
+                          sum += Convert.ToDecimal(value);
+                        }
                       }
 
-                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, sum / (groupIndices[j + 1] - groupIndices[j]));
+                      rollupObject.SetPropertyValue(rollupProp.propertyName, sum / group.Count);
                     }
                     else
                     {
-                      rollupDataObjects[j].SetPropertyValue(rollupProp.propertyName, null);
+                      rollupObject.SetPropertyValue(rollupProp.propertyName, null);
                     }
 
                     break;
                   }
               }
+
+              rollupObjects.Add(rollupObject);
             }
           }
 
-          dataObjects = rollupDataObjects.ToList();
+          dataObjects = rollupObjects;
         }
       }
 
@@ -769,6 +848,7 @@ namespace org.iringtools.adapter
         }
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
         DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         if (filter != null)
@@ -855,16 +935,17 @@ namespace org.iringtools.adapter
 
           if (identifiers.Count > 0)
           {
-            //if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
-            //{
-            //  dataTransferObjects = MultiGetDataTransferObjects(dataObject, identifiers);
-            //}
-            //else
-            //{
-            List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
-            DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-            dataTransferObjects = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
-            //}
+            if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
+            {
+              dataTransferObjects = MultiGetDataTransferObjects(dataObject, identifiers);
+            }
+            else
+            {
+              List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
+              DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+              dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+              dataTransferObjects = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
+            }
           }
         }
         catch (Exception ex)
@@ -1211,6 +1292,96 @@ namespace org.iringtools.adapter
       }
     }
 
+    public Response RefreshGraphCache(string scope, string app, string graph)
+    {
+      Response response = new Response();
+
+      try
+      {
+        InitializeScope(scope, app, true);
+
+        if (_mapping == null)
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Mapping for [" + scope + "." + app + ".] not found.");
+          return response;
+        }
+
+        string objectType = null;
+
+        foreach (GraphMap g in _mapping.graphMaps)
+        {
+          if (g.name.ToLower() == graph.ToLower())
+          {
+            objectType = g.dataObjectName;
+            break;
+          }
+        }
+
+        if (objectType == null)
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Graph [" + scope + "." + app + "." + graph + ".] not found.");
+          return response;
+        }
+
+        response = RefreshCache(scope, app, objectType, false);
+      }
+      catch(Exception e)
+      {
+        _logger.Error("Error refreshing cache: ", e);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    public Response ImportGraphCache(string scope, string app, string graph, string baseUri)
+    {
+      Response response = new Response();
+
+      try
+      {
+        InitializeScope(scope, app, true);
+
+        if (_mapping == null)
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Mapping for [" + scope + "." + app + ".] not found.");
+          return response;
+        }
+
+        string objectType = null;
+
+        foreach (GraphMap g in _mapping.graphMaps)
+        {
+          if (g.name.ToLower() == graph.ToLower())
+          {
+            objectType = g.dataObjectName;
+            break;
+          }
+        }
+
+        if (objectType == null)
+        {
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Graph [" + scope + "." + app + "." + graph + ".] not found.");
+          return response;
+        }
+
+        response = ImportCache(scope, app, objectType, baseUri, false);
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error refreshing cache: ", e);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
     // build cross _graphmap from manifest graph and mapping graph
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {
@@ -1544,6 +1715,7 @@ namespace org.iringtools.adapter
         int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
         List<string> pageIdentifiers = identifiers.GetRange(offset, pageSize);
         DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        projectionLayer.dataLayerGateway = _dataLayerGateway;
         ManualResetEvent doneEvent = new ManualResetEvent(false);
         OutboundDtoTask dtoTask = new OutboundDtoTask(doneEvent, projectionLayer, _dataLayerGateway, _graphMap, dataObject, pageIdentifiers);
         ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);
