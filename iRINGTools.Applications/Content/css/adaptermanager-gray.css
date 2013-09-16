@@ -12,7 +12,9 @@ a:visited {color: black}
 a:hover {color: black}
 a:active {color: black}
 
-
+.x-tree { 
+	background-color: #fff; 
+}
 .bg_TreeNodeColor
 {
     background-color:#E8E8E8 !important;

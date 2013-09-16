@@ -370,35 +370,6 @@
                 ]
             },
             "designerId": "97d8429e-c878-4838-b853-d758eb9f7613"
-        },
-        {
-            "type": "Ext.container.Container",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "anchor": "100%",
-                "html": [
-                    "Drop a Property Node here."
-                ],
-                "itemId": "pmfpcontainer",
-                "style": [
-                    "border:1px silver solid;margin:5px;padding:8px;height:40px"
-                ],
-                "styleHtmlContent": true,
-                "designer|displayName": "PropertyContainer",
-                "anchorSize": null
-            },
-            "designerId": "5f50ac49-b269-4754-80a1-2149b81ee5ea",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "anchor",
-                    "type": "string"
-                }
-            ]
         }
     ]
 }
