@@ -304,6 +304,13 @@ namespace org.iringtools.web.controllers
                   JsonTreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
                   JsonTreeNode roleNode = new JsonTreeNode();
 
+                  IList<String> mappedProperties = graphMap.GetMappedProperties(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
+                  foreach (var propertyName in mappedProperties)
+                  {
+                    int i = 0;
+                    templateNode.properties.Add("propertyName_" + i, propertyName);
+                  }
+
                   foreach (var role in templateMap.roleMaps)
                   {
                     roleNode = new JsonTreeNode
@@ -710,7 +717,8 @@ namespace org.iringtools.web.controllers
         expanded = false,
         leaf = false,
         children = new List<JsonTreeNode>(),
-        record = templateMap
+        record = templateMap,
+        properties = new Dictionary<string,string>()
       };
 
       return templateNode;
