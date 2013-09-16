@@ -18,7 +18,6 @@ namespace iRINGTools.Web.Models
 
     DataLayers GetDataLayers();
 
-
     DataLayer GetDataLayer(string scope, string application);
 
     Mapping GetMapping(string scope, string application);

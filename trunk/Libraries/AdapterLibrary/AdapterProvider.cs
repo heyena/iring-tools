@@ -186,7 +186,7 @@ namespace org.iringtools.adapter
         else
         {
           sc.DisplayName = scope.DisplayName;
-          sc.Description = scope.Description;
+            sc.Description = scope.Description;
           _scopes.Sort(new ScopeComparer());
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
@@ -3132,7 +3132,7 @@ namespace org.iringtools.adapter
                 if (!isKeyPropertiesHaveValues)
                 {
                   //TODO: remove object from list and add error in payload
-                  throw new Exception("Value of key property must for atleat one key property.");
+                  throw new Exception("At leat one key property is required.");
                 }
 
               }
@@ -3618,6 +3618,9 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>("dto");
           _isProjectionPart7 = true;
         }
+
+        if (typeof(BasePart7ProjectionEngine).IsAssignableFrom(_projectionEngine.GetType()))
+          ((BasePart7ProjectionEngine)_projectionEngine).dataLayerGateway = _dataLayerGateway;
       }
       catch (Exception ex)
       {
@@ -4337,214 +4340,6 @@ namespace org.iringtools.adapter
 
       return response;
     }
-
-    #region cache related methods
-    public Response SwitchDataMode(string scope, string app, string mode)
-    {
-      Response response = new Response();
-
-      try
-      {
-        InitializeScope(scope, app, false);
-
-        ScopeProject proj = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
-        ScopeApplication application = proj.Applications.Find(x => x.Name.ToLower() == app.ToLower());
-
-        application.DataMode = (DataMode)Enum.Parse(typeof(DataMode), mode);
-
-        string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-        Utility.Write<ScopeProjects>(_scopes, scopesPath);
-
-        response.Level = StatusLevel.Success;
-        response.Messages.Add("Data Mode switched successfully.");
-
-        // cache does not exist, create it
-        if (application.DataMode == DataMode.Cache && application.CacheTimestamp == null)
-        {
-          Impersonate();
-          InitializeDataLayer(false);
-
-          Response refreshResponse = _dataLayerGateway.RefreshCache(false);
-
-          if (response.Level == StatusLevel.Success)
-          {
-            UpdateCacheInfo(scope, app);
-          }
-
-          response.Append(refreshResponse);
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Debug("Error switching data mode: ", ex);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("Error switching data mode: " + ex.Message);
-      }
-
-      return response;
-    }
-
-    public Response RefreshCache(string scope, string app, bool updateDictionary)
-    {
-      Response response = new Response();
-
-      try
-      {
-        InitializeScope(scope, app, false);
-        Impersonate();
-        InitializeDataLayer(false);
-
-        response = _dataLayerGateway.RefreshCache(updateDictionary);
-
-        if (response.Level == StatusLevel.Success)
-        {
-          UpdateCacheInfo(scope, app);
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Debug("Error refreshing cache: ", ex);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("Error refreshing cache: " + ex.Message);
-      }
-
-      return response;
-    }
-
-    public Response RefreshCache(string scope, string app, string objectType, bool updateDictionary)
-    {
-      Response response = new Response();
-
-      try
-      {
-        InitializeScope(scope, app, false);
-        Impersonate();
-        InitializeDataLayer(false);
-        
-        response = _dataLayerGateway.RefreshCache(updateDictionary, objectType);
-
-        if (response.Level == StatusLevel.Success)
-        {
-          UpdateCacheInfo(scope, app);
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Debug("Error refreshing cache: ", ex);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("Error refreshing cache: " + ex.Message);
-      }
-
-      return response;
-    }
-
-    public Response ImportCache(string scope, string app, string baseUri, bool updateDictionary)
-    {
-      Response response = new Response();
-
-      try
-      {
-        InitializeScope(scope, app, false);
-        Impersonate();
-        InitializeDataLayer(false);
-        
-        response = _dataLayerGateway.ImportCache(baseUri, updateDictionary);
-
-        if (response.Level == StatusLevel.Success)
-        {
-          UpdateCacheInfo(scope, app);
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Debug("Error importing cache: ", ex);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("Error importing cache: " + ex.Message);
-      }
-
-      return response;
-    }
-
-    public Response ImportCache(string scope, string app, string objectType, string url, bool updateDictionary)
-    {
-      Response response = new Response();
-
-      try
-      {
-        InitializeScope(scope, app, false);
-        Impersonate();
-        InitializeDataLayer(false);
-        
-        response = _dataLayerGateway.ImportCache(objectType, url, updateDictionary);
-
-        if (response.Level == StatusLevel.Success)
-        {
-          UpdateCacheInfo(scope, app);
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Debug("Error importing cache: ", ex);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("Error importing cache: " + ex.Message);
-      }
-
-      return response;
-    }
-
-    public Response DeleteCache(string scope, string app)
-    {
-      Response response = new Response();
-
-      try
-      {
-        InitializeScope(scope, app, false);
-        InitializeDataLayer(false);
-        
-        response = _dataLayerGateway.DeleteCache();
-      }
-      catch (Exception ex)
-      {
-        _logger.Debug("Error deleting cache: ", ex);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("Error deleting cache: " + ex.Message);
-      }
-
-      return response;
-    }
-
-    public Response DeleteCache(string scope, string app, string objectType)
-    {
-      Response response = new Response();
-
-      try
-      {
-        InitializeScope(scope, app, false);
-        InitializeDataLayer(false);
-
-        response = _dataLayerGateway.DeleteCache(objectType);
-      }
-      catch (Exception ex)
-      {
-        _logger.Debug("Error deleting cache: ", ex);
-        response.Level = StatusLevel.Error;
-        response.Messages.Add("Error deleting cache: " + ex.Message);
-      }
-
-      return response;
-    }
-
-    private void UpdateCacheInfo(string scope, string app)
-    {
-      ScopeProject project = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
-      ScopeApplication application = project.Applications.Find(x => x.Name.ToLower() == app.ToLower());
-
-      application.DataMode = DataMode.Cache;
-      application.CacheTimestamp = DateTime.Now;
-
-      Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-    }
-    #endregion
 
     public DocumentBytes GetResourceData(string scope, string app)
     {

@@ -41,7 +41,7 @@ namespace org.iringtools.adapter
       _app = _settings["ApplicationName"].ToLower();
       _dataPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"]);
 
-      _connStr = _settings["iRINGCacheConnStr"];
+      _connStr = _settings[BaseProvider.CACHE_CONNSTR];
       if (_connStr != null && IsBase64Encoded(_connStr))
       {
         _connStr = EncryptionUtility.Decrypt(_connStr);
@@ -119,27 +119,9 @@ namespace org.iringtools.adapter
     {
       DataDictionary dictionary = null;
       filter = null;
-      DataFilter externalFilter = null;
 
       try
       {
-        if (objectType != null)         //get the external filter file and append into the existing one ...
-        {
-          DirectoryInfo appDataDir = new DirectoryInfo(_dataPath);
-          string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.xml", _scope, _app, objectType);
-          FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
-
-          foreach (FileInfo file in filterFiles)
-          {
-            externalFilter = Utility.Read<DataFilter>(file.FullName);
-            if (filter == null)
-              filter = externalFilter;
-            else
-              filter.AppendFilter(externalFilter);
-            break;
-          }
-        }
-
         if (_lwDataLayer != null)
         {
           dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
@@ -171,51 +153,22 @@ namespace org.iringtools.adapter
 
           dictionary = _dataLayer.GetDictionary();
         }
-        // Injecting the external filter in to the dictionary.
-        if (dictionary != null)
+
+        // injecting external filters to dictionary
+        if (dictionary != null && dictionary.dataObjects != null)
         {
-          if (objectType != null)
+          foreach (DataObject dataObject in dictionary.dataObjects)
           {
-            var obj = (from dataObjects in dictionary.dataObjects
-                       where dataObjects.objectName.ToLower() == objectType.ToLower()
-                       select dataObjects).First();
+            string filterPath = string.Format("{0}Filter.{1}.{2}.{3}.xml", _dataPath, _scope, _app, dataObject.objectName);
 
-            if (externalFilter != null)
+            if (File.Exists(filterPath))
             {
-              if (obj.dataFilter == null)
-                obj.dataFilter = externalFilter;
-              else
-                obj.dataFilter.AppendFilter(externalFilter);
-            }
-          }
-          else
-          {
-            // if objectType is not specified then pick all filter files for that scope and inject it into the dictionary.
-            DirectoryInfo appDataDir = new DirectoryInfo(_dataPath);
-            string filterFilePattern = String.Format("Filter.{0}.{1}.{2}.later.xml", _scope, _app, "*");
-            FileInfo[] filterFiles = appDataDir.GetFiles(filterFilePattern);
-
-            foreach (FileInfo file in filterFiles)
-            {
-              string fileName = Path.GetFileNameWithoutExtension(file.Name);
-              string objectName = fileName.Substring(fileName.LastIndexOf('.') + 1);
-
-              var obj = (from dataObjects in dictionary.dataObjects
-                         where dataObjects.objectName.ToLower() == objectName.ToLower()
-                         select dataObjects).First();
-
-              if (obj != null)
-              {
-                if (obj.dataFilter == null)
-                  obj.dataFilter = Utility.Read<DataFilter>(file.FullName);
-                else
-                  obj.dataFilter.AppendFilter(Utility.Read<DataFilter>(file.FullName));
-              }
+              DataFilter dataFilter = Utility.Read<DataFilter>(filterPath);
+              dataObject.dataFilter = dataFilter;
             }
           }
         }
-
-         //injecting Virtual properties
+		//injecting Virtual properties
         if (dictionary != null)
         {
           string virtualPropertiesPath = string.Format("{0}VirtualProperties.{1}.{2}.xml",
@@ -236,7 +189,6 @@ namespace org.iringtools.adapter
             }
           }
         }
-
 
       }
       catch (Exception e)
@@ -376,7 +328,10 @@ namespace org.iringtools.adapter
 
               foreach (var pair in dataObj.Dictionary)
               {
-                newRow[pair.Key] = pair.Value;
+                if (pair.Value == null)
+                  newRow[pair.Key] = DBNull.Value;
+                else
+                  newRow[pair.Key] = pair.Value;
               }
 
               if (dataObj.HasContent)
@@ -525,7 +480,7 @@ namespace org.iringtools.adapter
         }
 
         DataDictionary dictionary = GetDictionary(updateDictionary, objectType);
-        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType);
+        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
         if (dataObject == null)
         {
@@ -693,7 +648,7 @@ namespace org.iringtools.adapter
         if (!string.IsNullOrEmpty(cacheId))
         {
           DataDictionary dictionary = GetDictionary();
-          DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType);
+          DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
           if (dataObject == null)
           {
@@ -760,10 +715,12 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          string tableName = GetCacheTableName(cacheId, objectType.objectName);
+          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
 
           if (filter == null) filter = new DataFilter();
-          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
+          filter.AppendFilter(cachedObjectType.dataFilter);
+
+          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
 
           int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
 
@@ -772,7 +729,7 @@ namespace org.iringtools.adapter
             whereClause = whereClause.Remove(orderByIndex);
           }
 
-          string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, tableName, whereClause);
+          string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, cachedObjectType.tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
 
@@ -824,12 +781,12 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          string tableName = GetCacheTableName(cacheId, objectType.objectName);
+          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
 
           if (filter == null) filter = new DataFilter();
-          filter.AppendFilter(objectType.dataFilter);
+          filter.AppendFilter(cachedObjectType.dataFilter);
 
-          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
+          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
 
           int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
           string orderByClause = "ORDER BY current_timestamp";
@@ -841,12 +798,17 @@ namespace org.iringtools.adapter
           }
 
           string query = string.Format(@"
-              SELECT * FROM (SELECT row_number() OVER ({4}) as __rn, * 
-              FROM {0} {1}) as __t WHERE __rn between {2} and {3}",
-              tableName, whereClause, start + 1, start + limit, orderByClause);
+              SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * 
+              FROM {0} {1}) as __t",
+              cachedObjectType.tableName, whereClause, orderByClause);
+
+          if (!(start == 0 && limit == 0))
+          {
+            query += string.Format(" WHERE __rn between {0} and {1}", start + 1, start + limit);
+          }
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
+          dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);
         }
         else if (_dataLayer != null)
         {
@@ -949,17 +911,17 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          string tableName = GetCacheTableName(cacheId, objectType.objectName);
+          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
 
           if (filter == null) filter = new DataFilter();
-          filter.AppendFilter(objectType.dataFilter);
+          filter.AppendFilter(cachedObjectType.dataFilter);
 
-          string whereClause = filter.ToSqlWhereClause("SQLServer", objectType);
+          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
 
-          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, tableName, whereClause);
+          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cachedObjectType.tableName, whereClause);
 
           DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          identifiers = BaseLightweightDataLayer.FormIdentifiers(objectType, dt);
+          identifiers = BaseLightweightDataLayer.FormIdentifiers(cachedObjectType, dt);
         }
         else if (_dataLayer != null)
         {
@@ -1300,6 +1262,24 @@ namespace org.iringtools.adapter
     {
       string safeObjectName = Regex.Replace(objectName, "[^0-9a-zA-Z]+", "");
       return cacheId + "_" + safeObjectName.ToLower();
+    }
+
+    protected DataObject GetCachedObjectType(string cacheId, DataObject objectType)
+    {
+      DataObject cachedObjectType = Utility.CloneDataContractObject<DataObject>(objectType);
+
+      if (cachedObjectType != null)
+      {
+        string tableName = GetCacheTableName(cacheId, objectType.objectName);
+        cachedObjectType.tableName = tableName;
+
+        foreach (DataProperty prop in cachedObjectType.dataProperties)
+        {
+          prop.columnName = prop.propertyName;
+        }
+      }
+
+      return cachedObjectType;
     }
 
     protected string CheckCache()

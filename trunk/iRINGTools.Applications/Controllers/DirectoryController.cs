@@ -13,6 +13,7 @@ using System.Web;
 using System.IO;
 using org.iringtools.utility;
 using System.Runtime.Serialization;
+using System.Xml.Linq;
 
 namespace org.iringtools.web.controllers
 {
@@ -67,7 +68,7 @@ namespace org.iringtools.web.controllers
                     type = "ScopeNode",
                     iconCls = "scope",
                     id = scope.Name,
-                    text = scope.DisplayName ?? scope.Name,
+                    text = scope.DisplayName,
                     expanded = false,
                     leaf = false,
                     children = null,
@@ -75,7 +76,9 @@ namespace org.iringtools.web.controllers
                   };
 
                   node.property = new Dictionary<string, string>();
-                  node.property.Add("Name", scope.Name);
+				  node.property.Add("Name", scope.Name);
+                  node.property.Add("Internal Name", scope.Name);
+                  node.property.Add("Display Name", scope.DisplayName);
                   node.property.Add("Description", scope.Description);
                   nodes.Add(node);
                 }
@@ -100,26 +103,29 @@ namespace org.iringtools.web.controllers
                     type = "ApplicationNode",
                     iconCls = "application",
                     id = scope.Name + "/" + application.Name,
-                    text = application.DisplayName ?? application.Name,
+                    text = application.DisplayName,
                     expanded = false,
                     leaf = false,
                     children = null,
                     record = new
                     {
                       Name = application.Name,
+                      DisplayName = application.DisplayName,
                       Description = application.Description,
                       DataLayer = dataLayer.Name,
                       Assembly = dataLayer.Assembly,
-                      Configuration = application.Configuration,
-                      DisplayName = application.DisplayName
+                      Configuration = application.Configuration
                     }
                   };
-
+                  
                   node.property = new Dictionary<string, string>();
-                  node.property.Add("Name", application.Name);
+				  node.property.Add("Name", application.Name);
+                  node.property.Add("Internal Name", application.Name);
+                  node.property.Add("Display Name", application.DisplayName);
                   node.property.Add("Description", application.Description);
                   node.property.Add("Data Layer", dataLayer.Name);
                   node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
+                  
                   nodes.Add(node);
                 }
               }
@@ -130,10 +136,9 @@ namespace org.iringtools.web.controllers
           case "ApplicationNode":
             {
               string context = form["node"];
-              string[] contextParts = context.Split(new char[] { '/' });
+              string[] contextParts = context.Split(new char[] { '/'});
               string scopeName = contextParts[0];
               string applicationName = contextParts[1];
-
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
               JsonTreeNode dataObjectsNode = new JsonTreeNode
@@ -146,24 +151,24 @@ namespace org.iringtools.web.controllers
                 expanded = false,
                 leaf = false,
                 children = null,
-                property = new Dictionary<string,string>()
+                property = new Dictionary<string, string>()
               };
 
               ScopeProject scope = _repository.GetScope(scopeName);
 
               if (scope != null)
               {
-                  ScopeApplication application = scope.Applications.Find(x => x.Name.ToLower() == applicationName.ToLower());
+                ScopeApplication application = scope.Applications.Find(x => x.Name.ToLower() == applicationName.ToLower());
 
-                  if (application != null)
+                if (application != null)
+                {
+                  dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
+
+                  if (application.DataMode == DataMode.Cache)
                   {
-                      dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
-
-                      if (application.DataMode == DataMode.Cache)
-                      {
-                          dataObjectsNode.property.Add("Last Cache Update", application.CacheTimestamp.ToString());
-                      }
+                    dataObjectsNode.property.Add("Last Cache Update", application.CacheTimestamp.ToString());
                   }
+                }
               }
 
               JsonTreeNode graphsNode = new JsonTreeNode
@@ -328,7 +333,10 @@ namespace org.iringtools.web.controllers
                   }
 
                   node.property = new Dictionary<string, string>();
-                  node.property.Add("Name", dataObject.objectName);
+				  node.property.Add("Name", dataObject.objectName);
+                  node.property.Add("Object Name", dataObject.objectName);
+                  node.property.Add("Is Readonly", dataObject.isReadOnly.ToString());
+                  node.property.Add("Properties Count", dataObject.dataProperties.Count.ToString());
                   nodes.Add(node);
 
                 }
@@ -338,7 +346,7 @@ namespace org.iringtools.web.controllers
             }
           case "DataObjectNode":
             {
-              string datatype, keytype;
+              string keyType, dataType;
               string context = form["node"];
               string scopeName = context.Split('/')[0];
               string applicationName = context.Split('/')[1];
@@ -351,14 +359,16 @@ namespace org.iringtools.web.controllers
 
               foreach (DataProperty property in dataObject.dataProperties)
               {
-                keytype = getKeytype(property.propertyName, dataObject.dataProperties);
-                datatype = getDatatype(property.propertyName, dataObject.dataProperties);
+                keyType = getKeyType(property.propertyName, dataObject.dataProperties);
+                dataType = property.dataType.ToString();
+
+                bool isKeyProp = dataObject.isKeyProperty(property.propertyName);
 
                 JsonTreeNode node = new JsonTreeNode
                 {
                   nodeType = "async",
-                  type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
-                  iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
+                  type = isKeyProp ? "KeyDataPropertyNode" : "DataPropertyNode",
+                  iconCls = isKeyProp ? "treeKey" : "treeProperty",
                   id = context + "/" + dataObject.objectName + "/" + property.propertyName,
                   text = property.propertyName,
                   expanded = true,
@@ -367,15 +377,20 @@ namespace org.iringtools.web.controllers
                   record = new
                   {
                     Name = property.propertyName,
-                    Keytype = keytype,
-                    Datatype = datatype
+                    Keytype = keyType,
+                    Datatype = dataType
                   }                 
                 };
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Name", property.propertyName);
-                node.property.Add("Keytype", keytype);
-                node.property.Add("Datatype", datatype);
+               
+                node.property.Add("Datatype", dataType);
+				node.property.Add("Data Length", property.dataLength.ToString());
                 node.property.Add("isVirtual", property.isVirtual.ToString());
+                if (isKeyProp)
+                {
+                   node.property.Add("Keytype", keyType);
+                }
                 nodes.Add(node);
               }
 
@@ -428,8 +443,8 @@ namespace org.iringtools.web.controllers
 
                 foreach (DataProperty property in dataObject.dataProperties)
                 {
-                  keytype = getKeytype(property.propertyName, dataObject.dataProperties);
-                  datatype = getDatatype(property.propertyName, dataObject.dataProperties);
+                  keytype = getKeyType(property.propertyName, dataObject.dataProperties);
+                  datatype = property.dataType.ToString();
 
                   JsonTreeNode node = new JsonTreeNode
                   {
@@ -672,19 +687,12 @@ namespace org.iringtools.web.controllers
       return Convert.ToString(dataEntity.Label);
     }
 
-    private string getKeytype(string name, List<DataProperty> properties)
+    private string getKeyType(string name, List<DataProperty> properties)
     {
       string keyType = string.Empty;
       keyType = properties.FirstOrDefault(p => p.propertyName == name).keyType.ToString();
 
       return keyType;
-    }
-    private string getDatatype(string name, List<DataProperty> properties)
-    {
-      string dataType = string.Empty;
-      dataType = properties.FirstOrDefault(p => p.propertyName == name).dataType.ToString();
-
-      return dataType;
     }
     #endregion
   }
