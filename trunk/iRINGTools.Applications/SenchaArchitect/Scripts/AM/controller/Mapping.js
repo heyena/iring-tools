@@ -258,13 +258,14 @@ Ext.define('AM.controller.Mapping', {
         var propArr = ['TAG','COMMODITY','EWP','TAGSTATUS'];
 
         if(record.data.type == 'TemplateMapNode'){
-          for(var i=0;i<node.parentNode.parentNode.childNodes[0].childNodes.length;i++){
-            if(node.parentNode.parentNode.childNodes[0].childNodes[i].data.text == dataObject){
-              if(node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes.length>0){
+          var objectNode = node.parentNode.parentNode.childNodes[0];
+          for(var i=0;i<objectNode.childNodes.length;i++){
+            if(objectNode.childNodes[i].data.text == dataObject){
+              if(objectNode.childNodes[i].childNodes.length>0){
                 for(k=0;k<propArr.length;k++){
-                  for(var j=0;j<node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes.length;j++){
-                    if(node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes[j].data.text == propArr[k]){
-                      var myTreeNode = node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes[j];
+                  for(var j=0;j<objectNode.childNodes[i].childNodes.length;j++){
+                    if(objectNode.childNodes[i].childNodes[j].data.text == propArr[k]){
+                      var myTreeNode = objectNode.childNodes[i].childNodes[j];
                       myTreeNode.set('cls','bg_TreeNodeColor');
                     }
                   }
@@ -273,13 +274,14 @@ Ext.define('AM.controller.Mapping', {
             }
           }
         }else{
-          for(var i=0;i<node.parentNode.parentNode.childNodes[0].childNodes.length;i++){
-            if(node.parentNode.parentNode.childNodes[0].childNodes[i].data.text == dataObject){
-              if(node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes.length>0){
+          var objectNode = node.parentNode.parentNode.childNodes[0];
+          for(var i=0;i<objectNode.childNodes.length;i++){
+            if(objectNode.childNodes[i].data.text == dataObject){
+              if(objectNode.childNodes[i].childNodes.length>0){
                 for(k=0;k<propArr.length;k++){
-                  for(var j=0;j<node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes.length;j++){
-                    if(node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes[j].data.text == propArr[k]){
-                      var myTreeNode = node.parentNode.parentNode.childNodes[0].childNodes[i].childNodes[j];
+                  for(var j=0;j<objectNode.childNodes[i].childNodes.length;j++){
+                    if(objectNode.childNodes[i].childNodes[j].data.text == propArr[k]){
+                      var myTreeNode = objectNode.childNodes[i].childNodes[j];
                       myTreeNode.set('cls','');
                     }
                   }

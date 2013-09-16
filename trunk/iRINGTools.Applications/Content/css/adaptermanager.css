@@ -46,6 +46,9 @@ input.button {
 a {
   color: #3E62A6;
 }
+.x-tree { 
+	background-color: #fff; 
+}
 .bg_TreeNodeColor
 {
     background-color:#FF0000 !important;

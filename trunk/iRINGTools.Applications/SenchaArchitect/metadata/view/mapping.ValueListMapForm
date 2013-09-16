@@ -6,7 +6,7 @@
     },
     "codeClass": null,
     "userConfig": {
-        "border": false,
+        "border": null,
         "height": null,
         "width": null,
         "designer|userClassName": "mapping.ValueListMapForm",

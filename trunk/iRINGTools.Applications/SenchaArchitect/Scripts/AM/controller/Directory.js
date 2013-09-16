@@ -484,8 +484,10 @@ Ext.define('AM.controller.Directory', {
               gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
               content.getEl().unmask();
             } else {
-              if (response)
-              showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
+              if (response){
+                //showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
+                showDialog(500, 300, 'Error', response.response.responseText, Ext.Msg.OK, null);
+              }
               return true;
             }
           }
