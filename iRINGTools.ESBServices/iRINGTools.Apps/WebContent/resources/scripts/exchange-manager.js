@@ -967,56 +967,96 @@ function getFilters() {
 }
 
 function submitExchange(userResponse) {
-	var exchange = this[0];
-	var scope = this[1];
-	var xid = this[2];
-	var reviewed = this[3];
-	var exchtab = Ext.getCmp('content-pane').getItem('tab-' + exchange);
+    var exchange = this[0];
+    var scope = this[1];
+    var xid = this[2];
+    var reviewed = this[3];
+    var exchtab = Ext.getCmp('content-pane').getItem('tab-' + exchange);
+
+    var getProgressBoo = true;
+    var runner = new Ext.util.TaskRunner();
+    var task = {
+        run: function () {
+            if (getProgressBoo) {
+                Ext.Ajax.request({
+                    url: 'exchangeRequestStatus?scope=' + scope + '&xid=' + xid,
+                    timeout: 5000,
+                    method: 'GET',
+                    success: function (response, options) {
+                        var obj = Ext.decode(response.responseText);
+                        var percentComplete = obj.percentComplete;
+                        var message = obj.message;
+                        Ext.MessageBox.updateProgress(percentComplete / 100, percentComplete + '% ' + message);
+                        if (obj.state === 'COMPLETED' || obj.state === 'ERROR') {
+                            getProgressBoo = false;
+                            Ext.MessageBox.hide();
+                        }
+                    }
+                });
+            } else {
+                // stop the TaskRunner when the 'getProgressBoo' is false
+                runner.stop(task);
+            }
+        },
+        interval: 1000 // monitor the progress every 1000 milliseconds
+    };
+
+	
 
 	if (userResponse == 'ok') {
-		if (exchtab) {
-			exchtab.getEl().mask('Exchange in progress, please wait ...',
-					'x-mask-loading');
+	    if (exchtab) {
+	        Ext.MessageBox.show({
+	            title: 'Exchange Status',
+	            msg: 'Processing items...',
+	            progressText: 'Initializing...',
+	            width: 300,
+	            progress: true,
+	            closable: false
+	        });
 		}
 
 		Ext.Ajax.request({
-			url : 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed='
+		    url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed='
 					+ reviewed,
-			timeout : 86400000, // 24 hours
-			success : function(response, request) {
-				if (exchtab) {
-					exchtab.getEl().unmask();
-				}
+		    timeout: 86400000, // 24 hours
+		    success: function (response, request) {
+		        if (exchtab) {
+		            exchtab.getEl().unmask();
+		        }
 
-				var responseText = Ext.decode(response.responseText);
-				var message = 'Data exchange [' + exchange + ']: '
+		        var responseText = Ext.decode(response.responseText);
+		        var message = 'Data exchange [' + exchange + ']: '
 						+ responseText;
+		        /*
+		        if (message.length < 300)
+		        showDialog(460, 125, 'Exchange Result', message,
+		        Ext.Msg.OK, null);
+		        else
+		        showDialog(660, 300, 'Exchange Result', message,
+		        Ext.Msg.OK, null);
+		        */
+		        // start the TaskRunner
+		      
+		        runner.start(task);
+		    },
+		    failure: function (response, request) {
+		        // ignore timeout error from proxy server
+		        if (response.responseText.indexOf('Error Code 1460') != -1) {
+		            if (exchtab) {
+		                exchtab.getEl().unmask();
+		            }
+		            getProgressBoo = false;
+		            var title = 'Exchange Error (' + response.status + ')';
+		            var message = 'Error while exchanging [' + exchange + '].';
 
-				if (message.length < 300)
-					showDialog(460, 125, 'Exchange Result', message,
-							Ext.Msg.OK, null);
-				else
-					showDialog(660, 300, 'Exchange Result', message,
-							Ext.Msg.OK, null);
-			},
-			failure : function(response, request) {
-				// ignore timeout error from proxy server
-				if (response.responseText.indexOf('Error Code 1460') != -1) {
-					if (exchtab) {
-						exchtab.getEl().unmask();
-					}
+		            var responseText = Ext.decode(response.responseText);
 
-					var title = 'Exchange Error (' + response.status + ')';
-					var message = 'Error while exchanging [' + exchange + '].';
+		            if (responseText)
+		                message += responseText;
 
-					var responseText = Ext.decode(response.responseText);
-
-					if (responseText)
-						message += responseText;
-
-					showDialog(660, 300, title, message, Ext.Msg.OK, null);
-				}
-			}
+		            showDialog(660, 300, title, message, Ext.Msg.OK, null);
+		        }
+		    }
 		});
 	}
 }

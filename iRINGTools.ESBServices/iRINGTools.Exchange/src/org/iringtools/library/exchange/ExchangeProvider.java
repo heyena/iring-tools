@@ -2,7 +2,9 @@ package org.iringtools.library.exchange;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,13 +42,14 @@ public class ExchangeProvider
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
   private static ConcurrentMap<String, RequestStatus> requests = new ConcurrentHashMap<String, RequestStatus>();
   private Map<String, Object> settings;
+  private static ConcurrentMap<String, String> exchangeRequestIds = new ConcurrentHashMap<String,String>();;
   private String path;
   
   public ExchangeProvider(Map<String, Object> settings)
   {
     this.settings = settings;
     this.path = settings.get("basePath").toString()
-			.concat("WEB-INF/data/");
+			.concat("WEB-INF/data/");    
   }
 
   public Manifest getCrossedManifest(Exchange exchange) throws Exception
@@ -321,48 +324,41 @@ public class ExchangeProvider
   public ExchangeResponse submitExchange(boolean async, String scope, String id, Exchange exchange, ExchangeRequest xReq)
   {
     logger.debug("Processing data exchange [" + scope + "." + id + "]...");
+    String requestId = UUID.randomUUID().toString().replace("-", "");
+    RequestStatus requestStatus = new RequestStatus();
+    requestStatus.setState(State.IN_PROGRESS);
+    requests.put(requestId, requestStatus);
+    exchangeRequestIds.put( scope + "." + id , requestId);
+      
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
+    executor.execute(exchangeTask);
+    executor.shutdown();
+    try
+    {  Thread.sleep(500); }
+    catch(Exception e)
+    {}
+     
+    ExchangeResponse exchangeResponse = exchangeTask.getExchangeResponse();
+    return exchangeResponse;            
 
-    if (async)
-    {
-      String requestId = UUID.randomUUID().toString().replace("-", "");
-      RequestStatus requestStatus = new RequestStatus();
-      requestStatus.setState(State.IN_PROGRESS);
-      requests.put(requestId, requestStatus);
-
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
-      executor.execute(exchangeTask);
-      executor.shutdown();
-
-      ExchangeResponse exchangeResponse = exchangeTask.getExchangeResponse();
-      return exchangeResponse;
-    }
-    else
-    {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, null);
-      executor.execute(exchangeTask);
-      executor.shutdown();
-
-      try
-      {
-        executor.awaitTermination(24, TimeUnit.HOURS);
-      }
-      catch (InterruptedException e)
-      {
-        logger.error("Exchange Task Executor interrupted: " + e.getMessage());
-      }
-
-      ExchangeResponse exchangeResponse = exchangeTask.getExchangeResponse();
-      return exchangeResponse;
-    }
   }
 
+ 
+  
+  
   public History getExchangeHistory(String scope, String id) throws Exception
   {
     return getExchangeHistory(scope, id, 0);
   }
 
+  public RequestStatus getExchangeRequestStatus(String scope, String id) throws Exception
+  {
+	  String requestId = exchangeRequestIds.get(scope + "." + id);
+	  RequestStatus requestStatus = getRequestStatus(requestId);
+	  return requestStatus;
+  }
+  
   public History getExchangeHistory(String scope, String id, int limit) throws Exception
   {
     History history = new History();

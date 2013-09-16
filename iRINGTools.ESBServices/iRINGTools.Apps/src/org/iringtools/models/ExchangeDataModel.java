@@ -43,6 +43,7 @@ import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
+import org.iringtools.library.RequestStatus;
 import org.iringtools.library.exchange.Constants;
 import org.iringtools.library.directory.DirectoryProvider;
 import org.iringtools.library.exchange.ExchangeProvider;
@@ -282,6 +283,14 @@ public class ExchangeDataModel extends DataModel
     return xRes;
   }
 
+  public RequestStatus getExchangeRequestStatus(String scope, String xId) throws Exception
+  {
+	  //TODO get exchange status from provider and return;
+	  RequestStatus requestStatus = provider.getExchangeRequestStatus(scope, xId);
+	  return requestStatus;
+  }
+  
+  
   public Grid getXHistoryGrid(String scope, String xId, String xlabel) throws Exception
   {
     Grid xHistoryGrid = new Grid();

@@ -119,6 +119,13 @@
         <param name="root">xResultsGrid</param>
       </result>
     </action>
+    <!-- exchange submit request status -->
+    <action name="exchangeRequestStatus" class="org.iringtools.controllers.ExchangeDataController" method="getExchangeRequestStatus">
+      <result type="json">
+        <param name="root">requestStatus</param>
+      </result>
+    </action>
+    
     <!-- summary data -->
     <action name="sdata" class="org.iringtools.controllers.ExchangeDataController" method="getSummary">
       <result type="json">

@@ -249,6 +249,14 @@ public class ExchangeTask implements Runnable
   		      String message = "No changing/deleting items found. ";
   		      StringBuilder summary = new StringBuilder(xRes.getSummary());
   		      xRes.setSummary(summary.append(message).toString());
+  		      
+  		      if (requestStatus != null)
+	  	      {
+  		    	requestStatus.setMessage(message);  
+	  	        requestStatus.setResponseText(JaxbUtils.toXml(xRes, false));
+	  	        requestStatus.setPercentComplete(100);
+	  	        requestStatus.setState(State.COMPLETED);
+	  	      }  
   		    }
   		    else
   		    {
@@ -264,6 +272,15 @@ public class ExchangeTask implements Runnable
   			      List<DataTransferObject> poolDtoListItems = new ArrayList<DataTransferObject>();
   			      poolDtosList.setItems(poolDtoListItems);
   			
+  			      if (requestStatus != null)
+				  {  			    
+  			    	int perCompleted = (int)((((float)i) /dxIndicesSize)*100);  	
+			  		requestStatus.setMessage("Processing Pool [ "+ (i + 1) +" - "+ (i + actualPoolSize) + " ]");  
+		  	        requestStatus.setResponseText(JaxbUtils.toXml(xRes, false));
+		  	        requestStatus.setPercentComplete(perCompleted);
+		  	        requestStatus.setState(State.IN_PROGRESS);
+				  } 
+  			      
   			      //
   			      // create deleted DTOs and collect add/change DTIs from source
   			      //
@@ -518,6 +535,8 @@ public class ExchangeTask implements Runnable
       {
         requestStatus.setResponseText(JaxbUtils.toXml(xRes, false));
         requestStatus.setState(State.COMPLETED);
+        requestStatus.setPercentComplete(100);
+        requestStatus.setMessage("Processed");
       }
     }
     catch (Exception e)

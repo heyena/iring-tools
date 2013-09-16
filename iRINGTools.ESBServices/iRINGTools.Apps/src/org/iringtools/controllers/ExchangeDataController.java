@@ -23,6 +23,8 @@ import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.response.ExchangeResponse;
+import org.iringtools.library.RequestStatus;
+import org.iringtools.library.State;
 import org.iringtools.models.ExchangeDataModel;
 import org.iringtools.models.Result;
 
@@ -50,9 +52,13 @@ public class ExchangeDataController extends BaseController
       targetScopeName, targetAppName, commName, targetGraphName, hasAlgorithm, appName, appScope, oldAppName,
       oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response;
 
-  private String parentClassId, parentClassIndex, parentClassPath, templateId, templateIndex;
+  private String parentClassId, parentClassIndex, parentClassPath, templateId, templateIndex,requestId;
+ 
 
-  // private String openGroup, propertyName, relationalOper, value,
+  private RequestStatus requestStatus; 
+ 
+
+// private String openGroup, propertyName, relationalOper, value,
   // logicalOper, closeGroup, sortOrder;
   private String openGroup[], propertyName[], propertyNameOE[], relationalOper[], value[], logicalOper[], closeGroup[],
       sortOrder[];
@@ -1165,6 +1171,28 @@ public class ExchangeDataController extends BaseController
     return SUCCESS;
   }
 
+  public String getExchangeRequestStatus() throws Exception
+  {
+	requestStatus = null;
+	try
+	{
+	  ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+	  requestStatus = exchangeDataModel.getExchangeRequestStatus(scope, xid);
+	//  requestStatus = exchangeDataModel.getStatusOfRequest(requestId);
+      if (requestStatus.getState() == State.NOT_FOUND )
+       {
+         throw new Exception("request not found");
+       }
+    }
+    catch (Exception ex)
+    {
+   	  requestStatus = new RequestStatus();
+      requestStatus.setState(State.ERROR);
+      requestStatus.setMessage(ex.getMessage());
+    }
+	
+	return SUCCESS;
+  }
   // --------------------------
   // getter and setter methods
   // --------------------------
@@ -1867,5 +1895,25 @@ public class ExchangeDataController extends BaseController
   public void setTemplateId(String templateId)
   {
     this.templateId = templateId;
+  }
+  
+  public void setRequestStatus(RequestStatus requestStatus) 
+  {
+	this.requestStatus = requestStatus;
+  }
+  
+  public RequestStatus getRequestStatus() 
+  {
+	return requestStatus;
+  }
+  
+  public String getRequestId() 
+  {
+	return requestId;
+  }
+
+  public void setRequestId(String requestId) 
+  {
+	this.requestId = requestId;
   }
 }
