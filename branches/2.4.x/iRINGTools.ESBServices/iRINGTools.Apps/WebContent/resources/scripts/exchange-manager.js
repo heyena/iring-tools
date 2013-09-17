@@ -2040,7 +2040,7 @@ function saveGraph() {
 					oldapp = appName;
 				}
 				var message = 'Graph name ' + '"' + graph + '"'
-						+ ' already exist in scope ' + '["' + oldScope + '.'
+						+ ' already exists in scope ' + '["' + oldScope + '.'
 						+ oldapp + '"]' + '.';
 
 				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
@@ -2971,7 +2971,7 @@ function saveScope(node, button, event) {
 			var result = Ext.decode(response.responseText);
 			if (result === 'ERROR') {
 				var message = 'Scope name ' + '"' + scope + '"'
-						+ ' already exist' + '.';
+						+ ' already exists' + '.';
 				+response.responseText;
 				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 
@@ -3052,7 +3052,7 @@ function saveComm(node, button, event) {
 			var result = Ext.decode(response.responseText);
 			if (result === 'ERROR') {
 				var message = 'Commodity name ' + '"' + commodity + '"'
-						+ ' already exist in scope ' + '"' + scope + '"' + '.';
+						+ ' already exists in scope ' + '"' + scope + '"' + '.';
 				+response.responseText;
 				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 
@@ -3396,7 +3396,7 @@ function saveApp(node, button, event) {
 						oldScope = scope;
 					}
 					var message = 'Application name ' + '"' + application + '"'
-							+ ' already exist in scope ' + '"' + oldScope + '"'
+							+ ' already exists in scope ' + '"' + oldScope + '"'
 							+ '.';
 					+response.responseText;
 					showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
@@ -5229,7 +5229,7 @@ Ext
 										if (dataTypeNode.attributes['text'] == 'Application Data') {
 											var graphNode = node.parentNode;
 											var scope = properties['Context'];
-											var app = graphNode.attributes['text'];
+											var app = graphNode.attributes.properties['Internal Name']; 
 											var graph = node.attributes['text'];
 											var baseUri = properties['Base URI'];
 											var label = scope + '.' + app + '.'
