@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="displayName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="context" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="baseUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "name",
+    "displayName",
     "context",
     "description",
     "baseUri",
@@ -50,6 +52,8 @@ public class Application
     private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected String name;
+    @XmlElement(required = true)
+    protected String displayName;
     @XmlElement(required = true)
     protected String context;
     @XmlElement(required = true)
@@ -81,6 +85,30 @@ public class Application
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the displayName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Sets the value of the displayName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDisplayName(String value) {
+        this.displayName = value;
     }
 
     /**

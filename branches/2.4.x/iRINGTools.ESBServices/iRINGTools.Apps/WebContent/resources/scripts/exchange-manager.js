@@ -1074,8 +1074,6 @@ function showDialog(width, height, title, message, buttons, callback) {
 	});
 }
 
-
-
 function onTreeItemContextMenu(node, e) {
 	var obj = node;
 	var directoryTree = Ext.getCmp('directory-tree');
@@ -1366,6 +1364,7 @@ function buildNewExchangeMenu() {
 		xtype : 'menuitem',
 		handler : function(item, event) {
 			newExchangeConfig();
+			
 			var view = Ext.getCmp('newExchangeConfigWin');
 			view.show();
 		},
@@ -1387,106 +1386,237 @@ function buildNewExchangeMenu() {
 }
 
 function newExchangeConfig() {
-	var newExchConfig = new Ext.FormPanel({
-		id : 'newExchConfig',
-		frame : false,
-		border : false,
-		bodyStyle : 'padding:15px 15px 5px 15px',
-		labelWidth : 100,
-		defaults : {
-			width : 390,
-			allowBlank : false
-		},
-		defaultType : 'textfield',
-		items : [ {
-			fieldLabel : 'Name',
-			name : 'name'
-		}, {
-			fieldLabel : 'Description',
-			name : 'description',
-			allowBlank : true
-		}, {
-			xtype : 'fieldset',
-			anchor : '100%',
-			defaults : {
-				width : 360,
-				allowBlank : false
-			},
-			defaultType : 'textfield',
-			title : 'Source Config',
-			items : [ {
-				fieldLabel : 'Base URI',
-				name : 'sourceUri'
-			}, {
-				fieldLabel : 'Scope Name',
-				name : 'sourceScopeName'
-			}, {
-				fieldLabel : 'App Name',
-				name : 'sourceAppName'
-			}, {
-				fieldLabel : 'Graph Name',
-				name : 'sourceGraphName'
-			} ],
-			buttons : [ {
-				text : 'Test',
-				handler : function(button, event) {
-					SourceUri();
-				}
-			} ]
-		}, {
-			xtype : 'fieldset',
-			anchor : '100%',
-			title : 'Target Config',
-			defaults : {
-				width : 360,
-				allowBlank : false
-			},
-			defaultType : 'textfield',
-			items : [ {
-				fieldLabel : 'Base URI',
-				name : 'targetUri'
-			}, {
-				fieldLabel : 'Scope Name',
-				name : 'targetScopeName'
-			}, {
-				fieldLabel : 'App Name',
-				name : 'targetAppName'
-			}, {
-				fieldLabel : 'Graph Name',
-				name : 'targetGraphName'
-			} ],
-			buttons : [ {
-				text : 'Test',
-				handler : function(button, event) {
-					TargetUri();
-				}
-			} ]
-		}, {
-			xtype : 'hidden',
-			fieldLabel : 'Label',
-			name : 'oldConfigName'
-		}, {
-			xtype : 'hidden',
-			fieldLabel : 'Label',
-			name : 'oldCommName'
-		}, {
-			xtype : 'hidden',
-			fieldLabel : 'Label',
-			name : 'oldScope'
-		} ],
-		buttons : [ {
-			text : 'Save',
-			handler : function(button, event) {
-				saveExchangeConfig();
-				newExchangeConfigWin.close();
-			}
-		}, {
-			text : 'Cancel',
-			handler : function(button, event) {
-				newExchangeConfigWin.close();
-			}
-		} ]
-	});
+	
+	var ScopeNameStore = null;
+	var AppNameStore = null;
+	var newExchConfig = new Ext.FormPanel(
+			{
+				id : 'newExchConfig',
+				frame : false,
+				border : false,
+				bodyStyle : 'padding:15px 15px 5px 15px',
+				labelWidth : 100,
+				defaults : {
+					width : 390,
+					allowBlank : false
+				},
+				defaultType : 'textfield',
+				items : [
+						{
+							fieldLabel : 'Name',
+							name : 'name'
+						},
+						{
+							fieldLabel : 'Description',
+							name : 'description',
+							allowBlank : true
+						},
+						{
+							xtype : 'fieldset',
+							anchor : '100%',
+							defaults : {
+								width : 360,
+								allowBlank : false
+							},
+							defaultType : 'textfield',
+							title : 'Source Config',
+							items : [
+									{
+										xtype : 'textfield',
+										fieldLabel : 'Base URI',
+										allowBlank : false,
+										name : 'sourceUri',
+										regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
+										regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+										vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+										listeners : {
+											specialkey : function(f, e) {
+												if((e.getKey() == e.TAB) || (e.getKey() == e.ENTER)) {
+													testUriAndGetScopeName("SourceExchange");
+
+												}
+											},
+											 render: function(c) {
+												 c.getEl().on('keyup', function() {
+													 Ext.getCmp('sourceScopeCombolist').clearValue();						
+													 Ext.getCmp('sourceScopeCombolist').setDisabled(true);
+													 Ext.getCmp('sourceAppCombolist').clearValue();							
+													 Ext.getCmp('sourceAppCombolist').setDisabled(true);
+													 Ext.getCmp('graphsourceName').setDisabled(true);
+												      }, c);
+											}
+										}
+									}, {
+										xtype : 'combo',
+										fieldLabel : 'Context',
+										name : 'sourceScopeName',
+										id: 'sourceScopeCombolist',
+										allowBlank : false,
+										store : ScopeNameStore,
+										valueField : 'value',
+										displayField : 'name',
+										forceSelection : true,
+										typeAhead : true,
+										triggerAction : 'all',
+										listeners : {
+											scope : this,
+											select : function() {
+							//		Ext.getCmp('sourceAppCombolist').clearValue();
+												getAppNames("SourceExchange");		
+											},
+											change:function(id,newvalue, oldvalue)
+											{
+												 Ext.getCmp('sourceAppCombolist').clearValue();
+												 //getAppNames("app");
+												Ext.getCmp('graphsourceName').setValue("");
+											}
+										}
+									}, {
+										xtype : 'combo',
+										fieldLabel : 'Application',
+										name : 'sourceAppName',
+										id: 'sourceAppCombolist',
+										store : AppNameStore,
+										valueField : 'value',
+										displayField : 'name',
+										forceSelection : true,
+										typeAhead : true,
+										allowBlank : false,
+										triggerAction : 'all',
+										listeners : {
+											scope : this,
+											select : function() {									
+												var appName = Ext.getCmp('sourceAppCombolist').getValue();
+												var obj = Ext.getCmp('newExchConfig');
+												var form = obj.getForm();
+												form.findField('sourceGraph').setDisabled(false);
+											}}
+									}, {
+										fieldLabel : 'Graph',
+										name : 'sourceGraphName',
+										id:'graphsourceName'
+									} ],
+							buttons : [ {
+								text : 'Test',
+								handler : function(button, event) {
+									SourceUri();
+								}
+							} ]
+						}, {
+							xtype : 'fieldset',
+							anchor : '100%',
+							title : 'Target Config',
+							defaults : {
+								width : 360,
+								allowBlank : false
+							},
+							defaultType : 'textfield',
+							items : [ {
+								xtype : 'textfield',
+								fieldLabel : 'Base URI',
+								allowBlank : false,
+								name : 'targetUri',
+								regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
+								regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+								vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+								listeners : {
+									specialkey : function(f, e) {
+										if (e.getKey() == e.TAB) {
+											testUriAndGetScopeName("TargetExchange");
+
+										}
+									},render: function(c) {
+										 c.getEl().on('keyup', function() {
+											 Ext.getCmp('targetScopeCombolist').clearValue();						
+											 Ext.getCmp('targetScopeCombolist').setDisabled(true);
+											 Ext.getCmp('targetAppCombolist').clearValue();							
+											 Ext.getCmp('targetAppCombolist').setDisabled(true);
+											 Ext.getCmp('targetGraph').setDisabled(true);
+										      }, c);
+									}
+								}
+							}, {
+								    xtype : 'combo',
+									fieldLabel : 'Context',
+									name : 'targetScopeName',
+									id: 'targetScopeCombolist',
+									allowBlank : false,
+									store : ScopeNameStore,
+									valueField : 'value',
+									displayField : 'name',
+									forceSelection : true,
+									typeAhead : true,
+									triggerAction : 'all',
+									listeners : {
+										scope : this,
+										select : function() {
+								//	Ext.getCmp('targetAppCombolist').clearValue();
+											getAppNames("TargetExchange");		
+										},
+										change:function(id,newvalue, oldvalue)
+										{
+											 Ext.getCmp('targetAppCombolist').clearValue();
+											 //getAppNames("app");
+											Ext.getCmp('targetGraph').setValue("");
+										}
+									}
+								},  {
+								    xtype : 'combo',
+									fieldLabel : 'Application',
+									name : 'targetAppName',
+									id: 'targetAppCombolist',
+									store : AppNameStore,
+									valueField : 'value',
+									displayField : 'name',
+									forceSelection : true,
+									typeAhead : true,
+									allowBlank : false,
+									triggerAction : 'all',
+									listeners : {
+										scope : this,
+										select : function() {									
+											var appName = Ext.getCmp('sourceAppCombolist').getValue();
+											var obj = Ext.getCmp('newExchConfig');
+											var form = obj.getForm();
+											form.findField('targetGraph').setDisabled(false);
+										}}
+								},  {
+								fieldLabel : 'Graph',
+								name : 'targetGraphName',
+								id : 'targetGraph'
+							} ],
+							buttons : [ {
+								text : 'Test',
+								handler : function(button, event) {
+									TargetUri();
+								}
+							} ]
+						}, {
+							xtype : 'hidden',
+							fieldLabel : 'Label',
+							name : 'oldConfigName'
+						}, {
+							xtype : 'hidden',
+							fieldLabel : 'Label',
+							name : 'oldCommName'
+						}, {
+							xtype : 'hidden',
+							fieldLabel : 'Label',
+							name : 'oldScope'
+						} ],
+				buttons : [ {
+					text : 'Save',
+					handler : function(button, event) {
+						saveExchangeConfig();
+				//newExchangeConfigWin.close();
+					}
+				}, {
+					text : 'Cancel',
+					handler : function(button, event) {
+						newExchangeConfigWin.close();
+					}
+				} ]
+			});
 
 	var newExchangeConfigWin = new Ext.Window({
 		id : 'newExchangeConfigWin',
@@ -1519,8 +1649,8 @@ function SourceUri() {
 
 			Ext.Msg.show({
 				title : 'Result ',
-				msg : '<textarea ' + style + ' readonly="yes">' + result.message
-						+ '</textarea>',
+				msg : '<textarea ' + style + ' readonly="yes">'
+						+ result.message + '</textarea>',
 				buttons : Ext.MessageBox.OK
 			});
 
@@ -1537,39 +1667,27 @@ function SourceUri() {
 	});
 }
 
-function testBaseUri() {
-	var obj = Ext.getCmp('newAppForm');
-	var form = obj.getForm();
-
-	var baseUri = form.findField('baseUri').getValue();
-	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
-			+ 'px;border:1px solid #aaa;overflow:auto"';
-	Ext.Ajax.request({
-		url : 'BasetestUri?' + '&sourceUri =' + baseUri,
-		method : 'POST',
-		timeout : 120000,
-		success : function(response, request) {
-			var result = Ext.decode(response.responseText);
-
-			Ext.Msg.show({
-				title : 'Result ',
-				msg : '<textarea ' + style + ' readonly="yes">' + result.message
-						+ '</textarea>',
-				buttons : Ext.MessageBox.OK
-			});
-
-		},
-		failure : function(response, request) {
-			Ext.Msg.show({
-				title : 'Result ',
-				msg : '<textarea ' + style + ' readonly="yes">'
-						+ "failed to connect to the specified Url"
-						+ '</textarea>',
-				buttons : Ext.MessageBox.OK
-			});
-		}
-	});
-}
+/*
+ * function testBaseUri() { var obj = Ext.getCmp('newAppForm'); var form =
+ * obj.getForm();
+ * 
+ * var baseUri = form.findField('baseUri').getValue(); var style =
+ * 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160 +
+ * 'px;border:1px solid #aaa;overflow:auto"'; Ext.Ajax.request({ url :
+ * 'BasetestUri?' + '&sourceUri =' + baseUri, method : 'POST', timeout : 120000,
+ * success : function(response, request) { var result =
+ * Ext.decode(response.responseText); if(result.success === false) {
+ * Ext.Msg.show({ title : 'Result ', msg : '<textarea ' + style + '
+ * readonly="yes">' + "Could not connect to the URL " + result.message + '</textarea>',
+ * buttons : Ext.MessageBox.OK }); } if(result.success === true) {
+ * Ext.Msg.show({ title : 'Result ', msg : '<textarea ' + style + '
+ * readonly="yes">' + result.message + '</textarea>', buttons :
+ * Ext.MessageBox.OK }); var obj = Ext.getCmp('newAppForm'); var form =
+ * obj.getForm(); form.findField('appScope').setDisabled(false); } }, failure :
+ * function(response, request) { Ext.Msg.show({ title : 'Result ', msg : '<textarea ' +
+ * style + ' readonly="yes">' + "failed to connect to the specified Url" + '</textarea>',
+ * buttons : Ext.MessageBox.OK }); } }); }
+ */
 
 function TargetUri() {
 	var obj = Ext.getCmp('newExchConfig');
@@ -1591,8 +1709,8 @@ function TargetUri() {
 
 			Ext.Msg.show({
 				title : 'Result ',
-				msg : '<textarea ' + style + ' readonly="yes">' + result.message
-						+ '</textarea>',
+				msg : '<textarea ' + style + ' readonly="yes">'
+						+ result.message + '</textarea>',
 				buttons : Ext.MessageBox.OK
 			});
 		},
@@ -1619,20 +1737,77 @@ function saveExchangeConfig() {
 	var commodity = node.text;
 	var xid = node.attributes.properties['Id'];
 	var oldscope = obj.findField('oldScope').getValue();
+	
+
+	//Validating
+	var form1 = obj;
+	var targetUri = form1.findField('targetUri').getValue();
+	var targetScopeName = form1.findField('targetScopeName').getValue();
+	var targetAppName = form1.findField('targetAppName').getValue();
+	var targetGraphName = form1.findField('targetGraphName').getValue();
+	var sourceUri = form1.findField('sourceUri').getValue();
+	var sourceScopeName = form1.findField('sourceScopeName').getValue();
+	var sourceAppName = form1.findField('sourceAppName').getValue();
+	var sourceGraphName = form1.findField('sourceGraphName').getValue();
+	var name = form1.findField('name').getValue();
+
+	if(((targetAppName !== "") && (targetAppName !== null)) && ((targetScopeName !== "") && (targetScopeName !== null)) &&  ((targetUri !== "") && (targetUri !== null)) && ((targetGraphName !== "") && (targetGraphName !== null)) &&((sourceAppName !== "") && (sourceAppName !== null)) && ((sourceScopeName !== "") && (sourceScopeName !== null)) &&  ((sourceUri !== "") && (sourceUri !== null)) && ((sourceGraphName !== "") && (sourceGraphName !== null)) && ((name !== "") && (name !== null)))                                             
+	{
 
 	Ext.Ajax.request({
 		url : 'newExchange?' + form + '&scope =' + scope + '&commodity ='
 				+ commodity + '&xid =' + xid,
 		method : 'POST',
 		timeout : 120000,
-		success : function(response, request) {		
+		success : function(response, request) {
 			refresh();
+			Ext.getCmp('newExchangeConfigWin').close();
 		},
 		failure : function(response, request) {
 			alert("save failed");
 		}
 	});
+	}
+	else{    
+	    if((targetAppName === ""))
+	    {
+	        form1.findField('targetAppName').markInvalid('App Name cannot be Empty');   
+	    }
 
+	    if((targetScopeName === ""))
+	    {
+	        form1.findField('targetScopeName').markInvalid('Scope Name cannot be Empty');   
+	    }
+	    if((targetUri === ""))
+	    {
+	        form1.findField('targetUri').markInvalid('Scope Uri cannot be Empty');   
+	    }
+	    if((targetGraphName === ""))
+	    {
+	        form1.findField('targetGraphName').markInvalid('Graph Name cannot be Empty');   
+	    }
+	    if((sourceAppName === ""))
+	    {
+	        form1.findField('sourceAppName').markInvalid('App Name cannot be Empty');   
+	    }
+
+	    if((sourceScopeName === ""))
+	    {
+	        form1.findField('sourceScopeName').markInvalid('Scope Name cannot be Empty');   
+	    }
+	    if((sourceUri === ""))
+	    {
+	        form1.findField('sourceUri').markInvalid('Scope Uri cannot be Empty');   
+	    }
+	    if((sourceGraphName === ""))
+	    {
+	        form1.findField('sourceGraphName').markInvalid('Graph Name cannot be Empty');   
+	    }
+	    if(name === "")
+	    {
+	        form1.findField('name').markInvalid('Name cannot be Empty');   
+	    }
+	}
 }
 
 function buildNewScopeMenu() {
@@ -1656,6 +1831,13 @@ function buildNewApplicationMenu() {
 		handler : function(item, event) {
 			newApp();
 			var view = Ext.getCmp('newAppWin');
+			var obj = Ext.getCmp('newAppForm');
+			var form = obj.getForm();
+			form.findField('appScope').setDisabled(true);
+			// form.findField('scopeDisplayName').setDisabled(true);
+			form.findField('appName').setDisabled(true);
+			form.findField('displayName').setDisabled(true);
+			form.findField('appDesc').setDisabled(true);
 			view.show();
 		},
 		text : 'New Application'
@@ -1665,30 +1847,30 @@ function buildNewApplicationMenu() {
 function buildGraphSubMenu() {
 	return [ {
 		xtype : 'menuitem',
-    text : 'Edit Graph',
+		text : 'Edit Graph',
 		handler : function() {
 			newGraph();
 			editGraph();
 		}
 	}, {
 		xtype : 'menuitem',
-    text : 'Delete Graph',
+		text : 'Delete Graph',
 		handler : function(item, event) {
 			deleteGraph();
 		}
 	}, {
-    xtype: 'menuseparator'
-  }, {
-    xtype : 'menuitem',
-    text : 'Refresh Cache',
-    handler: onRefreshCache,
-    scope: this
-  }, {
-    xtype : 'menuitem',
-    text : 'Import Cache',
-    handler : onImportCache,
-    scope: this
-  }];
+		xtype : 'menuseparator'
+	}, {
+		xtype : 'menuitem',
+		text : 'Refresh Cache',
+		handler : onRefreshCache,
+		scope : this
+	}, {
+		xtype : 'menuitem',
+		text : 'Import Cache',
+		handler : onImportCache,
+		scope : this
+	} ];
 }
 
 function editCommodity() {
@@ -1851,21 +2033,21 @@ function saveGraph() {
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
-			var result =Ext.decode(response.responseText);
-			if(result === 'ERROR')
-			{
-				if((oldScope == '')&&(oldapp == ''))
-				{
+			var result = Ext.decode(response.responseText);
+			if (result === 'ERROR') {
+				if ((oldScope == '') && (oldapp == '')) {
 					oldScope = scope;
-					oldapp=appName;
+					oldapp = appName;
 				}
-		var message =  'Graph name '+ '"'+ graph+ '"' +' already exist in scope '+ '["'+ oldScope+'.'+oldapp+ '"]'+'.';
-		
-showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
-		
+				var message = 'Graph name ' + '"' + graph + '"'
+						+ ' already exist in scope ' + '["' + oldScope + '.'
+						+ oldapp + '"]' + '.';
+
+				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+
 			}
-		refresh();
-	},		
+			refresh();
+		},
 		failure : function(response, request) {
 			alert("save failed");
 		}
@@ -1873,20 +2055,23 @@ showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 }
 
 function buildApplicationSubMenu() {
-	return [{
-    xtype : 'menuitem',
-    handler : function() {
-      newGraph();
-      var view = Ext.getCmp('newGraphWin');
-      view.show();
-    },
-    text : 'Add Graph'
-  }, {
-    xtype: 'menuseparator'
-  }, {
+	return [ {
+		xtype : 'menuitem',
+		handler : function() {
+			newGraph();
+			var view = Ext.getCmp('newGraphWin');
+			view.show();
+		},
+		text : 'Add Graph'
+	}, {
+		xtype : 'menuseparator'
+	}, {
 		xtype : 'menuitem',
 		handler : function() {
 			newApp();
+			var obj = Ext.getCmp('newAppForm');
+			var form = obj.getForm();
+			// form.findField('scopeDisplayName').setDisabled(true);
 			editApplication();
 		},
 		text : 'Edit Application'
@@ -1896,152 +2081,228 @@ function buildApplicationSubMenu() {
 			deleteApp();
 		},
 		text : 'Delete Application'
-	}];
+	} ];
 }
 
 function onRefreshCache(btn, ev) {
-  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-  Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+	var node = Ext.getCmp('directory-tree').getSelectionModel()
+			.getSelectedNode();
+	Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
 
-  Ext.Ajax.request({
-    url: 'refreshCache',
-    method: 'POST',
-    timeout: 3600000,
-    params: {
-      'dxfrUri': node.attributes.properties['Base URI'],
-      'scope': node.attributes.properties['Context'],
-      'app': node.parentNode.text,
-      'graph': node.attributes.properties['Name']
-    },
-    success: function (response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
-      
-      var responseObj = Ext.decode(response.responseText);
+	Ext.Ajax
+			.request({
+				url : 'refreshCache',
+				method : 'POST',
+				timeout : 3600000,
+				params : {
+					'dxfrUri' : node.attributes.properties['Base URI'],
+					'scope' : node.attributes.properties['Context'],
+					'app' : node.parentNode.text,
+					'graph' : node.attributes.properties['Name']
+				},
+				success : function(response, request) {
+					Ext.getCmp('content-pane').getEl().unmask();
 
-      if (responseObj.level == 'SUCCESS') {
-        showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
-      }
-      else {
-        showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
-      }
-    },
-    failure: function (response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
-      
-      if (request.response.status == 200) {
-        var responseObj = Ext.decode(request.response.responseText);
-        
-        if (responseObj.level == 'SUCCESS') {
-          showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
-        }
-        else {
-          showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
-        }
-      }
-      else {
-        var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
-        showDialog(500, 160, 'Refresh Cache Error', errMsg, Ext.Msg.OK, null);
-      }
-    }
-  });
+					var responseObj = Ext.decode(response.responseText);
+
+					if (responseObj.level == 'SUCCESS') {
+						showDialog(450, 100, 'Refresh Cache Result',
+								'Cache refreshed successfully.', Ext.Msg.OK,
+								null);
+					} else {
+						showDialog(500, 160, 'Refresh Cache Error',
+								responseObj.messages.items.join('\n'),
+								Ext.Msg.OK, null);
+					}
+				},
+				failure : function(response, request) {
+					Ext.getCmp('content-pane').getEl().unmask();
+
+					if (request.response.status == 200) {
+						var responseObj = Ext
+								.decode(request.response.responseText);
+
+						if (responseObj.level == 'SUCCESS') {
+							showDialog(450, 100, 'Refresh Cache Result',
+									'Cache refreshed successfully.',
+									Ext.Msg.OK, null);
+						} else {
+							showDialog(500, 160, 'Refresh Cache Error',
+									responseObj.messages.items.join('\n'),
+									Ext.Msg.OK, null);
+						}
+					} else {
+						var errMsg = 'Failure Type: ' + request.failureType
+								+ '. Status text: '
+								+ request.response.statusText + '.';
+						showDialog(500, 160, 'Refresh Cache Error', errMsg,
+								Ext.Msg.OK, null);
+					}
+				}
+			});
 }
 
-function onImportCache (btn, ev) {
-  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
- 
-  var importCacheForm = new Ext.FormPanel({
-    url: 'importCache',
-    timeout: 1200000,
-    method: 'POST',
-    frame: false,
-    border: false,
-    bodyStyle: 'padding:20px 5px 20px 5px',
-    items: [
-      { fieldLabel: 'Cache URI', name: 'cacheUri', xtype: 'textfield', width: 360, allowBlank: false },
-      { name: 'dxfrUri', xtype: 'hidden', value: node.attributes.properties['Base URI'] },
-      { name: 'scope', xtype: 'hidden', value: node.attributes.properties['Context'] },
-      { name: 'app', xtype: 'hidden', value: node.parentNode.text },
-      { name: 'graph', xtype: 'hidden', value: node.attributes.properties['Name'] }
-    ]
-  });
-  
-  var win = new Ext.Window({
-    title: 'Import Cache',
-    width: 500,
-    modal: true,
-    closable: true,
-    resizable: false,
-    items: [importCacheForm],
-    buttons: [{
-      text: 'Submit',
-      handler: function () {
-        importCacheForm.getForm().getEl().mask("Processing...", "x-mask-loading");
-        
-        importCacheForm.getForm().submit({
-          success: function (response, request) {              
-            importCacheForm.getForm().getEl().unmask();
-            
-            var responseObj = Ext.decode(response.responseText);
+function onImportCache(btn, ev) {
+	var node = Ext.getCmp('directory-tree').getSelectionModel()
+			.getSelectedNode();
 
-            if (responseObj.level == 'SUCCESS') {
-              win.close();
-              showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
-            }
-            else {
-              showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
-            }
-          },
-          failure: function (response, request) {
-            importCacheForm.getForm().getEl().unmask();  
-            
-            if (request.response.status == 200) {
-              var responseObj = Ext.decode(request.response.responseText);
-              
-              if (responseObj.level == 'SUCCESS') {
-                win.close();
-                showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
-              }
-              else {
-                showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
-              }
-            }
-            else {
-              var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
-              showDialog(500, 160, 'Import Cache Error', errMsg, Ext.Msg.OK, null);
-            }
-          }
-        });
-      }
-    }, {
-      text: 'Close',
-      handler: function () {
-        win.close();
-      }
-    }]
-  });
+	var importCacheForm = new Ext.FormPanel({
+		url : 'importCache',
+		timeout : 1200000,
+		method : 'POST',
+		frame : false,
+		border : false,
+		bodyStyle : 'padding:20px 5px 20px 5px',
+		items : [ {
+			fieldLabel : 'Cache URI',
+			name : 'cacheUri',
+			xtype : 'textfield',
+			width : 360,
+			allowBlank : false
+		}, {
+			name : 'dxfrUri',
+			xtype : 'hidden',
+			value : node.attributes.properties['Base URI']
+		}, {
+			name : 'scope',
+			xtype : 'hidden',
+			value : node.attributes.properties['Context']
+		}, {
+			name : 'app',
+			xtype : 'hidden',
+			value : node.parentNode.text
+		}, {
+			name : 'graph',
+			xtype : 'hidden',
+			value : node.attributes.properties['Name']
+		} ]
+	});
 
-  win.show(this);
+	var win = new Ext.Window(
+			{
+				title : 'Import Cache',
+				width : 500,
+				modal : true,
+				closable : true,
+				resizable : false,
+				items : [ importCacheForm ],
+				buttons : [
+						{
+							text : 'Submit',
+							handler : function() {
+								importCacheForm.getForm().getEl().mask(
+										"Processing...", "x-mask-loading");
+
+								importCacheForm
+										.getForm()
+										.submit(
+												{
+													success : function(
+															response, request) {
+														importCacheForm
+																.getForm()
+																.getEl()
+																.unmask();
+
+														var responseObj = Ext
+																.decode(response.responseText);
+
+														if (responseObj.level == 'SUCCESS') {
+															win.close();
+															showDialog(
+																	450,
+																	100,
+																	'Import Cache Result',
+																	'Cache imported successfully.',
+																	Ext.Msg.OK,
+																	null);
+														} else {
+															showDialog(
+																	500,
+																	160,
+																	'Import Cache Error',
+																	responseObj.messages.items
+																			.join('\n'),
+																	Ext.Msg.OK,
+																	null);
+														}
+													},
+													failure : function(
+															response, request) {
+														importCacheForm
+																.getForm()
+																.getEl()
+																.unmask();
+
+														if (request.response.status == 200) {
+															var responseObj = Ext
+																	.decode(request.response.responseText);
+
+															if (responseObj.level == 'SUCCESS') {
+																win.close();
+																showDialog(
+																		450,
+																		100,
+																		'Import Cache Result',
+																		'Cache imported successfully.',
+																		Ext.Msg.OK,
+																		null);
+															} else {
+																showDialog(
+																		500,
+																		160,
+																		'Import Cache Error',
+																		responseObj.messages.items
+																				.join('\n'),
+																		Ext.Msg.OK,
+																		null);
+															}
+														} else {
+															var errMsg = 'Failure Type: '
+																	+ request.failureType
+																	+ '. Status text: '
+																	+ request.response.statusText
+																	+ '.';
+															showDialog(
+																	500,
+																	160,
+																	'Import Cache Error',
+																	errMsg,
+																	Ext.Msg.OK,
+																	null);
+														}
+													}
+												});
+							}
+						}, {
+							text : 'Close',
+							handler : function() {
+								win.close();
+							}
+						} ]
+			});
+
+	win.show(this);
 }
 
-function buildManifestMenu(scope, xid,isDeleted) {
-    if (isDeleted === 'false') {
-        return [{
-            xtype: 'menuitem',
-            handler: function () {
-                deleteTemplate(scope, xid);
-            },
-            text: 'Exclude Template'
-        }];
-    }
-    else {
-        return [{
-            xtype: 'menuitem',
-            handler: function () {
-                includeTemplate(scope, xid);
-            },
-            text: 'Include Template'
-        }];
-    }
+function buildManifestMenu(scope, xid, isDeleted) {
+	if (isDeleted === 'false') {
+		return [ {
+			xtype : 'menuitem',
+			handler : function() {
+				deleteTemplate(scope, xid);
+			},
+			text : 'Exclude Template'
+		} ];
+	} else {
+		return [ {
+			xtype : 'menuitem',
+			handler : function() {
+				includeTemplate(scope, xid);
+			},
+			text : 'Include Template'
+		} ];
+	}
 }
 
 function editApplication() {
@@ -2055,8 +2316,6 @@ function editApplication() {
 
 	var view = Ext.getCmp('newAppWin');
 	view.setTitle("Edit Application");
-	var obj = Ext.getCmp('newAppForm');
-	var form = obj.getForm();
 
 	Ext.Ajax.request({
 		url : 'getApplication?' + '&scope =' + scope + '&appName ='
@@ -2065,14 +2324,53 @@ function editApplication() {
 		timeout : 120000,
 		success : function(response, request) {
 			var application = Ext.decode(response.responseText);
-			form.setValues({
-				appName : application.name,
-				appDesc : application.description,
-				appScope : application.context,
-				baseUri : application.baseUri,
-				oldAppName : appNameValue,
-				oldScope : scope
+			/*
+			 * form.setValues({ appName : application.name,
+			 * appDisplayName:application.appDisplayName, appDesc :
+			 * application.description, appScope : application.context,
+			 * scopeDisplayName : application.scopeDisplayName, baseUri :
+			 * application.baseUri, oldAppName : appNameValue, oldScope : scope
+			 * });
+			 */
+			var obj = Ext.getCmp('newAppForm');
+			var form = obj.getForm();
+			form.findField('baseUri').setValue(application.baseUri);
+			ScopeNameStore = new Ext.data.ArrayStore({
+
+				url : 'getAMScope?' + '&sourceUri =' + application.baseUri,
+				autoDestroy : true,
+				autoLoad : false,
+				fields : [ {
+					name : 'value'
+				}, {
+					name : 'name'
+				} ]
+
 			});
+			Ext.getCmp('scopeCombolist').bindStore(ScopeNameStore);
+			// form.findField('appScope').setValue(application.context);
+			Ext.getCmp('scopeCombolist').setValue(application.context);
+			// form.findField('scopeDisplayName').setValue(application.scopeDisplayName);
+			AppNameStore = new Ext.data.ArrayStore({
+
+				url : 'getAppNames?' + '&appScope =' + application.context
+						+ '&sourceUri =' + application.baseUri,
+				autoDestroy : true,
+				autoLoad : false,
+				fields : [ {
+					name : 'value'
+				}, {
+					name : 'name'
+				} ]
+
+			});
+			Ext.getCmp('appCombolist').bindStore(AppNameStore);
+			// form.findField('appName').setValue(application.name);
+			Ext.getCmp('appCombolist').setValue(application.name);
+			form.findField('displayName').setValue(application.displayName);
+			form.findField('appDesc').setValue(application.description);
+			form.findField('oldAppName').setValue(application.displayName);
+			form.findField('oldScope').setValue(scope);
 			centerPanel.getEl().unmask();
 			view.show();
 		},
@@ -2119,152 +2417,148 @@ function buildCommoditySubMenu() {
 					editDataFilter();
 				},
 				text : 'Apply Data Filters'
-			},
-			{
+			}, {
 				xtype : 'menuitem',
 				handler : function() {
 					ConfigureManifest();
 				},
 				text : 'Configure Manifest'
-			}];
+			} ];
 }
 
-
 function ConfigureManifest() {
-    var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-    var scope = node.parentNode.parentNode.parentNode.text;
-    var xid = node.attributes.properties['Id'];
+	var node = Ext.getCmp('directory-tree').getSelectionModel()
+			.getSelectedNode();
+	var scope = node.parentNode.parentNode.parentNode.text;
+	var xid = node.attributes.properties['Id'];
 
-   // var label = "MappingTestTabPanel";
-    var label = 'Manifest(' + scope + ')'+ node.text;
-	
-    var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
+	// var label = "MappingTestTabPanel";
+	var label = 'Manifest(' + scope + ')' + node.text;
+
+	var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
 
 	if (tab != null) {
 		tab.show();
 	} else {
-		//var contentPane = Ext.getCmp('content-pane');
-    //contentPane.getEl().mask("Loading...", "x-mask-loading");
-    var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+		// var contentPane = Ext.getCmp('content-pane');
+		// contentPane.getEl().mask("Loading...", "x-mask-loading");
+		var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
 
-    var manifestTreePane = new Ext.tree.TreePanel(
-		{
-		    //id : 'crossedManifest-tree',
-		    id: manifestTreePaneId,
-		    region: 'center',
-		    dataUrl: 'crossedManifest?scope=' + scope + '&xid=' + xid,
-		    width: 800,
-		    lines: true,
-		    autoScroll: true,
-		    border: false,
-		    animate: true,
-		    enableDD: false,
-		    containerScroll: true,
-		    rootVisible: false,
-		    tbar: new Ext.Toolbar(
-					{
-					    items: [
-								{
-								    //id : 'Reload-manifest-button',
-								    xtype: 'button',
-								    icon: 'resources/images/16x16/view-refresh.png',
-								    text: 'Reload',
-								    handler: function () {
-								        reloadManifest(scope, xid);
-								    }
-								},
-								{
-								    //id : 'Reset-manifest-button',
-								    xtype: 'button',
-								    icon: 'resources/images/16x16/reset-icon.png',
-								    text: 'Reset',
-								    handler: function () {
-								        resetManifest(scope, xid);
-								    }
-								},
-								{
-								    //id : 'Save-manifest-button',
-								    xtype: 'button',
-								    icon: 'resources/images/16x16/save-icon.png',
-								    text: 'Save',
-								    handler: function () {
-								        saveManifest(scope, xid);
-								    }
-								}]
-					}),
-		    root: {
-		        nodeType: 'async',
-		        text: 'Mapping',
-		        icon: 'resources/images/directory.png'
-		    },
-		    listeners: {
-		        click: function (node, event) { },
-		        dblclick: function (node, event) { },
-		        contextmenu: function (node, event) {
-		            onCrossedManifestTreeItemContextMenu(node, event, scope, xid);
-		        },
-		        keydown: function (evnt) { }
-		    }
-
-		});
-
-		manifestTreePane.loader.on('loadexception', function (treePanel, node, response) {
-		    if (!(response.status == 0 || response.status == 408)) {
-		        //container.getEl().unmask();
-		        var message = 'Request URL: /' + treePanel.dataUrl
-							    + '.\n\nError description: '
-							    + response.responseText;
-		        showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
-            }
-		});
-
-			if (Ext.getCmp('content-pane').getItem(
-					'tab-' + label) == null) {
-				var mappingTab = new Ext.Panel({
-					id : 'tab-' + label,
-					title : label,
-					//type : type,
-					//context : context,
-					layout : 'border',
-					closable : true,
-					items: [manifestTreePane],
-					listeners : {}
-				});
-
-				Ext.getCmp('content-pane').add(mappingTab).show();
+		var manifestTreePane = new Ext.tree.TreePanel({
+			// id : 'crossedManifest-tree',
+			id : manifestTreePaneId,
+			region : 'center',
+			dataUrl : 'crossedManifest?scope=' + scope + '&xid=' + xid,
+			width : 800,
+			lines : true,
+			autoScroll : true,
+			border : false,
+			animate : true,
+			enableDD : false,
+			containerScroll : true,
+			rootVisible : false,
+			tbar : new Ext.Toolbar({
+				items : [ {
+					// id : 'Reload-manifest-button',
+					xtype : 'button',
+					icon : 'resources/images/16x16/view-refresh.png',
+					text : 'Reload',
+					handler : function() {
+						reloadManifest(scope, xid);
+					}
+				}, {
+					// id : 'Reset-manifest-button',
+					xtype : 'button',
+					icon : 'resources/images/16x16/reset-icon.png',
+					text : 'Reset',
+					handler : function() {
+						resetManifest(scope, xid);
+					}
+				}, {
+					// id : 'Save-manifest-button',
+					xtype : 'button',
+					icon : 'resources/images/16x16/save-icon.png',
+					text : 'Save',
+					handler : function() {
+						saveManifest(scope, xid);
+					}
+				} ]
+			}),
+			root : {
+				nodeType : 'async',
+				text : 'Mapping',
+				icon : 'resources/images/directory.png'
+			},
+			listeners : {
+				click : function(node, event) {
+				},
+				dblclick : function(node, event) {
+				},
+				contextmenu : function(node, event) {
+					onCrossedManifestTreeItemContextMenu(node, event, scope,
+							xid);
+				},
+				keydown : function(evnt) {
+				}
 			}
-		
 
-	}	
+		});
+
+		manifestTreePane.loader.on('loadexception', function(treePanel, node,
+				response) {
+			if (!(response.status == 0 || response.status == 408)) {
+				// container.getEl().unmask();
+				var message = 'Request URL: /' + treePanel.dataUrl
+						+ '.\n\nError description: ' + response.responseText;
+				showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+			}
+		});
+
+		if (Ext.getCmp('content-pane').getItem('tab-' + label) == null) {
+			var mappingTab = new Ext.Panel({
+				id : 'tab-' + label,
+				title : label,
+				// type : type,
+				// context : context,
+				layout : 'border',
+				closable : true,
+				items : [ manifestTreePane ],
+				listeners : {}
+			});
+
+			Ext.getCmp('content-pane').add(mappingTab).show();
+		}
+
+	}
 }
 
 function onCrossedManifestTreeItemContextMenu(node, event, scope, xid) {
-    //  if (node.isSelected()) { 
+	// if (node.isSelected()) {
 
-   // var scope = directoryNode.parentNode.parentNode.parentNode.text;
-   // var xid = directoryNode.attributes.properties['Id'];
+	// var scope = directoryNode.parentNode.parentNode.parentNode.text;
+	// var xid = directoryNode.attributes.properties['Id'];
 
-    var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
-    var manifestTree = Ext.getCmp(manifestTreePaneId);
-    //var manifestTree = Ext.getCmp('crossedManifest-tree')
+	var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+	var manifestTree = Ext.getCmp(manifestTreePaneId);
+	// var manifestTree = Ext.getCmp('crossedManifest-tree')
 
-    var x = event.browserEvent.clientX;
-    var y = event.browserEvent.clientY;
+	var x = event.browserEvent.clientX;
+	var y = event.browserEvent.clientY;
 
-    var obj = node.attributes;
-    var isDeleted = node.attributes.properties['IsDeleted'];
+	var obj = node.attributes;
+	var isDeleted = node.attributes.properties['IsDeleted'];
 
-   // alert(obj.type);
-    if (obj.type == "TemplateNode") {
-        var isParentDeleted = node.parentNode.attributes.properties['IsDeleted'];
-        if (isParentDeleted == 'false') {
-            manifestMenu = new Ext.menu.Menu();
-            manifestMenu.add(this.buildManifestMenu(scope, xid, isDeleted));
-    	    manifestMenu.showAt([ x, y ]);
-    	    event.stopEvent();
-        }        
-    }
- manifestTree.getSelectionModel().select(node);
+	// alert(obj.type);
+	if (obj.type == "TemplateNode") {
+		var isParentDeleted = node.parentNode.attributes.properties['IsDeleted'];
+		if (isParentDeleted == 'false') {
+			manifestMenu = new Ext.menu.Menu();
+			manifestMenu.add(this.buildManifestMenu(scope, xid, isDeleted));
+			manifestMenu.showAt([ x, y ]);
+			event.stopEvent();
+		}
+	}
+	manifestTree.getSelectionModel().select(node);
 
 }
 
@@ -2272,76 +2566,75 @@ function resetManifest(scope, xid) {
 	var centerPanel = Ext.getCmp('content-pane');
 	centerPanel.getEl().mask("Loading...", "x-mask-loading");
 	Ext.Ajax.request({
-	    url: 'resetCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
-	    method: 'POST',
-	    timeout: 120000,
-	    success: function (response, request) {
-	        var application = Ext.decode(response.responseText);
-	        centerPanel.getEl().unmask();
-	        refreshManifestTree(scope, xid);
-	    },
-	    failure: function (response, request) {
-	        centerPanel.getEl().unmask();
-	        var message = 'Error in rest manifest: ' + response.statusText
-          			+ '.\n\nError description: '
-				    + response.responseText;
-	        showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
-	    }
+		url : 'resetCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
+		method : 'POST',
+		timeout : 120000,
+		success : function(response, request) {
+			var application = Ext.decode(response.responseText);
+			centerPanel.getEl().unmask();
+			refreshManifestTree(scope, xid);
+		},
+		failure : function(response, request) {
+			centerPanel.getEl().unmask();
+			var message = 'Error in rest manifest: ' + response.statusText
+					+ '.\n\nError description: ' + response.responseText;
+			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+		}
 	});
 }
 
 function reloadManifest(scope, xid) {
-    var centerPanel = Ext.getCmp('content-pane');
-    centerPanel.getEl().mask("Loading...", "x-mask-loading");
-    Ext.Ajax.request({
-        url: 'reloadCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
-        method: 'POST',
-        timeout: 120000,
-        success: function (response, request) {
-            var application = Ext.decode(response.responseText);
-            centerPanel.getEl().unmask();
-            refreshManifestTree(scope, xid);
-        },
-        failure: function (response, request) {
-            centerPanel.getEl().unmask();
-            var message = 'Error in reload manifest: ' + response.statusText
-          			+ '.\n\nError description: '
-				    + response.responseText;
-            showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
-        }
-    });
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	Ext.Ajax.request({
+		url : 'reloadCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
+		method : 'POST',
+		timeout : 120000,
+		success : function(response, request) {
+			var application = Ext.decode(response.responseText);
+			centerPanel.getEl().unmask();
+			refreshManifestTree(scope, xid);
+		},
+		failure : function(response, request) {
+			centerPanel.getEl().unmask();
+			var message = 'Error in reload manifest: ' + response.statusText
+					+ '.\n\nError description: ' + response.responseText;
+			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+		}
+	});
 }
 
 function saveManifest(scope, xid) {
-    var centerPanel = Ext.getCmp('content-pane');
-    centerPanel.getEl().mask("Loading...", "x-mask-loading");
-    Ext.Ajax.request({
-        url: 'saveCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
-        method: 'POST',
-        timeout: 120000,
-        success: function (response, request) {
-            var application = Ext.decode(response.responseText);
-            centerPanel.getEl().unmask();
-            showDialog(400, 90, 'Success', 'Manifest saved successfully.', Ext.Msg.OK, null);
-        },
-        failure: function (response, request) {
-            centerPanel.getEl().unmask();
-            var message = 'Error in save manifest: ' + response.statusText
-          			+ '.\n\nError description: '
-				    + response.responseText;
-            showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
-        }
-    });
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	Ext.Ajax.request({
+		url : 'saveCrossedManifest?' + '&scope =' + scope + '&xid =' + xid,
+		method : 'POST',
+		timeout : 120000,
+		success : function(response, request) {
+			var application = Ext.decode(response.responseText);
+			centerPanel.getEl().unmask();
+			showDialog(400, 90, 'Success', 'Manifest saved successfully.',
+					Ext.Msg.OK, null);
+		},
+		failure : function(response, request) {
+			centerPanel.getEl().unmask();
+			var message = 'Error in save manifest: ' + response.statusText
+					+ '.\n\nError description: ' + response.responseText;
+			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+		}
+	});
 }
 
 function deleteTemplate(scope, xid) {
-    var centerPanel = Ext.getCmp('content-pane');
-    centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
 
-   //var directorynode = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-	
-    //var scope = directorynode.parentNode.parentNode.parentNode.text;
-	//var xid = directorynode.attributes.properties['Id'];
+	// var directorynode =
+	// Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+
+	// var scope = directorynode.parentNode.parentNode.parentNode.text;
+	// var xid = directorynode.attributes.properties['Id'];
 
 	var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
 
@@ -2354,72 +2647,68 @@ function deleteTemplate(scope, xid) {
 	var templateId = node.attributes.properties['Id'];
 	var templateIndex = node.attributes.properties['TemplateIndex'];
 
-    Ext.Ajax.request({
-        url: 'deleteTemplate?' + '&scope =' + scope + '&xid ='
-				+ xid,
-        method: 'POST',
-        params: {
-            parentClassId: parentClassId,
-            parentClassIndex: parentClassIndex,
-            parentClassPath: parentClassPath,
-            templateId: templateId,
-            templateIndex: templateIndex
-        },
-        timeout: 120000,
-        success: function (response, request) {
-            var application = Ext.decode(response.responseText);
-            centerPanel.getEl().unmask();
-            refreshManifestTree(scope, xid);
-        },
-        failure: function (response, request) {
-            centerPanel.getEl().unmask();
-            var message = 'Error in delete template: ' + response.statusText
-          			+ '.\n\nError description: '
-				    + response.responseText;
-            showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
-        }
-    });
+	Ext.Ajax.request({
+		url : 'deleteTemplate?' + '&scope =' + scope + '&xid =' + xid,
+		method : 'POST',
+		params : {
+			parentClassId : parentClassId,
+			parentClassIndex : parentClassIndex,
+			parentClassPath : parentClassPath,
+			templateId : templateId,
+			templateIndex : templateIndex
+		},
+		timeout : 120000,
+		success : function(response, request) {
+			var application = Ext.decode(response.responseText);
+			centerPanel.getEl().unmask();
+			refreshManifestTree(scope, xid);
+		},
+		failure : function(response, request) {
+			centerPanel.getEl().unmask();
+			var message = 'Error in delete template: ' + response.statusText
+					+ '.\n\nError description: ' + response.responseText;
+			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+		}
+	});
 }
 
 function includeTemplate(scope, xid) {
-    var centerPanel = Ext.getCmp('content-pane');
-    centerPanel.getEl().mask("Loading...", "x-mask-loading");
-    var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
-    var node = Ext.getCmp(manifestTreePaneId).getSelectionModel().getSelectedNode();
-    
-    var parentClassId = node.parentNode.attributes.properties['Id'];
-    var parentClassIndex = node.parentNode.attributes.properties['ClassIndex'];
-    var parentClassPath = node.parentNode.attributes.properties['Path'];
-    var templateId = node.attributes.properties['Id'];
-    var templateIndex = node.attributes.properties['TemplateIndex'];
+	var centerPanel = Ext.getCmp('content-pane');
+	centerPanel.getEl().mask("Loading...", "x-mask-loading");
+	var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+	var node = Ext.getCmp(manifestTreePaneId).getSelectionModel()
+			.getSelectedNode();
 
-    Ext.Ajax.request({
-        url: 'includeTemplate?' + '&scope =' + scope + '&xid ='
-				+ xid,
-        method: 'POST',
-        params: {
-            parentClassId: parentClassId,
-            parentClassIndex: parentClassIndex,
-            parentClassPath: parentClassPath,
-            templateId: templateId,
-            templateIndex: templateIndex
-        },
-        timeout: 120000,
-        success: function (response, request) {
-            var application = Ext.decode(response.responseText);
-            centerPanel.getEl().unmask();
-            refreshManifestTree(scope, xid);
-        },
-        failure: function (response, request) {
-            centerPanel.getEl().unmask();
-            var message = 'Error in include template: ' + response.statusText
-          			+ '.\n\nError description: '
-				    + response.responseText;
-            showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
-        }
-    });
+	var parentClassId = node.parentNode.attributes.properties['Id'];
+	var parentClassIndex = node.parentNode.attributes.properties['ClassIndex'];
+	var parentClassPath = node.parentNode.attributes.properties['Path'];
+	var templateId = node.attributes.properties['Id'];
+	var templateIndex = node.attributes.properties['TemplateIndex'];
+
+	Ext.Ajax.request({
+		url : 'includeTemplate?' + '&scope =' + scope + '&xid =' + xid,
+		method : 'POST',
+		params : {
+			parentClassId : parentClassId,
+			parentClassIndex : parentClassIndex,
+			parentClassPath : parentClassPath,
+			templateId : templateId,
+			templateIndex : templateIndex
+		},
+		timeout : 120000,
+		success : function(response, request) {
+			var application = Ext.decode(response.responseText);
+			centerPanel.getEl().unmask();
+			refreshManifestTree(scope, xid);
+		},
+		failure : function(response, request) {
+			centerPanel.getEl().unmask();
+			var message = 'Error in include template: ' + response.statusText
+					+ '.\n\nError description: ' + response.responseText;
+			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+		}
+	});
 }
-
 
 function editExchangeConfig() {
 	var centerPanel = Ext.getCmp('content-pane');
@@ -2432,8 +2721,7 @@ function editExchangeConfig() {
 
 	var view = Ext.getCmp('newExchangeConfigWin');
 	view.setTitle("Edit Exchange Definition");
-	var obj = Ext.getCmp('newExchConfig');
-	var formdata = obj.getForm();
+	
 
 	Ext.Ajax.request({
 		url : 'getExchange',
@@ -2446,21 +2734,80 @@ function editExchangeConfig() {
 		timeout : 120000,
 		success : function(response, request) {
 			var form = Ext.decode(response.responseText);
-			formdata.setValues({
-				name : form.name,
-				description : form.description,
-				sourceUri : form.sourceUri,
-				sourceScopeName : form.sourceScope,
-				sourceAppName : form.sourceApp,
-				sourceGraphName : form.sourceGraph,
-				targetUri : form.targetUri,
-				targetScopeName : form.targetScope,
-				targetAppName : form.targetApp,
-				targetGraphName : form.targetGraph,
-				oldConfigName : commConfigName,
-				oldCommName : commodity,
-				oldScope : scope
+			var obj = Ext.getCmp('newExchConfig');
+			var formdata = obj.getForm();
+			formdata.findField('name').setValue(form.name);
+			formdata.findField('description').setValue(form.description);
+			formdata.findField('sourceUri').setValue(form.sourceUri);
+			//testUriAndGetScopeName("SourceExchange");
+            ScopeNameStore = new Ext.data.ArrayStore({
+
+				url : 'getAMScope?' + '&sourceUri =' + form.sourceUri,
+				autoDestroy : true,
+				autoLoad : false,
+				fields : [ {
+					name : 'value'
+				}, {
+					name : 'name'
+				} ]
+
 			});
+            Ext.getCmp('sourceScopeCombolist').bindStore(ScopeNameStore);
+			Ext.getCmp('sourceScopeCombolist').setValue(form.sourceScope);
+		//	getAppNames("SourceExchange");
+        AppNameStore = new Ext.data.ArrayStore({
+
+				url : 'getAppNames?' + '&appScope =' + form.sourceScope
+						+ '&sourceUri =' + form.sourceUri,
+				autoDestroy : true,
+				autoLoad : false,
+				fields : [ {
+					name : 'value'
+				}, {
+					name : 'name'
+				} ]
+
+			});
+			Ext.getCmp('sourceAppCombolist').bindStore(AppNameStore);
+			Ext.getCmp('sourceAppCombolist').setValue(form.sourceApp);
+			formdata.findField('sourceGraphName').setValue(form.sourceGraph);
+			
+			formdata.findField('targetUri').setValue(form.targetUri);
+		//	testUriAndGetScopeName("TargetExchange");
+         ScopeNameStore = new Ext.data.ArrayStore({
+
+				url : 'getAMScope?' + '&sourceUri =' + form.targetUri,
+				autoDestroy : true,
+				autoLoad : false,
+				fields : [ {
+					name : 'value'
+				}, {
+					name : 'name'
+				} ]
+
+			});
+            Ext.getCmp('targetScopeCombolist').bindStore(ScopeNameStore);
+			Ext.getCmp('targetScopeCombolist').setValue(form.targetScope);
+		//	getAppNames("TargetExchange");
+         AppNameStore = new Ext.data.ArrayStore({
+
+				url : 'getAppNames?' + '&appScope =' + form.targetScope
+						+ '&sourceUri =' + form.targetUri,
+				autoDestroy : true,
+				autoLoad : false,
+				fields : [ {
+					name : 'value'
+				}, {
+					name : 'name'
+				} ]
+
+			});
+			Ext.getCmp('targetAppCombolist').bindStore(AppNameStore);
+			Ext.getCmp('targetAppCombolist').setValue(form.targetApp);
+			formdata.findField('targetGraphName').setValue(form.targetGraph);
+			formdata.findField('oldConfigName').setValue(commConfigName);
+			formdata.findField('oldCommName').setValue(commodity);
+			formdata.findField('oldScope').setValue(scope);
 			centerPanel.getEl().unmask();
 			view.show();
 		},
@@ -2613,7 +2960,7 @@ function saveScope(node, button, event) {
 	var form = obj.getValues(true);
 	var directoryTree = Ext.getCmp('directory-tree');
 	var node = directoryTree.getSelectionModel().getSelectedNode();
-	
+
 	var scope = obj.findField('scope').getValue();
 	// newScope();
 	Ext.Ajax.request({
@@ -2621,14 +2968,14 @@ function saveScope(node, button, event) {
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
-			var result =Ext.decode(response.responseText);
-			if(result === 'ERROR')
-				{
-			var message =  'Scope name '+ '"'+ scope+ '"' +' already exist' +'.';
-			+ response.responseText;
-	showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
-			
-				}
+			var result = Ext.decode(response.responseText);
+			if (result === 'ERROR') {
+				var message = 'Scope name ' + '"' + scope + '"'
+						+ ' already exist' + '.';
+				+response.responseText;
+				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+
+			}
 			refresh();
 		},
 		failure : function(response, request) {
@@ -2699,17 +3046,17 @@ function saveComm(node, button, event) {
 
 	Ext.Ajax.request({
 		url : 'newComm?' + form + '&scope=' + scope,
-		//method : 'POST',
+		// method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
-			var result =Ext.decode(response.responseText);
-			if(result === 'ERROR')
-				{
-			var message =  'Commodity name '+ '"'+ commodity+'"'+' already exist in scope '+ '"'+ scope+ '"'+'.';
-			+ response.responseText;
-	showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
-			
-				}
+			var result = Ext.decode(response.responseText);
+			if (result === 'ERROR') {
+				var message = 'Commodity name ' + '"' + commodity + '"'
+						+ ' already exist in scope ' + '"' + scope + '"' + '.';
+				+response.responseText;
+				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+
+			}
 			refresh();
 		},
 		failure : function(response, request) {
@@ -2718,10 +3065,181 @@ function saveComm(node, button, event) {
 	});
 }
 
+function getAppNames(name) {
+	var baseUri;
+	var scopeName;
+	if(name === "app"){
+		var obj = Ext.getCmp('newAppForm');
+		var form = obj.getForm();		
+		baseUri = form.findField('baseUri').getValue();
+		scopeName = Ext.getCmp('scopeCombolist').getValue();
+	form.findField('appName').setDisabled(false);
+	}else{
+		var obj = Ext.getCmp('newExchConfig');
+		var form = obj.getForm();
+		if(name === "SourceExchange")
+		{
+			baseUri =	form.findField('sourceUri').getValue();
+			scopeName = Ext.getCmp('sourceScopeCombolist').getValue();
+			form.findField('sourceAppName').setDisabled(false);
+		
+		}else{
+			baseUri =	form.findField('targetUri').getValue();
+			scopeName = Ext.getCmp('targetScopeCombolist').getValue();
+			form.findField('targetAppName').setDisabled(false);
+		}
+		}
+	AppNameStore = new Ext.data.ArrayStore({
+
+		url : 'getAppNames?' + '&appScope =' + scopeName + '&sourceUri ='
+				+ baseUri,
+		autoDestroy : true,
+		autoLoad : false,
+		fields : [ {
+			name : 'value'
+		}, {
+			name : 'name'
+		} ]
+
+	});
+	if (name === "app") {
+		Ext.getCmp('appCombolist').bindStore(AppNameStore);
+	} else if( name === "SourceExchange"){
+		Ext.getCmp('sourceAppCombolist').bindStore(AppNameStore);
+
+	}else if( name === "TargetExchange"){
+		Ext.getCmp('targetAppCombolist').bindStore(AppNameStore);
+	}
+
+}
+
+function testUriAndGetScopeName(name) {
+	var baseUri
+	if(name === "app"){
+	var obj = Ext.getCmp('newAppForm');
+	var form = obj.getForm();
+	baseUri = form.findField('baseUri').getValue();
+		form.findField('appScope').setDisabled(false);
+	}
+	else {
+		var obj = Ext.getCmp('newExchConfig');
+		var form = obj.getForm();
+		if(name === "SourceExchange")
+		{
+			baseUri =	form.findField('sourceUri').getValue();
+			form.findField('sourceScopeName').setDisabled(false);
+		
+		}else{
+			baseUri =	form.findField('targetUri').getValue();
+			form.findField('targetScopeName').setDisabled(false);
+		}
+		}
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
+			+ 'px;border:1px solid #aaa;overflow:auto"';
+	Ext.Ajax.request({
+		url : 'BasetestUri?' + '&sourceUri =' + baseUri,
+		method : 'POST',
+		timeout : 120000,
+		success : function(response, request) {
+			var result = Ext.decode(response.responseText);
+			if (result.success === false) {
+				if (name === "app") {
+				
+					Ext.getCmp('scopeCombolist').setDisabled(true);
+				}  else if( name === "SourceExchange"){
+					
+					Ext.getCmp('sourceScopeCombolist').setDisabled(true);
+				}else if (name === "TargetExchange")
+					{
+					Ext.getCmp('targetScopeCombolist').setDisabled(true);
+					}
+				Ext.Msg.show({
+					title : 'Result ',
+					msg : '<textarea ' + style + ' readonly="yes">'
+							+ "Could not connect to the URL " + result.message
+							+ '</textarea>',
+					buttons : Ext.MessageBox.OK
+				});
+			}
+			if (result.success === true) {			
+				
+				
+				ScopeNameStore = new Ext.data.ArrayStore({
+
+					url : 'getAMScope?' + '&sourceUri =' + baseUri,
+					autoDestroy : true,
+					autoLoad : false,
+					fields : [ {
+						name : 'value'
+					}, {
+						name : 'name'
+					} ]
+
+				});
+				if (name === "app") {
+					Ext.getCmp('scopeCombolist').bindStore(ScopeNameStore);
+					Ext.getCmp('scopeCombolist').setDisabled(false);
+				} else if( name === "SourceExchange"){
+					Ext.getCmp('sourceScopeCombolist').bindStore(ScopeNameStore);
+					Ext.getCmp('sourceScopeCombolist').setDisabled(false);
+				}else if (name === "TargetExchange")
+					{
+					Ext.getCmp('targetScopeCombolist').bindStore(ScopeNameStore);
+					Ext.getCmp('targetScopeCombolist').setDisabled(false);
+					}
+
+			}
+
+		},
+		failure : function(response, request) {
+			Ext.Msg.show({
+				title : 'Result ',
+				msg : '<textarea ' + style + ' readonly="yes">'
+						+ "failed to connect to the specified Url"
+						+ '</textarea>',
+				buttons : Ext.MessageBox.OK
+			});
+		}
+	});
+}
+
 function newApp() {
 	var node = Ext.getCmp('directory-tree').getSelectionModel()
 			.getSelectedNode();
 	var scope = node.parentNode.text;
+	var ScopeNameStore = null;
+	var AppNameStore = null;
+
+	var scopeCombo = new Ext.form.ComboBox({
+		fieldLabel : 'Context',
+		name : 'appScope',
+		id : 'scopeCombolist',
+		allowBlank : false,
+		store : ScopeNameStore,
+		valueField : 'value',
+		displayField : 'name',
+		forceSelection : true,
+		typeAhead : true,
+		triggerAction : 'all',
+		listeners : {
+			scope : this,
+			select : function() {
+		//Ext.getCmp('appCombolist').clearValue();
+				getAppNames("app");
+			//Ext.getCmp('dispalyField').clearValue();
+			//Ext.getCmp('AppDescription').clearValue();
+				
+			},
+	change:function(id,newvalue, oldvalue)
+	{
+		 Ext.getCmp('appCombolist').clearValue();
+		 //getAppNames("app");
+		Ext.getCmp('dispalyField').setValue("");
+		Ext.getCmp('AppDescription').setValue("");
+	}
+			
+		}
+	});
 
 	var newAppForm = new Ext.FormPanel(
 			{
@@ -2729,59 +3247,89 @@ function newApp() {
 				frame : false,
 				border : false,
 				bodyStyle : 'padding:15px',
-				labelwidth : 75,
+				labelWidth : 110,
 				defaults : {
 					width : 300,
 					allowBlank : false
 				},
-				defaultType : 'textfield',
+				// defaultType : 'textfield',
 				items : [
 						{
-							fieldLabel : 'Name',
-							name : 'appName'
+
+							xtype : 'textfield',
+							fieldLabel : 'BaseUrl',
+							allowBlank : false,
+							name : 'baseUri',
+							regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
+							regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+							vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+							listeners : {
+								specialkey : function(f, e) {
+									if((e.getKey() == e.TAB) || (e.getKey() == e.ENTER)) {
+										testUriAndGetScopeName("app");
+										// Ext.getCmp('scopeCombolist').bindStore(ScopeNameStore);
+									}
+									
+								},
+						 render: function(c) {
+							 c.getEl().on('keyup', function() {
+								 Ext.getCmp('scopeCombolist').clearValue();						
+								 Ext.getCmp('scopeCombolist').setDisabled(true);
+								 Ext.getCmp('appCombolist').clearValue();							
+								 Ext.getCmp('appCombolist').setDisabled(true);
+							      }, c);
+						}
+							}
 						},
-						{
+
+						scopeCombo,
+						/*
+						 * { xtype : 'textfield', fieldLabel : 'Scope Display
+						 * Name', width :200, name : 'scopeDisplayName',
+						 * allowBlank : false, value : scope },
+						 */{
+							xtype : 'combo',
+							fieldLabel : 'Application',
+							name : 'appName',
+							id : 'appCombolist',
+							store : AppNameStore,
+							valueField : 'value',
+							displayField : 'name',
+							forceSelection : true,
+							typeAhead : true,
+							allowBlank : false,
+							triggerAction : 'all',
+							listeners : {
+								scope : this,
+								select : function() {
+									var appName = Ext.getCmp('appCombolist')
+											.getValue();
+									var obj = Ext.getCmp('newAppForm');
+									var form = obj.getForm();
+									form.findField('displayName')
+											.setDisabled(false);
+									form.findField('appDesc')
+											.setDisabled(false);
+									form.findField('displayName').setValue(
+											appName);
+								}
+								 
+							}
+						}, {
+							xtype : 'textfield',
+							fieldLabel : 'Display Name',
+							id : "dispalyField",
+							allowBlank : false,
+							name : 'displayName'
+						}, {
+							xtype : 'textfield',
 							fieldLabel : 'Description',
+							id: "AppDescription",
 							name : 'appDesc',
 							allowBlank : true
 						},
+
 						{
-							fieldLabel : 'Scope',
-							name : 'appScope',
-							value : scope
-						},
-						{
-							xtype : 'panel',
-							anchor : '100%',
-							border : false,
-							layout : {
-								type : 'hbox'
-							},
-							items : [
-									{
-										xtype : 'displayfield',
-										width : 105,
-										value : 'Base URI:'
-									},
-									{
-										xtype : 'textfield',
-										fieldLabel : 'BaseUrl',
-										width : 245,
-										allowBlank : false,
-										name : 'baseUri',
-										regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
-										regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
-										vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)'
-									}, {
-										xtype : 'button',
-										margins : '0 0 0 5',
-										handler : function(button, event) {
-											testBaseUri();
-										},
-										width : 50,
-										text : 'Test'
-									} ]
-						}, {
 							xtype : 'hidden',
 							fieldLabel : 'Label',
 							name : 'oldAppName'
@@ -2794,7 +3342,7 @@ function newApp() {
 					text : 'Save',
 					handler : function(node, button, event) {
 						saveApp(node, button, event);
-						newAppWin.close();
+						// newAppWin.close();
 					}
 				}, {
 					text : 'Cancel',
@@ -2807,8 +3355,8 @@ function newApp() {
 	var newAppWin = new Ext.Window({
 		id : 'newAppWin',
 		title : 'New Application',
-		width : 455,
-		height : 200,
+		width : 500,
+		height : 226,
 		resizable : false,
 		closable : true,
 		modal : true,
@@ -2826,28 +3374,59 @@ function saveApp(node, button, event) {
 	var application = obj.findField('appName').getValue();
 	var oldScope = obj.findField('oldScope').getValue();
 
-	Ext.Ajax.request({
-		url : 'newApplication?' + form + '&scope =' + scope,
-		method : 'POST',
-		timeout : 120000,
-		success : function(response, request) {
-			var result =Ext.decode(response.responseText);
-			if(result === 'ERROR')
-			{ if(oldScope == '')
-				{
-				oldScope = scope;
+	var obj = Ext.getCmp('newAppForm');
+	var form1 = obj.getForm();
+	var baseUri = form1.findField('baseUri').getValue();
+	var scopeName = form1.findField('scopeCombolist').getValue();
+	// var displayScope = form.findField('scopeDisplayName').getValue();
+	var appName = form1.findField('appCombolist').getValue();
+	var appDisplay = form1.findField('displayName').getValue();
+
+	if (((baseUri !== "") && (baseUri !== null))
+			&& ((scopeName !== "") && (scopeName !== null))
+			&& ((appName !== "") && (appName !== null) && (appDisplay !== "") && (appDisplay !== null))) {
+		Ext.Ajax.request({
+			url : 'newApplication?' + form + '&scope =' + scope,
+			method : 'POST',
+			timeout : 120000,
+			success : function(response, request) {
+				var result = Ext.decode(response.responseText);
+				if (result === 'ERROR') {
+					if (oldScope == '') {
+						oldScope = scope;
+					}
+					var message = 'Application name ' + '"' + application + '"'
+							+ ' already exist in scope ' + '"' + oldScope + '"'
+							+ '.';
+					+response.responseText;
+					showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+
 				}
-		var message =  'Application name '+ '"'+ application+ '"' +' already exist in scope '+ '"'+ oldScope+ '"'+'.';
-		+ response.responseText;
-showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
-		
+				Ext.getCmp('newAppWin').close();
+				refresh();
+			},
+			failure : function(response, request) {
+				alert("save failed");
 			}
-		refresh();
-	},		
-		failure : function(response, request) {
-			alert("save failed");
+		});
+	} else {
+		if (baseUri === "") {
+			form1.findField('baseUri').markInvalid('Base Uri cannot be Empty');
 		}
-	});
+		if (scopeName === "") {
+			form1.findField('scopeCombolist').markInvalid(
+					'Scope cannot be Empty');
+
+		}
+		if (appName === "") {
+			form1.findField('appCombolist').markInvalid(
+					'App Name cannot be Empty');
+		}
+		if (appDisplay === "") {
+			form1.findField('displayName').markInvalid(
+					'Dispaly App Name cannot be Empty');
+		}
+	}
 }
 
 function editDataFilter() {
@@ -2909,11 +3488,11 @@ function editDataFilter() {
 								relValue = "Contains";
 							} else if (rel == "5") {
 								relValue = "StartsWith";
-							}else if (rel == "6") {
+							} else if (rel == "6") {
 								relValue = "EndsWith";
-							}else if (rel == "7") {
+							} else if (rel == "7") {
 								relValue = "GreaterThanOrEqual";
-							}else if (rel == "8") {
+							} else if (rel == "8") {
 								relValue = "LesserThanOrEqual";
 							}
 
@@ -4445,19 +5024,18 @@ function refresh() {
 
 function refreshManifestTree(scope, xid) {
 
-    var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
-    var manifestTree = Ext.getCmp(manifestTreePaneId);
-   
-    // reload tree
-    manifestTree.getLoader().load(manifestTree.root);
-    manifestTree.getRootNode().expand(false);
+	var manifestTreePaneId = 'crossedManifest-tree(' + scope + ')' + xid;
+	var manifestTree = Ext.getCmp(manifestTreePaneId);
+
+	// reload tree
+	manifestTree.getLoader().load(manifestTree.root);
+	manifestTree.getRootNode().expand(false);
 }
 
+Ext
+		.onReady(function() {
 
-
-Ext.onReady(function () {
-
-            Ext.Ajax.timeout = 180000;
+			Ext.Ajax.timeout = 180000;
 			Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
 			applicationMenu = new Ext.menu.Menu();
@@ -4484,9 +5062,9 @@ Ext.onReady(function () {
 			newScopemenu = new Ext.menu.Menu();
 			this.newScopemenu.add(this.buildNewScopeMenu());
 
-//			manifestMenu = new Ext.menu.Menu();
-//			this.manifestMenu.add(this.buildManifestMenu());
-			
+			// manifestMenu = new Ext.menu.Menu();
+			// this.manifestMenu.add(this.buildManifestMenu());
+
 			// exchangeMenu.add(this.buildExchangeMenu());
 			Ext.QuickTips.init();
 			/*
@@ -4686,8 +5264,8 @@ Ext.onReady(function () {
 								var keyPressed = evnt.getKey();
 								if (evnt.ctrlKey) {
 									/*
-									 * After trial and error, the ctrl+c combination seems to be
-									 * code 67
+									 * After trial and error, the ctrl+c
+									 * combination seems to be code 67
 									 */
 									if (67 == 67)// if (keyPressed == 67)
 									{
@@ -4725,8 +5303,8 @@ Ext.onReady(function () {
 								var keyPressed = evnt.getKey();
 								if (evnt.ctrlKey) {
 									/*
-									 * After trial and error, the ctrl+c combination seems to be
-									 * code 67
+									 * After trial and error, the ctrl+c
+									 * combination seems to be code 67
 									 */
 									if (67 == 67)// if (keyPressed == 67)
 									{

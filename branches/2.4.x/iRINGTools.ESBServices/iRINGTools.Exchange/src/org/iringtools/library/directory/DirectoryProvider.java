@@ -38,14 +38,35 @@ public class DirectoryProvider {
 	}
 
 	public Directory getDirectory() throws Exception {
+		Directory directory;
 		if (IOUtils.fileExists(path)) {
-			return JaxbUtils.read(Directory.class, path);
-		} else {
+			directory = JaxbUtils.read(Directory.class, path);
+			String version = directory.getVersion();
+			if((version == null) || (version == ""))
+			{
+			version = "1.0";
+			directory.setVersion(version);
+			List<Scope> scopes = directory.getScope();
+
+			for (Scope s : scopes) {
+				ApplicationData applicationData = s.getApplicationData();
+				if (applicationData != null) {
+					List<Application> appData = applicationData
+							.getApplication();
+					for (Application applicatio : appData) {
+						applicatio.setDisplayName(applicatio.getName());
+						applicatio.setContext(s.getName());
+						JaxbUtils.write(directory, path, false);
+					}
+			}
+			}		
+		}
+			return directory;
+			} else {
 			logger.info("Directory file does not exist. Create empty one.");
 
-			Directory directory = new Directory();
+			directory = new Directory();
 			JaxbUtils.write(directory, path, false);
-
 			return directory;
 		}
 	}
@@ -453,8 +474,8 @@ public class DirectoryProvider {
 						List<Application> appData = applicationData
 								.getApplication();
 						for (Application applicatio : appData) {
-							if (applicatio.getName().equalsIgnoreCase(
-									app.getName())) {
+							if (applicatio.getDisplayName().equalsIgnoreCase(
+									app.getDisplayName())) {
 								exres.setLevel(Level.ERROR);
 								exres.setSummary("ERROR");
 								return exres;
@@ -490,7 +511,7 @@ public class DirectoryProvider {
 						List<Application> appData = applicationData
 								.getApplication();
 						for (Application applicatio : appData) {
-							if (applicatio.getName().equalsIgnoreCase(app)) {
+							if (applicatio.getDisplayName().equalsIgnoreCase(app)) {
 								appData.remove(applicatio);
 								break;
 							}
@@ -523,18 +544,39 @@ public class DirectoryProvider {
 						List<Application> appData = applicationData
 								.getApplication();
 						for (Application applicatio : appData) {
-							if (applicatio.getName().equalsIgnoreCase(
-									app.getName())) {
+							if (applicatio.getDisplayName().equalsIgnoreCase(
+									app.getDisplayName())) {
 								exres.setLevel(Level.ERROR);
 								exres.setSummary("ERROR");
 								return exres;
+							}else
+								/*Assign new Name to Application */
+								if (applicatio.getDisplayName().equalsIgnoreCase(
+									oldAppName)) {
+								applicatio.setName(app.getName());
+								applicatio.setDisplayName(app.getDisplayName());
+								applicatio.setBaseUri(app.getBaseUri());
+								applicatio.setContext(app.getContext());
+							//	application.setScopeDisplayName(app.getScopeDisplayName());
+								applicatio
+										.setDescription(app.getDescription());
+								exres.setLevel(Level.SUCCESS);
+								exres.setSummary("SUCCESS");
+								break;
 							}
 						}
+
+						AppDataComparator applicationSort = new AppDataComparator();
+						Collections.sort(appData, applicationSort);
+						JaxbUtils.write(directory, path, false);
+
+					break;
+				}
 					}
 				}
-			}
+			
 			/*Assign new Name to Application */
-			for (Scope s : scopes) {
+		/*	for (Scope s : scopes) {
 				if (scope.equalsIgnoreCase(s.getName())) {
 					ApplicationData applicationData = s.getApplicationData();
 
@@ -543,11 +585,13 @@ public class DirectoryProvider {
 								.getApplication();
 
 						for (Application application : applications) {
-							if (application.getName().equalsIgnoreCase(
+							if (application.getDisplayName().equalsIgnoreCase(
 									oldAppName)) {
 								application.setName(app.getName());
+								application.setDisplayName(app.getDisplayName());
 								application.setBaseUri(app.getBaseUri());
 								application.setContext(app.getContext());
+							//	application.setScopeDisplayName(app.getScopeDisplayName());
 								application
 										.setDescription(app.getDescription());
 								exres.setLevel(Level.SUCCESS);
@@ -563,7 +607,7 @@ public class DirectoryProvider {
 
 					break;
 				}
-			}
+			} */
 		} catch (Exception e) {
 			String message = "Error updating application [" + app.getName()
 					+ "." + "]: " + e;
@@ -586,7 +630,7 @@ public class DirectoryProvider {
 								.getApplication();
 
 						for (Application application : applications) {
-							if (application.getName().equalsIgnoreCase(app)) {
+							if (application.getDisplayName().equalsIgnoreCase(app)) {
 								if (application.getContext() == null
 										|| application.getContext().length() == 0)
 									application.setContext(s.getName());

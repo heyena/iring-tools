@@ -44,6 +44,8 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.library.RequestStatus;
+import org.iringtools.library.Applications;
+import org.iringtools.library.Scopes;
 import org.iringtools.library.exchange.Constants;
 import org.iringtools.library.directory.DirectoryProvider;
 import org.iringtools.library.exchange.ExchangeProvider;
@@ -1553,6 +1555,75 @@ public class ExchangeDataModel extends DataModel
     }
     return columnnameList;
   }
-}
+  public Result testBaseUri(String Uri) throws IOException {
+		Result result = new Result();
+		try {
+			  HttpClient httpClient = new HttpClient(Uri);
+			    httpClient.setAsync(false);
+			    httpClient.get(String.class);
+			    result.setSuccess(true);
+				result.setMessage("Connected successfully!");
+		}catch (HttpClientException e) {
+			result.setSuccess(false);
+			result.setMessage("Exception : "+ e.getErrorMessage());
+		}catch (Exception e) {
+			result.setSuccess(false);
+			result.setMessage("Exception : Invalid URL.");
+		}
+		return result;
+	}
+  public List<List<String>> getInternalScopeNameFromAM(String Uri) throws IOException {
+		//  List<String>  scopelist = new  ArrayList<String>();
+			 List<List<String>> scopelist = new  ArrayList<List<String>>();
+			try {
+				  HttpClient httpClient = new HttpClient(Uri+"/adapter/scopes");
+				    httpClient.setAsync(false);
+				   Scopes adapterMangerScopes =  httpClient.get(Scopes.class);
+				   List<org.iringtools.library.Scope> scopes = adapterMangerScopes.getItems();
+					for (org.iringtools.library.Scope s : scopes){
+						List<String> scopeName = new ArrayList<String>();
+						scopeName.add(s.getName());		
+						scopeName.add(s.getName());
+						scopelist.add(scopeName);
+					//	scopelist.add(s.getName());	
+						}
+				   
+			}catch (Exception e) {
+				String error = "Error getting scopes :" + e;
+				 logger.error(error);
+			}
+			return scopelist;
+		}
+
+	public List<List<String>> getAppNames(String appScope, String Uri) {
+		 List<List<String>> applist = new  ArrayList<List<String>>();
+			try {
+				  HttpClient httpClient = new HttpClient(Uri+"/adapter/scopes");
+				    httpClient.setAsync(false);
+				   Scopes adapterMangerScopes =  httpClient.get(Scopes.class);
+				   List<org.iringtools.library.Scope> scopes = adapterMangerScopes.getItems();
+					for (org.iringtools.library.Scope s : scopes){
+						if(s.getName().equalsIgnoreCase(appScope))
+						{  Applications apps = s.getApplications();
+						List<org.iringtools.library.Application>  appNamelist = apps.getItems();
+							for(org.iringtools.library.Application app : appNamelist)
+							{
+								List<String> appName = new ArrayList<String>();
+								appName.add(app.getName());		
+								appName.add(app.getName());
+								applist.add(appName);
+							//	scopelist.add(s.getName());	
+							}
+						}					
+						}
+				   
+			}catch (Exception e) {
+				String error = "Error getting scopes :" + e;
+				 logger.error(error);
+			}
+			return applist;
+	}
+	}
+
 
   
