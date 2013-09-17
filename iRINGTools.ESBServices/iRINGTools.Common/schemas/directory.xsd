@@ -10,6 +10,7 @@
   <xs:complexType>
    <xs:sequence>
     <xs:element ref="scope" maxOccurs="unbounded" />
+    <xs:element name="version" type="xs:string" minOccurs="0" />
    </xs:sequence>
   </xs:complexType>
  </xs:element>
@@ -36,7 +37,8 @@
   <xs:complexType>
    <xs:sequence>
     <xs:element name="name" type="xs:string" />
-    <xs:element name="context" type="xs:string" />
+    <xs:element name="displayName" type="xs:string" />
+    <xs:element name="context" type="xs:string" />    
     <xs:element name="description" type="xs:string" />
     <xs:element name="baseUri" type="xs:string" />
     <xs:element ref="graph" maxOccurs="unbounded" />

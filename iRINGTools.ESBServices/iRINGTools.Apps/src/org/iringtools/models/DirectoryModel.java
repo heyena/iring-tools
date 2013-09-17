@@ -62,7 +62,7 @@ public class DirectoryModel
         for (Application app : appData.getApplication())
         {
           TreeNode appNode = new TreeNode();
-          appNode.setText(app.getName());
+          appNode.setText(app.getDisplayName());
           appNode.setIconCls("application");
           appDataNodeList.add(appNode);
 

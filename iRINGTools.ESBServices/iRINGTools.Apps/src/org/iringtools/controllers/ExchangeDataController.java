@@ -50,7 +50,7 @@ public class ExchangeDataController extends BaseController
   private Result result;
   private String id, name, description, sourceUri, sourceScopeName, sourceAppName, sourceGraphName, targetUri,
       targetScopeName, targetAppName, commName, targetGraphName, hasAlgorithm, appName, appScope, oldAppName,
-      oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response;
+      oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response, displayName, scopeDisplayName;
 
   private String parentClassId, parentClassIndex, parentClassPath, templateId, templateIndex,requestId;
  
@@ -83,6 +83,8 @@ public class ExchangeDataController extends BaseController
   private String xlabel;
   private String xtime;
   private int itemCount;
+  private List<List<String>> appNames;
+  private List<List<String>> adapterScopeList;
   private List<List<String>> columnNames;
   private List<List<String>> relationOperator;
   private List<List<String>> logicalOperator;
@@ -411,36 +413,38 @@ public class ExchangeDataController extends BaseController
   }
 
   public String newApplication()
-  {
-    try
-    {
-      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      Application newApp = new Application();
-      newApp.setName(appName);
-      newApp.setContext(appScope);
-      newApp.setDescription(appDesc);
-      newApp.setBaseUri(baseUri);
+	  {
+		    try
+		    {
+		      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+		      Application newApp = new Application();
+		      newApp.setName(appName); 
+		      newApp.setDisplayName(displayName);
+		      newApp.setContext(appScope);
+		     // newApp.setScopeDisplayName(scope);
+		      newApp.setDescription(appDesc);
+		      newApp.setBaseUri(baseUri);
 
-      if ((oldAppName == null) || (oldAppName.equals("")))
-      {
-        newApp.setGraph(null);
-        ExchangeResponse exres = exchangeDataModel.newApplication(newApp, scope, exchangeServiceUri);
-        response = exres.getSummary();
-      }
-      else
-      {
-        ExchangeResponse exres = exchangeDataModel.editApplication(newApp, oldAppName, oldScope);
-        response = exres.getSummary();
-      }
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      return ERROR;
-    }
+		      if ((oldAppName == null) || (oldAppName.equals("")))
+		      {
+		        newApp.setGraph(null);
+		        ExchangeResponse exres = exchangeDataModel.newApplication(newApp, scope, exchangeServiceUri);
+		        response = exres.getSummary();
+		      }
+		      else
+		      {
+		        ExchangeResponse exres = exchangeDataModel.editApplication(newApp, oldAppName, oldScope);
+		        response = exres.getSummary();
+		      }
+		    }
+		    catch (Exception e)
+		    {
+		      e.printStackTrace();
+		      return ERROR;
+		    }
 
-    return SUCCESS;
-  }
+		    return SUCCESS;
+		  }
 
   public String deleteApplication()
   {
@@ -666,6 +670,59 @@ public class ExchangeDataController extends BaseController
 
     return SUCCESS;
   }
+  
+  public String getAMScope()
+  {
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      boolean checkUrl = sourceUri.contains("/dxfr");
+      if(checkUrl)
+      {
+      int len = sourceUri.length();
+      int corlen = len - 5;
+       baseUri = sourceUri.substring(0, corlen);
+      }else{
+    	baseUri = sourceUri;
+      }
+      adapterScopeList = exchangeDataModel.getInternalScopeNameFromAM(baseUri);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      return ERROR;
+    }
+
+    return SUCCESS;
+  }
+  
+  public String getAppNamesList()
+  {
+    try
+    {
+    	
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      String baseUri;
+      boolean checkUrl = sourceUri.contains("/dxfr");
+      if(checkUrl)
+      {
+      int len = sourceUri.length();
+      int corlen = len - 5;
+      baseUri = sourceUri.substring(0, corlen);
+      }else{
+      	baseUri = sourceUri;
+        }
+      appNames = exchangeDataModel.getAppNames(appScope, baseUri );
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      return ERROR;
+    }
+
+    return SUCCESS;
+  }
+
 
   public String testBaseUri()
   {
@@ -673,10 +730,19 @@ public class ExchangeDataController extends BaseController
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
 
+      String baseUri;
+      boolean checkUrl = sourceUri.contains("/dxfr");
+      if(checkUrl)
+      {
       int len = sourceUri.length();
       int corlen = len - 5;
-      String baseUri = sourceUri.substring(0, corlen);
+      baseUri = sourceUri.substring(0, corlen);
       result = exchangeDataModel.testUri(baseUri);
+       baseUri = sourceUri.substring(0, corlen);
+      }else{
+    	baseUri = sourceUri;
+      }
+      result = exchangeDataModel.testBaseUri(baseUri);
     }
     catch (Exception e)
     {
@@ -1916,4 +1982,39 @@ public class ExchangeDataController extends BaseController
   {
 	this.requestId = requestId;
   }
+  public List<List<String>> getAdapterScopeList() {
+		return adapterScopeList;
+
+	}
+
+
+	public void setAdapterScopeList(List<List<String>> adapterScopeList) {
+		this.adapterScopeList = adapterScopeList;
+	}
+
+	public void setAppNames(List<List<String>> appNames) {
+		this.appNames = appNames;
+	}
+
+	public List<List<String>> getAppNames() {
+		return appNames;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getScopeDisplayName() {
+		return scopeDisplayName;
+	}
+
+	public void setScopeDisplayName(String scopeDisplayName) {
+		this.scopeDisplayName = scopeDisplayName;
+	}
+	  
 }
+

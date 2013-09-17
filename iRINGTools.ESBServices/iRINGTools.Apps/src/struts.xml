@@ -256,6 +256,19 @@
       </result>
        </action>
        
+       <!-- Getting AM scopes --> 
+       <action name="getAMScope" class="org.iringtools.controllers.ExchangeDataController" method="getAMScope">
+      <result type="json">
+        <param name="root">adapterScopeList</param>
+      </result>
+       </action> 
+        <!-- Getting App names for  scopes --> 
+       <action name="getAppNames" class="org.iringtools.controllers.ExchangeDataController" method="getAppNamesList">
+      <result type="json">
+        <param name="root">appNames</param>
+      </result>
+       </action>
+       
         <!-- get grid columns names-->
       <action name="getColumnNames" class="org.iringtools.controllers.ExchangeDataController" method="getColumns">
       <result type="json">

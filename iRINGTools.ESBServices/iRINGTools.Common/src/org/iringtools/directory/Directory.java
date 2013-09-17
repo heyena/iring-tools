@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.iringtools.org/directory}scope" maxOccurs="unbounded"/>
+ *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "scope"
+    "scope",
+    "version"
 })
 @XmlRootElement(name = "directory")
 public class Directory
@@ -42,6 +44,7 @@ public class Directory
     private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected List<Scope> scope;
+    protected String version;
 
     /**
      * Gets the value of the scope property.
@@ -70,6 +73,30 @@ public class Directory
             scope = new ArrayList<Scope>();
         }
         return this.scope;
+    }
+
+    /**
+     * Gets the value of the version property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * Sets the value of the version property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setVersion(String value) {
+        this.version = value;
     }
 
     /**
