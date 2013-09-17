@@ -54,7 +54,6 @@ public class ExchangeDataController extends BaseController
 
   private String parentClassId, parentClassIndex, parentClassPath, templateId, templateIndex,requestId;
  
-
   private RequestStatus requestStatus; 
  
 
