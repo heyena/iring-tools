@@ -49,7 +49,7 @@ public class DirectoryModel
       scopeNodes.add(scopeNode);
       
       properties = scopeNode.getProperties();
-      properties.put("Context", scope.getName());
+      properties.put("Name", scope.getName());
 
       List<Node> scopeNodeList = scopeNode.getChildren();
       ApplicationData appData = scope.getApplicationData();
