@@ -38,6 +38,7 @@ public class DirectoryModel
   public Tree directoryToTree(Directory directory)
   {
     Tree tree = new Tree();
+    HashMap<String, String> properties = new HashMap<String, String>();
     List<Node> scopeNodes = tree.getNodes();
 
     for (Scope scope : directory.getScope())
@@ -46,6 +47,9 @@ public class DirectoryModel
       scopeNode.setText(scope.getName());
       scopeNode.setIconCls("scope");
       scopeNodes.add(scopeNode);
+      
+      properties = scopeNode.getProperties();
+      properties.put("Context", scope.getName());
 
       List<Node> scopeNodeList = scopeNode.getChildren();
       ApplicationData appData = scope.getApplicationData();
@@ -65,6 +69,13 @@ public class DirectoryModel
           appNode.setText(app.getDisplayName());
           appNode.setIconCls("application");
           appDataNodeList.add(appNode);
+          
+          properties = appNode.getProperties();
+          properties.put("Context", app.getContext());
+          properties.put("Name", app.getDisplayName());
+          properties.put("Description", app.getDescription());
+          properties.put("Base URI", app.getBaseUri());
+          properties.put("Internal Name", app.getName());
 
           String context = (app.getContext() != null && app.getContext().length() > 0)
               ? app.getContext() : scope.getName();
@@ -80,7 +91,7 @@ public class DirectoryModel
             graphNode.setLeaf(true);
             appNodeList.add(graphNode);
             
-            HashMap<String, String> properties = graphNode.getProperties();
+            properties = graphNode.getProperties();
             properties.put("Context", context);
             properties.put("Name", graph.getName());
             properties.put("Description", graph.getDescription());
@@ -107,6 +118,10 @@ public class DirectoryModel
           commodityNode.setText(commodity.getName());
           commodityNode.setIconCls("commodity");
           exchangeDataNodeList.add(commodityNode);
+          
+          properties = commodityNode.getProperties();
+          properties.put("Name", commodity.getName());
+
 
           List<Node> commodityNodeList = commodityNode.getChildren();
 
@@ -119,7 +134,7 @@ public class DirectoryModel
             exchangeNode.setLeaf(true);
             commodityNodeList.add(exchangeNode);
             
-            HashMap<String, String> properties = exchangeNode.getProperties();
+            properties = exchangeNode.getProperties();
             properties.put("Id", exchange.getId());
             properties.put("Name", exchange.getName());
             properties.put("Description", exchange.getDescription());
