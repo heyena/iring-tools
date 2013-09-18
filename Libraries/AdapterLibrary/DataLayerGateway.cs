@@ -1204,6 +1204,28 @@ namespace org.iringtools.adapter
       return contents;
     }
 
+    public List<IDataObject> GetRelatedObjects(IDataObject parentDataObject, DataObject relatedObjectType, DataFilter filter, 
+      int limit, int start)
+    {
+      if (_dataLayer != null && relatedObjectType.isRelatedOnly)
+      {
+        IList<IDataObject> objects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType.objectName, filter, limit, start);
+        return objects.ToList<IDataObject>();
+      }
+
+      throw new Exception("Data layer is not bound or related object type does not have IsRelatedOnly set.");
+    }
+
+    public long GetRelatedCount(IDataObject parentDataObject, DataObject relatedObjectType, DataFilter filter)
+    {
+      if (_dataLayer != null && relatedObjectType.isRelatedOnly)
+      {
+        return _dataLayer.GetRelatedCount(parentDataObject, relatedObjectType.objectName);
+      }
+
+      throw new Exception("Data layer is not bound or related object type does not have IsRelatedOnly set.");
+    }
+
     public Picklists GetPicklist(string picklistName, int start, int limit)
     {
       if (_dataLayer == null)

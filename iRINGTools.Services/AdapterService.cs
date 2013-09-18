@@ -200,6 +200,13 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets app settings of an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/config")]
+    public XElement GetConfig(string scope, string app)
+    {
+      return _adapterProvider.GetConfig(scope, app);
+    }
+
     [Description("Gets the Ninject binding configuration for the specified scope.")]
     [WebGet(UriTemplate = "/{scope}/{app}/binding")]
     public XElement GetBinding(string scope, string app)
