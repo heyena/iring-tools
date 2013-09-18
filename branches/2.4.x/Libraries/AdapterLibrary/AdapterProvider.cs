@@ -451,12 +451,11 @@ namespace org.iringtools.adapter
           application.DisplayName = updatedApp.DisplayName;
           application.Description = updatedApp.Description;
           application.DataMode = updatedApp.DataMode;
-          application.Configuration.AppSettings = updatedApp.Configuration.AppSettings;
 
           scope.Applications.Sort(new ApplicationComparer());
 
           string appConfigPath = string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], scope.Name, application.Name);
-          Utility.Write<Configuration>(application.Configuration, appConfigPath, false);
+          Utility.Write<Configuration>(updatedApp.Configuration, appConfigPath, false);
         }
         else  // application does not exist, stop processing
         {
@@ -813,6 +812,30 @@ namespace org.iringtools.adapter
     }
     #endregion Generate methods
 
+    public XElement GetConfig(string project, string application)
+    {
+      Configuration config = null;
+
+      try
+      {
+        string configPath = (project.ToLower() != "all")
+          ? string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], project, application)
+          : string.Format("{0}All.{1}.config", _settings["AppDataPath"], application);
+
+        if (File.Exists(configPath))
+        {
+          config = Utility.Read<Configuration>(configPath, false);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error getting application configuration: {0}", ex));
+        throw ex;
+      }
+
+      return config.ToXElement();
+    }
+
     public XElement GetBinding(string project, string application)
     {
       XElement binding = null;
@@ -824,7 +847,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
+        _logger.Error(string.Format("Error getting application binding configuration: {0}", ex));
         throw ex;
       }
 
@@ -2792,31 +2815,38 @@ namespace org.iringtools.adapter
             ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedresource)
             : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedresource);
 
-        //_projectionEngine.Count = _dataLayerGateway.GetRelatedCount(parentDataObject, relatedObjectType);
-
         DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
 
-        foreach (PropertyMap propMap in dataRelationship.propertyMaps)
+        if (relatedObjectType.isRelatedOnly)
         {
-          filter.Expressions.Add(new Expression()
+          // NOTE: this path strictly supports legacy data layers with related only support.
+          _dataObjects = _dataLayerGateway.GetRelatedObjects(parentDataObject, relatedObjectType, filter, limit, start);
+          _projectionEngine.Count = _dataLayerGateway.GetRelatedCount(parentDataObject, relatedObjectType, filter);
+        }
+        else
+        {
+          foreach (PropertyMap propMap in dataRelationship.propertyMaps)
           {
-            PropertyName = propMap.relatedPropertyName,
-            RelationalOperator = RelationalOperator.EqualTo,
-            LogicalOperator = LogicalOperator.And,
-            Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
-          });
-        }
+            filter.Expressions.Add(new Expression()
+            {
+              PropertyName = propMap.relatedPropertyName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              LogicalOperator = LogicalOperator.And,
+              Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
+            });
+          }
 
-        try
-        {
-          _dataObjects = _dataLayerGateway.Get(relatedObjectType, filter, start, limit);
+          try
+          {
+            _dataObjects = _dataLayerGateway.Get(relatedObjectType, filter, start, limit);
+          }
+          catch (NotImplementedException nie)
+          {
+            throw nie;
+          }
+
+          _projectionEngine.Count = _dataObjects.Count;
         }
-        catch (NotImplementedException nie)
-        {
-          //_dataObjects = _dataLayerGateway.Get(relatedObjectType, filter, start, limit);
-          throw nie;
-        }
-        _projectionEngine.Count = _dataObjects.Count;
 
         XDocument xdoc = _projectionEngine.ToXml(relatedObjectType.objectName, ref _dataObjects);
         return xdoc;

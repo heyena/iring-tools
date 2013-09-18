@@ -16,6 +16,7 @@ using System.Net;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.ServiceModel.Web;
 
 
 namespace iRINGTools.Web.Models
@@ -315,14 +316,15 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public XElement GetBinding(string scope, string application)
+    public org.iringtools.library.Configuration GetConfig(string scope, string application)
     {
-      XElement obj = null;
+      org.iringtools.library.Configuration config = null;
 
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);        
-        obj = client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
+        XElement element =  client.Get<XElement>(string.Format("/{0}/{1}/config", scope, application), true);
+        config = SerializationExtensions.ToObject<org.iringtools.library.Configuration>(element);
       }
       catch (Exception ex)
       {
@@ -330,7 +332,25 @@ namespace iRINGTools.Web.Models
         throw ex;
       }
 
-      return obj;
+      return config;
+    }
+
+    public XElement GetBinding(string scope, string application)
+    {
+      XElement binding = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        binding = client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        throw ex;
+      }
+
+      return binding;
     }
 
     public string UpdateBinding(string scope, string application, string dataLayer)

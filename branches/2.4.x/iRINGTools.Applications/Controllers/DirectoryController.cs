@@ -92,6 +92,9 @@ namespace org.iringtools.web.controllers
 
               foreach (ScopeApplication application in scope.Applications)
               {
+                Configuration config = _repository.GetConfig(scope.Name, application.Name);
+                application.Configuration = config;
+
                 DataLayer dataLayer = _repository.GetDataLayer(scope.Name, application.Name);
 
                 if (dataLayer != null)
