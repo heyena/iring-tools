@@ -99,6 +99,14 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
         {
           xtype: 'hiddenfield',
           name: 'baseUrl'
+        },
+        {
+          xtype: 'container',
+          anchor: '100%',
+          html: 'Drop a Property Node here.',
+          itemId: 'pmfpcontainer',
+          style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
+          styleHtmlContent: true
         }
       ],
       listeners: {

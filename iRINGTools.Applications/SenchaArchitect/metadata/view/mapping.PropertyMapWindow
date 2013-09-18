@@ -9,10 +9,12 @@
         "initCompnent": null,
         "init": null,
         "height": 140,
+        "margin": null,
         "width": 430,
         "designer|userClassName": "mapping.PropertyMapWindow",
         "designer|userAlias": "propertymapwindow",
         "layout": "fit",
+        "bodyPadding": null,
         "title": "Map Data Property to RoleMap"
     },
     "designerId": "30a9aae0-b8d9-4577-bd7d-c9c9ae4978d3",

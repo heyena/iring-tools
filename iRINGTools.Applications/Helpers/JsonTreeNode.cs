@@ -30,5 +30,6 @@ namespace iRINGTools.Web.Helpers
     public Dictionary<string, string> properties { get; set; }
     public string iconCls { get; set; }
     public string Namespace { get; set; }
+    public int propertiesCount { get; set; }
   }
 }

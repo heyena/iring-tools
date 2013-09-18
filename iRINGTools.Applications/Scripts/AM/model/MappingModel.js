@@ -37,6 +37,12 @@ Ext.define('AM.model.MappingModel', {
     },
     {
       name: 'record'
+    },
+    {
+      name: 'properties'
+    },
+    {
+      name: 'propertiesCount'
     }
   ]
 });

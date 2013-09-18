@@ -93,6 +93,30 @@
                 "name": "record"
             },
             "designerId": "8492f84c-5f97-461d-8ac6-e6c8051aafb1"
+        },
+        {
+            "type": "Ext.data.Field",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "properties"
+            },
+            "designerId": "400986a0-9aba-43bc-b4f4-c1b060561c46"
+        },
+        {
+            "type": "Ext.data.Field",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "propertiesCount"
+            },
+            "designerId": "bc2ed163-79b8-4839-ac80-d42d5084312d"
         }
     ]
 }
