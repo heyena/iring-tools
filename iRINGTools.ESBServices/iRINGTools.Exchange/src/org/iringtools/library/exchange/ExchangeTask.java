@@ -17,6 +17,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
+import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
 import org.iringtools.directory.Exchange;
 import org.iringtools.dxfr.dti.DataTransferIndex;
@@ -441,13 +442,27 @@ public class ExchangeTask implements Runnable
   			          {
   			            logger.error("Error writing pool response to disk: " + e);
   			            e.printStackTrace();            
-  			          }
+  			          }	          		       
   			
   			          // update level as necessary
   			          if (xRes.getLevel().ordinal() < poolResponse.getLevel().ordinal())
   			          {
-  			            xRes.setLevel(poolResponse.getLevel());
+  			            xRes.setLevel(poolResponse.getLevel()); 
   			          }
+  			      
+  			          if (poolResponse.getLevel().name() != Level.SUCCESS.toString())
+  			          {
+  			        	  StringBuilder messages = new StringBuilder();
+  			        	  if (poolResponse.getMessages() != null)
+  			        	  {
+  			        		  for (String message : poolResponse.getMessages().getItems())
+  			        		  {
+  			        			  messages.append(message);
+  			        		  }
+  			        		  
+  			        		xRes.setSummary(xRes.getSummary().concat(messages.toString()));
+  			        	  }  			        	
+    			      }
   			
   			          poolResponse = null;
   			        }
@@ -461,19 +476,19 @@ public class ExchangeTask implements Runnable
       {
         String message = "Exchange completed with error.";
         StringBuilder summary = new StringBuilder(xRes.getSummary());
-        xRes.setSummary(summary.append(message).toString());
+        xRes.setSummary(summary.append(" ").append(message).toString());
       }
       else if (xRes.getLevel() == Level.WARNING)
       {
         String message = "Exchange completed with warning.";
         StringBuilder summary = new StringBuilder(xRes.getSummary());
-        xRes.setSummary(summary.append(message).toString());
+        xRes.setSummary(summary.append(" ").append(message).toString());
       }
       else if (xRes.getLevel() == Level.SUCCESS)
       {
         String message = "Exchange completed successfully.";
         StringBuilder summary = new StringBuilder(xRes.getSummary());
-        xRes.setSummary(summary.append(message).toString());
+        xRes.setSummary(summary.append(" ").append(message).toString());
       }
   
       XMLGregorianCalendar endTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
