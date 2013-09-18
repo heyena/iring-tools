@@ -17,7 +17,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
-import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
 import org.iringtools.directory.Exchange;
 import org.iringtools.dxfr.dti.DataTransferIndex;
@@ -474,21 +473,20 @@ public class ExchangeTask implements Runnable
       
       if (xRes.getLevel() == Level.ERROR)
       {
-        String message = "Exchange completed with error.";
+        String message = "Exchange completed with error. ";
         StringBuilder summary = new StringBuilder(xRes.getSummary());
-        xRes.setSummary(summary.append(" ").append(message).toString());
+        xRes.setSummary(summary.insert(0, message).toString());
       }
       else if (xRes.getLevel() == Level.WARNING)
       {
-        String message = "Exchange completed with warning.";
+        String message = "Exchange completed with warning. ";
         StringBuilder summary = new StringBuilder(xRes.getSummary());
-        xRes.setSummary(summary.append(" ").append(message).toString());
+        xRes.setSummary(summary.insert(0, message).toString());
       }
       else if (xRes.getLevel() == Level.SUCCESS)
       {
         String message = "Exchange completed successfully.";
-        StringBuilder summary = new StringBuilder(xRes.getSummary());
-        xRes.setSummary(summary.append(" ").append(message).toString());
+        xRes.setSummary(message);
       }
   
       XMLGregorianCalendar endTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
