@@ -252,21 +252,24 @@ Ext.define('AM.controller.Mapping', {
       }, me);
 
       mapTree.on('itemclick', function (tablepanel, record, item, index, e) {
-        var tempProperty = 'EQUIPMENT.COMMODITY';
-        var dataObject = tempProperty.split('.')[0];
-        var prop =  tempProperty.split('.')[1];
-        var propArr = ['TAG','COMMODITY','EWP','TAGSTATUS'];
-
-        if(record.data.type == 'TemplateMapNode'){
-          var objectNode = node.parentNode.parentNode.childNodes[0];
-          for(var i=0;i<objectNode.childNodes.length;i++){
-            if(objectNode.childNodes[i].data.text == dataObject){
-              if(objectNode.childNodes[i].childNodes.length>0){
-                for(k=0;k<propArr.length;k++){
-                  for(var j=0;j<objectNode.childNodes[i].childNodes.length;j++){
-                    if(objectNode.childNodes[i].childNodes[j].data.text == propArr[k]){
-                      var myTreeNode = objectNode.childNodes[i].childNodes[j];
-                      myTreeNode.set('cls','bg_TreeNodeColor');
+        var tempProperty, dataObject, prop;
+        if(record.data.type == 'TemplateMapNode' && record.data.propertiesCount>0){
+          for(var kk=0;kk<record.data.propertiesCount;kk++){
+            var propIndex = 'propertyName_'+kk;
+            var tempProperty = record.data.properties[propIndex];
+            if(tempProperty){
+              dataObject = tempProperty.split('.')[0];
+              prop =  tempProperty.split('.')[1];
+              var objectNode = node.parentNode.parentNode.childNodes[0];
+              for(var i=0;i<objectNode.childNodes.length;i++){
+                if(objectNode.childNodes[i].data.text == dataObject){
+                  if(objectNode.childNodes[i].childNodes.length>0){
+                    for(var j=0;j<objectNode.childNodes[i].childNodes.length;j++){
+                      if(objectNode.childNodes[i].childNodes[j].data.text == prop){
+                        var myTreeNode = objectNode.childNodes[i].childNodes[j];
+                        var selectedNode = me.getDirTree().getStore().getNodeById(myTreeNode.internalId);
+                        selectedNode.set('cls','bg_TreeNodeColor');
+                      }
                     }
                   }
                 }
@@ -274,18 +277,14 @@ Ext.define('AM.controller.Mapping', {
             }
           }
         }else{
+
           var objectNode = node.parentNode.parentNode.childNodes[0];
           for(var i=0;i<objectNode.childNodes.length;i++){
-            if(objectNode.childNodes[i].data.text == dataObject){
-              if(objectNode.childNodes[i].childNodes.length>0){
-                for(k=0;k<propArr.length;k++){
-                  for(var j=0;j<objectNode.childNodes[i].childNodes.length;j++){
-                    if(objectNode.childNodes[i].childNodes[j].data.text == propArr[k]){
-                      var myTreeNode = objectNode.childNodes[i].childNodes[j];
-                      myTreeNode.set('cls','');
-                    }
-                  }
-                }
+            if(objectNode.childNodes[i].childNodes.length>0){
+              for(var j=0;j<objectNode.childNodes[i].childNodes.length;j++){
+                var myTreeNode = objectNode.childNodes[i].childNodes[j];
+                var selectedNode = me.getDirTree().getStore().getNodeById(myTreeNode.internalId);
+                selectedNode.set('cls','');
               }
             }
           }
