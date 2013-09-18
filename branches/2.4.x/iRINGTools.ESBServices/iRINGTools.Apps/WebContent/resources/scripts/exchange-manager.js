@@ -1364,6 +1364,13 @@ function buildNewExchangeMenu() {
 		xtype : 'menuitem',
 		handler : function(item, event) {
 			newExchangeConfig();
+			Ext.getCmp('sourceScopeCombolist').setDisabled(true);
+			Ext.getCmp('sourceAppCombolist').setDisabled(true);
+			Ext.getCmp('graphsourceName').setDisabled(true);
+			
+			Ext.getCmp('targetScopeCombolist').setDisabled(true);
+			Ext.getCmp('targetAppCombolist').setDisabled(true);
+			Ext.getCmp('targetGraph').setDisabled(true);
 			
 			var view = Ext.getCmp('newExchangeConfigWin');
 			view.show();
@@ -1489,7 +1496,7 @@ function newExchangeConfig() {
 												var appName = Ext.getCmp('sourceAppCombolist').getValue();
 												var obj = Ext.getCmp('newExchConfig');
 												var form = obj.getForm();
-												form.findField('sourceGraph').setDisabled(false);
+												form.findField('sourceGraphName').setDisabled(false);
 											}}
 									}, {
 										fieldLabel : 'Graph',
@@ -1578,7 +1585,7 @@ function newExchangeConfig() {
 											var appName = Ext.getCmp('sourceAppCombolist').getValue();
 											var obj = Ext.getCmp('newExchConfig');
 											var form = obj.getForm();
-											form.findField('targetGraph').setDisabled(false);
+											form.findField('targetGraphName').setDisabled(false);
 										}}
 								},  {
 								fieldLabel : 'Graph',
@@ -2416,14 +2423,27 @@ function buildCommoditySubMenu() {
 					view.show();
 					editDataFilter();
 				},
-				text : 'Apply Data Filters'
+				text : 'Configure Filter'
 			}, {
+				xtype: 'menuitem',
+				handler : function() {
+					ShowExchangeHistory();
+				},
+          //    icon: 'resources/images/16x16/file-table.png',
+                text: 'Show Summary'
+			},{
 				xtype : 'menuitem',
 				handler : function() {
 					ConfigureManifest();
 				},
 				text : 'Configure Manifest'
 			} ];
+}
+
+function ShowExchangeHistory()
+{
+	
+
 }
 
 function ConfigureManifest() {

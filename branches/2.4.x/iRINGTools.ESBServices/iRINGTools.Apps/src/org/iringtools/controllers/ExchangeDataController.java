@@ -736,8 +736,6 @@ public class ExchangeDataController extends BaseController
       int len = sourceUri.length();
       int corlen = len - 5;
       baseUri = sourceUri.substring(0, corlen);
-      result = exchangeDataModel.testUri(baseUri);
-       baseUri = sourceUri.substring(0, corlen);
       }else{
     	baseUri = sourceUri;
       }
