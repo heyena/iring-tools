@@ -226,7 +226,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         xtype: 'button',
         text: 'Reload Tree',
         handler: this.onReload,
-        icon: 'Content/img/16x16/view-refresh.png',
+        icon: 'Content/img/16x16/refresh.png',
         scope: this
       }
     //      ,
@@ -254,7 +254,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       {
       text: 'Regenerate HibernateDataLayer artifacts',
       handler: this.onRegenerateAll,
-      icon: 'Content/img/16x16/document-new.png',
+      icon: 'Content/img/16x16/regen.png',
       scope: this
     }
     ]
@@ -263,16 +263,15 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildScopeMenu: function () {
     return [
       {
-
         text: 'Edit Scope',
         handler: this.onEditScope,
-        icon: 'Content/img/16x16/document-properties.png',
+        icon: 'Content/img/16x16/edit.png',
         scope: this
       },
       {
         text: 'Delete Scope',
         handler: this.onDeleteScope,
-        icon: 'Content/img/16x16/edit-delete.png',
+        icon: 'Content/img/16x16/delete.png',
         scope: this
       },
       {
@@ -292,13 +291,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       {
         text: 'Edit Application',
         handler: this.onEditApplication,
-        icon: 'Content/img/16x16/document-properties.png',
+        icon: 'Content/img/16x16/edit.png',
         scope: this
       },
       {
         text: 'Delete Application',
         handler: this.onDeleteApplication,
-        icon: 'Content/img/16x16/edit-delete.png',
+        icon: 'Content/img/16x16/delete.png',
         scope: this
       },
       {
@@ -333,7 +332,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             {
               text: 'View Application Data',
               handler: this.onLoadAppData,
-              icon: 'Content/img/16x16/document-properties.png',
+              icon: 'Content/img/16x16/view.png',
               scope: this
             }
         ]
@@ -345,7 +344,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     menu.add({
       text: 'Refresh Dictionary',
       handler: this.onRefreshDictionary,
-      icon: 'Content/img/refresh_dict.gif',
+      icon: 'Content/img/16x16/refresh.png',
       scope: this
     });
 
@@ -354,7 +353,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         menu.add({
           text: 'Switch to Cached-Data Mode',
           handler: this.onSwitchToCachedDataMode,
-          icon: 'Content/img/switch.png',
+          icon: 'Content/img/16x16/switch.png',
           scope: this
         });
       }
@@ -363,7 +362,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       menu.add({
         text: 'Switch to Live-Data Mode',
         handler: this.onSwitchToLiveDataMode,
-        icon: 'Content/img/switch.png',
+        icon: 'Content/img/16x16/switch.png',
         scope: this
       });
     }
@@ -373,13 +372,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         {
           text: 'Refresh Cache',
           handler: this.onRefreshCache,
-          icon: 'Content/img/refresh_cache.gif',
+          icon: 'Content/img/16x16/refresh.png',
           scope: this
         },
         {
           text: 'Import Cache',
           handler: this.onImportCache,
-          icon: 'Content/img/import.jpg',
+          icon: 'Content/img/16x16/import.png',
           scope: this
         }
       ]);
@@ -404,13 +403,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     {
       text: 'Edit Value List Name',
       handler: this.onEditValueList,
-      icon: 'Content/img/16x16/document-properties.png',
+      icon: 'Content/img/16x16/edit.png',
       scope: this
     },
     {
       text: 'Delete ValueList',
       handler: this.onDeleteValueList,
-      icon: 'Content/img/16x16/edit-delete.png',
+      icon: 'Content/img/16x16/delete.png',
       scope: this
     },
     {
@@ -430,13 +429,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     {
       text: 'Edit Value List Map',
       handler: this.onEditValueListMap,
-      icon: 'Content/img/16x16/document-properties.png',
+      icon: 'Content/img/16x16/edit.png',
       scope: this
     },
     {
       text: 'Delete Value List Map',
       handler: this.onDeleteValueListMap,
-      icon: 'Content/img/16x16/edit-delete.png',
+      icon: 'Content/img/16x16/delete.png',
       scope: this
     }
     ]
@@ -459,22 +458,22 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     return [{
        text: 'Edit GraphMap',
        handler: this.onEditGraphMap,
-       icon: 'Content/img/16x16/document-properties.png',
+       icon: 'Content/img/16x16/edit.png',
        scope: this
      },
       {
         text: 'Delete GraphMap',
         handler: this.onDeleteGraphMap,
-        icon: 'Content/img/16x16/edit-delete.png',
+        icon: 'Content/img/16x16/delete.png',
         scope: this
       },
       {
         xtype: 'menuseparator'
       },
     {
-      text: 'Open GraphMap',
+      text: 'Configure GraphMap',
       handler: this.onOpenGraphMap,
-      icon: 'Content/img/16x16/mapping.png',
+      icon: 'Content/img/16x16/configure.png',
       scope: this
     }]
   },

@@ -189,7 +189,7 @@ function createXlogsPane(context, xlogsContainer, xlabel) {
 														},
 														{
 															xtype : 'button',
-															icon : 'resources/images/16x16/view-refresh.png',
+															icon : 'resources/images/16x16/refresh.png',
 															tooltip : 'Refresh',
 															handler : function() {
 																xlogsStore
@@ -1133,7 +1133,7 @@ function buildEditDeleteSubMenu() {
 			editDeleteScope(node, event);
 		},
 		text : 'Edit Scope',
-		icon : 'resources/images/16x16/document-properties.png'
+		icon : 'resources/images/16x16/edit.png'
 		
 	}, {
 		xtype : 'menuitem',
@@ -1141,7 +1141,7 @@ function buildEditDeleteSubMenu() {
 			deleteScope(node, event);
 		},
 		text : 'Delete Scope',
-		icon : 'resources/images/16x16/edit-delete.png'
+		icon : 'resources/images/16x16/delete.png'
 	} ];
 }
 
@@ -1154,7 +1154,8 @@ function buildNewCommodityMenu() {
 			var view = Ext.getCmp('newCommWin');
 			view.show();
 		},
-		text : 'New Commodity'
+		text : 'New Commodity',
+		icon : 'resources/images/16x16/document-new.png'
 	} ];
 }
 
@@ -1378,14 +1379,14 @@ function buildNewExchangeMenu() {
 			editCommodity();
 		},
 		text : 'Edit Commodity',
-		icon : 'resources/images/16x16/document-properties.png'
+		icon : 'resources/images/16x16/edit.png'
 	}, {
 		xtype : 'menuitem',
 		handler : function(item, event) {
 			deleteCommodity();
 		},
 		text : 'Delete commodity',
-		icon : 'resources/images/16x16/edit-delete.png'
+		icon : 'resources/images/16x16/delete.png'
 	} ];
 }
 
@@ -1854,7 +1855,7 @@ function buildGraphSubMenu() {
 	return [ {
 		xtype : 'menuitem',
 		text : 'Edit Graph',
-		icon : 'resources/images/16x16/document-properties.png',
+		icon : 'resources/images/16x16/edit.png',
 		handler : function() {
 			newGraph();
 			editGraph();
@@ -1862,7 +1863,7 @@ function buildGraphSubMenu() {
 	}, {
 		xtype : 'menuitem',
 		text : 'Delete Graph',
-		icon : 'resources/images/16x16/edit-delete.png',
+		icon : 'resources/images/16x16/delete.png',
 		handler : function(item, event) {
 			deleteGraph();
 		}
@@ -1871,13 +1872,13 @@ function buildGraphSubMenu() {
 	}, {
 		xtype : 'menuitem',
 		text : 'Refresh Cache',
-		icon : 'resources/images/16x16/view-refresh.png',
+		icon : 'resources/images/16x16/refresh.png',
 		handler : onRefreshCache,
 		scope : this
 	}, {
 		xtype : 'menuitem',
 		text : 'Import Cache',
-		icon : 'resources/images/import.jpg',
+		icon : 'resources/images/16x16/import.png',
 		handler : onImportCache,
 		scope : this
 	} ];
@@ -2086,14 +2087,14 @@ function buildApplicationSubMenu() {
 			editApplication();
 		},
 		text : 'Edit Application',
-		icon : 'resources/images/16x16/document-properties.png'
+		icon : 'resources/images/16x16/edit.png'
 	}, {
 		xtype : 'menuitem',
 		handler : function() {
 			deleteApp();
 		},
 		text : 'Delete Application',
-		icon : 'resources/images/16x16/edit-delete.png'
+		icon : 'resources/images/16x16/delete.png'
 	} ];
 }
 
@@ -2405,7 +2406,7 @@ function buildCommoditySubMenu() {
 					editExchangeConfig();
 				},
 				text : 'Edit Exchange',
-				icon : 'resources/images/16x16/document-properties.png'
+				icon : 'resources/images/16x16/edit.png'
 			},
 			{
 				xtype : 'menuitem',
@@ -2413,7 +2414,7 @@ function buildCommoditySubMenu() {
 					deleteConfig();
 				},
 				text : 'Delete Exchange',
-				icon : 'resources/images/16x16/edit-delete.png'
+				icon : 'resources/images/16x16/delete.png'
 			},			 
 			{
 				xtype : 'menuitem',
@@ -2433,15 +2434,15 @@ function buildCommoditySubMenu() {
 					view.show();
 					editDataFilter();
 				},
-				text : 'Configure Exchange Filter',
-				icon : 'resources/images/16x16/cog_edit.png'
+				text : 'Configure Filter',
+				icon : 'resources/images/16x16/configure.png'
 			},{
 				xtype : 'menuitem',
 				handler : function() {
 					ConfigureManifest();
 				},
 				text : 'Modify Exchange',
-				icon : 'resources/images/16x16/document-properties.png'
+				icon : 'resources/images/16x16/modify.png'
 			} ,{
 				xtype: 'menuitem',
 				handler : function() {
@@ -2533,7 +2534,7 @@ function ShowExchangeHistory()
 						                          {
 						                              xtype: 'button',
 						                              action: 'refreshHistory',
-						                              icon: 'resources/images/16x16/view-refresh.png',
+						                              icon: 'resources/images/16x16/refresh.png',
 						                              text: '',
 						                              tooltip: 'Refresh'
 						                          }
@@ -2600,7 +2601,7 @@ function ConfigureManifest() {
 				items : [ {
 					// id : 'Reload-manifest-button',
 					xtype : 'button',
-					icon : 'resources/images/16x16/view-refresh.png',
+					icon : 'resources/images/16x16/refresh.png',
 					text : 'Reload',
 					handler : function() {
 						reloadManifest(scope, xid);
@@ -4292,7 +4293,7 @@ function applyDataFilter(url) {
 																				+ rowCount,
 																		// text:'Delete',
 																		margins : '0, 20,0,0',
-																		icon : 'resources/images/16x16/delete-icon.png'
+																		icon : 'resources/images/16x16/delete.png'
 																	} ]
 														};
 
@@ -4610,7 +4611,7 @@ function applyDataFilter(url) {
 													id : 'delete_1',
 													// text:'Delete',
 													margins : '0, 20,0,0',
-													icon : 'resources/images/16x16/delete-icon.png',
+													icon : 'resources/images/16x16/delete.png',
 													tooltip : 'remove Expression'
 												} ]
 									} ]
@@ -4856,7 +4857,7 @@ function applyDataFilter(url) {
 																				+ rowCount,
 																		// margin:
 																		// 10,
-																		icon : 'resources/images/16x16/delete-icon.png'
+																		icon : 'resources/images/16x16/delete.png'
 																	} ]
 														};
 
@@ -4994,7 +4995,7 @@ function applyDataFilter(url) {
 													border : false,
 													id : 'OEDelete_1',
 													// margin: 10,
-													icon : 'resources/images/16x16/delete-icon.png'
+													icon : 'resources/images/16x16/delete.png'
 												} ]
 									} ]
 						} ],
@@ -5268,7 +5269,7 @@ Ext
 											{
 												id : 'refresh-button',
 												xtype : 'button',
-												icon : 'resources/images/16x16/view-refresh.png',
+												icon : 'resources/images/16x16/refresh.png',
 												text : 'Refresh',
 												handler : function() {
 													refresh();
