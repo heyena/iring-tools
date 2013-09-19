@@ -47,7 +47,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 			  columnWidth: '0.60',
 			  grow: false,
 			  //width:270,
-			  // height: 50,
+			  height: 40,
 			  style: 'margin:0 0 0 3;'
 			  //margin:'0 0 0 3'
 			},
@@ -93,6 +93,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
     }
   },
+
   initComponent: function () {
     myThis = this;
     this.addEvents({
