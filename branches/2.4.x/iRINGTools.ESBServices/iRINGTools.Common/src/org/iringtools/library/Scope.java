@@ -1,6 +1,7 @@
 
 package org.iringtools.library;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -36,8 +37,11 @@ import javax.xml.bind.annotation.XmlType;
     "applications"
 })
 @XmlRootElement(name = "scope")
-public class Scope {
+public class Scope
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
