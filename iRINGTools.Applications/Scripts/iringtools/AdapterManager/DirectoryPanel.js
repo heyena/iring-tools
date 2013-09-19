@@ -731,7 +731,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         var responseObj = Ext.decode(response.responseText);
 
         if (responseObj.Level == 0) {
-          showDialog(450, 100, 'Result', 'Data Mode switched to [' + mode + '].', Ext.Msg.OK, null);
+          //showDialog(450, 100, 'Result', 'Data Mode switched to [' + mode + '].', Ext.Msg.OK, null);
         }
         else {
           showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
