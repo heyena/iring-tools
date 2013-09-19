@@ -1645,7 +1645,7 @@ function SourceUri() {
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
-		url : 'SourcetestUri?' + '&sourceUri =' + sourceUri,
+		url : 'SourcetestUri?' + '&sourceUri =' + sourceUri + '&graphName =' + graph, 
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
@@ -1705,7 +1705,7 @@ function TargetUri() {
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
-		url : 'testTargetUrl?' + '&targetUri =' + targetUri,
+		url : 'testTargetUrl?' + '&targetUri =' + targetUri+ '&graphName =' + graph,
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {

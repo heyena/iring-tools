@@ -50,7 +50,7 @@ public class ExchangeDataController extends BaseController
   private Result result;
   private String id, name, description, sourceUri, sourceScopeName, sourceAppName, sourceGraphName, targetUri,
       targetScopeName, targetAppName, commName, targetGraphName, hasAlgorithm, appName, appScope, oldAppName,
-      oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response, displayName, scopeDisplayName;
+      oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response, displayName, scopeDisplayName, graphName;
 
   private String parentClassId, parentClassIndex, parentClassPath, templateId, templateIndex,requestId;
  
@@ -755,7 +755,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      result = exchangeDataModel.testUri(sourceUri);
+      result = exchangeDataModel.testUri(sourceUri, graphName);
     }
     catch (Exception e)
     {
@@ -771,7 +771,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      result = exchangeDataModel.testUri(targetUri);
+      result = exchangeDataModel.testUri(targetUri, graphName);
     }
     catch (Exception e)
     {
@@ -2011,6 +2011,14 @@ public class ExchangeDataController extends BaseController
 
 	public void setScopeDisplayName(String scopeDisplayName) {
 		this.scopeDisplayName = scopeDisplayName;
+	}
+
+	public String getGraphName() {
+		return graphName;
+	}
+
+	public void setGraphName(String graphName) {
+		this.graphName = graphName;
 	}
 	  
 }
