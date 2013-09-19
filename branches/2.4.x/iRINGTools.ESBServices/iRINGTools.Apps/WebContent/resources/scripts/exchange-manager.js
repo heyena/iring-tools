@@ -1152,13 +1152,16 @@ function buildEditDeleteSubMenu() {
 			newScope(node, event);
 			editDeleteScope(node, event);
 		},
-		text : 'Edit Scope'
+		text : 'Edit Scope',
+		icon : 'resources/images/16x16/document-properties.png'
+		
 	}, {
 		xtype : 'menuitem',
 		handler : function(node, event) {
 			deleteScope(node, event);
 		},
-		text : 'Delete Scope'
+		text : 'Delete Scope',
+		icon : 'resources/images/16x16/edit-delete.png'
 	} ];
 }
 
@@ -1386,20 +1389,23 @@ function buildNewExchangeMenu() {
 			var view = Ext.getCmp('newExchangeConfigWin');
 			view.show();
 		},
-		text : 'New Exchange'
+		text : 'New Exchange',
+		icon : 'resources/images/16x16/document-new.png'
 	}, {
 		xtype : 'menuitem',
 		handler : function(item, event) {
 			newCommodity();
 			editCommodity();
 		},
-		text : 'Edit Commodity'
+		text : 'Edit Commodity',
+		icon : 'resources/images/16x16/document-properties.png'
 	}, {
 		xtype : 'menuitem',
 		handler : function(item, event) {
 			deleteCommodity();
 		},
-		text : 'Delete commodity'
+		text : 'Delete commodity',
+		icon : 'resources/images/16x16/edit-delete.png'
 	} ];
 }
 
@@ -1839,7 +1845,8 @@ function buildNewScopeMenu() {
 					"oldScope").setValue('null');
 			view.show();
 		},
-		text : 'New Scope'
+		text : 'New Scope',
+		icon: 'resources/images/16x16/document-new.png'
 	};
 }
 
@@ -1858,7 +1865,8 @@ function buildNewApplicationMenu() {
 			form.findField('appDesc').setDisabled(true);
 			view.show();
 		},
-		text : 'New Application'
+		text : 'New Application',
+		icon : 'resources/images/16x16/document-new.png'
 	};
 }
 
@@ -1866,6 +1874,7 @@ function buildGraphSubMenu() {
 	return [ {
 		xtype : 'menuitem',
 		text : 'Edit Graph',
+		icon : 'resources/images/16x16/document-properties.png',
 		handler : function() {
 			newGraph();
 			editGraph();
@@ -1873,6 +1882,7 @@ function buildGraphSubMenu() {
 	}, {
 		xtype : 'menuitem',
 		text : 'Delete Graph',
+		icon : 'resources/images/16x16/edit-delete.png',
 		handler : function(item, event) {
 			deleteGraph();
 		}
@@ -1881,11 +1891,13 @@ function buildGraphSubMenu() {
 	}, {
 		xtype : 'menuitem',
 		text : 'Refresh Cache',
+		icon : 'resources/images/16x16/view-refresh.png',
 		handler : onRefreshCache,
 		scope : this
 	}, {
 		xtype : 'menuitem',
 		text : 'Import Cache',
+		icon : 'resources/images/import.jpg',
 		handler : onImportCache,
 		scope : this
 	} ];
@@ -2080,7 +2092,8 @@ function buildApplicationSubMenu() {
 			var view = Ext.getCmp('newGraphWin');
 			view.show();
 		},
-		text : 'Add Graph'
+		text : 'Add Graph',
+		icon : 'resources/images/16x16/document-new.png'
 	}, {
 		xtype : 'menuseparator'
 	}, {
@@ -2092,13 +2105,15 @@ function buildApplicationSubMenu() {
 			// form.findField('scopeDisplayName').setDisabled(true);
 			editApplication();
 		},
-		text : 'Edit Application'
+		text : 'Edit Application',
+		icon : 'resources/images/16x16/document-properties.png'
 	}, {
 		xtype : 'menuitem',
 		handler : function() {
 			deleteApp();
 		},
-		text : 'Delete Application'
+		text : 'Delete Application',
+		icon : 'resources/images/16x16/edit-delete.png'
 	} ];
 }
 
@@ -2310,7 +2325,8 @@ function buildManifestMenu(scope, xid, isDeleted) {
 			handler : function() {
 				deleteTemplate(scope, xid);
 			},
-			text : 'Exclude Template'
+			text : 'Exclude Template',
+			icon : 'resources/images/list-remove.png'
 		} ];
 	} else {
 		return [ {
@@ -2318,7 +2334,8 @@ function buildManifestMenu(scope, xid, isDeleted) {
 			handler : function() {
 				includeTemplate(scope, xid);
 			},
-			text : 'Include Template'
+			text : 'Include Template',
+			icon : 'resources/images/list-add.png'
 		} ];
 	}
 }
@@ -2407,14 +2424,16 @@ function buildCommoditySubMenu() {
 					newExchangeConfig();
 					editExchangeConfig();
 				},
-				text : 'Edit Exchange'
+				text : 'Edit Exchange',
+				icon : 'resources/images/16x16/document-properties.png'
 			},
 			{
 				xtype : 'menuitem',
 				handler : function() {
 					deleteConfig();
 				},
-				text : 'Delete Exchange'
+				text : 'Delete Exchange',
+				icon : 'resources/images/16x16/edit-delete.png'
 			},
 			{
 				xtype : 'menuitem',
@@ -2434,13 +2453,15 @@ function buildCommoditySubMenu() {
 					view.show();
 					editDataFilter();
 				},
-				text : 'Configure Filter'
+				text : 'Configure Filter',
+				icon : 'resources/images/16x16/cog_edit.png'
 			},{
 				xtype : 'menuitem',
 				handler : function() {
 					ConfigureManifest();
 				},
-				text : 'Modify Exchange'
+				text : 'Modify Exchange',
+				icon : 'resources/images/16x16/document-properties.png'
 			} ];
 }
 
