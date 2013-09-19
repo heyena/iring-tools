@@ -1532,7 +1532,7 @@ public class ExchangeDataModel extends DataModel {
 			}
 
 			result.setSuccess(false);
-			result.setMessage("Graph " + graphName + " not found in manifest");
+			result.setMessage("Graph " + graphName + " not found in manifest.");
 		} catch (HttpClientException e) {
 			result.setSuccess(false);
 			result.setMessage("Exception : " + e.getErrorMessage());
