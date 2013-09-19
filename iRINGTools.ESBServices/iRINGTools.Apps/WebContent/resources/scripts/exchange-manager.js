@@ -369,30 +369,10 @@ function loadPageDto(type, action, context, label) {
 														{
 															id : 'tb-xlog',
 															xtype : 'button',
-															tooltip : 'Show/hide exchange results',
+															tooltip : 'exchange results',
 															icon : 'resources/images/16x16/history.png',
 															handler : function() {
-																var dtoTab = Ext
-																		.getCmp(
-																				'content-pane')
-																		.getActiveTab();
-																var xlogsContainer = dtoTab.items.map['xlogs-container-'
-																		+ label];
-
-																if (xlogsContainer.items.length == 0) {
-																	createXlogsPane(
-																			context,
-																			xlogsContainer,
-																			label);
-																} else {
-																	if (xlogsContainer.collapsed)
-																		xlogsContainer
-																				.expand(true);
-																	else {
-																		xlogsContainer
-																				.collapse(true);
-																	}
-																}
+																ShowExchangeHistory()
 															}
 														},
 														{
@@ -2434,7 +2414,7 @@ function buildCommoditySubMenu() {
 				},
 				text : 'Delete Exchange',
 				icon : 'resources/images/16x16/edit-delete.png'
-			},
+			},			 
 			{
 				xtype : 'menuitem',
 				handler : function() {
@@ -2462,7 +2442,127 @@ function buildCommoditySubMenu() {
 				},
 				text : 'Modify Exchange',
 				icon : 'resources/images/16x16/document-properties.png'
-			} ];
+			} ,{
+				xtype: 'menuitem',
+				handler : function() {
+					ShowExchangeHistory();
+				},
+              icon:  'resources/images/16x16/history.png',
+                text: 'Show History'
+			}
+			];
+}
+function ShowExchangeHistory()
+{
+	var me = this;
+	var contentPanel =  Ext.getCmp('content-pane');
+	var activeTab = contentPanel.getActiveTab();
+	var directoryTree  = Ext.getCmp('directory-tree');
+	var node =  directoryTree.getSelectionModel().getSelectedNode();
+	var scope = node.parentNode.parentNode.parentNode.text;
+	var xid = node.attributes.properties.Id;
+	var xlabel = node.text;
+	
+	var reviewed = true;
+	var xlogsContainer;
+	var existingXlogCont;
+	if(activeTab === undefined || (activeTab === null))
+	{
+		existingXlogCont = contentPanel.items.map['xlogpanel-'];
+	}else{
+		existingXlogCont = contentPanel.items.map['xlogpanel-'+activeTab.title];	
+	}
+
+	
+	if (existingXlogCont == undefined || existingXlogCont.items.length == 0) {	
+		  var url = 'xlogs?&scope=' +scope+ '&xid='+xid +'&xlabel=' + xlabel;
+		  var store = createGridStore(contentPanel, url);
+
+			store.on('load', function() {
+				/*	var gridPane = createGridPane(store, {
+					forceFit : true
+				}, true);*/
+				var colModel = new Ext.grid.DynamicColumnModel(store);
+				var selModel = new Ext.grid.RowSelectionModel({
+					singleSelect : true
+				});
+				var gridPane = new Ext.grid.GridPanel({
+					identifier : store.reader.identifier,
+					description : store.reader.description,
+					layout : 'fit',
+					minColumnWidth : 80,
+					val : null,
+					loadMask : true,
+					store : store,
+					cm : colModel,
+					selModel : selModel,
+					stripeRows : true,
+					enableColLock : false,
+				});
+				  var xloggridpanel = new Ext.Panel({
+						 split: true,
+						 layout: {
+						        type: 'fit'
+						    },
+						 id: 'XlogGridPanel',
+			            enableColumnHide: false,
+			            items: gridPane,
+						viewConfig: {
+			           enableTextSelection: true
+			       },
+					});
+				  var xlogpanel = new Ext.Panel({
+						 region: 'south',
+						    layout: {
+						        type: 'fit'
+						    },
+						    header: false,
+						    id: 'xlogpanel',
+						    items: [xloggridpanel],
+						    dockedItems: [
+						                  {
+						                      xtype: 'toolbar',
+						                      dock: 'top',
+						                      items: [
+						                          {
+						                              xtype: 'label',
+						                              height: 13,
+						                              width: 85,
+						                              text: 'Exchange Results'
+						                          },
+						                          {
+						                              xtype: 'button',
+						                              action: 'refreshHistory',
+						                              icon: 'resources/images/16x16/view-refresh.png',
+						                              text: '',
+						                              tooltip: 'Refresh'
+						                          }
+						                      ]
+						                  }
+						              ]
+					});
+				  xlogpanel.closable = true;
+			     //   xlogPanel.id = 'xlogpanel-'+activeTab.title;
+			        var label = '(Exchange Result)'+'('+scope +')' +xlabel;
+			        xlogpanel.setTitle(label);
+			        xlogpanel.add(xloggridpanel);
+			        var myTab = contentPanel.add(xlogpanel);
+			        contentPanel.setActiveTab(myTab);
+			});
+				
+			store.load({});
+			store.on('exception',function( store, records, options ){
+				 var msg = 'No History found for this Exchange';
+				    showDialog(400, 200, 'Error', msg, Ext.Msg.OK, null);
+			},this);
+	 
+	
+	} 
+	else {
+	    existingXlogCont.show();
+	
+	}
+
 }
 
 function ConfigureManifest() {
