@@ -351,7 +351,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     if (node.attributes.property["Data Mode"] == "Live") {
       if (node.parentNode.attributes.property["LightweightDataLayer"] == "No") {
         menu.add({
-          text: 'Switch to Cached-Data Mode',
+          text: 'Switch to Cache Mode',
           handler: this.onSwitchToCachedDataMode,
           icon: 'Content/img/16x16/switch.png',
           scope: this
@@ -360,15 +360,18 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     }
     else if (node.parentNode.attributes.property["LightweightDataLayer"] == "No") {
       menu.add({
-        text: 'Switch to Live-Data Mode',
+        text: 'Switch to Live Mode',
         handler: this.onSwitchToLiveDataMode,
         icon: 'Content/img/16x16/switch.png',
         scope: this
       });
     }
 
-    if (node.attributes.property["Data Mode"] != "Cache") {
+    if (node.attributes.property["Data Mode"] == "Cache") {
       menu.add([
+        {
+          xtype: 'menuseparator'
+        },
         {
           text: 'Refresh Cache',
           handler: this.onRefreshCache,
