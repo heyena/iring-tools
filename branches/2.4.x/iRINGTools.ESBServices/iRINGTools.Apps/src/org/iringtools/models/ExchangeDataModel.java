@@ -32,6 +32,7 @@ import org.iringtools.dxfr.manifest.Class;
 import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.ClassTemplatesList;
 import org.iringtools.dxfr.manifest.Graph;
+import org.iringtools.dxfr.manifest.Graphs;
 import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.manifest.Role;
 import org.iringtools.dxfr.manifest.Template;
@@ -1190,7 +1191,6 @@ public class ExchangeDataModel extends DataModel
   {
     return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);
   }
-
   // TODO: complete implementation
   // public Grid getRelatedDtoGrid(String serviceUri, String scope, String xId, String dtoIdentifier, String classId,
   // String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
@@ -1480,16 +1480,29 @@ public class ExchangeDataModel extends DataModel
     return dprovider.getCommodityInfo(com, scope);
   }
 
-  public Result testUri(String Uri) throws IOException
+  public Result testUri(String Uri, String graphName) throws IOException
   {
     Result result = new Result();
+    Manifest manifest = null;
     try
     {
       HttpClient httpClient = new HttpClient(Uri);
       httpClient.setAsync(false);
-      httpClient.get(Manifest.class);
-      result.setSuccess(true);
-      result.setMessage("Connected successfully!");
+      manifest = httpClient.get(Manifest.class);
+      Graphs graph = manifest.getGraphs();
+      for(int i = 0; i < graph.getItems().size(); i++)
+      {
+    	  String name = graph.getItems().get(i).getName();
+    	  if(graphName.equalsIgnoreCase(name))
+    	  {
+    		  result.setSuccess(true);
+    	      result.setMessage("Connected successfully!");
+    	      return result;
+    	  }    	 
+      }
+      
+      result.setSuccess(false);
+      result.setMessage("Graph name doesn't exist in manifest");
     }
     catch (HttpClientException e)
     {
