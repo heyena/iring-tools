@@ -1,6 +1,7 @@
 
 package org.iringtools.library;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -38,8 +39,11 @@ import javax.xml.bind.annotation.XmlType;
     "responseText"
 })
 @XmlRootElement(name = "requestStatus")
-public class RequestStatus {
+public class RequestStatus
+    implements Serializable
+{
 
+    private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected State state;
     protected int percentComplete;
