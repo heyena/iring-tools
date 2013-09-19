@@ -837,11 +837,22 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses) {
 
 	var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
 	delete rowData['&nbsp;']; // remove info field
-
+	var colModelConfig = dtoGrid.selModel.grid.colModel.config;
 	var parsedRowData = {};
+	
 	for ( var colData in rowData)
-		parsedRowData[colData] = removeHTMLTag(rowData[colData]);
-
+	{
+		var propertyName = colData;
+		//replace dataIndex with column headeR
+		var len = colModelConfig.length;
+		for (var i=0;i<len;i++)	{
+			if (colModelConfig[i].dataIndex === colData){
+				propertyName = colModelConfig[i].header;
+				break;
+			}
+		}
+		parsedRowData[propertyName] = removeHTMLTag(rowData[colData]);
+	}
 	var propertyGrid = new Ext.grid.PropertyGrid(
 			{
 				region : 'center',
