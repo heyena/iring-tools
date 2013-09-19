@@ -447,36 +447,16 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     var scope = node.parentNode.parentNode.text;
     var application = node.parentNode.text
 
-    return [
-    {
+    return [{
       text: 'New GraphMap',
       handler: this.onNewGraphMap,
       icon: 'Content/img/16x16/document-new.png',
       scope: this
-    },
-    {
-      xtype: 'hrefitem',
-      href: '/mapping/export/' + scope + '/' + application,
-      hrefTarget: '_blank',
-      html: 'Export Graphs',
-      icon: 'Content/img/16x16/preferences-system.png',
-      scope: this
-    }
-    ]
+    }]
   },
 
   buildGraphMenu: function () {
-    return [
-         {
-           text: 'Refresh Facade',
-           handler: this.onRefreshFacade,
-           icon: 'Content/img/table_refresh.png',
-           scope: this
-         },
-         {
-           xtype: 'menuseparator'
-         },
-     {
+    return [{
        text: 'Edit GraphMap',
        handler: this.onEditGraphMap,
        icon: 'Content/img/16x16/document-properties.png',

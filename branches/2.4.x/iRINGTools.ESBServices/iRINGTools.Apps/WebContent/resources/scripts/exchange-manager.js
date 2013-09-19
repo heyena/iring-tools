@@ -1319,7 +1319,7 @@ function deleteConfig() {
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
-		title : 'Delete Exchange Definition',
+		title : 'Delete Exchange',
 		msg : '<textarea ' + style + ' readonly="yes">'
 				+ 'Are you sure to delete ' + '"' + exchangeConfigName + '"'
 				+ ' exchange?' + '</textarea>',
@@ -1346,7 +1346,7 @@ function deleteConfig() {
 					failure : function(response, request) {
 						contentPanel.getEl().unmask();
 						Ext.Msg.show({
-							title : 'Delete Exchange Definition failed ',
+							title : 'Delete Exchange failed ',
 							msg : '<textarea ' + style + ' readonly="yes">'
 									+ 'Error: ' + response.reponseText
 									+ '</textarea>',
@@ -1375,7 +1375,7 @@ function buildNewExchangeMenu() {
 			var view = Ext.getCmp('newExchangeConfigWin');
 			view.show();
 		},
-		text : 'New Exchange Definition'
+		text : 'New Exchange'
 	}, {
 		xtype : 'menuitem',
 		handler : function(item, event) {
@@ -1627,7 +1627,7 @@ function newExchangeConfig() {
 
 	var newExchangeConfigWin = new Ext.Window({
 		id : 'newExchangeConfigWin',
-		title : 'New Exchange Definition',
+		title : 'New Exchange',
 		width : 540,
 		height : 516,
 		modal : true,
@@ -2396,14 +2396,14 @@ function buildCommoditySubMenu() {
 					newExchangeConfig();
 					editExchangeConfig();
 				},
-				text : 'Edit Exchange Definition'
+				text : 'Edit Exchange'
 			},
 			{
 				xtype : 'menuitem',
 				handler : function() {
 					deleteConfig();
 				},
-				text : 'Delete Exchange Definition'
+				text : 'Delete Exchange'
 			},
 			{
 				xtype : 'menuitem',
@@ -2424,26 +2424,13 @@ function buildCommoditySubMenu() {
 					editDataFilter();
 				},
 				text : 'Configure Filter'
-			}, {
-				xtype: 'menuitem',
-				handler : function() {
-					ShowExchangeHistory();
-				},
-          //    icon: 'resources/images/16x16/file-table.png',
-                text: 'Show Summary'
 			},{
 				xtype : 'menuitem',
 				handler : function() {
 					ConfigureManifest();
 				},
-				text : 'Configure Manifest'
+				text : 'Modify Exchange'
 			} ];
-}
-
-function ShowExchangeHistory()
-{
-	
-
 }
 
 function ConfigureManifest() {
@@ -2740,8 +2727,7 @@ function editExchangeConfig() {
 	var commConfigName = node.text;
 
 	var view = Ext.getCmp('newExchangeConfigWin');
-	view.setTitle("Edit Exchange Definition");
-	
+	view.setTitle("Edit Exchange");
 
 	Ext.Ajax.request({
 		url : 'getExchange',
