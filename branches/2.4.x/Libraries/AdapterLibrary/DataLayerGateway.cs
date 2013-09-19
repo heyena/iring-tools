@@ -1122,7 +1122,7 @@ namespace org.iringtools.adapter
             response.Append(updateResponse);
           }
 
-          if (hasCache)
+          if (hasCache && _settings["DataMode"] == DataMode.Cache.ToString())
           {
             if (response.Level == StatusLevel.Success)
             {

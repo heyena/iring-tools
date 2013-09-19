@@ -165,10 +165,10 @@ namespace org.iringtools.web.controllers
                 {
                   dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
 
-                  if (application.DataMode == DataMode.Cache)
-                  {
-                    dataObjectsNode.property.Add("Last Cache Update", application.CacheTimestamp.ToString());
-                  }
+                  //if (application.DataMode == DataMode.Cache)
+                  //{
+                  //  dataObjectsNode.property.Add("Last Cache Update", application.CacheTimestamp.ToString());
+                  //}
                 }
               }
 

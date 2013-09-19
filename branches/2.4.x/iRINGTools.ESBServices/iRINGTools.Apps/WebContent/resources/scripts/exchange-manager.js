@@ -2433,7 +2433,7 @@ function buildCommoditySubMenu() {
 					view.show();
 					editDataFilter();
 				},
-				text : 'Configure Filter',
+				text : 'Configure Exchange Filter',
 				icon : 'resources/images/16x16/cog_edit.png'
 			},{
 				xtype : 'menuitem',
