@@ -819,14 +819,13 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses) {
 	delete rowData['&nbsp;']; // remove info field
 	var colModelConfig = dtoGrid.selModel.grid.colModel.config;
 	var parsedRowData = {};
-	
-	for ( var colData in rowData)
-	{
+
+	for ( var colData in rowData) {
 		var propertyName = colData;
-		//replace dataIndex with column headeR
+		// replace dataIndex with column headeR
 		var len = colModelConfig.length;
-		for (var i=0;i<len;i++)	{
-			if (colModelConfig[i].dataIndex === colData){
+		for ( var i = 0; i < len; i++) {
+			if (colModelConfig[i].dataIndex === colData) {
 				propertyName = colModelConfig[i].header;
 				break;
 			}
@@ -958,96 +957,96 @@ function getFilters() {
 }
 
 function submitExchange(userResponse) {
-    var exchange = this[0];
-    var scope = this[1];
-    var xid = this[2];
-    var reviewed = this[3];
-    var exchtab = Ext.getCmp('content-pane').getItem('tab-' + exchange);
+	var exchange = this[0];
+	var scope = this[1];
+	var xid = this[2];
+	var reviewed = this[3];
+	var exchtab = Ext.getCmp('content-pane').getItem('tab-' + exchange);
 
-    var getProgressBoo = true;
-    var runner = new Ext.util.TaskRunner();
-    var task = {
-        run: function () {
-            if (getProgressBoo) {
-                Ext.Ajax.request({
-                    url: 'exchangeRequestStatus?scope=' + scope + '&xid=' + xid,
-                    timeout: 5000,
-                    method: 'GET',
-                    success: function (response, options) {
-                        var obj = Ext.decode(response.responseText);
-                        var percentComplete = obj.percentComplete;
-                        var message = obj.message;
-                        Ext.MessageBox.updateProgress(percentComplete / 100, percentComplete + '% ' + message);
-                        if (obj.state === 'COMPLETED' || obj.state === 'ERROR') {
-                            getProgressBoo = false;
-                            Ext.MessageBox.hide();
-                        }
-                    }
-                });
-            } else {
-                // stop the TaskRunner when the 'getProgressBoo' is false
-                runner.stop(task);
-            }
-        },
-        interval: 1000 // monitor the progress every 1000 milliseconds
-    };
-
-	
+	var getProgressBoo = true;
+	var runner = new Ext.util.TaskRunner();
+	var task = {
+		run : function() {
+			if (getProgressBoo) {
+				Ext.Ajax
+						.request({
+							url : 'exchangeRequestStatus?scope=' + scope
+									+ '&xid=' + xid,
+							timeout : 5000,
+							method : 'GET',
+							success : function(response, options) {
+								var obj = Ext.decode(response.responseText);
+								var percentComplete = obj.percentComplete;
+								var message = obj.message;
+								Ext.MessageBox.updateProgress(
+										percentComplete / 100, percentComplete
+												+ '% ' + message);
+								if (obj.state === 'COMPLETED'
+										|| obj.state === 'ERROR') {
+									getProgressBoo = false;
+									Ext.MessageBox.hide();
+								}
+							}
+						});
+			} else {
+				// stop the TaskRunner when the 'getProgressBoo' is false
+				runner.stop(task);
+			}
+		},
+		interval : 1000
+	// monitor the progress every 1000 milliseconds
+	};
 
 	if (userResponse == 'ok') {
-	    if (exchtab) {
-	        Ext.MessageBox.show({
-	            title: 'Exchange Status',
-	            msg: 'Processing items...',
-	            progressText: 'Initializing...',
-	            width: 300,
-	            progress: true,
-	            closable: false
-	        });
+		if (exchtab) {
+			Ext.MessageBox.show({
+				title : 'Exchange Status',
+				msg : 'Processing items...',
+				progressText : 'Initializing...',
+				width : 300,
+				progress : true,
+				closable : false
+			});
 		}
 
 		Ext.Ajax.request({
-		    url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed='
+			url : 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed='
 					+ reviewed,
-		    timeout: 86400000, // 24 hours
-		    success: function (response, request) {
-		        if (exchtab) {
-		            exchtab.getEl().unmask();
-		        }
+			timeout : 86400000, // 24 hours
+			success : function(response, request) {
+				if (exchtab) {
+					exchtab.getEl().unmask();
+				}
 
-		        var responseText = Ext.decode(response.responseText);
-		        var message = 'Data exchange [' + exchange + ']: '
+				var responseText = Ext.decode(response.responseText);
+				var message = 'Data exchange [' + exchange + ']: '
 						+ responseText;
-		        /*
-		        if (message.length < 300)
-		        showDialog(460, 125, 'Exchange Result', message,
-		        Ext.Msg.OK, null);
-		        else
-		        showDialog(660, 300, 'Exchange Result', message,
-		        Ext.Msg.OK, null);
-		        */
-		        // start the TaskRunner
-		      
-		        runner.start(task);
-		    },
-		    failure: function (response, request) {
-		        // ignore timeout error from proxy server
-		        if (response.responseText.indexOf('Error Code 1460') != -1) {
-		            if (exchtab) {
-		                exchtab.getEl().unmask();
-		            }
-		            getProgressBoo = false;
-		            var title = 'Exchange Error (' + response.status + ')';
-		            var message = 'Error while exchanging [' + exchange + '].';
+				/*
+				 * if (message.length < 300) showDialog(460, 125, 'Exchange
+				 * Result', message, Ext.Msg.OK, null); else showDialog(660,
+				 * 300, 'Exchange Result', message, Ext.Msg.OK, null);
+				 */
+				// start the TaskRunner
+				runner.start(task);
+			},
+			failure : function(response, request) {
+				// ignore timeout error from proxy server
+				if (response.responseText.indexOf('Error Code 1460') != -1) {
+					if (exchtab) {
+						exchtab.getEl().unmask();
+					}
+					getProgressBoo = false;
+					var title = 'Exchange Error (' + response.status + ')';
+					var message = 'Error while exchanging [' + exchange + '].';
 
-		            var responseText = Ext.decode(response.responseText);
+					var responseText = Ext.decode(response.responseText);
 
-		            if (responseText)
-		                message += responseText;
+					if (responseText)
+						message += responseText;
 
-		            showDialog(660, 300, title, message, Ext.Msg.OK, null);
-		        }
-		    }
+					showDialog(660, 300, title, message, Ext.Msg.OK, null);
+				}
+			}
 		});
 	}
 }
@@ -1108,8 +1107,55 @@ function onTreeItemContextMenu(node, e) {
 					applicationMenu.showAt([ x, y ]);
 					e.stopEvent();
 				} else if ((obj.parentNode.parentNode.text === 'Application Data')) {
-					graphSubMenu.showAt([ x, y ]);
-					e.stopEvent();
+
+					AppName = obj.parentNode.attributes.properties['Internal Name'];
+					context = obj.parentNode.attributes.properties['Context'];
+					Uri = obj.parentNode.attributes.properties['Base URI'];
+
+					Ext.Ajax
+							.request({
+								url : 'testAppMode?' + '&scope =' + context
+										+ '&name =' + AppName + '&sourceUri ='
+										+ Uri,
+								method : 'POST',
+								timeout : 120000,
+								success : function(response, request) {
+									var result = Ext
+											.decode(response.responseText);
+
+									if (result === 'cache') {
+										graphSubMenu.items.items[2]
+												.setDisabled(false);
+										graphSubMenu.items.items[4]
+												.setDisabled(false);
+										graphSubMenu.items.items[3]
+												.setDisabled(false);
+										graphSubMenu.showAt([ x, y ]);
+										e.stopEvent();
+									} else {
+										graphSubMenu.items.items[2]
+												.setDisabled(true);
+										graphSubMenu.items.items[4]
+												.setDisabled(true);
+										graphSubMenu.items.items[3]
+												.setDisabled(true);
+										graphSubMenu.showAt([ x, y ]);
+										e.stopEvent();
+									}
+								},
+								failure : function(response, request) {
+									Ext.Msg
+											.show({
+												title : 'Result ',
+												msg : '<textarea '
+														+ style
+														+ ' readonly="yes">'
+														+ "failed to connect to the specified Url"
+														+ '</textarea>',
+												buttons : Ext.MessageBox.OK
+											});
+								}
+							});
 
 				} else if ((obj.text === 'Data Exchanges')) {
 					newCommoditymenu.showAt([ x, y ]);
@@ -1134,7 +1180,7 @@ function buildEditDeleteSubMenu() {
 		},
 		text : 'Edit Scope',
 		icon : 'resources/images/16x16/edit.png'
-		
+
 	}, {
 		xtype : 'menuitem',
 		handler : function(node, event) {
@@ -1362,11 +1408,11 @@ function buildNewExchangeMenu() {
 			Ext.getCmp('sourceScopeCombolist').setDisabled(true);
 			Ext.getCmp('sourceAppCombolist').setDisabled(true);
 			Ext.getCmp('graphsourceName').setDisabled(true);
-			
+
 			Ext.getCmp('targetScopeCombolist').setDisabled(true);
 			Ext.getCmp('targetAppCombolist').setDisabled(true);
 			Ext.getCmp('targetGraph').setDisabled(true);
-			
+
 			var view = Ext.getCmp('newExchangeConfigWin');
 			view.show();
 		},
@@ -1391,7 +1437,7 @@ function buildNewExchangeMenu() {
 }
 
 function newExchangeConfig() {
-	
+
 	var ScopeNameStore = null;
 	var AppNameStore = null;
 	var newExchConfig = new Ext.FormPanel(
@@ -1436,26 +1482,50 @@ function newExchangeConfig() {
 										vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
 										listeners : {
 											specialkey : function(f, e) {
-												if((e.getKey() == e.TAB) || (e.getKey() == e.ENTER)) {
+												if ((e.getKey() == e.TAB)
+														|| (e.getKey() == e.ENTER)) {
 													testUriAndGetScopeName("SourceExchange");
 
 												}
 											},
-											 render: function(c) {
-												 c.getEl().on('keyup', function() {
-													 Ext.getCmp('sourceScopeCombolist').clearValue();						
-													 Ext.getCmp('sourceScopeCombolist').setDisabled(true);
-													 Ext.getCmp('sourceAppCombolist').clearValue();							
-													 Ext.getCmp('sourceAppCombolist').setDisabled(true);
-													 Ext.getCmp('graphsourceName').setDisabled(true);
-												      }, c);
+											render : function(c) {
+												c
+														.getEl()
+														.on(
+																'keyup',
+																function() {
+																	Ext
+																			.getCmp(
+																					'sourceScopeCombolist')
+																			.clearValue();
+																	Ext
+																			.getCmp(
+																					'sourceScopeCombolist')
+																			.setDisabled(
+																					true);
+																	Ext
+																			.getCmp(
+																					'sourceAppCombolist')
+																			.clearValue();
+																	Ext
+																			.getCmp(
+																					'sourceAppCombolist')
+																			.setDisabled(
+																					true);
+																	Ext
+																			.getCmp(
+																					'graphsourceName')
+																			.setDisabled(
+																					true);
+																}, c);
 											}
 										}
-									}, {
+									},
+									{
 										xtype : 'combo',
 										fieldLabel : 'Context',
 										name : 'sourceScopeName',
-										id: 'sourceScopeCombolist',
+										id : 'sourceScopeCombolist',
 										allowBlank : false,
 										store : ScopeNameStore,
 										valueField : 'value',
@@ -1466,21 +1536,26 @@ function newExchangeConfig() {
 										listeners : {
 											scope : this,
 											select : function() {
-							//		Ext.getCmp('sourceAppCombolist').clearValue();
-												getAppNames("SourceExchange");		
+												// Ext.getCmp('sourceAppCombolist').clearValue();
+												getAppNames("SourceExchange");
 											},
-											change:function(id,newvalue, oldvalue)
-											{
-												 Ext.getCmp('sourceAppCombolist').clearValue();
-												 //getAppNames("app");
-												Ext.getCmp('graphsourceName').setValue("");
+											change : function(id, newvalue,
+													oldvalue) {
+												Ext
+														.getCmp(
+																'sourceAppCombolist')
+														.clearValue();
+												// getAppNames("app");
+												Ext.getCmp('graphsourceName')
+														.setValue("");
 											}
 										}
-									}, {
+									},
+									{
 										xtype : 'combo',
 										fieldLabel : 'Application',
 										name : 'sourceAppName',
-										id: 'sourceAppCombolist',
+										id : 'sourceAppCombolist',
 										store : AppNameStore,
 										valueField : 'value',
 										displayField : 'name',
@@ -1490,16 +1565,22 @@ function newExchangeConfig() {
 										triggerAction : 'all',
 										listeners : {
 											scope : this,
-											select : function() {									
-												var appName = Ext.getCmp('sourceAppCombolist').getValue();
-												var obj = Ext.getCmp('newExchConfig');
+											select : function() {
+												var appName = Ext.getCmp(
+														'sourceAppCombolist')
+														.getValue();
+												var obj = Ext
+														.getCmp('newExchConfig');
 												var form = obj.getForm();
-												form.findField('sourceGraphName').setDisabled(false);
-											}}
+												form.findField(
+														'sourceGraphName')
+														.setDisabled(false);
+											}
+										}
 									}, {
 										fieldLabel : 'Graph',
 										name : 'sourceGraphName',
-										id:'graphsourceName'
+										id : 'graphsourceName'
 									} ],
 							buttons : [ {
 								text : 'Test',
@@ -1507,7 +1588,8 @@ function newExchangeConfig() {
 									SourceUri();
 								}
 							} ]
-						}, {
+						},
+						{
 							xtype : 'fieldset',
 							anchor : '100%',
 							title : 'Target Config',
@@ -1516,80 +1598,116 @@ function newExchangeConfig() {
 								allowBlank : false
 							},
 							defaultType : 'textfield',
-							items : [ {
-								xtype : 'textfield',
-								fieldLabel : 'Base URI',
-								allowBlank : false,
-								name : 'targetUri',
-								regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
-								regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
-								vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
-								listeners : {
-									specialkey : function(f, e) {
-										if (e.getKey() == e.TAB) {
-											testUriAndGetScopeName("TargetExchange");
+							items : [
+									{
+										xtype : 'textfield',
+										fieldLabel : 'Base URI',
+										allowBlank : false,
+										name : 'targetUri',
+										regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
+										regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+										vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+										listeners : {
+											specialkey : function(f, e) {
+												if (e.getKey() == e.TAB) {
+													testUriAndGetScopeName("TargetExchange");
 
+												}
+											},
+											render : function(c) {
+												c
+														.getEl()
+														.on(
+																'keyup',
+																function() {
+																	Ext
+																			.getCmp(
+																					'targetScopeCombolist')
+																			.clearValue();
+																	Ext
+																			.getCmp(
+																					'targetScopeCombolist')
+																			.setDisabled(
+																					true);
+																	Ext
+																			.getCmp(
+																					'targetAppCombolist')
+																			.clearValue();
+																	Ext
+																			.getCmp(
+																					'targetAppCombolist')
+																			.setDisabled(
+																					true);
+																	Ext
+																			.getCmp(
+																					'targetGraph')
+																			.setDisabled(
+																					true);
+																}, c);
+											}
 										}
-									},render: function(c) {
-										 c.getEl().on('keyup', function() {
-											 Ext.getCmp('targetScopeCombolist').clearValue();						
-											 Ext.getCmp('targetScopeCombolist').setDisabled(true);
-											 Ext.getCmp('targetAppCombolist').clearValue();							
-											 Ext.getCmp('targetAppCombolist').setDisabled(true);
-											 Ext.getCmp('targetGraph').setDisabled(true);
-										      }, c);
-									}
-								}
-							}, {
-								    xtype : 'combo',
-									fieldLabel : 'Context',
-									name : 'targetScopeName',
-									id: 'targetScopeCombolist',
-									allowBlank : false,
-									store : ScopeNameStore,
-									valueField : 'value',
-									displayField : 'name',
-									forceSelection : true,
-									typeAhead : true,
-									triggerAction : 'all',
-									listeners : {
-										scope : this,
-										select : function() {
-								//	Ext.getCmp('targetAppCombolist').clearValue();
-											getAppNames("TargetExchange");		
-										},
-										change:function(id,newvalue, oldvalue)
-										{
-											 Ext.getCmp('targetAppCombolist').clearValue();
-											 //getAppNames("app");
-											Ext.getCmp('targetGraph').setValue("");
+									},
+									{
+										xtype : 'combo',
+										fieldLabel : 'Context',
+										name : 'targetScopeName',
+										id : 'targetScopeCombolist',
+										allowBlank : false,
+										store : ScopeNameStore,
+										valueField : 'value',
+										displayField : 'name',
+										forceSelection : true,
+										typeAhead : true,
+										triggerAction : 'all',
+										listeners : {
+											scope : this,
+											select : function() {
+												// Ext.getCmp('targetAppCombolist').clearValue();
+												getAppNames("TargetExchange");
+											},
+											change : function(id, newvalue,
+													oldvalue) {
+												Ext
+														.getCmp(
+																'targetAppCombolist')
+														.clearValue();
+												// getAppNames("app");
+												Ext.getCmp('targetGraph')
+														.setValue("");
+											}
 										}
-									}
-								},  {
-								    xtype : 'combo',
-									fieldLabel : 'Application',
-									name : 'targetAppName',
-									id: 'targetAppCombolist',
-									store : AppNameStore,
-									valueField : 'value',
-									displayField : 'name',
-									forceSelection : true,
-									typeAhead : true,
-									allowBlank : false,
-									triggerAction : 'all',
-									listeners : {
-										scope : this,
-										select : function() {									
-											var appName = Ext.getCmp('sourceAppCombolist').getValue();
-											var obj = Ext.getCmp('newExchConfig');
-											var form = obj.getForm();
-											form.findField('targetGraphName').setDisabled(false);
-										}}
-								},  {
-								fieldLabel : 'Graph',
-								name : 'targetGraphName',
-								id : 'targetGraph'
-							} ],
+									},
+									{
+										xtype : 'combo',
+										fieldLabel : 'Application',
+										name : 'targetAppName',
+										id : 'targetAppCombolist',
+										store : AppNameStore,
+										valueField : 'value',
+										displayField : 'name',
+										forceSelection : true,
+										typeAhead : true,
+										allowBlank : false,
+										triggerAction : 'all',
+										listeners : {
+											scope : this,
+											select : function() {
+												var appName = Ext.getCmp(
+														'sourceAppCombolist')
+														.getValue();
+												var obj = Ext
+														.getCmp('newExchConfig');
+												var form = obj.getForm();
+												form.findField(
+														'targetGraphName')
+														.setDisabled(false);
+											}
+										}
+									}, {
+										fieldLabel : 'Graph',
+										name : 'targetGraphName',
+										id : 'targetGraph'
+									} ],
 							buttons : [ {
 								text : 'Test',
 								handler : function(button, event) {
@@ -1613,7 +1731,7 @@ function newExchangeConfig() {
 					text : 'Save',
 					handler : function(button, event) {
 						saveExchangeConfig();
-				//newExchangeConfigWin.close();
+						// newExchangeConfigWin.close();
 					}
 				}, {
 					text : 'Cancel',
@@ -1646,7 +1764,8 @@ function SourceUri() {
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
-		url : 'SourcetestUri?' + '&sourceUri =' + sourceUri + '&graphName =' + graph, 
+		url : 'SourcetestUri?' + '&sourceUri =' + sourceUri + '&graphName ='
+				+ graph,
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
@@ -1706,7 +1825,8 @@ function TargetUri() {
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
-		url : 'testTargetUrl?' + '&targetUri =' + targetUri+ '&graphName =' + graph,
+		url : 'testTargetUrl?' + '&targetUri =' + targetUri + '&graphName ='
+				+ graph,
 		method : 'POST',
 		timeout : 120000,
 		success : function(response, request) {
@@ -1742,9 +1862,8 @@ function saveExchangeConfig() {
 	var commodity = node.text;
 	var xid = node.attributes.properties['Id'];
 	var oldscope = obj.findField('oldScope').getValue();
-	
 
-	//Validating
+	// Validating
 	var form1 = obj;
 	var targetUri = form1.findField('targetUri').getValue();
 	var targetScopeName = form1.findField('targetScopeName').getValue();
@@ -1756,62 +1875,67 @@ function saveExchangeConfig() {
 	var sourceGraphName = form1.findField('sourceGraphName').getValue();
 	var name = form1.findField('name').getValue();
 
-	if(((targetAppName !== "") && (targetAppName !== null)) && ((targetScopeName !== "") && (targetScopeName !== null)) &&  ((targetUri !== "") && (targetUri !== null)) && ((targetGraphName !== "") && (targetGraphName !== null)) &&((sourceAppName !== "") && (sourceAppName !== null)) && ((sourceScopeName !== "") && (sourceScopeName !== null)) &&  ((sourceUri !== "") && (sourceUri !== null)) && ((sourceGraphName !== "") && (sourceGraphName !== null)) && ((name !== "") && (name !== null)))                                             
-	{
+	if (((targetAppName !== "") && (targetAppName !== null))
+			&& ((targetScopeName !== "") && (targetScopeName !== null))
+			&& ((targetUri !== "") && (targetUri !== null))
+			&& ((targetGraphName !== "") && (targetGraphName !== null))
+			&& ((sourceAppName !== "") && (sourceAppName !== null))
+			&& ((sourceScopeName !== "") && (sourceScopeName !== null))
+			&& ((sourceUri !== "") && (sourceUri !== null))
+			&& ((sourceGraphName !== "") && (sourceGraphName !== null))
+			&& ((name !== "") && (name !== null))) {
 
-	Ext.Ajax.request({
-		url : 'newExchange?' + form + '&scope =' + scope + '&commodity ='
-				+ commodity + '&xid =' + xid,
-		method : 'POST',
-		timeout : 120000,
-		success : function(response, request) {
-			refresh();
-			Ext.getCmp('newExchangeConfigWin').close();
-		},
-		failure : function(response, request) {
-			alert("save failed");
+		Ext.Ajax.request({
+			url : 'newExchange?' + form + '&scope =' + scope + '&commodity ='
+					+ commodity + '&xid =' + xid,
+			method : 'POST',
+			timeout : 120000,
+			success : function(response, request) {
+				refresh();
+				Ext.getCmp('newExchangeConfigWin').close();
+			},
+			failure : function(response, request) {
+				alert("save failed");
+			}
+		});
+	} else {
+		if ((targetAppName === "")) {
+			form1.findField('targetAppName').markInvalid(
+					'App Name cannot be Empty');
 		}
-	});
-	}
-	else{    
-	    if((targetAppName === ""))
-	    {
-	        form1.findField('targetAppName').markInvalid('App Name cannot be Empty');   
-	    }
 
-	    if((targetScopeName === ""))
-	    {
-	        form1.findField('targetScopeName').markInvalid('Scope Name cannot be Empty');   
-	    }
-	    if((targetUri === ""))
-	    {
-	        form1.findField('targetUri').markInvalid('Scope Uri cannot be Empty');   
-	    }
-	    if((targetGraphName === ""))
-	    {
-	        form1.findField('targetGraphName').markInvalid('Graph Name cannot be Empty');   
-	    }
-	    if((sourceAppName === ""))
-	    {
-	        form1.findField('sourceAppName').markInvalid('App Name cannot be Empty');   
-	    }
+		if ((targetScopeName === "")) {
+			form1.findField('targetScopeName').markInvalid(
+					'Scope Name cannot be Empty');
+		}
+		if ((targetUri === "")) {
+			form1.findField('targetUri').markInvalid(
+					'Scope Uri cannot be Empty');
+		}
+		if ((targetGraphName === "")) {
+			form1.findField('targetGraphName').markInvalid(
+					'Graph Name cannot be Empty');
+		}
+		if ((sourceAppName === "")) {
+			form1.findField('sourceAppName').markInvalid(
+					'App Name cannot be Empty');
+		}
 
-	    if((sourceScopeName === ""))
-	    {
-	        form1.findField('sourceScopeName').markInvalid('Scope Name cannot be Empty');   
-	    }
-	    if((sourceUri === ""))
-	    {
-	        form1.findField('sourceUri').markInvalid('Scope Uri cannot be Empty');   
-	    }
-	    if((sourceGraphName === ""))
-	    {
-	        form1.findField('sourceGraphName').markInvalid('Graph Name cannot be Empty');   
-	    }
-	    if(name === "")
-	    {
-	        form1.findField('name').markInvalid('Name cannot be Empty');   
-	    }
+		if ((sourceScopeName === "")) {
+			form1.findField('sourceScopeName').markInvalid(
+					'Scope Name cannot be Empty');
+		}
+		if ((sourceUri === "")) {
+			form1.findField('sourceUri').markInvalid(
+					'Scope Uri cannot be Empty');
+		}
+		if ((sourceGraphName === "")) {
+			form1.findField('sourceGraphName').markInvalid(
+					'Graph Name cannot be Empty');
+		}
+		if (name === "") {
+			form1.findField('name').markInvalid('Name cannot be Empty');
+		}
 	}
 }
 
@@ -1827,7 +1951,7 @@ function buildNewScopeMenu() {
 			view.show();
 		},
 		text : 'New Scope',
-		icon: 'resources/images/16x16/document-new.png'
+		icon : 'resources/images/16x16/document-new.png'
 	};
 }
 
@@ -2415,7 +2539,7 @@ function buildCommoditySubMenu() {
 				},
 				text : 'Delete Exchange',
 				icon : 'resources/images/16x16/delete.png'
-			},			 
+			},
 			{
 				xtype : 'menuitem',
 				handler : function() {
@@ -2436,132 +2560,122 @@ function buildCommoditySubMenu() {
 				},
 				text : 'Configure Filter',
 				icon : 'resources/images/16x16/configure.png'
-			},{
+			}, {
 				xtype : 'menuitem',
 				handler : function() {
 					ConfigureManifest();
 				},
 				text : 'Modify Exchange',
 				icon : 'resources/images/16x16/modify.png'
-			} ,{
-				xtype: 'menuitem',
+			}, {
+				xtype : 'menuitem',
 				handler : function() {
 					ShowExchangeHistory();
 				},
-              icon:  'resources/images/16x16/history.png',
-                text: 'Show History'
-			}
-			];
+				icon : 'resources/images/16x16/history.png',
+				text : 'Show History'
+			} ];
 }
-function ShowExchangeHistory()
-{
+function ShowExchangeHistory() {
 	var me = this;
-	var contentPanel =  Ext.getCmp('content-pane');
+	var contentPanel = Ext.getCmp('content-pane');
 	var activeTab = contentPanel.getActiveTab();
-	var directoryTree  = Ext.getCmp('directory-tree');
-	var node =  directoryTree.getSelectionModel().getSelectedNode();
+	var directoryTree = Ext.getCmp('directory-tree');
+	var node = directoryTree.getSelectionModel().getSelectedNode();
 	var scope = node.parentNode.parentNode.parentNode.text;
 	var xid = node.attributes.properties.Id;
 	var xlabel = node.text;
-	
+
 	var reviewed = true;
 	var xlogsContainer;
 	var existingXlogCont;
-	if(activeTab === undefined || (activeTab === null))
-	{
+	if (activeTab === undefined || (activeTab === null)) {
 		existingXlogCont = contentPanel.items.map['xlogpanel-'];
-	}else{
-		existingXlogCont = contentPanel.items.map['xlogpanel-'+activeTab.title];	
+	} else {
+		existingXlogCont = contentPanel.items.map['xlogpanel-'
+				+ activeTab.title];
 	}
 
-	
-	if (existingXlogCont == undefined || existingXlogCont.items.length == 0) {	
-		  var url = 'xlogs?&scope=' +scope+ '&xid='+xid +'&xlabel=' + xlabel;
-		  var store = createGridStore(contentPanel, url);
+	if (existingXlogCont == undefined || existingXlogCont.items.length == 0) {
+		var url = 'xlogs?&scope=' + scope + '&xid=' + xid + '&xlabel=' + xlabel;
+		var store = createGridStore(contentPanel, url);
 
-			store.on('load', function() {
-				/*	var gridPane = createGridPane(store, {
-					forceFit : true
-				}, true);*/
-				var colModel = new Ext.grid.DynamicColumnModel(store);
-				var selModel = new Ext.grid.RowSelectionModel({
-					singleSelect : true
-				});
-				var gridPane = new Ext.grid.GridPanel({
-					identifier : store.reader.identifier,
-					description : store.reader.description,
-					layout : 'fit',
-					minColumnWidth : 80,
-					val : null,
-					loadMask : true,
-					store : store,
-					cm : colModel,
-					selModel : selModel,
-					stripeRows : true,
-					enableColLock : false,
-				});
-				  var xloggridpanel = new Ext.Panel({
-						 split: true,
-						 layout: {
-						        type: 'fit'
-						    },
-						 id: 'XlogGridPanel',
-			            enableColumnHide: false,
-			            items: gridPane,
-						viewConfig: {
-			           enableTextSelection: true
-			       },
-					});
-				  var xlogpanel = new Ext.Panel({
-						 region: 'south',
-						    layout: {
-						        type: 'fit'
-						    },
-						    header: false,
-						    id: 'xlogpanel',
-						    items: [xloggridpanel],
-						    dockedItems: [
-						                  {
-						                      xtype: 'toolbar',
-						                      dock: 'top',
-						                      items: [
-						                          {
-						                              xtype: 'label',
-						                              height: 13,
-						                              width: 85,
-						                              text: 'Exchange Results'
-						                          },
-						                          {
-						                              xtype: 'button',
-						                              action: 'refreshHistory',
-						                              icon: 'resources/images/16x16/refresh.png',
-						                              text: '',
-						                              tooltip: 'Refresh'
-						                          }
-						                      ]
-						                  }
-						              ]
-					});
-				  xlogpanel.closable = true;
-			     //   xlogPanel.id = 'xlogpanel-'+activeTab.title;
-			        var label = '(Exchange Result)'+'('+scope +')' +xlabel;
-			        xlogpanel.setTitle(label);
-			        xlogpanel.add(xloggridpanel);
-			        var myTab = contentPanel.add(xlogpanel);
-			        contentPanel.setActiveTab(myTab);
+		store.on('load', function() {
+			/*
+			 * var gridPane = createGridPane(store, { forceFit : true }, true);
+			 */
+			var colModel = new Ext.grid.DynamicColumnModel(store);
+			var selModel = new Ext.grid.RowSelectionModel({
+				singleSelect : true
 			});
-				
-			store.load({});
-			store.on('exception',function( store, records, options ){
-				 var msg = 'No History found for this Exchange';
-				    showDialog(400, 200, 'Error', msg, Ext.Msg.OK, null);
-			},this);
-	 
-	
-	} 
-	else {
-	    existingXlogCont.show();
-	
+			var gridPane = new Ext.grid.GridPanel({
+				identifier : store.reader.identifier,
+				description : store.reader.description,
+				layout : 'fit',
+				minColumnWidth : 80,
+				val : null,
+				loadMask : true,
+				store : store,
+				cm : colModel,
+				selModel : selModel,
+				stripeRows : true,
+				enableColLock : false,
+			});
+			var xloggridpanel = new Ext.Panel({
+				split : true,
+				layout : {
+					type : 'fit'
+				},
+				id : 'XlogGridPanel',
+				enableColumnHide : false,
+				items : gridPane,
+				viewConfig : {
+					enableTextSelection : true
+				},
+			});
+			var xlogpanel = new Ext.Panel({
+				region : 'south',
+				layout : {
+					type : 'fit'
+				},
+				header : false,
+				id : 'xlogpanel',
+				items : [ xloggridpanel ],
+				dockedItems : [ {
+					xtype : 'toolbar',
+					dock : 'top',
+					items : [ {
+						xtype : 'label',
+						height : 13,
+						width : 85,
+						text : 'Exchange Results'
+					}, {
+						xtype : 'button',
+						action : 'refreshHistory',
+						icon : 'resources/images/16x16/refresh.png',
+						text : '',
+						tooltip : 'Refresh'
+					} ]
+				} ]
+			});
+			xlogpanel.closable = true;
+			// xlogPanel.id = 'xlogpanel-'+activeTab.title;
+			var label = '(Exchange Result)' + '(' + scope + ')' + xlabel;
+			xlogpanel.setTitle(label);
+			xlogpanel.add(xloggridpanel);
+			var myTab = contentPanel.add(xlogpanel);
+			contentPanel.setActiveTab(myTab);
+		});
+
+		store.load({});
+		store.on('exception', function(store, records, options) {
+			var msg = 'No History found for this Exchange';
+			showDialog(400, 200, 'Error', msg, Ext.Msg.OK, null);
+		}, this);
+
+	} else {
+		existingXlogCont.show();
+
 	}
 
 }
@@ -2878,8 +2992,8 @@ function editExchangeConfig() {
 			formdata.findField('name').setValue(form.name);
 			formdata.findField('description').setValue(form.description);
 			formdata.findField('sourceUri').setValue(form.sourceUri);
-			//testUriAndGetScopeName("SourceExchange");
-            ScopeNameStore = new Ext.data.ArrayStore({
+			// testUriAndGetScopeName("SourceExchange");
+			ScopeNameStore = new Ext.data.ArrayStore({
 
 				url : 'getAMScope?' + '&sourceUri =' + form.sourceUri,
 				autoDestroy : true,
@@ -2891,10 +3005,10 @@ function editExchangeConfig() {
 				} ]
 
 			});
-            Ext.getCmp('sourceScopeCombolist').bindStore(ScopeNameStore);
+			Ext.getCmp('sourceScopeCombolist').bindStore(ScopeNameStore);
 			Ext.getCmp('sourceScopeCombolist').setValue(form.sourceScope);
-		//	getAppNames("SourceExchange");
-        AppNameStore = new Ext.data.ArrayStore({
+			// getAppNames("SourceExchange");
+			AppNameStore = new Ext.data.ArrayStore({
 
 				url : 'getAppNames?' + '&appScope =' + form.sourceScope
 						+ '&sourceUri =' + form.sourceUri,
@@ -2910,10 +3024,10 @@ function editExchangeConfig() {
 			Ext.getCmp('sourceAppCombolist').bindStore(AppNameStore);
 			Ext.getCmp('sourceAppCombolist').setValue(form.sourceApp);
 			formdata.findField('sourceGraphName').setValue(form.sourceGraph);
-			
+
 			formdata.findField('targetUri').setValue(form.targetUri);
-		//	testUriAndGetScopeName("TargetExchange");
-         ScopeNameStore = new Ext.data.ArrayStore({
+			// testUriAndGetScopeName("TargetExchange");
+			ScopeNameStore = new Ext.data.ArrayStore({
 
 				url : 'getAMScope?' + '&sourceUri =' + form.targetUri,
 				autoDestroy : true,
@@ -2925,10 +3039,10 @@ function editExchangeConfig() {
 				} ]
 
 			});
-            Ext.getCmp('targetScopeCombolist').bindStore(ScopeNameStore);
+			Ext.getCmp('targetScopeCombolist').bindStore(ScopeNameStore);
 			Ext.getCmp('targetScopeCombolist').setValue(form.targetScope);
-		//	getAppNames("TargetExchange");
-         AppNameStore = new Ext.data.ArrayStore({
+			// getAppNames("TargetExchange");
+			AppNameStore = new Ext.data.ArrayStore({
 
 				url : 'getAppNames?' + '&appScope =' + form.targetScope
 						+ '&sourceUri =' + form.targetUri,
@@ -3183,51 +3297,52 @@ function saveComm(node, button, event) {
 	var scope = node.parentNode.text;
 	var commodity = obj.findField('commName').getValue();
 
-	Ext.Ajax.request({
-		url : 'newComm?' + form + '&scope=' + scope,
-		// method : 'POST',
-		timeout : 120000,
-		success : function(response, request) {
-			var result = Ext.decode(response.responseText);
-			if (result === 'ERROR') {
-				var message = 'Commodity name ' + '"' + commodity + '"'
-						+ ' already exists in scope ' + '"' + scope + '"' + '.';
-				+response.responseText;
-				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+	Ext.Ajax
+			.request({
+				url : 'newComm?' + form + '&scope=' + scope,
+				// method : 'POST',
+				timeout : 120000,
+				success : function(response, request) {
+					var result = Ext.decode(response.responseText);
+					if (result === 'ERROR') {
+						var message = 'Commodity name ' + '"' + commodity + '"'
+								+ ' already exists in scope ' + '"' + scope
+								+ '"' + '.';
+						+response.responseText;
+						showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 
-			}
-			refresh();
-		},
-		failure : function(response, request) {
-			alert("save failed");
-		}
-	});
+					}
+					refresh();
+				},
+				failure : function(response, request) {
+					alert("save failed");
+				}
+			});
 }
 
 function getAppNames(name) {
 	var baseUri;
 	var scopeName;
-	if(name === "app"){
+	if (name === "app") {
 		var obj = Ext.getCmp('newAppForm');
-		var form = obj.getForm();		
+		var form = obj.getForm();
 		baseUri = form.findField('baseUri').getValue();
 		scopeName = Ext.getCmp('scopeCombolist').getValue();
-	form.findField('appName').setDisabled(false);
-	}else{
+		form.findField('appName').setDisabled(false);
+	} else {
 		var obj = Ext.getCmp('newExchConfig');
 		var form = obj.getForm();
-		if(name === "SourceExchange")
-		{
-			baseUri =	form.findField('sourceUri').getValue();
+		if (name === "SourceExchange") {
+			baseUri = form.findField('sourceUri').getValue();
 			scopeName = Ext.getCmp('sourceScopeCombolist').getValue();
 			form.findField('sourceAppName').setDisabled(false);
-		
-		}else{
-			baseUri =	form.findField('targetUri').getValue();
+
+		} else {
+			baseUri = form.findField('targetUri').getValue();
 			scopeName = Ext.getCmp('targetScopeCombolist').getValue();
 			form.findField('targetAppName').setDisabled(false);
 		}
-		}
+	}
 	AppNameStore = new Ext.data.ArrayStore({
 
 		url : 'getAppNames?' + '&appScope =' + scopeName + '&sourceUri ='
@@ -3243,10 +3358,10 @@ function getAppNames(name) {
 	});
 	if (name === "app") {
 		Ext.getCmp('appCombolist').bindStore(AppNameStore);
-	} else if( name === "SourceExchange"){
+	} else if (name === "SourceExchange") {
 		Ext.getCmp('sourceAppCombolist').bindStore(AppNameStore);
 
-	}else if( name === "TargetExchange"){
+	} else if (name === "TargetExchange") {
 		Ext.getCmp('targetAppCombolist').bindStore(AppNameStore);
 	}
 
@@ -3254,25 +3369,23 @@ function getAppNames(name) {
 
 function testUriAndGetScopeName(name) {
 	var baseUri
-	if(name === "app"){
-	var obj = Ext.getCmp('newAppForm');
-	var form = obj.getForm();
-	baseUri = form.findField('baseUri').getValue();
+	if (name === "app") {
+		var obj = Ext.getCmp('newAppForm');
+		var form = obj.getForm();
+		baseUri = form.findField('baseUri').getValue();
 		form.findField('appScope').setDisabled(false);
-	}
-	else {
+	} else {
 		var obj = Ext.getCmp('newExchConfig');
 		var form = obj.getForm();
-		if(name === "SourceExchange")
-		{
-			baseUri =	form.findField('sourceUri').getValue();
+		if (name === "SourceExchange") {
+			baseUri = form.findField('sourceUri').getValue();
 			form.findField('sourceScopeName').setDisabled(false);
-		
-		}else{
-			baseUri =	form.findField('targetUri').getValue();
+
+		} else {
+			baseUri = form.findField('targetUri').getValue();
 			form.findField('targetScopeName').setDisabled(false);
 		}
-		}
+	}
 	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160
 			+ 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Ajax.request({
@@ -3283,15 +3396,14 @@ function testUriAndGetScopeName(name) {
 			var result = Ext.decode(response.responseText);
 			if (result.success === false) {
 				if (name === "app") {
-				
+
 					Ext.getCmp('scopeCombolist').setDisabled(true);
-				}  else if( name === "SourceExchange"){
-					
+				} else if (name === "SourceExchange") {
+
 					Ext.getCmp('sourceScopeCombolist').setDisabled(true);
-				}else if (name === "TargetExchange")
-					{
+				} else if (name === "TargetExchange") {
 					Ext.getCmp('targetScopeCombolist').setDisabled(true);
-					}
+				}
 				Ext.Msg.show({
 					title : 'Result ',
 					msg : '<textarea ' + style + ' readonly="yes">'
@@ -3300,9 +3412,8 @@ function testUriAndGetScopeName(name) {
 					buttons : Ext.MessageBox.OK
 				});
 			}
-			if (result.success === true) {			
-				
-				
+			if (result.success === true) {
+
 				ScopeNameStore = new Ext.data.ArrayStore({
 
 					url : 'getAMScope?' + '&sourceUri =' + baseUri,
@@ -3318,14 +3429,15 @@ function testUriAndGetScopeName(name) {
 				if (name === "app") {
 					Ext.getCmp('scopeCombolist').bindStore(ScopeNameStore);
 					Ext.getCmp('scopeCombolist').setDisabled(false);
-				} else if( name === "SourceExchange"){
-					Ext.getCmp('sourceScopeCombolist').bindStore(ScopeNameStore);
+				} else if (name === "SourceExchange") {
+					Ext.getCmp('sourceScopeCombolist')
+							.bindStore(ScopeNameStore);
 					Ext.getCmp('sourceScopeCombolist').setDisabled(false);
-				}else if (name === "TargetExchange")
-					{
-					Ext.getCmp('targetScopeCombolist').bindStore(ScopeNameStore);
+				} else if (name === "TargetExchange") {
+					Ext.getCmp('targetScopeCombolist')
+							.bindStore(ScopeNameStore);
 					Ext.getCmp('targetScopeCombolist').setDisabled(false);
-					}
+				}
 
 			}
 
@@ -3363,20 +3475,19 @@ function newApp() {
 		listeners : {
 			scope : this,
 			select : function() {
-		//Ext.getCmp('appCombolist').clearValue();
+				// Ext.getCmp('appCombolist').clearValue();
 				getAppNames("app");
-			//Ext.getCmp('dispalyField').clearValue();
-			//Ext.getCmp('AppDescription').clearValue();
-				
+				// Ext.getCmp('dispalyField').clearValue();
+				// Ext.getCmp('AppDescription').clearValue();
+
 			},
-	change:function(id,newvalue, oldvalue)
-	{
-		 Ext.getCmp('appCombolist').clearValue();
-		 //getAppNames("app");
-		Ext.getCmp('dispalyField').setValue("");
-		Ext.getCmp('AppDescription').setValue("");
-	}
-			
+			change : function(id, newvalue, oldvalue) {
+				Ext.getCmp('appCombolist').clearValue();
+				// getAppNames("app");
+				Ext.getCmp('dispalyField').setValue("");
+				Ext.getCmp('AppDescription').setValue("");
+			}
+
 		}
 	});
 
@@ -3404,20 +3515,27 @@ function newApp() {
 							vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
 							listeners : {
 								specialkey : function(f, e) {
-									if((e.getKey() == e.TAB) || (e.getKey() == e.ENTER)) {
+									if ((e.getKey() == e.TAB)
+											|| (e.getKey() == e.ENTER)) {
 										testUriAndGetScopeName("app");
 										// Ext.getCmp('scopeCombolist').bindStore(ScopeNameStore);
 									}
-									
+
 								},
-						 render: function(c) {
-							 c.getEl().on('keyup', function() {
-								 Ext.getCmp('scopeCombolist').clearValue();						
-								 Ext.getCmp('scopeCombolist').setDisabled(true);
-								 Ext.getCmp('appCombolist').clearValue();							
-								 Ext.getCmp('appCombolist').setDisabled(true);
-							      }, c);
-						}
+								render : function(c) {
+									c.getEl().on(
+											'keyup',
+											function() {
+												Ext.getCmp('scopeCombolist')
+														.clearValue();
+												Ext.getCmp('scopeCombolist')
+														.setDisabled(true);
+												Ext.getCmp('appCombolist')
+														.clearValue();
+												Ext.getCmp('appCombolist')
+														.setDisabled(true);
+											}, c);
+								}
 							}
 						},
 
@@ -3445,14 +3563,14 @@ function newApp() {
 											.getValue();
 									var obj = Ext.getCmp('newAppForm');
 									var form = obj.getForm();
-									form.findField('displayName')
-											.setDisabled(false);
+									form.findField('displayName').setDisabled(
+											false);
 									form.findField('appDesc')
 											.setDisabled(false);
 									form.findField('displayName').setValue(
 											appName);
 								}
-								 
+
 							}
 						}, {
 							xtype : 'textfield',
@@ -3463,7 +3581,7 @@ function newApp() {
 						}, {
 							xtype : 'textfield',
 							fieldLabel : 'Description',
-							id: "AppDescription",
+							id : "AppDescription",
 							name : 'appDesc',
 							allowBlank : true
 						},
@@ -3535,8 +3653,8 @@ function saveApp(node, button, event) {
 						oldScope = scope;
 					}
 					var message = 'Application name ' + '"' + application + '"'
-							+ ' already exists in scope ' + '"' + oldScope + '"'
-							+ '.';
+							+ ' already exists in scope ' + '"' + oldScope
+							+ '"' + '.';
 					+response.responseText;
 					showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 
@@ -5368,7 +5486,7 @@ Ext
 										if (dataTypeNode.attributes['text'] == 'Application Data') {
 											var graphNode = node.parentNode;
 											var scope = properties['Context'];
-											var app = graphNode.attributes.properties['Internal Name']; 
+											var app = graphNode.attributes.properties['Internal Name'];
 											var graph = node.attributes['text'];
 											var baseUri = properties['Base URI'];
 											var label = scope + '.' + app + '.'

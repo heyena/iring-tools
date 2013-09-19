@@ -728,17 +728,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-
-      String baseUri;
-      boolean checkUrl = sourceUri.contains("/dxfr");
-      if(checkUrl)
-      {
-      int len = sourceUri.length();
-      int corlen = len - 5;
-      baseUri = sourceUri.substring(0, corlen);
-      }else{
-    	baseUri = sourceUri;
-      }
+      String baseUri =  removeDxfrString();
       result = exchangeDataModel.testBaseUri(baseUri);
     }
     catch (Exception e)
@@ -765,7 +755,39 @@ public class ExchangeDataController extends BaseController
 
     return SUCCESS;
   }
+  
+  
+  public String testAppMode()
+  {
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      String baseUri =  removeDxfrString();
+      id = exchangeDataModel.testAppMode(scope, name, baseUri);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      return ERROR;
+    }
 
+    return SUCCESS;
+  }
+
+  public String removeDxfrString()
+  {   String baseUri = null;
+	  boolean checkUrl = sourceUri.contains("/dxfr");
+      if(checkUrl)
+      {
+      int len = sourceUri.length();
+      int corlen = len - 5;
+      baseUri = sourceUri.substring(0, corlen);
+      }else{
+      	baseUri = sourceUri;
+        }
+      return baseUri;
+	  
+  }
   public String testTargetUri()
   {
     try

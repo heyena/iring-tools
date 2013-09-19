@@ -267,6 +267,13 @@
       <result type="json">
         <param name="root">appNames</param>
       </result>
+       </action> 
+       
+         <!-- Get mode for App names --> 
+       <action name="testAppMode" class="org.iringtools.controllers.ExchangeDataController" method="testAppMode">
+      <result type="json">
+        <param name="root">id</param>
+      </result>
        </action>
        
         <!-- get grid columns names-->
