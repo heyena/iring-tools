@@ -26,6 +26,7 @@ public class DifferencingProvider
 
   public DataTransferIndices diff(DataTransferIndices sourceDtis, DataTransferIndices targetDtis)
   {
+    DtiComparator dtic = new DtiComparator();
     DataTransferIndices resultDtis = new DataTransferIndices();
     DataTransferIndexList resultDtiList = new DataTransferIndexList();
     resultDtis.setDataTransferIndexList(resultDtiList);
@@ -41,6 +42,7 @@ public class DifferencingProvider
       if (targetDtis != null && targetDtis.getDataTransferIndexList() != null)
       {
         List<DataTransferIndex> targetDtiItems = targetDtis.getDataTransferIndexList().getItems();
+        Collections.sort(targetDtiItems, dtic);
         DataTransferIndex previousDti = null;
         
         for (int i = 0; i < targetDtiItems.size(); i++)
@@ -74,6 +76,7 @@ public class DifferencingProvider
       if (sourceDtis != null && sourceDtis.getDataTransferIndexList() != null)
       {
         List<DataTransferIndex> sourceDtiItems = sourceDtis.getDataTransferIndexList().getItems();
+        Collections.sort(sourceDtiItems, dtic);
         DataTransferIndex previousDti = null;
         
         for (int i = 0; i < sourceDtiItems.size(); i++)
@@ -99,10 +102,9 @@ public class DifferencingProvider
   	
     List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getItems();
     List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();
-    DtiComparator DtiComparator = new DtiComparator();
-
-    Collections.sort(sourceDtiList, DtiComparator);
-    Collections.sort(targetDtiList, DtiComparator);
+    
+    Collections.sort(sourceDtiList, dtic);
+    Collections.sort(targetDtiList, dtic);
 
     /*
      * Case 3:
