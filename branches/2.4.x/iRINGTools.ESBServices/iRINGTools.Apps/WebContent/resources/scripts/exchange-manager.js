@@ -830,7 +830,8 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses) {
 				break;
 			}
 		}
-		parsedRowData[propertyName] = removeHTMLTag(rowData[colData]);
+		if(propertyName !== 'Content' && propertyName !== 'Info' && propertyName !== 'Status')
+			parsedRowData[propertyName] = removeHTMLTag(rowData[colData]);
 	}
 	var propertyGrid = new Ext.grid.PropertyGrid(
 			{
