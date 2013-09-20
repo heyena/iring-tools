@@ -75,6 +75,10 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
             select: {
               fn: me.onRelatedObjectSelect,
               scope: me
+            },
+            change: {
+              fn: me.onRelatedObjectCmbChange,
+              scope: me
             }
           }
         },
@@ -123,7 +127,13 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           fieldLabel: 'Mapping Property',
           labelWidth: 160,
           name: 'mapPropertyName',
-          queryMode: 'local'
+          queryMode: 'local',
+          listeners: {
+            select: {
+              fn: me.onMapPropertyNameCmbSelect,
+              scope: me
+            }
+          }
         },
         {
           xtype: 'relationPropertyGrid',
@@ -197,15 +207,42 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
       }
 
       var mapCombo = form.down('#mapPropertyNameCmb');
-      mapCombo.store = Ext.create('Ext.data.SimpleStore', {
+      var myStore = Ext.create('Ext.data.SimpleStore', {
         fields: ['value', 'text', 'name'],
         autoLoad: true,
         data: mappingProperties
       });
+      mapCombo.bindStore(myStore);
+      /* mapCombo.store = Ext.create('Ext.data.SimpleStore', {
+      fields: ['value', 'text', 'name'],
+      autoLoad: true,
+      data: mappingProperties
+      });
+      */
     }
   },
 
+  onRelatedObjectCmbChange: function(field, newValue, oldValue, eOpts) {
+
+    var me = this;
+    var form = field.up('setrelationform');
+    if(newValue == ''){
+      var mapCombo = form.down('#mapPropertyNameCmb');
+      var myStore = Ext.create('Ext.data.SimpleStore', {
+        fields: ['value', 'text', 'name'],
+        autoLoad: true,
+        data: []
+      });
+      mapCombo.bindStore(myStore);
+    }
+    form.down('#mapPropertyNameCmb').reset();
+  },
+
   onPropertySelect: function(combo, records, eOpts) {
+
+  },
+
+  onMapPropertyNameCmbSelect: function(combo, records, eOpts) {
 
   },
 

@@ -162,17 +162,53 @@
                             "  }\r",
                             "\r",
                             "  var mapCombo = form.down('#mapPropertyNameCmb');\r",
-                            "  mapCombo.store = Ext.create('Ext.data.SimpleStore', {\r",
+                            "  var myStore = Ext.create('Ext.data.SimpleStore', {\r",
                             "    fields: ['value', 'text', 'name'],\r",
                             "    autoLoad: true,\r",
                             "    data: mappingProperties\r",
                             "  });\r",
+                            "  mapCombo.bindStore(myStore);\r",
+                            " /* mapCombo.store = Ext.create('Ext.data.SimpleStore', {\r",
+                            "    fields: ['value', 'text', 'name'],\r",
+                            "    autoLoad: true,\r",
+                            "    data: mappingProperties\r",
+                            "  });\r",
+                            "  */\r",
                             "}"
                         ],
                         "name": "select",
                         "scope": "me"
                     },
                     "designerId": "98d69f33-c1c9-48fb-9cc7-7c8467854579"
+                },
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "fn": "onRelatedObjectCmbChange",
+                        "implHandler": [
+                            "\r",
+                            "var me = this;\r",
+                            "var form = field.up('setrelationform');\r",
+                            "if(newValue == ''){\r",
+                            "\tvar mapCombo = form.down('#mapPropertyNameCmb');\r",
+                            "  var myStore = Ext.create('Ext.data.SimpleStore', {\r",
+                            "    fields: ['value', 'text', 'name'],\r",
+                            "    autoLoad: true,\r",
+                            "    data: []\r",
+                            "  });\r",
+                            "  mapCombo.bindStore(myStore);\r",
+                            "}\r",
+                            "form.down('#mapPropertyNameCmb').reset();"
+                        ],
+                        "name": "change",
+                        "scope": "me"
+                    },
+                    "designerId": "a42d5556-ff12-498d-9ec7-1f1e3636ffcd"
                 }
             ]
         },
@@ -263,7 +299,26 @@
             "configAlternates": {
                 "store": "array"
             },
-            "designerId": "7134a791-3d07-445c-aec3-a5c0cb5b0fcd"
+            "designerId": "7134a791-3d07-445c-aec3-a5c0cb5b0fcd",
+            "cn": [
+                {
+                    "type": "basiceventbinding",
+                    "reference": {
+                        "name": "listeners",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "fn": "onMapPropertyNameCmbSelect",
+                        "implHandler": [
+                            ""
+                        ],
+                        "name": "select",
+                        "scope": "me"
+                    },
+                    "designerId": "18e2ebd2-2d62-42c6-9563-e77138eb3338"
+                }
+            ]
         },
         {
             "type": "Ext.toolbar.Toolbar",
