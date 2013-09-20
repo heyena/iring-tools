@@ -11,6 +11,7 @@ using net.java.dev.wadl;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
+using System.Linq;
 
 namespace org.iringtools.services
 {
@@ -562,6 +563,25 @@ namespace org.iringtools.services
 
       PrepareResponse(ref response);      
       _adapterProvider.FormatOutgoingMessage<Response>(response, format, false);
+    }
+
+    public void publish(string app, string project)
+    {
+        Response response = new Response();
+        try
+        {
+            Locator locator = _adapterProvider.publish(project, app);
+
+            _adapterProvider.FormatOutgoingMessage<Locator>(locator, "json", false);
+        }
+        catch (Exception ex)
+        {
+            response.Level = StatusLevel.Error;
+            response.Messages.Add(ex.Message);
+
+            PrepareResponse(ref response);
+            _adapterProvider.FormatOutgoingMessage<Response>(response, "json", false);
+        }
     }
 
     #region Async request queue
