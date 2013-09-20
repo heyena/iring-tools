@@ -4719,6 +4719,75 @@ namespace org.iringtools.adapter
 
       return dataObjects;
     }
+
+    public Locator publish(string project, string application)
+    {
+        string path = _settings["AppDataPath"] + "publishingTemplate.xml";
+        var xmlDoc = new XmlDocument{ XmlResolver = null };
+        if (File.Exists(path))
+        {
+            xmlDoc.Load(path);
+        }
+        else
+            throw new Exception("Publishing template not found.");
+
+        DataDictionary dictionary = GetDictionary(project, application);
+
+        Locator locator = (Locator)Utility.Deserialize<Locator>(xmlDoc.InnerXml, true);
+
+        if (dictionary != null)
+        {
+            locator.updated = DateTime.Now;
+            if (!string.IsNullOrEmpty(dictionary.description))
+                locator.description = dictionary.description;
+
+            foreach (Instance Inst in locator.instances)
+            {
+                Inst.updated = DateTime.Now;
+                List<Endpoint> newEndpoints = new List<Endpoint>();
+                bool IsContextsEndpoint = false;
+                foreach (DataObject objects in dictionary.dataObjects)
+                {
+                    foreach (Endpoint epoint in Inst.endpoints)
+                    {
+                        Endpoint newepoint = Utility.CloneDataContractObject<Endpoint>(epoint);
+                        if (!newepoint.path.Contains("0") && IsContextsEndpoint)
+                            continue;
+                        if (!newepoint.path.Contains("0"))
+                            IsContextsEndpoint = true;
+
+
+                        newepoint.path = string.Format(newepoint.path, objects.objectName);
+                        if (!string.IsNullOrEmpty(objects.description))
+                        {
+                            newepoint.description = objects.description;
+                        }
+                        else
+                        {
+                            newepoint.description = string.Format(newepoint.description, objects.objectName);
+                        }
+
+                        foreach (Operation opers in newepoint.operations)
+                        {
+                            opers.summary = string.Format(opers.summary, objects.objectName);
+                            opers.updated = DateTime.Now;
+
+                            foreach (Parameter param in opers.parameters)
+                            {
+                                param.description = string.Format(param.description, objects.objectName);
+                            }
+                        }
+                        newEndpoints.Add(newepoint);
+                    }
+                }
+                Inst.endpoints.Clear();
+                Inst.endpoints.AddRange(newEndpoints);
+            }
+        }
+        return locator;
+    }
+
+
   }
 
   public enum PostAction { Create, Update }

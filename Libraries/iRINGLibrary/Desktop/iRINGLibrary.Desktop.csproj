@@ -164,6 +164,7 @@
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="ServiceClient.cs" />
+    <Compile Include="Locator.cs" />
     <Compile Include="ServiceSettings.cs" />
     <Compile Include="SPARQLClient.cs" />
     <Compile Include="SPARQLQuery.cs" />
