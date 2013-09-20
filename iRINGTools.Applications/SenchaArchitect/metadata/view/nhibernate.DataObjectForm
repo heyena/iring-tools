@@ -6,6 +6,10 @@
     },
     "codeClass": null,
     "userConfig": {
+        "keyDelimeter": "",
+        "description": "",
+        "objectNamespace": "",
+        "objectName": "",
         "height": null,
         "width": null,
         "designer|userClassName": "nhibernate.DataObjectForm",
@@ -17,6 +21,28 @@
         "title": null
     },
     "designerId": "926170c4-1014-4c33-b926-bf1625034d16",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "keyDelimeter",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "description",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "objectNamespace",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "objectName",
+            "type": "string"
+        }
+    ],
     "cn": [
         {
             "type": "Ext.form.Label",

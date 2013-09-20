@@ -17,6 +17,10 @@ Ext.define('AM.view.nhibernate.DataObjectForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.dataobjectform',
 
+  keyDelimeter: '',
+  description: '',
+  objectNamespace: '',
+  objectName: '',
   bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
 
   initComponent: function() {
