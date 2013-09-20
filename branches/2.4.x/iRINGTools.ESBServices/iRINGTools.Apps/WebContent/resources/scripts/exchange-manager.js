@@ -5614,7 +5614,14 @@ Ext
 
 			var viewport = new Ext.Viewport({
 				layout : 'border',
-				items : [ headerPane, directoryPane, contentPane ]
+				items : [ headerPane, directoryPane, contentPane ],
+				listeners: {
+		      render: function () {
+		        Ext.getBody().on("contextmenu", Ext.emptyFn, null, {
+		          preventDefault: true
+		        });
+		      }
+		    },
 			});
 
 			directoryTreePane.getRootNode().expand(false);
