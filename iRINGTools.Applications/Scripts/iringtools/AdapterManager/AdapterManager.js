@@ -153,7 +153,7 @@ Ext.onReady(function () {
     });
 
     win.show();
-    newTab.form.getForm().findField('Name').clearInvalid();
+    newTab.form.getForm().findField('displayName').clearInvalid();
   }, this);
 
 
