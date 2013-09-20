@@ -3208,14 +3208,53 @@ namespace org.iringtools.adapter
           throw new Exception("Operation not supported.");
         }
 
-        DataObject relatedObjectType = _dictionary.dataObjects.First(c => c.objectName.ToLower() == relatedResource.ToLower());
+        DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
 
-        /// TODO: set property maps from parent resource in the posted xml
-        List<IDataObject> childDataObjects = _projectionEngine.ToDataObjects(relatedResource, ref xml);
-        SetObjectState(action, childDataObjects);
+        if (objectType == null)
+        {
+          throw new Exception("Primary resource [" + resource + "] not found.");
+        }
 
-        response = _dataLayerGateway.Update(relatedObjectType, childDataObjects);
+        DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
+        
+        //
+        // if relationship is null, check if provided related resource by name
+        //
+        if (relationship == null)
+        {
+          relationship = objectType.dataRelationships.First(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+        }
 
+        DataObject relatedType = _dictionary.dataObjects.First(c => c.objectName == relationship.relatedObjectName);      
+
+        if (relatedType == null)
+        {
+          throw new Exception("Relationship between parent and child resource not found.");
+        }
+
+        //
+        // get parent object and set property maps from parent resource in the posted xml
+        //
+        IDataObject parentObject = _dataLayerGateway.Get(objectType, new List<string> { id }).FirstOrDefault();
+
+        if (parentObject == null)
+        {
+          throw new Exception("Parent object with id [" + id + "] not found.");
+        }
+
+        List<IDataObject> childObjects = _projectionEngine.ToDataObjects(relatedType.objectName, ref xml);
+        SetObjectState(action, childObjects);
+
+        foreach (IDataObject childObject in childObjects)
+        {
+          foreach (PropertyMap propMap in relationship.propertyMaps)
+          {
+            object value = parentObject.GetPropertyValue(propMap.dataPropertyName);
+            childObject.SetPropertyValue(propMap.relatedPropertyName, value);
+          }
+        }
+
+        response = _dataLayerGateway.Update(relatedType, childObjects);
         response.DateTimeStamp = DateTime.Now;
 
         string baseUri = _settings["GraphBaseUri"] +
