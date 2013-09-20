@@ -1219,7 +1219,7 @@ function deleteApp(node, event) {
 	Ext.Msg.show({
 		title : 'Delete Application',
 		msg : '<textarea ' + style + ' readonly="yes">'
-				+ 'Are you sure to delete ' + appName + ' application?'
+				+ 'Are you sure you want to delete ' + appName + ' application?'
 				+ '</textarea>',
 		buttons : Ext.MessageBox.YESNO,
 		modal : true,
@@ -1268,7 +1268,7 @@ function deleteGraph(node, event) {
 	Ext.Msg.show({
 		title : 'Delete Graph',
 		msg : '<textarea ' + style + ' readonly="yes">'
-				+ 'Are you sure to delete ' + name + ' graph?' + '</textarea>',
+				+ 'Are you sure you want to delete ' + name + ' graph?' + '</textarea>',
 		buttons : Ext.MessageBox.YESNO,
 		modal : true,
 		// icon: Ext.Msg.QUESTION,
@@ -1315,7 +1315,7 @@ function deleteCommodity(node, event) {
 	Ext.Msg.show({
 		title : 'Delete Commodity',
 		msg : '<textarea ' + style + ' readonly="yes">'
-				+ 'Are you sure to delete ' + commName + ' commodity?'
+				+ 'Are you sure you want to delete ' + commName + ' commodity?'
 				+ '</textarea>',
 		buttons : Ext.MessageBox.YESNO,
 		modal : true,
@@ -1365,7 +1365,7 @@ function deleteConfig() {
 	Ext.Msg.show({
 		title : 'Delete Exchange',
 		msg : '<textarea ' + style + ' readonly="yes">'
-				+ 'Are you sure to delete ' + '"' + exchangeConfigName + '"'
+				+ 'Are you sure you want to delete ' + '"' + exchangeConfigName + '"'
 				+ ' exchange?' + '</textarea>',
 		buttons : Ext.MessageBox.YESNO,
 		modal : true,
@@ -2001,8 +2001,8 @@ function buildGraphSubMenu() {
 		text : 'Refresh Cache',
 		icon : 'resources/images/16x16/refresh.png',
 		handler : function() {
-			  showDialog(500, 160, 'Refresh Cache ',
-						'Are you sure to Refresh Cache',
+			  showDialog(400, 100, 'Refresh Cache Confirmation',
+						'Are you sure you want to refresh cache?',
 						Ext.Msg.YESNO, onRefreshCache);
 					},
 		scope : this
