@@ -2732,7 +2732,7 @@ function ConfigureManifest() {
 				}, {
 					// id : 'Save-manifest-button',
 					xtype : 'button',
-					icon : 'resources/images/16x16/save-icon.png',
+					icon : 'resources/images/16x16/document-save.png',
 					text : 'Save',
 					handler : function() {
 						saveManifest(scope, xid);

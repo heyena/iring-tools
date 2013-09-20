@@ -4720,7 +4720,7 @@ namespace org.iringtools.adapter
       return dataObjects;
     }
 
-    public Locator publish(string project, string application)
+    public Locator Publish(string project, string application)
     {
         string path = _settings["AppDataPath"] + "publishingTemplate.xml";
         var xmlDoc = new XmlDocument{ XmlResolver = null };

@@ -193,7 +193,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       {
           text: 'Reload',
           handler: this.onReload,
-          icon: 'Content/img/16x16/view-refresh.png',
+          icon: 'Content/img/16x16/refresh.png',
           scope: this
       },
       {
@@ -221,31 +221,31 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           {
               text: 'Add/Edit ClassMap',
               handler: this.onAddClassMap,
-              icon: 'Content/img/16x16/document-new.png',
+              icon: 'Content/img/class-map.png',
               scope: this
           },
           {
               text: 'Make Possessor',
               handler: this.onMakePossessor,
-              icon: 'Content/img/16x16/modify.png',
+              icon: 'Content/img/relation.png',
               scope: this
           },
           {
               text: 'Map Property',
               handler: this.onMapProperty,
-              icon: 'Content/img/16x16/mapping.png',
+              icon: 'Content/img/property.png',
               scope: this
           },
           {
               text: 'Map ValueList',
               handler: this.onMapValueList,
-              icon: 'Content/img/16x16/mapping.png',
+              icon: 'Content/img/value.png',
               scope: this
           },
           {
               text: 'Map Literal',
               handler: this.onMapConstant,
-              icon: 'Content/img/16x16/mapping.png',
+              icon: 'Content/img/valuelist.png',
               scope: this
           },
           {

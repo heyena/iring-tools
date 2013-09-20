@@ -179,10 +179,8 @@ Ext.onReady(function () {
 
     var win = new Ext.Window({
       id: 'editwin-' + node.id,
-      title: 'Edit Scope \"' + node.text + '\"',
+      title: 'Edit Scope',
       iconCls: 'tabsScope',
-      height: 218, //190,
-      width: 450, //440,
       closable: true,
       modal: true,
       resizable: false,
