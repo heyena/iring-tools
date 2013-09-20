@@ -2630,7 +2630,7 @@ function ShowExchangeHistory() {
 				cm : colModel,
 				selModel : selModel,
 				stripeRows : true,
-				enableColLock : false,
+				enableColLock : false
 			});
 			var xloggridpanel = new Ext.Panel({
 				split : true,
@@ -2642,7 +2642,7 @@ function ShowExchangeHistory() {
 				items : gridPane,
 				viewConfig : {
 					enableTextSelection : true
-				},
+				}
 			});
 			var xlogpanel = new Ext.Panel({
 				region : 'south',
