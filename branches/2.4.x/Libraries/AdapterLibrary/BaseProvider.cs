@@ -115,6 +115,17 @@ namespace org.iringtools.adapter
         Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
+      // read scope configration file
+      
+      foreach (var scope in _scopes)
+      {
+        string scopeConfigPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
+        if (File.Exists(scopeConfigPath))
+          scope.Configuration = Utility.Read<Configuration>(scopeConfigPath,false);
+        else
+          scope.Configuration = new Configuration() { AppSettings = new AppSettings()};
+      }
+      
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
       // Ninject Extension requires fully qualified path.

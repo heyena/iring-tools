@@ -405,7 +405,7 @@ namespace iRINGTools.Web.Models
       return dataLayer;
     }
 
-    public string AddScope(string name, string description)
+    public string AddScope(string name, string description, string cacheDBConnStr)
     {
       string obj = null;
 
@@ -414,8 +414,19 @@ namespace iRINGTools.Web.Models
         ScopeProject scope = new ScopeProject()
         {
           Name = name,
-          Description = description
+          Description = description,
+          Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings()}
         };
+
+        if (!String.IsNullOrWhiteSpace(cacheDBConnStr))
+        {
+          scope.Configuration.AppSettings.Settings = new List<Setting>(){
+            new Setting(){
+                  Key = "iRINGCacheConnStr",
+                  Value = cacheDBConnStr
+              }
+          };
+        }
 
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
         obj = client.Post<ScopeProject>("/scopes", scope, true);
@@ -428,7 +439,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string UpdateScope(string name, string displayName, string newDescription)
+    public string UpdateScope(string name, string displayName, string newDescription, string cacheDBConnStr)
     {
       string obj = null;
 
@@ -438,8 +449,19 @@ namespace iRINGTools.Web.Models
         {
           Name = name,
           DisplayName = displayName,
-          Description = newDescription
+          Description = newDescription,
+          Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings() }
         };
+
+        if (!String.IsNullOrWhiteSpace(cacheDBConnStr))
+        {
+          scope.Configuration.AppSettings.Settings = new List<Setting>(){
+            new Setting(){
+                  Key = "iRINGCacheConnStr",
+                  Value = cacheDBConnStr
+              }
+          };
+        }
 
         string uri = string.Format("/scopes/{0}", name);
         WebHttpClient client = CreateWebClient(_adapterServiceUri);

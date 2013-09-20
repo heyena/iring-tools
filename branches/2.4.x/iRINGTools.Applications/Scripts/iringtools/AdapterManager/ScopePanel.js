@@ -30,15 +30,22 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
     var name = "";
     var displayName = "";
     var description = "";
+    var cacheDBConnStr = "";
 
     if (this.record != null) {
       name = this.record.Name;
       displayName = this.record.DisplayName;
       description = this.record.Description;
+      if (this.record.Configuration != null && this.record.Configuration.AppSettings != null && this.record.Configuration.AppSettings.Settings !=null) {
+          Ext.each(this.record.Configuration.AppSettings.Settings, function (settings, index) {
+              if (settings.Key == "iRINGCacheConnStr")
+                  cacheDBConnStr = settings.Value;
+          });
+      }
     }
 
     this.form = new Ext.FormPanel({
-      labelWidth: 70,
+      labelWidth: 105,
       url: this.url,
       method: 'POST',
       frame: false,
@@ -53,7 +60,8 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
       items: [
         { name: 'name', xtype: 'hidden', value: name, allowBlank: false },
         { fieldLabel: 'Name', name: 'displayName', xtype: 'textfield', value: displayName, allowBlank: false },
-        { fieldLabel: 'Description', name: 'description', allowBlank: true, xtype: 'textarea', value: description }
+        { fieldLabel: 'Description', name: 'description', allowBlank: true, xtype: 'textarea', value: description },
+        { fieldLabel: 'CacheDB ConnStr', name: 'cacheDBConnStr', xtype: 'textfield', value: cacheDBConnStr }
       ]
     });
 
