@@ -120,8 +120,7 @@ Ext.onReady(function () {
     collapsed: false,
     navigationUrl: 'directory/getnode'
   });
-
-
+  
   directoryPanel.on('newscope', function (npanel, node) {
     var newTab = new AdapterManager.ScopePanel({
       id: 'tab-' + node.id,
@@ -158,7 +157,7 @@ Ext.onReady(function () {
 
 
   directoryPanel.on('editscope', function (npanel, node) {
-    var newTab = new AdapterManager.ScopePanel({
+    var scopePanel = new AdapterManager.ScopePanel({
       id: 'tab-' + node.id,
       record: node.attributes.record,
       url: 'directory/scope'
@@ -166,31 +165,20 @@ Ext.onReady(function () {
 
     var parentNode = node.parentNode;
 
-    newTab.on('save', function (panel) {
-      win.close();
+    scopePanel.on('save', function (panel) {
+      scopePanel.close();
       directoryPanel.onReload(node);
       if (parentNode.expanded == false)
         parentNode.expand();
     }, this);
 
-    newTab.on('Cancel', function (panel) {
-      win.close();
+    scopePanel.on('Cancel', function (panel) {
+      scopePanel.close();
     }, this);
 
-    var win = new Ext.Window({
-      id: 'editwin-' + node.id,
-      title: 'Edit Scope',
-      iconCls: 'tabsScope',
-      closable: true,
-      modal: true,
-      resizable: false,
-      items: newTab
-    });
-
-    win.show();
+    scopePanel.show();
   }, this);
-
-
+  
   directoryPanel.on('deletescope', function (npanel, node) {
     Ext.Ajax.request({
       url: 'directory/deletescope',

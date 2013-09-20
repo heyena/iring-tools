@@ -1,31 +1,15 @@
 ﻿Ext.ns('AdapterManager');
 
-AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
-  border: false,
-  frame: false,
-  split: true,
-  from: null,
-  record: null,
-  url: null,
-  layout: 'fit',
-  bodyStyle: 'padding:15px',
+AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
+  title: 'Edit Scope',
+  width: 460,
+  height: 205,
+  iconCls: 'tabsScope',
+  closable: true,
+  modal: true,
+  resizable: false,
 
-  /**
-  * initComponent
-  * @protected
-  */
   initComponent: function () {
-
-    this.addEvents({
-      close: true,
-      save: true,
-      reset: true,
-      validate: true,
-      tabChange: true,
-      refresh: true,
-      selectionchange: true
-    });
-
     this.bbar = this.buildToolbar();
 
     var name = "";
@@ -52,6 +36,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
       frame: false,
       border: false,
       autoDestroy: false,
+      bodyStyle: 'padding:15px',
       defaults: {
         width: 300,
         msgTarget: 'side'
