@@ -568,10 +568,10 @@ namespace org.iringtools.services
     public void publish(string app, string project)
     {
         Response response = new Response();
+
         try
         {
-            Locator locator = _adapterProvider.publish(project, app);
-
+            Locator locator = _adapterProvider.Publish(project, app);
             _adapterProvider.FormatOutgoingMessage<Locator>(locator, "json", false);
         }
         catch (Exception ex)

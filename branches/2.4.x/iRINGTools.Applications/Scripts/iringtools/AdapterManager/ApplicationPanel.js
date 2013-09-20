@@ -286,18 +286,14 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 					{
 					  xtype: "tbbutton",
 					  text: 'Ok',
-					  //icon: 'Content/img/16x16/document-save.png',
-					  //tooltip: 'Save',
 					  disabled: false,
 					  handler: this.onSave,
 					  scope: this
 					},
 					 {
 					   xtype: "tbbutton",
-					   text: 'Cancel',
-					   //icon: 'Content/img/16x16/edit-clear.png',
-					   //tooltip: 'Clear',
-					   disabled: false,
+					   text: 'Cancel',					   
+             disabled: false,
 					   handler: this.onReset,
 					   scope: this
 					 }
@@ -313,7 +309,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     var that = this;    // consists the main/prappNameclass object  
     var endpointName = that.items.first().getForm().findField('Name').getValue();
     var flag = false;
-    //var fieldSet = Ext.getCmp('settingfieldset');
+    
     for (var i = 0; i < that.items.items[0].items.items[6].items.items.length; i++) {
       if (that.items.items[0].items.items[6].items.items[i].items.items[0].name.toLowerCase().substring(0, 3) == 'key') {
         if (that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == ' ' || that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == "") {
@@ -338,7 +334,6 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
           that.fireEvent('Save', that);
         },
         failure: function (f, a) {
-          //Ext.Msg.alert('Warning', 'Error saving changes!')
           var message = 'Error saving changes!';
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }

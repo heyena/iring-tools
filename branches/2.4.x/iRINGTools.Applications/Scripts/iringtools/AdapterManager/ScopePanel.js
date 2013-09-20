@@ -7,7 +7,8 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
   from: null,
   record: null,
   url: null,
-  bodyStyle: 'padding:10px',
+  layout: 'fit',
+  bodyStyle: 'padding:15px',
 
   /**
   * initComponent
@@ -51,9 +52,8 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
       frame: false,
       border: false,
       autoDestroy: false,
-      bodyStyle: 'padding:10px',
       defaults: {
-        width: 290,
+        width: 300,
         msgTarget: 'side'
       },
       defaultType: 'textfield',
@@ -78,15 +78,13 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
       height: 24
     }, {
       xtype: "tbbutton",
-      text: 'Ok',
-      //icon: 'Content/img/16x16/document-save.png',      
+      text: 'Ok',  
       disabled: false,
       handler: this.onSave,
       scope: this
     }, {
       xtype: "tbbutton",
       text: 'Cancel',
-      //icon: 'Content/img/16x16/edit-clear.png',      
       disabled: false,
       handler: this.onReset,
       scope: this
@@ -107,11 +105,9 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
       this.form.getForm().submit({
         waitMsg: 'Saving Data...',
         success: function (f, a) {
-          //Ext.Msg.alert('Success', 'Changes saved successfully!');
           that.fireEvent('Save', that);
         },
         failure: function (f, a) {
-          //Ext.Msg.alert('Warning', 'Error saving changes!')
           var message = 'Error saving changes!';
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
@@ -135,5 +131,3 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
     return returnVal;
   }
 });
-
-
