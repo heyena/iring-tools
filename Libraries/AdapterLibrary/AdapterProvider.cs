@@ -146,6 +146,10 @@ namespace org.iringtools.adapter
           {
             proj.Applications.Sort(new ApplicationComparer());
           }
+          
+          //save configration
+          string scopeConfigPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
+          Utility.Write<Configuration>(scope.Configuration, scopeConfigPath, false);
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           response.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
@@ -188,6 +192,9 @@ namespace org.iringtools.adapter
           sc.DisplayName = scope.DisplayName;
             sc.Description = scope.Description;
           _scopes.Sort(new ScopeComparer());
+
+          string scopeConfigPath = string.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
+          Utility.Write<Configuration>(scope.Configuration, scopeConfigPath, false);
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
@@ -237,6 +244,12 @@ namespace org.iringtools.adapter
 
           // remove scope from scope list
           _scopes.Remove(sc);
+
+          string scopeConfigPath = string.Format("{0}{1}.config", _settings["AppDataPath"], sc.Name);
+          if (File.Exists(scopeConfigPath))
+          {
+            File.Delete(scopeConfigPath);
+          }
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           status.Messages.Add(String.Format("Scope [{0}] deleted successfully.", scopeName));

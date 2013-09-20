@@ -50,6 +50,9 @@ namespace org.iringtools.library
 
     [DataMember(Name = "displayName", Order = 3, EmitDefaultValue = false)]
     public string DisplayName { get; set; }
+
+    [DataMember(Name = "configuration", Order = 4, EmitDefaultValue = false)]
+    public Configuration Configuration { get; set; }
   }
 
   [DataContract(Name = "application", Namespace = "http://www.iringtools.org/library")]

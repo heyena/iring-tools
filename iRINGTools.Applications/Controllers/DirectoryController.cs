@@ -79,6 +79,11 @@ namespace org.iringtools.web.controllers
                   node.property.Add("Internal Name", scope.Name);
                   node.property.Add("Display Name", scope.DisplayName);
                   node.property.Add("Description", scope.Description);
+                  //if (scope.Configuration !=null && scope.Configuration.AppSettings!=null && scope.Configuration.AppSettings.Settings !=null )
+                  //{
+                  //  string val = scope.Configuration.AppSettings.Settings.SingleOrDefault(x => x.Key == "iRINGCacheConnStr").Value;
+                  //  node.property.Add("cacheDBConnStr", val);
+                  //}                  
                   nodes.Add(node);
                 }
               }
@@ -575,11 +580,11 @@ namespace org.iringtools.web.controllers
 
       if (string.IsNullOrEmpty(form["name"]))
       {
-        success = _repository.AddScope(form["displayName"], form["description"]);
+        success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"]);
       }
       else
       {
-        success = _repository.UpdateScope(form["name"], form["displayName"], form["description"]);
+        success = _repository.UpdateScope(form["name"], form["displayName"], form["description"], form["cacheDBConnStr"]);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
