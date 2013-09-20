@@ -227,31 +227,31 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           {
               text: 'Make Possessor',
               handler: this.onMakePossessor,
-              // icon: '',
+              icon: 'Content/img/16x16/modify.png',
               scope: this
           },
           {
               text: 'Map Property',
               handler: this.onMapProperty,
-              // icon: '',
+              icon: 'Content/img/16x16/mapping.png',
               scope: this
           },
           {
               text: 'Map ValueList',
               handler: this.onMapValueList,
-              // icon: '',
+              icon: 'Content/img/16x16/mapping.png',
               scope: this
           },
           {
               text: 'Map Literal',
               handler: this.onMapConstant,
-              //icon: '',
+              icon: 'Content/img/16x16/mapping.png',
               scope: this
           },
           {
               text: 'Reset Mapping',
               handler: this.onResetMapping,
-              //icon: '',
+              icon: 'Content/img/16x16/reset.png',
               scope: this
           }
       ]
