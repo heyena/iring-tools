@@ -1070,6 +1070,8 @@ function onTreeItemContextMenu(node, e) {
 	var directoryTree = Ext.getCmp('directory-tree');
 	var x = e.browserEvent.clientX;
 	var y = e.browserEvent.clientY;
+	var style = 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 60
+	+ 'px;border:1px solid #aaa;overflow:auto"';
 
 	if (node != null) {// var obj = node;
 		if ((obj !== null)) {
@@ -1151,7 +1153,7 @@ function onTreeItemContextMenu(node, e) {
 												msg : '<textarea '
 														+ style
 														+ ' readonly="yes">'
-														+ "failed to connect to the specified Url"
+														+ "failed to Read DataMode from AdapterManger"
 														+ '</textarea>',
 												buttons : Ext.MessageBox.OK
 											});
@@ -1998,7 +2000,11 @@ function buildGraphSubMenu() {
 		xtype : 'menuitem',
 		text : 'Refresh Cache',
 		icon : 'resources/images/16x16/refresh.png',
-		handler : onRefreshCache,
+		handler : function() {
+			  showDialog(500, 160, 'Refresh Cache ',
+						'Are you sure to Refresh Cache',
+						Ext.Msg.YESNO, onRefreshCache);
+					},
 		scope : this
 	}, {
 		xtype : 'menuitem',
@@ -2223,7 +2229,10 @@ function buildApplicationSubMenu() {
 	} ];
 }
 
-function onRefreshCache(btn, ev) {
+function onRefreshCache(btn) {	
+
+	if(btn === "yes")
+	{	
 	var node = Ext.getCmp('directory-tree').getSelectionModel()
 			.getSelectedNode();
 	Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
@@ -2279,6 +2288,7 @@ function onRefreshCache(btn, ev) {
 					}
 				}
 			});
+	}
 }
 
 function onImportCache(btn, ev) {
