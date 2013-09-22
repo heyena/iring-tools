@@ -110,6 +110,7 @@ public class DataModel
   protected final int INFO_FIELD_WIDTH = 40;
   protected final int CONTENT_FIELD_WIDTH = 60;
   protected final int TRANSFER_FIELD_WIDTH = 80;
+  protected final int DUPES_FIELD_WIDTH = 60;
   protected final int STATUS_FIELD_WIDTH = 60;
   protected final int FIELD_PADDING = 2;
   protected final int HEADER_PX_PER_CHAR = 6;
@@ -343,13 +344,11 @@ public class DataModel
 
           if (dataMode == DataMode.EXCHANGE)
           {
-            // rowData.add((dto.getDuplicateCount().toString()));
-
             if (dto.getDuplicateCount() == null)
             {
               rowData.add("<img rc=\"resources/images/warning.png\" width=16 " + "title=\"Invalid duplicate count.\">");
             }
-            else if (dto.getDuplicateCount() == 1)
+            else if (dto.getDuplicateCount() == 0)
             {
               rowData.add("<img src=\"resources/images/success.png\" width=16 "
                   + "title=\"This row is good to exchange.\">");
@@ -398,6 +397,16 @@ public class DataModel
             else
             {
               rowData.set(1, "");
+            }
+            
+            // set duplicate
+            if (dto.getDuplicateCount() == null || dto.getDuplicateCount() == 0)
+            {
+              rowData.set(2, "No");
+            }
+            else
+            {
+              rowData.set(2, "Yes");
             }
           }
 
@@ -714,16 +723,16 @@ public class DataModel
 
     if (dataMode == DataMode.EXCHANGE)
     {
-      // Dups count field
-      Field dupField = new Field();
-      dupField.setName("Status");
-      dupField.setDataIndex("_status");
-      dupField.setType("string");
-      dupField.setWidth(STATUS_FIELD_WIDTH);
-      dupField.setFixed(true);
-      dupField.setFilterable(false);
-      dupField.setSortable(false);
-      fields.add(0, dupField);
+      // status field
+      Field statusField = new Field();
+      statusField.setName("Status");
+      statusField.setDataIndex("_status");
+      statusField.setType("string");
+      statusField.setWidth(STATUS_FIELD_WIDTH);
+      statusField.setFixed(true);
+      statusField.setFilterable(false);
+      statusField.setSortable(false);
+      fields.add(0, statusField);
 
       // transfer-type field
       Field transferField = new Field();
@@ -738,6 +747,17 @@ public class DataModel
 
     if (dataMode == DataMode.APP)
     {
+      // Dupes count field
+      Field dupesField = new Field();
+      dupesField.setName("Dupes");
+      dupesField.setDataIndex("_dupes");
+      dupesField.setType("string");
+      dupesField.setWidth(DUPES_FIELD_WIDTH);
+      dupesField.setFixed(true);
+      dupesField.setFilterable(false);
+      dupesField.setSortable(false);
+      fields.add(0, dupesField);
+      
       // content field
       Field contentField = new Field();
       contentField.setName("Content");
@@ -1027,7 +1047,7 @@ public class DataModel
     return null;
   }
 
-  // NOTE: the order of the indices in the list needs to retain to honor grid sorting
+  // removes duplicates and retains sort order of the dtis
   protected void collapseDuplicates(DataTransferIndices dtis) throws Exception
   {
     try
@@ -1040,8 +1060,8 @@ public class DataModel
       for (int i = 0; i < dtiList.size(); i++)
       {
         DataTransferIndex dti = dtiList.get(i);
-        int dupes = 1;
-
+        int dupes = 0;
+  
         for (int j = i + 1; j < dtiList.size(); j++)
         {
           if (dti.getIdentifier().equalsIgnoreCase(dtiList.get(j).getIdentifier()))
@@ -1050,7 +1070,7 @@ public class DataModel
             dtiList.remove(j--);
           }
         }
-
+  
         dti.setDuplicateCount(dupes);
       }
     }
