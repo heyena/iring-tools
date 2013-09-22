@@ -42,27 +42,13 @@ public class DifferencingProvider
       if (targetDtis != null && targetDtis.getDataTransferIndexList() != null)
       {
         List<DataTransferIndex> targetDtiItems = targetDtis.getDataTransferIndexList().getItems();
-        Collections.sort(targetDtiItems, dtic);
-        DataTransferIndex previousDti = null;
         
         for (int i = 0; i < targetDtiItems.size(); i++)
         {
-          DataTransferIndex dti = targetDtiItems.get(i);          
-          dti.setDuplicateCount(1);
-          dti.setTransferType(TransferType.DELETE);
-          
-          if (previousDti != null && dti.getIdentifier().equalsIgnoreCase(previousDti.getIdentifier()))
-          {
-            previousDti.setDuplicateCount(previousDti.getDuplicateCount() + 1);
-            targetDtiItems.remove(i--);
-          }
-          else
-          {
-            previousDti = dti;
-          }
+          targetDtiItems.get(i).setTransferType(TransferType.DELETE);
         }
       }
-
+      
       return targetDtis;
     }
 
@@ -82,7 +68,7 @@ public class DifferencingProvider
         for (int i = 0; i < sourceDtiItems.size(); i++)
         {
           DataTransferIndex dti = sourceDtiItems.get(i); 
-          dti.setDuplicateCount(1);
+          dti.setDuplicateCount(0);
           dti.setTransferType(TransferType.ADD);
           
           if (previousDti != null && dti.getIdentifier().equalsIgnoreCase(previousDti.getIdentifier()))
@@ -124,7 +110,7 @@ public class DifferencingProvider
       for (int i = 0; i < sourceDtiItems.size(); i++)
       {
         DataTransferIndex dti = sourceDtiItems.get(i);          
-        dti.setDuplicateCount(1);
+        dti.setDuplicateCount(0);
         dti.setTransferType(TransferType.ADD);
         
         if (previousDti != null && dti.getIdentifier().equalsIgnoreCase(previousDti.getIdentifier()))
@@ -143,7 +129,7 @@ public class DifferencingProvider
       for (int i = 0; i < targetDtiItems.size(); i++)
       {
         DataTransferIndex dti = targetDtiItems.get(i);          
-        dti.setDuplicateCount(1);
+        dti.setDuplicateCount(0);
         dti.setTransferType(TransferType.DELETE);
         
         if (previousDti != null && dti.getIdentifier().equalsIgnoreCase(previousDti.getIdentifier()))
@@ -193,7 +179,7 @@ public class DifferencingProvider
       if (value < 0)
       {
         sourceDti.setTransferType(TransferType.ADD);
-        sourceDti.setDuplicateCount(1);
+        sourceDti.setDuplicateCount(0);
         resultDtiListItems.add(sourceDti);
       
         // detect source duplicates and increment the count
@@ -210,7 +196,7 @@ public class DifferencingProvider
       else if (value == 0)  // identifiers match, can be SYNC or CHANGE
       {
         DataTransferIndex resultDti = new DataTransferIndex();
-        resultDti.setDuplicateCount(1);
+        resultDti.setDuplicateCount(0);
         resultDti.setIdentifier(sourceDti.getIdentifier());
         resultDti.setInternalIdentifier(sourceDti.getInternalIdentifier() + Constants.CHANGE_TOKEN + targetDti.getInternalIdentifier());
         
@@ -246,7 +232,7 @@ public class DifferencingProvider
       {
         targetDti.setTransferType(TransferType.DELETE);
         targetDti.setHashValue(null);
-        targetDti.setDuplicateCount(1);
+        targetDti.setDuplicateCount(0);
         resultDtiListItems.add(targetDti);
 
         // skip target duplicates
@@ -274,7 +260,7 @@ public class DifferencingProvider
         }
         
         sourceDti.setTransferType(TransferType.ADD);
-        sourceDti.setDuplicateCount(1);
+        sourceDti.setDuplicateCount(0);
         resultDtiListItems.add(sourceDti);  
               
         // detect source duplicates and increment the count
@@ -301,7 +287,7 @@ public class DifferencingProvider
         DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(i);
         targetDti.setTransferType(TransferType.DELETE);
         targetDti.setHashValue(null);
-        targetDti.setDuplicateCount(1);
+        targetDti.setDuplicateCount(0);
         resultDtiListItems.add(targetDti);
         
         // skip target duplicates
