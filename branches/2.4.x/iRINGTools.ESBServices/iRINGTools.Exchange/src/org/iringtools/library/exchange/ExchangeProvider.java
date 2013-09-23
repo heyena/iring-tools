@@ -362,8 +362,6 @@ public class ExchangeProvider
 
   }
 
- 
-  
   
   public History getExchangeHistory(String scope, String id) throws Exception
   {
