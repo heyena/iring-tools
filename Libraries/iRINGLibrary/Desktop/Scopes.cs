@@ -88,6 +88,21 @@ namespace org.iringtools.library
     [DataMember(Name = "dataMode", Order = 5, EmitDefaultValue = false)]
     public DataMode DataMode { get; set; }
 
+    [DataMember(Name = "cacheInfoList", Order = 6, EmitDefaultValue = false)]
+    public CacheInfoList CacheInfoList { get; set; }
+  }
+
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library")]
+  public class CacheInfoList : List<CacheInfo> { }
+
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "cacheInfo")]
+  public class CacheInfo
+  {
+    [DataMember(Name = "objectName", Order = 0)]
+    public string ObjectName { get; set; }
+
+    [DataMember(Name = "timestamp", Order = 1, EmitDefaultValue = false)]
+    public DateTime? Timestamp { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]
