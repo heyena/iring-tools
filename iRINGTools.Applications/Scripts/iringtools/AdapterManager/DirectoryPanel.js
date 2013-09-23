@@ -367,7 +367,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       });
     }
 
-    if (node.attributes.property["Data Mode"] == "Cache") {
+    if (node.attributes.property["Data Mode"] != "Live") {
       menu.add([
         {
           xtype: 'menuseparator'
@@ -784,7 +784,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   onImportCache: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    Ext.getCmp('content-panel').getEl().mask('Processing...', 'x-mask-loading');
 
     var importCacheForm = new Ext.FormPanel({
       url: 'AdapterManager/ImportCache',

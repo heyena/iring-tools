@@ -2236,6 +2236,7 @@ function buildCommoditySubMenu() {
     text : 'Show History'
   } ];
 }
+
 function ShowExchangeHistory() {
   var me = this;
   var contentPanel = Ext.getCmp('content-pane');
