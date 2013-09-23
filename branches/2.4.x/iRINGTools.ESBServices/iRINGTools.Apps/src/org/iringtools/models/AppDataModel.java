@@ -69,7 +69,7 @@ public class AppDataModel extends DataModel
           if (pageDtis != null && pageDtis.getDataTransferIndexList() != null
               && pageDtis.getDataTransferIndexList().getItems().size() > 0)
           {
-            collapseDuplicates(pageDtis);
+            //collapseDuplicates(pageDtis);
 
             logger.debug("Getting a page of DTOs...");
             String dtoPath = graphPath + "/page";
