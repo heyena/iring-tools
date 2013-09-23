@@ -363,22 +363,6 @@ namespace org.iringtools.adapter
 
         response.Level = StatusLevel.Success;
         response.Messages.Add("Data Mode switched successfully.");
-
-        // cache does not exist, create it
-        //if (application.DataMode == DataMode.Cache && application.CacheTimestamp == null)
-        //{
-        //  Impersonate();
-        //  InitializeDataLayer(false);
-
-        //  Response refreshResponse = _dataLayerGateway.RefreshCache(false);
-
-        //  if (response.Level == StatusLevel.Success)
-        //  {
-        //    UpdateCacheInfo(scope, app);
-        //  }
-
-        //  response.Append(refreshResponse);
-        //}
       }
       catch (Exception ex)
       {
@@ -404,7 +388,7 @@ namespace org.iringtools.adapter
 
         if (response.Level == StatusLevel.Success)
         {
-          UpdateCacheInfo(scope, app);
+          UpdateCacheInfo(scope, app, null);
         }
       }
       catch (Exception ex)
@@ -431,7 +415,7 @@ namespace org.iringtools.adapter
 
         if (response.Level == StatusLevel.Success)
         {
-          UpdateCacheInfo(scope, app);
+          UpdateCacheInfo(scope, app, objectType);
         }
       }
       catch (Exception ex)
@@ -458,7 +442,7 @@ namespace org.iringtools.adapter
 
         if (response.Level == StatusLevel.Success)
         {
-          UpdateCacheInfo(scope, app);
+          UpdateCacheInfo(scope, app, null);
         }
       }
       catch (Exception ex)
@@ -485,7 +469,7 @@ namespace org.iringtools.adapter
 
         if (response.Level == StatusLevel.Success)
         {
-          UpdateCacheInfo(scope, app);
+          UpdateCacheInfo(scope, app, objectType);
         }
       }
       catch (Exception ex)
@@ -540,15 +524,68 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public void UpdateCacheInfo(string scope, string app)
+    protected void UpdateCacheInfo(ScopeApplication application, DataObject dataObject)
     {
-      ScopeProject project = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
-      ScopeApplication application = project.Applications.Find(x => x.Name.ToLower() == app.ToLower());
+      if (dataObject == null)
+      {
+        throw new Exception("Object type [" + dataObject.objectName + "] not known.");
+      }
 
-      //application.DataMode = DataMode.Cache;
-      //TODO: update cache timestamps for single or all data objects
+      CacheInfo cacheInfo = null;
 
-      Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+      if (application.CacheInfoList == null)
+      {
+        application.CacheInfoList = new CacheInfoList();
+      }
+      else
+      {
+        cacheInfo = application.CacheInfoList.Find(x => x.ObjectName.ToLower() == dataObject.objectName.ToLower());
+      }
+
+      if (cacheInfo == null)
+      {
+        cacheInfo = new CacheInfo()
+        {
+          ObjectName = dataObject.objectName,
+          Timestamp = DateTime.Now
+        };
+
+        application.CacheInfoList.Add(cacheInfo);
+      }
+      else
+      {
+        cacheInfo.Timestamp = DateTime.Now;
+      }
+    }
+
+    public void UpdateCacheInfo(string scope, string app, string objectType)
+    {
+      try
+      {
+        ScopeProject project = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
+        ScopeApplication application = project.Applications.Find(x => x.Name.ToLower() == app.ToLower());
+        DataDictionary dictionary = _dataLayerGateway.GetDictionary();
+
+        if (string.IsNullOrEmpty(objectType))
+        {
+          foreach (DataObject dataObject in dictionary.dataObjects)
+          {
+            UpdateCacheInfo(application, dataObject);
+          }
+        }
+        else
+        {
+          DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+          UpdateCacheInfo(application, dataObject);
+        }
+
+        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+      }
+      catch (Exception e)
+      {
+        _logger.Debug("Error updating cache information: ", e);
+        throw e;
+      }
     }
     #endregion
 
