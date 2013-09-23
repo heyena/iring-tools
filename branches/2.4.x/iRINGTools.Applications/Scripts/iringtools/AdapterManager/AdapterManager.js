@@ -122,37 +122,25 @@ Ext.onReady(function () {
   });
   
   directoryPanel.on('newscope', function (npanel, node) {
-    var newTab = new AdapterManager.ScopePanel({
+      var scopePanel = new AdapterManager.ScopePanel({
       id: 'tab-' + node.id,
       record: node.attributes.record,
       url: 'directory/scope'
     });
 
-    newTab.on('save', function (panel) {
-      win.close();
+  scopePanel.on('save', function (panel) {
+      scopePanel.close();
       directoryPanel.onReload(node);
       if (node.expanded == false)
         node.expand();
     }, this);
 
-    newTab.on('Cancel', function (panel) {
-      win.close();
+  scopePanel.on('Cancel', function (panel) {
+      scopePanel.close();
     }, this);
 
-    var win = new Ext.Window({
-      id: 'newwin-' + node.id,
-      title: 'Add Scope',
-      iconCls: 'tabsScope',
-      height: 218,
-      width: 450,
-      closable: true,
-      modal: true,
-      resizable: false,
-      items: newTab
-    });
-
-    win.show();
-    newTab.form.getForm().findField('displayName').clearInvalid();
+  scopePanel.show();
+  scopePanel.form.getForm().findField('displayName').clearInvalid();
   }, this);
 
 
