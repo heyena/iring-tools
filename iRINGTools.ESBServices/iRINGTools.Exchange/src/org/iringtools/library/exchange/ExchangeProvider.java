@@ -323,23 +323,42 @@ public class ExchangeProvider
   public ExchangeResponse submitExchange(boolean async, String scope, String id, Exchange exchange, ExchangeRequest xReq)
   {
     logger.debug("Processing data exchange [" + scope + "." + id + "]...");
+    
     String requestId = UUID.randomUUID().toString().replace("-", "");
     RequestStatus requestStatus = new RequestStatus();
     requestStatus.setState(State.IN_PROGRESS);
     requests.put(requestId, requestStatus);
     exchangeRequestIds.put( scope + "." + id , requestId);
-      
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
-    executor.execute(exchangeTask);
-    executor.shutdown();
-    try
-    {  Thread.sleep(500); }
-    catch(Exception e)
-    {}
-     
-    ExchangeResponse exchangeResponse = exchangeTask.getExchangeResponse();
-    return exchangeResponse;            
+    
+    if (async)
+    {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
+      executor.execute(exchangeTask);
+      executor.shutdown();
+
+      ExchangeResponse exchangeResponse = exchangeTask.getExchangeResponse();
+      return exchangeResponse;
+    }
+    else
+    {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
+      executor.execute(exchangeTask);
+      executor.shutdown();
+
+      try
+      {
+        executor.awaitTermination(24, TimeUnit.HOURS);
+      }
+      catch (InterruptedException e)
+      {
+        logger.error("Exchange Task Executor interrupted: " + e.getMessage());
+      }
+
+      ExchangeResponse exchangeResponse = exchangeTask.getExchangeResponse();
+      return exchangeResponse;
+    }
 
   }
 
