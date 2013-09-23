@@ -400,14 +400,14 @@ public class DataModel
             }
             
             // set duplicate
-            if (dto.getDuplicateCount() == null || dto.getDuplicateCount() == 0)
-            {
-              rowData.set(2, "No");
-            }
-            else
-            {
-              rowData.set(2, "Yes");
-            }
+//            if (dto.getDuplicateCount() == null || dto.getDuplicateCount() == 0)
+//            {
+//              rowData.set(2, "No");
+//            }
+//            else
+//            {
+//              rowData.set(2, "Yes");
+//            }
           }
 
           // update info field
@@ -747,16 +747,16 @@ public class DataModel
 
     if (dataMode == DataMode.APP)
     {
-      // Dupes count field
-      Field dupesField = new Field();
-      dupesField.setName("Dupes");
-      dupesField.setDataIndex("_dupes");
-      dupesField.setType("string");
-      dupesField.setWidth(DUPES_FIELD_WIDTH);
-      dupesField.setFixed(true);
-      dupesField.setFilterable(false);
-      dupesField.setSortable(false);
-      fields.add(0, dupesField);
+      // duplicates field
+//      Field dupesField = new Field();
+//      dupesField.setName("Dupes");
+//      dupesField.setDataIndex("_dupes");
+//      dupesField.setType("string");
+//      dupesField.setWidth(DUPES_FIELD_WIDTH);
+//      dupesField.setFixed(true);
+//      dupesField.setFilterable(false);
+//      dupesField.setSortable(false);
+//      fields.add(0, dupesField);
       
       // content field
       Field contentField = new Field();
