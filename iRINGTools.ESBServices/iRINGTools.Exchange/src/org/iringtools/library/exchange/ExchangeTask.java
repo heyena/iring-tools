@@ -154,7 +154,7 @@ public class ExchangeTask implements Runnable
   		    for (DataTransferIndex dxi : dtis.getDataTransferIndexList().getItems())
   		    {
   		      // exclude DTOs with duplicates
-  		      if (dxi.getDuplicateCount() != null && dxi.getDuplicateCount() > 1)
+  		      if (dxi.getDuplicateCount() != null && dxi.getDuplicateCount() > 0)
   		      {
   		        String message = "Excluding DTO [" + dxi.getIdentifier() + "] due to [" + dxi.getDuplicateCount() + "] duplicates. ";
   		        logger.warn(message);
