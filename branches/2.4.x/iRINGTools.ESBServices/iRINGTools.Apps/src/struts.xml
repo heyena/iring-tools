@@ -270,9 +270,9 @@
        </action> 
        
          <!-- Get mode for App names --> 
-       <action name="testAppMode" class="org.iringtools.controllers.ExchangeDataController" method="testAppMode">
+       <action name="getAppDataMode" class="org.iringtools.controllers.ExchangeDataController" method="getAppDataMode">
       <result type="json">
-        <param name="root">id</param>
+        <param name="root">dataMode</param>
       </result>
        </action>
        

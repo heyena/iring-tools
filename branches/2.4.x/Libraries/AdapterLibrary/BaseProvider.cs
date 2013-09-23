@@ -365,20 +365,20 @@ namespace org.iringtools.adapter
         response.Messages.Add("Data Mode switched successfully.");
 
         // cache does not exist, create it
-        if (application.DataMode == DataMode.Cache && application.CacheTimestamp == null)
-        {
-          Impersonate();
-          InitializeDataLayer(false);
+        //if (application.DataMode == DataMode.Cache && application.CacheTimestamp == null)
+        //{
+        //  Impersonate();
+        //  InitializeDataLayer(false);
 
-          Response refreshResponse = _dataLayerGateway.RefreshCache(false);
+        //  Response refreshResponse = _dataLayerGateway.RefreshCache(false);
 
-          if (response.Level == StatusLevel.Success)
-          {
-            UpdateCacheInfo(scope, app);
-          }
+        //  if (response.Level == StatusLevel.Success)
+        //  {
+        //    UpdateCacheInfo(scope, app);
+        //  }
 
-          response.Append(refreshResponse);
-        }
+        //  response.Append(refreshResponse);
+        //}
       }
       catch (Exception ex)
       {
@@ -545,8 +545,8 @@ namespace org.iringtools.adapter
       ScopeProject project = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
       ScopeApplication application = project.Applications.Find(x => x.Name.ToLower() == app.ToLower());
 
-      application.DataMode = DataMode.Cache;
-      application.CacheTimestamp = DateTime.Now;
+      //application.DataMode = DataMode.Cache;
+      //TODO: update cache timestamps for single or all data objects
 
       Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
     }
