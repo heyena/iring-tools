@@ -1015,6 +1015,7 @@ function submitExchange(userResponse) {
 					+ reviewed,
 			timeout : 86400000, // 24 hours
 			success : function(response, request) {
+				getProgressBoo = false;
 				if (exchtab) {
 					exchtab.getEl().unmask();
 				}
@@ -1022,13 +1023,14 @@ function submitExchange(userResponse) {
 				var responseText = Ext.decode(response.responseText);
 				var message = 'Data exchange [' + exchange + ']: '
 						+ responseText;
-				/*
-				 * if (message.length < 300) showDialog(460, 125, 'Exchange
-				 * Result', message, Ext.Msg.OK, null); else showDialog(660,
-				 * 300, 'Exchange Result', message, Ext.Msg.OK, null);
-				 */
+				
+				  if (message.length < 300) 
+					  showDialog(460, 125, 'Exchange Result', message, Ext.Msg.OK, null); 
+				  else 
+					  showDialog(660, 300, 'Exchange Result', message, Ext.Msg.OK, null);
+				 
 				// start the TaskRunner
-				runner.start(task);
+				//runner.start(task);
 			},
 			failure : function(response, request) {
 				// ignore timeout error from proxy server
@@ -1049,6 +1051,10 @@ function submitExchange(userResponse) {
 				}
 			}
 		});
+		var delayedTask = new Ext.util.DelayedTask(function(){
+			runner.start(task);
+		 });
+		delayedTask.delay(500); 
 	}
 }
 
