@@ -103,7 +103,7 @@ namespace org.iringtools.adapter
             XElement binding = Utility.GetxElementObject(bindingConfigPath);
 
             if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
-              app.DataMode = DataMode.CacheOnly;
+              app.DataMode = DataMode.Cache;
           }
 
           return scope;

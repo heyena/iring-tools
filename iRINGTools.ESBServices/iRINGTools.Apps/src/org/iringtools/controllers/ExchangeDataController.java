@@ -48,7 +48,7 @@ public class ExchangeDataController extends BaseController
   private Exchange form;
   private Scope newScopeAdd;
   private Result result;
-  private String id, name, description, sourceUri, sourceScopeName, sourceAppName, sourceGraphName, targetUri,
+  private String dataMode, name, description, sourceUri, sourceScopeName, sourceAppName, sourceGraphName, targetUri,
       targetScopeName, targetAppName, commName, targetGraphName, hasAlgorithm, appName, appScope, oldAppName,
       oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response, displayName, scopeDisplayName, graphName;
 
@@ -757,13 +757,13 @@ public class ExchangeDataController extends BaseController
   }
   
   
-  public String testAppMode()
+  public String getAppDataMode()
   {
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
       String baseUri =  removeDxfrString();
-      id = exchangeDataModel.testAppMode(scope, name, baseUri);
+      dataMode = exchangeDataModel.getAppDataMode(scope, name, baseUri);      
     }
     catch (Exception e)
     {
@@ -1381,15 +1381,15 @@ public class ExchangeDataController extends BaseController
   {
     return dir;
   }
-
-  public String getId()
+  
+  public String getDataMode()
   {
-    return id;
+    return this.dataMode;
   }
 
-  public void setId(String id)
+  public void setDataMode(String appMode)
   {
-    this.id = id;
+    this.dataMode = appMode;
   }
 
   public String getName()

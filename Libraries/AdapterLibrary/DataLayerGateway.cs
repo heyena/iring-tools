@@ -22,7 +22,7 @@ namespace org.iringtools.adapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataLayerGateway));
 
-    private const string NO_CACHE_ERROR = "Lightweight data layer requires cache to be built prior to this operation.";
+    private const string NO_CACHE_ERROR = "Cache entry has not been created. You need to refresh or import cache files.";
     private const string PROP_SEPARATOR = ", ";
     private const string CACHE_ID_PREFIX = "c";
 
@@ -537,7 +537,7 @@ namespace org.iringtools.adapter
                 object value = pair.Value;
                 if (value == null)
                 {
-                    value = DBNull.Value;
+                  value = DBNull.Value;
                 }
                 newRow[pair.Key] = value;
               }
@@ -678,51 +678,45 @@ namespace org.iringtools.adapter
     public long GetCount(DataObject objectType, DataFilter filter)
     {
       long count = 0;
+      string cacheId = string.Empty;
 
       try
       {
-        if (_settings["DataMode"] == DataMode.Live.ToString())
+        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
         {
-          if (_dataLayer != null)
+          cacheId = CheckCache();
+
+          if (string.IsNullOrEmpty(cacheId))
           {
-            return _dataLayer.GetCount(objectType.objectName, filter);
-          }
-        }
-
-        string cacheId = CheckCache();
-
-        if (!string.IsNullOrEmpty(cacheId))
-        {
-          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
-
-          if (filter == null) filter = new DataFilter();
-          filter.AppendFilter(cachedObjectType.dataFilter);
-
-          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
-
-          int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
-
-          if (orderByIndex != -1)
-          {
-            whereClause = whereClause.Remove(orderByIndex);
-          }
-
-          string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, cachedObjectType.tableName, whereClause);
-
-          DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-
-          if (dt != null && dt.Rows.Count > 0)
-          {
-            count = long.Parse(Convert.ToString(dt.Rows[0][0]));
+            throw new Exception(NO_CACHE_ERROR);
           }
         }
         else if (_dataLayer != null)
         {
           return _dataLayer.GetCount(objectType.objectName, filter);
         }
-        else
+
+        DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
+
+        if (filter == null) filter = new DataFilter();
+        filter.AppendFilter(cachedObjectType.dataFilter);
+
+        string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
+
+        int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
+
+        if (orderByIndex != -1)
         {
-          throw new Exception(NO_CACHE_ERROR);
+          whereClause = whereClause.Remove(orderByIndex);
+        }
+
+        string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, cachedObjectType.tableName, whereClause);
+
+        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
+
+        if (dt != null && dt.Rows.Count > 0)
+        {
+          count = long.Parse(Convert.ToString(dt.Rows[0][0]));
         }
       }
       catch (Exception e)
@@ -740,53 +734,16 @@ namespace org.iringtools.adapter
 
       try
       {
-        if (_settings["DataMode"] == DataMode.Live.ToString())
+        string cacheId = string.Empty;
+
+        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
         {
-          if (_dataLayer != null)
+          cacheId = CheckCache();
+
+          if (string.IsNullOrEmpty(cacheId))
           {
-            IList<IDataObject> iDataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start);
-
-            if (iDataObjects != null)
-            {
-              dataObjects = iDataObjects.ToList();
-            }
-
-            return dataObjects;
+            throw new Exception(NO_CACHE_ERROR);
           }
-        }
-
-        string cacheId = CheckCache();
-
-        if (!string.IsNullOrEmpty(cacheId))
-        {
-          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
-
-          if (filter == null) filter = new DataFilter();
-          filter.AppendFilter(cachedObjectType.dataFilter);
-
-          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
-
-          int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
-          string orderByClause = "ORDER BY current_timestamp";
-
-          if (orderByIndex != -1)
-          {
-            orderByClause = whereClause.Substring(orderByIndex);
-            whereClause = whereClause.Remove(orderByIndex);
-          }
-
-          string query = string.Format(@"
-              SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * 
-              FROM {0} {1}) as __t",
-              cachedObjectType.tableName, whereClause, orderByClause);
-
-          if (!(start == 0 && limit == 0))
-          {
-            query += string.Format(" WHERE __rn between {0} and {1}", start + 1, start + limit);
-          }
-
-          DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);
         }
         else if (_dataLayer != null)
         {
@@ -796,11 +753,38 @@ namespace org.iringtools.adapter
           {
             dataObjects = iDataObjects.ToList();
           }
+
+          return dataObjects;
         }
-        else
+        
+        DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
+
+        if (filter == null) filter = new DataFilter();
+        filter.AppendFilter(cachedObjectType.dataFilter);
+
+        string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
+
+        int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
+        string orderByClause = "ORDER BY current_timestamp";
+
+        if (orderByIndex != -1)
         {
-          throw new Exception(NO_CACHE_ERROR);
+          orderByClause = whereClause.Substring(orderByIndex);
+          whereClause = whereClause.Remove(orderByIndex);
         }
+
+        string query = string.Format(@"
+            SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * 
+            FROM {0} {1}) as __t",
+            cachedObjectType.tableName, whereClause, orderByClause);
+
+        if (!(start == 0 && limit == 0))
+        {
+          query += string.Format(" WHERE __rn between {0} and {1}", start + 1, start + limit);
+        }
+
+        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
+        dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);
       }
       catch (Exception e)
       {
@@ -817,41 +801,36 @@ namespace org.iringtools.adapter
 
       try
       {
-        if (_settings["DataMode"] == DataMode.Live.ToString())
+        string cacheId = string.Empty;
+
+        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
         {
-          if (_dataLayer != null)
+          cacheId = CheckCache();
+
+          if (string.IsNullOrEmpty(cacheId))
           {
-            IList<IDataObject> iDataObjects = _dataLayer.Get(objectType.objectName, identifiers);
-
-            if (iDataObjects != null)
-            {
-              dataObjects = iDataObjects.ToList();
-            }
-
-            return dataObjects;
+            throw new Exception(NO_CACHE_ERROR);
           }
-        }
-        
-        string cacheId = CheckCache();
-
-        if (!string.IsNullOrEmpty(cacheId))
-        {
-          string tableName = GetCacheTableName(cacheId, objectType.objectName);
-
-          string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, identifiers);
-          string query = "SELECT * FROM " + tableName + whereClause;
-
-          DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
         }
         else if (_dataLayer != null)
         {
-          dataObjects = _dataLayer.Get(objectType.objectName, identifiers).ToList();
+          IList<IDataObject> iDataObjects = _dataLayer.Get(objectType.objectName, identifiers);
+
+          if (iDataObjects != null)
+          {
+            dataObjects = iDataObjects.ToList();
+          }
+
+          return dataObjects;
         }
-        else
-        {
-          throw new Exception(NO_CACHE_ERROR);
-        }
+        
+        string tableName = GetCacheTableName(cacheId, objectType.objectName);
+
+        string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, identifiers);
+        string query = "SELECT * FROM " + tableName + whereClause;
+
+        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
+        dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
       }
       catch (Exception e)
       {
@@ -868,36 +847,16 @@ namespace org.iringtools.adapter
 
       try
       {
-        if (_settings["DataMode"] == DataMode.Live.ToString())
+        string cacheId = string.Empty;
+
+        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
         {
-          if (_dataLayer != null)
+          cacheId = CheckCache();
+
+          if (string.IsNullOrEmpty(cacheId))
           {
-            IList<string> iIdentifiers = _dataLayer.GetIdentifiers(objectType.objectName, filter);
-
-            if (iIdentifiers != null)
-            {
-              identifiers = iIdentifiers.ToList();
-            }
-
-            return identifiers;
+            throw new Exception(NO_CACHE_ERROR);
           }
-        }
-
-        string cacheId = CheckCache();
-
-        if (!string.IsNullOrEmpty(cacheId))
-        {
-          DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
-
-          if (filter == null) filter = new DataFilter();
-          filter.AppendFilter(cachedObjectType.dataFilter);
-
-          string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
-
-          string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cachedObjectType.tableName, whereClause);
-
-          DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
-          identifiers = BaseLightweightDataLayer.FormIdentifiers(cachedObjectType, dt);
         }
         else if (_dataLayer != null)
         {
@@ -907,11 +866,21 @@ namespace org.iringtools.adapter
           {
             identifiers = iIdentifiers.ToList();
           }
+
+          return identifiers;
         }
-        else
-        {
-          throw new Exception(NO_CACHE_ERROR);
-        }
+
+        DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
+
+        if (filter == null) filter = new DataFilter();
+        filter.AppendFilter(cachedObjectType.dataFilter);
+
+        string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
+
+        string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cachedObjectType.tableName, whereClause);
+
+        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
+        identifiers = BaseLightweightDataLayer.FormIdentifiers(cachedObjectType, dt);
       }
       catch (Exception e)
       {
@@ -963,18 +932,19 @@ namespace org.iringtools.adapter
 
       try
       {
-        string cacheId = CheckCache();
+        string cacheId = string.Empty;
         string tableName = string.Empty;
-        bool hasCache = false;
 
-        if (!string.IsNullOrEmpty(cacheId))
+        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
         {
+          cacheId = CheckCache();
+
+          if (string.IsNullOrEmpty(cacheId))
+          {
+            throw new Exception(NO_CACHE_ERROR);
+          }
+
           tableName = GetCacheTableName(cacheId, objectType.objectName);
-          hasCache = true;
-        }
-        else if (_lwDataLayer != null)
-        {
-          throw new Exception(NO_CACHE_ERROR);
         }
 
         //
@@ -1122,7 +1092,7 @@ namespace org.iringtools.adapter
             response.Append(updateResponse);
           }
 
-          if (hasCache && _settings["DataMode"] == DataMode.Cache.ToString())
+          if (_settings["DataMode"] == DataMode.Cache.ToString())
           {
             if (response.Level == StatusLevel.Success)
             {
@@ -1204,7 +1174,7 @@ namespace org.iringtools.adapter
       return contents;
     }
 
-    public List<IDataObject> GetRelatedObjects(IDataObject parentDataObject, DataObject relatedObjectType, DataFilter filter, 
+    public List<IDataObject> GetRelatedObjects(IDataObject parentDataObject, DataObject relatedObjectType, DataFilter filter,
       int limit, int start)
     {
       if (_dataLayer != null && relatedObjectType.isRelatedOnly)

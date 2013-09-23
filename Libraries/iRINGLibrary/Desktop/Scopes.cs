@@ -88,8 +88,6 @@ namespace org.iringtools.library
     [DataMember(Name = "dataMode", Order = 5, EmitDefaultValue = false)]
     public DataMode DataMode { get; set; }
 
-    [DataMember(Name = "cacheTimestamp", Order = 6, EmitDefaultValue = false)]
-    public DateTime? CacheTimestamp { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]
@@ -98,8 +96,6 @@ namespace org.iringtools.library
     [EnumMember]
     Live, 
     [EnumMember]
-    Cache,
-    [EnumMember]
-    CacheOnly
+    Cache
   };
 }

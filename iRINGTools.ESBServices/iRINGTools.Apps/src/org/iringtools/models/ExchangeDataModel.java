@@ -1650,46 +1650,46 @@ public class ExchangeDataModel extends DataModel
     return applist;
   }
 
-  public String testAppMode(String scope, String name, String Uri)
+  public String getAppDataMode(String scope, String name, String Uri)
   {
-
     String modeValue = null;
+    
     try
     {
-      HttpClient httpClient = new HttpClient(Uri + "/adapter/scopes");
+      HttpClient httpClient = new HttpClient(Uri + "/adapter/scopes/" + scope);
       httpClient.setAsync(false);
-      Scopes adapterMangerScopes = httpClient.get(Scopes.class);
-      List<org.iringtools.library.Scope> scopes = adapterMangerScopes.getItems();
-      for (org.iringtools.library.Scope s : scopes)
+      org.iringtools.library.Scope scopeInfo = httpClient.get(org.iringtools.library.Scope.class);
+      
+      if (scopeInfo == null)
       {
-        if (s.getName().equalsIgnoreCase(scope))
+        throw new Exception("Scope " + scope + " not found.");
+      }
+      
+      Applications apps = scopeInfo.getApplications();
+      List<org.iringtools.library.Application> appNamelist = apps.getItems();
+      
+      for (org.iringtools.library.Application app : appNamelist)
+      {
+        if (app.getName().equalsIgnoreCase(name))
         {
-          Applications apps = s.getApplications();
-          List<org.iringtools.library.Application> appNamelist = apps.getItems();
-          for (org.iringtools.library.Application app : appNamelist)
+          if (app.getDataMode() != null)
           {
-            if (app.getName().equalsIgnoreCase(name))
-            {
-              if (app.getDataMode() != null)
-              {
-                if (app.getDataMode().equalsIgnoreCase("live"))
-                  modeValue = "live";
-                else if (app.getDataMode().equalsIgnoreCase("cache"))
-                  modeValue = "cache";
-              }
-              else
-                modeValue = "live";
-            }
+            if (app.getDataMode().equalsIgnoreCase("live"))
+              modeValue = "live";
+            else if (app.getDataMode().equalsIgnoreCase("cache"))
+              modeValue = "cache";
           }
+          else
+            modeValue = "live";
         }
       }
-
     }
     catch (Exception e)
     {
       String error = "Error getting scopes :" + e;
       logger.error(error);
     }
+    
     return modeValue;
   }
 }

@@ -303,7 +303,7 @@ function loadPageDto(type, action, context, label) {
             items : [ {
               id : 'tb-exchange',
               xtype : 'button',
-              tooltip : 'Submit Data Exchange',
+              tooltip : 'Run Exchange',
               icon : 'resources/images/16x16/exchange-send.png',
               handler : function() {
                 var xidIndex = context.indexOf('&xid=');
@@ -322,7 +322,7 @@ function loadPageDto(type, action, context, label) {
               tooltip : 'Show Exchange History',
               icon : 'resources/images/16x16/history.png',
               handler : function() {
-                ShowExchangeHistory();
+                showExchangeHistory();
               }
             }, {
               xtype : 'tbspacer',
@@ -978,7 +978,7 @@ function onTreeItemContextMenu(node, e) {
           Uri = obj.parentNode.attributes.properties['Base URI'];
 
           Ext.Ajax.request({
-            url : 'testAppMode?' + '&scope =' + context + '&name =' + AppName + '&sourceUri =' + Uri,
+            url : 'getAppDataMode?' + '&scope =' + context + '&name =' + AppName + '&sourceUri =' + Uri,
             method : 'POST',
             timeout : 120000,
             success : function(response, request) {
@@ -1001,7 +1001,7 @@ function onTreeItemContextMenu(node, e) {
             failure : function(response, request) {
               Ext.Msg.show({
                 title : 'Result ',
-                msg : '<textarea ' + style + ' readonly="yes">' + "failed to Read DataMode from AdapterManger"
+                msg : '<textarea ' + style + ' readonly="yes">' + "Unable to get application info from endpoint."
                     + '</textarea>',
                 buttons : Ext.MessageBox.OK
               });
@@ -2187,7 +2187,23 @@ function editApplication() {
 }
 
 function buildCommoditySubMenu() {
-  return [ {
+  return [{
+    xtype : 'menuitem',
+    handler : function() {
+      runExchange();
+    },
+    icon : 'resources/images/16x16/exchange-send.png',
+    text : 'Run Exchange'
+  }, {
+    xtype : 'menuitem',
+    handler : function() {
+      showExchangeHistory();
+    },
+    icon : 'resources/images/16x16/history.png',
+    text : 'Show History'
+  }, {
+    xtype : 'menuseparator',
+  }, {
     xtype : 'menuitem',
     handler : function() {
       newExchangeConfig();
@@ -2227,17 +2243,21 @@ function buildCommoditySubMenu() {
     },
     text : 'Modify Exchange',
     icon : 'resources/images/16x16/modify.png'
-  }, {
-    xtype : 'menuitem',
-    handler : function() {
-      ShowExchangeHistory();
-    },
-    icon : 'resources/images/16x16/history.png',
-    text : 'Show History'
-  } ];
+  }];
 }
 
-function ShowExchangeHistory() {
+function runExchange() {
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+  var scope = node.parentNode.parentNode.parentNode.attributes['text'];
+  var exchange = node.attributes["text"];
+  var xid = node.attributes.properties['Id'];
+  var reviewed = (node.reviewed != undefined);
+  var msg = 'Are you sure you want exchange data \r\n[' + exchange + ']?';
+  var processUserResponse = submitExchange.createDelegate([ exchange, scope, xid, reviewed ]);
+  showDialog(460, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL, processUserResponse);  
+}
+
+function showExchangeHistory() {
   var me = this;
   var contentPanel = Ext.getCmp('content-pane');
   var activeTab = contentPanel.getActiveTab();
@@ -4595,22 +4615,6 @@ Ext
                 text : 'Refresh',
                 handler : function() {
                   refresh();
-                }
-              }, {
-                id : 'exchange-button',
-                xtype : 'button',
-                icon : 'resources/images/16x16/exchange-send.png',
-                text : 'Exchange',
-                disabled : true,
-                handler : function() {
-                  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-                  var scope = node.parentNode.parentNode.parentNode.attributes['text'];
-                  var exchange = node.attributes["text"];
-                  var xid = node.attributes.properties['Id'];
-                  var reviewed = (node.reviewed != undefined);
-                  var msg = 'Are you sure you want exchange data \r\n[' + exchange + ']?';
-                  var processUserResponse = submitExchange.createDelegate([ exchange, scope, xid, reviewed ]);
-                  showDialog(460, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL, processUserResponse);
                 }
               }, {
                 // TODO: TBD
