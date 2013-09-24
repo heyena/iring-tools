@@ -146,7 +146,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      ExchangeResponse response = exchangeDataModel.submitExchange(exchangeServiceUri, scope, xid, reviewed);
+      ExchangeResponse response = exchangeDataModel.submitExchange(scope, xid, reviewed);
       xResultsGrid = response.getSummary();
     }
     catch (Exception e)
