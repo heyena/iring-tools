@@ -73,6 +73,23 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets cache information for an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/cacheinfo")]
+    public void GetApplication(string scope, string app, string graph)
+    {
+      try
+      {
+        CacheInfo cacheInfo = _dtoProvider.GetCacheInfo(scope, app, graph);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<CacheInfo>(cacheInfo));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
     [Description("Gets manifest of an application.")]
     [WebGet(UriTemplate = "/{scope}/{app}/manifest")]
     public void GetManifest(string scope, string app)

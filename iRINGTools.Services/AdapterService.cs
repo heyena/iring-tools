@@ -53,7 +53,7 @@ namespace org.iringtools.services
       return _adapterProvider.GetScopes();
     }
 
-    [Description("Gets the scopes (project and application combinations) available from the service.")]
+    [Description("Gets a specific scope information.")]
     [WebGet(UriTemplate = "/scopes/{scopeName}")]
     public ScopeProject GetScope(string scopeName)
     {
@@ -61,6 +61,16 @@ namespace org.iringtools.services
       context.ContentType = "application/xml";
 
       return _adapterProvider.GetScope(scopeName);
+    }
+
+    [Description("Gets a specific application information.")]
+    [WebGet(UriTemplate = "/scopes/{scopeName}/apps/{appName}")]
+    public ScopeApplication GetApplication(string scopeName, string appName)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.GetApplication(scopeName, appName);
     }
 
     [Description("Gets datalayer resource data.")]

@@ -139,6 +139,61 @@ namespace org.iringtools.adapter
       InitializeIdentity();
     }
 
+    public ScopeProject GetScope(string scopeName)
+    {
+      foreach (ScopeProject scope in _scopes)
+      {
+        if (scope.Name.ToLower() == scopeName.ToLower())
+        {
+          foreach (ScopeApplication app in scope.Applications)
+          {
+            string bindingConfigPath =
+              string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+              _settings["AppDataPath"], scope.Name, app.Name);
+
+            XElement binding = Utility.GetxElementObject(bindingConfigPath);
+
+            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+              app.DataMode = DataMode.Cache;
+          }
+
+          return scope;
+        }
+      }
+
+      throw new Exception("Scope [" + scopeName + "] not found.");
+    }
+
+    public ScopeApplication GetApplication(string scopeName, string appName)
+    {
+      foreach (ScopeProject scope in _scopes)
+      {
+        if (scope.Name.ToLower() == scopeName.ToLower())
+        {
+          foreach (ScopeApplication app in scope.Applications)
+          {
+            if (app.Name.ToLower() == appName.ToLower())
+            {
+              string bindingConfigPath =
+                string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+                _settings["AppDataPath"], scope.Name, app.Name);
+
+              XElement binding = Utility.GetxElementObject(bindingConfigPath);
+
+              if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+                app.DataMode = DataMode.Cache;
+
+              return app;
+            }
+          }
+
+          break;
+        }
+      }
+
+      throw new Exception("Application [" + scopeName + "." + appName + "] not found.");
+    }
+
     protected void InitializeDataLayer()
     {
       InitializeDataLayer(true);
@@ -531,30 +586,31 @@ namespace org.iringtools.adapter
         throw new Exception("Object type [" + dataObject.objectName + "] not known.");
       }
 
-      CacheInfo cacheInfo = null;
-
-      if (application.CacheInfoList == null)
+      if (application.CacheInfo == null)
       {
-        application.CacheInfoList = new CacheInfoList();
-      }
-      else
-      {
-        cacheInfo = application.CacheInfoList.Find(x => x.ObjectName.ToLower() == dataObject.objectName.ToLower());
+        application.CacheInfo = new CacheInfo();
       }
 
-      if (cacheInfo == null)
+      if (application.CacheInfo.Caches == null)
       {
-        cacheInfo = new CacheInfo()
+        application.CacheInfo.Caches = new Caches();
+      }
+
+      Cache cache = application.CacheInfo.Caches.Find(x => x.ObjectName.ToLower() == dataObject.objectName.ToLower());
+
+      if (cache == null)
+      {
+        cache = new Cache()
         {
           ObjectName = dataObject.objectName,
-          Timestamp = DateTime.Now
+          LastUpdate = DateTime.Now
         };
 
-        application.CacheInfoList.Add(cacheInfo);
+        application.CacheInfo.Caches.Add(cache);
       }
       else
       {
-        cacheInfo.Timestamp = DateTime.Now;
+        cache.LastUpdate = DateTime.Now;
       }
     }
 

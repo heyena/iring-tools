@@ -88,21 +88,34 @@ namespace org.iringtools.library
     [DataMember(Name = "dataMode", Order = 5, EmitDefaultValue = false)]
     public DataMode DataMode { get; set; }
 
-    [DataMember(Name = "cacheInfoList", Order = 6, EmitDefaultValue = false)]
-    public CacheInfoList CacheInfoList { get; set; }
+    [DataMember(Name = "cacheInfo", Order = 6, EmitDefaultValue = false)]
+    public CacheInfo CacheInfo { get; set; }
   }
-
-  [CollectionDataContract(Namespace = "http://www.iringtools.org/library")]
-  public class CacheInfoList : List<CacheInfo> { }
 
   [DataContract(Namespace = "http://www.iringtools.org/library", Name = "cacheInfo")]
   public class CacheInfo
   {
+    [DataMember(Name = "importURI", Order = 0, EmitDefaultValue = false)]
+    public string ImportURI { get; set; }
+
+    [DataMember(Name = "timeout", Order = 1, EmitDefaultValue = false)]
+    public long Timeout { get; set; }
+    
+    [DataMember(Name = "caches", Order = 2, EmitDefaultValue = false)]
+    public Caches Caches { get; set; }
+  }
+
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", ItemName = "cache")]
+  public class Caches : List<Cache> { }
+
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "cache")]
+  public class Cache
+  {
     [DataMember(Name = "objectName", Order = 0)]
     public string ObjectName { get; set; }
 
-    [DataMember(Name = "timestamp", Order = 1, EmitDefaultValue = false)]
-    public DateTime? Timestamp { get; set; }
+    [DataMember(Name = "lastUpdate", Order = 1, EmitDefaultValue = false)]
+    public DateTime? LastUpdate { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]
@@ -112,5 +125,5 @@ namespace org.iringtools.library
     Live, 
     [EnumMember]
     Cache
-  };
+  }
 }

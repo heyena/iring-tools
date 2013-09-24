@@ -128,19 +128,19 @@ public class DifferencingProvider
       
       for (int i = 0; i < targetDtiItems.size(); i++)
       {
-        DataTransferIndex dti = targetDtiItems.get(i);          
-        dti.setDuplicateCount(0);
-        dti.setTransferType(TransferType.DELETE);
-        
-        if (previousDti != null && dti.getIdentifier().equalsIgnoreCase(previousDti.getIdentifier()))
-        {
-          previousDti.setDuplicateCount(previousDti.getDuplicateCount() + 1);
-          targetDtiItems.remove(i--);
-        }
-        else
-        {
-          previousDti = dti;
-        }
+        DataTransferIndex dti = targetDtiItems.get(i);       
+        dti.setTransferType(TransferType.DELETE);   
+//        dti.setDuplicateCount(0);
+//        
+//        if (previousDti != null && dti.getIdentifier().equalsIgnoreCase(previousDti.getIdentifier()))
+//        {
+//          previousDti.setDuplicateCount(previousDti.getDuplicateCount() + 1);
+//          targetDtiItems.remove(i--);
+//        }
+//        else
+//        {
+//          previousDti = dti;
+//        }
       }
 
       resultDtiListItems.addAll(sourceDtiList);
@@ -148,7 +148,6 @@ public class DifferencingProvider
 
       resultDtis.setSortType(sourceDtis.getSortType());
       resultDtis.setSortOrder(sourceDtis.getSortOrder());
-
      
       return resultDtis;
     }
@@ -220,13 +219,12 @@ public class DifferencingProvider
         {
           resultDti.setDuplicateCount(resultDti.getDuplicateCount() + 1);
         }
+        
         // skip target duplicates
         while (++targetIndex < targetDtiList.size() && (targetDti.getIdentifier().equalsIgnoreCase(targetDtiList.get(targetIndex).getIdentifier())))
-          //   while (targetIndex < targetDtiList.size() && targetDti.getIdentifier().equalsIgnoreCase(targetDtiList.get(targetIndex).getIdentifier()))
-         {
-           resultDti.setDuplicateCount(resultDti.getDuplicateCount() + 1);
-           //  targetIndex++;         	
-         }       
+        {        
+//          resultDti.setDuplicateCount(resultDti.getDuplicateCount() + 1);
+        }       
       }
       else
       {
@@ -236,14 +234,15 @@ public class DifferencingProvider
         resultDtiListItems.add(targetDti);
 
         // skip target duplicates
-        while (++targetIndex < targetDtiList.size() && (targetDti.getIdentifier().equalsIgnoreCase(targetDtiList.get(targetIndex).getIdentifier())))
-        {
-        	targetDti.setDuplicateCount(targetDti.getDuplicateCount() + 1);
-        	
-          if (targetDti.getDuplicateCount() > 1)
-          {
-            targetDtiList.remove(targetIndex--);
-          }
+        while (++targetIndex < targetDtiList.size() && 
+            (targetDti.getIdentifier().equalsIgnoreCase(targetDtiList.get(targetIndex).getIdentifier())))
+        {          
+//        	targetDti.setDuplicateCount(targetDti.getDuplicateCount() + 1);
+//        	
+//          if (targetDti.getDuplicateCount() > 1)
+//          {
+//            targetDtiList.remove(targetIndex--);
+//          }
         }
       }
     }
@@ -284,7 +283,7 @@ public class DifferencingProvider
       	  break;
         }
     	  
-        DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(i);
+        DataTransferIndex targetDti = targetDtiList.get(i);
         targetDti.setTransferType(TransferType.DELETE);
         targetDti.setHashValue(null);
         targetDti.setDuplicateCount(0);
@@ -293,12 +292,12 @@ public class DifferencingProvider
         // skip target duplicates
         while (++targetIndex < targetDtiList.size() && (targetDti.getIdentifier().equalsIgnoreCase(targetDtiList.get(targetIndex).getIdentifier())))
         {
-        	targetDti.setDuplicateCount(targetDti.getDuplicateCount() + 1);
-        	
-        	if (targetDti.getDuplicateCount() > 1)
-          {
-        	  targetDtiList.remove(targetIndex--);
-          }
+//        	targetDti.setDuplicateCount(targetDti.getDuplicateCount() + 1);
+//        	
+//        	if (targetDti.getDuplicateCount() > 1)
+//          {
+//        	  targetDtiList.remove(targetIndex--);
+//          }
         }
       }
     }

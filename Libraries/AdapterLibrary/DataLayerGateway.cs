@@ -606,7 +606,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception e)
       {
-        _logger.Error("Error refreshing cache: " + e.Message);
+        _logger.Error("Error deleting cache: " + e.Message);
         response.Level = StatusLevel.Error;
         response.Messages.Add(e.Message);
       }
@@ -721,7 +721,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception e)
       {
-        _logger.Error("Error getting data object count for type [" + objectType.objectName + "]: " + e.Message);
+        _logger.Error("Error getting data objects count for type [" + objectType.objectName + "]: " + e.Message);
         throw e;
       }
 
@@ -934,6 +934,8 @@ namespace org.iringtools.adapter
       {
         string cacheId = string.Empty;
         string tableName = string.Empty;
+        bool enableCacheUpdate = _settings["EnableCacheUpdate"] == null ||
+          _settings["EnableCacheUpdate"].ToString().ToLower() == "true";
 
         if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
         {
@@ -961,51 +963,54 @@ namespace org.iringtools.adapter
 
           response = _lwDataLayer.Update(objectType, sdos);
 
-          //
-          // if overall status is success, then we can assume that 
-          // all data objects have been updated successfully. Otherwise,
-          // inspect every object status and perform update only against succeeded ones.
-          //
-          if (response.Level == StatusLevel.Success)
+          if (enableCacheUpdate)
           {
-            foreach (SerializableDataObject sdo in dataObjects)
+            //
+            // if overall status is success, then we can assume that 
+            // all data objects have been updated successfully. Otherwise,
+            // inspect every object status and perform update only upon succeeded ones.
+            //
+            if (response.Level == StatusLevel.Success)
             {
-              idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
-            }
-
-            DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
-          }
-          else
-          {
-            foreach (Status status in response.StatusList)
-            {
-              if (status.Level == StatusLevel.Success)
+              foreach (SerializableDataObject sdo in dataObjects)
               {
-                SerializableDataObject sdo = null;
+                idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
+              }
 
-                foreach (IDataObject dataObject in dataObjects)
+              DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+            }
+            else
+            {
+              foreach (Status status in response.StatusList)
+              {
+                if (status.Level == StatusLevel.Success)
                 {
-                  if (((SerializableDataObject)dataObject).Id.ToLower() == status.Identifier.ToLower())
+                  SerializableDataObject sdo = null;
+
+                  foreach (IDataObject dataObject in dataObjects)
                   {
-                    sdo = (SerializableDataObject)dataObject;
-                    break;
+                    if (((SerializableDataObject)dataObject).Id.ToLower() == status.Identifier.ToLower())
+                    {
+                      sdo = (SerializableDataObject)dataObject;
+                      break;
+                    }
+                  }
+
+                  if (sdo != null)
+                  {
+                    idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
+                  }
+                  else
+                  {
+                    status.Messages.Add(
+                      string.Format("Object id is out of sync. It should be {0} instead of {1}.",
+                        sdo.Id, status.Identifier));
                   }
                 }
-
-                if (sdo != null)
-                {
-                  idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
-                }
-                else
-                {
-                  status.Messages.Add(
-                    string.Format("Object id is out of sync. It should be {0} instead of {1}.",
-                      sdo.Id, status.Identifier));
-                }
               }
-            }
 
-            DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+              DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+            }
           }
         }
         else if (_dataLayer != null)
@@ -1092,7 +1097,7 @@ namespace org.iringtools.adapter
             response.Append(updateResponse);
           }
 
-          if (_settings["DataMode"] == DataMode.Cache.ToString())
+          if (_settings["DataMode"] == DataMode.Cache.ToString() && enableCacheUpdate)
           {
             if (response.Level == StatusLevel.Success)
             {

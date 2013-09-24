@@ -74,6 +74,51 @@ namespace org.iringtools.adapter
       throw new Exception(error);
     }
 
+    public CacheInfo GetCacheInfo(string scope, string app, string graph)
+    {
+      CacheInfo cacheInfo = new CacheInfo()
+      {
+         Caches = new Caches()
+      };
+
+      try
+      {
+        InitializeScope(scope, app);
+        
+        GraphMap graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
+
+        if (graphMap == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        }
+
+        string objectName = graphMap.dataObjectName;
+        ScopeApplication application = GetApplication(scope, app);
+
+        if (application.CacheInfo != null && application.CacheInfo.Caches != null)
+        {
+          foreach (Cache cache in application.CacheInfo.Caches)
+          {
+            if (cache.ObjectName.ToLower() == objectName.ToLower())
+            {
+              cacheInfo.ImportURI = application.CacheInfo.ImportURI;
+              cacheInfo.Timeout = application.CacheInfo.Timeout;
+              cacheInfo.Caches.Add(cache);
+
+              break;
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting application cache information: " + ex);
+        throw ex;
+      }
+
+      return cacheInfo;
+    }
+
     public Manifest GetManifest(string scope, string app, string graph)
     {
       Manifest manifest = new Manifest()
