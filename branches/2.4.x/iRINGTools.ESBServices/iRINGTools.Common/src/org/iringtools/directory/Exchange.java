@@ -24,7 +24,6 @@ import org.iringtools.data.filter.DataFilter;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="poolSize" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
- *         &lt;element name="cacheable" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="sourceUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="sourceScope" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="sourceApp" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -48,7 +47,6 @@ import org.iringtools.data.filter.DataFilter;
     "name",
     "description",
     "poolSize",
-    "cacheable",
     "sourceUri",
     "sourceScope",
     "sourceApp",
@@ -71,7 +69,6 @@ public class Exchange
     protected String name;
     protected String description;
     protected Integer poolSize;
-    protected Boolean cacheable;
     @XmlElement(required = true)
     protected String sourceUri;
     @XmlElement(required = true)
@@ -185,31 +182,6 @@ public class Exchange
      */
     public void setPoolSize(Integer value) {
         this.poolSize = value;
-    }
-
-    /**
-     * Gets the value of the cacheable property.
-     * This getter has been renamed from isCacheable() to getCacheable() by cxf-xjc-boolean plugin.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean getCacheable() {
-        return cacheable;
-    }
-
-    /**
-     * Sets the value of the cacheable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setCacheable(Boolean value) {
-        this.cacheable = value;
     }
 
     /**
