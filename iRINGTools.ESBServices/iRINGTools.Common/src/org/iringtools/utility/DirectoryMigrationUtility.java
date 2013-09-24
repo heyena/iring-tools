@@ -293,11 +293,11 @@ public class DirectoryMigrationUtility {
 									OMElement xCacheableElt = xRoot
 											.getFirstChildWithName(new QName(
 													ns, "cachecable"));
-									if (xCacheableElt != null) {
-										xchange.setCacheable(Boolean
-												.parseBoolean(xCacheableElt
-														.getText()));
-									}
+//									if (xCacheableElt != null) {
+//										xchange.setCacheable(Boolean
+//												.parseBoolean(xCacheableElt
+//														.getText()));
+//									}
 
 									OMElement xPoolSizeElt = xRoot
 											.getFirstChildWithName(new QName(

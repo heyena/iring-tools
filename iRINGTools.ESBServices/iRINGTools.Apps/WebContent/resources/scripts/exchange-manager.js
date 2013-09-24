@@ -1287,6 +1287,11 @@ function newExchangeConfig() {
       name : 'description',
       allowBlank : true
     }, {
+		fieldLabel : 'Pool Size',
+		name : 'poolSize',
+		value: 100,
+		allowBlank : true
+	},{
       xtype : 'fieldset',
       anchor : '100%',
       defaults : {
@@ -1497,7 +1502,7 @@ function newExchangeConfig() {
     id : 'newExchangeConfigWin',
     title : 'New Exchange',
     width : 540,
-    height : 516,
+    height : 536,
     modal : true,
     resizable : false,
     items : [ newExchConfig ]
@@ -1613,6 +1618,11 @@ function saveExchangeConfig() {
   var sourceAppName = form1.findField('sourceAppName').getValue();
   var sourceGraphName = form1.findField('sourceGraphName').getValue();
   var name = form1.findField('name').getValue();
+  var poolSize = form1.findField('poolSize').getValue();
+	if((poolSize === null) || (poolSize === ""))
+		{
+		poolSize = 100;
+		}
 
   if (((targetAppName !== "") && (targetAppName !== null)) && ((targetScopeName !== "") && (targetScopeName !== null))
       && ((targetUri !== "") && (targetUri !== null)) && ((targetGraphName !== "") && (targetGraphName !== null))
@@ -2663,6 +2673,13 @@ function editExchangeConfig() {
       var formdata = obj.getForm();
       formdata.findField('name').setValue(form.name);
       formdata.findField('description').setValue(form.description);
+      if((form.poolSize === null) || (form.poolSize === ""))
+		{
+		formdata.findField('poolSize').setValue(100);
+		}
+	else{
+	formdata.findField('poolSize').setValue(form.poolSize);
+	}
       formdata.findField('sourceUri').setValue(form.sourceUri);
       // testUriAndGetScopeName("SourceExchange");
       ScopeNameStore = new Ext.data.ArrayStore({

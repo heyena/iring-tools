@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Scope }
+     * Create an instance of {@link Commodity }
      * 
      */
-    public Scope createScope() {
-        return new Scope();
+    public Commodity createCommodity() {
+        return new Commodity();
     }
 
     /**
@@ -54,19 +54,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graph }
+     * Create an instance of {@link Scope }
      * 
      */
-    public Graph createGraph() {
-        return new Graph();
+    public Scope createScope() {
+        return new Scope();
     }
 
     /**
-     * Create an instance of {@link Commodity }
+     * Create an instance of {@link Application }
      * 
      */
-    public Commodity createCommodity() {
-        return new Commodity();
+    public Application createApplication() {
+        return new Application();
     }
 
     /**
@@ -86,11 +86,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Application }
+     * Create an instance of {@link Graph }
      * 
      */
-    public Application createApplication() {
-        return new Application();
+    public Graph createGraph() {
+        return new Graph();
     }
 
 }

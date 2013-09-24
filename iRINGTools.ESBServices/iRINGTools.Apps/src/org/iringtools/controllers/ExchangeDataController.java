@@ -50,7 +50,8 @@ public class ExchangeDataController extends BaseController
   private Result result;
   private String dataMode, name, description, sourceUri, sourceScopeName, sourceAppName, sourceGraphName, targetUri,
       targetScopeName, targetAppName, commName, targetGraphName, hasAlgorithm, appName, appScope, oldAppName,
-      oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response, displayName, scopeDisplayName, graphName;
+      oldConfigName, oldGraphName, oldCommName, appDesc, baseUri, response, displayName, scopeDisplayName, graphName,  poolSize;
+ 
 
   private String parentClassId, parentClassIndex, parentClassPath, templateId, templateIndex,requestId;
  
@@ -611,6 +612,7 @@ public class ExchangeDataController extends BaseController
       form = new Exchange();
       form.setName(name);
       form.setDescription(description);
+      form.setPoolSize(Integer.parseInt(poolSize));
       form.setSourceUri(sourceUri);
       form.setSourceScope(sourceScopeName);
       form.setSourceApp(sourceAppName);
@@ -2041,6 +2043,14 @@ public class ExchangeDataController extends BaseController
 
 	public void setGraphName(String graphName) {
 		this.graphName = graphName;
+	}
+
+	public String getPoolSize() {
+		return poolSize;
+	}
+
+	public void setPoolSize(String poolSize) {
+		this.poolSize = poolSize;
 	}
 	  
 }

@@ -138,6 +138,7 @@ public class DirectoryProvider {
 									exchangefile.setName(exchange.getName());
 									exchangefile.setDescription(exchange
 											.getDescription());
+									exchangefile.setPoolSize(exchange.getPoolSize());
 									exchangefile.setSourceUri(exchange
 											.getSourceUri());
 									exchangefile.setSourceScope(exchange
