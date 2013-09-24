@@ -4513,10 +4513,6 @@ function refresh() {
   // clear property grid
   Ext.getCmp('property-pane').setSource({});
 
-  // disable toolbar buttons
-  Ext.getCmp('exchange-button').disable();
-  Ext.getCmp('xlogs-button').disable();
-
   // reload tree
   directoryTree.getLoader().load(directoryTree.root);
   directoryTree.getRootNode().expand(false);
@@ -4633,18 +4629,7 @@ Ext
                 handler : function() {
                   refresh();
                 }
-              }, {
-                // TODO: TBD
-                id : 'xlogs-button',
-                xtype : 'button',
-                icon : 'resources/images/16x16/history.png',
-                text : 'History',
-                disabled : true,
-                hidden : true,
-                handler : function() {
-                  alert('Show exchange log');
-                }
-              } ]
+              }]
             }),
             root : {
               nodeType : 'async',
@@ -4657,23 +4642,6 @@ Ext
                   if (node.attributes.properties != null) {
                     Ext.getCmp('property-pane').setSource(node.attributes.properties);
                   }
-                }
-                try {
-                  if (node.parentNode != null) {
-                    if (node.parentNode.parentNode != null) {
-                      var dataTypeNode = node.parentNode.parentNode;
-
-                      if (dataTypeNode != null && dataTypeNode.attributes['text'] == 'Data Exchanges') {
-                        Ext.getCmp('exchange-button').enable();
-                        Ext.getCmp('xlogs-button').enable();
-                      } else {
-                        Ext.getCmp('exchange-button').disable();
-                        Ext.getCmp('xlogs-button').disable();
-                      }
-                    }
-                  }
-
-                } catch (err) {
                 }
               },
               dblclick : function(node, event) {
@@ -4799,7 +4767,7 @@ Ext
               preventDefault : true
             });
           }
-        },
+        }
       });
 
       directoryTreePane.getRootNode().expand(false);
