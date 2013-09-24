@@ -33,32 +33,38 @@ Ext.define('AM.view.menus.RolemapMenu', {
         {
           xtype: 'menuitem',
           action: 'makepossessor',
+          icon: 'Content/img/16x16/map.png',
           text: 'Make Possessor'
         },
         {
           xtype: 'menuitem',
           action: 'makereference',
           hidden: true,
+          icon: 'Content/img/16x16/map.png',
           text: 'Make Reference'
         },
         {
           xtype: 'menuitem',
           action: 'mapproperty',
+          icon: 'Content/img/16x16/map.png',
           text: 'Map Property'
         },
         {
           xtype: 'menuitem',
           action: 'mapvaluelist',
+          icon: 'Content/img/16x16/map.png',
           text: 'Map ValueList'
         },
         {
           xtype: 'menuitem',
           action: 'mapliteral',
+          icon: 'Content/img/16x16/map.png',
           text: 'Map Literal'
         },
         {
           xtype: 'menuitem',
           action: 'resetmapping',
+          icon: 'Content/img/16x16/map.png',
           text: 'Reset Mapping'
         }
       ]

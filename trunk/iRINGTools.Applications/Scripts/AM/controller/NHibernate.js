@@ -1781,7 +1781,7 @@ Ext.define('AM.controller.NHibernate', {
       }
     });
 
-    var relatedObjectName = relationFolderNode.childNodes[0].raw.relatedObjectName;
+    var relatedObjectName = relationFolderNode.childNodes[0].data.relatedObjectName;//relationFolderNode.childNodes[0].raw.relatedObjectName;
     var relatedObject;
     rootNode.eachChild(function(child) {
       if(child.data.text == relatedObjectName) {
@@ -1878,7 +1878,8 @@ Ext.define('AM.controller.NHibernate', {
         gridStore.removeAll();
 
         form.getForm().findField('relationType').setValue(data.relationshipType);
-        //form.getForm().findField('relatedObjectName').setValue(data.relatedObjectName);
+        form.getForm().findField('relatedObjectName').setValue(data.relatedObjectName);
+        //form.getForm().findField('mapPropertyName').on('select',function(){alert('going to change...');});
       }
     });
 

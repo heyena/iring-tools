@@ -226,14 +226,47 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
 
     var me = this;
     var form = field.up('setrelationform');
+    var rootNode = form.rootNode;
+    var mapCombo = form.down('#mapPropertyNameCmb');
+    var relatedObjectName = newValue;//records[0].data.text;
     if(newValue == ''){
-      var mapCombo = form.down('#mapPropertyNameCmb');
       var myStore = Ext.create('Ext.data.SimpleStore', {
         fields: ['value', 'text', 'name'],
         autoLoad: true,
         data: []
       });
       mapCombo.bindStore(myStore);
+    }else{
+
+      if (relatedObjectName !== '') {
+        var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
+        var relationConfigPanel = form.getForm();
+        var mappingProperties = [];
+
+        if (relatedDataObjectNode.childNodes[1]) {
+          keysNode = relatedDataObjectNode.childNodes[0];
+          propertiesNode = relatedDataObjectNode.childNodes[1];
+          var ii = 0;
+
+          keysNode.eachChild(function(child) {
+            mappingProperties.push([ii, child.data.text, child.data.property.columnName]);
+            ii++;
+          });
+
+          propertiesNode.eachChild(function(child) {
+            mappingProperties.push([ii, child.data.text, child.data.property.columnName]);
+            ii++;
+          });
+        }
+        var mapCombo = form.down('#mapPropertyNameCmb');
+        var myStore = Ext.create('Ext.data.SimpleStore', {
+          fields: ['value', 'text', 'name'],
+          autoLoad: true,
+          data: mappingProperties
+        });
+        mapCombo.bindStore(myStore);
+      }
+
     }
     form.down('#mapPropertyNameCmb').reset();
   },
@@ -266,18 +299,23 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
 
     var relatedName = form.getForm().findField('relatedObjectName').getValue();
     node.data.relatedObjectName = relatedName;
-
+    node.raw.relatedObjectName = relatedName;
     var propertyMap = [];
 
-    if(node.data.propertyMap) {
-      for (i = 0; i < node.data.propertyMap.length; i++)
-      propertyMap.push([node.data.propertyMap[i].dataPropertyName, node.data.propertyMap[i].relatedPropertyName]);
+    /*if(node.data.propertyMap) {
+    for (i = 0; i < node.data.propertyMap.length; i++)
+    propertyMap.push([node.data.propertyMap[i].dataPropertyName, node.data.propertyMap[i].relatedPropertyName]);
     } else {
-      node.data.propertyMap = [];
-      grid.getStore().each(function(record) {
-        node.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
-      });
-    }
+    node.data.propertyMap = [];
+    grid.getStore().each(function(record) {
+    node.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+    });
+    }*/
+
+    node.data.propertyMap = [];
+    grid.getStore().each(function(record) {
+      node.data.propertyMap.push({'dataPropertyName': record.data.property, 'relatedPropertyName': record.data.relatedProperty});
+    });
   },
 
   onRelationReset: function(button, e, eOpts) {
