@@ -88,31 +88,6 @@ namespace org.iringtools.adapter
       return _scopes;
     }
 
-    public ScopeProject GetScope(string scopeName)
-    {
-      foreach (ScopeProject scope in _scopes)
-      {
-        if (scope.Name.ToLower() == scopeName.ToLower())
-        {
-          foreach (ScopeApplication app in scope.Applications)
-          {
-            string bindingConfigPath = 
-              string.Format("{0}BindingConfiguration.{1}.{2}.xml", 
-              _settings["AppDataPath"], scope.Name, app.Name);
-
-            XElement binding = Utility.GetxElementObject(bindingConfigPath);
-
-            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
-              app.DataMode = DataMode.Cache;
-          }
-
-          return scope;
-        }
-      }
-
-      return null;
-    }
-
     public VersionInfo GetVersion()
     {
       Version version = this.GetType().Assembly.GetName().Version;

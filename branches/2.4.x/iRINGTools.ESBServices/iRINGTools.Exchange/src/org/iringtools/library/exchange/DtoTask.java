@@ -231,6 +231,17 @@ public class DtoTask implements Runnable
         targetDtos.setAppName(exchange.getTargetApp());
         List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getItems();
 
+        // get more DTOs then requested DTIs
+        if (targetDtos.getDataTransferObjectList() != null && 
+            targetDtos.getDataTransferObjectList().getItems().size() > targetDtiItems.size())
+        {        
+          //TODO: propagate this error up
+          logger.error("Inconsistent number of DTOs received [" +  
+              targetDtos.getDataTransferObjectList().getItems().size()
+              + "] than number of DTIs requested [" + targetDtiItems.size() + "]. " +
+              "This is most likely due to duplicates on receiving side.");
+        }
+        
         // append delete DTOs to resultDtoList, leave change DTOs to send to differencing engine
         for (int i = 0; i < targetDtoListItems.size(); i++)
         {
@@ -256,13 +267,21 @@ public class DtoTask implements Runnable
         }
       }
     }
-
-    DifferencingProvider df = new DifferencingProvider();
-    DataTransferObjects dxoList = df.diff(manifest, sourceDtos, targetDtos);
-
-    if (dxoList != null)
+    
+    try
     {
-      resultDtoListItems.addAll(dxoList.getDataTransferObjectList().getItems());
+      DifferencingProvider df = new DifferencingProvider();
+      DataTransferObjects dxoList = df.diff(manifest, sourceDtos, targetDtos);
+
+      if (dxoList != null)
+      {
+        resultDtoListItems.addAll(dxoList.getDataTransferObjectList().getItems());
+      }
+    }
+    catch (Exception de)
+    {
+      logger.error("Error differecing DTOs: " + de.getMessage());
+      throw new Exception(de);
     }
       
     List<DataTransferObject> orderedDtoListItems = sortDtos(resultDtoListItems, dtiList);
@@ -318,8 +337,11 @@ public class DtoTask implements Runnable
       logger.error(e.getMessage());
       e.printStackTrace();
 
-      requestStatus.setMessage(e.getMessage());
-      requestStatus.setState(State.ERROR);
+      if (requestStatus != null)
+      {
+        requestStatus.setMessage(e.getMessage());
+        requestStatus.setState(State.ERROR);
+      }
     }
   }
 
@@ -375,7 +397,7 @@ class DtoSubTask implements Runnable
       else
       {
         dtos = httpClient.post(DataTransferObjects.class, dxoRequest);
-      }
+      }   
     }
     catch (Exception e)
     {
