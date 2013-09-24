@@ -226,7 +226,7 @@ public class ExchangeDataModel extends DataModel
     return data;
   }
 
-  public ExchangeResponse submitExchange(String serviceUri, String scope, String xId, boolean reviewed)
+  public ExchangeResponse submitExchange(String scope, String xId, boolean reviewed)
       throws Exception
   {
     this.scope = scope;
