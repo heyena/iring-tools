@@ -230,7 +230,7 @@ namespace org.iringtools.refdata
               {
                   foreach (var repositoryName in repositoryNames)
                   {
-                     if (repository.Name.Equals(repositoryNames))
+                     if (repository.Name.Equals(repositoryName))
                          repositoryList.Add(repository);
                   }
               }
