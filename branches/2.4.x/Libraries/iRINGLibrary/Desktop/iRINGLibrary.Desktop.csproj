@@ -144,6 +144,7 @@
     <Compile Include="DataProviders.cs" />
     <Compile Include="DataRelationships.cs" />
     <Compile Include="MimeTypes.cs" />
+    <Compile Include="NameValueList.cs" />
     <Compile Include="Picklists.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="DatabaseDictionary.cs" />

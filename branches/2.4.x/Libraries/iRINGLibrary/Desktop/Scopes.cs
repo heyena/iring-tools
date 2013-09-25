@@ -101,15 +101,15 @@ namespace org.iringtools.library
     [DataMember(Name = "timeout", Order = 1, EmitDefaultValue = false)]
     public long Timeout { get; set; }
     
-    [DataMember(Name = "caches", Order = 2, EmitDefaultValue = false)]
-    public Caches Caches { get; set; }
+    [DataMember(Name = "cacheEntries", Order = 2, EmitDefaultValue = false)]
+    public CacheEntries CacheEntries { get; set; }
   }
 
-  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", ItemName = "cache")]
-  public class Caches : List<Cache> { }
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "cacheEntries")]
+  public class CacheEntries : List<CacheEntry> { }
 
-  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "cache")]
-  public class Cache
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "cacheEntry")]
+  public class CacheEntry
   {
     [DataMember(Name = "objectName", Order = 0)]
     public string ObjectName { get; set; }

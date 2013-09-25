@@ -635,6 +635,39 @@ namespace org.iringtools.adapter
         File.Delete(SpreadSheetDataPath);
       }
     }
+    
+    public CacheInfo GetCacheInfo(string scope, string app)
+    {
+      CacheInfo cacheInfo = null;
+
+      try
+      {
+        InitializeScope(scope, app);
+
+        ScopeApplication application = GetApplication(scope, app);
+
+        if (application == null)
+        {
+          throw new Exception("Application [" + scope + "." + app + "] not found.");
+        }
+
+        if (application.CacheInfo == null)
+        {
+          cacheInfo = new CacheInfo();
+        }
+        else
+        {
+          cacheInfo = application.CacheInfo;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting application cache information: " + ex);
+        throw ex;
+      }
+
+      return cacheInfo;
+    }
 
     #region Generate methods
     public Response Generate()

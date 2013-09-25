@@ -139,61 +139,6 @@ namespace org.iringtools.adapter
       InitializeIdentity();
     }
 
-    public ScopeProject GetScope(string scopeName)
-    {
-      foreach (ScopeProject scope in _scopes)
-      {
-        if (scope.Name.ToLower() == scopeName.ToLower())
-        {
-          foreach (ScopeApplication app in scope.Applications)
-          {
-            string bindingConfigPath =
-              string.Format("{0}BindingConfiguration.{1}.{2}.xml",
-              _settings["AppDataPath"], scope.Name, app.Name);
-
-            XElement binding = Utility.GetxElementObject(bindingConfigPath);
-
-            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
-              app.DataMode = DataMode.Cache;
-          }
-
-          return scope;
-        }
-      }
-
-      throw new Exception("Scope [" + scopeName + "] not found.");
-    }
-
-    public ScopeApplication GetApplication(string scopeName, string appName)
-    {
-      foreach (ScopeProject scope in _scopes)
-      {
-        if (scope.Name.ToLower() == scopeName.ToLower())
-        {
-          foreach (ScopeApplication app in scope.Applications)
-          {
-            if (app.Name.ToLower() == appName.ToLower())
-            {
-              string bindingConfigPath =
-                string.Format("{0}BindingConfiguration.{1}.{2}.xml",
-                _settings["AppDataPath"], scope.Name, app.Name);
-
-              XElement binding = Utility.GetxElementObject(bindingConfigPath);
-
-              if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
-                app.DataMode = DataMode.Cache;
-
-              return app;
-            }
-          }
-
-          break;
-        }
-      }
-
-      throw new Exception("Application [" + scopeName + "." + appName + "] not found.");
-    }
-
     protected void InitializeDataLayer()
     {
       InitializeDataLayer(true);
@@ -253,6 +198,61 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error initializing identity: {0}", ex));
         throw ex;
       }
+    }
+
+    public ScopeProject GetScope(string scopeName)
+    {
+      foreach (ScopeProject scope in _scopes)
+      {
+        if (scope.Name.ToLower() == scopeName.ToLower())
+        {
+          foreach (ScopeApplication app in scope.Applications)
+          {
+            string bindingConfigPath =
+              string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+              _settings["AppDataPath"], scope.Name, app.Name);
+
+            XElement binding = Utility.GetxElementObject(bindingConfigPath);
+
+            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+              app.DataMode = DataMode.Cache;
+          }
+
+          return scope;
+        }
+      }
+
+      throw new Exception("Scope [" + scopeName + "] not found.");
+    }
+
+    public ScopeApplication GetApplication(string scopeName, string appName)
+    {
+      foreach (ScopeProject scope in _scopes)
+      {
+        if (scope.Name.ToLower() == scopeName.ToLower())
+        {
+          foreach (ScopeApplication app in scope.Applications)
+          {
+            if (app.Name.ToLower() == appName.ToLower())
+            {
+              string bindingConfigPath =
+                string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+                _settings["AppDataPath"], scope.Name, app.Name);
+
+              XElement binding = Utility.GetxElementObject(bindingConfigPath);
+
+              if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+                app.DataMode = DataMode.Cache;
+
+              return app;
+            }
+          }
+
+          break;
+        }
+      }
+
+      throw new Exception("Application [" + scopeName + "." + appName + "] not found.");
     }
 
     protected void Impersonate()
@@ -591,26 +591,26 @@ namespace org.iringtools.adapter
         application.CacheInfo = new CacheInfo();
       }
 
-      if (application.CacheInfo.Caches == null)
+      if (application.CacheInfo.CacheEntries == null)
       {
-        application.CacheInfo.Caches = new Caches();
+        application.CacheInfo.CacheEntries = new CacheEntries();
       }
 
-      Cache cache = application.CacheInfo.Caches.Find(x => x.ObjectName.ToLower() == dataObject.objectName.ToLower());
+      CacheEntry cacheEntry = application.CacheInfo.CacheEntries.Find(x => x.ObjectName.ToLower() == dataObject.objectName.ToLower());
 
-      if (cache == null)
+      if (cacheEntry == null)
       {
-        cache = new Cache()
+        cacheEntry = new CacheEntry()
         {
           ObjectName = dataObject.objectName,
           LastUpdate = DateTime.Now
         };
 
-        application.CacheInfo.Caches.Add(cache);
+        application.CacheInfo.CacheEntries.Add(cacheEntry);
       }
       else
       {
-        cache.LastUpdate = DateTime.Now;
+        cacheEntry.LastUpdate = DateTime.Now;
       }
     }
 
