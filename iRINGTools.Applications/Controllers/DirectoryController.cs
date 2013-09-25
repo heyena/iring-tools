@@ -602,7 +602,7 @@ namespace org.iringtools.web.controllers
       string success = String.Empty;
       string scopeName = form["Scope"];
       string cacheImportURI = form["cacheImportURI"];
-      long cacheTimeout = Convert.ToInt64(form["cacheTimeout"]);
+      long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"])?0:Convert.ToInt64(form["cacheTimeout"]);
      
       library.Configuration configuration = new Configuration
       {
