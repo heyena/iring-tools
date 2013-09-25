@@ -28,7 +28,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
   addSettings: function (key, value, nameID, valueID) {
     return [{
       xtype: 'container',
-      style: 'margin:10 20 0 65;',
+      style: 'margin:10 20 0 95;',
       //bodyStyle: 'padding:10px 20px 0 70px',
       layout: 'column',
       items: [
@@ -124,6 +124,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     var description = "";
     var dataLayer = "";
     var assembly = "";
+    var cacheImportURI = "";
+    var cacheTimeout = "";
 
     if (this.record != null) {
       name = this.record.Name;
@@ -132,6 +134,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
       dataLayer = this.record.DataLayer;
       assembly = this.record.Assembly;
       showconfigure = false;
+      cacheImportURI = this.record.CacheImportURI;
+      cacheTimeout = this.record.CacheTimeout;
     }
     else {
       showconfigure = true;
@@ -187,7 +191,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     }, this);
 
     this.form = new Ext.FormPanel({
-      labelWidth: 70, // label settings here cascade unless
+      labelWidth: 100, // label settings here cascade unless
       url: this.url,
       method: 'POST',
       bodyStyle: 'padding:10px 5px 0',
@@ -206,6 +210,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 					  { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 530, value: displayName, allowBlank: false },
 					  { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 530, height: 62, value: description },
 					  cmbDataLayers,
+                      { fieldLabel: 'Cache ImportURI', name: 'cacheImportURI', xtype: 'textfield', width: 530, value: cacheImportURI, allowBlank: false },
+					  { fieldLabel: 'Cache Timeout', name: 'cacheTimeout', xtype: 'textfield', width: 530, value: cacheTimeout, allowBlank: false },
 					  {
 					    xtype: 'container',
 					    layout: {
@@ -310,9 +316,9 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     var endpointName = that.items.first().getForm().findField('Name').getValue();
     var flag = false;
     
-    for (var i = 0; i < that.items.items[0].items.items[6].items.items.length; i++) {
-      if (that.items.items[0].items.items[6].items.items[i].items.items[0].name.toLowerCase().substring(0, 3) == 'key') {
-        if (that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == ' ' || that.items.items[0].items.items[6].items.items[i].items.items[0].getValue().trim() == "") {
+    for (var i = 0; i < that.items.items[0].items.items[8].items.items.length; i++) {
+      if (that.items.items[0].items.items[8].items.items[i].items.items[0].name.toLowerCase().substring(0, 3) == 'key') {
+        if (that.items.items[0].items.items[8].items.items[i].items.items[0].getValue().trim() == ' ' || that.items.items[0].items.items[8].items.items[i].items.items[0].getValue().trim() == "") {
           flag = true;
         }
       }
