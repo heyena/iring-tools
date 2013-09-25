@@ -124,6 +124,23 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets data mode cache/live for an application.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/datamode")]
+    public void GetDataMode(string scope, string app)
+    {
+      try
+      {
+        string dataMode = _dtoProvider.GetDataMode(scope, app);
+
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(dataMode);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
     [Description("Gets cache information for an application.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/cacheinfo")]
     public void GetCacheInfo(string scope, string app, string graph)
