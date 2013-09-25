@@ -73,9 +73,60 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets list of scopes at this endpoint.")]
+    [WebGet(UriTemplate = "/scopes")]
+    public void GetScopeList()
+    {
+      try
+      {
+        NameValueList scopeList = _dtoProvider.GetScopeList();
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<NameValueList>(scopeList));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
+    [Description("Gets list of scopes at this endpoint.")]
+    [WebGet(UriTemplate = "/scopes/{scope}/apps")]
+    public void GetAppList(string scope)
+    {
+      try
+      {
+        NameValueList appList = _dtoProvider.GetAppList(scope);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<NameValueList>(appList));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+    
+    [Description("Gets list of scopes at this endpoint.")]
+    [WebGet(UriTemplate = "/scopes/{scope}/apps/{app}/graphs")]
+    public void GetGraphList(string scope, string app)
+    {
+      try
+      {
+        NameValueList graphList = _dtoProvider.GetGraphList(scope, app);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<NameValueList>(graphList));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
     [Description("Gets cache information for an application.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/cacheinfo")]
-    public void GetApplication(string scope, string app, string graph)
+    public void GetCacheInfo(string scope, string app, string graph)
     {
       try
       {

@@ -63,6 +63,16 @@ namespace org.iringtools.services
       return _adapterProvider.GetScope(scopeName);
     }
 
+    [Description("Gets cache information for an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/cacheinfo")]
+    public CacheInfo GetCacheInfo(string scope, string app)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.GetCacheInfo(scope, app);
+    }
+
     [Description("Gets a specific application information.")]
     [WebGet(UriTemplate = "/scopes/{scopeName}/apps/{appName}")]
     public ScopeApplication GetApplication(string scopeName, string appName)

@@ -74,11 +74,102 @@ namespace org.iringtools.adapter
       throw new Exception(error);
     }
 
+    public NameValueList GetScopeList()
+    {
+      NameValueList list = new NameValueList();
+
+      try
+      {
+        if (_scopes != null)
+        {
+          foreach (ScopeProject scope in _scopes)
+          {
+            list.Add(new ListItem()
+            {
+              Name = scope.DisplayName,
+              Value = scope.Name
+            });
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting scope list: " + ex);
+        throw ex;
+      }
+
+      return list;
+    }
+
+    public NameValueList GetAppList(string scopeName)
+    {
+      NameValueList list = new NameValueList();
+
+      try
+      {
+        if (_scopes != null)
+        {
+          foreach (ScopeProject scope in _scopes)
+          {
+            if (scope.Name.ToLower() == scopeName.ToLower())
+            {
+              foreach (ScopeApplication app in scope.Applications)
+              {
+                list.Add(new ListItem()
+                {
+                  Name = app.DisplayName,
+                  Value = app.Name
+                });
+              }
+
+              break;
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting application list: " + ex);
+        throw ex;
+      }
+
+      return list;
+    }
+
+    public NameValueList GetGraphList(string scope, string app)
+    {
+      NameValueList list = new NameValueList();
+
+      try
+      {
+        InitializeScope(scope, app, true);
+
+        if (_mapping != null)
+        {
+          foreach (GraphMap graph in _mapping.graphMaps)
+          {
+            list.Add(new ListItem()
+            {
+              Name = graph.name,
+              Value = graph.name
+            });
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting graph list: " + ex);
+        throw ex;
+      }
+
+      return list;
+    }
+
     public CacheInfo GetCacheInfo(string scope, string app, string graph)
     {
       CacheInfo cacheInfo = new CacheInfo()
       {
-         Caches = new Caches()
+         CacheEntries = new CacheEntries()
       };
 
       try
@@ -95,15 +186,15 @@ namespace org.iringtools.adapter
         string objectName = graphMap.dataObjectName;
         ScopeApplication application = GetApplication(scope, app);
 
-        if (application.CacheInfo != null && application.CacheInfo.Caches != null)
+        if (application.CacheInfo != null && application.CacheInfo.CacheEntries != null)
         {
-          foreach (Cache cache in application.CacheInfo.Caches)
+          foreach (CacheEntry cacheEntry in application.CacheInfo.CacheEntries)
           {
-            if (cache.ObjectName.ToLower() == objectName.ToLower())
+            if (cacheEntry.ObjectName.ToLower() == objectName.ToLower())
             {
               cacheInfo.ImportURI = application.CacheInfo.ImportURI;
               cacheInfo.Timeout = application.CacheInfo.Timeout;
-              cacheInfo.Caches.Add(cache);
+              cacheInfo.CacheEntries.Add(cacheEntry);
 
               break;
             }
