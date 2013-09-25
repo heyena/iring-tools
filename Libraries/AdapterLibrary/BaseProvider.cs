@@ -124,6 +124,15 @@ namespace org.iringtools.adapter
           scope.Configuration = Utility.Read<Configuration>(scopeConfigPath,false);
         else
           scope.Configuration = new Configuration() { AppSettings = new AppSettings()};
+
+        if (scope.Configuration != null && scope.Configuration.AppSettings != null && scope.Configuration.AppSettings.Settings != null)
+        {
+          var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
+                                   where setting.Key == CACHE_CONNSTR
+                                   select setting).SingleOrDefault();
+          if(connectionSetting !=null)
+              connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value);
+        }
       }
       
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
