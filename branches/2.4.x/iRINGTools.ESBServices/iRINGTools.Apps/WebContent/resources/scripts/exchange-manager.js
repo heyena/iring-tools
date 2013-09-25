@@ -860,7 +860,7 @@ function submitExchange(userResponse) {
   };
 
   if (userResponse == 'ok') {
-    if (exchtab) {
+   // if (exchtab) {
       Ext.MessageBox.show({
         title : 'Exchange Status',
         msg : 'Processing items...',
@@ -869,7 +869,7 @@ function submitExchange(userResponse) {
         progress : true,
         closable : false
       });
-    }
+    //}
 
     Ext.Ajax.request({
       url : 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
