@@ -165,6 +165,23 @@ namespace org.iringtools.adapter
       return list;
     }
 
+    public string GetDataMode(string scope, string app)
+    {
+      try
+      {
+        InitializeScope(scope, app);
+
+        ScopeApplication application = GetApplication(scope, app);
+
+        return application.DataMode.ToString();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting application data mode: " + ex);
+        throw ex;
+      }
+    }
+
     public CacheInfo GetCacheInfo(string scope, string app, string graph)
     {
       CacheInfo cacheInfo = new CacheInfo()
