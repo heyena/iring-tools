@@ -7,7 +7,7 @@
 */
 
 AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
-  height: 360,
+  height: 422,
   border: false,
   frame: false,
   split: false,
