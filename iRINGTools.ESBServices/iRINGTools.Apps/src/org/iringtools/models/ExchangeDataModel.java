@@ -1652,46 +1652,25 @@ public class ExchangeDataModel extends DataModel
   }
 
   public String getAppDataMode(String scope, String name, String Uri)
-  {
-    String modeValue = null;
-    
+  {     String dataMode = null;
     try
     {
-      HttpClient httpClient = new HttpClient(Uri + "/adapter/scopes/" + scope);
+      HttpClient httpClient = new HttpClient(Uri + "/" + scope+"/"+name +"/datamode");
       httpClient.setAsync(false);
-      org.iringtools.library.Scope scopeInfo = httpClient.get(org.iringtools.library.Scope.class);
-      
-      if (scopeInfo == null)
-      {
-        throw new Exception("Scope " + scope + " not found.");
-      }
-      
-      Applications apps = scopeInfo.getApplications();
-      List<org.iringtools.library.Application> appNamelist = apps.getItems();
-      
-      for (org.iringtools.library.Application app : appNamelist)
-      {
-        if (app.getName().equalsIgnoreCase(name))
-        {
-          if (app.getDataMode() != null)
-          {
-            if (app.getDataMode().equalsIgnoreCase("live"))
-              modeValue = "live";
-            else if (app.getDataMode().equalsIgnoreCase("cache"))
-              modeValue = "cache";
-          }
-          else
-            modeValue = "live";
-        }
-      }
+       dataMode = httpClient.get(String.class);
+    
+            if (dataMode.equalsIgnoreCase("live"))
+              return dataMode;
+            else if (dataMode.equalsIgnoreCase("cache"))
+              return dataMode;
+       
     }
     catch (Exception e)
     {
       String error = "Error getting scopes :" + e;
       logger.error(error);
     }
-    
-    return modeValue;
+    return dataMode;
   }
 
 public org.iringtools.library.CacheInfo getShowUpdateCache(String name,

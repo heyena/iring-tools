@@ -766,8 +766,8 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      String baseUri =  removeDxfrString();
-      dataMode = exchangeDataModel.getAppDataMode(scope, name, baseUri);      
+    //  String baseUri =  removeDxfrString();
+      dataMode = exchangeDataModel.getAppDataMode(scope, name, sourceUri);      
     }
     catch (Exception e)
     {

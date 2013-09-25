@@ -1750,7 +1750,7 @@ function getAppMode() {
       var importbutton  =  Ext.getCmp('importCache');
       var obj = Ext.getCmp('showUpdateCacheForm');
 	  var form = obj.getForm();
-        if (result === 'cache') {
+        if (result.toUpperCase() === 'CACHE') {
         	refreshbutton.setDisabled(false);
         	importbutton.setDisabled(false);
          form.setValues({
