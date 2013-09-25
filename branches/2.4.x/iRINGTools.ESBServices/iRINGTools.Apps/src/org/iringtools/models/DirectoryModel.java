@@ -146,13 +146,14 @@ public class DirectoryModel
     return tree;
   } 
   
-  public Response refreshCache(String dxfrUri, String scope, String app, String graph)
+  public Response refreshCache(String dxfrUri, String scope, String app, String graph, String timeout)
   {
     Response response = null;
     
     try
     {
       HttpClient client = new HttpClient(dxfrUri);
+      client.setTimeout(Integer.parseInt(timeout));
       response = client.get(Response.class, scope + "/" + app + "/" + graph + "/refresh");
     }
     catch (Exception e)
@@ -166,13 +167,14 @@ public class DirectoryModel
     return response;
   }
   
-  public Response importCache(String dxfrUri, String scope, String app, String graph, String cacheUri)
+  public Response importCache(String dxfrUri, String scope, String app, String graph, String cacheUri, String timeout)
   {
     Response response = null;
     
     try
     {
       HttpClient client = new HttpClient(dxfrUri);
+      client.setTimeout(Integer.parseInt(timeout));
       response = client.get(Response.class, scope + "/" + app + "/" + graph + "/import?baseUri=" + cacheUri);
     }
     catch (Exception e)

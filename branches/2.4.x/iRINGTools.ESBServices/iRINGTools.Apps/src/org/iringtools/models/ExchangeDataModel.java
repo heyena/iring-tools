@@ -42,6 +42,7 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.library.Applications;
+import org.iringtools.library.CacheInfo;
 import org.iringtools.library.RequestStatus;
 import org.iringtools.library.Scopes;
 import org.iringtools.library.directory.DirectoryProvider;
@@ -1692,4 +1693,47 @@ public class ExchangeDataModel extends DataModel
     
     return modeValue;
   }
+
+public org.iringtools.library.CacheInfo getShowUpdateCache(String name,
+		String scope, String appName, String Uri) {
+	 org.iringtools.library.CacheInfo cacheInfo = null;
+	    
+	    try
+	    {
+	      HttpClient httpClient = new HttpClient(Uri + "/" + scope + "/" + appName + "/" +  name + "/cacheinfo");
+	      httpClient.setAsync(false);
+	       cacheInfo = httpClient.get(org.iringtools.library.CacheInfo.class);
+	      
+//	      if (cacheInfo == null)
+//	      {
+//	        throw new Exception("cacheInfo for graph " + name + " not found.");
+//	      }
+	   /*   
+	      Applications apps = scopeInfo.getApplications();
+	      List<org.iringtools.library.Application> appNamelist = apps.getItems();
+	      
+	      for (org.iringtools.library.Application app : appNamelist)
+	      {
+	        if (app.getName().equalsIgnoreCase(name))
+	        {
+	          if (app.getDataMode() != null)
+	          {
+	            if (app.getDataMode().equalsIgnoreCase("live"))
+	              modeValue = "live";
+	            else if (app.getDataMode().equalsIgnoreCase("cache"))
+	              modeValue = "cache";
+	          }
+	          else
+	            modeValue = "live";
+	        }
+	      }*/
+	    }
+	    catch (Exception e)
+	    {
+	      String error = "Error getting scopes :" + e;
+	      logger.error(error);
+	    }
+	    
+	    return cacheInfo;
+	  }
 }

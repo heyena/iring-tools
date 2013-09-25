@@ -30,6 +30,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Application }
+     * 
+     */
+    public Application createApplication() {
+        return new Application();
+    }
+
+    /**
+     * Create an instance of {@link RequestStatus }
+     * 
+     */
+    public RequestStatus createRequestStatus() {
+        return new RequestStatus();
+    }
+
+    /**
+     * Create an instance of {@link CacheInfo }
+     * 
+     */
+    public CacheInfo createCacheInfo() {
+        return new CacheInfo();
+    }
+
+    /**
+     * Create an instance of {@link CacheEntries }
+     * 
+     */
+    public CacheEntries createCacheEntries() {
+        return new CacheEntries();
+    }
+
+    /**
      * Create an instance of {@link Applications }
      * 
      */
@@ -54,19 +86,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Application }
+     * Create an instance of {@link CacheEntry }
      * 
      */
-    public Application createApplication() {
-        return new Application();
-    }
-
-    /**
-     * Create an instance of {@link RequestStatus }
-     * 
-     */
-    public RequestStatus createRequestStatus() {
-        return new RequestStatus();
+    public CacheEntry createCacheEntry() {
+        return new CacheEntry();
     }
 
 }

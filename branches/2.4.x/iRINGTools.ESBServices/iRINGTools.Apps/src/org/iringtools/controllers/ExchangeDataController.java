@@ -23,6 +23,7 @@ import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.response.ExchangeResponse;
+import org.iringtools.library.CacheInfo;
 import org.iringtools.library.RequestStatus;
 import org.iringtools.library.State;
 import org.iringtools.models.ExchangeDataModel;
@@ -67,6 +68,7 @@ public class ExchangeDataController extends BaseController
 
   private Application application;
   private Commodity comDetails;
+  private CacheInfo cacheInfo;
   private Graph graph;
   // private List<String[]> dfList ;
   // private DataFilter dataFilter;
@@ -766,6 +768,22 @@ public class ExchangeDataController extends BaseController
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
       String baseUri =  removeDxfrString();
       dataMode = exchangeDataModel.getAppDataMode(scope, name, baseUri);      
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      return ERROR;
+    }
+
+    return SUCCESS;
+  }
+  
+  public String getShowUpdateCache()
+  {
+    try
+    {
+    	ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+    	cacheInfo = exchangeDataModel.getShowUpdateCache(name, scope, appName, baseUri );   
     }
     catch (Exception e)
     {
@@ -2051,6 +2069,14 @@ public class ExchangeDataController extends BaseController
 
 	public void setPoolSize(String poolSize) {
 		this.poolSize = poolSize;
+	}
+
+	public CacheInfo getCacheInfo() {
+		return cacheInfo;
+	}
+
+	public void setCacheInfo(CacheInfo cacheInfo) {
+		this.cacheInfo = cacheInfo;
 	}
 	  
 }

@@ -18,7 +18,7 @@ public class DirectoryController extends BaseController {
 
 	private Tree directoryTree;
 	private String dtoContext;
-	private String dxfrUri, scope, app, graph, cacheUri;
+	private String dxfrUri, scope, app, graph, cacheUri, timeout;
 	private Response refreshResult, importResult;
 
 	public DirectoryController() throws Exception {
@@ -95,7 +95,7 @@ public class DirectoryController extends BaseController {
 
 	public String refreshCache() {
 		DirectoryModel directoryModel = new DirectoryModel(settings);
-		refreshResult = directoryModel.refreshCache(dxfrUri, scope, app, graph);
+		refreshResult = directoryModel.refreshCache(dxfrUri, scope, app, graph, timeout);
 		appendMessages(refreshResult);
 
 		return SUCCESS;
@@ -104,7 +104,7 @@ public class DirectoryController extends BaseController {
 	public String importCache() {
 		DirectoryModel directoryModel = new DirectoryModel(settings);
 		importResult = directoryModel.importCache(dxfrUri, scope, app, graph,
-				cacheUri);
+				cacheUri, timeout);
 		appendMessages(importResult);
 
 		return SUCCESS;
@@ -164,4 +164,14 @@ public class DirectoryController extends BaseController {
 
 		this.cacheUri = cacheUri;
 	}
+
+  public String getTimeout() {
+    return timeout;
+  }
+
+  public void setTimeout(String timeout) {
+    this.timeout = timeout;
+  }
+	
 }
+

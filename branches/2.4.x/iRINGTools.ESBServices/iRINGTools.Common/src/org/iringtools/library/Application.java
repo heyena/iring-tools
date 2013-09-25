@@ -21,7 +21,9 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="displayName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="dataMode" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element ref="{http://www.iringtools.org/library}cacheInfo"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +36,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "name",
     "description",
-    "dataMode"
+    "displayName",
+    "dataMode",
+    "cacheInfo"
 })
 @XmlRootElement(name = "application")
 public class Application
@@ -47,7 +51,11 @@ public class Application
     @XmlElement(required = true)
     protected String description;
     @XmlElement(required = true)
+    protected String displayName;
+    @XmlElement(required = true)
     protected String dataMode;
+    @XmlElement(required = true)
+    protected CacheInfo cacheInfo;
 
     /**
      * Gets the value of the name property.
@@ -98,6 +106,30 @@ public class Application
     }
 
     /**
+     * Gets the value of the displayName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Sets the value of the displayName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDisplayName(String value) {
+        this.displayName = value;
+    }
+
+    /**
      * Gets the value of the dataMode property.
      * 
      * @return
@@ -119,6 +151,30 @@ public class Application
      */
     public void setDataMode(String value) {
         this.dataMode = value;
+    }
+
+    /**
+     * Gets the value of the cacheInfo property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link CacheInfo }
+     *     
+     */
+    public CacheInfo getCacheInfo() {
+        return cacheInfo;
+    }
+
+    /**
+     * Sets the value of the cacheInfo property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link CacheInfo }
+     *     
+     */
+    public void setCacheInfo(CacheInfo value) {
+        this.cacheInfo = value;
     }
 
 }
