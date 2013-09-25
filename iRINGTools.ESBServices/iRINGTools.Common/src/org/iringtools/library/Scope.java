@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="displayName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element ref="{http://www.iringtools.org/library}applications"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -34,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "name",
     "description",
+    "displayName",
     "applications"
 })
 @XmlRootElement(name = "scope")
@@ -46,6 +48,8 @@ public class Scope
     protected String name;
     @XmlElement(required = true)
     protected String description;
+    @XmlElement(required = true)
+    protected String displayName;
     @XmlElement(required = true)
     protected Applications applications;
 
@@ -95,6 +99,30 @@ public class Scope
      */
     public void setDescription(String value) {
         this.description = value;
+    }
+
+    /**
+     * Gets the value of the displayName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Sets the value of the displayName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDisplayName(String value) {
+        this.displayName = value;
     }
 
     /**

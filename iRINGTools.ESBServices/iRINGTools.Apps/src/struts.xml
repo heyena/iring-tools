@@ -276,6 +276,13 @@
       </result>
        </action>
        
+        <!-- get Cache info -->
+      <action name="getShowUpdateCache" class="org.iringtools.controllers.ExchangeDataController" method="getShowUpdateCache">
+      <result type="json">
+        <param name="root">cacheInfo</param>
+      </result>
+       </action>
+       
         <!-- get grid columns names-->
       <action name="getColumnNames" class="org.iringtools.controllers.ExchangeDataController" method="getColumns">
       <result type="json">

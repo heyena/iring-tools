@@ -20,8 +20,9 @@
  <xs:element name="scope">
   <xs:complexType>
    <xs:sequence>
-    <xs:element name="name" type="xs:string" />
+    <xs:element name="name" type="xs:string" />    
     <xs:element name="description" type="xs:string" />
+    <xs:element name="displayName" type="xs:string" />
     <xs:element ref="applications" />
    </xs:sequence>
   </xs:complexType>
@@ -44,13 +45,42 @@
  <xs:element name="application">
   <xs:complexType>
    <xs:sequence>
-    <xs:element name="name" type="xs:string" />
+    <xs:element name="name" type="xs:string" />   
     <xs:element name="description" type="xs:string" />
+     <xs:element name="displayName" type="xs:string" />
     <xs:element name="dataMode" type="xs:string" />
+     <xs:element ref="cacheInfo" />
    </xs:sequence>
   </xs:complexType>
  </xs:element>
 
+<xs:element name="cacheInfo">
+  <xs:complexType>
+   <xs:sequence>
+    	<xs:element name="importURI" type="xs:string" />
+    	<xs:element name="timeout" type="xs:long" />
+    	<xs:element ref="cacheEntries" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+   
+ <xs:element name="cacheEntries">
+  <xs:complexType>
+   <xs:sequence>
+    	<xs:element ref="cacheEntry" maxOccurs="unbounded"/>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+  
+ <xs:element name="cacheEntry">
+  <xs:complexType>
+   <xs:sequence>
+    	<xs:element name="objectName" type="xs:string" />
+    	<xs:element name="lastUpdate" type="xs:dateTime" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element> 
+   
  <xs:element name="requestStatus">
   <xs:complexType>
    <xs:sequence>

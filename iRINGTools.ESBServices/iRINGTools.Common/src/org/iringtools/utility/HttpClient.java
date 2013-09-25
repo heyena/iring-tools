@@ -31,6 +31,7 @@ public class HttpClient
   private static final Logger logger = Logger.getLogger(HttpClient.class);
 
   private String baseUri;
+  private int timeout = 0;
   private NetworkCredentials networkCredentials = null;
   private Map<String, String> headers = new HashMap<String, String>();
 
@@ -66,6 +67,11 @@ public class HttpClient
     setNetworkCredentials(networkCredentials);
     setAsync(async);
   }
+  
+  public void setTimeout(int timeout)
+  {
+	  this.timeout = timeout;
+  }
 
   public void setAsync(boolean value)
   {
@@ -88,6 +94,7 @@ public class HttpClient
     try
     {
       conn = getConnection(GET_METHOD, relativeUri);
+      conn.setReadTimeout(timeout);
 
       responseCode = conn.getResponseCode();
       logger.debug("Response Code: " + responseCode);
