@@ -29,6 +29,7 @@ namespace org.iringtools.adapter
     private AdapterSettings _settings;
     private string _scope;
     private string _app;
+    private DataDictionary _dictionary;
     private string _dataPath;
     private string _connStr;
     private IDataLayer _dataLayer;
@@ -187,7 +188,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        DataDictionary dictionary = GetDictionary(updateDictionary);
+        _dictionary = GetDictionary(updateDictionary);
         cacheId = CheckCache();
 
         if (!string.IsNullOrEmpty(cacheId))
@@ -199,9 +200,9 @@ namespace org.iringtools.adapter
           cacheId = CreateCacheEntry();
         }
 
-        foreach (DataObject objectType in dictionary.dataObjects)
+        foreach (DataObject objectType in _dictionary.dataObjects)
         {
-          Response objectTypeRefresh = RefreshCache(cacheId, objectType);
+          Response objectTypeRefresh = RefreshCache(cacheId, objectType, false);
           response.Append(objectTypeRefresh);
         }
       }
@@ -219,7 +220,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response RefreshCache(bool updateDictionary, string objectType)
+    public Response RefreshCache(bool updateDictionary, string objectType, bool includeRelated)
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
@@ -228,8 +229,8 @@ namespace org.iringtools.adapter
 
       try
       {
-        DataDictionary dictionary = GetDictionary(updateDictionary, objectType);
-        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        _dictionary = GetDictionary(updateDictionary, objectType);
+        DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
         if (dataObject == null)
         {
@@ -247,7 +248,7 @@ namespace org.iringtools.adapter
           cacheId = CreateCacheEntry();
         }
 
-        Response objectTypeRefresh = RefreshCache(cacheId, dataObject);
+        Response objectTypeRefresh = RefreshCache(cacheId, dataObject, includeRelated);
         response.Append(objectTypeRefresh);
         return response;
       }
@@ -265,7 +266,37 @@ namespace org.iringtools.adapter
       }
     }
 
-    protected Response RefreshCache(string cacheId, DataObject objectType)
+    protected Response RefreshCache(string cacheId, DataObject objectType, bool includeRelated)
+    {
+      Response response = DoRefreshCache(cacheId, objectType);
+
+      try
+      {
+        if (objectType.dataRelationships != null)
+        {
+          foreach (DataRelationship relationship in objectType.dataRelationships)
+          {
+            DataObject relatedObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+
+            if (relatedObject != null)
+            {
+              Response relatedObjectRefresh = DoRefreshCache(cacheId, relatedObject);
+              response.Append(relatedObjectRefresh);
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error refreshing cache for type [" + objectType.objectName + "]: " + e.Message);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    protected Response DoRefreshCache(string cacheId, DataObject objectType)
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
@@ -404,7 +435,7 @@ namespace org.iringtools.adapter
       {
         if (!baseUri.EndsWith("/")) baseUri += "/";
 
-        DataDictionary dictionary = GetDictionary(updateDictionary);
+        _dictionary = GetDictionary(updateDictionary);
         cacheId = CheckCache();
 
         if (!string.IsNullOrEmpty(cacheId))
@@ -416,11 +447,11 @@ namespace org.iringtools.adapter
           cacheId = CreateCacheEntry();
         }
 
-        foreach (DataObject objectType in dictionary.dataObjects)
+        foreach (DataObject objectType in _dictionary.dataObjects)
         {
-          string url = baseUri + objectType.objectName + ".dat";
-          Response objectTypeRefresh = ImportCache(cacheId, objectType, url);
-          response.Append(objectTypeRefresh);
+          string importURI = baseUri + objectType.objectName + ".dat";
+          Response objectTypeImport = ImportCache(cacheId, objectType, importURI, false);
+          response.Append(objectTypeImport);
         }
       }
       catch (Exception e)
@@ -437,7 +468,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response ImportCache(string objectType, string url, bool updateDictionary)
+    public Response ImportCache(string objectType, string importURI, bool updateDictionary, bool includeRelated)
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
@@ -457,15 +488,15 @@ namespace org.iringtools.adapter
           cacheId = CreateCacheEntry();
         }
 
-        DataDictionary dictionary = GetDictionary(updateDictionary, objectType);
-        DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+        _dictionary = GetDictionary(updateDictionary, objectType);
+        DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
         if (dataObject == null)
         {
           throw new Exception("Object type " + objectType + " not found.");
         }
 
-        Response objectTypeImport = ImportCache(cacheId, dataObject, url);
+        Response objectTypeImport = ImportCache(cacheId, dataObject, importURI, includeRelated);
         response.Append(objectTypeImport);
       }
       catch (Exception e)
@@ -482,7 +513,37 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    protected Response ImportCache(string cacheId, DataObject objectType, string url)
+    protected Response ImportCache(string cacheId, DataObject objectType, string importURI, bool includeRelated)
+    {
+      Response response = DoImportCache(cacheId, objectType, importURI);
+
+      try
+      {
+        if (objectType.dataRelationships != null)
+        {
+          foreach (DataRelationship relationship in objectType.dataRelationships)
+          {
+            DataObject relatedObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+
+            if (relatedObject != null)
+            {
+              Response relatedObjectImport = DoImportCache(cacheId, relatedObject, importURI);
+              response.Append(relatedObjectImport);
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error importing cached data from URI [" + importURI + "]: " + e.Message);
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(e.Message);
+      }
+
+      return response;
+    }
+
+    protected Response DoImportCache(string cacheId, DataObject objectType, string importURI)
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
@@ -495,17 +556,17 @@ namespace org.iringtools.adapter
           Level = StatusLevel.Success,
         };
 
-        if (!url.ToLower().EndsWith(".dat"))
+        if (!importURI.ToLower().EndsWith(".dat"))
         {
-          if (!url.EndsWith("/"))
+          if (!importURI.EndsWith("/"))
           {
-            url += "/";
+            importURI += "/";
           }
 
-          url += objectType.objectName + ".dat";
+          importURI += objectType.objectName + ".dat";
         }
 
-        WebHttpClient client = new WebHttpClient(url);
+        WebHttpClient client = new WebHttpClient(importURI);
         Stream stream = client.GetStream(string.Empty);
         List<SerializableDataObject> dataObjects = BaseLightweightDataLayer.ReadDataObjects(stream);
 
@@ -565,7 +626,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception e)
       {
-        _logger.Error("Error importing cached data from URL [" + url + "]: " + e.Message);
+        _logger.Error("Error importing cached data from URI [" + importURI + "]: " + e.Message);
         response.Level = StatusLevel.Error;
         response.Messages.Add(e.Message);
       }
@@ -584,9 +645,9 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          DataDictionary dictionary = GetDictionary();
+          _dictionary = GetDictionary();
 
-          foreach (DataObject objectType in dictionary.dataObjects)
+          foreach (DataObject objectType in _dictionary.dataObjects)
           {
             Response objectTypeDelete = DeleteCache(cacheId, objectType);
             response.Append(objectTypeDelete);
@@ -625,8 +686,8 @@ namespace org.iringtools.adapter
 
         if (!string.IsNullOrEmpty(cacheId))
         {
-          DataDictionary dictionary = GetDictionary();
-          DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+          _dictionary = GetDictionary();
+          DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
 
           if (dataObject == null)
           {

@@ -420,11 +420,12 @@ namespace org.iringtools.services
 
     [Description("Creates/rebuilds graph data cache.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/refresh")]
-    public void RefreshGraphCache(string scope, string app, string graph)
+    public void RefreshCache(string scope, string app, string graph)
     {
       try
       {
-        Response response = _dtoProvider.RefreshGraphCache(scope, app, graph);
+        Response response = _dtoProvider.RefreshCache(scope, app, graph);
+
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
       }
@@ -436,11 +437,19 @@ namespace org.iringtools.services
 
     [Description("Imports graph data cache. Cache files are baseUri followed by <object type>.dat is required.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/import?baseuri={baseUri}")]
-    public void ImportGraphCache(string scope, string app, string graph, string baseUri)
+    public void ImportCache(string scope, string app, string graph, string baseUri)
     {
-      Response response = _dtoProvider.ImportGraphCache(scope, app, graph, baseUri);
-      HttpContext.Current.Response.ContentType = "application/xml";
-      HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      try
+      {
+        Response response = _dtoProvider.ImportCache(scope, app, graph, baseUri);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
     } 
         
     [Description("Gets status of a asynchronous request.")]

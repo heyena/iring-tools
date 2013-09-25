@@ -475,7 +475,7 @@ namespace org.iringtools.adapter
         Impersonate();
         InitializeDataLayer(false);
 
-        response = _dataLayerGateway.RefreshCache(updateDictionary, objectType);
+        response = _dataLayerGateway.RefreshCache(updateDictionary, objectType, true);
 
         if (response.Level == StatusLevel.Success)
         {
@@ -529,7 +529,7 @@ namespace org.iringtools.adapter
         Impersonate();
         InitializeDataLayer(false);
 
-        response = _dataLayerGateway.ImportCache(objectType, url, updateDictionary);
+        response = _dataLayerGateway.ImportCache(objectType, url, updateDictionary, true);
 
         if (response.Level == StatusLevel.Success)
         {
