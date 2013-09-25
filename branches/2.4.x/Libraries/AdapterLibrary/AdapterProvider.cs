@@ -176,11 +176,13 @@ namespace org.iringtools.adapter
             sc.Description = scope.Description;
           _scopes.Sort(new ScopeComparer());
 
-          var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
-                                   where setting.Key == CACHE_CONNSTR
-                                   select setting).First();
-          connectionSetting.Value = EncryptionUtility.Encrypt(connectionSetting.Value);
-
+          if (scope.Configuration.AppSettings.Settings != null)
+          {
+            var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
+                                     where setting.Key == CACHE_CONNSTR
+                                     select setting).First();
+            connectionSetting.Value = EncryptionUtility.Encrypt(connectionSetting.Value);
+          }
 
           string scopeConfigPath = string.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
           Utility.Write<Configuration>(scope.Configuration, scopeConfigPath, false);
@@ -453,6 +455,12 @@ namespace org.iringtools.adapter
           application.DisplayName = updatedApp.DisplayName;
           application.Description = updatedApp.Description;
           application.DataMode = updatedApp.DataMode;
+
+          if (application.CacheInfo == null)
+            application.CacheInfo = new CacheInfo();
+
+          application.CacheInfo.ImportURI = updatedApp.CacheInfo.ImportURI;
+          application.CacheInfo.Timeout = updatedApp.CacheInfo.Timeout;
 
           scope.Applications.Sort(new ApplicationComparer());
 
