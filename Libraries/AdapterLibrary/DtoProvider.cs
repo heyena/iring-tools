@@ -1428,7 +1428,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public Response RefreshGraphCache(string scope, string app, string graph)
+    public Response RefreshCache(string scope, string app, string graph)
     {
       Response response = new Response();
 
@@ -1473,7 +1473,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response ImportGraphCache(string scope, string app, string graph, string baseUri)
+    public Response ImportCache(string scope, string app, string graph, string baseUri)
     {
       Response response = new Response();
 
