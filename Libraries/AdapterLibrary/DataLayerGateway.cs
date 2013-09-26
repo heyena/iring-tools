@@ -143,7 +143,7 @@ namespace org.iringtools.adapter
             }
             else
             {
-              Response response = ((IDataLayer2)_dataLayer).RefreshAll();
+              Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
 
               if (response.Level != StatusLevel.Success)
               {
