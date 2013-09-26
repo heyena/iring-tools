@@ -1257,7 +1257,7 @@ function newExchangeConfig() {
 	            	   baseUri = form.findField('sourceUri').getValue();
 	            	  if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
 	            		  {
-	            		  form.findField('baseUri').markInvalid('Base Uri should contain /dxfr');
+	            		  form.findField('sourceUri').markInvalid('Base Uri should contain /dxfr');
 	            		  }
 	            	  else
 	              testUriAndGetScopeName("SourceExchange");
@@ -1383,7 +1383,7 @@ function newExchangeConfig() {
 	            	   baseUri = form.findField('targetUri').getValue();
 	            	  if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
 	            		  {
-	            		  form.findField('baseUri').markInvalid('Base Uri should contain /dxfr');
+	            		  form.findField('targetUri').markInvalid('Base Uri should contain /dxfr');
 	            		  }
 	            	  else
 	              testUriAndGetScopeName("TargetExchange");
@@ -3259,6 +3259,7 @@ function testUriAndGetScopeName(name) {
    var obj = Ext.getCmp('newExchConfig');
    var form = obj.getForm();
    if (name === "SourceExchange") {
+	   baseUri = form.findField('sourceUri').getValue();
      form.findField('sourceScopeName').setDisabled(false);
 
    } else {
