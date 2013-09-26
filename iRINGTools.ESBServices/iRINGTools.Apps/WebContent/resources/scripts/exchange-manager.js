@@ -1205,322 +1205,322 @@ function buildNewExchangeMenu() {
 
 function newExchangeConfig() {
 
-	  var ScopeNameStore = null;
-	  var AppNameStore = null;
-	  var graphNameStore = null;
-	  var newExchConfig = new Ext.FormPanel({
-	    id : 'newExchConfig',
-	    frame : false,
-	    border : false,
-	    bodyStyle : 'padding:15px 15px 5px 15px',
-	    labelWidth : 100,
-	    defaults : {
-	      width : 390,
-	      allowBlank : false
-	    },
-	    defaultType : 'textfield',
-	    items : [ {
-	      fieldLabel : 'Name',
-	      name : 'name'
-	    }, {
-	      fieldLabel : 'Description',
-	      name : 'description',
-	      allowBlank : true
-	    }, {
-	      fieldLabel : 'Pool Size',
-	      name : 'poolSize',
-	      value : 100,
-	      allowBlank : true
-	    }, {
-	      xtype : 'fieldset',
-	      anchor : '100%',
-	      defaults : {
-	        width : 360,
-	        allowBlank : false
-	      },
-	      defaultType : 'textfield',
-	      title : 'Source Config',
-	      items : [ {
-	        xtype : 'textfield',
-	        fieldLabel : 'Base URI',
-	        allowBlank : false,
-	        name : 'sourceUri',
-	        regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
-	        regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
-	        vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
-	        listeners : {
-	          specialkey : function(f, e) {
-	            if ((e.getKey() == e.TAB) || (e.getKey() == e.ENTER)) {
-	            	  var subStr = '/dxfr';
-	            	  var obj = Ext.getCmp('newExchConfig');
-	            	   var form = obj.getForm();
-	            	   baseUri = form.findField('sourceUri').getValue();
-	            	  if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
-	            		  {
-	            		  form.findField('sourceUri').markInvalid('Base Uri should contain /dxfr');
-	            		  }
-	            	  else
-	              testUriAndGetScopeName("SourceExchange");
+    var ScopeNameStore = null;
+    var AppNameStore = null;
+    var graphNameStore = null;
+    var newExchConfig = new Ext.FormPanel({
+      id : 'newExchConfig',
+      frame : false,
+      border : false,
+      bodyStyle : 'padding:15px 15px 5px 15px',
+      labelWidth : 100,
+      defaults : {
+        width : 390,
+        allowBlank : false
+      },
+      defaultType : 'textfield',
+      items : [ {
+        fieldLabel : 'Name',
+        name : 'name'
+      }, {
+        fieldLabel : 'Description',
+        name : 'description',
+        allowBlank : true
+      }, {
+        fieldLabel : 'Pool Size',
+        name : 'poolSize',
+        value : 100,
+        allowBlank : true
+      }, {
+        xtype : 'fieldset',
+        anchor : '100%',
+        defaults : {
+          width : 360,
+          allowBlank : false
+        },
+        defaultType : 'textfield',
+        title : 'Source Config',
+        items : [ {
+          xtype : 'textfield',
+          fieldLabel : 'Base URI',
+          allowBlank : false,
+          name : 'sourceUri',
+          regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
+          regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+          vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+          listeners : {
+            specialkey : function(f, e) {
+              if ((e.getKey() == e.TAB) || (e.getKey() == e.ENTER)) {
+                  var subStr = '/dxfr';
+                  var obj = Ext.getCmp('newExchConfig');
+                   var form = obj.getForm();
+                   baseUri = form.findField('sourceUri').getValue();
+                  if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
+                    {
+                    form.findField('sourceUri').markInvalid('Base Uri should contain /dxfr');
+                    }
+                  else
+                testUriAndGetScopeName("SourceExchange");
 
-	            }
-	          },
-	          render : function(c) {
-	            c.getEl().on('keyup', function() {
-	              Ext.getCmp('sourceScopeCombolist').clearValue();
-	              Ext.getCmp('sourceScopeCombolist').setDisabled(true);
-	              Ext.getCmp('sourceAppCombolist').clearValue();
-	              Ext.getCmp('sourceAppCombolist').setDisabled(true);
-	              Ext.getCmp('sourceGraphCombolist').clearValue();
-	              Ext.getCmp('sourceGraphCombolist').setDisabled(true);
-	            }, c);
-	          }
-	        }
-	      }, {
-	        xtype : 'combo',
-	        fieldLabel : 'Context',
-	        name : 'sourceScopeName',
-	        id : 'sourceScopeCombolist',
-	        allowBlank : false,
-	        store : ScopeNameStore,
-	        valueField : 'value',
-	        displayField : 'name',
-	        forceSelection : true,
-	        typeAhead : true,
-	        triggerAction : 'all',
-	        listeners : {
-	          scope : this,
-	          select : function() {
-	            // Ext.getCmp('sourceAppCombolist').clearValue();
-	            getAppNames("SourceExchange");
-	          },
-	          change : function(id, newvalue, oldvalue) {
-	            Ext.getCmp('sourceAppCombolist').clearValue();
-	            // getAppNames("app");
-	            Ext.getCmp('sourceGraphCombolist').clearValue();
-	          }
-	        }
-	      }, {
-	        xtype : 'combo',
-	        fieldLabel : 'Application',
-	        name : 'sourceAppName',
-	        id : 'sourceAppCombolist',
-	        store : AppNameStore,
-	        valueField : 'value',
-	        displayField : 'name',
-	        forceSelection : true,
-	        typeAhead : true,
-	        allowBlank : false,
-	        triggerAction : 'all',
-	        listeners : {
-	          scope : this,
-	          select : function() {
-	            var appName = Ext.getCmp('sourceAppCombolist').getValue();
-	            var obj = Ext.getCmp('newExchConfig');
-	            var form = obj.getForm();
-	            var AppName = form.findField('sourceAppName').getValue();
-	            var context = form.findField('sourceScopeName').getValue();
-	            var Uri  = form.findField('sourceUri').getValue();
-	            graphNameStore = new Ext.data.ArrayStore({
+              }
+            },
+            render : function(c) {
+              c.getEl().on('keyup', function() {
+                Ext.getCmp('sourceScopeCombolist').clearValue();
+                Ext.getCmp('sourceScopeCombolist').setDisabled(true);
+                Ext.getCmp('sourceAppCombolist').clearValue();
+                Ext.getCmp('sourceAppCombolist').setDisabled(true);
+                Ext.getCmp('sourceGraphCombolist').clearValue();
+                Ext.getCmp('sourceGraphCombolist').setDisabled(true);
+              }, c);
+            }
+          }
+        }, {
+          xtype : 'combo',
+          fieldLabel : 'Context',
+          name : 'sourceScopeName',
+          id : 'sourceScopeCombolist',
+          allowBlank : false,
+          store : ScopeNameStore,
+          valueField : 'value',
+          displayField : 'name',
+          forceSelection : true,
+          typeAhead : true,
+          triggerAction : 'all',
+          listeners : {
+            scope : this,
+            select : function() {
+              // Ext.getCmp('sourceAppCombolist').clearValue();
+              getAppNames("SourceExchange");
+            },
+            change : function(id, newvalue, oldvalue) {
+              Ext.getCmp('sourceAppCombolist').clearValue();
+              // getAppNames("app");
+              Ext.getCmp('sourceGraphCombolist').clearValue();
+            }
+          }
+        }, {
+          xtype : 'combo',
+          fieldLabel : 'Application',
+          name : 'sourceAppName',
+          id : 'sourceAppCombolist',
+          store : AppNameStore,
+          valueField : 'value',
+          displayField : 'name',
+          forceSelection : true,
+          typeAhead : true,
+          allowBlank : false,
+          triggerAction : 'all',
+          listeners : {
+            scope : this,
+            select : function() {
+              var appName = Ext.getCmp('sourceAppCombolist').getValue();
+              var obj = Ext.getCmp('newExchConfig');
+              var form = obj.getForm();
+              var AppName = form.findField('sourceAppName').getValue();
+              var context = form.findField('sourceScopeName').getValue();
+              var Uri  = form.findField('sourceUri').getValue();
+              graphNameStore = new Ext.data.ArrayStore({
 
-	            	url : 'getGraphNames?' + '&scope =' + context
-	            			+ '&name =' + AppName + '&sourceUri ='
-	            			+ Uri,
-	            	autoDestroy : true,
-	            	autoLoad : false,
-	            	fields : [ {
-	            		name : 'value'
-	            	}, {
-	            		name : 'name'
-	            	} ]
+                url : 'getGraphNames?' + '&scope =' + context
+                    + '&name =' + AppName + '&sourceUri ='
+                    + Uri,
+                autoDestroy : true,
+                autoLoad : false,
+                fields : [ {
+                  name : 'value'
+                }, {
+                  name : 'name'
+                } ]
 
-	            });
-	            Ext.getCmp('sourceGraphCombolist').bindStore(graphNameStore);
-	            form.findField('sourceGraphName').setDisabled(false);
-	          }
-	        }
-	      }, {
-	    	    xtype : 'combo',
-				fieldLabel : 'Graph',
-				name : 'sourceGraphName',
-				id : 'sourceGraphCombolist',
-				allowBlank : false,
-				store : graphNameStore,
-				valueField : 'value',
-				displayField : 'name',
-				forceSelection : true,
-				typeAhead : true,
-				triggerAction : 'all'
-			}],
-	      buttons : [ {
-	        text : 'Test',
-	        handler : function(button, event) {
-	          SourceUri();
-	        }
-	      } ]
-	    }, {
-	      xtype : 'fieldset',
-	      anchor : '100%',
-	      title : 'Target Config',
-	      defaults : {
-	        width : 360,
-	        allowBlank : false
-	      },
-	      defaultType : 'textfield',
-	      items : [ {
-	        xtype : 'textfield',
-	        fieldLabel : 'Base URI',
-	        allowBlank : false,
-	        name : 'targetUri',
-	        regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
-	        regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
-	        vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
-	        listeners : {
-	          specialkey : function(f, e) {
-	            if (e.getKey() == e.TAB) {
-	            	 var subStr = '/dxfr';
-	            	  var obj = Ext.getCmp('newExchConfig');
-	            	   var form = obj.getForm();
-	            	   baseUri = form.findField('targetUri').getValue();
-	            	  if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
-	            		  {
-	            		  form.findField('targetUri').markInvalid('Base Uri should contain /dxfr');
-	            		  }
-	            	  else
-	              testUriAndGetScopeName("TargetExchange");
+              });
+              Ext.getCmp('sourceGraphCombolist').bindStore(graphNameStore);
+              form.findField('sourceGraphName').setDisabled(false);
+            }
+          }
+        }, {
+            xtype : 'combo',
+        fieldLabel : 'Graph',
+        name : 'sourceGraphName',
+        id : 'sourceGraphCombolist',
+        allowBlank : false,
+        store : graphNameStore,
+        valueField : 'value',
+        displayField : 'name',
+        forceSelection : true,
+        typeAhead : true,
+        triggerAction : 'all'
+      }],
+        buttons : [ {
+          text : 'Test',
+          handler : function(button, event) {
+            SourceUri();
+          }
+        } ]
+      }, {
+        xtype : 'fieldset',
+        anchor : '100%',
+        title : 'Target Config',
+        defaults : {
+          width : 360,
+          allowBlank : false
+        },
+        defaultType : 'textfield',
+        items : [ {
+          xtype : 'textfield',
+          fieldLabel : 'Base URI',
+          allowBlank : false,
+          name : 'targetUri',
+          regex : /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\:[a-zA-Z0-9\/]{2,5}[\/]{0,1}/,
+          regexText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+          vtypeText : 'Invalid URL Format (eg: http://localhost/services/dxfr)',
+          listeners : {
+            specialkey : function(f, e) {
+              if (e.getKey() == e.TAB) {
+                 var subStr = '/dxfr';
+                  var obj = Ext.getCmp('newExchConfig');
+                   var form = obj.getForm();
+                   baseUri = form.findField('targetUri').getValue();
+                  if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
+                    {
+                    form.findField('targetUri').markInvalid('Base Uri should contain /dxfr');
+                    }
+                  else
+                testUriAndGetScopeName("TargetExchange");
 
-	            }
-	          },
-	          render : function(c) {
-	            c.getEl().on('keyup', function() {
-	              Ext.getCmp('targetScopeCombolist').clearValue();
-	              Ext.getCmp('targetScopeCombolist').setDisabled(true);
-	              Ext.getCmp('targetAppCombolist').clearValue();
-	              Ext.getCmp('targetAppCombolist').setDisabled(true);
-	              Ext.getCmp('targetGraphCombolist').clearValue();
-	              Ext.getCmp('targetGraphCombolist').setDisabled(true);
-	            }, c);
-	          }
-	        }
-	      }, {
-	        xtype : 'combo',
-	        fieldLabel : 'Context',
-	        name : 'targetScopeName',
-	        id : 'targetScopeCombolist',
-	        allowBlank : false,
-	        store : ScopeNameStore,
-	        valueField : 'value',
-	        displayField : 'name',
-	        forceSelection : true,
-	        typeAhead : true,
-	        triggerAction : 'all',
-	        listeners : {
-	          scope : this,
-	          select : function() {
-	            // Ext.getCmp('targetAppCombolist').clearValue();
-	            getAppNames("TargetExchange");
-	          },
-	          change : function(id, newvalue, oldvalue) {
-	            Ext.getCmp('targetAppCombolist').clearValue();
-	            // getAppNames("app");
-	            Ext.getCmp('targetAppCombolist').clearValue();
-	          }
-	        }
-	      }, {
-	        xtype : 'combo',
-	        fieldLabel : 'Application',
-	        name : 'targetAppName',
-	        id : 'targetAppCombolist',
-	        store : AppNameStore,
-	        valueField : 'value',
-	        displayField : 'name',
-	        forceSelection : true,
-	        typeAhead : true,
-	        allowBlank : false,
-	        triggerAction : 'all',
-	        listeners : {
-	          scope : this,
-	          select : function() {
-	          
-	            var obj = Ext.getCmp('newExchConfig');
-	            var form = obj.getForm();               
-	            var AppName = form.findField('targetAppName').getValue();
-	            var context = form.findField('targetScopeName').getValue();
-	            var Uri  = form.findField('targetUri').getValue();
-	            graphNameStore = new Ext.data.ArrayStore({
+              }
+            },
+            render : function(c) {
+              c.getEl().on('keyup', function() {
+                Ext.getCmp('targetScopeCombolist').clearValue();
+                Ext.getCmp('targetScopeCombolist').setDisabled(true);
+                Ext.getCmp('targetAppCombolist').clearValue();
+                Ext.getCmp('targetAppCombolist').setDisabled(true);
+                Ext.getCmp('targetGraphCombolist').clearValue();
+                Ext.getCmp('targetGraphCombolist').setDisabled(true);
+              }, c);
+            }
+          }
+        }, {
+          xtype : 'combo',
+          fieldLabel : 'Context',
+          name : 'targetScopeName',
+          id : 'targetScopeCombolist',
+          allowBlank : false,
+          store : ScopeNameStore,
+          valueField : 'value',
+          displayField : 'name',
+          forceSelection : true,
+          typeAhead : true,
+          triggerAction : 'all',
+          listeners : {
+            scope : this,
+            select : function() {
+              // Ext.getCmp('targetAppCombolist').clearValue();
+              getAppNames("TargetExchange");
+            },
+            change : function(id, newvalue, oldvalue) {
+              Ext.getCmp('targetAppCombolist').clearValue();
+              // getAppNames("app");
+              Ext.getCmp('targetAppCombolist').clearValue();
+            }
+          }
+        }, {
+          xtype : 'combo',
+          fieldLabel : 'Application',
+          name : 'targetAppName',
+          id : 'targetAppCombolist',
+          store : AppNameStore,
+          valueField : 'value',
+          displayField : 'name',
+          forceSelection : true,
+          typeAhead : true,
+          allowBlank : false,
+          triggerAction : 'all',
+          listeners : {
+            scope : this,
+            select : function() {
+            
+              var obj = Ext.getCmp('newExchConfig');
+              var form = obj.getForm();               
+              var AppName = form.findField('targetAppName').getValue();
+              var context = form.findField('targetScopeName').getValue();
+              var Uri  = form.findField('targetUri').getValue();
+              graphNameStore = new Ext.data.ArrayStore({
 
-	            	url : 'getGraphNames?' + '&scope =' + context
-	            			+ '&name =' + AppName + '&sourceUri ='
-	            			+ Uri,
-	            	autoDestroy : true,
-	            	autoLoad : false,
-	            	fields : [ {
-	            		name : 'value'
-	            	}, {
-	            		name : 'name'
-	            	} ]
+                url : 'getGraphNames?' + '&scope =' + context
+                    + '&name =' + AppName + '&sourceUri ='
+                    + Uri,
+                autoDestroy : true,
+                autoLoad : false,
+                fields : [ {
+                  name : 'value'
+                }, {
+                  name : 'name'
+                } ]
 
-	            });
-	            Ext.getCmp('targetGraphCombolist').bindStore(graphNameStore);
-	            form.findField('targetGraphName').setDisabled(false);
-	          }
-	        }
-	      }, {
-	        
-	    	    xtype : 'combo',
-				fieldLabel : 'Graph',
-				name : 'targetGraphName',
-				id : 'targetGraphCombolist',
-				allowBlank : false,
-				store : graphNameStore,
-				valueField : 'value',
-				displayField : 'name',
-				forceSelection : true,
-				typeAhead : true,
-				triggerAction : 'all'
-	      } ],
-	      buttons : [ {
-	        text : 'Test',
-	        handler : function(button, event) {
-	          TargetUri();
-	        }
-	      } ]
-	    }, {
-	      xtype : 'hidden',
-	      fieldLabel : 'Label',
-	      name : 'oldConfigName'
-	    }, {
-	      xtype : 'hidden',
-	      fieldLabel : 'Label',
-	      name : 'oldCommName'
-	    }, {
-	      xtype : 'hidden',
-	      fieldLabel : 'Label',
-	      name : 'oldScope'
-	    } ],
-	    buttons : [ {
-	      text : 'Save',
-	      handler : function(button, event) {
-	        saveExchangeConfig();
-	        // newExchangeConfigWin.close();
-	      }
-	    }, {
-	      text : 'Cancel',
-	      handler : function(button, event) {
-	        newExchangeConfigWin.close();
-	      }
-	    } ]
-	  });
+              });
+              Ext.getCmp('targetGraphCombolist').bindStore(graphNameStore);
+              form.findField('targetGraphName').setDisabled(false);
+            }
+          }
+        }, {
+          
+            xtype : 'combo',
+        fieldLabel : 'Graph',
+        name : 'targetGraphName',
+        id : 'targetGraphCombolist',
+        allowBlank : false,
+        store : graphNameStore,
+        valueField : 'value',
+        displayField : 'name',
+        forceSelection : true,
+        typeAhead : true,
+        triggerAction : 'all'
+        } ],
+        buttons : [ {
+          text : 'Test',
+          handler : function(button, event) {
+            TargetUri();
+          }
+        } ]
+      }, {
+        xtype : 'hidden',
+        fieldLabel : 'Label',
+        name : 'oldConfigName'
+      }, {
+        xtype : 'hidden',
+        fieldLabel : 'Label',
+        name : 'oldCommName'
+      }, {
+        xtype : 'hidden',
+        fieldLabel : 'Label',
+        name : 'oldScope'
+      } ],
+      buttons : [ {
+        text : 'Save',
+        handler : function(button, event) {
+          saveExchangeConfig();
+          // newExchangeConfigWin.close();
+        }
+      }, {
+        text : 'Cancel',
+        handler : function(button, event) {
+          newExchangeConfigWin.close();
+        }
+      } ]
+    });
 
-	  var newExchangeConfigWin = new Ext.Window({
-	    id : 'newExchangeConfigWin',
-	    title : 'New Exchange',
-	    width : 540,
-	    height : 540,
-	    modal : true,
-	    resizable : false,
-	    items : [ newExchConfig ]
-	  });
-	}
+    var newExchangeConfigWin = new Ext.Window({
+      id : 'newExchangeConfigWin',
+      title : 'New Exchange',
+      width : 540,
+      height : 540,
+      modal : true,
+      resizable : false,
+      items : [ newExchConfig ]
+    });
+  }
 
 function SourceUri() {
   var obj = Ext.getCmp('newExchConfig');
@@ -1726,8 +1726,6 @@ function buildGraphSubMenu() {
       onShowUpdateCache();
       getAppMode();
       fillShowUpdateCache();
-      // var view = Ext.getCmp('showUpdateCacheWin');
-      // view.show();
     },
     scope : this
   }];
@@ -1936,165 +1934,165 @@ function editCommodity() {
 }
 
 function editGraph() {
-	var centerPanel = Ext.getCmp('content-pane');
-	centerPanel.getEl().mask("Loading...", "x-mask-loading");
-	var node = Ext.getCmp('directory-tree').getSelectionModel()
-			.getSelectedNode();
-	var scope = node.parentNode.parentNode.parentNode.text;
-	var graphValue = node.text;
-	var appNameValue = node.parentNode.attributes.properties['Internal Name'];
-	var Uri = node.parentNode.attributes.properties['Base URI'];
+  var centerPanel = Ext.getCmp('content-pane');
+  centerPanel.getEl().mask("Loading...", "x-mask-loading");
+  var node = Ext.getCmp('directory-tree').getSelectionModel()
+      .getSelectedNode();
+  var scope = node.parentNode.parentNode.parentNode.text;
+  var graphValue = node.text;
+  var appNameValue = node.parentNode.attributes.properties['Internal Name'];
+  var Uri = node.parentNode.attributes.properties['Base URI'];
 
-	var view = Ext.getCmp('newGraphWin');
-	view.setTitle("Edit Graph");
-	var obj = Ext.getCmp('newGraphForm');
-	var form = obj.getForm();
+  var view = Ext.getCmp('newGraphWin');
+  view.setTitle("Edit Graph");
+  var obj = Ext.getCmp('newGraphForm');
+  var form = obj.getForm();
 
-	Ext.Ajax.request({
-		url : 'getGraph?' + '&scope =' + scope + '&appName =' + appNameValue
-				+ '&name =' + graphValue,
-		method : 'POST',
-		timeout : 120000,
-		success : function(response, request) {
-			var graph = Ext.decode(response.responseText);
-			var context = node.attributes.properties['Context'];
-			 graphNameStore = new Ext.data.ArrayStore({
+  Ext.Ajax.request({
+    url : 'getGraph?' + '&scope =' + scope + '&appName =' + appNameValue
+        + '&name =' + graphValue,
+    method : 'POST',
+    timeout : 120000,
+    success : function(response, request) {
+      var graph = Ext.decode(response.responseText);
+      var context = node.attributes.properties['Context'];
+       graphNameStore = new Ext.data.ArrayStore({
 
-					url : 'getGraphNames?' + '&scope =' + context
-							+ '&name =' + appNameValue + '&sourceUri ='
-							+ Uri,
-					autoDestroy : true,
-					autoLoad : false,
-					fields : [ {
-						name : 'value'
-					}, {
-						name : 'name'
-					} ]
+          url : 'getGraphNames?' + '&scope =' + context
+              + '&name =' + appNameValue + '&sourceUri ='
+              + Uri,
+          autoDestroy : true,
+          autoLoad : false,
+          fields : [ {
+            name : 'value'
+          }, {
+            name : 'name'
+          } ]
 
-				});
-			 
-			  Ext.getCmp('graphCombolist').bindStore(graphNameStore);
-			  
-			form.setValues({
-				name : graph.name,
-				description : graph.description,
-				oldAppName : appNameValue,
-				oldScope : scope,
-				oldGraphName : graphValue
-			/* CommName: graph.commodity */
-			});
-			centerPanel.getEl().unmask();
-			view.show();
-		},
-		failure : function(response, request) {
-			centerPanel.getEl().unmask();
-			alert("Error fetching data to fill form");
-		}
-	});
+        });
+       
+        Ext.getCmp('graphCombolist').bindStore(graphNameStore);
+        
+      form.setValues({
+        name : graph.name,
+        description : graph.description,
+        oldAppName : appNameValue,
+        oldScope : scope,
+        oldGraphName : graphValue
+      /* CommName: graph.commodity */
+      });
+      centerPanel.getEl().unmask();
+      view.show();
+    },
+    failure : function(response, request) {
+      centerPanel.getEl().unmask();
+      alert("Error fetching data to fill form");
+    }
+  });
 
 }
 
 function newGraph() {
 
-	 var obj = Ext.getCmp('directory-tree')
-		.getSelectionModel().getSelectedNode();
+   var obj = Ext.getCmp('directory-tree')
+    .getSelectionModel().getSelectedNode();
 var AppName = obj.attributes.properties['Internal Name'];
 var context = obj.attributes.properties['Context'];
 var Uri = obj.attributes.properties['Base URI'];
 
 var graphNameStore = new Ext.data.ArrayStore({
 
-	url : 'getGraphNames?' + '&scope =' + context
-			+ '&name =' + AppName + '&sourceUri ='
-			+ Uri,
-	autoDestroy : true,
-	autoLoad : false,
-	fields : [ {
-		name : 'value'
-	}, {
-		name : 'name'
-	} ]
+  url : 'getGraphNames?' + '&scope =' + context
+      + '&name =' + AppName + '&sourceUri ='
+      + Uri,
+  autoDestroy : true,
+  autoLoad : false,
+  fields : [ {
+    name : 'value'
+  }, {
+    name : 'name'
+  } ]
 
 });
 
-	var graphCombo = new Ext.form.ComboBox(
-			{
-				fieldLabel : 'Graph',
-				name : 'name',
-				id : 'graphCombolist',
-				allowBlank : false,
-				store : graphNameStore,
-				valueField : 'value',
-				displayField : 'name',
-				forceSelection : true,
-				width : 240,
-				typeAhead : true,
-				triggerAction : 'all'
-			});
-	
-	// Ext.getCmp('graphCombolist').bindStore(graphNameStore);
+  var graphCombo = new Ext.form.ComboBox(
+      {
+        fieldLabel : 'Graph',
+        name : 'name',
+        id : 'graphCombolist',
+        allowBlank : false,
+        store : graphNameStore,
+        valueField : 'value',
+        displayField : 'name',
+        forceSelection : true,
+        width : 240,
+        typeAhead : true,
+        triggerAction : 'all'
+      });
+  
+  // Ext.getCmp('graphCombolist').bindStore(graphNameStore);
 
-	var newGraphForm = new Ext.FormPanel({
-		id : 'newGraphForm',
-		border : false,
-		layout : 'form',
-		frame : false,
-		bodyStyle : 'padding:15px',
-		labelwidth : 75,
-		items : [ graphCombo, {
-			xtype : 'textfield',
-			width : 240,
-			fieldLabel : 'Description',
-			name : 'description'
-		},
-		/*
-		 * { xtype: 'textfield', anchor: '95%', fieldLabel: 'Commodity', name:
-		 * 'CommName' },
-		 */
-		{
-			xtype : 'hidden',
-			anchor : '100%',
-			fieldLabel : 'Label',
-			name : 'oldScope'
-		}, {
-			xtype : 'hidden',
-			anchor : '100%',
-			fieldLabel : 'Label',
-			name : 'oldAppName'
-		}, {
-			xtype : 'hidden',
-			anchor : '100%',
-			fieldLabel : 'Label',
-			name : 'oldGraphName'
-		} ],
-		buttons : [ {
-			text : 'Save',
-			handler : function(node, button, event) {
-				saveGraph();
-				newGraphWin.close();
-			}
-		// margin: 10,
-		}, {
-			text : 'Cancel',
-			handler : function(button, event) {
-				newGraphWin.close();
-			}
-		} ]
-	});
+  var newGraphForm = new Ext.FormPanel({
+    id : 'newGraphForm',
+    border : false,
+    layout : 'form',
+    frame : false,
+    bodyStyle : 'padding:15px',
+    labelwidth : 75,
+    items : [ graphCombo, {
+      xtype : 'textfield',
+      width : 240,
+      fieldLabel : 'Description',
+      name : 'description'
+    },
+    /*
+     * { xtype: 'textfield', anchor: '95%', fieldLabel: 'Commodity', name:
+     * 'CommName' },
+     */
+    {
+      xtype : 'hidden',
+      anchor : '100%',
+      fieldLabel : 'Label',
+      name : 'oldScope'
+    }, {
+      xtype : 'hidden',
+      anchor : '100%',
+      fieldLabel : 'Label',
+      name : 'oldAppName'
+    }, {
+      xtype : 'hidden',
+      anchor : '100%',
+      fieldLabel : 'Label',
+      name : 'oldGraphName'
+    } ],
+    buttons : [ {
+      text : 'Save',
+      handler : function(node, button, event) {
+        saveGraph();
+        newGraphWin.close();
+      }
+    // margin: 10,
+    }, {
+      text : 'Cancel',
+      handler : function(button, event) {
+        newGraphWin.close();
+      }
+    } ]
+  });
 
-	var newGraphWin = new Ext.Window({
-		id : 'newGraphWin',
-		resizable : false,
-		height : 150,
-		width : 417,
-		layout : {
-			type : 'fit'
-		},
-		title : 'New Graph',
-		modal : true,
-		items : [ newGraphForm ]
+  var newGraphWin = new Ext.Window({
+    id : 'newGraphWin',
+    resizable : false,
+    height : 150,
+    width : 417,
+    layout : {
+      type : 'fit'
+    },
+    title : 'New Graph',
+    modal : true,
+    items : [ newGraphForm ]
 
-	});
+  });
 }
 function saveGraph() {
   var me = this;
@@ -2169,18 +2167,19 @@ function onRefreshCache() {
   var obj = Ext.getCmp('showUpdateCacheForm');
   var form = obj.getForm();
   var timeout = form.findField("timeOut").getValue();
+  
   if ((timeout === "") || (timeout === "Infinite")) {
     timeout = '0';
   }
-  Ext.getCmp('showUpdateCacheWin').close();
 
-  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-  Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();  
+  
+  obj.setDisabled(true);
+  form.getEl().mask('Processing cache refresh...', 'x-mask-loading');
 
   Ext.Ajax.request({
     url : 'refreshCache',
     method : 'POST',
-    // timeout : 3600000,
     timeout : timeout,
     params : {
       'dxfrUri' : node.attributes.properties['Base URI'],
@@ -2190,28 +2189,37 @@ function onRefreshCache() {
       'timeout' : timeout
     },
     success : function(response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
+      var panel = Ext.getCmp('showUpdateCacheForm');      
+      panel.getForm().getEl().unmask();
+      panel.setDisabled(false);
 
       var responseObj = Ext.decode(response.responseText);
 
       if (responseObj.level == 'SUCCESS') {
+        Ext.getCmp('showUpdateCacheWin').close();        
         showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
-      } else {
+      } 
+      else {
         showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
       }
     },
     failure : function(response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
+      var panel = Ext.getCmp('showUpdateCacheForm');      
+      panel.getForm().getEl().unmask();
+      panel.setDisabled(false);
 
       if (request.response.status == 200) {
         var responseObj = Ext.decode(request.response.responseText);
 
         if (responseObj.level == 'SUCCESS') {
+          Ext.getCmp('showUpdateCacheWin').close();
           showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
-        } else {
+        } 
+        else {
           showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
         }
-      } else {
+      } 
+      else {
         var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
         showDialog(500, 160, 'Refresh Cache Error', errMsg, Ext.Msg.OK, null);
       }
@@ -2224,16 +2232,19 @@ function onImportCache() {
   var obj = Ext.getCmp('showUpdateCacheForm');
   var form = obj.getForm();
   var timeout = form.findField("timeOut").getValue();
+  
   if ((timeout === "") || (timeout === "Infinite")) {
     timeout = '0';
   }
-  var cacheUri = form.findField("CacheUri").getValue();
-  Ext.getCmp('showUpdateCacheWin').close();
-  Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+  
+  var cacheUri = form.findField("CacheUri").getValue();  
+  
+  obj.setDisabled(true);
+  form.getEl().mask('Processing cache import...', 'x-mask-loading');
+  
   Ext.Ajax.request({
     url : 'importCache',
     method : 'POST',
-    // timeout : 3600000,
     timeout : timeout,
     params : {
       'dxfrUri' : node.attributes.properties['Base URI'],
@@ -2244,34 +2255,42 @@ function onImportCache() {
       'timeout' : timeout
     },
     success : function(response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
-
+      var panel = Ext.getCmp('showUpdateCacheForm');      
+      panel.getForm().getEl().unmask();
+      panel.setDisabled(false);
+      
       var responseObj = Ext.decode(response.responseText);
 
       if (responseObj.level == 'SUCCESS') {
+        Ext.getCmp('showUpdateCacheWin').close();
         showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
-      } else {
+      } 
+      else {
         showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
       }
     },
     failure : function(response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
-
+      var panel = Ext.getCmp('showUpdateCacheForm');      
+      panel.getForm().getEl().unmask();
+      panel.setDisabled(false);
+      
       if (request.response.status == 200) {
         var responseObj = Ext.decode(request.response.responseText);
 
         if (responseObj.level == 'SUCCESS') {
+          Ext.getCmp('showUpdateCacheWin').close();
           showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
-        } else {
+        } 
+        else {
           showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
         }
-      } else {
+      } 
+      else {
         var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
         showDialog(500, 160, 'Import Cache Error', errMsg, Ext.Msg.OK, null);
       }
     }
   });
-
 }
 
 function buildManifestMenu(scope, xid, isDeleted) {
@@ -2820,146 +2839,146 @@ function includeTemplate(scope, xid) {
 }
 
 function editExchangeConfig() {
-	  var centerPanel = Ext.getCmp('content-pane');
-	  centerPanel.getEl().mask("Loading...", "x-mask-loading");
-	  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-	  var scope = node.parentNode.parentNode.parentNode.text;
-	  var commodity = node.parentNode.text;
-	  var commConfigName = node.text;
+    var centerPanel = Ext.getCmp('content-pane');
+    centerPanel.getEl().mask("Loading...", "x-mask-loading");
+    var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+    var scope = node.parentNode.parentNode.parentNode.text;
+    var commodity = node.parentNode.text;
+    var commConfigName = node.text;
 
-	  var view = Ext.getCmp('newExchangeConfigWin');
-	  view.setTitle("Edit Exchange");
+    var view = Ext.getCmp('newExchangeConfigWin');
+    view.setTitle("Edit Exchange");
 
-	  Ext.Ajax.request({
-	    url : 'getExchange',
-	    params : {
-	      scope : scope,
-	      commName : commodity,
-	      name : commConfigName
-	    },
-	    method : 'POST',
-	    timeout : 120000,
-	    success : function(response, request) {
-	      var form = Ext.decode(response.responseText);
-	      var obj = Ext.getCmp('newExchConfig');
-	      var formdata = obj.getForm();
-	      formdata.findField('name').setValue(form.name);
-	      formdata.findField('description').setValue(form.description);
-	      if ((form.poolSize === null) || (form.poolSize === "")) {
-	        formdata.findField('poolSize').setValue(100);
-	      } else {
-	        formdata.findField('poolSize').setValue(form.poolSize);
-	      }
-	      formdata.findField('sourceUri').setValue(form.sourceUri);
-	      // testUriAndGetScopeName("SourceExchange");
-	      ScopeNameStore = new Ext.data.ArrayStore({
+    Ext.Ajax.request({
+      url : 'getExchange',
+      params : {
+        scope : scope,
+        commName : commodity,
+        name : commConfigName
+      },
+      method : 'POST',
+      timeout : 120000,
+      success : function(response, request) {
+        var form = Ext.decode(response.responseText);
+        var obj = Ext.getCmp('newExchConfig');
+        var formdata = obj.getForm();
+        formdata.findField('name').setValue(form.name);
+        formdata.findField('description').setValue(form.description);
+        if ((form.poolSize === null) || (form.poolSize === "")) {
+          formdata.findField('poolSize').setValue(100);
+        } else {
+          formdata.findField('poolSize').setValue(form.poolSize);
+        }
+        formdata.findField('sourceUri').setValue(form.sourceUri);
+        // testUriAndGetScopeName("SourceExchange");
+        ScopeNameStore = new Ext.data.ArrayStore({
 
-	        url : 'getAMScope?' + '&sourceUri =' + form.sourceUri,
-	        autoDestroy : true,
-	        autoLoad : false,
-	        fields : [ {
-	          name : 'value'
-	        }, {
-	          name : 'name'
-	        } ]
+          url : 'getAMScope?' + '&sourceUri =' + form.sourceUri,
+          autoDestroy : true,
+          autoLoad : false,
+          fields : [ {
+            name : 'value'
+          }, {
+            name : 'name'
+          } ]
 
-	      });
-	      Ext.getCmp('sourceScopeCombolist').bindStore(ScopeNameStore);
-	      Ext.getCmp('sourceScopeCombolist').setValue(form.sourceScope);
-	      // getAppNames("SourceExchange");
-	      AppNameStore = new Ext.data.ArrayStore({
+        });
+        Ext.getCmp('sourceScopeCombolist').bindStore(ScopeNameStore);
+        Ext.getCmp('sourceScopeCombolist').setValue(form.sourceScope);
+        // getAppNames("SourceExchange");
+        AppNameStore = new Ext.data.ArrayStore({
 
-	        url : 'getAppNames?' + '&appScope =' + form.sourceScope + '&sourceUri =' + form.sourceUri,
-	        autoDestroy : true,
-	        autoLoad : false,
-	        fields : [ {
-	          name : 'value'
-	        }, {
-	          name : 'name'
-	        } ]
+          url : 'getAppNames?' + '&appScope =' + form.sourceScope + '&sourceUri =' + form.sourceUri,
+          autoDestroy : true,
+          autoLoad : false,
+          fields : [ {
+            name : 'value'
+          }, {
+            name : 'name'
+          } ]
 
-	      });
-	      Ext.getCmp('sourceAppCombolist').bindStore(AppNameStore);
-	      Ext.getCmp('sourceAppCombolist').setValue(form.sourceApp);
-	       graphNameStore = new Ext.data.ArrayStore({
+        });
+        Ext.getCmp('sourceAppCombolist').bindStore(AppNameStore);
+        Ext.getCmp('sourceAppCombolist').setValue(form.sourceApp);
+         graphNameStore = new Ext.data.ArrayStore({
 
-	    		url : 'getGraphNames?' + '&scope =' + form.sourceScope
-	    				+ '&name =' + form.sourceApp + '&sourceUri ='
-	    				+ form.sourceUri,
-	    		autoDestroy : true,
-	    		autoLoad : false,
-	    		fields : [ {
-	    			name : 'value'
-	    		}, {
-	    			name : 'name'
-	    		} ]
+          url : 'getGraphNames?' + '&scope =' + form.sourceScope
+              + '&name =' + form.sourceApp + '&sourceUri ='
+              + form.sourceUri,
+          autoDestroy : true,
+          autoLoad : false,
+          fields : [ {
+            name : 'value'
+          }, {
+            name : 'name'
+          } ]
 
-	    	});
-	       Ext.getCmp('sourceGraphCombolist').bindStore(graphNameStore);
-	       Ext.getCmp('sourceGraphCombolist').setValue(form.sourceGraph);
+        });
+         Ext.getCmp('sourceGraphCombolist').bindStore(graphNameStore);
+         Ext.getCmp('sourceGraphCombolist').setValue(form.sourceGraph);
 
-	      formdata.findField('targetUri').setValue(form.targetUri);
-	      // testUriAndGetScopeName("TargetExchange");
-	      ScopeNameStore = new Ext.data.ArrayStore({
+        formdata.findField('targetUri').setValue(form.targetUri);
+        // testUriAndGetScopeName("TargetExchange");
+        ScopeNameStore = new Ext.data.ArrayStore({
 
-	        url : 'getAMScope?' + '&sourceUri =' + form.targetUri,
-	        autoDestroy : true,
-	        autoLoad : false,
-	        fields : [ {
-	          name : 'value'
-	        }, {
-	          name : 'name'
-	        } ]
+          url : 'getAMScope?' + '&sourceUri =' + form.targetUri,
+          autoDestroy : true,
+          autoLoad : false,
+          fields : [ {
+            name : 'value'
+          }, {
+            name : 'name'
+          } ]
 
-	      });
-	      Ext.getCmp('targetScopeCombolist').bindStore(ScopeNameStore);
-	      Ext.getCmp('targetScopeCombolist').setValue(form.targetScope);
-	      // getAppNames("TargetExchange");
-	      AppNameStore = new Ext.data.ArrayStore({
+        });
+        Ext.getCmp('targetScopeCombolist').bindStore(ScopeNameStore);
+        Ext.getCmp('targetScopeCombolist').setValue(form.targetScope);
+        // getAppNames("TargetExchange");
+        AppNameStore = new Ext.data.ArrayStore({
 
-	        url : 'getAppNames?' + '&appScope =' + form.targetScope + '&sourceUri =' + form.targetUri,
-	        autoDestroy : true,
-	        autoLoad : false,
-	        fields : [ {
-	          name : 'value'
-	        }, {
-	          name : 'name'
-	        } ]
+          url : 'getAppNames?' + '&appScope =' + form.targetScope + '&sourceUri =' + form.targetUri,
+          autoDestroy : true,
+          autoLoad : false,
+          fields : [ {
+            name : 'value'
+          }, {
+            name : 'name'
+          } ]
 
-	      });
-	      Ext.getCmp('targetAppCombolist').bindStore(AppNameStore);
-	      Ext.getCmp('targetAppCombolist').setValue(form.targetApp);
+        });
+        Ext.getCmp('targetAppCombolist').bindStore(AppNameStore);
+        Ext.getCmp('targetAppCombolist').setValue(form.targetApp);
 
-	     graphNameStore = new Ext.data.ArrayStore({
+       graphNameStore = new Ext.data.ArrayStore({
 
-	      	url : 'getGraphNames?' + '&scope =' + form.targetScope
-	      			+ '&name =' + form.targetApp + '&sourceUri ='
-	      			+ form.targetScope,
-	      	autoDestroy : true,
-	      	autoLoad : false,
-	      	fields : [ {
-	      		name : 'value'
-	      	}, {
-	      		name : 'name'
-	      	} ]
+          url : 'getGraphNames?' + '&scope =' + form.targetScope
+              + '&name =' + form.targetApp + '&sourceUri ='
+              + form.targetScope,
+          autoDestroy : true,
+          autoLoad : false,
+          fields : [ {
+            name : 'value'
+          }, {
+            name : 'name'
+          } ]
 
-	      });
-	     Ext.getCmp('targetGraphCombolist').bindStore(graphNameStore);
-	     Ext.getCmp('targetGraphCombolist').setValue(form.targetGraph);
-	      
-	      formdata.findField('oldConfigName').setValue(commConfigName);
-	      formdata.findField('oldCommName').setValue(commodity);
-	      formdata.findField('oldScope').setValue(scope);
-	      centerPanel.getEl().unmask();
-	      view.show();
-	    },
-	    failure : function(response, request) {
-	      centerPanel.getEl().unmask();
-	      alert("Error fetching data to fill form");
-	    }
-	  });
+        });
+       Ext.getCmp('targetGraphCombolist').bindStore(graphNameStore);
+       Ext.getCmp('targetGraphCombolist').setValue(form.targetGraph);
+        
+        formdata.findField('oldConfigName').setValue(commConfigName);
+        formdata.findField('oldCommName').setValue(commodity);
+        formdata.findField('oldScope').setValue(scope);
+        centerPanel.getEl().unmask();
+        view.show();
+      },
+      failure : function(response, request) {
+        centerPanel.getEl().unmask();
+        alert("Error fetching data to fill form");
+      }
+    });
 
-	}
+  }
 
 function deleteScope(node, event) {
   var me = this;
@@ -3247,8 +3266,8 @@ function getAppNames(name) {
 }
 
 function testUriAndGetScopeName(name) {
-	 var centerPanel = Ext.getCmp('content-pane');
-	  centerPanel.getEl().mask("Loading...", "x-mask-loading");
+   var centerPanel = Ext.getCmp('content-pane');
+    centerPanel.getEl().mask("Loading...", "x-mask-loading");
  var baseUri;
  if (name === "app") {
    var obj = Ext.getCmp('newAppForm');
@@ -3259,7 +3278,7 @@ function testUriAndGetScopeName(name) {
    var obj = Ext.getCmp('newExchConfig');
    var form = obj.getForm();
    if (name === "SourceExchange") {
-	   baseUri = form.findField('sourceUri').getValue();
+     baseUri = form.findField('sourceUri').getValue();
      form.findField('sourceScopeName').setDisabled(false);
 
    } else {
@@ -3391,15 +3410,15 @@ function newApp() {
       listeners : {
         specialkey : function(f, e) {
           if ((e.getKey() == e.TAB) || (e.getKey() == e.ENTER)) {
-        	  var subStr = '/dxfr';
-        	  var obj = Ext.getCmp('newAppForm');
-        	   var form = obj.getForm();
-        	   baseUri = form.findField('baseUri').getValue();
-        	  if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
-        		  {
-        		  form.findField('baseUri').markInvalid('Base Uri should contain /dxfr');
-        		  }
-        	  else
+            var subStr = '/dxfr';
+            var obj = Ext.getCmp('newAppForm');
+             var form = obj.getForm();
+             baseUri = form.findField('baseUri').getValue();
+            if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
+              {
+              form.findField('baseUri').markInvalid('Base Uri should contain /dxfr');
+              }
+            else
             testUriAndGetScopeName("app");
             // Ext.getCmp('scopeCombolist').bindStore(ScopeNameStore);
           }
