@@ -234,7 +234,7 @@ namespace org.iringtools.adapter
 
         if (dataObject == null)
         {
-          throw new Exception("Object type " + objectType + " not found.");
+          throw new Exception("Object type [" + objectType + "] not found.");
         }
 
         cacheId = CheckCache();
@@ -250,20 +250,21 @@ namespace org.iringtools.adapter
 
         Response objectTypeRefresh = RefreshCache(cacheId, dataObject, includeRelated);
         response.Append(objectTypeRefresh);
-        return response;
       }
       catch (Exception e)
       {
+        response.Level = StatusLevel.Error;
+
         string error = "Error refreshing cache for [" + objectType + "]: " + e.Message;
         _logger.Error(error);
-        response.Level = StatusLevel.Error;
         response.Messages.Add(error);
-        return response;
       }
       finally
       {
         SetCacheState(cacheId, CacheState.Ready);
       }
+
+      return response;
     }
 
     protected Response RefreshCache(string cacheId, DataObject objectType, bool includeRelated)
@@ -272,7 +273,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        if (objectType.dataRelationships != null)
+        if (includeRelated && objectType.dataRelationships != null)
         {
           foreach (DataRelationship relationship in objectType.dataRelationships)
           {
@@ -354,7 +355,10 @@ namespace org.iringtools.adapter
             SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
             bulkCopy.DestinationTableName = tableName;
             bulkCopy.WriteToServer(table);
-            status.Messages.Add("Cache data populated successfully.");
+
+            string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
+            status.Messages.Add(msg);
+            response.Messages.Add(msg);
           }
         }
         else if (_dataLayer != null)
@@ -409,19 +413,22 @@ namespace org.iringtools.adapter
           SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
           bulkCopy.DestinationTableName = tableName;
           bulkCopy.WriteToServer(table);
-          status.Messages.Add("Cache data populated successfully.");
-        }
 
-        return response;
+          string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
+          status.Messages.Add(msg);
+          response.Messages.Add(msg);
+        }
       }
       catch (Exception e)
       {
-        string error = "Error refreshing cache for object type " + objectType.objectName + ": " + e.Message;
-        _logger.Error(error);
         response.Level = StatusLevel.Error;
+        
+        string error = "Error refreshing cache [" + objectType.objectName + "]: " + e.Message;
+        _logger.Error(error);
         response.Messages.Add(error);
-        return response;
       }
+
+      return response;
     }
 
     public Response ImportCache(string baseUri, bool updateDictionary)
@@ -493,7 +500,7 @@ namespace org.iringtools.adapter
 
         if (dataObject == null)
         {
-          throw new Exception("Object type " + objectType + " not found.");
+          throw new Exception("Object type [" + objectType + "] not found.");
         }
 
         Response objectTypeImport = ImportCache(cacheId, dataObject, importURI, includeRelated);
@@ -519,7 +526,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        if (objectType.dataRelationships != null)
+        if (includeRelated && objectType.dataRelationships != null)
         {
           foreach (DataRelationship relationship in objectType.dataRelationships)
           {
@@ -583,7 +590,10 @@ namespace org.iringtools.adapter
         if (dataObjects == null || dataObjects.Count == 0)
         {
           status.Level = StatusLevel.Warning;
-          status.Messages.Add("Cached data is empty.");
+
+          string msg = "Cache data for [" + objectType.objectName + "] is empty:";
+          status.Messages.Add(msg);
+          response.Messages.Add(msg);
         }
         else
         {
@@ -608,7 +618,10 @@ namespace org.iringtools.adapter
             else
             {
               status.Level = StatusLevel.Error;
-              status.Messages.Add("Cached data object is invalid.");
+
+              string error = "Cached data for [" + objectType.objectName + "] is invalid.";
+              status.Messages.Add(error);
+              response.Messages.Add(error);
               break;
             }
           }
@@ -619,7 +632,10 @@ namespace org.iringtools.adapter
           SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
           bulkCopy.DestinationTableName = tableName;
           bulkCopy.WriteToServer(table);
-          status.Messages.Add("Cached data imported successfully.");
+
+          string msg = "Cached data for [" + objectType.objectName + "] imported successfully.";
+          status.Messages.Add(msg);
+          response.Messages.Add(msg);
         }
 
         response.Append(status);

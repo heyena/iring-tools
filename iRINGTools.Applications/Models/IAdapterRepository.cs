@@ -42,11 +42,11 @@ namespace iRINGTools.Web.Models
 
     Response Refresh(string scope, string application, string dataObjectName);
 
-    Response RefreshCache(string scope, string application);
+    Response RefreshCache(string scope, string application, int timeout);
 
     Response RefreshCache(string scope, string application, string dataObjectName);
 
-    Response ImportCache(string scope, string application, string cacheUri);
+    Response ImportCache(string scope, string application, string cacheUri, int timeout);
 
     Response DeleteCache(string scope, string application);
     
