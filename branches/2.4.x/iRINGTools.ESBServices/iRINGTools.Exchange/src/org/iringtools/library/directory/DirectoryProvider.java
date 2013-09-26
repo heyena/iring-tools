@@ -1,5 +1,6 @@
 package org.iringtools.library.directory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -536,21 +537,21 @@ public class DirectoryProvider {
 		try {
 			Directory directory = JaxbUtils.read(Directory.class, path);
 			List<Scope> scopes = directory.getScope();
+			List<Application> appData = new ArrayList<Application>();
 			/* check whether the Application contains newapp name, if it does
 			 show Error message*/
 			for (Scope s : scopes) {
 				if (scope.equalsIgnoreCase(s.getName())) {
 					ApplicationData applicationData = s.getApplicationData();
 					if (applicationData != null) {
-						List<Application> appData = applicationData
-								.getApplication();
+					appData = applicationData.getApplication();
 						for (Application applicatio : appData) {
 							if (applicatio.getDisplayName().equalsIgnoreCase(
 									app.getDisplayName())) {
 								exres.setLevel(Level.ERROR);
 								exres.setSummary("ERROR");
 								return exres;
-							}else
+							}}   for (Application applicatio : appData) {
 								/*Assign new Name to Application */
 								if (applicatio.getDisplayName().equalsIgnoreCase(
 									oldAppName)) {
@@ -566,6 +567,7 @@ public class DirectoryProvider {
 								break;
 							}
 						}
+					}
 
 						AppDataComparator applicationSort = new AppDataComparator();
 						Collections.sort(appData, applicationSort);
@@ -574,7 +576,6 @@ public class DirectoryProvider {
 					break;
 				}
 					}
-				}
 			
 			/*Assign new Name to Application */
 		/*	for (Scope s : scopes) {

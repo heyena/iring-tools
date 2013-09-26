@@ -30,27 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CacheEntries }
+     * Create an instance of {@link CacheEntry }
      * 
      */
-    public CacheEntries createCacheEntries() {
-        return new CacheEntries();
+    public CacheEntry createCacheEntry() {
+        return new CacheEntry();
     }
 
     /**
-     * Create an instance of {@link CacheInfo }
+     * Create an instance of {@link Application }
      * 
      */
-    public CacheInfo createCacheInfo() {
-        return new CacheInfo();
-    }
-
-    /**
-     * Create an instance of {@link Applications }
-     * 
-     */
-    public Applications createApplications() {
-        return new Applications();
+    public Application createApplication() {
+        return new Application();
     }
 
     /**
@@ -62,6 +54,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link NameValueList }
+     * 
+     */
+    public NameValueList createNameValueList() {
+        return new NameValueList();
+    }
+
+    /**
+     * Create an instance of {@link CacheEntries }
+     * 
+     */
+    public CacheEntries createCacheEntries() {
+        return new CacheEntries();
+    }
+
+    /**
      * Create an instance of {@link RequestStatus }
      * 
      */
@@ -70,11 +78,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CacheEntry }
+     * Create an instance of {@link Applications }
      * 
      */
-    public CacheEntry createCacheEntry() {
-        return new CacheEntry();
+    public Applications createApplications() {
+        return new Applications();
+    }
+
+    /**
+     * Create an instance of {@link CacheInfo }
+     * 
+     */
+    public CacheInfo createCacheInfo() {
+        return new CacheInfo();
     }
 
     /**
@@ -86,11 +102,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Application }
+     * Create an instance of {@link ListItem }
      * 
      */
-    public Application createApplication() {
-        return new Application();
+    public ListItem createListItem() {
+        return new ListItem();
     }
 
 }
