@@ -211,7 +211,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 					  { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 530, height: 62, value: description },
 					  cmbDataLayers,
                       { fieldLabel: 'Cache ImportURI', name: 'cacheImportURI', xtype: 'textfield', width: 530, value: cacheImportURI },
-					  { fieldLabel: 'Cache Timeout', name: 'cacheTimeout', xtype: 'textfield', width: 530, value: cacheTimeout },
+					  { fieldLabel: 'Cache Timeout (in ms)', name: 'cacheTimeout', xtype: 'textfield', width: 530, value: cacheTimeout },
 					  {
 					    xtype: 'container',
 					    layout: {

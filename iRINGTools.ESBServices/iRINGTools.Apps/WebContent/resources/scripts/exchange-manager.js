@@ -1784,42 +1784,44 @@ function fillShowUpdateCache() {
     timeout : 120000,
     success : function(response, request) {
       var showUpdatedinfo = Ext.decode(response.responseText);
-      var dateTime = 'Undefined';
-      var timeoutvalue = "Undefined";
-      var importUrl = "Undefined";
+      var dateTime = '';
+      var timeoutvalue = '';
+      var importUrl = '';
+      
       if (showUpdatedinfo !== null) {
         if (showUpdatedinfo.cacheEntries.cacheEntry[0] !== undefined) {
           if (showUpdatedinfo.cacheEntries.cacheEntry[0].lastUpdate !== undefined) {
             var lastUpdate = showUpdatedinfo.cacheEntries.cacheEntry[0].lastUpdate;
             dateTime = lastUpdate.year + "-" + lastUpdate.month + "-" + lastUpdate.day + "T" + lastUpdate.hour + ":"
-                + lastUpdate.minute + ":" + lastUpdate.second + "." + lastUpdate.fractionalSecond;
+                + lastUpdate.minute + ":" + lastUpdate.second + "." + lastUpdate.millisecond;
           }
         }
-        if (showUpdatedinfo.timeout === 0) {
+        
+        if (showUpdatedinfo.timeout == null || showUpdatedinfo.timeout === 0) {
           timeoutvalue = 'Infinite';
         } else {
           timeoutvalue = showUpdatedinfo.timeout;
         }
+        
         if (showUpdatedinfo.importURI !== null) {
           importUrl = showUpdatedinfo.importURI;
         }
       }
-      if (importUrl === "Undefined") {
+      if (importUrl === '') {
         Ext.getCmp('importCache').setDisabled(true);
       }
       form.setValues({
         laseUpdate : dateTime,
         CacheUri : importUrl,
-        timeOut : timeoutvalue,
+        timeOut : timeoutvalue
       });
 
       centerPanel.getEl().unmask();
       view.show();
-
     },
     failure : function(response, request) {
       centerPanel.getEl().unmask();
-      alert("Error fetching data");
+      showDialog(400, 100, 'Loading Error', 'Error getting cache information!', Ext.Msg.OK, null);
     }
   });
 }
@@ -1894,8 +1896,7 @@ function onShowUpdateCache() {
     },
     title : 'Cache Information',
     modal : true,
-    items : [ showUpdateCache ],
-
+    items : [ showUpdateCache ]
   });
 }
 
@@ -1927,7 +1928,7 @@ function editCommodity() {
     },
     failure : function(response, request) {
       centerPanel.getEl().unmask();
-      alert("Error fetching data to fill form");
+      showDialog(400, 100, 'Error', 'Error getting commodity information!', Ext.Msg.OK, null);
     }
   });
 }
@@ -1964,10 +1965,9 @@ function editGraph() {
     },
     failure : function(response, request) {
       centerPanel.getEl().unmask();
-      alert("Error fetching data to fill form");
+      showDialog(400, 100, 'Error', 'Error getting graph information!', Ext.Msg.OK, null);
     }
   });
-
 }
 
 function newGraph() {
@@ -2071,7 +2071,7 @@ function saveGraph() {
       refresh();
     },
     failure : function(response, request) {
-      alert("save failed");
+      showDialog(400, 100, 'Error', 'Error saving graph!', Ext.Msg.OK, null);
     }
   });
 }
@@ -2113,7 +2113,7 @@ function onRefreshCache() {
   var obj = Ext.getCmp('showUpdateCacheForm');
   var form = obj.getForm();
   var timeout = form.findField("timeOut").getValue();
-  if ((timeout === "Undefined") || (timeout === "Infinite")) {
+  if ((timeout === "") || (timeout === "Infinite")) {
     timeout = '0';
   }
   Ext.getCmp('showUpdateCacheWin').close();
@@ -2168,7 +2168,7 @@ function onImportCache() {
   var obj = Ext.getCmp('showUpdateCacheForm');
   var form = obj.getForm();
   var timeout = form.findField("timeOut").getValue();
-  if ((timeout === "Undefined") || (timeout === "Infinite")) {
+  if ((timeout === "") || (timeout === "Infinite")) {
     timeout = '0';
   }
   var cacheUri = form.findField("CacheUri").getValue();
@@ -2307,7 +2307,7 @@ function editApplication() {
     },
     failure : function(response, request) {
       centerPanel.getEl().unmask();
-      alert("Error fetching data to fill form");
+      showDialog(400, 100, 'Error', 'Error getting application information!', Ext.Msg.OK, null);
     }
   });
 }
@@ -2328,7 +2328,7 @@ function buildCommoditySubMenu() {
     icon : 'resources/images/16x16/history.png',
     text : 'Show History'
   }, {
-    xtype : 'menuseparator',
+    xtype : 'menuseparator'
   }, {
     xtype : 'menuitem',
     handler : function() {
@@ -2867,10 +2867,9 @@ function editExchangeConfig() {
     },
     failure : function(response, request) {
       centerPanel.getEl().unmask();
-      alert("Error fetching data to fill form");
+      showDialog(400, 100, 'Error', 'Error getting exchange configuration!', Ext.Msg.OK, null);
     }
   });
-
 }
 
 function deleteScope(node, event) {
@@ -2948,7 +2947,7 @@ function editDeleteScope() {
     },
     failure : function(response, request) {
       centerPanel.getEl().unmask();
-      alert("Error fetching data to fill form");
+      showDialog(400, 100, 'Error', 'Error getting scope information!', Ext.Msg.OK, null);
     }
   });
 }
@@ -3025,7 +3024,7 @@ function saveScope(node, button, event) {
       refresh();
     },
     failure : function(response, request) {
-      alert("save failed");
+      showDialog(400, 100, 'Error', 'Error saving scope!', Ext.Msg.OK, null);
     }
   });
 }
@@ -3107,7 +3106,7 @@ function saveComm(node, button, event) {
           refresh();
         },
         failure : function(response, request) {
-          alert("save failed");
+          showDialog(400, 100, 'Error', 'Error saving commodity!', Ext.Msg.OK, null);
         }
       });
 }
@@ -3431,7 +3430,7 @@ function saveApp(node, button, event) {
         refresh();
       },
       failure : function(response, request) {
-        alert("save failed");
+        showDialog(400, 100, 'Error', 'Error saving application!', Ext.Msg.OK, null);
       }
     });
   } else {
@@ -3463,16 +3462,6 @@ function editDataFilter() {
   var view = Ext.getCmp('applyDataFilterWin');
   var obj = Ext.getCmp('dataFilterForm');
   var formdata = obj.getForm();
-
-  /*
-   * var propetyName = Ext.getCmp('propertyName_1'); var propetyNameStore =
-   * propetyName.getStore(); var url = 'getColumnNames?' + '&scope =' +scope+
-   * '&xid='+xid; propetyNameStore.getProxy().url = url; propetyNameStore.load({
-   * callback: function (records, response) { //
-   * Ext.getCmp('propertyName_1').setValues(response.response.responseText); }
-   * 
-   * });
-   */
 
   Ext.Ajax.request({
     url : 'getDataFilter',
@@ -3559,7 +3548,7 @@ function editDataFilter() {
     },
     failure : function(response, request) {
       centerPanel.getEl().unmask();
-      Ext.Msg.alert("Error fetching data to fill form");
+      showDialog(400, 100, 'Error', 'Error getting existing data filter!', Ext.Msg.OK, null);
     }
   });
   Ext.Ajax.request({
@@ -3600,7 +3589,7 @@ function editDataFilter() {
     },
     failure : function(response, request) {
       centerPanel.getEl().unmask();
-      Ext.Msg.alert("Error fetching Filters");
+      showDialog(400, 100, 'Error', 'Error getting existing data filter!', Ext.Msg.OK, null);
     }
   });
   if (dfList !== null) {
@@ -4610,7 +4599,7 @@ function saveDataFilter() {
       // me.onRefreshTree();
     },
     failure : function(response, request) {
-      Ext.Msg.alert("save failed");
+      showDialog(400, 100, 'Error', 'Error saving data filter!', Ext.Msg.OK, null);
     }
   });
 }
