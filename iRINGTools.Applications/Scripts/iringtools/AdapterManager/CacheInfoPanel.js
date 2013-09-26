@@ -87,7 +87,7 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
           form.findField('importURI').setValue(cacheInfo.importURI);
         }
 
-        if (cacheInfo.timeout == null) {
+        if (cacheInfo.timeout == null || cacheInfo.timeout === 0) {
           form.findField('timeout').setValue(3600000);
         }
         else {

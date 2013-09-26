@@ -121,7 +121,7 @@
     </action>
 
     <!-- exchange submission -->
-    <action name="submitExchange" class="org.iringtools.controllers.ExchangeDataController" method="runUnattendedExchange">
+    <action name="runExchange" class="org.iringtools.controllers.ExchangeDataController" method="runUnattendedExchange">
       <result type="json">
         <param name="root">xResultsGrid</param>
       </result>
