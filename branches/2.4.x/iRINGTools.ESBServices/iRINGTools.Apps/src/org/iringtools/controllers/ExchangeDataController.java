@@ -161,6 +161,22 @@ public class ExchangeDataController extends BaseController
     return SUCCESS;
   }
 
+  public String runUnattendedExchange() throws Exception
+  {
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      ExchangeResponse response = exchangeDataModel.runUnattendedExchange(scope, xid);
+      xResultsGrid = response.getSummary();
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      throw new Exception(e.getMessage());
+    }
+    return SUCCESS;
+  }
+  
   // ----------------------------
   // get all exchange responses
   // ---------------------------

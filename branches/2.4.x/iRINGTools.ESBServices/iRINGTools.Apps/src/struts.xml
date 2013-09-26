@@ -119,6 +119,14 @@
         <param name="root">xResultsGrid</param>
       </result>
     </action>
+
+    <!-- exchange submission -->
+    <action name="submitExchange" class="org.iringtools.controllers.ExchangeDataController" method="runUnattendedExchange">
+      <result type="json">
+        <param name="root">xResultsGrid</param>
+      </result>
+    </action>    
+    
     <!-- exchange submit request status -->
     <action name="exchangeRequestStatus" class="org.iringtools.controllers.ExchangeDataController" method="getExchangeRequestStatus">
       <result type="json">
