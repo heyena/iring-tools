@@ -130,8 +130,11 @@ namespace org.iringtools.adapter
           var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
                                    where setting.Key == CACHE_CONNSTR
                                    select setting).SingleOrDefault();
-          if(connectionSetting !=null)
-              connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value);
+          if (connectionSetting != null)
+          {
+              if (EncryptionUtility.IsBase64Encoded(connectionSetting.Value))
+                  connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value);
+          }
         }
       }
       

@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using log4net;
+using System.Text.RegularExpressions;
 
 namespace org.iringtools.utility
 {
@@ -143,6 +144,12 @@ namespace org.iringtools.utility
         String message = "Error decrypting [" + cipherText + "]. " + e;
         throw new Exception(message);
       }
+    }
+
+    public static bool IsBase64Encoded(string text)
+    {
+        string pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
+        return Regex.IsMatch(text, pattern);
     }
   }
 }
