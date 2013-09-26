@@ -27,6 +27,20 @@ namespace org.iringtools.web.controllers
       return View();
     }
 
+    public ActionResult CacheInfo(FormCollection form)
+    {
+      try
+      {
+        CacheInfo cacheInfo = _repository.GetCacheInfo(form["scope"], form["app"]);
+        return Json(cacheInfo, JsonRequestBehavior.AllowGet);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+        throw e;
+      }
+    }
+
     public ActionResult DBProviders()
     {
       JsonContainer<List<DBProvider>> container = new JsonContainer<List<DBProvider>>();
@@ -201,12 +215,11 @@ namespace org.iringtools.web.controllers
 
     public JsonResult RefreshCache(FormCollection form)
     {
-      string context = form["nodeid"];
-      string[] names = context.Split('/');
-      string scope = names[0];
-      string application = names[1];
-      
-      Response response = _repository.RefreshCache(scope, application);
+      string scope = form["scope"];
+      string app = form["app"];
+      int timeout = int.Parse(form["timeout"]);
+
+      Response response = _repository.RefreshCache(scope, app, timeout);
 
       return Json(response, JsonRequestBehavior.AllowGet);
     }
@@ -226,13 +239,12 @@ namespace org.iringtools.web.controllers
 
     public JsonResult ImportCache(FormCollection form)
     {
-      string context = form["nodeid"];
-      string cacheURI = form["cacheURI"];
-      string[] names = context.Split('/');
-      string scope = names[0];
-      string application = names[1];
+      string scope = form["scope"];
+      string app = form["app"];
+      string importURI = form["importURI"];
+      int timeout = int.Parse(form["timeout"]);
 
-      Response response = _repository.ImportCache(scope, application, cacheURI);
+      Response response = _repository.ImportCache(scope, app, importURI, timeout);
 
       return Json(response, JsonRequestBehavior.AllowGet);
     }

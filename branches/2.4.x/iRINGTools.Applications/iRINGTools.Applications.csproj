@@ -4699,6 +4699,7 @@
     <Content Include="Scripts\iringtools\AdapterManager\AppDataGrid.js" />
     <Content Include="Scripts\iringtools\AdapterManager\BooleanFilter.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ClassMapPanel.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\CacheInfoPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DataLayerPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DateFilter.js" />
     <Content Include="Scripts\iringtools\AdapterManager\FileDownloadGrid.js" />

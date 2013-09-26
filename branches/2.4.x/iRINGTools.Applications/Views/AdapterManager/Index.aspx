@@ -27,6 +27,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/App.js") %>" type="text/javascript"></script>    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ActionPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/DirectoryPanel.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/CacheInfoPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AppDataGrid.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/MappingPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/SearchPanel.js") %>" type="text/javascript"></script>

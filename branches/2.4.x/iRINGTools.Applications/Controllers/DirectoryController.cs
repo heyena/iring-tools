@@ -167,20 +167,10 @@ namespace org.iringtools.web.controllers
               if (scope != null)
               {
                 ScopeApplication application = scope.Applications.Find(x => x.Name.ToLower() == applicationName.ToLower());
+
                 if (application != null)
                 {
                   dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
-                  if (application.CacheInfo != null)
-                  {
-                    if (application.CacheInfo.ImportURI != null)
-                      dataObjectsNode.property.Add("Cache URI", application.CacheInfo.ImportURI);
-                    if (application.CacheInfo.Timeout != null)
-                      dataObjectsNode.property.Add("Cache Timeout", Convert.ToString(application.CacheInfo.Timeout));
-                  }
-                  //if (application.DataMode == DataMode.Cache)
-                  //{
-                  //  dataObjectsNode.property.Add("Last Cache Update", application.CacheTimestamp.ToString());
-                  //}
                 }
               }
 

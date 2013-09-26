@@ -666,17 +666,17 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public Response RefreshCache(string scope, string application)
+    public Response RefreshCache(string scope, string app, int timeout)
     {
       Response response = null;
 
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
-        client.Timeout = 3600000;
+        client.Timeout = timeout;
 
         string isAsync = _settings["Async"];
-        string url = string.Format("/{0}/{1}/cache/refresh", scope, application);
+        string url = string.Format("/{0}/{1}/cache/refresh", scope, app);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {
@@ -709,7 +709,7 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public Response RefreshCache(string scope, string application, string dataObjectName)
+    public Response RefreshCache(string scope, string app, string dataObjectName)
     {
       Response response = null;
 
@@ -719,7 +719,7 @@ namespace iRINGTools.Web.Models
         client.Timeout = 3600000;
 
         string isAsync = _settings["Async"];
-        string url = string.Format("/{0}/{1}/{2}/cache/refresh", scope, application, dataObjectName);
+        string url = string.Format("/{0}/{1}/{2}/cache/refresh", scope, app, dataObjectName);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {
@@ -752,17 +752,17 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public Response ImportCache(string scope, string application, string cacheUri)
+    public Response ImportCache(string scope, string app, string importURI, int timeout)
     {
       Response response = null;
 
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
-        client.Timeout = 3600000;
+        client.Timeout = timeout;
 
         string isAsync = _settings["Async"];
-        string url = string.Format("/{0}/{1}/cache/import?baseUri={2}", scope, application, cacheUri);
+        string url = string.Format("/{0}/{1}/cache/import?baseUri={2}", scope, app, importURI);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {
@@ -834,6 +834,13 @@ namespace iRINGTools.Web.Models
       }
 
       return response;
+    }
+
+    public CacheInfo GetCacheInfo(string scope, string app)
+    {
+      WebHttpClient client = CreateWebClient(_adapterServiceUri);
+      string relativePath = string.Format("/{0}/{1}/cacheinfo", scope, app);
+      return client.Get<CacheInfo>(relativePath);
     }
 
     #region NHibernate Configuration Wizard support methods

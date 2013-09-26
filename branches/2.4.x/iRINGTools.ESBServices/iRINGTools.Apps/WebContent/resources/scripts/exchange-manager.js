@@ -860,16 +860,16 @@ function submitExchange(userResponse) {
   };
 
   if (userResponse == 'ok') {
-   // if (exchtab) {
-      Ext.MessageBox.show({
-        title : 'Exchange Status',
-        msg : 'Processing items...',
-        progressText : 'Initializing...',
-        width : 300,
-        progress : true,
-        closable : false
-      });
-    //}
+    // if (exchtab) {
+    Ext.MessageBox.show({
+      title : 'Exchange Status',
+      msg : 'Processing items...',
+      progressText : 'Initializing...',
+      width : 300,
+      progress : true,
+      closable : false
+    });
+    // }
 
     Ext.Ajax.request({
       url : 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
@@ -973,8 +973,8 @@ function onTreeItemContextMenu(node, e) {
           e.stopEvent();
         } else if ((obj.parentNode.parentNode.text === 'Application Data')) {
 
-        	 graphSubMenu.showAt([ x, y ]);
-             e.stopEvent();
+          graphSubMenu.showAt([ x, y ]);
+          e.stopEvent();
 
         } else if ((obj.text === 'Data Exchanges')) {
           newCommoditymenu.showAt([ x, y ]);
@@ -1255,11 +1255,11 @@ function newExchangeConfig() {
       name : 'description',
       allowBlank : true
     }, {
-		fieldLabel : 'Pool Size',
-		name : 'poolSize',
-		value: 100,
-		allowBlank : true
-	},{
+      fieldLabel : 'Pool Size',
+      name : 'poolSize',
+      value : 100,
+      allowBlank : true
+    }, {
       xtype : 'fieldset',
       anchor : '100%',
       defaults : {
@@ -1587,10 +1587,9 @@ function saveExchangeConfig() {
   var sourceGraphName = form1.findField('sourceGraphName').getValue();
   var name = form1.findField('name').getValue();
   var poolSize = form1.findField('poolSize').getValue();
-	if((poolSize === null) || (poolSize === ""))
-		{
-		poolSize = 100;
-		}
+  if ((poolSize === null) || (poolSize === "")) {
+    poolSize = 100;
+  }
 
   if (((targetAppName !== "") && (targetAppName !== null)) && ((targetScopeName !== "") && (targetScopeName !== null))
       && ((targetUri !== "") && (targetUri !== null)) && ((targetGraphName !== "") && (targetGraphName !== null))
@@ -1679,248 +1678,226 @@ function buildNewApplicationMenu() {
 }
 
 function buildGraphSubMenu() {
-  return [
-      {
-        xtype : 'menuitem',
-        text : 'Edit Graph',
-        icon : 'resources/images/16x16/edit.png',
-        handler : function() {
-          newGraph();
-          editGraph();
-        }
-      },
-      {
-        xtype : 'menuitem',
-        text : 'Delete Graph',
-        icon : 'resources/images/16x16/delete.png',
-        handler : function(item, event) {
-          deleteGraph();
-        }
-      },
-      {
-        xtype : 'menuseparator'
-      },
-      {
-          xtype : 'menuitem',
-          text : 'Show/Update Cache',
-          icon : 'resources/images/16x16/import.png',
-          handler :function(item, event) 
-          { onShowUpdateCache();
-            getAppMode();
-            fillShowUpdateCache()
-        //  var view = Ext.getCmp('showUpdateCacheWin');
-       //   view.show();
-        	  },
-          scope : this
-        }
-    /*  {
-        xtype : 'menuitem',
-        text : 'Refresh Cache',
-        icon : 'resources/images/16x16/refresh.png',
-        handler : function() {
-          showDialog(400, 100, 'Refresh Cache Confirmation', 'Are you sure you want to refresh cache?', Ext.Msg.YESNO,
-              onRefreshCache);
-        },
-        scope : this
-      }, {
-        xtype : 'menuitem',
-        text : 'Import Cache',
-        icon : 'resources/images/16x16/import.png',
-        handler : onImportCache,
-        scope : this
-      } */];
+  return [ {
+    xtype : 'menuitem',
+    text : 'Edit Graph',
+    icon : 'resources/images/16x16/edit.png',
+    handler : function() {
+      newGraph();
+      editGraph();
+    }
+  }, {
+    xtype : 'menuitem',
+    text : 'Delete Graph',
+    icon : 'resources/images/16x16/delete.png',
+    handler : function(item, event) {
+      deleteGraph();
+    }
+  }, {
+    xtype : 'menuseparator'
+  }, {
+    xtype : 'menuitem',
+    text : 'Show/Update Cache',
+    icon : 'resources/images/16x16/import.png',
+    handler : function(item, event) {
+      onShowUpdateCache();
+      getAppMode();
+      fillShowUpdateCache();
+      // var view = Ext.getCmp('showUpdateCacheWin');
+      // view.show();
+    },
+    scope : this
+  }
+  /*
+   * { xtype : 'menuitem', text : 'Refresh Cache', icon :
+   * 'resources/images/16x16/refresh.png', handler : function() {
+   * showDialog(400, 100, 'Refresh Cache Confirmation', 'Are you sure you want
+   * to refresh cache?', Ext.Msg.YESNO, onRefreshCache); }, scope : this }, {
+   * xtype : 'menuitem', text : 'Import Cache', icon :
+   * 'resources/images/16x16/import.png', handler : onImportCache, scope : this }
+   */];
 }
 
 function getAppMode() {
-	
-	var centerPanel = Ext.getCmp('content-pane');
-	 centerPanel.getEl().mask("Loading...", "x-mask-loading");
-	 var obj = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-   AppName = obj.parentNode.attributes.properties['Internal Name'];
-    context = obj.parentNode.attributes.properties['Context'];
-    Uri = obj.parentNode.attributes.properties['Base URI'];
 
-    Ext.Ajax.request({
-      url : 'getAppDataMode?' + '&scope =' + context + '&name =' + AppName + '&sourceUri =' + Uri,
-      method : 'POST',
-      timeout : 120000,
-      success : function(response, request) {
+  var centerPanel = Ext.getCmp('content-pane');
+  centerPanel.getEl().mask("Loading...", "x-mask-loading");
+  var obj = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+  AppName = obj.parentNode.attributes.properties['Internal Name'];
+  context = obj.parentNode.attributes.properties['Context'];
+  Uri = obj.parentNode.attributes.properties['Base URI'];
+
+  Ext.Ajax.request({
+    url : 'getAppDataMode?' + '&scope =' + context + '&name =' + AppName + '&sourceUri =' + Uri,
+    method : 'POST',
+    timeout : 120000,
+    success : function(response, request) {
       var result = Ext.decode(response.responseText);
-      var refreshbutton  =  Ext.getCmp('refreshCache');
-      var importbutton  =  Ext.getCmp('importCache');
+      var refreshbutton = Ext.getCmp('refreshCache');
+      var importbutton = Ext.getCmp('importCache');
       var obj = Ext.getCmp('showUpdateCacheForm');
-	  var form = obj.getForm();
-        if (result.toUpperCase() === 'CACHE') {
-        	refreshbutton.setDisabled(false);
-        	importbutton.setDisabled(false);
-         form.setValues({
-        	 dataMode : 'Cache'        	 
-         });
-        	 centerPanel.getEl().unmask();
-        } else {
-        	refreshbutton.setDisabled(true);
-        	importbutton.setDisabled(true);
-        	 form.setValues({
-            	 dataMode : 'Live'        	 
-             });
-        	 centerPanel.getEl().unmask();
-        }
-      },
-      failure : function(response, request) {
-        Ext.Msg.show({
-          title : 'Result ',
-          msg : '<textarea ' + style + ' readonly="yes">' + "Unable to get application info from endpoint."
-              + '</textarea>',
-          buttons : Ext.MessageBox.OK
+      var form = obj.getForm();
+      if (result.toUpperCase() === 'CACHE') {
+        refreshbutton.setDisabled(false);
+        importbutton.setDisabled(false);
+        form.setValues({
+          dataMode : 'Cache'
         });
+        centerPanel.getEl().unmask();
+      } else {
+        refreshbutton.setDisabled(true);
+        importbutton.setDisabled(true);
+        form.setValues({
+          dataMode : 'Live'
+        });
+        centerPanel.getEl().unmask();
       }
-    });
+    },
+    failure : function(response, request) {
+      Ext.Msg.show({
+        title : 'Result ',
+        msg : '<textarea ' + style + ' readonly="yes">' + "Unable to get application info from endpoint."
+            + '</textarea>',
+        buttons : Ext.MessageBox.OK
+      });
+    }
+  });
 }
 
 function fillShowUpdateCache() {
-	  var centerPanel = Ext.getCmp('content-pane');
-	  centerPanel.getEl().mask("Loading...", "x-mask-loading");
-	  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-	  var scope = node.parentNode.parentNode.parentNode.text;
-	  var graphValue = node.text;
-	  var appNameValue = node.parentNode.attributes.properties['Internal Name'];
-	    Uri = node.parentNode.attributes.properties['Base URI'];
+  var centerPanel = Ext.getCmp('content-pane');
+  centerPanel.getEl().mask("Loading...", "x-mask-loading");
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+  var scope = node.parentNode.parentNode.parentNode.text;
+  var graphValue = node.text;
+  var appNameValue = node.parentNode.attributes.properties['Internal Name'];
+  Uri = node.parentNode.attributes.properties['Base URI'];
 
-	  var view = Ext.getCmp('showUpdateCacheWin');
-	   var obj = Ext.getCmp('showUpdateCacheForm');
-	  var form = obj.getForm();
+  var view = Ext.getCmp('showUpdateCacheWin');
+  var obj = Ext.getCmp('showUpdateCacheForm');
+  var form = obj.getForm();
 
-	  Ext.Ajax.request({
-	    url : 'getShowUpdateCache?' + '&scope =' + scope + '&appName =' + appNameValue + '&name =' + graphValue + '&baseUri =' + Uri,
-	    method : 'POST',
-	    timeout : 120000,
-	    success : function(response, request) {
-	      var showUpdatedinfo = Ext.decode(response.responseText);
-	      var dateTime  = 'Undefined';
-	      var timeoutvalue = "Undefined";
-	      var importUrl = "Undefined";
-	      if(showUpdatedinfo !== null){
-	      if(showUpdatedinfo.cacheEntries.cacheEntry[0] !== undefined)
-	    	  {
-	      if(showUpdatedinfo.cacheEntries.cacheEntry[0].lastUpdate !== undefined)
-	    	  {
-	      var lastUpdate = showUpdatedinfo.cacheEntries.cacheEntry[0].lastUpdate;
-	       dateTime = lastUpdate.year +"-" + lastUpdate.month +"-" + lastUpdate.day+"T"+lastUpdate.hour+ ":" + lastUpdate.minute+":" + lastUpdate.second +"." + lastUpdate.fractionalSecond;
-	    	  }
-	    	  }
-	      	      if(showUpdatedinfo.timeout === 0)
-	    	  {
-	    	  timeoutvalue = 'Infinite' ;
-	    	  }else{
-	    		  timeoutvalue =   showUpdatedinfo.timeout;
-	    	  }
-	      	      if(showUpdatedinfo.importURI !== null)
-	      	    	  {
-	      	    	importUrl = showUpdatedinfo.importURI;
-	      	    	  }
-	      }
-	      if(importUrl === "Undefined")
-	    	  {
-	    	  Ext.getCmp('importCache').setDisabled(true);
-	    	  }
-	      form.setValues({
-		        laseUpdate : dateTime,
-		        CacheUri : importUrl,
-		        timeOut : timeoutvalue,
-		      });
-	     
-	      centerPanel.getEl().unmask();
-	      view.show();
-	     
-	    },
-	    failure : function(response, request) {
-	      centerPanel.getEl().unmask();
-	      alert("Error fetching data");
-	    }
-	  });
+  Ext.Ajax.request({
+    url : 'getShowUpdateCache?' + '&scope =' + scope + '&appName =' + appNameValue + '&name =' + graphValue
+        + '&baseUri =' + Uri,
+    method : 'POST',
+    timeout : 120000,
+    success : function(response, request) {
+      var showUpdatedinfo = Ext.decode(response.responseText);
+      var dateTime = 'Undefined';
+      var timeoutvalue = "Undefined";
+      var importUrl = "Undefined";
+      if (showUpdatedinfo !== null) {
+        if (showUpdatedinfo.cacheEntries.cacheEntry[0] !== undefined) {
+          if (showUpdatedinfo.cacheEntries.cacheEntry[0].lastUpdate !== undefined) {
+            var lastUpdate = showUpdatedinfo.cacheEntries.cacheEntry[0].lastUpdate;
+            dateTime = lastUpdate.year + "-" + lastUpdate.month + "-" + lastUpdate.day + "T" + lastUpdate.hour + ":"
+                + lastUpdate.minute + ":" + lastUpdate.second + "." + lastUpdate.fractionalSecond;
+          }
+        }
+        if (showUpdatedinfo.timeout === 0) {
+          timeoutvalue = 'Infinite';
+        } else {
+          timeoutvalue = showUpdatedinfo.timeout;
+        }
+        if (showUpdatedinfo.importURI !== null) {
+          importUrl = showUpdatedinfo.importURI;
+        }
+      }
+      if (importUrl === "Undefined") {
+        Ext.getCmp('importCache').setDisabled(true);
+      }
+      form.setValues({
+        laseUpdate : dateTime,
+        CacheUri : importUrl,
+        timeOut : timeoutvalue,
+      });
 
-	}
+      centerPanel.getEl().unmask();
+      view.show();
+
+    },
+    failure : function(response, request) {
+      centerPanel.getEl().unmask();
+      alert("Error fetching data");
+    }
+  });
+}
 
 function onShowUpdateCache() {
-	  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-	  var showUpdateCache = new Ext.FormPanel({
-	    id : 'showUpdateCacheForm',
-	    border : false,
-	    layout : 'form',
-	    frame : false,
-	    bodyStyle : 'padding:15px',
-	    labelwidth : 75,
-	    items : [ 
-{
-    xtype : 'textfield',
-    width : 240,
-    fieldLabel : 'Data Mode',
-//    disabled: true,
-    readOnly: true,
-    name : 'dataMode'
-  },
-		{
-	      xtype : 'textfield',
-	      width : 240,
-	      fieldLabel : 'Import URI',
-	  //    disabled: true,
-	      readOnly: true,
-	      name : 'CacheUri'
-	    },
-		 {
-	      xtype : 'textfield',
-	      width : 240,
-	      fieldLabel : 'Time out',
-	   //   disabled: true,
-	      readOnly: true,
-	      name : 'timeOut'
-	    },
-	    {
-		      xtype : 'textfield',
-		      width : 240,
-		      fieldLabel : 'Last Update',
-		//      disabled: true,
-		      readOnly: true,
-		      name : 'laseUpdate'
-		    }
-	   ],
-	    buttons :  [ {
-		      text : 'Refresh',
-		      id :'refreshCache',
-		      handler : function(node, button, event) {		    	 
-		    	  onRefreshCache();
-		     //   showUpdateCacheWin.close();
-		        },
-		        scope : this
-		    }, {
-		      text : 'Import',
-		      id : 'importCache',
-		      handler : function(button, event) {
-		    	  onImportCache();		    	    
-		      }
-		    },
-			  {
-		      text : 'Cancel',
-		      handler : function(button, event) {
-		        showUpdateCacheWin.close();
-		      }
-		    } ]
-	  });
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+  var showUpdateCache = new Ext.FormPanel({
+    id : 'showUpdateCacheForm',
+    border : false,
+    layout : 'form',
+    frame : false,
+    bodyStyle : 'padding:15px',
+    labelwidth : 75,
+    items : [ {
+      xtype : 'textfield',
+      width : 240,
+      fieldLabel : 'Data Mode',
+      // disabled: true,
+      readOnly : true,
+      name : 'dataMode'
+    }, {
+      xtype : 'textfield',
+      width : 240,
+      fieldLabel : 'Import URI',
+      // disabled: true,
+      readOnly : true,
+      name : 'CacheUri'
+    }, {
+      xtype : 'textfield',
+      width : 240,
+      fieldLabel : 'Time out',
+      // disabled: true,
+      readOnly : true,
+      name : 'timeOut'
+    }, {
+      xtype : 'textfield',
+      width : 240,
+      fieldLabel : 'Last Update',
+      // disabled: true,
+      readOnly : true,
+      name : 'laseUpdate'
+    } ],
+    buttons : [ {
+      text : 'Refresh',
+      id : 'refreshCache',
+      handler : function(node, button, event) {
+        onRefreshCache();
+        // showUpdateCacheWin.close();
+      },
+      scope : this
+    }, {
+      text : 'Import',
+      id : 'importCache',
+      handler : function(button, event) {
+        onImportCache();
+      }
+    }, {
+      text : 'Cancel',
+      handler : function(button, event) {
+        showUpdateCacheWin.close();
+      }
+    } ]
+  });
 
-	  var showUpdateCacheWin = new Ext.Window({
-	    id : 'showUpdateCacheWin',
-	    resizable : false,
-	    height : 200,
-	    width : 417,
-	    layout : {
-	      type : 'fit'
-	    },
-	    title : 'Cache Information',
-	    modal : true,
-	    items : [showUpdateCache],
-	
-	  });
-	}
+  var showUpdateCacheWin = new Ext.Window({
+    id : 'showUpdateCacheWin',
+    resizable : false,
+    height : 200,
+    width : 417,
+    layout : {
+      type : 'fit'
+    },
+    title : 'Cache Information',
+    modal : true,
+    items : [ showUpdateCache ],
+
+  });
+}
 
 function editCommodity() {
   var centerPanel = Ext.getCmp('content-pane');
@@ -2133,82 +2110,28 @@ function buildApplicationSubMenu() {
 }
 
 function onRefreshCache() {
-	  var obj = Ext.getCmp('showUpdateCacheForm');
-	  var form = obj.getForm();
-	var  timeout =  form.findField("timeOut").getValue();
-	if((timeout === "Undefined") || (timeout === "Infinite")){
-		timeout = '0';
-	}
-	Ext.getCmp('showUpdateCacheWin').close();
-	
-    var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-    Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
-
-    Ext.Ajax.request({
-      url : 'refreshCache',
-      method : 'POST',
-     // timeout : 3600000,
-      timeout : timeout,
-      params : {
-        'dxfrUri' : node.attributes.properties['Base URI'],
-        'scope' : node.attributes.properties['Context'],
-        'app' :  node.parentNode.attributes.properties['Internal Name'],
-        'graph' : node.attributes.properties['Name'],
-        'timeout'  : timeout
-      },
-      success : function(response, request) {
-        Ext.getCmp('content-pane').getEl().unmask();
-
-        var responseObj = Ext.decode(response.responseText);
-
-        if (responseObj.level == 'SUCCESS') {
-          showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
-        } else {
-          showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
-        }
-      },
-      failure : function(response, request) {
-        Ext.getCmp('content-pane').getEl().unmask();
-
-        if (request.response.status == 200) {
-          var responseObj = Ext.decode(request.response.responseText);
-
-          if (responseObj.level == 'SUCCESS') {
-            showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
-          } else {
-            showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
-          }
-        } else {
-          var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
-          showDialog(500, 160, 'Refresh Cache Error', errMsg, Ext.Msg.OK, null);
-        }
-      }
-    });
-}
-
-function onImportCache() {
-  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
   var obj = Ext.getCmp('showUpdateCacheForm');
   var form = obj.getForm();
-var  timeout =  form.findField("timeOut").getValue();
-if((timeout === "Undefined") || (timeout === "Infinite")){
-	timeout = '0';
-}
-var cacheUri = form.findField("CacheUri").getValue();
-Ext.getCmp('showUpdateCacheWin').close();
-Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+  var timeout = form.findField("timeOut").getValue();
+  if ((timeout === "Undefined") || (timeout === "Infinite")) {
+    timeout = '0';
+  }
+  Ext.getCmp('showUpdateCacheWin').close();
+
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+  Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+
   Ext.Ajax.request({
-    url : 'importCache',
+    url : 'refreshCache',
     method : 'POST',
-   // timeout : 3600000,
+    // timeout : 3600000,
     timeout : timeout,
     params : {
       'dxfrUri' : node.attributes.properties['Base URI'],
       'scope' : node.attributes.properties['Context'],
       'app' : node.parentNode.attributes.properties['Internal Name'],
       'graph' : node.attributes.properties['Name'],
-      'cacheUri' : cacheUri,
-      'timeout'  : timeout
+      'timeout' : timeout
     },
     success : function(response, request) {
       Ext.getCmp('content-pane').getEl().unmask();
@@ -2216,10 +2139,9 @@ Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
       var responseObj = Ext.decode(response.responseText);
 
       if (responseObj.level == 'SUCCESS') {
-         showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
+        showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
       } else {
-   showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK,
-                        null);
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
       }
     },
     failure : function(response, request) {
@@ -2229,19 +2151,71 @@ Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
         var responseObj = Ext.decode(request.response.responseText);
 
         if (responseObj.level == 'SUCCESS') {
-           showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
-                    } else {
-                      showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK,
-                          null);
-                    }
-                  } else {
-                    var errMsg = 'Failure Type: ' + request.failureType + '. Status text: '
-                        + request.response.statusText + '.';
-                    showDialog(500, 160, 'Import Cache Error', errMsg, Ext.Msg.OK, null);
-                  }
-                }
-              });
- 
+          showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+        } else {
+          showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
+        }
+      } else {
+        var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
+        showDialog(500, 160, 'Refresh Cache Error', errMsg, Ext.Msg.OK, null);
+      }
+    }
+  });
+}
+
+function onImportCache() {
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
+  var obj = Ext.getCmp('showUpdateCacheForm');
+  var form = obj.getForm();
+  var timeout = form.findField("timeOut").getValue();
+  if ((timeout === "Undefined") || (timeout === "Infinite")) {
+    timeout = '0';
+  }
+  var cacheUri = form.findField("CacheUri").getValue();
+  Ext.getCmp('showUpdateCacheWin').close();
+  Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+  Ext.Ajax.request({
+    url : 'importCache',
+    method : 'POST',
+    // timeout : 3600000,
+    timeout : timeout,
+    params : {
+      'dxfrUri' : node.attributes.properties['Base URI'],
+      'scope' : node.attributes.properties['Context'],
+      'app' : node.parentNode.attributes.properties['Internal Name'],
+      'graph' : node.attributes.properties['Name'],
+      'cacheUri' : cacheUri,
+      'timeout' : timeout
+    },
+    success : function(response, request) {
+      Ext.getCmp('content-pane').getEl().unmask();
+
+      var responseObj = Ext.decode(response.responseText);
+
+      if (responseObj.level == 'SUCCESS') {
+        showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
+      } else {
+        showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
+      }
+    },
+    failure : function(response, request) {
+      Ext.getCmp('content-pane').getEl().unmask();
+
+      if (request.response.status == 200) {
+        var responseObj = Ext.decode(request.response.responseText);
+
+        if (responseObj.level == 'SUCCESS') {
+          showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
+        } else {
+          showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
+        }
+      } else {
+        var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
+        showDialog(500, 160, 'Import Cache Error', errMsg, Ext.Msg.OK, null);
+      }
+    }
+  });
+
 }
 
 function buildManifestMenu(scope, xid, isDeleted) {
@@ -2339,7 +2313,7 @@ function editApplication() {
 }
 
 function buildCommoditySubMenu() {
-  return [{
+  return [ {
     xtype : 'menuitem',
     handler : function() {
       runExchange();
@@ -2395,7 +2369,7 @@ function buildCommoditySubMenu() {
     },
     text : 'Modify Exchange',
     icon : 'resources/images/16x16/modify.png'
-  }];
+  } ];
 }
 
 function runExchange() {
@@ -2406,7 +2380,7 @@ function runExchange() {
   var reviewed = (node.reviewed != undefined);
   var msg = 'Are you sure you want exchange data \r\n[' + exchange + ']?';
   var processUserResponse = submitExchange.createDelegate([ exchange, scope, xid, reviewed ]);
-  showDialog(460, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL, processUserResponse);  
+  showDialog(460, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL, processUserResponse);
 }
 
 function showExchangeHistory() {
@@ -2815,13 +2789,11 @@ function editExchangeConfig() {
       var formdata = obj.getForm();
       formdata.findField('name').setValue(form.name);
       formdata.findField('description').setValue(form.description);
-      if((form.poolSize === null) || (form.poolSize === ""))
-		{
-		formdata.findField('poolSize').setValue(100);
-		}
-	else{
-	formdata.findField('poolSize').setValue(form.poolSize);
-	}
+      if ((form.poolSize === null) || (form.poolSize === "")) {
+        formdata.findField('poolSize').setValue(100);
+      } else {
+        formdata.findField('poolSize').setValue(form.poolSize);
+      }
       formdata.findField('sourceUri').setValue(form.sourceUri);
       // testUriAndGetScopeName("SourceExchange");
       ScopeNameStore = new Ext.data.ArrayStore({
@@ -4771,7 +4743,7 @@ Ext
                 handler : function() {
                   refresh();
                 }
-              }]
+              } ]
             }),
             root : {
               nodeType : 'async',
