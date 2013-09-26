@@ -3,7 +3,7 @@
 AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
   layout: 'fit',
   width: 440,
-  height: 200,
+  height: 235,
   closable: true,
   resizable: false,
   modal: true,
@@ -32,7 +32,7 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
       items: [
         { name: 'importURI', fieldLabel: 'Import URI' },
         { name: 'timeout', fieldLabel: 'Timeout' },
-        { name: 'lastUpdate', fieldLabel: 'Last Update' }
+        { name: 'lastUpdate', fieldLabel: 'Last Update', xtype: 'textarea', height: 100, autoScroll: true }
       ]
     });
 
@@ -80,18 +80,33 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
         var panel = Ext.getCmp(request.params.panelId);
         var form = panel.form.getForm();
 
-        if (cacheInfo.ImportURI == null) {
+        if (cacheInfo.importURI == null) {
           Ext.getCmp('ImportCacheBtn').setDisabled(true);
         }
         else {
-          form.findField('importURI').setValue(cacheInfo.ImportURI);
+          form.findField('importURI').setValue(cacheInfo.importURI);
         }
 
-        if (cacheInfo.Timeout == null) {
+        if (cacheInfo.timeout == null) {
           form.findField('timeout').setValue(3600000);
         }
         else {
-          form.findField('timeout').setValue(cacheInfo.Timeout);
+          form.findField('timeout').setValue(cacheInfo.timeout);
+        }
+
+        if (cacheInfo.cacheEntries != null) {
+          var lastUpdates = '';
+
+          for (var i = 0; i < cacheInfo.cacheEntries.length; i++) {
+            if (i > 0) {
+              lastUpdates += '\n';
+            }
+
+            var entry = cacheInfo.cacheEntries[i];
+            lastUpdates += entry.objectName + ' (' + entry.lastUpdate + ')';
+          }
+
+          form.findField('lastUpdate').setValue(lastUpdates);
         }
 
         panel.show();
@@ -104,9 +119,9 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
   },
 
   onRefreshCache: function (btn, ev) {
-    this.getEl().mask('Processing...', 'x-mask-loading');
-
     var timeout = this.form.form.findField('timeout').getValue();
+    this.bottomToolbar.setDisabled(true);
+    this.form.getEl().mask('Processing...', 'x-mask-loading');
 
     Ext.Ajax.request({
       url: 'AdapterManager/RefreshCache',
@@ -132,7 +147,7 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
         panel.node.parentNode.reload();
 
         panel.close();
-        panel.getEl().unmask();
+        panel.form.getEl().unmask();
       },
       failure: function (response, request) {
         var responseObj = Ext.decode(response.responseText);
@@ -140,17 +155,18 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
 
         var panel = Ext.getCmp(request.params.panelId);
         panel.node.parentNode.reload();
-        panel.getEl().unmask();
+        panel.form.getEl().unmask();
       }
     });
   },
 
   onImportCache: function (btn, ev) {
-    this.getEl().mask('Processing...', 'x-mask-loading');
-
     var form = this.form.form;
     var timeout = form.findField('timeout').getValue();
     var importURI = form.findField('importURI').getValue();
+
+    this.bottomToolbar.setDisabled(true);
+    this.form.getEl().mask('Processing...', 'x-mask-loading');
 
     Ext.Ajax.request({
       url: 'AdapterManager/ImportCache',
@@ -177,7 +193,7 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
         panel.node.parentNode.reload();
 
         panel.close();
-        panel.getEl().unmask();
+        panel.form.getEl().unmask();
       },
       failure: function (response, request) {
         var responseObj = Ext.decode(response.responseText);
@@ -185,7 +201,7 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
 
         var panel = Ext.getCmp(request.params.panelId);
         panel.node.parentNode.reload();
-        panel.getEl().unmask();
+        panel.form.getEl().unmask();
       }
     });
   },

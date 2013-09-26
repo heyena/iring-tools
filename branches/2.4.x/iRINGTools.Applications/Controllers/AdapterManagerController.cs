@@ -5,6 +5,7 @@ using iRINGTools.Web.Helpers;
 using iRINGTools.Web.Models;
 using log4net;
 using org.iringtools.library;
+using Newtonsoft.Json;
 
 namespace org.iringtools.web.controllers
 {
@@ -31,8 +32,11 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        CacheInfo cacheInfo = _repository.GetCacheInfo(form["scope"], form["app"]);
-        return Json(cacheInfo, JsonRequestBehavior.AllowGet);
+        CacheInfo cacheInfo = _repository.GetCacheInfo(form["scope"], form["app"]);        
+        
+        // NOTE: default ASP .NET serializer has issue with datetime fields, use JSON. NET library
+        string json = JsonConvert.SerializeObject(cacheInfo);
+        return Content(json);
       }
       catch (Exception e)
       {
