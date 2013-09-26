@@ -1708,8 +1708,6 @@ function buildGraphSubMenu() {
       onShowUpdateCache();
       getAppMode();
       fillShowUpdateCache();
-      // var view = Ext.getCmp('showUpdateCacheWin');
-      // view.show();
     },
     scope : this
   }];
@@ -2151,18 +2149,19 @@ function onRefreshCache() {
   var obj = Ext.getCmp('showUpdateCacheForm');
   var form = obj.getForm();
   var timeout = form.findField("timeOut").getValue();
+  
   if ((timeout === "") || (timeout === "Infinite")) {
     timeout = '0';
   }
-  Ext.getCmp('showUpdateCacheWin').close();
 
-  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-  Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+  var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();  
+  
+  obj.setDisabled(true);
+  form.getEl().mask('Processing cache refresh...', 'x-mask-loading');
 
   Ext.Ajax.request({
     url : 'refreshCache',
     method : 'POST',
-    // timeout : 3600000,
     timeout : timeout,
     params : {
       'dxfrUri' : node.attributes.properties['Base URI'],
@@ -2172,28 +2171,37 @@ function onRefreshCache() {
       'timeout' : timeout
     },
     success : function(response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
+      var panel = Ext.getCmp('showUpdateCacheForm');      
+      panel.getForm().getEl().unmask();
+      panel.setDisabled(false);
 
       var responseObj = Ext.decode(response.responseText);
 
       if (responseObj.level == 'SUCCESS') {
+        Ext.getCmp('showUpdateCacheWin').close();        
         showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
-      } else {
+      } 
+      else {
         showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
       }
     },
     failure : function(response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
+      var panel = Ext.getCmp('showUpdateCacheForm');      
+      panel.getForm().getEl().unmask();
+      panel.setDisabled(false);
 
       if (request.response.status == 200) {
         var responseObj = Ext.decode(request.response.responseText);
 
         if (responseObj.level == 'SUCCESS') {
+          Ext.getCmp('showUpdateCacheWin').close();
           showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
-        } else {
+        } 
+        else {
           showDialog(500, 160, 'Refresh Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
         }
-      } else {
+      } 
+      else {
         var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
         showDialog(500, 160, 'Refresh Cache Error', errMsg, Ext.Msg.OK, null);
       }
@@ -2206,16 +2214,19 @@ function onImportCache() {
   var obj = Ext.getCmp('showUpdateCacheForm');
   var form = obj.getForm();
   var timeout = form.findField("timeOut").getValue();
+  
   if ((timeout === "") || (timeout === "Infinite")) {
     timeout = '0';
   }
-  var cacheUri = form.findField("CacheUri").getValue();
-  Ext.getCmp('showUpdateCacheWin').close();
-  Ext.getCmp('content-pane').getEl().mask("Processing...", "x-mask-loading");
+  
+  var cacheUri = form.findField("CacheUri").getValue();  
+  
+  obj.setDisabled(true);
+  form.getEl().mask('Processing cache import...', 'x-mask-loading');
+  
   Ext.Ajax.request({
     url : 'importCache',
     method : 'POST',
-    // timeout : 3600000,
     timeout : timeout,
     params : {
       'dxfrUri' : node.attributes.properties['Base URI'],
@@ -2226,34 +2237,42 @@ function onImportCache() {
       'timeout' : timeout
     },
     success : function(response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
-
+      var panel = Ext.getCmp('showUpdateCacheForm');      
+      panel.getForm().getEl().unmask();
+      panel.setDisabled(false);
+      
       var responseObj = Ext.decode(response.responseText);
 
       if (responseObj.level == 'SUCCESS') {
+        Ext.getCmp('showUpdateCacheWin').close();
         showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
-      } else {
+      } 
+      else {
         showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
       }
     },
     failure : function(response, request) {
-      Ext.getCmp('content-pane').getEl().unmask();
-
+      var panel = Ext.getCmp('showUpdateCacheForm');      
+      panel.getForm().getEl().unmask();
+      panel.setDisabled(false);
+      
       if (request.response.status == 200) {
         var responseObj = Ext.decode(request.response.responseText);
 
         if (responseObj.level == 'SUCCESS') {
+          Ext.getCmp('showUpdateCacheWin').close();
           showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
-        } else {
+        } 
+        else {
           showDialog(500, 160, 'Import Cache Error', responseObj.messages.items.join('\n'), Ext.Msg.OK, null);
         }
-      } else {
+      } 
+      else {
         var errMsg = 'Failure Type: ' + request.failureType + '. Status text: ' + request.response.statusText + '.';
         showDialog(500, 160, 'Import Cache Error', errMsg, Ext.Msg.OK, null);
       }
     }
   });
-
 }
 
 function buildManifestMenu(scope, xid, isDeleted) {

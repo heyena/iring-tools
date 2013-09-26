@@ -290,9 +290,9 @@ public class DirectoryMigrationUtility {
 									//
 									// general exchange info
 									//
-									OMElement xCacheableElt = xRoot
-											.getFirstChildWithName(new QName(
-													ns, "cachecable"));
+//									OMElement xCacheableElt = xRoot
+//											.getFirstChildWithName(new QName(
+//													ns, "cachecable"));
 //									if (xCacheableElt != null) {
 //										xchange.setCacheable(Boolean
 //												.parseBoolean(xCacheableElt

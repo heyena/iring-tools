@@ -32,36 +32,34 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
       items: [
         { name: 'importURI', fieldLabel: 'Import URI' },
         { name: 'timeout', fieldLabel: 'Timeout' },
-        { name: 'lastUpdate', fieldLabel: 'Last Update', xtype: 'textarea', height: 100, autoScroll: true }
-      ]
+        { name: 'lastUpdate', fieldLabel: 'Last Update', xtype: 'textarea', height: 90, autoScroll: true }
+      ],
+
+      buttons: [{
+        xtype: "tbbutton",
+        id: 'RefreshCacheBtn',
+        text: 'Refresh',
+        disabled: false,
+        handler: this.onRefreshCache,
+        scope: this
+      }, {
+        xtype: "tbbutton",
+        id: 'ImportCacheBtn',
+        text: 'Import',
+        disabled: false,
+        handler: this.onImportCache,
+        scope: this
+      }, {
+        xtype: "tbbutton",
+        text: 'Cancel',
+        handler: this.onCancel,
+        scope: this
+      }]
     });
 
     this.items = [
       this.form
     ];
-
-    this.bbar = [{
-      xtype: 'tbfill'
-    }, {
-      xtype: "tbbutton",
-      id: 'RefreshCacheBtn',
-      text: 'Refresh',
-      disabled: false,
-      handler: this.onRefreshCache,
-      scope: this
-    }, {
-      xtype: "tbbutton",
-      id: 'ImportCacheBtn',
-      text: 'Import',
-      disabled: false,
-      handler: this.onImportCache,
-      scope: this
-    }, {
-      xtype: "tbbutton",
-      text: 'Cancel',
-      handler: this.onCancel,
-      scope: this
-    }];
 
     AdapterManager.CacheInfoPanel.superclass.initComponent.call(this);
   },
@@ -120,8 +118,9 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
 
   onRefreshCache: function (btn, ev) {
     var timeout = this.form.form.findField('timeout').getValue();
-    this.bottomToolbar.setDisabled(true);
-    this.form.getEl().mask('Processing...', 'x-mask-loading');
+
+    this.form.setDisabled(true);
+    this.form.getEl().mask('Processing cache refresh...', 'x-mask-loading');
 
     Ext.Ajax.request({
       url: 'AdapterManager/RefreshCache',
@@ -134,28 +133,29 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
         'panelId': this.id
       },
       success: function (response, request) {
+        var panel = Ext.getCmp(request.params.panelId);
+        panel.node.parentNode.reload();
+        panel.form.setDisabled(false);
+        panel.form.getEl().unmask();
+
         var responseObj = Ext.decode(response.responseText);
 
         if (responseObj.Level == 0) {
+          panel.close();
           showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
         }
         else {
           showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
-
-        var panel = Ext.getCmp(request.params.panelId);
-        panel.node.parentNode.reload();
-
-        panel.close();
-        panel.form.getEl().unmask();
       },
       failure: function (response, request) {
-        var responseObj = Ext.decode(response.responseText);
-        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
-
         var panel = Ext.getCmp(request.params.panelId);
         panel.node.parentNode.reload();
+        panel.form.setDisabled(false);
         panel.form.getEl().unmask();
+
+        var responseObj = Ext.decode(response.responseText);
+        showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
       }
     });
   },
@@ -165,8 +165,8 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
     var timeout = form.findField('timeout').getValue();
     var importURI = form.findField('importURI').getValue();
 
-    this.bottomToolbar.setDisabled(true);
-    this.form.getEl().mask('Processing...', 'x-mask-loading');
+    this.form.setDisabled(true);
+    this.form.getEl().mask('Processing cache import...', 'x-mask-loading');
 
     Ext.Ajax.request({
       url: 'AdapterManager/ImportCache',
@@ -180,28 +180,29 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
         'panelId': this.id
       },
       success: function (response, request) {
+        var panel = Ext.getCmp(request.params.panelId);
+        panel.node.parentNode.reload();
+        panel.form.setDisabled(false);
+        panel.form.getEl().unmask();
+
         var responseObj = Ext.decode(response.responseText);
 
         if (responseObj.Level == 0) {
+          panel.close();
           showDialog(450, 100, 'Import Cache Result', 'Cache imported successfully.', Ext.Msg.OK, null);
         }
         else {
           showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
-
-        var panel = Ext.getCmp(request.params.panelId);
-        panel.node.parentNode.reload();
-
-        panel.close();
-        panel.form.getEl().unmask();
       },
       failure: function (response, request) {
-        var responseObj = Ext.decode(response.responseText);
-        showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
-
         var panel = Ext.getCmp(request.params.panelId);
         panel.node.parentNode.reload();
+        panel.form.setDisabled(false);
         panel.form.getEl().unmask();
+
+        var responseObj = Ext.decode(response.responseText);
+        showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
       }
     });
   },
