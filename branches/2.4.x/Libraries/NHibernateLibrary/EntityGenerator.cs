@@ -147,6 +147,8 @@ namespace org.iringtools.nhibernate
           #endregion
 
           status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");
+
+          response.Messages.Add("Dictionary refreshed successfully.");
         }
         catch (Exception ex)
         {

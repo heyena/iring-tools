@@ -747,6 +747,56 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    public override Response Refresh(string objectType)
+    {
+      if (_dataDictionary == null || _dataDictionary.dataObjects == null)
+      {
+        Response response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages() { "Dictionary is empty." },
+        };
+
+        return response;
+      }
+
+      return Generate(_settings["projectName"], _settings["applicationName"]);
+    }
+
+    public override Response RefreshAll()
+    {
+      return Refresh(null);
+    }
+
+    protected Response Generate(string scope, string app)
+    {
+      Response response = new Response();
+
+      try
+      {
+        EntityGenerator generator = _kernel.Get<EntityGenerator>();
+
+        string compilerVersion = "v4.0";
+        if (!string.IsNullOrEmpty(_settings["CompilerVersion"]))
+        {
+          compilerVersion = _settings["CompilerVersion"];
+        }
+
+        Response genRes = generator.Generate(compilerVersion, _dbDictionary, scope, app);
+
+        response.Append(genRes);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error refreshing dictionary {0}:", ex));
+
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(ex.Message);
+      }
+
+      return response;
+    }
+
     public override IList<IDataObject> GetRelatedObjects(IDataObject parentDataObject, string relatedObjectType)
     {
       IList<IDataObject> relatedObjects = null;
