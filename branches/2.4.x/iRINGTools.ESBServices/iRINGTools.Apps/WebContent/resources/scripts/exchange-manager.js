@@ -699,7 +699,7 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses) {
 
   for ( var colData in rowData) {
     var propertyName = colData;
-    // replace dataIndex with column headeR
+    // replace dataIndex with column header
     var len = colModelConfig.length;
     for ( var i = 0; i < len; i++) {
       if (colModelConfig[i].dataIndex === colData) {
@@ -723,10 +723,8 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses) {
             e.cancel = true;
           },
           click : function() {
-            // alert('clicked...');
           },
           keydown : function(evnt) {
-            // alert('keydown...');
             var keyPressed = evnt.getKey();
             if (evnt.ctrlKey) {
               /*
@@ -851,16 +849,13 @@ function submitExchange(userResponse) {
           }
         });
       } else {
-        // stop the TaskRunner when the 'getProgressBoo' is false
         runner.stop(task);
       }
     },
     interval : 1000
-  // monitor the progress every 1000 milliseconds
   };
 
   if (userResponse == 'ok') {
-    // if (exchtab) {
     Ext.MessageBox.show({
       title : 'Exchange Status',
       msg : 'Exchange in progress...',
@@ -869,7 +864,6 @@ function submitExchange(userResponse) {
       progress : true,
       closable : false
     });
-    // }
 
     Ext.Ajax.request({
       url : 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
@@ -887,12 +881,8 @@ function submitExchange(userResponse) {
           showDialog(460, 125, 'Exchange Result', message, Ext.Msg.OK, null);
         else
           showDialog(660, 300, 'Exchange Result', message, Ext.Msg.OK, null);
-
-        // start the TaskRunner
-        // runner.start(task);
       },
       failure : function(response, request) {
-        // ignore timeout error from proxy server
         if (response.responseText.indexOf('Error Code 1460') != -1) {
           if (exchtab) {
             exchtab.getEl().unmask();
@@ -943,25 +933,14 @@ function onTreeItemContextMenu(node, e) {
         if (obj.parentNode.parentNode !== null) {
           var dataExchangeNode = obj.parentNode.parentNode.text;
           if (dataExchangeNode !== null && dataExchangeNode === 'Data Exchanges') {
-
-            // var dataExchangeMenu =
-            // Ext.widget('dataexchangemenu');
             commodityMenu.showAt([ x, y ]);
             e.stopEvent();
           }
         }
 
         if (dataTypeNode !== null && dataTypeNode === 'Data Exchanges') {
-
-          // if (node.isSelected()) {
-
-          // var obj = node.attributes;
-
-          // if (obj.type == "ExchangeNode") {
           newExchangemenu.showAt([ x, y ]);
           e.stopEvent();
-          // this.MenuClick(obj);
-          // }
         } else if (obj.parentNode.text === 'Directory') {
           editDeleteScopeMenu.showAt([ x, y ]);
           e.stopEvent();
@@ -1079,11 +1058,7 @@ function deleteGraph(node, event) {
         + '</textarea>',
     buttons : Ext.MessageBox.YESNO,
     modal : true,
-    // icon: Ext.Msg.QUESTION,
-    // buttons: Ext.MessageBox.OKCANCEL,
-    // inputField: new IMS.form.DateField(),
     fn : function(buttonId, text) {
-      // if (buttonId == 'ok')
       if (buttonId == 'yes') {
         var contentPanel = Ext.getCmp('content-pane');
         contentPanel.getEl().mask("Loading...", "x-mask-loading");
@@ -1121,11 +1096,7 @@ function deleteCommodity(node, event) {
         + '</textarea>',
     buttons : Ext.MessageBox.YESNO,
     modal : true,
-    // icon: Ext.Msg.QUESTION,
-    // buttons: Ext.MessageBox.OKCANCEL,
-    // inputField: new IMS.form.DateField(),
     fn : function(buttonId, text) {
-      // if (buttonId == 'ok')
       if (buttonId == 'yes') {
         var contentPanel = Ext.getCmp('content-pane');
         contentPanel.getEl().mask("Loading...", "x-mask-loading");
@@ -1398,12 +1369,10 @@ function newExchangeConfig() {
         listeners : {
           scope : this,
           select : function() {
-            // Ext.getCmp('targetAppCombolist').clearValue();
             getAppNames("TargetExchange");
           },
           change : function(id, newvalue, oldvalue) {
             Ext.getCmp('targetAppCombolist').clearValue();
-            // getAppNames("app");
             Ext.getCmp('targetGraph').setValue("");
           }
         }
@@ -1456,7 +1425,6 @@ function newExchangeConfig() {
       text : 'Save',
       handler : function(button, event) {
         saveExchangeConfig();
-        // newExchangeConfigWin.close();
       }
     }, {
       text : 'Cancel',
@@ -1510,28 +1478,6 @@ function SourceUri() {
   });
 }
 
-/*
- * function testBaseUri() { var obj = Ext.getCmp('newAppForm'); var form =
- * obj.getForm();
- * 
- * var baseUri = form.findField('baseUri').getValue(); var style =
- * 'style="margin:0;padding:0;width:' + 400 + 'px;height:' + 160 +
- * 'px;border:1px solid #aaa;overflow:auto"'; Ext.Ajax.request({ url :
- * 'BasetestUri?' + '&sourceUri =' + baseUri, method : 'POST', timeout : 120000,
- * success : function(response, request) { var result =
- * Ext.decode(response.responseText); if(result.success === false) {
- * Ext.Msg.show({ title : 'Result ', msg : '<textarea ' + style + '
- * readonly="yes">' + "Could not connect to the URL " + result.message + '</textarea>',
- * buttons : Ext.MessageBox.OK }); } if(result.success === true) {
- * Ext.Msg.show({ title : 'Result ', msg : '<textarea ' + style + '
- * readonly="yes">' + result.message + '</textarea>', buttons :
- * Ext.MessageBox.OK }); var obj = Ext.getCmp('newAppForm'); var form =
- * obj.getForm(); form.findField('appScope').setDisabled(false); } }, failure :
- * function(response, request) { Ext.Msg.show({ title : 'Result ', msg : '<textarea ' +
- * style + ' readonly="yes">' + "failed to connect to the specified Url" + '</textarea>',
- * buttons : Ext.MessageBox.OK }); } }); }
- */
-
 function TargetUri() {
   var obj = Ext.getCmp('newExchConfig');
   var form = obj.getForm();
@@ -1563,7 +1509,6 @@ function TargetUri() {
       });
     }
   });
-
 }
 
 function saveExchangeConfig() {
@@ -1587,6 +1532,7 @@ function saveExchangeConfig() {
   var sourceGraphName = form1.findField('sourceGraphName').getValue();
   var name = form1.findField('name').getValue();
   var poolSize = form1.findField('poolSize').getValue();
+  
   if ((poolSize === null) || (poolSize === "")) {
     poolSize = 100;
   }
@@ -1609,7 +1555,8 @@ function saveExchangeConfig() {
         alert("save failed");
       }
     });
-  } else {
+  } 
+  else {
     if ((targetAppName === "")) {
       form1.findField('targetAppName').markInvalid('App Name cannot be Empty');
     }
@@ -1666,7 +1613,6 @@ function buildNewApplicationMenu() {
       var obj = Ext.getCmp('newAppForm');
       var form = obj.getForm();
       form.findField('appScope').setDisabled(true);
-      // form.findField('scopeDisplayName').setDisabled(true);
       form.findField('appName').setDisabled(true);
       form.findField('displayName').setDisabled(true);
       form.findField('appDesc').setDisabled(true);
@@ -1707,19 +1653,10 @@ function buildGraphSubMenu() {
       // view.show();
     },
     scope : this
-  }
-  /*
-   * { xtype : 'menuitem', text : 'Refresh Cache', icon :
-   * 'resources/images/16x16/refresh.png', handler : function() {
-   * showDialog(400, 100, 'Refresh Cache Confirmation', 'Are you sure you want
-   * to refresh cache?', Ext.Msg.YESNO, onRefreshCache); }, scope : this }, {
-   * xtype : 'menuitem', text : 'Import Cache', icon :
-   * 'resources/images/16x16/import.png', handler : onImportCache, scope : this }
-   */];
+  }];
 }
 
 function getAppMode() {
-
   var centerPanel = Ext.getCmp('content-pane');
   centerPanel.getEl().mask("Loading...", "x-mask-loading");
   var obj = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
@@ -1834,34 +1771,23 @@ function onShowUpdateCache() {
     layout : 'form',
     frame : false,
     bodyStyle : 'padding:15px',
-    labelwidth : 75,
+    defaults: {
+     labelwidth : 75,
+     width : 265,
+     xtype : 'textfield',
+     readOnly : true
+    },
     items : [ {
-      xtype : 'textfield',
-      width : 240,
       fieldLabel : 'Data Mode',
-      // disabled: true,
-      readOnly : true,
       name : 'dataMode'
     }, {
-      xtype : 'textfield',
-      width : 240,
       fieldLabel : 'Import URI',
-      // disabled: true,
-      readOnly : true,
       name : 'CacheUri'
     }, {
-      xtype : 'textfield',
-      width : 240,
       fieldLabel : 'Time out',
-      // disabled: true,
-      readOnly : true,
       name : 'timeOut'
     }, {
-      xtype : 'textfield',
-      width : 240,
       fieldLabel : 'Last Update',
-      // disabled: true,
-      readOnly : true,
       name : 'laseUpdate'
     } ],
     buttons : [ {
@@ -1869,7 +1795,6 @@ function onShowUpdateCache() {
       id : 'refreshCache',
       handler : function(node, button, event) {
         onRefreshCache();
-        // showUpdateCacheWin.close();
       },
       scope : this
     }, {
@@ -1958,7 +1883,6 @@ function editGraph() {
         oldAppName : appNameValue,
         oldScope : scope,
         oldGraphName : graphValue
-      /* CommName: graph.commodity */
       });
       centerPanel.getEl().unmask();
       view.show();
@@ -1989,10 +1913,6 @@ function newGraph() {
       fieldLabel : 'Description',
       name : 'description'
     },
-    /*
-     * { xtype: 'textfield', anchor: '95%', fieldLabel: 'Commodity', name:
-     * 'CommName' },
-     */
     {
       xtype : 'hidden',
       anchor : '100%',
@@ -2015,7 +1935,6 @@ function newGraph() {
         saveGraph();
         newGraphWin.close();
       }
-    // margin: 10,
     }, {
       text : 'Cancel',
       handler : function(button, event) {
@@ -2094,7 +2013,6 @@ function buildApplicationSubMenu() {
       newApp();
       var obj = Ext.getCmp('newAppForm');
       var form = obj.getForm();
-      // form.findField('scopeDisplayName').setDisabled(true);
       editApplication();
     },
     text : 'Edit Application',

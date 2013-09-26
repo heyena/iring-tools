@@ -152,7 +152,7 @@ function setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjec
 
         var msgbx = Ext.MessageBox.show({
             title: 'Please wait',
-            msg: 'Loading items...',
+            msg: 'Loading...',
             progressText: 'Initializing...',
             width: 200,
             progress: true,
@@ -1005,7 +1005,7 @@ function showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjects
     //var m = dataObjectsPane.body.mask('<div id="pbar"></div>');
 	var msgbx = Ext.MessageBox.show({
 	    title: 'Please wait',
-	    msg: 'Loading items...',
+	    msg: 'Loading...',
 	    progressText: 'Initializing...',
 	    width: 200,
 	    progress: true,

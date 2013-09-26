@@ -43,7 +43,6 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.library.Applications;
-import org.iringtools.library.CacheInfo;
 import org.iringtools.library.RequestStatus;
 import org.iringtools.library.Scopes;
 import org.iringtools.library.directory.DirectoryProvider;
