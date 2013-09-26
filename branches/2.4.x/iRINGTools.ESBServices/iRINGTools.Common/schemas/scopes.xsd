@@ -57,8 +57,8 @@
 <xs:element name="cacheInfo">
   <xs:complexType>
    <xs:sequence>
-    	<xs:element name="importURI" type="xs:string" />
-    	<xs:element name="timeout" type="xs:long" />
+    	<xs:element name="importURI" type="xs:string" minOccurs="0"/>
+    	<xs:element name="timeout" type="xs:int" minOccurs="0"/>
     	<xs:element ref="cacheEntries" />
    </xs:sequence>
   </xs:complexType>

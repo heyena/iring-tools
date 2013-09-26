@@ -1721,7 +1721,7 @@ public class ExchangeDataModel extends DataModel
     }
     catch (Exception e)
     {
-      String error = "Error getting scopes :" + e;
+      String error = "Error getting Apps :" + e;
       logger.error(error);
     }
     return dataMode;
@@ -1740,7 +1740,7 @@ public org.iringtools.library.CacheInfo getShowUpdateCache(String name,
 	    }
 	    catch (Exception e)
 	    {
-	      String error = "Error getting scopes :" + e;
+	      String error = "Error getting cache Info :" + e;
 	      logger.error(error);
 	    }
 	    

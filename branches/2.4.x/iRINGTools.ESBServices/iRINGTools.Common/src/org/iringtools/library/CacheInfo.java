@@ -19,8 +19,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="importURI" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="timeout" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="importURI" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="timeout" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element ref="{http://www.iringtools.org/library}cacheEntries"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -42,9 +42,8 @@ public class CacheInfo
 {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
     protected String importURI;
-    protected long timeout;
+    protected Integer timeout;
     @XmlElement(required = true)
     protected CacheEntries cacheEntries;
 
@@ -75,16 +74,24 @@ public class CacheInfo
     /**
      * Gets the value of the timeout property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public long getTimeout() {
+    public Integer getTimeout() {
         return timeout;
     }
 
     /**
      * Sets the value of the timeout property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setTimeout(long value) {
+    public void setTimeout(Integer value) {
         this.timeout = value;
     }
 

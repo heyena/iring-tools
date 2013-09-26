@@ -1764,7 +1764,7 @@ function fillShowUpdateCache() {
   var centerPanel = Ext.getCmp('content-pane');
   centerPanel.getEl().mask("Loading...", "x-mask-loading");
   var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode();
-  var scope = node.parentNode.parentNode.parentNode.text;
+  var scope =  node.attributes.properties['Context'];
   var graphValue = node.text;
   var appNameValue = node.parentNode.attributes.properties['Internal Name'];
   Uri = node.parentNode.attributes.properties['Base URI'];
