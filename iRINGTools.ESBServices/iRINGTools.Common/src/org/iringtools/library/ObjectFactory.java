@@ -30,19 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Application }
+     * Create an instance of {@link CacheEntries }
      * 
      */
-    public Application createApplication() {
-        return new Application();
-    }
-
-    /**
-     * Create an instance of {@link RequestStatus }
-     * 
-     */
-    public RequestStatus createRequestStatus() {
-        return new RequestStatus();
+    public CacheEntries createCacheEntries() {
+        return new CacheEntries();
     }
 
     /**
@@ -51,14 +43,6 @@ public class ObjectFactory {
      */
     public CacheInfo createCacheInfo() {
         return new CacheInfo();
-    }
-
-    /**
-     * Create an instance of {@link CacheEntries }
-     * 
-     */
-    public CacheEntries createCacheEntries() {
-        return new CacheEntries();
     }
 
     /**
@@ -78,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Scopes }
+     * Create an instance of {@link RequestStatus }
      * 
      */
-    public Scopes createScopes() {
-        return new Scopes();
+    public RequestStatus createRequestStatus() {
+        return new RequestStatus();
     }
 
     /**
@@ -91,6 +75,22 @@ public class ObjectFactory {
      */
     public CacheEntry createCacheEntry() {
         return new CacheEntry();
+    }
+
+    /**
+     * Create an instance of {@link Scopes }
+     * 
+     */
+    public Scopes createScopes() {
+        return new Scopes();
+    }
+
+    /**
+     * Create an instance of {@link Application }
+     * 
+     */
+    public Application createApplication() {
+        return new Application();
     }
 
 }
