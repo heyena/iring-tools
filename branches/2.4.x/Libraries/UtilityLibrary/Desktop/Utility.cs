@@ -1927,5 +1927,10 @@ namespace org.iringtools.dynamic
         }
     }
 
+    public static bool IsBase64Encoded(string text)
+    {
+      string pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
+      return Regex.IsMatch(text, pattern);
+    }
   }
 }
