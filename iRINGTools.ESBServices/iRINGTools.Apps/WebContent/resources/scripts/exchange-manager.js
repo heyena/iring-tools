@@ -863,7 +863,7 @@ function submitExchange(userResponse) {
     // if (exchtab) {
     Ext.MessageBox.show({
       title : 'Exchange Status',
-      msg : 'Processing items...',
+      msg : 'Exchange in progress...',
       progressText : 'Initializing...',
       width : 300,
       progress : true,

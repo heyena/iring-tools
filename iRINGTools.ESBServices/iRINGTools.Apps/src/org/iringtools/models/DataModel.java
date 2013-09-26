@@ -147,39 +147,41 @@ public class DataModel
 
   protected Exchange getExchangeFromDirectory(String scopeName, String xId)
   {
-    Exchange exchange = null;
-
     Directory directory = (Directory) session.get(DIRECTORY_KEY);
-
-    for (Scope scope : directory.getScope())
-    {
-      if (scope.getName().equalsIgnoreCase(scopeName))
-      {
-        if (scope.getDataExchanges() != null)
-        {
-          for (Commodity commodity : scope.getDataExchanges().getCommodity())
-          {
-            for (Exchange xchange : commodity.getExchange())
-            {
-              if (xId.equalsIgnoreCase(xchange.getId()))
-              {
-                if (xchange.getPoolSize() == null)
-                {
-                  Integer defaultPoolSize = Integer.parseInt(settings.get("poolSize").toString());
-                  xchange.setPoolSize(defaultPoolSize);
-                }
-
-                return xchange;
-              }
-            }
-          }
-        }
-
-        break;
-      }
-    }
-
+    Exchange exchange = getExchangFromDirectory(directory,scopeName,xId);
     return exchange;
+  }
+  
+  public Exchange getExchangFromDirectory(Directory directory,String scopeName, String xId)
+  { 
+	  Exchange exchange = null;
+	  
+	  for (Scope scope : directory.getScope())
+	    {
+	      if (scope.getName().equalsIgnoreCase(scopeName))
+	      {
+	        if (scope.getDataExchanges() != null)
+	        {
+	          for (Commodity commodity : scope.getDataExchanges().getCommodity())
+	          {
+	            for (Exchange xchange : commodity.getExchange())
+	            {
+	              if (xId.equalsIgnoreCase(xchange.getId()))
+	              {
+	                if (xchange.getPoolSize() == null)
+	                {
+	                  Integer defaultPoolSize = Integer.parseInt(settings.get("poolSize").toString());
+	                  xchange.setPoolSize(defaultPoolSize);
+	                }
+	                return xchange;
+	              }
+	            }
+	          }
+	        }
+	        break;
+	      }
+	    }
+	  return exchange;
   }
 
   protected DataFilter createDataFilter(String filter, String sortBy, String sortOrder) throws DataModelException

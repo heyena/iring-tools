@@ -20,6 +20,7 @@ import org.iringtools.data.filter.OrderExpressions;
 import org.iringtools.data.filter.RelationalOperator;
 import org.iringtools.directory.Application;
 import org.iringtools.directory.Commodity;
+import org.iringtools.directory.Directory;
 import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.dti.DataTransferIndex;
@@ -281,6 +282,41 @@ public class ExchangeDataModel extends DataModel
           session.remove(key);
     }
 
+    return xRes;
+  }
+
+  public ExchangeResponse runUnattendedExchange(String scope, String xId)
+	      throws Exception
+  {
+    this.scope = scope;
+    this.xId = xId;
+    
+    ExchangeResponse xRes = new ExchangeResponse();
+    DirectoryProvider  dProvider = new DirectoryProvider(settings);
+    Directory directory = dProvider.getDirectory();
+    
+    Exchange exchange = getExchangFromDirectory(directory, scope, xId);
+    Manifest manifest = getLatestCrossedManifest(exchange);
+    DataTransferIndices dtis = getFullDtis(exchange, manifest);
+
+    ExchangeRequest xReq = new ExchangeRequest();
+    xReq.setManifest(manifest);
+    xReq.setDataTransferIndices(dtis);
+    xReq.setReviewed(true);
+    try
+    {
+      xRes = provider.submitExchange(false, scope, xId, exchange, xReq);
+    }
+    catch (Exception ex)
+    {
+      String error = "Error during exchange: " + ex.getMessage();
+      logger.error(error);
+
+      String noHtmlError = error.replaceAll("(<html)[^&]*(</html>)", "");
+      String noDocTypeError = noHtmlError.replaceAll("(<!DOCTYPE)[^&]*(>)", "");
+      xRes.setSummary(noDocTypeError.replaceAll("\\r\\n", ""));
+      xRes.setLevel(Level.ERROR);
+    }
     return xRes;
   }
 
