@@ -132,7 +132,7 @@ namespace org.iringtools.adapter
                                    select setting).SingleOrDefault();
           if (connectionSetting != null)
           {
-              if (EncryptionUtility.IsBase64Encoded(connectionSetting.Value))
+              if (Utility.IsBase64Encoded(connectionSetting.Value))
                   connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value);
           }
         }
