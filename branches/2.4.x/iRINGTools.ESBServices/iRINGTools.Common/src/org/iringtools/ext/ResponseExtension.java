@@ -7,6 +7,7 @@ import org.iringtools.common.response.StatusList;
 
 public class ResponseExtension extends Response
 {
+  private static final long serialVersionUID = 1L;
   protected Level statuslevel;
 
   public void append(Response response)
