@@ -131,39 +131,33 @@ namespace org.iringtools.nhibernate
     public Response PostDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
       Response response = new Response();
-      Status status = new Status();
-      DataObject tempDataObject = null;
-      response.StatusList.Add(status);
 
       try
       {
-        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
-        DatabaseDictionary existDBDictionary = GetDictionary(projectName, applicationName);
 
-        foreach (DataObject dataObject in databaseDictionary.dataObjects)
-        {
-          tempDataObject = existDBDictionary.GetTableObject(dataObject.tableName);
-          if (tempDataObject != null)
-            if (tempDataObject.dataFilter != null)
-              dataObject.dataFilter = tempDataObject.dataFilter;
-        }
+        //NOTE: this no longer needed since filter should be stored separately
+        //to void loss during refresh
+
+        //DatabaseDictionary existDBDictionary = GetDictionary(projectName, applicationName);
+        //foreach (DataObject dataObject in databaseDictionary.dataObjects)
+        //{
+        //  DataObject tempDataObject = existDBDictionary.GetTableObject(dataObject.tableName);
+
+        //  if (tempDataObject != null && tempDataObject.dataFilter != null)
+        //      dataObject.dataFilter = tempDataObject.dataFilter;
+        //}
 
         NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"], _settings["KeyFile"]);
-        response.Append(Generate(projectName, applicationName));
-
-        if (response.Level.ToString().ToUpper() == "SUCCESS")
-          status.Messages.Add("Database Dictionary saved successfully");
-        else
-        {
-          throw new Exception(response.StatusList[0].Messages[0].ToString());
-        }
-
+        Response genRes = Generate(projectName, applicationName);
+        response.Append(genRes);
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in SaveDatabaseDictionary: " + ex);
-        status.Messages.Add("Error in saving database dictionary" + ex.Message);
+        _logger.Error("Error updating dictionary: " + ex);
+
+        response.Level = StatusLevel.Error;
+        response.Messages.Add("Error updating dictionary" + ex.Message);
       }
 
       return response;
