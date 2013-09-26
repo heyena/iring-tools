@@ -15,7 +15,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
     var name = "";
     var displayName = "";
     var description = "";
-    var cacheDBConnStr = "";
+    var cacheDBConnStr = "Data Source={hostname\\db-instance};Initial Catalog={dbName};User ID={user id};Password={password}";
 
     if (this.record != null) {
       name = this.record.Name;
