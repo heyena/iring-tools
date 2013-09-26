@@ -43,6 +43,8 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.library.Applications;
+import org.iringtools.library.ListItem;
+import org.iringtools.library.NameValueList;
 import org.iringtools.library.RequestStatus;
 import org.iringtools.library.Scopes;
 import org.iringtools.library.directory.DirectoryProvider;
@@ -1625,20 +1627,19 @@ public class ExchangeDataModel extends DataModel
 
   public List<List<String>> getInternalScopeNameFromAM(String Uri) throws IOException
   {
-    // List<String> scopelist = new ArrayList<String>();
     List<List<String>> scopelist = new ArrayList<List<String>>();
     try
     {
-      HttpClient httpClient = new HttpClient(Uri + "/adapter/scopes");
+      HttpClient httpClient = new HttpClient(Uri + "/scopes");
       httpClient.setAsync(false);
-      Scopes adapterMangerScopes = httpClient.get(Scopes.class);
-      List<org.iringtools.library.Scope> scopes = adapterMangerScopes.getItems();
-      for (org.iringtools.library.Scope s : scopes)
+      NameValueList nameValuelist = httpClient.get(NameValueList.class);
+      List<org.iringtools.library.ListItem> scopes = nameValuelist.getItems();
+      for (org.iringtools.library.ListItem s : scopes)
       {
-        List<String> scopeName = new ArrayList<String>();
-        scopeName.add(s.getName());
-        scopeName.add(s.getName());
-        scopelist.add(scopeName);
+        List<String> scope = new ArrayList<String>();
+        scope.add(s.getValue());
+        scope.add(s.getValue());
+        scopelist.add(scope);
         // scopelist.add(s.getName());
       }
 
@@ -1656,25 +1657,17 @@ public class ExchangeDataModel extends DataModel
     List<List<String>> applist = new ArrayList<List<String>>();
     try
     {
-      HttpClient httpClient = new HttpClient(Uri + "/adapter/scopes");
+      HttpClient httpClient = new HttpClient(Uri + "/scopes/"+ appScope + "/apps");
       httpClient.setAsync(false);
-      Scopes adapterMangerScopes = httpClient.get(Scopes.class);
-      List<org.iringtools.library.Scope> scopes = adapterMangerScopes.getItems();
-      for (org.iringtools.library.Scope s : scopes)
+      NameValueList appList = httpClient.get(NameValueList.class);
+      List<org.iringtools.library.ListItem> apps = appList.getItems();
+      for (org.iringtools.library.ListItem a : apps)
       {
-        if (s.getName().equalsIgnoreCase(appScope))
-        {
-          Applications apps = s.getApplications();
-          List<org.iringtools.library.Application> appNamelist = apps.getItems();
-          for (org.iringtools.library.Application app : appNamelist)
-          {
-            List<String> appName = new ArrayList<String>();
-            appName.add(app.getName());
-            appName.add(app.getName());
-            applist.add(appName);
+            List<String> app = new ArrayList<String>();
+            app.add(a.getValue());
+            app.add(a.getValue());
+            applist.add(app);
             // scopelist.add(s.getName());
-          }
-        }
       }
 
     }
@@ -1686,6 +1679,32 @@ public class ExchangeDataModel extends DataModel
     return applist;
   }
 
+  public List<List<String>> getGraphNames(String scope, String app, String Uri)
+  {
+    List<List<String>> graphlist = new ArrayList<List<String>>();
+    try
+    {
+      HttpClient httpClient = new HttpClient(Uri + "/scopes/"+ scope + "/apps/" + app +"/graphs" );
+      httpClient.setAsync(false);
+      NameValueList appList = httpClient.get(NameValueList.class);
+      List<org.iringtools.library.ListItem> graphs = appList.getItems();
+      for (org.iringtools.library.ListItem g : graphs)
+      {
+            List<String> graph = new ArrayList<String>();
+            graph.add(g.getValue());
+            graph.add(g.getValue());
+            graphlist.add(graph);
+            // scopelist.add(s.getName());
+      }
+
+    }
+    catch (Exception e)
+    {
+      String error = "Error getting scopes :" + e;
+      logger.error(error);
+    }
+    return graphlist;
+  }
   public String getAppDataMode(String scope, String name, String Uri)
   {     String dataMode = null;
     try
@@ -1717,30 +1736,7 @@ public org.iringtools.library.CacheInfo getShowUpdateCache(String name,
 	      HttpClient httpClient = new HttpClient(Uri + "/" + scope + "/" + appName + "/" +  name + "/cacheinfo");
 	      httpClient.setAsync(false);
 	       cacheInfo = httpClient.get(org.iringtools.library.CacheInfo.class);
-	      
-//	      if (cacheInfo == null)
-//	      {
-//	        throw new Exception("cacheInfo for graph " + name + " not found.");
-//	      }
-	   /*   
-	      Applications apps = scopeInfo.getApplications();
-	      List<org.iringtools.library.Application> appNamelist = apps.getItems();
-	      
-	      for (org.iringtools.library.Application app : appNamelist)
-	      {
-	        if (app.getName().equalsIgnoreCase(name))
-	        {
-	          if (app.getDataMode() != null)
-	          {
-	            if (app.getDataMode().equalsIgnoreCase("live"))
-	              modeValue = "live";
-	            else if (app.getDataMode().equalsIgnoreCase("cache"))
-	              modeValue = "cache";
-	          }
-	          else
-	            modeValue = "live";
-	        }
-	      }*/
+
 	    }
 	    catch (Exception e)
 	    {

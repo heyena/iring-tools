@@ -273,7 +273,7 @@
         <!-- Getting App names for  scopes --> 
        <action name="getAppNames" class="org.iringtools.controllers.ExchangeDataController" method="getAppNamesList">
       <result type="json">
-        <param name="root">appNames</param>
+        <param name="root">namesList</param>
       </result>
        </action> 
        
@@ -281,6 +281,13 @@
        <action name="getAppDataMode" class="org.iringtools.controllers.ExchangeDataController" method="getAppDataMode">
       <result type="json">
         <param name="root">dataMode</param>
+      </result>
+       </action>
+       
+         <!-- Get mode for graphs names --> 
+       <action name="getGraphNames" class="org.iringtools.controllers.ExchangeDataController" method="getGraphNamesList">
+      <result type="json">
+        <param name="root">namesList</param>
       </result>
        </action>
        

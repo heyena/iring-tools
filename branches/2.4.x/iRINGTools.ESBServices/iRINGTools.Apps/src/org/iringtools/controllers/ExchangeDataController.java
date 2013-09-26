@@ -85,7 +85,7 @@ public class ExchangeDataController extends BaseController
   private String xlabel;
   private String xtime;
   private int itemCount;
-  private List<List<String>> appNames;
+  private List<List<String>> namesList; 
   private List<List<String>> adapterScopeList;
   private List<List<String>> columnNames;
   private List<List<String>> relationOperator;
@@ -695,16 +695,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      boolean checkUrl = sourceUri.contains("/dxfr");
-      if(checkUrl)
-      {
-      int len = sourceUri.length();
-      int corlen = len - 5;
-       baseUri = sourceUri.substring(0, corlen);
-      }else{
-    	baseUri = sourceUri;
-      }
-      adapterScopeList = exchangeDataModel.getInternalScopeNameFromAM(baseUri);
+      adapterScopeList = exchangeDataModel.getInternalScopeNameFromAM(sourceUri);
     }
     catch (Exception e)
     {
@@ -721,17 +712,7 @@ public class ExchangeDataController extends BaseController
     {
     	
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      String baseUri;
-      boolean checkUrl = sourceUri.contains("/dxfr");
-      if(checkUrl)
-      {
-      int len = sourceUri.length();
-      int corlen = len - 5;
-      baseUri = sourceUri.substring(0, corlen);
-      }else{
-      	baseUri = sourceUri;
-        }
-      appNames = exchangeDataModel.getAppNames(appScope, baseUri );
+      namesList = exchangeDataModel.getAppNames(appScope, sourceUri );
     }
     catch (Exception e)
     {
@@ -742,6 +723,24 @@ public class ExchangeDataController extends BaseController
     return SUCCESS;
   }
 
+  public String getGraphNamesList()
+  {
+    try
+    {
+      
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
+      namesList = exchangeDataModel.getGraphNames(scope, name, sourceUri );
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      return ERROR;
+    }
+
+    return SUCCESS;
+  }
+
+  
 
   public String testBaseUri()
   {
@@ -2047,12 +2046,12 @@ public class ExchangeDataController extends BaseController
 		this.adapterScopeList = adapterScopeList;
 	}
 
-	public void setAppNames(List<List<String>> appNames) {
-		this.appNames = appNames;
+	public void setNamesList(List<List<String>> namesList) {
+		this.namesList = namesList;
 	}
 
-	public List<List<String>> getAppNames() {
-		return appNames;
+	public List<List<String>> getNamesList() {
+		return namesList;
 	}
 
 	public String getDisplayName() {
