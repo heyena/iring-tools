@@ -1,22 +1,23 @@
 ﻿Ext.ns('AdapterManager');
 
 AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
-  layout: 'fit',
   title: 'Edit Scope',
   width: 460,
   height: 240,
+  layout: 'fit',
   iconCls: 'tabsScope',
   closable: true,
   modal: true,
   resizable: false,
+  cacheConnStrTpl: 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}',
 
   initComponent: function () {
     this.bbar = this.buildToolbar();
 
-    var name = "";
-    var displayName = "";
-    var description = "";
-    var cacheDBConnStr = "Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}";
+    var name = '';
+    var displayName = '';
+    var description = '';
+    var cacheDBConnStr = this.cacheConnStrTpl;
 
     if (this.record != null) {
       name = this.record.Name;
@@ -93,6 +94,11 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
     var returnVal = this.checkidNodeExists()
 
     if (returnVal == true) {
+      var connStrField = this.form.getForm().findField('cacheDBConnStr');
+      if (connStrField.getValue() == this.cacheConnStrTpl) {
+        connStrField.setValue('');
+      }
+
       this.form.getForm().submit({
         waitMsg: 'Saving Data...',
         success: function (f, a) {
