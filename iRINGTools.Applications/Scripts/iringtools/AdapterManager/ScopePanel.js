@@ -24,12 +24,11 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
       description = this.record.Description;
 
       if (this.record.Configuration != null && this.record.Configuration.AppSettings != null &&
-            this.record.Configuration.AppSettings.Settings != null) 
-      {
-          Ext.each(this.record.Configuration.AppSettings.Settings, function (settings, index) {
-              if (settings.Key == "iRINGCacheConnStr")
-                  cacheDBConnStr = settings.Value;
-          });
+            this.record.Configuration.AppSettings.Settings != null) {
+        Ext.each(this.record.Configuration.AppSettings.Settings, function (settings, index) {
+          if (settings.Key == "iRINGCacheConnStr")
+            cacheDBConnStr = settings.Value;
+        });
       }
     }
 
@@ -40,16 +39,17 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
       border: false,
       autoDestroy: false,
       bodyStyle: 'padding:15px',
+      labelWidth: 100,
       defaults: {
-        labelWidth: 105,
-        width: 290,
+        anchor: '100%',
+        allowBlank: true,
         msgTarget: 'side'
       },
       defaultType: 'textfield',
       items: [
-        { name: 'name', xtype: 'hidden', value: name, allowBlank: false },
-        { fieldLabel: 'Name', name: 'displayName', xtype: 'textfield', value: displayName, allowBlank: false },
-        { fieldLabel: 'Description', name: 'description', allowBlank: true, xtype: 'textarea', value: description },
+        { name: 'name', xtype: 'hidden', value: name },
+        { fieldLabel: 'Name', name: 'displayName', value: displayName, allowBlank: false, msgTarget: 'Required field' },
+        { fieldLabel: 'Description', name: 'description', xtype: 'textarea', value: description },
         { fieldLabel: 'Cache ConnStr', name: 'cacheDBConnStr', xtype: 'textarea', value: cacheDBConnStr }
       ]
     });
@@ -67,10 +67,13 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
       height: 24
     }, {
       xtype: "tbbutton",
-      text: 'Ok',  
+      text: 'Ok',
       disabled: false,
       handler: this.onSave,
       scope: this
+    }, {
+      xtype: 'tbspacer',
+      width: 5
     }, {
       xtype: "tbbutton",
       text: 'Cancel',
@@ -86,8 +89,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
   },
 
   onSave: function () {
-    var that = this;    // consists the main/previous class object
-
+    var that = this;
     var returnVal = this.checkidNodeExists()
 
     if (returnVal == true) {
@@ -98,13 +100,13 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
         },
         failure: function (f, a) {
           var message = 'Error saving changes!';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
         }
       });
     }
     else {
-      var message = 'Scope/Application name already exists!';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      var message = 'Scope already exists!';
+      showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
     }
   },
 

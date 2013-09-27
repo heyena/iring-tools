@@ -1,9 +1,9 @@
 ﻿Ext.ns('AdapterManager');
 
 AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
-  layout: 'fit',
   width: 440,
-  height: 235,
+  height: 230,
+  layout: 'fit',
   closable: true,
   resizable: false,
   modal: true,
@@ -18,48 +18,57 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
 
     this.form = new Ext.FormPanel({
       method: 'POST',
-      bodyStyle: 'padding:10px',
+      bodyStyle: 'padding:15px',
       border: false,
       frame: false,
       defaults: {
-        xtype: 'textfield',
         labelWidth: 100,
-        width: 295,
+        anchor: '100%',
         msgTarget: 'side',
         readOnly: true
       },
+      defaultType: 'textfield',
 
       items: [
         { name: 'importURI', fieldLabel: 'Import URI' },
         { name: 'timeout', fieldLabel: 'Timeout' },
         { name: 'lastUpdate', fieldLabel: 'Last Update', xtype: 'textarea', height: 90, autoScroll: true }
-      ],
-
-      buttons: [{
-        xtype: "tbbutton",
-        id: 'RefreshCacheBtn',
-        text: 'Refresh',
-        disabled: false,
-        handler: this.onRefreshCache,
-        scope: this
-      }, {
-        xtype: "tbbutton",
-        id: 'ImportCacheBtn',
-        text: 'Import',
-        disabled: false,
-        handler: this.onImportCache,
-        scope: this
-      }, {
-        xtype: "tbbutton",
-        text: 'Cancel',
-        handler: this.onCancel,
-        scope: this
-      }]
+      ]
     });
 
     this.items = [
       this.form
     ];
+
+    this.bbar = [{
+      xtype: 'tbfill',
+      height: 24
+    }, {
+      xtype: 'tbbutton',
+      id: 'RefreshCacheBtn',
+      text: 'Refresh',
+      disabled: false,
+      handler: this.onRefreshCache,
+      scope: this
+    }, {
+      xtype: 'tbspacer',
+      width: 5
+    }, {
+      xtype: 'tbbutton',
+      id: 'ImportCacheBtn',
+      text: 'Import',
+      disabled: false,
+      handler: this.onImportCache,
+      scope: this
+    }, {
+      xtype: 'tbspacer',
+      width: 5
+    }, {
+      xtype: 'tbbutton',
+      text: 'Cancel',
+      handler: this.onCancel,
+      scope: this
+    }];
 
     AdapterManager.CacheInfoPanel.superclass.initComponent.call(this);
   },

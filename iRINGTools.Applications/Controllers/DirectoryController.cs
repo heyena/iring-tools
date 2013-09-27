@@ -79,11 +79,7 @@ namespace org.iringtools.web.controllers
                   node.property.Add("Internal Name", scope.Name);
                   node.property.Add("Display Name", scope.DisplayName);
                   node.property.Add("Description", scope.Description);
-                  //if (scope.Configuration !=null && scope.Configuration.AppSettings!=null && scope.Configuration.AppSettings.Settings !=null )
-                  //{
-                  //  string val = scope.Configuration.AppSettings.Settings.SingleOrDefault(x => x.Key == "iRINGCacheConnStr").Value;
-                  //  node.property.Add("cacheDBConnStr", val);
-                  //}                  
+                
                   nodes.Add(node);
                 }
               }
