@@ -33,43 +33,43 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
         { name: 'importURI', fieldLabel: 'Import URI' },
         { name: 'timeout', fieldLabel: 'Timeout' },
         { name: 'lastUpdate', fieldLabel: 'Last Update', xtype: 'textarea', height: 90, autoScroll: true }
-      ]
+      ],
+
+      bbar: [{
+        xtype: 'tbfill',
+        height: 24
+      }, {
+        xtype: 'tbbutton',
+        id: 'RefreshCacheBtn',
+        text: 'Refresh',
+        disabled: false,
+        handler: this.onRefreshCache,
+        scope: this
+      }, {
+        xtype: 'tbspacer',
+        width: 5
+      }, {
+        xtype: 'tbbutton',
+        id: 'ImportCacheBtn',
+        text: 'Import',
+        disabled: false,
+        handler: this.onImportCache,
+        scope: this
+      }, {
+        xtype: 'tbspacer',
+        width: 5
+      }, {
+        xtype: 'tbbutton',
+        text: 'Cancel',
+        handler: this.onCancel,
+        scope: this
+      }]
     });
 
     this.items = [
       this.form
     ];
-
-    this.bbar = [{
-      xtype: 'tbfill',
-      height: 24
-    }, {
-      xtype: 'tbbutton',
-      id: 'RefreshCacheBtn',
-      text: 'Refresh',
-      disabled: false,
-      handler: this.onRefreshCache,
-      scope: this
-    }, {
-      xtype: 'tbspacer',
-      width: 5
-    }, {
-      xtype: 'tbbutton',
-      id: 'ImportCacheBtn',
-      text: 'Import',
-      disabled: false,
-      handler: this.onImportCache,
-      scope: this
-    }, {
-      xtype: 'tbspacer',
-      width: 5
-    }, {
-      xtype: 'tbbutton',
-      text: 'Cancel',
-      handler: this.onCancel,
-      scope: this
-    }];
-
+    
     AdapterManager.CacheInfoPanel.superclass.initComponent.call(this);
   },
 
