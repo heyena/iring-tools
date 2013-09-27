@@ -749,7 +749,10 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Refresh(string objectType)
     {
-      if (_dataDictionary == null || _dataDictionary.dataObjects == null)
+      if (File.Exists(_settings["DBDictionaryPath"]))
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["KeyFile"]);
+
+      if (_dbDictionary == null || _dbDictionary.dataObjects == null)
       {
         Response response = new Response()
         {

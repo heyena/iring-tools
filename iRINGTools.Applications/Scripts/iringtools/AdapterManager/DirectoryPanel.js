@@ -243,7 +243,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         handler: this.onNewScope,
         icon: 'Content/img/16x16/document-new.png',
         scope: this
-      },
+      }//,
     ///TODO: Pending on testing, do not delete
     //      {
     //          text: 'Add/Update DataLayer',
@@ -251,12 +251,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     //          icon: 'Content/img/16x16/document-new.png',
     //          scope: this
     //      },
-      {
-      text: 'Regenerate HibernateDataLayer artifacts',
-      handler: this.onRegenerateAll,
-      icon: 'Content/img/16x16/regen.png',
-      scope: this
-    }
+//      {
+//        text: 'Regenerate HibernateDataLayer artifacts',
+//        handler: this.onRegenerateAll,
+//        icon: 'Content/img/16x16/regen.png',
+//        scope: this
+//      }
     ]
   },
 
