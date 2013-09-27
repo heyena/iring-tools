@@ -1,9 +1,10 @@
 ﻿Ext.ns('AdapterManager');
 
 AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
+  layout: 'fit',
   title: 'Edit Scope',
   width: 460,
-  height: 205,
+  height: 240,
   iconCls: 'tabsScope',
   closable: true,
   modal: true,
@@ -15,13 +16,16 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
     var name = "";
     var displayName = "";
     var description = "";
-    var cacheDBConnStr = "Data Source={hostname\\db-instance};Initial Catalog={dbName};User ID={user id};Password={password}";
+    var cacheDBConnStr = "Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}";
 
     if (this.record != null) {
       name = this.record.Name;
       displayName = this.record.DisplayName;
       description = this.record.Description;
-      if (this.record.Configuration != null && this.record.Configuration.AppSettings != null && this.record.Configuration.AppSettings.Settings !=null) {
+
+      if (this.record.Configuration != null && this.record.Configuration.AppSettings != null &&
+            this.record.Configuration.AppSettings.Settings != null) 
+      {
           Ext.each(this.record.Configuration.AppSettings.Settings, function (settings, index) {
               if (settings.Key == "iRINGCacheConnStr")
                   cacheDBConnStr = settings.Value;
@@ -30,7 +34,6 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
     }
 
     this.form = new Ext.FormPanel({
-      labelWidth: 105,
       url: this.url,
       method: 'POST',
       frame: false,
@@ -38,7 +41,8 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
       autoDestroy: false,
       bodyStyle: 'padding:15px',
       defaults: {
-        width: 300,
+        labelWidth: 105,
+        width: 290,
         msgTarget: 'side'
       },
       defaultType: 'textfield',
@@ -46,7 +50,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Window, {
         { name: 'name', xtype: 'hidden', value: name, allowBlank: false },
         { fieldLabel: 'Name', name: 'displayName', xtype: 'textfield', value: displayName, allowBlank: false },
         { fieldLabel: 'Description', name: 'description', allowBlank: true, xtype: 'textarea', value: description },
-        { fieldLabel: 'CacheDB ConnStr', name: 'cacheDBConnStr', xtype: 'textfield', value: cacheDBConnStr }
+        { fieldLabel: 'Cache ConnStr', name: 'cacheDBConnStr', xtype: 'textarea', value: cacheDBConnStr }
       ]
     });
 
