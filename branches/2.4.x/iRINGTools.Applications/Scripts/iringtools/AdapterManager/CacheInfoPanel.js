@@ -69,11 +69,14 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
     this.items = [
       this.form
     ];
-    
+
     AdapterManager.CacheInfoPanel.superclass.initComponent.call(this);
   },
 
   display: function () {
+    this.show();
+    this.form.getEl().mask('Loading...', 'x-mask-loading');
+
     Ext.Ajax.request({
       url: 'AdapterManager/CacheInfo',
       method: 'POST',
@@ -116,9 +119,12 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
           form.findField('lastUpdate').setValue(lastUpdates);
         }
 
-        panel.show();
+        panel.form.getEl().unmask();
       },
       failure: function (response, request) {
+        var panel = Ext.getCmp(request.params.panelId);
+        panel.close();
+
         var message = 'Error getting cache information!';
         showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
       }
