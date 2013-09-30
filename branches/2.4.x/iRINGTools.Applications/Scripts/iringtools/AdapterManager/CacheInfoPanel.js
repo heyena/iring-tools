@@ -98,7 +98,7 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
         }
 
         if (cacheInfo.timeout == null || cacheInfo.timeout === 0) {
-          form.findField('timeout').setValue(3600000);
+          form.findField('timeout').setValue(60);
         }
         else {
           form.findField('timeout').setValue(cacheInfo.timeout);
@@ -132,7 +132,7 @@ AdapterManager.CacheInfoPanel = Ext.extend(Ext.Window, {
   },
 
   onRefreshCache: function (btn, ev) {
-    var timeout = this.form.form.findField('timeout').getValue();
+    var timeout = this.form.form.findField('timeout').getValue() * 60000;
 
     this.form.setDisabled(true);
     this.form.getEl().mask('Processing cache refresh...', 'x-mask-loading');
