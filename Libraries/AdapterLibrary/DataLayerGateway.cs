@@ -31,7 +31,7 @@ namespace org.iringtools.adapter
     private string _app;
     private DataDictionary _dictionary;
     private string _dataPath;
-    private string _connStr;
+    private string _cacheConnStr;
     private IDataLayer _dataLayer;
     private ILightweightDataLayer _lwDataLayer;
 
@@ -41,11 +41,15 @@ namespace org.iringtools.adapter
       _scope = _settings["ProjectName"].ToLower();
       _app = _settings["ApplicationName"].ToLower();
       _dataPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"]);
+      _cacheConnStr = _settings[BaseProvider.CACHE_CONNSTR];
 
-      _connStr = _settings[BaseProvider.CACHE_CONNSTR];
-      if (_connStr != null && IsBase64Encoded(_connStr))
+      if (Utility.IsBase64Encoded(_cacheConnStr))
       {
-        _connStr = EncryptionUtility.Decrypt(_connStr);
+        string keyFile = (_settings[BaseProvider.CACHE_CONNSTR_LEVEL] == "Scope")
+        ? string.Format("{0}{1}.key", _settings["AppDataPath"], _scope)
+        : string.Format("{0}adapter.key", _settings["AppDataPath"]);
+
+        _cacheConnStr = EncryptionUtility.Decrypt(_cacheConnStr, keyFile);
       }
 
       string dlBindingPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml", _dataPath, _scope, _app);
@@ -324,7 +328,7 @@ namespace org.iringtools.adapter
         //
         string tableName = GetCacheTableName(cacheId, objectType.objectName);
         string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
-        DataTable table = DBManager.Instance.ExecuteQuery(_connStr, tableSQL);
+        DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
 
         if (_lwDataLayer != null)
         {
@@ -352,7 +356,7 @@ namespace org.iringtools.adapter
               table.Rows.Add(newRow);
             }
 
-            SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
+            SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
             bulkCopy.DestinationTableName = tableName;
             bulkCopy.WriteToServer(table);
 
@@ -410,7 +414,7 @@ namespace org.iringtools.adapter
             start += page;
           }
 
-          SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
+          SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
           bulkCopy.DestinationTableName = tableName;
           bulkCopy.WriteToServer(table);
 
@@ -585,7 +589,7 @@ namespace org.iringtools.adapter
         //
         string tableName = GetCacheTableName(cacheId, objectType.objectName);
         string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
-        DataTable table = DBManager.Instance.ExecuteQuery(_connStr, tableSQL);
+        DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
 
         if (dataObjects == null || dataObjects.Count == 0)
         {
@@ -629,7 +633,7 @@ namespace org.iringtools.adapter
 
         if (status.Level == StatusLevel.Success)
         {
-          SqlBulkCopy bulkCopy = new SqlBulkCopy(_connStr);
+          SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
           bulkCopy.DestinationTableName = tableName;
           bulkCopy.WriteToServer(table);
 
@@ -789,7 +793,7 @@ namespace org.iringtools.adapter
 
         string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, cachedObjectType.tableName, whereClause);
 
-        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
+        DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
 
         if (dt != null && dt.Rows.Count > 0)
         {
@@ -860,7 +864,7 @@ namespace org.iringtools.adapter
           query += string.Format(" WHERE __rn between {0} and {1}", start + 1, start + limit);
         }
 
-        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
+        DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
         dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);
       }
       catch (Exception e)
@@ -906,7 +910,7 @@ namespace org.iringtools.adapter
         string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, identifiers);
         string query = "SELECT * FROM " + tableName + whereClause;
 
-        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
+        DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
         dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
       }
       catch (Exception e)
@@ -956,7 +960,7 @@ namespace org.iringtools.adapter
 
         string query = string.Format(BaseLightweightDataLayer.SELECT_SQL_TPL, cachedObjectType.tableName, whereClause);
 
-        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, query);
+        DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
         identifiers = BaseLightweightDataLayer.FormIdentifiers(cachedObjectType, dt);
       }
       catch (Exception e)
@@ -1054,7 +1058,7 @@ namespace org.iringtools.adapter
                 idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
               }
 
-              DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+              DBManager.Instance.ExecuteUpdate(_cacheConnStr, idSQLMap);
             }
             else
             {
@@ -1086,7 +1090,7 @@ namespace org.iringtools.adapter
                 }
               }
 
-              DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+              DBManager.Instance.ExecuteUpdate(_cacheConnStr, idSQLMap);
             }
           }
         }
@@ -1183,7 +1187,7 @@ namespace org.iringtools.adapter
                 idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
               }
 
-              DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+              DBManager.Instance.ExecuteUpdate(_cacheConnStr, idSQLMap);
             }
             else
             {
@@ -1215,7 +1219,7 @@ namespace org.iringtools.adapter
                 }
               }
 
-              DBManager.Instance.ExecuteUpdate(_connStr, idSQLMap);
+              DBManager.Instance.ExecuteUpdate(_cacheConnStr, idSQLMap);
             }
           }
         }
@@ -1342,7 +1346,7 @@ namespace org.iringtools.adapter
       try
       {
         string checkCacheSQL = string.Format("SELECT * FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _scope, _app);
-        DataTable dt = DBManager.Instance.ExecuteQuery(_connStr, checkCacheSQL);
+        DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, checkCacheSQL);
 
         if (dt.Rows.Count > 0)
         {
@@ -1374,7 +1378,7 @@ namespace org.iringtools.adapter
       string deleteCacheSQL = string.Format(
         "DELETE FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _scope, _app);
 
-      return DBManager.Instance.ExecuteNonQuery(_connStr, deleteCacheSQL);
+      return DBManager.Instance.ExecuteNonQuery(_cacheConnStr, deleteCacheSQL);
     }
 
     protected void SetCacheState(string cacheId, CacheState state)
@@ -1384,7 +1388,7 @@ namespace org.iringtools.adapter
         string setCacheStateSQL = string.Format(
           "UPDATE Caches SET State = '{2}' WHERE Context = '{0}' AND Application = '{1}'",
             _scope, _app, state.ToString());
-        bool success = DBManager.Instance.ExecuteNonQuery(_connStr, setCacheStateSQL);
+        bool success = DBManager.Instance.ExecuteNonQuery(_cacheConnStr, setCacheStateSQL);
 
         if (!success)
         {
@@ -1400,7 +1404,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        DBManager.Instance.ExecuteNonQuery(_connStr, deleteTableSQL);
+        DBManager.Instance.ExecuteNonQuery(_cacheConnStr, deleteTableSQL);
       }
       catch (Exception e)
       {
@@ -1416,7 +1420,7 @@ namespace org.iringtools.adapter
       string createCacheSQL = string.Format(@"INSERT INTO Caches (CacheId, Context, Application, Timestamp, State)
           VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", cacheId, _scope, _app, DateTime.Now.ToUniversalTime(), CacheState.Busy.ToString());
 
-      bool success = DBManager.Instance.ExecuteNonQuery(_connStr, createCacheSQL);
+      bool success = DBManager.Instance.ExecuteNonQuery(_cacheConnStr, createCacheSQL);
       if (!success)
       {
         throw new Exception("Error creating cache entry.");
@@ -1445,7 +1449,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        DBManager.Instance.ExecuteNonQuery(_connStr, tableBuilder.ToString());
+        DBManager.Instance.ExecuteNonQuery(_cacheConnStr, tableBuilder.ToString());
       }
       catch (Exception e)
       {

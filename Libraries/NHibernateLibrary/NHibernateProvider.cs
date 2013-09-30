@@ -71,7 +71,11 @@ namespace org.iringtools.nhibernate
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
 
-        DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["KeyFile"]);
+        string keyFile = string.Format("{0}{1}.{2}.key",
+            _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+        DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], keyFile);
+
         if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
         {
           status.Messages.Add("Error project name and application name can not be null");
@@ -109,14 +113,19 @@ namespace org.iringtools.nhibernate
       {
         InitializeScope(projectName, applicationName);
 
+        string keyFile = string.Format("{0}{1}.{2}.key",
+            _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
         if (File.Exists(_settings["DBDictionaryPath"]))
         {
-          databaseDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["KeyFile"]);
+          databaseDictionary = NHibernateUtility.LoadDatabaseDictionary(
+            _settings["DBDictionaryPath"], keyFile);
         }
         else
         {
           databaseDictionary = new DatabaseDictionary();
-          NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"], _settings["KeyFile"]);
+          NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, 
+            _settings["DBDictionaryPath"], keyFile);
         }
       }
       catch (Exception ex)
@@ -136,19 +145,11 @@ namespace org.iringtools.nhibernate
       {
         InitializeScope(projectName, applicationName);
 
-        //NOTE: this no longer needed since filter should be stored separately
-        //to void loss during refresh
+        string keyFile = string.Format("{0}{1}.{2}.key",
+                    _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
 
-        //DatabaseDictionary existDBDictionary = GetDictionary(projectName, applicationName);
-        //foreach (DataObject dataObject in databaseDictionary.dataObjects)
-        //{
-        //  DataObject tempDataObject = existDBDictionary.GetTableObject(dataObject.tableName);
+        NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"], keyFile);
 
-        //  if (tempDataObject != null && tempDataObject.dataFilter != null)
-        //      dataObject.dataFilter = tempDataObject.dataFilter;
-        //}
-
-        NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"], _settings["KeyFile"]);
         Response genRes = Generate(projectName, applicationName);
         response.Append(genRes);
       }
@@ -201,8 +202,11 @@ namespace org.iringtools.nhibernate
 
         InitializeScope(projectName, applicationName);
 
+        string keyFile = string.Format("{0}{1}.{2}.key",
+            _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
         if (File.Exists(_settings["DBDictionaryPath"]))
-          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["KeyFile"]);
+          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], keyFile);
         else
           return tableNames;
 
@@ -314,8 +318,11 @@ namespace org.iringtools.nhibernate
       {
         InitializeScope(projectName, applicationName);
 
+        string keyFile = string.Format("{0}{1}.{2}.key",
+            _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
         if (File.Exists(_settings["DBDictionaryPath"]))
-          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["KeyFile"]);
+          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], keyFile);
 
         string connString = dbDictionary.ConnectionString;
         string dbProvider = dbDictionary.Provider.ToString().ToUpper();

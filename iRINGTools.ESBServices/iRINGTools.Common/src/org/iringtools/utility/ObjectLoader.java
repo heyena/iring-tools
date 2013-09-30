@@ -92,6 +92,7 @@ public final class ObjectLoader
     }
   }
   
+  @SuppressWarnings("resource")
   private static <T> Class<T> loadClass(String className, String[] paths) throws ObjectLoaderException
   {
     if (paths.length > 0)

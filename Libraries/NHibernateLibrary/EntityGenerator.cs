@@ -664,7 +664,7 @@ namespace org.iringtools.nhibernate
 
         StringBuilder configBuilder = new StringBuilder();
         XmlTextWriter configWriter = new XmlTextWriter(new StringWriter(configBuilder));
-
+        
         configWriter.Formatting = Formatting.Indented;
         configWriter.WriteStartElement("configuration");
         configWriter.WriteStartElement("hibernate-configuration", "urn:nhibernate-configuration-2.2");
@@ -679,7 +679,11 @@ namespace org.iringtools.nhibernate
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "connection.connection_string");
-        configWriter.WriteString(EncryptionUtility.Encrypt(connectionString));
+
+        string keyFile = string.Format("{0}{1}.{2}.key", 
+          _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+        configWriter.WriteString(EncryptionUtility.Encrypt(connectionString, keyFile));
+
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "proxyfactory.factory_class");
