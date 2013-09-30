@@ -2380,7 +2380,7 @@ function newGraph() {
 			text : 'Save',
 			handler : function(node, button, event) {
 				saveGraph();
-				newGraphWin.close();
+			//	newGraphWin.close();
 			}
 		// margin: 10,
 		}, {
@@ -2416,7 +2416,10 @@ function saveGraph() {
 	var graph = obj.findField('name').getValue();
 	var oldapp = obj.findField('oldAppName').getValue();
 	var oldScope = obj.findField('oldScope').getValue();
-
+	
+	if((node.attributes.properties['Name'] !== graph) || 
+	(node.attributes.properties['Description'] !==  obj.findField('description').getValue()))
+{
 	Ext.Ajax.request({
 		url : 'newGraph?' + form + '&scope =' + scope + '&appName =' + appName,
 		method : 'POST',
@@ -2442,6 +2445,11 @@ function saveGraph() {
 					null);
 		}
 	});
+	Ext.getCmp('newGraphWin').close();
+} else{
+	showDialog(400, 100, 'Info', 'No changes to save.', Ext.Msg.OK,
+			null);
+}
 }
 
 function buildApplicationSubMenu() {
@@ -3458,7 +3466,7 @@ function newScope() {
 			text : 'Save',
 			handler : function(node, button, event) {
 				saveScope(node, button, event);
-				newScopeWin.close();
+			//	newScopeWin.close();
 			}
 		}, {
 			text : 'Cancel',
@@ -3492,6 +3500,8 @@ function saveScope(node, button, event) {
 	var node = directoryTree.getSelectionModel().getSelectedNode();
 
 	var scope = obj.findField('scope').getValue();
+	if(node.attributes.properties['Name'] !== scope)
+	{
 	// newScope();
 	Ext.Ajax.request({
 		url : 'newScope?' + form,
@@ -3513,6 +3523,11 @@ function saveScope(node, button, event) {
 					null);
 		}
 	});
+	Ext.getCmp('newScopeWin').close();
+	} else{
+		showDialog(400, 100, 'Info', 'No changes to save.', Ext.Msg.OK,
+				null);
+	}
 }
 
 function newCommodity() {
@@ -3932,7 +3947,15 @@ function saveApp(node, button, event) {
 
 	if (((baseUri !== "") && (baseUri !== null))
 			&& ((scopeName !== "") && (scopeName !== null))
-			&& ((appName !== "") && (appName !== null) && (appDisplay !== "") && (appDisplay !== null))) {
+			&& ((appName !== "") && (appName !== null) && (appDisplay !== "") && (appDisplay !== null))) 
+	{
+		if((appDisplay !== node.attributes.properties['Name'])  ||
+		(appName !== node.attributes.properties['Internal Name']) ||
+		(scopeName !== node.attributes.properties['Context']) ||
+		 (baseUri !== node.attributes.properties['Base URI']) ||
+		(form1.findField('appDesc').getValue() !== node.attributes.properties['Description']))
+		{
+		 
 		Ext.Ajax.request({
 			url : 'newApplication?' + form + '&scope =' + scope,
 			method : 'POST',
@@ -3958,7 +3981,12 @@ function saveApp(node, button, event) {
 						Ext.Msg.OK, null);
 			}
 		});
-	} else {
+	}else {
+		showDialog(400, 100, 'Info', 'No changes to save.',
+				Ext.Msg.OK, null);
+		
+	}
+		} else {
 		if (baseUri === "") {
 			form1.findField('baseUri').markInvalid('Base Uri cannot be Empty');
 		}
@@ -5021,7 +5049,7 @@ function applyDataFilter(url) {
 						},
 						{
 							xtype : 'fieldset',
-							height : 128,
+							height : 135,
 							id : 'OExpress',
 							margin : 5,
 							width : 654,
