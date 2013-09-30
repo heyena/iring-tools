@@ -24,6 +24,7 @@ namespace org.iringtools.adapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseProvider));
     public const string CACHE_CONNSTR = "iRINGCacheConnStr";
+    public const string CACHE_CONNSTR_LEVEL = "Adapter";
 
     protected IKernel _kernel = null;
     protected AdapterSettings _settings = null;
@@ -60,6 +61,8 @@ namespace org.iringtools.adapter
       }
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+      _settings[CACHE_CONNSTR_LEVEL] = "Adapter";
 
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
@@ -132,8 +135,12 @@ namespace org.iringtools.adapter
                                    select setting).SingleOrDefault();
           if (connectionSetting != null)
           {
-              if (Utility.IsBase64Encoded(connectionSetting.Value))
-                  connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value);
+            if (Utility.IsBase64Encoded(connectionSetting.Value))
+            {
+              _settings[CACHE_CONNSTR_LEVEL] = "Scope";
+              string keyFile = string.Format("{0}{1}.key", _settings["AppDataPath"], scope.Name);
+              connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value, keyFile);
+            }
           }
         }
       }
@@ -294,7 +301,10 @@ namespace org.iringtools.adapter
         AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
 
         if (scopeSettings.Contains(CACHE_CONNSTR))
+        {
+          _settings[CACHE_CONNSTR_LEVEL] = "Scope";
           _settings[CACHE_CONNSTR] = scopeSettings[CACHE_CONNSTR].ToString();
+        }
 
         _settings.AppendSettings(scopeSettings);
       }

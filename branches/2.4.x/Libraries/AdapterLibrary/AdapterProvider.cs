@@ -116,10 +116,15 @@ namespace org.iringtools.adapter
 
           if (scope.Configuration.AppSettings.Settings != null)
           {
-              var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
-                                       where setting.Key == CACHE_CONNSTR
-                                       select setting).First();
-              connectionSetting.Value = EncryptionUtility.Encrypt(connectionSetting.Value);
+            var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
+                                    where setting.Key == CACHE_CONNSTR
+                                    select setting).First();
+
+            if (connectionSetting != null)
+            {
+              string keyFile = string.Format("{0}{1}.key", _settings["AppDataPath"], scope.Name);
+              connectionSetting.Value = EncryptionUtility.Encrypt(connectionSetting.Value, keyFile);
+            }
           }
 
           _scopes.Add(scope);
@@ -181,7 +186,12 @@ namespace org.iringtools.adapter
             var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
                                      where setting.Key == CACHE_CONNSTR
                                      select setting).First();
-            connectionSetting.Value = EncryptionUtility.Encrypt(connectionSetting.Value);
+
+            if (connectionSetting != null)
+            {
+              string keyFile = string.Format("{0}{1}.key", _settings["AppDataPath"], scope.Name);
+              connectionSetting.Value = EncryptionUtility.Encrypt(connectionSetting.Value, keyFile);
+            }
           }
 
           string scopeConfigPath = string.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);

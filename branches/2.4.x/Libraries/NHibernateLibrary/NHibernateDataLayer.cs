@@ -56,13 +56,16 @@ namespace org.iringtools.adapter.datalayer
         _settings["Scope"]
       );
 
+      string keyFile = string.Format("{0}{1}.{2}.key",
+        _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
       if (File.Exists(_dbDictionaryPath))
       {
-        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, keyFile);
       }
       else if (utility.Utility.isLdapConfigured && utility.Utility.FileExistInRepository<DatabaseDictionary>(_dbDictionaryPath))
       {
-        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, keyFile);
       }
 
       _dataDictionary = new DataDictionary();
@@ -749,8 +752,12 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Refresh(string objectType)
     {
+
+      string keyFile = string.Format("{0}{1}.{2}.key",
+        _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
       if (File.Exists(_settings["DBDictionaryPath"]))
-        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["KeyFile"]);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], keyFile);
 
       if (_dbDictionary == null || _dbDictionary.dataObjects == null)
       {
