@@ -747,8 +747,7 @@ public class ExchangeDataController extends BaseController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(settings, session);
-      String baseUri =  removeDxfrString();
-      result = exchangeDataModel.testBaseUri(baseUri);
+      result = exchangeDataModel.testBaseUri(sourceUri);
     }
     catch (Exception e)
     {
