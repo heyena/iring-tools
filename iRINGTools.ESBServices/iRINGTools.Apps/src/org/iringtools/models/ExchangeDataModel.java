@@ -1603,7 +1603,7 @@ public class ExchangeDataModel extends DataModel
     Result result = new Result();
     try
     {
-      HttpClient httpClient = new HttpClient(Uri);
+      HttpClient httpClient = new HttpClient(Uri+ "/scopes");
       httpClient.setAsync(false);
       httpClient.get(String.class);
       result.setSuccess(true);
