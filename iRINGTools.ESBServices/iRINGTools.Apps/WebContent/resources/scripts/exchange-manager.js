@@ -1573,13 +1573,13 @@ function newExchangeConfig() {
 										forceSelection : true,
 										typeAhead : true,
 										triggerAction : 'all'
-									} ],
-							buttons : [ {
+									} ]
+						/*	buttons : [ {
 								text : 'Test',
 								handler : function(button, event) {
 									SourceUri();
 								}
-							} ]
+							} ]*/
 						},
 						{
 							xtype : 'fieldset',
@@ -1748,13 +1748,13 @@ function newExchangeConfig() {
 										forceSelection : true,
 										typeAhead : true,
 										triggerAction : 'all'
-									} ],
-							buttons : [ {
+									} ]
+						/*	buttons : [ {
 								text : 'Test',
 								handler : function(button, event) {
 									TargetUri();
 								}
-							} ]
+							} ]*/
 						}, {
 							xtype : 'hidden',
 							fieldLabel : 'Label',
@@ -1786,7 +1786,7 @@ function newExchangeConfig() {
 		id : 'newExchangeConfigWin',
 		title : 'New Exchange',
 		width : 540,
-		height : 540,
+		height : 463,
 		modal : true,
 		resizable : false,
 		items : [ newExchConfig ]
@@ -3679,24 +3679,24 @@ function testUriAndGetScopeName(name) {
 			if (result.success === false) {
 				if (name === "app") {
 					form.findField('baseUri').markInvalid(
-							'Enter valid Url to fetch contexts.');
+							'Unable to get contexts from the given URI. Enter Valid.');
 					Ext.getCmp('scopeCombolist').setDisabled(true);
 				} else if (name === "SourceExchange") {
 					form.findField('sourceUri').markInvalid(
-							'Enter valid Url to fetch contexts.');
+							'Unable to get contexts from the given URI. Enter Valid.');
 					Ext.getCmp('sourceScopeCombolist').setDisabled(true);
 				} else if (name === "TargetExchange") {
 					form.findField('targetUri').markInvalid(
-							'Enter valid Url to fetch contexts.');
+							'Unable to get contexts from the given URI. Enter Valid.');
 					Ext.getCmp('targetScopeCombolist').setDisabled(true);
 				}
-				Ext.Msg.show({
+				/*Ext.Msg.show({
 					title : 'Result ',
 					msg : '<textarea ' + style + ' readonly="yes">'
 							+ "Could not connect to the URL " + result.message
 							+ '</textarea>',
 					buttons : Ext.MessageBox.OK
-				});
+				});*/
 				centerPanel.getEl().unmask();
 			}
 			if (result.success === true) {
