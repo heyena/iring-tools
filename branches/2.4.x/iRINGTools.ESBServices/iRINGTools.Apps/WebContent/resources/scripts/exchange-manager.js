@@ -8,9 +8,9 @@ Ext.Ajax.on('requestexception', function(conn, response, options) {
 
 function copyToClipboard(celldata) {
   /*
-   * if (window.clipboardData) // Internet Explorer window.clipboardData.setData
-   * ("Text", celldata);
-   */
+	 * if (window.clipboardData) // Internet Explorer
+	 * window.clipboardData.setData ("Text", celldata);
+	 */
   window.prompt("Copy to clipboard: Ctrl+C, Enter", celldata);
 }
 
@@ -119,9 +119,9 @@ function createGridPane(store, pageSize, viewConfig, withResizer) {
         val = record.target.innerText;
       },
       /*
-       * celldblclick: function(ts, td, cellIndex, record, tr, rowIndex, e,
-       * eOpts ){ val = record.target.innerText; copyToClipboard(val); },
-       */
+		 * celldblclick: function(ts, td, cellIndex, record, tr, rowIndex, e,
+		 * eOpts ){ val = record.target.innerText; copyToClipboard(val); },
+		 */
       beforeedit : function(e) {
         e.cancel = true;
       },
@@ -129,8 +129,8 @@ function createGridPane(store, pageSize, viewConfig, withResizer) {
         var keyPressed = evnt.getKey();
         if (evnt.ctrlKey) {
           /*
-           * After trial and error, the ctrl+c combination seems to be code 67
-           */
+			 * After trial and error, the ctrl+c combination seems to be code 67
+			 */
           if (67 == 67)// if (keyPressed == 67)
           {
             // var celldata =
@@ -192,8 +192,8 @@ function createXlogsPane(context, xlogsContainer, xlabel) {
           var keyPressed = evnt.getKey();
           if (evnt.ctrlKey) {
             /*
-             * After trial and error, the ctrl+c combination seems to be code 67
-             */
+			 * After trial and error, the ctrl+c combination seems to be code 67
+			 */
             if (67 == 67)// if
             // (keyPressed
             // == 67)
@@ -660,9 +660,9 @@ function showChangedItemsInfo() {
       plain : true,
       items : [ propertyGrid ]
     /*
-     * listeners: { beforelayout: function (pane) { //alert('before layout..');
-     * Ext.getBody().unmask(); } }
-     */
+	 * listeners: { beforelayout: function (pane) { //alert('before layout..');
+	 * Ext.getBody().unmask(); } }
+	 */
     });
     win.show();
     dtoContentPane.add(win);
@@ -728,9 +728,9 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses) {
             var keyPressed = evnt.getKey();
             if (evnt.ctrlKey) {
               /*
-               * After trial and error, the ctrl+c combination seems to be code
-               * 67
-               */
+				 * After trial and error, the ctrl+c combination seems to be
+				 * code 67
+				 */
               if (67 == 67)// if (keyPressed == 67)
               {
                 var celldata = Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
@@ -1264,6 +1264,19 @@ function newExchangeConfig() {
 
               }
             },
+            blur: function()
+            {
+                var subStr = '/dxfr';
+                var obj = Ext.getCmp('newExchConfig');
+                 var form = obj.getForm();
+                 baseUri = form.findField('sourceUri').getValue();
+                if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
+                  {
+                  form.findField('sourceUri').markInvalid('Base Uri should contain /dxfr');
+                  }
+                else
+              testUriAndGetScopeName("SourceExchange");
+            },
             render : function(c) {
               c.getEl().on('keyup', function() {
                 Ext.getCmp('sourceScopeCombolist').clearValue();
@@ -1390,6 +1403,19 @@ function newExchangeConfig() {
 
               }
             },
+blur : function()
+{
+    var subStr = '/dxfr';
+    var obj = Ext.getCmp('newExchConfig');
+     var form = obj.getForm();
+     baseUri = form.findField('targetUri').getValue();
+    if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
+      {
+      form.findField('targetUri').markInvalid('Base Uri should contain /dxfr');
+      }
+    else
+  testUriAndGetScopeName("TargetExchange");	
+	},
             render : function(c) {
               c.getEl().on('keyup', function() {
                 Ext.getCmp('targetScopeCombolist').clearValue();
@@ -2046,9 +2072,9 @@ var graphNameStore = new Ext.data.ArrayStore({
       name : 'description'
     },
     /*
-     * { xtype: 'textfield', anchor: '95%', fieldLabel: 'Commodity', name:
-     * 'CommName' },
-     */
+	 * { xtype: 'textfield', anchor: '95%', fieldLabel: 'Commodity', name:
+	 * 'CommName' },
+	 */
     {
       xtype : 'hidden',
       anchor : '100%',
@@ -2333,12 +2359,12 @@ function editApplication() {
     success : function(response, request) {
       var application = Ext.decode(response.responseText);
       /*
-       * form.setValues({ appName : application.name,
-       * appDisplayName:application.appDisplayName, appDesc :
-       * application.description, appScope : application.context,
-       * scopeDisplayName : application.scopeDisplayName, baseUri :
-       * application.baseUri, oldAppName : appNameValue, oldScope : scope });
-       */
+		 * form.setValues({ appName : application.name,
+		 * appDisplayName:application.appDisplayName, appDesc :
+		 * application.description, appScope : application.context,
+		 * scopeDisplayName : application.scopeDisplayName, baseUri :
+		 * application.baseUri, oldAppName : appNameValue, oldScope : scope });
+		 */
       var obj = Ext.getCmp('newAppForm');
       var form = obj.getForm();
       form.findField('baseUri').setValue(application.baseUri);
@@ -2483,8 +2509,8 @@ function showExchangeHistory() {
 
     store.on('load', function() {
       /*
-       * var gridPane = createGridPane(store, { forceFit : true }, true);
-       */
+		 * var gridPane = createGridPane(store, { forceFit : true }, true);
+		 */
       var colModel = new Ext.grid.DynamicColumnModel(store);
       var selModel = new Ext.grid.RowSelectionModel({
         singleSelect : true
@@ -3296,12 +3322,13 @@ function testUriAndGetScopeName(name) {
      var result = Ext.decode(response.responseText);
      if (result.success === false) {
        if (name === "app") {
-
+    	  form.findField('baseUri').markInvalid('Enter valid Url');
          Ext.getCmp('scopeCombolist').setDisabled(true);
        } else if (name === "SourceExchange") {
-
+    	   form.findField('sourceUri').markInvalid('Enter valid Url');
          Ext.getCmp('sourceScopeCombolist').setDisabled(true);
        } else if (name === "TargetExchange") {
+    	   form.findField('targetUri').markInvalid('Enter valid Url');
          Ext.getCmp('targetScopeCombolist').setDisabled(true);
        }
        Ext.Msg.show({
@@ -3421,9 +3448,22 @@ function newApp() {
             else
             testUriAndGetScopeName("app");
             // Ext.getCmp('scopeCombolist').bindStore(ScopeNameStore);
-          }
+          } },
+          blur: function()
+          {
+        	  var subStr = '/dxfr';
+              var obj = Ext.getCmp('newAppForm');
+               var form = obj.getForm();
+               baseUri = form.findField('baseUri').getValue();
+              if( baseUri.toLowerCase().indexOf( subStr.toLowerCase() ) === -1 )
+                {
+                form.findField('baseUri').markInvalid('Base Uri should contain /dxfr');
+                }
+              else
+              testUriAndGetScopeName("app");
+          },
 
-        },
+       
         render : function(c) {
           c.getEl().on('keyup', function() {
             Ext.getCmp('scopeCombolist').clearValue();
@@ -3437,9 +3477,9 @@ function newApp() {
 
     scopeCombo,
     /*
-     * { xtype : 'textfield', fieldLabel : 'Scope Display Name', width :200,
-     * name : 'scopeDisplayName', allowBlank : false, value : scope },
-     */{
+	 * { xtype : 'textfield', fieldLabel : 'Scope Display Name', width :200,
+	 * name : 'scopeDisplayName', allowBlank : false, value : scope },
+	 */{
       xtype : 'combo',
       fieldLabel : 'Application',
       name : 'appName',
@@ -3692,9 +3732,9 @@ function editDataFilter() {
           var sort = dfList[i][1];
           var sortValue;
           /*
-           * if(sort == "0") { sortValue = "Asc"; }else if(sort == "1") {
-           * sortValue = "Desc"; }
-           */
+			 * if(sort == "0") { sortValue = "Asc"; }else if(sort == "1") {
+			 * sortValue = "Desc"; }
+			 */
 
           if (i + 1 >= 2) {
             var add = Ext.getCmp('OEAdd_0');
@@ -3971,9 +4011,9 @@ function applyDataFilter(url) {
                 flex : 1.8,
                 margin : 5,
                 /*
-                 * store: [ [ '0', 'EqualTo' ], [ '1', 'NotEqualTo' ], [ '2',
-                 * 'GreaterThan' ], [ '3', 'LessThan' ] ]
-                 */
+				 * store: [ [ '0', 'EqualTo' ], [ '1', 'NotEqualTo' ], [ '2',
+				 * 'GreaterThan' ], [ '3', 'LessThan' ] ]
+				 */
                 store : RelationalStore,
                 valueField : 'name',
                 forceSelection : true,
@@ -4041,23 +4081,23 @@ function applyDataFilter(url) {
                     arrRelaOper[i] = Ext.getCmp('relationalOperator_' + i).getValue();
 
                     /*
-                     * var relopr = Ext .getCmp( 'relationalOperator_' + i)
-                     * .getValue(); if(relopr == "0") { arrRelaOper[i] =
-                     * "EqualTo"; } else if(relopr == "1") { arrRelaOper[i] =
-                     * "NotEqualTo"; } else if(relopr == "2") { arrRelaOper[i] =
-                     * "GreaterThan"; }else if(relopr == "3") { arrRelaOper[i] =
-                     * "LessThan"; }
-                     */
+					 * var relopr = Ext .getCmp( 'relationalOperator_' + i)
+					 * .getValue(); if(relopr == "0") { arrRelaOper[i] =
+					 * "EqualTo"; } else if(relopr == "1") { arrRelaOper[i] =
+					 * "NotEqualTo"; } else if(relopr == "2") { arrRelaOper[i] =
+					 * "GreaterThan"; }else if(relopr == "3") { arrRelaOper[i] =
+					 * "LessThan"; }
+					 */
 
                     arrValue[i] = Ext.getCmp('value_' + i).getValue();
 
                     arrLogOper[i] = Ext.getCmp('logicalOperator_' + i).getValue();
 
                     /*
-                     * var log = Ext .getCmp( 'logicalOperator_' + i)
-                     * .getValue(); if(log == "0") { arrLogOper[i] = "AND"; }
-                     * else if(log == "1") { arrLogOper[i] = "OR"; }
-                     */
+					 * var log = Ext .getCmp( 'logicalOperator_' + i)
+					 * .getValue(); if(log == "0") { arrLogOper[i] = "AND"; }
+					 * else if(log == "1") { arrLogOper[i] = "OR"; }
+					 */
                     arrClose[i] = Ext.getCmp('closeGroup_' + i).getValue();
                     // arrDel[i]
                     // =
@@ -4184,9 +4224,9 @@ function applyDataFilter(url) {
           flex : 1.8,
           margin : 5,
           /*
-           * store: [ [ '0', 'EqualTo' ], [ '1', 'NotEqualTo' ], [ '2',
-           * 'GreaterThan' ], [ '3', 'LessThan' ] ]
-           */
+			 * store: [ [ '0', 'EqualTo' ], [ '1', 'NotEqualTo' ], [ '2',
+			 * 'GreaterThan' ], [ '3', 'LessThan' ] ]
+			 */
           store : RelationalStore,
           valueField : 'name',
           forceSelection : true,
@@ -4233,8 +4273,8 @@ function applyDataFilter(url) {
             var rowCount = fieldSet.items.length;
             var container = button.findParentByType('container').getId();
             /*
-             * button.up( 'container') .getId();
-             */
+			 * button.up( 'container') .getId();
+			 */
             var curID = parseInt(container.charAt(container.length - 1));
             var arrOpen = [];
             var arrProName = [];
@@ -4249,21 +4289,21 @@ function applyDataFilter(url) {
               arrRelaOper[i] = Ext.getCmp('relationalOperator_' + i).getValue();
 
               /*
-               * var relopr = Ext .getCmp( 'relationalOperator_' + i)
-               * .getValue(); if(relopr == "0") { arrRelaOper[i] = "EqualTo"; }
-               * else if(relopr == "1") { arrRelaOper[i] = "NotEqualTo"; } else
-               * if(relopr == "2") { arrRelaOper[i] = "GreaterThan"; }else
-               * if(relopr == "3") { arrRelaOper[i] = "LessThan"; }
-               */
+				 * var relopr = Ext .getCmp( 'relationalOperator_' + i)
+				 * .getValue(); if(relopr == "0") { arrRelaOper[i] = "EqualTo"; }
+				 * else if(relopr == "1") { arrRelaOper[i] = "NotEqualTo"; }
+				 * else if(relopr == "2") { arrRelaOper[i] = "GreaterThan";
+				 * }else if(relopr == "3") { arrRelaOper[i] = "LessThan"; }
+				 */
 
               arrValue[i] = Ext.getCmp('value_' + i).getValue();
               arrLogOper[i] = Ext.getCmp('logicalOperator_' + i).getValue();
 
               /*
-               * var log = Ext .getCmp( 'logicalOperator_' + i) .getValue();
-               * if(log == "0") { arrLogOper[i] = "AND"; } else if(log == "1") {
-               * arrLogOper[i] = "OR"; }
-               */
+				 * var log = Ext .getCmp( 'logicalOperator_' + i) .getValue();
+				 * if(log == "0") { arrLogOper[i] = "AND"; } else if(log == "1") {
+				 * arrLogOper[i] = "OR"; }
+				 */
               arrClose[i] = Ext.getCmp('closeGroup_' + i).getValue();
               // arrDel[i] =
               // Ext.getCmp('delete_'+i).getValue();
@@ -4408,9 +4448,9 @@ function applyDataFilter(url) {
               // valueField:
               // 'value',
               }, /*
-                   * { xtype: 'textfield', id: 'OEProName_'+rowCount, width:
-                   * 290, name: 'OEProName_'+rowCount },
-                   */
+					 * { xtype: 'textfield', id: 'OEProName_'+rowCount, width:
+					 * 290, name: 'OEProName_'+rowCount },
+					 */
 
               {
                 xtype : 'combo',
@@ -4520,9 +4560,9 @@ function applyDataFilter(url) {
           displayField : 'name'
         // valueField: 'value',
         },/*
-           * { xtype: 'textfield', id: 'OEProName_1', width: 290, name:
-           * 'OEProName_1' },
-           */
+			 * { xtype: 'textfield', id: 'OEProName_1', width: 290, name:
+			 * 'OEProName_1' },
+			 */
         {
           xtype : 'combo',
           // flex: 1.2,
@@ -4641,10 +4681,10 @@ function saveDataFilter() {
     arrRelaOper[i] = Ext.getCmp('relationalOperator_' + i).getValue();
 
     /*
-     * if(rel == "0") { arrRelaOper[i] = "EqualTo"; } else if(rel == "1") {
-     * arrRelaOper[i] = "NotEqualTo"; } else if(rel == "2") { arrRelaOper[i] =
-     * "GreaterThan"; }else if(rel == "3") { arrRelaOper[i] = "LessThan"; }
-     */
+	 * if(rel == "0") { arrRelaOper[i] = "EqualTo"; } else if(rel == "1") {
+	 * arrRelaOper[i] = "NotEqualTo"; } else if(rel == "2") { arrRelaOper[i] =
+	 * "GreaterThan"; }else if(rel == "3") { arrRelaOper[i] = "LessThan"; }
+	 */
 
     var value = Ext.getCmp('value_' + i).getValue();
     if (value != '') {
@@ -4654,19 +4694,19 @@ function saveDataFilter() {
     }
     arrLogOper[i] = Ext.getCmp('logicalOperator_' + i).getValue();
     /*
-     * if(log == "0") { arrLogOper[i] = "AND"; } else if(log == "1") {
-     * arrLogOper[i] = "OR"; }
-     */
+	 * if(log == "0") { arrLogOper[i] = "AND"; } else if(log == "1") {
+	 * arrLogOper[i] = "OR"; }
+	 */
     arrClose[i] = Ext.getCmp('closeGroup_' + i).getValue();
 
     /*
-     * var arrOpen = Ext.getCmp('openCount_'+i).getValue(); var arrProName =
-     * Ext.getCmp('propertyName_'+i).getValue(); var arrRelaOper =
-     * Ext.getCmp('relationalOperator_'+i).getValue(); var arrValue =
-     * Ext.getCmp('value_'+i).getValue(); var arrLogOper =
-     * Ext.getCmp('logicalOperator_'+i).getValue(); var arrClose =
-     * Ext.getCmp('closeGroup_'+i).getValue();
-     */
+	 * var arrOpen = Ext.getCmp('openCount_'+i).getValue(); var arrProName =
+	 * Ext.getCmp('propertyName_'+i).getValue(); var arrRelaOper =
+	 * Ext.getCmp('relationalOperator_'+i).getValue(); var arrValue =
+	 * Ext.getCmp('value_'+i).getValue(); var arrLogOper =
+	 * Ext.getCmp('logicalOperator_'+i).getValue(); var arrClose =
+	 * Ext.getCmp('closeGroup_'+i).getValue();
+	 */
 
   }
 
@@ -4683,9 +4723,9 @@ function saveDataFilter() {
     // var arrProName = Ext.getCmp('OEProName_'+i).getValue();
     arrSortOrder[i] = Ext.getCmp('OESortOrder_' + i).getValue();
     /*
-     * if(sort == "0") { arrSortOrder[i] = "Asc"; }else if(sort == "1") {
-     * arrSortOrder[i] = "Desc"; }
-     */
+	 * if(sort == "0") { arrSortOrder[i] = "Asc"; }else if(sort == "1") {
+	 * arrSortOrder[i] = "Desc"; }
+	 */
     arrProNameOE[i] = Ext.getCmp('OEProName_' + i).getValue();
 
   }
@@ -4789,12 +4829,12 @@ Ext
       // exchangeMenu.add(this.buildExchangeMenu());
       Ext.QuickTips.init();
       /*
-       * this.control({
-       * 
-       * "treepanel": { itemclick: this.onTreeItemClick, itemdblclick:
-       * this.onTreeItemDblClick, itemcontextmenu: this.onTreeItemContextMenu
-       * }});
-       */
+		 * this.control({
+		 * 
+		 * "treepanel": { itemclick: this.onTreeItemClick, itemdblclick:
+		 * this.onTreeItemDblClick, itemcontextmenu: this.onTreeItemContextMenu
+		 * }});
+		 */
 
       Ext.get('about-link').on('click', function() {
         var win = new Ext.Window({
@@ -4907,9 +4947,9 @@ Ext
                 var keyPressed = evnt.getKey();
                 if (evnt.ctrlKey) {
                   /*
-                   * After trial and error, the ctrl+c combination seems to be
-                   * code 67
-                   */
+					 * After trial and error, the ctrl+c combination seems to be
+					 * code 67
+					 */
                   if (67 == 67)// if (keyPressed == 67)
                   {
                     var celldata = Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
@@ -4944,9 +4984,9 @@ Ext
                 var keyPressed = evnt.getKey();
                 if (evnt.ctrlKey) {
                   /*
-                   * After trial and error, the ctrl+c combination seems to be
-                   * code 67
-                   */
+					 * After trial and error, the ctrl+c combination seems to be
+					 * code 67
+					 */
                   if (67 == 67)// if (keyPressed == 67)
                   {
                     var celldata = Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
