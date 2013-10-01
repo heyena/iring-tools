@@ -2837,7 +2837,7 @@ namespace org.iringtools.adapter
     }
 
     public XDocument GetRelatedList(
-            string project, string application, string resource, string id, string relatedresource,
+            string project, string application, string resource, string id, string relatedResource,
             ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex, NameValueCollection parameters)
     {
       try
@@ -2846,14 +2846,40 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resource, ref format, false);
 
-        AddURIsInSettingCollection(project, application, resource, id, relatedresource);
+        if (_projectionEngine == null)
+        {
+          throw new Exception("Initializing projection failed. This is most likely due to invalid format/content-type.");
+        }
+
+        AddURIsInSettingCollection(project, application, resource, id, relatedResource);
 
         id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
         IDataObject parentDataObject = _dataLayerGateway.Get(_dataObjDef, new List<string> { id }).FirstOrDefault<IDataObject>();
         if (parentDataObject == null) return new XDocument();
 
-        DataRelationship dataRelationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedresource.ToLower());
-        DataObject relatedObjectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == dataRelationship.relatedObjectName.ToLower());
+        DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+
+        if (objectType == null)
+        {
+          throw new Exception("Primary resource [" + resource + "] not found.");
+        }
+
+        DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
+
+        //
+        // if relationship is null, check if provided related resource by name
+        //
+        if (relationship == null)
+        {
+          relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+        }
+
+        DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
+
+        if (relatedType == null)
+        {
+          throw new Exception("Relationship between parent and child resource not found.");
+        }
 
         if (limit == 0)
         {
@@ -2865,20 +2891,20 @@ namespace org.iringtools.adapter
         _projectionEngine.FullIndex = fullIndex;
 
         _projectionEngine.BaseURI = (project.ToLower() == "all")
-            ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedresource)
-            : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedresource);
+            ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedResource)
+            : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedResource);
 
         DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
 
-        if (relatedObjectType.isRelatedOnly)
+        if (relatedType.isRelatedOnly)
         {
           // NOTE: this path strictly supports legacy data layers with related only support.
-          _dataObjects = _dataLayerGateway.GetRelatedObjects(parentDataObject, relatedObjectType, filter, limit, start);
-          _projectionEngine.Count = _dataLayerGateway.GetRelatedCount(parentDataObject, relatedObjectType, filter);
+          _dataObjects = _dataLayerGateway.GetRelatedObjects(parentDataObject, relatedType, filter, limit, start);
+          _projectionEngine.Count = _dataLayerGateway.GetRelatedCount(parentDataObject, relatedType, filter);
         }
         else
         {
-          foreach (PropertyMap propMap in dataRelationship.propertyMaps)
+          foreach (PropertyMap propMap in relationship.propertyMaps)
           {
             filter.Expressions.Add(new Expression()
             {
@@ -2891,7 +2917,7 @@ namespace org.iringtools.adapter
 
           try
           {
-            _dataObjects = _dataLayerGateway.Get(relatedObjectType, filter, start, limit);
+            _dataObjects = _dataLayerGateway.Get(relatedType, filter, start, limit);
           }
           catch (NotImplementedException nie)
           {
@@ -2901,7 +2927,7 @@ namespace org.iringtools.adapter
           _projectionEngine.Count = _dataObjects.Count;
         }
 
-        XDocument xdoc = _projectionEngine.ToXml(relatedObjectType.objectName, ref _dataObjects);
+        XDocument xdoc = _projectionEngine.ToXml(relatedType.objectName, ref _dataObjects);
         return xdoc;
       }
       catch (Exception ex)
@@ -2912,7 +2938,7 @@ namespace org.iringtools.adapter
     }
 
     public XDocument GetRelatedItem(string project, string application, string resource, string id,
-      string relatedresource, string relatedId, ref string format)
+      string relatedResource, string relatedId, ref string format)
     {
       try
       {
@@ -2920,27 +2946,52 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resource, ref format, false);
 
-        AddURIsInSettingCollection(project, application, resource, id, relatedresource, relatedId);
+        if (_projectionEngine == null)
+        {
+          throw new Exception("Initializing projection failed. This is most likely due to invalid format/content-type.");
+        }
+
+        AddURIsInSettingCollection(project, application, resource, id, relatedResource, relatedId);
 
         id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
         IDataObject parentDataObject = _dataLayerGateway.Get(_dataObjDef, new List<string> { id }).FirstOrDefault<IDataObject>();
         if (parentDataObject == null) return new XDocument();
 
         _projectionEngine.BaseURI = (project.ToLower() == "all")
-            ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedresource)
-            : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedresource);
+            ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedResource)
+            : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedResource);
 
-        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedresource.ToLower());
-        DataObject relatedObjectType = _dictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+        DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
 
-        _dataObjects = _dataLayerGateway.Get(relatedObjectType, new List<string> { relatedId });
+        if (objectType == null)
+        {
+          throw new Exception("Primary resource [" + resource + "] not found.");
+        }
+
+        DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
+
+        //
+        // if relationship is null, check if provided related resource by name
+        //
+        if (relationship == null)
+        {
+          relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+        }
+
+        DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
+
+        if (relatedType == null)
+        {
+          throw new Exception("Relationship between parent and child resource not found.");
+        }
+        _dataObjects = _dataLayerGateway.Get(relatedType, new List<string> { relatedId });
 
         if (_dataObjects != null)
         {
           _projectionEngine.Count = _dataObjects.Count;
         }
 
-        XDocument xdoc = _projectionEngine.ToXml(relatedObjectType.objectName, ref _dataObjects);
+        XDocument xdoc = _projectionEngine.ToXml(relatedType.objectName, ref _dataObjects);
         return xdoc;
       }
       catch (Exception ex)
@@ -3231,6 +3282,11 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resource, ref format, false);
 
+        if (_projectionEngine == null)
+        {
+          throw new Exception("Initializing projection failed. This is most likely due to invalid format/content-type.");
+        }
+
         if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
         {
           string message = "Can not perform post on read-only data layer of [" + project + "." + application + "].";
@@ -3256,16 +3312,16 @@ namespace org.iringtools.adapter
         }
 
         DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
-        
+
         //
         // if relationship is null, check if provided related resource by name
         //
         if (relationship == null)
         {
-          relationship = objectType.dataRelationships.First(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+          relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
         }
 
-        DataObject relatedType = _dictionary.dataObjects.First(c => c.objectName == relationship.relatedObjectName);      
+        DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
 
         if (relatedType == null)
         {
