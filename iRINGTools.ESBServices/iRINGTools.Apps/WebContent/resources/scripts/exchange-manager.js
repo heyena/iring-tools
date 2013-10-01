@@ -2048,21 +2048,26 @@ function getAppMode() {
 			var importbutton = Ext.getCmp('importCache');
 			var obj = Ext.getCmp('showUpdateCacheForm');
 			var form = obj.getForm();
+			
 			if (result.toUpperCase() === 'CACHE') {
 				refreshbutton.setDisabled(false);
 				importbutton.setDisabled(false);
 				form.setValues({
 					dataMode : 'Cache'
 				});
-				centerPanel.getEl().unmask();
-			} else {
+			} 
+			else  {
 				refreshbutton.setDisabled(true);
 				importbutton.setDisabled(true);
-				form.setValues({
-					dataMode : 'Live'
-				});
-				centerPanel.getEl().unmask();
-			}
+				
+				if (result.toUpperCase() === 'LIVE') {
+					form.setValues({
+						dataMode : 'Live'
+					});
+				}
+			}	
+
+			centerPanel.getEl().unmask();
 		},
 		failure : function(response, request) {
 			Ext.Msg.show({
