@@ -2049,9 +2049,14 @@ function getAppMode() {
 			var obj = Ext.getCmp('showUpdateCacheForm');
 			var form = obj.getForm();
 			
-			if (result.toUpperCase() === 'CACHE') {
+			if (result == null) {
+				refreshbutton.setDisabled(true);
+				importbutton.setDisabled(true);
+			}
+			else if (result.toUpperCase() === 'CACHE') {
 				refreshbutton.setDisabled(false);
 				importbutton.setDisabled(false);
+				
 				form.setValues({
 					dataMode : 'Cache'
 				});
@@ -2060,11 +2065,9 @@ function getAppMode() {
 				refreshbutton.setDisabled(true);
 				importbutton.setDisabled(true);
 				
-				if (result.toUpperCase() === 'LIVE') {
-					form.setValues({
-						dataMode : 'Live'
-					});
-				}
+				form.setValues({
+					dataMode : 'Live'
+				});
 			}	
 
 			centerPanel.getEl().unmask();
